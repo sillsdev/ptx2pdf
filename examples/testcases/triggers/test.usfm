@@ -27,5 +27,8 @@ Culpa et aperiam quis aut eos. Et reprehenderit enim quasi est et sunt. Consecte
 
 \s Glossary
 \p
-\k Word\k* Is a part of speech that could be uttered in isolation.  Consult a linguist for lots of technical extra bits we won't bother with.
-\p This is the second paragraph in the definition of word.
+\k Word\k* Is a part of speech that could be uttered in isolation. Consult a linguist for lots of technical extra bits we won't bother with.
+
+\p \zfiga|Word\*This is the second paragraph in the definition of word.  \zvar|test\*. \zvar|test\*!
+
+\p This is the next  paragraph after the milestone.

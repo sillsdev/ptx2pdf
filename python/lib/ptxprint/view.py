@@ -8,6 +8,8 @@ from ptxprint.utils import _, refKey, universalopen, print_traceback, local2glob
 from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm
 from ptxprint.piclist import PicInfo, PicChecks
 from ptxprint.styleditor import StyleEditor
+from ptxprint.pdfrw.pdfreader import PdfReader
+import ptxprint.pdfrw.errors
 import pathlib, os, sys
 from configparser import NoSectionError, NoOptionError, _UNSET
 from tempfile import NamedTemporaryFile
@@ -18,7 +20,7 @@ import datetime, time
 import json
 from shutil import copyfile, copytree, move
 
-VersionStr = "1.8.3"
+VersionStr = "1.9.2"
 
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
 
@@ -137,6 +139,7 @@ class ViewModel:
         self.styleEditor = StyleEditor(self)
         self.triggervcs = False
         self.copyrightInfo = {}
+        self.pubvars = {}
 
         # private to this implementation
         self.dict = {}
@@ -168,10 +171,10 @@ class ViewModel:
     def setPrintBtnStatus(self, idnty, txt=""):
         self.doStatus(txt)
         
-    def msgQuestion(self, q1, q2):
+    def msgQuestion(self, q1, q2, default=False):
         print("Answering \"no\" to: " + q1)
         print(q2)
-        return False
+        return default
 
     def resetToInitValues(self):
         if self.ptsettings is not None and self.ptsettings.dir == "right":
@@ -193,12 +196,24 @@ class ViewModel:
         else:
             self.dict[wid] = value
 
+    def getvar(self, k):
+        return self.pubvars.get(k, "")
+
+    def setvar(self, k, v):
+        self.pubvars[k] = v
+
+    def allvars(self):
+        return self.pubvars.keys()
+
+    def clearvars(self):
+        self.pubvars = {}
+
     def baseTeXPDFnames(self, bks=None):
         if bks is None:
             bks = self.getBooks(files=True)
-        if self.working_dir == None:
-            self.working_dir = os.path.join(self.settings_dir, self.prjid, 'PrintDraft')
         cfgname = self.configName()
+        if self.working_dir == None:
+            self.working_dir = os.path.join(self.settings_dir, self.prjid, "local", "ptxprint", cfgname)
         if cfgname is None:
             cfgname = ""
         else:
@@ -310,7 +325,7 @@ class ViewModel:
         if self.loadingConfig:
             return False
         (marginmms, topmarginmms, bottommarginmms, headerpos, footerpos, rulerpos, headerlabel, footerlabel) = self.getMargins()
-        self.set("l_margin2header1", "{}mm".format(f2s(headerlabel)))
+        self.set("l_margin2header1", "{}mm".format(f2s(headerlabel, 1)))
         return True
 
     def getMargins(self):
@@ -334,7 +349,8 @@ class ViewModel:
         # specified topmargin subtract 0.7 * hfontsize which the macros add in
         headerposmms = float(self.get("s_topmargin")) - asmm(float(self.get("s_headerposition"))) - 0.7 * hfontsizemms
         footerposmms = float(self.get("s_footerposition"))
-        headerlabel = headerposmms - hfontheight * hfontsizemms
+        # report top of TeX headerbox then add that box back on and remove the 'true' height of the font
+        headerlabel = headerposmms - (hfontheight - 0.7) * hfontsizemms
         footerlabel = (bottommarginmms - footerposmms - hfontheight * hfontsizemms) * 72.27 / 25.4
         # simply subtract ruler gap from header gap
         rulerposmms = asmm(float(self.get("s_headerposition")) - float(self.get("s_rhruleposition")))
@@ -355,16 +371,19 @@ class ViewModel:
     def setConfigId(self, configid, saveCurrConfig=False, force=False):
         return self.updateProjectSettings(self.prjid, saveCurrConfig=saveCurrConfig, configName=configid, forceConfig=force)
 
-    def _copyConfig(self, oldcfg, newcfg, moving=False):
+    def _copyConfig(self, oldcfg, newcfg, moving=False, newprj=None):
         oldp = self.configPath(cfgname=oldcfg, makePath=False)
-        newp = self.configPath(cfgname=newcfg, makePath=False)
+        newp = self.configPath(cfgname=newcfg, makePath=False, prjid=newprj)
         if os.path.exists(newp):
             return False
         self.triggervcs = True
         os.makedirs(newp)
         jobs = {k:k for k in('ptxprint-mods.sty', 'ptxprint.sty', 'ptxprint-mods.tex',
-                             'ptxprint.cfg', 'PicLists', 'AdjLists')}
-        jobs["{}-{}.piclist".format(self.prjid, oldcfg)] = "{}-{}.piclist".format(self.prjid, newcfg)
+                             'ptxprint.cfg', 'FRTlocal.sfm', 'PicLists', 'AdjLists')}
+        if newprj is not None:
+            del jobs['AdjLists']
+        else:
+            jobs["{}-{}.piclist".format(self.prjid, oldcfg)] = "{}-{}.piclist".format(self.prjid, newcfg)
         for f, n in jobs.items():
             srcp = os.path.join(oldp, f)
             destp = os.path.join(newp, n)
@@ -400,8 +419,6 @@ class ViewModel:
                 self.updateBookList()
             if not self.prjid:
                 return False
-            if not self.fixed_wd:
-                self.working_dir = os.path.join(self.settings_dir, self.prjid, 'PrintDraft')
             fdir = os.path.join(self.settings_dir, self.prjid, 'shared', 'fonts')
             if os.path.exists(fdir):
                 cachepath(fdir)
@@ -413,6 +430,8 @@ class ViewModel:
                     self._copyConfig(None, configName, moving=True)
                 else:
                     self._copyConfig(self.configId, configName)
+            if not self.fixed_wd:
+                self.working_dir = os.path.join(self.settings_dir, self.prjid, "local", "ptxprint", configName)
             oldVersion = self.readConfig(cfgname=configName)
             self.styleEditor.load(self.getStyleSheets(configName))
             self.updateStyles(oldVersion)
@@ -484,6 +503,9 @@ class ViewModel:
             return (media['default'], media['limit'])
         return (None, None)
     
+    def configFRT(self):
+        return os.path.join(self.configPath(self.configName()), "FRTlocal.sfm")
+
     def configName(self):
         return self.configId or None
 
@@ -595,6 +617,8 @@ class ViewModel:
                 if val == "" or val == self.ptsettings.dict.get(self._settingmappings[k], ""):
                     continue
             self._configset(config, k, str(val) if val is not None else "")
+        for k in self.allvars():
+            self._configset(config, "vars/"+str(k), self.getvar(str(k)))
         return config
 
     def _config_get(self, config, section, option, conv=None, fallback=_UNSET, **kw):
@@ -688,7 +712,12 @@ class ViewModel:
         if v < 1.7:
             if config.getboolean("document", "pdfx1aoutput", fallback=False):
                 config.set("document", "pdfoutput", "PDF/X-1A")
-            config.set("config", "version", "1.7")
+        if v < 1.9:
+            val = self._config_get(config, "scrmymr", "syllables", fallback="")
+            self._configset(config, "scripts/mymr/syllables", config.getboolean("scrmymr", "syllables", fallback=False) if val else False)
+        if v < 1.93:
+            self._configset(config, "notes/xrcolside", "3")
+            config.set("config", "version", "1.93")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):
@@ -714,6 +743,7 @@ class ViewModel:
 
     def loadConfig(self, config):
         def setv(k, v): self.set(k, v, skipmissing=True)
+        self.clearvars()
         for sect in config.sections():
             for opt in config.options(sect):
                 key = "{}/{}".format(sect, opt)
@@ -745,7 +775,9 @@ class ViewModel:
                             if val is not None:
                                 setv(v[0], val)
                         except AttributeError:
-                            pass # ignore missing keys 
+                            pass # ignore missing keys
+                elif sect == "vars":
+                    self.setvar(opt, val)
                 elif sect in FontModelMap:
                     v = FontModelMap[sect]
                     if v[0].startswith("bl_") and opt == "name":    # legacy
@@ -804,7 +836,7 @@ class ViewModel:
             return
         fname = os.path.join(self.configPath(self.configName(), makePath=True), "ptxprint.sty")
         regularfont = self.get("bl_fontR")
-        root = os.path.join(self.settings_dir, self.prjid, "PrintDraft")
+        root = os.path.join(self.settings_dir, self.prjid, "local", "ptxprint", self.configName())
         with open(fname, "w", encoding="Utf-8") as outf:
             self.styleEditor.output_diffile(outf, regular=regularfont, root=root)
 
@@ -815,7 +847,7 @@ class ViewModel:
             self.picinfos.out(os.path.join(self.configPath(self.configName()),
                                     "{}-{}.piclist".format(self.prjid, self.configName())))
 
-    def loadPics(self):
+    def loadPics(self, mustLoad=True):
         if self.loadingConfig:
             return
         if self.picinfos is None:
@@ -829,7 +861,7 @@ class ViewModel:
             res = self.picinfos.load_files(self)
         else:
             res = self.picinfos.load_files(self, suffix="BL")
-        if not res:
+        if not res and mustLoad:
             self.onGeneratePicListClicked(None)
             
     def onGeneratePicListClicked(self, btn):
@@ -860,9 +892,9 @@ class ViewModel:
         res = fname[:doti] + cname + fname[doti:] + ext if doti > 0 else fname + cname + ext
         return res
 
-    def generateAdjList(self):
+    def generateAdjList(self, books=None):
         existingFilelist = []
-        booklist = self.getBooks()
+        booklist = self.getBooks() if books is None else books
         diglot  = self.get("c_diglot")
         prjid = self.get("fcb_project")
         secprjid = ""
@@ -886,10 +918,16 @@ class ViewModel:
         if len(existingFilelist):
             q1 = _("One or more Paragraph Adjust file(s) already exist!")
             q2 = "\n".join(existingFilelist)+_("\n\nDo you want to OVERWRITE the above-listed file(s)?")
-            if not self.msgQuestion(q1, q2):
+            if not self.msgQuestion(q1, q2, default=True):
                 return
         for bk in booklist:
-            u = usfms.get(bk)
+            try:
+                u = usfms.get(bk)
+            except SyntaxError as e:
+                self.doError(_("Syntax error in UFSM data for {}".format(bk)), \
+                            secondary=_("In order to generate an AdjList for this book the \n" +
+                                        "syntax error(s) in the data need to be resolved.\n" + str(e)))
+                return
             adjlist = u.make_adjlist()
             fname = self.getBookFilename(bk)
             outfname = os.path.join(self.configPath(self.configName()),
@@ -920,6 +958,20 @@ class ViewModel:
                 for (b, c, v, p) in adjlist:
                     if p == 0 and v != 0 and c != 0:
                         outf.write("{} {}.{} +0\n".format(b, c, v))
+                        
+    def generateFrontMatter(self, frtype="basic", inclcover=False):
+        prjid = self.get("fcb_project")
+        destp = self.configFRT()
+        print(destp)
+        if frtype == "basic":
+            srcp = os.path.join(os.path.dirname(__file__), "FRTtemplateBasic.txt")
+        elif frtype == "advanced":
+            srcp = os.path.join(os.path.dirname(__file__), "FRTtemplateAdvanced.txt")
+        elif frtype == "paratext":
+            srcp = os.path.join(self.settings_dir, prjid, self.getBookFilename("FRT", prjid))
+            
+        print("Copying:", srcp, "===>", destp)
+        copyfile(srcp, destp)
 
     def generateHyphenationFile(self):
         listlimit = 27836 # 32749
@@ -1079,6 +1131,7 @@ class ViewModel:
                   'c_useModsSty': ("ptxprint-mods.sty", True),
                   'c_useModsTex': ("ptxprint-mods.tex", True),
                   'c_usePrintDraftChanges': ("PrintDraftChanges.txt", False),
+                  'c_frontmatter': ("FRTlocal.sfm", True),
                   None: ("picChecks.txt", False)}
         res = {}
         cfgchanges = {}
@@ -1099,10 +1152,10 @@ class ViewModel:
         for bk in books:
             fname = self.getBookFilename(bk, prjid)
             if fname is None:
-                scope = self.get("r_books")
+                scope = self.get("r_book")
                 if scope == "module":
                     res[os.path.join(fpath, bk)] = os.path.basename(bk)
-                    cfgchanges['btn_chooseBibleModule'] = os.path.basename(fname)
+                    cfgchanges['btn_chooseBibleModule'] = os.path.basename(bk)
             else:
                 res[os.path.join(fpath, fname)] = os.path.basename(fname)
             if interlang is not None:
@@ -1258,19 +1311,22 @@ class ViewModel:
         temps = []
         for a in (".pdf", ):
             temps.extend([x.replace(".xdv", a) for x in self.tempFiles if x.endswith(".xdv")])
-        for f in self.tempFiles + runjob.picfiles + temps:
+        for f in set(self.tempFiles + runjob.picfiles + temps):
             pf = os.path.join(self.working_dir, f)
             if os.path.exists(pf):
                 outfname = os.path.relpath(pf, self.settings_dir)
-                if pf.endswith(".pdf") and "PrintDraft" not in pf:
-                    trailer = PdfReader(pf)
-                    trailer.read_all()
-                    outf = BytesIO()
-                    PdfWriter(outf, trailer=trailer).write()
-                    outf.close()
-                    zf.writestr(outfname, outf.getval())
-                else:
-                    zf.write(pf, outfname)
+#                if pf.endswith(".pdf") and "local/ptxprint" not in pf:
+#                    try:
+#                        trailer = PdfReader(pf)
+#                        trailer.read_all()
+#                        outf = BytesIO()
+#                        PdfWriter(outf, trailer=trailer).write()
+#                        outf.close()
+#                        zf.writestr(outfname, outf.getval())
+#                    except ptxprint.pdfrw.errors:
+#                        pass
+#                else:
+                zf.write(pf, outfname)
         ptxmacrospath = self.scriptsdir
         for f in os.listdir(ptxmacrospath):
             if f.endswith(".tex") or f.endswith(".sty"):
@@ -1323,9 +1379,9 @@ class ViewModel:
 
         # create a fontconfig
         zf.writestr("{}/fonts.conf".format(self.prjid), writefontsconf(archivedir=True))
-        scriptlines = ["#!/bin/sh", "cd PrintDraft"]
+        scriptlines = ["#!/bin/sh", "cd local/ptxprint/{}".format(self.configName())]
         for t in texfiles:
-            scriptlines.append("hyph_size=32749 stack_size=32768 FONTCONFIG_FILE=`pwd`/../fonts.conf TEXINPUTS=../src:. xetex {}".format(os.path.basename(t)))
+            scriptlines.append("hyph_size=32749 stack_size=32768 FONTCONFIG_FILE=`pwd`/../../../fonts.conf TEXINPUTS=../../../src:. xetex {}".format(os.path.basename(t)))
         zinfo = ZipInfo("{}/runtex.sh".format(self.prjid))
         zinfo.external_attr = 0o755 << 16
         zinfo.create_system = 3
@@ -1335,13 +1391,14 @@ REM In order to run this script at the Windows CMD prompt:
 REM   1. Change the extension from .txt to .bat
 REM   2. Change current directory to PrintDraft using: cd PrintDraft
 REM   3. Then to run it, use: ..\\runtex.bat
-REM e.g. C:\\Users\\<Username>\\Downloads\\WSG\\PrintDraft>..\\runtex.bat
+REM e.g. C:\\Users\\<Username>\\Downloads\\WSG\\local\\ptxprint\\{0}>..\\..\\..\\runtex.bat
+cd local\\ptxprint\\{0}
 for %%i in (xetex.exe) do set truetex=%%~$PATH:i
 if "%truetex%" == "" set truetex=C:\\Program Files\\PTXprint\\xetex\\bin\\xetex.exe
-set FONTCONFIG_FILE=%cd%\\..\\fonts.conf
-set TEXINPUTS=.;%cd%\\..\\src\\;
+set FONTCONFIG_FILE=%cd%\\..\\..\\..\\fonts.conf
+set TEXINPUTS=.;%cd%\\..\\..\\..\\src\\;
 set hyph_size=32749
-set stack_size=32768"""
+set stack_size=32768""".format(self.configName())
         for t in texfiles:
             batfile += '\nif exist "%truetex%" "%truetex%" {}'.format(os.path.basename(t))
         zf.writestr("{}/runtex.txt".format(self.prjid), batfile)

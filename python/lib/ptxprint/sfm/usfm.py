@@ -34,7 +34,7 @@ import site
 
 _PALASO_DATA = os.path.join(
     site.getuserbase(),
-    'palaso-python', 'sfm')
+    'ptxprint', 'sfm')
 _package_dir = os.path.dirname(__file__)
 
 
@@ -303,7 +303,7 @@ class parser(sfm.parser):
                  stylesheet=default_stylesheet,
                  default_meta=_default_meta,
                  canonicalise_footnotes=True,
-                 tag_escapes=r"\\",
+                 tag_escapes=r"[\\+%!@#$^&()=-_`/]",
                  *args, **kwds):
         if not canonicalise_footnotes:
             self._canonicalise_footnote = lambda x: x
@@ -313,6 +313,7 @@ class parser(sfm.parser):
                          stylesheet,
                          default_meta,
                          private_prefix='z',
+                         tag_escapes=tag_escapes,
                          *args, **kwds)
 
     @classmethod
@@ -352,7 +353,7 @@ class parser(sfm.parser):
         ptype = parent.meta['StyleType'].lower()
         pttype = parent.meta['TextType'].lower()
         if (stype == 'character' and ptype == 'paragraph') \
-                or (style == 'paragraph' and (pttype in ('chapternumber', 'notetext')
+                or (stype in ('paragraph', '') and (pttype in ('chapternumber', 'notetext', 'other')
                                               or parent.name == "id")):
             if len(occurs) and parent.name not in occurs:
                 p = parent.parent
@@ -360,6 +361,8 @@ class parser(sfm.parser):
                     if p.name in occurs:
                         return False
                     p = p.parent
+            return True
+        elif self._escaped_tag.match(str(tok)):
             return True
         super()._force_close(parent, tok, tag)
         return False

@@ -398,9 +398,11 @@ the combinations do not trigger an unprintable page.
   - There is only one paragraph counter which is reset at each change of
     trigger. Thus the above example *will not* trigger if there
     is no 3rd paragraph before the next verse number, nor will it trigger if some other
-    potential marker occurs.  
+    potential marker occurs.
   - As the first paragraph of the verse / key term is the one containing  that
-    item, a suffix of ```=1``` is an invalid trigger point and will never match.
+    item, a suffix of ```=1``` is normally an invalid trigger point and will never match.
+    The exception to this is when a *stand-alone milestone* **immediately** follows a paragraph break. 
+    In that case the trigger will activate just before the first piece of actual text after the milestone, assuming there is some.
   - The code assumes that *any* occurance of the separator in the piclist reference 
     means that what follows is a paragraph number. Using some other separator is now 
     supported, with the restriction that (a) it sould not be expected to occur 
@@ -460,4 +462,9 @@ other paragraphing style elements.
 As noted above, caption styling is controled via the `fig` marker in the stylesheet. Font-related styles can be selected in the normal manner.
 For multi-line captions, the line spacing may be controlled by modification of `\LineSpacing` (in the same scaleable units as parameter `\FontSize`) or 
 `\BaseLine` (units must be supplied).
+
+### No Captions and references at all
+```
+\DoCaptionsfalse
+```
 

@@ -47,7 +47,6 @@
    \setgr@bname{\thiswh@tstyle}%
    \trace{A}{grabname set to \gr@bname}%
    \x@\let\x@|\csname \gr@bname\endcsname
-  
 }
 \catcode`\|=12
 \def\kill@ttrib #1\E{%
@@ -65,11 +64,14 @@
   \iftemp
     \get@ttribute{#1}%
     \trace{A}{Special #1 :\attr@b}%
+    %\tracingmacros=1
     \setbox0\hbox{%
-	\ifx\tmpa\relax\else\tmpa\fi
+	\ifx\tmpa\relax\else
+          \edef\tmp{\tmpa}\tmp\fi
 	\unhbox0
-	\ifx\tmpb\relax\else\tmpb\fi
-      }
+	\ifx\tmpb\relax\else
+          \edef\tmp{\tmpb}\tmp\fi
+      }%
   \fi
 }
 \def\Spec@lAttribName#1#2{attr-spec-#1-#2}
@@ -79,7 +81,7 @@
   \else
     \x@\let\csname\tmpa\endcsname\tmp
   \fi}
-\def\SetSpeciallAttribs#1#2#3{\tracingassigns=1\relax%
+\def\SetSpeciallAttribs#1#2#3{%\tracingassigns=1\relax%
   \SetOneSpecialAttrib{#1}{start}{#2}%
   \SetOneSpecialAttrib{#1}{end}{#3}\tracingassigns=0\relax}%
 
@@ -112,7 +114,7 @@
   \fi
   \edef\attrid{\milestoneOp id}% id / sid / eid, depending.
   \catcode`\|=\active
-  \catcode`\/=12
+  \catcode`\/=12\relax
   \ifmst@nestyle
     \use@ttrSlash
   \else
@@ -122,10 +124,35 @@
   \in@ttribfalse
   \xdef\@ttributes{}%
 }
-\SetSpeciallAttribs{link-href}{pdf:bann \attr@b-http://localhost-}
-}{\noexpand\special{pdf:eann}}
-\SetSpeciallAttribs{link-name}{}{}
+\def\GOTOLinkBorderstyle{/S/U/W 1} % Underline
+\def\URLLinkBorderstyle{/S/U/W 1} % Underline
+\def\GOTOLinkBorderCol{.9 .5 .5}% pale red
+\def\URLLinkBorderCol{.5 .5 .5}% Gry
 
+%\def\LinkBorderstyle{}
+
+\def\pdfURL#1{\special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 1]\ifx\URLLinkBorderstyle\empty\else/BS<<\URLLinkBorderstyle>>\fi/H/I\ifx\GOTOLinkBorderCol\empty\else/C[\URLLinkBorderCol]\fi/A<</S/URI/URI(#1)>>>>}}
+
+\edef\h@shcatcode{\the\catcode`\#}
+\catcode`\#=12
+\def\h@sh{#}
+\catcode`\#=\h@shcatcode
+
+\def\pdfG@T@#1#2 #3\E{\edef\tmp{#1}\ifx\tmp\h@sh \edef\tmp{#2}\else\edef\tmp{#3}\ifx\tmp\empty\edef\tmp{#1#2}\else\edef\tmp{\zap@space #1#2.#3 \empty}\fi\fi
+  \special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 1]\ifx\GOTOLinkBorderstyle\empty\else/BS<<\GOTOLinkBorderstyle>>\fi/H/I\ifx\GOTOLinkBorderCol\empty\else/C[\GOTOLinkBorderCol]\fi/A<</S/GoTo/D(\tmp)>>>>}%
+  \trace{A}{link is GOTO to '\tmp'}%
+}
+\def\pdfGOTO#1{\x@\pdfG@T@#1 \E}
+\def\pdfURLorGOTO#1:#2\end{\lowercase{\edef\tmp{#1:schema}}\x@\ifcsname\tmp\endcsname\csname\tmp\endcsname{\attr@b}\else\pdfGOTO{\attr@b}\fi}
+\def\pdfPRJ#1{}
+
+\x@\let\csname http:schema\endcsname\pdfURL
+\x@\let\csname https:schema\endcsname\pdfURL
+\x@\let\csname prj:schema\endcsname\pdfPRJ
+
+
+\SetSpeciallAttribs{link-id}{\special{pdf:dest (\attr@b) [@thispage /XYZ @xpos @ypos null]}}{}
+\SetSpeciallAttribs{link-href}{\noexpand\pdfURLorGOTO\attr@b:\noexpand\end}{\special{pdf:eann}}
 %%%%%%%%%
 %
 \def\def@endm@rker#1+#2\E{\edef\end@marker{\if #1\ss@ChrP +\fi#2}}
@@ -136,7 +163,7 @@
   \edef\gr@bname{@attr@grab-\end@marker}%
   \trace{A}{Grab@name: \gr@bname}%
   \x@\ifcsname \gr@bname\endcsname\else
-    \trace{A}{New grabber: \gr@bname\space about to be defined}%
+    \trace{A}{New grabber: \gr@bname\space about to be defined, endmarker: \end@marker}%
     \x@\setup@ttr@grab\x@{\csname \end@marker\endcsname}%
   \fi
 }
@@ -167,7 +194,8 @@
   \ifx\tmp\relax
     \x@\let\x@\tmp\csname defaultattrkey-#1\endcsname
   \fi
-  \x@\xdef\csname \@ttrlistname\endcsname{\tmp,#2}}
+  \x@\xdef\csname \@ttrlistname\endcsname{\tmp,#2}%
+}
 
 \edef\p@stattribcmd{}% Parse the attributes, run any code.
 
@@ -295,7 +323,7 @@
   \let\D@first=\interpr@tother@ttrib
   \let\save@ttrib=\extend@ttriblist
 }
-\def\interpr@tother@ttrib#1{
+\def\interpr@tother@ttrib#1{%
   \x@\interpr@t@ttrib #1??\E
 }
 \def\store@nattrib#1-#2|#3\E{%Ignore - in milestone markers
@@ -304,7 +332,7 @@
 
 
 \def\interpr@t@ttrib#1?#2?#3\E{% There may be a preceding ? mark. Also setdefaultattrib needs to not have the -s / -e for milestones. 
-  \def\tmp{#1}
+  \def\tmp{#1}%
   \ifx\tmp\empty
      \trace{A}{Attribute '#2' is optional (#1,#2,#3)}%
      \x@\store@nattrib\m@rker-|#2\E
@@ -318,7 +346,7 @@
     \ifx\p@ram\c@nter\hfil\else\ifx\p@ram\r@ght\hfil\else\ifx\p@ram\relax\hfil\fi\fi\fi
     \box#2%
     \ifx\p@ram\c@nter\hfil\else\ifx\p@ram\l@ft\hfil\else\ifx\p@ram\relax\hfil\fi\fi\fi}
-\def\rubyb#1#2{\trace{A}{rubyb}\tracingmacros=1\setbox1=\hbox{\s@tfont{#2|#1}\get@ttribute{#2}\attr@b}%
+\def\rubyb#1#2{\trace{A}{rubyb}\setbox1=\hbox{\s@tfont{#2|#1}\get@ttribute{#2}\attr@b}%
     \dimen0=\ifdim\wd0>\wd1 \wd0\else\wd1\fi
     \setbox0=\hbox{\vtop{\s@tbaseline{#1}\hbox to \dimen0{\alignb@x{#1}{0}}%
         \hbox to \dimen0{\alignb@x{#2|#1}{1}}}}}

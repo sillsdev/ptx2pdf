@@ -93,6 +93,13 @@ If a left column footnote steals space from the right column also, and vise-vers
 
 
 
+- ```\OmitChapterNumberLtrue``` , ```\OmitChapterNumberLfalse``` and ```\OmitChapterNumberLdefault```
+- ```\OmitChapterNumberRtrue``` , ```\OmitChapterNumberRfalse``` and ```\OmitChapterNumberRdefault```
+- ```\OmitVerseNumberOneLtrue``` , ```\OmitVerseNumberOneLfalse``` and ```\OmitVerseNumberOneLdefault```
+- ```\OmitVerseNumberOneRtrue``` , ```\OmitVerseNumberOneRfalse``` and ```\OmitVerseNumberOneRdefault```
+Column-specific control over chapter and verse numbers. The 'third state' of this boolean (which is the default) permits the 'global' boolean (without the `L` or 'R') to have control.
+
+
 - ```\VisTracetrue``` 
 - ```\VisTraceExtratrue``` 
 Debugging options for really sticky problems; see end of this document.
@@ -106,18 +113,21 @@ Gutter between the 2 cols, (measured in ```\FontSizeUnit```s), just like in two 
 
 - ```\def\DiglotLFraction{0.55}```  
 Fraction of the space that is used by column L.  Similarly `\DiglotRFraction`, `\DiglotAFraction` etc. Unless multiple page layout (experimental)
-is used, the sum of all the fractions should be  1.0. No automatic verification of this is currently done, you'll just get ugly results.
+is used, the sum of all the fractions should be  1.0. If mulpiple pages layout is used, the sum of all fractions on their respective pages should be 1.0. 
+No automatic verification of this is currently done, you'll just get ugly results.
 
 -  ```\def\DiglotLeftFraction{0.5}``` ```\def\DiglotRightFraction{0.5}``` 
-Deprecated synonym for `\def\DiglotLFraction{0.5}` and `..goltRFraction...`
+Deprecated synonym for `\def\DiglotLFraction{0.5}` and `..glotRFraction...`
 
 Hopefully, the  above fractional controls (and the font-sizes from they style sheet) should enable even the most widely different translation styles and languages to balance in an overall pleasing way, without huge gaps under every chunk on one column.
 
-### Column-dependent configuration parameters
-The following may be defined with a column-dependent suffix (`L`, `R`, `A`, ...).
- `AdornVerseNumber`, `VerticalSpaceFactor`, `LineSpacingFactor`, `regular`, `bold`, `italic`, `bolditalic`, `SpaceStretchFactor`, `SpaceShrinkFactor`
+### Column-specific configuration parameters
+The following may be defined with a column-specific suffix (`L`, `R`, `A`, ...).
+ `AdornVerseNumber`, `VerticalSpaceFactor`, `LineSpacingFactor`, `regular`, `bold`, `italic`, `bolditalic`, `SpaceStretchFactor`, `SpaceShrinkFactor`, `MakeChapterLabel`
 
 These dimensions can similarly have column-specific values: `FontSizeUnit`, `IndentUnit`
+
+If the column-specific value is not defined, then the 'global' (not-specific) value will apply.
 
 ###Deprecated true/false options
 - ```\useLeftMarkstrue```

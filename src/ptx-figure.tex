@@ -176,6 +176,7 @@
  
 % These three macros split up x-xetex="foo" parameter, stripping out any key=val formated parameters and leaving the rest.
 % 
+
 \def\p@rs@xtr@#1=#2=#3\end{\edef\t{#2}%
   \ifx\t\empty \edef\t{#1}%
     \ifx\t\empty\else
@@ -200,7 +201,17 @@
           \fi
         \fi
       \fi
-    \else \message{Unexpected key #1=#2. Expected key "rotate"}\fi
+    \else
+      \ifx\key\keyP@GE
+	\ifx\picfilecomm@nd\XeTeXpdffile
+	  \edef\picp@ge{page \val}%
+        \else
+	  \message{Not a PDF file, page=... only supported on PDFs}%
+	\fi
+      \else
+	\message{Unexpected key #1=#2. Expected key "rotate"}%
+      \fi
+    \fi
   \fi
 }
 \def\p@rsextr@#1 #2\relax{%                                                     %(2)
@@ -212,9 +223,10 @@
 }
 \def\p@rsextra#1{%                                                              %(1)
   \trace{g}{Parsing #1}%
+  \edef\@rg{#1 }%Space is needed!
   \def\xtraremains{}\let\n@xt=\p@rsextr@
   \edef\t{#1}\ifx\t\empty\let\n@xt=\relax\fi
-  \x@\n@xt#1 \relax
+  \x@\n@xt\@rg  \relax
 }
 %-cfig_parsextra
 
@@ -319,16 +331,21 @@
   \fi
 }    
 
+\newif\ifDoCaptions
+\DoCaptionstrue
+
 \def\d@caption{% 
-  \xdef\r@f{\csname figparam-ref\endcsname}% get reference
-  \d@c@ption{}%Normal monoglot caption.
-  \ifdiglot 
-    \bgroup %Alternative captions
-      \def\col@do##1{\def\c@rrdstat{##1}\d@c@ption{##1}}%
-      \x@\each@col\diglot@list\E
-    \egroup
+  \ifDoCaptions
+    \xdef\r@f{\csname figparam-ref\endcsname}% get reference
+    \d@c@ption{}%Normal monoglot caption.
+    \ifdiglot 
+      \bgroup %Alternative captions
+        \def\col@do##1{\def\c@rrdstat{##1}\d@c@ption{##1}}%
+        \x@\each@col\diglot@list\E
+      \egroup
+    \fi
+    \vskip.5\baselineskip
   \fi
-  \vskip.5\baselineskip
 }
 
 \def\t@xtfragment#1#2{\bgroup\everypar={}\let\par\endgraf
@@ -446,9 +463,7 @@
           \edef\cr@dit@col{\p@ram}%
 	\else
           \trace{g}{decoding \p@ram}%
-          \tracingmacros=1
           \x@\checkh@x \p@ram\end
-          \tracingmacros=0
           \let\cr@dit@col\rgb@out
           \trace{g}{ result: \cr@dit@col}%
           %\edef\cr@dit@col{\p@ram}%
@@ -505,14 +520,19 @@
   \vbox to 0pt{\kern-#2 \vss \hbox to #1{\hss\idf@nt #3\hss}\vss}%
   \kern-.2pt \hrule height .2pt}}
 
-\def\ins@rtpic#1#2#3#4#5#6{%
- \trace{g}{ins@rtpic #1 #2 #3 #4 #5 #6}%
+\def\ins@rtpic#1#2#3#4#5#6#7{%
+ \trace{g}{ins@rtpic #1 #7 #2 #3 (#4) #5 #6}%
  \openin\t@stread="#1"
    \ifeof\t@stread\dimen0=\ifdim #3>#4\relax #4\else #3\fi
      \m@kepl@ceholder{\dimen0}{0.618 \dimen0}{missing: \csname figparam-src\endcsname}%
-   \else \closein\t@stread \picfilecomm@nd #1 #2 #3 #5 #6\fi
+   \else \closein\t@stread \picfilecomm@nd #1 #7 #2 #3 #5 #6\fi
 }
 
+\oddc@tcodes%NO SPACES until |normalc@tcodes is called.
+|def|ch@ckpathfwd#1/#2|E{|edef|t@mp{#2}|ifx|t@mp|empty|else||global|temptrue|fi}
+|def|ch@ckpathback#1\#2|E{|edef|t@mp{#2}|ifx|t@mp|empty|else|global|temptrue|fi}%
+|def|ch@ckpath#1{|global|tempfalse|ch@ckpathfwd#1/|E|ch@ckpathback#1\|E}%
+|normalc@tcodes%
 %+cfig_dofigure_intro
 \def\d@figure#1{%
  \ifIncludeFigures
@@ -684,8 +704,9 @@
     \edef\f@lename{\csname figparam-src\endcsname}%
     \edef\mirr@r{\csname figparam-mirror\endcsname}%
     \def\xtra{}\def\xtraremains{}%
-    \x@\p@rsextra{\csname figparam-x-xetex\endcsname}%See if there are any key=val parameters in the x-xetex parameter
     \expandafter\ch@ckpdf\f@lename..\endf@lename
+    \let\picp@ge\empty
+    \x@\p@rsextra{\csname figparam-x-xetex\endcsname}%See if there are any key=val parameters in the x-xetex parameter
     %what are we scaling on the image? Width or height?
     \ifrotimage
       %If there's rotation, fit the image height to width instead of the normal way:
@@ -694,15 +715,24 @@
       \def\picdim@n{width}\def\picaltdim@n{height}%Normal
     \fi
     % First, try to set it at the requested dimension:
-    \setbox\newpicb@x=\hbox{%
-      \ins@rtpic{"\the\PicPath\csname figparam-src\endcsname"}%
-                     {\picdim@n}{\the\dimexpr\sizem@ltiple\p@cwidth\relax}{\the\dimexpr\p@cheight\relax}{\xtra}{\xtraremains}}%
+    \tempfalse\tracingmacros=1\tracingassigns=1
+    \x@\ch@ckpath\x@{\csname figparam-src\endcsname}
+	\tracingmacros=0\tracingassigns=0
+    \iftemp
+      \setbox\newpicb@x=\hbox{%
+        \ins@rtpic{"\csname figparam-src\endcsname"}%
+                     {\picdim@n}{\the\dimexpr\sizem@ltiple\p@cwidth\relax}{\the\dimexpr\p@cheight\relax}{\xtra}{\xtraremains}{\picp@ge}}%
+    \else
+      \setbox\newpicb@x=\hbox{%
+        \ins@rtpic{"\the\PicPath\csname figparam-src\endcsname"}%
+                     {\picdim@n}{\the\dimexpr\sizem@ltiple\p@cwidth\relax}{\the\dimexpr\p@cheight\relax}{\xtra}{\xtraremains}{\picp@ge}}%
+    \fi
     \ifdim\ht\newpicb@x>\p@cheight
       %It doesn't fit. Scale to other dimension:
       \trace{g}{Picture too big set with \picdim@n=\sizem@ltiple\space\the\p@cwidth}%
       \setbox\newpicb@x=\hbox{%
         \ins@rtpic{"\the\PicPath\csname figparam-src\endcsname"}%
-                     {\picaltdim@n}{\p@cheight}{\sizem@ltiple}{\xtra}{\xtraremains}}%
+                     {\picaltdim@n}{\p@cheight}{\sizem@ltiple}{\xtra}{\xtraremains}{\picp@ge}}%
     \fi
     \ifFigurePlaceholders % replace graphic with a frame and the file name
       \setbox\newpicb@x=\m@kepl@ceholder{\wd\newpicb@x}{\ht\newpicb@x}{\csname figparam-src\endcsname}%
@@ -766,9 +796,10 @@
     \insert\p@cins{\penalty10000 % make sure this picture does not float away to another page
       \splittopskip\z@skip
       \splitmaxdepth\maxdimen \floatingpenalty20000 % was zero
-      \headingtopspace=0pt
-      \pdfsavepos
-      \write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
+      \headingtopspace=0pt%
+      \penalty10000
+      \pdfsavepos\penalty10000
+      \write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}\penalty10000%
       \gridp@ctrue\gridb@x0\gridp@cfalse% make sure we align to the page grid
       \pdfsavepos
       \write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
@@ -856,7 +887,7 @@
        \edef\temp{D|\temp}\advance\count255 by -1
      \repeat
    \fi
-   \trace{g}{Delay for \eotpn@me set to \temp}%
+   \trace{g}{Delay for \eotpn@me set to '\temp'}%
    \x@\xdef\csname \eotpn@me Delay\endcsname{\temp}%
    \relax\relax
 }
@@ -1016,6 +1047,7 @@
 \def\@lignTop{t}
 \def\@lignBot{b}
 \def\keyR@TATE{rotate}
+\def\keyP@GE{page}
 \def\val@dd{odd}
 \def\val@ven{even}
 \def\valb@th{both}
@@ -1106,6 +1138,11 @@
   \fi
   \edef\ch@ck{#1}%
   \x@\ifx\csname fig#2p@ge\endcsname\ch@ck\else\trace{g}{Figure #2 page changed from \ch@ck \space to \csname fig#2p@ge\endcsname}\temptrue\fi
+  \x@\let\x@\ch@ck\csname fig#2occurrences\endcsname
+  \ifx\ch@ck\relax\x@\edef\csname fig#2occurrences\endcsname{#1}\else
+    \message{*** Figure #2 on page #1, but previously seen on \ch@ck. Work-around is to move the anchor to a different verse or alter the size/placement.}%
+    \x@\edef\csname fig#2occurrences\endcsname{\ch@ck, #1}%
+  \fi
 }
 %-cfig_openpicpages
 

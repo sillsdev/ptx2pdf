@@ -3,7 +3,7 @@
 \input paratext2.tex
 \input ptx-ptxprint.tex
 
-{project/ifusepremodstex}\inputifpresent{{{/premodspath}}}
+{project/ifusepremodstex}\includeifpresent{{{/premodspath}}}
 %%%%% Aligned Diglot Switches
 {document/ifdiglot}\diglottrue
 {document/ifdiglot}\diglotcolumns
@@ -77,8 +77,7 @@
 %\extrafont
 
 {document/ifletter}\newskip\intercharskip \intercharskip=0pt plus {document/letterstretch:.2f}em minus {document/lettershrink:.2f}em
-{document/ifletter}\def\letterspace{{\leavevmode\nobreak\hskip\intercharskip}}
-{document/ifletter}\DefineActiveChar{{^^^^fdd0}}{{\letterspace}}
+{document/ifletter}\def\intercharspace{{\leavevmode\nobreak\hskip\intercharskip}}\XeTeXinterchartokenstate=1
 
 
 %%%%% Layout %%%%%
@@ -152,7 +151,7 @@
 {notes/xreachnewline}\ParagraphedNotes{{x}}
 %\NumericCallers{{x}}
 {notes/includexrefs}{notes/ifxrexternalist}\expandafter\def\csname x:properties\endcsname{{nonpublishable}}
-{notes/xrlocation}\def\XrefNotes{{x}}\def\XrefNotesMargin{{1.5pt}}\XrefNotesWidth={notes/xrcentrecolwidth}pt
+{notes/xrlocation}\def\XrefNotes{{x}}\XrefNotesMargin={notes/xrguttermargin}pt \XrefNotesWidth={notes/xrcentrecolwidth}pt\def\XrefSide{{{notes/xrcolside}}}
 \ColNotes{notes/columnnotes}
 %%%{notes/includexrefs}\expandafter\def\csname x{L_}:properties\endcsname{{nonpublishable}}
 %%%{ifdiglotincludexrefs_}\expandafter\def\csname x{R_}:properties\endcsname{{nonpublishable}}
@@ -199,7 +198,7 @@
 \def\RFevencenter{{{footer/oddcenter}}}
 \def\RFtitlecenter{{{footer/oddcenter}}}
 \def\RFnoVoddcenter{{{footer/oddcenter}}}
-\def\RFnoVoddcenter{{{footer/oddcenter}}}
+\def\RFnoVevencenter{{{footer/oddcenter}}}
   
 {footer/ifftrtitlepagenum}\def\RFtitlecenter{{\pagenumber}}
 {footer/ifprintconfigname}\def\RFtitlecenter{{{config/name}}}
@@ -208,6 +207,7 @@
 
 %%%%% Illustration and Adjustment Locations and Lists %%%%%
 \IncludeFigures{document/ifinclfigs}
+\DoCaptions{document/iffigshowcaptions}
 \FigurePlaceholders{document/iffigplaceholders}
 \PicPath={{{document/directory}/tmpPics/}}
 {document/ifusepiclist}\PicListPath={{{project/piclists}}}
@@ -250,27 +250,35 @@
 {project/ifcolophon}{project/pgbreakcolophon}\pb
 {project/ifcolophon}\zcolophon}}
 % Looks in local Config folder for ptxprint-mods.tex, and drops back to shared/ptxprint .tex if not found 
-{project/ifusemodstex}\input "{/modspath}"% adjust/override setup parameters here
+{project/ifusemodstex}\includeifpresent{{{/modspath}}}% adjust/override setup parameters here
+
+%\defzvar
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% all settings need to come before this line %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%% Watermark PDF file or Grid PDF etc. %%%%%
-{paper/ifwatermark}{paper/watermarkpdf}
+{paper/ifwatermark}\def\MergePDF{{"{paper/watermarkpdf}"}}
 
 %%%%% Front Matter PDF file(s) get included here %%%%%
-{project/frontincludes}
-
-{document/toc}\GenerateTOC[{document/toctitle}]{{{jobname}.toc}}
 {document/toc}\BodyColumns=1     % Temporarily set this to Single Column for the ToC page(s)
-{document/toc}\ptxfile{{{jobname}.toc}}
+
+{document/toc}\includeifpresent{{{jobname}.toc}}
+{document/toc}{document/hasnofront_}\preptxfile\prepusfm\id FRT -- toc
+{document/toc}{document/hasnofront_}\is {document/toctitle} \ip \ztoc |main\*\ip \postptxfile
+{project/frontincludes}
+\ptxfile{{{project/frontfile}}}
 {document/toc}\BodyColumns={paper/columns}     % But ensure it goes back to the chosen Single/Double setting for the main body text
+\useTOCone{document/usetoc1}
+\useTOCtwo{document/usetoc2}
+\useTOCthree{document/usetoc3}
+{document/toc}\GenerateTOC[{document/toctitle}]{{{jobname}.toc}}
 
 %%%%% Load Paratext USFM %%%%%
 \XeTeXdefaultencoding "utf-8"
 \def\closeadjlist{{\relax}}
 \def\closepiclist{{\relax}}
 % job files:
-\ptxfile{{PrintDraft/41MATprojid-draft.SFM}}
+%\ptxfile{{PrintDraft/41MATprojid-draft.SFM}}
 %%%%% Back Matter PDF file(s) get included here %%%%%
 {project/backincludes}
 

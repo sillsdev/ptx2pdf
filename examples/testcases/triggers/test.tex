@@ -7,6 +7,7 @@
 \showboxdepth=99\showboxbreadth=99
 \catcode`\@=12
 \stylesheet{usfm_sb.sty}
+\stylesheet{ptx2pdf.sty}
 \stylesheet{default-custom.sty}
 \stylesheet{test.sty}
 %\tracing{sc}
@@ -18,6 +19,7 @@
 %\tracing{eb}
 \tracing{s}
 %\tracing{g}
+\tracing{j}
 \tracing{T}
 \def\tmstart{\tracingmacros=0 \tracingassigns=1 \tracinggroups=1}
 \def\tmstop{\tracingmacros=0 \tracingassigns=0 \tracinggroups=0}
@@ -56,5 +58,6 @@
 \csname ColorFontstrue\endcsname
 %\tracinggroups=1
 \relax
+\addtrigger{ms:zvar=test}{Jesus is the Word}
 \ptxfile{test.usfm}
 \bye

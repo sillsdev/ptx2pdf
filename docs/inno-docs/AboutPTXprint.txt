@@ -11,18 +11,33 @@ There is a Scripture Software Community page dedicated to PTXprint (https://comm
 
 Please use "New Issue" button in the GitHub Issue Tracking System (https://github.com/sillsdev/ptx2pdf/issues) to report any bugs, or document suggestions for improvement. 
 
-If you serve in a sensitive location, you may report issues directly by e-mail <ptxprint_support@sil.org> rather than via the publicly accessible websites listed above.
+If you serve in a sensitive location, you can report issues directly by e-mail <ptxprint_support@sil.org> rather than via the publicly accessible websites listed above.
 
 
+Examples of running PTXprint from the commandline (in Windows):
 
-Note that PTXprint can also be run directly using these commandline options (without the Graphical User Interface):
+"C:\Program Files\PTXprint\PTXprint.exe" -c Diglot XYZ
+will OPEN PTXprint with XYZ project active and the saved configuration called "Diglot" (but won't print anything)
 
+"C:\Program Files\PTXprint\PTXprint.exe" -c NTandPsalms -P XYZ
+will directly create a PDF from the XYJ project using the saved configuration called "NTandPsalms" (no GUI will appear)
+
+"C:\Program Files\PTXprint\PTXprint.exe" -b ROM -c SideXrefs -P XYZ
+will directly create a PDF of ROMANS from the XYJ project using the saved configuration called "SideXrefs" (no GUI will appear)
+
+"C:\Program Files\PTXprint\PTXprint.exe" -b "MAT MRK LUK JHN ACT GLO" -P XYZ
+will directly create a PDF of 4 gospels, Acts and Glossary from the XYJ project using the Default configuration (no GUI will appear)
+
+"C:\Program Files\PTXprint\PTXprint.exe" -h
+will show the commandline usage parameters (as seen below)
+ 
 usage: ptxprint [-h] [-c CONFIG] [-M MODULE] [-p PARATEXT] [-d DIRECTORY] [-P]
-                [-b BOOKS] [-R RUNS] [-L LANG] [-m MACROS] [-l]
-                [--timeout TIMEOUT] [-T] [-f FONTPATH] [--nofontcache]
-                [-A ARCHIVE] [-D DEFINE] [--debug] [-C CAPTURE] [-z EXTRAS]
+                [-b BOOKS] [-R RUNS] [-L LANG] [-m MACROS] [-l LOGGING]
+                [--logfile LOGFILE] [--timeout TIMEOUT] [-T] [-f FONTPATH]
+                [--nofontcache] [-A ACTION] [-D DEFINE] [--debug] [-C CAPTURE]
+                [-z EXTRAS]
                 [pid]
-				
+
 positional arguments:
   pid                   Project id or full path to a ptxprint.cfg file
 
@@ -43,21 +58,19 @@ optional arguments:
   -L LANG, --lang LANG  Set UI language code
   -m MACROS, --macros MACROS
                         Directory containing TeX macros (paratext2.tex)
-  -l, --logging         Output logging to terminal instead of logging window
+  -l LOGGING, --logging LOGGING
+                        Enable logging level [DEBUG, *INFO*, WARN, ERROR]
+  --logfile LOGFILE     Set logging file [ptxprint.log] or "none"
   --timeout TIMEOUT     xetex runtime timeout
   -T, --testing         Run in testing, output xdv
   -f FONTPATH, --fontpath FONTPATH
                         Directory of fonts to include (repeatable)
   --nofontcache         Don't use system fonts
-  -A ARCHIVE, --archive ARCHIVE
-                        Create archive of project
+  -A ACTION, --action ACTION
+                        Run view method instead of print
   -D DEFINE, --define DEFINE
                         set UI component=value. Repeatable
   --debug               Give debug output
-  -C CAPTURE, --capture CAPTURE
-                        Capture interaction events to file. Not to be used yet
   -z EXTRAS, --extras EXTRAS
                         Special bit flags: 0 - verbose xdvipdfmx call
   
-e.g. in Windows:
-"C:\Program Files\PTXprint\PTXprint.exe" -P -c NTandPsalms XYZproj

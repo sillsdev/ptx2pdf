@@ -149,11 +149,11 @@
 % `csname` is required here in order to build a macro name containing a colon and possibly a number.
 %
 
-\def\defp@ram#1#2{\x@\def\csname\c@tprefix\m@rker\ds@ffix:#1\endcsname{#2}\trace{s}{\c@tprefix\m@rker\ds@ffix:#1 -> #2}}
+\def\defp@ram#1#2{\x@\def\csname\c@tprefix\m@rker\ds@ffix:#1\endcsname{#2}\trace{s}{def \c@tprefix\m@rker\ds@ffix:#1 -> #2}}
 \def\condp@ram#1#2#3{\edef\t@mp{#1}\ifx\t@mp\h@phen\relax\def\t@mp{#3}\else\def\t@mp{#2}\fi\t@mp}
 \def\defbinp@ram#1#2{\edef\t@mp{#2}\ifx\t@mp\h@phen\defp@ram{#1}{false}\else\defp@ram{#1}{true}\fi}
 \def\setp@ram#1#2#3{
-  \x@\xdef\csname\c@tprefix#2\ds@ffix:#1\endcsname{#3}\trace{s}{\c@tprefix#2\ds@ffix:#1 -> #3}
+  \x@\xdef\csname\c@tprefix#2\ds@ffix:#1\endcsname{#3}\trace{s}{set \c@tprefix#2\ds@ffix:#1 -> #3}
   \should@xist{#2}%Ensure that the marker is in the exists list
 } % expand now, not later 
 %-csty_defparam
@@ -172,7 +172,7 @@
 % Rather than attempt to code \ifs for all possible 8 options, it now builds a comma-separated list of them, 
 % and finds the first match. This results in cleaner code.
 
-\def\s@tpossParams#1{\trace{s}{setpossParam #1 (\styst@kskip/\styst@kfirst/\styst@k)}%
+\def\s@tpossParams#1{\trace{s}{setpossParam {#1} (\styst@kskip / \styst@kfirst / \styst@k)}%
   \ifdiglot
      \edef\p@ssParams{#1\c@rrdstat,#1}%
   \else
@@ -180,7 +180,14 @@
   \fi
   \edef\tmp{#1}\ifx\tmp\styst@k\else
     \ifx\styst@k\empty\else
-      \ifx\tmp\styst@kfirst\else
+      \ifx\tmp\styst@kfirst
+	\ifx\tmp\styst@kskip\else
+	   % We get here with attributed milestones. Should we allow fall-back to the milestone's default style?
+	   \ifAttrMilestoneMatchesUnattr
+	     \edef\p@ssParams{\p@ssParams,\styst@kskip}%
+	   \fi
+        \fi
+      \else
          \edef\p@ssParams{#1+\styst@kfirst,\p@ssParams}%
       \fi
       \ifx\styst@k\styst@kfirst\else%styst@k may be the same as styst@kfirst
@@ -206,6 +213,13 @@
   \global\let\p@ssParams=\@ut
   \trace{s}{3. Shrunk list:\p@ssParams}%
 }
+
+% Should a milestone with a defined attribute (e.g. \qt-s|Jesus\*) match the
+% main stylesheet entry for the milestone? (without a defined attribute).
+\newif\ifAttrMilestoneMatchesUnattr
+\AttrMilestoneMatchesUnattrtrue% Default: yes.
+
+
 \def\kill@cache #1\E{%Remove listed item
    \x@\global\x@\let\csname #1\endcsname\relax}
 
@@ -408,6 +422,13 @@
 \def\noPrintVerse{\global\c@ncelfirstversetrue}
 \def\spl@tprintableverse{\x@\spl@tverses\print@bleVerse --\relax}
 \catcode`-=12
+\def\pdfv@rsemark{%TODO: Not every verse.
+  \special{pdf:dest (\id@@@\c@rrdstat.\ch@pter:\v@rsefrom) [@thispage /XYZ @xpos @ypos null]}%
+}%
+
+\def\MakeChapterLabel#1#2{#1\ #2}
+\gdef\reference{}%
+
 \lowercase{
  % `~` is set by lowercase to a space for delimiting \ch@rstylepls
  \def\@ddcvhooks{
@@ -421,7 +442,9 @@
    \ifx\mayb@vp\vp\let\nxt\@@VP@@\fi\nxt}%
   \def\@@VP@@\vp ##1\vp*{\xdef\print@bleVerse{##1}\@@V@@}
   \def\@@V@@{%
-   \the\prev@rsehooks \spl@tprintableverse
+   \the\prev@rsehooks
+   \spl@tprintableverse
+   \pdfv@rsemark % make book.chapter:verse mark (plural if this is a range)
    %\ if not cancelling first verse, output verse number
    \ifc@ncelfirstverse\else
     \ifrotate
@@ -484,36 +507,38 @@
   % Define a macro to process space delimited chapter number
   % ## is necessary because this is a nested macro definition
   \def\@c@ ##1 {\ifsk@pping \egroup \fi % if we were skipping, stop it
-  \gdef\ch@pter{##1}% remember chapter number
-  \gdef\ch@ptert@xt{##1}% the chapter number we will actually output
-  \gdef\v@rse{}% clear verse number
-  \ifdiglot
-    \trace{c}{Saving chapter number '\ch@pter' for side: \c@rrdstat}%
-    \x@\global\x@\let\csname @ch@pter\g@tdstat\endcsname\ch@pter
-    \x@\global\x@\let\csname @ch@ptert@xt\g@tdstat\endcsname\ch@ptert@xt
-    \x@\global\x@\let\csname @v@rse\g@tdstat\endcsname\v@rse
-  \fi
-  \ifReenterIntroOK\else\global\intr@donetrue\fi% Are markers starting 'i' allowed to flip us back into one-column mode?
-  \uppercase{\xdef\c@rref{\id@@@\ifdiglot\c@rrdstat\fi\ch@pter.0}}%
-  \global\let\print@bleVerse=\v@rse
-  \m@kedigitsletters
-   % If omitting chapter number, skip this. 
-   % We would have to set \OmitChapterNumbertrue on a book by book basis
-   % in the configuration file in order to omit chapter numbers for single chapter books.
-  \ifOmitChapterNumber
-    \trace{c}{Chapter numbers ommitted}%
-  \else
-    % if chapter label not present, set \ch@ptertrue to cause chapter number to be printed
-    % at start of first text paragraph.
-    \x@\global\x@\let\x@\ch@pl@bel\csname ch@plabel\g@tdstat\endcsname% global as p@rstyle{cl} may end a group.
-    \ifx\ch@pl@bel\empty \global\ch@ptertrue 
-      \trace{c}{No chapter label in use : \ch@pter}%
-    \else % if \cl present, output chapter label here
-      \trace{c}{Chapter label in use: \ch@pl@bel \ch@pter}%
-      \p@rstyle{cl}\ch@pl@bel\ \ch@pter
-      \pdfb@@kmark \pdfch@ptermark
+    \gdef\ch@pter{##1}% remember chapter number
+    \gdef\ch@ptert@xt{##1}% the chapter number we will actually output
+    \gdef\v@rse{}% clear verse number
+    \ifdiglot
+      \trace{c}{Saving chapter number '\ch@pter' for side: \c@rrdstat}%
+      \x@\global\x@\let\csname @ch@pter\g@tdstat\endcsname\ch@pter
+      \x@\global\x@\let\csname @ch@ptert@xt\g@tdstat\endcsname\ch@ptert@xt
+      \x@\global\x@\let\csname @v@rse\g@tdstat\endcsname\v@rse
     \fi
-  \fi}
+    \ifReenterIntroOK\else\global\intr@donetrue\fi% Are markers starting 'i' allowed to flip us back into one-column mode?
+    \uppercase{\xdef\c@rref{\id@@@\ifdiglot\c@rrdstat\fi\ch@pter.0}}%
+    \global\let\print@bleVerse=\v@rse
+    \op@ninghooks{start}{c}%
+    \m@kedigitsletters
+     % If omitting chapter number, skip this. 
+     % We would have to set \OmitChapterNumbertrue on a book by book basis
+     % in the configuration file in order to omit chapter numbers for single chapter books.
+    \ifOmitChapterNumber
+      \trace{c}{Chapter numbers ommitted}%
+      \pdfb@@kmark \pdfch@ptermark
+    \else
+      % if chapter label not present, set \ch@ptertrue to cause chapter number to be printed
+      % at start of first text paragraph.
+      \x@\global\x@\let\x@\ch@pl@bel\csname ch@plabel\g@tdstat\endcsname% global as p@rstyle{cl} may end a group.
+      \ifx\ch@pl@bel\empty \global\ch@ptertrue 
+        \trace{c}{No chapter label in use : \ch@pter}%
+      \else % if \cl present, output chapter label here
+        \trace{c}{Chapter label in use: \ch@pl@bel \ch@pter}%
+        \p@rstyle{cl}\MakeChapterLabel{\ch@pl@bel}{\ch@pter}%
+        \pdfb@@kmark \pdfch@ptermark
+      \fi
+    \fi}
   %
   \def\c{\m@kedigitsother\@c@}
   \def\cp ##1 {\gdef\ch@ptert@xt{##1}}
@@ -631,13 +656,11 @@
                  \else\endash\AdornVerseNumber{\v@rseto}\fi}
 \def\hangprintv@rse{\ifx\v@rsefrom\v@rseto\relax\AdornVerseNumber{\v@rsefrom}%
     \else
-         \dimen1=\SuperscriptFactor\baselineskip \multiply\dimen1 by 2
          \getp@ram{baseline}{v}\baselineskip=\ifx\p@ram\relax\baselineskip\else\p@ram\fi
          \dimen0=\SuperscriptFactor\baselineskip \advance\dimen0 by -\baselineskip
          \setbox1=\hbox{\endash\AdornVerseNumber{\v@rseto}}%
          \setbox0=\vtop{\hbox to \wd1{\hfil\AdornVerseNumber{\v@rsefrom}}%
                         \kern\dimen0\box1}%
-         \ht0=0.5\dimen1 \dp0=0pt
          \hbox{\box0}\fi}
 \let\printv@rse=\simpleprintv@rse                                               %(1)
 \def\@ne{1}
@@ -696,6 +719,7 @@
 \begingroup
 \obeylines%
 \gdef\@ddspecialhooks{% there are a few special USFM markers that we give "magic" properties
+ \let\pb=\pagebreak %pb isn't a paragraph style, 
  \let\@H=\h%
  \def\h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12
         \obeylines\@h}% \h gets stored as the book name (for references)
@@ -730,7 +754,7 @@
     \let\v@rse=\empty % Normally verses and keywords don't co-occur
     \edef\kr@f{\detokenize{##1}}%
     \x@\setkr@f\x@{\kr@f}%
-    \message{\kr@f}%
+    \trace{T}{keyword: \kr@f}%
     \runtrigg@rsother{k.\kr@f}%
     \activ@tecustomch@rs
     \@k ##1\endch@rstylen* %
@@ -882,7 +906,7 @@
   \global\p@ppingfalse
   \let\d@=\wip@do
 }
-\def\end@llpoppedstyles#1{\trace{s}{end@llpoppedstyles #1}\let\itp@psstore\empty\edef\mcch@cking{#1}\let\d@=\whileitp@ps\mcdown\ifx\itp@psstore\empty\else\edef\mcstack{\itp@psstore\mcstack}\fi\trace{s}{end@llpoppedstyles END: \mcstack}}
+\def\end@llpoppedstyles#1{\trace{s}{end@llpoppedstyles #1}\let\itp@psstore\empty\xdef\mcch@cking{#1}\let\d@=\whileitp@ps\mcdown\ifx\itp@psstore\empty\else\edef\mcstack{\itp@psstore\mcstack}\fi\trace{s}{end@llpoppedstyles END: \mcstack}}
 
 \def\s@tstyst@k#1{%Get a + separated list of styles that ought to uniquely define a font/etc.
   %List excludes marker #1 and stops at a barrier (e.g. a par/note/sidebar)
@@ -1023,7 +1047,6 @@
 
 \def\unprepusfm{
  \m@kedigitsother
- \catcode`\%=14 % The return of commentary
  \deactiv@tecustomch@rs
  \catcode13=5
  \catcode`\/=12
@@ -1035,7 +1058,7 @@
 % Read the files associated with this book: usfm, adjustment list, picture list
 %+csty_ptxfile_intro
 \def\ptxst@rtp@ge{1}
-\def\ptxfile#1{
+\def\preptxfile{
  \saveLRspecificOrig%This becomes a \relax after first use. Always call it.
  \kill@PossParamCache
  \global\intr@donefalse
@@ -1045,7 +1068,7 @@
       \gdef\c@rrdstat{L}%
     \fi
     \setLRspecific% \@netimesetup needs actual values, in a diglot there may be no use of generic FontSizeUnit, etc.
-  \fi
+ \fi
  \@netimesetup
  \ifdiglot\bgroup%This must be outside of @onetimesetup as there's no guarantee that diglot will be true for all ptxfiles.
    \diglots@tup
@@ -1079,8 +1102,11 @@
  \initp@rastyles
  \initn@testyles
  \ifendbooknoeject\else\p@geonetrue\fi
+}
 %-csty_ptxfile_intro
 %+csty_ptxfile_start
+\def\ptxfile#1{
+ \preptxfile
  \openadjlist "\the\AdjListPath#1.adj"
  \openpiclist "\the\PicListPath#1.piclist"
  \opentriglist "#1.triggers"
@@ -1096,8 +1122,11 @@
    \ifeof\t@stread \def\n@xt{\MSG{USFM file "\the\PtxFilePath#1" not found -- ignored}}
    \else \closein\t@stread \def\n@xt{\input "\the\PtxFilePath#1"\relax}\fi
  \n@xt
+ \postptxfile
+}
 %-csty_ptxfile_start
 %+csty_ptxfile_end
+\def\postptxfile{
  \ifhmode \unskip\end@llpoppedstyles{P}\par \fi
  \ifsk@pping\egroup\fi
  \ifhe@dings\endhe@dings\fi
@@ -1114,9 +1143,10 @@
  \iflastptxfile\csname bookend-final\endcsname\fi
  \singlecolumn % must come after bookend-final, as that might include 2col content.
  \bookendpagebreak
- %\ifendbooknoeject\else\global\output={\global\setbox255=\box\voidb@x}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
- \ifendbooknoeject\else\global\output={\shipout\vbox{\box\partial\box255}}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
+ %\ifendbooknoeject\else\global\output={\shipout\vbox{\box\partial\box255}}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
  \global\output={\onecol}
+ % no idea why we need \noindent here
+ \ifendbooknoeject\else\trace{o}{end of book eject with \the\ht\partial \space remaining}\ifdim\ht\partial>0pt\noindent\eject\fi\xdef\p@gefirstmark{}\fi
 }
 %-csty_ptxfile_end
 \newread\t@stread
@@ -1228,7 +1258,7 @@
 \newtoks\c@th@@ks
 \newtoks\afterh@@ks
 \def\cl@singhooks#1#2{% for <end> and <after> hooks. For <after> hooks, it's necessary to end the group after these are defined 
-  \trace{s}{op@ninghooks #1 #2}%
+  \trace{s}{cl@singhooks #1 #2}%
   \global\let\n@xt\relax
   \global\let\n@@xt\relax
   \global\let\n@@@xt\relax
@@ -1288,7 +1318,7 @@
 %+csty_setupsizes
 \def\s@tb@dyb@seline#1{%Parameter is {} for monoglot, L / R for diglot.
  \baselineskip=\origb@selineskip
- \le@dingunit=\LineSpacingFactor\FontSizeUnit
+ \global\le@dingunit=\LineSpacingFactor\FontSizeUnit
  \onel@neunit=\LineSpaceBase\le@dingunit
  \verticalsp@ceunit=\VerticalSpaceFactor\le@dingunit
  \trace{F}{le@dingunit(\the\le@dingunit)=\LineSpacingFactor * \the\FontSizeUnit, onel@neunit(\the\onel@neunit)=\LineSpaceBase * \the\le@dingunit}
@@ -1304,6 +1334,10 @@
    \MSG{Baselineskip for p#1 defined, as \the\baselineskip}%
    \x@\xdef\csname b@selineskip#1\endcsname{\the\baselineskip}%
  \fi
+}
+\def\onecolwidth#1{#1=\textwidth
+  \advance #1 by -2\columnshift\advance #1 by -\XrefNotesWidth
+  \advance #1 by -\XrefNotesMargin\advance #1 by -\gutter
 }
 \def\s@tupsizes{
  \s@tb@dyb@seline{}%
@@ -1332,7 +1366,9 @@
  \fi
  \csname set@col@widths@\diglotlayout\endcsname
 %
-  \hsize=\textwidth \advance\hsize by -2\columnshift
+  %\onecolwidth{\hsize}%
+  \hsize=\textwidth
+  \trace{o}{hsize=\the\hsize, notes width=\the\XrefNotesWidth, margin=\XrefNotesMargin}%
  \topm@rgin=\TopMarginFactor\MarginUnit
  \advance\topm@rgin by -\topskip \advance\topm@rgin by 12\FontSizeUnit
  \bottomm@rgin=\BottomMarginFactor\MarginUnit
@@ -1374,4 +1410,5 @@
 \newdimen\ExtraRMargin \ExtraRMargin=0pt
 \newdimen\gutter \gutter=20pt
 \newdimen\XrefNotesWidth \XrefNotesWidth=0pt
+\newdimen\XrefNotesMargin \XrefNotesMargin=1pt
 \endinput

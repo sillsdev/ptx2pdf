@@ -6,8 +6,10 @@ test.pdf:test.tex
 	TEXINPUTS=.:$(DIR) xetex $< && cp test.pdf test.parlocs test.delayed test.log 1
 	A=1 ; while grep Rerun test.log ; do TEXINPUTS=.:$(DIR) xetex $<  && mkdir $$A ; cp test.pdf test.parlocs test.delayed test.log $$A; A=$$((A+1)) ;  done ; echo last one: $$A  ; for A in `seq $$A 15` ; do rm $$A/*;done
 	
+testpages.pdf:testpages.tex
+	xetex testpages.tex
 
-test.pdf: test.tex usfmTex-ext.tex usfmTex-settings.tex test.usfm $(DIR)/*.tex *.sty test.usfm test.usfm.piclist
+test.pdf: test.tex usfmTex-ext.tex usfmTex-settings.tex test.usfm $(DIR)/*.tex *.sty test.usfm test.usfm.piclist testpages.pdf
 
 bisect:
 	mkdir ../bisect || rm -f ../bisect/*

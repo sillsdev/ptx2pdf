@@ -12,6 +12,7 @@ class ParatextSettings:
         self.prjid = prjid
         self.langid = None
         self.dir = "left"
+        self.collation = None
         self.parse()
 
     def parse(self):
@@ -32,6 +33,7 @@ class ParatextSettings:
             self.read_bookNames(path)
         else:
             self.default_bookNames()
+        self.collation = None
         return self
 
     def read_ldml(self):
@@ -153,3 +155,7 @@ class ParatextSettings:
             res[fname] = self.langid+".ldml"
         return res
 
+    def getCollation(self):
+        if self.collation is None:
+            self.collation = self.find_ldml('collations/collation[@type="standard"]/cr')
+        return self.collation

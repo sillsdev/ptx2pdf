@@ -223,7 +223,8 @@ class Usfm:
         res = reduce(_g, self.doc, [])
         if pending[0] is not None:
             ref[3] += 1
-            res.append(ref[:]) 
+            res.append(ref[:])
+        return res
 
     def readnames(self):
         if len(self.tocs) > 0:
@@ -300,12 +301,14 @@ class Usfm:
                         yield c1
         return iterfn(e)
 
-    def iiterel(self, i, e):
+    def iiterel(self, i, e, endfn=None):
         def iterfn(il, el):
             if isinstance(el, sfm.Element):
                 yield (il, el)
                 for il, c in list(enumerate(el)):
                     yield from iterfn(il, c)
+                if endfn is not None:
+                    endfn(el)
         return iterfn(i, e)
 
     def iterVerse(self, chap, verse):
@@ -499,6 +502,79 @@ class Usfm:
         def _gt(e, a):
             return None
         sreduce(_ge, _gt, self.doc, None)
+        
+    def stripIntro(self, noIntro=True, noOutline=True):
+        newdoc = []
+        for e in self.doc[0]:
+            if not isinstance(e, sfm.Element):
+                newdoc.append(e)
+                continue
+            if noOutline and e.name.startswith("io"):
+                continue
+            if noIntro and e.name.startswith("i") and not e.name.startswith("io"):
+                continue
+            newdoc.append(e)
+        self.doc[0][:] = newdoc
+
+    def stripEmptyChVs(self, ellipsis=False):
+        def iterfn(el, top=False):
+            if isinstance(el, sfm.Element):
+                lastv = None
+                predels = []
+                for c in el[:]:
+                    if not isinstance(c, sfm.Element) or c.name != "v":
+                        if iterfn(c):
+                            if len(predels):
+                                if isinstance(predels[-1], sfm.Element) \
+                                                 and predels[-1].name == "p" \
+                                                 and len(predels[-1]) == 1 \
+                                                 and str(predels[-1][0]).strip() == "...":
+                                    predels.pop(-1)
+                                for p in predels:
+                                    if isinstance(p, sfm.Element):
+                                        p.parent.remove(p)
+                            lastv = None
+                            predels = []
+                        else:
+                            predels.append(c)
+                    elif isinstance(c, sfm.Element) and c.name == "v":
+                        if lastv is not None:
+                            for p in predels:
+                                p.parent.remove(p)
+                            predels = []
+                            if ellipsis:
+                                i = lastv.parent.index(lastv)
+                                ell = sfm.Text("...", parent=lastv.parent)
+                                lastv.parent.insert(i, ell)
+                                predels.append(ell)
+                                lastv.parent.pop(i+1)
+                            else:
+                                lastv.parent.remove(lastv)
+                        lastv = c
+                if lastv is not None:
+                    lastv.parent.remove(lastv)
+                if len(predels):
+                    if ellipsis:
+                        p = predels[0]
+                        i = p.parent.index(p)
+                        st = p.parent.meta.get("styletype", "")
+                        if st is None or st.lower() == "paragraph":
+                            ell = sfm.Text("...", parent=p.parent)
+                        else:
+                            ell = sfm.Element('p', parent=p.parent, meta=self.sheets['p'])
+                            ell.append(sfm.Text("...\n", parent=ell))
+                        p.parent.insert(i, ell)
+                    for p in predels:
+                        p.parent.remove(p)
+                    predels = [ell] if ellipsis else []
+                st = el.meta.get("styletype", "") 
+                if (st is None or st.lower() == "paragraph") and len(el) == len(predels):
+                    # el.parent.remove(el)
+                    return False
+            elif re.match(r"^\s*$", str(el)) or re.match(r"\.{3}\s*$", str(el)):
+                return False
+            return True
+        iterfn(self.doc[0], top=True)
 
 def read_module(inf, sheets):
     lines = inf.readlines()

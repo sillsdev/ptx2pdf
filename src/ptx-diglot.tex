@@ -103,7 +103,7 @@
 \def\stylesh@@t#1{\stylesheet{#1}\gdef\ds@ffix{}}
 
 %LRspecific holds a list of things that get redefined on side-switching. Now split into Definitions and Dimensions.
-\def\LRspecificDef{AdornVerseNumber,VerticalSpaceFactor,LineSpacingFactor,regular,bold,italic,bolditalic,SpaceStretchFactor,SpaceShrinkFactor}
+\def\LRspecificDef{AdornVerseNumber,VerticalSpaceFactor,LineSpacingFactor,regular,bold,italic,bolditalic,SpaceStretchFactor,SpaceShrinkFactor,ifOmitChapterNumber,ifOmitVerseNumberOne,MakeChapterLabel}
 \def\LRspecificDim{FontSizeUnit,le@dingunit,onel@neunit,verticalsp@ceunit,IndentUnit} 
 
 
@@ -198,6 +198,15 @@
 \x@\newif\csname ifinp@r-R\endcsname % Used for parlocs analysis
 \x@\newcount\csname p@rlinesgone-L\endcsname % Used for parlocs analysis
 \x@\newcount\csname p@rlinesgone-R\endcsname % Used for parlocs analysis
+\def\newsideSpecificIf#1{% 'Tristate' if - true / false / default (where default means the side-specific logic ought to let the global value take precedence
+  \x@\def\csname #1true\endcsname{\x@\let\csname if#1\endcsname\iftrue}%
+  \x@\def\csname #1false\endcsname{\x@\let\csname if#1\endcsname\iffalse}%
+  \x@\def\csname #1default\endcsname{\x@\let\csname if#1\endcsname\undefined}%
+}
+\newsideSpecificIf{OmitChapterNumberL}
+\newsideSpecificIf{OmitVerseNumberOneL}
+\newsideSpecificIf{OmitChapterNumberR}
+\newsideSpecificIf{OmitVerseNumberOneR}
 
 \def\doVisTrace#1{%
   \setbox0=\vtop to 0pt{\hrule height 0pt depth 0.5pt width 15pt\hbox{\VisTracefont #1 \the\TRACEcount}\vss}\ht0=0pt\dp0=0pt
@@ -453,7 +462,10 @@
     \global\advance\availht by \baselineskip % avoid underfull box in case of footnote
     \global\vsize=\availht
     \global\advance\availht by -\baselineskip % avoid underfull box in case of footnote
-    \csname partial\c@rrdstat penalty\endcsname=0 %FIXME: Isn't there a \splitpenalty??
+    \ifvoid\@xcs\else
+      \trace{D}{Resetting partial\c@rrdstat penalty from \the\csname partial\c@rrdstat penalty\endcsname to 0}%
+      \global\csname partial\c@rrdstat penalty\endcsname=0 %FIXME: Isn't there a \splitpenalty??
+    \fi
     \global\galleypenalty=0
     \global\setbox\galley=\vbox{\x@\unvcopy\p@rtl\unpenalty\penalty\endtri@lpen@lty}%
     \trace{D}{Running trial \the\trialheight, \the\ht\galley+\the\dp\galley (\the\ht\@xcs+\the\dp\@xcs left for next time)}%
@@ -710,7 +722,7 @@
 % Change which side we're adding to
 \def\pr@sideswitch#1#2{%
   \tmpcount=\lastnodetype
-  \global\savedpenalty=\lastpenalty % This MUST be first (at least, before any writes), or the last /thing/ won't be a penalty
+  \global\savedpenalty=\lastpenalty% This MUST be first (at least, before any writes), or the last /thing/ won't be a penalty
   \ifx\c@rrdstat\empty
     \trace{d}{\c@rrdstat is empty, somehow, making it L for sanity}%
     \gdef\c@rrdstat{L}%
@@ -719,7 +731,16 @@
   \global\let\layoutstylebreak\enddigl@t % 
   \ifhe@dings\endhe@dings
     \global\savedpenalty=\lastpenalty % Pick up revised after-heading penalty
+    \traceNum{D}{Got \the\savedpenalty from headings}%
+    \ifnum\TRACEcount=\diglotDbgJoinboxes
+      \showboxbreadth=100
+      \showlists
+    \fi
   \fi%
+  \trace{d}{pr@sideswitch #1 #2, sp:\the\savedpenalty lnt:\the\tmpcount}%
+  \ifnum\outputpenalty=-10000 %User-pagebreak
+    \global\savedpenalty=\outputpenalty
+  \fi
   \x@\xdef\csname saved\c@rrdstat penalty\endcsname{\the\savedpenalty}%
   \ifinn@te\errmessage{*** #1text called from inside footnote?!?}\fi
   \ifx\last@popped@parstyle\relax\else
@@ -727,6 +748,7 @@
   \fi
   \trace{d}{pr@sideswitch #1 (\c@rrdstat) pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, xR\the\dp\excessR, lp:\the\savedpenalty \ifallNeedEmptying\space  allNeedemptying\fi}%
   %\showlists
+  \global\savedpenalty=0 % avoid cross-contamination
   \global\output={\diglotCollect}%Why woudn't it be? Don't know, but sometimes it's not.
   \let\@ldstat=\c@rrdstat
   \@@setside{#2}%Set the side to occur after the next swapcols penalty
@@ -851,6 +873,7 @@
    %\diglottrue % Is THIS necessary?
  \fi
 }
+\def\usediglot#1{\xdef\c@rrdstat{#1}}
 
 \def\resetc@rdstat{\xdef\c@rrdstat{\f@lwgdstat}}% Restore to correct value for new text. Mainly for use in Collect
 
@@ -868,7 +891,7 @@
 }
 
 \def\oldboole@n#1#2{%
-  \message{diglot#1true is deprecated. The normal column switching method is to use (no)lefttext / (no)righttext or the new  diglotcolumn and endcols macros}%
+  \message{diglot#1true is deprecated. The normal column switching method is to use (no)lefttext / (no)righttext or the new  polyglotcolumn and endcols macros}%
   \polyglotcolumn{#1}%
 }
 
@@ -1813,7 +1836,7 @@
   \else 
     \global\setbox\destb@x=\vtop{\joinboxes{\destb@x}{255}{1}{\x@\the\csname partial\c@rrdstat penalty\endcsname}}%
   \fi
-  \x@\csname partial\c@rrdstat penalty\endcsname=\tmpcount
+  \global\x@\csname partial\c@rrdstat penalty\endcsname=\tmpcount
   \ifnum\outputpenalty=\dgl@tPenColSwap\relax %Got to the end of the \lefttext
     \trace{D}{Reached end of diglotCollect. \ifallNeedEmptying Running trials soon\fi}%
     \ifallNeedEmptying
@@ -2166,6 +2189,13 @@
     \trace{D}{side \c@rrdstat\space has stuff to typeset}%
     \xdef\tri@llist{\tri@llist#1}% More trials to run 
   \fi
+  \ifnum\csname \c@rrdstat boxpenalty\endcsname<-9999
+    \trace{d}{side \c@rrdstat\space wants a pagebreak}%
+    \pagefulltrue
+    \x@\gdef\csname saved\c@rrdstat penalty\endcsname{0}%Saved penalty is used now.
+    \global\csname \c@rrdstat boxpenalty\endcsname=-9999 %
+  \fi
+    
   \edef\n@xtarg{#2}%
   \let\afterch@ckcontents\ch@ckcontents
   \ifx\n@xtarg\empty
@@ -2442,7 +2472,9 @@
     \empty@cseq{b@ok#1}% Name of book to put in PDF.
     \empty@cseq{ch@plabel#1}% Chapter label
     \empty@cseq{@ch@pter#1}% Chapter Nuber
-    \empty@cseq{@v@rse#1}% Chapter label
+    \empty@cseq{@v@rse#1}% verse label
+    \newsideSpecificIf{OmitChapterNumber#1} % Control option
+    \newsideSpecificIf{OmitVerseNumberOne#1} % Control option
     \xdef@cseq{@cur#1ht}{0pt}% 
     \xdef@cseq{@cur#1dp}{0pt}% 
     \header@defs{#1}% All the possible header contents

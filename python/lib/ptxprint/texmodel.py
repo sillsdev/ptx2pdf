@@ -31,10 +31,10 @@ ModelMap = {
     "date_":                    ("_date", None),
     "pdfdate_":                 ("_pdfdate", None),
     "xmpdate_":                 ("_xmpdate", None),
-    "ifusediglotcustomsty_":    ("_diglotcustomsty", lambda w,v: "%"),
-    "ifusediglotmodsty_":       ("_diglotmodsty", lambda w,v: "%"),
-    "ifdiglotincludefootnotes_":("_diglotinclfn", lambda w,v: "%"),
-    "ifdiglotincludexrefs_":    ("_diglotinclxr", lambda w,v: "%"),
+    "ifusediglotcustomsty_":    ("_diglotcustomsty", lambda w,v: "%" if not v else ""),
+    "ifusediglotmodsty_":       ("_diglotmodsty", lambda w,v: "%" if not v else ""),
+    "ifdiglotincludefootnotes_":("_diglotinclfn", lambda w,v: "%" if not v else ""),
+    "ifdiglotincludexrefs_":    ("_diglotinclxr", lambda w,v: "%" if not v else ""),
     "transparency_":            ("fcb_outputFormat", lambda w,v: "false" if v in (None, "None", "PDF/X-4") else "true"),
 
     "config/notes":             ("t_configNotes", lambda w,v: v or ""),
@@ -54,7 +54,6 @@ ModelMap = {
     "project/backincludes":     ("btn_selectBackPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s.as_posix()) \
                                  for s in w.BackPDFs) if (w.get("c_inclBackMatter") and w.BackPDFs is not None
                                                                                     and w.BackPDFs != 'None') else ""),
-    "project/useprintdraftfolder": ("c_useprintdraftfolder", lambda w,v :"true" if v else "false"),
     "project/processscript":    ("c_processScript", None),
     "project/runscriptafter":   ("c_processScriptAfter", None),
     "project/selectscript":     ("btn_selectScript", lambda w,v: w.customScript.as_posix() if w.customScript is not None else ""),
@@ -73,6 +72,8 @@ ModelMap = {
     "project/license":          ("ecb_licenseText", None),
     "project/copyright":        ("t_copyrightStatement", lambda w,v: re.sub(r"\\u([0-9a-fA-F]{4})",
                                                                    lambda m: chr(int(m.group(1), 16)), v) if v is not None else ""),
+    "project/iffrontmatter":    ("c_frontmatter", lambda w,v: "" if v else "%"),
+    "project/periphpagebreak":  ("c_periphPageBreak", None),
     "project/colophontext":     ("tb_colophon", lambda w,v: re.sub(r"\\u([0-9a-fA-F]{4})",
                                                                    lambda m: chr(int(m.group(1), 16)), v) if v is not None else ""),
     "project/ifcolophon":       ("c_colophon", lambda w,v: "" if v else "%"),
@@ -82,11 +83,11 @@ ModelMap = {
     "paper/width":              ("ecb_pagesize", lambda w,v: re.sub(r"^(.*?)\s*[,xX].*$", r"\1", v or "148mm")),
     "paper/pagesize":           ("ecb_pagesize", None),
     "paper/ifwatermark":        ("c_applyWatermark", lambda w,v: "" if v else "%"),
-    "paper/watermarkpdf":       ("btn_selectWatermarkPDF", lambda w,v: '\def\MergePDF{{"{}"}}'.format(w.watermarks.as_posix()) \
+    "paper/watermarkpdf":       ("btn_selectWatermarkPDF", lambda w,v: w.watermarks.as_posix() \
                                  if (w.get("c_applyWatermark") and w.watermarks is not None and w.watermarks != 'None') else ""),
     "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),  
     "paper/ifgrid":             ("c_grid", lambda w,v :"" if v else "%"),
-    "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v else "false"),
+    "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v or w.get("r_xrLocn") == "centre" else "false"),
     "paper/margins":            ("s_margins", lambda w,v: round(float(v)) if v else "12"),
     "paper/topmargin":          ("s_topmargin", None),
     "paper/bottommargin":       ("s_bottommargin", None),
@@ -157,11 +158,12 @@ ModelMap = {
     "document/author":          (None, lambda w,v: "" if w.get("c_sensitive") else w.ptsettings.get('Copyright', "")),
 
     "document/startpagenum":    ("s_startPageNum", lambda w,v: int(float(v)) if v else "1"),
+    "document/multibook":       ("r_book_multiple", lambda w,v: "" if v else "%"),
     "document/toc":             ("c_autoToC", lambda w,v: "" if v else "%"),
     "document/toctitle":        ("t_tocTitle", lambda w,v: v or ""),
-    "document/usetoc1":         ("c_usetoc1", None),
-    "document/usetoc2":         ("c_usetoc2", None),
-    "document/usetoc3":         ("c_usetoc3", None),
+    "document/usetoc1":         ("c_usetoc1", lambda w,v: "true" if v else "false"),
+    "document/usetoc2":         ("c_usetoc2", lambda w,v: "true" if v else "false"),
+    "document/usetoc3":         ("c_usetoc3", lambda w,v: "true" if v else "false"),
     "document/chapfrom":        ("s_chapfrom", lambda w,v: int(float(v)) if v else "1"),
     "document/chapto":          ("s_chapto", lambda w,v: int(float(v)) if v else "999"),
     "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: round(float(v)*3) or "12"), # Hack to be fixed
@@ -188,6 +190,7 @@ ModelMap = {
     "document/iffigskipmissing": ("c_skipmissingimages", None),
     "document/iffigcrop":       ("c_cropborders", None),
     "document/iffigplaceholders": ("c_figplaceholders", lambda w,v: "true" if v else "false"),
+    "document/iffigshowcaptions": ("c_fighidecaptions", lambda w,v: "false" if v else "true"),
     "document/iffighiderefs":   ("c_fighiderefs", None),
     # "document/usesmallpics":    ("c_useLowResPics", lambda w,v :"" if v else "%"),
     # "document/uselargefigs":    ("c_useHighResPics", lambda w,v :"" if v else "%"),
@@ -196,8 +199,6 @@ ModelMap = {
     "document/exclusivefolder": ("c_exclusiveFiguresFolder", None),
     "document/customfigfolder": ("btn_selectFigureFolder", lambda w,v: w.customFigFolder.as_posix() \
                                                                        if w.customFigFolder is not None else ""),
-    "document/customoutputfolder": ("btn_selectOutputFolder", lambda w,v: w.customOutputFolder.as_posix() \
-                                                                          if w.customOutputFolder is not None else ""),
     "document/imagetypepref":   ("t_imageTypeOrder", None),
     # "document/spacecntxtlztn":  ("fcb_spaceCntxtlztn", lambda w,v: str({"None": 0, "Some": 1, "Full": 2}.get(v, loosint(v)))),
     "document/glossarymarkupstyle":  ("fcb_glossaryMarkupStyle", None),
@@ -212,6 +213,7 @@ ModelMap = {
     "document/indentunit":      ("s_indentUnit", lambda w,v: round(float(v or "1.0"), 1)),
     "document/firstparaindent": ("c_firstParaIndent", lambda w,v: "true" if v else "false"),
     "document/ifhidehboxerrors": ("c_showHboxErrorBars", lambda w,v :"%" if v else ""),
+    "document/hidemptyverses":  ("c_hideEmptyVerses", None),
     "document/elipsizemptyvs":  ("c_elipsizeMissingVerses", None),
     "document/ifspacing":       ("c_spacing", lambda w,v :"" if v else "%"),
     "document/spacestretch":    ("s_maxSpace", lambda w,v : str((int(float(v)) - 100) / 100.)),
@@ -238,6 +240,8 @@ ModelMap = {
     "document/diglotsecconfig": ("ecb_diglotSecConfig", None),
     "document/diglotmergemode": ("c_diglotMerge", lambda w,v: "simple" if v else "doc"),
     "document/diglotadjcenter": ("c_diglotAdjCenter", None),
+
+    "document/hasnofront_":     ("c_frontmatter", lambda w,v: "%" if v else ""),
 
     "header/ifomitrhchapnum":   ("c_omitrhchapnum", lambda w,v :"true" if v else "false"),
     "header/ifverses":          ("c_hdrverses", lambda w,v :"true" if v else "false"),
@@ -275,7 +279,9 @@ ModelMap = {
 
     "notes/iffootnoterule":     ("c_footnoterule", lambda w,v: "%" if v else ""),
     "notes/xrlocation":         ("r_xrLocn", lambda w,v: r"" if v == "centre" else "%"),
+    "notes/xrcolside":          ("fcb_colXRside", None),
     "notes/xrcentrecolwidth":   ("s_centreColWidth", lambda w,v: int(float(v)) if v else "60"),
+    "notes/xrguttermargin":     ("s_xrGutterWidth", lambda w,v: "{:.1f}".format(float(v)) if v else "2.0"),
     "notes/ifxrexternalist":    ("c_useXrefList", lambda w,v: "%" if v else ""),
     "notes/xrlistsource":       ("r_xrSource", None),
     "notes/xrlistsize":         ("s_xrSourceSize", lambda w,v: int(float(v)) if v else "3"),
@@ -283,7 +289,7 @@ ModelMap = {
     "notes/addcolon":           ("c_addColon", None),
     "notes/keepbookwithrefs":   ("c_keepBookWithRefs", None),
     "notes/glossaryfootnotes":  ("c_glossaryFootnotes", None),
-    "notes/columnnotes":        ("c_columnNotes", lambda w,v: "true" if v and w.get("c_doublecolumn") else "false"),
+    "notes/columnnotes":        ("c_columnNotes", lambda w,v: "true" if v else "false"),
 
     "notes/abovenotespace":     ("s_abovenotespace", None),
     "notes/belownoterulespace": ("s_belownoterulespace", None),
@@ -313,7 +319,7 @@ ModelMap = {
     "thumbtabs/restart":        ("c_thumbrestart", None),
     "thumbtabs/groups":         ("t_thumbgroups", None),
 
-    "scrmymr/syllables":        ("c_scrmymrSyllable", None),
+    "scripts/mymr/syllables":   ("c_scrmymrSyllable", None),
 }
 
 Borders = {'c_inclPageBorder':      ('pageborder', 'fancy/pageborderpdf', 'A5 page border.pdf'),
@@ -373,6 +379,36 @@ class TexModel:
     }
     _crossRefInfo = None
 
+    _periphids = {
+        "title page": "title",
+        "half title page": "halftitle",
+        "promotional page": "promo",
+        "imprimatur": "imprimatur",
+        "publication data": "pubdata",
+        "foreword": "foreword",
+        "preface": "preface",
+        "table of contents": "contents",
+        "alphabetical contents": "alphacontents",
+        "table of abbreviations": "abbreviations",
+        "bible introduction": "intbible",
+        "old testament introduction": "intot",
+        "pentateuch introduction": "intpent",
+        "history introduction": "inthistory",
+        "poetry introduction": "intpoetry",
+        "prophecy introduction": "intprophesy",
+        "deuterocanon introduction": "intdc",
+        "new testament introduction": "intnt",
+        "gospels introduction": "intgospels",
+        "epistles introduction": "intepistles",
+        "letters introduction": "intletters",
+        "chronology": "chron",
+        "weights and measures": "measures",
+        "map index": "maps",
+        "lxx quotes in nt": "lxxquotes",
+        "cover": "cover",
+        "spine": "spine"
+    }
+
     def __init__(self, printer, path, ptsettings, prjid=None, inArchive=False):
         from ptxprint.view import VersionStr
         self.VersionStr = VersionStr
@@ -384,6 +420,7 @@ class TexModel:
         self.debug = False
         self.interlinear = None
         self.imageCopyrightLangs = {}
+        self.frontperiphs = None
         libpath = os.path.abspath(os.path.dirname(__file__))
         self.dict = {"/ptxpath": str(path).replace("\\","/"),
                      "/ptxprintlibpath": libpath.replace("\\","/"),
@@ -400,7 +437,7 @@ class TexModel:
     def docdir(self):
         if self.asBool("project/useprintdraftfolder"):
             base = os.path.join(self.dict["/ptxpath"], self.dict["project/id"])
-            docdir = os.path.join(base, 'PrintDraft')
+            docdir = os.path.join(base, 'local', 'ptxprint', self.printer.configName())
         else:
             base = self.printer.working_dir
             docdir = base
@@ -491,13 +528,14 @@ class TexModel:
         else:
             vals = ("0.0", "0.0")
         (self.dict["grid/xoffset_"], self.dict["grid/yoffset_"]) = vals
+        self.dict['project/frontfile'] = ''
 
     def updatefields(self, a):
         global get
         def get(k): return self[k]
         for k in a:
             v = ModelMap[k]
-            val = self.printer.get(v[0]) if v[0] is not None else None
+            val = self.printer.get(v[0], skipmissing=k.startswith("scripts/")) if v[0] is not None else None
             if v[1] is None:
                 self.dict[k] = val
             else:
@@ -651,7 +689,7 @@ class TexModel:
                 lambda m:m.group(0).lower(), self.dict['project/colophontext'])
         with universalopen(os.path.join(os.path.dirname(__file__), template)) as inf:
             for l in inf.readlines():
-                if l.startswith(r"\ptxfile"):
+                if l.startswith(r"%\ptxfile"):
                     res.append(r"\PtxFilePath={"+os.path.relpath(filedir, docdir).replace("\\","/")+"/}")
                     for i, f in enumerate(self.dict['project/bookids']):
                         fname = self.dict['project/books'][i]
@@ -744,11 +782,68 @@ class TexModel:
 \\prepusfm
 \\def\\zcopyright\uFDEE{project/copyright}\uFDEF
 \\def\\zlicense\uFDEE{project/license}\uFDEF
-\\unprepusfm
 """.format(**self.dict))
+                    if "diglot/copyright" in self.dict:
+                        res.append("\\def\\zcopyrightR\uFDEE{}\uFDEF".format(self.dict["diglot/copyright"]))
+                    res.append("\\unprepusfm")
+                elif l.startswith(r"%\defzvar"):
+                    for k in self.printer.allvars():
+                        res.append(r"\defzvar{{{}}}{{{}}}".format(k, self.printer.getvar(k)))
+                    for k, e in (('contentsheader', 'document/toctitle'),):
+                        res.append(r"\defzvar{{{}}}{{{}}}".format(k, self.dict[e]))
                 else:
                     res.append(l.rstrip().format(**self.dict))
         return "\n".join(res).replace("\\OmitChapterNumberfalse\n\\OmitChapterNumbertrue\n","")
+
+    def _doperiph(self, m):
+        if self.frontperiphs is None:
+            frtfile = os.path.join(self.printer.settings_dir, self.printer.prjid, self.printer.getBookFilename("FRT"))
+            self.frontperiphs = {}
+            if not os.path.exists(frtfile):
+                return ""
+            with open(frtfile, encoding="utf-8") as inf:
+                mode = 0        # default
+                currperiphs = []
+                currk = None
+                for l in inf.readlines():
+                    ma = re.match(r'\\periph\s+([^|]+)(?:\|\s*(?:id\s*=\s*"([^"]+)|(\S+)))', l)
+                    if ma:
+                        if mode == 1:    # already collecting so save
+                            self.frontperiphs[currk] = "\n".join(currperiphs)
+                        currk = ma[2] or ma[3]
+                        if not currk:
+                            currk = self._periphids.get(m[1].lower(), m[1].lower())
+                        currperiphs = []
+                        mode = 1
+                    elif mode == 1:
+                        if r"\periph" in l:
+                            mode = 0
+                        else:
+                            currperiphs.append(l.rstrip())
+                if currk is not None:
+                    self.frontperiphs[currk] = "\n".join(currperiphs)
+        k = m[1]
+        if k in self.frontperiphs:
+            return self.frontperiphs[k]
+        else:
+            return ""
+
+    def createFrontMatter(self, outfname):
+        self.dict['project/frontfile'] = os.path.basename(outfname)
+        infpath = self.printer.configFRT()
+        if os.path.exists(infpath):
+            fcontent = []
+            with open(infpath, encoding="utf-8") as inf:
+                seenperiph = False
+                for l in inf.readlines():
+                    if l.strip().startswith(r"\periph"):
+                        l = r"\pb" if self.dict['project/periphpagebreak'] and seenperiph else ""
+                        seenperiph = True
+                    l = re.sub(r"\\zperiphfrt\s*\|([^\\\s]+)\s*\\\*", self._doperiph, l)
+                    l = re.sub(r"\\zbl\s*\|(\d+)\\\*", lambda m: "\\b\n" * int(m.group(1)), l)
+                    fcontent.append(l.rstrip())
+            with open(outfname, "w", encoding="utf-8") as outf:
+                outf.write("\n".join(fcontent))
 
     def flattenModule(self, infpath, outdir):
         outfpath = os.path.join(outdir, os.path.basename(infpath))
@@ -756,8 +851,8 @@ class TexModel:
         if doti > 0:
             outfpath = outfpath[:doti] + "-flat" + outfpath[doti:]
         usfms = self.printer.get_usfms()
-        mod = Module(infpath, usfms)
         try:
+            mod = Module(infpath, usfms)
             res = mod.parse()
         except SyntaxError as e:
             return (None, e)
@@ -848,12 +943,15 @@ class TexModel:
                 dat = self.runChanges(self.changes, bk, dat)
                 self.analyzeImageCopyrights(dat)
 
-            if self.dict['project/canonicalise'] or self.dict['document/ifletter'] == "":
+            if self.dict['project/canonicalise'] or self.dict['document/ifletter'] == "" or self.asBool("document/elipsizemptyvs") \
+                        or not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
                 if doc is None:
                     doc = self._makeUSFM(dat.splitlines(True), bk)
                 if doc is not None:
-                    if self.dict["document/ifletter"] == "":
-                        doc.letter_space(letterspace)
+                    if not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
+                        doc.stripIntro(not self.asBool("document/bookintro"), not self.asBool("document/introoutline"))
+                    if self.asBool("document/hidemptyverses"):
+                        doc.stripEmptyChVs(ellipsis=self.asBool("document/elipsizemptyvs"))
 
             if self.dict['fancy/endayah'] == "":
                 if doc is None:
@@ -940,7 +1038,7 @@ class TexModel:
                             elif r.verse == 0:
                                 atcontexts.append((r.book, regex.compile(r"(?<=\\c {}).*?($|\\[cv] )".format(r.chap), flags=regex.S)))
                             else:
-                                atcontexts.append((r.book, regex.compile(r"(?<=\\c {}.*?\\v {}).*?($|\\[cv] )".format(r.chap, r.verse), flags=regex.S)))
+                                atcontexts.append((r.book, regex.compile(r"(?<=\\c {}(?:.(?!\\c))*?)\\v {} .*?($|\\[cv] )".format(r.chap, r.verse), flags=regex.S)))
                         l = l[m.end():].strip()
                     else:
                         atcontexts = [None]
@@ -967,17 +1065,17 @@ class TexModel:
                 except re.error as e:
                     self.printer.doError("Regular expression error: {} in changes file at line {}".format(str(e), i+1),
                                          show=not self.printer.get("c_quickRun"))
+        return changes
+
+    def makelocalChanges(self, printer, bk, chaprange=None):
         script = self.dict["document/script"]
         if len(script):
             sscript = getattr(scriptsnippets, script[8:].lower(), None)
             if sscript is not None:
-                changes.extend(sscript.regexes(self))
-
-        if not len(changes):
-            return None
+                self.changes.extend(sscript.regexes(self))
         if self.printer is not None and self.printer.get("c_tracing"):
             print("List of PrintDraftChanges:-------------------------------------------------------------")
-            report = "\n".join("{} -> {}".format(p[1].pattern, p[2]) for p in changes)
+            report = "\n".join("{} -> {}".format(p[1].pattern, p[2]) for p in self.changes)
             if getattr(self.printer, "logger", None) is not None:
                 self.printer.logger.insert_at_cursor(v)
             else:
@@ -985,9 +1083,6 @@ class TexModel:
                     print(report)
                 except UnicodeEncodeError:
                     print("Unable to print details of PrintDraftChanges.txt")
-        return changes
-
-    def makelocalChanges(self, printer, bk, chaprange=None):
         self.localChanges = []
         if bk == "GLO" and self.dict['document/filterglossary']:
             self.filterGlossary(printer)
@@ -1026,14 +1121,6 @@ class TexModel:
         if not self.asBool("document/ifmainbodytext"):
             self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+".format(first), flags=regex.S), ""))
 
-        # Elipsize ranges of MISSING/Empty verses in the text (if 3 or more verses in a row are empty...) 
-        if self.asBool("document/elipsizemptyvs"):
-            self.localChanges.append((None, regex.compile(r"\\v (\d+)([-,]\d+)? ?\r?\n(\\v (\d+)([-,]\d+)? ?\r?\n){1,}", flags=regex.M), r"\\v \1-\4 {...} "))
-            # self.localChanges.append((None, regex.compile(r"(\r?\n\\c \d+ ?)(\r?\n\\v 1)", flags=regex.M), r"\1\r\n\\p \2"))
-            self.localChanges.append((None, regex.compile(r" (\\c \d+ ?)(\r?\n\\v 1)", flags=regex.M), r" \r\n\1\r\n\\p \2"))
-            # self.localChanges.append((None, regex.compile(r"(\{\.\.\.\}) (\\c \d+ ?)\r?\n\\v", flags=regex.M), r"\1\r\n\2\r\n\\p \\v"))
-            self.localChanges.append((None, regex.compile(r"(\\c \d+ ?(\r?\n)+\\p (\r?\n)?\\v [\d-]+ \{\.\.\.\} ?(\r?\n)+)(?=\\c)", flags=regex.M), r"\1\\m {...}\r\n"))
-
         # Probably need to make this more efficient for multi-book and lengthy glossaries (cache the GLO & changes reqd etc.)
         if self.asBool("notes/glossaryfootnotes"):
             self.makeGlossaryFootnotes(printer, bk)
@@ -1070,14 +1157,6 @@ class TexModel:
         else:
             # Strip out all \figs from the USFM as an internally generated temp PicList will do the same job
             self.localChanges.append((None, regex.compile(r'\\fig[\s|][^\\]+?\\fig\*', flags=regex.M), ""))
-        
-        if not self.asBool("document/bookintro"): # Drop Introductory matter
-            self.localChanges.append((None, regex.compile(r"\\i(b|ex?|m[iqt]?|mt[1234]?|mte[12]?|p[iqr]?|q[123]?|s[12]?|li[12]?)\s?.*?\r?\n", flags=regex.M), "")) 
-
-        if not self.asBool("document/introoutline"): # Drop ALL Intro Outline matter & Intro Outline References
-            # Wondering whether we should restrict this to just the GEN...REV books (as some xtra books only use \ixx markers for content)
-            self.localChanges.append((None, regex.compile(r"\\(iot|io[1234]?) [^\\]+", flags=regex.M), ""))
-            self.localChanges.append((None, regex.compile(r"\\ior .+?\\ior\*\s?\r?\n", flags=regex.M), ""))
 
         if not self.asBool("document/sectionheads"): # Drop ALL Section Headings (which also drops the Parallel passage refs now)
             self.localChanges.append((None, regex.compile(r"\\[sr] .+", flags=regex.M), ""))
@@ -1086,8 +1165,6 @@ class TexModel:
             self.localChanges.append((None, regex.compile(r"\\r .+", flags=regex.M), ""))
 
         if self.asBool("document/preventorphans"): # Prevent orphans at end of *any* paragraph [anything that isn't followed by a \v]
-            # self.localChanges.append((None, regex.compile(r" ([^\\ ]+?) ([^\\ ]+?\r?\n)(?!\\v)", flags=regex.S), r" \1\u00A0\2"))
-            # OLD RegEx: Keep final two words of \q lines together [but doesn't work if there is an \f or \x at the end of the line] 
             self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)[^\\\s]+)) (\S+\s*\n)", \
                                             flags=regex.M), r"\1\u00A0\5"))
             self.localChanges.append((None, regex.compile(r"(\s+[^ 0-9\\\n\u2000\u00A0]+) ([^ 0-9\\\n\u2000\u00A0]+\n(?:\\[pmqsc]|$))", flags=regex.S), r"\1\u00A0\2"))
@@ -1114,7 +1191,7 @@ class TexModel:
             self.localChanges.append((self.make_contextsfn(None, regex.compile(r"(\\[xf]t [^\\]+)")),
                                     regex.compile(r"(\d?[^\s\d\-\\,;]{3,}[^\\\s]*?) (\d+[:.]\d+)"), r"\1\u00A0\2"))
             self.localChanges.append((self.make_contextsfn(None, regex.compile(r"(\\[xf]t [^\\]+)")),
-                                    regex.compile(r"( .) "), r"\1\u00A0")) # What is this one doing?
+                                    regex.compile(r"( .) "), r"\1\u00A0")) # Ensure no floating single chars in note text
 
         # keep \xo & \fr refs with whatever follows (i.e the bookname or footnote) so it doesn't break at end of line
         self.localChanges.append((None, regex.compile(r"(\\(xo|fr) (\d+[:.]\d+([-,]\d+)?)) "), r"\1\u00A0"))
@@ -1134,7 +1211,8 @@ class TexModel:
         # Convert hyphens from minus to hyphen
         self.localChanges.append((None, regex.compile(r"(?<!\\[fx]\s)((?<=\s)-|-(?=\s))", flags=regex.M), r"\u2011"))
 
-        if self.asBool("document/toc"): # Only do this IF the auto Table of Contents is enabled
+        if self.asBool("document/toc") and self.asBool("document/multibook"):
+            # Only do this IF the auto Table of Contents is enabled AND there is more than one book
             for c in range(1,4): # Remove any \toc lines that we don't want appearing in the ToC
                 if not self.asBool("document/usetoc{}".format(c)):
                     self.localChanges.append((None, regex.compile(r"(\\toc{} .+)".format(c), flags=regex.M), ""))
@@ -1167,7 +1245,7 @@ class TexModel:
         # Strip out any spaces either side of an en-quad 
         self.localChanges.append((None, regex.compile(r"\s?\u2000\s?", flags=regex.M), r"\u2000")) 
         # Change double-spaces to singles
-        self.localChanges.append((None, regex.compile(r"  ", flags=regex.M), r" ")) 
+        self.localChanges.append((None, regex.compile(r" {2,}", flags=regex.M), r" ")) 
         # Escape special codes % and $ that could be in the text itself
         self.localChanges.append((None, regex.compile(r"([%$])", flags=regex.M), r"\\\1")) 
 
@@ -1180,46 +1258,11 @@ class TexModel:
                 print(report)
         return self.localChanges
 
-    def figNameChanges(self, printer, bk): # @@@ FIXME - once we have the other system working...
-        # This method will probably disappear once we have a way to handle the peripheral books
-        if printer is None:
-            return([])
-        figlist = []
-        figchngs = []
-        prjid = self.dict['project/id']
-        prjdir = os.path.join(self.ptsettings.basedir, prjid)
-        picdir = os.path.join(prjdir, 'PrintDraft', 'tmpPics') #.replace("\\","/")
-        fname = printer.getBookFilename(bk, prjdir)
-        infpath = os.path.join(prjdir, fname)
-        extOrder = printer.getExtOrder()
-        with universalopen(infpath) as inf:
-            dat = inf.read()
-            inf.close()
-            figlist += re.findall(r"(?i)\\fig .*?\|(.+?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)\|.+?\\fig\*", dat)    # Finds USFM2-styled markup in text:
-            figlist += re.findall(r'(?i)\\fig .+src="(.+?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text:
-            for f in figlist:
-                found = False
-                for ext in extOrder:
-                    if ext.lower().startswith("tif"):
-                        ext = "jpg"
-                    tmpf = self.newBase(f)+"."+ext
-                    fname = os.path.join(picdir, tmpf)
-                    if os.path.exists(fname):
-                        figchngs.append((f,tmpf))
-                        found = True
-                        break
-                if not found:
-                    figchngs.append((f,"")) 
-        if len(figchngs):
-            print(figchngs)
-        return(figchngs)
-
     def base(self, fpath):
         doti = fpath.rfind(".")
         return os.path.basename(fpath[:doti])
 
     def codeLower(self, fpath):
-        #cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?$", self.base(fpath))
         cl = re.match(self.printer.getPicRe()+"$", self.base(fpath))
         if cl:
             return cl[0].lower()
@@ -1272,8 +1315,8 @@ class TexModel:
             self.localChanges.append((None, regex.compile(r"\\p \\k {}\\k\* .+\r?\n".format(delGloEntry), flags=regex.M), ""))
 
     def analyzeImageCopyrights(self, txt):
-        for m in re.findall(r"(?i)\\(\S+).*?\\zimagecopyrights([A-Z]{2,3})", txt):
-            self.imageCopyrightLangs[m[1].lower()] = m[0]
+        for m in re.findall(r"(?i)\\(\S+).*?\\zimagecopyrights([A-Z]{2,3})?", txt):
+            self.imageCopyrightLangs[m[1].lower() if m[1] else "en"] = m[0]
         return
 
     def generateEmptyImageCopyrights(self):

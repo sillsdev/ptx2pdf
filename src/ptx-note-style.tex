@@ -48,10 +48,11 @@
 \newif\ifnewcl@ss
 
 % new note class: append to the list in \n@tecl@sses, and allocate an \insert number
-\def\allocatecl@ss#1{
+\def\allocatecl@ss#1{%
   \x@\n@tecl@sses\x@{\the\n@tecl@sses \\{#1}}%
-  \ifcsname zplacenotes-#1\endcsname\else
-    \x@\gdef\csname zplacenotes-#1\endcsname{\write1{WARNING: p.\the\pageno: zplacenotes-#1 used in text when #1 is a footnote, not an endnote.}}
+  \ifcsname zplacenotes-#1\endcsname\else% zplacenotes-#1 is an endnote macro. (as is ztestnotes-#1) Trigger a warning rather than leave an undefined macro.
+    \x@\gdef\csname zplacenotes-#1\endcsname{\write1{WARNING: p.\the\pageno: zplacenotes-#1 used in text when #1 is a footnote, not an endnote.}}%
+    \x@\gdef\csname ztestnotes-#1\endcsname{\write1{WARNING: p.\the\pageno: ztestnotes-#1 used in text when #1 is a footnote, not an endnote.}\@ndnotesfoundfalse}%
   \fi
   \relax%
   \ifdiglot%
@@ -79,7 +80,6 @@
   \else\s@tn@tep@r@ms{#1}\fi
 }
 \def\s@tn@tep@r@ms#1{%
-  %% !!!FIXME!!! This guesses p@ranotes take half a line each. There are better ways. 
   \x@\count\csname note-#1\endcsname=\ifdiglot 100 \else \ifp@ranotes 100 \else 100 \fi\fi 
   \x@\skip\csname note-#1\endcsname=\AboveNoteSpace %Skip before footntoes
   \x@\dimen\csname note-#1\endcsname=\maxdimen %Max note skip
@@ -191,6 +191,8 @@
   \loop \ifnum\count255>26 \advance\count255 by -26 \repeat
   \advance\count255 by 96 \edef\them@rk{\char\count255}}
 \fi
+
+\def\resetautonum#1{\x@\xdef\csname autonum #1\endcsname{0}}
 %-cnote_autonum
 
 %+cnote_declare

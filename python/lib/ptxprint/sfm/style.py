@@ -269,9 +269,8 @@ def update_sheet(sheet, ammendments={}, field_replace=False, **kwds):
         try:
             meta = sheet[marker]
             if not field_replace:
-                meta['OccursUnder'].update(new_meta.pop('OccursUnder', set()))
-                meta['TextProperties'].update(new_meta.pop('TextProperties',
-                                                           set()))
+                meta['OccursUnder'] = meta['OccursUnder'].union(new_meta.pop('OccursUnder', set()))
+                meta['TextProperties'] = meta['TextProperties'].union(new_meta.pop('TextProperties', set()))
             meta.update(
                 fv for fv in new_meta.items()
                 if fv[0] not in _fields or fv[1] != _fields[fv[0]][1])

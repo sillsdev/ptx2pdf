@@ -64,17 +64,21 @@
   \fi
   \global\t@tletrue\global\@ntrofalse\global\b@dyfalse\fi}
 
+\newif\iftob@dy \tob@dyfalse
 \def\st@rtbody{%\endhe@dings
-  \ifb@dy\else\TRACE{st@rtbody}%
-  \ifdiglot\else
-    \ifnum\BodyColumns=\c@rrentcols
-      \penalty-200\vskip\baselineskip
-    \else
-      \ifdiglot\diglotcolumns\else
-      \ifnum\BodyColumns=2 \doublecolumns\else\singlecolumn\fi\fi
-    \fi
-  \fi
-  \global\b@dytrue\global\@ntrofalse\global\t@tlefalse\fi}
+\ifb@dy\else\trace{o}{st@rtbody by \m@rker}%
+%  \ifdiglot\else
+%    \ifnum\BodyColumns=\c@rrentcols
+%      \penalty-200\vskip\baselineskip
+%    \else
+      \tob@dytrue\ifnum\BodyColumns=2 \doublecolumns\else\singlecolumn\fi
+%    \fi
+%  \fi
+  \tob@dyfalse
+  \global\b@dytrue\global\@ntrofalse\global\t@tlefalse
+  % set up for single column from single column. Empty vbox to say we are not at the start of a page
+  \ifnum\BodyColumns=1 \onecolwidth{\hsize}\ifdim\ht\partial>\baselineskip\vbox{\kern0pt}\fi\fi
+\fi}
 
 \newcount\c@rrentcols \global\c@rrentcols=1
 %-cpar_starttypes
@@ -102,7 +106,7 @@
 
 %+cpar_killdescenders
 \def\killd@scenders#1{%
-  \vbox{
+  \vbox{%
   \trace{h}{killing descenders: ht=\the\ht#1, dp=\the\dp#1}%
   \unvbox#1 \skip0=\lastskip\unskip \count255=\lastpenalty\unpenalty
     \setbox0=\lastbox\global\dimen4=\dp0  % Remember last box's depth
@@ -143,25 +147,28 @@
 \def\m@d{\dimen3=\dimen1\divide\dimen1\dimen0\multiply\dimen1\dimen0\advance\dimen3 by -\dimen1\advance\dimen0 by -\dimen3}
 
 \def\gr@db@@x#1{%
-  \ifhmode\endgraf\fi % Not sure why, but sometiems we get here in hmode
-  \prevdepth=0pt
-  \setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders{#1}\fi
-  \trace{h}{after killingdescenders: ht=\the\ht0, dp=\the\dp0}
-  \ifVisTraceExtra
-    \setbox0=\vbox{\box0\doVisTraceT{G}\box0}%
+  \ifdim\baselineskip < 0.5pt\unvbox#1
+  \else
+      \ifhmode\endgraf\fi % Not sure why, but sometiems we get here in hmode
+      \prevdepth=0pt
+      \setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders{#1}\fi
+      \trace{h}{after killingdescenders: ht=\the\ht0, dp=\the\dp0}
+      \ifVisTraceExtra
+        \setbox0=\vbox{\box0\doVisTraceT{G}\box0}%
+      \fi
+      \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0 (\the\dimen4); spacebefore=\the\headingtopspace; depth=\the\lastdepth}%
+      \s@tbaseline{p}\dimen1=\ht0 \dimen0=\baselineskip \m@d \dimen2=\dimen0 % dimen2 is grid space
+      \dimen1=\ht0 \advance\dimen1 by -\headingtopspace
+      \dimen0=\baselineskip \m@d \advance\dimen2 by -\dimen0
+      \advance\dimen2 by \headingtopspace                                           %(1)
+      \ifgridp@c\else\ifdiglot\else
+        \ifdim\lastdepth>0pt\advance\dimen2 by -\lastdepth\fi
+      \fi\fi
+      \ifdiglot\kern\else\vskip\fi\dimen2
+      \trace{h}{after gridbox(\ch@pter.\v@rse): skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip; dim1=\the\dimen1;  ht0=\the\ht0; dp0=\the\dp0}%
+      \vbox{\kern\dimen0\vskip-\headingtopspace\unvbox0}
+      \nobreak%\dimen0=\prevdepth\trace{h}{prevdepth=\the\dimen0}%
   \fi
-  \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0 (\the\dimen4); spacebefore=\the\headingtopspace; depth=\the\lastdepth}%
-  \s@tbaseline{p}\dimen1=\ht0 \dimen0=\baselineskip \m@d \dimen2=\dimen0 % dimen2 is grid space
-  \dimen1=\ht0 \advance\dimen1 by -\headingtopspace
-  \dimen0=\baselineskip \m@d \advance\dimen2 by -\dimen0
-  \advance\dimen2 by \headingtopspace                                           %(1)
-  \ifgridp@c\else\ifdiglot\else
-    \ifdim\lastdepth>0pt\advance\dimen2 by -\lastdepth\fi
-  \fi\fi
-  \ifdiglot\kern\else\vskip\fi\dimen2
-  \trace{h}{after gridbox(\ch@pter.\v@rse): skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip; dim1=\the\dimen1;  ht0=\the\ht0; dp0=\the\dp0}%
-  \vbox{\kern\dimen0\vskip-\headingtopspace\unvbox0}
-  \nobreak%\dimen0=\prevdepth\trace{h}{prevdepth=\the\dimen0}%
 }
 
 \newif\ifsquashgridbox\squashgridboxtrue                                        %(2)
@@ -182,6 +189,9 @@
    \cl@singhooks{end}{\m@rker}%
    \trace{j}{baselineskip = \the\baselineskip, looseness = \the\looseness}%
    \endgraf
+   \ifinn@te\else
+     \edef\t@mpp{\string\@parlen{\c@rref}{\the\prevgraf}}\x@\write\x@\p@rlocs\x@{\t@mpp}%
+   \fi
    \ifvmode\ifinn@te\else\ifhe@dings\else\lastdepth=\prevdepth\fi\fi\fi
    \cutoutcarryover 
  \fi
@@ -311,6 +321,7 @@
       \ifhe@dings\nobreak\fi
       \vskip\p@ram\verticalsp@ceunit                                              %(1)
     \fi
+    %\edef\spc@ut{pdf:code EMC}\x@\special\x@{\spc@ut}%
   \fi
   %\ifx\mcstack\mcstack@mpty\else
     %\def\d@##1+##2\E{\edef\tmp{##2}%
@@ -322,7 +333,7 @@
   \the\afterh@@ks
  \fi
 }
-\def\p@rstyle#1{\trace{s}{p@rstyle: #1}%
+\def\p@rstyle#1{\trace{ss}{p@rstyle: #1}%
  \endlastp@rstyle{#1}%
  \ifn@npublishable\else
   \gdef\m@rker{#1}% remember the new style name
@@ -404,6 +415,7 @@
    %
    \the\@veryparhooks
    \x@\writep@rstart\x@{\the\baselineskip}%baselineskip must fully expanded as macro param, else it remains a macro and only L baseline is output on diglot/polyglot.
+   %\edef\spc@ut{pdf:code /\c@rref \space BMC}\x@\special\x@{\spc@ut}%
    \ifRTL \rightskip\else\leftskip\fi =0pt
    \ifRTL \beginR \leftskip\else\rightskip\fi =0pt \ifJustifyPars\else plus .25\hsize\fi
    \getp@ram{justification}{\m@rker}%
@@ -618,7 +630,7 @@
     \edef\dc@ref@rgs{\string\@colstart{\the\ht#2}{\the\dp#2}{\the\wd#2}}%
     \pdfsavepos
     \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}%
-    \box#1%
+    \unvbox#1%
     \pdfsavepos
     \write\p@rlocs{\string\@colstop{\the\pdflastxpos}{\the\pdflastypos}}%
     %\MSG{\dc@ref@rgs (\the\hsize) ->}%
@@ -656,7 +668,7 @@
 \let\p@rlinesgone\p@rlinesgoneMonoglot
 
 \def\this@pgno{}
-\let\par@items\cstackempty
+\def\par@items{,}   % \cstackempty but not defined yet
 \x@\newif\csname ifinp@r-\endcsname
 
 \def\calc@p@rlinesgone#1#2{%
@@ -665,13 +677,13 @@
   \trace{C}{#2: ( #1  / \the\baselineskip) -> \the\p@rlinesgone}%
 }
 
-\def\@parstart#1#2#3{
+\def\@parstart#1#2#3{%
   \prev@y=#3\relax
   \dimen1=\numexpr \prev@col@y - \prev@y\relax sp\relax
   \edef\prev@col@ht{\the\dimexpr \tot@col@ht - \dimen1\relax}%
   \trace{C}{@parstart \tot@col@ht - \the\dimen1 = \prev@col@ht}%
   \csname inp@r-\c@rrdstat true\endcsname
-  \x@\edef\csname baselineskip@\c@rrdstat\endcsname{#1}\relax\p@rlinesgone=1\relax\let\par@items\cstackempty}
+  \x@\xdef\csname baselineskip@\c@rrdstat\endcsname{#1}\relax\p@rlinesgone=1\relax\let\par@items\cstackempty}
 
 \def\@parend#1#2{%
   \this@y=#2\relax
@@ -679,13 +691,15 @@
   \csname inp@r-\c@rrdstat false\endcsname
 }
 
+\def\@parlen#1#2{}
+
 \def\@nontextstart#1#2{\def\n@ntextstart{#2}}%
 \def\@nontextstop#1#2{%
   \csname ifinp@r-\c@rrdstat\endcsname
     \dimen1=\dimexpr \n@ntextstart sp - #2 sp\relax
     \trace{C}{Non text for \n@ntextstart -#2 (=\the\dimen1)}%
-    \edef\tot@col@ht{\the\dimexpr \tot@col@ht -\dimen1\relax}
-    \edef\prev@col@ht{\the\dimexpr \prev@col@ht -\dimen1\relax}
+    \edef\tot@col@ht{\the\dimexpr \tot@col@ht -\dimen1\relax}%
+    \edef\prev@col@ht{\the\dimexpr \prev@col@ht -\dimen1\relax}%
   \fi
 }%
 
@@ -704,6 +718,7 @@
   \edef\prev@col@wd{#3}%
   \p@rlengthimportantfalse
 }
+\@@colstart{0pt}{0pt}{0pt}{0}{0}
 \def\@@colstop#1#2{%
   \edef\this@col@x{#1}%
   \edef\this@col@y{#2}%
@@ -725,7 +740,7 @@
 %interested in doing clever things with were not put
 %on the pending stack. Use a new stack, \par@items and
 %...  Do somthing with it. At the moment just moan.
-\def\check@pagefoot#1|#2|#3\E{
+\def\check@pagefoot#1|#2|#3\E{%
   \ifnum #3 < \this@col@y
   \dimen1=\this@col@y sp
   \advance \dimen1 by -#3 sp
@@ -839,7 +854,7 @@
     \dimen1=#6 \baselineskip % delay of the item
     \trace{C}{... -\the\dimen1}% 
     \advance\tmp@lines by -\dimen1
-    \edef\par@items{\cstackpush{\par@items}{#1|#2|\the\tmp@lines}}% Add end-point to stack checking.
+    \xdef\par@items{\cstackpush{\par@items}{#1|#2|\the\tmp@lines}}% Add end-point to stack checking.
     \tmp@lines=\prev@y
     \advance\tmp@lines by -\thing@y
     \divide\tmp@lines by \baselineskip
@@ -1013,8 +1028,11 @@
        \kern\ifRTL\rightskip\else\leftskip\fi}%
      %\ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
      %\x@\c@tcmd\x@{\the\ch@pterwd}{\t@std@lay}{2}%
+     \raise@test{chapter}%
+     \ifx\t@str@ise\else\ifnum \t@str@ise=1
+      \vadjust pre {\nobreak}% Prevent break before this line if the box is raised
+     \fi\fi
      \vadjust{\vbox to 0pt{\kern-\dp\str@tbox \kern-\ht\ch@pterbox              %(2)
-      \raise@test{chapter}%
       \ifx\t@str@ise\relax \else \kern-\t@str@ise\baselineskip \fi
       \ifRTL\let\n@xt\rightline\else\let\n@xt\leftline\fi
       \n@xt{\ifRTL\beginR\fi\box\ch@pterbox\ifRTL\endR\fi}\vss}%

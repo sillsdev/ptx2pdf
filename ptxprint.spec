@@ -40,16 +40,18 @@ a = Analysis(['python/scripts/ptxprint'],
                       + [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
                             ('Google-Noto-Emoji-Objects-62859-open-book.ico', '62859-open-book-icon(128).png', 
 							 'picLocationPreviews.png', 'default_cmyk.icc', 'cross_references.txt',
+							 'FRTtemplateBasic.txt', 'FRTtemplateAdvanced.txt',
 							 'Top1FalseFalse.png', 'Top1FalseTrue.png', 'Top2FalseFalse.png',
 							 'Top2FalseTrue.png', 'Top2TrueFalse.png', 'Top2TrueTrue.png',
 							 'Bottom1False.png', 'Bottom2False.png', 'Bottom2True.png')]
                       + [('python/lib/ptxprint/sfm/*.bz2', 'ptxprint/sfm')]
-                      + [('fonts/' + f, 'fonts/' + f) for f in ('Empties.ttf', 'SourceCodePro-Regular.ttf')]
+                      + [('fonts/' + f, 'fonts/' + f) for f in ('empties.ttf', 'SourceCodePro-Regular.ttf')]
                       + [('src/mappings/*.tec', 'ptx2pdf/mappings')],
 #					  + [('python/lib/ptxprint/mo/' + y +'/LC_MESSAGES/ptxprint.mo', 'mo/' + y + '/LC_MESSAGES') for y in os.listdir('python/lib/ptxprint/mo')],
              datas =    [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
-                            ('ptxprint.glade', 'template.tex', 'picCopyrights.json')]
-                      + [('python/lib/ptxprint/sfm/*.*y', 'ptxprint/sfm')]
+                            ('ptxprint.glade', 'template.tex', 'picCopyrights.json', 'sRGB.icc', 'default_cmyk.icc')]
+					  + sum(([('python/lib/ptxprint/{}/*.*y'.format(x), 'ptxprint/{}'.format(x))] for x in ('sfm', 'pdf', 'pdfrw', 'pdfrw/objects')), [])
+                      + [('python/lib/ptxprint/sfm/*.txt', 'ptxprint/sfm')]
                       + [('docs/inno-docs/*.txt', 'ptxprint')]
                       + [('src/*.tex', 'ptx2pdf'), ('src/ptx2pdf.sty', 'ptx2pdf'), ('src/usfm_sb.sty', 'ptx2pdf')],
              hiddenimports = ['_winreg'],
@@ -73,7 +75,7 @@ exe = EXE(pyz,
           upx_exclude = ['tcl'],
           runtime_tmpdir = None,
           windowed=True,
-          console = False,
+          console = True,
           icon="icon/Google-Noto-Emoji-Objects-62859-open-book.ico")
 coll = COLLECT(exe,
                a.binaries,

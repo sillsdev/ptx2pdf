@@ -2,7 +2,7 @@
 
 import argparse, sys, os, configparser
 import appdirs
-import site
+import site, logging
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     site.USER_BASE = os.path.join(os.path.expanduser("~"), ".local")
     if not hasattr(site, 'getuserbase'):
@@ -34,6 +34,16 @@ class DictAction(argparse.Action):
         (k, v) = values.split("=")
         vals[k] = v
 
+class StreamLogger:     # thanks to shellcat_zero https://stackoverflow.com/questions/19425736/how-to-redirect-stdout-and-stderr-to-logger-in-python
+    def __init__(self, logger, level):
+        self.logger = logger
+        self.level = level
+    def write(self, buf):
+        for line in buf.rstrip().splitlines():
+            self.logger.log(self.level, line.rstrip())
+    def flush(self):
+        pass
+
 parser = argparse.ArgumentParser()
 # parser.add_argument('-h','--help', help="show this help message and exit")
 parser.add_argument('pid',nargs="?",help="Project id or full path to a ptxprint.cfg file")
@@ -46,7 +56,8 @@ parser.add_argument('-b','--books',help='Space separated bookid list to set')
 parser.add_argument('-R','--runs',type=int,default=0,help="limit xetex runs")
 parser.add_argument('-L','--lang',help='Set UI language code')
 parser.add_argument('-m','--macros',help="Directory containing TeX macros (paratext2.tex)")
-parser.add_argument('-l','--logging',action="store_true",help="Output logging to terminal instead of logging window")
+parser.add_argument('-l','--logging',default="INFO",help="Enable logging level [DEBUG, *INFO*, WARN, ERROR]")
+parser.add_argument('--logfile',default='ptxprint.log',help='Set logging file [ptxprint.log] or "none"')
 parser.add_argument('--timeout',default=200,type=int,help='xetex runtime timeout')
 parser.add_argument('-T','--testing',action='store_true',help="Run in testing, output xdv")
 parser.add_argument('-f','--fontpath',action='append',help="Directory of fonts to include (repeatable)")
@@ -62,17 +73,32 @@ args = parser.parse_args()
 # We might need to do this AFTER reading in the user-config file (as the UI language needs to be read)
 # setup_i18n()
 
-if args.logging and getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-    errfile = open("ptxprint.log", "w")
-    sys.stdio = errfile
-    sys.stderr = errfile
+log = None
+logconffile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint_logging.cfg")
+if sys.platform == 'win32' and args.logfile == 'ptxprint.log':
+    args.logfile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint.log")
+if os.path.exists(logconffile):
+    logging.config.fileConfig(logconffile)
+    log = logging.getLogger('ptxprint')
+elif args.logging:
+    loglevel = getattr(logging, args.logging.upper(), None)
+    if isinstance(loglevel, int):
+        parms = {'level': loglevel, 'datefmt': '%d/%b/%Y %H:%M:%S', 'format': '%(asctime)s %(levelname)s:%(module)s(%(lineno)d) %(message)s'}
+        if args.logfile.lower != "none":
+            parms.update(filename=args.logfile, filemode="w") #, encoding="utf-8")
+        logging.basicConfig(**parms)
+    log = logging.getLogger('ptxprint')
+
+if log is not None and getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+    sys.stdio = StreamLogger(log, logging.INFO)
+    sys.stderr = StreamLogger(log, logging.ERROR)
 
 from ptxprint.utils import _, setup_i18n, get_ptsettings, pt_bindir, putenv
 from ptxprint.font import initFontCache, cachepath, writefontsconf
 
 fontconfig_path = writefontsconf()
 putenv("FONTCONFIG_FILE", fontconfig_path)
-if not args.print:
+if not args.print and not args.action:
     from ptxprint.gtkview import GtkViewModel, getPTDir, reset_gtk_direction
 
 from ptxprint.view import ViewModel, VersionStr, doError
@@ -100,6 +126,7 @@ else:
     if not os.path.exists(os.path.dirname(conffile)):
         os.makedirs(os.path.dirname(conffile))
     config.add_section("init")
+logging.debug("Loaded config")
 
 if args.lang is None:
     args.lang = getnsetlang(config)
@@ -144,6 +171,8 @@ if args.directory is not None:
 # Where to find the default for -p
 # HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Paratext\8:Settings_Directory
 
+logging.debug(f"project id={args.pid}, config={args.config}, directory={args.directory}")
+
 scriptsdir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
 if os.path.exists("/usr/share/ptx2pdf") and not os.path.exists(os.path.join(scriptsdir, "..", "..", "src")):
     scriptsdir = "/usr/share/ptx2pdf"
@@ -153,12 +182,13 @@ elif getattr(sys, 'frozen', False):
 else:
     macrosdir = os.path.join(scriptsdir, "..", "..", "src")
 
-def doit(printer, maxruns=0, noview=False):
+def doit(printer, maxruns=0, noview=False, nothreads=False):
     if not isLocked():
         if maxruns > 0:
             oldruns = args.runs
             args.runs = maxruns
         runjob = RunJob(printer, scriptsdir, args)
+        runjob.nothreads = nothreads
         runjob.doit(noview=noview)
         if maxruns > 0:
             args.runs = oldruns
@@ -186,17 +216,19 @@ if args.print or args.action is not None:
         mainw.setPrjid(args.pid)
         mainw.setConfigId(args.config or "Default")
     res = 0
-    initFontCache(nofclist=args.nofontcache)
+    logging.debug(f"Created viewmodel for {args.paratext}")
+    initFontCache(nofclist=args.nofontcache).wait()
+    logging.debug("Loaded fonts")
     if args.print:
         if args.books is not None and len(args.books):
             mainw.bookNoUpdate = True
             bl = args.books.split(" ")
             if len(bl) == 1:
-                mainw.set("cb_book", bl[0])
+                mainw.set("ecb_book", bl[0])
                 mainw.set("r_book", "single")
             elif len(bl) > 1:
                 mainw.set("t_booklist", args.books)
-                mainw.set("r_booK", "multiple")
+                mainw.set("r_book", "multiple")
         elif args.module is not None and len(args.module):
             mainw.set("r_book", "module")
             mainw.moduleFile = Path(args.module)
@@ -205,7 +237,7 @@ if args.print or args.action is not None:
                 mainw.set(k, v)
         mainw.savePics()
         mainw.saveStyles()
-        job = doit(mainw)
+        job = doit(mainw, nothreads=True)
         if job is not None:
             res = job.wait()
         else:
@@ -226,6 +258,7 @@ else:
         if args.define is not None:
             for k, v in args.define.items():
                 mainw.set(k, v)
+        logging.debug(f"Created gtkview for {args.paratext}")
         mainw.run(doit)
         if mainw.lang != args.lang:
             if not sys.platform.startswith("win"):

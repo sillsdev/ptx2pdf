@@ -87,7 +87,8 @@ def f_(s):
 def refKey(r, info=""):
     m = re.match(r"^(\d?\D+)?\s*(\d*)\.?(\d*)(\S*?)(\s+.*)?$", r)
     if m:
-        return (books.get(m.group(1)[:3], 100), int(m.group(2) or 0), int(m.group(3) or 0), m.group(1)[3:], info, m.group(4))
+        bkid = m.group(1) or ""
+        return (books.get(bkid[:3], 100), int(m.group(2) or 0), int(m.group(3) or 0), bkid[3:], info, m.group(4))
     else:
         return (100, 0, 0, r, info, "")
 

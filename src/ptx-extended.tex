@@ -86,7 +86,6 @@
   \edef\thisRGB{#2}%
   \ifNoTransparency
     \ifdim 1pt = #1 pt\relax\else
-      \tracingmacros=1
       \edef\thisRGB{\x@\remove@transpancy\thisRGB|\thisalpha\noexpand\E }%
       \edef\thisalpha{1}%
       \MSG{* Transparency is disabled, anything behind transparent item will be hidden. #2 -> \thisRGB}%
@@ -694,10 +693,8 @@
    \ifeof\t@stread 
      \m@kepl@ceholder{\dimen0}{0.618 \dimen0}{#1}%
    \else\closein\t@stread
-    \tracingassigns=1
     \let\picfilecomm@nd=\XeTeXpicfile
     \expandafter\ch@ckpdf#1..\endf@lename
-    \tracingassigns=0
     \setbox0\hbox{\picfilecomm@nd #1 #2}%
     \global\dimen3=\wd0
     \global\dimen4=\ht0
