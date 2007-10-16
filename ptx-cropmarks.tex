@@ -1,0 +1,86 @@
+% cropmark support for the ptx2pdf package
+
+\catcode`\@=11
+
+\newif\ifCropMarks
+
+\font\idf@nt=cmtt10 scaled 700
+
+\newbox\topcr@p \newbox\bottomcr@p
+\def\makecr@ps{%
+  \global\setbox\topcr@p=\vbox to 0pt{\vss
+    \hbox to \PaperWidth{%
+      \kern -30pt
+      \vrule height .2pt depth .2pt width 25pt
+      \kern 4.8pt
+      \vrule height 30pt depth -5pt width .4pt
+      \hss
+      \raise20pt\vtop{\hsize\PaperWidth
+        \lineskiplimit=0pt \baselineskip=10pt
+        \leftskip=0pt plus 1fil \rightskip=\leftskip \parfillskip=0pt
+        \noindent \beginL\idf@nt \jobname\ -- \printd@te\endL}%
+      \hss
+      \vrule height 30pt depth -5pt width .4pt
+      \kern 4.8pt
+      \vrule height .2pt depth .2pt width 25pt
+      \kern -30pt
+    }%
+  }% end \vbox for \topcr@p
+  \global\setbox\bottomcr@p=\vbox to 0pt{%
+    \hbox to \PaperWidth{%
+      \kern -30pt
+      \vrule height .2pt depth .2pt width 25pt
+      \kern 4.8pt
+      \vrule height -5pt depth 30pt width .4pt
+      \hss
+      \vrule height -5pt depth 30pt width .4pt
+      \kern 4.8pt
+      \vrule height .2pt depth .2pt width 25pt
+      \kern -30pt
+    }%
+    \vss
+  }% end \vbox for \bottomcr@p
+}
+
+\def\printd@te{\number\year.%
+  \ifnum\month<10 0\fi \number\month.%
+  \ifnum\day<10 0\fi \number\day\ --
+  \count255=\time \divide\count255 by 60
+  \ifnum\count255<10 0\fi \number\count255:%
+  \multiply\count255 by 60 \advance\count255 by -\time
+  \count255=-\count255
+  \ifnum\count255<10 0\fi \number\count255
+}
+
+\def\shipwithcr@pmarks#1{%
+  \dimen0=0\ifCropMarks .5\fi in
+  \advance\pdfpagewidth by 2\dimen0
+  \advance\pdfpageheight by 2\dimen0
+  \hoffset=-1in \voffset=-1in
+  \shipout\vbox to 0pt{
+    \kern \baselineskip % make room for headline
+    \offinterlineskip
+    \vbox to \pdfpageheight{\vss
+      \hbox to \pdfpagewidth{\hss #1\hss}\vss}
+    \vss
+    \ifCropMarks
+      \ifvoid\topcr@p \makecr@ps \fi
+      \vbox to 0pt{
+        \kern\dimen0
+        \moveright\dimen0\copy\topcr@p
+        \kern\PaperHeight
+        \moveright\dimen0\copy\bottomcr@p
+        \vss
+      }
+    \fi
+  }%
+}
+
+\def\plainoutput{\shipwithcr@pmarks
+    {\vbox{\makeheadline\pagebody\makefootline}}%
+  \advancepageno
+  \ifnum\outputpenalty>-\@MM \else\dosupereject\fi}
+
+\catcode`\@=12
+
+\endinput

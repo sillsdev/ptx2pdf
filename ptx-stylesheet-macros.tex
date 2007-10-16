@@ -1,0 +1,713 @@
+%% Macros to read Paratext stylesheets and define TeX control sequences
+%% for all markers present in the file
+
+\catcode`\@=11
+
+\let\x@=\expandafter
+\TeXXeTstate=1
+
+\def\MSG{\immediate\write16 }
+
+\def\TRACE#1{} % default - consume messages
+%\let\TRACE=\MSG % use this to echo them
+
+\ifx\regular\undefined   \def\regular{"Times New Roman"}      \fi
+\ifx\bold\undefined      \def\bold{"Times New Roman/B"}       \fi
+\ifx\italic\undefined    \def\italic{"Times New Roman/I"}     \fi
+\ifx\bolditalic\undefined\def\bolditalic{"Times New Roman/BI"}\fi
+
+\def \Marker         #1\relax{\def\m@rker{#1}}
+\def \Endmarker      #1\relax{\defp@ram{endmarker}{#1}}
+\def \Name           #1\relax{}
+\def \Description    #1\relax{}
+\def \OccursUnder    #1\relax{}
+\let \Occursunder\OccursUnder
+\def \Rank           #1\relax{}
+\def \TextType       #1\relax{\lowercase{\defp@ram{type}{#1}}}
+\let \Texttype\TextType
+\def \TextProperties #1\relax{\lowercase{\defp@ram{properties}{#1}}}
+\let \Textproperties\TextProperties
+\def \StyleType      #1\relax{\lowercase{\def\styl@type{#1}}\m@kestyle}
+\let \Styletype=\StyleType
+\def \FontSize       #1\relax{\defp@ram{fontsize}{#1}}
+\let \Fontsize\FontSize
+\def \FontName       #1\relax{\defp@ram{fontname}{#1}}
+\let \Fontname\FontName
+\def \FirstLineIndent#1\relax{\defp@ram{firstindent}{#1}}
+\let \Firstlineindent\FirstLineIndent
+\def \LeftMargin     #1\relax{\defp@ram{leftmargin}{#1}}
+\let \Leftmargin\LeftMargin
+\def \RightMargin    #1\relax{\defp@ram{rightmargin}{#1}}
+\let \Rightmargin\RightMargin
+\def \Italic         {\defp@ram{italic}{true}}
+\let \italic\Italic
+\def \Bold           {\defp@ram{bold}{true}}
+\let \bold\Bold
+\def \Superscript    {\defp@ram{superscript}{true}}
+\let \superscript\Superscript
+\def \Underline      {}
+\let \underline\Underline
+\def \NotRepeatable  {}
+\let \Notrepeatable\NotRepeatable
+\def \SpaceBefore    #1\relax{\defp@ram{spacebefore}{#1}}
+\let \Spacebefore\SpaceBefore
+\def \SpaceAfter     #1\relax{\defp@ram{spaceafter}{#1}}
+\let \Spaceafter\SpaceAfter
+\def \Color          #1\relax{}
+\let \color\Color
+\def \Justification  #1\relax{\lowercase{\defp@ram{justification}{#1}}}
+\def \CallerStyle    #1\relax{\defp@ram{callerstyle}{#1}}
+
+\def\defp@ram#1#2{\x@\def\csname\m@rker:#1\endcsname{#2}}
+\def\getp@ram#1#2{\edef\p@ram{\csname#2:#1\endcsname}}
+
+\def\defp@rstyle#1{\x@\def\csname#1\endcsname{\p@rstyle{#1}}}
+\def\defch@rstyle#1{\x@\def\csname#1\endcsname{\ch@rstyle{#1}}}
+\def\defn@testyle#1{\x@\def\csname#1\endcsname{\n@testyle{#1}}\m@ken@tecl@ss{#1}}
+
+\def\m@ken@tecl@ss#1{%
+  \x@\n@tecl@sses\x@{\the\n@tecl@sses \\{#1}}%
+  \x@\n@winsert\csname note-#1\endcsname
+  \s@tn@tep@rams{#1}%
+}
+\let\n@winsert=\newinsert
+\newtoks\n@tecl@sses
+
+\def\s@tn@tep@rams#1{%
+  \x@\count\csname note-#1\endcsname=1000
+  \x@\skip\csname note-#1\endcsname=\AboveNoteSpace
+  \x@\dimen\csname note-#1\endcsname=\maxdimen
+}
+\newdimen\AboveNoteSpace \AboveNoteSpace=\medskipamount
+
+\def\m@kestyle{{\uccode`\|=`\\\uppercase{\message{|\m@rker}}}
+ \ifx\styl@type\P@ra \x@\defp@rstyle\x@{\m@rker}
+ \else\ifx\styl@type\Ch@r \x@\defch@rstyle\x@{\m@rker}
+ \else\ifx\styl@type\N@te \x@\defn@testyle\x@{\m@rker}
+ \else \message{unknown style type \styl@type}
+ \fi\fi\fi}
+\def\P@ra{paragraph}
+\def\Ch@r{character}
+\def\N@te{note}
+
+\newif\if@ntromarker
+\newif\if@ntro \newif\ift@tle \newif\ifb@dy
+\newif\ifd@ublecols \d@ublecolsfalse
+\def\t@stintro#1#2\relax{\if#1i\global\@ntromarkertrue\else\global\@ntromarkerfalse\fi}
+\def\st@rtintro{\TRACE{st@rtintro}\if@ntro\else
+  \ifnum\IntroColumns=\c@rrentcols\else
+    \ifnum\IntroColumns=2 \doublecolumns\else\singlecolumn\fi
+  \fi
+  \global\@ntrotrue\global\t@tlefalse\global\b@dyfalse\fi}
+\def\st@rttitle{\TRACE{st@rttitle}\ift@tle\else
+  \ifnum\TitleColumns=\c@rrentcols\else
+    \ifnum\TitleColumns=2 \doublecolumns\else\singlecolumn\fi
+  \fi
+  \global\t@tletrue\global\@ntrofalse\global\b@dyfalse\fi}
+\def\st@rtbody{\ifb@dy\else\TRACE{st@rtbody}%
+  \ifnum\BodyColumns=\c@rrentcols
+    \penalty-200\vskip\baselineskip
+  \else
+    \ifnum\BodyColumns=2 \doublecolumns\else\singlecolumn\fi
+  \fi
+  \global\b@dytrue\global\@ntrofalse\global\t@tlefalse\fi}
+\newcount\c@rrentcols \global\c@rrentcols=1
+
+\newif\ifhe@dings
+\newbox\he@dingbox
+\def\endhe@dings{\ifhe@dings\TRACE{endhe@dings}%
+  \makecutouts \endgraf
+  \egroup \cutoutcarryover
+  \gridb@x\he@dingbox
+  \global\he@dingsfalse
+ \fi
+}
+
+\def\gridb@x#1{%
+% \setbox0=\hbox{\kern-#1pt\vrule\kern#1pt\kern-.4pt\box#1\kern-.4pt\vrule}%
+%\MSG{before gridbox: ht0=\the\ht0; dp0=\the\dp0}
+ \setbox0=\box#1%
+%{\showboxbreadth=100 \showboxdepth=10 \showbox0 }%
+ \dimen4=\dp0
+ \dimen2=\ht0 \advance\dimen2 by \dp0
+ \dimen0=0\baselineskip
+ \loop \ifdim\dimen0<\dimen2
+   \advance\dimen0 by \baselineskip
+%   \line{\kern-5pt\special{color push rgb 1 0 0}.\hfil\special{color pop}}\nobreak \repeat
+   \line{}\nobreak \repeat
+% \line{\kern-5pt\special{color push rgb 0 1 0}.\hfil\special{color pop}}\nobreak
+ \line{}\nobreak
+ \setbox0=\vbox to 0pt{\kern-\ht0\unvbox0}
+ \dp0=\dimen4
+%\MSG{ after gridbox: dimen0=\the\dimen0; dp0=\the\dp0}
+ \unvbox0 \nobreak
+}
+
+\def\par{\ifhmode \TRACE{par}%
+ \makecutouts
+ \csname end-\m@rker\endcsname
+ \endgraf \cutoutcarryover \fi}
+
+\newif\ifhe@dingstyle
+\def\p@rstyle#1{\TRACE{p@rstyle:#1}%
+ \ifsk@pping \egroup \fi
+ \t@stpublishability{#1}%
+ \ifn@npublishable
+  \setbox\j@nkbox=\vbox\bgroup \sk@ppingtrue
+ \else
+  \ifhmode\unskip\fi
+  \end@llcharstyles
+  \par
+  \getp@ram{spaceafter}{\m@rker}%
+  \x@\ifx\p@ram\relax \else
+    \ifhe@dings\nobreak\fi \vskip\p@ram \VerticalSpaceUnit
+  \fi
+  \resetp@rstyle
+  \csname after-\m@rker\endcsname
+  \gdef\m@rker{#1}
+  \csname before-\m@rker\endcsname
+  \x@\t@stintro\m@rker\relax
+  \global\he@dingstylefalse
+  \getp@ram{type}{\m@rker}\ifx\p@ram\t@tle \mark{\t@tle}\fi
+  \ifx\p@ram\t@tle
+    \ift@tle\else\ifhe@dings\endhe@dings\fi\fi
+    \st@rttitle
+    \global\he@dingstyletrue 
+  \else\ifx\p@ram\s@ction
+    \ift@tle\ifhe@dings\endhe@dings\fi\fi
+    \if@ntromarker\st@rtintro\else\st@rtbody\fi
+    \global\he@dingstyletrue
+  \else\ifx\p@ram\oth@r
+    \ift@tle\ifhe@dings\endhe@dings\fi\fi
+    \if@ntromarker\st@rtintro\else\st@rtbody\fi
+    \if@ntromarker\else\global\he@dingstyletrue\fi
+  \else
+    \if@ntromarker\st@rtintro\else\st@rtbody\fi
+  \fi\fi\fi
+  \ifhe@dingstyle\TRACE{headingstyle true}%
+    \ifhe@dings\else
+      \setbox\he@dingbox=\vbox\bgroup\global\he@dingstrue
+        \linepenalty=1000
+    \fi
+    \nobreak
+  \else\TRACE{headingstyle false}%
+    \ifhe@dings\endhe@dings\fi
+  \fi
+  \getp@ram{spacebefore}{\m@rker}%
+  \x@\ifx\p@ram\relax \else
+    \ifhe@dings\nobreak\fi \vskip\p@ram \VerticalSpaceUnit
+  \fi
+  \everypar={%
+   \ifRTL\beginR\fi
+   \getp@ram{justification}{\m@rker}%
+   \ifx\p@ram\c@nter
+    \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
+   \else\ifx\p@ram\l@ft
+    \rightskip=0pt plus \textwidth
+   \else\ifx\p@ram\r@ght
+    \leftskip=0pt plus \textwidth \parfillskip=0pt
+   \fi\fi\fi
+   \getp@ram{leftmargin}{\m@rker}%
+   \x@\ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
+   \getp@ram{rightmargin}{\m@rker}%
+   \x@\ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
+   \s@tfont{\m@rker}%
+   \allowp@rindenttrue
+   \c@ncelfirstversefalse
+   \ifch@pter
+    \getp@ram{type}{\m@rker}%
+    \ifx\p@ram\v@rsetext
+     \m@kechapterbox
+     \kern-\wd\ch@pterbox\box\ch@pterbox
+     \global\ch@pterfalse
+     \ifIndentAtChapter\else \allowp@rindentfalse \fi
+     \c@ncelfirstversetrue
+     \ifx\XeTeXversion\undefined \else
+      \special{pdf:dest (\b@ok.\ch@pter) [@thispage /Fit]}%
+      \special{pdf:outline 0 << /Title (\b@ok\space\ch@pter)
+               /A << /S /GoTo /D (\b@ok.\ch@pter) >> >>}%
+     \fi
+    \fi
+   \fi
+   \ifallowp@rindent
+    \getp@ram{firstindent}{\m@rker}%
+    \x@\ifx\p@ram\relax \else \kern\p@ram \IndentUnit \fi
+   \fi
+   \global\p@ranesting=1
+   \csname start-\m@rker\endcsname
+   \ifc@ncelfirstverse \spacefactor=0\n@wchaptersf \fi
+  }%
+ \fi}
+\newif\ifRTL
+\newif\ifallowp@rindent
+\newif\ifc@ncelfirstverse
+\newif\ifIndentAtChapter
+\newif\ifOmitVerseNumberOne \OmitVerseNumberOnefalse
+\def\n@wchaptersf{998}
+
+\newif\ifsk@pping \newif\ifn@npublishable \newbox\j@nkbox
+\def\t@stpublishability#1{\n@npublishablefalse
+ \getp@ram{properties}{#1}%
+ \x@\t@stnonpub\p@ram nonpublishable!}
+\def\t@stnonpub #1nonpublishable#2!{%
+ \def\t@st{#2}\ifx\t@st\empty\else\n@npublishabletrue\fi}
+
+\def\m@kechapterbox{%
+ \setbox\ch@pterbox=\hbox{\s@tfont{c}\ch@pter}%
+ \setbox\ch@pterbox=\hbox{\lower\baselineskip\box\ch@pterbox
+   \box\ch@pternote\kern.2em}%
+ \ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
+ \x@\let\x@\d@lay\csname delay-\id@@@.\ch@pter\endcsname
+ \x@\c@tcmd\x@{\the\wd\ch@pterbox}{0\d@lay}{2}%
+ \dp\ch@pterbox=0pt
+ \setbox\ch@pterbox=\hbox{\ifRTL\kern\rightskip\fi
+   \box\ch@pterbox
+   \ifRTL\else\kern\leftskip\fi}%
+}
+\newbox\ch@pterbox
+\newbox\ch@pternote
+\def\DelayChapter#1#2#3{\uppercase{\def\ucb@@k{#1}}%
+  \x@\def\csname delay-\ucb@@k.#2\endcsname{#3}}
+
+\def\v@rsetext{versetext}
+\def\c@nter{center}
+\def\l@ft{left}
+\def\r@ght{right}
+\def\t@tle{title}
+\def\s@ction{section}
+\def\oth@r{other}
+\def\resetp@rstyle{%
+ \leftskip=0pt \rightskip=\leftskip
+ \parfillskip=0pt plus 1fil
+ \parindent=0pt }
+
+\def\ch@rstyle#1{\TRACE{ch@rstyle:#1}%
+ \def\newch@rstyle{#1}%
+ \catcode32=12\relax
+ \futurelet\n@xt\doch@rstyle}
+\def\doch@rstyle{\catcode32=10\relax
+ \if\n@xt*\let\n@xt\endch@rstyle\else\let\n@xt\startch@rstyle\fi
+ \n@xt}
+
+\catcode`\~=12 \lccode`\~=32 % we'll use \lowercase{~} when we need a cat-12 space
+\lowercase{
+ \def\startch@rstyle~{\TRACE{startch@rstyle}%
+  \csname before-\newch@rstyle\endcsname
+  \bgroup
+   \let\thisch@rstyle=\newch@rstyle
+   \s@tfont{\thisch@rstyle}%
+   \ifnum\n@tenesting>0 \global\advance\n@tenesting by 1
+   \else \global\advance\p@ranesting by 1 \fi
+   \csname start-\thisch@rstyle\endcsname}
+ \def\endch@rstyle*{\TRACE{endch@rstyle}%
+   \csname end-\thisch@rstyle\endcsname
+   \x@\global\x@\let\x@\n@xt
+    \csname after-thisch@rstyle\endcsname
+   \ifnum\n@tenesting>0 \global\advance\n@tenesting by -1
+   \else \global\advance\p@ranesting by -1 \fi
+  \egroup
+  \n@xt}
+}
+\newcount\n@tenesting \newcount\p@ranesting
+\def\sethook#1#2#3{\x@\def\csname #1-#2\endcsname{#3}}
+
+\def\end@llcharstyles{%
+ \ifnum\n@tenesting>0 \doendch@rstyles\n@tenesting
+  \else \doendch@rstyles\p@ranesting \fi}
+\def\doendch@rstyles#1{\@LOOP \ifnum#1>1 \endch@rstyle*\@REPEAT}
+\def\@LOOP #1\@REPEAT{\gdef\@BODY{#1}\@ITERATE}
+\def\@ITERATE{\@BODY \global\let\@NEXT\@ITERATE
+ \else \global\let\@NEXT\relax \fi \@NEXT}
+
+\def\n@testyle#1{\TRACE{n@testyle:#1}%
+ \def\newn@testyle{#1}%
+ \catcode32=12\relax
+ \futurelet\n@xt\don@testyle}
+\def\don@testyle{\catcode32=10\relax 
+ \if\n@xt*\let\n@xt\endn@testyle\else\let\n@xt\startn@testyle\fi
+ \n@xt}
+
+\lowercase{
+ \def\startn@testyle~#1 {\TRACE{startn@testyle}%
+  \def\t@st{#1}%
+  \ifx\t@st\pl@s
+    \inc@utonum{\newn@testyle}%
+    \x@\gen@utonum\x@{\newn@testyle}%
+  \else\ifx\t@st\min@s \def\them@rk{}%
+  \else \def\them@rk{#1}%
+  \fi\fi
+  \begingroup\resetp@rstyle
+  \m@kenote{\newn@testyle}{\everypar={}\cancelcutouts
+   \getp@ram{callerstyle}{\newn@testyle}%
+   \x@\ifx\p@ram\relax\def\c@llerstyle{v}\else\edef\c@llerstyle{\p@ram}\fi
+   \hbox{\h@ndlesuperscript{\c@llerstyle}{\s@tfont{\c@llerstyle}\them@rk}}}\bgroup
+  \global\n@tenesting=1\relax
+  \csname start-\newn@testyle\endcsname
+  \ignorespaces
+ }
+}
+
+\def\endn@testyle*{\TRACE{endn@testyle}%
+ \end@llcharstyles
+ \csname end-\newn@testyle\endcsname
+ \egroup
+ \global\n@tenesting=0 \endgroup}
+
+\def\inc@utonum#1{\count255=0\csname autonum #1\endcsname
+ \advance\count255 by 1 \x@\xdef\csname autonum #1\endcsname{\number\count255}}
+
+%% overridden by ptx-callers.tex
+\ifx\gen@utonum\undefined
+ \def\gen@utonum#1{%
+  \count255=0\csname autonum #1\endcsname
+  \loop \ifnum\count255>26 \advance\count255 by -26 \repeat
+  \advance\count255 by 96 \edef\them@rk{\char\count255}}
+\fi
+
+\def\pl@s{+}
+\def\min@s{-}
+\def\xr@fstyle{x}
+\def\fnc@ller#1{\s@tfont{v}#1}
+
+\def\wlog#1{\immediate\write-1{#1}}
+\def\s@tfont#1{%
+ \x@\ifx\csname font<#1>\endcsname \relax
+  \let\typef@ce=\regular
+  \getp@ram{fontname}{#1}%
+  \x@\ifx\p@ram\relax
+	  \getp@ram{superscript}{#1}%
+	  \dimen0=\ifx\p@ram\tru@ \SuperscriptFactor\fi\FontSizeUnit
+	  \getp@ram{bold}{#1}%
+	  \ifx\p@ram\tru@
+		\let\typef@ce=\bold
+		\getp@ram{italic}{#1}%
+		\ifx\p@ram\tru@ \let\typef@ce=\bolditalic \fi
+	  \else
+		\getp@ram{italic}{#1}%
+		\ifx\p@ram\tru@ \let\typef@ce=\italic \fi
+	  \fi
+  \else
+   \edef\typef@ce{"\p@ram"}%
+  \fi
+  \getp@ram{fontsize}{#1}%
+  \x@\global\x@\font
+    \csname font<#1>\endcsname=\typef@ce\space at \p@ram \dimen0
+ \fi
+ \csname font<#1>\endcsname
+}
+\def\tru@{true}
+\def\SuperscriptFactor{0.75}
+
+\def\h@ndlesuperscript#1#2{%
+  \getp@ram{superscript}{#1}%
+    \ifx\p@ram\tru@
+      \setbox0=\hbox{#2}%
+      \raise.75ex\box0
+    \else\hbox{#2}\fi
+}
+
+\lowercase{
+ \def\@ddcvhooks{
+  \let\@V=\v
+  \def\@v@ ##1 {\gdef\v@rse{##1}%
+   \x@\spl@tverses\v@rse--\relax
+   \c@ncelfirstversefalse
+   \ifOmitVerseNumberOne \ifnum\spacefactor=998 \c@ncelfirstversetrue \fi \fi
+   \ifc@ncelfirstverse\else \h@ndlesuperscript{v}{\@V~\printv@rse\@V*}\kern.2em \fi
+   \egroup
+   \m@rkverse
+   \the\v@rsehooks
+   \gdef\reference{\ch@pter:\v@rse}}
+  \def\v{\csname before-v\endcsname
+   \leavevmode
+   \ifdim\lastkern=-1sp \let\ll@p=\llap
+   \else \let\ll@p=\relax \fi % hanging verse number?
+   \ll@p\bgroup\m@kedigitsother\@v@}
+  \let\@C=\c
+  \def\@c@ ##1 {\ifsk@pping \egroup \fi
+   \gdef\ch@pter{##1}\gdef\v@rse{}\m@kedigitsletters
+   \ifOmitChapterNumber\else
+    \ifx\ch@plabel\empty \global\ch@ptertrue 
+    \else \p@rstyle{cl}\ch@plabel\ \ch@pter\fi
+   \fi}
+  \def\c{\m@kedigitsother\@c@}
+  \ifnum\dropnumbersize=0
+    \getp@ram{fontsize}{p}\count255=\p@ram \multiply\count255 by 2
+    \getp@ram{fontsize}{c}\dropnumbersize=\p@ram
+    \ifnum\dropnumbersize<\count255
+      \s@tfont{c}\setbox0=\hbox{0123456789}
+      \x@\let\csname font<c>\endcsname=\relax
+      \s@tfont{p}\dimen0=\fontdimen5\font
+      \advance\dimen0 by \baselineskip
+      \multiply\dimen0 by 100 \divide\dimen0 by \ht0
+      \multiply\dimen0 by \dropnumbersize \divide\dimen0 by 100
+      \dropnumbersize=\dimen0
+    \fi
+  \fi
+  \def\m@rker{c}\defp@ram{fontsize}{\the\dropnumbersize}
+ }
+}
+\newif\ifOmitChapterNumber
+\def\printv@rse{\v@rsefrom\ifx\v@rsefrom\v@rseto\else\endash\v@rseto\fi}
+\def\hangversenumber{\kern-1sp\relax}
+\def\@ne{1}
+
+\newcount\dropnumbersize
+
+\newtoks\v@rsehooks
+\def\addtoversehooks#1{\x@\v@rsehooks\x@{\the\v@rsehooks #1}}
+
+\newif\ifch@pter \def\ch@plabel{}
+\def\m@kedigitsletters{\catcode`0=\el@ven \catcode`1=\el@ven \catcode`2=\el@ven \catcode`3=\el@ven
+ \catcode`4=\el@ven \catcode`5=\el@ven \catcode`6=\el@ven \catcode`7=\el@ven
+ \catcode`8=\el@ven \catcode`9=\el@ven \relax}
+\def\m@kedigitsother{\catcode`0=\tw@lve \catcode`1=\tw@lve \catcode`2=\tw@lve \catcode`3=\tw@lve
+ \catcode`4=\tw@lve \catcode`5=\tw@lve \catcode`6=\tw@lve \catcode`7=\tw@lve
+ \catcode`8=\tw@lve \catcode`9=\tw@lve \relax}
+\def\el@ven{11}
+\def\tw@lve{12}
+
+\def\b@ok{BOOK}
+\def\ch@pter{}
+\def\v@rse{}
+\def\m@rkverse{\mark{\b@ok:\ch@pter:\v@rse}}
+
+\begingroup
+\obeylines%
+\gdef\@ddspecialhooks{%
+ \let\@H=\h%
+ \def\h{\bgroup\obeylines\@h}%
+ \def\@h ##1^^M{\gdef\b@ok{##1}\egroup}%
+ \let\@CL=\cl%
+ \def\cl{\bgroup\obeylines\@cl}%
+ \def\@cl ##1^^M{\gdef\ch@plabel{##1}\egroup}%
+ \let\@ID=\id%
+ \def\id{\bgroup\obeylines\@id}%
+ \def\@id ##1^^M{\gdef\c@rrID{##1}\uppercase{\@@id##1ZZZ\end}\egroup}%
+ \let\fig=\@fig%
+}%
+\endgroup
+\def\@@id#1#2#3#4\end{\gdef\id@@@{#1#2#3}}
+\def\@fig #1\fig*{\d@figure{#1}}
+
+\def\f@rstref#1{\edef\t@st{#1}\x@\extr@ctfirst\t@st\relax
+ \ifx\@book\empty\else\@book\ \@chapter\ifVerseRefs\cvs@p\@verse\fi\fi}
+\def\l@stref#1{\edef\t@st{#1}\x@\extr@ctlast\t@st\relax
+ \ifx\@@book\empty\else\@@book\ \@@chapter\ifVerseRefs\cvs@p\@@verse\fi\fi}
+\def\r@ngerefs#1#2{%
+ \edef\t@st{#1}\x@\extr@ctfirst\t@st\relax
+ \edef\t@st{#2}\x@\extr@ctlast\t@st\relax
+ \ifx\@book\empty\else
+ \@book\ 
+ \ifVerseRefs
+  \ifx\@chapter\empty\else\@chapter\cvs@p\fi\@verse
+  \ifx\@book\@@book
+   \ifx\@chapter\@@chapter
+    \ifx\@verse\@@verse\else\ranges@p\@@verse\fi
+   \else\ranges@p\@@chapter\cvs@p\@@verse\fi
+  \else\ranges@p\@@book\ \@@chapter\cvs@p\@@verse\fi
+ \else
+  \ifx\@chapter\empty\else
+   \@chapter
+   \ifx\@chapter\@@chapter\else
+    \setbox0=\hbox{\tracinglostchars=0
+     \global\c@untA=0\@chapter \global\c@untB=0\@@chapter}%
+    \advance\c@untA by 1
+    \ifnum\c@untA=\c@untB \pairs@p \else \ranges@p \fi
+    \@@chapter
+   \fi
+  \fi
+ \fi\fi}
+\newcount\c@untA \newcount\c@untB
+\newif\ifVerseRefs
+\def\ranges@p{\kern.1em\endash\kern.1em}
+%\def\pairs@p{,\kern.2em}
+\let\pairs@p\ranges@p
+\def\cvs@p{\hbox{:}}
+\def\endash{\char"2013\relax}
+
+\def\extr@ctfirst#1:#2:#3\relax{%
+ \def\@book{#1}\def\@chapter{#2}\def\t@st{#3}%
+ \x@\spl@tverses\t@st--\relax
+ \edef\@verse{\v@rsefrom}}
+\def\extr@ctlast#1:#2:#3\relax{%
+ \def\@@book{#1}\def\@@chapter{#2}\def\t@st{#3}%
+ \x@\spl@tverses\t@st--\relax
+ \edef\@@verse{\v@rseto}}
+\def\spl@tverses#1-#2-#3\relax{%
+ \edef\v@rsefrom{#1}\edef\v@rseto{#2}%
+ \ifx\v@rseto\empty\let\v@rseto=\v@rsefrom\fi}
+
+\newif\ifc@ntinue \c@ntinuetrue
+\newread\styl@sheet
+\def\stylesheet#1{
+ \openin\styl@sheet=#1
+ \ifeof\styl@sheet\message{Paratext stylesheet #1 not found!}\else
+   \message{Reading Paratext stylesheet #1...}%
+   \endlinechar=-1
+   \catcode`\#=5 % paratext comment char
+   \loop
+    \read\styl@sheet to \th@line
+    \th@line \relax
+    \ifeof\styl@sheet \c@ntinuefalse \fi
+    \ifc@ntinue\repeat
+   \endlinechar=13
+   \s@tupsizes
+   \@ddcvhooks
+   \@ddspecialhooks
+   \catcode`\#=6 % restore default TeX catcode
+ \fi}
+
+\def\ptxfile#1{
+ \openadjlist "#1.adj"
+ \openpiclist "#1.piclist"
+ %\catcode`\$=12
+ \catcode`\^=12 \catcode`\_=12 % make these printable
+ \catcode`\&=12 \catcode`\~=12
+ \catcode`\#=12 %\catcode`\%=12
+ \catcode`\{=12 \catcode`\}=12
+ \catcode`\/=\active
+ \catcode13=10
+ \m@kedigitsletters
+ \input "#1" \ifsk@pping\egroup\fi
+ \catcode13=5
+ \closepiclist
+ \closeadjlist
+ \catcode`\/=12
+ \catcode`\#=6 \catcode`\%=14 % restore TeX meanings for those we might use
+ \catcode`\{=1 \catcode`\}=2
+ \singlecolumn
+ \pagebreak}
+
+\catcode`\/=\active
+\def/{\futurelet\n@xt\sl@sh}
+\def\sl@sh{\ifx\n@xt/\let\n@xt\sl@shbreak\else\let\n@xt\sl@shprint\fi\n@xt}
+\def\sl@shbreak/{\penalty-250\ }
+\def\sl@shprint{\char`\/}
+\catcode`\/=12
+
+\newtoks\oddhead
+\newtoks\evenhead
+\newtoks\titlehead
+\headline={{%
+ \pl@ceborder
+ \s@tfont{h}%
+ \edef\t@st{\p@gefirstmark}%
+ \global\rhr@letrue
+ \ifx\t@st\empty \hfil \global\rhr@lefalse \else
+  \ifx\t@st\t@tle \the\titlehead \global\rhr@lefalse \else
+  \ifodd\pageno \the\oddhead \else \the\evenhead
+  \fi\fi\fi}}
+\oddhead={\rlap{\RHoddleft}\hfil\RHoddcenter\hfil\llap{\RHoddright}}
+\evenhead={\rlap{\RHevenleft}\hfil\RHevencenter\hfil\llap{\RHevenright}}
+\titlehead={\rlap{\RHtitleleft}\hfil\RHtitlecenter\hfil\llap{\RHtitleright}}
+
+\newtoks\oddfoot
+\newtoks\evenfoot
+\newtoks\titlefoot
+\footline={{%
+ \s@tfont{h}%
+ \edef\t@st{\p@gefirstmark}%
+ \ifx\t@st\empty \hfil \else
+  \ifx\t@st\t@tle \the\titlefoot \else
+  \ifodd\pageno \the\oddfoot \else \the\evenfoot
+  \fi\fi\fi}}
+\oddfoot={\rlap{\RFoddleft}\hfil\RFoddcenter\hfil\llap{\RFoddright}}
+\evenfoot={\rlap{\RFevenleft}\hfil\RFevencenter\hfil\llap{\RFevenright}}
+\titlefoot={\rlap{\RHtitleleft}\hfil\RFtitlecenter\hfil\llap{\RHtitleright}}
+
+\def\firstref{\ifRTL\beginR\fi\f@rstref{\p@gefirstmark}\ifRTL\endR\fi}
+\def\lastref{\ifRTL\beginR\fi\l@stref{\p@gebotmark}\ifRTL\endR\fi}
+\def\rangeref{\ifRTL\beginR\fi\r@ngerefs{\p@gefirstmark}{\p@gebotmark}\ifRTL\endR\fi}
+\let\pagenumber=\folio
+
+\def\RHoddleft{\empty}
+\def\RHoddcenter{\rangeref}
+\def\RHoddright{\pagenumber}
+
+\def\RHevenleft{\pagenumber}
+\def\RHevencenter{\rangeref}
+\def\RHevenright{\empty}
+
+\def\RHtitleleft{\empty}
+\def\RHtitlecenter{\empty}
+\def\RHtitleright{\empty}
+
+\def\RFoddleft{\empty}
+\def\RFoddcenter{\empty}
+\def\RFoddright{\empty}
+
+\def\RFevenleft{\empty}
+\def\RFevencenter{\empty}
+\def\RFevenright{\empty}
+
+\def\RFtitleleft{\empty}
+\def\RFtitlecenter{\pagenumber}
+\def\RFtitleright{\empty}
+
+\def\PageBorder{}
+\newbox\b@rder
+\def\pl@ceborder{\ifx\PageBorder\empty\else
+  \ifvoid\b@rder
+    \global\setbox\b@rder=\hbox{\XeTeXpdffile \PageBorder \relax}%
+    \global\setbox\b@rder=\vbox to 0pt{\vss\hbox to \textwidth{\hss\box\b@rder\hss}\vss}%
+  \fi
+  \hbox to 0pt{\vbox to 0pt{\kern0.5\textheight
+    \kern-0.5\baselineskip\kern12pt\copy\b@rder\vss}\hss}%
+ \fi}
+
+\newdimen\FontSizeUnit		\FontSizeUnit=1bp
+\newdimen\IndentUnit		\IndentUnit=1in
+\newdimen\PaperWidth		\PaperWidth=210mm
+\newdimen\PaperHeight		\PaperHeight=297mm
+\newdimen\MarginUnit		\MarginUnit=1in
+\newdimen\LeadingUnit		\LeadingUnit=1bp
+\newdimen\VerticalSpaceUnit	\VerticalSpaceUnit=0.5bp
+\newdimen\BindingGutter		\BindingGutter=5mm
+\def\LineSpacingFactor{1.0}
+\def\VerticalSpaceFactor{1}
+\def\TopMarginFactor{1.0}
+\def\SideMarginFactor{1.0}
+\def\ColumnGutterFactor{10}
+
+\newcount\TitleColumns
+\newcount\IntroColumns
+\newcount\BodyColumns
+
+\newif\ifGutter
+\newif\ifDoubleSided
+
+\def\s@tupsizes{
+ \LeadingUnit=\LineSpacingFactor\FontSizeUnit
+ \VerticalSpaceUnit=\VerticalSpaceFactor\LeadingUnit
+ \baselineskip=14\LeadingUnit
+ \topskip=10\LeadingUnit
+ \gutter=\ColumnGutterFactor\FontSizeUnit
+ \dimen0=\PaperWidth \dimen2=\SideMarginFactor\MarginUnit
+ \advance\dimen0 by -2\dimen2
+ \ifGutter \advance\dimen0 by -\BindingGutter \fi
+ \textwidth=\dimen0
+ \colwidth=0.5\textwidth \advance\colwidth by -0.5\gutter
+ \hsize=\textwidth
+ \dimen0=\PaperHeight
+ \advance\dimen0 by -\TopMarginFactor\MarginUnit
+ \advance\dimen0 by -\TopMarginFactor\MarginUnit
+ \textheight=\dimen0
+ \vsize=\textheight
+ \dimen0=\SideMarginFactor\MarginUnit \advance\dimen0 by -1in
+ \hoffset=\dimen0
+ \dimen0=\TopMarginFactor\MarginUnit \advance\dimen0 by -1in
+ \advance\dimen0 by 0.5\baselineskip % nudge down a little for header
+ \voffset=\dimen0
+ \pdfpagewidth=\PaperWidth
+ \pdfpageheight=\PaperHeight
+ \resetvsize
+}
+\newdimen\textwidth
+\newdimen\textheight
+\newdimen\colwidth
+\newdimen\gutter \gutter=20pt
+
+\catcode`\@=12
+
+\endinput

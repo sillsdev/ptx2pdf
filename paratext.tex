@@ -1,0 +1,201 @@
+% macros to read Paratext stylesheets
+% jfk - 17 Sep 2004
+% tweaks - Feb 2007
+% added "hook" support, hangversenumber, ignore empty paras - July 2007
+
+\input ptx-stylesheet-macros.tex
+
+\TeXXeTstate=1
+
+\catcode`\@=11
+\def\@fileversion#1{}
+
+\input Cutouts.tex
+\input AdjList.tex
+
+\ifx\regular\undefined   \def\regular{"Times New Roman"}      \fi
+\ifx\bold\undefined      \def\bold{"Times New Roman/B"}       \fi
+\ifx\italic\undefined    \def\italic{"Times New Roman/I"}     \fi
+\ifx\bolditalic\undefined\def\bolditalic{"Times New Roman/BI"}\fi
+
+\let\x@=\expandafter
+
+% based on plain.tex \footnote, \vfootnote
+\def\m@kenote#1#2{%
+  \let\@sf\empty % #1=class; #2=caller; text is read later
+  \ifhmode\edef\@sf{\spacefactor\the\spacefactor}\/\fi
+  #2\@sf\vm@kenote{#1}{#2}}
+\newif\ifd@fernotes
+\def\vm@kenote#1#2{%
+  \ifd@fernotes \let\next\d@fern@te
+  \else \let\next\vm@ken@te \fi
+  \next{#1}{#2}}
+\def\d@fern@te#1#2{\immediate\write16{deferring note '#1' at \reference}}
+\def\vm@ken@te#1#2{%
+  \x@\insert\csname note-#1\endcsname\bgroup
+  \interlinepenalty\interfootnotelinepenalty
+  \splittopskip\ht\strutbox % top baseline for broken footnotes
+  \splitmaxdepth\dp\strutbox \floatingpenalty\@MM
+  \leftskip\z@skip \rightskip\z@skip \spaceskip\z@skip \xspaceskip\z@skip
+  \setbox0=\hbox{#2}\leavevmode\ifRTL\setbox2=\lastbox\beginR\box2\fi
+  #2\ifdim\wd0>0pt\kern.2em\fi\footstrut\futurelet\next\fo@t}
+\def\footstrut{\s@tfont{\newn@testyle}%
+  \s@tbaseline{\newn@testyle}%
+  \setbox\f@@tstrut=\hbox to 0pt{\XeTeXuseglyphmetrics=0 \char32 \hss}%
+  \dimen0=\ht\f@@tstrut \dimen2=\dp\f@@tstrut
+  \dimen4=\dimen0 \advance\dimen4 by \dimen2
+  \ifdim\dimen4>\baselineskip
+    \dimen6=100\baselineskip \divide\dimen6 by \dimen4
+    \multiply\dimen0 by \dimen6 \divide\dimen0 by 100
+    \multiply\dimen2 by \dimen6 \divide\dimen2 by 100
+  \fi
+  \setbox\f@@tstrut=\hbox{}\ht\f@@tstrut=\dimen0 \dp\f@@tstrut=\dimen2
+  \copy\f@@tstrut}
+\def\@foot{\box\f@@tstrut\egroup}
+\newbox\f@@tstrut
+
+\def\s@tbaseline#1{%
+  \x@\ifx\csname baseline<#1>\endcsname \relax
+    \getp@ram{fontsize}{#1}\dimen0=\p@ram\LeadingUnit
+    \multiply\dimen0 by 14 \divide\dimen0 by 12
+    \x@\xdef\csname baseline<#1>\endcsname{\the\dimen0}\fi
+  \baselineskip=\csname baseline<#1>\endcsname}
+
+\output={\onecolout}
+\def\onecolout{\xdef\p@gefirstmark{\firstmark}\xdef\p@gebotmark{\botmark}%
+  \plainoutput
+  \xdef\p@gefirstmark{}
+  \xdef\p@gebotmark{}}
+\def\plainoutput{\shipout\vbox{\makeheadline\pagebody\makefootline}%
+  \advancepageno
+  \ifnum\outputpenalty>-\@MM \else\dosupereject\fi}
+\def\pagebody{\vbox to\textheight{\boxmaxdepth\maxdepth \pagecontents}}
+\def\makeheadline{\vbox to\z@{\vskip-22.5\p@
+  \hbox to \textwidth{\vbox to8.5\p@{}\the\headline}\vss
+  \ifrhr@le\ifdim\RHruleposition=\maxdimen\else
+    \kern-\RHruleposition\kern-0.4pt\hrule\kern\RHruleposition
+    \fi\fi}\nointerlineskip}
+\newif\ifrhr@le
+\def\makefootline{\baselineskip24\p@\lineskiplimit\z@
+  \hbox to \textwidth{\the\footline}}
+\newdimen\RHruleposition \RHruleposition=\maxdimen
+
+\def\pagecontents{\ifvoid\topins\else\unvbox\topins\fi
+  \dimen@=\dp\@cclv \unvbox\@cclv % open up \box255
+  \kern-\dimen@ \vfill
+  \f@rstnotetrue
+  \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}
+\def\ins@rtn@tecl@ss#1{
+  \x@\let\x@\th@cl@ss\csname note-#1\endcsname
+  \ifvoid\th@cl@ss\else
+    \vskip\skip\th@cl@ss
+    \iff@rstnote\footnoterule\f@rstnotefalse\fi
+    \unvbox\th@cl@ss\fi
+}
+\newif\iff@rstnote
+\def\footnoterule{\kern-3\p@
+  \hrule width \hsize \kern 2.6\p@} % the \hrule is .4pt high
+
+\def\doublecolumns{
+  \ifhe@dings\endhe@dings\fi
+  \penalty-100\vskip\baselineskip
+  \global\output={\savepartialpage}\eject
+  \ifdim\ht\partial>0.75\textheight
+    \global\output={\onecolout}
+    \unvbox\partial\vfill\eject
+  \fi
+  \global\hsize=0.48\textwidth
+  \global\vsize=\textheight \global\advance\vsize by -\ht\partial
+  \global\output={\twocolumnout}
+  \global\firstcoltrue
+  \global\c@rrentcols=2
+}
+
+\def\savepartialpage{\edef\t@st{\p@gefirstmark}%
+    \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi
+    \global\setbox\partial=\vbox{\boxmaxdepth\maxdepth \pagecontents}}
+\newbox\partial
+
+\newif\iffirstcol
+\newbox\firstcol \newbox\secondcol
+\newcount\firstcolpenalty
+\def\twocolumnout{
+  \xdef\p@gebotmark{\botmark}
+  \iffirstcol
+    \edef\t@st{\p@gefirstmark}%
+    \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi
+    \global\setbox\firstcol=\vbox to \vsize{\boxmaxdepth\maxdepth \pagecontents}
+    \global\firstcolpenalty=\outputpenalty
+    \global\firstcolfalse
+  \else
+    \global\setbox\secondcol=\vbox to \vsize{\boxmaxdepth\maxdepth \pagecontents}
+    \output={\global\setbox\firstcol=\vbox to \vsize
+      {\boxmaxdepth\maxdepth\pagecontents}\unvbox\firstcol}\eject
+    \output={\global\setbox\secondcol=\vbox to \vsize
+      {\boxmaxdepth\maxdepth\pagecontents}\unvbox\secondcol}\eject
+    \shipout\vbox{\makeheadline
+      \box\partial
+      \hbox to \textwidth{\ifRTL\box\secondcol\hfil\box\firstcol
+        \else\box\firstcol\hfil\box\secondcol\fi}
+      \makefootline}%
+    \advancepageno
+    \global\vsize=\textheight
+    \global\firstcoltrue
+    \xdef\p@gefirstmark{}
+    \xdef\p@gebotmark{}
+  \fi
+}
+\xdef\p@gefirstmark{}
+
+\def\singlecolumn{
+  \ifhe@dings\endhe@dings\fi
+  \global\output={\balancecolumns}\eject
+  \global\hsize=\textwidth
+  \global\vsize=\textheight
+  \global\output={\onecolout}
+  \global\c@rrentcols=1
+  \box\partial
+  \vskip\baselineskip
+}
+
+\def\balancecolumns{
+  \setbox0=\vbox{
+    \ifvoid\firstcol\else\unvbox\firstcol\penalty\firstcol\fi
+    \unvbox255}
+  \dimen0=0.5\ht0
+  \loop
+    \setbox4=\vbox{\unvcopy0}
+    \setbox2=\vsplit4 to \dimen0
+    \dimen2=\ht2 \dimen4=\ht4
+    \ifdim\dimen2<\dimen4 \advance\dimen0 by \baselineskip \repeat
+  \setbox2=\vbox{\unvbox2}
+  \setbox4=\vbox to\ht2{\unvbox4}
+  \global\setbox\partial=\vbox{\box\partial\hbox to \textwidth{\box2\hfil\box4}}
+}
+
+\def\pagebreak{\vfill\eject
+  \ifnum\c@rrentcols=2
+    \iffirstcol\else\line{}\vfill\eject\fi
+  \fi
+}
+
+\def\resetvsize{\global\vsize=\textheight} 
+
+\tolerance=9000
+\hbadness=10000
+\emergencystretch=1in
+\vbadness=10000
+\frenchspacing
+
+\catcode`\[=\active \def[{\char`\[\ignorespaces}
+\catcode`\(=\active \def({\char`\(\ignorespaces}
+
+\catcode`\@=12
+
+\parskip=0pt
+\baselineskip=14pt
+\lineskip=0pt
+
+\widowpenalty=10000
+\clubpenalty=10000
+

@@ -1,0 +1,90 @@
+% paragraph shape support for the ptx2pdf package
+
+\catcode`\@=11
+
+\def\leftcutout{\@cutout{L}}
+\def\rightcutout{\@cutout{R}}
+\def\cancelcutouts{\@numcuts=0 }
+
+\def\@cutout#1#2#3#4{%
+  \global\advance\@numcuts by 1
+  \expandafter\xdef\csname cut@side\the\@numcuts\endcsname{#1}%
+  \expandafter\xdef\csname cut@width\the\@numcuts\endcsname{#2}%
+  \expandafter\xdef\csname cut@after\the\@numcuts\endcsname{#3}%
+  \expandafter\xdef\csname cut@lines\the\@numcuts\endcsname{#4}%
+}
+\newcount\@numcuts
+
+\def\cutoutcarryover{%
+  \ifnum\@numcuts>0
+    \count@=\@numcuts \@numcuts=0
+    \@index=0
+    \loop \ifnum\@index<\count@ \advance\@index by 1
+      \@after=\csname cut@after\the\@index\endcsname
+      \advance\@after by -\prevgraf
+      \@until=\csname cut@lines\the\@index\endcsname
+      \advance\@until by \@after
+      \ifnum\@until>0
+        \ifnum\@after<0 \@after=0 \fi
+        \advance\@until by -\@after
+        \@width=\csname cut@width\the\@index\endcsname
+        \edef\@side{\csname cut@side\the\@index\endcsname}%
+        \@cutout{\@side}{\the\@width}{\the\@after}{\the\@until}%
+      \fi
+    \repeat
+  \fi
+}
+
+\def\makecutouts{%
+  \ifnum\hangafter<0 \@parshapelines=-\hangafter
+  \else \@parshapelines=\hangafter \fi
+  \@index=0
+  \loop \ifnum\@index<\@numcuts \advance\@index by 1
+    \count@=\csname cut@after\the\@index\endcsname
+    \advance\count@ by \csname cut@lines\the\@index\endcsname \relax
+    \ifnum\count@>\@parshapelines \@parshapelines=\count@ \fi
+  \repeat
+  \advance\@parshapelines by 1
+  \def\@shape{}%
+  \@line=0
+  \loop \ifnum\@line<\@parshapelines \advance\@line by 1
+    \global\@hsize=\hsize
+    \global\@indent=0pt
+    \ifnum\hangafter<0
+      \ifnum\@line>-\hangafter\else \global\@indent=\hangindent \fi
+    \else
+      \ifnum\@line>\hangafter \global\@indent=\hangindent \fi
+    \fi
+    \ifdim\@indent<0pt \global\advance\@hsize by \@indent \global\@indent=0pt
+    \else \global\advance\@hsize by -\@indent \fi
+    \@cutthisline
+    \edef\@shape{\@shape\space\the\@indent\space\the\@hsize}%
+  \repeat
+  \parshape=\number\@parshapelines \@shape
+}
+\def\@cutthisline{%
+  \@index=0
+  {\loop \ifnum\@index<\@numcuts
+    \advance\@index by 1
+    \@after=\csname cut@after\the\@index\endcsname
+    \@until=\csname cut@lines\the\@index\endcsname
+    \advance\@until by \@after
+    \ifnum\@line>\@after
+      \ifnum\@line>\@until \else
+        \@width=\csname cut@width\the\@index\endcsname
+        \global\advance\@hsize by -\@width
+        \if L\csname cut@side\the\@index\endcsname
+          \global\advance\@indent by \@width
+        \fi
+      \fi
+    \fi
+  \repeat}%
+}
+\newcount\@parshapelines
+\newcount\@index \newcount\@line \newcount\@after \newcount\@until
+\newdimen\@width \newdimen\@indent \newdimen\@hsize
+
+\catcode`\@=12
+
+\endinput
+

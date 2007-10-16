@@ -1,0 +1,445 @@
+﻿% Paratext formatting macros, spanning footnotes version
+
+\TeXXeTstate=1
+
+\input ptx-stylesheet-macros.tex
+\input ptx-cropmarks.tex
+\input ptx-adj-list.tex
+\input ptx-pic-list.tex
+\input ptx-cutouts.tex
+\input ptx-callers.tex
+
+\catcode`\@=11
+
+\let\x@=\expandafter
+
+% based on plain.tex \footnote, \vfootnote
+\def\m@kenote#1#2{\let\@sf\empty % #1=class; #2=caller; text is read later
+  \ifhmode\edef\@sf{\spacefactor\the\spacefactor}\/\fi
+  \ifch@pter \everypar={}\ch@pterfalse
+    \global\setbox\ch@pternote=\hbox{\box\ch@pternote #2}
+  \else #2\fi
+  \@sf \vm@kenote{#1}{#2}}
+
+\def\vm@kenote#1#2{%
+  \let\next\relax
+  \x@\insert\csname note-#1\endcsname\bgroup
+%%% single-column notes:
+  \checkp@ranotes{#1}%
+  \hsize=\ifp@ranotes\maxdimen\else\textwidth\fi
+  \interlinepenalty\interfootnotelinepenalty
+  \splittopskip\ht\strutbox % top baseline for broken footnotes
+  \splitmaxdepth\dp\strutbox \floatingpenalty\@MM
+  \leftskip\z@skip \rightskip\z@skip \spaceskip\z@skip \xspaceskip\z@skip
+  \leavevmode\ifRTL\setbox2=\lastbox\beginR\box2\fi
+  \testomitc@ller{#1}\ifomitc@ller\else
+    \setbox0=\hbox{#2}#2\ifdim\wd0>0pt\kern.2em\fi
+  \fi
+  \footstrut\futurelet\next\fo@t}
+
+\def\OmitCallerInNote#1{%
+  \expandafter\let\csname omit-in-note #1\endcsname=1}
+\def\testomitc@ller#1{\expandafter\ifx\csname omit-in-note #1\endcsname\relax
+  \omitc@llerfalse \else \omitc@llertrue \fi}
+\newif\ifomitc@ller
+
+\def\footstrut{\s@tfont{\newn@testyle}%
+  \s@tbaseline{\newn@testyle}%
+  \setbox\f@@tstrut=\hbox to 0pt{\XeTeXuseglyphmetrics=0 \char32 \hss}%
+  \dimen0=\ht\f@@tstrut \dimen2=\dp\f@@tstrut
+  \dimen4=\dimen0 \advance\dimen4 by \dimen2
+  \ifdim\dimen4<\baselineskip
+    \dimen6=100\baselineskip \divide\dimen6 by \dimen4
+    \multiply\dimen0 by \dimen6 \divide\dimen0 by 100
+    \multiply\dimen2 by \dimen6 \divide\dimen2 by 100
+  \fi
+  \setbox\f@@tstrut=\hbox{}\ht\f@@tstrut=\dimen0 \dp\f@@tstrut=\dimen2
+  \copy\f@@tstrut}
+
+\def\@foot{\copy\f@@tstrut \ifp@ranotes \parfillskip=0pt \fi
+  \par\egroup}
+\newbox\f@@tstrut
+\def\n@teglue{2em plus 1em minus .5em\relax}
+
+\def\s@tbaseline#1{%
+  \x@\ifx\csname baseline<#1>\endcsname \relax
+    \getp@ram{fontsize}{#1}\dimen0=\p@ram\LeadingUnit
+    \multiply\dimen0 by 14 \divide\dimen0 by 12
+    \x@\xdef\csname baseline<#1>\endcsname{\the\dimen0}\fi
+  \baselineskip=\csname baseline<#1>\endcsname}
+
+\output={\onecolout}
+\def\onecolout{\edef\p@gefirstmark{\firstmark}\xdef\p@gebotmark{\botmark}%
+  \plainoutput
+  \xdef\p@gefirstmark{}
+  \xdef\p@gebotmark{}}
+\def\pagebody{\vbox to\textheight{\boxmaxdepth\maxdepth \pagecontents}}
+\def\makeheadline{\vbox to\z@{\vskip-22.5\p@
+  \hbox to \textwidth{\vbox to8.5\p@{}\the\headline}\vss
+  \ifrhr@le\ifdim\RHruleposition=\maxdimen\else
+    \kern-\RHruleposition\kern-0.4pt\hrule\kern\RHruleposition
+    \fi\fi}\nointerlineskip}
+\newif\ifrhr@le
+\def\makefootline{\baselineskip24\p@\lineskiplimit\z@
+  \hbox to \textwidth{\the\footline}}
+\newdimen\RHruleposition \RHruleposition=\maxdimen
+
+\def\pagecontents{\ifvoid\topins\else\unvbox\topins\fi
+  \dimen@=\dp\@cclv \unvbox\@cclv % open up \box255
+  \ifvoid\bottomins\else\unvbox\bottomins\fi
+  \kern-\dimen@ \vfill
+  \f@rstnotetrue
+  \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}
+
+\def\ins@rtn@tecl@ss#1{%
+  \checkp@ranotes{#1}\ifp@ranotes\let\n@xt=\parains@rtn@tecl@ss
+    \else\let\n@xt=\separateins@rtn@tecl@ss\fi
+  \n@xt{#1}}
+
+\def\separateins@rtn@tecl@ss#1{%
+  \x@\let\x@\th@cl@ss\csname note-#1\endcsname
+  \ifvoid\th@cl@ss\else
+    \vskip\AboveNoteSpace
+    \iff@rstnote\footnoterule\f@rstnotefalse\fi
+    \unvbox\th@cl@ss\fi}
+
+\def\parains@rtn@tecl@ss#1{%
+  \x@\let\x@\th@cl@ss\csname note-#1\endcsname
+  \ifvoid\th@cl@ss\else
+    \vskip\AboveNoteSpace
+    \iff@rstnote\footnoterule\f@rstnotefalse\fi
+    {\maken@tepara{\th@cl@ss}}%
+  \fi}
+
+\newif\iff@rstnote
+\def\footnoterule{\kern-.4pt % the \hrule is .4pt high
+  \hrule width \textwidth}
+
+\def\ParagraphedNotes#1{\x@\let\csname paranotes-#1\endcsname=1}
+\newif\ifp@ranotes
+\def\checkp@ranotes#1{\x@\ifx\csname paranotes-#1\endcsname\relax
+  \p@ranotesfalse\else\p@ranotestrue\fi}
+
+\def\maken@tepara#1{\hsize=\textwidth
+  \let\par=\endgraf\ch@pterfalse
+  \everypar={}\noindent
+  \unvbox#1 \makehboxofhboxes 
+  \setbox0=\hbox{\unhbox0 \removehboxes}
+  \noindent\unhbox0\unskip\unpenalty\unskip\unskip\linepenalty100\par} 
+\def\makehboxofhboxes{\setbox0=\hbox{} 
+  \loop\setbox2=\lastbox \ifhbox2 \setbox0=\hbox{\box2\unhbox0}\repeat} 
+\def\removehboxes{\setbox0=\lastbox 
+  \ifhbox0{\removehboxes}\unhbox0\internotespace\fi}
+\def\internotespace{\hfil\hskip\intern@teskip\penalty-10\hfilneg}
+\newskip\intern@teskip \intern@teskip=15pt% plus 5pt minus 5pt
+
+\def\doublecolumns{%
+  \ifnum\c@rrentcols=1
+    \ifhe@dings\endhe@dings\fi
+    \penalty-100\vskip\baselineskip
+    \global\output={\savepartialpage}\eject
+    \ifdim\ht\partial>0.75\textheight
+      \global\output={\onecolout}
+      \unvbox\partial\vfill\eject
+    \fi
+    \global\hsize=0.48\textwidth
+    \global\vsize=2\textheight \global\advance\vsize by -2\ht\partial
+    \gdef\resetvsize{\global\vsize=2\textheight \global\advance\vsize by \baselineskip} 
+    \global\output={\twocols}
+    \global\c@rrentcols=2
+    \global\count\topins=2000
+    \global\count\bottomins=2000
+    \let\\=\s@tn@tec@unt \the\n@tecl@sses
+    \global\holdinginserts=1
+  \fi}
+\def\s@tn@tec@unt#1{%
+  \x@\let\x@\th@cl@ss\csname note-#1\endcsname
+  \checkp@ranotes{#1}%
+  \global\count\th@cl@ss=\ifp@ranotes 0 \else 2000 \fi
+  \global\skip\th@cl@ss=\AboveNoteSpace }
+
+\def\resetvsize{\global\vsize=\textheight} 
+
+\def\msg#1{\immediate\write16{#1}}
+\def\savepartialpage{%
+%%%  \msg{SAVEPARTIAL}
+  \edef\t@st{\p@gefirstmark}%
+  \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi
+  \global\setbox\partial=\vbox{\boxmaxdepth\maxdepth \pagecontents}}
+\newbox\partial
+
+\def\twocols{% primary output routine in 2-col mode
+%%%  \msg{TWOCOLS @ \ch@pter:\v@rse, txtht=\the\textheight, partial=\the\ht\partial}
+  \global\setbox\galley=\copy255
+  \global\galleypenalty=\outputpenalty
+  \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
+  \global\output={\trial}
+  \global\holdinginserts=0
+  \unvbox255
+  \penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
+  }
+\newbox\galley
+\newcount\galleypenalty
+\newdimen\trialheight
+
+\def\@dvn@tecl@ssdim@#1{%
+  \checkp@ranotes{#1}%
+  \ifp@ranotes\let\n@xt=\@dvnoteclassdim@para
+  \else\let\n@xt=\@dvnoteclassdim@sep\fi
+  \n@xt{#1}}
+
+\def\@dvnoteclassdim@para#1{
+  \x@\let\x@\th@cl@ss\csname note-#1\endcsname
+  \ifvoid\th@cl@ss\else
+    \setbox0=\copy\th@cl@ss
+    \setbox0=\vbox{\maken@tepara{0}}
+    \advance\dimen0 by -\ht0
+    \advance\dimen0 by -\dp0
+    \advance\dimen0 by -\AboveNoteSpace
+  \fi}
+\def\@dvnoteclassdim@sep#1{
+  \x@\let\x@\th@cl@ss\csname note-#1\endcsname
+  \ifvoid\th@cl@ss\else
+    \advance\dimen0 by -\ht\th@cl@ss
+    \advance\dimen0 by -\dp\th@cl@ss
+    \advance\dimen0 by -\AboveNoteSpace
+  \fi}
+\def\cle@rn@tecl@ss#1{%
+  \x@\let\x@\th@cl@ss\csname note-#1\endcsname
+  \global\setbox\th@cl@ss=\box\voidb@x}
+
+\def\incr#1#2{\ifvoid#2\else\advance#1 by \skip#2\advance#1 by \ht#2\fi}
+\def\decr#1#2{\ifvoid#2\else\advance#1 by-\skip#2\advance#1 by-\ht#2\fi}
+
+\def\trial{%
+%%%  \msg{TRIAL with ht=\the\trialheight, vsize=\the\vsize}
+  \edef\p@gebotmark{\botmark}
+  \edef\t@st{\p@gefirstmark}%
+  \ifx\t@st\empty\edef\p@gefirstmark{\firstmark}\fi
+  \dimen0=\trialheight
+  \let\\=\@dvn@tecl@ssdim@ \the\n@tecl@sses
+%%%
+  \decr{\dimen0}{\topins}
+  \decr{\dimen0}{\bottomins}
+%%%
+  \splittopskip=\topskip
+  \setbox8=\copy255
+  \dimen2=\dimen0 \decr{\dimen2}{\topleftins} \decr{\dimen2}{\bottomleftins}
+  \dimen4=\dimen0 \decr{\dimen4}{\toprightins} \decr{\dimen4}{\bottomrightins}
+  \setbox4=\vsplit255 to \dimen2
+  \setbox6=\vsplit255 to \dimen4
+  \setbox4=\vbox{\unvbox4}
+  \setbox6=\vbox{\unvbox6}
+  \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
+%%%  \msg{first col = \the\ht4, second col = \the\ht6, rem = \the\ht255}
+  \iffitonpage
+%%%    \msg{SUCCEEDED, shipping page}
+% re-split to better balance columns, if possible
+% at this point:
+%   box4+box6 is the page content
+%   dimen0 is ht that definitely works
+%   try re-splitting with smaller ht while ht6<ht4
+    \dimen2=\ht4 \incr{\dimen2}{\topleftins} \incr{\dimen2}{\bottomleftins}
+    \dimen4=\ht6 \incr{\dimen4}{\toprightins} \incr{\dimen4}{\bottomrightins}
+    \ifdim\dimen4<\dimen2
+      \rebalancetrue
+      \dimen8=\dimen0
+      \loop%\msg{re-balancing}
+        \vfuzz=\maxdimen
+        \advance\dimen8 by -\baselineskip
+        \setbox0=\copy8
+        \dimen2=\dimen8 \decr{\dimen2}{\topleftins} \decr{\dimen2}{\bottomleftins}
+        \dimen4=\dimen8 \decr{\dimen4}{\toprightins} \decr{\dimen4}{\bottomrightins}
+        \setbox4=\vsplit0 to \dimen2 \setbox4=\vbox{\unvbox4}
+        \setbox6=\vsplit0 to \dimen4 \setbox6=\vbox{\unvbox6}
+        \ifvoid0\else\rebalancefalse\fi
+        \dimen6=\ht6 \incr{\dimen6}{\topleftins} \incr{\dimen6}{\bottomleftins}
+        \advance\dimen6 by -\ht4 \decr{\dimen6}{\toprightins} \decr{\dimen6}{\bottomrightins}
+        \ifdim\dimen6>.3\baselineskip \rebalancefalse\fi
+        \ifdim\dimen8<3\baselineskip \rebalancefalse\fi
+        \ifrebalance\repeat
+      \advance\dimen8 by \baselineskip
+      \dimen2=\dimen8 \decr{\dimen2}{\topleftins} \decr{\dimen2}{\bottomleftins}
+      \dimen4=\dimen8 \decr{\dimen4}{\toprightins} \decr{\dimen4}{\bottomrightins}
+      \setbox4=\vsplit8 to \dimen2 \setbox4=\vbox{\unvbox4}
+      \setbox6=\vsplit8 to \dimen4 \setbox6=\vbox{\unvbox6}
+    \fi
+    \dimen4=\dp4 \setbox4=\vbox to \dimen0{\unvbox\topleftins\unvbox4\vfil\unvbox\bottomleftins}\dp4=\dimen4
+    \dimen6=\dp6 \setbox6=\vbox to \dimen0{\unvbox\toprightins\unvbox6\vfil\unvbox\bottomrightins}\dp6=\dimen6
+    \def\pagecontents{%
+      \ifvoid\partial\else \unvbox\partial \fi
+      \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi
+      \dimen0=\ifdim\dp6>\dp4 \dp6 \else \dp4 \fi
+      %\showthe\dimen0
+      \hbox to \textwidth{\ifRTL \box6\hfil\box4 \else \box4\hfil\box6 \fi}
+      \ifvoid\bottomins\else \vskip\skip\bottomins \unvbox\bottomins \fi
+      \kern-\dimen0 \vfil
+      \f@rstnotetrue
+      \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses
+    }
+    \resetvsize
+    \plainoutput
+    \xdef\p@gefirstmark{}
+    \xdef\p@gebotmark{}
+    \global\holdinginserts=1
+    \global\output={\twocols}
+  \else
+%%%    \msg{REDUCING VSIZE}
+    \global\advance\vsize by -\baselineskip
+    \global\setbox\topins=\box\voidb@x
+    \global\setbox\bottomins=\box\voidb@x
+    \global\setbox\topleftins=\box\voidb@x
+    \global\setbox\toprightins=\box\voidb@x
+    \global\setbox\bottomleftins=\box\voidb@x
+    \global\setbox\bottomrightins=\box\voidb@x
+    \let\\=\cle@rn@tecl@ss \the\n@tecl@sses
+    \global\setbox255=\box\voidb@x
+    \global\holdinginserts=1
+    \global\output={\backingup}
+    \unvbox\galley \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
+  \fi}
+\newif\iffitonpage
+\newif\ifrebalance
+
+\def\backingup{
+%%%  \msg{BACKING-UP}
+  \global\deadcycles=0
+  \global\setbox\galley=\copy255
+  \global\galleypenalty=\outputpenalty
+  \global\output={\trial}
+  \global\holdinginserts=0
+  \unvbox255 %\eject
+  \penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
+}
+
+\xdef\p@gefirstmark{}
+
+\def\singlecolumn{%
+  \ifnum\c@rrentcols>1
+    \ifhe@dings\endhe@dings\fi
+    \vfill\eject
+    \global\holdinginserts=0
+    \global\hsize=\textwidth
+    \global\vsize=\textheight
+    \global\output={\onecolout}
+    \global\c@rrentcols=1
+    \global\count\topins=1000
+    \global\count\bottomins=1000
+    \box\partial
+    \vskip\baselineskip
+  \fi}
+
+\count\topins=1000 \dimen\topins=\maxdimen \skip\topins=0pt
+\newinsert\bottomins \count\bottomins=1000 \dimen\bottomins=\maxdimen
+\newinsert\topleftins \count\topleftins=1000 \dimen\topleftins=\maxdimen
+\newinsert\toprightins \count\toprightins=1000 \dimen\toprightins=\maxdimen
+\newinsert\bottomleftins \count\bottomleftins=1000 \dimen\bottomleftins=\maxdimen
+\newinsert\bottomrightins\count\bottomrightins=1000 \dimen\bottomrightins=\maxdimen
+
+\def\d@figure#1{%
+  \gdef\p@rams{#1|}%
+  \global\p@ramnumber=1
+  \loop
+    \x@\getonep@ram\p@rams\end
+    \ifx\p@rams\empty \morep@ramsfalse \else \morep@ramstrue \fi
+    \ifmorep@rams\repeat
+  \lowercase{\edef\size@ption{\csname param-3\endcsname}}%
+  \lowercase{\edef\loc@ption{\csname param-4\endcsname}}%
+  \ifx\loc@ption\empty
+    \ifx\size@ption\size@SPAN\def\loc@ption{t}\else\def\loc@ption{tl}\fi
+  \fi
+  \p@cwidth=\ifx\size@ption\size@COL \hsize
+  \else\ifx\size@ption\size@SPAN \textwidth
+  \else \p@cwidth=\textwidth
+    \errmessage{Unknown picture size "\size@ption", expected "col" or "span"}\fi\fi
+  \let\p@cins=\relax
+  \ifx\loc@ption\loc@T \let\p@cins=\topins
+  \else\ifx\loc@ption\loc@B \let\p@cins=\bottomins
+  \else
+      \ifnum\c@rrentcols>1
+        \ifx\loc@ption\loc@TL \let\p@cins=\topleftins
+        \else\ifx\loc@ption\loc@TR \let\p@cins=\toprightins
+        \else\ifx\loc@ption\loc@BL \let\p@cins=\bottomleftins
+        \else\ifx\loc@ption\loc@BR \let\p@cins=\bottomrightins
+        \fi\fi\fi\fi
+      \else
+        \ifx\loc@ption\loc@TL \picw@rning{tl}{t}\let\p@cins=\topins
+        \else\ifx\loc@ption\loc@TR \picw@rning{tr}{t}\let\p@cins=\topins
+        \else\ifx\loc@ption\loc@BL \picw@rning{bl}{b}\let\p@cins=\bottomins
+        \else\ifx\loc@ption\loc@BR \picw@rning{br}{b}\let\p@cins=\bottomins
+        \fi\fi\fi\fi
+      \fi
+  \fi\fi
+  \ifx\p@cins\relax
+    \errmessage{Unknown picture location "\loc@ption",
+      expected one of t,b,tl,tr,bl,br}\let\p@cins=\topins
+  \fi
+  \setbox0=\vbox{
+    \hsize=\p@cwidth
+    \line{\XeTeXpicfile "\the\PicPath\csname param-2\endcsname" width \p@cwidth }
+    \edef\r@f{\csname param-7\endcsname}
+    \edef\c@ption{\csname param-6\endcsname}
+    \ifx\c@ption\empty\else
+      \everypar={}\let\par\endgraf
+      \leftskip=0pt plus 1fil \rightskip=\leftskip \parfillskip=0pt
+      \linepenalty=1000
+      \noindent\leavevmode
+        \s@tfont{fig}\c@ption\unskip
+        \ifx\r@f\empty\else\nobreak\ (\r@f\unskip)\fi
+      \par
+    \fi
+    \vskip.5\baselineskip
+  }%
+  \insert\p@cins{\penalty10000 % nonfloating insertion % was 100
+    \splittopskip\z@skip
+    \splitmaxdepth\maxdimen \floatingpenalty20000 % was zero
+    \gridb@x0}%
+}
+\newtoks\PicPath
+\def\picw@rning#1#2{\msg{converted picture placement "#1" to "#2" in single-column layout}}
+\def\size@COL{col}
+\def\size@SPAN{span}
+\def\loc@T{t}
+\def\loc@B{b}
+\def\loc@TL{tl}
+\def\loc@TR{tr}
+\def\loc@BL{bl}
+\def\loc@BR{br}
+\newcount\p@ramnumber
+\newdimen\p@cwidth
+\newif\ifmorep@rams
+\def\getonep@ram#1|#2\end{\gdef\p@rams{#2}%
+  \x@\gdef\csname param-\the\p@ramnumber\endcsname{#1}%
+  \global\advance\p@ramnumber by 1 }
+
+\def\pagebreak{\vfill\eject %% FIXME
+  \ifnum\c@rrentcols=2
+%    \iffirstcol\else\line{}\vfill\eject\fi
+  \fi
+}
+\let\pb=\pagebreak
+
+\def\columnbreak{\vfill\eject}
+
+\tolerance=9000
+\hbadness=10000
+\emergencystretch=1in
+\vbadness=10000
+\vfuzz=2pt
+\frenchspacing
+
+
+\catcode`\[=\active \def[{\char`\[\ignorespaces}
+\catcode`\(=\active \def({\char`\(\ignorespaces}
+
+\catcode`\@=12
+
+\parskip=0pt
+\baselineskip=14pt
+\lineskip=0pt
+
+\widowpenalty=10000
+\clubpenalty=10000
+\brokenpenalty=50
+
+\endinput

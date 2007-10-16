@@ -1,0 +1,62 @@
+% picture-list support for the ptx2pdf package
+
+% format of lines in pic-list file:
+% book_id chapter.verse desc|file|size|loc|copyright|caption|ref
+%
+% eg:
+% MRK 1.16 |hk00207b.png|span|b||fishermen...catching fish with a net.|1.16
+
+\catcode`\@=11
+
+\def\parsep@cline #1 #2.#3 #4\end{%
+  \uppercase{\gdef\p@cref{#1#2.#3}}\gdef\p@cspec{#4}%
+}
+
+\def\dop@c{%
+  \x@\d@figure\x@{\p@cspec}%
+  \readnextp@c
+}
+
+\def\readnextp@c{%
+  \ifeof\p@clist
+    \global\let\p@cref\empty
+  \else
+    \begingroup
+      \catcode`0=12 \catcode`1=12 \catcode`2=12 \catcode`3=12 \catcode`4=12
+      \catcode`5=12 \catcode`6=12 \catcode`7=12 \catcode`8=12 \catcode`9=12
+      \catcode`.=12 \catcode`\%=5
+      \endlinechar=-1
+      \read\p@clist to \p@cline
+      \ifx\p@cline\P@R\readnextp@c\else
+        \ifx\p@cline\empty\readnextp@c\else
+          \expandafter\parsep@cline\p@cline\end
+        \fi
+      \fi
+    \endgroup
+  \fi
+}
+\def\P@R{\par}
+
+\newread\p@clist
+\def\openpiclist "#1" {%
+  \closein\p@clist
+  \openin\p@clist="#1"
+  \ifeof\p@clist \immediate\write16{(no picture list "#1" found)}%
+  \else \immediate\write16{(using picture list "#1")}\fi
+  \readnextp@c
+}
+\def\closepiclist{%
+  \ifeof\p@clist\else \errmessage{Did not use all pictures in list}\fi
+  \closein\p@clist
+}
+
+\def\ch@ckpiclist{%
+  \edef\c@rref{\id@@@\ch@pter.\v@rse}%
+  \ifx\c@rref\p@cref \dop@c \fi}
+
+\addtoversehooks{\ch@ckpiclist}
+
+\catcode`\@=12
+
+\endinput
+

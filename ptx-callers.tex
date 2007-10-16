@@ -1,0 +1,102 @@
+﻿% footnote caller support for the ptx2pdf package
+
+\catcode`\@=11
+
+\newcount\AutoCallerStartChar
+\newcount\AutoCallerNumChars
+
+\def\AutoCallers#1#2{%
+  \expandafter\def\csname callers-#1\endcsname{#2}%
+  \numc@llers=0
+  \expandafter\expandafter\expandafter
+    \countc@llers\csname callers-#1\endcsname,\end
+  \expandafter\edef\csname callercount-#1\endcsname{\the\numc@llers}}
+
+\def\countc@llers#1,#2\end{\def\t@st{#1}
+  \ifx\t@st\empty \let\n@xt\donec@llers
+  \else \advance\numc@llers by 1 \let\n@xt\countc@llers \fi
+  \n@xt#2,\end}
+\def\donec@llers#1\end{}
+
+\def\getcaller#1#2{%
+  \c@llernum=#1\relax
+  \expandafter\ifx\csname page-caller #2\endcsname\relax \else
+    \write\n@tepages{\string\noteonpage{#2}{#1}{\the\pageno}}%
+    \expandafter\let\expandafter\thisc@llerpage\csname notepage-#2-#1\endcsname
+    \ifx\thisc@llerpage\relax \else
+      \count255=\c@llernum \c@llernum=1
+      \loop \advance\count255 by -1
+        \expandafter\let\expandafter\prevc@llerpage\csname notepage-#2-\number\count255\endcsname
+        \ifx\thisc@llerpage\prevc@llerpage \advance\c@llernum by 1 \repeat
+    \fi
+  \fi
+  \expandafter\ifx\csname callers-#2\endcsname\relax
+    \loop\ifnum\c@llernum>\AutoCallerNumChars
+      \advance\c@llernum by -\AutoCallerNumChars \repeat
+    \advance\c@llernum by -1 \advance\c@llernum by \AutoCallerStartChar
+    \char\c@llernum
+  \else
+    \edef\c@llers{\csname callers-#2\endcsname}%
+    \ifx\c@llers\empty \else
+    \numc@llers=\csname callercount-#2\endcsname
+    \loop \ifnum\c@llernum>\numc@llers
+      \advance\c@llernum by -\numc@llers \repeat
+    \loop \ifnum\c@llernum>1
+      \advance\c@llernum by -1
+      \expandafter\dropfirstc@ller\c@llers,\end \repeat
+    \expandafter\getfirstc@ller\c@llers,\end
+    \fi
+  \fi
+}
+
+\def\dropfirstc@ller#1,#2\end{\def\c@llers{#2}}
+\def\getfirstc@ller#1,#2\end{#1}
+\newcount\c@llernum \newcount\numc@llers
+
+\newwrite\n@tepages
+\def\PageResetCallers#1{%
+  \ifpagec@llers \else
+    \input "\jobname.notepages"
+    \pagec@llerstrue
+    \let\s@ve@nd=\end
+    \def\end{\par\vfill\supereject
+      \finishc@llers \s@ve@nd}
+  \fi
+  \expandafter\let\csname page-caller #1\endcsname=1
+  \openout\n@tepages="\jobname.notepages"
+}
+\newif\ifpagec@llers
+\def\noteonpage#1#2#3{% class, number, page
+  \expandafter\def\csname notepage-#1-#2\endcsname{#3}}
+\def\finishc@llers{\immediate\closeout\n@tepages \n@teschangedfalse
+  \m@kedigitsother
+  \let\noteonpage=\checkn@tepage \input "\jobname.notepages" 
+  \ifn@teschanged \msg{*** Notes may have changed; re-run to update callers}\fi}
+\def\checkn@tepage#1#2#3{\def\t@st{#3}
+  \expandafter\ifx\expandafter\t@st\csname notepage-#1-#2\endcsname
+    \else \n@teschangedtrue \fi}
+\newif\ifn@teschanged
+
+% Character numbers used for default caller sequence
+\AutoCallerStartChar=97
+\AutoCallerNumChars=26
+
+% To restart numbering class "f" on each page:
+% \PageResetCallers{f}
+
+% To make note class "f" use a specific sequence of symbols:
+% \AutoCallers{f}{*,†,‡,¶,§,**,††,‡‡,¶¶,§§}
+
+% To make note class "x" omit callers:
+% \AutoCallers{x}{}
+
+%% override macro from ptx-stylesheet-macros.tex:
+\def\gen@utonum#1{\count255=0\csname autonum #1\endcsname
+  \edef\n@mber{\the\count255}%
+  \expandafter\def\expandafter\them@rk
+    \expandafter{\expandafter\getcaller\expandafter{\n@mber}{#1}}}
+
+\catcode`\@=12
+
+\endinput
+
