@@ -266,12 +266,12 @@
 }
 \newbox\ch@pterbox
 \newbox\ch@pternote
-\def\DelayChapter#1#2#3{\uppercase{\def\ucb@@k{#1}}%
+\def\DelayedChapter#1#2#3{\uppercase{\def\ucb@@k{#1}}%
   \x@\def\csname delay-\ucb@@k.#2\endcsname{#3}}
 
 \def\ptx@nb{%
   \ifch@pter
-    \msg{*** no-break at chapter \ch@pter, check if \string\DelayChapter\space is needed}%
+    \msg{*** no-break at chapter \ch@pter, check \string\DelayedChapter\space setting}%
     \m@kechapterbox \global\ch@pterfalse
     \leavevmode\str@t \vadjust{\vbox to 0pt{\kern-\dp\str@tbox \kern-\ht\ch@pterbox
       \box\ch@pterbox\vss}}%
@@ -313,7 +313,7 @@
  \def\endch@rstyle*{\TRACE{endch@rstyle}%
    \csname end-\thisch@rstyle\endcsname
    \x@\global\x@\let\x@\n@xt
-    \csname after-thisch@rstyle\endcsname
+    \csname after-\thisch@rstyle\endcsname
    \ifnum\n@tenesting>0 \global\advance\n@tenesting by -1
    \else \global\advance\p@ranesting by -1 \fi
   \egroup
@@ -424,13 +424,18 @@
    \x@\spl@tverses\v@rse--\relax
    \c@ncelfirstversefalse
    \ifOmitVerseNumberOne \ifnum\spacefactor=998 \c@ncelfirstversetrue \fi \fi
-   \ifc@ncelfirstverse\else \h@ndlesuperscript{v}{\@V~\printv@rse\@V*}\kern.2em \fi
+   \ifc@ncelfirstverse\else
+     \csname before-v\endcsname
+     \h@ndlesuperscript{v}{%
+       \x@\let\csname before-v\endcsname\relax
+       \x@\let\csname after-v\endcsname\relax
+       \@V~\printv@rse\@V*}%
+     \csname after-v\endcsname\kern.2em \fi
    \egroup
    \m@rkverse
    \the\v@rsehooks
    \gdef\reference{\ch@pter:\v@rse}}
-  \def\v{\csname before-v\endcsname
-   \leavevmode
+  \def\v{\leavevmode
    \ifdim\lastkern=-1sp \let\ll@p=\llap
    \else \let\ll@p=\relax \fi % hanging verse number?
    \ll@p\bgroup\m@kedigitsother\@v@}

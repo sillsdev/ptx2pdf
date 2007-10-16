@@ -31,10 +31,14 @@
     \fi
   \fi
   \expandafter\ifx\csname callers-#2\endcsname\relax
-    \loop\ifnum\c@llernum>\AutoCallerNumChars
-      \advance\c@llernum by -\AutoCallerNumChars \repeat
-    \advance\c@llernum by -1 \advance\c@llernum by \AutoCallerStartChar
-    \char\c@llernum
+    \expandafter\ifx\csname numeric-callers #2\endcsname\relax
+      \loop\ifnum\c@llernum>\AutoCallerNumChars
+        \advance\c@llernum by -\AutoCallerNumChars \repeat
+      \advance\c@llernum by -1 \advance\c@llernum by \AutoCallerStartChar
+      \char\c@llernum
+    \else
+      \number\c@llernum
+    \fi
   \else
     \edef\c@llers{\csname callers-#2\endcsname}%
     \ifx\c@llers\empty \else
@@ -77,6 +81,9 @@
     \else \n@teschangedtrue \fi}
 \newif\ifn@teschanged
 
+\def\NumericCallers#1{%
+  \expandafter\let\csname numeric-callers #1\endcsname=1}
+
 % Character numbers used for default caller sequence
 \AutoCallerStartChar=97
 \AutoCallerNumChars=26
@@ -89,6 +96,10 @@
 
 % To make note class "x" omit callers:
 % \AutoCallers{x}{}
+
+% To make note class "f" default to numbers rather than chars
+% (an explicit list of \AutoCallers will still override this)
+% \NumericCallers{f}
 
 %% override macro from ptx-stylesheet-macros.tex:
 \def\gen@utonum#1{\count255=0\csname autonum #1\endcsname
