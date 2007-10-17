@@ -59,7 +59,7 @@
 \def \CallerStyle    #1\relax{\defp@ram{callerstyle}{#1}}
 
 \def\defp@ram#1#2{\x@\def\csname\m@rker:#1\endcsname{#2}}
-\def\getp@ram#1#2{\edef\p@ram{\csname#2:#1\endcsname}}
+\def\getp@ram#1#2{\x@\let\x@\p@ram\csname#2:#1\endcsname}
 
 \def\defp@rstyle#1{\x@\def\csname#1\endcsname{\p@rstyle{#1}}}
 \def\defch@rstyle#1{\x@\def\csname#1\endcsname{\ch@rstyle{#1}}}
@@ -118,27 +118,32 @@
 \def\endhe@dings{\ifhe@dings\TRACE{endhe@dings}%
   \makecutouts \endgraf
   \egroup \cutoutcarryover
+%{\showboxbreadth=200 \showbox\he@dingbox}
   \gridb@x\he@dingbox
   \global\he@dingsfalse
  \fi
 }
 
+\def\killd@scenders#1{%
+  \vbox{\unvbox#1 \skip0=\lastskip\unskip \count255=\lastpenalty\unpenalty
+    \setbox0=\lastbox
+    \ifvoid0\else \dp0=0pt \box0 \fi
+    \ifdim\skip0>0pt \penalty\count255 \vskip\skip0 \fi}}
+
 \def\gridb@x#1{%
 % \setbox0=\hbox{\kern-#1pt\vrule\kern#1pt\kern-.4pt\box#1\kern-.4pt\vrule}%
 %\MSG{before gridbox: ht0=\the\ht0; dp0=\the\dp0}
- \setbox0=\box#1%
+ \setbox0=\killd@scenders#1%
 %{\showboxbreadth=100 \showboxdepth=10 \showbox0 }%
- \dimen4=\dp0
  \dimen2=\ht0 \advance\dimen2 by \dp0
- \dimen0=0\baselineskip
+ \dimen0=0pt
  \loop \ifdim\dimen0<\dimen2
    \advance\dimen0 by \baselineskip
 %   \line{\kern-5pt\special{color push rgb 1 0 0}.\hfil\special{color pop}}\nobreak \repeat
    \line{}\nobreak \repeat
 % \line{\kern-5pt\special{color push rgb 0 1 0}.\hfil\special{color pop}}\nobreak
- \line{}\nobreak
+% \line{}\nobreak
  \setbox0=\vbox to 0pt{\kern-\ht0\unvbox0}
- \dp0=\dimen4
 %\MSG{ after gridbox: dimen0=\the\dimen0; dp0=\the\dp0}
  \unvbox0 \nobreak
 }
@@ -159,8 +164,9 @@
   \end@llcharstyles
   \par
   \getp@ram{spaceafter}{\m@rker}%
-  \x@\ifx\p@ram\relax \else
-    \ifhe@dings\nobreak\fi \vskip\p@ram \VerticalSpaceUnit
+  \ifx\p@ram\relax \else
+    \ifhe@dings\nobreak\fi
+    \vskip\p@ram\VerticalSpaceUnit
   \fi
   \resetp@rstyle
   \csname after-\m@rker\endcsname
@@ -194,7 +200,7 @@
     \ifhe@dings\endhe@dings\fi
   \fi
   \getp@ram{spacebefore}{\m@rker}%
-  \x@\ifx\p@ram\relax \else
+  \ifx\p@ram\relax \else
     \ifhe@dings\nobreak\fi \vskip\p@ram \VerticalSpaceUnit
   \fi
   \everypar={%
@@ -208,9 +214,9 @@
     \leftskip=0pt plus \textwidth \parfillskip=0pt
    \fi\fi\fi
    \getp@ram{leftmargin}{\m@rker}%
-   \x@\ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
+   \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
    \getp@ram{rightmargin}{\m@rker}%
-   \x@\ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
+   \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
    \s@tfont{\m@rker}%
    \allowp@rindenttrue
    \c@ncelfirstversefalse
@@ -231,7 +237,7 @@
    \fi
    \ifallowp@rindent
     \getp@ram{firstindent}{\m@rker}%
-    \x@\ifx\p@ram\relax \else \kern\p@ram \IndentUnit \fi
+    \ifx\p@ram\relax \else \kern\p@ram \IndentUnit \fi
    \fi
    \global\p@ranesting=1
    \csname start-\m@rker\endcsname
@@ -289,6 +295,7 @@
 \def\oth@r{other}
 \def\resetp@rstyle{%
  \leftskip=0pt \rightskip=\leftskip
+% \dimen0=\hsize \advance\dimen0 by -4em \parfillskip=2em plus \dimen0 minus 1em
  \parfillskip=0pt plus 1fil
  \parindent=0pt }
 
@@ -350,7 +357,7 @@
   \begingroup\resetp@rstyle
   \m@kenote{\newn@testyle}{\everypar={}\cancelcutouts
    \getp@ram{callerstyle}{\newn@testyle}%
-   \x@\ifx\p@ram\relax\def\c@llerstyle{v}\else\edef\c@llerstyle{\p@ram}\fi
+   \ifx\p@ram\relax\def\c@llerstyle{v}\else\edef\c@llerstyle{\p@ram}\fi
    \hbox{\h@ndlesuperscript{\c@llerstyle}{\s@tfont{\c@llerstyle}\them@rk}}}\bgroup
   \global\n@tenesting=1\relax
   \csname start-\newn@testyle\endcsname
@@ -385,7 +392,7 @@
  \x@\ifx\csname font<#1>\endcsname \relax
   \let\typef@ce=\regular
   \getp@ram{fontname}{#1}%
-  \x@\ifx\p@ram\relax
+  \ifx\p@ram\relax
 	  \getp@ram{superscript}{#1}%
 	  \dimen0=\ifx\p@ram\tru@ \SuperscriptFactor\fi\FontSizeUnit
 	  \getp@ram{bold}{#1}%
@@ -413,9 +420,9 @@
   \getp@ram{superscript}{#1}%
     \ifx\p@ram\tru@
       \setbox0=\hbox{#2}%
-      \raise.75ex\box0
-    \else\hbox{#2}\fi
-}
+      \raise\SuperscriptRaise\box0
+    \else\hbox{#2}\fi}
+\def\SuperscriptRaise{0.7ex}
 
 \lowercase{
  \def\@ddcvhooks{
@@ -682,7 +689,7 @@
 \newdimen\VerticalSpaceUnit	\VerticalSpaceUnit=0.5bp
 \newdimen\BindingGutter		\BindingGutter=5mm
 \def\LineSpacingFactor{1.0}
-\def\VerticalSpaceFactor{1}
+\def\VerticalSpaceFactor{1.0}
 \def\TopMarginFactor{1.0}
 \def\SideMarginFactor{1.0}
 \def\ColumnGutterFactor{10}
