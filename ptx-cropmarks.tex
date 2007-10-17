@@ -61,14 +61,25 @@
     \kern \baselineskip % make room for headline
     \offinterlineskip
     \vbox to \pdfpageheight{\vss
+      \let\g@tterside=0
+      \ifBindingGutter
+        \ifDoubleSided
+          \ifodd\pageno
+            \ifRTL \let\g@tterside=R
+            \else  \let\g@tterside=L \fi
+          \else
+            \ifRTL \let\g@tterside=L
+            \else  \let\g@tterside=R \fi
+          \fi
+        \else
+          \ifRTL \let\g@tterside=R
+          \else  \let\g@tterside=L \fi
+        \fi
+      \fi
       \hbox to \pdfpagewidth{\hss\hbox{%
-        \ifBindingGutter\kern
-          \ifodd\pageno\ifRTL 0pt\else\BindingGutter\fi
-          \else\ifRTL\BindingGutter\else 0pt\fi\fi\fi
+        \if\g@tterside L\kern\BindingGutter\fi
         #1%
-        \ifBindingGutter\kern
-          \ifodd\pageno\ifRTL\BindingGutter\else 0pt\fi
-          \else\ifRTL 0pt\else\BindingGutter\fi\fi\fi
+        \if\g@tterside R\kern\BindingGutter\fi
       }\hss}\vss}
     \vss
     \ifCropMarks

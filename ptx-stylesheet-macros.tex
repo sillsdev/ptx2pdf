@@ -166,7 +166,7 @@
   \getp@ram{spaceafter}{\m@rker}%
   \ifx\p@ram\relax \else
     \ifhe@dings\nobreak\fi
-    \vskip\p@ram\VerticalSpaceUnit
+    \vskip\p@ram\verticalsp@ceunit
   \fi
   \resetp@rstyle
   \csname after-\m@rker\endcsname
@@ -193,7 +193,7 @@
   \ifhe@dingstyle\TRACE{headingstyle true}%
     \ifhe@dings\else
       \setbox\he@dingbox=\vbox\bgroup\global\he@dingstrue
-        \linepenalty=1000
+        \linepenalty=1000 \interlinepenalty=10000
     \fi
     \nobreak
   \else\TRACE{headingstyle false}%
@@ -201,7 +201,7 @@
   \fi
   \getp@ram{spacebefore}{\m@rker}%
   \ifx\p@ram\relax \else
-    \ifhe@dings\nobreak\fi \vskip\p@ram \VerticalSpaceUnit
+    \ifhe@dings\nobreak\fi \vskip\p@ram \verticalsp@ceunit
   \fi
   \everypar={%
    \ifRTL\beginR\fi
@@ -622,7 +622,8 @@
  \global\rhr@letrue
  \ifx\t@st\empty \hfil \global\rhr@lefalse \else
   \ifx\t@st\t@tle \the\titlehead \global\rhr@lefalse \else
-  \ifodd\pageno \the\oddhead \else \the\evenhead
+  \ifodd\pageno \the\oddhead \else
+    \ifDoubleSided \the\evenhead \else \the\oddhead \fi
   \fi\fi\fi}}
 \oddhead={\rlap{\RHoddleft}\hfil\RHoddcenter\hfil\llap{\RHoddright}}
 \evenhead={\rlap{\RHevenleft}\hfil\RHevencenter\hfil\llap{\RHevenright}}
@@ -636,7 +637,8 @@
  \edef\t@st{\p@gefirstmark}%
  \ifx\t@st\empty \hfil \else
   \ifx\t@st\t@tle \the\titlefoot \else
-  \ifodd\pageno \the\oddfoot \else \the\evenfoot
+  \ifodd\pageno \the\oddfoot \else 
+    \ifDoubleSided \the\evenfoot \else \the\oddfoot \fi
   \fi\fi\fi}}
 \oddfoot={\rlap{\RFoddleft}\hfil\RFoddcenter\hfil\llap{\RFoddright}}
 \evenfoot={\rlap{\RFevenleft}\hfil\RFevencenter\hfil\llap{\RFevenright}}
@@ -687,8 +689,6 @@
 \newdimen\PaperWidth		\PaperWidth=210mm
 \newdimen\PaperHeight		\PaperHeight=297mm
 \newdimen\MarginUnit		\MarginUnit=1in
-\newdimen\LeadingUnit		\LeadingUnit=1bp
-\newdimen\VerticalSpaceUnit	\VerticalSpaceUnit=0.5bp
 \newdimen\BindingGutter		\BindingGutter=5mm
 \def\LineSpacingFactor{1.0}
 \def\VerticalSpaceFactor{1.0}
@@ -696,18 +696,20 @@
 \def\SideMarginFactor{1.0}
 \def\ColumnGutterFactor{15}
 
-\newcount\TitleColumns
-\newcount\IntroColumns
-\newcount\BodyColumns
+\newcount\TitleColumns \TitleColumns=1
+\newcount\IntroColumns \IntroColumns=1
+\newcount\BodyColumns  \BodyColumns=1
 
 \newif\ifBindingGutter
-\newif\ifDoubleSided
+\newif\ifDoubleSided \DoubleSidedtrue
 
+\newdimen\le@dingunit
+\newdimen\verticalsp@ceunit
 \def\s@tupsizes{
- \LeadingUnit=\LineSpacingFactor\FontSizeUnit
- \VerticalSpaceUnit=\VerticalSpaceFactor\LeadingUnit
- \baselineskip=14\LeadingUnit
- \topskip=10\LeadingUnit
+ \le@dingunit=\LineSpacingFactor\FontSizeUnit
+ \verticalsp@ceunit=\VerticalSpaceFactor\le@dingunit
+ \baselineskip=14\le@dingunit
+ \topskip=10\le@dingunit
  \gutter=\ColumnGutterFactor\FontSizeUnit
  \dimen0=\PaperWidth \dimen2=\SideMarginFactor\MarginUnit
  \advance\dimen0 by -2\dimen2
