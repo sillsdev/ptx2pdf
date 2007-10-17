@@ -692,13 +692,13 @@
 \def\VerticalSpaceFactor{1.0}
 \def\TopMarginFactor{1.0}
 \def\SideMarginFactor{1.0}
-\def\ColumnGutterFactor{10}
+\def\ColumnGutterFactor{15}
 
 \newcount\TitleColumns
 \newcount\IntroColumns
 \newcount\BodyColumns
 
-\newif\ifGutter
+\newif\ifBindingGutter
 \newif\ifDoubleSided
 
 \def\s@tupsizes{
@@ -709,7 +709,7 @@
  \gutter=\ColumnGutterFactor\FontSizeUnit
  \dimen0=\PaperWidth \dimen2=\SideMarginFactor\MarginUnit
  \advance\dimen0 by -2\dimen2
- \ifGutter \advance\dimen0 by -\BindingGutter \fi
+ \ifBindingGutter \advance\dimen0 by -\BindingGutter \fi
  \textwidth=\dimen0
  \colwidth=0.5\textwidth \advance\colwidth by -0.5\gutter
  \hsize=\textwidth
