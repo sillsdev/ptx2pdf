@@ -544,11 +544,13 @@
  \fi\fi}
 \newcount\c@untA \newcount\c@untB
 \newif\ifVerseRefs
-\def\ranges@p{\kern.1em\endash\kern.1em}
+\def\ranges@p{\hbox{\RangeSeparator}}
 %\def\pairs@p{,\kern.2em}
 \let\pairs@p\ranges@p
-\def\cvs@p{\hbox{:}}
+\def\cvs@p{\hbox{\ChapterVerseSeparator}}
 \def\endash{\char"2013\relax}
+\def\RangeSeparator{\kern.1em\endash\kern.1em}
+\def\ChapterVerseSeparator{\kern.02em.\kern.02em}
 
 \def\extr@ctfirst#1:#2:#3\relax{%
  \def\@book{#1}\def\@chapter{#2}\def\t@st{#3}%

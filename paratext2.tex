@@ -28,14 +28,16 @@
   \checkp@ranotes{#1}%
   \hsize=\ifp@ranotes\maxdimen\else\textwidth\fi
   \interlinepenalty\interfootnotelinepenalty
-  \splittopskip\ht\strutbox % top baseline for broken footnotes
-  \splitmaxdepth\dp\strutbox \floatingpenalty\@MM
+  \floatingpenalty\@MM
   \leftskip\z@skip \rightskip\z@skip \spaceskip\z@skip \xspaceskip\z@skip
   \leavevmode\ifRTL\setbox2=\lastbox\beginR\box2\fi
   \testomitc@ller{#1}\ifomitc@ller\else
     \setbox0=\hbox{#2}#2\ifdim\wd0>0pt\kern.2em\fi
   \fi
-  \footstrut\futurelet\next\fo@t}
+  \footstrut
+  \splittopskip\ht\f@@tstrut % top baseline for broken footnotes
+  \splitmaxdepth\dp\f@@tstrut
+  \futurelet\next\fo@t}
 
 \def\OmitCallerInNote#1{%
   \expandafter\let\csname omit-in-note #1\endcsname=1}
@@ -48,11 +50,11 @@
   \setbox\f@@tstrut=\hbox to 0pt{\XeTeXuseglyphmetrics=0 \char32 \hss}%
   \dimen0=\ht\f@@tstrut \dimen2=\dp\f@@tstrut
   \dimen4=\dimen0 \advance\dimen4 by \dimen2
-  \ifdim\dimen4<\baselineskip
+%  \ifdim\dimen4<\baselineskip
     \dimen6=100\baselineskip \divide\dimen6 by \dimen4
     \multiply\dimen0 by \dimen6 \divide\dimen0 by 100
     \multiply\dimen2 by \dimen6 \divide\dimen2 by 100
-  \fi
+%  \fi
   \setbox\f@@tstrut=\hbox{}\ht\f@@tstrut=\dimen0 \dp\f@@tstrut=\dimen2
   \copy\f@@tstrut}
 
@@ -112,8 +114,8 @@
   \fi}
 
 \newif\iff@rstnote
-\def\footnoterule{\kern-.4pt % the \hrule is .4pt high
-  \hrule width \textwidth}
+\def\footnoterule{\kern-0.5\AboveNoteSpace\kern-.4pt % the \hrule is .4pt high
+  \hrule width \textwidth\kern0.5\AboveNoteSpace}
 
 \def\ParagraphedNotes#1{\x@\let\csname paranotes-#1\endcsname=1}
 \newif\ifp@ranotes
@@ -125,7 +127,7 @@
   \everypar={}\noindent
   \unvbox#1 \makehboxofhboxes 
   \setbox0=\hbox{\unhbox0 \removehboxes}
-  \noindent\unhbox0\unskip\unpenalty\unskip\unskip\linepenalty100\par} 
+  \noindent\unhbox0\unskip\unpenalty\unskip\unskip\linepenalty50\par} 
 \def\makehboxofhboxes{\setbox0=\hbox{} 
   \loop\setbox2=\lastbox \ifhbox2 \setbox0=\hbox{\box2\unhbox0}\repeat} 
 \def\removehboxes{\setbox0=\lastbox 
