@@ -66,12 +66,20 @@
 \def\defn@testyle#1{\x@\def\csname#1\endcsname{\n@testyle{#1}}\m@ken@tecl@ss{#1}}
 
 \def\m@ken@tecl@ss#1{%
+  \newcl@sstrue
+  \def\n@wcl@ss{#1}
+  \let\\=\ch@ckifcl@ss \the\n@tecl@sses
+  \ifnewcl@ss \allocatecl@ss{#1} \fi
+}
+\def\allocatecl@ss#1{
   \x@\n@tecl@sses\x@{\the\n@tecl@sses \\{#1}}%
   \x@\n@winsert\csname note-#1\endcsname
   \s@tn@tep@rams{#1}%
 }
 \let\n@winsert=\newinsert
 \newtoks\n@tecl@sses
+\def\ch@ckifcl@ss#1{\def\t@st{#1}\ifx\t@st\n@wcl@ss\newcl@ssfalse\fi}
+\newif\ifnewcl@ss
 
 \def\s@tn@tep@rams#1{%
   \x@\count\csname note-#1\endcsname=1000
@@ -564,12 +572,12 @@
  \edef\v@rsefrom{#1}\edef\v@rseto{#2}%
  \ifx\v@rseto\empty\let\v@rseto=\v@rsefrom\fi}
 
-\newif\ifc@ntinue \c@ntinuetrue
+\newif\ifc@ntinue
 \newread\styl@sheet
 \def\stylesheet#1{
- \openin\styl@sheet=#1
- \ifeof\styl@sheet\message{Paratext stylesheet #1 not found!}\else
-   \message{Reading Paratext stylesheet #1...}%
+ \openin\styl@sheet="#1" \c@ntinuetrue
+ \ifeof\styl@sheet\message{Paratext stylesheet "#1" not found!}\else
+   \message{Reading Paratext stylesheet "#1"...}%
    \endlinechar=-1
    \catcode`\#=5 % paratext comment char
    \loop
@@ -578,13 +586,18 @@
     \ifeof\styl@sheet \c@ntinuefalse \fi
     \ifc@ntinue\repeat
    \endlinechar=13
-   \s@tupsizes
-   \@ddcvhooks
-   \@ddspecialhooks
+   \closein\styl@sheet
    \catcode`\#=6 % restore default TeX catcode
  \fi}
 
+\def\@netimesetup{
+ \s@tupsizes
+ \@ddcvhooks
+ \@ddspecialhooks
+ \let\@netimesetup=\relax}
+
 \def\ptxfile#1{
+ \@netimesetup
  \openadjlist "#1.adj"
  \openpiclist "#1.piclist"
  %\catcode`\$=12
@@ -596,6 +609,7 @@
  \catcode13=10
  \m@kedigitsletters
  \input "#1" \ifsk@pping\egroup\fi
+ \m@kedigitsother
  \catcode13=5
  \closepiclist
  \closeadjlist
