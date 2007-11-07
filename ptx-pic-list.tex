@@ -41,7 +41,7 @@
 \def\openpiclist "#1" {%
   \closein\p@clist
   \openin\p@clist="#1"
-  \ifeof\p@clist \immediate\write16{(no picture list "#1" found)}%
+  \ifeof\p@clist \immediate\write-1{(no picture list "#1" found)}%
   \else \immediate\write16{(using picture list "#1")}\fi
   \readnextp@c
 }

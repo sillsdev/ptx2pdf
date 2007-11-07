@@ -598,8 +598,8 @@
 
 \def\ptxfile#1{
  \@netimesetup
- \openadjlist "#1.adj"
- \openpiclist "#1.piclist"
+ \openadjlist "\the\AdjListPath#1.adj"
+ \openpiclist "\the\PicListPath#1.piclist"
  %\catcode`\$=12
  \catcode`\^=12 \catcode`\_=12 % make these printable
  \catcode`\&=12 \catcode`\~=12
@@ -618,6 +618,8 @@
  \catcode`\{=1 \catcode`\}=2
  \singlecolumn
  \pagebreak}
+\newtoks\AdjListPath
+\newtoks\PicListPath
 
 \catcode`\/=\active
 \def/{\futurelet\n@xt\sl@sh}

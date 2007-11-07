@@ -36,7 +36,7 @@
 \def\openadjlist "#1" {%
  \closein\@djlist
  \openin\@djlist="#1"
- \ifeof\@djlist \immediate\write16{(no adjustment list "#1" found)}%
+ \ifeof\@djlist \immediate\write-1{(no adjustment list "#1" found)}%
  \else \immediate\write16{(using adjustment list "#1")}\fi
  \readnext@dj
 }
