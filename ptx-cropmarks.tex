@@ -89,6 +89,10 @@
         \moveright\dimen0\copy\topcr@p
         \kern\PaperHeight
         \moveright\dimen0\copy\bottomcr@p
+        \moveright\dimen0\vbox to 0pt{\kern15pt\hsize\PaperWidth \everypar={}
+          \lineskiplimit=0pt \baselineskip=10pt
+          \leftskip=0pt plus 1fil \rightskip=\leftskip \parfillskip=0pt
+          \noindent \beginL\idf@nt \c@rrID\endL\endgraf\vss}
         \vss
       }
     \fi
