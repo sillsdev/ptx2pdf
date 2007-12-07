@@ -1,30 +1,37 @@
 % ptx-adj-list.tex
 % paragraph adjustment from auxiliary file
 
-\catcode`\@=11
-
+% Read a line from the adjustment file; expected format is
+%    BBB C.V ADJ
+% where BBB is the book code (GEN, EXO, MAT, etc), C.V is the chapter.verse reference,
+% and ADJ is the paragraph-length adjustment to be applied here (+1, +2, -1, etc).
+% 
+% The reference of the adjustment to be applied is stored in \@djref, and the actual adjustment in \@djustment.
+%
 \def\parse@djline #1 #2.#3 #4\end{%
  \uppercase{\gdef\@djref{#1#2.#3}}\gdef\@djustment{#4}%
 }
 
+% Perform the current adjustment, and read the next line, if any
 \def\do@dj{%
  \looseness=\@djustment
  \readnext@dj
 }
 
+% read the next line from the adjustment list, or set \@djref to empty if no more
 \def\readnext@dj{%
  \ifeof\@djlist
   \let\@djref\empty
  \else
-  \begingroup
+  \begingroup % ensure relevant characters have the expected catcodes
    \catcode`0=12 \catcode`1=12 \catcode`2=12 \catcode`3=12 \catcode`4=12
    \catcode`5=12 \catcode`6=12 \catcode`7=12 \catcode`8=12 \catcode`9=12
    \catcode`.=12 \catcode`+=12 \catcode`-=12 \catcode`\%=5
    \endlinechar=-1
    \read\@djlist to \@djline
-   \ifx\@djline\P@R\readnext@dj\else
+   \ifx\@djline\P@R\readnext@dj\else % skip blank lines (or comments)
     \ifx\@djline\empty\readnext@dj\else
-     \expandafter\parse@djline\@djline\end
+     \expandafter\parse@djline\@djline\end % store the reference and adjustment to be done
     \fi
    \fi
   \endgroup
@@ -33,24 +40,22 @@
 \def\P@R{\par}
 
 \newread\@djlist
-\def\openadjlist "#1" {%
+\def\openadjlist "#1" {% open an adjustment list, and read the first record
  \closein\@djlist
  \openin\@djlist="#1"
  \ifeof\@djlist \immediate\write-1{(no adjustment list "#1" found)}%
  \else \immediate\write16{(using adjustment list "#1")}\fi
  \readnext@dj
 }
-\def\closeadjlist{%
+\def\closeadjlist{% close the adjustment list, with an error message if we didn't process it fully
  \ifeof\@djlist\else \errmessage{Did not use all adjustments in list}\fi
  \closein\@djlist
 }
 
-\def\ch@ckadjustments{%
+\def\ch@ckadjustments{% check if the current reference is the place for the next adjustment
  \edef\c@rref{\id@@@\ch@pter.\v@rse}%
  \ifx\c@rref\@djref \do@dj \fi}
 
-\addtoversehooks{\ch@ckadjustments}
-
-\catcode`\@=12
+\addtoversehooks{\ch@ckadjustments} % add this to the hooks executed at each verse
 
 \endinput

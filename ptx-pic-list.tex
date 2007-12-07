@@ -1,12 +1,14 @@
 % picture-list support for the ptx2pdf package
 
-% format of lines in pic-list file:
-% book_id chapter.verse desc|file|size|loc|copyright|caption|ref
+% Format of lines in pic-list file:
+%     BBB C.V desc|file|size|loc|copyright|caption|ref
+% where BBB is the book code, C.V is the chapter/verse reference,
+% and the remaining data corresponds to USFM's \fig marker fields
 %
 % eg:
 % MRK 1.16 |hk00207b.png|span|b||fishermen...catching fish with a net.|1.16
 
-\catcode`\@=11
+% Compare ptx-adj-list.tex for comments on the code.
 
 \def\parsep@cline #1 #2.#3 #4\end{%
   \uppercase{\gdef\p@cref{#1#2.#3}}\gdef\p@cspec{#4}%
@@ -56,7 +58,4 @@
 
 \addtoversehooks{\ch@ckpiclist}
 
-\catcode`\@=12
-
 \endinput
-

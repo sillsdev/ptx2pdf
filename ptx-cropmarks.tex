@@ -1,13 +1,11 @@
 % cropmark support for the ptx2pdf package
 
-\catcode`\@=11
-
 \newif\ifCropMarks
 
-\font\idf@nt=cmtt10 scaled 700
+\font\idf@nt=cmtt10 scaled 700 % font for the marginal job information
 
 \newbox\topcr@p \newbox\bottomcr@p
-\def\makecr@ps{%
+\def\makecr@ps{% construct the cropmark boxes for top and bottom of page
   \global\setbox\topcr@p=\vbox to 0pt{\vss
     \hbox to \PaperWidth{%
       \kern -30pt
@@ -42,7 +40,7 @@
   }% end \vbox for \bottomcr@p
 }
 
-\def\printd@te{\number\year.%
+\def\printd@te{\number\year.% print the date and time of the run
   \ifnum\month<10 0\fi \number\month.%
   \ifnum\day<10 0\fi \number\day\ --
   \count255=\time \divide\count255 by 60
@@ -52,12 +50,12 @@
   \ifnum\count255<10 0\fi \number\count255
 }
 
-\def\shipwithcr@pmarks#1{%
+\def\shipwithcr@pmarks#1{% \shipout box #1, adding cropmarks if required
   \dimen0=0\ifCropMarks .5\fi in
-  \advance\pdfpagewidth by 2\dimen0
+  \advance\pdfpagewidth by 2\dimen0 % increase PDF media size
   \advance\pdfpageheight by 2\dimen0
-  \hoffset=-1in \voffset=-1in
-  \shipout\vbox to 0pt{
+  \hoffset=-1in \voffset=-1in % shift the origin to (0,0)
+  \shipout\vbox to 0pt{% ship the actual page content, with \BindingGutter added if wanted
     \kern \baselineskip % make room for headline
     \offinterlineskip
     \vbox to \pdfpageheight{\vss
@@ -82,8 +80,8 @@
         \if\g@tterside R\kern\BindingGutter\fi
       }\hss}\vss}
     \vss
-    \ifCropMarks
-      \ifvoid\topcr@p \makecr@ps \fi
+    \ifCropMarks % if crop marks are enabled
+      \ifvoid\topcr@p \makecr@ps \fi % create them (first time)
       \vbox to 0pt{
         \kern\dimen0
         \moveright\dimen0\copy\topcr@p
@@ -92,18 +90,18 @@
         \moveright\dimen0\vbox to 0pt{\kern15pt\hsize\PaperWidth \everypar={}
           \lineskiplimit=0pt \baselineskip=10pt
           \leftskip=0pt plus 1fil \rightskip=\leftskip \parfillskip=0pt
-          \noindent \beginL\idf@nt \c@rrID\endL\endgraf\vss}
+          \noindent \beginL\idf@nt \c@rrID\endL\endgraf % add the current \id line
+          \vss}
         \vss
       }
     \fi
   }%
 }
 
+% redefine plain TeX's output routine to add the cropmarks
 \def\plainoutput{\shipwithcr@pmarks
     {\vbox{\makeheadline\pagebody\makefootline}}%
   \advancepageno
   \ifnum\outputpenalty>-\@MM \else\dosupereject\fi}
-
-\catcode`\@=12
 
 \endinput

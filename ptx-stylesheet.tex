@@ -1,0 +1,305 @@
+%% Macros to read Paratext stylesheets and define TeX control sequences
+%% for all markers present in the file
+
+%
+% Macros to process each marker used in a Paratext stylesheet,
+% either ignoring it or saving the parameter as appropriate
+%
+\def \Marker         #1\relax{\def\m@rker{#1}} % store name of marker currently being defined
+\def \Endmarker      #1\relax{\defp@ram{endmarker}{#1}}
+\def \Name           #1\relax{}
+\def \Description    #1\relax{}
+\def \OccursUnder    #1\relax{}
+\let \Occursunder\OccursUnder
+\def \Rank           #1\relax{}
+\def \TextType       #1\relax{\lowercase{\defp@ram{type}{#1}}}
+\let \Texttype\TextType
+\def \TextProperties #1\relax{\lowercase{\defp@ram{properties}{#1}}}
+\let \Textproperties\TextProperties
+\def \StyleType      #1\relax{\lowercase{\def\styl@type{#1}}\m@kestyle}
+\let \Styletype=\StyleType
+\def \FontSize       #1\relax{\defp@ram{fontsize}{#1}}
+\let \Fontsize\FontSize
+\def \FontName       #1\relax{\defp@ram{fontname}{#1}}
+\let \Fontname\FontName
+\def \FirstLineIndent#1\relax{\defp@ram{firstindent}{#1}}
+\let \Firstlineindent\FirstLineIndent
+\def \LeftMargin     #1\relax{\defp@ram{leftmargin}{#1}}
+\let \Leftmargin\LeftMargin
+\def \RightMargin    #1\relax{\defp@ram{rightmargin}{#1}}
+\let \Rightmargin\RightMargin
+\def \Italic         {\defp@ram{italic}{true}}
+\let \italic\Italic
+\def \Bold           {\defp@ram{bold}{true}}
+\let \bold\Bold
+\def \Superscript    {\defp@ram{superscript}{true}}
+\let \superscript\Superscript
+\def \Underline      {}
+\let \underline\Underline
+\def \NotRepeatable  {}
+\let \Notrepeatable\NotRepeatable
+\def \SpaceBefore    #1\relax{\defp@ram{spacebefore}{#1}}
+\let \Spacebefore\SpaceBefore
+\def \SpaceAfter     #1\relax{\defp@ram{spaceafter}{#1}}
+\let \Spaceafter\SpaceAfter
+\def \Color          #1\relax{}
+\let \color\Color
+\def \Justification  #1\relax{\lowercase{\defp@ram{justification}{#1}}}
+\def \CallerStyle    #1\relax{\defp@ram{callerstyle}{#1}}
+
+%
+% \defp@ram: store the value of a parameter from the .sty file
+%   #1 -> name of parameter to store
+%   #2 -> value
+% Constructs a macro name \<marker>:<parameter> to hold the value
+%
+\def\defp@ram#1#2{\x@\def\csname\m@rker:#1\endcsname{#2}}
+
+%
+% \getp@aram: fetch the value of a style parameter into \p@ram
+%   #1 -> name of parameter to fetch
+%   #2 -> name of marker
+% Sets temporary macro \p@ram to the value
+%
+\def\getp@ram#1#2{\x@\let\x@\p@ram\csname#2:#1\endcsname}
+
+%
+%
+%
+\def\m@kestyle{{\uccode`\|=`\\\uppercase{\message{|\m@rker}}}
+ \ifx\styl@type\P@ra \x@\defp@rstyle\x@{\m@rker}
+ \else\ifx\styl@type\Ch@r \x@\defch@rstyle\x@{\m@rker}
+ \else\ifx\styl@type\N@te \x@\defn@testyle\x@{\m@rker}
+ \else \message{unknown style type \styl@type}
+ \fi\fi\fi}
+\def\P@ra{paragraph}
+\def\Ch@r{character}
+\def\N@te{note}
+
+%
+% \def*style: define a USFM marker as a paragraph, character or note style marker
+% which will expand to \p@rstyle, \ch@rstyle or \n@testyle, with the marker name
+% as its parameter
+%
+% \csname...\endcsname is used because the marker may contain numbers as well as letters
+%
+\def\defp@rstyle#1{\x@\def\csname#1\endcsname{\p@rstyle{#1}}}
+\def\defch@rstyle#1{\x@\def\csname#1\endcsname{\ch@rstyle{#1}}}
+\def\defn@testyle#1{\x@\def\csname#1\endcsname{\n@testyle{#1}}\m@ken@tecl@ss{#1}}
+
+\def\sethook#1#2#3{\x@\def\csname #1-#2\endcsname{#3}}
+
+\lowercase{
+ \def\@ddcvhooks{
+  \let\@V=\v
+  \def\@v@ ##1 {\gdef\v@rse{##1}%
+   \x@\spl@tverses\v@rse--\relax
+   \c@ncelfirstversefalse
+   \ifOmitVerseNumberOne \ifnum\spacefactor=998 \c@ncelfirstversetrue \fi \fi
+   \ifc@ncelfirstverse\else
+     \csname before-v\endcsname
+     \h@ndlesuperscript{v}{%
+       \x@\let\csname before-v\endcsname\relax
+       \x@\let\csname after-v\endcsname\relax
+       \@V~\printv@rse\@V*}%
+     \csname after-v\endcsname\kern.2em \fi
+   \egroup
+   \m@rkverse
+   \the\v@rsehooks
+   \gdef\reference{\ch@pter:\v@rse}}
+  \def\v{\leavevmode
+   \ifdim\lastkern=-1sp \let\ll@p=\llap
+   \else \let\ll@p=\relax \fi % hanging verse number?
+   \ll@p\bgroup\m@kedigitsother\@v@}
+  \let\@C=\c
+  \def\@c@ ##1 {\ifsk@pping \egroup \fi
+   \gdef\ch@pter{##1}\gdef\v@rse{}\m@kedigitsletters
+   \ifOmitChapterNumber\else
+    \ifx\ch@plabel\empty \global\ch@ptertrue 
+    \else \p@rstyle{cl}\ch@plabel\ \ch@pter\fi
+   \fi}
+  \def\c{\m@kedigitsother\@c@}
+  \ifnum\dropnumbersize=0
+    \getp@ram{fontsize}{p}\count255=\p@ram \multiply\count255 by 2
+    \getp@ram{fontsize}{c}\dropnumbersize=\p@ram
+    \ifnum\dropnumbersize<\count255
+      \s@tfont{c}\setbox0=\hbox{0123456789}
+      \x@\let\csname font<c>\endcsname=\relax
+      \s@tfont{p}\dimen0=\fontdimen5\font
+      \advance\dimen0 by \baselineskip
+      \multiply\dimen0 by 100 \divide\dimen0 by \ht0
+      \multiply\dimen0 by \dropnumbersize \divide\dimen0 by 100
+      \dropnumbersize=\dimen0
+    \fi
+  \fi
+  \def\m@rker{c}\defp@ram{fontsize}{\the\dropnumbersize}
+ }
+}
+\newif\ifOmitChapterNumber
+\def\printv@rse{\v@rsefrom\ifx\v@rsefrom\v@rseto\else\endash\v@rseto\fi}
+\def\@ne{1}
+
+% put \hangversenumber into the <start> hook for a style such as \q1
+% in order to 'hang' verse numbers into the paragraph indent of the style
+\def\hangversenumber{\kern-1sp\relax}
+
+% size to use for drop-cap style numbers; automatically calculated if not set
+\newcount\dropnumbersize
+
+% other modules can use \addtoversehooks to insert macros that will be executed at each verse
+\def\addtoversehooks#1{\x@\v@rsehooks\x@{\the\v@rsehooks #1}}
+\newtoks\v@rsehooks
+
+\newif\ifch@pter \def\ch@plabel{}
+
+% macros to switch digits between "letter" and "other" category; must be "letter" when reading USFM data,
+% but "other" when we want to read numeric values
+\def\m@kedigitsletters{\catcode`0=\el@ven \catcode`1=\el@ven \catcode`2=\el@ven \catcode`3=\el@ven
+ \catcode`4=\el@ven \catcode`5=\el@ven \catcode`6=\el@ven \catcode`7=\el@ven
+ \catcode`8=\el@ven \catcode`9=\el@ven \relax}
+\def\m@kedigitsother{\catcode`0=\tw@lve \catcode`1=\tw@lve \catcode`2=\tw@lve \catcode`3=\tw@lve
+ \catcode`4=\tw@lve \catcode`5=\tw@lve \catcode`6=\tw@lve \catcode`7=\tw@lve
+ \catcode`8=\tw@lve \catcode`9=\tw@lve \relax}
+\def\el@ven{11}
+\def\tw@lve{12}
+
+\def\b@ok{BOOK}
+\def\ch@pter{}
+\def\v@rse{}
+\def\m@rkverse{\mark{\b@ok:\ch@pter:\v@rse}}
+
+\begingroup
+\obeylines%
+\gdef\@ddspecialhooks{% there are a few special USFM markers that we give "magic" properties
+ \let\@H=\h%
+ \def\h{\bgroup\obeylines\@h}% \h gets stored as the book name (for references)
+ \def\@h ##1^^M{\gdef\b@ok{##1}\egroup}%
+ \let\@CL=\cl%
+ \def\cl{\bgroup\obeylines\@cl}% \cl gets stored as chapter label and changes \c format
+ \def\@cl ##1^^M{\gdef\ch@plabel{##1}\egroup}%
+ \let\@ID=\id%
+ \def\id{\bgroup\obeylines\@id}% \id gets stored and printed in the margin with cropmarks
+ \def\@id ##1^^M{\gdef\c@rrID{##1}\uppercase{\@@id##1ZZZ\end}\egroup}%
+ \let\fig=\ptx@fig% \fig has its own special macro to parse the fields
+ \let\nb=\ptx@nb% \nb is a special code that suppresses a paragraph break across \c
+}%
+\endgroup
+\def\@@id#1#2#3#4\end{\gdef\id@@@{#1#2#3}} % get first 3 chars of the \id
+\def\ptx@fig #1\fig*{\d@figure{#1}}
+
+%
+% \stylesheet{...} reads a Paratext stylesheet line by line
+%
+\newif\ifc@ntinue
+\newread\styl@sheet
+\def\stylesheet#1{
+ \openin\styl@sheet="#1" \c@ntinuetrue
+ \ifeof\styl@sheet\message{Paratext stylesheet "#1" not found!}\else
+   \message{Reading Paratext stylesheet "#1"...}%
+   \endlinechar=-1
+   \catcode`\#=5 % paratext comment char
+   \loop
+    \read\styl@sheet to \th@line
+    \th@line \relax
+    \ifeof\styl@sheet \c@ntinuefalse \fi
+    \ifc@ntinue\repeat
+   \endlinechar=13
+   \closein\styl@sheet
+   \catcode`\#=6 % restore default TeX catcode
+ \fi}
+
+\def\@netimesetup{
+ % stuff to execute after loading all stylesheets but before processing the first USFM file
+ \s@tupsizes
+ \@ddcvhooks
+ \@ddspecialhooks
+ \let\@netimesetup=\relax}
+
+\def\ptxfile#1{
+ \@netimesetup
+ \openadjlist "\the\AdjListPath#1.adj"
+ \openpiclist "\the\PicListPath#1.piclist"
+ %\catcode`\$=12
+ \catcode`\^=12 \catcode`\_=12 % make these printable
+ \catcode`\&=12 \catcode`\~=12
+ \catcode`\#=12 %\catcode`\%=12
+ \catcode`\{=12 \catcode`\}=12
+ \catcode`\/=\active
+ \catcode13=10
+ \m@kedigitsletters
+ \input "#1" \ifsk@pping\egroup\fi
+ \m@kedigitsother
+ \catcode13=5
+ \closepiclist
+ \closeadjlist
+ \catcode`\/=12
+ \catcode`\#=6 \catcode`\%=14 % restore TeX meanings for those we might use
+ \catcode`\{=1 \catcode`\}=2
+ \singlecolumn
+ \pagebreak}
+\newtoks\AdjListPath % path to look for adjustment files
+\newtoks\PicListPath % path to look for picture list files
+
+\catcode`\/=\active
+\def/{\futurelet\n@xt\sl@sh}
+\def\sl@sh{\ifx\n@xt/\let\n@xt\sl@shbreak\else\let\n@xt\sl@shprint\fi\n@xt}
+\def\sl@shbreak/{\penalty-250\ }
+\def\sl@shprint{\char`\/}
+\catcode`\/=12
+
+\newdimen\FontSizeUnit		\FontSizeUnit=1bp
+\newdimen\IndentUnit		\IndentUnit=1in
+\newdimen\PaperWidth		\PaperWidth=210mm
+\newdimen\PaperHeight		\PaperHeight=297mm
+\newdimen\MarginUnit		\MarginUnit=1in
+\newdimen\BindingGutter		\BindingGutter=5mm
+\def\LineSpacingFactor{1.0}
+\def\VerticalSpaceFactor{1.0}
+\def\TopMarginFactor{1.0}
+\def\SideMarginFactor{1.0}
+\def\ColumnGutterFactor{15}
+
+\newcount\TitleColumns \TitleColumns=1
+\newcount\IntroColumns \IntroColumns=1
+\newcount\BodyColumns  \BodyColumns=1
+
+\newif\ifBindingGutter % \BindingGutter won't be used unless this is set to true
+\newif\ifDoubleSided \DoubleSidedtrue
+
+% calculate various dimensions based on the factors, units, etc that have been defined
+\def\s@tupsizes{
+ \le@dingunit=\LineSpacingFactor\FontSizeUnit
+ \verticalsp@ceunit=\VerticalSpaceFactor\le@dingunit
+ \baselineskip=14\le@dingunit
+ \lineskiplimit=-7\le@dingunit
+ \lineskip=0pt
+ \topskip=12\le@dingunit
+ \gutter=\ColumnGutterFactor\FontSizeUnit
+ \dimen0=\PaperWidth \dimen2=\SideMarginFactor\MarginUnit
+ \advance\dimen0 by -2\dimen2
+ \ifBindingGutter \advance\dimen0 by -\BindingGutter \fi
+ \textwidth=\dimen0
+ \colwidth=0.5\textwidth \advance\colwidth by -0.5\gutter
+ \hsize=\textwidth
+ \dimen0=\PaperHeight
+ \advance\dimen0 by -\TopMarginFactor\MarginUnit
+ \advance\dimen0 by -\TopMarginFactor\MarginUnit
+ \textheight=\dimen0
+ \vsize=\textheight
+ \dimen0=\SideMarginFactor\MarginUnit \advance\dimen0 by -1in
+ \hoffset=\dimen0
+ \dimen0=\TopMarginFactor\MarginUnit \advance\dimen0 by -1in
+ \advance\dimen0 by 0.5\baselineskip % nudge down a little for header
+ \voffset=\dimen0
+ \pdfpagewidth=\PaperWidth
+ \pdfpageheight=\PaperHeight
+ \resetvsize
+}
+\newdimen\le@dingunit
+\newdimen\verticalsp@ceunit
+\newdimen\textwidth
+\newdimen\textheight
+\newdimen\colwidth
+\newdimen\gutter \gutter=20pt
+
+\endinput

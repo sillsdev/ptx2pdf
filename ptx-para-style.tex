@@ -1,0 +1,244 @@
+% Paragraph style macros
+
+% some flags used to communicate between the macros
+\newif\if@ntromarker
+\newif\if@ntro \newif\ift@tle \newif\ifb@dy
+\newif\ifd@ublecols \d@ublecolsfalse
+
+% test if a marker is an "introduction" style (name begins with "i")
+\def\t@stintro#1#2\relax{\if#1i\global\@ntromarkertrue\else\global\@ntromarkerfalse\fi}
+
+% start title/intro/body, if not already in that mode, switching columns if needed
+\def\st@rtintro{\TRACE{st@rtintro}\if@ntro\else
+  \ifnum\IntroColumns=\c@rrentcols\else
+    \ifnum\IntroColumns=2 \doublecolumns\else\singlecolumn\fi
+  \fi
+  \global\@ntrotrue\global\t@tlefalse\global\b@dyfalse\fi}
+
+\def\st@rttitle{\TRACE{st@rttitle}\ift@tle\else
+  \ifnum\TitleColumns=\c@rrentcols\else
+    \ifnum\TitleColumns=2 \doublecolumns\else\singlecolumn\fi
+  \fi
+  \global\t@tletrue\global\@ntrofalse\global\b@dyfalse\fi}
+
+\def\st@rtbody{\ifb@dy\else\TRACE{st@rtbody}%
+  \ifnum\BodyColumns=\c@rrentcols
+    \penalty-200\vskip\baselineskip
+  \else
+    \ifnum\BodyColumns=2 \doublecolumns\else\singlecolumn\fi
+  \fi
+  \global\b@dytrue\global\@ntrofalse\global\t@tlefalse\fi}
+
+\newcount\c@rrentcols \global\c@rrentcols=1
+
+%
+% Headings are set into a box, so that they can be measured and adjusted for the grid
+%
+\newif\ifhe@dings
+\newbox\he@dingbox
+\def\endhe@dings{\ifhe@dings\TRACE{endhe@dings}%
+  \makecutouts \endgraf
+  \egroup \cutoutcarryover
+%{\showboxbreadth=200 \showbox\he@dingbox}
+  \gridb@x\he@dingbox
+  \global\he@dingsfalse
+ \fi
+}
+
+\def\killd@scenders#1{%
+  \vbox{\unvbox#1 \skip0=\lastskip\unskip \count255=\lastpenalty\unpenalty
+    \setbox0=\lastbox
+    \ifvoid0\else \dp0=0pt \box0 \fi
+    \ifdim\skip0>0pt \penalty\count255 \vskip\skip0 \fi}}
+
+%
+% Given a box of headings, output it but ensure we use an integral number of lines altogether
+%
+\def\gridb@x#1{%
+% \setbox0=\hbox{\kern-#1pt\vrule\kern#1pt\kern-.4pt\box#1\kern-.4pt\vrule}%
+%\MSG{before gridbox: ht0=\the\ht0; dp0=\the\dp0}
+ \setbox0=\killd@scenders#1%
+%{\showboxbreadth=100 \showboxdepth=10 \showbox0 }%
+ \dimen2=\ht0 \advance\dimen2 by \dp0
+ \dimen0=0pt
+ \loop \ifdim\dimen0<\dimen2
+   \advance\dimen0 by \baselineskip
+   \line{}\nobreak \repeat
+ \setbox0=\vbox to 0pt{\kern-\ht0\unvbox0}
+%\MSG{ after gridbox: dimen0=\the\dimen0; dp0=\the\dp0}
+ \unvbox0 \nobreak
+}
+
+% end a paragraph, handling cutouts (shaping around drop-cap) if any, and the <end> hook
+\def\par{\ifhmode \TRACE{par}%
+ \makecutouts
+ \csname end-\m@rker\endcsname
+ \endgraf \cutoutcarryover \fi}
+
+%
+% Handle a paragraph style marker (parameter is the marker name)
+%
+\newif\ifhe@dingstyle
+\def\p@rstyle#1{\TRACE{p@rstyle:#1}%
+ \ifsk@pping \egroup \fi % if we were skipping nonpublishable text, end that mode
+ \t@stpublishability{#1}% test if the new marker is nonpublishable
+ \ifn@npublishable
+  \setbox\j@nkbox=\vbox\bgroup \sk@ppingtrue % and if so, start a box to consume and discard the text
+ \else % else we need to actually process it!
+  \ifhmode\unskip\fi % remove any trailing space
+  \end@llcharstyles % end any character styles in effect
+  \par % end the paragraph
+  \getp@ram{spaceafter}{\m@rker}% output any <spaceafter> for the previous style
+  \ifx\p@ram\relax \else
+    \ifhe@dings\nobreak\fi
+    \vskip\p@ram\verticalsp@ceunit
+  \fi
+  \resetp@rstyle
+  \csname after-\m@rker\endcsname % handle <after> hook for the previous style
+  \gdef\m@rker{#1} % remember the new style name
+  \csname before-\m@rker\endcsname % handle its <before> hook
+  %
+  % now we check what kind of marker this is: intro? title? section? other?
+  % and switch to the appropriate mode
+  %
+  \x@\t@stintro\m@rker\relax
+  \global\he@dingstylefalse
+  \getp@ram{type}{\m@rker}\ifx\p@ram\t@tle \mark{\t@tle}\fi
+  \ifx\p@ram\t@tle
+    \ift@tle\else\ifhe@dings\endhe@dings\fi\fi
+    \st@rttitle
+    \global\he@dingstyletrue 
+  \else\ifx\p@ram\s@ction
+    \ift@tle\ifhe@dings\endhe@dings\fi\fi
+    \if@ntromarker\st@rtintro\else\st@rtbody\fi
+    \global\he@dingstyletrue
+  \else\ifx\p@ram\oth@r
+    \ift@tle\ifhe@dings\endhe@dings\fi\fi
+    \if@ntromarker\st@rtintro\else\st@rtbody\fi
+    \if@ntromarker\else\global\he@dingstyletrue\fi
+  \else
+    \if@ntromarker\st@rtintro\else\st@rtbody\fi
+  \fi\fi\fi
+  \ifhe@dingstyle\TRACE{headingstyle true}%
+    \ifhe@dings\else
+      \setbox\he@dingbox=\vbox\bgroup\global\he@dingstrue
+        \linepenalty=1000 \interlinepenalty=10000
+    \fi
+    \nobreak
+  \else\TRACE{headingstyle false}%
+    \ifhe@dings\endhe@dings\fi
+  \fi
+  \getp@ram{spacebefore}{\m@rker}% output <spacebefore> for this style
+  \ifx\p@ram\relax \else
+    \ifhe@dings\nobreak\fi \vskip\p@ram \verticalsp@ceunit
+  \fi
+  \everypar={%
+   %
+   % \everypar will be triggered when the paragraph actually starts (normally at the first character of text,
+   % or something like a verse number); then we'll set up margins/indents and font
+   %
+   \ifRTL\beginR\fi
+   \getp@ram{justification}{\m@rker}%
+   \ifx\p@ram\c@nter
+    \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
+   \else\ifx\p@ram\l@ft
+    \rightskip=0pt plus \textwidth
+   \else\ifx\p@ram\r@ght
+    \leftskip=0pt plus \textwidth \parfillskip=0pt
+   \fi\fi\fi
+   \getp@ram{leftmargin}{\m@rker}%
+   \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
+   \getp@ram{rightmargin}{\m@rker}%
+   \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
+   \s@tfont{\m@rker}%
+   \allowp@rindenttrue
+   \c@ncelfirstversefalse
+   %
+   % handle drop-cap style chapter number, if this is the beginning of a chapter
+   %
+   \ifch@pter
+    \getp@ram{type}{\m@rker}%
+    \ifx\p@ram\v@rsetext
+     \m@kechapterbox
+     \kern-\wd\ch@pterbox\box\ch@pterbox
+     \global\ch@pterfalse
+     \ifIndentAtChapter\else \allowp@rindentfalse \fi
+     \c@ncelfirstversetrue
+     \ifx\XeTeXversion\undefined \else
+      \special{pdf:dest (\b@ok.\ch@pter) [@thispage /Fit]}%
+      \special{pdf:outline 0 << /Title (\b@ok\space\ch@pter)
+               /A << /S /GoTo /D (\b@ok.\ch@pter) >> >>}%
+     \fi
+    \fi
+   \fi
+   \ifallowp@rindent % create first-line indent, unless suppressed at dropped chapter number
+    \getp@ram{firstindent}{\m@rker}%
+    \ifx\p@ram\relax \else \kern\p@ram \IndentUnit \fi
+   \fi
+   \global\p@ranesting=1
+   \csname start-\m@rker\endcsname % handle <start> hook
+   \ifc@ncelfirstverse \spacefactor=0\n@wchaptersf \fi
+   % set special \spacefactor if we're at a chapter number, so \v 1 can omit the verse number here
+  }%
+ \fi}
+\newif\ifRTL
+\newif\ifallowp@rindent
+\newif\ifc@ncelfirstverse
+\newif\ifIndentAtChapter
+\newif\ifOmitVerseNumberOne \OmitVerseNumberOnefalse
+\def\n@wchaptersf{998}
+
+\newif\ifsk@pping \newif\ifn@npublishable \newbox\j@nkbox
+\def\t@stpublishability#1{\n@npublishablefalse % check if "nonpublishable" occurred in the marker's \Properties
+ \getp@ram{properties}{#1}%
+ \x@\t@stnonpub\p@ram nonpublishable!}
+\def\t@stnonpub #1nonpublishable#2!{%
+ \def\t@st{#2}\ifx\t@st\empty\else\n@npublishabletrue\fi}
+
+% Create the drop-cap in \ch@pterbox, and create the cutout in the current paragraph
+\def\m@kechapterbox{%
+ \setbox\ch@pterbox=\hbox{\s@tfont{c}\ch@pter}%
+ \setbox\ch@pterbox=\hbox{\lower\baselineskip\box\ch@pterbox
+   \box\ch@pternote\kern.2em}%
+ \ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
+ \x@\let\x@\d@lay\csname delay-\id@@@.\ch@pter\endcsname
+ \x@\c@tcmd\x@{\the\wd\ch@pterbox}{0\d@lay}{2}%
+ \dp\ch@pterbox=0pt
+ \setbox\ch@pterbox=\hbox{\ifRTL\kern\rightskip\fi
+   \box\ch@pterbox
+   \ifRTL\else\kern\leftskip\fi}%
+}
+\newbox\ch@pterbox
+\newbox\ch@pternote
+
+% Used to delay a cutout until later in the paragraph, for no-break chapter numbers
+\def\DelayedChapter#1#2#3{\uppercase{\def\ucb@@k{#1}}%
+  \x@\def\csname delay-\ucb@@k.#2\endcsname{#3}}
+
+\def\ptx@nb{%
+  \ifch@pter
+    \msg{*** no-break at chapter \ch@pter, check \string\DelayedChapter\space setting}%
+    \m@kechapterbox \global\ch@pterfalse
+    \leavevmode\str@t \vadjust{\vbox to 0pt{\kern-\dp\str@tbox \kern-\ht\ch@pterbox
+      \box\ch@pterbox\vss}}%
+  \fi}
+\newbox\str@tbox
+\def\str@t{\setbox\str@tbox=\hbox to 0pt{\XeTeXuseglyphmetrics=0 
+  \char32 \hss}\copy\str@tbox}
+
+% strings for testing against stylesheet parameters
+\def\v@rsetext{versetext}
+\def\c@nter{center}
+\def\l@ft{left}
+\def\r@ght{right}
+\def\t@tle{title}
+\def\s@ction{section}
+\def\oth@r{other}
+
+\def\resetp@rstyle{%
+ \leftskip=0pt \rightskip=\leftskip
+% \dimen0=\hsize \advance\dimen0 by -4em \parfillskip=2em plus \dimen0 minus 1em
+ \parfillskip=0pt plus 1fil
+ \parindent=0pt }
+
+\endinput

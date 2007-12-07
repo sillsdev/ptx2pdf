@@ -1,19 +1,33 @@
 ﻿% Paratext formatting macros, spanning footnotes version
 
-\TeXXeTstate=1
-
-\input ptx-stylesheet-macros.tex
-\input ptx-cropmarks.tex
-\input ptx-adj-list.tex
-\input ptx-pic-list.tex
-\input ptx-cutouts.tex
-\input ptx-callers.tex
-
 \catcode`\@=11
-
 \let\x@=\expandafter
 
-% based on plain.tex \footnote, \vfootnote
+\TeXXeTstate=1 % enable the eTeX bidi extensions, in case we need RTL support
+
+\def\MSG{\immediate\write16 } % shorthand to write a message to the terminal
+\def\TRACE#1{} % default - consume messages
+%\let\TRACE=\MSG % use this to echo them
+\def\wlog{\immediate\write-1 } % write message to log file only
+
+\input ptx-para-style.tex
+\input ptx-char-style.tex
+\input ptx-note-style.tex
+\input ptx-stylesheet.tex % must come after the ptx-*-style.tex macros
+\input ptx-references.tex
+\input ptx-cropmarks.tex
+\input ptx-adj-list.tex % must come after ptx-stylesheet.tex
+\input ptx-pic-list.tex % must come after ptx-stylesheet.tex
+\input ptx-cutouts.tex
+\input ptx-callers.tex % must come after ptx-note-style.tex
+
+% default font names (override in setup file)
+\ifx\regular\undefined   \def\regular{"Times New Roman"}      \fi
+\ifx\bold\undefined      \def\bold{"Times New Roman/B"}       \fi
+\ifx\italic\undefined    \def\italic{"Times New Roman/I"}     \fi
+\ifx\bolditalic\undefined\def\bolditalic{"Times New Roman/BI"}\fi
+
+% footnote macros based on plain.tex \footnote, \vfootnote
 \def\m@kenote#1#2{\let\@sf\empty % #1=class; #2=caller; text is read later
   \ifhmode\edef\@sf{\spacefactor\the\spacefactor}\/\fi
   \ifch@pter \everypar={}\ch@pterfalse
@@ -25,7 +39,7 @@
   \let\next\relax
   \x@\insert\csname note-#1\endcsname\bgroup
 %%% single-column notes:
-  \checkp@ranotes{#1}%
+  \checkp@ranotes{#1}% check whether this note class is to be paragraphed
   \hsize=\ifp@ranotes\maxdimen\else\textwidth\fi
   \interlinepenalty\interfootnotelinepenalty
   \floatingpenalty\@MM
@@ -39,12 +53,15 @@
   \splitmaxdepth\dp\f@@tstrut
   \futurelet\next\fo@t}
 
+% use \OmitCallerInNote{f} to omit callers from the note at foot of page
+% but leave them in the body text
 \def\OmitCallerInNote#1{%
   \expandafter\let\csname omit-in-note #1\endcsname=1}
 \def\testomitc@ller#1{\expandafter\ifx\csname omit-in-note #1\endcsname\relax
   \omitc@llerfalse \else \omitc@llertrue \fi}
 \newif\ifomitc@ller
 
+% create a "strut" (see TeXbook) of suitable size for the note style
 \def\footstrut{\s@tfont{\newn@testyle}%
   \s@tbaseline{\newn@testyle}%
   \setbox\f@@tstrut=\hbox to 0pt{\XeTeXuseglyphmetrics=0 \char32 \hss}%
@@ -61,8 +78,9 @@
 \def\@foot{\copy\f@@tstrut \ifp@ranotes \parfillskip=0pt \fi
   \par\egroup}
 \newbox\f@@tstrut
-\def\n@teglue{2em plus 1em minus .5em\relax}
+\def\n@teglue{2em plus 1em minus .5em\relax} % glue to be used between paragraphed notes
 
+% set baseline appropriately for the given style (may be using much smaller font than body)
 \def\s@tbaseline#1{%
   \x@\ifx\csname baseline<#1>\endcsname \relax
     \getp@ram{fontsize}{#1}\dimen0=\p@ram\le@dingunit
@@ -70,6 +88,7 @@
     \x@\xdef\csname baseline<#1>\endcsname{\the\dimen0}\fi
   \baselineskip=\csname baseline<#1>\endcsname}
 
+% default output routine is single-column, based on Plain TeX output routine (see TeXbook)
 \output={\onecolout}
 \def\onecolout{\edef\p@gefirstmark{\firstmark}\xdef\p@gebotmark{\botmark}%
   \plainoutput
@@ -86,14 +105,15 @@
   \hbox to \textwidth{\the\footline}}
 \newdimen\RHruleposition \RHruleposition=\maxdimen
 
-\def\pagecontents{\ifvoid\topins\else\unvbox\topins\fi
+\def\pagecontents{\ifvoid\topins\else\unvbox\topins\fi % top insert (picture) if any
   \dimen@=\dp\@cclv \unvbox\@cclv % open up \box255
-  \ifvoid\bottomins\else\unvbox\bottomins\fi
+  \ifvoid\bottomins\else\unvbox\bottomins\fi % bottom insert (picture) if any
   \kern-\dimen@ \vfill
   \f@rstnotetrue
-  \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}
+  \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % process the list of note classes, inserting each in turn
+}
 
-\def\ins@rtn@tecl@ss#1{%
+\def\ins@rtn@tecl@ss#1{% insert the given note class, either paragraphed or separately
   \checkp@ranotes{#1}\ifp@ranotes\let\n@xt=\parains@rtn@tecl@ss
     \else\let\n@xt=\separateins@rtn@tecl@ss\fi
   \n@xt{#1}}
@@ -117,11 +137,14 @@
 \def\footnoterule{\kern-0.5\AboveNoteSpace\kern-.4pt % the \hrule is .4pt high
   \hrule width \textwidth\kern0.5\AboveNoteSpace}
 
+% determine if a given note class is to be paragraphed
 \def\ParagraphedNotes#1{\x@\let\csname paranotes-#1\endcsname=1}
 \newif\ifp@ranotes
 \def\checkp@ranotes#1{\x@\ifx\csname paranotes-#1\endcsname\relax
   \p@ranotesfalse\else\p@ranotestrue\fi}
 
+% reformat the contents of a note class insertion into a single paragraph
+% (based on code from the TeXbook, appendix D)
 \def\maken@tepara#1{\hsize=\textwidth
   \let\par=\endgraf\ch@pterfalse
   \everypar={}\noindent
@@ -135,23 +158,26 @@
 \def\internotespace{\hfil\hskip\intern@teskip\penalty-10\hfilneg}
 \newskip\intern@teskip \intern@teskip=15pt% plus 5pt minus 5pt
 
+% switch to double-column mode if currently single
 \def\doublecolumns{%
   \ifnum\c@rrentcols=1
     \ifhe@dings\endhe@dings\fi
     \penalty-100\vskip\baselineskip
-    \global\output={\savepartialpage}\eject
+    \global\output={\savepartialpage}\eject % save any partially-full page
     \ifdim\ht\partial>0.75\textheight
-      \global\output={\onecolout}
+      \global\output={\onecolout} % but output it immediately if 75% full
       \unvbox\partial\vfill\eject
     \fi
+    % reset parameters for 2-column formatting
     \global\hsize=\colwidth
     \global\vsize=2\textheight \global\advance\vsize by -2\ht\partial
     \gdef\resetvsize{\global\vsize=2\textheight \global\advance\vsize by \baselineskip} 
     \global\output={\twocols}
     \global\c@rrentcols=2
+    % top and bottom inserts effectively use twice their height
     \global\count\topins=2000
     \global\count\bottomins=2000
-    \let\\=\s@tn@tec@unt \the\n@tecl@sses
+    \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
     \global\holdinginserts=1
   \fi}
 \def\s@tn@tec@unt#1{%
@@ -163,8 +189,8 @@
 \def\resetvsize{\global\vsize=\textheight} 
 
 \def\msg#1{\immediate\write16{#1}}
-\def\savepartialpage{%
-%%%  \msg{SAVEPARTIAL}
+\def\savepartialpage{% save a partially-full page when switching to 2-column format,
+%%%  \msg{SAVEPARTIAL} % and remember the first \mark on the page
   \edef\t@st{\p@gefirstmark}%
   \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi
   \global\setbox\partial=\vbox{\boxmaxdepth\maxdepth \pagecontents}}
@@ -184,6 +210,8 @@
 \newcount\galleypenalty
 \newdimen\trialheight
 
+% for measuring the space needed for each class of notes;
+% this will decrease \dimen0 by the space needed for the given class
 \def\@dvn@tecl@ssdim@#1{%
   \checkp@ranotes{#1}%
   \ifp@ranotes\let\n@xt=\@dvnoteclassdim@para
@@ -210,28 +238,32 @@
   \x@\let\x@\th@cl@ss\csname note-#1\endcsname
   \global\setbox\th@cl@ss=\box\voidb@x}
 
+% increment or decrement a given \dimen by the height of a given \box, unless void
 \def\incr#1#2{\ifvoid#2\else\advance#1 by \skip#2\advance#1 by \ht#2\fi}
 \def\decr#1#2{\ifvoid#2\else\advance#1 by-\skip#2\advance#1 by-\ht#2\fi}
 
-\def\trial{%
+\def\trial{% trial formatting to see if current contents will fit on the page
 %%%  \msg{TRIAL with ht=\the\trialheight, vsize=\the\vsize}
-  \edef\p@gebotmark{\botmark}
+  \edef\p@gebotmark{\botmark}% remember last \mark for running header
   \edef\t@st{\p@gefirstmark}%
-  \ifx\t@st\empty\edef\p@gefirstmark{\firstmark}\fi
-  \dimen0=\trialheight
-  \let\\=\@dvn@tecl@ssdim@ \the\n@tecl@sses
+  \ifx\t@st\empty\edef\p@gefirstmark{\firstmark}\fi % remember first, if not already set
+  \dimen0=\trialheight % amount of space we think is available
+  \let\\=\@dvn@tecl@ssdim@ \the\n@tecl@sses % reduce it by the space needed for each note class
 %%%
-  \decr{\dimen0}{\topins}
+  \decr{\dimen0}{\topins}% and by the space needed for spanning pictures
   \decr{\dimen0}{\bottomins}
 %%%
   \splittopskip=\topskip
   \setbox8=\copy255
+  % figure out height available for each column, after subtracting column pictures
   \dimen2=\dimen0 \decr{\dimen2}{\topleftins} \decr{\dimen2}{\bottomleftins}
   \dimen4=\dimen0 \decr{\dimen4}{\toprightins} \decr{\dimen4}{\bottomrightins}
+  % split the galley into the two columns we need
   \setbox4=\vsplit255 to \dimen2
   \setbox6=\vsplit255 to \dimen4
   \setbox4=\vbox{\unvbox4}
   \setbox6=\vbox{\unvbox6}
+  % and check if it all fit; if not, we'll have to back up and try again
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
 %%%  \msg{first col = \the\ht4, second col = \the\ht6, rem = \the\ht255}
   \iffitonpage
@@ -285,7 +317,8 @@
     \xdef\p@gebotmark{}
     \global\holdinginserts=1
     \global\output={\twocols}
-  \else
+  \else % the contents of the "galley" didn't fit into the columns,
+        % so reduce \vsize and try again with an earlier break
 %%%    \msg{REDUCING VSIZE}
     \global\advance\vsize by -\baselineskip
     \global\setbox\topins=\box\voidb@x
@@ -303,7 +336,8 @@
 \newif\iffitonpage
 \newif\ifrebalance
 
-\def\backingup{
+\def\backingup{% this output routine is used when we reduce \vsize;
+               % it will cause a new page break to be found, and then \trial is called again
 %%%  \msg{BACKING-UP}
   \global\deadcycles=0
   \global\setbox\galley=\copy255
@@ -316,6 +350,7 @@
 
 \xdef\p@gefirstmark{}
 
+% to switch back to single column, we reset the page size parameters
 \def\singlecolumn{%
   \ifnum\c@rrentcols>1
     \ifhe@dings\endhe@dings\fi

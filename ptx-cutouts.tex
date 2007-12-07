@@ -1,10 +1,13 @@
 % paragraph shape support for the ptx2pdf package
 
-\catcode`\@=11
-
+%
+% Parameters to the cutout macros:
+%   #1 -> width of cutout to create
+%   #2 -> begin after this many lines of the paragraph (0 for start of par)
+%   #3 -> number of lines to cut
+%
 \def\leftcutout{\@cutout{L}}
 \def\rightcutout{\@cutout{R}}
-\def\cancelcutouts{\@numcuts=0 }
 
 \def\@cutout#1#2#3#4{%
   \global\advance\@numcuts by 1
@@ -15,6 +18,14 @@
 }
 \newcount\@numcuts
 
+% Forget any current cutouts
+\def\cancelcutouts{\@numcuts=0 }
+
+%
+% This must be called after each paragraph to carry-over any residual amout of cutout
+% (e.g., if you ask for a 10-line cutout, but the paragraph only has 6 lines;
+% the remaining 4 lines will be cut in the next paragraph)
+%
 \def\cutoutcarryover{%
   \ifnum\@numcuts>0
     \count@=\@numcuts \@numcuts=0
@@ -35,6 +46,10 @@
   \fi
 }
 
+%
+% This must be called at the end of each paragraph (e.g., by redefining \par)
+% so as to calculate and apply the shape, given all current cutout specifications
+%
 \def\makecutouts{%
   \ifnum\hangafter<0 \@parshapelines=-\hangafter
   \else \@parshapelines=\hangafter \fi
@@ -84,7 +99,4 @@
 \newcount\@index \newcount\@line \newcount\@after \newcount\@until
 \newdimen\@width \newdimen\@indent \newdimen\@hsize
 
-\catcode`\@=12
-
 \endinput
-
