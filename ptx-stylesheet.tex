@@ -29,9 +29,7 @@
 \def \RightMargin    #1\relax{\defp@ram{rightmargin}{#1}}
 \let \Rightmargin\RightMargin
 \def \Italic         {\defp@ram{italic}{true}}
-\let \italic\Italic
 \def \Bold           {\defp@ram{bold}{true}}
-\let \bold\Bold
 \def \Superscript    {\defp@ram{superscript}{true}}
 \let \superscript\Superscript
 \def \Underline      {}
@@ -193,6 +191,8 @@
 \newif\ifc@ntinue
 \newread\styl@sheet
 \def\stylesheet#1{
+ \let\save@bold=\bold \let\bold=\Bold
+ \let\save@italic=\italic \let\italic=\Italic
  \openin\styl@sheet="#1" \c@ntinuetrue
  \ifeof\styl@sheet\message{Paratext stylesheet "#1" not found!}\else
    \message{Reading Paratext stylesheet "#1"...}%
@@ -206,7 +206,10 @@
    \endlinechar=13
    \closein\styl@sheet
    \catcode`\#=6 % restore default TeX catcode
- \fi}
+ \fi
+ \let\bold=\save@bold
+ \let\italic=\save@italic
+}
 
 \def\@netimesetup{
  % stuff to execute after loading all stylesheets but before processing the first USFM file
