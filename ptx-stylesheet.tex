@@ -44,6 +44,7 @@
 \let \color\Color
 \def \Justification  #1\relax{\lowercase{\defp@ram{justification}{#1}}}
 \def \CallerStyle    #1\relax{\defp@ram{callerstyle}{#1}}
+\def \TEStyleName    #1\relax{}
 
 %
 % \defp@ram: store the value of a parameter from the .sty file
@@ -228,10 +229,11 @@
  \openadjlist "\the\AdjListPath#1.adj"
  \openpiclist "\the\PicListPath#1.piclist"
  %\catcode`\$=12
- \catcode`\^=12 \catcode`\_=12 % make these printable
+ \catcode`\^=12 % make these printable
  \catcode`\&=12 \catcode`\~=12
  \catcode`\#=12 %\catcode`\%=12
  \catcode`\{=12 \catcode`\}=12
+ \catcode`\_=11 % treat as letter for TE custom styles
  \catcode`\/=\active
  \catcode13=10
  \m@kedigitsletters
