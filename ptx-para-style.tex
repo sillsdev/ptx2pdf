@@ -80,6 +80,7 @@
 % Handle a paragraph style marker (parameter is the marker name)
 %
 \newif\ifhe@dingstyle
+\newif\ifJustifyPars \JustifyParstrue
 \def\p@rstyle#1{\TRACE{p@rstyle:#1}%
  \ifsk@pping \egroup \fi % if we were skipping nonpublishable text, end that mode
  \t@stpublishability{#1}% test if the new marker is nonpublishable
@@ -141,14 +142,15 @@
    % \everypar will be triggered when the paragraph actually starts (normally at the first character of text,
    % or something like a verse number); then we'll set up margins/indents and font
    %
-   \ifRTL\beginR\fi
+   \ifRTL \beginR \leftskip\else\rightskip\fi =0pt
+     \ifJustifyPars\else plus .25\hsize\fi
    \getp@ram{justification}{\m@rker}%
    \ifx\p@ram\c@nter
     \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
    \else\ifx\p@ram\l@ft
-    \rightskip=0pt plus \textwidth
+    \rightskip=0pt plus .25\hsize
    \else\ifx\p@ram\r@ght
-    \leftskip=0pt plus \textwidth \parfillskip=0pt
+    \leftskip=0pt plus .25\hsize \parfillskip=0pt
    \fi\fi\fi
    \getp@ram{leftmargin}{\m@rker}%
    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
