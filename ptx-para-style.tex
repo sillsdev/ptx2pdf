@@ -3,7 +3,8 @@
 % some flags used to communicate between the macros
 \newif\if@ntromarker
 \newif\if@ntro \newif\ift@tle \newif\ifb@dy
-\newif\ifd@ublecols \d@ublecolsfalse
+
+\def\initp@rastyles{\@ntrofalse \t@tlefalse \b@dyfalse}
 
 % test if a marker is an "introduction" style (name begins with "i")
 \def\t@stintro#1#2\relax{\if#1i\global\@ntromarkertrue\else\global\@ntromarkerfalse\fi}

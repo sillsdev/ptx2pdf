@@ -175,15 +175,16 @@
     \global\output={\twocols}
     \global\c@rrentcols=2
     % top and bottom inserts effectively use twice their height
-    \global\count\topins=2000
-    \global\count\bottomins=2000
+    \count255=2000
+    \global\count\topins=\count255
+    \global\count\bottomins=\count255
     \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
     \global\holdinginserts=1
   \fi}
 \def\s@tn@tec@unt#1{%
   \x@\let\x@\th@cl@ss\csname note-#1\endcsname
   \checkp@ranotes{#1}%
-  \global\count\th@cl@ss=\ifp@ranotes 0 \else 2000 \fi
+  \global\count\th@cl@ss=\ifp@ranotes 0 \else \count255 \fi
   \global\skip\th@cl@ss=\AboveNoteSpace }
 
 \def\resetvsize{\global\vsize=\textheight} 
@@ -360,8 +361,10 @@
     \global\vsize=\textheight
     \global\output={\onecolout}
     \global\c@rrentcols=1
-    \global\count\topins=1000
-    \global\count\bottomins=1000
+    \count255=1000
+    \global\count\topins=\count255
+    \global\count\bottomins=\count255
+    \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
     \box\partial
     \vskip\baselineskip
   \fi}
