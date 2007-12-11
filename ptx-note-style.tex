@@ -60,7 +60,7 @@
   \m@kenote{\newn@testyle}{\everypar={}\cancelcutouts % begin a note insertion in the given style
    \getp@ram{callerstyle}{\newn@testyle}% see if a caller style was defined
    \ifx\p@ram\relax\def\c@llerstyle{v}\else\edef\c@llerstyle{\p@ram}\fi % if not, treat it like "v"
-   \setbox0=\hbox{\h@ndlesuperscript{\c@llerstyle}{\s@tfont{\c@llerstyle}\them@rk}}%
+   \setbox0=\hbox{\ch@rstyle{\c@llerstyle}~\them@rk\ch@rstyle{\c@llerstyle}*}%
    \ht0=0pt\box0 % suppress height of caller
    }\bgroup
   \global\n@tenesting=1\relax

@@ -25,10 +25,14 @@
    \s@tfont{\thisch@rstyle}% set up font attributes
    \ifnum\n@tenesting>0 \global\advance\n@tenesting by 1 % record nesting level in para or note
    \else \global\advance\p@ranesting by 1 \fi
+   \getp@ram{superscript}{\thisch@rstyle}%
+   \ifx\p@ram\tru@ \setbox0=\hbox\bgroup \fi
    \csname start-\thisch@rstyle\endcsname % execute any <start> hook
  }
  \def\endch@rstyle*{\TRACE{endch@rstyle}% consume the * that marked the SFM as ending a style
    \csname end-\thisch@rstyle\endcsname % execute any <end> hook
+   \getp@ram{superscript}{\thisch@rstyle}%
+   \ifx\p@ram\tru@ \egroup \raise\SuperscriptRaise\box0 \fi
    \x@\global\x@\let\x@\n@xt % remember the <after> hook, if any, beyond the current group
     \csname after-\thisch@rstyle\endcsname
    \ifnum\n@tenesting>0 \global\advance\n@tenesting by -1 % decrement nesting level
@@ -38,6 +42,7 @@
  }
 }
 \newcount\n@tenesting \newcount\p@ranesting
+\def\SuperscriptRaise{0.85ex} % note that this is in terms of the scaled-down superscript font size
 
 %
 % end all character styles in effect within the current note or paragraph
@@ -83,16 +88,5 @@
 }
 \def\tru@{true}
 \def\SuperscriptFactor{0.75}
-
-%
-% the \Superscript attribute isn't really supported everywhere, only for \v and footnote callers
-%
-\def\h@ndlesuperscript#1#2{% apply superscripting to #2, if specified by style #1
-  \getp@ram{superscript}{#1}%
-    \ifx\p@ram\tru@
-      \setbox0=\hbox{#2}%
-      \raise\SuperscriptRaise\box0
-    \else\hbox{#2}\fi}
-\def\SuperscriptRaise{0.7ex}
 
 \endinput

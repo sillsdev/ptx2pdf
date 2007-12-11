@@ -95,12 +95,8 @@
    \global\c@ncelfirstversefalse
    \ifOmitVerseNumberOne \ifnum\spacefactor=998 \global\c@ncelfirstversetrue \fi \fi
    \ifc@ncelfirstverse\else
-     \csname before-v\endcsname
-     \h@ndlesuperscript{v}{%
-       \x@\let\csname before-v\endcsname\relax
-       \x@\let\csname after-v\endcsname\relax
-       \@V~\printv@rse\@V*}%
-     \csname after-v\endcsname\kern\AfterVerseSpaceFactor\FontSizeUnit \fi
+     \@V~\printv@rse\@V*%
+     \kern\AfterVerseSpaceFactor\FontSizeUnit \fi
    \egroup
    \m@rkverse
    \the\v@rsehooks
