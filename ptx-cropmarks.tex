@@ -74,11 +74,14 @@
           \else  \let\g@tterside=L \fi
         \fi
       \fi
+      \kern\TopMarginFactor\MarginUnit
       \hbox to \pdfpagewidth{\hss\hbox{%
         \if\g@tterside L\kern\BindingGutter\fi
         #1%
         \if\g@tterside R\kern\BindingGutter\fi
-      }\hss}\vss}
+      }\hss}
+      \kern\BottomMarginFactor\MarginUnit
+      \vss}
     \vss
     \ifCropMarks % if crop marks are enabled
       \ifvoid\topcr@p \makecr@ps \fi % create them (first time)
