@@ -53,7 +53,9 @@
   \else\ifx\t@st\min@s \def\them@rk{}% if it is - then there is no caller
   \else \def\them@rk{#1}% otherwise the caller is the parameter
   \fi\fi
-  \begingroup\resetp@rstyle
+  \begingroup
+  \ifdim\lastskip>0pt \sp@cebeforetrue \else \sp@cebeforefalse \fi % was there a preceding space?
+  \resetp@rstyle
   \m@kenote{\newn@testyle}{\everypar={}\cancelcutouts % begin a note insertion in the given style
    \getp@ram{callerstyle}{\newn@testyle}% see if a caller style was defined
    \ifx\p@ram\relax\def\c@llerstyle{v}\else\edef\c@llerstyle{\p@ram}\fi % if not, treat it like "v"
@@ -68,7 +70,11 @@
  \end@llcharstyles % end any character styles within the note
  \csname end-\newn@testyle\endcsname % execute <end> hook
  \egroup % end the insert (started in \m@kenote)
- \global\n@tenesting=0 \endgroup}
+ \global\n@tenesting=0 
+ \ifsp@cebefore \global\let\n@xt=\ignorespaces % ignore following spaces if there was a preceding one
+   \else \global\let\n@xt\relax \fi
+ \endgroup\n@xt}
+\newif\ifsp@cebefore
 
 \def\inc@utonum#1{\count255=0\csname autonum #1\endcsname % increment note counter for class #1
  \advance\count255 by 1 \x@\xdef\csname autonum #1\endcsname{\number\count255}}
