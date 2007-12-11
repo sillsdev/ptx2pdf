@@ -177,7 +177,9 @@
  \def\h{\bgroup\obeylines\@h}% \h gets stored as the book name (for references)
  \def\@h ##1^^M{\gdef\b@ok{##1}\egroup}%
  \let\@CL=\cl%
- \def\cl{\bgroup\obeylines\@cl}% \cl gets stored as chapter label and changes \c format
+ \def\do@CL{\global\ch@pterfalse\@CL}%
+ \def\cl{\ifch@pter \let\n@xt=\do@CL \else \let\n@xt=\st@recl \fi \n@xt}%
+ \def\st@recl{\bgroup\obeylines\@cl}% \cl gets stored as chapter label and changes \c format
  \def\@cl ##1^^M{\gdef\ch@plabel{##1}\egroup}%
  \let\@ID=\id%
  \def\id{\bgroup\obeylines\@id}% \id gets stored and printed in the margin with cropmarks
@@ -224,6 +226,7 @@
 
 \def\ptxfile#1{
  \@netimesetup
+ \gdef\ch@plabel{}
  \openadjlist "\the\AdjListPath#1.adj"
  \openpiclist "\the\PicListPath#1.piclist"
  %\catcode`\$=12
