@@ -100,14 +100,13 @@
        \x@\let\csname before-v\endcsname\relax
        \x@\let\csname after-v\endcsname\relax
        \@V~\printv@rse\@V*}%
-     \csname after-v\endcsname\kern\AfterVerseSpace \fi
+     \csname after-v\endcsname\kern\AfterVerseSpaceFactor\FontSizeUnit \fi
    \egroup
    \m@rkverse
    \the\v@rsehooks
    \gdef\reference{\ch@pter:\v@rse}%
-   \ifc@ncelfirstverse\else
-     \nobreak\hskip1sp % let \x detect that there's space here
-   \fi}
+   \nobreak\hskip1sp % let \x detect that there's "space" (or maybe drop-chapter) here
+  }
   \def\v{\leavevmode
    \ifdim\lastkern=-1sp \let\ll@p=\llap
    \else \let\ll@p=\relax \fi % hanging verse number?
@@ -136,7 +135,7 @@
   \def\m@rker{c}\defp@ram{fontsize}{\the\dropnumbersize}
  }
 }
-\newdimen\AfterVerseSpace \AfterVerseSpace=2pt
+\def\AfterVerseSpaceFactor{3}
 \newif\ifOmitChapterNumber
 \def\printv@rse{\v@rsefrom\ifx\v@rsefrom\v@rseto\else\endash\v@rseto\fi}
 \def\@ne{1}

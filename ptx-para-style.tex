@@ -171,9 +171,12 @@
      \fi
     \fi
    \fi
-   \ifallowp@rindent % create first-line indent, unless suppressed at dropped chapter number
-    \getp@ram{firstindent}{\m@rker}%
-    \ifx\p@ram\relax \else \kern\p@ram \IndentUnit \fi
+   \getp@ram{firstindent}{\m@rker}%
+   \ifx\p@ram\relax \else \x@\ifdim\p@ram pt<0pt \allowp@rindenttrue \fi
+    \ifallowp@rindent % create first-line indent, unless suppressed at dropped chapter number
+                      % (note that we don't suppress negative indents, as in \q1 etc)
+     \kern\p@ram \IndentUnit
+    \fi
    \fi
    \global\p@ranesting=1
    \csname start-\m@rker\endcsname % handle <start> hook
@@ -199,7 +202,7 @@
 \def\m@kechapterbox{%
  \setbox\ch@pterbox=\hbox{\s@tfont{c}\ch@pter}%
  \setbox\ch@pterbox=\hbox{\lower\baselineskip\box\ch@pterbox
-   \box\ch@pternote\kern.2em}%
+   \box\ch@pternote\kern\AfterChapterSpaceFactor\FontSizeUnit}%
  \ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
  \x@\let\x@\d@lay\csname delay-\id@@@.\ch@pter\endcsname
  \x@\c@tcmd\x@{\the\wd\ch@pterbox}{0\d@lay}{2}%
@@ -210,6 +213,7 @@
 }
 \newbox\ch@pterbox
 \newbox\ch@pternote
+\def\AfterChapterSpaceFactor{3}
 
 % Used to delay a cutout until later in the paragraph, for no-break chapter numbers
 \def\DelayedChapter#1#2#3{\uppercase{\def\ucb@@k{#1}}%
