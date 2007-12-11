@@ -20,13 +20,14 @@
 \def\allocatecl@ss#1{
   \x@\n@tecl@sses\x@{\the\n@tecl@sses \\{#1}}%
   \x@\n@winsert\csname note-#1\endcsname
-  \s@tn@tep@rams{#1}%
 }
 \let\n@winsert=\newinsert % work around the \outer nature of \newinsert
 
 % set default insert parameters for a note class (updated if we switch to double-column)
+\def\initn@testyles{\let\\=\s@tn@tep@rams \the\n@tecl@sses}
 \def\s@tn@tep@rams#1{%
-  \x@\count\csname note-#1\endcsname=1000
+  \checkp@ranotes{#1}%
+  \x@\count\csname note-#1\endcsname=\ifp@ranotes 0 \else 1000 \fi %% !!!FIXME!!!
   \x@\skip\csname note-#1\endcsname=\AboveNoteSpace
   \x@\dimen\csname note-#1\endcsname=\maxdimen
 }
@@ -59,7 +60,9 @@
   \m@kenote{\newn@testyle}{\everypar={}\cancelcutouts % begin a note insertion in the given style
    \getp@ram{callerstyle}{\newn@testyle}% see if a caller style was defined
    \ifx\p@ram\relax\def\c@llerstyle{v}\else\edef\c@llerstyle{\p@ram}\fi % if not, treat it like "v"
-   \hbox{\h@ndlesuperscript{\c@llerstyle}{\s@tfont{\c@llerstyle}\them@rk}}}\bgroup
+   \setbox0=\hbox{\h@ndlesuperscript{\c@llerstyle}{\s@tfont{\c@llerstyle}\them@rk}}%
+   \ht0=0pt\box0 % suppress height of caller
+   }\bgroup
   \global\n@tenesting=1\relax
   \csname start-\newn@testyle\endcsname % execute the <start> hook, if defined
   \ignorespaces

@@ -72,7 +72,7 @@
     \multiply\dimen0 by \dimen6 \divide\dimen0 by 100
     \multiply\dimen2 by \dimen6 \divide\dimen2 by 100
 %  \fi
-  \setbox\f@@tstrut=\hbox{}\ht\f@@tstrut=\dimen0 \dp\f@@tstrut=\dimen2
+  \setbox\f@@tstrut=\hbox{}\ht\f@@tstrut=1.2\dimen0 \dp\f@@tstrut=1.2\dimen2
   \copy\f@@tstrut}
 
 \def\@foot{\copy\f@@tstrut \ifp@ranotes \parfillskip=0pt \fi
@@ -88,12 +88,68 @@
     \x@\xdef\csname baseline<#1>\endcsname{\the\dimen0}\fi
   \baselineskip=\csname baseline<#1>\endcsname}
 
-% default output routine is single-column, based on Plain TeX output routine (see TeXbook)
-\output={\onecolout}
-\def\onecolout{\edef\p@gefirstmark{\firstmark}\xdef\p@gebotmark{\botmark}%
-  \plainoutput
-  \xdef\p@gefirstmark{}
-  \xdef\p@gebotmark{}}
+% default output routine is single-column, somewhat based on Plain TeX output routine (see TeXbook)
+\global\output={\onecol}
+\global\holdinginserts=1
+\def\onecol{%
+  \global\setbox\galley=\copy255
+  \global\galleypenalty=\outputpenalty
+  \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
+  \global\output={\onecoltrial}
+  \global\holdinginserts=0
+  \unvbox255
+  \penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
+}
+\def\onecoltrial{% single-column version of \twocoltrial (see below)
+%%%  \msg{TRIAL with ht=\the\trialheight, vsize=\the\vsize}
+  \edef\p@gebotmark{\botmark}% remember last \mark for running header
+  \edef\t@st{\p@gefirstmark}%
+  \ifx\t@st\empty\edef\p@gefirstmark{\firstmark}\fi % remember first, if not already set
+  \availht=\trialheight % amount of space we think is available
+  \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
+  \decr{\availht}{\topins}% and by the space needed for spanning pictures
+  \decr{\availht}{\bottomins}
+  \setbox\s@vedpage=\copy255
+  % split the galley to the actual size available
+  \setbox\colA=\vsplit255 to \availht
+  \setbox\colA=\vbox{\unvbox\colA}
+  % and check if it all fit; if not, we'll have to back up and try again
+  \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
+  \iffitonpage
+%%%    \msg{SUCCEEDED, shipping page}
+% at this point:
+%   \box\colA is the page content
+%   \availht is ht that definitely works
+    \def\pagecontents{%
+      \ifvoid\partial\else \unvbox\partial \fi
+      \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi
+      \dimen0=\dp\colA
+      \hbox to \textwidth{\box\colA\hfil}
+      \ifvoid\bottomins\else \vskip\skip\bottomins \unvbox\bottomins \fi
+      \kern-\dimen0 \vfil
+      \f@rstnotetrue
+      \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses
+    }
+    \resetvsize
+    \plainoutput
+    \xdef\p@gefirstmark{}
+    \xdef\p@gebotmark{}
+    \global\holdinginserts=1
+    \global\output={\onecol}
+  \else % the contents of the "galley" didn't fit into the actual page,
+        % so reduce \vsize and try again with an earlier break
+%%%    \msg{REDUCING VSIZE}
+    \global\advance\vsize by -\baselineskip
+    \global\setbox\topins=\box\voidb@x
+    \global\setbox\bottomins=\box\voidb@x
+    \let\\=\cle@rn@tecl@ss \the\n@tecl@sses
+    \global\setbox255=\box\voidb@x
+    \global\holdinginserts=1
+    \global\let\whichtrial=\onecoltrial
+    \global\output={\backingup}
+    \unvbox\galley \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
+  \fi}
+
 \def\pagebody{\vbox to\textheight{\boxmaxdepth\maxdepth \pagecontents}}
 \def\makeheadline{\vbox to\z@{\vskip-22.5\p@
   \hbox to \textwidth{\vbox to8.5\p@{}\the\headline}\vss
@@ -104,14 +160,6 @@
 \def\makefootline{\baselineskip24\p@\lineskiplimit\z@
   \hbox to \textwidth{\the\footline}}
 \newdimen\RHruleposition \RHruleposition=\maxdimen
-
-\def\pagecontents{\ifvoid\topins\else\unvbox\topins\fi % top insert (picture) if any
-  \dimen@=\dp\@cclv \unvbox\@cclv % open up \box255
-  \ifvoid\bottomins\else\unvbox\bottomins\fi % bottom insert (picture) if any
-  \kern-\dimen@ \vfill
-  \f@rstnotetrue
-  \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % process the list of note classes, inserting each in turn
-}
 
 \def\ins@rtn@tecl@ss#1{% insert the given note class, either paragraphed or separately
   \checkp@ranotes{#1}\ifp@ranotes\let\n@xt=\parains@rtn@tecl@ss
@@ -147,7 +195,7 @@
 % (based on code from the TeXbook, appendix D)
 \def\maken@tepara#1{\hsize=\textwidth
   \let\par=\endgraf\ch@pterfalse
-  \everypar={}\noindent
+  \everypar={}\noindent\leftskip0pt\rightskip\leftskip
   \unvbox#1 \makehboxofhboxes 
   \setbox0=\hbox{\unhbox0 \removehboxes}
   \noindent\unhbox0\unskip\unpenalty\unskip\unskip\linepenalty50\par} 
@@ -165,7 +213,7 @@
     \penalty-100\vskip\baselineskip
     \global\output={\savepartialpage}\eject % save any partially-full page
     \ifdim\ht\partial>0.75\textheight
-      \global\output={\onecolout} % but output it immediately if 75% full
+      \global\output={\onecol} % but output it immediately if 75% full
       \unvbox\partial\vfill\eject
     \fi
     % reset parameters for 2-column formatting
@@ -202,7 +250,7 @@
   \global\setbox\galley=\copy255
   \global\galleypenalty=\outputpenalty
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
-  \global\output={\trial}
+  \global\output={\twocoltrial}
   \global\holdinginserts=0
   \unvbox255
   \penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
@@ -212,28 +260,28 @@
 \newdimen\trialheight
 
 % for measuring the space needed for each class of notes;
-% this will decrease \dimen0 by the space needed for the given class
-\def\@dvn@tecl@ssdim@#1{%
+% this will decrease \availht by the space needed for the given class
+\def\reduceavailht#1{%
   \checkp@ranotes{#1}%
-  \ifp@ranotes\let\n@xt=\@dvnoteclassdim@para
-  \else\let\n@xt=\@dvnoteclassdim@sep\fi
+  \ifp@ranotes\let\n@xt=\reduceavailht@para
+  \else\let\n@xt=\reduceavailht@sep\fi
   \n@xt{#1}}
 
-\def\@dvnoteclassdim@para#1{
+\def\reduceavailht@para#1{
   \x@\let\x@\th@cl@ss\csname note-#1\endcsname
   \ifvoid\th@cl@ss\else
     \setbox0=\copy\th@cl@ss
     \setbox0=\vbox{\maken@tepara{0}}
-    \advance\dimen0 by -\ht0
-    \advance\dimen0 by -\dp0
-    \advance\dimen0 by -\AboveNoteSpace
+    \advance\availht by -\ht0
+    \advance\availht by -\dp0
+    \advance\availht by -\AboveNoteSpace
   \fi}
-\def\@dvnoteclassdim@sep#1{
+\def\reduceavailht@sep#1{
   \x@\let\x@\th@cl@ss\csname note-#1\endcsname
   \ifvoid\th@cl@ss\else
-    \advance\dimen0 by -\ht\th@cl@ss
-    \advance\dimen0 by -\dp\th@cl@ss
-    \advance\dimen0 by -\AboveNoteSpace
+    \advance\availht by -\ht\th@cl@ss
+    \advance\availht by -\dp\th@cl@ss
+    \advance\availht by -\AboveNoteSpace
   \fi}
 \def\cle@rn@tecl@ss#1{%
   \x@\let\x@\th@cl@ss\csname note-#1\endcsname
@@ -243,70 +291,78 @@
 \def\incr#1#2{\ifvoid#2\else\advance#1 by \skip#2\advance#1 by \ht#2\fi}
 \def\decr#1#2{\ifvoid#2\else\advance#1 by-\skip#2\advance#1 by-\ht#2\fi}
 
-\def\trial{% trial formatting to see if current contents will fit on the page
+% allocate some named registers for the \trial routine to use
+\newbox\s@vedpage % to save the page contents for re-splitting columns
+\newdimen\availht % overall available height
+\newdimen\shortavail % shortened version of \availht for re-balancing loop
+\newdimen\colhtA \newdimen\colhtB % dimen registers for calculating available ht for each col
+\newbox\colA \newbox\colB % box registers to hold contents of the columns
+
+\def\twocoltrial{% trial formatting to see if current contents will fit on the page
 %%%  \msg{TRIAL with ht=\the\trialheight, vsize=\the\vsize}
   \edef\p@gebotmark{\botmark}% remember last \mark for running header
   \edef\t@st{\p@gefirstmark}%
   \ifx\t@st\empty\edef\p@gefirstmark{\firstmark}\fi % remember first, if not already set
-  \dimen0=\trialheight % amount of space we think is available
-  \let\\=\@dvn@tecl@ssdim@ \the\n@tecl@sses % reduce it by the space needed for each note class
+  \availht=\trialheight % amount of space we think is available
+  \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
 %%%
-  \decr{\dimen0}{\topins}% and by the space needed for spanning pictures
-  \decr{\dimen0}{\bottomins}
+  \decr{\availht}{\topins}% and by the space needed for spanning pictures
+  \decr{\availht}{\bottomins}
 %%%
   \splittopskip=\topskip
-  \setbox8=\copy255
+  \setbox\s@vedpage=\copy255
   % figure out height available for each column, after subtracting column pictures
-  \dimen2=\dimen0 \decr{\dimen2}{\topleftins} \decr{\dimen2}{\bottomleftins}
-  \dimen4=\dimen0 \decr{\dimen4}{\toprightins} \decr{\dimen4}{\bottomrightins}
+  \colhtA=\availht \decr{\colhtA}{\topleftins} \decr{\colhtA}{\bottomleftins}
+  \colhtB=\availht \decr{\colhtB}{\toprightins} \decr{\colhtB}{\bottomrightins}
   % split the galley into the two columns we need
-  \setbox4=\vsplit255 to \dimen2
-  \setbox6=\vsplit255 to \dimen4
-  \setbox4=\vbox{\unvbox4}
-  \setbox6=\vbox{\unvbox6}
+  \setbox\colA=\vsplit255 to \colhtA
+  \setbox\colB=\vsplit255 to \colhtB
+  \setbox\colA=\vbox{\unvbox\colA}
+  \setbox\colB=\vbox{\unvbox\colB}
   % and check if it all fit; if not, we'll have to back up and try again
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
-%%%  \msg{first col = \the\ht4, second col = \the\ht6, rem = \the\ht255}
+%%%  \msg{first col = \the\ht\colA, second col = \the\ht\colB, rem = \the\ht255}
   \iffitonpage
 %%%    \msg{SUCCEEDED, shipping page}
 % re-split to better balance columns, if possible
 % at this point:
-%   box4+box6 is the page content
-%   dimen0 is ht that definitely works
-%   try re-splitting with smaller ht while ht6<ht4
-    \dimen2=\ht4 \incr{\dimen2}{\topleftins} \incr{\dimen2}{\bottomleftins}
-    \dimen4=\ht6 \incr{\dimen4}{\toprightins} \incr{\dimen4}{\bottomrightins}
-    \ifdim\dimen4<\dimen2
+%   \box\colA + \box\colB is the page content
+%   \availht is ht that definitely works
+%   \s@vedpage is a copy of the original page contents that was split into columns A and B
+%   try re-splitting with smaller ht while \ht\colB<\ht\colA (including allowance for column inserts)
+    \colhtA=\ht\colA \incr{\colhtA}{\topleftins} \incr{\colhtA}{\bottomleftins}
+    \colhtB=\ht\colB \incr{\colhtB}{\toprightins} \incr{\colhtB}{\bottomrightins}
+    \ifdim\colhtB<\colhtA
       \rebalancetrue
-      \dimen8=\dimen0
+      \shortavail=\availht
       \loop%\msg{re-balancing}
         \vfuzz=\maxdimen
-        \advance\dimen8 by -\baselineskip
-        \setbox0=\copy8
-        \dimen2=\dimen8 \decr{\dimen2}{\topleftins} \decr{\dimen2}{\bottomleftins}
-        \dimen4=\dimen8 \decr{\dimen4}{\toprightins} \decr{\dimen4}{\bottomrightins}
-        \setbox4=\vsplit0 to \dimen2 \setbox4=\vbox{\unvbox4}
-        \setbox6=\vsplit0 to \dimen4 \setbox6=\vbox{\unvbox6}
+        \advance\shortavail by -\baselineskip
+        \setbox0=\copy\s@vedpage
+        \colhtA=\shortavail \decr{\colhtA}{\topleftins} \decr{\colhtA}{\bottomleftins}
+        \colhtB=\shortavail \decr{\colhtB}{\toprightins} \decr{\colhtB}{\bottomrightins}
+        \setbox\colA=\vsplit0 to \colhtA \setbox\colA=\vbox{\unvbox\colA}
+        \setbox\colB=\vsplit0 to \colhtB \setbox\colB=\vbox{\unvbox\colB}
         \ifvoid0\else\rebalancefalse\fi
-        \dimen6=\ht6 \incr{\dimen6}{\topleftins} \incr{\dimen6}{\bottomleftins}
-        \advance\dimen6 by -\ht4 \decr{\dimen6}{\toprightins} \decr{\dimen6}{\bottomrightins}
-        \ifdim\dimen6>.3\baselineskip \rebalancefalse\fi
-        \ifdim\dimen8<3\baselineskip \rebalancefalse\fi
+        \dimen0=\ht\colB \incr{\dimen0}{\topleftins} \incr{\dimen0}{\bottomleftins}
+        \advance\dimen0 by -\ht\colA \decr{\dimen0}{\toprightins} \decr{\dimen0}{\bottomrightins}
+        \ifdim\dimen0>.3\baselineskip \rebalancefalse\fi
+        \ifdim\shortavail<3\baselineskip \rebalancefalse\fi
         \ifrebalance\repeat
-      \advance\dimen8 by \baselineskip
-      \dimen2=\dimen8 \decr{\dimen2}{\topleftins} \decr{\dimen2}{\bottomleftins}
-      \dimen4=\dimen8 \decr{\dimen4}{\toprightins} \decr{\dimen4}{\bottomrightins}
-      \setbox4=\vsplit8 to \dimen2 \setbox4=\vbox{\unvbox4}
-      \setbox6=\vsplit8 to \dimen4 \setbox6=\vbox{\unvbox6}
+      \advance\shortavail by \baselineskip
+      \colhtA=\shortavail \decr{\colhtA}{\topleftins} \decr{\colhtA}{\bottomleftins}
+      \colhtB=\shortavail \decr{\colhtB}{\toprightins} \decr{\colhtB}{\bottomrightins}
+      \setbox\colA=\vsplit\s@vedpage to \colhtA \setbox\colA=\vbox{\unvbox\colA}
+      \setbox\colB=\vsplit\s@vedpage to \colhtB \setbox\colB=\vbox{\unvbox\colB}
     \fi
-    \dimen4=\dp4 \setbox4=\vbox to \dimen0{\unvbox\topleftins\unvbox4\vfil\unvbox\bottomleftins}\dp4=\dimen4
-    \dimen6=\dp6 \setbox6=\vbox to \dimen0{\unvbox\toprightins\unvbox6\vfil\unvbox\bottomrightins}\dp6=\dimen6
+    \dimen0=\dp\colA \setbox\colA=\vbox to \availht{\unvbox\topleftins\unvbox\colA\vfil\unvbox\bottomleftins}\dp\colA=\dimen0
+    \dimen0=\dp\colB \setbox\colB=\vbox to \availht{\unvbox\toprightins\unvbox\colB\vfil\unvbox\bottomrightins}\dp\colB=\dimen0
     \def\pagecontents{%
       \ifvoid\partial\else \unvbox\partial \fi
       \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi
-      \dimen0=\ifdim\dp6>\dp4 \dp6 \else \dp4 \fi
+      \dimen0=\ifdim\dp\colB>\dp\colA \dp\colB \else \dp\colA \fi
       %\showthe\dimen0
-      \hbox to \textwidth{\ifRTL \box6\hfil\box4 \else \box4\hfil\box6 \fi}
+      \hbox to \textwidth{\ifRTL \box\colB\hfil\box\colA \else \box\colA\hfil\box\colB \fi}
       \ifvoid\bottomins\else \vskip\skip\bottomins \unvbox\bottomins \fi
       \kern-\dimen0 \vfil
       \f@rstnotetrue
@@ -331,6 +387,7 @@
     \let\\=\cle@rn@tecl@ss \the\n@tecl@sses
     \global\setbox255=\box\voidb@x
     \global\holdinginserts=1
+    \global\let\whichtrial=\twocoltrial
     \global\output={\backingup}
     \unvbox\galley \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
   \fi}
@@ -338,12 +395,12 @@
 \newif\ifrebalance
 
 \def\backingup{% this output routine is used when we reduce \vsize;
-               % it will cause a new page break to be found, and then \trial is called again
+               % it will cause a new page break to be found, and then the \trial routine is called again
 %%%  \msg{BACKING-UP}
   \global\deadcycles=0
   \global\setbox\galley=\copy255
   \global\galleypenalty=\outputpenalty
-  \global\output={\trial}
+  \global\output={\whichtrial}
   \global\holdinginserts=0
   \unvbox255 %\eject
   \penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
@@ -356,10 +413,10 @@
   \ifnum\c@rrentcols>1
     \ifhe@dings\endhe@dings\fi
     \vfill\eject
-    \global\holdinginserts=0
+    \global\holdinginserts=1
     \global\hsize=\textwidth
     \global\vsize=\textheight
-    \global\output={\onecolout}
+    \global\output={\onecol}
     \global\c@rrentcols=1
     \count255=1000
     \global\count\topins=\count255
