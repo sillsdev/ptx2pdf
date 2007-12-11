@@ -93,8 +93,8 @@
   \let\@V=\v
   \def\@v@ ##1 {\gdef\v@rse{##1}%
    \x@\spl@tverses\v@rse--\relax
-   \global\c@ncelfirstversefalse
-   \ifOmitVerseNumberOne \ifnum\spacefactor=998 \global\c@ncelfirstversetrue \fi \fi
+   \c@ncelfirstversefalse
+   \ifOmitVerseNumberOne \ifnum\spacefactor=998 \c@ncelfirstversetrue \fi \fi
    \ifc@ncelfirstverse\else
      \@V~\printv@rse\@V*%
      \kern\AfterVerseSpaceFactor\FontSizeUnit \fi
@@ -134,6 +134,7 @@
 }
 \def\AfterVerseSpaceFactor{3}
 \newif\ifOmitChapterNumber
+\newif\ifc@ncelfirstverse
 \def\printv@rse{\v@rsefrom\ifx\v@rsefrom\v@rseto\else\endash\v@rseto\fi}
 \def\@ne{1}
 

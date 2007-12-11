@@ -4,7 +4,7 @@
 \newif\if@ntromarker
 \newif\if@ntro \newif\ift@tle \newif\ifb@dy
 
-\def\initp@rastyles{\@ntrofalse \t@tlefalse \b@dyfalse}
+\def\initp@rastyles{\@ntrofalse \t@tlefalse \b@dyfalse \def\m@rker{}}
 
 % test if a marker is an "introduction" style (name begins with "i")
 \def\t@stintro#1#2\relax{\if#1i\global\@ntromarkertrue\else\global\@ntromarkerfalse\fi}
@@ -89,6 +89,9 @@
   \ifhmode\unskip\fi % remove any trailing space
   \end@llcharstyles % end any character styles in effect
   \par % end the paragraph
+  \ifdr@ppednumber % the preceding par had a dropped number; add \nobreak if it was a single line
+    \ifnum\prevgraf=1 \nobreak \fi
+  \fi
   \getp@ram{spaceafter}{\m@rker}% output any <spaceafter> for the previous style
   \ifx\p@ram\relax \else
     \ifhe@dings\nobreak\fi
@@ -131,7 +134,7 @@
   \fi
   \getp@ram{spacebefore}{\m@rker}% output <spacebefore> for this style
   \ifx\p@ram\relax \else
-    \ifhe@dings\nobreak\fi \vskip\p@ram \verticalsp@ceunit
+    \ifhe@dings\nobreak\fi \vskip\p@ram\verticalsp@ceunit
   \fi
   \everypar={%
    %
@@ -153,7 +156,7 @@
    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
    \s@tfont{\m@rker}%
    \allowp@rindenttrue
-   \c@ncelfirstversefalse
+   \dr@ppednumberfalse
    %
    % handle drop-cap style chapter number, if this is the beginning of a chapter
    %
@@ -164,7 +167,7 @@
      \kern-\wd\ch@pterbox\box\ch@pterbox
      \global\ch@pterfalse
      \ifIndentAtChapter\else \allowp@rindentfalse \fi
-     \c@ncelfirstversetrue
+     \dr@ppednumbertrue
      \ifx\XeTeXversion\undefined \else
       \special{pdf:dest (\b@ok.\ch@pter) [@thispage /Fit]}%
       \special{pdf:outline 0 << /Title (\b@ok\space\ch@pter)
@@ -181,13 +184,13 @@
    \fi
    \global\p@ranesting=1
    \csname start-\m@rker\endcsname % handle <start> hook
-   \ifc@ncelfirstverse \spacefactor=0\n@wchaptersf \fi
+   \ifdr@ppednumber \spacefactor=0\n@wchaptersf \fi
    % set special \spacefactor if we're at a chapter number, so \v 1 can omit the verse number here
   }%
  \fi}
 \newif\ifRTL
 \newif\ifallowp@rindent
-\newif\ifc@ncelfirstverse
+\newif\ifdr@ppednumber
 \newif\ifIndentAtChapter
 \newif\ifOmitVerseNumberOne \OmitVerseNumberOnefalse
 \def\n@wchaptersf{998}
@@ -225,7 +228,7 @@
     \msg{*** no-break at chapter \ch@pter, check \string\DelayedChapter\space setting}%
     \m@kechapterbox \global\ch@pterfalse
     \leavevmode\str@t \vadjust{\vbox to 0pt{\kern-\dp\str@tbox \kern-\ht\ch@pterbox
-      \box\ch@pterbox\vss}}%
+      \box\ch@pterbox\vss}\nobreak}%
   \fi}
 \newbox\str@tbox
 \def\str@t{\setbox\str@tbox=\hbox to 0pt{\XeTeXuseglyphmetrics=0 
