@@ -45,6 +45,7 @@
  \n@xt} % chain to the start or end macro
 
 \catcode`\~=12 \lccode`\~=32 % we'll use \lowercase{~} when we need a category-12 space
+\lccode`\|=`\\
 \lowercase{% when \startch@rstyle is called, the following <space> has become category-12
            % so we have to explicitly consume it here as part of the macro parameter list
  \def\startch@rstyle~{\TRACE{startch@rstyle}%
@@ -60,15 +61,19 @@
    \csname start-\thisch@rstyle\endcsname % execute any <start> hook
  }
  \def\endch@rstyle*{\TRACE{endch@rstyle}% consume the * that marked the SFM as ending a style
-   \csname end-\thisch@rstyle\endcsname % execute any <end> hook
-   \getp@ram{superscript}{\thisch@rstyle}%
-   \ifx\p@ram\tru@ \egroup \raise\SuperscriptRaise\box0 \fi
-   \x@\global\x@\let\x@\n@xt % remember the <after> hook, if any, beyond the current group
-    \csname after-\thisch@rstyle\endcsname
-   \ifnum\n@tenesting>0 \global\advance\n@tenesting by -1 % decrement nesting level
-   \else \global\advance\p@ranesting by -1 \fi
-  \egroup % end the style's group, so formatting reverts
-  \n@xt % execute the <after> hook, if there was one
+   \ifx\thisch@rstyle\undefined
+     \MSG{*** unmatched character style end-marker |\newch@rstyle*}%
+   \else
+     \csname end-\thisch@rstyle\endcsname % execute any <end> hook
+     \getp@ram{superscript}{\thisch@rstyle}%
+     \ifx\p@ram\tru@ \egroup \raise\SuperscriptRaise\box0 \fi
+     \x@\global\x@\let\x@\n@xt % remember the <after> hook, if any, beyond the current group
+      \csname after-\thisch@rstyle\endcsname
+     \ifnum\n@tenesting>0 \global\advance\n@tenesting by -1 % decrement nesting level
+     \else \global\advance\p@ranesting by -1 \fi
+    \egroup % end the style's group, so formatting reverts
+    \n@xt % execute the <after> hook, if there was one
+   \fi
  }
 }
 \newcount\n@tenesting \newcount\p@ranesting
