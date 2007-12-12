@@ -10,6 +10,16 @@
 %\let\TRACE=\MSG % use this to echo them
 \def\wlog{\immediate\write-1 } % write message to log file only
 
+% \addtoendhooks collects macros to be executed at the end of the job
+\def\addtoendhooks#1{\x@\global\x@\@ndhooks\x@{\the\@ndhooks #1}}
+\newtoks\@ndhooks
+\let\s@ve@nd=\end
+\def\end{\par\vfill\supereject \the\@ndhooks \s@ve@nd}
+
+% and \addtoinithooks is for stuff we do during one-time-setup before the first PTX file
+\def\addtoinithooks#1{\x@\global\x@\@nithooks\x@{\the\@nithooks #1}}
+\newtoks\@nithooks
+
 \input ptx-para-style.tex
 \input ptx-char-style.tex
 \input ptx-note-style.tex

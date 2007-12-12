@@ -85,13 +85,17 @@
  \ifsk@pping \egroup \fi % if we were skipping nonpublishable text, end that mode
  \t@stpublishability{#1}% test if the new marker is nonpublishable
  \ifn@npublishable
-  \setbox\j@nkbox=\vbox\bgroup \sk@ppingtrue % and if so, start a box to consume and discard the text
+  \setbox\j@nkbox=\vbox\bgroup\def\m@rker{#1}\sk@ppingtrue % and if so, start a box to consume and discard the text
  \else % else we need to actually process it!
-  \ifhmode\unskip\fi % remove any trailing space
-  \end@llcharstyles % end any character styles in effect
-  \par % end the paragraph
-  \ifdr@ppednumber % the preceding par had a dropped number; add \nobreak if it was a single line
-    \ifnum\prevgraf=1 \nobreak \fi
+  \ifhmode\unskip % remove any trailing space
+    \end@llcharstyles % end any character styles in effect
+    \pdfsavepos
+    \write\p@rlocs{\noexpand\@parend{\the\pdflastxpos}{\the\pdflastypos}}%
+    \par % end the paragraph
+    \ifdr@ppednumber % the preceding par had a dropped number; add \nobreak if it was a single line
+      \x@\write\x@\p@rlocs\x@{\x@\noexpand\x@\@parlines\x@{\the\prevgraf}}%
+      \ifnum\prevgraf=1 \nobreak \fi
+    \fi
   \fi
   \getp@ram{spaceafter}{\m@rker}% output any <spaceafter> for the previous style
   \ifx\p@ram\relax \else
@@ -142,6 +146,8 @@
    % \everypar will be triggered when the paragraph actually starts (normally at the first character of text,
    % or something like a verse number); then we'll set up margins/indents and font
    %
+   \pdfsavepos
+   \write\p@rlocs{\noexpand\@parstart{\the\pdflastxpos}{\the\pdflastypos}}%
    \ifRTL \beginR \leftskip\else\rightskip\fi =0pt
      \ifJustifyPars\else plus .25\hsize\fi
    \getp@ram{justification}{\m@rker}%
@@ -197,6 +203,94 @@
 \newif\ifOmitVerseNumberOne \OmitVerseNumberOnefalse
 \def\n@wchaptersf{998}
 
+\newwrite\p@rlocs
+\newread\readp@rlocs
+\def\initp@rlocs{%
+  % check if there's a delayed-chapters file from a previous run
+  \openin\readp@rlocs="\jobname.delayed"
+  \ifeof\readp@rlocs \let\n@xt\relax
+  \else \def\n@xt{\input "\jobname.delayed"}\fi
+  \closein\readp@rlocs
+  % and if so, read it so we'll use those settings
+  \n@xt
+  % open the parlocs file to record paragraph and no-break-chapter locations
+  \openout\p@rlocs="\jobname.parlocs"
+}
+\addtoinithooks{\initp@rlocs}
+
+\def\finishp@rlocs{%
+  \immediate\closeout\p@rlocs
+  \catcode`\{=1 \catcode`\}=2 \m@kedigitsother \catcode`\@=11
+  \input "\jobname.parlocs"
+  \ifdelay@pen \immediate\closeout\delayf@le \delay@penfalse \fi
+}
+\newif\ifdelay@pen
+\let\delayf@le=\p@rlocs % we write the delay file while reading the finished parlocs, so we can re-use the write stream
+\addtoendhooks{\finishp@rlocs}
+
+% commands that get written to the parlocs file to record locations
+\let\pendingch@pter=\empty
+\newcount\prev@y \newcount\this@y \newcount\chap@y
+
+\def\@parstart#1#2{\prev@y=#2\relax}
+
+\def\@parend#1#2{%
+  \ifx\pendingch@pter\empty\else
+    \this@y=#2\relax
+    \ifnum\chap@y>\this@y
+      \advance\this@y by -\chap@y
+      \divide\this@y by \baselineskip
+    \else
+      \MSG{*** unable to determine \string\DelayedChapter\space setting for \pendingb@@k\space\pendingch@pter}%
+      \let\pendingch@pter=\empty
+      \let\pendingb@@k=\empty
+    \fi
+  \fi}
+
+\def\@parlines#1{\ifx\pendingch@pter\empty\else
+  \advance\this@y by #1 \advance\this@y by -1
+  \MSG{* calculated \string\DelayedChapter{\pendingb@@k}{\pendingch@pter}{\the\this@y}}%
+  \wr@teDelayedChapter{\pendingb@@k}{\pendingch@pter}{\the\this@y}%
+  \let\pendingch@pter\empty\let\pendingb@@k\empty\fi}
+
+\def\@delayedchapter#1#2#3#4{\chap@y=#4\relax
+  \ifnum\prev@y<\chap@y % para start was lower than chapter number, must have passed a col/page break
+    \def\pendingb@@k{#1}%
+    \def\pendingch@pter{#2}%
+  \else % para start level with or above chapter number; OK to calculate # of lines
+    \advance\prev@y by -\chap@y
+    \divide\prev@y by \baselineskip
+    \MSG{* calculated \string\DelayedChapter{#1}{#2}{\the\prev@y}}%
+    \wr@teDelayedChapter{#1}{#2}{\the\prev@y}%
+  \fi}
+
+\def\wr@teDelayedChapter#1#2#3{%
+  \ifdelay@pen\else
+    \immediate\openout\delayf@le="\jobname.delayed"
+    \delay@pentrue
+  \fi
+  \x@\let\x@\t@st\csname delay-#1.#2\endcsname
+  \ifx\t@st\relax \pr@vdelay=-2 % ensure undefined value will not match 0
+  \else \pr@vdelay=\csname delay-#1.#2\endcsname\fi
+  \th@sdelay=#3\relax
+  \ifnum\pr@vdelay=\th@sdelay % if the delay value is unchanged, all is good
+    \MSG{* OK}%
+  \else
+    \advance\pr@vdelay by 1
+    \ifnum\pr@vdelay=\th@sdelay % if new delay is 1 greater than old, we can use \RaiseChapter
+      \advance\th@sdelay by -1
+      \x@\let\x@\t@st\csname raise-#1.#2\endcsname
+      \ifx\t@st\relax \MSG{*** RaiseChapter needed at #1 #2, re-run to update}%
+      \else \MSG{* OK using RaiseChapter at #1 #2}\fi
+      \immediate\write\delayf@le{\string\RaiseChapter{#1}{#2}}%
+    \else
+      \MSG{*** DelayedChapter setting changed at #1 #2, re-run to update}%
+    \fi
+  \fi
+  \immediate\write\delayf@le{\string\DelayedChapter{#1}{#2}{\number\th@sdelay}}%
+}
+\newcount\pr@vdelay \newcount\th@sdelay
+
 \newif\ifsk@pping \newif\ifn@npublishable \newbox\j@nkbox
 \def\t@stpublishability#1{\n@npublishablefalse % check if "nonpublishable" occurred in the marker's \Properties
  \getp@ram{properties}{#1}%
@@ -223,14 +317,26 @@
 
 % Used to delay a cutout until later in the paragraph, for no-break chapter numbers
 \def\DelayedChapter#1#2#3{\uppercase{\def\ucb@@k{#1}}%
-  \x@\def\csname delay-\ucb@@k.#2\endcsname{#3}}
+  \x@\edef\csname delay-\ucb@@k.#2\endcsname{#3}}
+
+% Used to set a delayed paragraph number one line higher (projecting above the line with v.1 instead of below it)
+\def\RaiseChapter#1#2{\uppercase{\def\ucb@@k{#1}}%
+  \x@\let\csname raise-\ucb@@k.#2\endcsname=1}
 
 \def\ptx@nb{%
   \ifch@pter
-    \msg{*** no-break at chapter \ch@pter, check \string\DelayedChapter\space setting}%
+    \x@\let\x@\t@st\csname delay-\id@@@.\ch@pter\endcsname
+    \ifx\t@st\relax \MSG{*** no-break at \id@@@\space\ch@pter, re-run to generate \string\DelayedChapter\space setting}%
+    \else \MSG{* no-break at \id@@@\space\ch@pter}\fi
     \m@kechapterbox \global\ch@pterfalse
     \leavevmode\str@t \vadjust{\vbox to 0pt{\kern-\dp\str@tbox \kern-\ht\ch@pterbox
+      \x@\let\x@\t@st\csname raise-\id@@@.\ch@pter\endcsname
+      \ifx\t@st\relax \else \kern-\baselineskip \fi
       \box\ch@pterbox\vss}\nobreak}%
+    \pdfsavepos
+    \edef\dc@ref@rgs{\string\@delayedchapter\string{\id@@@\string}\string{\ch@pter\string}}%
+    \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}%
+    \dr@ppednumbertrue
   \fi}
 \newbox\str@tbox
 \def\str@t{\setbox\str@tbox=\hbox to 0pt{\XeTeXuseglyphmetrics=0 

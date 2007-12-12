@@ -146,7 +146,7 @@
 \newcount\dropnumbersize
 
 % other modules can use \addtoversehooks to insert macros that will be executed at each verse
-\def\addtoversehooks#1{\x@\v@rsehooks\x@{\the\v@rsehooks #1}}
+\def\addtoversehooks#1{\x@\global\x@\v@rsehooks\x@{\the\v@rsehooks #1}}
 \newtoks\v@rsehooks
 
 \newif\ifch@pter \def\ch@plabel{}
@@ -220,6 +220,7 @@
  \s@tupsizes
  \@ddcvhooks
  \@ddspecialhooks
+ \the\@nithooks
  \let\@netimesetup=\relax}
 
 \def\ptxfile#1{

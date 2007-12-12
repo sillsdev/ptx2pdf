@@ -74,9 +74,7 @@
     \fi \closein\n@tepagetest
     \n@xt
     \pagec@llerstrue
-    \let\s@ve@nd=\end
-    \def\end{\par\vfill\supereject % at end of job, we need to finish up the notepages file and check for changes
-      \finishc@llers \s@ve@nd}
+    \addtoendhooks{\finishc@llers}
     \openout\n@tepages="\jobname.notepages"
   \fi
   \expandafter\let\csname page-caller #1\endcsname=1 % record that this note class wants per-page callers
