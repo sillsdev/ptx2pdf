@@ -565,9 +565,10 @@
 \vfuzz=2pt
 \frenchspacing
 
-
 \catcode`\[=\active \def[{\char`\[\ignorespaces}
 \catcode`\(=\active \def({\char`\(\ignorespaces}
+
+\catcode"AD=\active \let^^ad=\- % make Unicode SOFT HYPHEN into a TeX discretionary hyphen
 
 \catcode`\@=12
 
