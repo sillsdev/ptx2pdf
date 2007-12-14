@@ -68,35 +68,46 @@
 \ifx\bolditalic\undefined\def\bolditalic{"Times New Roman/BI"}\fi
 
 % footnote macros based on plain.tex \footnote, \vfootnote
-\def\m@kenote#1#2{\let\@sf\empty % #1=class; #2=caller; text is read later
+\def\m@kenote#1#2{\let\@sf\empty % #1=class(e.g. f, x); 
+  % #2=caller + all the macros to setup the styling for the caller 
+  % text is read later
   \ifhmode\edef\@sf{\spacefactor\the\spacefactor}\/\fi
+  % if footnote is on a chapter number ...
   \ifch@pter \everypar={}\ch@pterfalse
     \global\setbox\ch@pternote=\hbox{\box\ch@pternote #2}
-  \else #2\fi
+  \else #2\fi % output caller
+  % @sf preserves the space factor (e.g. extra space after a period), restore it now
   \@sf \vm@kenote{#1}{#2}}
 
 \def\vm@kenote#1#2{%
   \let\next\relax
-  \x@\insert\csname note-#1\endcsname\bgroup
+  \x@\insert\csname note-#1\endcsname\bgroup % insert note-f (or note-x)
 %%% single-column notes:
-  \checkp@ranotes{#1}% check whether this note class is to be paragraphed
+  \checkp@ranotes{#1}% check whether this note class is to be paragraphed 
+  % if paragraph notes, make each line infinitely wide so it does not get line broken yet
   \hsize=\ifp@ranotes\maxdimen\else\textwidth\fi
-  \interlinepenalty\interfootnotelinepenalty
-  \floatingpenalty\@MM
-  \leftskip\z@skip \rightskip\z@skip \spaceskip\z@skip \xspaceskip\z@skip
-  \leavevmode\ifRTL\setbox2=\lastbox\beginR\box2\fi
+  % insert penalties to control breaking of footnotes
+  \interlinepenalty\interfootnotelinepenalty % set penalty to break lines
+  \floatingpenalty\@MM % make sure note does not float away from caller to another page
+  \leftskip\z@skip \rightskip\z@skip \spaceskip\z@skip \xspaceskip\z@skip % reset extra space around paragraph 0
+  \leavevmode % begin paragraph
+  \ifRTL\setbox2=\lastbox\beginR\box2\fi % if RTL text this paragraph needs to be RTL
+  % if note omitting caller from note (i.e. all callers are *'s)
   \testomitc@ller{#1}\ifomitc@ller\else
+    % save copy of caller in temporary box, if non-empty add a little space
     \setbox0=\hbox{#2}#2\ifdim\wd0>0pt\kern.2em\fi
   \fi
-  \footstrut
+  \footstrut % adjust line spacing between notes
+  % currently we do not allow footnotes to break to the next page, so this may not be necessary
   \splittopskip\ht\f@@tstrut % top baseline for broken footnotes
   \splitmaxdepth\dp\f@@tstrut
-  \futurelet\next\fo@t}
+  \futurelet\next\fo@t}% use plain.tex footnote processor
 
 % use \OmitCallerInNote{f} to omit callers from the note at foot of page
-% but leave them in the body text
+% but leave them in the body text (e.g. all the callers are *'s)
 \def\OmitCallerInNote#1{%
   \expandafter\let\csname omit-in-note #1\endcsname=1}
+%
 \def\testomitc@ller#1{\expandafter\ifx\csname omit-in-note #1\endcsname\relax
   \omitc@llerfalse \else \omitc@llertrue \fi}
 \newif\ifomitc@ller
@@ -121,6 +132,7 @@
 \def\n@teglue{2em plus 1em minus .5em\relax} % glue to be used between paragraphed notes
 
 % set baseline appropriately for the given style (may be using much smaller font than body)
+% baselineskip = leading
 \def\s@tbaseline#1{%
   \x@\ifx\csname baseline<#1>\endcsname \relax
     \getp@ram{fontsize}{#1}\dimen0=\p@ram\le@dingunit
@@ -206,18 +218,22 @@
     \else\let\n@xt=\separateins@rtn@tecl@ss\fi
   \n@xt{#1}}
 
+% insert a note class in which each note is on its own line
 \def\separateins@rtn@tecl@ss#1{%
-  \x@\let\x@\th@cl@ss\csname note-#1\endcsname
+  \x@\let\x@\th@cl@ss\csname note-#1\endcsname % make \th@cl@ss be a synonym for the current note class
+  % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\else
-    \vskip\AboveNoteSpace
-    \iff@rstnote\footnoterule\f@rstnotefalse\fi
-    \unvbox\th@cl@ss\fi}
+    \vskip\AboveNoteSpace % output above note class space
+    \iff@rstnote\footnoterule\f@rstnotefalse\fi % output rule before first note
+    \unvbox\th@cl@ss\fi}% output notes
 
+% insert a note class in which each note is in the same paragraph
 \def\parains@rtn@tecl@ss#1{%
-  \x@\let\x@\th@cl@ss\csname note-#1\endcsname
+  \x@\let\x@\th@cl@ss\csname note-#1\endcsname % make \th@cl@ss be a synonym for the current note class
+  % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\else
     \vskip\AboveNoteSpace
-    \iff@rstnote\footnoterule\f@rstnotefalse\fi
+    \iff@rstnote\footnoterule\f@rstnotefalse\fi % output rule before first note
     {\maken@tepara{\th@cl@ss}}%
   \fi}
 
@@ -231,69 +247,103 @@
 \def\checkp@ranotes#1{\x@\ifx\csname paranotes-#1\endcsname\relax
   \p@ranotesfalse\else\p@ranotestrue\fi}
 
-% reformat the contents of a note class insertion into a single paragraph
+% reformat the contents of a note class insertion into a single paragraph.
+% this is usually done for \x. It is sometimes done for \f.
 % (based on code from the TeXbook, appendix D)
-\def\maken@tepara#1{\hsize=\textwidth
+% #1 is vbox containing notes as individual paragraphs.
+\def\maken@tepara#1{%
+  \hsize=\textwidth % width is full page size
   \let\par=\endgraf\ch@pterfalse
-  \everypar={}\noindent\leftskip0pt\rightskip\leftskip
-  \unvbox#1 \makehboxofhboxes 
-  \setbox0=\hbox{\unhbox0 \removehboxes}
-  \noindent\unhbox0\unskip\unpenalty\unskip\unskip\linepenalty50\par} 
-\def\makehboxofhboxes{\setbox0=\hbox{} 
+  \everypar={}% don't do body text formatting
+  \noindent% don't do body text indenting
+  \unvbox#1 % open up the vbox of notes to get at the list of individual note boxes
+  \makehboxofhboxes % make a single hbox for all notes of this class
+  \setbox0=\hbox{\unhbox0 \removehboxes} % add internote space
+  \noindent\unhbox0 % starting making new paragraph
+  \unskip\unpenalty\unskip\unskip % remove internote skip info after last note
+  % set penalty which allows breaking between notes unless this would cause
+  % an extra line to be created.
+  \linepenalty50
+  \par} 
+%
+% make box0 = an hbox contining all the contents of this class
+\def\makehboxofhboxes{%
+  \setbox0=\hbox{}%
   \loop\setbox2=\lastbox \ifhbox2 \setbox0=\hbox{\box2\unhbox0}\repeat} 
-\def\removehboxes{\setbox0=\lastbox 
+%
+% remove inside level of boxing and adding inter note space after each
+%     [[a][b][c]] --> [a \internotespace b \internotespace c \internotespace]
+\def\removehboxes{%
+  \setbox0=\lastbox 
   \ifhbox0{\removehboxes}\unhbox0\internotespace\fi}
+%
+% skip between notes in paragraph. skip is good place to break.
 \def\internotespace{\hfil\hskip\intern@teskip\penalty-10\hfilneg}
+
+% don't allow stretching between notes.
 \newskip\intern@teskip \intern@teskip=15pt% plus 5pt minus 5pt
 
-% switch to double-column mode if currently single
+% switch to double-column mode if currently single.
+% this is called from \parstyle when the new style wants to be double-columned
 \def\doublecolumns{%
   \ifnum\c@rrentcols=1
-    \ifhe@dings\endhe@dings\fi
-    \penalty-100\vskip\baselineskip
+    % make switch from single to double column
+    \ifhe@dings\endhe@dings\fi % if headings in process, end headings
+    \penalty-100\vskip\baselineskip % ensure blank line between single and double column material
     \global\output={\savepartialpage}\eject % save any partially-full page
+	% if single column material already fills 3/4 page, go to next page to start double columns
     \ifdim\ht\partial>0.75\textheight
       \global\output={\onecol} % but output it immediately if 75% full
       \unvbox\partial\vfill\eject
     \fi
     % reset parameters for 2-column formatting
     \global\hsize=\colwidth
-    \global\vsize=2\textheight \global\advance\vsize by -2\ht\partial
+    \global\vsize=2\textheight % in 2 col mode you can put twice the height of text
+	\global\advance\vsize by -2\ht\partial % subtract height of 1 column material
+	% make a macro reset vsize for remaining pages which do not have 1 column material
     \gdef\resetvsize{\global\vsize=2\textheight \global\advance\vsize by \baselineskip} 
     \global\output={\twocols}
     \global\c@rrentcols=2
     % top and bottom inserts effectively use twice their height
+	% (\count of an insertion class is a scaling factor)
     \count255=2000
     \global\count\topins=\count255
     \global\count\bottomins=\count255
     \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
-    \global\holdinginserts=1
+    \global\holdinginserts=1 % don't pull out inserts yet, we are still adjusting page
   \fi}
+
+% iterate over note classes, set \count for each class  
 \def\s@tn@tec@unt#1{%
   \x@\let\x@\th@cl@ss\csname note-#1\endcsname
   \checkp@ranotes{#1}%
+  % notes made into paragraphs (e.g. \x) are counted as 0 height for now,
+  % later we will backup making page size smaller until things fit
   \global\count\th@cl@ss=\ifp@ranotes 0 \else \count255 \fi
   \global\skip\th@cl@ss=\AboveNoteSpace }
 
 \def\resetvsize{\global\vsize=\textheight} 
 
 \def\msg#1{\immediate\write16{#1}}
+
 \def\savepartialpage{% save a partially-full page when switching to 2-column format,
 %%%  \msg{SAVEPARTIAL} % and remember the first \mark on the page
   \edef\t@st{\p@gefirstmark}%
   \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi
+  % save 1 column material since we are switching to 2 columns
   \global\setbox\partial=\vbox{\boxmaxdepth\maxdepth \pagecontents}}
 \newbox\partial
 
 \def\twocols{% primary output routine in 2-col mode
 %%%  \msg{TWOCOLS @ \ch@pter:\v@rse, txtht=\the\textheight, partial=\the\ht\partial}
+  % save copy of current page so we can retry with different heights
   \global\setbox\galley=\copy255
-  \global\galleypenalty=\outputpenalty
+  \global\galleypenalty=\outputpenalty % save current penalty so we can restore it at (A)
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
   \global\output={\twocoltrial}
-  \global\holdinginserts=0
-  \unvbox255
-  \penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
+  \global\holdinginserts=0 % when doing trial place insertions into boxes
+  \unvbox255 % force invoking \twocoltrial
+  \penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi % (A) restore output penalty
   }
 \newbox\galley
 \newcount\galleypenalty
@@ -351,30 +401,34 @@
 %%%
   \splittopskip=\topskip
   \setbox\s@vedpage=\copy255
-  % figure out height available for each column, after subtracting column pictures
+  % figure out height available for each column, after subtracting
+  % pictures placed at top or bottom of left or right column
   \colhtA=\availht \decr{\colhtA}{\topleftins} \decr{\colhtA}{\bottomleftins}
   \colhtB=\availht \decr{\colhtB}{\toprightins} \decr{\colhtB}{\bottomrightins}
   % split the galley into the two columns we need
-  \setbox\colA=\vsplit255 to \colhtA
-  \setbox\colB=\vsplit255 to \colhtB
-  \setbox\colA=\vbox{\unvbox\colA}
+  \setbox\colA=\vsplit255 to \colhtA % set \box\colA to amount which fits in first column
+  \setbox\colB=\vsplit255 to \colhtB % and \colB to second
+  \setbox\colA=\vbox{\unvbox\colA} % reset columns to natural height
   \setbox\colB=\vbox{\unvbox\colB}
   % and check if it all fit; if not, we'll have to back up and try again
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
 %%%  \msg{first col = \the\ht\colA, second col = \the\ht\colB, rem = \the\ht255}
   \iffitonpage
 %%%    \msg{SUCCEEDED, shipping page}
-% re-split to better balance columns, if possible
-% at this point:
-%   \box\colA + \box\colB is the page content
-%   \availht is ht that definitely works
-%   \s@vedpage is a copy of the original page contents that was split into columns A and B
-%   try re-splitting with smaller ht while \ht\colB<\ht\colA (including allowance for column inserts)
+    % re-split to better balance columns, if possible
+    % at this point:
+    %   \box\colA + \box\colB is the page content
+    %   \availht is ht that definitely works
+    %   \s@vedpage is a copy of the original page contents that was split into columns A and B
+    %   try re-splitting with smaller ht while \ht\colB<\ht\colA
+    %   (including allowance for column inserts)
     \colhtA=\ht\colA \incr{\colhtA}{\topleftins} \incr{\colhtA}{\bottomleftins}
     \colhtB=\ht\colB \incr{\colhtB}{\toprightins} \incr{\colhtB}{\bottomrightins}
     \ifdim\colhtB<\colhtA
       \rebalancetrue
       \shortavail=\availht
+	  % loop making column height smaller.
+	  % as long as everything still fits a shorter page is better balanaced
       \loop%\msg{re-balancing}
         \vfuzz=\maxdimen
         \advance\shortavail by -\baselineskip
@@ -383,32 +437,40 @@
         \colhtB=\shortavail \decr{\colhtB}{\toprightins} \decr{\colhtB}{\bottomrightins}
         \setbox\colA=\vsplit0 to \colhtA \setbox\colA=\vbox{\unvbox\colA}
         \setbox\colB=\vsplit0 to \colhtB \setbox\colB=\vbox{\unvbox\colB}
+		% if something left in box0, it didn't fit, quit loop
         \ifvoid0\else\rebalancefalse\fi
+		% if second column longer than first column by more than .3*line height, quit loop
         \dimen0=\ht\colB \incr{\dimen0}{\topleftins} \incr{\dimen0}{\bottomleftins}
         \advance\dimen0 by -\ht\colA \decr{\dimen0}{\toprightins} \decr{\dimen0}{\bottomrightins}
         \ifdim\dimen0>.3\baselineskip \rebalancefalse\fi
+		% give up if target size less than 3 lines (should not happen)
         \ifdim\shortavail<3\baselineskip \rebalancefalse\fi
         \ifrebalance\repeat
+	  % last try failed, so back up to previous length
       \advance\shortavail by \baselineskip
       \colhtA=\shortavail \decr{\colhtA}{\topleftins} \decr{\colhtA}{\bottomleftins}
       \colhtB=\shortavail \decr{\colhtB}{\toprightins} \decr{\colhtB}{\bottomrightins}
       \setbox\colA=\vsplit\s@vedpage to \colhtA \setbox\colA=\vbox{\unvbox\colA}
       \setbox\colB=\vsplit\s@vedpage to \colhtB \setbox\colB=\vbox{\unvbox\colB}
     \fi
+	% assemble final content of columns
     \dimen0=\dp\colA \setbox\colA=\vbox to \availht{\unvbox\topleftins\unvbox\colA\vfil\unvbox\bottomleftins}\dp\colA=\dimen0
     \dimen0=\dp\colB \setbox\colB=\vbox to \availht{\unvbox\toprightins\unvbox\colB\vfil\unvbox\bottomrightins}\dp\colB=\dimen0
+	% define pagecontents for use by \plainoutput below
     \def\pagecontents{%
-      \ifvoid\partial\else \unvbox\partial \fi
-      \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi
-      \dimen0=\ifdim\dp\colB>\dp\colA \dp\colB \else \dp\colA \fi
+      \ifvoid\partial\else \unvbox\partial \fi % output partial page
+      \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi % output top spanning pictures
+      \dimen0=\ifdim\dp\colB>\dp\colA \dp\colB \else \dp\colA \fi % calc depth of deepest column
       %\showthe\dimen0
+	  % determine order of columns based on text direction
       \hbox to \textwidth{\ifRTL \box\colB\hfil\box\colA \else \box\colA\hfil\box\colB \fi}
-      \ifvoid\bottomins\else \vskip\skip\bottomins \unvbox\bottomins \fi
+      \ifvoid\bottomins\else \vskip\skip\bottomins \unvbox\bottomins \fi % ouput bottom spanning pictures
+	  % ensure that footnote rule is relative to baseline of last line of text (not the bottom of descenders)
       \kern-\dimen0 \vfil
       \f@rstnotetrue
-      \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses
+      \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % output all note classes
     }
-    \resetvsize
+    \resetvsize % reset size of next page since it will not have any 1 column material
     \plainoutput
     \xdef\p@gefirstmark{}
     \xdef\p@gebotmark{}
@@ -418,6 +480,7 @@
         % so reduce \vsize and try again with an earlier break
 %%%    \msg{REDUCING VSIZE}
     \global\advance\vsize by -\baselineskip
+	% clear insertions
     \global\setbox\topins=\box\voidb@x
     \global\setbox\bottomins=\box\voidb@x
     \global\setbox\topleftins=\box\voidb@x
@@ -473,23 +536,31 @@
 \newinsert\bottomleftins \count\bottomleftins=1000 \dimen\bottomleftins=\maxdimen
 \newinsert\bottomrightins\count\bottomrightins=1000 \dimen\bottomrightins=\maxdimen
 
+% called from \fig or from figure list
 \def\d@figure#1{%
-  \gdef\p@rams{#1|}%
+  \gdef\p@rams{#1|}% ensure there is a trailing | separator
+  % place parts of text into \param-1, \param-2, ...
   \global\p@ramnumber=1
   \loop
     \x@\getonep@ram\p@rams\end
     \ifx\p@rams\empty \morep@ramsfalse \else \morep@ramstrue \fi
     \ifmorep@rams\repeat
+  % get size and location
   \lowercase{\edef\size@ption{\csname param-3\endcsname}}%
   \lowercase{\edef\loc@ption{\csname param-4\endcsname}}%
-  \ifx\loc@ption\empty
-    \ifx\size@ption\size@SPAN\def\loc@ption{t}\else\def\loc@ption{tl}\fi
+  % 
+  \ifx\loc@ption\empty % if location empty
+    \ifx\size@ption\size@SPAN%
+	   \def\loc@ption{t}% if size is SPAN default to top
+	\else\def\loc@ption{tl}\fi % else default to top left
   \fi
+  % set width to column width or span width
   \p@cwidth=\ifx\size@ption\size@COL \hsize
   \else\ifx\size@ption\size@SPAN \textwidth
   \else \p@cwidth=\textwidth
     \errmessage{Unknown picture size "\size@ption", expected "col" or "span"}\fi\fi
   \let\p@cins=\relax
+  % make \p@cins point to insertion class for this location
   \ifx\loc@ption\loc@T \let\p@cins=\topins
   \else\ifx\loc@ption\loc@B \let\p@cins=\bottomins
   \else
@@ -511,15 +582,18 @@
     \errmessage{Unknown picture location "\loc@ption",
       expected one of t,b,tl,tr,bl,br}\let\p@cins=\topins
   \fi
+  % create box to contain picture
   \setbox0=\vbox{
     \hsize=\p@cwidth
+	% insert picture based on PicPath and file name, scaled to \p@cwidth
     \line{\XeTeXpicfile "\the\PicPath\csname param-2\endcsname" width \p@cwidth }
-    \edef\r@f{\csname param-7\endcsname}
-    \edef\c@ption{\csname param-6\endcsname}
+    \edef\r@f{\csname param-7\endcsname} % get reference
+    \edef\c@ption{\csname param-6\endcsname} % get caption
     \ifx\c@ption\empty\else
       \everypar={}\let\par\endgraf
       \leftskip=0pt plus 1fil \rightskip=\leftskip \parfillskip=0pt
       \linepenalty=1000
+	  % insert caption box
       \noindent\leavevmode
         \s@tfont{fig}\c@ption\unskip
         \ifx\r@f\empty\else\nobreak\ (\r@f\unskip)\fi
@@ -527,13 +601,17 @@
     \fi
     \vskip.5\baselineskip
   }%
-  \insert\p@cins{\penalty10000 % nonfloating insertion % was 100
+  % insert into proper insertion class for this position
+  \insert\p@cins{\penalty10000 % make sure this picture does not float away to another page
     \splittopskip\z@skip
     \splitmaxdepth\maxdimen \floatingpenalty20000 % was zero
-    \gridb@x0}%
+    \gridb@x0% make sure we align to the page grid
+  }%
 }
-\newtoks\PicPath
+\newtoks\PicPath % directory containing picture files
+
 \def\picw@rning#1#2{\msg{converted picture placement "#1" to "#2" in single-column layout}}
+
 \def\size@COL{col}
 \def\size@SPAN{span}
 \def\loc@T{t}
@@ -542,9 +620,13 @@
 \def\loc@TR{tr}
 \def\loc@BL{bl}
 \def\loc@BR{br}
+
 \newcount\p@ramnumber
 \newdimen\p@cwidth
 \newif\ifmorep@rams
+
+% Place everything up to first | into \param-N.
+% Redefine \p@rams to be rest of list
 \def\getonep@ram#1|#2\end{\gdef\p@rams{#2}%
   \x@\gdef\csname param-\the\p@ramnumber\endcsname{#1}%
   \global\advance\p@ramnumber by 1 }
@@ -569,6 +651,7 @@
 \catcode`\(=\active \def({\char`\(\ignorespaces}
 
 \catcode"AD=\active \let^^ad=\- % make Unicode SOFT HYPHEN into a TeX discretionary hyphen
+\catcode"A0=\active \def^^a0{\penalty10000\ } % make Unicode NO-BREAK SPACE into a no-break space
 
 \catcode`\@=12
 
