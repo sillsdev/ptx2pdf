@@ -114,6 +114,9 @@
    \edef\typef@ce{"\p@ram"}% use font name from the stylesheet
   \fi
   \getp@ram{fontsize}{#1}%
+  \ifx\p@ram\relax
+    \MSG{*** FontSize missing for marker '#1', defaulting to 12}%
+    \def\p@ram{12}\fi
   % create the font identifier for this style
   \x@\global\x@\font
     \csname font<#1>\endcsname=\typef@ce\space at \p@ram \dimen0
