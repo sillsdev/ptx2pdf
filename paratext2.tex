@@ -647,11 +647,14 @@
 \vfuzz=2pt
 \frenchspacing
 
+\XeTeXdashbreakstate=1 % allow line-break after en- and em-dash even if no space
+
 \catcode`\[=\active \def[{\char`\[\ignorespaces}
 \catcode`\(=\active \def({\char`\(\ignorespaces}
 
 \catcode"AD=\active \let^^ad=\- % make Unicode SOFT HYPHEN into a TeX discretionary hyphen
 \catcode"A0=\active \def^^a0{\penalty10000\ } % make Unicode NO-BREAK SPACE into a no-break space
+\catcode"200B=\active \def^^^^200b{\hskip0pt \relax} % ZERO WIDTH SPACE is a possible break
 
 \catcode`\@=12
 

@@ -161,7 +161,10 @@
   \ifhe@dingstyle\TRACE{headingstyle true}%
     \ifhe@dings\else
       \setbox\he@dingbox=\vbox\bgroup\global\he@dingstrue
-        \linepenalty=1000 \interlinepenalty=10000
+        \linepenalty=1000 % minimize line count
+        \interlinepenalty=10000 % never break column/page between lines
+        \XeTeXdashbreakstate=0 % mainly for ranges in \r
+        \hyphenpenalty=10000 \exhyphenpenalty=10000 % don't hyphenate in headings
     \fi
     \nobreak
   \else\TRACE{headingstyle false}%
