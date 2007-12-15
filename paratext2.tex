@@ -631,6 +631,40 @@
   \x@\gdef\csname param-\the\p@ramnumber\endcsname{#1}%
   \global\advance\p@ramnumber by 1 }
 
+\def\includepdf{\@netimesetup % in case \ptxfile hasn't been used yet
+  \ifx\XeTeXpdfpagecount\undefined
+    \MSG{*** sorry, \string\includepdf\space requires XeTeX 0.997 or later}%
+    \let\n@xt\relax
+  \else \let\n@xt\incl@depdf \fi
+  \n@xt}
+\def\incl@depdf{\begingroup
+  \m@kedigitsother \catcode`\[=12 \catcode`\]=12
+  \futurelet\n@xt\t@stincl@de@ptions}
+\def\t@stincl@de@ptions{\ifx\n@xt[\let\n@xt\incl@de@ptions
+  \else\let\n@xt\incl@deno@ptions\fi\n@xt}
+\def\incl@deno@ptions#1{\incl@de@ptions[]{#1}}
+\def\incl@de@ptions[#1]#2{%
+  \totalp@ges=\XeTeXpdfpagecount "#2"\relax
+  \whichp@ge=0
+  \loop \ifnum\whichp@ge<\totalp@ges
+    \advance\whichp@ge by 1
+    \setbox0=\hbox{\XeTeXpdffile "#2" page \whichp@ge #1}%
+    \ifdim\wd0>\pdfpagewidth
+      \setbox0=\hbox{\XeTeXpdffile "#2" page \whichp@ge #1 width \pdfpagewidth}%
+    \fi
+    \ifdim\ht0>\pdfpageheight
+      \setbox0=\hbox{\XeTeXpdffile "#2" page \whichp@ge #1 height \pdfpageheight}%
+    \fi
+    {\def\c@rrID{#2 #1 page \number\whichp@ge}% for lower crop-mark info, if requested
+      \setbox0=\vbox{\kern-\baselineskip \box0 \kern\baselineskip}%
+      \shipwithcr@pmarks{\box0}}%
+    \advancepageno
+    \repeat
+  \endgroup % begun in \incl@depdf
+}
+\newcount\totalp@ges
+\newcount\whichp@ge
+
 \def\pagebreak{\vfill\eject %% FIXME
   \ifnum\c@rrentcols=2
 %    \iffirstcol\else\line{}\vfill\eject\fi
