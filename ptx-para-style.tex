@@ -119,8 +119,8 @@
  \else % else we need to actually process it!
   \ifhmode\unskip % remove any trailing space
     \end@llcharstyles % end any character styles in effect
-    \pdfsavepos
-    \write\p@rlocs{\noexpand\@parend{\the\pdflastxpos}{\the\pdflastypos}}%
+    \beginL\pdfsavepos
+    \write\p@rlocs{\noexpand\@parend{\the\pdflastxpos}{\the\pdflastypos}}\endL
     \par % end the paragraph
     \ifdr@ppednumber % the preceding par had a dropped number; add \nobreak if it was a single line
       \x@\write\x@\p@rlocs\x@{\x@\noexpand\x@\@parlines\x@{\the\prevgraf}}%
@@ -179,8 +179,8 @@
    % \everypar will be triggered when the paragraph actually starts (normally at the first character of text,
    % or something like a verse number); then we'll set up margins/indents and font
    %
-   \pdfsavepos
-   \write\p@rlocs{\noexpand\@parstart{\the\pdflastxpos}{\the\pdflastypos}}%
+   \beginL\pdfsavepos
+   \write\p@rlocs{\noexpand\@parstart{\the\pdflastxpos}{\the\pdflastypos}}\endL
    \ifRTL \beginR \leftskip\else\rightskip\fi =0pt
      \ifJustifyPars\else plus .25\hsize\fi
    \getp@ram{justification}{\m@rker}%
@@ -365,10 +365,11 @@
     \leavevmode\str@t \vadjust{\vbox to 0pt{\kern-\dp\str@tbox \kern-\ht\ch@pterbox
       \x@\let\x@\t@st\csname raise-\id@@@.\ch@pter\endcsname
       \ifx\t@st\relax \else \kern-\baselineskip \fi
-      \box\ch@pterbox\vss}\nobreak}%
-    \pdfsavepos
+      \ifRTL\let\n@xt\rightline\else\let\n@xt\leftline\fi
+      \n@xt{\ifRTL\beginR\fi\box\ch@pterbox\ifRTL\endR\fi}\vss}\nobreak}%
+    \beginL\pdfsavepos
     \edef\dc@ref@rgs{\string\@delayedchapter\string{\id@@@\string}\string{\ch@pter\string}}%
-    \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}%
+    \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}\endL
     \dr@ppednumbertrue
   \fi}
 \newbox\str@tbox
