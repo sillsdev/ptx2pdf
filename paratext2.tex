@@ -300,6 +300,7 @@
     \global\hsize=\colwidth
     \global\vsize=2\textheight % in 2 col mode you can put twice the height of text
 	\global\advance\vsize by -2\ht\partial % subtract height of 1 column material
+	\global\advance\vsize by \baselineskip % don't get caught short by 1/2 line or so
 	% make a macro reset vsize for remaining pages which do not have 1 column material
     \gdef\resetvsize{\global\vsize=2\textheight \global\advance\vsize by \baselineskip} 
     \global\output={\twocols}
