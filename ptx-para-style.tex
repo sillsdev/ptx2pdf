@@ -333,7 +333,9 @@
 
 % Create the drop-cap in \ch@pterbox, and create the cutout in the current paragraph
 \def\m@kechapterbox{%
- \setbox\ch@pterbox=\hbox{\s@tfont{c}\ch@pter}%
+ \edef\printchapter{\ch@pter}%
+ \csname PrepChapterNumber\endcsname
+ \setbox\ch@pterbox=\hbox{\s@tfont{c}\printchapter}%
  \setbox\ch@pterbox=\hbox{\lower\baselineskip\box\ch@pterbox
    \box\ch@pternote\kern\AfterChapterSpaceFactor\FontSizeUnit}%
  \ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
