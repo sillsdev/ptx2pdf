@@ -86,24 +86,25 @@
   \advance\pdfpageheight by 2\dimen0
   \hoffset=-1in \voffset=-1in % shift the origin to (0,0)
   \shipout\vbox to 0pt{% ship the actual page content, with \BindingGutter added if wanted
+    \let\g@tterside=0 % figure out if we're adding a binding gutter, and which side
+    \ifBindingGutter
+      \ifDoubleSided
+        \ifodd\pageno
+          \ifRTL \let\g@tterside=R
+          \else  \let\g@tterside=L \fi
+        \else
+          \ifRTL \let\g@tterside=L
+          \else  \let\g@tterside=R \fi
+        \fi
+      \else
+        \ifRTL \let\g@tterside=R
+        \else  \let\g@tterside=L \fi
+      \fi
+    \fi
+    \pl@ceborder % add PageBorder (or watermark) graphic, if defined
     \kern \baselineskip % make room for headline
     \offinterlineskip
     \vbox to \pdfpageheight{\vss
-      \let\g@tterside=0
-      \ifBindingGutter
-        \ifDoubleSided
-          \ifodd\pageno
-            \ifRTL \let\g@tterside=R
-            \else  \let\g@tterside=L \fi
-          \else
-            \ifRTL \let\g@tterside=L
-            \else  \let\g@tterside=R \fi
-          \fi
-        \else
-          \ifRTL \let\g@tterside=R
-          \else  \let\g@tterside=L \fi
-        \fi
-      \fi
       \kern\TopMarginFactor\MarginUnit
       \hbox to \pdfpagewidth{\hss\hbox{%
         \if\g@tterside L\kern\BindingGutter\fi
@@ -121,7 +122,7 @@
         \kern\PaperHeight
         \moveright\dimen0\copy\bottomcr@p
         \moveright\dimen0\vbox to 0pt{\kern15pt\hsize\PaperWidth \everypar={}
-          \lineskiplimit=0pt \baselineskip=10pt
+          \lineskiplimit=0pt \baselineskip=10pt \linepenalty=200
           \leftskip=0pt plus 1fil \rightskip=\leftskip \parfillskip=0pt
           \noindent \beginL\idf@nt \c@rrID\endL\endgraf % add the current \id line
           \vss}
@@ -130,6 +131,23 @@
     \fi
   }%
 }
+
+\def\PageBorder{}
+\newbox\b@rder
+\def\pl@ceborder{\ifx\PageBorder\empty\else % if \PageBorder is empty, this does nothing
+  \ifvoid\b@rder % set up the \b@rder box the first time it's needed
+    \global\setbox\b@rder=\hbox{\XeTeXpdffile \PageBorder \relax}%
+    \global\setbox\b@rder=\vbox to \pdfpageheight{\vss
+      \hbox to \pdfpagewidth{\hss\box\b@rder\hss}\vss}%
+  \fi
+  \vbox to 0pt{% respect binding gutter, just like main page content
+    \hbox to \pdfpagewidth{\hss\hbox{%
+      \if\g@tterside L\kern\BindingGutter\fi
+      \copy\b@rder
+      \if\g@tterside R\kern\BindingGutter\fi
+    }\hss}
+  \vss}% output a copy of \box\b@rder
+\fi}
 
 % redefine plain TeX's output routine to add the cropmarks
 \def\plainoutput{\shipwithcr@pmarks

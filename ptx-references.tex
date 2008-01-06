@@ -123,7 +123,6 @@
 
 % define \headline for use by the output routine
 \headline={{%
- \pl@ceborder % place border graphic, if one has been defined
  \s@tfont{h}%
  \edef\t@st{\p@gefirstmark}% check first mark on page to see if this is a "title" page
  \global\rhr@letrue
@@ -191,18 +190,5 @@
 \def\RFtitleleft{\empty}
 \def\RFtitlecenter{\pagenumber}
 \def\RFtitleright{\empty}
-
-% If \PageBorder is defined as the name of a PDF file, it will be placed on every page
-% by the default \headline, before anything else is printed
-\def\PageBorder{}
-\newbox\b@rder
-\def\pl@ceborder{\ifx\PageBorder\empty\else % if \PageBorder is empty, this does nothing
-  \ifvoid\b@rder % set up the \b@rder box the first time it's needed
-    \global\setbox\b@rder=\hbox{\XeTeXpdffile \PageBorder \relax}%
-    \global\setbox\b@rder=\vbox to 0pt{\vss\hbox to \textwidth{\hss\box\b@rder\hss}\vss}%
-  \fi
-  \hbox to 0pt{\vbox to 0pt{\kern0.5\textheight % output a copy of \box\b@rder
-    \kern7\le@dingunit\copy\b@rder\vss}\hss}%
- \fi}
 
 \endinput
