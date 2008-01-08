@@ -104,13 +104,13 @@
     \pl@ceborder % add PageBorder (or watermark) graphic, if defined
     \offinterlineskip
     \vbox to \pdfpageheight{\vss
-      \kern\TopMarginFactor\MarginUnit
+      \kern\topm@rgin
       \hbox to \pdfpagewidth{\hss\hbox{%
         \if\g@tterside L\kern\BindingGutter\fi
         #1%
         \if\g@tterside R\kern\BindingGutter\fi
       }\hss}
-      \kern\BottomMarginFactor\MarginUnit
+      \kern\bottomm@rgin
       \vss}
     \vss
     \ifCropMarks % if crop marks are enabled

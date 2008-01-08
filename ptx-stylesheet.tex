@@ -383,9 +383,12 @@
  \textwidth=\dimen0
  \colwidth=0.5\textwidth \advance\colwidth by -0.5\gutter
  \hsize=\textwidth
+ \topm@rgin=\TopMarginFactor\MarginUnit
+ \advance\topm@rgin by -\topskip \advance\topm@rgin by 12\FontSizeUnit
+ \bottomm@rgin=\BottomMarginFactor\MarginUnit
  \dimen0=\PaperHeight
- \advance\dimen0 by -\TopMarginFactor\MarginUnit
- \advance\dimen0 by -\BottomMarginFactor\MarginUnit
+ \advance\dimen0 by -\topm@rgin
+ \advance\dimen0 by -\bottomm@rgin
  \textheight=\dimen0
  \vsize=\textheight
  \pdfpagewidth=\PaperWidth
@@ -394,6 +397,8 @@
 }
 \newdimen\le@dingunit
 \newdimen\verticalsp@ceunit
+\newdimen\topm@rgin
+\newdimen\bottomm@rgin
 \newdimen\textwidth
 \newdimen\textheight
 \newdimen\colwidth

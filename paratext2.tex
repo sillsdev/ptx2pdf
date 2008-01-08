@@ -204,7 +204,7 @@
 
 \def\pagebody{\vbox to\textheight{\boxmaxdepth\maxdepth \pagecontents}}
 \def\makeheadline{%
-  \vbox to 0pt{\kern-\TopMarginFactor\MarginUnit
+  \vbox to 0pt{\kern-\topm@rgin
    \vbox{\kern\HeaderPosition\MarginUnit
     \hbox to \textwidth{\the\headline}
     \ifrhr@le\ifdim\RHruleposition=\maxdimen\else
@@ -212,7 +212,7 @@
     \fi\fi}\vss}\nointerlineskip}
 \newif\ifrhr@le
 \def\makefootline{%
-  \vbox to 0pt{\kern\BottomMarginFactor\MarginUnit
+  \vbox to 0pt{\kern\bottomm@rgin
     \kern-\FooterPosition\MarginUnit
      \hbox to \textwidth{\the\footline}\vss}}
 \newdimen\RHruleposition \RHruleposition=\maxdimen
