@@ -203,14 +203,18 @@
   \fi}
 
 \def\pagebody{\vbox to\textheight{\boxmaxdepth\maxdepth \pagecontents}}
-\def\makeheadline{\vbox to\z@{\vskip-22.5\p@
-  \hbox to \textwidth{\vbox to8.5\p@{}\the\headline}\vss
-  \ifrhr@le\ifdim\RHruleposition=\maxdimen\else
-    \kern-\RHruleposition\kern-0.4pt\hrule\kern\RHruleposition
-    \fi\fi}\nointerlineskip}
+\def\makeheadline{%
+  \vbox to 0pt{\kern-\TopMarginFactor\MarginUnit
+   \vbox{\kern\HeaderPosition\MarginUnit
+    \hbox to \textwidth{\the\headline}
+    \ifrhr@le\ifdim\RHruleposition=\maxdimen\else
+      \kern-\prevdepth \kern\RHruleposition\hrule
+    \fi\fi}\vss}\nointerlineskip}
 \newif\ifrhr@le
-\def\makefootline{\baselineskip24\p@\lineskiplimit\z@
-  \hbox to \textwidth{\the\footline}}
+\def\makefootline{%
+  \vbox to 0pt{\kern\BottomMarginFactor\MarginUnit
+    \kern-\FooterPosition\MarginUnit
+     \hbox to \textwidth{\the\footline}\vss}}
 \newdimen\RHruleposition \RHruleposition=\maxdimen
 
 \def\ins@rtn@tecl@ss#1{% insert the given note class, either paragraphed or separately

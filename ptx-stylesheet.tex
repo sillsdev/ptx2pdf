@@ -346,25 +346,27 @@
 \catcode`\/=12
 
 % Create registers to hold configuration information, set defaults
-\newdimen\FontSizeUnit		\FontSizeUnit=1bp
-\newdimen\IndentUnit		\IndentUnit=1in
+\newdimen\FontSizeUnit		\FontSizeUnit=1bp % units for font sizes in Paratext stylesheet
+\newdimen\IndentUnit		\IndentUnit=1in % units for indents
 \newdimen\PaperWidth		\PaperWidth=210mm
 \newdimen\PaperHeight		\PaperHeight=297mm
-\newdimen\MarginUnit		\MarginUnit=1in
+\newdimen\MarginUnit		\MarginUnit=1in % units for margins
 \newdimen\BindingGutter		\BindingGutter=5mm
-\def\LineSpacingFactor{1.0}
-\def\VerticalSpaceFactor{1.0}
+\def\LineSpacingFactor{1.0} % scale factor used for line spacing
+\def\VerticalSpaceFactor{1.0} % scaling factor applied to space before/after styles
 \def\TopMarginFactor{1.0}
-\let\BottomMarginFactor=\TopMarginFactor % use \def to set separate value if desired
+\def\BottomMarginFactor{\TopMarginFactor}
 \def\SideMarginFactor{1.0}
-\def\ColumnGutterFactor{15}
+\def\ColumnGutterFactor{15} % relative to FontSizeUnit
+\def\HeaderPosition{0.5} % pos of baseline from top of page, relative to MarginUnit
+\def\FooterPosition{0.5} % pos of baseline from bottom of page, relative to MarginUnit
 
 \newcount\TitleColumns \TitleColumns=1
 \newcount\IntroColumns \IntroColumns=1
 \newcount\BodyColumns  \BodyColumns=1
 
 \newif\ifBindingGutter % \BindingGutter won't be used unless this is set to true
-\newif\ifDoubleSided \DoubleSidedtrue
+\newif\ifDoubleSided \DoubleSidedtrue % binding gutter on alternate sides; use odd/even headers
 
 % calculate various dimensions based on the factors, units, etc that have been defined
 \def\s@tupsizes{
@@ -386,11 +388,6 @@
  \advance\dimen0 by -\BottomMarginFactor\MarginUnit
  \textheight=\dimen0
  \vsize=\textheight
- \dimen0=\SideMarginFactor\MarginUnit \advance\dimen0 by -1in
- \hoffset=\dimen0
- \dimen0=\TopMarginFactor\MarginUnit \advance\dimen0 by -1in
- \advance\dimen0 by 0.5\baselineskip % nudge down a little for header
- \voffset=\dimen0
  \pdfpagewidth=\PaperWidth
  \pdfpageheight=\PaperHeight
  \resetvsize
