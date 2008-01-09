@@ -49,21 +49,27 @@
 \lowercase{% when \startch@rstyle is called, the following <space> has become category-12
            % so we have to explicitly consume it here as part of the macro parameter list
  \def\startch@rstyle~{\TRACE{startch@rstyle}%
-  \leavevmode % in case the paragraph hasn't started yet
-  \csname before-\newch@rstyle\endcsname % execute any <before> hook
-  \bgroup % start a group to encapsulate the style's formatting changes
-   \let\thisch@rstyle=\newch@rstyle % remember the current style
-   \s@tfont{\thisch@rstyle}% set up font attributes
-   \ifnum\n@tenesting>0 \global\advance\n@tenesting by 1 % record nesting level in para or note
-   \else \global\advance\p@ranesting by 1 \fi
-   \getp@ram{superscript}{\thisch@rstyle}%
-   \ifx\p@ram\tru@ \setbox0=\hbox\bgroup \fi
-   \csname start-\thisch@rstyle\endcsname % execute any <start> hook
+  \t@stpublishability{\newch@rstyle}\ifn@npublishable
+   \setbox0=\hbox\bgroup\skipch@rstyletrue
+   \let\thisch@rstyle=\newch@rstyle
+  \else
+   \leavevmode % in case the paragraph hasn't started yet
+   \csname before-\newch@rstyle\endcsname % execute any <before> hook
+   \bgroup % start a group to encapsulate the style's formatting changes
+    \let\thisch@rstyle=\newch@rstyle % remember the current style
+    \s@tfont{\thisch@rstyle}% set up font attributes
+    \ifnum\n@tenesting>0 \global\advance\n@tenesting by 1 % record nesting level in para or note
+    \else \global\advance\p@ranesting by 1 \fi
+    \getp@ram{superscript}{\thisch@rstyle}%
+    \ifx\p@ram\tru@ \setbox0=\hbox\bgroup \fi
+    \csname start-\thisch@rstyle\endcsname % execute any <start> hook
+  \fi
  }
  \def\endch@rstyle*{\TRACE{endch@rstyle}% consume the * that marked the SFM as ending a style
    \ifx\thisch@rstyle\undefined
      \MSG{*** unmatched character style end-marker |\newch@rstyle*}%
    \else
+    \ifskipch@rstyle\egroup\else
      \csname end-\thisch@rstyle\endcsname % execute any <end> hook
      \getp@ram{superscript}{\thisch@rstyle}%
      \ifx\p@ram\tru@ \egroup \raise\SuperscriptRaise\box0 \fi
@@ -73,9 +79,11 @@
      \else \global\advance\p@ranesting by -1 \fi
     \egroup % end the style's group, so formatting reverts
     \n@xt % execute the <after> hook, if there was one
+    \fi
    \fi
  }
 }
+\newif\ifskipch@rstyle
 \newcount\n@tenesting \newcount\p@ranesting
 \def\SuperscriptRaise{0.85ex} % note that this is in terms of the scaled-down superscript font size
 

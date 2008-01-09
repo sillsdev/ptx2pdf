@@ -131,6 +131,14 @@
 % e.g. \sethook{start}{s1}{-} % put a hyphen at the start of every section heading
 \def\sethook#1#2#3{\x@\def\csname #1-#2\endcsname{#3}}
 
+% All types of marker use this to check for the "nonpublishable" property
+\def\t@stpublishability#1{\n@npublishablefalse % check if "nonpublishable" occurred in the marker's \Properties
+ \getp@ram{properties}{#1}%
+ \x@\t@stnonpub\p@ram nonpublishable!}
+\def\t@stnonpub #1nonpublishable#2!{%
+ \def\t@st{#2}\ifx\t@st\empty\else\n@npublishabletrue\fi}
+\newif\ifn@npublishable
+
 % called after \c and \v have been processed in stylesheet at beginning of typesetting file
 % Patch in special handling for \c and \v.
 % ~ is set to lowercase to a space in \ch@rstyle
@@ -283,7 +291,7 @@
  \let\save@bold=\bold \let\bold=\Bold
  \let\save@italic=\italic \let\italic=\Italic
  \openin\styl@sheet="#1" \c@ntinuetrue
- \ifeof\styl@sheet\message{Paratext stylesheet "#1" not found!}\else
+ \ifeof\styl@sheet\errmessage{Paratext stylesheet "#1" not found}\else
    \message{Reading Paratext stylesheet "#1"...}%
    \endlinechar=-1
    \catcode`\#=5 % paratext comment char
