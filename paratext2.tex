@@ -178,9 +178,13 @@
       \dimen0=\dp\colA
       \hbox to \textwidth{\box\colA\hfil}
       \ifvoid\bottomins\else \vskip\skip\bottomins \unvbox\bottomins \fi
-      \kern-\dimen0 \vfil
       \f@rstnotetrue
       \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses
+      \iff@rstnote % no notes actually occurred!
+        \kern-\dimen0 \vfil
+      \else
+        \setbox0=\lastbox \dimen0=\dp0 \box0 \kern-\dimen0
+      \fi
     }
     \resetvsize
     \plainoutput
@@ -227,6 +231,7 @@
   \x@\let\x@\th@cl@ss\csname note-#1\endcsname % make \th@cl@ss be a synonym for the current note class
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\else
+    \iff@rstnote\kern-\dimen0\vfil\fi % ignore depth of body text; fill space
     \vskip\AboveNoteSpace % output above note class space
     \iff@rstnote\footnoterule\f@rstnotefalse\fi % output rule before first note
     \unvbox\th@cl@ss\fi}% output notes
@@ -236,6 +241,7 @@
   \x@\let\x@\th@cl@ss\csname note-#1\endcsname % make \th@cl@ss be a synonym for the current note class
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\else
+    \iff@rstnote\kern-\dimen0\vfil\fi % ignore depth of body text; fill space
     \vskip\AboveNoteSpace
     \iff@rstnote\footnoterule\f@rstnotefalse\fi % output rule before first note
     {\maken@tepara{\th@cl@ss}}%
@@ -470,10 +476,13 @@
 	  % determine order of columns based on text direction
       \hbox to \textwidth{\ifRTL \box\colB\hfil\box\colA \else \box\colA\hfil\box\colB \fi}
       \ifvoid\bottomins\else \vskip\skip\bottomins \unvbox\bottomins \fi % ouput bottom spanning pictures
-	  % ensure that footnote rule is relative to baseline of last line of text (not the bottom of descenders)
-      \kern-\dimen0 \vfil
       \f@rstnotetrue
       \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % output all note classes
+      \iff@rstnote % no notes actually occurred!
+        \kern-\dimen0 \vfil
+      \else
+        \setbox0=\lastbox \dimen0=\dp0 \box0 \kern-\dimen0
+      \fi
     }
     \resetvsize % reset size of next page since it will not have any 1 column material
     \plainoutput
