@@ -204,11 +204,14 @@
    \ifch@pter
     \getp@ram{type}{\m@rker}%
     \ifx\p@ram\v@rsetext
-     \m@kechapterbox
-     \kern-\wd\ch@pterbox\box\ch@pterbox
-     \global\ch@pterfalse
-     \ifIndentAtChapter\else \allowp@rindentfalse \fi
-     \dr@ppednumbertrue
+     \t@stpublishability{c}\ifn@npublishable
+     \else
+      \m@kechapterbox
+      \kern-\wd\ch@pterbox\box\ch@pterbox
+      \global\ch@pterfalse
+      \ifIndentAtChapter\else \allowp@rindentfalse \fi
+      \dr@ppednumbertrue
+     \fi
      \ifx\XeTeXversion\undefined \else
       \special{pdf:dest (\b@ok.\ch@pter) [@thispage /Fit]}%
       \special{pdf:outline 0 << /Title (\b@ok\space\ch@pter)
@@ -357,16 +360,22 @@
     \x@\let\x@\t@st\csname delay-\id@@@.\ch@pter\endcsname
     \ifx\t@st\relax \MSG{*** no-break at \id@@@\space\ch@pter, re-run to generate \string\DelayedChapter\space setting}%
     \else \MSG{* no-break at \id@@@\space\ch@pter}\fi
-    \m@kechapterbox \global\ch@pterfalse
-    \leavevmode\str@t \vadjust{\vbox to 0pt{\kern-\dp\str@tbox \kern-\ht\ch@pterbox
+    \leavevmode\str@t
+    \global\ch@pterfalse
+    \t@stpublishability{c}\ifn@npublishable
+     \setbox\ch@pterbox=\box\voidb@x
+    \else
+     \m@kechapterbox
+     \vadjust{\vbox to 0pt{\kern-\dp\str@tbox \kern-\ht\ch@pterbox
       \x@\let\x@\t@st\csname raise-\id@@@.\ch@pter\endcsname
       \ifx\t@st\relax \else \kern-\baselineskip \fi
       \ifRTL\let\n@xt\rightline\else\let\n@xt\leftline\fi
       \n@xt{\ifRTL\beginR\fi\box\ch@pterbox\ifRTL\endR\fi}\vss}\nobreak}%
-    \beginL\pdfsavepos
-    \edef\dc@ref@rgs{\string\@delayedchapter\string{\id@@@\string}\string{\ch@pter\string}}%
-    \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}\endL
-    \dr@ppednumbertrue
+     \beginL\pdfsavepos
+     \edef\dc@ref@rgs{\string\@delayedchapter\string{\id@@@\string}\string{\ch@pter\string}}%
+     \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}\endL
+     \dr@ppednumbertrue
+    \fi
   \fi}
 \newbox\str@tbox
 \def\str@t{\setbox\str@tbox=\hbox to 0pt{\XeTeXuseglyphmetrics=0 
