@@ -210,9 +210,10 @@
 \def\makeheadline{%
   \vbox to 0pt{\kern-\topm@rgin
    \vbox{\kern\HeaderPosition\MarginUnit
-    \hbox to \textwidth{\the\headline}
+    \setbox0=\hbox to \textwidth{\the\headline}
+    \ht0=0pt \dp0=0pt \box0
     \ifrhr@le\ifdim\RHruleposition=\maxdimen\else
-      \kern-\prevdepth \kern\RHruleposition\hrule
+      \kern\RHruleposition\hrule
     \fi\fi}\vss}\nointerlineskip}
 \newif\ifrhr@le
 \def\makefootline{%
