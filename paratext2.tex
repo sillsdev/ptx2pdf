@@ -620,7 +620,7 @@
   \insert\p@cins{\penalty10000 % make sure this picture does not float away to another page
     \splittopskip\z@skip
     \splitmaxdepth\maxdimen \floatingpenalty20000 % was zero
-    \gridb@x0% make sure we align to the page grid
+    \gridp@ctrue\gridb@x0\gridp@cfalse% make sure we align to the page grid
   }%
 }
 \newtoks\PicPath % directory containing picture files

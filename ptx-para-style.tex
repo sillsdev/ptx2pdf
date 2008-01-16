@@ -88,7 +88,8 @@
 \def\gridb@x#1{%
 % \setbox0=\hbox{\kern-#1pt\vrule\kern#1pt\kern-.4pt\box#1\kern-.4pt\vrule}%
 %\MSG{before gridbox: ht0=\the\ht0; dp0=\the\dp0}
- \setbox0=\killd@scenders#1%
+ \setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders#1\fi%
+%\MSG{after killd: ht0=\the\ht0; dp0=\the\dp0}
 %{\showboxbreadth=100 \showboxdepth=10 \showbox0 }%
  \dimen2=\ht0 \advance\dimen2 by \dp0
  \dimen0=0pt
@@ -99,6 +100,7 @@
 %\MSG{ after gridbox: dimen0=\the\dimen0; dp0=\the\dp0}
  \unvbox0 \nobreak
 }
+\newif\ifgridp@c % if applying \gridb@x to a picture box rather than headings
 
 % end a paragraph, handling cutouts (shaping around drop-cap) if any, and the <end> hook
 \def\par{\ifhmode \TRACE{par}%
