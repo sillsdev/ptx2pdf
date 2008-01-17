@@ -73,6 +73,7 @@
 \def \Italic         {\defp@ram{italic}{true}}
 \def \Bold           {\defp@ram{bold}{true}}
 \def \Superscript    {\defp@ram{superscript}{true}}
+\def \Regular        {\defp@ram{italic}{false}\defp@ram{bold}{false}\defp@ram{superscript}{false}}
 \let \superscript\Superscript
 \def \SpaceBefore    #1\relax{\defp@ram{spacebefore}{#1}}
 \let \Spacebefore\SpaceBefore
@@ -288,6 +289,7 @@
 \newif\ifc@ntinue
 \newread\styl@sheet
 \def\stylesheet#1{
+ \let\save@regular=\regular \let\regular=\Regular
  \let\save@bold=\bold \let\bold=\Bold
  \let\save@italic=\italic \let\italic=\Italic
  \openin\styl@sheet="#1" \c@ntinuetrue
@@ -304,6 +306,7 @@
    \closein\styl@sheet
    \catcode`\#=6 % restore default TeX catcode
  \fi
+ \let\regular=\save@regular
  \let\bold=\save@bold
  \let\italic=\save@italic
 }
