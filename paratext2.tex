@@ -671,8 +671,9 @@
       \setbox0=\hbox{\XeTeXpdffile "#2" page \whichp@ge #1 height \pdfpageheight}%
     \fi
     {\def\c@rrID{#2 #1 page \number\whichp@ge}% for lower crop-mark info, if requested
-      \setbox0=\vbox{\kern-\baselineskip \box0 \kern\baselineskip}%
-      \shipwithcr@pmarks{\box0}}%
+      \BindingGutterfalse % assume this was already done on the included pages
+      \let\PageBorder=\empty % and the pages already have any border they need
+      \shipwithcr@pmarks{\vbox{\box0}}}%
     \advancepageno
     \repeat
   \endgroup % begun in \incl@depdf
