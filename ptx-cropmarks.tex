@@ -113,6 +113,28 @@
       \kern\bottomm@rgin
       \vss}
     \vss
+    \docr@pmarks
+  }%
+}
+
+\def\shipcompletep@gewithcr@pmarks#1{% \shipout box #1, adding cropmarks if required
+                                     % but without adding margins, borders, etc
+                                     % (used for \includepdf)
+  \dimen0=0\ifCropMarks .5\fi in
+  \advance\pdfpagewidth by 2\dimen0 % increase PDF media size
+  \advance\pdfpageheight by 2\dimen0
+  \hoffset=-1in \voffset=-1in % shift the origin to (0,0)
+  \shipout\vbox to 0pt{% ship the actual page
+    \offinterlineskip
+    \vbox to \pdfpageheight{\vss
+      \hbox to \pdfpagewidth{\hss#1\hss}
+      \vss}
+    \vss
+    \docr@pmarks
+  }%
+}
+
+\def\docr@pmarks{%
     \ifCropMarks % if crop marks are enabled
       \ifvoid\topcr@p \makecr@ps \fi % create them (first time)
       \vbox to 0pt{
@@ -127,9 +149,7 @@
           \vss}
         \vss
       }
-    \fi
-  }%
-}
+    \fi}
 
 \def\PageBorder{}
 \newbox\b@rder
