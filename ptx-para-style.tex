@@ -93,11 +93,14 @@
 %{\showboxbreadth=100 \showboxdepth=10 \showbox0 }%
  \dimen2=\ht0 \advance\dimen2 by \dp0
  \dimen0=0pt
+ \ifgridp@c\line{}\nobreak\fi % otherwise first \line in loop won't get any baselineskip
+                              % when doing a picture box, because it's not part of the
+                              % current page
  \loop \ifdim\dimen0<\dimen2
    \advance\dimen0 by \baselineskip
    \line{}\nobreak \repeat
  \setbox0=\vbox to 0pt{\kern-\ht0\unvbox0}
-%\MSG{ after gridbox: dimen0=\the\dimen0; dp0=\the\dp0}
+%\ifgridp@c\MSG{ after gridbox: dimen0=\the\dimen0; dp0=\the\dp0}\fi
  \unvbox0 \nobreak
 }
 \newif\ifgridp@c % if applying \gridb@x to a picture box rather than headings
