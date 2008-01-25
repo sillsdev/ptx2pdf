@@ -553,6 +553,7 @@
 
 % called from \fig or from figure list
 \def\d@figure#1{%
+ \ifIncludeFigures
   \gdef\p@rams{#1|}% ensure there is a trailing | separator
   % place parts of text into \param-1, \param-2, ...
   \global\p@ramnumber=1
@@ -622,8 +623,10 @@
     \splitmaxdepth\maxdimen \floatingpenalty20000 % was zero
     \gridp@ctrue\gridb@x0\gridp@cfalse% make sure we align to the page grid
   }%
+ \fi% end \ifIncludeFigures
 }
 \newtoks\PicPath % directory containing picture files
+\newif\ifIncludeFigures \IncludeFigurestrue
 
 \def\picw@rning#1#2{\msg{converted picture placement "#1" to "#2" in single-column layout}}
 

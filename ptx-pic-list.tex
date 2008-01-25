@@ -74,7 +74,8 @@
   \closein\p@clist
   \openin\p@clist="#1"
   \ifeof\p@clist \immediate\write-1{(no picture list "#1" found)}%
-  \else \immediate\write16{(using picture list "#1")}\fi
+  \else \immediate\write16{(\ifIncludeFigures using\else skipping\fi
+    \space pictures from list "#1")}\fi
   \readnextp@c
 }
 \def\closepiclist{%
