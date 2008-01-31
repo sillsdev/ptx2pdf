@@ -79,10 +79,12 @@
   \TRACE{startn@testyle}%
   \t@stpublishability{\newn@testyle}\ifn@npublishable
    \begingroup
+   \let\aftern@te\relax
    \setbox0=\hbox\bgroup \skipn@testyletrue
    \global\n@tenesting=1\relax
    \ifdim\lastskip>0pt \sp@cebeforetrue \else \sp@cebeforefalse \fi % was there a preceding space?
   \else
+   \csname before-\newn@testyle\endcsname
    \def\t@st{#1}%
    \ifx\t@st\pl@s % if it is + then generate an auto-numbering caller
     \inc@utonum{\newn@testyle}%
@@ -91,6 +93,7 @@
    \else \def\them@rk{#1}% otherwise the caller is the parameter
    \fi\fi
    \begingroup
+   \x@\let\x@\aftern@te\csname after-\newn@testyle\endcsname
    \ifdim\lastskip>0pt \sp@cebeforetrue \else \sp@cebeforefalse \fi % was there a preceding space?
    \resetp@rstyle
    \m@kenote{\newn@testyle}{\everypar={}\cancelcutouts % begin a note insertion in the given style
@@ -115,6 +118,7 @@
  \global\n@tenesting=0 
  \ifsp@cebefore \global\let\n@xt=\ignorespaces % ignore following spaces if there was a preceding one
    \else \global\let\n@xt\relax \fi
+ \aftern@te
  \endgroup\n@xt}
 \newif\ifsp@cebefore
 \newif\ifskipn@testyle
