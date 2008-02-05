@@ -50,12 +50,29 @@
 \def\addtoinithooks#1{\x@\global\x@\@nithooks\x@{\the\@nithooks #1}}
 \newtoks\@nithooks
 
+% and \addtoeveryparhooks is for the start of every paragraph
+\def\addtoeveryparhooks#1{\x@\global\x@\@veryparhooks\x@{\the\@veryparhooks #1}}
+\newtoks\@veryparhooks
+
+% initialize a \timestamp macro for the cropmarks etc to use
+\edef\timestamp{\number\year.% print the date and time of the run
+  \ifnum\month<10 0\fi \number\month.%
+  \ifnum\day<10 0\fi \number\day\space -- }%
+\count255=\time \divide\count255 by 60
+\edef\timestamp{\timestamp
+  \ifnum\count255<10 0\fi \number\count255:}%
+\multiply\count255 by 60 \advance\count255 by -\time
+\count255=-\count255
+\edef\timestamp{\timestamp
+  \ifnum\count255<10 0\fi \number\count255}%
+
 \input ptx-para-style.tex
 \input ptx-char-style.tex
 \input ptx-note-style.tex
 \input ptx-stylesheet.tex % must come after the ptx-*-style.tex macros
 \input ptx-references.tex
 \input ptx-cropmarks.tex
+\input ptx-toc.tex
 \input ptx-adj-list.tex % must come after ptx-stylesheet.tex
 \input ptx-pic-list.tex % must come after ptx-stylesheet.tex
 \input ptx-cutouts.tex

@@ -184,6 +184,7 @@
    % \everypar will be triggered when the paragraph actually starts (normally at the first character of text,
    % or something like a verse number); then we'll set up margins/indents and font
    %
+   \the\@veryparhooks
    \beginL\pdfsavepos
    \write\p@rlocs{\noexpand\@parstart{\the\pdflastxpos}{\the\pdflastypos}}\endL
    \ifRTL \beginR \leftskip\else\rightskip\fi =0pt

@@ -46,7 +46,7 @@
       \raise20pt\vtop{\hsize\PaperWidth \everypar={}
         \lineskiplimit=0pt \baselineskip=10pt
         \leftskip=0pt plus 1fil \rightskip=\leftskip \parfillskip=0pt
-        \noindent \beginL\idf@nt \jobname\ -- \printd@te\endL}%
+        \noindent \beginL\idf@nt \jobname\ -- \timestamp\endL}%
       \hss
       \vrule height 30pt depth -5pt width .4pt
       \kern 4.8pt
@@ -68,16 +68,6 @@
     }%
     \vss
   }% end \vbox for \bottomcr@p
-}
-
-\def\printd@te{\number\year.% print the date and time of the run
-  \ifnum\month<10 0\fi \number\month.%
-  \ifnum\day<10 0\fi \number\day\ --
-  \count255=\time \divide\count255 by 60
-  \ifnum\count255<10 0\fi \number\count255:%
-  \multiply\count255 by 60 \advance\count255 by -\time
-  \count255=-\count255
-  \ifnum\count255<10 0\fi \number\count255
 }
 
 \def\shipwithcr@pmarks#1{% \shipout box #1, adding cropmarks if required
