@@ -122,6 +122,7 @@
  \ifn@npublishable
   \setbox\j@nkbox=\vbox\bgroup\def\m@rker{#1}\sk@ppingtrue % and if so, start a box to consume and discard the text
  \else % else we need to actually process it!
+  \the\p@rstylehooks % allow other modules to hook in here
   \ifhmode\unskip % remove any trailing space
     \end@llcharstyles % end any character styles in effect
     \beginL\pdfsavepos

@@ -46,13 +46,17 @@
 \let\s@ve@nd=\end
 \def\end{\par\vfill\supereject \the\@ndhooks \s@ve@nd}
 
-% and \addtoinithooks is for stuff we do during one-time-setup before the first PTX file
+% \addtoinithooks is for stuff we do during one-time-setup before the first PTX file
 \def\addtoinithooks#1{\x@\global\x@\@nithooks\x@{\the\@nithooks #1}}
 \newtoks\@nithooks
 
-% and \addtoeveryparhooks is for the start of every paragraph
+% \addtoeveryparhooks is for the start of every paragraph
 \def\addtoeveryparhooks#1{\x@\global\x@\@veryparhooks\x@{\the\@veryparhooks #1}}
 \newtoks\@veryparhooks
+
+% \addtoparstylehooks is for stuff to do at each new parstyle marker
+\def\addtoparstylehooks#1{\x@\global\x@\p@rstylehooks\x@{\the\p@rstylehooks #1}}
+\newtoks\p@rstylehooks
 
 % initialize a \timestamp macro for the cropmarks etc to use
 \edef\timestamp{\number\year.% print the date and time of the run
@@ -73,6 +77,7 @@
 \input ptx-references.tex
 \input ptx-cropmarks.tex
 \input ptx-toc.tex
+\input ptx-tables.tex
 \input ptx-adj-list.tex % must come after ptx-stylesheet.tex
 \input ptx-pic-list.tex % must come after ptx-stylesheet.tex
 \input ptx-cutouts.tex

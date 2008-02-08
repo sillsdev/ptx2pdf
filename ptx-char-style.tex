@@ -108,6 +108,7 @@
 \def\@LOOP #1\@REPEAT{\gdef\@BODY{#1}\@ITERATE}
 \def\@ITERATE{\@BODY \global\let\@NEXT\@ITERATE
  \else \global\let\@NEXT\relax \fi \@NEXT}
+\let\@REPEAT\fi
 
 %
 % Set up the font attributes for a given marker (used by all style types, not only char styles)

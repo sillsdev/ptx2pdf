@@ -135,7 +135,8 @@
         \moveright\dimen0\vbox to 0pt{\kern15pt\hsize\PaperWidth \everypar={}
           \lineskiplimit=0pt \baselineskip=10pt \linepenalty=200
           \leftskip=0pt plus 1fil \rightskip=\leftskip \parfillskip=0pt
-          \noindent \beginL\idf@nt \c@rrID\endL\endgraf % add the current \id line
+          \noindent \beginL\idf@nt
+            \csname c@rrID\endcsname\endL\endgraf % add the current \id line
           \vss}
         \vss
       }
