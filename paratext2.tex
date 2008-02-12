@@ -704,7 +704,10 @@
 \newcount\totalp@ges
 \newcount\whichp@ge
 
-\def\pagebreak{\vfill\eject %% FIXME
+\def\pagebreak{%
+  \ifsk@pping \egroup \fi
+  \ifhe@dings\endhe@dings\fi
+  \vfill\eject %% FIXME
   \ifnum\c@rrentcols=2
 %    \iffirstcol\else\line{}\vfill\eject\fi
   \fi
