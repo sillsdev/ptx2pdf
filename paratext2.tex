@@ -288,11 +288,12 @@
   \hsize=\textwidth % width is full page size
   \let\par=\endgraf\ch@pterfalse
   \everypar={}% don't do body text formatting
-  \noindent% don't do body text indenting
   \unvbox#1 % open up the vbox of notes to get at the list of individual note boxes
   \makehboxofhboxes % make a single hbox for all notes of this class
   \setbox0=\hbox{\unhbox0 \removehboxes} % add internote space
-  \noindent\unhbox0 % starting making new paragraph
+  \noindent % starting making new paragraph
+  \ifRTL\beginR\fi % respect directionality
+  \unhbox0 % unbox the text so it can be line-wrapped
   \unskip\unpenalty\unskip\unskip % remove internote skip info after last note
   % set penalty which allows breaking between notes unless this would cause
   % an extra line to be created.
