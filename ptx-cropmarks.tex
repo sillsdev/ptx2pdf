@@ -75,6 +75,7 @@
   \advance\pdfpagewidth by 2\dimen0 % increase PDF media size
   \advance\pdfpageheight by 2\dimen0
   \hoffset=-1in \voffset=-1in % shift the origin to (0,0)
+  \let\pr@tect=\noexpand
   \shipout\vbox to 0pt{% ship the actual page content, with \BindingGutter added if wanted
     \let\g@tterside=0 % figure out if we're adding a binding gutter, and which side
     \ifBindingGutter
