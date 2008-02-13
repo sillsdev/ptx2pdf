@@ -37,11 +37,13 @@
 % to the given file, which can be used with \ptxfile{...}
 % or renamed and edited as needed to customize the TOC.
 
-\def\GenerateTOC{\futurelet\n@xt\g@ntoc}
+\def\GenerateTOC{\edef\s@vebracketcat{\the\catcode`\[}%
+  \catcode`\[=12 \futurelet\n@xt\g@ntoc}
 \def\g@ntoc{\ifx\n@xt[\let\n@xt\g@ntoc@rg
   \else\let\n@xt\g@ntocn@@rg\fi\n@xt}
 \def\g@ntocn@@rg#1{\g@ntoc@rg[Table of Contents]{#1}}
-\def\g@ntoc@rg[#1]#2{\def\t@ctitle{#1}\def\t@cfilename{#2}}
+\def\g@ntoc@rg[#1]#2{\def\t@ctitle{#1}\def\t@cfilename{#2}%
+  \catcode`\[=\s@vebracketcat\relax}
 \let\t@cfilename\empty
 
 \newwrite\t@cfile
