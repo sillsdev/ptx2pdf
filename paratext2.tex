@@ -625,7 +625,16 @@
   \setbox0=\vbox{
     \hsize=\p@cwidth
 	% insert picture based on PicPath and file name, scaled to \p@cwidth
-    \line{\XeTeXpicfile "\the\PicPath\csname param-2\endcsname" width \p@cwidth }
+    \setbox0=\hbox{\XeTeXpicfile "\the\PicPath\csname param-2\endcsname" width \p@cwidth}
+    \ifFigurePlaceholders % replace graphic with a frame and the file name
+      \setbox0=\vbox to \ht0{\offinterlineskip
+        \hrule height .2pt \kern-.2pt
+        \hbox to \wd0{\vrule height \ht0 width .2pt \hfil \vrule width .2pt}
+        \vbox to 0pt{\kern-\ht0 \vss \hbox to \wd0{\hss\idf@nt
+          \csname param-2\endcsname\hss}\vss}
+        \kern-.2pt \hrule height .2pt}
+    \fi
+    \line{\box0}
     \edef\r@f{\csname param-7\endcsname} % get reference
     \edef\c@ption{\csname param-6\endcsname} % get caption
     \ifx\c@ption\empty\else
@@ -650,6 +659,7 @@
 }
 \newtoks\PicPath % directory containing picture files
 \newif\ifIncludeFigures \IncludeFigurestrue
+\newif\ifFigurePlaceholders
 
 \def\picw@rning#1#2{\msg{converted picture placement "#1" to "#2" in single-column layout}}
 
