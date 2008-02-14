@@ -335,6 +335,7 @@
  \catcode`\_=11 % treat as letter for TE custom styles
  \catcode`\/=\active
  \catcode13=10
+ \def\d@something{\afterassignment\@ctivate \count255=}\the\do@ctive
  \m@kedigitsletters %so that marker names can include digits
  % test if file is available, inform user if it's missing
  \openin\t@stread="#1"
@@ -345,6 +346,7 @@
  \ifsk@pping\egroup\fi % end skipping, if file ended with a non-printable marker
  \endt@ble % end table if file ended during table processing
  \m@kedigitsother
+ \def\d@something{\afterassignment\de@ctivate \count255=}\the\do@ctive
  \catcode13=5
  \closepiclist
  \closeadjlist
@@ -356,6 +358,25 @@
 \newread\t@stread
 \newtoks\AdjListPath % path to look for adjustment files
 \newtoks\PicListPath % path to look for picture list files
+
+% mechanism to define active chars within the ptx files
+\catcode`\~=\active
+\def\DefineActiveChar#1#2{\count255=`#1
+  \do@ctive=\x@\x@\x@{\x@\the\x@\do@ctive
+    \x@\d@something\the\count255 }
+  \lccode`\~=\count255
+  \def\t@mp{\noexpand#2} \lowercase{\edef~{\t@mp}}}
+\newtoks\do@ctive
+
+\def\@ctivate{\x@\edef\csname save-cat-\the\count255\endcsname{\the\catcode\count255}%
+  \catcode\the\count255=\active\relax}
+\def\de@ctivate{\catcode\the\count255=\csname save-cat-\the\count255\endcsname\relax}
+
+\def\openbracket{\char`\[\ignorespaces}
+\def\openparen{\char`\(\ignorespaces}
+
+\DefineActiveChar{[}{\openbracket} % make these skip following spaces
+\DefineActiveChar{(}{\openparen}   % (useful at end-of-line before new verse)
 
 \catcode`\/=\active
 \def/{\futurelet\n@xt\sl@sh}
