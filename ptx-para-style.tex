@@ -221,8 +221,9 @@
      \fi
      \ifx\XeTeXversion\undefined \else
       \special{pdf:dest (\id@@@.\ch@pter) [@thispage /Fit]}%
+      \bgroup\liter@lspecials
       \special{pdf:outline 0 << /Title (\b@ok\space\ch@pter)
-               /A << /S /GoTo /D (\id@@@.\ch@pter) >> >>}%
+               /A << /S /GoTo /D (\id@@@.\ch@pter) >> >>}\egroup
      \fi
     \fi
    \fi

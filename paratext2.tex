@@ -736,22 +736,42 @@
 
 \XeTeXdashbreakstate=1 % allow line-break after en- and em-dash even if no space
 
-\catcode"AD=\active \let^^ad=\- % make Unicode SOFT HYPHEN into a TeX discretionary hyphen
-\def\NBSP{\nobreak\ }
-\def\ZWSP{\hskip0pt \relax}
-\def\ZWNBSP{\WJ}
-\def\WJ{\nobreak}
-\catcode"A0=\active \def^^a0{\pr@tect\NBSP} % make Unicode NO-BREAK SPACE into a no-break space
-\catcode"200B=\active \def^^^^200b{\pr@tect\ZWSP} % ZERO WIDTH SPACE is a possible break
-\catcode"2060=\active \def^^^^2060{\pr@tect\WJ} % WORD JOINER
-\catcode"FEFF=\active \def^^^^feff{\pr@tect\ZWNBSP} % ZERO WIDTH NO-BREAK SPACE
+%% various Unicode characters that we handle in TeX... and protect in TOC and PDF bookmarks
+
+\def\SFTHYPHEN{\-}
+\def\NBSP{\nobreak\ } % make Unicode NO-BREAK SPACE into a no-break space
+\def\ZWSP{\hskip0pt\relax} % ZERO WIDTH SPACE is a possible break
+\def\WJ{\nobreak} % WORD JOINER
+\def\ZWNBSP{\WJ} % ZERO WIDTH NO-BREAK SPACE
+
 \let\pr@tect=\relax
 \def\pr@tectspecials{%
+  \let\SFTHYPHEN=\relax
   \let\NBSP=\relax
   \let\ZWSP=\relax
   \let\ZWNBSP=\relax
   \let\WJ=\relax
 }
+
+\catcode"A0=12
+\catcode"AD=12
+\catcode"200B=12
+\catcode"2060=12
+\catcode"FEFF=12
+\def\liter@lspecials{%
+  \def\pr@tect{}%
+  \def\NBSP{^^a0}%
+  \def\SFTHYPHEN{^^ad}%
+  \def\ZWSP{^^^^200b}%
+  \def\WJ{^^^^2060}%
+  \def\ZWNBSP{^^^^feff}%
+}
+
+\catcode"A0=\active   \def^^a0{\pr@tect\NBSP}
+\catcode"AD=\active   \def^^ad{\pr@tect\SFTHYPHEN}
+\catcode"200B=\active \def^^^^200b{\pr@tect\ZWSP}
+\catcode"2060=\active \def^^^^2060{\pr@tect\WJ}
+\catcode"FEFF=\active \def^^^^feff{\pr@tect\ZWNBSP}
 
 \catcode`\@=12
 
