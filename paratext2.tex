@@ -95,9 +95,11 @@
   % text is read later
   \ifhmode\edef\@sf{\spacefactor\the\spacefactor}\/\fi
   % if footnote is on a chapter number ...
-  \ifch@pter \everypar={}\ch@pterfalse
-    \global\setbox\ch@pternote=\hbox{\box\ch@pternote #2}
-  \else #2\fi % output caller
+  \ifhe@dings #2\else
+    \ifch@pter \everypar={}\ch@pterfalse
+      \global\setbox\ch@pternote=\hbox{\box\ch@pternote #2}%
+    \else #2\fi % output caller
+  \fi
   % @sf preserves the space factor (e.g. extra space after a period), restore it now
   \@sf \vm@kenote{#1}{#2}}
 
