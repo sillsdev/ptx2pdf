@@ -206,6 +206,16 @@
    \allowp@rindenttrue
    \dr@ppednumberfalse
    %
+   % Generate top-level PDF bookmark if the \h book name has changed
+   \ifx\b@ok\prevb@ok \else
+    \bgroup\liter@lspecials
+     \special{pdf:dest (\id@@@.) [@thispage /Fit]}%
+     \special{pdf:outline 0 << /Title (\b@ok)
+            /A << /S /GoTo /D (\id@@@.) >> >>}%
+     \global\let\prevb@ok\b@ok
+    \egroup
+   \fi
+   %
    % handle drop-cap style chapter number, if this is the beginning of a chapter
    %
    \ifch@pter
@@ -219,12 +229,12 @@
       \ifIndentAtChapter\else \allowp@rindentfalse \fi
       \dr@ppednumbertrue
      \fi
-     \ifx\XeTeXversion\undefined \else
+     % generate second-level PDF bookmark for the chapter
+     \bgroup\liter@lspecials
       \special{pdf:dest (\id@@@.\ch@pter) [@thispage /Fit]}%
-      \bgroup\liter@lspecials
-      \special{pdf:outline 0 << /Title (\b@ok\space\ch@pter)
-               /A << /S /GoTo /D (\id@@@.\ch@pter) >> >>}\egroup
-     \fi
+      \special{pdf:outline 1 << /Title (\b@ok\space\ch@pter)
+              /A << /S /GoTo /D (\id@@@.\ch@pter) >> >>}%
+     \egroup
     \fi
    \fi
    \getp@ram{firstindent}{\m@rker}%
@@ -246,6 +256,8 @@
 \newif\ifIndentAtChapter
 \newif\ifOmitVerseNumberOne \OmitVerseNumberOnefalse
 \def\n@wchaptersf{998}
+\let\b@ok\relax
+\let\prevb@ok\relax
 
 \newwrite\p@rlocs
 \newread\readp@rlocs
