@@ -247,13 +247,17 @@
     \kern-\p@ram\IndentUnit
     \getp@ram{rightmargin}{tr}%
     \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
-    \x@\ifx\csname align-\the\@row-\the\@col\endcsname\cell@r
+    \x@\let\x@\the@lign\csname align-\the\@row-\the\@col\endcsname
+    \ifx\the@lign\cell@r
       \ifRTL\let\n@xt=\rightskip\else\let\n@xt=\leftskip\fi
     \else
       \ifRTL\let\n@xt=\leftskip\else\let\n@xt=\rightskip\fi
     \fi
-    \advance\n@xt by 0pt plus 1fill
-    \unhbox0\par}%
+    \advance\n@xt by 0pt plus 1fil
+    \ifx\the@lign\cell@r\nobreak\csname leaders-tcr\the\@col\endcsname\hfill\fi
+    \unhbox0\unskip \parfillskip=0pt
+    \ifx\the@lign\cell@r\else\nobreak\csname leaders-tc\the\@col\endcsname\hfill\null\fi
+    \par}%
   \wd0=\c@rrentcolwidth
 %  \MSG{after wrap:}\showbox0
   \box0 }
