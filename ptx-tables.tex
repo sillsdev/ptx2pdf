@@ -79,13 +79,26 @@
 \def\t@blerow{%
   \startt@ble
   \@ndcell
-  \global\advance\tabler@ws by 1
-  \global\tablec@l=0
+  \@ndrow
+  \advance\tabler@ws by 1
+  \tablec@l=0
   \@tablerowtrue \@TR \@tablerowfalse
+  \@rowtrue
   \ignorespaces}
 
 \addtoparstylehooks{\if@tablerow\else\endt@ble\fi}
 \newif\if@tablerow
+\newif\if@row
+
+\def\@ndrow{%
+  \if@row
+    \loop \ifnum\tablec@l<\maxtablec@l
+      \advance\tablec@l by 1
+      \x@\let\x@\c@rrentcolbox\csname tablecol-\the\tablec@l\endcsname
+      \setbox\c@rrentcolbox=\vbox{\hbox{}\unvbox\c@rrentcolbox}%
+      \repeat
+    \@rowfalse
+  \fi}
 
 \catcode`\~=12 \lccode`\~=32
 \lowercase{%
@@ -122,6 +135,12 @@
     \setbox0=\vbox{\unvbox\cellb@x \global\setbox\cellb@x=\lastbox}%
     \global\setbox\cellb@x=\hbox{\unhbox\cellb@x \unskip\unskip\unpenalty}%
     \x@\let\x@\c@rrentcolbox\csname tablecol-\the\tablec@l\endcsname
+    \ifvoid\c@rrentcolbox % adding a column, may need to add empty cells above
+      \count255=1
+      \loop \ifnum\count255<\tabler@ws \advance\count255 by 1
+        \setbox\c@rrentcolbox=\vbox{\hbox{}\unvbox\c@rrentcolbox}%
+        \repeat
+    \fi
     \setbox\c@rrentcolbox=\vbox{\box\cellb@x\unvbox\c@rrentcolbox}%
       % note that this stacks the cells upwards! they'll be reversed later
   \fi}
@@ -134,7 +153,7 @@
     \ifhe@dings\endhe@dings\fi
     \tabler@ws=0
     \tablec@l=0
-    \maxtablec@l=0
+    \global\maxtablec@l=0
     \doingt@bletrue
   \fi}
 
@@ -142,6 +161,7 @@
 \def\endt@ble{%
   \ifdoingt@ble
     \@ndcell
+    \@ndrow
     \t@talwidth=0pt
     \f@reachcol{\advance\t@talwidth by \wd\c@rrentcolbox}%
     \endt@blewrap
