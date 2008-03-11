@@ -46,7 +46,7 @@
 \lowercase{
  \def\doch@rstyle{% here, \n@xt has been \let to the next character after the marker
   \catcode32=10 % reset <space> to act like a space again
-  \catcode13=5 % and <return> is a newline
+  \catcode13=10 % and <return> is also a space (we don't want blank line -> \par)
   \if\n@xt*\let\n@xt\endch@rstyle % check for "*", if so then we need to end the style
   \else\if\n@xt~\let\n@xt\startch@rstyle@spc
   \else\let\n@xt\startch@rstyle@nl\fi\fi % else we need to start it
