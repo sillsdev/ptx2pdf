@@ -359,9 +359,8 @@
  \x@\let\x@\d@lay\csname delay-\id@@@.\ch@pter\endcsname
  \x@\c@tcmd\x@{\the\wd\ch@pterbox}{0\d@lay}{2}%
  \dp\ch@pterbox=0pt
- \setbox\ch@pterbox=\hbox{\ifRTL\kern\rightskip\fi
-   \box\ch@pterbox
-   \ifRTL\else\kern\leftskip\fi}%
+ \setbox\ch@pterbox=\hbox{\box\ch@pterbox
+   \kern\ifRTL\rightskip\else\leftskip\fi}%
 }
 \newbox\ch@pterbox
 \newbox\ch@pternote
