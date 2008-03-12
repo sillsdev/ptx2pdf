@@ -149,10 +149,6 @@
   % Define a macro to read an actual space delimited verse number
   \def\@v@ ##1 {\gdef\v@rse{##1}%
    \x@\spl@tverses\v@rse--\relax % split verse in a verse bridge (e.g. 3-4) into \v@rsefrom, \v@rseto
-   % set c@ncelfirstversetrue if we are immediately following a drop cap chapter number
-   % and the user has requested omission of the first verse number in a chapter
-   \c@ncelfirstversefalse
-   \ifOmitVerseNumberOne \ifnum\spacefactor=998 \c@ncelfirstversetrue \fi \fi
    % if not cancelling first verse, output verse number
    \ifc@ncelfirstverse\else
      \@V~\printv@rse\@V*% (A) output verse number using saved style. ~ will lowercase to a space
@@ -169,6 +165,10 @@
   }
   % define handling for usfm \v marker
   \def\v{\leavevmode % ensure we are in horizontal mode to build paragraph
+   % set c@ncelfirstversetrue if we are immediately following a drop cap chapter number
+   % and the user has requested omission of the first verse number in a chapter
+   \c@ncelfirstversefalse
+   \ifOmitVerseNumberOne \ifnum\spacefactor=998 \c@ncelfirstversetrue \fi \fi
    % -1sp indicates that a hanging verse number has been requested here.
    % When this happens we make ll@p use llap to right justify the verse number at the current position.
    % Otherwise make ll@p do nothing.
