@@ -168,7 +168,8 @@
    % set c@ncelfirstversetrue if we are immediately following a drop cap chapter number
    % and the user has requested omission of the first verse number in a chapter
    \c@ncelfirstversefalse
-   \ifOmitVerseNumberOne \ifnum\spacefactor=998 \c@ncelfirstversetrue \fi \fi
+   \ifnum\spacefactor=\n@wchaptersf \kern0sp % override \hangversenumber here
+    \ifOmitVerseNumberOne \c@ncelfirstversetrue \fi \fi
    % -1sp indicates that a hanging verse number has been requested here.
    % When this happens we make ll@p use llap to right justify the verse number at the current position.
    % Otherwise make ll@p do nothing.
