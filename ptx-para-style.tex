@@ -224,7 +224,25 @@
      \t@stpublishability{c}\ifn@npublishable
      \else
       \m@kechapterbox
-      \kern-\wd\ch@pterbox\box\ch@pterbox
+      \ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
+      \getp@ram{leftmargin}{\m@rker}%
+      \ifx\p@ram\relax % simple case - no left indent
+        \x@\c@tcmd\x@{\the\ch@pterwd}{0}{2}%
+      \else % probably \q or something like that;
+            % need to compare cutout width with leftindent
+        \dimen0=\p@ram\IndentUnit \dimen2=\dimen0
+        \getp@ram{firstindent}{\m@rker}%
+        \ifx\p@ram\relax \else \advance\dimen0 by \p@ram\IndentUnit \fi
+        % now \dimen0 is the real indent of the 1st line
+        \dimen4=\ch@pterwd \advance\dimen4 by -\dimen0
+        \ifdim\dimen4>0pt % if the chapter number doesn't fit there...
+          \x@\c@tcmd\x@{\the\dimen4}{0}{1}% create extra indent
+          \dimen4=\ch@pterwd \advance\dimen4 by -\dimen2 % and for wrap if needed
+          \ifdim\dimen4>0pt \x@\c@tcmd\x@{\the\dimen4}{1}{1}\fi
+        \else % the indent is already big enough, so just use it as is
+          \setbox\ch@pterbox=\hbox to \dimen0{\box\ch@pterbox\hfil}%
+        \fi
+      \fi
       \global\ch@pterfalse
       \ifIndentAtChapter\else \allowp@rindentfalse \fi
       \dr@ppednumbertrue
@@ -244,6 +262,7 @@
      \kern\p@ram \IndentUnit
     \fi
    \fi
+   \ifvoid\ch@pterbox\else \kern-\wd\ch@pterbox \box\ch@pterbox \fi
    \global\p@ranesting=1
    \csname start-\m@rker\endcsname % handle <start> hook
    \ifdr@ppednumber \spacefactor=0\n@wchaptersf \fi
@@ -348,20 +367,17 @@
 \newcount\pr@vdelay \newcount\th@sdelay
 \newif\ifsk@pping \newbox\j@nkbox
 
-% Create the drop-cap in \ch@pterbox, and create the cutout in the current paragraph
+% Create the drop-cap in \ch@pterbox
 \def\m@kechapterbox{%
  \edef\printchapter{\ch@pter}%
  \csname PrepChapterNumber\endcsname
  \setbox\ch@pterbox=\hbox{\s@tfont{c}\printchapter}%
  \setbox\ch@pterbox=\hbox{\lower\baselineskip\box\ch@pterbox
    \box\ch@pternote\kern\AfterChapterSpaceFactor\FontSizeUnit}%
- \ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
- \x@\let\x@\d@lay\csname delay-\id@@@.\ch@pter\endcsname
- \x@\c@tcmd\x@{\the\wd\ch@pterbox}{0\d@lay}{2}%
+ \ch@pterwd=\wd\ch@pterbox
  \dp\ch@pterbox=0pt
- \setbox\ch@pterbox=\hbox{\box\ch@pterbox
-   \kern\ifRTL\rightskip\else\leftskip\fi}%
 }
+\newdimen\ch@pterwd
 \newbox\ch@pterbox
 \newbox\ch@pternote
 \def\AfterChapterSpaceFactor{3}
@@ -385,6 +401,11 @@
      \setbox\ch@pterbox=\box\voidb@x
     \else
      \m@kechapterbox
+     \setbox\ch@pterbox=\hbox{\box\ch@pterbox
+       \kern\ifRTL\rightskip\else\leftskip\fi}%
+     \ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
+     \x@\let\x@\d@lay\csname delay-\id@@@.\ch@pter\endcsname
+     \x@\c@tcmd\x@{\the\ch@pterwd}{0\d@lay}{2}%
      \vadjust{\vbox to 0pt{\kern-\dp\str@tbox \kern-\ht\ch@pterbox
       \x@\let\x@\t@st\csname raise-\id@@@.\ch@pter\endcsname
       \ifx\t@st\relax \else \kern-\baselineskip \fi
