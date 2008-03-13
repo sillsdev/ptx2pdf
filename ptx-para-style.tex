@@ -296,8 +296,9 @@
 \def\finishp@rlocs{%
   \immediate\closeout\p@rlocs
   \catcode`\{=1 \catcode`\}=2 \m@kedigitsother \catcode`\@=11
+  \immediate\openout\delayf@le="\jobname.delayed"
   \input "\jobname.parlocs"
-  \ifdelay@pen \immediate\closeout\delayf@le \delay@penfalse \fi
+  \immediate\closeout\delayf@le
 }
 \newif\ifdelay@pen
 \let\delayf@le=\p@rlocs % we write the delay file while reading the finished parlocs, so we can re-use the write stream
@@ -340,10 +341,6 @@
   \fi}
 
 \def\wr@teDelayedChapter#1#2#3{%
-  \ifdelay@pen\else
-    \immediate\openout\delayf@le="\jobname.delayed"
-    \delay@pentrue
-  \fi
   \x@\let\x@\t@st\csname delay-#1.#2\endcsname
   \ifx\t@st\relax \pr@vdelay=-2 % ensure undefined value will not match 0
   \else \pr@vdelay=\csname delay-#1.#2\endcsname\fi
