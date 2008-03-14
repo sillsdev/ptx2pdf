@@ -147,6 +147,8 @@
   % and switch to the appropriate mode
   %
   \x@\t@stintro\m@rker\relax
+  % \tr is treated as an intro marker if we're already in intro mode
+  \if@tablerow\if@ntro\@ntromarkertrue\fi\fi
   \global\he@dingstylefalse
   \getp@ram{type}{\m@rker}\ifx\p@ram\t@tle \mark{\t@tle}\fi
   \ifx\p@ram\t@tle
