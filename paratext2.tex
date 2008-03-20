@@ -743,8 +743,9 @@
 \def\SFTHYPHEN{\-}
 \def\NBSP{\nobreak\ } % make Unicode NO-BREAK SPACE into a no-break space
 \def\ZWSP{\hskip0pt\relax} % ZERO WIDTH SPACE is a possible break
-\def\WJ{\nobreak} % WORD JOINER
+\def\WJ{\leavevmode\nobreak} % WORD JOINER
 \def\ZWNBSP{\WJ} % ZERO WIDTH NO-BREAK SPACE
+\def\NBHYPH{\leavevmode\hbox{-}} % NON-BREAKING HYPHEN
 
 \let\pr@tect=\relax
 \def\pr@tectspecials{%
@@ -753,6 +754,7 @@
   \let\ZWSP=\relax
   \let\ZWNBSP=\relax
   \let\WJ=\relax
+  \let\NBHYPH=\relax
 }
 
 \catcode"A0=12
@@ -767,6 +769,7 @@
   \def\ZWSP{^^^^200b}%
   \def\WJ{^^^^2060}%
   \def\ZWNBSP{^^^^feff}%
+  \def\NBHYPH{^^^^2011}%
 }
 
 \catcode"A0=\active   \def^^a0{\pr@tect\NBSP}
@@ -774,6 +777,7 @@
 \catcode"200B=\active \def^^^^200b{\pr@tect\ZWSP}
 \catcode"2060=\active \def^^^^2060{\pr@tect\WJ}
 \catcode"FEFF=\active \def^^^^feff{\pr@tect\ZWNBSP}
+\catcode"2011=\active \def^^^^2011{\pr@tect\NBHYPH}
 
 \catcode`\@=12
 
