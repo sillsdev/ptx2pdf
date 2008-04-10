@@ -213,7 +213,8 @@
    \ifx\b@ok\prevb@ok \else
     \bgroup\liter@lspecials
      \special{pdf:dest (\id@@@.) [@thispage /Fit]}%
-     \special{pdf:outline 0 << /Title (\b@ok)
+     \ifx\b@ok\relax \let\t@mp=\id@@@ \else \let\t@mp=\b@ok \fi
+     \special{pdf:outline 0 << /Title (\t@mp)
             /A << /S /GoTo /D (\id@@@.) >> >>}%
      \global\let\prevb@ok\b@ok
     \egroup
@@ -253,7 +254,8 @@
      % generate second-level PDF bookmark for the chapter
      \bgroup\liter@lspecials
       \special{pdf:dest (\id@@@.\ch@pter) [@thispage /Fit]}%
-      \special{pdf:outline 1 << /Title (\b@ok\space\ch@pter)
+      \ifx\b@ok\relax \let\t@mp=\id@@@ \else \let\t@mp=\b@ok \fi
+      \special{pdf:outline 1 << /Title (\t@mp\space\ch@pter)
               /A << /S /GoTo /D (\id@@@.\ch@pter) >> >>}%
      \egroup
     \fi
