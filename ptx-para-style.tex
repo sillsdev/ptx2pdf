@@ -210,15 +210,7 @@
    \dr@ppednumberfalse
    %
    % Generate top-level PDF bookmark if the \h book name has changed
-   \ifx\b@ok\prevb@ok \else
-    \bgroup\liter@lspecials
-     \special{pdf:dest (\id@@@.) [@thispage /Fit]}%
-     \ifx\b@ok\relax \let\t@mp=\id@@@ \else \let\t@mp=\b@ok \fi
-     \special{pdf:outline 0 << /Title (\t@mp)
-            /A << /S /GoTo /D (\id@@@.) >> >>}%
-     \global\let\prevb@ok\b@ok
-    \egroup
-   \fi
+   \pdfb@@kmark
    %
    % handle drop-cap style chapter number, if this is the beginning of a chapter
    %
@@ -252,12 +244,7 @@
       \dr@ppednumbertrue
      \fi
      % generate second-level PDF bookmark for the chapter
-     \bgroup\liter@lspecials
-      \special{pdf:dest (\id@@@.\ch@pter) [@thispage /Fit]}%
-      \ifx\b@ok\relax \let\t@mp=\id@@@ \else \let\t@mp=\b@ok \fi
-      \special{pdf:outline 1 << /Title (\t@mp\space\ch@pter)
-              /A << /S /GoTo /D (\id@@@.\ch@pter) >> >>}%
-     \egroup
+     \pdfch@ptermark
     \fi
    \fi
    \getp@ram{firstindent}{\m@rker}%
@@ -282,6 +269,24 @@
 \def\n@wchaptersf{998}
 \let\b@ok\relax
 \let\prevb@ok\relax
+
+\def\pdfb@@kmark{\ifx\b@ok\prevb@ok
+ \else
+  \bgroup\liter@lspecials
+   \special{pdf:dest (\id@@@.) [@thispage /Fit]}%
+   \ifx\b@ok\relax \let\t@mp=\id@@@ \else \let\t@mp=\b@ok \fi
+   \special{pdf:outline 0 << /Title (\t@mp)
+            /A << /S /GoTo /D (\id@@@.) >> >>}%
+   \global\let\prevb@ok\b@ok
+  \egroup
+ \fi}
+
+\def\pdfch@ptermark{\bgroup\liter@lspecials
+  \special{pdf:dest (\id@@@.\ch@pter) [@thispage /Fit]}%
+  \ifx\b@ok\relax \let\t@mp=\id@@@ \else \let\t@mp=\b@ok \fi
+  \special{pdf:outline 1 << /Title (\t@mp\space\ch@pter)
+           /A << /S /GoTo /D (\id@@@.\ch@pter) >> >>}%
+  \egroup}
 
 \newwrite\p@rlocs
 \newread\readp@rlocs
@@ -412,7 +417,8 @@
       \x@\let\x@\t@st\csname raise-\id@@@.\ch@pter\endcsname
       \ifx\t@st\relax \else \kern-\baselineskip \fi
       \ifRTL\let\n@xt\rightline\else\let\n@xt\leftline\fi
-      \n@xt{\ifRTL\beginR\fi\box\ch@pterbox\ifRTL\endR\fi}\vss}\nobreak}%
+      \n@xt{\ifRTL\beginR\fi\box\ch@pterbox\ifRTL\endR\fi}\vss}%
+      \pdfb@@kmark\pdfch@ptermark\nobreak}%
      \beginL\pdfsavepos
      \edef\dc@ref@rgs{\string\@delayedchapter\string{\id@@@\string}\string{\ch@pter\string}}%
      \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}\endL

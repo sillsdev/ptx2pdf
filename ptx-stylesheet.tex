@@ -191,8 +191,10 @@
     % if chapter label not present, set \ch@ptertrue to cause chapter number to be printed
     % at start of first text paragraph.
     \ifx\ch@plabel\empty \global\ch@ptertrue 
-	% if \cl present, output chapter label here
-    \else \p@rstyle{cl}\ch@plabel\ \ch@pter\fi
+    \else % if \cl present, output chapter label here
+      \p@rstyle{cl}\ch@plabel\ \ch@pter
+      \pdfb@@kmark \pdfch@ptermark
+    \fi
    \fi}
   %
   \def\c{\m@kedigitsother\@c@}
