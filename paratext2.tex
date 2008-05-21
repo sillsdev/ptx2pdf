@@ -500,7 +500,8 @@
       \dimen0=\ifdim\dp\colB>\dp\colA \dp\colB \else \dp\colA \fi % calc depth of deepest column
       %\showthe\dimen0
 	  % determine order of columns based on text direction
-      \hbox to \textwidth{\ifRTL \box\colB\hfil\box\colA \else \box\colA\hfil\box\colB \fi}
+      \hbox to \textwidth{\ifRTL \box\colB\makecolumngutter\box\colA
+        \else \box\colA\makecolumngutter\box\colB \fi}
       \ifvoid\bottomins\else \vskip\skip\bottomins \unvbox\bottomins \fi % ouput bottom spanning pictures
       \f@rstnotetrue
       \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % output all note classes
@@ -536,6 +537,10 @@
   \fi}
 \newif\iffitonpage
 \newif\ifrebalance
+
+\def\makecolumngutter{\hfil
+  \ifColumnGutterRule \vrule\hfil\fi}
+\newif\ifColumnGutterRule
 
 \def\backingup{% this output routine is used when we reduce \vsize;
                % it will cause a new page break to be found, and then the \trial routine is called again
