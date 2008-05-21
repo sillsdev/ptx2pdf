@@ -45,15 +45,13 @@
 \newcount\@djparindex
 
 % Perform the current adjustment, and read the next line, if any
-\def\do@dj{%
- \looseness=\@djustment
- \readnext@dj
-}
+\def\do@dj{\looseness=\@djustment \readnext@dj
+ \@dvance@djfalse \ch@ckadjustments}
 
 % read the next line from the adjustment list, or set \@djref to empty if no more
 \def\readnext@dj{%
  \ifeof\@djlist
-  \let\@djref\empty
+  \global\let\@djref\empty \global\@djparindex=-1
  \else
   \begingroup % ensure relevant characters have the expected catcodes
    \catcode`0=12 \catcode`1=12 \catcode`2=12 \catcode`3=12 \catcode`4=12
@@ -87,12 +85,17 @@
 
 \def\ch@ckadjustments{% check if the current reference is the place for the next adjustment
  \edef\c@rref{\id@@@\ch@pter.\v@rse}%
+ \ifx\c@rref\pr@vref \if@dvance@dj \global\advance\curr@djpar by 1 \fi
+ \else \global\curr@djpar=1 \fi
+ \global\let\pr@vref=\c@rref
  \ifx\c@rref\@djref
-   \global\advance\@djparindex by -1
-   \ifnum\@djparindex=0 \do@dj \fi
+   \ifnum\@djparindex=\curr@djpar \do@dj \fi
  \fi}
+\newif\if@dvance@dj \@dvance@djtrue
+\newcount\curr@djpar
+\global\let\pr@vref=\empty
 
-\addtoversehooks{\ch@ckadjustments} % add this to the hooks executed at each verse
-\addtoeveryparhooks{\ch@ckadjustments} % and at every new par
+\addtoversehooks{\@dvance@djfalse\ch@ckadjustments} % add this to the hooks executed at each verse
+\addtoeveryparhooks{\@dvance@djtrue\ch@ckadjustments} % and at every new par
 
 \endinput
