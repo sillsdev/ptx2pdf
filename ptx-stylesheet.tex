@@ -199,31 +199,37 @@
   %
   \def\c{\m@kedigitsother\@c@}
   % set default value for drop cap chapter number size if not already set
-  \ifnum\dropnumbersize=0
-    \getp@ram{fontsize}{p}\count255=0\p@ram \multiply\count255 by 2 
-    \ifnum\count255=0 \count255=24 \fi % just in case \FontSize was missing
-    \getp@ram{fontsize}{c}\dropnumbersize=0\p@ram \relax
+  \ifdim\dropnumbersize=0pt
+    \getp@ram{fontsize}{p}\dimen255=0\p@ram\FontSizeUnit \multiply\dimen255 by 2
+    \ifdim\dimen255=0pt \dimen255=24\FontSizeUnit \fi % just in case \FontSize was missing
+    \getp@ram{fontsize}{c}\dropnumbersize=0\p@ram\FontSizeUnit \relax
 	% if font size specified for chapter number stylesheet is less than 2*paragraph font size ...
-    \ifnum\dropnumbersize<\count255
+    \ifdim\dropnumbersize<\dimen255
       \s@tfont{c}\setbox0=\hbox{0123456789}%set a box at the size specified by the \c marker
 	  %clear font<c> so that it will get rebuilt on next setfont for \c (after we have figured out real size)
       \x@\let\csname font<c>\endcsname=\relax 
 	  % Calculate drop cap height = base line height + (lower case) x height
       \s@tfont{p}\dimen0=\fontdimen5\font % get x height (appendix F) 5 is x-height of font
       \advance\dimen0 by \baselineskip
-	  % The following calculations are scaled by 100 in order to get better accuracy
+	  % The following calculations are scaled by 256 in order to get better accuracy
 	  % even though calculations are integer values.
 	  % divide desired height by current height
-      \multiply\dimen0 by 100 \divide\dimen0 by \ht0
-	  % multiple by original size from \c marker in stylesheet
-      \multiply\dimen0 by \dropnumbersize \divide\dimen0 by 100
+      \multiply\dimen0 by 256
+      \divide\dimen0 by \ht0
+	  % multiply by original size from \c marker in stylesheet
+      \multiply\dimen0 by \dropnumbersize
       \dropnumbersize=\dimen0
+      % divide by the \FontSizeUnit to get value for fontsize param of marker \c
+      \dimen0=\FontSizeUnit \divide\dimen0 by 256
+      \divide\dropnumbersize by \dimen0
     \fi
   \fi
   % set font size for \c
-  \def\m@rker{c}\defp@ram{fontsize}{\the\dropnumbersize}
+  \edef\dr@psize{\expandafter\strip@pt\the\dropnumbersize}%
+  \def\m@rker{c}\defp@ram{fontsize}{\dr@psize}
  }
 }
+{\catcode`P=12 \catcode`T=12 \lowercase{\gdef\strip@pt#1PT{#1}}}
 \def\AfterVerseSpaceFactor{2}
 \newif\ifOmitChapterNumber
 \newif\ifc@ncelfirstverse
@@ -235,7 +241,7 @@
 \def\hangversenumber{\kern-1sp\relax}
 
 % size to use for drop-cap style numbers; automatically calculated if not set
-\newcount\dropnumbersize
+\newdimen\dropnumbersize
 
 % other modules can use \addtoversehooks to insert macros that will be executed at each verse
 \def\addtoversehooks#1{\x@\global\x@\v@rsehooks\x@{\the\v@rsehooks #1}}
