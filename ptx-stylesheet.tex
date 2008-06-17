@@ -205,6 +205,7 @@
     \getp@ram{fontsize}{c}\dropnumbersize=0\p@ram\FontSizeUnit \relax
 	% if font size specified for chapter number stylesheet is less than 2*paragraph font size ...
     \ifdim\dropnumbersize<\dimen255
+      \s@tfont{p}%workaround for Lotus Elam Bold issue - ensure the \p font is loaded first
       \s@tfont{c}\setbox0=\hbox{0123456789}%set a box at the size specified by the \c marker
 	  %clear font<c> so that it will get rebuilt on next setfont for \c (after we have figured out real size)
       \x@\let\csname font<c>\endcsname=\relax 
@@ -347,9 +348,9 @@
  \def\d@something{\afterassignment\@ctivate \count255=}\the\do@ctive
  \m@kedigitsletters %so that marker names can include digits
  % test if file is available, inform user if it's missing
- \openin\t@stread="#1"
-   \ifeof\t@stread \def\n@xt{\MSG{USFM file "#1" not found -- ignored}}
-   \else \closein\t@stread \def\n@xt{\input "#1"\relax}\fi
+ \openin\t@stread="\the\PtxFilePath#1"
+   \ifeof\t@stread \def\n@xt{\MSG{USFM file "\the\PtxFilePath#1" not found -- ignored}}
+   \else \closein\t@stread \def\n@xt{\input "\the\PtxFilePath#1"\relax}\fi
  \n@xt
  \ifhmode \unskip\end@llcharstyles \par \fi
  \ifsk@pping\egroup\fi % end skipping, if file ended with a non-printable marker
@@ -367,6 +368,7 @@
 \newread\t@stread
 \newtoks\AdjListPath % path to look for adjustment files
 \newtoks\PicListPath % path to look for picture list files
+\newtoks\PtxFilePath % path to look for main ptx input files
 
 % mechanism to define active chars within the ptx files
 \catcode`\~=\active
