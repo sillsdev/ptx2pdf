@@ -129,9 +129,10 @@
     \beginL\pdfsavepos
     \write\p@rlocs{\noexpand\@parend{\the\pdflastxpos}{\the\pdflastypos}}\endL
     \par % end the paragraph
-    \ifdr@ppednumber % the preceding par had a dropped number; add \nobreak if it was a single line
+    \ifdr@ppednumber % the preceding par had a dropped number;
+                     % add \nobreak if it was a single line, else clear the flag
       \x@\write\x@\p@rlocs\x@{\x@\noexpand\x@\@parlines\x@{\the\prevgraf}}%
-      \ifnum\prevgraf=1 \nobreak \fi
+      \ifnum\prevgraf=1 \nobreak \else \dr@ppednumberfalse \fi
     \fi
   \fi
   \getp@ram{spaceafter}{\m@rker}% output any <spaceafter> for the previous style
@@ -207,13 +208,13 @@
    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
    \s@tfont{\m@rker}%
    \allowp@rindenttrue
-   \dr@ppednumberfalse
    %
    % Generate top-level PDF bookmark if the \h book name has changed
    \pdfb@@kmark
    %
    % handle drop-cap style chapter number, if this is the beginning of a chapter
    %
+   \getp@ram{firstindent}{\m@rker}\let\f@rstindent=\p@ram
    \ifch@pter
     \getp@ram{type}{\m@rker}%
     \ifx\p@ram\v@rsetext
@@ -227,8 +228,7 @@
       \else % probably \q or something like that;
             % need to compare cutout width with leftindent
         \dimen0=\p@ram\IndentUnit \dimen2=\dimen0
-        \getp@ram{firstindent}{\m@rker}%
-        \ifx\p@ram\relax \else \advance\dimen0 by \p@ram\IndentUnit \fi
+        \ifx\f@rstindent\relax \else \advance\dimen0 by \f@rstindent\IndentUnit \fi
         % now \dimen0 is the real indent of the 1st line
         \dimen4=\ch@pterwd \advance\dimen4 by -\dimen0
         \ifdim\dimen4>0pt % if the chapter number doesn't fit there...
@@ -246,12 +246,31 @@
      % generate second-level PDF bookmark for the chapter
      \pdfch@ptermark
     \fi
+   \else
+    \ifdr@ppednumber % second line of chapter number, need to check indent/cutout
+     \cancelcutouts % forget existing cutout, we're re-doing it
+     \ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
+     \getp@ram{leftmargin}{\m@rker}%
+     \ifx\p@ram\relax % simple case - no left indent
+       \x@\c@tcmd\x@{\the\ch@pterwd}{0}{1}%
+     \else % probably \q or something like that;
+           % need to compare cutout width with leftindent
+       \dimen0=\p@ram\IndentUnit \dimen2=\dimen0
+       \ifx\f@rstindent\relax \else \advance\dimen0 by \f@rstindent\IndentUnit \fi
+       % now \dimen0 is the real indent of the 1st line
+       \dimen4=\ch@pterwd \advance\dimen4 by -\dimen0
+       \ifdim\dimen4>0pt % if the chapter number doesn't fit there...
+         \x@\c@tcmd\x@{\the\dimen4}{0}{1}% create extra indent
+       \else % the indent is already big enough, so just use it as is
+       \fi
+     \fi
+     \dr@ppednumberfalse
+    \fi
    \fi
-   \getp@ram{firstindent}{\m@rker}%
-   \ifx\p@ram\relax \else \x@\ifdim\p@ram pt<0pt \allowp@rindenttrue \fi
+   \ifx\f@rstindent\relax \else \x@\ifdim\f@rstindent pt<0pt \allowp@rindenttrue \fi
     \ifallowp@rindent % create first-line indent, unless suppressed at dropped chapter number
                       % (note that we don't suppress negative indents, as in \q1 etc)
-     \kern\p@ram \IndentUnit
+     \kern\f@rstindent \IndentUnit
     \fi
    \fi
    \ifvoid\ch@pterbox\else \kern-\wd\ch@pterbox \box\ch@pterbox \fi
