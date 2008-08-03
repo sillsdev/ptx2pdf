@@ -84,6 +84,7 @@
    \global\n@tenesting=1\relax
    \ifdim\lastskip>0pt \sp@cebeforetrue \else \sp@cebeforefalse \fi % was there a preceding space?
   \else
+   \leavevmode
    \csname before-\newn@testyle\endcsname
    \def\t@st{#1}%
    \ifx\t@st\pl@s % if it is + then generate an auto-numbering caller
