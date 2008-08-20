@@ -234,8 +234,10 @@
 \def\AfterVerseSpaceFactor{2}
 \newif\ifOmitChapterNumber
 \newif\ifc@ncelfirstverse
-\def\printv@rse{\v@rsefrom\ifx\v@rsefrom\v@rseto\else\endash\v@rseto\fi}
+\def\printv@rse{\AdornVerseNumber{\v@rsefrom}\ifx\v@rsefrom\v@rseto
+                \else\endash\AdornVerseNumber{\v@rseto}\fi}
 \def\@ne{1}
+\def\AdornVerseNumber#1{#1}
 
 % put \hangversenumber into the <start> hook for a style such as \q1
 % in order to 'hang' verse numbers into the paragraph indent of the style
