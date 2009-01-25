@@ -108,6 +108,7 @@
 %
 %
 \def\m@kestyle{{\uccode`\|=`\\\uppercase{\message{|\m@rker}}}
+ \x@\let\csname font<\m@rker>\endcsname=\relax 
  \ifx\styl@type\P@ra \x@\defp@rstyle\x@{\m@rker}
  \else\ifx\styl@type\Ch@r \x@\defch@rstyle\x@{\m@rker}
  \else\ifx\styl@type\N@te \x@\defn@testyle\x@{\m@rker}
@@ -293,7 +294,8 @@
 \endgroup
 \def\unc@tcodespecials{\def\do##1{\catcode`##1=12 }\dospecials}
 \def\@@id#1#2#3#4\end{\gdef\id@@@{#1#2#3}} % get first 3 chars of the \id
-\def\ptx@fig #1\fig*{\d@figure{#1}}
+\def\ptx@fig{\begingroup\m@kedigitsother \ptx@f@g}
+\def\ptx@f@g #1\fig*{\d@figure{#1}\endgroup}
 
 %
 % \stylesheet{...} reads a Paratext stylesheet line by line
