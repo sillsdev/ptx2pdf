@@ -214,8 +214,8 @@
     \nth@line=0
     \@@LOOP \ifnum\nth@line<\linec@unt
       \advance\nth@line by 1
-      \line{\ifRTL\hfil\lochcaer@f{\getnth@line}\else
-        \f@reachcol{\getnth@line}\hfil\fi}%
+      \line{\ifRTL\hfil\lochcaer@f{\getnth@line}\hfil\else
+        \hfil\f@reachcol{\getnth@line}\hfil\fi}%
       \ifnum\nth@line<\linec@unt \nobreak \fi
       \@@REPEAT
   }%
