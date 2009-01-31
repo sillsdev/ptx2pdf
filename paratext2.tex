@@ -659,7 +659,7 @@
       \leftskip=0pt plus 1fil \rightskip=\leftskip \parfillskip=0pt
       \linepenalty=1000
 	  % insert caption box
-      \noindent\leavevmode
+      \noindent\leavevmode\ifRTL\beginR\fi
         \s@tfont{fig}\c@ption\unskip
         \ifx\r@f\empty\else\nobreak\ (\r@f\unskip)\fi
       \par
