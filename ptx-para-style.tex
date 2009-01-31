@@ -225,6 +225,8 @@
       \getp@ram{leftmargin}{\m@rker}%
       \ifx\p@ram\relax % simple case - no left indent
         \x@\c@tcmd\x@{\the\ch@pterwd}{0}{2}%
+      \else\ifx\p@ram\zer@
+        \x@\c@tcmd\x@{\the\ch@pterwd}{0}{2}%
       \else % probably \q or something like that;
             % need to compare cutout width with leftindent
         \dimen0=\p@ram\IndentUnit \dimen2=\dimen0
@@ -238,7 +240,7 @@
         \else % the indent is already big enough, so just use it as is
           \setbox\ch@pterbox=\hbox to \dimen0{\box\ch@pterbox\hfil}%
         \fi
-      \fi
+      \fi\fi
       \global\ch@pterfalse
       \ifIndentAtChapter\else \allowp@rindentfalse \fi
       \dr@ppednumbertrue
@@ -289,6 +291,7 @@
 \def\n@wchaptersf{998}
 \let\b@ok\relax
 \let\prevb@ok\relax
+\def\zer@{0}
 
 \def\pdfb@@kmark{\ifx\b@ok\prevb@ok
  \else
