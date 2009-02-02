@@ -153,6 +153,7 @@
    % if not cancelling first verse, output verse number
    \ifc@ncelfirstverse\else
      \@V~\printv@rse\@V*% (A) output verse number using saved style. ~ will lowercase to a space
+     \kern\h@ngverseoffset % additional space to align hanging numbers, if required
      \kern\AfterVerseSpaceFactor\FontSizeUnit \fi
    \egroup
    \m@rkverse % generate a milestone for running headers
@@ -174,8 +175,8 @@
    % -1sp indicates that a hanging verse number has been requested here.
    % When this happens we make ll@p use llap to right justify the verse number at the current position.
    % Otherwise make ll@p do nothing.
-   \ifdim\lastkern=-1sp \let\ll@p=\llap
-   \else \let\ll@p=\relax \fi % hanging verse number?
+   \ifdim\lastkern=-1sp \let\ll@p=\llap \calch@ngverseoffset
+   \else \let\ll@p=\relax \h@ngverseoffset=0pt \fi % hanging verse number?
    \ll@p\bgroup\m@kedigitsother\@v@} %
   % remember chapter macro for later
   \let\@C=\c
@@ -243,6 +244,28 @@
 % put \hangversenumber into the <start> hook for a style such as \q1
 % in order to 'hang' verse numbers into the paragraph indent of the style
 \def\hangversenumber{\kern-1sp\relax}
+
+% calculate extra space to put after the hanging number, to align at specified marker's indent
+\def\HangVerseAlignMarker{}
+\def\calch@ngverseoffset{%
+  \ifx\HangVerseAlignMarker\empty
+    \h@ngverseoffset=0pt
+  \else
+    % if \HangVerseAlign is not empty, then we align hanging numbers to that style's indent
+    \h@ngverseoffset=0pt
+    \getp@ram{leftmargin}{\m@rker}%
+    \ifx\p@ram\relax \else \advance\h@ngverseoffset \p@ram\IndentUnit \fi
+    \getp@ram{firstindent}{\m@rker}%
+    \ifx\p@ram\relax \else \advance\h@ngverseoffset \p@ram\IndentUnit \fi
+    \getp@ram{leftmargin}{\HangVerseAlignMarker}%
+    \ifx\p@ram\relax \else \advance\h@ngverseoffset -\p@ram\IndentUnit \fi
+    \getp@ram{firstindent}{\HangVerseAlignMarker}%
+    \ifx\p@ram\relax \else \advance\h@ngverseoffset -\p@ram\IndentUnit \fi
+    % don't allow it to be negative as that would make the number overprint the text
+    \ifdim\h@ngverseoffset<0pt \h@ngverseoffset=0pt \fi
+  \fi
+}
+\newdimen\h@ngverseoffset
 
 % size to use for drop-cap style numbers; automatically calculated if not set
 \newdimen\dropnumbersize
