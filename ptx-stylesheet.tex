@@ -150,6 +150,7 @@
   % Define a macro to read an actual space delimited verse number
   \def\@v@ ##1 {\gdef\v@rse{##1}%
    \x@\spl@tverses\v@rse--\relax % split verse in a verse bridge (e.g. 3-4) into \v@rsefrom, \v@rseto
+   \ifx\v@rse\@ne \else \c@ncelfirstversefalse \fi % if the number isn't just "1", never cancel it
    % if not cancelling first verse, output verse number
    \ifc@ncelfirstverse\else
      \@V~\printv@rse\@V*% (A) output verse number using saved style. ~ will lowercase to a space
