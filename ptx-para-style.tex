@@ -267,7 +267,7 @@
        \fi
      \fi
      \dr@ppednumberfalse
-     \spacefactor=\n@wchaptersf % prevent hanging verse number here
+     \spacefactor=\dr@pcapsf % prevent hanging verse number here
     \fi
    \fi
    \ifx\f@rstindent\relax \else \x@\ifdim\f@rstindent pt<0pt \allowp@rindenttrue \fi
@@ -279,7 +279,7 @@
    \ifvoid\ch@pterbox\else \kern-\wd\ch@pterbox \box\ch@pterbox \fi
    \global\p@ranesting=1
    \csname start-\m@rker\endcsname % handle <start> hook
-   \ifdr@ppednumber \spacefactor=0\n@wchaptersf \fi
+   \ifdr@ppednumber \spacefactor=\n@wchaptersf \fi
    % set special \spacefactor if we're at a chapter number, so \v 1 can omit the verse number here
   }%
  \fi}
@@ -289,6 +289,7 @@
 \newif\ifIndentAtChapter
 \newif\ifOmitVerseNumberOne \OmitVerseNumberOnefalse
 \def\n@wchaptersf{998}
+\def\dr@pcapsf{997}
 \let\b@ok\relax
 \let\prevb@ok\relax
 \def\zer@{0}

@@ -171,7 +171,8 @@
    % and the user has requested omission of the first verse number in a chapter
    \c@ncelfirstversefalse
    \ifnum\spacefactor=\n@wchaptersf \kern0sp % override \hangversenumber here
-    \ifOmitVerseNumberOne \c@ncelfirstversetrue \fi \fi
+    \ifOmitVerseNumberOne \c@ncelfirstversetrue \fi % and maybe suppress v1
+   \else\ifnum\spacefactor=\dr@pcapsf \kern0sp \fi \fi % second line, just prevent hang
    % -1sp indicates that a hanging verse number has been requested here.
    % When this happens we make ll@p use llap to right justify the verse number at the current position.
    % Otherwise make ll@p do nothing.
