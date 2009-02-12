@@ -36,18 +36,23 @@
 % Note that "V" may be a verse range, if the USFM data included bridged verses such as "\v 12-15".
 % Therefore, we have to do some extra work to extract individual verse numbers.
 
+\newif\ifOmitChapterNumberRH % make this true to omit the ch # (eg for single-chapter books)
 %
 % Print the first reference from the mark data
 %
 \def\f@rstref#1{\edef\t@st{#1}\x@\extr@ctfirst\t@st\relax
- \ifx\@book\empty\else\@book\ \@chapter\ifVerseRefs\cvs@p\@verse\fi\fi}
+ \ifx\@book\empty\else\@book\ 
+  \ifOmitChapterNumberRH\@verse\else
+   \@chapter\ifVerseRefs\cvs@p\@verse\fi\fi\fi}
 
 %
 % Print the last reference from the mark data
 % (same as above unless there are bridged verses)
 %
 \def\l@stref#1{\edef\t@st{#1}\x@\extr@ctlast\t@st\relax
- \ifx\@@book\empty\else\@@book\ \@@chapter\ifVerseRefs\cvs@p\@@verse\fi\fi}
+ \ifx\@@book\empty\else\@@book\ 
+  \ifOmitChapterNumberRH\@@verse\else
+   \@@chapter\ifVerseRefs\cvs@p\@@verse\fi\fi\fi}
 
 %
 % Print the range of references from a pair of marks
@@ -58,13 +63,14 @@
  \ifx\@book\empty\else
  \@book\ 
  \ifVerseRefs
-  \ifx\@chapter\empty\else\@chapter\cvs@p\fi\@verse
+  \ifOmitChapterNumberRH\else\ifx\@chapter\empty\else\@chapter\cvs@p\fi\fi\@verse
   \ifx\@book\@@book
    \ifx\@chapter\@@chapter
     \ifx\@verse\@@verse\else\ranges@p\@@verse\fi
-   \else\ranges@p\@@chapter\cvs@p\@@verse\fi
-  \else\ranges@p\@@book\ \@@chapter\cvs@p\@@verse\fi
+   \else\ranges@p\ifOmitChapterNumberRH\else\@@chapter\cvs@p\fi\@@verse\fi
+  \else\ranges@p\@@book\ \ifOmitChapterNumberRH\else\@@chapter\cvs@p\fi\@@verse\fi
  \else
+  \ifOmitChapterNumberRH\else
   \ifx\@chapter\empty\else
    \@chapter
    \ifx\@chapter\@@chapter\else
@@ -74,6 +80,7 @@
     \ifnum\c@untA=\c@untB \pairs@p \else \ranges@p \fi
     \@@chapter
    \fi
+  \fi
   \fi
  \fi\fi}
 \newcount\c@untA \newcount\c@untB
