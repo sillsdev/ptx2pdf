@@ -74,8 +74,10 @@
 %{\showboxbreadth=200 \showbox\he@dingbox}
   \gridb@x\he@dingbox
   \global\he@dingsfalse
+  \global\first@fterheadingtrue
  \fi
 }
+\newif\iffirst@fterheading
 
 \def\killd@scenders#1{%
   \vbox{\unvbox#1 \skip0=\lastskip\unskip \count255=\lastpenalty\unpenalty
@@ -270,13 +272,19 @@
      \spacefactor=\dr@pcapsf % prevent hanging verse number here
     \fi
    \fi
-   \ifx\f@rstindent\relax \else \x@\ifdim\f@rstindent pt<0pt \allowp@rindenttrue \fi
+   \ifx\f@rstindent\relax \else
+    \x@\ifdim\f@rstindent pt<0pt
+      \allowp@rindenttrue
+    \else
+      \iffirst@fterheading \ifIndentAfterHeading\else \allowp@rindentfalse \fi\fi
+    \fi
     \ifallowp@rindent % create first-line indent, unless suppressed at dropped chapter number
                       % (note that we don't suppress negative indents, as in \q1 etc)
      \kern\f@rstindent \IndentUnit
     \fi
    \fi
    \ifvoid\ch@pterbox\else \kern-\wd\ch@pterbox \box\ch@pterbox \fi
+   \global\first@fterheadingfalse
    \global\p@ranesting=1
    \csname start-\m@rker\endcsname % handle <start> hook
    \ifdr@ppednumber \spacefactor=\n@wchaptersf \fi
@@ -287,6 +295,7 @@
 \newif\ifallowp@rindent
 \newif\ifdr@ppednumber
 \newif\ifIndentAtChapter
+\newif\ifIndentAfterHeading \IndentAfterHeadingtrue
 \newif\ifOmitVerseNumberOne \OmitVerseNumberOnefalse
 \def\n@wchaptersf{998}
 \def\dr@pcapsf{997}
