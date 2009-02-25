@@ -298,7 +298,8 @@
 \obeylines%
 \gdef\@ddspecialhooks{% there are a few special USFM markers that we give "magic" properties
  \let\@H=\h%
- \def\h{\bgroup\obeylines\@h}% \h gets stored as the book name (for references)
+ \def\h{\bgroup\deactiv@tecustomch@rs
+        \obeylines\@h}% \h gets stored as the book name (for references)
  \def\@h ##1^^M{\gdef\b@ok{##1}\egroup}% store book id in \b@ok
  %
  \let\@CL=\cl%
@@ -374,7 +375,7 @@
  \catcode`\_=11 % treat as letter for TE custom styles
  \catcode`\/=\active
  \catcode13=10
- \def\d@something{\afterassignment\@ctivate \count255=}\the\do@ctive
+ \activ@tecustomch@rs
  \m@kedigitsletters %so that marker names can include digits
  % test if file is available, inform user if it's missing
  \openin\t@stread="\the\PtxFilePath#1"
@@ -385,7 +386,7 @@
  \ifsk@pping\egroup\fi % end skipping, if file ended with a non-printable marker
  \endt@ble % end table if file ended during table processing
  \m@kedigitsother
- \def\d@something{\afterassignment\de@ctivate \count255=}\the\do@ctive
+ \deactiv@tecustomch@rs
  \catcode13=5
  \closepiclist
  \closeadjlist
@@ -411,6 +412,11 @@
 \def\@ctivate{\x@\edef\csname save-cat-\the\count255\endcsname{\the\catcode\count255}%
   \catcode\the\count255=\active\relax}
 \def\de@ctivate{\catcode\the\count255=\csname save-cat-\the\count255\endcsname\relax}
+
+\def\activ@tecustomch@rs{% activate all the chars configured with \DefineActiveChar
+ \def\d@something{\afterassignment\@ctivate \count255=}\the\do@ctive}  
+\def\deactiv@tecustomch@rs{% deactivate all the chars configured with \DefineActiveChar
+ \def\d@something{\afterassignment\de@ctivate \count255=}\the\do@ctive}  
 
 \def\openbracket{\char`\[\ignorespaces}
 \def\openparen{\char`\(\ignorespaces}
