@@ -95,16 +95,20 @@
   % text is read later
   \ifhmode\edef\@sf{\spacefactor\the\spacefactor}\/\fi
   % if footnote is on a chapter number ...
+  \ch@pternotefalse
   \ifhe@dings #2\else
     \ifch@pter \everypar={}\ch@pterfalse
       \global\setbox\ch@pternote=\hbox{\box\ch@pternote #2}%
+      \ch@pternotetrue
     \else #2\fi % output caller
   \fi
   % @sf preserves the space factor (e.g. extra space after a period), restore it now
   \@sf \vm@kenote{#1}{#2}}
+\newif\ifch@pternote
 
 \def\vm@kenote#1#2{%
   \let\next\relax
+  \ifch@pternote\endgraf\vskip0pt\fi
   \x@\insert\csname note-#1\endcsname\bgroup % insert note-f (or note-x)
 %%% single-column notes:
   \checkp@ranotes{#1}% check whether this note class is to be paragraphed 
@@ -151,7 +155,7 @@
   \copy\f@@tstrut}
 
 \def\@foot{\copy\f@@tstrut \ifp@ranotes \parfillskip=0pt \fi
-  \par\egroup}
+  \par\egroup\ifch@pternote\nobreak\fi}
 \newbox\f@@tstrut
 \def\n@teglue{2em plus 1em minus .5em\relax} % glue to be used between paragraphed notes
 
@@ -757,6 +761,7 @@
 \vbadness=10000
 \vfuzz=2pt
 \frenchspacing
+\interfootnotelinepenalty=10000
 
 \XeTeXdashbreakstate=1 % allow line-break after en- and em-dash even if no space
 
