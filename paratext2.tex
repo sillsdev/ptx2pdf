@@ -118,6 +118,7 @@
   \interlinepenalty\interfootnotelinepenalty % set penalty to break lines
   \floatingpenalty\@MM % make sure note does not float away from caller to another page
   \leftskip\z@skip \rightskip\z@skip \spaceskip\z@skip \xspaceskip\z@skip % reset extra space around paragraph 0
+  \parfillskip=0pt plus 1fil
   \leavevmode % begin paragraph
   \ifRTL\setbox2=\lastbox\beginR\box2\fi % if RTL text this paragraph needs to be RTL
   % if note omitting caller from note (i.e. all callers are *'s)
@@ -293,6 +294,7 @@
 \def\maken@tepara#1{%
   \hsize=\textwidth % width is full page size
   \let\par=\endgraf\ch@pterfalse
+  \resetp@rstyle
   \everypar={}% don't do body text formatting
   \unvbox#1 % open up the vbox of notes to get at the list of individual note boxes
   \makehboxofhboxes % make a single hbox for all notes of this class
