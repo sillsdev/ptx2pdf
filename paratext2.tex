@@ -467,6 +467,7 @@
     %   (including allowance for column inserts)
     \colhtA=\ht\colA \incr{\colhtA}{\topleftins} \incr{\colhtA}{\bottomleftins}
     \colhtB=\ht\colB \incr{\colhtB}{\toprightins} \incr{\colhtB}{\bottomrightins}
+    \shortavail=\availht
     \ifdim\colhtB<\colhtA
       \rebalancetrue
       \shortavail=\availht
@@ -497,8 +498,12 @@
       \setbox\colB=\vsplit\s@vedpage to \colhtB \setbox\colB=\vbox{\unvbox\colB}
     \fi
 	% assemble final content of columns
-    \dimen0=\dp\colA \setbox\colA=\vbox to \availht{\unvbox\topleftins\unvbox\colA\vfil\unvbox\bottomleftins}\dp\colA=\dimen0
-    \dimen0=\dp\colB \setbox\colB=\vbox to \availht{\unvbox\toprightins\unvbox\colB\vfil\unvbox\bottomrightins}\dp\colB=\dimen0
+    \dimen0=\dp\colA
+      \setbox\colA=\vbox to \shortavail{\unvbox\topleftins\unvbox\colA
+        \vfil\unvbox\bottomleftins}\dp\colA=\dimen0
+    \dimen0=\dp\colB
+      \setbox\colB=\vbox to \shortavail{\unvbox\toprightins\unvbox\colB
+        \vfil\unvbox\bottomrightins}\dp\colB=\dimen0
     \wd\colA=\colwidth \wd\colB=\colwidth % fix widths in case of empty column
 	% define pagecontents for use by \plainoutput below
     \def\pagecontents{%
