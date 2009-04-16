@@ -55,6 +55,7 @@
 \def\st@rtbody{%
   \ifb@dy\else\TRACE{st@rtbody}%
   \endhe@dings
+  \if@ntro \csname IntroBodySwitch\endcsname \fi
   \ifnum\BodyColumns=\c@rrentcols
     \penalty-200\vskip\baselineskip
   \else
