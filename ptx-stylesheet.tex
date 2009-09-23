@@ -166,6 +166,7 @@
    % to insert chapter:verse in footnotes.
    \gdef\reference{\ch@pter:\v@rse}%
    \nobreak\hskip1sp % let \x detect that there's "space" (or maybe drop-chapter) here
+   \relax
   }
   % define handling for usfm \v marker
   \def\v{\leavevmode % ensure we are in horizontal mode to build paragraph
