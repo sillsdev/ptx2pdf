@@ -132,6 +132,10 @@
   \else
    \edef\typef@ce{"\p@ram"}% use font name from the stylesheet
   \fi
+  \getp@ram{smallcaps}{#1}%
+  \ifx\p@ram\tru@
+    \edef\typef@ce{\typef@ce\SmallCapsSuffix}%
+  \fi
   \getp@ram{fontsize}{#1}%
   \ifx\p@ram\relax
     \MSG{*** FontSize missing for marker '#1', defaulting to 12}%
@@ -145,5 +149,6 @@
 }
 \def\tru@{true}
 \def\SuperscriptFactor{0.75}
+\def\SmallCapsSuffix{/ICU:+smcp}
 
 \endinput
