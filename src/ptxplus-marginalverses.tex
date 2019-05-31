@@ -33,6 +33,7 @@
   \ifhbox0{\removehboxes}\unhbox0\fi}
 
 \def\myv{%
+    \ifstartpara\else\VerseMarker\fi
     \leavevmode\c@ncelfirstversefalse
     \ifnum\spacefactor=\n@wchaptersf \kern0sp %
      \ifOmitVerseNumberOne \c@ncelfirstversetrue \fi\fi
