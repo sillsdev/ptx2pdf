@@ -361,7 +361,7 @@
  \def\d@something{\afterassignment\@ctivate \count255=}\the\do@ctive
  \m@kedigitsletters %so that marker names can include digits
  % test if file is available, inform user if it's missing
- \openin\t@stread="\the\PtxFilePath#1.usfm"
+ \openin\t@stread="\the\PtxFilePath#1.#2"
    \ifeof\t@stread \def\n@xt{\MSG{USFM file "\the\PtxFilePath#1.#2" not found -- ignored}}
    \else \closein\t@stread \def\n@xt{\input "\the\PtxFilePath#1.#2"\relax}\fi
  \n@xt
