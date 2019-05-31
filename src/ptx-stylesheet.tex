@@ -215,16 +215,24 @@
 	  % Calculate drop cap height = base line height + (lower case) x height
       \s@tfont{p}\dimen0=\fontdimen5\font % get x height (appendix F) 5 is x-height of font
       \advance\dimen0 by \baselineskip
-	  % The following calculations are scaled by 256 in order to get better accuracy
-	  % even though calculations are integer values.
-	  % divide desired height by current height
-      \multiply\dimen0 by 256
-      \divide\dimen0 by \ht0
+      \multiply\dimen0 by 16
+      \dimen2=0.0625\ht0
+      \divide\dimen0 by \dimen2
+      % now \dimen0 is (desired / actual)*256 as a 16.16 fixed-point value
 	  % multiply by original size from \c marker in stylesheet
-      \multiply\dimen0 by \dropnumbersize
-      \dropnumbersize=\dimen0
+      \dimen0=0.0625\dimen0
+      \dimen2=0.0625\dropnumbersize
+      \multiply\dimen0 by \dimen2
+      % now \dropnumbersize is the final size we want to achieve;
       % divide by the \FontSizeUnit to get value for fontsize param of marker \c
-      \dimen0=\FontSizeUnit \divide\dimen0 by 256
+      \dropnumbersize=\dimen0
+      \ifdim\dropnumbersize<64pt
+        \multiply\dropnumbersize by 256
+        \dimen0=\FontSizeUnit \divide\dimen0 by 256
+      \else
+        \multiply\dropnumbersize by 64
+        \dimen0=\FontSizeUnit \divide\dimen0 by 1024
+      \fi
       \divide\dropnumbersize by \dimen0
     \fi
   \fi
