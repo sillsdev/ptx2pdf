@@ -33,7 +33,7 @@
 % some flags used to communicate between the macros
 \newif\if@ntromarker
 \newif\if@ntro \newif\ift@tle \newif\ifb@dy
-\newif\ifst@rtpara
+\newif\ifstartpara
 
 \def\initp@rastyles{\@ntrofalse \t@tlefalse \b@dyfalse \def\m@rker{}}
 
@@ -186,7 +186,7 @@
   \ifx\p@ram\relax \else
     \ifhe@dings\nobreak\fi \ifnsp@cebefore\nsp@cebeforefalse\else\vskip\p@ram\verticalsp@ceunit\fi
   \fi
-  \global\st@rtparatrue
+  \global\startparatrue
   \everypar={%
    %
    % \everypar will be triggered when the paragraph actually starts (normally at the first character of text,
@@ -281,7 +281,7 @@
    \global\p@ranesting=1
    \csname start-\m@rker\endcsname % handle <start> hook
    \ifdr@ppednumber \spacefactor=0\n@wchaptersf \fi
-   \st@rtparafalse
+   \startparafalse
    % set special \spacefactor if we're at a chapter number, so \v 1 can omit the verse number here
   }%
  \fi}
