@@ -335,7 +335,15 @@
  \let\@netimesetup=\relax}
 
 % Read the files associated with this book: usfm, adjustment list, picture list
-\def\ptxfile#1{
+% Note this is a change from the original way ptx2pdf works with files.
+% Previously this function required a naming convention of file.usfm.piclist or
+% file.usfm.adj. The change is that it now uses file.piclist and file.adj. The
+% goal is to simplify and normalize automated file naming. The code below uses
+% a two-step process to break up the input name which is file.usfm and then
+% replaces .usfm with .adj and .piclist. This will effectivly break all projects
+% that have used this fork of the ptx2pdf macros.
+\def\ptxfile#1{\ptxfilesub#1|}
+\def\ptxfilesub#1.#2|{
  \@netimesetup
  \gdef\ch@plabel{}
  \initp@rastyles
@@ -353,9 +361,9 @@
  \def\d@something{\afterassignment\@ctivate \count255=}\the\do@ctive
  \m@kedigitsletters %so that marker names can include digits
  % test if file is available, inform user if it's missing
- \openin\t@stread="\the\PtxFilePath#1"
-   \ifeof\t@stread \def\n@xt{\MSG{USFM file "\the\PtxFilePath#1" not found -- ignored}}
-   \else \closein\t@stread \def\n@xt{\input "\the\PtxFilePath#1"\relax}\fi
+ \openin\t@stread="\the\PtxFilePath#1.usfm"
+   \ifeof\t@stread \def\n@xt{\MSG{USFM file "\the\PtxFilePath#1.#2" not found -- ignored}}
+   \else \closein\t@stread \def\n@xt{\input "\the\PtxFilePath#1.#2"\relax}\fi
  \n@xt
  \ifhmode \unskip\end@llcharstyles \par \fi
  \ifsk@pping\egroup\fi % end skipping, if file ended with a non-printable marker

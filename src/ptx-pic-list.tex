@@ -72,6 +72,7 @@
 \newread\p@clist
 \def\openpiclist "#1" {%
   \closein\p@clist
+%  \immediate\write-1{(opening piclist "#1")}%
   \openin\p@clist="#1"
   \ifeof\p@clist \immediate\write-1{(no picture list "#1" found)}%
   \else \immediate\write16{(\ifIncludeFigures using\else skipping\fi
