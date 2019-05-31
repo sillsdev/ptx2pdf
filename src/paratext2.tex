@@ -214,7 +214,7 @@
       \ifvoid\partial\else \unvbox\partial \fi
       \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi
       \dimen0=\dp\colA
-      \hbox to \textwidth{%\hbox to \columnshift{}
+      \hbox to \textwidth{\hbox to \columnshift{}%
         \box\colA\hfil}
       \ifvoid\bottomins\else\kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \unvbox\bottomins \fi
       \f@rstnotetrue
@@ -709,7 +709,7 @@
     \global\holdinginserts=0
     \global\output={\savepartialpaged}\eject % save any partially-full page
     \penalty-100\vskip\baselineskip % ensure blank line between single and double column material
-    \global\hsize=\textwidth% \advance\hsize by -\columnshift
+    \global\hsize=\textwidth \advance\hsize by -\columnshift
     \global\vsize=\textheight
     \global\c@rrentcols=1
 %%%      \MSG{\the\ht\partial is > 0.9 times \the\textheight?}

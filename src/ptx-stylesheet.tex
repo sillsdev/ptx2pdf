@@ -329,6 +329,7 @@
 \def\@netimesetup{
  % stuff to execute after loading all stylesheets but before processing the first USFM file
  \s@tupsizes
+ \defineheads
  \@ddcvhooks
  \@ddspecialhooks
  \the\@nithooks
@@ -446,7 +447,7 @@
  \ifBindingGutter \advance\dimen0 by -\BindingGutter \fi
  \textwidth=\dimen0
  \colwidth=0.5\textwidth \advance\colwidth by -0.5\gutter\advance\colwidth by -\columnshift
- \hsize=\textwidth% \advance\hsize by -\columnshift
+ \hsize=\textwidth \advance\hsize by -\columnshift
  \topm@rgin=\TopMarginFactor\MarginUnit
  \advance\topm@rgin by -\topskip \advance\topm@rgin by 12\FontSizeUnit
  \bottomm@rgin=\BottomMarginFactor\MarginUnit

@@ -137,9 +137,17 @@
 \newtoks\oddhead
 \newtoks\evenhead
 \newtoks\titlehead
-\oddhead={\hbox to \columnshift{}\rlap{\RHoddleft}\hfil\RHoddcenter\hfil\hbox to \columnshift{}\llap{\RHoddright}}
-\evenhead={\hbox to \columnshift{}\rlap{\RHevenleft}\hfil\RHevencenter\hfil\hbox to \columnshift{}\llap{\RHevenright}}
-\titlehead={\hbox to \columnshift{}\rlap{\RHtitleleft}\hfil\RHtitlecenter\hfil\hbox to \columnshift{}\llap{\RHtitleright}}
+\def\defineheads{
+  \ifnum\BodyColumns=2
+    \oddhead={\hbox to \columnshift{}\rlap{\RHoddleft}\hfil\RHoddcenter\hfil\hbox to \columnshift{}\llap{\RHoddright}}
+    \evenhead={\hbox to \columnshift{}\rlap{\RHevenleft}\hfil\RHevencenter\hfil\hbox to \columnshift{}\llap{\RHevenright}}
+    \titlehead={\hbox to \columnshift{}\rlap{\RHtitleleft}\hfil\RHtitlecenter\hfil\hbox to \columnshift{}\llap{\RHtitleright}}
+  \else
+    \oddhead={\hbox to \columnshift{}\rlap{\RHoddleft}\hfil\RHoddcenter\hfil\llap{\RHoddright}}
+    \evenhead={\hbox to \columnshift{}\rlap{\RHevenleft}\hfil\RHevencenter\hfil\llap{\RHevenright}}
+    \titlehead={\hbox to \columnshift{}\rlap{\RHtitleleft}\hfil\RHtitlecenter\hfil\llap{\RHtitleright}}
+  \fi
+}
 
 % \footline is similar except it doesn't have to place a border graphic
 \footline={{%
