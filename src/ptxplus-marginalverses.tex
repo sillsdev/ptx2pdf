@@ -25,7 +25,9 @@
           \kern\AfterVerseSpaceFactor\FontSizeUnit}}%
         \ht1=\dimen0\dp1=0pt\tracingparagraphs=0
         \trace{v}{\reference - tolerance=\the\tolerance}\box1}\nobreak
-    \hskip 1sp\everypar=\myeverypar}}}
+    \hskip 1sp%
+    \x@\global\x@\let\x@\n@xt\csname after-v\endcsname
+    \everypar=\myeverypar \n@xt}}}
 \gdef\marginremovehboxes{%
   \setbox0=\lastbox 
   \ifhbox0{\removehboxes}\unhbox0\fi}
