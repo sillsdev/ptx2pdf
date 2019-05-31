@@ -146,6 +146,7 @@
 % called after \c and \v have been processed in stylesheet at beginning of typesetting file
 % Patch in special handling for \c and \v.
 % ~ is set to lowercase to a space in \ch@rstyle
+\newif\ifhangingverse
 \lowercase{
  \def\@ddcvhooks{
   \let\@V=\v% remember \v defn for (A) below
@@ -176,8 +177,8 @@
    % -1sp indicates that a hanging verse number has been requested here.
    % When this happens we make ll@p use llap to right justify the verse number at the current position.
    % Otherwise make ll@p do nothing.
-   \ifdim\lastkern=-1sp \let\ll@p=\llap %
-   \else \let\ll@p=\relax \fi % hanging verse number?
+   \ifdim\lastkern=-1sp \let\ll@p=\llap\hangingversetrue %
+   \else \let\ll@p=\relax\hangingversefalse \fi % hanging verse number?
    \ll@p\bgroup\m@kedigitsother\@v@} %
   % remember chapter macro for later
   \let\@C=\c
@@ -215,24 +216,16 @@
 	  % Calculate drop cap height = base line height + (lower case) x height
       \s@tfont{p}\dimen0=\fontdimen5\font % get x height (appendix F) 5 is x-height of font
       \advance\dimen0 by \baselineskip
-      \multiply\dimen0 by 16
-      \dimen2=0.0625\ht0
-      \divide\dimen0 by \dimen2
-      % now \dimen0 is (desired / actual)*256 as a 16.16 fixed-point value
+	  % The following calculations are scaled by 256 in order to get better accuracy
+	  % even though calculations are integer values.
+	  % divide desired height by current height
+      \multiply\dimen0 by 256
+      \divide\dimen0 by \ht0
 	  % multiply by original size from \c marker in stylesheet
-      \dimen0=0.0625\dimen0
-      \dimen2=0.0625\dropnumbersize
-      \multiply\dimen0 by \dimen2
-      % now \dropnumbersize is the final size we want to achieve;
-      % divide by the \FontSizeUnit to get value for fontsize param of marker \c
+      \multiply\dimen0 by \dropnumbersize
       \dropnumbersize=\dimen0
-      \ifdim\dropnumbersize<64pt
-        \multiply\dropnumbersize by 256
-        \dimen0=\FontSizeUnit \divide\dimen0 by 256
-      \else
-        \multiply\dropnumbersize by 64
-        \dimen0=\FontSizeUnit \divide\dimen0 by 1024
-      \fi
+      % divide by the \FontSizeUnit to get value for fontsize param of marker \c
+      \dimen0=\FontSizeUnit \divide\dimen0 by 256
       \divide\dropnumbersize by \dimen0
     \fi
   \fi
@@ -283,7 +276,8 @@
 \obeylines%
 \gdef\@ddspecialhooks{% there are a few special USFM markers that we give "magic" properties
  \let\@H=\h%
- \def\h{\bgroup\obeylines\@h}% \h gets stored as the book name (for references)
+ \def\h{\bgroup\deactiv@tecustomch@rs
+        \obeylines\@h}% \h gets stored as the book name (for references)
  \def\@h ##1^^M{\gdef\b@ok{##1}\egroup}% store book id in \b@ok
  %
  \let\@CL=\cl%
@@ -312,6 +306,7 @@
 \newif\ifc@ntinue
 \newread\styl@sheet
 \def\stylesheet#1{
+ \m@kedigitsother
  \let\save@regular=\regular \let\regular=\Regular
  \let\save@bold=\bold \let\bold=\Bold
  \let\save@italic=\italic \let\italic=\Italic
@@ -344,15 +339,7 @@
  \let\@netimesetup=\relax}
 
 % Read the files associated with this book: usfm, adjustment list, picture list
-% Note this is a change from the original way ptx2pdf works with files.
-% Previously this function required a naming convention of file.usfm.piclist or
-% file.usfm.adj. The change is that it now uses file.piclist and file.adj. The
-% goal is to simplify and normalize automated file naming. The code below uses
-% a two-step process to break up the input name which is file.usfm and then
-% replaces .usfm with .adj and .piclist. This will effectivly break all projects
-% that have used this fork of the ptx2pdf macros.
-\def\ptxfile#1{\ptxfilesub#1|}
-\def\ptxfilesub#1.#2|{
+\def\ptxfile#1{
  \@netimesetup
  \gdef\ch@plabel{}
  \initp@rastyles
@@ -367,18 +354,18 @@
  \catcode`\_=11 % treat as letter for TE custom styles
  \catcode`\/=\active
  \catcode13=10
- \def\d@something{\afterassignment\@ctivate \count255=}\the\do@ctive
+ \activ@tecustomch@rs
  \m@kedigitsletters %so that marker names can include digits
  % test if file is available, inform user if it's missing
- \openin\t@stread="\the\PtxFilePath#1.#2"
-   \ifeof\t@stread \def\n@xt{\MSG{USFM file "\the\PtxFilePath#1.#2" not found -- ignored}}
-   \else \closein\t@stread \def\n@xt{\input "\the\PtxFilePath#1.#2"\relax}\fi
+ \openin\t@stread="\the\PtxFilePath#1"
+   \ifeof\t@stread \def\n@xt{\MSG{USFM file "\the\PtxFilePath#1" not found -- ignored}}
+   \else \closein\t@stread \def\n@xt{\input "\the\PtxFilePath#1"\relax}\fi
  \n@xt
  \ifhmode \unskip\end@llcharstyles \par \fi
  \ifsk@pping\egroup\fi % end skipping, if file ended with a non-printable marker
  \endt@ble % end table if file ended during table processing
  \m@kedigitsother
- \def\d@something{\afterassignment\de@ctivate \count255=}\the\do@ctive
+ \deactiv@tecustomch@rs
  \catcode13=5
  \closepiclist
  \closeadjlist
@@ -404,6 +391,11 @@
 \def\@ctivate{\x@\edef\csname save-cat-\the\count255\endcsname{\the\catcode\count255}%
   \catcode\the\count255=\active\relax}
 \def\de@ctivate{\catcode\the\count255=\csname save-cat-\the\count255\endcsname\relax}
+
+\def\activ@tecustomch@rs{% activate all the chars configured with \DefineActiveChar
+ \def\d@something{\afterassignment\@ctivate \count255=}\the\do@ctive}  
+\def\deactiv@tecustomch@rs{% deactivate all the chars configured with \DefineActiveChar
+ \def\d@something{\afterassignment\de@ctivate \count255=}\the\do@ctive}  
 
 \def\openbracket{\char`\[\ignorespaces}
 \def\openparen{\char`\(\ignorespaces}
@@ -445,7 +437,10 @@
 \def\s@tupsizes{
  \le@dingunit=\LineSpacingFactor\FontSizeUnit
  \verticalsp@ceunit=\VerticalSpaceFactor\le@dingunit
- \baselineskip=14\le@dingunit
+ \ifdim\baselineskip < 1pt \baselineskip=14\le@dingunit\fi % If the baselineskip has been specifically
+                                                           % set it will remain. Otherwise, the default
+                                                           % of 14 will be applied here and set text will
+                                                           % hold to the grid.
  \lineskiplimit=-7\le@dingunit
  \lineskip=0pt
  \topskip=\baselineskip
@@ -456,7 +451,7 @@
  \advance\dimen0 by -1\ExtraRMargin
  \textwidth=\dimen0
  \colwidth=0.5\textwidth \advance\colwidth by -0.5\gutter\advance\colwidth by -\columnshift
- \hsize=\textwidth \advance\hsize by -\singlecolumnshift
+ \hsize=\textwidth \advance\hsize by -\columnshift
  \topm@rgin=\TopMarginFactor\MarginUnit
  \advance\topm@rgin by -\topskip \advance\topm@rgin by 12\FontSizeUnit
  \bottomm@rgin=\BottomMarginFactor\MarginUnit

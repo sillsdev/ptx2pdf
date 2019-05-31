@@ -1,11 +1,6 @@
-# Version=2.203
-# ********************************************************************
-# * usfm.sty is the default stylesheet for Paratext 6 or 7 projects  *
-# *   using USFM markup.                                             *
-# * Latest documentation and stylesheets are maintained at:          *
-# *   http://ubs-icap.org/usfm                                       *
-# ********************************************************************
-# Last Updated: Jan 08, 2009 Jeff Klassen
+# File: usfmTex.sty
+# This style sheet is a fork of the ParaText standard style sheet,
+# usfm.sty, version 2.500, used for the Rapuma system.
 
 # File Identification
 
@@ -32,7 +27,7 @@
 \Marker h
 \Name h - File - Header
 \Description Running header text for a book (basic)
-\OccursUnder id 
+\OccursUnder id
 \Rank 1
 \TextType Other
 \TextProperties paragraph publishable vernacular
@@ -42,7 +37,7 @@
 \Marker h1
 \Name h1 - File - Header
 \Description Running header text
-\OccursUnder id 
+\OccursUnder id
 \Rank 1
 \TextType Other
 \TextProperties paragraph publishable vernacular
@@ -52,7 +47,7 @@
 \Marker h2
 \Name h2 - File - Left Header
 \Description Running header text, left side of page
-\OccursUnder id 
+\OccursUnder id
 \Rank 1
 \TextType Other
 \TextProperties paragraph publishable vernacular
@@ -62,7 +57,7 @@
 \Marker h3
 \Name h3 - File - Right Header
 \Description Running header text, right side of page
-\OccursUnder id 
+\OccursUnder id
 \Rank 1
 \TextType Other
 \TextProperties paragraph publishable vernacular
@@ -72,7 +67,7 @@
 \Marker toc1
 \Name toc1 - File - Long Table of Contents Text
 \Description Long table of contents text
-\OccursUnder h 
+\OccursUnder h h1 h2 h3
 \Rank 1
 \TextType Other
 \TextProperties paragraph publishable vernacular
@@ -85,7 +80,7 @@
 \Marker toc2
 \Name toc2 - File - Short Table of Contents Text
 \Description Short table of contents text
-\OccursUnder h 
+\OccursUnder h h1 h2 h3
 \Rank 1
 \TextType Other
 \TextProperties paragraph publishable vernacular
@@ -97,7 +92,7 @@
 \Marker toc3
 \Name toc3 - File - Book Abbreviation
 \Description Book Abbreviation
-\OccursUnder h 
+\OccursUnder h h1 h2 h3
 \Rank 1
 \TextType Other
 \TextProperties paragraph publishable vernacular
@@ -112,6 +107,16 @@
 \Marker rem
 \Name rem - File - Remark
 \Description Comments and remarks
+\OccursUnder id ide c
+\TextType Other
+\TextProperties paragraph nonpublishable nonvernacular
+\StyleType Paragraph
+\FontSize 12
+\Color 16711680
+
+\Marker sts
+\Name rem - File - Status
+\Description Status of this file
 \OccursUnder id ide c
 \TextType Other
 \TextProperties paragraph nonpublishable nonvernacular
@@ -208,11 +213,13 @@
 \TextProperties paragraph publishable vernacular level_1
 \TextType Other
 \OccursUnder id
-\Rank 5
+\Rank 7
 \StyleType Paragraph
 \FontSize 20
 \Bold
 \Justification Center
+\SpaceBefore 8
+\SpaceAfter 4
 
 \Marker imte1
 \Name imte1 - Introduction - [Uncommon] Major Title at Introduction End Level 1
@@ -220,11 +227,13 @@
 \TextProperties paragraph publishable vernacular level_1
 \TextType Other
 \OccursUnder id
-\Rank 5
+\Rank 7
 \StyleType Paragraph
 \FontSize 20
 \Bold
 \Justification Center
+\SpaceBefore 8
+\SpaceAfter 4
 
 \Marker imte2
 \Name imte2 - Introduction - [Uncommon] Major Title at Introduction End Level 2
@@ -232,11 +241,12 @@
 \TextProperties paragraph publishable vernacular level_2
 \TextType Other
 \OccursUnder id
-\Rank 5
+\Rank 7
 \StyleType Paragraph
 \FontSize 16
 \Italic
 \Justification Center
+\SpaceAfter 2 
 
 \Marker is
 \Name is - Introduction - Section Heading Level 1
@@ -355,7 +365,7 @@
 \Description Introduction references range for outline entry; for marking references separately
 \OccursUnder id io io1 io2 io3 io4 NEST
 \TextType Other
-\TextProperties paragraph publishable vernacular level_4
+\TextProperties publishable vernacular
 \StyleType Character
 \FontSize 12
 
@@ -411,11 +421,11 @@
 \OccursUnder id
 \Rank 6
 \TextType Other
-\TextProperties paragraph publishable vernacular
+\TextProperties paragraph publishable vernacular level_1
 \StyleType paragraph
 \FontSize 12
-\LeftMargin .625
-\FirstLineIndent -.375 # 1/4 inch indent, 5/8 inch wrap
+\LeftMargin .5
+\FirstLineIndent -.375 # 1/8 inch indent, 1/2 inch wrap
 
 \Marker ili1
 \Name ili1 - Introduction - List Entry - Level 1
@@ -423,11 +433,11 @@
 \OccursUnder id
 \Rank 6
 \TextType Other
-\TextProperties paragraph publishable vernacular
+\TextProperties paragraph publishable vernacular level_1
 \StyleType paragraph
 \FontSize 12
 \LeftMargin .5
-\FirstLineIndent -.25 # 1/4 inch indent, 5/8 inch wrap
+\FirstLineIndent -.375 # 1/8 inch indent, 1/2 inch wrap
 
 \Marker ili2
 \Name ili2 - Introduction - List Entry - Level 2
@@ -435,11 +445,11 @@
 \OccursUnder id
 \Rank 6
 \TextType Other
-\TextProperties paragraph publishable vernacular
+\TextProperties paragraph publishable vernacular level_2
 \StyleType paragraph
 \FontSize 12
 \LeftMargin .75
-\FirstLineIndent -.25  # 6/16 inch
+\FirstLineIndent -.375
 
 \Marker ipq
 \Name ipq - Introduction - Paragraph - quote from text
@@ -547,7 +557,7 @@
 \Marker iex
 \Name iex - Introduction - Explanatory or Bridge Text
 \Description Introduction explanatory or bridge text (e.g. explanation of missing book in Short Old Testament)
-\OccursUnder id c
+\OccursUnder id
 \TextType Other
 \TextProperties paragraph publishable vernacular
 \StyleType Paragraph
@@ -607,7 +617,7 @@
 \Name cp - Chapter Number - Publishing Alternate
 \Description Published chapter number (this is a chapter marking that would be used in the published text)
 \OccursUnder c 
-\Rank 1
+\Rank 4
 \TextType Other
 \TextProperties paragraph
 \StyleType Paragraph
@@ -644,7 +654,7 @@
 \Marker v
 \Name v - Verse Number
 \Description A verse number (Necessary for normal paratext operation) (basic)
-\OccursUnder li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 qm4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 s3 d sp
+\OccursUnder li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 tr tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 s3 d sp
 \TextType VerseNumber
 \TextProperties verse
 \StyleType Character
@@ -652,10 +662,10 @@
 \Superscript
 
 \Marker va
-\Endmarker va
+\Endmarker va*
 \Name va...va* - Verse Number - Alternate
 \Description Second (alternate) verse number (for coding dual numeration in Psalms; see also NRSV Exo 22.1-4)
-\OccursUnder li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 qm4 tc1 tc2 tc3 tc4 s3 d
+\OccursUnder li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 tc1 tc2 tc3 tc4 s3 d
 \TextType Other
 \StyleType Character
 \FontSize 12
@@ -699,7 +709,7 @@
 \Marker pmo
 \Name pmo - Paragraph - Embedded Text Opening
 \Description Embedded text opening
-\OccursUnder m mi nb p pc ph phi pi pi1 pi2 pi3 pr q q1 q2 q3 q4 qc qr
+\OccursUnder m mi nb p pc ph phi pi pi1 pi2 pi3 pr q q1 q2 q3 q4 qc qr s1 s2 s3 s4
 \TextType VerseText
 \TextProperties paragraph publishable vernacular
 \StyleType Paragraph
@@ -710,7 +720,7 @@
 \Marker pm
 \Name pm - Paragraph - Embedded Text
 \Description Embedded text paragraph
-\OccursUnder m mi nb p pc ph phi pi pi1 pi2 pi3 pr  psi q q1 q2 q3 q4 qc qr
+\OccursUnder m mi nb p pc ph phi pi pi1 pi2 pi3 pr psi q q1 q2 q3 q4 qc qr b s1 s2 s3 s4
 \TextType VerseText
 \TextProperties paragraph publishable vernacular
 \StyleType Paragraph
@@ -722,7 +732,7 @@
 \Marker pmc
 \Name pmc - Paragraph - Embedded Text Closing
 \Description Embedded text closing
-\OccursUnder m mi nb p pc ph phi pi pi1 pi2 pi3 pr q q1 q2 q3 q4 qc qr
+\OccursUnder m mi nb p pc ph phi pi pi1 pi2 pi3 pr q q1 q2 q3 q4 qc qr b s1 s2 s3 s4
 \TextType VerseText
 \TextProperties paragraph publishable vernacular
 \StyleType Paragraph
@@ -733,7 +743,7 @@
 \Marker pmr
 \Name pmr - Paragraph - Embedded Text Refrain
 \Description Embedded text refrain (e.g. Then all the people shall say, "Amen!")
-\OccursUnder m mi nb p pc ph phi pi pi1 pi2 pi3 pr q q1 q2 q3 q4 qc qr
+\OccursUnder m mi nb p pc ph phi pi pi1 pi2 pi3 pr q q1 q2 q3 q4 qc qr b s1 s2 s3 s4
 \TextType VerseText
 \TextProperties paragraph publishable vernacular
 \StyleType Paragraph
@@ -748,7 +758,7 @@
 \OccursUnder c
 \Rank 4
 \TextType VerseText
-\TextProperties paragraph publishable vernacular
+\TextProperties paragraph publishable vernacular level_1
 \StyleType Paragraph
 \FontSize 12
 \FirstLineIndent .125   # 1/8 inch first line indent
@@ -761,7 +771,7 @@
 \OccursUnder c
 \Rank 4
 \TextType VerseText
-\TextProperties paragraph publishable vernacular
+\TextProperties paragraph publishable vernacular level_1
 \StyleType Paragraph
 \FontSize 12
 \FirstLineIndent .125   # 1/8 inch first line indent
@@ -774,7 +784,7 @@
 \OccursUnder c
 \Rank 4
 \TextType VerseText
-\TextProperties paragraph publishable vernacular
+\TextProperties paragraph publishable vernacular level_2
 \StyleType Paragraph
 \FontSize 12
 \FirstLineIndent .125   # 1/8 inch first line indent
@@ -787,7 +797,7 @@
 \OccursUnder c
 \Rank 4
 \TextType VerseText
-\TextProperties paragraph publishable vernacular
+\TextProperties paragraph publishable vernacular level_3
 \StyleType Paragraph
 \FontSize 12
 \FirstLineIndent .125   # 1/8 inch first line indent
@@ -839,6 +849,8 @@
 \Justification Right
 
 # Poetry
+# Note that \q(1234) indent settings are different from standard Paratext
+# This is to better facilitate two column layout for printing.
 
 \Marker q
 \Name q - Poetry - Indent Level 1 - Single Level Only
@@ -849,8 +861,8 @@
 \TextProperties paragraph publishable vernacular poetic level_1
 \StyleType Paragraph
 \FontSize 12
-\LeftMargin 1.25
-\FirstLineIndent -1  # 1/4 inch indent, 1 inch wrap
+\LeftMargin 0.25
+\FirstLineIndent -0.125
 
 \Marker q1
 \Name q1 - Poetry - Indent Level 1
@@ -861,8 +873,8 @@
 \TextProperties paragraph publishable vernacular poetic level_1
 \StyleType Paragraph
 \FontSize 12
-\LeftMargin 1.25
-\FirstLineIndent -1  # 1/4 inch indent, 1 inch wrap
+\LeftMargin 0.25
+\FirstLineIndent -0.125
 
 \Marker q2
 \Name q2 - Poetry - Indent Level 2
@@ -873,8 +885,8 @@
 \TextProperties paragraph publishable vernacular poetic level_2
 \StyleType Paragraph
 \FontSize 12
-\LeftMargin 1.25
-\FirstLineIndent -.75  # 1/2 inch indent, 1 inch wrap
+\LeftMargin 0.5
+\FirstLineIndent -.25
 
 \Marker q3
 \Name q3 - Poetry - Indent Level 3
@@ -885,8 +897,8 @@
 \TextProperties paragraph publishable vernacular poetic level_3
 \StyleType Paragraph
 \FontSize 12
-\LeftMargin 1.25
-\FirstLineIndent -.5 # 3/4 inch indent, 1 inch wrap
+\LeftMargin 0.75
+\FirstLineIndent -.375
 
 \Marker q4
 \Name q4 - Poetry - Indent Level 4
@@ -894,11 +906,11 @@
 \OccursUnder c
 \Rank 4
 \TextType VerseText
-\TextProperties paragraph publishable vernacular poetic level_3
+\TextProperties paragraph publishable vernacular poetic level_4
 \StyleType Paragraph
 \FontSize 12
-\LeftMargin 1.25
-\FirstLineIndent -.25 # 3/4 inch indent, 1 inch wrap
+\LeftMargin 1
+\FirstLineIndent -.5
 
 \Marker qc
 \Name qc - Poetry - Centered
@@ -952,7 +964,7 @@
 \OccursUnder q q1 q2 q3 q4 qc qr  NEST
 \Rank 4
 \TextType Other
-\TextProperties paragraph publishable vernacular poetic
+\TextProperties publishable vernacular poetic
 \StyleType Character
 \FontSize 12
 \Italic
@@ -960,7 +972,7 @@
 \Marker qm
 \Name qm - Poetry - Embedded Text - Indent Level 1 - Single Level Only
 \Description Poetry text, embedded, level 1 indent (if single level)
-\OccursUnder m mi nb p pc ph phi pi pi1 pi2 pi3 pr q q1 q2 q3 q4 qc qr
+\OccursUnder m mi nb p pc ph phi pi pi1 pi2 pi3 pr q q1 q2 q3 q4 qc qr b
 \TextType VerseText
 \TextProperties paragraph publishable vernacular poetic
 \StyleType Paragraph
@@ -971,7 +983,7 @@
 \Marker qm1
 \Name qm1 - Poetry - Embedded Text - Indent Level 1
 \Description Poetry text, embedded, level 1 indent (if multiple levels)
-\OccursUnder m mi nb p pc ph phi pi pi1 pi2 pi3 pr q q1 q2 q3 q4 qc qr
+\OccursUnder m mi nb p pc ph phi pi pi1 pi2 pi3 pr q q1 q2 q3 q4 qc qr b
 \TextType VerseText
 \TextProperties paragraph publishable vernacular poetic level_1
 \StyleType Paragraph
@@ -982,7 +994,7 @@
 \Marker qm2
 \Name qm2 - Poetry - Embedded Text - Indent Level 2
 \Description Poetry text, embedded, level 2 indent
-\OccursUnder m mi nb p pc ph phi pi pi1 pi2 pi3 pr q q1 q2 q3 q4 qc qr
+\OccursUnder m mi nb p pc ph phi pi pi1 pi2 pi3 pr q q1 q2 q3 q4 qc qr b
 \TextType VerseText
 \TextProperties paragraph publishable vernacular poetic level_2
 \StyleType Paragraph
@@ -993,7 +1005,7 @@
 \Marker qm3
 \Name qm3 - Poetry - Embedded Text - Indent Level 3
 \Description Poetry text, embedded, level 3 indent
-\OccursUnder m mi nb p pc ph phi pi pi1 pi2 pi3 pr q q1 q2 q3 q4 qc qr
+\OccursUnder m mi nb p pc ph phi pi pi1 pi2 pi3 pr q q1 q2 q3 q4 qc qr b
 \TextType VerseText
 \TextProperties paragraph publishable vernacular poetic level_3
 \StyleType Paragraph
@@ -1366,6 +1378,16 @@
 \FontSize 12
 \Italic
 
+\Marker th5
+\Name th5 - Table - Column 5 Heading
+\Description A table heading, column 5
+\OccursUnder tr
+\TextType VerseText
+\TextProperties publishable vernacular
+\StyleType Character
+\FontSize 12
+\Italic
+
 \Marker tc1
 \Name tc1 - Table - Column 1 Cell
 \Description A table cell item, column 1
@@ -1402,6 +1424,122 @@
 \StyleType Character
 \FontSize 12
 
+\Marker tc5
+\Name tc5 - Table - Column 5 Cell
+\Description A table cell item, column 5
+\OccursUnder tr
+\TextType VerseText
+\TextProperties publishable vernacular
+\StyleType Character
+\FontSize 12
+
+# Center Aligned Table Heads and Columns
+
+\Marker thc1 
+\Name thc1 - Table - Column 1 Heading - Center Aligned
+\Description A table heading, column 1, center aligned
+\OccursUnder tr
+\TextType VerseText
+\TextProperties publishable vernacular
+\StyleType Character
+\FontSize 12
+\Italic
+\Justification Center
+
+\Marker thc2
+\Name thc2 - Table - Column 2 Heading - Center Aligned
+\Description A table heading, column 2, center aligned
+\OccursUnder tr
+\TextType VerseText
+\TextProperties publishable vernacular
+\StyleType Character
+\FontSize 12
+\Italic
+\Justification Center
+
+\Marker thc3
+\Name thc3 - Table - Column 3 Heading - Center Aligned
+\Description A table heading, column 3, center aligned
+\OccursUnder tr
+\TextType VerseText
+\TextProperties publishable vernacular
+\StyleType Character
+\FontSize 12
+\Italic
+\Justification Center
+
+\Marker thc4
+\Name thc4 - Table - Column 4 Heading - Center Aligned
+\Description A table heading, column 4, center aligned
+\OccursUnder tr
+\TextType VerseText
+\TextProperties publishable vernacular
+\StyleType Character
+\FontSize 12
+\Italic
+\Justification Center
+
+\Marker thc5
+\Name thc5 - Table - Column 5 Heading - Center Aligned
+\Description A table heading, column 5, center aligned
+\OccursUnder tr
+\TextType VerseText
+\TextProperties publishable vernacular
+\StyleType Character
+\FontSize 12
+\Italic
+\Justification Center
+
+\Marker tcc1
+\Name tcc1 - Table - Column 1 Cell - Center Aligned
+\Description A table cell item, column 1, center aligned
+\OccursUnder tr
+\TextType VerseText
+\TextProperties publishable vernacular
+\StyleType Character
+\FontSize 12
+\Justification Center
+
+\Marker tcc2
+\Name tcc2 - Table - Column 2 Cell - Center Aligned
+\Description A table cell item, column 2, center aligned
+\OccursUnder tr
+\TextType VerseText
+\TextProperties publishable vernacular
+\StyleType Character
+\FontSize 12
+\Justification Center
+
+\Marker tcc3
+\Name tcc3 - Table - Column 3 Cell - Center Aligned
+\Description A table cell item, column 3, center aligned
+\OccursUnder tr
+\TextType VerseText
+\TextProperties publishable vernacular
+\StyleType Character
+\FontSize 12
+\Justification Center
+
+\Marker tcc4
+\Name tcc4 - Table - Column 4 Cell - Center Aligned
+\Description A table cell item, column 4, center aligned
+\OccursUnder tr
+\TextType VerseText
+\TextProperties publishable vernacular
+\StyleType Character
+\FontSize 12
+\Justification Center
+
+\Marker tcc5
+\Name tcc5 - Table - Column 5 Cell - Center Aligned
+\Description A table cell item, column 5, center aligned
+\OccursUnder tr
+\TextType VerseText
+\TextProperties publishable vernacular
+\StyleType Character
+\FontSize 12
+\Justification Center
+
 # Right Aligned Table Heads and Columns
 
 \Marker thr1 
@@ -1413,8 +1551,7 @@
 \StyleType Character
 \FontSize 12
 \Italic
-\Justification right
-
+\Justification Right
 
 \Marker thr2
 \Name thr2 - Table - Column 2 Heading - Right Aligned
@@ -1425,7 +1562,7 @@
 \StyleType Character
 \FontSize 12
 \Italic
-\Justification right
+\Justification Right
 
 \Marker thr3
 \Name thr3 - Table - Column 3 Heading - Right Aligned
@@ -1436,7 +1573,7 @@
 \StyleType Character
 \FontSize 12
 \Italic
-\Justification right
+\Justification Right
 
 \Marker thr4
 \Name thr4 - Table - Column 4 Heading - Right Aligned
@@ -1447,7 +1584,18 @@
 \StyleType Character
 \FontSize 12
 \Italic
-\Justification right
+\Justification Right
+
+\Marker thr5
+\Name thr5 - Table - Column 5 Heading - Right Aligned
+\Description A table heading, column 5, right aligned
+\OccursUnder tr
+\TextType VerseText
+\TextProperties publishable vernacular
+\StyleType Character
+\FontSize 12
+\Italic
+\Justification Right
 
 \Marker tcr1 
 \Name tcr1 - Table - Column 1 Cell - Right Aligned
@@ -1457,7 +1605,7 @@
 \TextProperties publishable vernacular
 \StyleType Character
 \FontSize 12
-\Justification right
+\Justification Right
 
 \Marker tcr2
 \Name tcr2 - Table - Column 2 Cell - Right Aligned
@@ -1467,7 +1615,7 @@
 \TextProperties publishable vernacular
 \StyleType Character
 \FontSize 12
-\Justification right
+\Justification Right
 
 \Marker tcr3
 \Name tcr3 - Table - Column 3 Cell - Right Aligned
@@ -1477,7 +1625,7 @@
 \TextProperties publishable vernacular
 \StyleType Character
 \FontSize 12
-\Justification right
+\Justification Right
 
 \Marker tcr4
 \Name tcr4 - Table - Column 4 Cell - Right Aligned
@@ -1487,7 +1635,17 @@
 \TextProperties publishable vernacular
 \StyleType Character
 \FontSize 12
-\Justification right
+\Justification Right
+
+\Marker tcr5
+\Name tcr5 - Table - Column 5 Cell - Right Aligned
+\Description A table cell item, column 5, right aligned
+\OccursUnder tr
+\TextType VerseText
+\TextProperties publishable vernacular
+\StyleType Character
+\FontSize 12
+\Justification Right
 
 # Lists
 
@@ -1497,11 +1655,11 @@
 \OccursUnder c
 \Rank 4
 \TextType VerseText
-\TextProperties paragraph publishable vernacular
+\TextProperties paragraph publishable vernacular level_1
 \StyleType paragraph
 \FontSize 12
-\LeftMargin .625
-\FirstLineIndent -.375 # 1/4 inch indent, 5/8 inch wrap
+\LeftMargin .5
+\FirstLineIndent -.375 # 1/8 inch indent, 1/2 inch wrap
 
 \Marker li1
 \Name li1 - List Entry - Level 1
@@ -1509,11 +1667,11 @@
 \OccursUnder c
 \Rank 4
 \TextType VerseText
-\TextProperties paragraph publishable vernacular
+\TextProperties paragraph publishable vernacular level_1
 \StyleType paragraph
 \FontSize 12
 \LeftMargin .5
-\FirstLineIndent -.25 # 1/4 inch indent, 5/8 inch wrap
+\FirstLineIndent -.375 # 1/8 inch indent, 1/2 inch wrap
 
 \Marker li2
 \Name li2 - List Entry - Level 2
@@ -1521,11 +1679,11 @@
 \OccursUnder c
 \Rank 4
 \TextType VerseText
-\TextProperties paragraph publishable vernacular
+\TextProperties paragraph publishable vernacular level_2
 \StyleType paragraph
 \FontSize 12
 \LeftMargin .75
-\FirstLineIndent -.25  # 6/16 inch
+\FirstLineIndent -.375
 
 \Marker li3
 \Name li3 - List Entry - Level 3
@@ -1533,11 +1691,11 @@
 \OccursUnder c
 \Rank 4
 \TextType VerseText
-\TextProperties paragraph publishable vernacular
+\TextProperties paragraph publishable vernacular level_3
 \StyleType paragraph
 \FontSize 12
 \LeftMargin 1
-\FirstLineIndent -.25  # 6/16 inch
+\FirstLineIndent -.375
 
 \Marker li4
 \Name li4 - List Entry - Level 4
@@ -1545,11 +1703,11 @@
 \OccursUnder c
 \Rank 4
 \TextType VerseText
-\TextProperties paragraph publishable vernacular
+\TextProperties paragraph publishable vernacular level_4
 \StyleType paragraph
 \FontSize 12
 \LeftMargin 1.25
-\FirstLineIndent -.25  # 6/16 inch
+\FirstLineIndent -.375
 
 # Footnotes
 
@@ -1557,7 +1715,7 @@
 \Endmarker f*
 \Name f...f* - Footnote 
 \Description A Footnote text item (basic)
-\OccursUnder c li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 qs sp tc1 tc2 tc3 tc4 mt mt1 mt2 mt3 ms ms1 ms2 ms3 s s1 s2 s3 spd d ip
+\OccursUnder c cp li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 qs sp tc1 tc2 tc3 tc4 mt mt1 mt2 mt3 ms ms1 ms2 ms3 s s1 s2 s3 d ip
 \TextProperties publishable vernacular note
 \TextType NoteText
 \StyleType Note
@@ -1567,7 +1725,7 @@
 \Endmarker fe*
 \Name fe...fe* - Endnote
 \Description An Endnote text item
-\OccursUnder c li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 sp tc1 tc2 tc3 tc4 ms ms1 ms2 ms3 s s1 s2 s3 spd d ip
+\OccursUnder c li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 sp tc1 tc2 tc3 tc4 ms ms1 ms2 ms3 s s1 s2 s3 d ip
 \TextProperties publishable vernacular note
 \TextType NoteText
 \StyleType Note
@@ -1675,7 +1833,7 @@
 \Endmarker fm*
 \Name fm - Footnote - Additional Caller to Previous Note
 \Description An additional footnote marker location for a previous footnote 
-\OccursUnder li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 sp tc1 tc2 tc3 tc4 ms ms1 ms2 s s1 s2 s3 spd d ip
+\OccursUnder li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 sp tc1 tc2 tc3 tc4 ms ms1 ms2 s s1 s2 s3 d ip
 \TextType Other
 \TextProperties paragraph publishable vernacular
 \StyleType Character
@@ -1688,7 +1846,7 @@
 \Endmarker x*
 \Name x...x* - Cross Reference
 \Description A list of cross references (basic)
-\OccursUnder li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 qs sp tc1 tc2 tc3 tc4 mt mt1 mt2 mt3 ms ms1 ms2 s s1 s2 s3 spd d
+\OccursUnder li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 qs sp tc1 tc2 tc3 tc4 mt mt1 mt2 mt3 ms ms1 ms2 s s1 s2 s3 d
 \TextProperties publishable vernacular note crossreference
 \TextType NoteText
 \StyleType Note
@@ -1709,7 +1867,7 @@
 \Endmarker xt*
 \Name xt - Cross Reference - Target References
 \Description The cross reference target reference(s), protocanon only (basic)
-\OccursUnder x f ef ip ipi im imi ili ili1 ili2
+\OccursUnder x f ip ipi im imi ili ili1 ili2 p pi pi1 pi2
 \TextProperties publishable vernacular note
 \TextType NoteText
 \StyleType Character
@@ -1778,26 +1936,13 @@
 \FontSize 10
 \Italic
 
-# Study material extensions to existing USFM markup.
-
-\Marker efm
-\Endmarker efm*
-\Name efm - Study Note - ID/Caller
-\Description ID or Caller for an extended (study) note. Used within a source project duplicte (target) text when autoring study material.
-\OccursUnder li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 qm4 tc1 tc2 tc3 tc4 s3 d NEST
-\TextType Other
-\StyleType Character
-\FontSize 10
-\Bold
-\Color 255
-
 # Other Special Text
 
 \Marker qt
 \Endmarker qt*
 \Name qt...qt* - Special Text - Quoted Text - OT in NT
 \Description For Old Testament quoted text appearing in the New Testament (basic)
-\OccursUnder li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 sp tc1 tc2 tc3 tc4 ip im ili ili1 ili2 io io1 io2 f fe NEST
+\OccursUnder ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe NEST
 \TextType VerseText
 \TextProperties publishable vernacular
 \StyleType Character
@@ -1807,8 +1952,8 @@
 \Marker nd
 \Endmarker nd*
 \Name nd...nd* - Special Text - Name of Deity
-\Description For name of diety (basic)
-\OccursUnder ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 sp tc1 tc2 tc3 tc4 ms ms1 ms2 s s1 s2 s3 spd d ip f fe NEST
+\Description For name of deity (basic)
+\OccursUnder ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe NEST
 \TextType VerseText
 \TextProperties publishable vernacular
 \StyleType Character
@@ -1819,7 +1964,7 @@
 \Endmarker tl*
 \Name tl...tl* - Special Text - Transliterated Word
 \Description For transliterated words
-\OccursUnder li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 sp tc1 tc2 tc3 tc4 ms ms1 ms2 s s1 s2 s3 spd d ip f fe NEST
+\OccursUnder ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 cls tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe NEST
 \TextType VerseText
 \TextProperties publishable nonvernacular
 \StyleType Character
@@ -1830,7 +1975,8 @@
 \Endmarker dc*
 \Name dc...dc* - Special Text - Deuterocanonical/LXX Additions
 \Description Deuterocanonical/LXX additions or insertions in the Protocanonical text
-\OccursUnder li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 sp tc1 tc2 tc3 tc4 ms ms1 ms2 s s1 s2 s3 spd d ip f fe NEST
+\OccursUnder ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe NEST
+\TextType VerseText
 \TextProperties publishable vernacular
 \StyleType Character
 \Italic
@@ -1839,7 +1985,7 @@
 \Endmarker bk*
 \Name bk...bk* - Special Text - Quoted book title
 \Description For the quoted name of a book
-\OccursUnder li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 sp tc1 tc2 tc3 tc4 ms ms1 ms2 s s1 s2 s3 spd d ip im ili ili1 ili2 io io1 io2 f fe NEST
+\OccursUnder ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe NEST
 \TextType VerseText
 \TextProperties publishable vernacular
 \StyleType Character
@@ -1850,7 +1996,7 @@
 \Endmarker sig*
 \Name sig...sig* - Special Text - Author's Signature (Epistles)
 \Description For the signature of the author of an Epistle
-\OccursUnder li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 sp tc1 tc2 tc3 tc4 ms ms1 ms2 s s1 s2 s3 spd d ip NEST
+\OccursUnder ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 cls tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe NEST
 \TextType VerseText
 \TextProperties publishable vernacular
 \StyleType Character
@@ -1861,7 +2007,7 @@
 \Endmarker pn*
 \Name pn...pn* - Special Text - Proper Name
 \Description For a proper name
-\OccursUnder ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 sp tc1 tc2 tc3 tc4 ms ms1 ms2 s s1 s2 s3 spd d ip f fe NEST
+\OccursUnder ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 cls tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe NEST
 \TextType VerseText
 \TextProperties publishable vernacular
 \StyleType Character
@@ -1871,14 +2017,14 @@
 
 \Marker addpn
 \Endmarker addpn*
-\Name (addpn...addpn*) - Special Text for Chinese
+\Name addpn...addpn* - Special Text for Chinese
 \Description For chinese words to be dot underline & underline
-\OccursUnder ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 li li1 li2 li3 li4 m mi mis nb p pc ph phi pi pi1 pi2 pi3 pr ps psi q q1 q2 q3 q4 qc qr sp tc1 tc2 tc3 tc4 ms ms1 ms2 s s1 s2 s3 spd d ip f fe NEST
+\OccursUnder ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 cls tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe NEST
 \TextType VerseText
-\TextProperties paragraph publishable vernacular
+\TextProperties publishable vernacular
 \StyleType Character
 \FontSize 12
-\Color 2263842
+#\Color 2263842
 \Bold
 \Italic
 \Underline
@@ -1887,7 +2033,7 @@
 \Endmarker wj*
 \Name wj...wj* - Special Text - Words of Jesus
 \Description For marking the words of Jesus
-\OccursUnder li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 sp tc1 tc2 tc3 tc4 ms ms1 ms2 s s1 s2 s3 spd d ip f fe NEST
+\OccursUnder ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe NEST
 \TextType VerseText
 \TextProperties publishable vernacular
 \StyleType Character
@@ -1898,7 +2044,7 @@
 \Endmarker k*
 \Name k...k* - Special Text - Keyword
 \Description For a keyword
-\OccursUnder li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 sp tc1 tc2 tc3 tc4 ms ms1 ms2 s s1 s2 s3 spd d ip im io1 io2 f fe NEST
+\OccursUnder ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe NEST
 \TextType VerseText
 \TextProperties publishable vernacular
 \StyleType Character
@@ -1910,7 +2056,7 @@
 \Endmarker sls*
 \Name sls...sls* - Special Text - Secondary Language or Text Source
 \Description To represent where the original text is in a secondary language or from an alternate text source
-\OccursUnder li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 sp tc1 tc2 tc3 tc4 f fe NEST
+\OccursUnder li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 sp tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe mt1 mt2 mt3 NEST
 \TextType VerseText
 \TextProperties publishable vernacular
 \StyleType Character
@@ -1921,9 +2067,9 @@
 \Endmarker ord*
 \Name ord...ord* - Special Text - Ordinal number text portion
 \Description For the text portion of an ordinal number
-\OccursUnder ip im li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 sp tc1 tc2 tc3 tc4 ms ms1 ms2 s s1 s2 s3 spd d ip f fe NEST
+\OccursUnder ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe NEST
 \TextType VerseText
-\TextProperties paragraph publishable vernacular
+\TextProperties publishable vernacular
 \StyleType Character
 \FontSize 12
 \Superscript
@@ -1932,11 +2078,12 @@
 \Endmarker add*
 \Name add...add* - Special Text - Translational Addition
 \Description For a translational addition to the text
-\OccursUnder li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 sp tc1 tc2 tc3 tc4 ms ms1 ms2 s s1 s2 s3 spd d ip f fe NEST
-\TextType Other
+\OccursUnder ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 cls tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe NEST
+\TextType VerseText
 \TextProperties publishable vernacular
 \StyleType Character
-\Color 2263842
+#\Color 2263842
+\FontSize 12
 \Bold
 \Italic
 
@@ -1958,6 +2105,7 @@
 \Name no...no* - Character - Normal Text
 \Description A character style, use normal text
 \OccursUnder is ip ipi im imi ili ili1 ili2 imq ipq iex iq iot io1 io2 io3 io4 s s1 s2 s3 NEST
+\TextType Other
 \TextProperties publishable vernacular
 \StyleType Character
 \FontSize 12
@@ -1966,7 +2114,8 @@
 \Endmarker it*
 \Name it...it* - Character - Italic Text
 \Description A character style, use italic text
-\OccursUnder ip ipi im imi ili ili1 ili2 iex io1 io2 io3 io4 cd li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 sp tc1 tc2 tc3 tc4 ms ms1 ms2 s s1 s2 s3 spd d ip f fe NEST
+\OccursUnder ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe NEST
+\TextType Other
 \TextProperties publishable vernacular
 \StyleType Character
 \FontSize 12
@@ -1976,7 +2125,8 @@
 \Endmarker bd*
 \Name bd...bd* - Character - Bold Text
 \Description A character style, use bold text
-\OccursUnder ip ipi im imi ili ili1 ili2 iex io1 io2 io3 io4 cd li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 sp tc1 tc2 tc3 tc4 ms ms1 ms2 s s1 s2 s3 spd d ip f fe NEST
+\OccursUnder ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe NEST
+\TextType Other
 \TextProperties publishable vernacular
 \StyleType Character
 \FontSize 12
@@ -1986,7 +2136,8 @@
 \Endmarker bdit*
 \Name bdit...bdit* - Character - BoldItalic Text
 \Description A character style, use bold + italic text
-\OccursUnder ip ipi im imi ili ili1 ili2 iex io1 io2 io3 io4 cd li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 sp tc1 tc2 tc3 tc4 ms ms1 ms2 s s1 s2 s3 spd d ip f fe NEST
+\OccursUnder ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe NEST
+\TextType Other
 \TextProperties publishable vernacular
 \StyleType Character
 \FontSize 12
@@ -1997,7 +2148,8 @@
 \Endmarker em*
 \Name em...em* - Character - Emphasized Text
 \Description A character style, use emphasized text style
-\OccursUnder ip ipi im imi ili ili1 ili2 iex io1 io2 io3 io4 cd li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 sp tc1 tc2 tc3 tc4 ms ms1 ms2 s s1 s2 s3 spd d ip f fe NEST
+\OccursUnder ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe NEST
+\TextType Other
 \TextProperties publishable vernacular
 \StyleType Character
 \FontSize 12
@@ -2007,7 +2159,8 @@
 \Endmarker sc*
 \Name sc...sc* - Character - Small Caps
 \Description A character style, for small capitalization text
-\OccursUnder ip ipi im imi ili ili1 ili2 iex io1 io2 io3 io4 cd li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 sp tc1 tc2 tc3 tc4 ms ms1 ms2 s s1 s2 s3 spd d ip f fe NEST
+\OccursUnder ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe NEST
+\TextType Other
 \TextProperties publishable vernacular
 \StyleType Character
 \FontSize 12
@@ -2017,7 +2170,8 @@
 \Marker pb
 \Name pb - Break - Page Break
 \Description Page Break used for new reader portions and children's bibles where content is controlled by the page
-\OccursUnder c
+# Changed from under "c" to under "id" so that a page break can happen anywhere in the document (djd - 20141102)
+\OccursUnder id
 \Rank 4
 \TextType Other
 \TextProperties publishable
@@ -2030,7 +2184,7 @@
 \Endmarker fig*
 \Name fig...fig* - Auxiliary - Figure/Illustration/Map
 \Description Illustration [Columns to span, height, filename, caption text]
-\OccursUnder li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 sp tc1 tc2 tc3 tc4 ms ms1 ms2 s s1 s2 s3 spd d ip
+\OccursUnder li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 sp tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 ms ms1 ms2 s s1 s2 s3 d ip
 \TextType Other
 \TextProperties paragraph publishable vernacular
 \StyleType Character
@@ -2040,12 +2194,12 @@
 \Endmarker pro*
 \Name pro...pro* - Special Text - CJK Pronunciation
 \Description For indicating pronunciation in CJK texts
-\OccursUnder ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 sp tc1 tc2 tc3 tc4 ms ms1 ms2 s s1 s2 s3 spd d ip f fe NEST
+\OccursUnder ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 sp tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 ms ms1 ms2 s s1 s2 s3 d ip f fe NEST
 \TextType Other
 \TextProperties Nonpublishable
 \StyleType Character
 \FontSize 10
-\Color 128
+#\Color 128
 
 # Peripheral References
 
@@ -2053,53 +2207,41 @@
 \Endmarker w*
 \Name w...w* - Peripheral Ref - Wordlist Entry
 \Description A wordlist text item
-\OccursUnder ip im li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr d q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 tc1 tc2 tc3 tc4 NEST
+\OccursUnder ip im li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr d q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 s s1 s2 s3 s4 NEST
 \TextType VerseText
 \TextProperties paragraph publishable vernacular
 \StyleType Character
 \FontSize 12
-\Color 16711935
-\Bold
-\Italic
 
 \Marker wh
 \Endmarker wh*
 \Name wh...wh* - Peripheral Ref - Hebrew Wordlist Entry
 \Description A Hebrew wordlist text item
-\OccursUnder li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 tc1 tc2 tc3 tc4 NEST
+\OccursUnder li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr d q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 s s1 s2 s3 s4 NEST
 \TextType VerseText
 \TextProperties paragraph publishable vernacular
 \StyleType Character
 \FontSize 12
-\Color 16711935
-\Bold
-\Italic
 
 \Marker wg
 \Endmarker wg*
 \Name wg...wg* - Peripheral Ref - Greek Wordlist Entry
 \Description A Greek Wordlist text item
-\OccursUnder li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 tc1 tc2 tc3 tc4 NEST
+\OccursUnder li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr d q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 s s1 s2 s3 s4 NEST
 \TextType VerseText
 \TextProperties paragraph publishable vernacular
 \StyleType Character
 \FontSize 12
-\Color 16711935
-\Bold
-\Italic
 
 \Marker ndx
 \Endmarker ndx*
 \Name ndx...ndx* - Peripheral Ref - Subject Index Entry 
 \Description A subject index text item
-\OccursUnder li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 tc1 tc2 tc3 tc4 NEST
+\OccursUnder li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr q q1 q2 q3 q4 qc qr qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 s s1 s2 s3 s4 NEST
 \TextType VerseText
 \TextProperties paragraph publishable vernacular
 \StyleType Character
 \FontSize 12
-\Color 16711935
-\Bold
-\Italic
 
 # Peripheral Materials
 # Content Division Marker
@@ -2310,14 +2452,24 @@
 \RightMargin .25
 \FontSize 12
 
+\Marker fs
+\Endmarker fs*
+\Name DEPRECATED fs - Footnote - Footnote Summary
+\Description A summary text for the concept/idea/quotation from the scripture translation for which the note is being provided.
+\OccursUnder f fe
+\TextProperties publishable vernacular note
+\TextType NoteText
+\StyleType Character
+\FontSize 12
+\Italic
+
 \Marker wr
 \Endmarker wr*
 \Name OBSOLETE wr...wr* - Auxiliary - Wordlist/Glossary Reference 
 \Description A Wordlist text item
 \OccursUnder ms s li li1 li2 li3 li4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr q q1 q2 q3 q4 qc qr tc1 tc2 tc3 tc4 f fe NEST
-\TextProperties publishable vernacular note
+\TextProperties publishable vernacular
 \TextType VerseText
-\TextProperties paragraph publishable vernacular
 \StyleType Character
 \FontSize 12
 \Italic
@@ -2472,7 +2624,7 @@
 
 \Marker zpa-d
 \Endmarker zpa-d*
-\Name zpa-xv - Periph - Description
+\Name zpa-d - Periph - Description
 \Description Description
 \OccursUnder id
 \Rank 1

@@ -73,7 +73,7 @@
   \makecutouts \endgraf
   \egroup \cutoutcarryover
 %{\showboxbreadth=200 \showbox\he@dingbox}
-  \gridb@x\he@dingbox
+  \gridb@x\he@dingbox\unvbox\he@dingnotes
   \global\he@dingsfalse
  \fi
 }
@@ -296,6 +296,7 @@
 
 \def\pdfb@@kmark{\ifx\b@ok\prevb@ok
  \else
+  \global\dr@ppednumberfalse
   \bgroup\liter@lspecials
    \special{pdf:dest (\id@@@.) [@thispage /Fit]}%
    \ifx\b@ok\relax \let\t@mp=\id@@@ \else \let\t@mp=\b@ok \fi
@@ -402,8 +403,7 @@
 \def\m@kechapterbox{%
  \edef\printchapter{\ch@pter}%
  \csname PrepChapterNumber\endcsname
-% \setbox\ch@pterbox=\hbox{\s@tfont{c}\printchapter}%
- \setbox\ch@pterbox=\hbox{\global\edef\newch@rstyle{c}\startch@rstyle\printchapter\endch@rstyle*}%
+ \setbox\ch@pterbox=\hbox{\s@tfont{c}\printchapter}%
  \setbox\ch@pterbox=\hbox{\lower\baselineskip\box\ch@pterbox
    \box\ch@pternote\kern\AfterChapterSpaceFactor\FontSizeUnit}%
  \ch@pterwd=\wd\ch@pterbox

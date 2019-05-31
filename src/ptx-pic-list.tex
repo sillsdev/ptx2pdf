@@ -54,10 +54,9 @@
     \global\let\p@cref\empty
   \else
     \begingroup
-    % This is a list of characters that can be used in a figure caption
       \catcode`0=12 \catcode`1=12 \catcode`2=12 \catcode`3=12 \catcode`4=12
       \catcode`5=12 \catcode`6=12 \catcode`7=12 \catcode`8=12 \catcode`9=12
-      \catcode`.=12 \catcode`\%=5 \catcode`\/=12 \catcode`\(=12 \catcode`\)=12
+      \catcode`.=12 \catcode`\%=5 \catcode`\/=12
       \endlinechar=-1
       \read\p@clist to \p@cline
       \ifx\p@cline\P@R\readnextp@c\else
