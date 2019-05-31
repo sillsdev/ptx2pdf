@@ -36,23 +36,19 @@
 % Note that "V" may be a verse range, if the USFM data included bridged verses such as "\v 12-15".
 % Therefore, we have to do some extra work to extract individual verse numbers.
 
-\newif\ifOmitChapterNumberRH % make this true to omit the ch # (eg for single-chapter books)
 %
 % Print the first reference from the mark data
 %
+\newif\ifOmitBookRef
 \def\f@rstref#1{\edef\t@st{#1}\x@\extr@ctfirst\t@st\relax
- \ifx\@book\empty\else\@book\ 
-  \ifOmitChapterNumberRH\@verse\else
-   \@chapter\ifVerseRefs\cvs@p\@verse\fi\fi\fi}
+ \ifx\@book\empty\else\ifOmitBookRef\else\@book\ \fi\ifOmitChapterNumber\else\@chapter\fi\ifVerseRefs\ifOmitChapterNumber\else\cvs@p\fi\@verse\fi\fi}
 
 %
 % Print the last reference from the mark data
 % (same as above unless there are bridged verses)
 %
 \def\l@stref#1{\edef\t@st{#1}\x@\extr@ctlast\t@st\relax
- \ifx\@@book\empty\else\@@book\ 
-  \ifOmitChapterNumberRH\@@verse\else
-   \@@chapter\ifVerseRefs\cvs@p\@@verse\fi\fi\fi}
+ \ifx\@@book\empty\else\ifx\@@book\t@tle\else\ifOmitBookRef\else\@@book\ \fi\ifOmitChapterNumber\else\@@chapter\fi\ifVerseRefs\ifOmitChapterNumber\else\cvs@p\fi\@@verse\fi\fi\fi}
 
 %
 % Print the range of references from a pair of marks
@@ -63,14 +59,13 @@
  \ifx\@book\empty\else
  \@book\ 
  \ifVerseRefs
-  \ifOmitChapterNumberRH\else\ifx\@chapter\empty\else\@chapter\cvs@p\fi\fi\@verse
+  \ifx\@chapter\empty\else\@chapter\cvs@p\fi\@verse
   \ifx\@book\@@book
    \ifx\@chapter\@@chapter
     \ifx\@verse\@@verse\else\ranges@p\@@verse\fi
-   \else\ranges@p\ifOmitChapterNumberRH\else\@@chapter\cvs@p\fi\@@verse\fi
-  \else\ranges@p\@@book\ \ifOmitChapterNumberRH\else\@@chapter\cvs@p\fi\@@verse\fi
+   \else\ranges@p\@@chapter\cvs@p\@@verse\fi
+  \else\ranges@p\@@book\ \@@chapter\cvs@p\@@verse\fi
  \else
-  \ifOmitChapterNumberRH\else
   \ifx\@chapter\empty\else
    \@chapter
    \ifx\@chapter\@@chapter\else
@@ -80,7 +75,6 @@
     \ifnum\c@untA=\c@untB \pairs@p \else \ranges@p \fi
     \@@chapter
    \fi
-  \fi
   \fi
  \fi\fi}
 \newcount\c@untA \newcount\c@untB
@@ -129,23 +123,23 @@
 %
 
 % define \headline for use by the output routine
-\headline={{%
+\headline={\hbox to \textwidth{%
  \s@tfont{h}%
  \edef\t@st{\p@gefirstmark}% check first mark on page to see if this is a "title" page
  \global\rhr@letrue
  \ifx\t@st\empty \hfil \global\rhr@lefalse \else
-  \ifx\t@st\t@tle \the\titlehead \global\rhr@lefalse \else
-  \ifodd\pageno \the\oddhead \else
-    \ifDoubleSided \the\evenhead \else \the\oddhead \fi % for single-sided, all pages are "odd"
-  \fi\fi\fi}}
-
+%  \ifendbooknoeject \ifodd\pageno \the\oddhead \else \ifDoubleSided \the\evenhead \else \the\oddhead \fi\fi \else
+    \ifx\t@st\t@tle \the\titlehead \global\rhr@lefalse \else
+      \ifodd\pageno \the\oddhead \else\ifDoubleSided \the\evenhead \else \the\oddhead\fi\fi
+%  \fi
+    \fi\fi}}
 % default headers are made of three components, placed left, center and right
 \newtoks\oddhead
 \newtoks\evenhead
 \newtoks\titlehead
-\oddhead={\rlap{\RHoddleft}\hfil\RHoddcenter\hfil\llap{\RHoddright}}
-\evenhead={\rlap{\RHevenleft}\hfil\RHevencenter\hfil\llap{\RHevenright}}
-\titlehead={\rlap{\RHtitleleft}\hfil\RHtitlecenter\hfil\llap{\RHtitleright}}
+\oddhead={\hbox to \columnshift{}\rlap{\RHoddleft}\hfil\RHoddcenter\hfil\hbox to \columnshift{}\llap{\RHoddright}}
+\evenhead={\hbox to \columnshift{}\rlap{\RHevenleft}\hfil\RHevencenter\hfil\hbox to \columnshift{}\llap{\RHevenright}}
+\titlehead={\hbox to \columnshift{}\rlap{\RHtitleleft}\hfil\RHtitlecenter\hfil\hbox to \columnshift{}\llap{\RHtitleright}}
 
 % \footline is similar except it doesn't have to place a border graphic
 \footline={{%

@@ -40,12 +40,14 @@
 % The reference of the adjustment to be applied is stored in \@djref, and the actual adjustment in \@djustment.
 %
 \def\parse@djline #1 #2.#3 #4[#5]#6\end{%
- \uppercase{\gdef\@djref{#1#2.#3}}\gdef\@djustment{#4}%
+ \uppercase{\xdef\@djref{#1#2.#3}}\gdef\@djustment{#4}%
  \global\@djparindex=0#5 \ifnum\@djparindex=0 \global\@djparindex=1 \fi}
 \newcount\@djparindex
 
 % Perform the current adjustment, and read the next line, if any
 \def\do@dj{\looseness=\@djustment \readnext@dj
+ \trace{j}{do@adj: Looseness \@djustment}%
+ %\immediate\write16{(Looseness \@djustment)}
  \@dvance@djfalse \ch@ckadjustments}
 
 % read the next line from the adjustment list, or set \@djref to empty if no more
@@ -60,6 +62,7 @@
    \catcode`[=12 \catcode`]=12
    \endlinechar=-1
    \read\@djlist to \@djline
+   %\immediate\write16{(Read adjustment: \@djline)}
    \ifx\@djline\P@R\readnext@dj\else % skip blank lines (or comments)
     \ifx\@djline\empty\readnext@dj\else
      \expandafter\parse@djline\@djline []\end % store the reference and adjustment to be done
@@ -78,17 +81,26 @@
  \else \immediate\write16{(using adjustment list "#1")}\fi
  \readnext@dj
 }
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Problem with this handling a blank line at the end of a list of adjustments
+
 \def\closeadjlist{% close the adjustment list, with an error message if we didn't process it fully
- \ifeof\@djlist\else \errmessage{Did not use all adjustments in list}\fi
+ %\ifeof\@djlist\else \errmessage{Did not use all adjustments in list}\fi
  \closein\@djlist
 }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \def\ch@ckadjustments{% check if the current reference is the place for the next adjustment
  \edef\c@rref{\id@@@\ch@pter.\v@rse}%
  \ifx\c@rref\pr@vref \if@dvance@dj \global\advance\curr@djpar by 1 \fi
  \else \global\curr@djpar=1 \fi
+ \trace{j}{checkadjustments: curref=\meaning\c@rref , prevref=\pr@vref , adjref=\meaning\@djref , curradjpar=\the\curr@djpar , adjparindex=\the\@djparindex}%
  \global\let\pr@vref=\c@rref
- \ifx\c@rref\@djref
+ \ifx\c@rref\@djref%
+ \trace{j}{(Testing \c@rref against \@djref  par \the\curr@djpar against \the\@djparindex)}%
    \ifnum\@djparindex=\curr@djpar \do@dj \fi
  \fi}
 \newif\if@dvance@dj \@dvance@djtrue

@@ -37,8 +37,7 @@
 %
 
 % Remember the name of the marker currently being defined
-\def \Marker         #1\relax{\def\m@rker{#1}% store name of marker currently being defined
-                              \expandafter\let\csname font<#1>\endcsname\relax}
+\def \Marker         #1\relax{\def\m@rker{#1}} % store name of marker currently being defined
 
 % Ignore stylesheet markers that do not affect formatting 
 \def \Name           #1\relax{}
@@ -82,10 +81,11 @@
 \let \Spaceafter\SpaceAfter
 \def \Justification  #1\relax{\lowercase{\defp@ram{justification}{#1}}}
 \def \CallerStyle    #1\relax{\defp@ram{callerstyle}{#1}} % ptx2pdf extension
+\def \CallerRaise    #1\relax{\defp@ram{callerraise}{#1}}
+\def \NoteCallerStyle    #1\relax{\defp@ram{notecallerstyle}{#1}} % ptx2pdf extension
+\def \NoteCallerRaise    #1\relax{\defp@ram{notecallerraise}{#1}}
 \def \TEStyleName    #1\relax{} % Translation Editor extension
-\def \SmallCaps      {\defp@ram{smallcaps}{true}}
-\let \Smallcaps\SmallCaps
-
+\def \BaseLine       #1\relax{\defp@ram{baseline}{#1}}
 % Make a TeX macro based on the StyleType
 \def \StyleType      #1\relax{\lowercase{\def\styl@type{#1}}\m@kestyle}
 \let \Styletype=\StyleType
@@ -98,7 +98,7 @@
 % csname is required here in order to build a macro name containing a colon and possibly a number.
 %
 \def\defp@ram#1#2{\x@\def\csname\m@rker:#1\endcsname{#2}}
-
+\def\setp@ram#1#2#3{\x@\xdef\csname#2:#1\endcsname{#3}} % expand now, not later 
 %
 % \getp@aram: fetch the value of a style parameter into \p@ram
 %   #1 -> name of parameter to fetch
@@ -111,7 +111,6 @@
 %
 %
 \def\m@kestyle{{\uccode`\|=`\\\uppercase{\message{|\m@rker}}}
- \x@\let\csname font<\m@rker>\endcsname=\relax 
  \ifx\styl@type\P@ra \x@\defp@rstyle\x@{\m@rker}
  \else\ifx\styl@type\Ch@r \x@\defch@rstyle\x@{\m@rker}
  \else\ifx\styl@type\N@te \x@\defn@testyle\x@{\m@rker}
@@ -153,11 +152,9 @@
   % Define a macro to read an actual space delimited verse number
   \def\@v@ ##1 {\gdef\v@rse{##1}%
    \x@\spl@tverses\v@rse--\relax % split verse in a verse bridge (e.g. 3-4) into \v@rsefrom, \v@rseto
-   \ifx\v@rse\@ne \else \c@ncelfirstversefalse \fi % if the number isn't just "1", never cancel it
    % if not cancelling first verse, output verse number
    \ifc@ncelfirstverse\else
      \@V~\printv@rse\@V*% (A) output verse number using saved style. ~ will lowercase to a space
-     \kern\h@ngverseoffset % additional space to align hanging numbers, if required
      \kern\AfterVerseSpaceFactor\FontSizeUnit \fi
    \egroup
    \m@rkverse % generate a milestone for running headers
@@ -167,22 +164,20 @@
    % remember current chapter:verse, not currently used. Could potentially be used
    % to insert chapter:verse in footnotes.
    \gdef\reference{\ch@pter:\v@rse}%
-   \nobreak\hskip1sp % let \x detect that there's "space" (or maybe drop-chapter) here
-   \relax
+   \nobreak\hskip0.5sp % let \x detect that there's "space" (or maybe drop-chapter) here
   }
   % define handling for usfm \v marker
   \def\v{\leavevmode % ensure we are in horizontal mode to build paragraph
    % set c@ncelfirstversetrue if we are immediately following a drop cap chapter number
    % and the user has requested omission of the first verse number in a chapter
-   \c@ncelfirstversefalse
+   \c@ncelfirstversefalse %
    \ifnum\spacefactor=\n@wchaptersf \kern0sp % override \hangversenumber here
-    \ifOmitVerseNumberOne \c@ncelfirstversetrue \fi % and maybe suppress v1
-   \else\ifnum\spacefactor=\dr@pcapsf \kern0sp \fi \fi % second line, just prevent hang
+    \ifOmitVerseNumberOne \c@ncelfirstversetrue \fi \fi
    % -1sp indicates that a hanging verse number has been requested here.
    % When this happens we make ll@p use llap to right justify the verse number at the current position.
    % Otherwise make ll@p do nothing.
-   \ifdim\lastkern=-1sp \let\ll@p=\llap \calch@ngverseoffset
-   \else \let\ll@p=\relax \h@ngverseoffset=0pt \fi % hanging verse number?
+   \ifdim\lastkern=-1sp \let\ll@p=\llap %
+   \else \let\ll@p=\relax \fi % hanging verse number?
    \ll@p\bgroup\m@kedigitsother\@v@} %
   % remember chapter macro for later
   \let\@C=\c
@@ -220,32 +215,16 @@
 	  % Calculate drop cap height = base line height + (lower case) x height
       \s@tfont{p}\dimen0=\fontdimen5\font % get x height (appendix F) 5 is x-height of font
       \advance\dimen0 by \baselineskip
-      % Now \dimen0 is the desired height, and \ht0 is the actual height
-      % that results from the existing \dropnumbersize.
-      % So we want to calculate
-      %   dropnumbersize = dropnumbersize * dimen0 / ht0
-      % but we have to be careful of both overflow and limited precision.
-	  % The calculations are scaled in order to get better accuracy
+	  % The following calculations are scaled by 256 in order to get better accuracy
 	  % even though calculations are integer values.
 	  % divide desired height by current height
-      \multiply\dimen0 by 16
-      \dimen2=0.0625\ht0
-      \divide\dimen0 by \dimen2
-      % now \dimen0 is (desired / actual)*256 as a 16.16 fixed-point value
+      \multiply\dimen0 by 256
+      \divide\dimen0 by \ht0
 	  % multiply by original size from \c marker in stylesheet
-      \dimen0=0.0625\dimen0
-      \dimen2=0.0625\dropnumbersize
-      \multiply\dimen0 by \dimen2
-      % now \dropnumbersize is the final size we want to achieve;
-      % divide by the \FontSizeUnit to get value for fontsize param of marker \c
+      \multiply\dimen0 by \dropnumbersize
       \dropnumbersize=\dimen0
-      \ifdim\dropnumbersize<64pt
-        \multiply\dropnumbersize by 256
-        \dimen0=\FontSizeUnit \divide\dimen0 by 256
-      \else
-        \multiply\dropnumbersize by 64
-        \dimen0=\FontSizeUnit \divide\dimen0 by 1024
-      \fi
+      % divide by the \FontSizeUnit to get value for fontsize param of marker \c
+      \dimen0=\FontSizeUnit \divide\dimen0 by 256
       \divide\dropnumbersize by \dimen0
     \fi
   \fi
@@ -258,36 +237,14 @@
 \def\AfterVerseSpaceFactor{2}
 \newif\ifOmitChapterNumber
 \newif\ifc@ncelfirstverse
-\def\printv@rse{\AdornVerseNumber{\v@rsefrom}\ifx\v@rsefrom\v@rseto
-                \else\endash\AdornVerseNumber{\v@rseto}\fi}
+ \def\printv@rse{\AdornVerseNumber{\v@rsefrom}\ifx\v@rsefrom\v@rseto
+                 \else\endash\AdornVerseNumber{\v@rseto}\fi}
 \def\@ne{1}
 \def\AdornVerseNumber#1{#1}
 
 % put \hangversenumber into the <start> hook for a style such as \q1
 % in order to 'hang' verse numbers into the paragraph indent of the style
 \def\hangversenumber{\kern-1sp\relax}
-
-% calculate extra space to put after the hanging number, to align at specified marker's indent
-\def\HangVerseAlignMarker{}
-\def\calch@ngverseoffset{%
-  \ifx\HangVerseAlignMarker\empty
-    \h@ngverseoffset=0pt
-  \else
-    % if \HangVerseAlign is not empty, then we align hanging numbers to that style's indent
-    \h@ngverseoffset=0pt
-    \getp@ram{leftmargin}{\m@rker}%
-    \ifx\p@ram\relax \else \advance\h@ngverseoffset \p@ram\IndentUnit \fi
-    \getp@ram{firstindent}{\m@rker}%
-    \ifx\p@ram\relax \else \advance\h@ngverseoffset \p@ram\IndentUnit \fi
-    \getp@ram{leftmargin}{\HangVerseAlignMarker}%
-    \ifx\p@ram\relax \else \advance\h@ngverseoffset -\p@ram\IndentUnit \fi
-    \getp@ram{firstindent}{\HangVerseAlignMarker}%
-    \ifx\p@ram\relax \else \advance\h@ngverseoffset -\p@ram\IndentUnit \fi
-    % don't allow it to be negative as that would make the number overprint the text
-    \ifdim\h@ngverseoffset<0pt \h@ngverseoffset=0pt \fi
-  \fi
-}
-\newdimen\h@ngverseoffset
 
 % size to use for drop-cap style numbers; automatically calculated if not set
 \newdimen\dropnumbersize
@@ -318,8 +275,7 @@
 \obeylines%
 \gdef\@ddspecialhooks{% there are a few special USFM markers that we give "magic" properties
  \let\@H=\h%
- \def\h{\bgroup\deactiv@tecustomch@rs
-        \obeylines\@h}% \h gets stored as the book name (for references)
+ \def\h{\bgroup\obeylines\@h}% \h gets stored as the book name (for references)
  \def\@h ##1^^M{\gdef\b@ok{##1}\egroup}% store book id in \b@ok
  %
  \let\@CL=\cl%
@@ -340,8 +296,7 @@
 \endgroup
 \def\unc@tcodespecials{\def\do##1{\catcode`##1=12 }\dospecials}
 \def\@@id#1#2#3#4\end{\gdef\id@@@{#1#2#3}} % get first 3 chars of the \id
-\def\ptx@fig{\begingroup\m@kedigitsother \ptx@f@g}
-\def\ptx@f@g #1\fig*{\d@figure{#1}\endgroup}
+\def\ptx@fig #1\fig*{\d@figure{#1}}
 
 %
 % \stylesheet{...} reads a Paratext stylesheet line by line
@@ -395,7 +350,7 @@
  \catcode`\_=11 % treat as letter for TE custom styles
  \catcode`\/=\active
  \catcode13=10
- \activ@tecustomch@rs
+ \def\d@something{\afterassignment\@ctivate \count255=}\the\do@ctive
  \m@kedigitsletters %so that marker names can include digits
  % test if file is available, inform user if it's missing
  \openin\t@stread="\the\PtxFilePath#1"
@@ -406,7 +361,7 @@
  \ifsk@pping\egroup\fi % end skipping, if file ended with a non-printable marker
  \endt@ble % end table if file ended during table processing
  \m@kedigitsother
- \deactiv@tecustomch@rs
+ \def\d@something{\afterassignment\de@ctivate \count255=}\the\do@ctive
  \catcode13=5
  \closepiclist
  \closeadjlist
@@ -432,11 +387,6 @@
 \def\@ctivate{\x@\edef\csname save-cat-\the\count255\endcsname{\the\catcode\count255}%
   \catcode\the\count255=\active\relax}
 \def\de@ctivate{\catcode\the\count255=\csname save-cat-\the\count255\endcsname\relax}
-
-\def\activ@tecustomch@rs{% activate all the chars configured with \DefineActiveChar
- \def\d@something{\afterassignment\@ctivate \count255=}\the\do@ctive}  
-\def\deactiv@tecustomch@rs{% deactivate all the chars configured with \DefineActiveChar
- \def\d@something{\afterassignment\de@ctivate \count255=}\the\do@ctive}  
 
 \def\openbracket{\char`\[\ignorespaces}
 \def\openparen{\char`\(\ignorespaces}
@@ -487,8 +437,8 @@
  \advance\dimen0 by -2\dimen2
  \ifBindingGutter \advance\dimen0 by -\BindingGutter \fi
  \textwidth=\dimen0
- \colwidth=0.5\textwidth \advance\colwidth by -0.5\gutter
- \hsize=\textwidth
+ \colwidth=0.5\textwidth \advance\colwidth by -0.5\gutter\advance\colwidth by -\columnshift
+ \hsize=\textwidth% \advance\hsize by -\columnshift
  \topm@rgin=\TopMarginFactor\MarginUnit
  \advance\topm@rgin by -\topskip \advance\topm@rgin by 12\FontSizeUnit
  \bottomm@rgin=\BottomMarginFactor\MarginUnit
@@ -497,8 +447,8 @@
  \advance\dimen0 by -\bottomm@rgin
  \textheight=\dimen0
  \vsize=\textheight
- \pdfpagewidth=\PaperWidth
- \pdfpageheight=\PaperHeight
+ \ifrotate\pdfpagewidth=\PaperHeight \pdfpageheight=\PaperWidth\else
+ \pdfpagewidth=\PaperWidth \pdfpageheight=\PaperHeight\fi
  \resetvsize
 }
 \newdimen\le@dingunit

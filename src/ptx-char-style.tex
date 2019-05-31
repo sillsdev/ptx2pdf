@@ -49,7 +49,7 @@
   \catcode13=10 % and <return> is also a space (we don't want blank line -> \par)
   \if\n@xt*\let\n@xt\endch@rstyle % check for "*", if so then we need to end the style
   \else\if\n@xt~\let\n@xt\startch@rstyle@spc
-  \else\let\n@xt\startch@rstyle@nl\fi\fi % else we need to start it
+  \else\if\n@xt_\let\n@xt\startch@rstyle@nl\else\let\n@xt\startch@rstyle\fi\fi\fi % else we need to start it
   \n@xt} % chain to the start or end macro
  % when \startch@rstyle is called, the following <space> or <return> has become category-12
  % so we have to explicitly consume it here as part of the macro parameter list
@@ -57,6 +57,7 @@
  \def\startch@rstyle@nl_{\startch@rstyle}
 }
 \def\startch@rstyle{\TRACE{startch@rstyle}%
+  \ifnum\n@tenesting>1 \global\edef\tempch@rstyle{\newch@rstyle}\edef\newch@rstyle{\thisch@rstyle}\endch@rstyle*\edef\newch@rstyle{\tempch@rstyle}\fi
   \t@stpublishability{\newch@rstyle}\ifn@npublishable
    \setbox0=\hbox\bgroup\skipch@rstyletrue
    \let\thisch@rstyle=\newch@rstyle
@@ -132,10 +133,6 @@
   \else
    \edef\typef@ce{"\p@ram"}% use font name from the stylesheet
   \fi
-  \getp@ram{smallcaps}{#1}%
-  \ifx\p@ram\tru@
-    \edef\typef@ce{\typef@ce\SmallCapsSuffix}%
-  \fi
   \getp@ram{fontsize}{#1}%
   \ifx\p@ram\relax
     \MSG{*** FontSize missing for marker '#1', defaulting to 12}%
@@ -149,6 +146,5 @@
 }
 \def\tru@{true}
 \def\SuperscriptFactor{0.75}
-\def\SmallCapsSuffix{/ICU:+smcp}
 
 \endinput

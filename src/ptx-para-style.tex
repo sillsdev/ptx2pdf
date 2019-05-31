@@ -52,10 +52,8 @@
   \fi
   \global\t@tletrue\global\@ntrofalse\global\b@dyfalse\fi}
 
-\def\st@rtbody{%
+\def\st@rtbody{%\endhe@dings
   \ifb@dy\else\TRACE{st@rtbody}%
-  \endhe@dings
-  \if@ntro \csname IntroBodySwitch\endcsname \fi
   \ifnum\BodyColumns=\c@rrentcols
     \penalty-200\vskip\baselineskip
   \else
@@ -76,10 +74,8 @@
 %{\showboxbreadth=200 \showbox\he@dingbox}
   \gridb@x\he@dingbox
   \global\he@dingsfalse
-  \global\first@fterheadingtrue
  \fi
 }
-\newif\iffirst@fterheading
 
 \def\killd@scenders#1{%
   \vbox{\unvbox#1 \skip0=\lastskip\unskip \count255=\lastpenalty\unpenalty
@@ -120,6 +116,7 @@
 % Handle a paragraph style marker (parameter is the marker name)
 %
 \newif\ifhe@dingstyle
+\newif\ifnsp@cebefore
 \newif\ifJustifyPars \JustifyParstrue
 \def\p@rstyle#1{\TRACE{p@rstyle:#1}%
  \ifsk@pping \egroup \fi % if we were skipping nonpublishable text, end that mode
@@ -173,7 +170,7 @@
     \if@ntromarker\st@rtintro\else\st@rtbody\fi
   \fi\fi\fi
   \ifhe@dingstyle\TRACE{headingstyle true}%
-    \ifhe@dings\else
+    \ifhe@dings\nsp@cebeforetrue\else
       \setbox\he@dingbox=\vbox\bgroup\global\he@dingstrue
         \linepenalty=1000 % minimize line count
         \interlinepenalty=10000 % never break column/page between lines
@@ -186,7 +183,7 @@
   \fi
   \getp@ram{spacebefore}{\m@rker}% output <spacebefore> for this style
   \ifx\p@ram\relax \else
-    \ifhe@dings\nobreak\fi \vskip\p@ram\verticalsp@ceunit
+    \ifhe@dings\nobreak\fi \ifnsp@cebefore\nsp@cebeforefalse\else\vskip\p@ram\verticalsp@ceunit\fi
   \fi
   \everypar={%
    %
@@ -229,8 +226,6 @@
       \getp@ram{leftmargin}{\m@rker}%
       \ifx\p@ram\relax % simple case - no left indent
         \x@\c@tcmd\x@{\the\ch@pterwd}{0}{2}%
-      \else\ifx\p@ram\zer@
-        \x@\c@tcmd\x@{\the\ch@pterwd}{0}{2}%
       \else % probably \q or something like that;
             % need to compare cutout width with leftindent
         \dimen0=\p@ram\IndentUnit \dimen2=\dimen0
@@ -244,7 +239,7 @@
         \else % the indent is already big enough, so just use it as is
           \setbox\ch@pterbox=\hbox to \dimen0{\box\ch@pterbox\hfil}%
         \fi
-      \fi\fi
+      \fi
       \global\ch@pterfalse
       \ifIndentAtChapter\else \allowp@rindentfalse \fi
       \dr@ppednumbertrue
@@ -271,25 +266,19 @@
        \fi
      \fi
      \dr@ppednumberfalse
-     \spacefactor=\dr@pcapsf % prevent hanging verse number here
+     \spacefactor=\n@wchaptersf % prevent hanging verse number here
     \fi
    \fi
-   \ifx\f@rstindent\relax \else
-    \x@\ifdim\f@rstindent pt<0pt
-      \allowp@rindenttrue
-    \else
-      \iffirst@fterheading \ifIndentAfterHeading\else \allowp@rindentfalse \fi\fi
-    \fi
+   \ifx\f@rstindent\relax \else \x@\ifdim\f@rstindent pt<0pt \allowp@rindenttrue \fi
     \ifallowp@rindent % create first-line indent, unless suppressed at dropped chapter number
                       % (note that we don't suppress negative indents, as in \q1 etc)
      \kern\f@rstindent \IndentUnit
     \fi
    \fi
    \ifvoid\ch@pterbox\else \kern-\wd\ch@pterbox \box\ch@pterbox \fi
-   \global\first@fterheadingfalse
    \global\p@ranesting=1
    \csname start-\m@rker\endcsname % handle <start> hook
-   \ifdr@ppednumber \spacefactor=\n@wchaptersf \fi
+   \ifdr@ppednumber \spacefactor=0\n@wchaptersf \fi
    % set special \spacefactor if we're at a chapter number, so \v 1 can omit the verse number here
   }%
  \fi}
@@ -297,13 +286,10 @@
 \newif\ifallowp@rindent
 \newif\ifdr@ppednumber
 \newif\ifIndentAtChapter
-\newif\ifIndentAfterHeading \IndentAfterHeadingtrue
 \newif\ifOmitVerseNumberOne \OmitVerseNumberOnefalse
 \def\n@wchaptersf{998}
-\def\dr@pcapsf{997}
 \let\b@ok\relax
 \let\prevb@ok\relax
-\def\zer@{0}
 
 \def\pdfb@@kmark{\ifx\b@ok\prevb@ok
  \else

@@ -96,14 +96,15 @@
    \begingroup
    \x@\let\x@\aftern@te\csname after-\newn@testyle\endcsname
    \ifdim\lastskip>0pt \sp@cebeforetrue \else \sp@cebeforefalse \fi % was there a preceding space?
+   \resetp@rstyle
    \m@kenote{\newn@testyle}{\everypar={}\cancelcutouts % begin a note insertion in the given style
     \getp@ram{callerstyle}{\newn@testyle}% see if a caller style was defined
     \ifx\p@ram\relax\def\c@llerstyle{v}\else\edef\c@llerstyle{\p@ram}\fi % if not, treat it like "v"
     \setbox0=\hbox{\ch@rstyle{\c@llerstyle}~\them@rk\ch@rstyle{\c@llerstyle}*}%
-    \ht0=0pt\box0 % suppress height of caller
-    }%
-   \bgroup
-   \resetp@rstyle
+    \ht0=0pt \getp@ram{textcallerraise}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi % suppress height of caller
+    }{\getp@ram{notecallerstyle}{\newn@testyle}\ifx\p@ram\relax\else\edef\c@llerstyle{\p@ram}%
+        \setbox0=\hbox{\ch@rstyle{\c@llerstyle}~\them@rk\ch@rstyle{\c@llerstyle}*}%
+        \ht0=0pt \getp@ram{notecallerraise}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi\fi}\bgroup
    \global\n@tenesting=1\relax
    \csname start-\newn@testyle\endcsname % execute the <start> hook, if defined
    \ignorespaces

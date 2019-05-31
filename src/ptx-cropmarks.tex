@@ -46,7 +46,7 @@
       \raise20pt\vtop{\hsize\PaperWidth \everypar={}
         \lineskiplimit=0pt \baselineskip=10pt
         \leftskip=0pt plus 1fil \rightskip=\leftskip \parfillskip=0pt
-        \noindent \beginL\idf@nt \jobname\ -- \timestamp\endL}%
+        \noindent \beginL\idf@nt \jobname\ :: \timestamp\endL}%
       \hss
       \vrule height 30pt depth -5pt width .4pt
       \kern 4.8pt
@@ -70,6 +70,8 @@
   }% end \vbox for \bottomcr@p
 }
 
+\newif\ifrotate\rotatefalse
+
 \def\shipwithcr@pmarks#1{% \shipout box #1, adding cropmarks if required
   \dimen0=0\ifCropMarks .5\fi in
   \advance\pdfpagewidth by 2\dimen0 % increase PDF media size
@@ -81,23 +83,31 @@
     \ifBindingGutter
       \ifDoubleSided
         \ifodd\pageno
-          \ifRTL \let\g@tterside=R
+          \ifRTL \let\g@tterside=R %
           \else  \let\g@tterside=L \fi
         \else
-          \ifRTL \let\g@tterside=L
+          \ifRTL \let\g@tterside=L %
           \else  \let\g@tterside=R \fi
         \fi
       \else
-        \ifRTL \let\g@tterside=R
+        \ifRTL \let\g@tterside=R %
         \else  \let\g@tterside=L \fi
       \fi
     \fi
+    \edef\oldup{\the\XeTeXupwardsmode}
+    \XeTeXupwardsmode=0 %
+    \ifrotate
+      \vbox to 0pt{\kern.5\pdfpagewidth  %\PaperWidth % swapped because rotated
+        \hbox to 0pt{\kern.5\pdfpagewidth \special{x:gsave}\special{x:rotate -90}\hss}
+        \vss}
+    \fi
     \pl@ceborder % add PageBorder (or watermark) graphic, if defined
     \offinterlineskip
-    \vbox to \pdfpageheight{\vss
+    \vbox to \ifrotate\pdfpagewidth\else\pdfpageheight\fi{\vss
       \kern\topm@rgin
-      \hbox to \pdfpagewidth{\hss\hbox{%
+      \hbox to \ifrotate\pdfpageheight\else\pdfpagewidth\fi{\hss\hbox{%
         \if\g@tterside L\kern\BindingGutter\fi
+        \XeTeXupwardsmode=\oldup
         #1%
         \if\g@tterside R\kern\BindingGutter\fi
       }\hss}
@@ -105,6 +115,7 @@
       \vss}
     \vss
     \docr@pmarks
+    \ifrotate\special{x:grestore}\fi
   }%
 }
 
