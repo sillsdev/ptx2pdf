@@ -40,10 +40,20 @@
 \def\initmyverse{\let\v=\myv}
 \addtoinithooks{\initmyverse}%
 \def\printv@rse{\AdornVerseNumber{\v@rsefrom}\ifx\v@rsefrom\v@rseto
-%                \else\setbox0\hbox{-} -\kern-\wd0\kern\wd0\penalty\hyphenpenalty \AdornVerseNumber{\v@rseto}\fi}
+
+                \else\setbox0\hbox{-} -\kern-\wd0\kern\wd0\penalty\hyphenpenalty \AdornVerseNumber{\v@rseto}\fi}
+
                 % The following seems to look better than the previous. Is there a way to
                 % do some math on \wd0 to make it act more proportionally? Hard coding to
                 % -1.5pt doesn't seem like a good way to do it.
-                \else\setbox0\hbox{-}-\kern-1.5pt\kern\wd0\penalty\hyphenpenalty \AdornVerseNumber{\v@rseto}\fi}
+
+%                \else\setbox0\hbox{-}-\kern-1.5pt\kern\wd0\penalty\hyphenpenalty \AdornVerseNumber{\v@rseto}\fi}
+
+                % djd - 20111108 / Further notes on this: The line in use now
+                % (top one) puts the hyphen at the start of the second line.
+                % This was changed to go back to the way it was done in 2009.
+                % Not sure if this is good or not.  I think I like the hyphen at
+                % the end of the number on the fist line, but for now it will
+                % stay like this.
 
 \endinput
