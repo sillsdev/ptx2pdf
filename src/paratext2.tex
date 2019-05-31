@@ -213,12 +213,12 @@
     \def\pagecontents{%
 %      \msg{upwards mode = \the\XeTeXupwardsmode}
       \ifvoid\partial\else \unvbox\partial \fi
-      \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi
+      \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
       \dimen0=\dp\colA
       \dimen1=\textwidth \advance\dimen1 \ExtraRMargin
       \hbox to \dimen1{\hbox to \singlecolumnshift{}%
         \box\colA\hbox to \ExtraRMargin{}\hfil}
-      \ifvoid\bottomins\else\kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \unvbox\bottomins \fi
+      \ifvoid\bottomins\else \kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\box\bottomins} \fi % ouput bottom spanning pictures
       \f@rstnotetrue
       \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses
       \iff@rstnote % no notes actually occurred!
@@ -539,7 +539,7 @@
     \ht\colA=\the\dimen3 \ht\colB=\the\dimen3
     \dimen4=\ht\partial
     \global\setbox\partial=\vbox{\unvbox\partial
-      \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi % output top spanning pictures
+      \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
       \dimen5=\textwidth\advance\dimen5 by \ExtraRMargin %
       \vbox{\hbox to \dimen5{\hbox to \columnshift{}\ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\dimen0}\box\colA %
         \else \box\colA\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\dimen0}\box\colB\hbox to \ExtraRMargin{}\fi\hfil}}}
@@ -639,7 +639,7 @@
 	% define pagecontents for use by \plainoutput below
     \def\pagecontents{%
       \ifvoid\partial\else \unvbox\partial \fi % output partial page
-      \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi % output top spanning pictures
+      \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
       %\ifdim\dp\colB>\dp\colA \dimen0=\dp\colB\dp\colA=\dimen0 \else \dimen0=\dp\colA\dp\colB=\dimen0 \fi % calc depth of deepest column
       %\ifdim\colhtA>\colhtB \dimen3=\colhtA \else \dimen3=\colhtB\fi
       \trace{p}{Text depth = \the\dimen3}%\showthe\dimen0
@@ -647,7 +647,7 @@
       \dimen1=\textwidth\advance\dimen1 by \ExtraRMargin
       \hbox to \dimen1{\hbox to \columnshift{}\ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\availht}{\the\dimen0}\box\colA
         \else \box\colA\makecolumngutter{\the\dimen3}{\the\availht}{\the\dimen0}\box\colB\hbox to \ExtraRMargin{}\fi\hfil}
-      \ifvoid\bottomins\else \kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \unvbox\bottomins \fi % ouput bottom spanning pictures
+      \ifvoid\bottomins\else \kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\box\bottomins} \fi % ouput bottom spanning pictures
       \f@rstnotetrue
       \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % output all note classes
       \iff@rstnote % no notes actually occurred!
@@ -768,7 +768,7 @@
   \fi
   % set width to column width or span width
   \p@cwidth=\ifx\size@ption\size@COL \hsize
-  \else\ifx\size@ption\size@SPAN \textwidth
+  \else\ifx\size@ption\size@SPAN \textwidth \advance\p@cwidth by -\columnshift
   \else \p@cwidth=\textwidth
     \errmessage{Unknown picture size "\size@ption", expected "col" or "span"}\fi\fi
   \let\p@cins=\relax
