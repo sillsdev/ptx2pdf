@@ -214,8 +214,9 @@
       \ifvoid\partial\else \unvbox\partial \fi
       \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi
       \dimen0=\dp\colA
-      \hbox to \textwidth{\hbox to \columnshift{}%
-        \box\colA\hfil}
+      \dimen1=\textwidth \advance\dimen1 \ExtraRMargin
+      \hbox to \dimen1{\hbox to \columnshift{}%
+        \box\colA\hbox to \ExtraRMargin{}\hfil}
       \ifvoid\bottomins\else\kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \unvbox\bottomins \fi
       \f@rstnotetrue
       \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses
@@ -529,8 +530,9 @@
     \dimen4=\ht\partial
     \global\setbox\partial=\vbox{\unvbox\partial
       \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi % output top spanning pictures
-      \vbox{\hbox to \textwidth{\hbox to \columnshift{}\ifRTL \box\colB\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\dimen0}\box\colA %
-        \else \box\colA\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\dimen0}\box\colB \fi}}}
+      \dimen5=\textwidth\advance\dimen5 by \ExtraRMargin
+      \vbox{\hbox to \dimen5{\hbox to \columnshift{}\ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\dimen0}\box\colA %
+        \else \box\colA\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\dimen0}\box\colB\hbox to \ExtraRMargin{}\fi\hfil}}}
     \advance\dimen3 by \dimen4 \ht\partial=\dimen3
     \global\holdinginserts=1
   \else
@@ -632,9 +634,9 @@
       %\ifdim\colhtA>\colhtB \dimen3=\colhtA \else \dimen3=\colhtB\fi
       \trace{p}{Text depth = \the\dimen3}%\showthe\dimen0
 	  % determine order of columns based on text direction
-      \dimen1=\textwidth
-      \hbox to \dimen1{\hbox to \columnshift{}\ifRTL \box\colB\makecolumngutter{\the\dimen3}{\the\availht}{\the\dimen0}\box\colA
-        \else \box\colA\makecolumngutter{\the\dimen3}{\the\availht}{\the\dimen0}\box\colB \fi}
+      \dimen1=\textwidth\advance\dimen1 by \ExtraRMargin
+      \hbox to \dimen1{\hbox to \columnshift{}\ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\availht}{\the\dimen0}\box\colA
+        \else \box\colA\makecolumngutter{\the\dimen3}{\the\availht}{\the\dimen0}\box\colB\hbox to \ExtraRMargin{}\fi\hfil}
       \ifvoid\bottomins\else \kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \unvbox\bottomins \fi % ouput bottom spanning pictures
       \f@rstnotetrue
       \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % output all note classes
