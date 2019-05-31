@@ -114,6 +114,7 @@
   \advance\tablec@l by 1
   \ifnum\tablec@l>\allocatedtablec@ls \@llocnewc@l \fi
   \setbox\cellb@x=\vbox\bgroup
+    \def\mark##1{\xdef\s@vedm@rk{##1}\aftergroup\dos@vedm@rk}%
     \hsize=\maxdimen
     \resetp@rstyle \everypar={}\noindent
     \ifRTL\beginR\fi
@@ -126,6 +127,7 @@
     \s@tfont{tr}%
     \global\p@ranesting=1
     \@celltrue}
+\def\dos@vedm@rk{\expandafter\mark\expandafter{\s@vedm@rk}}
 
 \def\@ndcell{%
   \if@cell
@@ -214,8 +216,8 @@
     \nth@line=0
     \@@LOOP \ifnum\nth@line<\linec@unt
       \advance\nth@line by 1
-      \line{\ifRTL\hfil\lochcaer@f{\getnth@line}\else
-        \f@reachcol{\getnth@line}\hfil\fi}%
+      \line{\ifRTL\hfil\lochcaer@f{\getnth@line}\hfil\else
+        \hfil\f@reachcol{\getnth@line}\hfil\fi}%
       \ifnum\nth@line<\linec@unt \nobreak \fi
       \@@REPEAT
   }%

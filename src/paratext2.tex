@@ -803,6 +803,11 @@
 \newinsert\bottomleftins \count\bottomleftins=1000 \dimen\bottomleftins=\maxdimen
 \newinsert\bottomrightins\count\bottomrightins=1000 \dimen\bottomrightins=\maxdimen
 
+\def\p@rsesize#1*#2*#3\end{%
+  \def\size@ption{#1}%
+  \def\sizem@ltiple{#2}% empty if not provided
+}
+
 % called from \fig or from figure list
 \def\d@figure#1{%
  \ifIncludeFigures
@@ -813,8 +818,10 @@
     \x@\getonep@ram\p@rams\end
     \ifx\p@rams\empty \morep@ramsfalse \else \morep@ramstrue \fi
     \ifmorep@rams\repeat
-  % get size and location
+  % get size
   \lowercase{\edef\size@ption{\csname param-3\endcsname}}%
+  \expandafter\p@rsesize\size@ption**\end % extract possible multiplier
+  % get location
   \lowercase{\edef\loc@ption{\csname param-4\endcsname}}%
   % 
   \ifx\loc@ption\empty % if location empty
@@ -854,7 +861,12 @@
   \setbox0=\vbox{
     \hsize=\p@cwidth
 	% insert picture based on PicPath and file name, scaled to \p@cwidth
-    \setbox0=\hbox{\XeTeXpicfile "\the\PicPath\csname param-2\endcsname" width \csname param-5\endcsname\p@cwidth}
+       \let\picfilecomm@nd=\XeTeXpicfile
+       \edef\f@lename{\csname param-2\endcsname}%
+       \expandafter\ch@ckpdf\f@lename..\endf@lename
+    \setbox0=\hbox to \p@cwidth{\hss
+      \picfilecomm@nd "\the\PicPath\csname param-2\endcsname"
+                     width \sizem@ltiple\p@cwidth \hss}
     \ifFigurePlaceholders % replace graphic with a frame and the file name
       \setbox0=\vbox to \ht0{\offinterlineskip
         \hrule height .2pt \kern-.2pt
@@ -890,6 +902,10 @@
 \newtoks\PicPath % directory containing picture files
 \newif\ifIncludeFigures \IncludeFigurestrue
 \newif\ifFigurePlaceholders
+
+\def\ch@ckpdf#1.#2.#3\endf@lename{\lowercase{\edef\@xt{#2}}%
+  \ifx\@xt\@pdf \let\picfilecomm@nd\XeTeXpdffile \fi}
+\def\@pdf{pdf}
 
 \def\picw@rning#1#2{\msg{converted picture placement "#1" to "#2" in single-column layout}}
 

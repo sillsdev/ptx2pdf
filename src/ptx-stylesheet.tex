@@ -37,7 +37,8 @@
 %
 
 % Remember the name of the marker currently being defined
-\def \Marker         #1\relax{\def\m@rker{#1}} % store name of marker currently being defined
+\def \Marker         #1\relax{\def\m@rker{#1} % store name of marker currently being defined
+                              \expandafter\let\csname font<#1>\endcsname\relax}
 
 % Ignore stylesheet markers that do not affect formatting 
 \def \Name           #1\relax{}
@@ -85,6 +86,8 @@
 \def \NoteCallerStyle    #1\relax{\defp@ram{notecallerstyle}{#1}} % ptx2pdf extension
 \def \NoteCallerRaise    #1\relax{\defp@ram{notecallerraise}{#1}}
 \def \TEStyleName    #1\relax{} % Translation Editor extension
+\def \SmallCaps      {\defp@ram{smallcaps}{true}}
+\let \Smallcaps\SmallCaps
 \def \BaseLine       #1\relax{\defp@ram{baseline}{#1}}
 % Make a TeX macro based on the StyleType
 \def \StyleType      #1\relax{\lowercase{\def\styl@type{#1}}\m@kestyle}
@@ -111,6 +114,7 @@
 %
 %
 \def\m@kestyle{{\uccode`\|=`\\\uppercase{\message{|\m@rker}}}
+ \x@\let\csname font<\m@rker>\endcsname=\relax 
  \ifx\styl@type\P@ra \x@\defp@rstyle\x@{\m@rker}
  \else\ifx\styl@type\Ch@r \x@\defch@rstyle\x@{\m@rker}
  \else\ifx\styl@type\N@te \x@\defn@testyle\x@{\m@rker}
@@ -397,8 +401,9 @@
 \def\deactiv@tecustomch@rs{% deactivate all the chars configured with \DefineActiveChar
  \def\d@something{\afterassignment\de@ctivate \count255=}\the\do@ctive}  
 
-\def\openbracket{\char`\[\ignorespaces}
-\def\openparen{\char`\(\ignorespaces}
+% use numbers to allow sequences to work in \fig .. \fig*
+\def\openbracket{\char91\[\ignorespaces}
+\def\openparen{\char40\(\ignorespaces}
 
 \DefineActiveChar{[}{\openbracket} % make these skip following spaces
 \DefineActiveChar{(}{\openparen}   % (useful at end-of-line before new verse)
