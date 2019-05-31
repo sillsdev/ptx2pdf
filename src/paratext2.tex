@@ -86,7 +86,11 @@
 % Additional modules that are not part of the normal ptx2pdf module
 \input ptxplus-character-kerning.tex
 \input ptxplus-toc-tables.tex
-%\input ptxplus-maps.tex
+%\input ptxplus-marginalverses.tex  % This is where we would like
+                                    % load this module but has to
+                                    % be loaded after the stylesheet
+                                    % information is loaded.
+%\input ptxplus-maps.tex            % This still needs development yet
 
 % default font names (override in setup file)
 \ifx\regular\undefined   \def\regular{"Times New Roman"}      \fi
