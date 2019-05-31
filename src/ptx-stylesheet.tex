@@ -48,6 +48,9 @@
 \def \Rank           #1\relax{}
 \def \Underline      {}
 \let \underline\Underline
+%\def \SmallCaps      {}
+%\let \smallcaps\SmallCaps
+%\let \Smallcaps\SmallCaps
 \def \NotRepeatable  {}
 \let \Notrepeatable\NotRepeatable
 \def \Color          #1\relax{}
@@ -438,8 +441,11 @@
 \def\deactiv@tecustomch@rs{% deactivate all the chars configured with \DefineActiveChar
  \def\d@something{\afterassignment\de@ctivate \count255=}\the\do@ctive}  
 
-\def\openbracket{\char`\[\ignorespaces}
-\def\openparen{\char`\(\ignorespaces}
+%\def\openbracket{\char`\[\ignorespaces}
+%\def\openparen{\char`\(\ignorespaces}
+% The above results in undefined control sequence when these characters occur within \fig...\fig*
+\def\openbracket{\char91\ignorespaces}
+\def\openparen{\char40\ignorespaces}
 
 \DefineActiveChar{[}{\openbracket} % make these skip following spaces
 \DefineActiveChar{(}{\openparen}   % (useful at end-of-line before new verse)
