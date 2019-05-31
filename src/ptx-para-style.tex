@@ -402,7 +402,8 @@
 \def\m@kechapterbox{%
  \edef\printchapter{\ch@pter}%
  \csname PrepChapterNumber\endcsname
- \setbox\ch@pterbox=\hbox{\s@tfont{c}\printchapter}%
+% \setbox\ch@pterbox=\hbox{\s@tfont{c}\printchapter}%
+ \setbox\ch@pterbox=\hbox{\global\edef\newch@rstyle{c}\startch@rstyle\printchapter\endch@rstyle*}
  \setbox\ch@pterbox=\hbox{\lower\baselineskip\box\ch@pterbox
    \box\ch@pternote\kern\AfterChapterSpaceFactor\FontSizeUnit}%
  \ch@pterwd=\wd\ch@pterbox
