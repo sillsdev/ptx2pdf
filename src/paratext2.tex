@@ -216,7 +216,7 @@
       \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi
       \dimen0=\dp\colA
       \dimen1=\textwidth \advance\dimen1 \ExtraRMargin
-      \hbox to \dimen1{\hbox to \columnshift{}%
+      \hbox to \dimen1{\hbox to \singlecolumnshift{}%
         \box\colA\hbox to \ExtraRMargin{}\hfil}
       \ifvoid\bottomins\else\kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \unvbox\bottomins \fi
       \f@rstnotetrue
@@ -540,7 +540,7 @@
     \dimen4=\ht\partial
     \global\setbox\partial=\vbox{\unvbox\partial
       \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi % output top spanning pictures
-      \dimen5=\textwidth\advance\dimen5 by \ExtraRMargin
+      \dimen5=\textwidth\advance\dimen5 by \ExtraRMargin %
       \vbox{\hbox to \dimen5{\hbox to \columnshift{}\ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\dimen0}\box\colA %
         \else \box\colA\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\dimen0}\box\colB\hbox to \ExtraRMargin{}\fi\hfil}}}
     \advance\dimen3 by \dimen4 \ht\partial=\dimen3
@@ -685,6 +685,7 @@
 \newif\ifrebalance
 
 \newdimen\columnshift
+\newdimen\singlecolumnshift
 \newdimen\ColumnGutterRuleSkip \ColumnGutterRuleSkip=0pt
 
 \def\makecolumngutter#1#2#3{\hfil
@@ -721,7 +722,7 @@
     \global\holdinginserts=0
     \global\output={\savepartialpaged}\eject % save any partially-full page
     \penalty-100\vskip\baselineskip % ensure blank line between single and double column material
-    \global\hsize=\textwidth \advance\hsize by -\columnshift
+    \global\hsize=\textwidth \advance\hsize by -\singlecolumnshift
     \global\vsize=\textheight
     \global\c@rrentcols=1
 %%%      \MSG{\the\ht\partial is > 0.9 times \the\textheight?}
@@ -734,6 +735,7 @@
     \global\count\topins=\count255
     \global\count\bottomins=\count255
     \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
+%    \vbox{\hbox{\kern -\columnshift \box\partial}}
     \box\partial
     \ifendbooknoeject\ifx\p@gefirstmark\t@tle \else\hrule\vskip2\baselineskip\fi\fi
   \fi}
