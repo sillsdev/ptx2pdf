@@ -1,0 +1,43 @@
+% This TeX code provides a way to have marginal verses
+% Caution, it is still under heave development
+
+
+\catcode`\@=11
+\let\myoldv=\v
+%\newif\multipleverses
+\newtoks\myeverypar
+\newdimen\mybaseline
+{\catcode`\~=12 \lccode`\~=32 \catcode`\*=12 \lowercase{%
+\gdef\marginverse #1 {%
+    \gdef\v@rse{#1}% 
+    \x@\spl@tverses\v@rse--\relax
+    \global\setbox2\hbox{\ifc@ncelfirstverse\else\myoldv ~\printv@rse\myoldv *\fi}%
+    \egroup\str@t\dimen0=\ht2\advance\dimen0 by \dp\str@tbox
+    \myeverypar=\everypar\everypar={}%
+    \dimen1=\columnshift\advance\dimen1 by -\AfterVerseSpaceFactor\FontSizeUnit
+    \m@rkverse \the\v@rsehooks \gdef\reference{\ch@pter:\v@rse}%
+    \vadjust{\getp@ram{baseline}{v}\ifx\p@ram\relax\let\p@ram\baselineskip\fi
+        %\kern -\dimen0\setbox1=\vbox to \dimen0{\llap{\unhbox2\kern\AfterVerseSpaceFactor\FontSizeUnit}}\dp1=0pt\box1}\nobreak
+        \kern -\dimen0\setbox1=\vbox{\llap{\vbox{\leftskip=0pt plus 1fill %
+            \rightskip=\z@skip\hsize=\dimen1 \baselineskip=\p@ram
+            \trace{v}{hs=\the\hsize , bl = \the\baselineskip}%
+            \noindent \unhbox2 \marginremovehboxes}%
+          \kern\AfterVerseSpaceFactor\FontSizeUnit}}%
+        \ht1=\dimen0\dp1=0pt\tracingparagraphs=0
+        \trace{v}{\reference - tolerance=\the\tolerance}\box1}\nobreak
+    \hskip 1sp\everypar=\myeverypar}}}
+\gdef\marginremovehboxes{%
+  \setbox0=\lastbox 
+  \ifhbox0{\removehboxes}\unhbox0\fi}
+
+\def\myv{%
+    \leavevmode\c@ncelfirstversefalse
+    \ifnum\spacefactor=\n@wchaptersf \kern0sp %
+     \ifOmitVerseNumberOne \c@ncelfirstversetrue \fi\fi
+    \bgroup\m@kedigitsother\marginverse} % ensure we are in horizontal mode to build paragraph
+\def\initmyverse{\let\v=\myv}
+\addtoinithooks{\initmyverse}%
+\def\printv@rse{\AdornVerseNumber{\v@rsefrom}\ifx\v@rsefrom\v@rseto
+                 \else\setbox0\hbox{-} -\kern-\wd0\kern\wd0\penalty\hyphenpenalty \AdornVerseNumber{\v@rseto}\fi}
+
+\endinput
