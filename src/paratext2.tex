@@ -138,6 +138,7 @@
   % currently we do not allow footnotes to break to the next page, so this may not be necessary
 %  \splittopskip\ht\f@@tstrut % top baseline for broken footnotes
 %  \splitmaxdepth\dp\f@@tstrut
+  \s@tfont{#1}%
   \futurelet\next\fo@t}% use plain.tex footnote processor
 
 % use \OmitCallerInNote{f} to omit callers from the note at foot of page
@@ -316,7 +317,16 @@
   \makehboxofhboxes % make a single hbox for all notes of this class
   \setbox0=\hbox{\unhbox0 \removehboxes} % add internote space
   \getp@ram{baseline}{#2}\baselineskip=\p@ram
-  \lineskiplimit=0pt\leftskip=\columnshift\rightskip=0pt plus 2em%\lineskip=10pt
+% Enable justification according to marker.
+  \lineskiplimit=0pt\leftskip=\columnshift\rightskip=0pt%\lineskip=10pt
+  \getp@ram{justification}{#2}%
+  \ifx\p@ram\c@nter
+     \leftskip=\columnshift plus 2em\rightskip=0pt plus 2em
+  \else\ifx\p@ram\l@ft
+     \rightskip=0pt plus 2em
+  \else\ifx\p@ram\r@ght
+     \leftskip=\columnshift plus 2em\fi
+  \fi\fi
   %\showbox0
   \noindent % starting making new paragraph
   \ifRTL\beginR\fi % respect directionality
