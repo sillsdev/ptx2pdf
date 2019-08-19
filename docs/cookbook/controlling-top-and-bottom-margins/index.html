@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Controlling top and bottom margins</title>
+	</head>
+	<body>
+		<table width="100%">
+			<tr valign="top">
+				<td width="150px">
+					<table>
+						<tr>
+							<th align="left">Navigation</th>
+						</tr>
+						<tr>
+							<td>
+								<small>
+									<a href="../../cookbook/index.html">Cookbook</a>
+								</small>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<small>
+									<a href="../../documentation/index.html">Documentation</a>
+								</small>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<small>
+									<a href="../../home/index.html">Home</a>
+								</small>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<small>
+									<a href="../../installation/index.html">Installation</a>
+								</small>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<small>
+									<a href="../../quick-start/index.html">Quick Start</a>
+								</small>
+							</td>
+						</tr>
+					</table>
+				</td>
+				<td>&#160;</td>
+				<td>
+					<div class="hentry webpage" id="https://sites.google.com/feeds/content/icapmail.org/ptx2pdf/7460877274049708313">
+						<div>
+						<a href="../index.html">Cookbook</a> &gt; </div>
+							<h3>
+								<span class="entry-title">Controlling top and bottom margins</span>
+							</h3>
+							<div>
+								<div class="entry-content">
+									<div xmlns='http://www.w3.org/1999/xhtml'>
+										<table class='sites-layout-name-one-column sites-layout-hbox' cellspacing='0'>
+											<tbody>
+												<tr>
+													<td class='sites-layout-tile sites-tile-name-content-1'>
+														<div dir='ltr'>
+															<h3>
+																<a name='TOC-Problem'/>Problem</h3>
+																<ol>
+																	<li>I have a PDF border for my document, but I want to make the bottom margin a little larger, so it doesn't run into my border.</li>
+																	<li>It appears to me that the top/bottom margins specify the limits of
+																		the text including the header and footer. So how can you specify the
+																	distance between the header and the body text (and same for footer)?</li>
+																</ol>
+																<h3>
+																	<a name='TOC-Solution'/>Solution</h3>
+																	<ol>
+																		<li>Use \BottomMarginFactor in ptx-stylesheet.tex if you want to
+																			control top and bottom separately. (If you leave it undefined, the
+																			macros will re-use the top factor for both.) So, \TopMarginFactor (and
+																			\BottomMarginFactor, if separately specified) will relate just to the
+																			margins of the body text area, independent of headers and footers.<br/>
+																			<br/>
+																		</li>
+																		<li>The parameters \HeaderPosition and \FooterPosition (with defaults
+																			of 0.5) controls the position of the header and footer. These are also
+																			in terms of \MarginUnit, and give the position of the baseline of the
+																			header/footer relative to the top/bottom edge of the paper (not the text
+																		area).</li>
+																	</ol>\RHruleposition (position of rule under the running head) measures
+																	from the baseline of the header (rather than upwards from the text
+																	area). This is a simple dimension, not a relative "factor".<br/>
+																	<h3>
+																		<a name='TOC-Source'/>Source</h3>
+																		<p>ptx-stylesheet.tex</p>
+																	</div>
+																</td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+											<br />
+											<small>Updated on <abbr class="updated" title="2012-01-06T15:23:58.980Z">Jan 6, 2012</abbr> by <span class="author">
+												<span class="vcard">
+													Jeff Klassen
+												</span>
+											</span> (Version <span class="sites:revision">5</span>)</small>
+												<br />
+												<br />
+											</div>
+										</div>
+									</td>
+								</tr>
+							</table>
+						</body>
+					</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Kerning certain characters</title>
+	</head>
+	<body>
+		<table width="100%">
+			<tr valign="top">
+				<td width="150px">
+					<table>
+						<tr>
+							<th align="left">Navigation</th>
+						</tr>
+						<tr>
+							<td>
+								<small>
+									<a href="../../cookbook/index.html">Cookbook</a>
+								</small>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<small>
+									<a href="../../documentation/index.html">Documentation</a>
+								</small>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<small>
+									<a href="../../home/index.html">Home</a>
+								</small>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<small>
+									<a href="../../installation/index.html">Installation</a>
+								</small>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<small>
+									<a href="../../quick-start/index.html">Quick Start</a>
+								</small>
+							</td>
+						</tr>
+					</table>
+				</td>
+				<td>&#160;</td>
+				<td>
+					<div class="hentry webpage" id="https://sites.google.com/feeds/content/icapmail.org/ptx2pdf/4963540300825492692">
+						<div>
+						<a href="../index.html">Cookbook</a> &gt; </div>
+							<h3>
+								<span class="entry-title">Kerning certain characters</span>
+							</h3>
+							<div>
+								<div class="entry-content">
+									<div xmlns='http://www.w3.org/1999/xhtml'>
+										<table class='sites-layout-name-one-column sites-layout-hbox' cellspacing='0'>
+											<tbody>
+												<tr>
+													<td class='sites-layout-tile sites-tile-name-content-1'>
+														<div dir='ltr'>
+															<h3>
+																<a name='TOC-Problem'/>Problem</h3>
+																<p>I would like to decrease the kerning between the period and several different letters in my language, these letters take several combinations of diacritics. I would like to make this happen through out the Scripture portion that I am typesetting?</p>
+																<h3>
+																	<a name='TOC-Solution'/>Solution</h3>
+																	<p>The "proper" way to do it would be to put the kerning you want into the font. A possible macro-level workaround might be to use character classes and the inter-character token insertion feature. If you do something like:</p>
+																	<div>
+																			<div class='sites-codeblock sites-codesnippet-block'>
+																				<code>\XeTeXinterchartokenstate=1
+<br/>
+																																							</code>
+																																							<br/>
+																																						<code>
+																					\XeTeXcharclass `a = 4 % class of letters where . is to be kerned closer
+																																							</code>
+																																							<br/>
+																																						<code>
+																					\XeTeXcharclass `e = 4
+																																							</code>
+																																							<br/>
+																																						<code>
+																					\XeTeXcharclass `i = 4
+																																							</code>
+																																							<br/>
+																																						<code>
+																					\XeTeXcharclass `o = 4
+																																							</code>
+																																							<br/>
+																																						<code>
+																					\XeTeXcharclass `u = 4
+<br/>
+																																							</code>
+																																							<br/>
+																																						<code>
+																					\XeTeXcharclass `. = 5 % assign a separate class to the period itself
+<br/>
+																																							</code>
+																																							<br/>
+																																						<code>
+																				\XeTeXinterchartoks 4 5 = {\kern-0.1em} % kern whenever classes 4 and 5 are adjacent</code>
+																			</div>
+																	</div>
+																	<p>... then you'll get an extra kern between any of those vowels and a following period. (Replace these example chars with the ones you're really interested in, of course. You can also specify them as Unicode character numbers rather than using the back-quote and a literal character, if that's more convenient.) To ignore certain diacritics for this purpose, assign them the class 256.</p>
+																	<p>Character classes range from 0..255 (and 256 for "ignore"); I started from 4 here simply because the xetex format file preassigns some CJK characters to classes 1..3.</p>
+																	<p>All this assumes that you're running XeTeX 0.997, as earlier releases did not have the inter-character tokens feature.</p>
+																</div>
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+										<br />
+										<small>Updated on <abbr class="updated" title="2012-01-06T15:19:14.916Z">Jan 6, 2012</abbr> by <span class="author">
+											<span class="vcard">
+												Jeff Klassen
+											</span>
+										</span> (Version <span class="sites:revision">2</span>)</small>
+											<br />
+											<br />
+										</div>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</body>
+				</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Quick Start</title>
+	</head>
+	<body>
+		<table width="100%">
+			<tr valign="top">
+				<td width="150px">
+					<table>
+						<tr>
+							<th align="left">Navigation</th>
+						</tr>
+						<tr>
+							<td>
+								<small>
+									<a href="../cookbook/index.html">Cookbook</a>
+								</small>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<small>
+									<a href="../documentation/index.html">Documentation</a>
+								</small>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<small>
+									<a href="../home/index.html">Home</a>
+								</small>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<small>
+									<a href="../installation/index.html">Installation</a>
+								</small>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<small>Quick Start</small>
+							</td>
+						</tr>
+					</table>
+				</td>
+				<td>&#160;</td>
+				<td>
+					<div>
+						<h3>
+							<span class="entry-title">Quick Start</span>
+						</h3>
+						<div>
+							<div class="entry-content">
+								<div xmlns='http://www.w3.org/1999/xhtml'>
+									<table class='sites-layout-name-one-column sites-layout-hbox' cellspacing='0'>
+										<tbody>
+											<tr>
+												<td class='sites-layout-tile sites-tile-name-content-1'>
+													<div dir='ltr'>To get started with ptx2pdf you need XeTeX and the ptx2pdf macro package installed. (Instructions can be found here.) We have a sample project that can be downloaded here - <a href='../quick-start/ptx2pdf-sample-GLW.zip?attredirects=0/index.html'>ptx2pdf-sample-GLW.zip</a>
+														<br/>
+														<br/>A typical ptx2pdf project consists of:<br/>
+														<ul>
+															<li>project file, this is the tex file that contains the references to all the files that are needed,</li>
+															<li>setup file, this is a txt file that contains the user defined setups,</li>
+															<li>usfm.sty, the standard USFM style sheet,</li>
+															<li>one or more sfm file(s) containing the formated scripture(s)</li>
+														</ul>
+														<h2>
+															<a name='TOC-The-project-file-e.g.-GLW.tex'/>The project file, e.g. GLW.tex</h2>This file links the macros and the style sheet and the actual scripture file(s). The sample project file looks like this:<br/>
+															<br/>
+															<div class='sites-codeblock sites-codesnippet-block'>
+																<code>% sample ptx2pdf-project file</code>
+																<br/>
+																<br/>
+																<code>\input paratext2.tex % first we \input the ptx2pdf macro package</code>
+																<br/>
+																<code>\input GLW-setup.txt % then we \input the setup file</code>
+																<br/>
+																<br/>
+																<code>\ptxfile{Intro-GLW.sfm} % we use \ptxfile to input the sfm files</code>
+																<br/>
+																<code>\ptxfile{43-JHN-GLW.sfm}</code>
+																<br/>
+																<code>\ptxfile{62-1JN-GLW.sfm}</code>
+																<br/>
+																<code>\ptxfile{63-2JN-GLW.sfm}</code>
+																<br/>
+																<code>\ptxfile{64-3JN-GLW.sfm}</code>
+																<br/>
+																<br/>
+																<code>\end % and this is how we end this file</code>
+															</div>
+															<br/>
+															<h2>
+																<a name='TOC-The-setup-file-e.g.-GLW-setup.txt'/>The setup file, e.g. GLW-setup.txt</h2>This file contains the user accessible setups for this project. The sample project setup file looks like this:<br/>
+																<br/>
+																<div class='sites-codeblock sites-codesnippet-block'>
+																	<code>% GLW-setup</code>
+																	<br/>
+																	<code>%</code>
+																	<br/>
+																	<code>% Paratext-to-PDF converter setup for GLW example</code>
+																	<br/>
+																	<code>%</code>
+																	<br/>
+																	<code>% This file defines some basic parameters that control the format of the output</code>
+																	<br/>
+																	<br/>
+																	<code>% Dimensions of A5 paper</code>
+																	<br/>
+																	<code>\PaperWidth=148.5mm</code>
+																	<br/>
+																	<code>\PaperHeight=210mm</code>
+																	<br/>
+																	<br/>
+																	<code>\CropMarkstrue</code>
+																	<br/>
+																	<br/>
+																	<code>% Basic unit for margins; changing this will alter them all</code>
+																	<br/>
+																	<code>\MarginUnit=.75in</code>
+																	<br/>
+																	<br/>
+																	<code>% Relative sizes of margins, based on the unit above</code>
+																	<br/>
+																	<code>\def\TopMarginFactor{1.0}</code>
+																	<br/>
+																	<code>\def\BottomMarginFactor{1.0}</code>
+																	<br/>
+																	<code>\def\SideMarginFactor{0.75}</code>
+																	<br/>
+																	<br/>
+																	<code>% Fonts to use for "plain", "bold", "italic", and "bold italic" from the Paratext stylesheet</code>
+																	<br/>
+																	<code>% (they need not really be italic, etc, of course)</code>
+																	<br/>
+																	<code>\def\regular{"Charis SIL"}</code>
+																	<br/>
+																	<code>\def\bold{"Charis SIL/B"}</code>
+																	<br/>
+																	<code>\def\italic{"Charis SIL/I"}</code>
+																	<br/>
+																	<code>\def\bolditalic{"Charis SIL/BI"}</code>
+																	<br/>
+																	<br/>
+																	<code>% Use right-to-left layout mode</code>
+																	<br/>
+																	<code>%\RTLtrue</code>
+																	<br/>
+																	<br/>
+																	<code>% Unit for font sizes in the stylesheet; changing this will scale all text proportionately</code>
+																	<br/>
+																	<code>\FontSizeUnit=0.8pt</code>
+																	<br/>
+																	<br/>
+																	<code>% Scaling factor used to adjust line spacing, relative to font size</code>
+																	<br/>
+																	<code>\def\LineSpacingFactor{1.05}</code>
+																	<br/>
+																	<code>\def\VerticalSpaceFactor{1.0}</code>
+																	<br/>
+																	<br/>
+																	<code>% Information to include in the running header (at top of pages, except first)</code>
+																	<br/>
+																	<code>% We set the items to print at left/center/right of odd and even pages separately</code>
+																	<br/>
+																	<code>% Possible contents:</code>
+																	<br/>
+																	<code>%   \rangeref = Scripture reference of the range of text on the page;</code>
+																	<br/>
+																	<code>%   \firstref = reference of the first verse on the page)</code>
+																	<br/>
+																	<code>%   \lastref = reference of the last verse on the page)</code>
+																	<br/>
+																	<code>%   \pagenumber = the page number</code>
+																	<br/>
+																	<code>%   \empty = print nothing in this position</code>
+																	<br/>
+																	<code>\def\RHoddleft{\empty}</code>
+																	<br/>
+																	<code>\def\RHoddcenter{\empty}</code>
+																	<br/>
+																	<code>\def\RHoddright{\rangeref}</code>
+																	<br/>
+																	<br/>
+																	<code>\def\RHevenleft{\rangeref}</code>
+																	<br/>
+																	<code>\def\RHevencenter{\empty}</code>
+																	<br/>
+																	<code>\def\RHevenright{\empty}</code>
+																	<br/>
+																	<br/>
+																	<code>\def\RHtitleleft{\empty}</code>
+																	<br/>
+																	<code>\def\RHtitlecenter{\empty}</code>
+																	<br/>
+																	<code>\def\RHtitleright{\empty}</code>
+																	<br/>
+																	<br/>
+																	<code>\def\RFoddcenter{\pagenumber}</code>
+																	<br/>
+																	<code>\def\RFevencenter{\pagenumber}</code>
+																	<br/>
+																	<code>\def\RFtitlecenter{\pagenumber}</code>
+																	<br/>
+																	<br/>
+																	<code>\VerseRefstrue % whether to include verse number in running head, or only chapter</code>
+																	<br/>
+																	<br/>
+																	<code>\OmitVerseNumberOnetrue % whether to skip printing verse number 1 at start of chapter</code>
+																	<br/>
+																	<code>%\IndentAtChaptertrue % whether to use paragraph indent at drop-cap chapter numbers</code>
+																	<br/>
+																	<br/>
+																	<code>\AutoCallers{f}{*,?,?,¶,§}</code>
+																	<br/>
+																	<code>\PageResetCallers{f}</code>
+																	<br/>
+																	<code>%\NumericCallers{f}</code>
+																	<br/>
+																	<code>%\OmitCallerInNote{f}</code>
+																	<br/>
+																	<br/>
+																	<code>\ParagraphedNotes{x} % reformat \x notes as a single paragraph</code>
+																	<br/>
+																	<br/>
+																	<code>\TitleColumns=1</code>
+																	<br/>
+																	<code>\IntroColumns=1</code>
+																	<br/>
+																	<code>\BodyColumns=2</code>
+																	<br/>
+																	<br/>
+																	<code>\def\ColumnGutterFactor{15} % gutter between double cols, relative to font size</code>
+																	<br/>
+																	<br/>
+																	<code>%\BindingGuttertrue % add extra margin of \BindingGutter on binding side</code>
+																	<br/>
+																	<code>%\BindingGutter=10pt</code>
+																	<br/>
+																	<code>%\DoubleSidedfalse</code>
+																	<br/>
+																	<br/>
+																	<code>% Define the Paratext stylesheet to be used as a basis for formatting</code>
+																	<br/>
+																	<code>\stylesheet{usfm.sty}</code>
+																	<br/>
+																	<code>\stylesheet{GLW-custom.sty} % here we load a custom style sheet overriding some of the defaults</code>
+																</div>
+																<br/>
+																<h2>
+																	<a name='TOC-Typesetting-GLW.tex'/>Typesetting GLW.tex</h2>To typeset GLW.tex open the file in your standard TeX editor to typeset or type in terminal:<br/>
+																	<br/>
+																	<div class='sites-codeblock sites-codesnippet-block'>
+																		<code>xetex GLW.tex</code>
+																	</div>
+																	<br/>
+																	<br/>
+																</div>
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+										<br />
+										<small>Updated on <abbr class="updated" title="2011-05-17T19:37:25.726Z">May 17, 2011</abbr> by <span class="author">
+											<span class="vcard">
+												Jeff Klassen
+											</span>
+										</span> (Version <span class="sites:revision">4</span>)</small>
+											<br />
+											<br />
+										</div>
+										<hr />
+										<div>
+											<b>Attachments (1)</b>
+											<br />
+											<br />
+											<div>
+												<a class="entry-content entry-title" href="ptx2pdf-sample-GLW.zip">ptx2pdf-sample-GLW.zip</a> - on <abbr class="updated" title="2011-05-17T19:28:42.086Z">May 17, 2011</abbr> by <span class="author">
+													<span class="vcard">
+														Jeff Klassen
+													</span>
+												</span> (Version <span class="sites:revision">1</span>)</div>
+												</div>
+											</div>
+										</td>
+									</tr>
+								</table>
+							</body>
+						</html>

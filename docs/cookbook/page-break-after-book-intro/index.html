@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Page break after book intro</title>
+	</head>
+	<body>
+		<table width="100%">
+			<tr valign="top">
+				<td width="150px">
+					<table>
+						<tr>
+							<th align="left">Navigation</th>
+						</tr>
+						<tr>
+							<td>
+								<small>
+									<a href="../../cookbook/index.html">Cookbook</a>
+								</small>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<small>
+									<a href="../../documentation/index.html">Documentation</a>
+								</small>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<small>
+									<a href="../../home/index.html">Home</a>
+								</small>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<small>
+									<a href="../../installation/index.html">Installation</a>
+								</small>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<small>
+									<a href="../../quick-start/index.html">Quick Start</a>
+								</small>
+							</td>
+						</tr>
+					</table>
+				</td>
+				<td>&#160;</td>
+				<td>
+					<div class="hentry webpage" id="https://sites.google.com/feeds/content/icapmail.org/ptx2pdf/3899630309933864069">
+						<div>
+						<a href="../index.html">Cookbook</a> &gt; </div>
+							<h3>
+								<span class="entry-title">Page break after book intro</span>
+							</h3>
+							<div>
+								<div class="entry-content">
+									<div xmlns='http://www.w3.org/1999/xhtml'>
+										<table class='sites-layout-name-one-column sites-layout-hbox' cellspacing='0'>
+											<tbody>
+												<tr>
+													<td class='sites-layout-tile sites-tile-name-content-1'>
+														<div dir='ltr'>
+															<h3>
+																<a name='TOC-Problem'/>Problem</h3>
+																<p>I would like to find a way to automatically make a page break after a book's introduction section? (I don't want to have to edit the source and put an \eject in.)</p>
+																<h3>
+																	<a name='TOC-Solution'/>Solution</h3>
+																	<p>If the introduction is long enough to warrant a page break put it in a separate SFM file, which means you get a page break automatically because \ptxfile always starts a fresh page.</p>
+																	<p>Is there a title at the start of the actual Scripture text? If there is something like \mt here, you could put \pagebreak (not a bare \eject) into the {before} hook for it.</p>
+																</div>
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+										<br />
+										<small>Updated on <abbr class="updated" title="2012-01-06T15:21:25.409Z">Jan 6, 2012</abbr> by <span class="author">
+											<span class="vcard">
+												Jeff Klassen
+											</span>
+										</span> (Version <span class="sites:revision">2</span>)</small>
+											<br />
+											<br />
+										</div>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</body>
+				</html>
