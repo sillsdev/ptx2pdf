@@ -1,6 +1,7 @@
 #### Navigation
 
-[Cookbook](../cookbook/README.md) | [Documentation](../documentation/README.md) | Home  | [Installation](../installation/README.md) | [Quick Start](../quick-start/README.md)
+Home  | [Installation](../installation/README.md) | [Quick Start](../quick-start/README.md) | [Documentation](../documentation/README.md) | [Cookbook ](../documentation/README.md) 
+
 
 ![XeTeX logo](xetex_icon.jpg)
 

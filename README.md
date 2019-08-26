@@ -5,7 +5,7 @@ PTX2PDF is a XeTeX based macro package for typesetting USFM formatted (Paratext 
 
 ## User Support
 
-The user support area provides the following information:
+The [user support area](docs/home/README.md) provides the following information:
 
  * an installation guide
  * a quick start user guide with sample project

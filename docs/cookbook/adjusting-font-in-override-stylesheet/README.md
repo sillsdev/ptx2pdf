@@ -1,6 +1,8 @@
 #### Navigation
 
-[Cookbook >](../README.md) | [Documentation](../documentation/README.md) | [Home](../home/README.md)  | [Installation](../installation/README.md) | [Quick Start](../quick-start/README.md)
+[Home](../home/README.md)  | [Installation](../installation/README.md) | [Quick Start](../quick-start/README.md) | [Documentation](../documentation/README.md) | [Cookbook ](../documentation/README.md) 
+
+[Cookbook >](../README.md) 
 
 
 # Adjusting font in override stylesheet
