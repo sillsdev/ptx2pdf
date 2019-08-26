@@ -1,9 +1,9 @@
+#### Navigation
 
-# Navigation
 [Cookbook](../cookbook/README.md) | [Documentation](../documentation/README.md) | [Home](../home/README.md)  | [Installation](../installation/README.md) | Quick Start
 
 
-### Quick Start
+# Quick Start
 
 To get started with ptx2pdf you need XeTeX and the ptx2pdf macro package installed. (Instructions can be found here.) We have a sample project that can be downloaded here - [ptx2pdf-sample-GLW.zip](../quick-start/ptx2pdf-sample-GLW.zip?attredirects=0/index.html)  
 

@@ -1,11 +1,10 @@
-
-# Navigation
+#### Navigation
 
 [Cookbook](../cookbook/README.md) | [Documentation](../documentation/README.md) | Home  | [Installation](../installation/README.md) | [Quick Start](../quick-start/README.md)
 
 ![XeTeX logo](xetex_icon.jpg)
 
-### Home
+# Home
 
 PTX2PDF is a [XeTeX](http://scripts.sil.org/xetex) based macro package for typesetting USFM formatted (Paratext output) scripture files. This user support area provides the following information:
 

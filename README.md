@@ -1,6 +1,6 @@
 # ptx2pdf
 
-PTX2PDF is a XeTeX based macro package for typesetting USFM formatted (Paratext output) scripture files. This repo aims to be the common source, bringing together copies from other repositories. It also contains various examples of [usage and documentation](docs/home/index.html).
+PTX2PDF is a XeTeX based macro package for typesetting USFM formatted (Paratext output) scripture files. This repo aims to be the common source, bringing together copies from other repositories. It also contains various examples of [usage and documentation](docs/home/README.md).
 
 
 ## User Support

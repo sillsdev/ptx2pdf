@@ -1,12 +1,11 @@
-
-# Navigation
+#### Navigation
 
 Cookbook | [Documentation](../documentation/README.md) | [Home](../home/README.md)  | [Installation](../installation/README.md) | [Quick Start](../quick-start/README.md)
 
-### Cookbook
+# Cookbook
 
 
-#### Answering frequently asked questions with real life examples.  
+## Answering frequently asked questions with real life examples.  
 
 1.  [Adjusting font in override stylesheet](adjusting-font-in-override-stylesheet/index.html)
 2.  [Adjusting space after chapter number](adjusting-space-after-chapter-number/index.html)

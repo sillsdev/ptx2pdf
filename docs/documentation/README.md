@@ -1,13 +1,13 @@
-# Navigation
+#### Navigation
 
 [Cookbook](../cookbook/README.md) | Documentation | [Home](../home/README.md)  | [Installation](../installation/README.md) | [Quick Start](../quick-start/README.md)
 
 
-### Documentation
+# Documentation
 
 A [PDF](../documentation/ptx2pdf-MacroSetupParameters.pdf?attredirects=0/index.html) version of this document is also available.  
 
-#### Contents
+## Contents
 
 -  [**1** Paratext Stylesheet](#TOC-Paratext-Stylesheet)
 -  [**2** Page Setup](#TOC-Page-Setup)
@@ -32,22 +32,20 @@ A [PDF](../documentation/ptx2pdf-MacroSetupParameters.pdf?attredirects=0/index.h
 -  [**10** Hooks](#ptx2pdf-MacroSetupParameters-Hooks)
     -  [**10.1** Appendix: Common OpenType script tags](#ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags)
 
-
-
-Text in <span style="color:rgb(255,0,0)">red</span> represents the portion of the setup parameter syntax which can be configured by the typesetter. Where applicable, default values are indicated in parentheses at the end of the definition.
+Text in ```gray``` represents the portion of the setup parameter syntax which can be configured by the typesetter. Where applicable, default values are indicated in parentheses at the end of the definition.
 
 ## <a name="TOC-Paratext-Stylesheet">Paratext Stylesheet</a>
 
 <a name="TOC-Paratext-Stylesheet">
 
-*   \stylesheet{<font color="red">usfm.sty</font>} – Define the Paratext stylesheet to be used as a basis for formatting (default=usfm.sty)
+*   \stylesheet{```usfm.sty```} – Define the Paratext stylesheet to be used as a basis for formatting (default=usfm.sty)
 
 You can read multiple stylesheets (to override primary stylesheet values)  
 For example:
 
-*   \stylesheet{<font color="red">mods.sty</font>}
+*   \stylesheet{```mods.sty```}
 
-In the file <font color="red">mods.sty</font>, add standard Paratext marker style definition parameters to override the default stylesheet definitions provided through \stylesheet{...} (above). Note that the first stylesheet is only loaded if it is used. Also, you cannot change fonts in subsequent stylesheets. Fonts are only loaded once at the beginning of the process.
+In the file ```mods.sty```, add standard Paratext marker style definition parameters to override the default stylesheet definitions provided through \stylesheet{...} (above). Note that the first stylesheet is only loaded if it is used. Also, you cannot change fonts in subsequent stylesheets. Fonts are only loaded once at the beginning of the process.
 
 </a>
 
@@ -71,8 +69,8 @@ In the file <font color="red">mods.sty</font>, add standard Paratext marker styl
 
 <a name="ptx2pdf-MacroSetupParameters-Dimensions">
 
-*   \PaperWidth=<font color="red">148.5mm</font> – Page width (default = 148.5mm – A5)
-*   \PaperHeight=<font color="red">210mm</font> – Page height (default = 210mm – A5)
+*   \PaperWidth=```148.5mm``` – Page width (default = 148.5mm – A5)
+*   \PaperHeight=```210mm``` – Page height (default = 210mm – A5)
 
 </a>
 
@@ -80,7 +78,7 @@ In the file <font color="red">mods.sty</font>, add standard Paratext marker styl
 
 <a name="ptx2pdf-MacroSetupParameters-CropMarks">
 
-*   \CropMarks<font color="red">true</font> – Add crops marks to the PDF output? (default = false)
+*   \CropMarks```true``` – Add crops marks to the PDF output? (default = false)
 
 </a>
 
@@ -88,7 +86,7 @@ In the file <font color="red">mods.sty</font>, add standard Paratext marker styl
 
 <a name="ptx2pdf-MacroSetupParameters-Margins">
 
-*   \MarginUnit=<font color="red">12mm</font> – Basic unit for margins; changing this will alter them all. (default = 1in)
+*   \MarginUnit=```12mm``` – Basic unit for margins; changing this will alter them all. (default = 1in)
 
 <div style="margin-left:20px">
 
@@ -96,12 +94,12 @@ In the file <font color="red">mods.sty</font>, add standard Paratext marker styl
 
 </div>
 
-*   \def\TopMarginFactor{<font color="red">1.15</font>} – Relative size of the top margin based on MarginUnit (default = 1.0)
-*   \def\BottomMarginFactor{<font color="red">1.0</font>} – Relative size of the bottom margin based on MarginUnit. If undefined, the \TopMarginFactor will be used for both top and bottom margins.  
+*   \def\TopMarginFactor{```1.15```} – Relative size of the top margin based on MarginUnit (default = 1.0)
+*   \def\BottomMarginFactor{```1.0```} – Relative size of the bottom margin based on MarginUnit. If undefined, the \TopMarginFactor will be used for both top and bottom margins.  
 
-*   \def\SideMarginFactor{<font color="red">1.0</font>} – Relative size of side margin based on MarginUnit (default = 0.7)
-*   \BindingGutter=<font color="red">4mm</font> – Amount for an additional margin on the binding side of the page (default = 5mm)
-    *   \BindingGutter<font color="red">true</font> must be specified for the \BindingGutter amount to be applied (default = false)
+*   \def\SideMarginFactor{```1.0```} – Relative size of side margin based on MarginUnit (default = 0.7)
+*   \BindingGutter=```4mm``` – Amount for an additional margin on the binding side of the page (default = 5mm)
+    *   \BindingGutter```true``` must be specified for the \BindingGutter amount to be applied (default = false)
 
 </a>
 
@@ -109,11 +107,11 @@ In the file <font color="red">mods.sty</font>, add standard Paratext marker styl
 
 <a name="ptx2pdf-MacroSetupParameters-Columns">
 
-*   \TitleColumns=<font color="red">1</font> – Number of columns used to typeset the main title (default = 1)
-*   \IntroColumns=<font color="red">1</font> – Number of columns used to typeset introduction material. Introduction material is defined by USFM markers beginning with \i (default = 1)
-*   \BodyColumns=<font color="red">1</font> – Number of columns used to typeset the body text (default = 1)
-*   \def\ColumnGutterFactor{<font color="red">15</font>} – Used to set the size of the gutter between columns; relative to font size
-*   \ColumnGutterRule<font color="red">true</font> – Place a vertical line between the columns in the column gutter? (default = false)
+*   \TitleColumns=```1``` – Number of columns used to typeset the main title (default = 1)
+*   \IntroColumns=```1``` – Number of columns used to typeset introduction material. Introduction material is defined by USFM markers beginning with \i (default = 1)
+*   \BodyColumns=```1``` – Number of columns used to typeset the body text (default = 1)
+*   \def\ColumnGutterFactor{```15```} – Used to set the size of the gutter between columns; relative to font size
+*   \ColumnGutterRule```true``` – Place a vertical line between the columns in the column gutter? (default = false)
 
 </a>
 
@@ -121,7 +119,7 @@ In the file <font color="red">mods.sty</font>, add standard Paratext marker styl
 
 <a name="ptx2pdf-MacroSetupParameters-Fonts">
 
-*   \FontSizeUnit=<font color="red">0.75</font> – Scaling factor for interpreting font sizes in the stylesheet. Changing this will scale all text proportionately (default = 0.9)
+*   \FontSizeUnit=```0.75``` – Scaling factor for interpreting font sizes in the stylesheet. Changing this will scale all text proportionately (default = 0.9)
 
 </a>
 
@@ -129,15 +127,15 @@ In the file <font color="red">mods.sty</font>, add standard Paratext marker styl
 
 <a name="ptx2pdf-MacroSetupParameters-Faces">
 
-*   \def\regular{<font color="red">"Times New Roman"</font>} – Font to use for text where the marker does not define a font style in the Paratext stylesheet (result is "plain" text)
-*   \def\bold{<font color="red">"Times New Roman/B"</font>} – Font to use for text where the marker is defined as "\Bold" in the Paratext stylesheet
-*   \def\italic{<font color="red">"Times New Roman/I"</font>} – Font to use for text where the marker is defined as "\Italic" in the Paratext stylesheet
-*   \def\bolditalic{<font color="red">"Times New Roman/BI"</font>} – Font to use for text where the marker is defined as "\Bold" + "\Italic" in the Paratext stylesheet
+*   \def\regular{```"Times New Roman"```} – Font to use for text where the marker does not define a font style in the Paratext stylesheet (result is "plain" text)
+*   \def\bold{```"Times New Roman/B"```} – Font to use for text where the marker is defined as "\Bold" in the Paratext stylesheet
+*   \def\italic{```"Times New Roman/I"```} – Font to use for text where the marker is defined as "\Italic" in the Paratext stylesheet
+*   \def\bolditalic{```"Times New Roman/BI"```} – Font to use for text where the marker is defined as "\Bold" + "\Italic" in the Paratext stylesheet
 
 For Mac OS X, use the Postscript Name or Full Name in quotes from Font Book's Font Info.
 
 Script specific features for fonts supporting the selected script can be enabled by adding a "script=" parameter to the end of the font name. For example, in the case of typesetting Arabic script, we might have:  
-     \def\regular{<font color="red">"Scheherazade:script=arab"</font>}
+     \def\regular{```"Scheherazade:script=arab"```}
 
 </a>
 
@@ -154,8 +152,8 @@ You can also specify a font definition like this directly in a stylesheet marker
 
 <a name="ptx2pdf-MacroSetupParameters-TextSpacing">
 
-*   \def\LineSpacingFactor{<font color="red">1</font>} – Scaling factor used to adjust line spacing (leading); relative to font size (default = 1.2)
-*   \def\VerticalSpaceFactor{<font color="red">1.0</font>} – Scaling factor used to adjust amount of vertical spaces applied for usfm.sty SpaceBefore and SpaceAfter values (default = 0.2}
+*   \def\LineSpacingFactor{```1```} – Scaling factor used to adjust line spacing (leading); relative to font size (default = 1.2)
+*   \def\VerticalSpaceFactor{```1.0```} – Scaling factor used to adjust amount of vertical spaces applied for usfm.sty SpaceBefore and SpaceAfter values (default = 0.2}
 
 </a>
 
@@ -163,11 +161,11 @@ You can also specify a font definition like this directly in a stylesheet marker
 
 <a name="ptx2pdf-MacroSetupParameters-Chapters&amp;Verses">
 
-*   \OmitVerseNumberOne<font color="red">true</font> – Omit the first verse number in every chapter? (default = false)
-*   \OmitChapterNumber<font color="red">true</font> – Omit the chapter numbers of the book. (Often used for one-chapter books. (default = false)
-*   \OmitChapterNumberRH<font color="red">true</font> – Omit the chapter numbers in the running header (RH). (default = false)
-*   \def\AdornVerseNumber#1{<font color="red">(</font>#1<font color="red">)</font>} – Put parentheses around the verse number (which is represented by #1)
-*   \def\AfterVerseSpaceFactor{<font color="red">0</font>} – Remove extra space after verse numbers, when you have set them to be "invisible", or a very small size, such as \Marker v \FontSize 0.0001
+*   \OmitVerseNumberOne```true``` – Omit the first verse number in every chapter? (default = false)
+*   \OmitChapterNumber```true``` – Omit the chapter numbers of the book. (Often used for one-chapter books. (default = false)
+*   \OmitChapterNumberRH```true``` – Omit the chapter numbers in the running header (RH). (default = false)
+*   \def\AdornVerseNumber#1{```(```#1```)```} – Put parentheses around the verse number (which is represented by #1)
+*   \def\AfterVerseSpaceFactor{```0```} – Remove extra space after verse numbers, when you have set them to be "invisible", or a very small size, such as \Marker v \FontSize 0.0001
 
 </a>
 
@@ -179,8 +177,8 @@ You can also specify a font definition like this directly in a stylesheet marker
 
 <a name="ptx2pdf-MacroSetupParameters-Header/FooterPosition">
 
-*   \def\HeaderPosition{<font color="red">0.7</font>} – Position of the baseline of the header relative to the top edge of the paper (not the text area) (default = 0.5)
-*   \def\FooterPosition{<font color="red">0.5</font>} – Position of the baseline of the footer relative to the bottom edge of the paper (not the text area) (default = 0.5)
+*   \def\HeaderPosition{```0.7```} – Position of the baseline of the header relative to the top edge of the paper (not the text area) (default = 0.5)
+*   \def\FooterPosition{```0.5```} – Position of the baseline of the footer relative to the bottom edge of the paper (not the text area) (default = 0.5)
 
 The following parameters are used to specify the information to include in the running header (at top of pages, except title pages). Set the items to print at left/center/right of odd and even pages separately.
 
@@ -190,9 +188,9 @@ The following parameters are used to specify the information to include in the r
 
 <a name="ptx2pdf-MacroSetupParameters-OddHeader">
 
-*   \def\RHoddleft{<font color="red">\empty</font>}
-*   \def\RHoddcenter{<font color="red">\rangeref</font>}
-*   \def\RHoddright{<font color="red">\pagenumber</font>}
+*   \def\RHoddleft{```\empty```}
+*   \def\RHoddcenter{```\rangeref```}
+*   \def\RHoddright{```\pagenumber```}
 
 </a>
 
@@ -200,9 +198,9 @@ The following parameters are used to specify the information to include in the r
 
 <a name="ptx2pdf-MacroSetupParameters-EvenHeader">
 
-*   \def\RHevenleft{<font color="red">\pagenumber</font>}
-*   \def\RHevencenter{<font color="red">\rangeref</font>}
-*   \def\RHevenright{<font color="red">\empty</font>}
+*   \def\RHevenleft{```\pagenumber```}
+*   \def\RHevencenter{```\rangeref```}
+*   \def\RHevenright{```\empty```}
 
 </a>
 
@@ -210,9 +208,9 @@ The following parameters are used to specify the information to include in the r
 
 <a name="ptx2pdf-MacroSetupParameters-TitlepageHeader">
 
-*   \def\RHtitleleft{<font color="red">\empty</font>}
-*   \def\RHtitlecenter{<font color="red">\empty</font>}
-*   \def\RHtitleright{<font color="red">\empty</font>}
+*   \def\RHtitleleft{```\empty```}
+*   \def\RHtitlecenter{```\empty```}
+*   \def\RHtitleright{```\empty```}
 
 </a>
 
@@ -234,7 +232,7 @@ Nine similar \def commands are available, beginning with \RF instead of \RH.
 
 <div><a name="ptx2pdf-MacroSetupParameters-Odd,Even,andTitlepageFooter">
 
-Literal text can also be included (e.g., to add dashes around a centered page number, like <font color="red">- \pagenumber -</font>).
+Literal text can also be included (e.g., to add dashes around a centered page number, like ```- \pagenumber -```).
 
 </a>
 
@@ -242,8 +240,8 @@ Literal text can also be included (e.g., to add dashes around a centered page nu
 
 <a name="ptx2pdf-MacroSetupParameters-OtherHeaderSetup">
 
-*   \RHruleposition=<font color="red">6pt</font> – Position of a rule below the running header (default = 10pt)
-*   \VerseRefs<font color="red">true</font> – Whether to include verse numbers in header/footer references, or only chapter numbers (default = false)
+*   \RHruleposition=```6pt``` – Position of a rule below the running header (default = 10pt)
+*   \VerseRefs```true``` – Whether to include verse numbers in header/footer references, or only chapter numbers (default = false)
 
 </a>
 
@@ -251,7 +249,7 @@ Literal text can also be included (e.g., to add dashes around a centered page nu
 
 <a name="ptx2pdf-MacroSetupParameters-Other">
 
-*   \IndentAfterHeading<font color="red">true</font> – Remove paragraph indentation on the first paragraph after a section heading (default = false)
+*   \IndentAfterHeading```true``` – Remove paragraph indentation on the first paragraph after a section heading (default = false)
 
 </a>
 
@@ -259,15 +257,15 @@ Literal text can also be included (e.g., to add dashes around a centered page nu
 
 <a name="ptx2pdf-MacroSetupParameters-Notes">
 
-*   \AutoCallerStartChar=<font color="red">97</font> – Unicode value of first character to use for auto-generated callers (default = 97 = 'a')
-*   \AutoCallerNumChars<font color="red">26</font> – Number of caller characters to generate before restarting sequence (default = 26)
+*   \AutoCallerStartChar=```97``` – Unicode value of first character to use for auto-generated callers (default = 97 = 'a')
+*   \AutoCallerNumChars```26``` – Number of caller characters to generate before restarting sequence (default = 26)
 *   \AutoCallers{f|x}{callers csv} – Make the specified note class use a specific sequence of symbols
-    *   \AutoCallers{<font color="red">f</font>}{<font color="red">*,+,¶,§,**,++,¶¶,§§</font>}
-    *   \AutoCallers{<font color="red">x</font>}{} (this configuration would suppress callers for cross-references)
-*   \NumericCallers{<font color="red">f</font>} – Make the note class use numeric (instead of alphabetic) callers (specify f _or_ x)
-*   \PageResetCallers{<font color="red">f</font>} – Restart numbering for the notes class on each page (specify f _or_ x)
-*   \OmitCallerInNote{<font color="red">x</font>} – To omit callers from the note class at the bottom of the page (specify f _or_ x)
-*   \ParagraphedNotes{<font color="red">x</font>} – Format the note class as a single paragraph, with larger space between note items (specify f _or_ x)
+    *   \AutoCallers{```f```}{```*,+,¶,§,**,++,¶¶,§§```}
+    *   \AutoCallers{```x```}{} (this configuration would suppress callers for cross-references)
+*   \NumericCallers{```f```} – Make the note class use numeric (instead of alphabetic) callers (specify f _or_ x)
+*   \PageResetCallers{```f```} – Restart numbering for the notes class on each page (specify f _or_ x)
+*   \OmitCallerInNote{```x```} – To omit callers from the note class at the bottom of the page (specify f _or_ x)
+*   \ParagraphedNotes{```x```} – Format the note class as a single paragraph, with larger space between note items (specify f _or_ x)
 
 _For now_, if you want to change the appearance of (or remove) the footnote rule, redefine \def\footnoterule
 
@@ -279,9 +277,9 @@ _For now_, if you want to change the appearance of (or remove) the footnote rule
 
 <a name="ptx2pdf-MacroSetupParameters-Illustrations(Figures)">
 
-*   \IncludeFigures<font color="red">true</font> – Output illustrations (figures) marked in the text with USFM <tt>\fig...\fig*</tt> markup? (default = true)
+*   \IncludeFigures```true``` – Output illustrations (figures) marked in the text with USFM <tt>\fig...\fig*</tt> markup? (default = true)
 
-*   \FigurePlaceholders<font color="red">false</font> – Operate in "figure placeholders" mode? If true, the macros will read your picture definitions, but only render a rectangular frame containing the text of the filename, rather than the actual graphic. (default = false)
+*   \FigurePlaceholders```false``` – Operate in "figure placeholders" mode? If true, the macros will read your picture definitions, but only render a rectangular frame containing the text of the filename, rather than the actual graphic. (default = false)
 
 </a>
 
@@ -292,7 +290,7 @@ _For now_, if you want to change the appearance of (or remove) the footnote rule
 Hooks can insert something (text, or any valid TeX instruction/control sequence) to the output, at selected marker (style) location(s).
 
 *   \sethook{location}{marker}{insert}  
-    Example: \sethook{<font color="red">start</font>}{<font color="red">s1</font>}{<font color="red">~</font>}  
+    Example: \sethook{```start```}{```s1```}{```~```}  
 
     Valid locations are:
     *   before – prior to the start of the par or style run containing the selected style text (before its definition is applied)
@@ -304,8 +302,8 @@ Hooks can insert something (text, or any valid TeX instruction/control sequence)
 
 
 A useful hook is the command to "hang" verse numbers into the paragraph indent, often wanted on poetry styles:  
-     \sethook{<font color="red">start</font>}{<font color="red">q1</font>}{<font color="red">\hangversenumber</font>}  
-     \sethook{<font color="red">start</font>}{<font color="red">q2</font>}{<font color="red">\hangversenumber</font>}  
+     \sethook{```start```}{```q1```}{```\hangversenumber```}  
+     \sethook{```start```}{```q2```}{```\hangversenumber```}  
 
 This allows a verse number at the beginning of a paragraph to be typeset "hanging" into the paragraph indent, so that the text itself starts at the usual indent position. This is often used with poetic sections (\q# markers), so that the actual text stays neatly aligned for lines both with and without verse numbers.  
 
