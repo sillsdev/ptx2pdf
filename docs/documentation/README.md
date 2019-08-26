@@ -1,6 +1,6 @@
 #### Navigation
 
-[Home](../home/README.md)  | [Installation](../installation/README.md) | [Quick Start](../quick-start/README.md) | Documentation | [Cookbook ](../documentation/README.md) 
+[Home](../home/README.md)  | [Installation](../installation/README.md) | [Quick Start](../quick-start/README.md) | Documentation | [Cookbook ](../cookbook/README.md) 
 
 
 # Documentation
