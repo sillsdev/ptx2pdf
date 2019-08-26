@@ -7,7 +7,7 @@ Cookbook | [Documentation](../documentation/README.md) | [Home](../home/README.m
 
 ## Answering frequently asked questions with real life examples.  
 
-1.  [Adjusting font in override stylesheet](adjusting-font-in-override-stylesheet/index.html)
+1.  [Adjusting font in override stylesheet](adjusting-font-in-override-stylesheet/README.md)
 2.  [Adjusting space after chapter number](adjusting-space-after-chapter-number/index.html)
 3.  [Controlling top and bottom margins](controlling-top-and-bottom-margins/index.html)
 4.  [Creating a booklet](creating-a-booklet/index.html)
