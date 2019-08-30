@@ -1,6 +1,6 @@
 #### Navigation
 
-Home  | [Installation](../installation/README.md) | [Quick Start](../quick-start/README.md) | [Documentation](../documentation/README.md) | [Cookbook ](../cookbook/README.md) 
+Home  | [Installation](../installation/README.md) | [Quick Start](../quick-start/README.md) | [Documentation](../documentation/README.md) | [Cookbook ](../cookbook/README.md)
 
 
 ![XeTeX logo](xetex_icon.jpg)
@@ -18,11 +18,10 @@ PTX2PDF is a [XeTeX](http://scripts.sil.org/xetex) based macro package for types
 
 
 
-     
-Updated on <abbr class="updated" title="2012-01-06T16:50:16.687Z">Jan 6, 2012</abbr> by <span class="author"><span class="vcard">Jeff Klassen</span> </span>(Version <span class="sites:revision">6</span>)</small>  
+
+Updated on <abbr class="updated" title="2012-01-06T16:50:16.687Z">Jan 6, 2012</abbr> by <span class="author"><span class="vcard">Jeff Klassen</span> </span>(Version <span class="sites:revision">6</span>)</small>
 
 
 * * *
 
-**Attachments (1)**  
-
+**Attachments (1)**

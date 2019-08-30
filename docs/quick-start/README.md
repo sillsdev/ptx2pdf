@@ -1,13 +1,13 @@
 #### Navigation
 
-[Home](../home/README.md)  | [Installation](../installation/README.md) | Quick Start | [Documentation](../documentation/README.md) | [Cookbook ](../cookbook/README.md) 
+[Home](../home/README.md)  | [Installation](../installation/README.md) | Quick Start | [Documentation](../documentation/README.md) | [Cookbook ](../cookbook/README.md)
 
 
 # Quick Start
 
-To get started with ptx2pdf you need XeTeX and the ptx2pdf macro package installed. (Instructions can be found here.) We have a sample project that can be downloaded here - [ptx2pdf-sample-GLW.zip](../quick-start/ptx2pdf-sample-GLW.zip?attredirects=0/index.html)  
+To get started with ptx2pdf you need XeTeX and the ptx2pdf macro package installed. (Instructions can be found here.) We have a sample project that can be downloaded here - [ptx2pdf-sample-GLW.zip](../quick-start/ptx2pdf-sample-GLW.zip?attredirects=0/index.html)
 
-A typical ptx2pdf project consists of:  
+A typical ptx2pdf project consists of:
 
 *   project file, this is the tex file that contains the references to all the files that are needed,
 *   setup file, this is a txt file that contains the user defined setups,
@@ -16,7 +16,7 @@ A typical ptx2pdf project consists of:
 
 ## <a name="TOC-The-project-file-e.g.-GLW.tex">The project file, e.g. GLW.tex</a>
 
-<a name="TOC-The-project-file-e.g.-GLW.tex">This file links the macros and the style sheet and the actual scripture file(s). The sample project file looks like this:  
+<a name="TOC-The-project-file-e.g.-GLW.tex">This file links the macros and the style sheet and the actual scripture file(s). The sample project file looks like this:
 
 ```
 % sample ptx2pdf-project file
@@ -37,7 +37,7 @@ A typical ptx2pdf project consists of:
 
 ## <a name="TOC-The-project-file-e.g.-GLW.tex"></a><a name="TOC-The-setup-file-e.g.-GLW-setup.txt">The setup file, e.g. GLW-setup.txt</a>
 
-<a name="TOC-The-setup-file-e.g.-GLW-setup.txt">This file contains the user accessible setups for this project. The sample project setup file looks like this:  
+<a name="TOC-The-setup-file-e.g.-GLW-setup.txt">This file contains the user accessible setups for this project. The sample project setup file looks like this:
 
 ```
 % GLW-setup
@@ -107,7 +107,7 @@ A typical ptx2pdf project consists of:
 %\IndentAtChaptertrue % whether to use paragraph indent at drop-cap chapter numbers
 
 \AutoCallers{f}{*,?,?,¶,§}
-\PageResetCallers{f}  
+\PageResetCallers{f}
 %\NumericCallers{f}
 %\OmitCallerInNote{f}
 
@@ -131,7 +131,7 @@ A typical ptx2pdf project consists of:
 
 ## <a name="TOC-The-setup-file-e.g.-GLW-setup.txt"></a><a name="TOC-Typesetting-GLW.tex">Typesetting GLW.tex</a>
 
-<a name="TOC-Typesetting-GLW.tex">To typeset GLW.tex open the file in your standard TeX editor to typeset or type in terminal: </a> 
+<a name="TOC-Typesetting-GLW.tex">To typeset GLW.tex open the file in your standard TeX editor to typeset or type in terminal: </a>
 
 ```xetex GLW.tex```
 
@@ -141,11 +141,10 @@ A typical ptx2pdf project consists of:
 
 
 
-<small>Updated on <abbr class="updated" title="2011-05-17T19:37:25.726Z">May 17, 2011</abbr> by <span class="author"><span class="vcard">Jeff Klassen</span> </span>(Version <span class="sites:revision">4</span>)</small>  
+<small>Updated on <abbr class="updated" title="2011-05-17T19:37:25.726Z">May 17, 2011</abbr> by <span class="author"><span class="vcard">Jeff Klassen</span> </span>(Version <span class="sites:revision">4</span>)</small>
 
 * * *
 
-**Attachments (1)**  
+**Attachments (1)**
 
 [ptx2pdf-sample-GLW.zip](ptx2pdf-sample-GLW.zip) - on <abbr class="updated" title="2011-05-17T19:28:42.086Z">May 17, 2011</abbr> by <span class="author"><span class="vcard">Jeff Klassen</span> </span>(Version <span class="sites:revision">1</span>)
-

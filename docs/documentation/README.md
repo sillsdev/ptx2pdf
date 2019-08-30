@@ -1,11 +1,11 @@
 #### Navigation
 
-[Home](../home/README.md)  | [Installation](../installation/README.md) | [Quick Start](../quick-start/README.md) | Documentation | [Cookbook ](../cookbook/README.md) 
+[Home](../home/README.md)  | [Installation](../installation/README.md) | [Quick Start](../quick-start/README.md) | Documentation | [Cookbook ](../cookbook/README.md)
 
 
 # Documentation
 
-A [PDF](../documentation/ptx2pdf-MacroSetupParameters.pdf?attredirects=0/index.html) version of this document is also available.  
+A [PDF](../documentation/ptx2pdf-MacroSetupParameters.pdf?attredirects=0/index.html) version of this document is also available.
 
 ## Contents
 
@@ -40,7 +40,7 @@ Text in ```gray``` represents the portion of the setup parameter syntax which ca
 
 *   \stylesheet{```usfm.sty```} – Define the Paratext stylesheet to be used as a basis for formatting (default=usfm.sty)
 
-You can read multiple stylesheets (to override primary stylesheet values)  
+You can read multiple stylesheets (to override primary stylesheet values)
 For example:
 
 *   \stylesheet{```mods.sty```}
@@ -95,7 +95,7 @@ In the file ```mods.sty```, add standard Paratext marker style definition parame
 </div>
 
 *   \def\TopMarginFactor{```1.15```} – Relative size of the top margin based on MarginUnit (default = 1.0)
-*   \def\BottomMarginFactor{```1.0```} – Relative size of the bottom margin based on MarginUnit. If undefined, the \TopMarginFactor will be used for both top and bottom margins.  
+*   \def\BottomMarginFactor{```1.0```} – Relative size of the bottom margin based on MarginUnit. If undefined, the \TopMarginFactor will be used for both top and bottom margins.
 
 *   \def\SideMarginFactor{```1.0```} – Relative size of side margin based on MarginUnit (default = 0.7)
 *   \BindingGutter=```4mm``` – Amount for an additional margin on the binding side of the page (default = 5mm)
@@ -134,17 +134,17 @@ In the file ```mods.sty```, add standard Paratext marker style definition parame
 
 For Mac OS X, use the Postscript Name or Full Name in quotes from Font Book's Font Info.
 
-Script specific features for fonts supporting the selected script can be enabled by adding a "script=" parameter to the end of the font name. For example, in the case of typesetting Arabic script, we might have:  
+Script specific features for fonts supporting the selected script can be enabled by adding a "script=" parameter to the end of the font name. For example, in the case of typesetting Arabic script, we might have:
      \def\regular{```"Scheherazade:script=arab"```}
 
 </a>
 
-<a name="ptx2pdf-MacroSetupParameters-Faces">The script parameter is an OpenType script tag. A list of common script tags is presented in an</a> [appendix](#ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags) at the end of this document.)  
+<a name="ptx2pdf-MacroSetupParameters-Faces">The script parameter is an OpenType script tag. A list of common script tags is presented in an</a> [appendix](#ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags) at the end of this document.)
 
-You can also specify a font definition like this directly in a stylesheet marker definition. For example:  
+You can also specify a font definition like this directly in a stylesheet marker definition. For example:
 
 ```
-     \Marker p  
+     \Marker p
      \FontName Scheherazade:script=arab
 ```
 
@@ -220,7 +220,7 @@ The following parameters are used to specify the information to include in the r
 
 Nine similar \def commands are available, beginning with \RF instead of \RH.
 
-**Header/Footer Content Parameters**  
+**Header/Footer Content Parameters**
 
 *   \rangeref – Scripture reference of the range of text on the page
 *   \firstref – reference of the first verse on the page
@@ -289,8 +289,8 @@ _For now_, if you want to change the appearance of (or remove) the footnote rule
 
 Hooks can insert something (text, or any valid TeX instruction/control sequence) to the output, at selected marker (style) location(s).
 
-*   \sethook{location}{marker}{insert}  
-    Example: \sethook{```start```}{```s1```}{```~```}  
+*   \sethook{location}{marker}{insert}
+    Example: \sethook{```start```}{```s1```}{```~```}
 
     Valid locations are:
     *   before – prior to the start of the par or style run containing the selected style text (before its definition is applied)
@@ -301,11 +301,11 @@ Hooks can insert something (text, or any valid TeX instruction/control sequence)
 </a></div>
 
 
-A useful hook is the command to "hang" verse numbers into the paragraph indent, often wanted on poetry styles:  
-     \sethook{```start```}{```q1```}{```\hangversenumber```}  
-     \sethook{```start```}{```q2```}{```\hangversenumber```}  
+A useful hook is the command to "hang" verse numbers into the paragraph indent, often wanted on poetry styles:
+     \sethook{```start```}{```q1```}{```\hangversenumber```}
+     \sethook{```start```}{```q2```}{```\hangversenumber```}
 
-This allows a verse number at the beginning of a paragraph to be typeset "hanging" into the paragraph indent, so that the text itself starts at the usual indent position. This is often used with poetic sections (\q# markers), so that the actual text stays neatly aligned for lines both with and without verse numbers.  
+This allows a verse number at the beginning of a paragraph to be typeset "hanging" into the paragraph indent, so that the text itself starts at the usual indent position. This is often used with poetic sections (\q# markers), so that the actual text stays neatly aligned for lines both with and without verse numbers.
 
 * * *
 
@@ -615,19 +615,18 @@ This allows a verse number at the beginning of a paragraph to be typeset "hangin
 
 <a name="ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags"></a></div>
 
-<a name="ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags">  
-<small>Updated on <abbr class="updated" title="2011-05-18T19:45:59.877Z">May 18, 2011</abbr> by <span class="author"><span class="vcard">Jeff Klassen</span> </span>(Version <span class="sites:revision">8</span>)</small>  
+<a name="ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags">
+<small>Updated on <abbr class="updated" title="2011-05-18T19:45:59.877Z">May 18, 2011</abbr> by <span class="author"><span class="vcard">Jeff Klassen</span> </span>(Version <span class="sites:revision">8</span>)</small>
 
 * * *
 
 
 <div><a name="ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags">
-	
-**Attachments (1)**  
+
+**Attachments (1)**
 
 </a>
 
 <div class="hentry attachment" id="https://sites.google.com/feeds/content/icapmail.org/ptx2pdf/4849046698044518104"><a name="ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags"></a>
 
 [ptx2pdf-MacroSetupParameters.pdf](ptx2pdf-MacroSetupParameters.pdf) - on <abbr class="updated" title="2011-05-17T19:48:01.362Z">May 17, 2011</abbr> by <span class="author"><span class="vcard">Jeff Klassen</span> </span>(Version <span class="sites:revision">1</span>)</div>
-

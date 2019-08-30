@@ -1,8 +1,8 @@
 #### Navigation
 
-[Home](../../home/README.md)  | [Installation](../../installation/README.md) | [Quick Start](../../quick-start/README.md) | [Documentation](../../documentation/README.md) | [Cookbook ](../README.md) 
+[Home](../../home/README.md)  | [Installation](../../installation/README.md) | [Quick Start](../../quick-start/README.md) | [Documentation](../../documentation/README.md) | [Cookbook ](../README.md)
 
-[Cookbook >](../README.md) 
+[Cookbook >](../README.md)
 
 
 # <span class="entry-title">User selectable Graphite features</span>
@@ -24,9 +24,9 @@ Yes. They're accessed by adding the feature names and settings required to the f
 <div>
 
 ```
-\font\charis = "Charis SIL/GR:  
+\font\charis = "Charis SIL/GR:
      Uppercase Eng alternates=Capital N with tail;
-     Literacy alternates=True" at 12pt  
+     Literacy alternates=True" at 12pt
 ...
 \charis This is some sample text....
 ```
@@ -39,5 +39,4 @@ To find out the names of the features supported by a font, you can consult the f
 
 
 
-<small>Updated on <abbr class="updated" title="2012-01-06T16:09:00.064Z">Jan 6, 2012</abbr> by <span class="author"><span class="vcard">Jeff Klassen</span> </span>(Version <span class="sites:revision">3</span>)</small>  
-
+<small>Updated on <abbr class="updated" title="2012-01-06T16:09:00.064Z">Jan 6, 2012</abbr> by <span class="author"><span class="vcard">Jeff Klassen</span> </span>(Version <span class="sites:revision">3</span>)</small>

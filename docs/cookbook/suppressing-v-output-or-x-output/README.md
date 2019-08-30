@@ -1,8 +1,8 @@
 #### Navigation
 
-[Home](../../home/README.md)  | [Installation](../../installation/README.md) | [Quick Start](../../quick-start/README.md) | [Documentation](../../documentation/README.md) | [Cookbook ](../README.md) 
+[Home](../../home/README.md)  | [Installation](../../installation/README.md) | [Quick Start](../../quick-start/README.md) | [Documentation](../../documentation/README.md) | [Cookbook ](../README.md)
 
-[Cookbook >](../README.md) 
+[Cookbook >](../README.md)
 
 
 # <span class="entry-title">Suppressing v output or x output</span>
@@ -31,7 +31,7 @@ in a stylesheet file. (I don't know if Paratext would object to finding this in 
 Note SFMs also support this option. This could be useful, for example, if you've got cross-references for the whole Bible coded with \x .... \x*, but want to print a portion (e.g., just a Gospel) without x-refs; no need to modify the USFM file, just add:
 
 ```
-\Marker x 
+\Marker x
 \TextProperties nonpublishable
 ```
 
@@ -47,5 +47,4 @@ to a custom stylesheet override, and they'll disappear from the output.
 ptx-stylesheet.tex
 
 
-<small>Updated on <abbr class="updated" title="2012-01-06T15:56:14.418Z">Jan 6, 2012</abbr> by <span class="author"><span class="vcard">Jeff Klassen</span> </span>(Version <span class="sites:revision">2</span>)</small>  
-
+<small>Updated on <abbr class="updated" title="2012-01-06T15:56:14.418Z">Jan 6, 2012</abbr> by <span class="author"><span class="vcard">Jeff Klassen</span> </span>(Version <span class="sites:revision">2</span>)</small>

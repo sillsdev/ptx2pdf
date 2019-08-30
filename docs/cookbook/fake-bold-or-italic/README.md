@@ -1,8 +1,8 @@
 #### Navigation
 
-[Home](../../home/README.md)  | [Installation](../../installation/README.md) | [Quick Start](../../quick-start/README.md) | [Documentation](../../documentation/README.md) | [Cookbook ](../README.md) 
+[Home](../../home/README.md)  | [Installation](../../installation/README.md) | [Quick Start](../../quick-start/README.md) | [Documentation](../../documentation/README.md) | [Cookbook ](../README.md)
 
-[Cookbook >](../README.md) 
+[Cookbook >](../README.md)
 
 
 # <span class="entry-title">Fake bold or italic</span>
@@ -25,9 +25,9 @@ Yes, but use it with moderation: often the results can be quite ugly.
 ```
 \def\italic{"Charis SIL:slant=0.2"}
 ```
-	
-will give you "slanted Roman" instead of the real Charis SIL Italic. Note that a negative "slant" factor will skew the font the other way; that might be useful if you're dealing with a right-to-left script. 
-	
+
+will give you "slanted Roman" instead of the real Charis SIL Italic. Note that a negative "slant" factor will skew the font the other way; that might be useful if you're dealing with a right-to-left script.
+
 
 *   **For fake bold**, use the embolden option.
 
@@ -40,5 +40,4 @@ The "emboldening factor" can be varied depending how much thickening you want, b
 
 
 
-<small>Updated on <abbr class="updated" title="2012-01-06T15:25:46.941Z">Jan 6, 2012</abbr> by <span class="author"><span class="vcard">Jeff Klassen</span> </span>(Version <span class="sites:revision">3</span>)</small>  
-
+<small>Updated on <abbr class="updated" title="2012-01-06T15:25:46.941Z">Jan 6, 2012</abbr> by <span class="author"><span class="vcard">Jeff Klassen</span> </span>(Version <span class="sites:revision">3</span>)</small>

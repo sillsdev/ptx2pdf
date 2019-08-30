@@ -1,8 +1,8 @@
 #### Navigation
 
-[Home](../../home/README.md)  | [Installation](../../installation/README.md) | [Quick Start](../../quick-start/README.md) | [Documentation](../../documentation/README.md) | [Cookbook ](../README.md) 
+[Home](../../home/README.md)  | [Installation](../../installation/README.md) | [Quick Start](../../quick-start/README.md) | [Documentation](../../documentation/README.md) | [Cookbook ](../README.md)
 
-[Cookbook >](../README.md) 
+[Cookbook >](../README.md)
 
 
 # <span class="entry-title">Adjusting space after chapter number</span>
@@ -23,5 +23,4 @@ There's a parameter called \AfterChapterSpaceFactor that might help; try
 and see what happens. (Default is 3\. It is related to the `\FontSizeUnit`, so it scales with the text.)
 
 
-<small>Updated on <abbr class="updated" title="2012-01-06T15:00:15.050Z">Jan 6, 2012</abbr> by <span class="author"><span class="vcard">Jeff Klassen</span> </span>(Version <span class="sites:revision">8</span>)</small>  
-
+<small>Updated on <abbr class="updated" title="2012-01-06T15:00:15.050Z">Jan 6, 2012</abbr> by <span class="author"><span class="vcard">Jeff Klassen</span> </span>(Version <span class="sites:revision">8</span>)</small>

@@ -1,8 +1,8 @@
 #### Navigation
 
-[Home](../../home/README.md)  | [Installation](../../installation/README.md) | [Quick Start](../../quick-start/README.md) | [Documentation](../../documentation/README.md) | [Cookbook ](../README.md) 
+[Home](../../home/README.md)  | [Installation](../../installation/README.md) | [Quick Start](../../quick-start/README.md) | [Documentation](../../documentation/README.md) | [Cookbook ](../README.md)
 
-[Cookbook >](../README.md) 
+[Cookbook >](../README.md)
 
 
 # <span class="entry-title">Watermark on pages</span>
@@ -41,5 +41,4 @@ ptx-cropmarks.tex
 
 
 
-<small>Updated on <abbr class="updated" title="2012-01-06T16:11:54.537Z">Jan 6, 2012</abbr> by <span class="author"><span class="vcard">Jeff Klassen</span> </span>(Version <span class="sites:revision">2</span>)</small>  
-
+<small>Updated on <abbr class="updated" title="2012-01-06T16:11:54.537Z">Jan 6, 2012</abbr> by <span class="author"><span class="vcard">Jeff Klassen</span> </span>(Version <span class="sites:revision">2</span>)</small>

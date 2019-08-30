@@ -1,8 +1,8 @@
 #### Navigation
 
-[Home](../../home/README.md)  | [Installation](../../installation/README.md) | [Quick Start](../../quick-start/README.md) | [Documentation](../../documentation/README.md) | [Cookbook ](../README.md) 
+[Home](../../home/README.md)  | [Installation](../../installation/README.md) | [Quick Start](../../quick-start/README.md) | [Documentation](../../documentation/README.md) | [Cookbook ](../README.md)
 
-[Cookbook >](../README.md) 
+[Cookbook >](../README.md)
 
 
 # Adjusting font in override stylesheet
@@ -48,5 +48,4 @@ It doesn't have to provide full redefinitions of the styles; the attributes you 
 
 
 
-<small>Updated on <abbr class="updated" title="2012-01-06T15:22:16.761Z">Jan 6, 2012</abbr> by <span class="author"><span class="vcard">Jeff Klassen</span> </span>(Version <span class="sites:revision">5</span>)</small>  
-
+<small>Updated on <abbr class="updated" title="2012-01-06T15:22:16.761Z">Jan 6, 2012</abbr> by <span class="author"><span class="vcard">Jeff Klassen</span> </span>(Version <span class="sites:revision">5</span>)</small>
