@@ -5,14 +5,14 @@
 [Cookbook >](../README.md)
 
 
-# <span class="entry-title">Updating XeTeX in TeXLive (Windows)</span>
+# <span class="entry-title">Updating XeTeX in TeX Live (Windows)</span>
 
 
 ## <a name="TOC-Problem">Problem</a>
 
 <a name="TOC-Problem">
 
-How can I update XeTeX to the latest version (I use TeXLive on Windows)?
+How can I update XeTeX to the latest version (I use TeX Live on Windows)?
 
 </a>
 
@@ -20,35 +20,54 @@ How can I update XeTeX to the latest version (I use TeXLive on Windows)?
 
 <a name="TOC-Solution">
 
-Listed below are the steps I followed to successfully update the version of XeTeX in my TeX Live installation.
+If you have a TeX Live installation as installed by the TeX Live installer,
+run `tlmgr update --self --all`
 
-Some details: I started with TeX Live 2007, standard installation, with files located at C:\TeXLive2007\. It has XeTeX 0.996, and I wanted to update to XeTeX 0.997 which has support for the \includepdf macro.
-
+If you have a mini installation based on W32TeX then continue reading.
 </a>
 
-*   Download the latest "xetex-dev" package from Akira's [W32TeX page](http://w32tex.org/):</a>
-    *   <a name="TOC-Solution">go to </a>[http://www.fsci.fuk.kindai.ac.jp/kakuto/win32-ptex/web2c75-e.html](http://www.fsci.fuk.kindai.ac.jp/kakuto/win32-ptex/web2c75-e.html) (no longer available)
-    *   scroll down to XeTeX-DEV for W32 (0.997)
-    *   click on link to download the file [ xetex-dev-w32.tar.bz2 ]
+*   Download the latest W32TeX build using the CTAN mirror from Akira's [W32TeX page](http://w32tex.org/): You will need the following files.
 
-*  Uncompress the .tar.bz2 file, making sure to maintain the folder structure
+    *   dvipdfm-w32.tar.xz
+    *   latex.tar.xz
+    *   mftools.tar.xz
+    *   pdftex-w32.tar.xz
+    *   platex.tar.xz
+    *   ptex-w32.tar.xz
+    *   web2c-lib.tar.xz
+    *   web2c-w32.tar.xz
+    *   xetex-w32.tar.xz
 
-   *   not all Windows compression programs can handle this type of file, try 7-zip.org or bzip.org
+*   For further validation, you can download these files from the other mirrors,
+    and compare the files using a diff tool or checksums.
+    There are often differences in the downloaded files between the different mirrors,
+    probably because the W32TeX project builds very frequently (perhaps daily),
+    and it takes some time for the mirrors to be updated.
 
-*  Open the \bin folder at the top of that folder structure and select and copy all files
+*   You could pick and choose the latest file from among the mirrors
+    (which is not entirely possible as some of the mirrors do not display timestamps,
+    and of those timestamps that are displayed the timezone of the mirror might
+    make the timestamp seem different, even for the same time of building the tarball).
+    This is not recommended, as you might get files from two different builds of W32TeX.
+    Therefore, update your installation with files all from the same mirror.
 
-     *   14 files in my case, all *.dll and *.exe files
+*  Uncompress the .tar.xz files, making sure to maintain the folder structure
 
-*  Go to C:\TeXLive2007\bin\win32 folder and paste
+   *   not all Windows compression programs can handle this type of file, try 7-zip.org
+   *   Linux users can use `tar -Jxf filename.tar.xz`
 
-     *   This will replace 13 files (3 of which were identical, but that's not a problem)
-     *   One file wasn't in the \win32 folder before, icudt38.dll, so it will just paste
+*  Use a directory diff tool (such as WinMerge, meld, or kdiff3) to compare the \bin and \share folders,
+   and copy the files that differ.
+   You don't want to copy all the files, as that will substantially increase the size of your mini installation.
 
-*  Go to a command prompt and type "fmtutil --byfmt xetex".
-*  Now you should be able to use the new version (0.997) of XeTeX
+     *   You may have to adjust the directory names and file locations, as these change due to Tex Live development.
+     *   In the `\bin` folder, there are two files that have a version number in them
+         (X indicating a digit), `icudtXX.dll` and `kpathseaXXX.dll`. You will need to remove the older file, and add the newer file.
 
-    *   The first time I ran XeTeX it took quite a while - rebuilding some databases
+*  You might need to run `fmtutil --byfmt xetex`, although XeTeX may do this for you when you first run XeTeX.
+
+*  The first time XeTeX runs it might take quite a while - rebuilding some font databases.
 
 
 
-<small>Updated on Aug 26, 2019 by Lorna Evans</small>
+<small>Updated on Aug 30, 2019 by Bobby de Vos</small>
