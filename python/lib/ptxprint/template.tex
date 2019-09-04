@@ -1,0 +1,90 @@
+
+\input paratext2.tex
+
+%%%%% Stylesheets %%%%%
+\stylesheet{{{/ptxpath}/usfm.sty}}
+\stylesheet{{{/ptxpath}/{project/id}/custom.sty}}
+\stylesheet{{NestedStyles.sty}}
+
+\stylesheet{{PrintDraft-mods.sty}}% override project stylesheet settings here
+
+%%%%% Page Setup %%%%%
+% Dimensions
+\PaperWidth={paper/width}
+\PaperHeight={paper/height}
+
+%% Margins
+\MarginUnit={paper/margins}
+\def\TopMarginFactor{{1.15}}
+\def\BottomMarginFactor{{1.15}}
+\def\SideMarginFactor{{1.0}}
+
+%% Columns
+\TitleColumns=1
+\IntroColumns=1
+\BodyColumns={paper/columns}
+
+%%%%% Text Spacing %%%%%
+\def\LineSpacingFactor{{1}}
+\def\VerticalSpaceFactor{{1.0}}
+
+%%%%% Fonts %%%%%
+\FontSizeUnit={paper/fontfactor:.6g}pt
+
+%% Faces
+\def\regular{{"Padauk Book/GR:;script=mymr;mapping=burmesedigits"}}
+\def\bold{{"Padauk Book/GR/B:script=mymr;mapping=burmesedigits"}}
+\def\italic{{"Padauk/GR/I:script=mymr;mapping=burmesedigits"}}
+\def\bolditalic{{"Padauk/GR/BI:script=mymr;mapping=burmesedigits"}}
+
+%%%%% Layout %%%%%
+\RTLfalse% Use right-to-left layout mode?
+\XeTeXlinebreaklocale "my"
+\JustifyParstrue
+
+\AutoCallers{{f}}{{a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}}
+\AutoCallers{{x}}{{a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}}
+
+
+%%%%% Running Header/Footer %%%%%
+\def\HeaderPosition{{0.7}}
+\def\FooterPosition{{0.7}}
+
+%% Odd Header
+\def\RHoddleft{{\empty}}
+\def\RHoddcenter{{\rangeref}}
+\def\RHoddright{{\pagenumber}}
+
+%% Even Header
+\def\RHevenleft{{\empty}}
+\def\RHevencenter{{\rangeref}}
+\def\RHevenright{{\pagenumber}}
+
+\VerseRefsfalse% include verses in reference text?
+
+%% Footer
+\def\RFoddcenter{{2019-09-04: DRAFT}}
+\def\RFevencenter{{2019-09-04: DRAFT}}
+\def\RFtitlecenter{{2019-09-04: DRAFT}}
+
+%%%%% Illustrations %%%%%
+\IncludeFigurestrue
+\PicPath={{/home/mhosken/Paratext8Projects/myBCBv0/figures/}}
+
+% tweak to enable blank lines
+\def\b{{\par\vskip\baselineskip}}
+% restore page break definition (if present in USFM stylesheet, it has been re-defined and will not work)
+\let\pb=\pagebreak
+
+\input PrintDraft-mods.tex% adjust/override setup parameters here
+
+%%%%% Hyphenation %%%%%
+\hyphenpenalty=10000
+
+%%%%% Load Paratext USFM %%%%%
+\XeTeXdefaultencoding "utf-8"
+\catcode`\%=12
+\ptxfile{{/home/mhosken/Paratext8Projects/myBCBv0/PrintDraft/41MATmyBCBv0-draft.SFM}}
+\catcode`\%=14
+
+\end
