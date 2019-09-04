@@ -29,7 +29,7 @@
 \def\VerticalSpaceFactor{{1.0}}
 
 %%%%% Fonts %%%%%
-\FontSizeUnit={paper/fontfactor:.6g}pt
+\FontSizeUnit={paper/fontfactor:.6f}pt
 
 %% Faces
 \def\regular{{"Padauk Book/GR:;script=mymr;mapping=burmesedigits"}}
@@ -69,14 +69,14 @@
 
 %%%%% Illustrations %%%%%
 \IncludeFigurestrue
-\PicPath={{/home/mhosken/Paratext8Projects/myBCBv0/figures/}}
+\PicPath={{{/ptxpath}/{project/id}/figures/}}
 
 % tweak to enable blank lines
 \def\b{{\par\vskip\baselineskip}}
 % restore page break definition (if present in USFM stylesheet, it has been re-defined and will not work)
 \let\pb=\pagebreak
 
-\input PrintDraft-mods.tex% adjust/override setup parameters here
+\input {{{/ptxpath}/{project/id}/PrintDraft-mods.tex}}% adjust/override setup parameters here
 
 %%%%% Hyphenation %%%%%
 \hyphenpenalty=10000

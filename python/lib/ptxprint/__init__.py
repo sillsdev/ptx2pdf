@@ -29,14 +29,19 @@ class PtxPrinter:
         v = ""
         if wid.startswith("cb_"):
             model = w.get_model()
-            if model is not None:
-                v = model[w.get_active()][sub]
+            i = w.get_active()
+            if i < 0:
+                e = w.get_child()
+                if e is not None:
+                    v = e.get_text()
+            elif model is not None:
+                v = model[i][sub]
         elif wid.startswith("t_"):
             v = w.get_text()
         elif wid.startswith("f_"):
             v = w.get_font_name()
             print(v)
-            m = re.match(r"(^.*?),?\s*((?:\S+\s+)*)(\d+)$", v)
+            m = re.match(r"(^.*?),?\s*((?:\S+\s+)*)(\d+(?:\.\d+)?)$", v)
             if m:
                 v = [m.group(1), m.group(2), m.group(3)]
             else:
@@ -56,7 +61,7 @@ class PtxPrinter:
 
 class Info:
     _mappings = {
-        "project/id": lambda w:w.get("cb_project", 1),
+        "project/id": lambda w:w.get("cb_project"),
         "paper/width": lambda w:re.sub(r"^.*?, \s*(.+?)\s*(?:\(.*|$)", r"\1", w.get("cb_pagesize")) or "148mm",
         "paper/height": lambda w:re.sub(r"^(.*?)\s*,.*$", r"\1", w.get("cb_pagesize")) or "210mm",
         "paper/margins": lambda w:w.get("t_margins") or "14mm",

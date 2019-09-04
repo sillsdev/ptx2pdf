@@ -12,6 +12,9 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-p','--paratext',required=True,help="Path to Paratext Projects directory")
 args = parser.parse_args()
 
+# Where to find the default for -p
+# HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\Folders
+
 def doit(printer):
     info = ptxprint.Info(printer, args.paratext)
     print(info.asTex())

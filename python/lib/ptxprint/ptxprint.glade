@@ -98,6 +98,12 @@
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="ls_projects">
+    <columns>
+      <!-- column-name projid -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkDialog" id="ptxprint">
     <property name="can_focus">False</property>
     <property name="type_hint">dialog</property>
@@ -205,14 +211,14 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkRadioButton">
+                                      <object class="GtkRadioButton" id="radiobutton1">
                                         <property name="label" translatable="yes">One Book</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="halign">start</property>
-                                        <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
+                                        <property name="group">radiobutton2</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -221,13 +227,14 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkRadioButton">
+                                      <object class="GtkRadioButton" id="radiobutton2">
                                         <property name="label" translatable="yes">Choose Books</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
+                                        <property name="group">radiobutton1</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -254,6 +261,16 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">start</property>
+                                        <property name="model">ls_projects</property>
+                                        <property name="has_entry">True</property>
+                                        <property name="entry_text_column">0</property>
+                                        <property name="id_column">0</property>
+                                        <child internal-child="entry">
+                                          <object class="GtkEntry">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                          </object>
+                                        </child>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -506,6 +523,7 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="active">0</property>
+                                    <property name="has_entry">True</property>
                                     <property name="active_id">0</property>
                                     <items>
                                       <item translatable="yes">8.5in, 11in (Letter)</item>
@@ -513,6 +531,12 @@
                                       <item translatable="yes">210mm, 297mm (A4)</item>
                                       <item translatable="yes">148mm, 210mm (A5)</item>
                                     </items>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                      </object>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
