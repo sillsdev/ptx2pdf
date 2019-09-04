@@ -9,9 +9,11 @@ To use ptx2pdf you need (a) XeTeX and (b) the ptx2pdf macro package. If you don'
 
 ## <a name="TOC-Installing-XeTeX">Installing XeTeX</a>
 
-<a name="TOC-Installing-XeTeX">The most convenient way to setup a TeX system is trough installing TeXLive. TeXLive is available for all major platforms, though Mac users might want to use MacTeX and Windows users might be interested in using the MikTeX distribution.
+<a name="TOC-Installing-XeTeX">The most convenient way to setup a TeX system is through installing TeX Live. TeX Live is available for all major platforms, though Mac users might want to use MacTeX and Windows users might be interested in using the MikTeX distribution.
 
-If you don't want a full blown TeX distribution on your machine, you might want to use this</a> [minimal Windows XeTeX distribution](xetexWin.zip) based on W32TeX.
+If you don't want a full blown TeX distribution on your machine, you might want to use this[minimal Windows XeTeX distribution](https://bitbucket.org/hindlemail/xetexnuget/src/default/PutXetexFolderInHere/) based on W32TeX. This distribution contains the ptx2pdf macros, so you don't need to install them as described below.
+
+</a>
 
 ## <a name="TOC-Installing-ptx2pdf">Installing ptx2pdf</a>
 
@@ -26,10 +28,4 @@ Next step is to place the macro files at the appropriate place in your texmf tre
 <a name="TOC-Installing-ptx2pdf"></a></td>
 
 
-<small>Updated on Aug 19, 2019 by <span class="author"><span class="vcard">Lorna Evans</span> </span>(Version <span class="sites:revision">7</span>)</small>
-
-* * *
-
-**Attachments (1)**
-
-[xetexWin.zip](xetexWin.zip) - on <abbr class="updated" title="2012-01-06T16:27:39.025Z">Jan 6, 2012</abbr> by <span class="author"><span class="vcard">Jeff Klassen</span> </span>(Version <span class="sites:revision">1</span>)
+<small>Updated on Sep 4, 2019 by <span class="author"><span class="vcard">Bobby de Vos</span> </span>(Version <span class="sites:revision">7</span>)</small>

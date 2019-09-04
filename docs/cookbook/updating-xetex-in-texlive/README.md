@@ -24,6 +24,10 @@ If you have a TeX Live installation as installed by the TeX Live installer,
 run `tlmgr update --self --all`
 
 If you have a mini installation based on W32TeX then continue reading.
+The process below is used to update a
+[combined mini distribution](https://bitbucket.org/hindlemail/xetexnuget/src/default/PutXetexFolderInHere/)
+of TeX Live plus the ptx2pdf macros.
+
 </a>
 
 *   Download the latest W32TeX build using the CTAN mirror from Akira's [W32TeX page](http://w32tex.org/): You will need the following files.
@@ -63,11 +67,13 @@ If you have a mini installation based on W32TeX then continue reading.
      *   You may have to adjust the directory names and file locations, as these change due to Tex Live development.
      *   In the `\bin` folder, there are two files that have a version number in them
          (X indicating a digit), `icudtXX.dll` and `kpathseaXXX.dll`. You will need to remove the older file, and add the newer file.
+     *   A statically link executable such as `xetex.exe` may change to a dynamically linked executable.
+         In this case you would have to add the library file such as `xetex.dll`.
 
-*  You might need to run `fmtutil --byfmt xetex`, although XeTeX may do this for you when you first run XeTeX.
+*  You might need to run `fmtutil --byfmt xetex`, although the xetex format file is already provided.
 
 *  The first time XeTeX runs it might take quite a while - rebuilding some font databases.
 
 
 
-<small>Updated on Aug 30, 2019 by Bobby de Vos</small>
+<small>Updated on Sep 4, 2019 by Bobby de Vos</small>
