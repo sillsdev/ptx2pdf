@@ -4,9 +4,9 @@
 %%%%% Stylesheets %%%%%
 \stylesheet{{{/ptxpath}/usfm.sty}}
 \stylesheet{{{/ptxpath}/{project/id}/custom.sty}}
-\stylesheet{{NestedStyles.sty}}
+%\stylesheet{{NestedStyles.sty}}
 
-\stylesheet{{PrintDraft-mods.sty}}% override project stylesheet settings here
+\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.sty}}% override project stylesheet settings here
 
 %%%%% Page Setup %%%%%
 % Dimensions
@@ -25,17 +25,22 @@
 \BodyColumns={paper/columns}
 
 %%%%% Text Spacing %%%%%
-\def\LineSpacingFactor{{1}}
+\def\LineSpacingFactor{{{paragraph/linespacing}}}
 \def\VerticalSpaceFactor{{1.0}}
 
 %%%%% Fonts %%%%%
 \FontSizeUnit={paper/fontfactor:.6f}pt
 
 %% Faces
-\def\regular{{"Padauk Book/GR:;script=mymr;mapping=burmesedigits"}}
-\def\bold{{"Padauk Book/GR/B:script=mymr;mapping=burmesedigits"}}
-\def\italic{{"Padauk/GR/I:script=mymr;mapping=burmesedigits"}}
-\def\bolditalic{{"Padauk/GR/BI:script=mymr;mapping=burmesedigits"}}
+%\def\regular{{"Padauk Book/GR:;script=mymr;mapping=burmesedigits"}}
+%\def\bold{{"Padauk Book/GR/B:script=mymr;mapping=burmesedigits"}}
+%\def\italic{{"Padauk/GR/I:script=mymr;mapping=burmesedigits"}}
+%\def\bolditalic{{"Padauk/GR/BI:script=mymr;mapping=burmesedigits"}}
+
+\def\regular{{"{font/regular}"}}
+\def\bold{{"{font/bold}"}}
+\def\italic{{"{font/italic}"}}
+\def\bolditalic{{"{font/bolditalic}"}}
 
 %%%%% Layout %%%%%
 \RTLfalse% Use right-to-left layout mode?
@@ -76,7 +81,7 @@
 % restore page break definition (if present in USFM stylesheet, it has been re-defined and will not work)
 \let\pb=\pagebreak
 
-\input {{{/ptxpath}/{project/id}/PrintDraft-mods.tex}}% adjust/override setup parameters here
+\input {/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.tex% adjust/override setup parameters here
 
 %%%%% Hyphenation %%%%%
 \hyphenpenalty=10000
