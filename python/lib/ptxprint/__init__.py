@@ -105,7 +105,7 @@ class PtxPrinterDialog:
 
     def getBooks(self):
         if self.get('c_onebook'):
-            return [self.get('cb_onebook')]
+            return [self.get('cb_book')]
         else:
             return self.get('t_booklist').split()
 

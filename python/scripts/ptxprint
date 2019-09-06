@@ -41,13 +41,12 @@ if args.test:
     mainw.set("c_justify", True)
 
 def doit(printer):
-    info = ptxprint.Info(printer, args.paratext, printer.pt_settings)
+    info = ptxprint.Info(printer, args.paratext, printer.ptsettings)
     prjid = printer.get("cb_project")
     prjdir = os.path.join(args.paratext, prjid)
     tmpdir = os.path.join(prjdir, 'PrintDraft') if printer.get("c_printdraft") else args.directory
     jobs = printer.getBooks()
     donebooks = []
-    # import pdb; pdb.set_trace()
     for b in jobs:
         out = info.convertBook(b, tmpdir, prjdir)
         donebooks.append(out)
