@@ -22,6 +22,8 @@ if not args.paratext:
     sys.exit(1)
 else:
     args.paratext = args.paratext.replace("\\", "/")
+    if args.paratext.endswith("/"):
+        args.paratext = args.paratext[:-1]
 
 # Where to find the default for -p
 # HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Paratext\8:Settings_Directory

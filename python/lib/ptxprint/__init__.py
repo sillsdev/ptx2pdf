@@ -231,6 +231,9 @@ class Info:
             self.ptsettings = ParatextSettings(prjdir)
         if self.changes is None:
             self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'))
+        customsty = os.path.join(prjdir, 'custom.sty')
+        if not os.path.exists(customsty):
+            open(customsty, "w").close()
         fbkfm = self.ptsettings['FileNameBookNameForm']
         bknamefmt = fbkfm.replace("MAT","{bkid}").replace("41","{bknum:02d}") + \
                     self.ptsettings['FileNamePostPart']
@@ -241,11 +244,11 @@ class Info:
             doti = outfname.rfind(".")
             if doti > 0:
                 outfname = outfname[:doti] + "-draft" + outfname[doti:]
-            with open(infname, "r") as inf:
+            with open(infname, "r", encoding="utf-8") as inf:
                 dat = inf.read()
                 for c in self.changes:
                     dat = c[0].sub(c[1], dat)
-            with open(outfname, "w") as outf:
+            with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write(dat)
             return outfname
         else:

@@ -43,7 +43,7 @@ elif sys.platform == "win32":
 
     def call(*a, **kw):
         path = os.path.join(pt_bindir, "xetex", "bin", a[0][0]+".exe").replace("/", "\\")
-        newa = [path] + list(a)[1:]
+        newa = [[path] + a[0][1:]] + list(a)[1:]
         res = subprocess.call(*newa, **kw)
         return res
 

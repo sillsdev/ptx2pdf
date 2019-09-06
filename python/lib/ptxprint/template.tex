@@ -44,7 +44,7 @@
 
 %%%%% Layout %%%%%
 \RTLfalse% Use right-to-left layout mode?
-\XeTeXlinebreaklocale "my"
+%\XeTeXlinebreaklocale "my"
 \JustifyPars{document/ifjustify}
 
 \AutoCallers{{f}}{{a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}}
@@ -81,7 +81,7 @@
 % restore page break definition (if present in USFM stylesheet, it has been re-defined and will not work)
 \let\pb=\pagebreak
 
-\input {/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.tex% adjust/override setup parameters here
+\input "{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.tex"% adjust/override setup parameters here
 
 %%%%% Hyphenation %%%%%
 \hyphenpenalty=10000
