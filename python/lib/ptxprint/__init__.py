@@ -158,7 +158,10 @@ class Info:
         "paper/fontfactor": lambda w:float(w.get("f_body")[2]) / 12,
         "paragraph/linespacing": lambda w:w.get("t_linespacing"),
         "document/iffigures": lambda w:"true" if w.get("c_figs") else "false",
-        "document/ifjustify": lambda w:"true" if w.get("c_justify") else "false"
+        "document/ifjustify": lambda w:"true" if w.get("c_justify") else "false",
+        "header/ifverses": lambda w:"true" if w.get("c_hdrverses") else "false",
+        "footer/draft": lambda w:w.get("t_draft"),
+        "footer/comment" : lambda w:w.get("l_comment")
     }
     _fonts = {
         "font/regular": "f_body",
@@ -166,12 +169,20 @@ class Info:
         "font/italic": "f_italic",
         "font/bolditalic": "f_bolditalic"
     }
+    _hdrmappings = {
+        "First Reference":  r"\firstref",
+        "Last Reference":   r"\lastref",
+        "Page Number":      r"\pagenumber",
+        "Reference Range":  r"\rangeref",
+        "-empty-":          r"\empty"
+    }
 
     def __init__(self, printer, path, ptsettings=None):
         self.dict = {"/ptxpath": path}
         for k, v in self._mappings.items():
             self.dict[k] = v(printer)
         self.processFonts(printer)
+        self.processHdrFtr(printer)
         self.ptsettings = ptsettings
         self.changes = None
 
@@ -193,6 +204,16 @@ class Info:
             if len(style):
                 s = "/" + "".join(x[0].upper() for x in style)
             self.dict[p] = family + engine + s            
+
+    def processHdrFtr(self, printer):
+        mirror = printer.get('c_mirrorpages')
+        for side in ('left', 'center', 'right'):
+            v = printer.get("cb_hdr" + side)
+            print(v)
+            t = self._hdrmappings.get(v, v)
+            if True or mirror:
+                self.dict['header/even{}'.format(side)] = t
+            self.dict['header/odd{}'.format(side)] = t
 
     def asTex(self, template="template.tex"):
         res = []
@@ -232,7 +253,9 @@ class Info:
 
     def readChanges(self, fname):
         changes = []
-        with open(fname, "r") as inf:
+        if not os.path.exists(fname):
+            return []
+        with open(fname, "r", encoding="utf-8") as inf:
             for l in inf.readlines():
                 l = l.strip().replace(u"\uFEFF", "")
                 l = re.sub(r"\s*#.*$", "", l)

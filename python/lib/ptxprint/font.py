@@ -1,5 +1,5 @@
-from ptxprint.runner import call
-import struct
+from ptxprint.runner import checkoutput
+import struct, re
 
 
 class TTFont:
@@ -9,8 +9,8 @@ class TTFont:
                 style = ""
             pattern = fname + (":style="+style if style else ":style=Regular")
             pattern = pattern.replace("-", r"\-")
-            files = call(["fc-list", pattern, "file"])
-            f = files.split("\n")[0].strip()[:-1]
+            files = checkoutput(["fc-list", pattern, "file"])
+            f = re.split(r":\s", files, flags=re.M)[0].strip()
             if f != "" or style == "":
                 break
             style = " ".join(style.split()[:-1])

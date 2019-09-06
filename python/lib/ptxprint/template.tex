@@ -56,21 +56,21 @@
 \def\FooterPosition{{0.7}}
 
 %% Odd Header
-\def\RHoddleft{{\empty}}
-\def\RHoddcenter{{\rangeref}}
-\def\RHoddright{{\pagenumber}}
+\def\RHoddleft{{{header/oddleft}}}
+\def\RHoddcenter{{{header/oddcenter}}}
+\def\RHoddright{{{header/oddright}}}
 
 %% Even Header
-\def\RHevenleft{{\empty}}
-\def\RHevencenter{{\rangeref}}
-\def\RHevenright{{\pagenumber}}
+\def\RHevenleft{{{header/evenleft}}}
+\def\RHevencenter{{{header/evencenter}}}
+\def\RHevenright{{{header/evenright}}}
 
-\VerseRefsfalse% include verses in reference text?
+\VerseRefs{header/ifverses}% include verses in reference text?
 
 %% Footer
-\def\RFoddcenter{{2019-09-04: DRAFT}}
-\def\RFevencenter{{2019-09-04: DRAFT}}
-\def\RFtitlecenter{{2019-09-04: DRAFT}}
+\def\RFoddcenter{{{footer/comment}: {footer/draft}}}
+\def\RFevencenter{{{footer/comment}: {footer/draft}}}
+\def\RFtitlecenter{{{footer/comment}: {footer/draft}}}
 
 %%%%% Illustrations %%%%%
 \IncludeFigures{document/iffigures}

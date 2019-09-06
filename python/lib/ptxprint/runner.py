@@ -1,12 +1,16 @@
 
-import sys, subprocess
+import sys, subprocess, os
 import xml.etree.ElementTree as et
 
 if sys.platform == "linux":
     import os
 
-    def call(*a, **kw):
+    def checkoutput(*a, **kw):
         res = subprocess.check_output(*a, **kw).decode("utf-8")
+        return res
+
+    def call(*a, **kw):
+        res = subprocess.call(*a, **kw)
         return res
 
     def openkey(path):
@@ -26,15 +30,21 @@ elif sys.platform == "win32":
     import winreg
 
     def openkey(path):
-        return winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\\" + path.replace("/", r"\\"))
+        return winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\\" + path.replace("/", "\\"))
 
     def queryvalue(base, value):
-        return winreg.QueryValue(base, value)
+        return winreg.QueryValueEx(base, value)[0]
+
+    def checkoutput(*a, **kw):
+        path = os.path.join(pt_bindir, "xetex", "bin", a[0][0]+".exe").replace("/", "\\")
+        newa = [path] + list(a)[1:]
+        res = subprocess.check_output(*newa, **kw).decode("utf-8")
+        return res
 
     def call(*a, **kw):
-        path = os.path.join(pt_bindir, "xetex", "bin", a[0][0]+".exe")
-        newa = [path] + a[1:]
-        res = subprocess.check_output(*a, **kw).decode("utf-8")
+        path = os.path.join(pt_bindir, "xetex", "bin", a[0][0]+".exe").replace("/", "\\")
+        newa = [path] + list(a)[1:]
+        res = subprocess.call(*newa, **kw)
         return res
 
 ptob = openkey("Paratext/8")

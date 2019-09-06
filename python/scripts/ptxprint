@@ -20,6 +20,8 @@ if args.paratext is None:
 if not args.paratext:
     print("No Paratext Settings directory found")
     sys.exit(1)
+else:
+    args.paratext = args.paratext.replace("\\", "/")
 
 # Where to find the default for -p
 # HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Paratext\8:Settings_Directory
@@ -40,12 +42,7 @@ if args.test:
     mainw.set("t_linespacing", "1.3")
     mainw.set("c_justify", True)
 
-def doit(printer):
-    info = ptxprint.Info(printer, args.paratext, printer.ptsettings)
-    prjid = printer.get("cb_project")
-    prjdir = os.path.join(args.paratext, prjid)
-    tmpdir = os.path.join(prjdir, 'PrintDraft') if printer.get("c_printdraft") else args.directory
-    jobs = printer.getBooks()
+def dojob(jobs, info, prjid, prjdir, tmpdir):
     donebooks = []
     for b in jobs:
         out = info.convertBook(b, tmpdir, prjdir)
@@ -61,5 +58,17 @@ def doit(printer):
         os.putenv('TEXINPUTS', ".:/usr/lib/Paratext8/xetex/share/texmf-dist/tex/ptx2pdf:/usr/lib/Paratext9/xetex/share/texmf-dist/tex/ptx2pdf")
     ptxprint.runner.call(["xetex", outfname], cwd=tmpdir)
     print("cd {}; xetex {}".format(tmpdir, outfname))
+
+def doit(printer):
+    info = ptxprint.Info(printer, args.paratext, printer.ptsettings)
+    prjid = printer.get("cb_project")
+    prjdir = os.path.join(args.paratext, prjid)
+    tmpdir = os.path.join(prjdir, 'PrintDraft') if printer.get("c_printdraft") else args.directory
+    jobs = printer.getBooks()
+    if printer.get("c_combine"):
+        dojob(jobs, info, prjid, prjdir, tmpdir)
+    else:
+        for j in jobs:
+            dojob([j], info, prjid, prjdir, tmpdir)
 
 mainw.run(doit)
