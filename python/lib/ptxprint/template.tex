@@ -45,7 +45,7 @@
 %%%%% Layout %%%%%
 \RTLfalse% Use right-to-left layout mode?
 \XeTeXlinebreaklocale "my"
-\JustifyParstrue
+\JustifyPars{document/ifjustify}
 
 \AutoCallers{{f}}{{a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}}
 \AutoCallers{{x}}{{a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}}
@@ -73,7 +73,7 @@
 \def\RFtitlecenter{{2019-09-04: DRAFT}}
 
 %%%%% Illustrations %%%%%
-\IncludeFigurestrue
+\IncludeFigures{document/iffigures}
 \PicPath={{{/ptxpath}/{project/id}/figures/}}
 
 % tweak to enable blank lines
@@ -88,8 +88,9 @@
 
 %%%%% Load Paratext USFM %%%%%
 \XeTeXdefaultencoding "utf-8"
+% job files. The next \ptxfile line is replaced, content is not used
 \catcode`\%=12
-\ptxfile{{/home/mhosken/Paratext8Projects/myBCBv0/PrintDraft/41MATmyBCBv0-draft.SFM}}
+\ptxfile{{PrintDraft/41MATprojid-draft.SFM}}
 \catcode`\%=14
 
 \end

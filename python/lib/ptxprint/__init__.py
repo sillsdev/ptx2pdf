@@ -1,18 +1,47 @@
 #!/usr/bin/python3
 
-import sys, os, re, regex
+import sys, os, re, regex, gi
+gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 import xml.etree.ElementTree as et
 from ptxprint.font import TTFont
 
-class PtxPrinter:
-    def __init__(self):
+_bookslist = """GEN|50 EXO|40 LEV|27 NUM|36 DEU|34 JOS|24 JDG|21 RUT|4 1SA|31 2SA|24 1KI|22 2KI|25 1CH|29 2CH|36 EZR|10 NEH|13
+        EST|10 JOB|42 PSA|150 PRO|31 ECC|12 SNG|8 ISA|66 JER|52 LAM|5 EZK|48 DAN|12 HOS|14 JOL|3 AMO|9 OBA|1 JON|4 MIC|7 NAM|3
+        HAB|3 ZEP|3 HAG|2 ZEC|14 MAL|4 ZZZ|0
+        MAT|28 MRK|16 LUK|24 JHN|21 ACT|28 ROM|16 1CO|16 2CO|13 GAL|6 EPH|6 PHP|4 COL|4 1TH|5 2TH|3 1TI|6 2TI|4 TIT|3 PHM|1
+        HEB|13 JAS|5 1PE|5 2PE|3 1JN|5 2JN|1 3JN|1 JUD|1 REV|22
+        TOB|0 JDT|0 ESG|0 WIS|0 DIR|0 BAR|0 LJE|0 S3Y|0 SUS|0 BEL|0 1MA|0 2MA|0 3MA|0 4MA|0 1ES|0 2ES|0 MAN|0 PS2|0
+        ODA|0 PSS|0"""
+allbooks = [b.split("|")[0] for b in _bookslist.split() if b != "ZZZ|0"]
+books = dict((b.split("|")[0], i+1) for i, b in enumerate(_bookslist.split()))
+chaps = dict(b.split("|") for b in _bookslist.split())
+
+
+class ParatextSettings:
+    def __init__(self, basedir, prjid):
+        self.dict = {}
+        doc = et.parse(os.path.join(basedir, prjid, "Settings.xml"))
+        for c in doc.getroot():
+            self.dict[c.tag] = c.text
+
+    def __getitem__(self, key):
+        return self.dict[key]
+
+
+class PtxPrinterDialog:
+    def __init__(self, allprojects, settings_dir):
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(os.path.dirname(__file__), "ptxprint.glade"))
         self.builder.connect_signals(self)
         self.addCR("cb_digits", 0)
         self.addCR("cb_columns", 0)
         self.mw = self.builder.get_object("ptxprint")
+        self.projects = self.builder.get_object("ls_projects")
+        self.settings_dir = settings_dir
+        self.ptsettings = None
+        for p in allprojects:
+            self.projects.append([p])
 
     def run(self, callback):
         self.callback = callback
@@ -70,6 +99,7 @@ class PtxPrinter:
             w.set_text(value)
         elif wid.startswith("f_"):
             w.set_font_name(value)
+            w.emit("font-set")
         elif wid.startswith("c_"):
             w.set_active(value)
 
@@ -99,29 +129,24 @@ class PtxPrinter:
         for s in ('bold', 'italic', 'bold italic'):
             w = self.builder.get_object("f_"+s.replace(" ", ""))
             fname = family + ", " + " ".join(style + s.split()) + " "+ str(size)
-            print("|".join([s, font, fname]))
             w.set_font_name(fname)
 
-
-_bookslist = """GEN EXO LEV NUM DEU JOS JDG RUT 1SA 2SA 1KI 2KI 1CH 2CH EZR NEH
-        EST JOB PSA PRO ECC SNG ISA JER LAM EZK DAN HOS JOL AMO OBA JON MIC NAM
-        HAB ZEP HAG ZEC MAL ZZZ
-        MAT MRK LUK JHN ACT ROM 1CO 2CO GAL EPH PHP COL 1TH 2TH 1TI 2TI TIT PHM
-        HEB JAS 1PE 2PE 1JN 2JN 3JN JUD REV
-        TOB JDT ESG WIS DIR BAR LJE S3Y SUS BEL 1MA 2MA 3MA 4MA 1ES 2ES MAN PS2
-        ODA PSS"""
-books = dict((b, i+1) for i, b in enumerate(_bookslist.split()))
-
-class ParatextSettings:
-    def __init__(self, prjdir):
-        self.dict = {}
-        doc = et.parse(os.path.join(prjdir, "Settings.xml"))
-        for c in doc.getroot():
-            self.dict[c.tag] = c.text
-
-    def __getitem__(self, key):
-        return self.dict[key]
-
+    def onProjectChange(self, cb_prj):
+        self.prjid = self.get("cb_project")
+        self.ptsettings = None
+        lsbooks = self.builder.get_object("ls_books")
+        lsbooks.clear()
+        if not self.prjid:
+            return
+        self.ptsettings = ParatextSettings(self.settings_dir, self.prjid)
+        bp = self.ptsettings['BooksPresent']
+        for i, b in enumerate(allbooks):
+            if i < len(bp) and bp[i] == "1":
+                lsbooks.append([b])
+        cb_bk = self.builder.get_object("cb_book")
+        cb_bk.set_active(0)
+        font_name = self.ptsettings['DefaultFont'] + ", " + self.ptsettings['DefaultFontSize']
+        self.set('f_body', font_name)
 
 class Info:
     _mappings = {
@@ -131,7 +156,9 @@ class Info:
         "paper/margins": lambda w:w.get("t_margins") or "14mm",
         "paper/columns": lambda w:w.get("cb_columns"),
         "paper/fontfactor": lambda w:float(w.get("f_body")[2]) / 12,
-        "paragraph/linespacing": lambda w:w.get("t_linespacing")
+        "paragraph/linespacing": lambda w:w.get("t_linespacing"),
+        "document/iffigures": lambda w:"true" if w.get("c_figs") else "false",
+        "document/ifjustify": lambda w:"true" if w.get("c_justify") else "false"
     }
     _fonts = {
         "font/regular": "f_body",
@@ -140,12 +167,12 @@ class Info:
         "font/bolditalic": "f_bolditalic"
     }
 
-    def __init__(self, printer, path):
+    def __init__(self, printer, path, ptsettings=None):
         self.dict = {"/ptxpath": path}
         for k, v in self._mappings.items():
             self.dict[k] = v(printer)
         self.processFonts(printer)
-        self.ptsettings = None
+        self.ptsettings = ptsettings
         self.changes = None
 
     def __getitem__(self, key):

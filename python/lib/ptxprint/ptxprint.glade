@@ -2,6 +2,20 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
+  <object class="GtkListStore" id="ls_books">
+    <columns>
+      <!-- column-name book -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">MAT</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">MRK</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="ls_columns">
     <columns>
       <!-- column-name number -->
@@ -128,8 +142,8 @@
                 <property name="receives_default">True</property>
               </object>
               <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
                 <property name="position">0</property>
               </packing>
             </child>
@@ -159,6 +173,7 @@
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
+                <property name="pack_type">end</property>
                 <property name="position">7</property>
               </packing>
             </child>
@@ -173,6 +188,7 @@
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
+                <property name="pack_type">end</property>
                 <property name="position">8</property>
               </packing>
             </child>
@@ -297,6 +313,7 @@
                                             <property name="has_entry">True</property>
                                             <property name="entry_text_column">0</property>
                                             <property name="id_column">0</property>
+                                            <signal name="changed" handler="onProjectChange" swapped="no"/>
                                             <child internal-child="entry">
                                               <object class="GtkEntry">
                                                 <property name="visible">True</property>
@@ -337,60 +354,29 @@
                                       <object class="GtkBox">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="homogeneous">True</property>
+                                        <property name="spacing">6</property>
                                         <child>
                                           <object class="GtkComboBox" id="cb_book">
                                             <property name="name">cb_onebook</property>
-                                            <property name="width_request">146</property>
+                                            <property name="width_request">160</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
+                                            <property name="model">ls_books</property>
+                                            <property name="active">0</property>
+                                            <property name="has_frame">False</property>
+                                            <property name="has_entry">True</property>
+                                            <property name="entry_text_column">0</property>
+                                            <property name="id_column">0</property>
+                                            <child internal-child="entry">
+                                              <object class="GtkEntry">
+                                                <property name="can_focus">False</property>
+                                              </object>
+                                            </child>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">True</property>
                                             <property name="position">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="margin_left">50</property>
-                                            <property name="margin_right">5</property>
-                                            <property name="label" translatable="yes">Chapters:</property>
-                                            <property name="justify">right</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">False</property>
-                                            <property name="position">1</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkComboBox" id="cb_chapfrom">
-                                            <property name="width_request">70</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="margin_left">50</property>
-                                            <property name="margin_right">10</property>
-                                            <property name="label" translatable="yes">To:</property>
-                                            <property name="justify">right</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">3</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -402,6 +388,50 @@
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">True</property>
+                                            <property name="pack_type">end</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="margin_left">20</property>
+                                            <property name="label" translatable="yes">To:</property>
+                                            <property name="justify">right</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="pack_type">end</property>
+                                            <property name="position">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkComboBox" id="cb_chapfrom">
+                                            <property name="width_request">70</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="pack_type">end</property>
+                                            <property name="position">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="margin_left">21</property>
+                                            <property name="label" translatable="yes">Chapters:</property>
+                                            <property name="justify">right</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="pack_type">end</property>
                                             <property name="position">4</property>
                                           </packing>
                                         </child>
