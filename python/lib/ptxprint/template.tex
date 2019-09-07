@@ -13,7 +13,11 @@
 \PaperWidth={paper/width}
 \PaperHeight={paper/height}
 
+\CropMarks{paper/ifcropmarks}
+
 %% Margins
+%\BindingGutter=4mm
+%\BindingGuttertrue
 \MarginUnit={paper/margins}
 \def\TopMarginFactor{{1.15}}
 \def\BottomMarginFactor{{1.15}}
@@ -23,6 +27,8 @@
 \TitleColumns=1
 \IntroColumns=1
 \BodyColumns={paper/columns}
+%\def\ColumnGutterFactor{{paper/gutterfactor}}
+\ColumnGutterRule{paper/ifverticalrule}
 
 %%%%% Text Spacing %%%%%
 \def\LineSpacingFactor{{{paragraph/linespacing}}}
@@ -43,17 +49,45 @@
 \def\bolditalic{{"{font/bolditalic}"}}
 
 %%%%% Layout %%%%%
-\RTLfalse% Use right-to-left layout mode?
+\RTL{document/ifrtl}   % Use right-to-left layout mode?
+% Specify ISO 639-1 language code.
+% XeTeX will use ICU line break info (useful for scripts which do not use word spaces).
 %\XeTeXlinebreaklocale "my"
+% Introduce some stretchability (glue) at each potential break
+%\XeTeXlinebreakskip=0em plus 0.1em minus 0.01em
+
+%%% Chapters & Verses %%%
 \JustifyPars{document/ifjustify}
+\OmitVerseNumberOne{document/ifomitverseone}
+\OmitChapterNumber{document/ifomitsinglechapter}
+%\def\AfterChapterSpaceFactor{{10}}
+%\def\AfterVerseSpaceFactor{{0}}
 
-\AutoCallers{{f}}{{a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}}
-\AutoCallers{{x}}{{a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}}
+%%%%% Notes %%%%%
 
+%% Disable footnote rule
+{notes/ifomitfootnoterule}\def\footnoterule{{}} 
+
+%\AutoCallerStartChar=97
+%\AutoCallerNumChars=26
+%\AutoCallers{{f}}{{a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}}
+\AutoCallers{{f}}{{notes/fncallers}} % to hide callers in body text this needs to be empty
+{notes/fnresetcallers}\PageResetCallers{{f}}
+{notes/fnomitcaller}\OmitCallerInNote{{f}}
+{notes/fnparagraphednotes}\ParagraphedNotes{{f}}
+%\NumericCallers{{f}}
+
+%\AutoCallers{{x}}{{a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}}
+\AutoCallers{{x}}{{notes/xrcallers}} % to hide callers in body text this needs to be empty
+{notes/xrresetcallers}\PageResetCallers{{x}}
+{notes/xromitcaller}\OmitCallerInNote{{x}}
+{notes/xrparagraphednotes}\ParagraphedNotes{{x}}
+%\NumericCallers{{x}}
 
 %%%%% Running Header/Footer %%%%%
 \def\HeaderPosition{{0.7}}
 \def\FooterPosition{{0.7}}
+%\RHruleposition={{10pt}}
 
 %% Odd Header
 \def\RHoddleft{{{header/oddleft}}}
@@ -75,6 +109,7 @@
 %%%%% Illustrations %%%%%
 \IncludeFigures{document/iffigures}
 \PicPath={{{/ptxpath}/{project/id}/figures/}}
+%\PicPath={{{/ptxpath}/{project/id}/local/figures/}} % should check if this folder exists (with HiRes figures)
 
 % tweak to enable blank lines
 \def\b{{\par\vskip\baselineskip}}

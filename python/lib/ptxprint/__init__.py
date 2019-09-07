@@ -153,15 +153,42 @@ class Info:
         "project/id": lambda w:w.get("cb_project"),
         "paper/height": lambda w:re.sub(r"^.*?, \s*(.+?)\s*(?:\(.*|$)", r"\1", w.get("cb_pagesize")) or "210mm",
         "paper/width": lambda w:re.sub(r"^(.*?)\s*,.*$", r"\1", w.get("cb_pagesize")) or "148mm",
+        "paper/ifcropmarks": lambda w:"true" if w.get("c_cropmarks") else "false",
+        "paper/ifverticalrule": lambda w:"true" if w.get("c_verticalrule") else "false",
+        "paper/gutterfactor": lambda w:w.get("t_colgutterfactor") or "15",
         "paper/margins": lambda w:w.get("t_margins") or "14mm",
         "paper/columns": lambda w:w.get("cb_columns"),
         "paper/fontfactor": lambda w:float(w.get("f_body")[2]) / 12,
+
         "paragraph/linespacing": lambda w:w.get("t_linespacing"),
+
+        "document/ifrtl": lambda w:"true" if w.get("c_rtl") else "false",
+        "document/ifomitsinglechapter": lambda w:"true" if w.get("c_omitsinglechapter") else "false",
+        "document/ifomitverseone": lambda w:"true" if w.get("c_omitverseone") else "false",
         "document/iffigures": lambda w:"true" if w.get("c_figs") else "false",
+        "document/iffigexclwebapp": lambda w:"true" if w.get("c_figexclwebapp") else "false",
+        "document/iffigplaceholders": lambda w:"true" if w.get("c_figplaceholders") else "false",
+        "document/iffighiderefs": lambda w:"true" if w.get("c_fighiderefs") else "false",
         "document/ifjustify": lambda w:"true" if w.get("c_justify") else "false",
+
         "header/ifverses": lambda w:"true" if w.get("c_hdrverses") else "false",
+        "header/ifrhrule": lambda w:"true" if w.get("c_rhrule") else "false",
+        "header/ruleposition": lambda w:w.get("t_rhruleposition") or "10pt",
+
         "footer/draft": lambda w:w.get("t_draft"),
-        "footer/comment" : lambda w:w.get("l_comment")
+        "footer/comment": lambda w:w.get("l_comment"),
+
+        "notes/ifomitfootnoterule": lambda w:"" if w.get("c_omitverseone") else "%", #empty if true, otherwise '%'
+        # if c_fnautocallers is false then fncallers needs to be set to empty {} - HOW TO DO THAT?
+        "notes/fncallers": lambda w:w.get("t_fncallers") or "*",
+        "notes/fnresetcallers": lambda w:"" if w.get("c_fnpageresetcallers") else "%",
+        "notes/fnomitcaller": lambda w:"" if w.get("c_fnomitcaller") else "%",
+        "notes/fnparagraphednotes": lambda w:"" if w.get("c_fnomitcaller") else "%",
+        # if c_xrautocallers is false then xrcallers needs to be set to empty {} - HOW TO DO THAT?
+        "notes/xrcallers": lambda w:w.get("t_xrcallers") or "+",
+        "notes/xrresetcallers": lambda w:"" if w.get("c_xrpageresetcallers") else "%",
+        "notes/xromitcaller": lambda w:"" if w.get("c_xromitcaller") else "%",
+        "notes/xrparagraphednotes": lambda w:"" if w.get("c_xromitcaller") else "%"
     }
     _fonts = {
         "font/regular": "f_body",
@@ -216,9 +243,11 @@ class Info:
             self.dict['header/odd{}'.format(side)] = t
 
     def asTex(self, template="template.tex"):
+ #       import pdb;pdb.set_trace()
         res = []
         with open(os.path.join(os.path.dirname(__file__), template)) as inf:
             for l in inf.readlines():
+#                print(l)
                 if l.startswith(r"\ptxfile"):
                     for f in self.dict['project/books']:
                         res.append("\\ptxfile{{{}}}\n".format(os.path.abspath(f)))
