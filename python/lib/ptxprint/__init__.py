@@ -178,7 +178,9 @@ class Info:
         "paragraph/linespacing":    ("t_linespacing", lambda w,v: v),
 
         "document/ifrtl":           ("c_rtl", lambda w,v :"true" if v else "false"),
-        "document/ifomitsinglechapter":     ("c_omitsinglechapter", lambda w,v: "true" if v else "false"),
+        "document/iflinebreakon":   ("c_linebreakon", lambda w,v: "" if v else "%"),
+        "document/linebreaklocale": ("t_linebreaklocale", lambda w,v: v or ""),
+        "document/ifomitchapternum": ("c_omitchapternumber", lambda w,v: "true" if v else "false"),
         "document/ifomitverseone":  ("c_omitverseone", lambda w,v: "true" if v else "false"),
         "document/iffigures":       ("c_figs", lambda w,v :"true" if v else "false"),
         "document/iffigexclwebapp": ("c_figexclwebapp", lambda w,v: "true" if v else "false"),
@@ -193,7 +195,7 @@ class Info:
         "footer/draft":             ("t_draft", lambda w,v: v),
         "footer/comment":           (None, lambda w,v: v),
 
-        "notes/ifomitfootnoterule":         (None, lambda w,v: "" if w.get("c_omitverseone") else "%"), #empty if true, otherwise '%'
+        "notes/ifomitfootnoterule":  (None, lambda w,v: "" if w.get("c_footnoterule") else "%"), #empty if true, otherwise '%'
         # if c_fnautocallers is false then fncallers needs to be set to empty {} - HOW TO DO THAT?
         "notes/fncallers":          ("t_fncallers", lambda w,v: v or "*"),
         "notes/fnresetcallers":     ("c_fnpageresetcallers", lambda w,v: "" if v else "%"),
