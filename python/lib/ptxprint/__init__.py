@@ -73,7 +73,6 @@ class PtxPrinterDialog:
     def get(self, wid, sub=0, asstr=False):
         w = self.builder.get_object(wid)
         v = ""
-        print(wid)
         if wid.startswith("cb_"):
             model = w.get_model()
             i = w.get_active()
@@ -101,7 +100,6 @@ class PtxPrinterDialog:
                 e.set_text(value)
             else:
                 for i, v in enumerate(model):
-                    print(w.get_id_column(), v[0], value)
                     if v[w.get_id_column()] == value:
                         w.set_active_id(value)
                         break
@@ -123,11 +121,9 @@ class PtxPrinterDialog:
         Gtk.main_quit()
 
     def onOK(self, btn):
-        print("Do something")
         self.callback(self)
 
     def onCancel(self, btn):
-        print("Do nothing")
         self.onDestroy(btn)
 
     def onFontChange(self, fbtn):
@@ -158,7 +154,6 @@ class PtxPrinterDialog:
         font_name = self.ptsettings['DefaultFont'] + ", " + self.ptsettings['DefaultFontSize']
         self.set('f_body', font_name)
         configfile = os.path.join(self.settings_dir, self.prjid, "ptxprint.cfg")
-        print(configfile)
         if os.path.exists(configfile):
             info = Info(self, self.settings_dir, self.ptsettings)
             config = configparser.ConfigParser()
@@ -169,6 +164,7 @@ class PtxPrinterDialog:
 class Info:
     _mappings = {
         "project/id":               (None, lambda w,v: w.get("cb_project")),
+        "project/book":             ("cb_book", None),
         "paper/height":             (None, lambda w,v: re.sub(r"^.*?, \s*(.+?)\s*(?:\(.*|$)", r"\1", w.get("cb_pagesize")) or "210mm"),
         "paper/width":              (None, lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", w.get("cb_pagesize")) or "148mm"),
         "paper/pagesize":           ("cb_pagesize", None),
@@ -258,7 +254,6 @@ class Info:
         mirror = printer.get('c_mirrorpages')
         for side in ('left', 'center', 'right'):
             v = printer.get("cb_hdr" + side)
-            print(v)
             t = self._hdrmappings.get(v, v)
             if True or mirror:
                 self.dict['header/even{}'.format(side)] = t
@@ -274,7 +269,6 @@ class Info:
         res = []
         with open(os.path.join(os.path.dirname(__file__), template)) as inf:
             for l in inf.readlines():
-#                print(l)
                 if l.startswith(r"\ptxfile"):
                     for f in self.dict['project/books']:
                         res.append("\\ptxfile{{{}}}\n".format(os.path.abspath(f)))
@@ -347,7 +341,6 @@ class Info:
                 config.add_section(sect)
             val = printer.get(v[0], asstr=True)
             config.set(sect, key, str(val))
-            print(sect, key, val)
         for k, v in self._fonts.items():
             (sect, key) = k.split("/")
             if not config.has_section(sect):
@@ -356,7 +349,6 @@ class Info:
         return config
 
     def loadConfig(self, printer, config):
-        print(config.sections())
         for sect in config.sections():
             for opt in config.options(sect):
                 key = "{}/{}".format(sect, opt)
@@ -364,7 +356,6 @@ class Info:
                     v = self._mappings[key]
                     if v[0] is None:
                         continue
-                    print(key, v[0])
                     if v[0].startswith("cb_") or v[0].startswith("t_") or v[0].startswith("f_"):
                         printer.set(v[0], config.get(sect, opt))
                     elif v[0].startswith("c_"):
