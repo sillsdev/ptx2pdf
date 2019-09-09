@@ -5,6 +5,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 import xml.etree.ElementTree as et
 from ptxprint.font import TTFont
+import configparser
 
 _bookslist = """GEN|50 EXO|40 LEV|27 NUM|36 DEU|34 JOS|24 JDG|21 RUT|4 1SA|31 2SA|24 1KI|22 2KI|25 1CH|29 2CH|36 EZR|10 NEH|13
         EST|10 JOB|42 PSA|150 PRO|31 ECC|12 SNG|8 ISA|66 JER|52 LAM|5 EZK|48 DAN|12 HOS|14 JOL|3 AMO|9 OBA|1 JON|4 MIC|7 NAM|3
@@ -69,7 +70,7 @@ class PtxPrinterDialog:
         else:
             return [font, [], 0]
 
-    def get(self, wid, sub=0):
+    def get(self, wid, sub=0, asstr=False):
         w = self.builder.get_object(wid)
         v = ""
         print(wid)
@@ -85,7 +86,8 @@ class PtxPrinterDialog:
         elif wid.startswith("t_"):
             v = w.get_text()
         elif wid.startswith("f_"):
-            v = self.parse_fontname(w.get_font_name())
+            val = w.get_font_name()
+            v = val if asstr else self.parse_fontname(val)
         elif wid.startswith("c_"):
             v = w.get_active()
         return v
@@ -98,7 +100,11 @@ class PtxPrinterDialog:
             if e is not None and isinstance(e, Gtk.Entry):
                 e.set_text(value)
             else:
-                w.set_active_id(value)
+                for i, v in enumerate(model):
+                    print(w.get_id_column(), v[0], value)
+                    if v[w.get_id_column()] == value:
+                        w.set_active_id(value)
+                        break
         elif wid.startswith("t_"):
             w.set_text(value)
         elif wid.startswith("f_"):
@@ -151,10 +157,18 @@ class PtxPrinterDialog:
         cb_bk.set_active(0)
         font_name = self.ptsettings['DefaultFont'] + ", " + self.ptsettings['DefaultFontSize']
         self.set('f_body', font_name)
+        configfile = os.path.join(self.settings_dir, self.prjid, "ptxprint.cfg")
+        print(configfile)
+        if os.path.exists(configfile):
+            info = Info(self, self.settings_dir, self.ptsettings)
+            config = configparser.ConfigParser()
+            config.read(configfile)
+            info.loadConfig(self, config)
+        
 
 class Info:
     _mappings = {
-        "project/id":               ("cb_project", lambda w,v: v),
+        "project/id":               (None, lambda w,v: w.get("cb_project")),
         "paper/height":             (None, lambda w,v: re.sub(r"^.*?, \s*(.+?)\s*(?:\(.*|$)", r"\1", w.get("cb_pagesize")) or "210mm"),
         "paper/width":              (None, lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", w.get("cb_pagesize")) or "148mm"),
         "paper/pagesize":           ("cb_pagesize", None),
@@ -323,3 +337,38 @@ class Info:
             return None
         return changes
 
+    def createConfig(self, printer):
+        config = configparser.ConfigParser()
+        for k, v in self._mappings.items():
+            if v[0] is None:
+                continue
+            (sect, key) = k.split("/")
+            if not config.has_section(sect):
+                config.add_section(sect)
+            val = printer.get(v[0], asstr=True)
+            config.set(sect, key, str(val))
+            print(sect, key, val)
+        for k, v in self._fonts.items():
+            (sect, key) = k.split("/")
+            if not config.has_section(sect):
+                config.add_section(sect)
+            config.set(sect, key, printer.get(v, asstr=True))
+        return config
+
+    def loadConfig(self, printer, config):
+        print(config.sections())
+        for sect in config.sections():
+            for opt in config.options(sect):
+                key = "{}/{}".format(sect, opt)
+                if key in self._mappings:
+                    v = self._mappings[key]
+                    if v[0] is None:
+                        continue
+                    print(key, v[0])
+                    if v[0].startswith("cb_") or v[0].startswith("t_") or v[0].startswith("f_"):
+                        printer.set(v[0], config.get(sect, opt))
+                    elif v[0].startswith("c_"):
+                        printer.set(v[0], config.getboolean(sect, opt))
+                elif key in self._fonts:
+                    v = self._fonts[key]
+                    printer.set(v, config.get(sect, opt))

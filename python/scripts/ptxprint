@@ -9,6 +9,7 @@ except ImportError:
     import ptxprint
 
 parser = argparse.ArgumentParser()
+parser.add_argument('pid',nargs="?",help="Project id")
 parser.add_argument('-p','--paratext',help="Path to Paratext Projects directory")
 parser.add_argument('-d','--directory',default=".",help="Directory to store temporary files in")
 parser.add_argument('-m','--macros',help="Directory containing TeX macros (paratext2.tex)")
@@ -57,6 +58,9 @@ if args.mptest:
     mainw.set("c_justify", True)
     mainw.set("t_colgutterfactor", "15")
 
+if args.pid:
+    mainw.set("cb_project", args.pid)
+
 def dojob(jobs, info, prjid, prjdir, tmpdir):
     donebooks = []
     for b in jobs:
@@ -79,6 +83,10 @@ def doit(printer):
     info = ptxprint.Info(printer, args.paratext, printer.ptsettings)
     prjid = printer.get("cb_project")
     prjdir = os.path.join(args.paratext, prjid)
+    # save config
+    config = info.createConfig(printer)
+    with open(os.path.join(prjdir, "ptxprint.cfg"), "w") as outf:
+        config.write(outf)
     tmpdir = os.path.join(prjdir, 'PrintDraft') if printer.get("c_printdraft") else args.directory
     jobs = printer.getBooks()
     if printer.get("c_combine"):
