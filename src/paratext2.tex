@@ -854,8 +854,9 @@
       \fi
   \fi\fi
   \ifx\p@cins\relax
-    \errmessage{Unknown picture location "\loc@ption",
-      expected one of t,b,tl,tr,bl,br}\let\p@cins=\topins
+    %\errmessage{Unknown picture location "\loc@ption",
+    %  expected one of t,b,tl,tr,bl,br}
+    \let\p@cins=\topins
   \fi
   % create box to contain picture
   \setbox0=\vbox{

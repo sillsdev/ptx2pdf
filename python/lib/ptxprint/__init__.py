@@ -28,6 +28,9 @@ class ParatextSettings:
     def __getitem__(self, key):
         return self.dict[key]
 
+    def get(self, key, default=None):
+        return self.dict.get(key, default)
+
 
 class PtxPrinterDialog:
     def __init__(self, allprojects, settings_dir):
@@ -69,6 +72,7 @@ class PtxPrinterDialog:
     def get(self, wid, sub=0):
         w = self.builder.get_object(wid)
         v = ""
+        print(wid)
         if wid.startswith("cb_"):
             model = w.get_model()
             i = w.get_active()
@@ -150,45 +154,46 @@ class PtxPrinterDialog:
 
 class Info:
     _mappings = {
-        "project/id": lambda w:w.get("cb_project"),
-        "paper/height": lambda w:re.sub(r"^.*?, \s*(.+?)\s*(?:\(.*|$)", r"\1", w.get("cb_pagesize")) or "210mm",
-        "paper/width": lambda w:re.sub(r"^(.*?)\s*,.*$", r"\1", w.get("cb_pagesize")) or "148mm",
-        "paper/ifcropmarks": lambda w:"true" if w.get("c_cropmarks") else "false",
-        "paper/ifverticalrule": lambda w:"true" if w.get("c_verticalrule") else "false",
-        "paper/gutterfactor": lambda w:w.get("t_colgutterfactor") or "15",
-        "paper/margins": lambda w:w.get("t_margins") or "14mm",
-        "paper/columns": lambda w:w.get("cb_columns"),
-        "paper/fontfactor": lambda w:float(w.get("f_body")[2]) / 12,
+        "project/id":               ("cb_project", lambda w,v: v),
+        "paper/height":             (None, lambda w,v: re.sub(r"^.*?, \s*(.+?)\s*(?:\(.*|$)", r"\1", w.get("cb_pagesize")) or "210mm"),
+        "paper/width":              (None, lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", w.get("cb_pagesize")) or "148mm"),
+        "paper/pagesize":           ("cb_pagesize", None),
+        "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),
+        "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v else "false"),
+        "paper/gutterfactor":       ("t_colgutterfactor", lambda w,v: v or "15"),
+        "paper/margins":            ("t_margins", lambda w,v: v or "14mm"),
+        "paper/columns":            ("cb_columns", lambda w,v: v),
+        "paper/fontfactor":         (None, lambda w,v: float(w.get("f_body")[2]) / 12),
 
-        "paragraph/linespacing": lambda w:w.get("t_linespacing"),
+        "paragraph/linespacing":    ("t_linespacing", lambda w,v: v),
 
-        "document/ifrtl": lambda w:"true" if w.get("c_rtl") else "false",
-        "document/ifomitsinglechapter": lambda w:"true" if w.get("c_omitsinglechapter") else "false",
-        "document/ifomitverseone": lambda w:"true" if w.get("c_omitverseone") else "false",
-        "document/iffigures": lambda w:"true" if w.get("c_figs") else "false",
-        "document/iffigexclwebapp": lambda w:"true" if w.get("c_figexclwebapp") else "false",
-        "document/iffigplaceholders": lambda w:"true" if w.get("c_figplaceholders") else "false",
-        "document/iffighiderefs": lambda w:"true" if w.get("c_fighiderefs") else "false",
-        "document/ifjustify": lambda w:"true" if w.get("c_justify") else "false",
+        "document/ifrtl":           ("c_rtl", lambda w,v :"true" if v else "false"),
+        "document/ifomitsinglechapter":     ("c_omitsinglechapter", lambda w,v: "true" if v else "false"),
+        "document/ifomitverseone":  ("c_omitverseone", lambda w,v: "true" if v else "false"),
+        "document/iffigures":       ("c_figs", lambda w,v :"true" if v else "false"),
+        "document/iffigexclwebapp": ("c_figexclwebapp", lambda w,v: "true" if v else "false"),
+        "document/iffigplaceholders":       ("c_figplaceholders", lambda w,v :"true" if v else "false"),
+        "document/iffighiderefs":   ("c_fighiderefs", lambda w,v :"true" if v else "false"),
+        "document/ifjustify":       ("c_justify", lambda w,v: "true" if v else "false"),
 
-        "header/ifverses": lambda w:"true" if w.get("c_hdrverses") else "false",
-        "header/ifrhrule": lambda w:"true" if w.get("c_rhrule") else "false",
-        "header/ruleposition": lambda w:w.get("t_rhruleposition") or "10pt",
+        "header/ifverses":          ("c_hdrverses", lambda w,v :"true" if v else "false"),
+        "header/ifrhrule":          ("c_rhrule", lambda w,v: "true" if v else "false"),
+        "header/ruleposition":      ("t_rhruleposition", lambda w,v: v or "10pt"),
 
-        "footer/draft": lambda w:w.get("t_draft"),
-        "footer/comment": lambda w:w.get("l_comment"),
+        "footer/draft":             ("t_draft", lambda w,v: v),
+        "footer/comment":           (None, lambda w,v: v),
 
-        "notes/ifomitfootnoterule": lambda w:"" if w.get("c_omitverseone") else "%", #empty if true, otherwise '%'
+        "notes/ifomitfootnoterule":         (None, lambda w,v: "" if w.get("c_omitverseone") else "%"), #empty if true, otherwise '%'
         # if c_fnautocallers is false then fncallers needs to be set to empty {} - HOW TO DO THAT?
-        "notes/fncallers": lambda w:w.get("t_fncallers") or "*",
-        "notes/fnresetcallers": lambda w:"" if w.get("c_fnpageresetcallers") else "%",
-        "notes/fnomitcaller": lambda w:"" if w.get("c_fnomitcaller") else "%",
-        "notes/fnparagraphednotes": lambda w:"" if w.get("c_fnomitcaller") else "%",
+        "notes/fncallers":          ("t_fncallers", lambda w,v: v or "*"),
+        "notes/fnresetcallers":     ("c_fnpageresetcallers", lambda w,v: "" if v else "%"),
+        "notes/fnomitcaller":       ("c_fnomitcaller", lambda w,v: "" if v else "%"),
+        "notes/fnparagraphednotes": (None, lambda w,v: "" if w.get("c_fnomitcaller") else "%"),
         # if c_xrautocallers is false then xrcallers needs to be set to empty {} - HOW TO DO THAT?
-        "notes/xrcallers": lambda w:w.get("t_xrcallers") or "+",
-        "notes/xrresetcallers": lambda w:"" if w.get("c_xrpageresetcallers") else "%",
-        "notes/xromitcaller": lambda w:"" if w.get("c_xromitcaller") else "%",
-        "notes/xrparagraphednotes": lambda w:"" if w.get("c_xromitcaller") else "%"
+        "notes/xrcallers":          ("t_xrcallers", lambda w,v: v or "+"),
+        "notes/xrresetcallers":     ("c_xrpageresetcallers", lambda w,v: "" if v else "%"),
+        "notes/xromitcaller":       ("c_xromitcaller", lambda w,v: "" if v else "%"),
+        "notes/xrparagraphednotes": (None, lambda w,v: "" if w.get("c_xromitcaller") else "%"),
     }
     _fonts = {
         "font/regular": "f_body",
@@ -205,13 +210,16 @@ class Info:
     }
 
     def __init__(self, printer, path, ptsettings=None):
-        self.dict = {"/ptxpath": path}
-        for k, v in self._mappings.items():
-            self.dict[k] = v(printer)
-        self.processFonts(printer)
-        self.processHdrFtr(printer)
         self.ptsettings = ptsettings
         self.changes = None
+        self.dict = {"/ptxpath": path}
+        for k, v in self._mappings.items():
+            val = printer.get(v[0]) if v[0] is not None else None
+            if v[1] is not None:
+                self.dict[k] = v[1](printer, val)
+        self.processFonts(printer)
+        self.processHdrFtr(printer)
+        self.processCallers(printer)
 
     def __getitem__(self, key):
         return self.dict[key]
@@ -241,6 +249,11 @@ class Info:
             if True or mirror:
                 self.dict['header/even{}'.format(side)] = t
             self.dict['header/odd{}'.format(side)] = t
+
+    def processCallers(self, printer):
+        default = "a b c d e f g h i j k l m n o p q r s t u v w x y z"
+        self.dict['footnotes/callers'] = \
+                ",".join(self.ptsettings.get('CallerSequence', default).split())
 
     def asTex(self, template="template.tex"):
  #       import pdb;pdb.set_trace()
@@ -276,7 +289,13 @@ class Info:
             with open(infname, "r", encoding="utf-8") as inf:
                 dat = inf.read()
                 for c in self.changes:
-                    dat = c[0].sub(c[1], dat)
+                    if c[0] is None:
+                        dat = c[1].sub(c[2], dat)
+                    else:
+                        newdat = [c[0].split(dat)]
+                        for i in range(1, len(newdat), 2):
+                            newdat[i] = c[1].sub(c[2], newdat[i])
+                        dat = "".join(newdat)
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write(dat)
             return outfname
@@ -295,7 +314,11 @@ class Info:
                     continue
                 m = re.match(r"^(['\"])(.*?)(?<!\\)\1\s*>\s*(['\"])(.*?)(?<!\\)\3", l)
                 if m:
-                    changes.append((regex.compile(m.group(2), flags=regex.M), m.group(4)))
+                    changes.append((None, regex.compile(m.group(2), flags=regex.M), m.group(4)))
+                    continue
+                m = re.match(r"^in\s+(['\"])(.*?)(?<!\\)\1\s*:\s*(['\"])(.*?)(?<!\\)\3\s*>\s*(['\"])(.*?)(?<!\\)\5", l)
+                if m:
+                    changes.append((regex.compile("("+m.group(2)+")", flags=regex.M), regex.compile(m.group(4), flags=regex.M), m.group(6)))
         if not len(changes):
             return None
         return changes

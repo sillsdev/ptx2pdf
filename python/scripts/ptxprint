@@ -11,8 +11,9 @@ except ImportError:
 parser = argparse.ArgumentParser()
 parser.add_argument('-p','--paratext',help="Path to Paratext Projects directory")
 parser.add_argument('-d','--directory',default=".",help="Directory to store temporary files in")
+parser.add_argument('-m','--macros',help="Directory containing TeX macros (paratext2.tex)")
 parser.add_argument('-t','--test', action='store_true',help="Quick start for a lazy typist")
-parser.add_argument('-m','--mptest', action='store_true',help="Quick start for the other lazy typist")
+parser.add_argument('-M','--mptest', action='store_true',help="Quick start for the other lazy typist")
 args = parser.parse_args()
 
 if args.paratext is None:
@@ -69,7 +70,8 @@ def dojob(jobs, info, prjid, prjdir, tmpdir):
     with open(os.path.join(tmpdir, outfname), "w") as texf:
         texf.write(info.asTex())
     if sys.platform == "linux":
-        os.putenv('TEXINPUTS', ".:/usr/lib/Paratext8/xetex/share/texmf-dist/tex/ptx2pdf:/usr/lib/Paratext9/xetex/share/texmf-dist/tex/ptx2pdf")
+        mdirs = args.macros or "/usr/lib/Paratext8/xetex/share/texmf-dist/tex/ptx2pdf:/usr/lib/Paratext9/xetex/share/texmf-dist/tex/ptx2pdf"
+        os.putenv('TEXINPUTS', ".:" + mdirs)
     ptxprint.runner.call(["xetex", outfname], cwd=tmpdir)
     print("cd {}; xetex {}".format(tmpdir, outfname))
 
