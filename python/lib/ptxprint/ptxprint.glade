@@ -547,6 +547,7 @@ PrintDraft Folder</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">end</property>
+                                    <property name="margin_left">6</property>
                                     <property name="label" translatable="yes">Page Size:</property>
                                   </object>
                                   <packing>
@@ -560,6 +561,7 @@ PrintDraft Folder</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -595,7 +597,7 @@ PrintDraft Folder</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">end</property>
-                                    <property name="hexpand">True</property>
+                                    <property name="margin_left">6</property>
                                     <property name="label" translatable="yes">Columns:</property>
                                   </object>
                                   <packing>
@@ -625,6 +627,8 @@ PrintDraft Folder</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="hexpand">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -659,6 +663,7 @@ PrintDraft Folder</property>
                                   <object class="GtkComboBoxText" id="cb_pagesize">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="hexpand">True</property>
                                     <property name="active">0</property>
                                     <property name="has_entry">True</property>
                                     <property name="active_id">0</property>
@@ -1053,6 +1058,8 @@ PrintDraft Folder</property>
                   <object class="GtkBox">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="margin_left">6</property>
+                    <property name="margin_right">6</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame">
@@ -1220,6 +1227,7 @@ PrintDraft Folder</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">end</property>
+                                    <property name="margin_right">6</property>
                                     <property name="label" translatable="yes">Slant</property>
                                     <property name="justify">center</property>
                                     <property name="xalign">0.5</property>
@@ -1251,6 +1259,7 @@ PrintDraft Folder</property>
                                   <object class="GtkSpinButton">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
+                                    <property name="margin_right">6</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">4</property>
@@ -1271,6 +1280,7 @@ PrintDraft Folder</property>
                                   <object class="GtkSpinButton">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
+                                    <property name="margin_right">6</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">4</property>
@@ -1291,6 +1301,7 @@ PrintDraft Folder</property>
                                   <object class="GtkSpinButton">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
+                                    <property name="margin_right">6</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">4</property>
@@ -2025,6 +2036,7 @@ as a single running paragraph (in verse order)</property>
                                       <object class="GtkFrame">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="margin_right">6</property>
                                         <property name="label_xalign">0.0099999997764825821</property>
                                         <property name="shadow_type">in</property>
                                         <child>
