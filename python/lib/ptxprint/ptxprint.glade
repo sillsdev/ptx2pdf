@@ -2,6 +2,36 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
+  <object class="GtkAdjustment" id="a_bolde">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="a_bolditalice">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="a_bolditalics">
+    <property name="upper">100</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="a_bolds">
+    <property name="upper">100</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="a_italice">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="a_italics">
+    <property name="upper">100</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">1</property>
+  </object>
   <object class="GtkListStore" id="ls_books">
     <columns>
       <!-- column-name book -->
@@ -135,9 +165,9 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can_focus">False</property>
-            <property name="halign">start</property>
-            <property name="margin_left">4</property>
-            <property name="homogeneous">True</property>
+            <property name="margin_left">6</property>
+            <property name="margin_right">6</property>
+            <property name="hexpand">True</property>
             <property name="layout_style">start</property>
             <child>
               <object class="GtkButton">
@@ -148,7 +178,7 @@
                 <property name="halign">start</property>
               </object>
               <packing>
-                <property name="expand">False</property>
+                <property name="expand">True</property>
                 <property name="fill">False</property>
                 <property name="position">0</property>
               </packing>
@@ -165,9 +195,26 @@
                 <property name="draw_indicator">True</property>
               </object>
               <packing>
-                <property name="expand">False</property>
+                <property name="expand">True</property>
                 <property name="fill">False</property>
                 <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton">
+                <property name="label" translatable="yes">Cancel</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="halign">end</property>
+                <property name="hexpand">True</property>
+                <signal name="clicked" handler="onCancel" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">False</property>
+                <property name="pack_type">end</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child>
@@ -177,29 +224,15 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="halign">end</property>
+                <property name="hexpand">True</property>
                 <signal name="clicked" handler="onOK" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
                 <property name="pack_type">end</property>
-                <property name="position">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton">
-                <property name="label" translatable="yes">Cancel</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="halign">start</property>
-                <signal name="clicked" handler="onCancel" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="pack_type">end</property>
                 <property name="position">3</property>
+                <property name="non_homogeneous">True</property>
               </packing>
             </child>
           </object>
@@ -214,6 +247,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="halign">start</property>
+            <property name="hexpand">True</property>
             <property name="orientation">vertical</property>
             <child>
               <object class="GtkNotebook">
@@ -1307,16 +1341,15 @@ PrintDraft Folder</property>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_boldembolden">
-                                    <property name="width_request">120</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="width_chars">4</property>
-                                    <property name="text" translatable="yes">0.0</property>
                                     <property name="overwrite_mode">True</property>
                                     <property name="progress_fraction">0.10000000000000001</property>
+                                    <property name="placeholder_text" translatable="yes">0.0</property>
                                     <property name="input_purpose">number</property>
+                                    <property name="adjustment">a_bolde</property>
                                     <property name="climb_rate">0.10000000000000001</property>
-                                    <property name="digits">1</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
                                   </object>
@@ -1326,16 +1359,19 @@ PrintDraft Folder</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkSpinButton">
-                                    <property name="width_request">130</property>
+                                  <object class="GtkSpinButton" id="s_boldslant">
+                                    <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="margin_right">6</property>
                                     <property name="width_chars">4</property>
                                     <property name="text" translatable="yes">0</property>
                                     <property name="overwrite_mode">True</property>
                                     <property name="input_purpose">number</property>
-                                    <property name="climb_rate">5</property>
+                                    <property name="adjustment">a_bolds</property>
+                                    <property name="climb_rate">0.050000000000000003</property>
+                                    <property name="digits">2</property>
                                     <property name="numeric">True</property>
+                                    <property name="update_policy">if-valid</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">4</property>
@@ -1344,13 +1380,14 @@ PrintDraft Folder</property>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_italicembolden">
+                                    <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="width_chars">4</property>
-                                    <property name="text" translatable="yes">0.0</property>
                                     <property name="overwrite_mode">True</property>
+                                    <property name="placeholder_text" translatable="yes">0</property>
                                     <property name="input_purpose">number</property>
+                                    <property name="adjustment">a_italice</property>
                                     <property name="climb_rate">0.10000000000000001</property>
-                                    <property name="digits">1</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
                                   </object>
@@ -1360,7 +1397,7 @@ PrintDraft Folder</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkSpinButton" id="s_fontislant">
+                                  <object class="GtkSpinButton" id="s_italicslant">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="margin_right">6</property>
@@ -1368,7 +1405,9 @@ PrintDraft Folder</property>
                                     <property name="text" translatable="yes">0</property>
                                     <property name="overwrite_mode">True</property>
                                     <property name="input_purpose">number</property>
-                                    <property name="climb_rate">5</property>
+                                    <property name="adjustment">a_italics</property>
+                                    <property name="climb_rate">0.050000000000000003</property>
+                                    <property name="digits">2</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
                                   </object>
@@ -1382,9 +1421,10 @@ PrintDraft Folder</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="width_chars">4</property>
-                                    <property name="text" translatable="yes">0.0</property>
+                                    <property name="placeholder_text" translatable="yes">0</property>
+                                    <property name="input_purpose">number</property>
+                                    <property name="adjustment">a_bolditalice</property>
                                     <property name="climb_rate">0.10000000000000001</property>
-                                    <property name="digits">1</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
                                   </object>
@@ -1394,14 +1434,16 @@ PrintDraft Folder</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkSpinButton" id="s_fontbislant">
+                                  <object class="GtkSpinButton" id="s_bolditalicslant">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="margin_right">6</property>
                                     <property name="width_chars">5</property>
                                     <property name="text" translatable="yes">0</property>
                                     <property name="input_purpose">number</property>
-                                    <property name="climb_rate">5</property>
+                                    <property name="adjustment">a_bolditalics</property>
+                                    <property name="climb_rate">0.050000000000000003</property>
+                                    <property name="digits">2</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
                                   </object>
@@ -2665,8 +2707,8 @@ material being typeset:</property>
             </child>
           </object>
           <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
             <property name="position">1</property>
           </packing>
         </child>

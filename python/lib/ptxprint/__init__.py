@@ -89,6 +89,8 @@ class PtxPrinterDialog:
             v = val if asstr else self.parse_fontname(val)
         elif wid.startswith("c_"):
             v = w.get_active()
+        elif wid.startswith("s_"):
+            v = w.get_value()
         return v
 
     def set(self, wid, value):
@@ -110,6 +112,8 @@ class PtxPrinterDialog:
             w.emit("font-set")
         elif wid.startswith("c_"):
             w.set_active(value)
+        elif wid.startswith("s_"):
+            w.set_value(value)
 
     def getBooks(self):
         if self.get('c_onebook'):
@@ -133,9 +137,16 @@ class PtxPrinterDialog:
         label = self.builder.get_object("l_font")
         label.set_text(font)
         for s in ('bold', 'italic', 'bold italic'):
-            w = self.builder.get_object("f_"+s.replace(" ", ""))
-            fname = family + ", " + " ".join(style + s.split()) + " "+ str(size)
+            sid = s.replace(" ", "")
+            w = self.builder.get_object("f_"+sid)
+            f = TTFont(family, " ".join(style + s.split()))
+            fname = family + ", " + f.style + " " + size
             w.set_font_name(fname)
+            print(s, fname, f.extrastyles)
+            if 'bold' in f.extrastyles:
+                self.set("s_{}embolden".format(sid), 2)
+            if 'italic' in f.extrastyles:
+                self.set("s_{}slant".format(sid), 0.27)
 
     def onProjectChange(self, cb_prj):
         self.prjid = self.get("cb_project")
