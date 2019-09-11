@@ -199,6 +199,7 @@ class Info:
         "document/iffighiderefs":   ("c_fighiderefs", lambda w,v :"true" if v else "false"),
         "document/ifjustify":       ("c_justify", lambda w,v: "true" if v else "false"),
 
+        "header/ifomitrhchapnum":   ("c_omitrhchapnum", lambda w,v :"true" if v else "false"),
         "header/ifverses":          ("c_hdrverses", lambda w,v :"true" if v else "false"),
         "header/ifrhrule":          ("c_rhrule", lambda w,v: "true" if v else "false"),
         "header/ruleposition":      ("t_rhruleposition", lambda w,v: v or "10pt"),

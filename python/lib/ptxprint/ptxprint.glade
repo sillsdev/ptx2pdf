@@ -3,34 +3,44 @@
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkAdjustment" id="a_bolde">
-    <property name="upper">100</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
+    <property name="lower">-10</property>
+    <property name="upper">10</property>
+    <property name="value">2</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_bolditalice">
-    <property name="upper">100</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
+    <property name="lower">-10</property>
+    <property name="upper">10</property>
+    <property name="value">2</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_bolditalics">
-    <property name="upper">100</property>
-    <property name="step_increment">0.10000000000000001</property>
-    <property name="page_increment">1</property>
+    <property name="lower">-1</property>
+    <property name="upper">1</property>
+    <property name="value">0.14999999999999999</property>
+    <property name="step_increment">0.01</property>
+    <property name="page_increment">0.10000000000000001</property>
   </object>
   <object class="GtkAdjustment" id="a_bolds">
-    <property name="upper">100</property>
-    <property name="step_increment">0.10000000000000001</property>
-    <property name="page_increment">1</property>
+    <property name="lower">-1</property>
+    <property name="upper">1</property>
+    <property name="step_increment">0.01</property>
+    <property name="page_increment">0.10000000000000001</property>
   </object>
   <object class="GtkAdjustment" id="a_italice">
-    <property name="upper">100</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="a_italics">
-    <property name="upper">100</property>
+    <property name="lower">-10</property>
+    <property name="upper">10</property>
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="a_italics">
+    <property name="lower">-1</property>
+    <property name="upper">1</property>
+    <property name="value">0.14999999999999999</property>
+    <property name="step_increment">0.01</property>
+    <property name="page_increment">0.10000000000000001</property>
   </object>
   <object class="GtkListStore" id="ls_books">
     <columns>
@@ -603,6 +613,7 @@ PrintDraft Folder</property>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">If the required size is not displayed, then just type the required page width and height separated by a comma. For example: 140mm,210mm</property>
                                     <property name="halign">end</property>
                                     <property name="margin_left">6</property>
                                     <property name="label" translatable="yes">Page Size:</property>
@@ -1018,7 +1029,17 @@ PrintDraft Folder</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkCheckButton" id="c_preventorphans">
+                                    <property name="label" translatable="yes">Prevent Orphan Words (\s &amp; \q#)</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
                                 </child>
                                 <child>
                                   <placeholder/>
@@ -1071,9 +1092,6 @@ PrintDraft Folder</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="spacing">6</property>
                                 <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
                                   <object class="GtkLabel" id="l_comment">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
@@ -1096,21 +1114,6 @@ PrintDraft Folder</property>
                                     <property name="fill">True</property>
                                     <property name="position">2</property>
                                   </packing>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
                                 </child>
                                 <child type="center">
                                   <placeholder/>
@@ -1282,6 +1285,7 @@ PrintDraft Folder</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">If the required font does not have a BOLD typeface, you can use this setting to create a BOLD effect. (For example, setting Embolden to 2.0 would thicken the Regular typeface making it appear as bold).</property>
                                     <property name="halign">start</property>
                                     <property name="hexpand">True</property>
                                     <property name="draw_indicator">True</property>
@@ -1297,6 +1301,7 @@ PrintDraft Folder</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">If the required font does not have an ITALIC typeface, you can use this setting to create an ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic).</property>
                                     <property name="halign">start</property>
                                     <property name="hexpand">True</property>
                                     <property name="draw_indicator">True</property>
@@ -1343,6 +1348,7 @@ PrintDraft Folder</property>
                                   <object class="GtkSpinButton" id="s_boldembolden">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
+                                    <property name="tooltip_text" translatable="yes">If the required font does not have a BOLD typeface, you can use this setting to create a BOLD effect. (For example, setting Embolden to 2.0 would thicken the Regular typeface making it appear as bold).</property>
                                     <property name="width_chars">4</property>
                                     <property name="overwrite_mode">True</property>
                                     <property name="progress_fraction">0.10000000000000001</property>
@@ -1350,6 +1356,7 @@ PrintDraft Folder</property>
                                     <property name="input_purpose">number</property>
                                     <property name="adjustment">a_bolde</property>
                                     <property name="climb_rate">0.10000000000000001</property>
+                                    <property name="digits">1</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
                                   </object>
@@ -1388,6 +1395,7 @@ PrintDraft Folder</property>
                                     <property name="input_purpose">number</property>
                                     <property name="adjustment">a_italice</property>
                                     <property name="climb_rate">0.10000000000000001</property>
+                                    <property name="digits">1</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
                                   </object>
@@ -1400,6 +1408,7 @@ PrintDraft Folder</property>
                                   <object class="GtkSpinButton" id="s_italicslant">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
+                                    <property name="tooltip_text" translatable="yes">If the required font does not have an ITALIC typeface, you can use this setting to create an ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic).</property>
                                     <property name="margin_right">6</property>
                                     <property name="width_chars">5</property>
                                     <property name="text" translatable="yes">0</property>
@@ -1425,6 +1434,7 @@ PrintDraft Folder</property>
                                     <property name="input_purpose">number</property>
                                     <property name="adjustment">a_bolditalice</property>
                                     <property name="climb_rate">0.10000000000000001</property>
+                                    <property name="digits">1</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
                                   </object>
@@ -1677,13 +1687,12 @@ layout</property>
                                         <property name="can_focus">False</property>
                                         <property name="orientation">vertical</property>
                                         <child>
-                                          <object class="GtkCheckButton" id="c_hdrchapters">
-                                            <property name="label" translatable="yes">Include Chapter numbers in header references</property>
+                                          <object class="GtkCheckButton" id="c_omitrhchapnum">
+                                            <property name="label" translatable="yes">Omit Chapter numbers from header references</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
                                             <property name="halign">start</property>
-                                            <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
                                           <packing>
@@ -1699,7 +1708,6 @@ layout</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
                                             <property name="halign">start</property>
-                                            <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
                                           <packing>
@@ -1926,7 +1934,6 @@ layout</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="halign">start</property>
-                                    <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -1950,7 +1957,17 @@ layout</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkCheckButton" id="c_omitallverses">
+                                    <property name="label" translatable="yes">Omit All Verse Numbers</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">3</property>
+                                  </packing>
                                 </child>
                               </object>
                             </child>
@@ -2389,9 +2406,6 @@ as a single running paragraph (in verse order)</property>
                                     <property name="margin_right">6</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
-                                    <property name="label" translatable="yes">A previously created PDF file can
-be included BEFORE the scripture          Select:
-material being typeset.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -2406,9 +2420,6 @@ material being typeset.</property>
                                     <property name="margin_right">6</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
-                                    <property name="label" translatable="yes">A watermark can be applied to
-all pages of the publication.                    Select:
-The text needs to be in a PDF.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -2419,6 +2430,7 @@ The text needs to be in a PDF.</property>
                                   <object class="GtkFileChooserButton">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">A watermark can be applied to all pages of the publication. The text needs to be in a PDF.</property>
                                     <property name="margin_top">8</property>
                                     <property name="margin_bottom">8</property>
                                     <property name="create_folders">False</property>
@@ -2432,11 +2444,12 @@ The text needs to be in a PDF.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton">
-                                    <property name="label" translatable="yes">Watermark</property>
+                                    <property name="label" translatable="yes">Apply Watermark PDF</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="margin_left">50</property>
+                                    <property name="tooltip_text" translatable="yes">A watermark can be applied to all pages of the publication. The text needs to be in a PDF.</property>
+                                    <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -2446,10 +2459,12 @@ The text needs to be in a PDF.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton">
-                                    <property name="label" translatable="yes">Front Matter Pages</property>
+                                    <property name="label" translatable="yes">Include Front Matter PDF</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">A previously created PDF file can be included BEFORE the scripture material being typeset.</property>
+                                    <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -2459,10 +2474,12 @@ The text needs to be in a PDF.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton">
-                                    <property name="label" translatable="yes">Back Matter Pages</property>
+                                    <property name="label" translatable="yes">Include Back Matter PDF</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">A previously created PDF file can be included AFTER the scripture material being typeset.</property>
+                                    <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -2478,9 +2495,6 @@ The text needs to be in a PDF.</property>
                                     <property name="margin_right">6</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
-                                    <property name="label" translatable="yes">A previously created PDF file can
-be included AFTER the scripture             Select:
-material being typeset:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -2491,6 +2505,7 @@ material being typeset:</property>
                                   <object class="GtkFileChooserButton">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">A previously created PDF file can be included AFTER the scripture material being typeset.</property>
                                     <property name="margin_top">8</property>
                                     <property name="margin_bottom">8</property>
                                     <property name="create_folders">False</property>
@@ -2506,6 +2521,7 @@ material being typeset:</property>
                                   <object class="GtkFileChooserButton">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">A previously created PDF file can be included BEFORE the scripture material being typeset.</property>
                                     <property name="margin_top">8</property>
                                     <property name="margin_bottom">8</property>
                                     <property name="create_folders">False</property>
@@ -2545,6 +2561,7 @@ material being typeset:</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
+                            <property name="halign">start</property>
                             <property name="margin_left">14</property>
                             <property name="draw_indicator">True</property>
                           </object>
@@ -2560,7 +2577,7 @@ material being typeset:</property>
                             <property name="can_focus">True</property>
                             <property name="halign">end</property>
                             <property name="hexpand">False</property>
-                            <property name="text" translatable="yes">&lt;Enter ToC Title here&gt;</property>
+                            <property name="text" translatable="yes">&lt;Enter Title for ToC here&gt;</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -2583,11 +2600,11 @@ material being typeset:</property>
                         <property name="orientation">vertical</property>
                         <child>
                           <object class="GtkCheckButton">
-                            <property name="label" translatable="yes">Begin next book on last page of previous book (if more than half a page is available)</property>
+                            <property name="label" translatable="yes">Format Introductory Outline with right-aligned \ior and tabbed leaders</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="margin_left">14</property>
+                            <property name="halign">start</property>
                             <property name="margin_top">4</property>
                             <property name="margin_bottom">4</property>
                             <property name="draw_indicator">True</property>
@@ -2599,10 +2616,22 @@ material being typeset:</property>
                           </packing>
                         </child>
                         <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
+                          <object class="GtkCheckButton">
+                            <property name="label" translatable="yes">Begin next book on last page of previous book (if more than half a page is available)</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="halign">start</property>
+                            <property name="margin_left">14</property>
+                            <property name="margin_top">4</property>
+                            <property name="margin_bottom">4</property>
+                            <property name="draw_indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
                         </child>
                       </object>
                       <packing>
