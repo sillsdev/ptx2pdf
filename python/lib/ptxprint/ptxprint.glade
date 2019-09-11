@@ -551,15 +551,18 @@ PrintDraft Folder</property>
                             <property name="can_focus">False</property>
                             <property name="margin_left">10</property>
                             <property name="margin_right">10</property>
+                            <property name="hexpand">True</property>
+                            <property name="left_padding">6</property>
+                            <property name="right_padding">6</property>
                             <child>
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="halign">start</property>
                                 <property name="margin_left">6</property>
                                 <property name="margin_right">6</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
+                                <property name="hexpand">True</property>
                                 <property name="row_spacing">6</property>
                                 <property name="column_spacing">10</property>
                                 <child>
@@ -605,6 +608,7 @@ PrintDraft Folder</property>
                                   <object class="GtkEntry" id="t_margins">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
+                                    <property name="hexpand">True</property>
                                     <property name="text" translatable="yes">12mm</property>
                                   </object>
                                   <packing>
@@ -647,7 +651,7 @@ PrintDraft Folder</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="halign">start</property>
+                                    <property name="halign">end</property>
                                     <property name="hexpand">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -672,6 +676,7 @@ PrintDraft Folder</property>
                                   <object class="GtkEntry" id="t_colgutterfactor">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
+                                    <property name="hexpand">True</property>
                                     <property name="text" translatable="yes">15pt</property>
                                   </object>
                                   <packing>
@@ -683,8 +688,6 @@ PrintDraft Folder</property>
                                   <object class="GtkComboBoxText" id="cb_pagesize">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="hexpand">True</property>
                                     <property name="active">0</property>
                                     <property name="has_entry">True</property>
                                     <property name="active_id">0</property>
@@ -784,6 +787,8 @@ PrintDraft Folder</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="hexpand">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -814,7 +819,6 @@ PrintDraft Folder</property>
                                   <object class="GtkEntry" id="t_linebreaklocale">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="halign">start</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -1127,7 +1131,8 @@ PrintDraft Folder</property>
                           <object class="GtkAlignment">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="left_padding">12</property>
+                            <property name="left_padding">10</property>
+                            <property name="right_padding">10</property>
                             <child>
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
@@ -1136,6 +1141,7 @@ PrintDraft Folder</property>
                                 <property name="margin_right">6</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
+                                <property name="hexpand">True</property>
                                 <property name="row_spacing">6</property>
                                 <property name="column_spacing">6</property>
                                 <child>
@@ -1243,6 +1249,7 @@ PrintDraft Folder</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="halign">start</property>
+                                    <property name="hexpand">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -1257,6 +1264,7 @@ PrintDraft Folder</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="halign">start</property>
+                                    <property name="hexpand">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -1271,6 +1279,7 @@ PrintDraft Folder</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="halign">start</property>
+                                    <property name="hexpand">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -1297,10 +1306,12 @@ PrintDraft Folder</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkSpinButton" id="s_fontbembolden">
+                                  <object class="GtkSpinButton" id="s_boldembolden">
+                                    <property name="width_request">120</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="text" translatable="yes">2.0</property>
+                                    <property name="width_chars">4</property>
+                                    <property name="text" translatable="yes">0.0</property>
                                     <property name="overwrite_mode">True</property>
                                     <property name="progress_fraction">0.10000000000000001</property>
                                     <property name="input_purpose">number</property>
@@ -1308,7 +1319,6 @@ PrintDraft Folder</property>
                                     <property name="digits">1</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
-                                    <property name="value">2</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">3</property>
@@ -1317,10 +1327,15 @@ PrintDraft Folder</property>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton">
+                                    <property name="width_request">130</property>
                                     <property name="can_focus">True</property>
                                     <property name="margin_right">6</property>
-                                    <property name="editable">False</property>
-                                    <property name="visibility">False</property>
+                                    <property name="width_chars">4</property>
+                                    <property name="text" translatable="yes">0</property>
+                                    <property name="overwrite_mode">True</property>
+                                    <property name="input_purpose">number</property>
+                                    <property name="climb_rate">5</property>
+                                    <property name="numeric">True</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">4</property>
@@ -1328,10 +1343,16 @@ PrintDraft Folder</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkSpinButton">
+                                  <object class="GtkSpinButton" id="s_italicembolden">
                                     <property name="can_focus">True</property>
-                                    <property name="editable">False</property>
-                                    <property name="visibility">False</property>
+                                    <property name="width_chars">4</property>
+                                    <property name="text" translatable="yes">0.0</property>
+                                    <property name="overwrite_mode">True</property>
+                                    <property name="input_purpose">number</property>
+                                    <property name="climb_rate">0.10000000000000001</property>
+                                    <property name="digits">1</property>
+                                    <property name="numeric">True</property>
+                                    <property name="update_policy">if-valid</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">3</property>
@@ -1343,6 +1364,13 @@ PrintDraft Folder</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="margin_right">6</property>
+                                    <property name="width_chars">5</property>
+                                    <property name="text" translatable="yes">0</property>
+                                    <property name="overwrite_mode">True</property>
+                                    <property name="input_purpose">number</property>
+                                    <property name="climb_rate">5</property>
+                                    <property name="numeric">True</property>
+                                    <property name="update_policy">if-valid</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">4</property>
@@ -1350,9 +1378,15 @@ PrintDraft Folder</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkSpinButton" id="s_fontbiembolden">
+                                  <object class="GtkSpinButton" id="s_bolditalicembolden">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
+                                    <property name="width_chars">4</property>
+                                    <property name="text" translatable="yes">0.0</property>
+                                    <property name="climb_rate">0.10000000000000001</property>
+                                    <property name="digits">1</property>
+                                    <property name="numeric">True</property>
+                                    <property name="update_policy">if-valid</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">3</property>
@@ -1364,6 +1398,12 @@ PrintDraft Folder</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="margin_right">6</property>
+                                    <property name="width_chars">5</property>
+                                    <property name="text" translatable="yes">0</property>
+                                    <property name="input_purpose">number</property>
+                                    <property name="climb_rate">5</property>
+                                    <property name="numeric">True</property>
+                                    <property name="update_policy">if-valid</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">4</property>
@@ -1403,7 +1443,7 @@ PrintDraft Folder</property>
                         </child>
                       </object>
                       <packing>
-                        <property name="expand">False</property>
+                        <property name="expand">True</property>
                         <property name="fill">True</property>
                         <property name="position">0</property>
                       </packing>
@@ -1711,7 +1751,8 @@ layout</property>
                           <object class="GtkAlignment">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="left_padding">12</property>
+                            <property name="left_padding">10</property>
+                            <property name="right_padding">10</property>
                             <child>
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
@@ -1891,6 +1932,8 @@ layout</property>
                       <object class="GtkFrame">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
                         <property name="margin_top">6</property>
                         <property name="margin_bottom">6</property>
                         <property name="label_xalign">0.0099999997764825821</property>
@@ -2107,11 +2150,14 @@ as a single running paragraph (in verse order)</property>
                                           <object class="GtkAlignment">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="left_padding">12</property>
+                                            <property name="left_padding">10</property>
+                                            <property name="right_padding">10</property>
                                             <child>
                                               <object class="GtkBox">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
+                                                <property name="margin_left">6</property>
+                                                <property name="margin_right">6</property>
                                                 <property name="orientation">vertical</property>
                                                 <property name="spacing">3</property>
                                                 <child>
