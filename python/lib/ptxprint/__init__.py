@@ -449,12 +449,18 @@ class Info:
         "notes/xrresetcallers":     ("c_xrpageresetcallers", lambda w,v: "" if v else "%"),
         "notes/xromitcaller":       ("c_xromitcaller", lambda w,v: "" if v else "%"),
         "notes/xrparagraphednotes": (None, lambda w,v: "" if w.get("c_xromitcaller") else "%"),
+        "fontbold/embolden":       ("s_boldembolden", lambda w,v: ";embolden={:.2f}".format(v) if v > 0. else ""),
+        "fontitalic/embolden":     ("s_italicembolden", lambda w,v: ";embolden={:.2f}".format(v) if v > 0. else ""),
+        "fontbolditalic/embolden": ("s_bolditalicembolden", lambda w,v: ";embolden={:.2f}".format(v) if v > 0. else ""),
+        "fontbold/slant":          ("s_boldslant", lambda w,v: ";slant={:.4f}".format(v) if v > 0. else ""),
+        "fontitalic/slant":        ("s_italicslant", lambda w,v: ";slant={:.4f}".format(v) if v > 0. else ""),
+        "fontbolditalic/slant":    ("s_bolditalicslant", lambda w,v: ";slant={:.4f}".format(v) if v > 0. else ""),
     }
     _fonts = {
-        "font/regular": "f_body",
-        "font/bold": "f_bold",
-        "font/italic": "f_italic",
-        "font/bolditalic": "f_bolditalic"
+        "fontregular/name": "f_body",
+        "fontbold/name": "f_bold",
+        "fontitalic/name": "f_italic",
+        "fontbolditalic/name": "f_bolditalic"
     }
     _hdrmappings = {                         # These aren't being saved/remembered yet in the UI!
         "First Reference":  r"\firstref",
