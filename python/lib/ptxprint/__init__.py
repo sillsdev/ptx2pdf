@@ -181,13 +181,18 @@ class Info:
         "paper/pagesize":           ("cb_pagesize", None),
         "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),
         "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v else "false"),
-        "paper/gutterfactor":       ("t_colgutterfactor", lambda w,v: v or "15"),
-        "paper/margins":            ("t_margins", lambda w,v: v or "14mm"),
+        "paper/margins":            ("s_margins", lambda w,v: v or "14"),
+        "paper/topmarginfactor":    ("s_topmarginfactor", lambda w,v: v or "1.15"),
+        "paper/bottommarginfactor": ("s_bottommarginfactor", lambda w,v: v or "1.15"),
+        #\def\SideMarginFactor{{1.0}} % not needed/wanted at this point
+
         "paper/columns":            ("cb_columns", lambda w,v: v),
-        "paper/fontfactor":         (None, lambda w,v: float(w.get("f_body")[2]) / 12),
+#        "paper/fontfactor":         (None, lambda w,v: float(w.get("f_body")[2]) / 12),  # This is now its own spin button for FONT SIZE
+        "paper/fontfactor":         ("s_fontsize", lambda w,v: v or "12"),
 
         "paragraph/linespacing":    ("t_linespacing", lambda w,v: v),
 
+        "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: v or "15"),
         "document/ifrtl":           ("c_rtl", lambda w,v :"true" if v else "false"),
         "document/iflinebreakon":   ("c_linebreakon", lambda w,v: "" if v else "%"),
         "document/linebreaklocale": ("t_linebreaklocale", lambda w,v: v or ""),
@@ -195,14 +200,15 @@ class Info:
         "document/ifomitverseone":  ("c_omitverseone", lambda w,v: "true" if v else "false"),
         "document/iffigures":       ("c_figs", lambda w,v :"true" if v else "false"),
         "document/iffigexclwebapp": ("c_figexclwebapp", lambda w,v: "true" if v else "false"),
-        "document/iffigplaceholders":       ("c_figplaceholders", lambda w,v :"true" if v else "false"),
+        "document/iffigplaceholders": ("c_figplaceholders", lambda w,v :"true" if v else "false"),
         "document/iffighiderefs":   ("c_fighiderefs", lambda w,v :"true" if v else "false"),
         "document/ifjustify":       ("c_justify", lambda w,v: "true" if v else "false"),
+        "document/hangpoetry":      ("c_hangpoetry", lambda w,v: "" if v else "%"),
 
         "header/ifomitrhchapnum":   ("c_omitrhchapnum", lambda w,v :"true" if v else "false"),
         "header/ifverses":          ("c_hdrverses", lambda w,v :"true" if v else "false"),
-        "header/ifrhrule":          ("c_rhrule", lambda w,v: "true" if v else "false"),
-        "header/ruleposition":      ("t_rhruleposition", lambda w,v: v or "10pt"),
+        "header/ifrhrule":          ("c_rhrule", lambda w,v: "" if v else "%"),
+        "header/ruleposition":      ("s_rhruleposition", lambda w,v: v or "10"),
 
         "footer/draft":             ("t_draft", lambda w,v: v),
         "footer/comment":           (None, lambda w,v: v),
