@@ -44,7 +44,7 @@ if args.test:
     mainw.set("t_booklist", "JHN")
     mainw.set("c_choosebooks", True)
     mainw.set("cb_columns", "1")
-    mainw.set("t_linespacing", "1.3")
+    mainw.set("s_linespacing", "1.3")
     mainw.set("c_justify", True)
 
 if args.mptest:
@@ -54,9 +54,9 @@ if args.mptest:
     mainw.set("t_booklist", "RUT")
     mainw.set("c_choosebooks", True)
     mainw.set("cb_columns", "2")
-    mainw.set("t_linespacing", "1.2")
+    mainw.set("s_linespacing", "1.2")
     mainw.set("c_justify", True)
-    mainw.set("t_colgutterfactor", "15")
+    mainw.set("s_colgutterfactor", "15")
 
 if args.pid:
     mainw.set("cb_project", args.pid)

@@ -135,7 +135,7 @@ class PtxPrinterDialog:
         (family, style, size) = self.parse_fontname(font)
         style = [s.lower() for s in style if s not in ("Regular", "Medium")]
         label = self.builder.get_object("l_font")
-        label.set_text(font)
+        # label.set_text(font) # No longer used after re-doing the UI
         for s in ('bold', 'italic', 'bold italic'):
             sid = s.replace(" ", "")
             w = self.builder.get_object("f_"+sid)
@@ -185,12 +185,13 @@ class Info:
         "paper/topmarginfactor":    ("s_topmarginfactor", lambda w,v: v or "1.15"),
         "paper/bottommarginfactor": ("s_bottommarginfactor", lambda w,v: v or "1.15"),
         #\def\SideMarginFactor{{1.0}} % not needed/wanted at this point
+        #"paper/gutter":            ("s_pagegutter", lambda w,v: v or "14"),
 
         "paper/columns":            ("cb_columns", lambda w,v: v),
 #        "paper/fontfactor":         (None, lambda w,v: float(w.get("f_body")[2]) / 12),  # This is now its own spin button for FONT SIZE
         "paper/fontfactor":         ("s_fontsize", lambda w,v: v or "12"),
 
-        "paragraph/linespacing":    ("t_linespacing", lambda w,v: v),
+        "paragraph/linespacing":    ("s_linespacing", lambda w,v: v),
 
         "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: v or "15"),
         "document/ifrtl":           ("c_rtl", lambda w,v :"true" if v else "false"),
