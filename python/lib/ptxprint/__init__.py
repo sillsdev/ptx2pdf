@@ -206,6 +206,8 @@ class Info:
         "document/ifjustify":       ("c_justify", lambda w,v: "true" if v else "false"),
         "document/hangpoetry":      ("c_hangpoetry", lambda w,v: "" if v else "%"),
 
+        "header/headerposition":    ("s_headerposition", lambda w,v: v or "0.5"),
+        "header/footerposition":    ("s_footerposition", lambda w,v: v or "0.5"),
         "header/ifomitrhchapnum":   ("c_omitrhchapnum", lambda w,v :"true" if v else "false"),
         "header/ifverses":          ("c_hdrverses", lambda w,v :"true" if v else "false"),
         "header/ifrhrule":          ("c_rhrule", lambda w,v: "" if v else "%"),
@@ -377,7 +379,7 @@ class Info:
                     v = self._mappings[key]
                     if v[0] is None:
                         continue
-                    if v[0].startswith("cb_") or v[0].startswith("t_") or v[0].startswith("f_"):
+                    if v[0].startswith("cb_") or v[0].startswith("t_") or v[0].startswith("f_") or v[0].startswith("s_"):
                         printer.set(v[0], config.get(sect, opt))
                     elif v[0].startswith("c_"):
                         printer.set(v[0], config.getboolean(sect, opt))
