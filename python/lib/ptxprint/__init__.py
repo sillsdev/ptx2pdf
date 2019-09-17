@@ -181,19 +181,19 @@ class Info:
         "paper/pagesize":           ("cb_pagesize", None),
         "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),
         "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v else "false"),
-        "paper/margins":            ("s_margins", lambda w,v: v or "14"),
-        "paper/topmarginfactor":    ("s_topmarginfactor", lambda w,v: v or "1.15"),
-        "paper/bottommarginfactor": ("s_bottommarginfactor", lambda w,v: v or "1.15"),
+        "paper/margins":            ("s_margins", lambda w,v: round(v) or "14"),
+        "paper/topmarginfactor":    ("s_topmarginfactor", lambda w,v: round(v, 2) or "1.15"),
+        "paper/bottommarginfactor": ("s_bottommarginfactor", lambda w,v: round(v, 2) or "1.15"),
         #\def\SideMarginFactor{{1.0}} % not needed/wanted at this point
-        #"paper/gutter":            ("s_pagegutter", lambda w,v: v or "14"),
+        #"paper/gutter":            ("s_pagegutter", lambda w,v: round(v) or "14"),
 
         "paper/columns":            ("cb_columns", lambda w,v: v),
 #        "paper/fontfactor":         (None, lambda w,v: float(w.get("f_body")[2]) / 12),  # This is now its own spin button for FONT SIZE
-        "paper/fontfactor":         ("s_fontsize", lambda w,v: v or "12"),
+        "paper/fontfactor":         ("s_fontsize", lambda w,v: round(v, 1) or "12"),
 
-        "paragraph/linespacing":    ("s_linespacing", lambda w,v: v),
+        "paragraph/linespacing":    ("s_linespacing", lambda w,v: round(v, 1)),
 
-        "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: v or "15"),
+        "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: round(v) or "15"),
         "document/ifrtl":           ("c_rtl", lambda w,v :"true" if v else "false"),
         "document/iflinebreakon":   ("c_linebreakon", lambda w,v: "" if v else "%"),
         "document/linebreaklocale": ("t_linebreaklocale", lambda w,v: v or ""),
@@ -206,8 +206,8 @@ class Info:
         "document/ifjustify":       ("c_justify", lambda w,v: "true" if v else "false"),
         "document/hangpoetry":      ("c_hangpoetry", lambda w,v: "" if v else "%"),
 
-        "header/headerposition":    ("s_headerposition", lambda w,v: v or "0.5"),
-        "header/footerposition":    ("s_footerposition", lambda w,v: v or "0.5"),
+        "header/headerposition":    ("s_headerposition", lambda w,v: round(v, 2) or "0.50"),
+        "header/footerposition":    ("s_footerposition", lambda w,v: round(v, 2) or "0.50"),
         "header/ifomitrhchapnum":   ("c_omitrhchapnum", lambda w,v :"true" if v else "false"),
         "header/ifverses":          ("c_hdrverses", lambda w,v :"true" if v else "false"),
         "header/ifrhrule":          ("c_rhrule", lambda w,v: "" if v else "%"),
@@ -379,8 +379,10 @@ class Info:
                     v = self._mappings[key]
                     if v[0] is None:
                         continue
-                    if v[0].startswith("cb_") or v[0].startswith("t_") or v[0].startswith("f_") or v[0].startswith("s_"):
+                    if v[0].startswith("cb_") or v[0].startswith("t_") or v[0].startswith("f_"):
                         printer.set(v[0], config.get(sect, opt))
+                    if v[0].startswith("s_"):
+                        printer.set(v[0], round(config.get(sect, opt)),2)
                     elif v[0].startswith("c_"):
                         printer.set(v[0], config.getboolean(sect, opt))
                 elif key in self._fonts:

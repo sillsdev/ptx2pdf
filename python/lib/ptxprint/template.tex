@@ -17,8 +17,8 @@
 %% Margins
 %\BindingGutter= mm % paper/gutter mm
 \MarginUnit={paper/margins}mm
-\def\TopMarginFactor{{paper/topmarginfactor}}
-\def\BottomMarginFactor{{paper/bottommarginfactor}}
+\def\TopMarginFactor{{{paper/topmarginfactor}}}
+\def\BottomMarginFactor{{{paper/bottommarginfactor}}}
 %\def\SideMarginFactor{{1.0}} % Not yet sure why we would want this anything other than 1.0
 
 %% Columns
@@ -26,7 +26,7 @@
 \IntroColumns=1
 \BodyColumns={paper/columns}
 \ColumnGutterRule{paper/ifverticalrule}
-\def\ColumnGutterFactor{{document/colgutterfactor}}
+\def\ColumnGutterFactor{{{document/colgutterfactor}}}
 
 %%%%% Text Spacing %%%%%
 \def\LineSpacingFactor{{{paragraph/linespacing}}}
@@ -78,22 +78,22 @@
 %\AutoCallerStartChar=97
 %\AutoCallerNumChars=26
 %\AutoCallers{{f}}{{a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}}
-\AutoCallers{{f}}{{notes/fncallers}} % to hide callers in body text this needs to be empty
+\AutoCallers{{f}}{{{notes/fncallers}}} % to hide callers in body text this needs to be empty
 {notes/fnresetcallers}\PageResetCallers{{f}}
 {notes/fnomitcaller}\OmitCallerInNote{{f}}
 {notes/fnparagraphednotes}\ParagraphedNotes{{f}}
 %\NumericCallers{{f}}
 
 %\AutoCallers{{x}}{{a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}}
-\AutoCallers{{x}}{{notes/xrcallers}} % to hide callers in body text this needs to be empty
+\AutoCallers{{x}}{{{notes/xrcallers}}} % to hide callers in body text this needs to be empty
 {notes/xrresetcallers}\PageResetCallers{{x}}
 {notes/xromitcaller}\OmitCallerInNote{{x}}
 {notes/xrparagraphednotes}\ParagraphedNotes{{x}}
 %\NumericCallers{{x}}
 
 %%%%% Running Header/Footer %%%%%
-\def\HeaderPosition{{header/headerposition}}
-\def\FooterPosition{{header/footerposition}}
+\def\HeaderPosition{{{header/headerposition}}}
+\def\FooterPosition{{{header/footerposition}}}
 {header/ifrhrule}\RHruleposition={header/ruleposition}pt
 
 %% Odd Header

@@ -35,12 +35,31 @@
     <property name="step_increment">0.050000000000000003</property>
     <property name="page_increment">0.10000000000000001</property>
   </object>
+  <object class="GtkAdjustment" id="a_colgutterwidth">
+    <property name="lower">1</property>
+    <property name="upper">40</property>
+    <property name="value">12</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">2</property>
+  </object>
   <object class="GtkAdjustment" id="a_fontsize">
     <property name="lower">2</property>
     <property name="upper">36</property>
     <property name="value">12</property>
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="a_ftrposition">
+    <property name="upper">1</property>
+    <property name="value">0.5</property>
+    <property name="step_increment">0.050000000000000003</property>
+    <property name="page_increment">0.10000000000000001</property>
+  </object>
+  <object class="GtkAdjustment" id="a_hdrposition">
+    <property name="upper">1</property>
+    <property name="value">0.5</property>
+    <property name="step_increment">0.050000000000000003</property>
+    <property name="page_increment">0.10000000000000001</property>
   </object>
   <object class="GtkAdjustment" id="a_italice">
     <property name="lower">-10</property>
@@ -67,13 +86,6 @@
     <property name="value">14</property>
     <property name="step_increment">1</property>
     <property name="page_increment">5</property>
-  </object>
-  <object class="GtkAdjustment" id="a_posinteger">
-    <property name="lower">1</property>
-    <property name="upper">40</property>
-    <property name="value">12</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_ruleposition">
     <property name="upper">100</property>
@@ -238,18 +250,6 @@
       <pattern>*.pdf</pattern>
       <pattern>*pdf</pattern>
     </patterns>
-  </object>
-  <object class="GtkAdjustment" id="s_ftrposition">
-    <property name="upper">1</property>
-    <property name="value">0.5</property>
-    <property name="step_increment">0.050000000000000003</property>
-    <property name="page_increment">0.10000000000000001</property>
-  </object>
-  <object class="GtkAdjustment" id="s_hdrposition">
-    <property name="upper">1</property>
-    <property name="value">0.5</property>
-    <property name="step_increment">0.050000000000000003</property>
-    <property name="page_increment">0.10000000000000001</property>
   </object>
   <object class="GtkDialog" id="ptxprint">
     <property name="can_focus">False</property>
@@ -756,7 +756,7 @@ PrintDraft Folder</property>
                                     <property name="tooltip_text" translatable="yes">If the required font does not have a BOLD typeface, you can use this setting to create a BOLD effect. (For example, setting Embolden to 2.0 would thicken the Regular typeface making it appear as bold).</property>
                                     <property name="halign">start</property>
                                     <property name="width_chars">4</property>
-                                    <property name="text" translatable="yes">-10.0</property>
+                                    <property name="text" translatable="yes">1.00</property>
                                     <property name="caps_lock_warning">False</property>
                                     <property name="progress_fraction">0.10000000000000001</property>
                                     <property name="placeholder_text" translatable="yes">0.0</property>
@@ -815,7 +815,7 @@ PrintDraft Folder</property>
                                         <property name="progress_fraction">0.10000000000000001</property>
                                         <property name="placeholder_text" translatable="yes">0.0</property>
                                         <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_posinteger</property>
+                                        <property name="adjustment">a_colgutterwidth</property>
                                         <property name="climb_rate">1</property>
                                         <property name="numeric">True</property>
                                         <property name="update_policy">if-valid</property>
@@ -933,8 +933,7 @@ PrintDraft Folder</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="halign">start</property>
-                                    <property name="width_chars">4</property>
-                                    <property name="text" translatable="yes">16</property>
+                                    <property name="text" translatable="yes">14</property>
                                     <property name="caps_lock_warning">False</property>
                                     <property name="progress_fraction">0.10000000000000001</property>
                                     <property name="placeholder_text" translatable="yes">0.0</property>
@@ -943,7 +942,7 @@ PrintDraft Folder</property>
                                     <property name="climb_rate">1</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
-                                    <property name="value">16</property>
+                                    <property name="value">14</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -1594,7 +1593,7 @@ PrintDraft Folder</property>
                                       <object class="GtkSpinButton" id="s_fontsize">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">If the required font does not have a BOLD typeface, you can use this setting to create a BOLD effect. (For example, setting Embolden to 2.0 would thicken the Regular typeface making it appear as bold).</property>
+                                        <property name="tooltip_text" translatable="yes">Set the size of the main body text.</property>
                                         <property name="width_chars">6</property>
                                         <property name="text" translatable="yes">2.0</property>
                                         <property name="caps_lock_warning">False</property>
@@ -2328,7 +2327,7 @@ PrintDraft Folder</property>
                             <property name="progress_fraction">0.10000000000000001</property>
                             <property name="placeholder_text" translatable="yes">0.0</property>
                             <property name="input_purpose">number</property>
-                            <property name="adjustment">s_hdrposition</property>
+                            <property name="adjustment">a_hdrposition</property>
                             <property name="climb_rate">0.050000000000000003</property>
                             <property name="digits">2</property>
                             <property name="numeric">True</property>
@@ -3167,7 +3166,7 @@ as a single running paragraph (in verse order)</property>
                             <property name="progress_fraction">0.10000000000000001</property>
                             <property name="placeholder_text" translatable="yes">0.0</property>
                             <property name="input_purpose">number</property>
-                            <property name="adjustment">s_ftrposition</property>
+                            <property name="adjustment">a_ftrposition</property>
                             <property name="climb_rate">0.050000000000000003</property>
                             <property name="digits">2</property>
                             <property name="numeric">True</property>
