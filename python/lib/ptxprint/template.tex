@@ -55,8 +55,8 @@
 %\XeTeXlinebreakskip=0em plus 0.1em minus 0.01em
 \JustifyPars{document/ifjustify}
 
-\AutoCallers{{f}}{{{footnotes/callers}}}
-\AutoCallers{{x}}{{a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}}
+%\AutoCallers{{f}}{{{footnotes/callers}}}
+%\AutoCallers{{x}}{{a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}}
 
 %%% Chapters & Verses %%%
 \JustifyPars{document/ifjustify}
@@ -72,7 +72,7 @@
 
 %%%%% Notes %%%%%
 
-%% Disable footnote rule
+%% Disable footnote rule (if next line is commented out then the footnote rule will show and vice versa)
 {notes/ifomitfootnoterule}\def\footnoterule{{}} 
 
 %\AutoCallerStartChar=97
@@ -102,17 +102,23 @@
 \def\RHoddright{{{header/oddright}}}
 
 %% Even Header
-\def\RHevenleft{{{header/evenleft}}}
+%\def\RHevenleft{{{header/evenleft}}}
+\def\RHevenleft{{{header/evenright}}}      % Hack!
 \def\RHevencenter{{{header/evencenter}}}
-\def\RHevenright{{{header/evenright}}}
+%\def\RHevenright{{{header/evenright}}}
+\def\RHevenright{{{header/evenleft}}}      % Hack!
 
 \VerseRefs{header/ifverses}                  % Include verses in reference text?
 \OmitChapterNumberRH{header/ifomitrhchapnum} % Omit the chapter numbers in the running header (RH)
 
 %% Footer
-\def\RFoddcenter{{{footer/comment}: {footer/draft}}}
-\def\RFevencenter{{{footer/comment}: {footer/draft}}}
-\def\RFtitlecenter{{{footer/comment}: {footer/draft}}}
+%\def\RFoddcenter{{{footer/comment}: {footer/draft}}}          % Need to work out what do do with Footer
+%\def\RFevencenter{{{footer/comment}: {footer/draft}}}
+%\def\RFtitlecenter{{{footer/comment}: {footer/draft}}}
+
+\def\RFoddcenter{{}}               % Temporarily BLANK out all footers
+\def\RFevencenter{{}}
+\def\RFtitlecenter{{}}
 
 %%%%% Illustrations %%%%%
 \IncludeFigures{document/iffigures}

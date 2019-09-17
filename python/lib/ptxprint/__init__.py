@@ -189,7 +189,7 @@ class Info:
 
         "paper/columns":            ("cb_columns", lambda w,v: v),
 #        "paper/fontfactor":         (None, lambda w,v: float(w.get("f_body")[2]) / 12),  # This is now its own spin button for FONT SIZE
-        "paper/fontfactor":         ("s_fontsize", lambda w,v: round(v, 1) or "12"),
+        "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
 
         "paragraph/linespacing":    ("s_linespacing", lambda w,v: round(v, 1)),
 
@@ -216,12 +216,14 @@ class Info:
         "footer/draft":             ("t_draft", lambda w,v: v),
         "footer/comment":           (None, lambda w,v: v),
 
-        "notes/ifomitfootnoterule":  (None, lambda w,v: "" if w.get("c_footnoterule") else "%"), #empty if true, otherwise '%'
+        "notes/ifomitfootnoterule": (None, lambda w,v: "%" if w.get("c_footnoterule") else ""), # opposite as one says show other omit
+
         # if c_fnautocallers is false then fncallers needs to be set to empty {} - HOW TO DO THAT?
         "notes/fncallers":          ("t_fncallers", lambda w,v: v or "*"),
         "notes/fnresetcallers":     ("c_fnpageresetcallers", lambda w,v: "" if v else "%"),
         "notes/fnomitcaller":       ("c_fnomitcaller", lambda w,v: "" if v else "%"),
         "notes/fnparagraphednotes": (None, lambda w,v: "" if w.get("c_fnomitcaller") else "%"),
+
         # if c_xrautocallers is false then xrcallers needs to be set to empty {} - HOW TO DO THAT?
         "notes/xrcallers":          ("t_xrcallers", lambda w,v: v or "+"),
         "notes/xrresetcallers":     ("c_xrpageresetcallers", lambda w,v: "" if v else "%"),
@@ -234,7 +236,7 @@ class Info:
         "font/italic": "f_italic",
         "font/bolditalic": "f_bolditalic"
     }
-    _hdrmappings = {
+    _hdrmappings = {                         # These aren't being saved/remembered yet in the UI!
         "First Reference":  r"\firstref",
         "Last Reference":   r"\lastref",
         "Page Number":      r"\pagenumber",
@@ -261,6 +263,7 @@ class Info:
         self.dict[key] = value
 
     def processFonts(self, printer):
+#        import pdb;pdb.set_trace()
         for p, wid in self._fonts.items():
             (family, style, size) = printer.get(wid)
             f = TTFont(family, " ".join(style))
@@ -278,7 +281,7 @@ class Info:
         for side in ('left', 'center', 'right'):
             v = printer.get("cb_hdr" + side)
             t = self._hdrmappings.get(v, v)
-            if True or mirror:
+            if True or mirror:   # This doesn't seem to be doing the mirroring (just copying from odd to even)
                 self.dict['header/even{}'.format(side)] = t
             self.dict['header/odd{}'.format(side)] = t
 
