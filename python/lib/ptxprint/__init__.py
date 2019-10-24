@@ -148,6 +148,153 @@ class PtxPrinterDialog:
             if 'italic' in f.extrastyles:
                 self.set("s_{}slant".format(sid), 0.27)
 
+    def updateFakeLabels(self):
+        lb = self.builder.get_object("l_embolden")
+        ls = self.builder.get_object("l_slant")
+        if self.get("c_fakebold") or self.get("c_fakeitalic") or self.get("c_fakebolditalic"):
+            lb.set_sensitive(True)
+            ls.set_sensitive(True)
+        else:
+            lb.set_sensitive(False)
+            ls.set_sensitive(False)
+
+    def onFakeboldClicked(self, c_fakebold):
+        bdb = self.builder.get_object("s_boldembolden")
+        bds = self.builder.get_object("s_boldslant")
+        if self.get("c_fakebold"):
+            bdb.set_sensitive(True)
+            bds.set_sensitive(True)
+        else:
+            bdb.set_sensitive(False)
+            bds.set_sensitive(False)
+        self.updateFakeLabels()
+        
+    def onFakeitalicClicked(self, c_fakeitalic):
+        itb = self.builder.get_object("s_italicembolden")
+        its = self.builder.get_object("s_italicslant")
+        if self.get("c_fakeitalic"):
+            itb.set_sensitive(True)
+            its.set_sensitive(True)
+        else:
+            itb.set_sensitive(False)
+            its.set_sensitive(False)
+        self.updateFakeLabels()
+
+    def onFakebolditalicClicked(self, c_fakebolditalic):
+        bib = self.builder.get_object("s_bolditalicembolden")
+        bis = self.builder.get_object("s_bolditalicslant")
+        if self.get("c_fakebolditalic"):
+            bib.set_sensitive(True)
+            bis.set_sensitive(True)
+        else:
+            bib.set_sensitive(False)
+            bis.set_sensitive(False)
+        self.updateFakeLabels()
+
+    def onClickedIncludeFootnotes(self, c_includeFootnotes):
+        fna = self.builder.get_object("c_fnautocallers")
+        fnc = self.builder.get_object("t_fncallers")
+        fno = self.builder.get_object("c_fnomitcaller")
+        fnr = self.builder.get_object("c_fnpageresetcallers")
+        fnp = self.builder.get_object("c_fnparagraphednotes") 
+        if self.get("c_includeFootnotes"):
+            fna.set_sensitive(True)
+            fnc.set_sensitive(True)
+            fno.set_sensitive(True)
+            fnr.set_sensitive(True)
+            fnp.set_sensitive(True)
+        else:
+            fna.set_sensitive(False)
+            fnc.set_sensitive(False)
+            fno.set_sensitive(False)
+            fnr.set_sensitive(False)
+            fnp.set_sensitive(False)
+        
+    def onClickedIncludeXrefs(self, c_includeXrefs):
+        xra = self.builder.get_object("c_xrautocallers")
+        xrc = self.builder.get_object("t_xrcallers")
+        xro = self.builder.get_object("c_xromitcaller")
+        xrr = self.builder.get_object("c_xrpageresetcallers")
+        xrp = self.builder.get_object("c_paragraphedxrefs") 
+        if self.get("c_includeXrefs"):
+            xra.set_sensitive(True)
+            xrc.set_sensitive(True)
+            xro.set_sensitive(True)
+            xrr.set_sensitive(True)
+            xrp.set_sensitive(True)
+        else:
+            xra.set_sensitive(False)
+            xrc.set_sensitive(False)
+            xro.set_sensitive(False)
+            xrr.set_sensitive(False)
+            xrp.set_sensitive(False)
+
+    def onColumnsChanged(self, cb_Columns):
+        vrul = self.builder.get_object("c_verticalrule")
+        gtrl = self.builder.get_object("l_gutterWidth")
+        gtrw = self.builder.get_object("s_colgutterfactor")
+        if self.get("cb_columns") == "2":
+            vrul.set_sensitive(True)
+            gtrl.set_sensitive(True)
+            gtrw.set_sensitive(True)
+        else:
+            vrul.set_sensitive(False)
+            gtrl.set_sensitive(False)
+            gtrw.set_sensitive(False)
+
+    def onBookSelectorChange(self, c_onebook):
+        cmb = self.builder.get_object("c_combine")
+        lcf = self.builder.get_object("l_chapfrom")
+        ccf = self.builder.get_object("cb_chapfrom")
+        lct = self.builder.get_object("l_chapto")
+        cct = self.builder.get_object("cb_chapto")
+        if self.get("c_onebook"):
+            cmb.set_sensitive(False)
+            lcf.set_sensitive(True)
+            ccf.set_sensitive(True)
+            lct.set_sensitive(True)
+            cct.set_sensitive(True)
+        else:
+            cmb.set_sensitive(True)
+            lcf.set_sensitive(False)
+            ccf.set_sensitive(False)
+            lct.set_sensitive(False)
+            cct.set_sensitive(False)
+            
+    def onFigsChanged(self, c_figs):
+        xcl = self.builder.get_object("c_figexclwebapp")
+        plc = self.builder.get_object("c_figplaceholders")
+        hdr = self.builder.get_object("c_fighiderefs")
+        if self.get("c_figs"):
+            xcl.set_sensitive(True)
+            plc.set_sensitive(True)
+            hdr.set_sensitive(True)
+        else:
+            xcl.set_sensitive(False)
+            plc.set_sensitive(False)
+            hdr.set_sensitive(False)
+
+    def onInclFrontMatterChanged(self, c_inclFrontMatter):
+        fcfm = self.builder.get_object("fc_frontMatter")
+        if self.get("c_inclFrontMatter"):
+            fcfm.set_sensitive(True)
+        else:
+            fcfm.set_sensitive(False)
+
+    def onApplyWatermarkChanged(self, c_applyWatermark):
+        fcwm = self.builder.get_object("fc_watermark")
+        if self.get("c_applyWatermark"):
+            fcwm.set_sensitive(True)
+        else:
+            fcwm.set_sensitive(False)
+    
+    def onInclBackMatterChanged(self, c_inclBackMatter):
+        fcbm = self.builder.get_object("fc_backMatter")
+        if self.get("c_inclBackMatter"):
+            fcbm.set_sensitive(True)
+        else:
+            fcbm.set_sensitive(False)
+            
     def onProjectChange(self, cb_prj):
         self.prjid = self.get("cb_project")
         self.ptsettings = None
