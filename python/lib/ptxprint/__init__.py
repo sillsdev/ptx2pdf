@@ -18,6 +18,13 @@ allbooks = [b.split("|")[0] for b in _bookslist.split() if b != "ZZZ|0"]
 books = dict((b.split("|")[0], i+1) for i, b in enumerate(_bookslist.split()))
 chaps = dict(b.split("|") for b in _bookslist.split())
 
+#print("allbooks(list)---------------------------------------------------")
+#print(allbooks)
+#print("books(dict)---------------------------------------------------")
+#print(books)
+#print("chaps(dict)---------------------------------------------------")
+#print(chaps)
+#print("---------------------------------------------------")
 
 class ParatextSettings:
     def __init__(self, basedir, prjid):
@@ -274,6 +281,13 @@ class PtxPrinterDialog:
             plc.set_sensitive(False)
             hdr.set_sensitive(False)
 
+    def onPreprocessChanged(self, c_preprocess):
+        pre = self.builder.get_object("fc_preprocess")
+        if self.get("c_preprocess"):
+            pre.set_sensitive(True)
+        else:
+            pre.set_sensitive(False)
+
     def onInclFrontMatterChanged(self, c_inclFrontMatter):
         fcfm = self.builder.get_object("fc_frontMatter")
         if self.get("c_inclFrontMatter"):
@@ -295,6 +309,65 @@ class PtxPrinterDialog:
         else:
             fcbm.set_sensitive(False)
             
+    def onAutoTocChanged(self, c_autoToC):
+        atoc = self.builder.get_object("t_tocTitle")
+        if self.get("c_autoToC"):
+            atoc.set_sensitive(True)
+            atoc.grab_focus() 
+        else:   
+            atoc.set_sensitive(False)
+
+    def onLineBreakChanged(self, c_linebreakon):
+        lbrk = self.builder.get_object("t_linebreaklocale")
+        if self.get("c_linebreakon"):
+            lbrk.set_sensitive(True)
+            lbrk.grab_focus() 
+        else:   
+            lbrk.set_sensitive(False)
+            
+    def onFnCallersChanged(self, c_fnautocallers):
+        fnc = self.builder.get_object("t_fncallers")
+        if self.get("c_fnautocallers"):
+            fnc.set_sensitive(True)
+            fnc.grab_focus() 
+        else:   
+            fnc.set_sensitive(False)
+            
+    def onXrCallersChanged(self, c_xrautocallers):
+        xrc = self.builder.get_object("t_xrcallers")
+        if self.get("c_xrautocallers"):
+            xrc.set_sensitive(True)
+            xrc.grab_focus() 
+        else:   
+            xrc.set_sensitive(False)
+            
+    def onrunningFooterChanged(self, c_runningFooter):
+        rnf = self.builder.get_object("t_runningFooter")
+        if self.get("c_runningFooter"):
+            rnf.set_sensitive(True)
+            rnf.grab_focus() 
+        else:   
+            rnf.set_sensitive(False)
+            
+    def onRHruleChanged(self, c_rhrule):
+        rhr = self.builder.get_object("s_rhruleposition")
+        if self.get("c_rhrule"):
+            rhr.set_sensitive(True)
+            rhr.grab_focus() 
+        else:   
+            rhr.set_sensitive(False)
+            
+#    def onXyzChanged(self, c_Xyz):
+#        abc = self.builder.get_object("t_TxYz")
+#        if self.get("c_Xyz"):
+#            abc.set_sensitive(True)
+#            abc.grab_focus() 
+#        else:   
+#            abc.set_sensitive(False)
+    def onClickChooseBooks(self, btn):
+        #Do something to bring up the Book Selector dialog
+        print("This should bring up the 'dlg_multiBookSelector' dialog to select one or more books")
+        
     def onProjectChange(self, cb_prj):
         self.prjid = self.get("cb_project")
         self.ptsettings = None
