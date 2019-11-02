@@ -12,8 +12,9 @@ _bookslist = """GEN|50 EXO|40 LEV|27 NUM|36 DEU|34 JOS|24 JDG|21 RUT|4 1SA|31 2S
         HAB|3 ZEP|3 HAG|2 ZEC|14 MAL|4 ZZZ|0
         MAT|28 MRK|16 LUK|24 JHN|21 ACT|28 ROM|16 1CO|16 2CO|13 GAL|6 EPH|6 PHP|4 COL|4 1TH|5 2TH|3 1TI|6 2TI|4 TIT|3 PHM|1
         HEB|13 JAS|5 1PE|5 2PE|3 1JN|5 2JN|1 3JN|1 JUD|1 REV|22
-        TOB|0 JDT|0 ESG|0 WIS|0 DIR|0 BAR|0 LJE|0 S3Y|0 SUS|0 BEL|0 1MA|0 2MA|0 3MA|0 4MA|0 1ES|0 2ES|0 MAN|0 PS2|0
-        ODA|0 PSS|0"""
+        TOB|14 JDT|16 ESG|10 WIS|19 SIR|51 BAR|6 LJE|1 S3Y|1 SUS|1 BEL|1 1MA|16 2MA|15 3MA|7 4MA|18 1ES|9 2ES|16 MAN|1 PS2|1
+        ODA|0 PSS|0""" # TO-DO! We also need to add these extra books:
+        # XXA|0 XXB|0 XXC|0 XXD|0 XXE|0 XXF|0 XXG|0 FRT|0 BAK|0 OTH|0 INT|0 CNC|0 GLO|0 TDX|0 NDX|0 DAG|14 LAO|1
 allbooks = [b.split("|")[0] for b in _bookslist.split() if b != "ZZZ|0"]
 books = dict((b.split("|")[0], i+1) for i, b in enumerate(_bookslist.split()))
 chaps = dict(b.split("|") for b in _bookslist.split())
@@ -464,7 +465,7 @@ class Info:
         "header/ifrhrule":          ("c_rhrule", lambda w,v: "" if v else "%"),
         "header/ruleposition":      ("s_rhruleposition", lambda w,v: v or "10"),
 
-        "footer/draft":             ("t_draft", lambda w,v: v),
+        "footer/draft":             ("t_runningFooter", lambda w,v: v),
         "footer/comment":           (None, lambda w,v: v),
 
         "notes/ifomitfootnoterule": (None, lambda w,v: "%" if w.get("c_footnoterule") else ""), # opposite as one says show other omit
@@ -493,7 +494,7 @@ class Info:
         "fontitalic/name": "f_italic",
         "fontbolditalic/name": "f_bolditalic"
     }
-    _hdrmappings = {                         # These aren't being saved/remembered yet in the UI!
+    _hdrmappings = {                         # TO-DO! These aren't being saved/remembered yet in the UI!
         "First Reference":  r"\firstref",
         "Last Reference":   r"\lastref",
         "Page Number":      r"\pagenumber",
@@ -595,6 +596,7 @@ class Info:
 
     def readChanges(self, fname):
         changes = []
+        #return None # Temporary to see if I can get WSGlatin working (as it gets stuck on my 'in "xyz": do abc' rules
         if not os.path.exists(fname):
             return []
         with open(fname, "r", encoding="utf-8") as inf:
@@ -605,6 +607,7 @@ class Info:
                     continue
                 m = re.match(r"^(['\"])(.*?)(?<!\\)\1\s*>\s*(['\"])(.*?)(?<!\\)\3", l)
                 if m:
+                    print(m.group(2) + " > " + m.group(4))
                     changes.append((None, regex.compile(m.group(2), flags=regex.M), m.group(4)))
                     continue
                 m = re.match(r"^in\s+(['\"])(.*?)(?<!\\)\1\s*:\s*(['\"])(.*?)(?<!\\)\3\s*>\s*(['\"])(.*?)(?<!\\)\5", l)
@@ -612,6 +615,14 @@ class Info:
                     changes.append((regex.compile("("+m.group(2)+")", flags=regex.M), regex.compile(m.group(4), flags=regex.M), m.group(6)))
         if not len(changes):
             return None
+        figs = printer.get_object("c_figs")
+        if figs.active():
+        #if printer.get("c_figs"):
+            print("Illustrations are wanted!")
+        else:
+            #   Drop ALL the Figures
+            print("Illustrations are to be EXCLUDED!")
+        changes.append((None, regex.compile(r"\\fig .*?\\fig\*", flags=regex.M), ""))   
         return changes
 
     def createConfig(self, printer):
@@ -637,12 +648,14 @@ class Info:
                 key = "{}/{}".format(sect, opt)
                 if key in self._mappings:
                     v = self._mappings[key]
+                    print(sect + "/" + opt + ": " + v[0])
                     if v[0] is None:
                         continue
                     if v[0].startswith("cb_") or v[0].startswith("t_") or v[0].startswith("f_"):
                         printer.set(v[0], config.get(sect, opt))
                     if v[0].startswith("s_"):
-                        printer.set(v[0], round(config.get(sect, opt)),2)
+                        printer.set(v[0], float(config.get(sect, opt)))
+                        #printer.set(v[0], round(config.get(sect, opt)),2)
                     elif v[0].startswith("c_"):
                         printer.set(v[0], config.getboolean(sect, opt))
                 elif key in self._fonts:

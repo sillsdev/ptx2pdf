@@ -601,7 +601,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkCheckButton">
+              <object class="GtkCheckButton" id="c_closePDF">
                 <property name="label" translatable="yes">[Close and] Overwrite Existing PDF file (if it exists)</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -619,12 +619,14 @@
             </child>
             <child>
               <object class="GtkButton">
-                <property name="label" translatable="yes">Cancel</property>
+                <property name="label">gtk-cancel</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="halign">end</property>
                 <property name="hexpand">True</property>
+                <property name="use_stock">True</property>
+                <property name="always_show_image">True</property>
                 <signal name="clicked" handler="onCancel" swapped="no"/>
               </object>
               <packing>
@@ -636,12 +638,14 @@
             </child>
             <child>
               <object class="GtkButton">
-                <property name="label" translatable="yes">OK</property>
+                <property name="label">gtk-ok</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="halign">end</property>
                 <property name="hexpand">True</property>
+                <property name="use_stock">True</property>
+                <property name="always_show_image">True</property>
                 <signal name="clicked" handler="onOK" swapped="no"/>
               </object>
               <packing>
@@ -665,6 +669,20 @@
             <property name="can_focus">False</property>
             <property name="halign">start</property>
             <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkTextView">
+                <property name="height_request">60</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="vscroll_policy">natural</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="pack_type">end</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
             <child>
               <object class="GtkNotebook">
                 <property name="visible">True</property>
@@ -844,7 +862,7 @@ existing PrintDraft Folder</property>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
-                                            <property name="fill">True</property>
+                                            <property name="fill">False</property>
                                             <property name="position">0</property>
                                           </packing>
                                         </child>
@@ -852,6 +870,7 @@ existing PrintDraft Folder</property>
                                           <object class="GtkComboBox" id="cb_chapto">
                                             <property name="width_request">100</property>
                                             <property name="visible">True</property>
+                                            <property name="sensitive">False</property>
                                             <property name="can_focus">False</property>
                                           </object>
                                           <packing>
@@ -865,6 +884,7 @@ existing PrintDraft Folder</property>
                                         <child>
                                           <object class="GtkLabel" id="l_chapto">
                                             <property name="visible">True</property>
+                                            <property name="sensitive">False</property>
                                             <property name="can_focus">False</property>
                                             <property name="margin_left">20</property>
                                             <property name="label" translatable="yes">To:</property>
@@ -881,6 +901,7 @@ existing PrintDraft Folder</property>
                                           <object class="GtkComboBox" id="cb_chapfrom">
                                             <property name="width_request">70</property>
                                             <property name="visible">True</property>
+                                            <property name="sensitive">False</property>
                                             <property name="can_focus">False</property>
                                           </object>
                                           <packing>
@@ -893,6 +914,7 @@ existing PrintDraft Folder</property>
                                         <child>
                                           <object class="GtkLabel" id="l_chapfrom">
                                             <property name="visible">True</property>
+                                            <property name="sensitive">False</property>
                                             <property name="can_focus">False</property>
                                             <property name="margin_left">21</property>
                                             <property name="label" translatable="yes">Chapters:</property>
@@ -1424,7 +1446,10 @@ into single PDF</property>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Basic Settings</property>
+                    <property name="tooltip_text" translatable="yes">Set the Project, Book(s),
+Page Layout and Text
+Flow options.</property>
+                    <property name="label" translatable="yes">Basic</property>
                     <property name="justify">center</property>
                   </object>
                   <packing>
@@ -1514,7 +1539,7 @@ into single PDF</property>
                                     <property name="receives_default">False</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onXyzChanged" swapped="no"/>
+                                    <signal name="clicked" handler="onLineBreakChanged" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -2228,7 +2253,10 @@ into single PDF</property>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Script, Font, Digits &amp; Illustrations</property>
+                    <property name="tooltip_text" translatable="yes">Define the Writing System,
+Fonts, style of Digits and 
+whether to include Illustrations.</property>
+                    <property name="label" translatable="yes">Display</property>
                     <property name="justify">center</property>
                   </object>
                   <packing>
@@ -3220,7 +3248,11 @@ as a single running paragraph (in verse order)</property>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Headers, Footers &amp; Notes</property>
+                    <property name="tooltip_text" translatable="yes">Set the position and content
+of Headers, Footers. And control
+the appearance of  Footnotes
+and Cross-references.</property>
+                    <property name="label" translatable="yes">Top &amp; Bottom</property>
                   </object>
                   <packing>
                     <property name="position">4</property>
@@ -3285,7 +3317,9 @@ as a single running paragraph (in verse order)</property>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Diglot or Multi-script</property>
+                    <property name="tooltip_text" translatable="yes">Create a Diglot or
+Multi-script publication.</property>
+                    <property name="label" translatable="yes">Diglot</property>
                   </object>
                   <packing>
                     <property name="position">3</property>
@@ -3738,8 +3772,14 @@ as a single running paragraph (in verse order)</property>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">
+Pre-process the text prior
+to creating the PDF, add Front
+and Back Matter, including
+Table of Contents. Custom
+TeX code can also be added.</property>
                     <property name="margin_bottom">2</property>
-                    <property name="label" translatable="yes">Extra Matter</property>
+                    <property name="label" translatable="yes">Periphery</property>
                     <property name="justify">center</property>
                   </object>
                   <packing>

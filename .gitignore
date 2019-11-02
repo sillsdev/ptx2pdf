@@ -1,6 +1,8 @@
 ptxprint-*
 *~
+*.bak
 *.log
+*.txt
 *.parlocs
 *.delayed
 *-draft.SFM
