@@ -51,6 +51,7 @@ class PtxPrinterDialog:
         self.projects = self.builder.get_object("ls_projects")
         self.settings_dir = settings_dir
         self.ptsettings = None
+        self.booklist = []
         for p in allprojects:
             self.projects.append([p])
 
@@ -125,6 +126,8 @@ class PtxPrinterDialog:
     def getBooks(self):
         if self.get('c_onebook'):
             return [self.get('cb_book')]
+        elif len(self.booklist):
+            return self.booklist
         else:
             return self.get('t_booklist').split()
 
@@ -356,7 +359,15 @@ class PtxPrinterDialog:
             rhr.grab_focus() 
         else:   
             rhr.set_sensitive(False)
-            
+
+    def onXyzChanged(self, c_button):
+        print(c_button)
+        if c_button.get_active():
+            rhr.set_sensitive(True)
+            rhr.grab_focus()
+        else:
+            rhr.set_sensitive(False)
+
 #    def onXyzChanged(self, c_Xyz):
 #        abc = self.builder.get_object("t_TxYz")
 #        if self.get("c_Xyz"):
@@ -367,6 +378,26 @@ class PtxPrinterDialog:
     def onClickChooseBooks(self, btn):
         #Do something to bring up the Book Selector dialog
         print("This should bring up the 'dlg_multiBookSelector' dialog to select one or more books")
+        dia = self.builder.get_object("dlg_multiBookSelector")
+        mbs_grid = self.builder.get_object("mbs_grid")
+        mbs_grid.forall(mbs_grid.remove)
+        lsbooks = self.builder.get_object("ls_books")
+        self.alltoggles = []
+        for i, b in enumerate(lsbooks):
+            tbox = Gtk.ToggleButton(b[0])
+            tbox.show()
+            self.alltoggles.append(tbox)
+            mbs_grid.attach(tbox, i // 20, i % 20, 1, 1)
+        response = dia.run()
+        if response == Gtk.ResponseType.OK:
+            self.booklist = [b.get_label() for b in self.alltoggles if b.get_active()]
+            print(self.booklist)
+        dia.hide()
+
+    def onClickmbs_all(self, btn):
+        print(self)
+        for b in self.alltoggles:
+            b.set_active(True)
         
     def onProjectChange(self, cb_prj):
         self.prjid = self.get("cb_project")

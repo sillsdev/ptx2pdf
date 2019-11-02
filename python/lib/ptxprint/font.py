@@ -9,7 +9,7 @@ class TTFont:
             if style == "Medium":
                 style = ""
             self.style = style
-            pattern = fname + (":style="+style if style else ":style=Regular")
+            pattern = '"' + fname + '"' + (":style="+style if style else ":style=Regular")
             pattern = pattern.replace("-", r"\-")
             files = checkoutput(["fc-list", pattern, "file"])
             f = re.split(r":\s", files, flags=re.M)[0].strip()
