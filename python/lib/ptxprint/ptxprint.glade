@@ -266,6 +266,7 @@
                         <property name="margin_right">6</property>
                         <property name="margin_top">3</property>
                         <property name="margin_bottom">3</property>
+                        <signal name="clicked" handler="onClickmbs_none" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -527,31 +528,39 @@
       <column type="gchararray"/>
       <!-- column-name code -->
       <column type="gchararray"/>
+      <!-- column-name id -->
+      <column type="guint"/>
     </columns>
     <data>
       <row>
         <col id="0" translatable="yes">Arabic</col>
         <col id="1" translatable="yes">Arab</col>
+        <col id="2">0</col>
       </row>
       <row>
         <col id="0" translatable="yes">Devanagari</col>
         <col id="1" translatable="yes">Deva</col>
+        <col id="2">1</col>
       </row>
       <row>
         <col id="0" translatable="yes">Latin</col>
         <col id="1" translatable="yes">Latn</col>
+        <col id="2">2</col>
       </row>
       <row>
         <col id="0" translatable="yes">Gunjala Gondi</col>
         <col id="1" translatable="yes">Gong</col>
+        <col id="2">3</col>
       </row>
       <row>
         <col id="0" translatable="yes">Masaram Gondi</col>
         <col id="1" translatable="yes">Gonm</col>
+        <col id="2">4</col>
       </row>
       <row>
         <col id="0" translatable="yes">Telugu</col>
         <col id="1" translatable="yes">Telu</col>
+        <col id="2">5</col>
       </row>
     </data>
   </object>
@@ -669,20 +678,6 @@
             <property name="can_focus">False</property>
             <property name="halign">start</property>
             <property name="orientation">vertical</property>
-            <child>
-              <object class="GtkTextView">
-                <property name="height_request">60</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="vscroll_policy">natural</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="pack_type">end</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
             <child>
               <object class="GtkNotebook">
                 <property name="visible">True</property>
@@ -1420,7 +1415,18 @@ into single PDF</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkCheckButton" id="c_indentafterheading">
+                                    <property name="label" translatable="yes">Suppress First Para Indentation</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Remove paragraph indentation on the first paragraph after a section heading.</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
                                 </child>
                               </object>
                             </child>
@@ -2131,7 +2137,7 @@ Flow options.</property>
                                     <property name="column_spacing">5</property>
                                     <property name="row_homogeneous">True</property>
                                     <child>
-                                      <object class="GtkCheckButton" id="c_figs">
+                                      <object class="GtkCheckButton" id="c_includefigs">
                                         <property name="label" translatable="yes">Include figures (illustrations) marked in the text (\fig ... \fig*)</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
@@ -3255,7 +3261,7 @@ and Cross-references.</property>
                     <property name="label" translatable="yes">Top &amp; Bottom</property>
                   </object>
                   <packing>
-                    <property name="position">4</property>
+                    <property name="position">2</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
@@ -3825,7 +3831,7 @@ TeX code can also be added.</property>
                     </child>
                   </object>
                   <packing>
-                    <property name="position">3</property>
+                    <property name="position">5</property>
                   </packing>
                 </child>
                 <child type="tab">
@@ -3835,7 +3841,7 @@ TeX code can also be added.</property>
                     <property name="label" translatable="yes">Markers</property>
                   </object>
                   <packing>
-                    <property name="position">3</property>
+                    <property name="position">5</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
@@ -3849,6 +3855,20 @@ TeX code can also be added.</property>
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkTextView">
+                <property name="height_request">60</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="vscroll_policy">natural</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="pack_type">end</property>
                 <property name="position">0</property>
               </packing>
             </child>

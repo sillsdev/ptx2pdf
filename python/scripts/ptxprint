@@ -14,7 +14,6 @@ parser.add_argument('-p','--paratext',help="Path to Paratext Projects directory"
 parser.add_argument('-d','--directory',default=".",help="Directory to store temporary files in")
 parser.add_argument('-m','--macros',help="Directory containing TeX macros (paratext2.tex)")
 parser.add_argument('-t','--test', action='store_true',help="Quick start for a lazy typist")
-parser.add_argument('-M','--mptest', action='store_true',help="Quick start for the other lazy typist")
 args = parser.parse_args()
 
 if args.paratext is None:
@@ -46,17 +45,6 @@ if args.test:
     mainw.set("cb_columns", "1")
     mainw.set("s_linespacing", "1.3")
     mainw.set("c_justify", True)
-
-if args.mptest:
-    mainw.set("cb_project", "WSG")
-    mainw.set("f_body", "Suranna UI Normal, 14")
-    mainw.onFontChange(mainw.builder.get_object("f_body"))
-    mainw.set("t_booklist", "RUT")
-    mainw.set("c_choosebooks", True)
-    mainw.set("cb_columns", "2")
-    mainw.set("s_linespacing", "1.2")
-    mainw.set("c_justify", True)
-    mainw.set("s_colgutterfactor", "15")
 
 if args.pid:
     mainw.set("cb_project", args.pid)

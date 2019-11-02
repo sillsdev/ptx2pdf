@@ -7,25 +7,27 @@ import xml.etree.ElementTree as et
 from ptxprint.font import TTFont
 import configparser
 
+# For future Reference on how Paratext treats this list:
+# G                                    MzM                         RT                P        X      FBO    ICGTND          L  OT z NT DC  -  X Y  -  Z  --  L
+# E                                    AzA                         EO                S        X      RAT    NNLDDA          A  
+# N                                    LzT                         VB                2        ABCDEFGTKH    TCOXXG          O  39+1+27+18+(8)+7+3+(4)+6+(10)+1 = 124
+# 111111111111111111111111111111111111111111111111111111111111111111111111111111111111000000001111111111000011111100000000001  CompleteCanon (all books possible)
+
 _bookslist = """GEN|50 EXO|40 LEV|27 NUM|36 DEU|34 JOS|24 JDG|21 RUT|4 1SA|31 2SA|24 1KI|22 2KI|25 1CH|29 2CH|36 EZR|10 NEH|13
         EST|10 JOB|42 PSA|150 PRO|31 ECC|12 SNG|8 ISA|66 JER|52 LAM|5 EZK|48 DAN|12 HOS|14 JOL|3 AMO|9 OBA|1 JON|4 MIC|7 NAM|3
         HAB|3 ZEP|3 HAG|2 ZEC|14 MAL|4 ZZZ|0
         MAT|28 MRK|16 LUK|24 JHN|21 ACT|28 ROM|16 1CO|16 2CO|13 GAL|6 EPH|6 PHP|4 COL|4 1TH|5 2TH|3 1TI|6 2TI|4 TIT|3 PHM|1
         HEB|13 JAS|5 1PE|5 2PE|3 1JN|5 2JN|1 3JN|1 JUD|1 REV|22
         TOB|14 JDT|16 ESG|10 WIS|19 SIR|51 BAR|6 LJE|1 S3Y|1 SUS|1 BEL|1 1MA|16 2MA|15 3MA|7 4MA|18 1ES|9 2ES|16 MAN|1 PS2|1
-        ODA|0 PSS|0""" # TO-DO! We also need to add these extra books:
-        # XXA|0 XXB|0 XXC|0 XXD|0 XXE|0 XXF|0 XXG|0 FRT|0 BAK|0 OTH|0 INT|0 CNC|0 GLO|0 TDX|0 NDX|0 DAG|14 LAO|1
+        ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0
+        XXA|0 XXB|0 XXC|0 XXD|0 XXE|0 XXF|0 XXG|0 FRT|0 BAK|0 OTH|0 
+        ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0
+        INT|0 CNC|0 GLO|0 TDX|0 NDX|0 DAG|14 
+        ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0
+        LAO|1"""
 allbooks = [b.split("|")[0] for b in _bookslist.split() if b != "ZZZ|0"]
 books = dict((b.split("|")[0], i+1) for i, b in enumerate(_bookslist.split()))
 chaps = dict(b.split("|") for b in _bookslist.split())
-
-#print("allbooks(list)---------------------------------------------------")
-#print(allbooks)
-#print("books(dict)---------------------------------------------------")
-#print(books)
-#print("chaps(dict)---------------------------------------------------")
-#print(chaps)
-#print("---------------------------------------------------")
 
 class ParatextSettings:
     def __init__(self, basedir, prjid):
@@ -276,7 +278,7 @@ class PtxPrinterDialog:
         xcl = self.builder.get_object("c_figexclwebapp")
         plc = self.builder.get_object("c_figplaceholders")
         hdr = self.builder.get_object("c_fighiderefs")
-        if self.get("c_figs"):
+        if self.get("c_includefigs"):
             xcl.set_sensitive(True)
             plc.set_sensitive(True)
             hdr.set_sensitive(True)
@@ -361,21 +363,6 @@ class PtxPrinterDialog:
         else:   
             rhr.set_sensitive(False)
 
-    def onXyzChanged(self, c_button):
-        print(c_button)
-        if c_button.get_active():
-            rhr.set_sensitive(True)
-            rhr.grab_focus()
-        else:
-            rhr.set_sensitive(False)
-
-#    def onXyzChanged(self, c_Xyz):
-#        abc = self.builder.get_object("t_TxYz")
-#        if self.get("c_Xyz"):
-#            abc.set_sensitive(True)
-#            abc.grab_focus() 
-#        else:   
-#            abc.set_sensitive(False)
     def onClickChooseBooks(self, btn):
         #Do something to bring up the Book Selector dialog
         print("This should bring up the 'dlg_multiBookSelector' dialog to select one or more books")
@@ -399,7 +386,12 @@ class PtxPrinterDialog:
         print(self)
         for b in self.alltoggles:
             b.set_active(True)
-        
+
+    def onClickmbs_none(self, btn):
+        print(self)
+        for b in self.alltoggles:
+            b.set_active(False)
+                
     def onProjectChange(self, cb_prj):
         self.prjid = self.get("cb_project")
         self.ptsettings = None
@@ -448,15 +440,20 @@ class Info:
         "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: round(v) or "15"),
         "document/ifrtl":           ("c_rtl", lambda w,v :"true" if v else "false"),
         "document/iflinebreakon":   ("c_linebreakon", lambda w,v: "" if v else "%"),
+        # "document/script":          ("cb_script", lambda w,v: ";script="+v.lower() if len(v) else ""),
+        # "document/script":          "mymr",
+        "document/digitmapping":    ("cb_digits", lambda w,v: ";mapping="+v.lower()+"digits" if len(v) else ""),
+
         "document/linebreaklocale": ("t_linebreaklocale", lambda w,v: v or ""),
         "document/ifomitchapternum": ("c_omitchapternumber", lambda w,v: "true" if v else "false"),
         "document/ifomitverseone":  ("c_omitverseone", lambda w,v: "true" if v else "false"),
-        "document/iffigures":       ("c_figs", lambda w,v :"true" if v else "false"),
+        "document/iffigures":       ("c_includefigs", lambda w,v :"true" if v else "false"),
         "document/iffigexclwebapp": ("c_figexclwebapp", lambda w,v: "true" if v else "false"),
         "document/iffigplaceholders": ("c_figplaceholders", lambda w,v :"true" if v else "false"),
         "document/iffighiderefs":   ("c_fighiderefs", lambda w,v :"true" if v else "false"),
         "document/ifjustify":       ("c_justify", lambda w,v: "true" if v else "false"),
         "document/hangpoetry":      ("c_hangpoetry", lambda w,v: "" if v else "%"),
+        "document/supressindent":   ("c_indentafterheading", lambda w,v: "false" if v else "true"),
 
         "header/headerposition":    ("s_headerposition", lambda w,v: round(v, 2) or "0.50"),
         "header/footerposition":    ("s_footerposition", lambda w,v: round(v, 2) or "0.50"),
@@ -464,29 +461,38 @@ class Info:
         "header/ifverses":          ("c_hdrverses", lambda w,v :"true" if v else "false"),
         "header/ifrhrule":          ("c_rhrule", lambda w,v: "" if v else "%"),
         "header/ruleposition":      ("s_rhruleposition", lambda w,v: v or "10"),
+        "header/hdrleftinner":      ("cb_hdrleft", lambda w,v: v or "-empty-"),
+        "header/hdrcenter":         ("cb_hdrcenter", lambda w,v: v or "-empty-"),
+        "header/hdrrightouter":     ("cb_hdrright", lambda w,v: v or "-empty-"),
+        "header/mirrorlayout":      ("c_mirrorpages", lambda w,v: "true" if v else "false"),
+        
+        "footer/ftrcenter":         ("t_runningFooter", lambda w,v: v if w.get("c_runningFooter") else ""),
 
-        "footer/draft":             ("t_runningFooter", lambda w,v: v),
-        "footer/comment":           (None, lambda w,v: v),
+        "notes/ifomitfootnoterule": (None, lambda w,v: "%" if w.get("c_footnoterule") else ""),
+        "notes/blendfnxr":          ("c_blendfnxr", lambda w,v :"true" if v else "false"),
 
-        "notes/ifomitfootnoterule": (None, lambda w,v: "%" if w.get("c_footnoterule") else ""), # opposite as one says show other omit
-
-        # if c_fnautocallers is false then fncallers needs to be set to empty {} - HOW TO DO THAT?
-        "notes/fncallers":          ("t_fncallers", lambda w,v: v or "*"),
+        "notes/fncallers":          ("t_fncallers", lambda w,v: v if w.get("c_fnautocallers") else ""),
         "notes/fnresetcallers":     ("c_fnpageresetcallers", lambda w,v: "" if v else "%"),
-        "notes/fnomitcaller":       ("c_fnomitcaller", lambda w,v: "" if v else "%"),
-        "notes/fnparagraphednotes": (None, lambda w,v: "" if w.get("c_fnomitcaller") else "%"),
+        "notes/fnomitcaller":       ("c_fnomitcaller", lambda w,v: "%" if v else ""),
+        "notes/fnparagraphednotes": ("c_fnparagraphednotes", lambda w,v: "" if v else "%"),
 
-        # if c_xrautocallers is false then xrcallers needs to be set to empty {} - HOW TO DO THAT?
-        "notes/xrcallers":          ("t_xrcallers", lambda w,v: v or "+"),
+        "notes/xrcallers":          ("t_xrcallers", lambda w,v: v if w.get("c_xrautocallers") else ""),
         "notes/xrresetcallers":     ("c_xrpageresetcallers", lambda w,v: "" if v else "%"),
-        "notes/xromitcaller":       ("c_xromitcaller", lambda w,v: "" if v else "%"),
-        "notes/xrparagraphednotes": (None, lambda w,v: "" if w.get("c_xromitcaller") else "%"),
-        "fontbold/embolden":       ("s_boldembolden", lambda w,v: ";embolden={:.2f}".format(v) if v > 0. else ""),
-        "fontitalic/embolden":     ("s_italicembolden", lambda w,v: ";embolden={:.2f}".format(v) if v > 0. else ""),
-        "fontbolditalic/embolden": ("s_bolditalicembolden", lambda w,v: ";embolden={:.2f}".format(v) if v > 0. else ""),
-        "fontbold/slant":          ("s_boldslant", lambda w,v: ";slant={:.4f}".format(v) if v > 0. else ""),
-        "fontitalic/slant":        ("s_italicslant", lambda w,v: ";slant={:.4f}".format(v) if v > 0. else ""),
-        "fontbolditalic/slant":    ("s_bolditalicslant", lambda w,v: ";slant={:.4f}".format(v) if v > 0. else ""),
+        "notes/xromitcaller":       ("c_xromitcaller", lambda w,v: "%" if v else ""),
+        "notes/xrparagraphednotes": ("c_paragraphedxrefs", lambda w,v: "" if v else "%"),
+
+        "fontbold/fakeit":          ("c_fakebold", lambda w,v :"true" if v else "false"),
+        "fontitalic/fakeit":        ("c_fakeitalic", lambda w,v :"true" if v else "false"),
+        "fontbolditalic/fakeit":    ("c_fakebolditalic", lambda w,v :"true" if v else "false"),
+        # Comment from MP to MH: I have built in some limits into the glade interface, but *do* allow for -ve values, so any non-zero value is OK
+        # For example, we have a very heavy, but beautiful "bold" font, but need it to be lighter so a -2.0 embolden makes it about right
+        # Having tried this out, I'm now wondering whether this is true or not. I can't get -ve Embolden values to work at all now. (but -ve Italics works!)
+        "fontbold/embolden":        ("s_boldembolden", lambda w,v: ";embolden={:.2f}".format(v) if v != 0.00 and w.get("c_fakebold") else ""),
+        "fontitalic/embolden":      ("s_italicembolden", lambda w,v: ";embolden={:.2f}".format(v) if v != 0.00 and w.get("c_fakeitalic") else ""),
+        "fontbolditalic/embolden":  ("s_bolditalicembolden", lambda w,v: ";embolden={:.2f}".format(v) if v != 0.00 and w.get("c_fakebolditalic") else ""),
+        "fontbold/slant":           ("s_boldslant", lambda w,v: ";slant={:.4f}".format(v) if v != 0.0000 and w.get("c_fakebold") else ""),
+        "fontitalic/slant":         ("s_italicslant", lambda w,v: ";slant={:.4f}".format(v) if v != 0.0000 and w.get("c_fakeitalic") else ""),
+        "fontbolditalic/slant":     ("s_bolditalicslant", lambda w,v: ";slant={:.4f}".format(v) if v != 0.0000 and w.get("c_fakebolditalic") else ""),
     }
     _fonts = {
         "fontregular/name": "f_body",
@@ -505,6 +511,7 @@ class Info:
     def __init__(self, printer, path, ptsettings=None):
         self.ptsettings = ptsettings
         self.changes = None
+        self.localChanges = None
         self.dict = {"/ptxpath": path}
         for k, v in self._mappings.items():
             val = printer.get(v[0]) if v[0] is not None else None
@@ -513,6 +520,7 @@ class Info:
         self.processFonts(printer)
         self.processHdrFtr(printer)
         self.processCallers(printer)
+        self.makelocalChanges(printer)
 
     def __getitem__(self, key):
         return self.dict[key]
@@ -532,15 +540,27 @@ class Info:
             s = ""
             if len(style):
                 s = "/" + "".join(x[0].upper() for x in style)
-            self.dict[p] = family + engine + s            
+            self.dict[p] = family + engine + s
 
     def processHdrFtr(self, printer):
         mirror = printer.get('c_mirrorpages')
         for side in ('left', 'center', 'right'):
             v = printer.get("cb_hdr" + side)
             t = self._hdrmappings.get(v, v)
-            if True or mirror:   # This doesn't seem to be doing the mirroring (just copying from odd to even)
+            # I'm not sure if there is a more elegant/shorter/Pythonic way of doing this; but this works!
+            if side == 'left':
+                if mirror:
+                    self.dict['header/even{}'.format('right')] = t
+                else:
+                    self.dict['header/even{}'.format(side)] = t
+            elif side == 'right':
+                if mirror:
+                    self.dict['header/even{}'.format('left')] = t
+                else:
+                    self.dict['header/even{}'.format(side)] = t
+            else: # centre
                 self.dict['header/even{}'.format(side)] = t
+            
             self.dict['header/odd{}'.format(side)] = t
 
     def processCallers(self, printer):
@@ -580,7 +600,7 @@ class Info:
                 outfname = outfname[:doti] + "-draft" + outfname[doti:]
             with open(infname, "r", encoding="utf-8") as inf:
                 dat = inf.read()
-                for c in self.changes:
+                for c in self.changes + self.localChanges:  # Is there a better/neater way of doing this?
                     if c[0] is None:
                         dat = c[1].sub(c[2], dat)
                     else:
@@ -596,7 +616,6 @@ class Info:
 
     def readChanges(self, fname):
         changes = []
-        #return None # Temporary to see if I can get WSGlatin working (as it gets stuck on my 'in "xyz": do abc' rules
         if not os.path.exists(fname):
             return []
         with open(fname, "r", encoding="utf-8") as inf:
@@ -607,7 +626,7 @@ class Info:
                     continue
                 m = re.match(r"^(['\"])(.*?)(?<!\\)\1\s*>\s*(['\"])(.*?)(?<!\\)\3", l)
                 if m:
-                    print(m.group(2) + " > " + m.group(4))
+                    # print(m.group(2) + " > " + m.group(4))
                     changes.append((None, regex.compile(m.group(2), flags=regex.M), m.group(4)))
                     continue
                 m = re.match(r"^in\s+(['\"])(.*?)(?<!\\)\1\s*:\s*(['\"])(.*?)(?<!\\)\3\s*>\s*(['\"])(.*?)(?<!\\)\5", l)
@@ -615,15 +634,29 @@ class Info:
                     changes.append((regex.compile("("+m.group(2)+")", flags=regex.M), regex.compile(m.group(4), flags=regex.M), m.group(6)))
         if not len(changes):
             return None
-        figs = printer.get_object("c_figs")
-        if figs.active():
-        #if printer.get("c_figs"):
-            print("Illustrations are wanted!")
-        else:
-            #   Drop ALL the Figures
-            print("Illustrations are to be EXCLUDED!")
-        changes.append((None, regex.compile(r"\\fig .*?\\fig\*", flags=regex.M), ""))   
         return changes
+            
+    def makelocalChanges(self, printer):
+        self.localChanges = []
+        if not printer.get("c_includefigs"):
+            self.localChanges.append((None, regex.compile(r"\\fig .*?\\fig\*", flags=regex.M), ""))             # Drop ALL Figures
+        else:
+            self.localChanges.append((None, regex.compile(r"\.[Tt][Ii][Ff]", flags=regex.M), ".jpg"))           # Change all TIFs to JPGs
+        
+        if not printer.get("c_includeFootnotes"):
+            self.localChanges.append((None, regex.compile(r"\\f .+?\\f\*", flags=regex.M), ""))                 # Drop ALL Footnotes
+        if not printer.get("c_includeXrefs"):
+            self.localChanges.append((None, regex.compile(r"\\x .+?\\x\*", flags=regex.M), ""))                 # Drop ALL Cross-references
+        if printer.get("c_blendfnxr"): # this is a bit of a hack, but it works! (any other ideas?)
+            # To merge/blend \f and \x together, simply change all (\x to \f) (\xo to \fr) (\xq to \fq) (\xt to \ft) and (\f* to \x*)
+            self.localChanges.append((None, regex.compile(r"\\x . ", flags=regex.M), r"\\f # "))
+            self.localChanges.append((None, regex.compile(r"\\x\* ", flags=regex.M), r"\\f* "))
+            self.localChanges.append((None, regex.compile(r"\\xq ", flags=regex.M), r"\\fq "))
+            self.localChanges.append((None, regex.compile(r"\\xt ", flags=regex.M), r"\\ft "))
+        
+        # self.localChanges.append((None, regex.compile(r"\\f \*", flags=regex.M), r"\\f +"))      # temp for MP's project
+        # (broken) changes.append((None, regex.compile(r"(\\q\d( \S+)+) (\S+\s*\n)", flags=regex.M), "\1\u00A0\3"))   # Keep final two words of \q lines together
+        return self.localChanges
 
     def createConfig(self, printer):
         config = configparser.ConfigParser()
@@ -648,7 +681,7 @@ class Info:
                 key = "{}/{}".format(sect, opt)
                 if key in self._mappings:
                     v = self._mappings[key]
-                    print(sect + "/" + opt + ": " + v[0])
+                    #print(sect + "/" + opt + ": " + v[0])
                     if v[0] is None:
                         continue
                     if v[0].startswith("cb_") or v[0].startswith("t_") or v[0].startswith("f_"):

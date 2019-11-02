@@ -41,6 +41,11 @@
 %\def\italic{{"Padauk/GR/I:script=mymr;mapping=burmesedigits"}}
 %\def\bolditalic{{"Padauk/GR/BI:script=mymr;mapping=burmesedigits"}}
 
+%\def\regular{{"{fontregular/name}{document/digitmapping}"}}
+%\def\bold{{"{fontbold/name}:{document/digitmapping}{fontbold/embolden}{fontbold/slant}"}}
+%\def\italic{{"{fontitalic/name}:{document/digitmapping}{fontitalic/embolden}{fontitalic/slant}"}}
+%\def\bolditalic{{"{fontbolditalic/name}:{document/digitmapping}{fontbolditalic/embolden}{fontbolditalic/slant}"}}
+
 \def\regular{{"{fontregular/name}"}}
 \def\bold{{"{fontbold/name}:{fontbold/embolden}{fontbold/slant}"}}
 \def\italic{{"{fontitalic/name}:{fontitalic/embolden}{fontitalic/slant}"}}
@@ -54,9 +59,7 @@
 % Introduce some stretchability (glue) at each potential break
 %\XeTeXlinebreakskip=0em plus 0.1em minus 0.01em
 \JustifyPars{document/ifjustify}
-
-%\AutoCallers{{f}}{{{footnotes/callers}}}
-%\AutoCallers{{x}}{{a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}}
+\IndentAfterHeading{document/supressindent}
 
 %%% Chapters & Verses %%%
 \JustifyPars{document/ifjustify}
@@ -77,7 +80,9 @@
 
 %\AutoCallerStartChar=97
 %\AutoCallerNumChars=26
-%\AutoCallers{{f}}{{a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}}
+%\AutoCallers{{f}}{{{footnotes/callers}}}
+%\AutoCallers{{x}}{{a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}}
+%\AutoCallers{{f}}{{*,+,¶,§,**,++,¶¶,§§}}
 \AutoCallers{{f}}{{{notes/fncallers}}} % to hide callers in body text this needs to be empty
 {notes/fnresetcallers}\PageResetCallers{{f}}
 {notes/fnomitcaller}\OmitCallerInNote{{f}}
@@ -102,28 +107,23 @@
 \def\RHoddright{{{header/oddright}}}
 
 %% Even Header
-%\def\RHevenleft{{{header/evenleft}}}
-\def\RHevenleft{{{header/evenright}}}      % Hack!
+\def\RHevenleft{{{header/evenleft}}}
 \def\RHevencenter{{{header/evencenter}}}
-%\def\RHevenright{{{header/evenright}}}
-\def\RHevenright{{{header/evenleft}}}      % Hack!
+\def\RHevenright{{{header/evenright}}}
 
 \VerseRefs{header/ifverses}                  % Include verses in reference text?
 \OmitChapterNumberRH{header/ifomitrhchapnum} % Omit the chapter numbers in the running header (RH)
 
 %% Footer
-%\def\RFoddcenter{{{footer/comment}: {footer/draft}}}          % Need to work out what do do with Footer
-%\def\RFevencenter{{{footer/comment}: {footer/draft}}}
-%\def\RFtitlecenter{{{footer/comment}: {footer/draft}}}
-
-\def\RFoddcenter{{}}               % Temporarily BLANK out all footers
-\def\RFevencenter{{}}
-\def\RFtitlecenter{{}}
+\def\RFoddcenter{{{footer/ftrcenter}}}
+\def\RFevencenter{{{footer/ftrcenter}}}
+\def\RFtitlecenter{{{footer/ftrcenter}}}
 
 %%%%% Illustrations %%%%%
 \IncludeFigures{document/iffigures}
 \PicPath={{{/ptxpath}/{project/id}/figures/}}
 %\PicPath={{{/ptxpath}/{project/id}/local/figures/}} % should check if this folder exists (with HiRes figures)
+\FigurePlaceholders{document/iffigplaceholders}
 
 % tweak to enable blank lines
 \def\b{{\par\vskip\baselineskip}}
