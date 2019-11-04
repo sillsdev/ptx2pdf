@@ -155,7 +155,7 @@ class PtxPrinterDialog:
             f = TTFont(family, " ".join(style + s.split()))
             fname = family + ", " + f.style + " " + size
             w.set_font_name(fname)
-            print(s, fname, f.extrastyles)
+            # print(s, fname, f.extrastyles)
             if 'bold' in f.extrastyles:
                 self.set("s_{}embolden".format(sid), 2)
             if 'italic' in f.extrastyles:
@@ -364,7 +364,6 @@ class PtxPrinterDialog:
             rhr.set_sensitive(False)
 
     def onClickChooseBooks(self, btn):
-        #Do something to bring up the Book Selector dialog
         dia = self.builder.get_object("dlg_multiBookSelector")
         mbs_grid = self.builder.get_object("mbs_grid")
         mbs_grid.forall(mbs_grid.remove)
@@ -378,7 +377,7 @@ class PtxPrinterDialog:
         response = dia.run()
         if response == Gtk.ResponseType.OK:
             self.booklist = [b.get_label() for b in self.alltoggles if b.get_active()]
-            print(self.booklist)
+            # print(self.booklist)
         dia.hide()
 
     def onClickmbs_all(self, btn):
@@ -386,19 +385,19 @@ class PtxPrinterDialog:
             b.set_active(True)
 
     def onClickmbs_OT(self, btn):
-        for b in self.alltoggles[:38]:   # This isn't right yet (as it depends on which books are in the Project!
+        for b in self.alltoggles[:39]:   # This isn't right yet (as it depends on which books are in the Project!
             b.set_active(True)
 
     def onClickmbs_NT(self, btn):
-        for b in self.alltoggles[40:66]:    # This isn't right yet (as it depends on which books are in the Project!
+        for b in self.alltoggles[39:66]:    # This isn't right yet (as it depends on which books are in the Project!
             b.set_active(True)
 
     def onClickmbs_DC(self, btn):
-        for b in self.alltoggles[67:75]:    # This isn't right yet (as it depends on which books are in the Project!
+        for b in self.alltoggles[66:74]:    # This isn't right yet (as it depends on which books are in the Project!
             b.set_active(True)
 
     def onClickmbs_xtra(self, btn):
-        for b in self.alltoggles[67:75]:    # This isn't right yet (as it depends on which books are in the Project!
+        for b in self.alltoggles[76:]:    # This isn't right yet (as it depends on which books are in the Project!
             b.set_active(True)
 
     def onClickmbs_none(self, btn):
@@ -436,21 +435,22 @@ class PtxPrinterDialog:
 
     def onEditModsTeX(self, cb_prj):
         self.prjid = self.get("cb_project")
-        modstexfile = os.path.join(self.settings_dir, self.prjid, "PrintDraft-mods.tex")
+        modstexfile = os.path.join(self.settings_dir, self.prjid, "PrintDraft", "PrintDraft-mods.tex")
         if os.path.exists(modstexfile):
             os.startfile(modstexfile)
 
     def onEditModsSty(self, cb_prj):
         self.prjid = self.get("cb_project")
-        modsstyfile = os.path.join(self.settings_dir, self.prjid, "PrintDraft-mods.sty")
+        modsstyfile = os.path.join(self.settings_dir, self.prjid, "PrintDraft", "PrintDraft-mods.sty")
         if os.path.exists(modsstyfile):
             os.startfile(modsstyfile)
 
-    def onEditPythonFile(self, cb_prj):
-        self.prjid = self.get("cb_project")
-        self.pythonScriptFile = self.get("fc_preprocess")
-        if os.path.exists(self.pythonScriptFile):
-            os.startfile(self.pythonScriptFile)
+    def onEditPythonFile(self, widget):
+        pyScript = "??????????????"
+        # print(pyScript)
+        if os.path.exists(pyScript):
+            os.startfile(pyScript)
+
 
 class Info:
     _mappings = {
@@ -484,12 +484,15 @@ class Info:
 
         "document/linebreaklocale": ("t_linebreaklocale", lambda w,v: v or ""),
         "document/ifomitchapternum": ("c_omitchapternumber", lambda w,v: "true" if v else "false"),
+        "document/ifomitallchapters": ("c_omitchapternumber", lambda w,v: "" if v else "%"),
         "document/ifomitverseone":  ("c_omitverseone", lambda w,v: "true" if v else "false"),
+        "document/ifomitallverses": ("c_omitallverses", lambda w,v: "" if v else "%"),  # This also needs \Marker v \FontSize 0.0001 to be set in .sty file
         "document/iffigures":       ("c_includefigs", lambda w,v :"true" if v else "false"),
         "document/iffigexclwebapp": ("c_figexclwebapp", lambda w,v: "true" if v else "false"),
         "document/iffigplaceholders": ("c_figplaceholders", lambda w,v :"true" if v else "false"),
         "document/iffighiderefs":   ("c_fighiderefs", lambda w,v :"true" if v else "false"),
         "document/ifjustify":       ("c_justify", lambda w,v: "true" if v else "false"),
+        "document/crossspacecntxt": ("cb_crossSpaceContextualization", lambda w,v: "0" if v == "None" else "1" if v == "Some" else "2"),
         "document/hangpoetry":      ("c_hangpoetry", lambda w,v: "" if v else "%"),
         "document/supresssectheads": ("c_omitSectHeads", lambda w,v: "true" if v else "false"),
         "document/supressbookintro": ("c_omitBookIntro", lambda w,v: "true" if v else "false"),
@@ -606,7 +609,7 @@ class Info:
 
     def processCallers(self, printer):
         default = "a b c d e f g h i j k l m n o p q r s t u v w x y z"
-        self.dict['footnotes/callers'] = \
+        self.dict['notes/fncallers'] = \
                 ",".join(self.ptsettings.get('CallerSequence', default).split())
 
     def asTex(self, template="template.tex"):
@@ -688,24 +691,31 @@ class Info:
         
         if printer.get("c_omitBookIntro"):
             self.localChanges.append((None, regex.compile(r"\\i(s|m|mi|p|pi|li\d?|pq|mq|pr|b|q\d?) [^\\]+", flags=regex.M), "")) # Drop Introductory matter
+
         if printer.get("c_omitIntroOutline"):
-            self.localChanges.append((None, regex.compile(r"\\(iot|io\d) [^\\]+", flags=regex.M), "")) # Drop ALL Intro Outline matter
-            self.localChanges.append((None, regex.compile(r"\\ior .+?\\ior\*", flags=regex.M), ""))              # and remove Intro Outline References
+            self.localChanges.append((None, regex.compile(r"\\(iot|io\d) [^\\]+", flags=regex.M), ""))          # Drop ALL Intro Outline matter
+            self.localChanges.append((None, regex.compile(r"\\ior .+?\\ior\*", flags=regex.M), ""))             # and remove Intro Outline References
+
         if printer.get("c_omitSectHeads"):
-            self.localChanges.append((None, regex.compile(r"\\s .+", flags=regex.M), ""))                 # Drop ALL Section Headings
+            self.localChanges.append((None, regex.compile(r"\\s .+", flags=regex.M), ""))                       # Drop ALL Section Headings
+
         if not printer.get("c_includeFootnotes"):
             self.localChanges.append((None, regex.compile(r"\\f .+?\\f\*", flags=regex.M), ""))                 # Drop ALL Footnotes
+
         if not printer.get("c_includeXrefs"):
             self.localChanges.append((None, regex.compile(r"\\x .+?\\x\*", flags=regex.M), ""))                 # Drop ALL Cross-references
-        if printer.get("c_blendfnxr"): # this is a bit of a hack, but it works! (any other ideas?)
+
+        if printer.get("c_blendfnxr"): # this is a bit of a hack, but it works! (any better ideas?) - we could at least make it a single RegEx instead of 4!
             # To merge/blend \f and \x together, simply change all (\x to \f) (\xo to \fr) (\xq to \fq) (\xt to \ft) and (\f* to \x*)
             self.localChanges.append((None, regex.compile(r"\\x . ", flags=regex.M), r"\\f # "))
             self.localChanges.append((None, regex.compile(r"\\x\* ", flags=regex.M), r"\\f* "))
             self.localChanges.append((None, regex.compile(r"\\xq ", flags=regex.M), r"\\fq "))
             self.localChanges.append((None, regex.compile(r"\\xt ", flags=regex.M), r"\\ft "))
         
-        # self.localChanges.append((None, regex.compile(r"\\f \*", flags=regex.M), r"\\f +"))      # temp for MP's project
-        # (broken) changes.append((None, regex.compile(r"(\\q\d( \S+)+) (\S+\s*\n)", flags=regex.M), "\1\u00A0\3"))   # Keep final two words of \q lines together
+        if True:
+            self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+) (\S+\s*\n)", flags=regex.M), r"\1\u00A0\4"))   # Keep final two words of \q lines together
+            # self.localChanges.append((None, regex.compile(r"(?<=[ ])(\S\S\S+)[- ]*\1(?=[\s,.!?])", flags=regex.M), r"\1\u00A0\1")) # keep reduplicated words together
+            self.localChanges.append((None, regex.compile(r"(\d [\S][\S]?) ", flags=regex.M), r"\1\u00A0")) # Push verse followed by 2-letter word to next line
         return self.localChanges
 
     def createConfig(self, printer):

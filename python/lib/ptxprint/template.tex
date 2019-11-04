@@ -7,6 +7,7 @@
 %\stylesheet{{NestedStyles.sty}}
 
 \stylesheet{{{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.sty}}% override project stylesheet settings here
+{document/ifomitallverses}\stylesheet{{D:/Temp/NoVerseNums-mods.sty}}
 
 %%%%% Page Setup %%%%%
 % Dimensions
@@ -31,6 +32,12 @@
 %%%%% Text Spacing %%%%%
 \def\LineSpacingFactor{{{paragraph/linespacing}}}
 \def\VerticalSpaceFactor{{1.0}}
+
+%% Cross-space contextualization
+% None=0 This is how XeTeX behaves by default. Most projects will use this setting.
+% Some=1 Spaces between words are adjusted, but the rendering of individual words is *NOT* affected by the spaces.
+% Full=2 Spaces between words are adjusted, and the rendering of individual words *IS* affected by the spaces.
+\XeTeXinterwordspaceshaping = {document/crossspacecntxt}
 
 %%%%% Fonts %%%%%
 \FontSizeUnit={paper/fontfactor:.6f}pt   % Q (from MP to MH): Can you explain what's happening here?
@@ -62,11 +69,10 @@
 \IndentAfterHeading{document/supressindent}
 
 %%% Chapters & Verses %%%
-\JustifyPars{document/ifjustify}
 \OmitVerseNumberOne{document/ifomitverseone}
 \OmitChapterNumber{document/ifomitchapternum}
-%\def\AfterChapterSpaceFactor{{10}}
-%\def\AfterVerseSpaceFactor{{0}}
+{document/ifomitallchapters}\def\AfterChapterSpaceFactor{{10}}
+{document/ifomitallverses}\def\AfterVerseSpaceFactor{{0}}
 
 %%% Poetry - Hang Verse Numbers
 {document/hangpoetry}\sethook{{start}}{{q1}}{{\hangversenumber}}
@@ -80,9 +86,8 @@
 
 %\AutoCallerStartChar=97
 %\AutoCallerNumChars=26
-%\AutoCallers{{f}}{{{footnotes/callers}}}
-%\AutoCallers{{x}}{{a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}}
 %\AutoCallers{{f}}{{*,+,¶,§,**,++,¶¶,§§}}
+%\AutoCallers{{f}}{{a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}}
 \AutoCallers{{f}}{{{notes/fncallers}}} % to hide callers in body text this needs to be empty
 {notes/fnresetcallers}\PageResetCallers{{f}}
 {notes/fnomitcaller}\OmitCallerInNote{{f}}
@@ -136,6 +141,7 @@
 \hyphenpenalty=10000
 
 {paper/watermark}\def\PageBorder{{D:/Temp/A4-Draft.pdf}}
+%{paper/watermark}\def\PageBorder{{D:/Temp/A5-Draft.pdf}}
 
 %%%%% Load Paratext USFM %%%%%
 \XeTeXdefaultencoding "utf-8"
