@@ -171,6 +171,7 @@
                         <property name="margin_right">6</property>
                         <property name="margin_top">3</property>
                         <property name="margin_bottom">3</property>
+                        <signal name="clicked" handler="onClickmbs_OT" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -188,6 +189,7 @@
                         <property name="margin_right">6</property>
                         <property name="margin_top">3</property>
                         <property name="margin_bottom">3</property>
+                        <signal name="clicked" handler="onClickmbs_NT" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -206,6 +208,7 @@
                         <property name="margin_right">6</property>
                         <property name="margin_top">3</property>
                         <property name="margin_bottom">3</property>
+                        <signal name="clicked" handler="onClickmbs_DC" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -223,6 +226,7 @@
                         <property name="margin_right">6</property>
                         <property name="margin_top">3</property>
                         <property name="margin_bottom">3</property>
+                        <signal name="clicked" handler="onClickmbs_xtra" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -352,6 +356,282 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="orientation">vertical</property>
+                            <property name="column_spacing">10</property>
+                            <property name="row_homogeneous">True</property>
+                            <property name="column_homogeneous">True</property>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
                             <child>
                               <placeholder/>
                             </child>
@@ -409,6 +689,29 @@
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkListStore" id="ls_XrefCaller">
+    <columns>
+      <!-- column-name XrefCaller -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">†</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">‡</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">+</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">#</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">↗</col>
+      </row>
+    </data>
   </object>
   <object class="GtkListStore" id="ls_books">
     <columns>
@@ -798,6 +1101,8 @@
                                               <object class="GtkEntry">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
+                                                <property name="max_length">8</property>
+                                                <property name="width_chars">12</property>
                                               </object>
                                             </child>
                                           </object>
@@ -954,6 +1259,7 @@ into single PDF</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
                                             <property name="halign">start</property>
+                                            <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
                                           <packing>
@@ -1095,6 +1401,7 @@ into single PDF</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">Change this if you want to increase or decrease the line spacing.</property>
                                     <property name="halign">start</property>
+                                    <property name="width_chars">6</property>
                                     <property name="text" translatable="yes">1.00</property>
                                     <property name="caps_lock_warning">False</property>
                                     <property name="progress_pulse_step">0</property>
@@ -1271,6 +1578,7 @@ into single PDF</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="halign">start</property>
+                                    <property name="width_chars">6</property>
                                     <property name="text" translatable="yes">14</property>
                                     <property name="caps_lock_warning">False</property>
                                     <property name="progress_pulse_step">0</property>
@@ -1340,7 +1648,7 @@ into single PDF</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="row_spacing">7</property>
-                                <property name="column_spacing">70</property>
+                                <property name="column_spacing">23</property>
                                 <property name="row_homogeneous">True</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_justify">
@@ -1372,9 +1680,10 @@ into single PDF</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_marginverses">
-                                    <property name="label" translatable="yes">Use Marginal Verses (beside body text)</property>
+                                  <object class="GtkCheckButton" id="c_preventorphans">
+                                    <property name="label" translatable="yes">Prevent Orphan Words (\s &amp; \q#)</property>
                                     <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="halign">start</property>
@@ -1382,7 +1691,22 @@ into single PDF</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
-                                    <property name="top_attach">0</property>
+                                    <property name="top_attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_marginverses">
+                                    <property name="label" translatable="yes">Use Marginal Verses (beside body text)</property>
+                                    <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -1395,17 +1719,47 @@ into single PDF</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">1</property>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">3</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_preventorphans">
-                                    <property name="label" translatable="yes">Prevent Orphan Words (\s &amp; \q#)</property>
+                                  <object class="GtkCheckButton" id="c_omit1paraIndent">
+                                    <property name="label" translatable="yes">Suppress First Para Indentation</property>
                                     <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Don't indent the first paragraph after a section heading. It will appear as an \m(argin) paragraph instead of a normal \p.</property>
+                                    <property name="halign">start</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_omitBookIntro">
+                                    <property name="label" translatable="yes">Suppress Book Introduction (\i..)</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Remove the entire Book Introduction.</property>
+                                    <property name="halign">start</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_omitIntroOutline">
+                                    <property name="label" translatable="yes">Suppress Introductory Outline (\io..)</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Remove the Introductory Outline.</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -1415,17 +1769,61 @@ into single PDF</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_indentafterheading">
-                                    <property name="label" translatable="yes">Suppress First Para Indentation</property>
+                                  <object class="GtkCheckButton" id="c_omitSectHeads">
+                                    <property name="label" translatable="yes">Suppress Section Headings (\s)</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Remove paragraph indentation on the first paragraph after a section heading.</property>
+                                    <property name="tooltip_text" translatable="yes">Remove all section headings.</property>
+                                    <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_omitchapternumber">
+                                    <property name="label" translatable="yes">Omit Chapter number(s)</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
                                     <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_omitverseone">
+                                    <property name="label" translatable="yes">Omit First Verse Number</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_omitallverses">
+                                    <property name="label" translatable="yes">Omit All Verse Numbers</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">2</property>
                                   </packing>
                                 </child>
                               </object>
@@ -1436,7 +1834,7 @@ into single PDF</property>
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Text Flow</property>
+                            <property name="label" translatable="yes">Text Flow and Content</property>
                           </object>
                         </child>
                       </object>
@@ -1488,81 +1886,136 @@ Flow options.</property>
                               <object class="GtkBox">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="margin_top">6</property>
-                                <property name="margin_bottom">6</property>
-                                <property name="spacing">7</property>
+                                <property name="orientation">vertical</property>
                                 <child>
-                                  <object class="GtkLabel">
+                                  <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Script:</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkComboBox" id="cb_script">
-                                    <property name="width_request">150</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="model">ls_scripts</property>
-                                    <property name="active">0</property>
-                                    <property name="popup_fixed_width">False</property>
-                                    <property name="id_column">0</property>
-                                    <property name="active_id">0</property>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="label" translatable="yes">Digit style
+for \c and \v:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkComboBox" id="cb_digits">
+                                        <property name="width_request">150</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="margin_left">6</property>
+                                        <property name="model">ls_digits</property>
+                                        <property name="active">0</property>
+                                        <property name="popup_fixed_width">False</property>
+                                        <property name="id_column">0</property>
+                                        <property name="active_id">0</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkComboBox" id="cb_script">
+                                        <property name="width_request">150</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="margin_left">6</property>
+                                        <property name="model">ls_scripts</property>
+                                        <property name="active">0</property>
+                                        <property name="popup_fixed_width">False</property>
+                                        <property name="id_column">0</property>
+                                        <property name="active_id">0</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="label" translatable="yes">Script for text:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_rtl">
+                                        <property name="label" translatable="yes">Right-to-Left Script Layout</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="margin_left">4</property>
+                                        <property name="margin_top">4</property>
+                                        <property name="margin_bottom">4</property>
+                                        <property name="hexpand">True</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_linebreakon">
+                                        <property name="label" translatable="yes">Specify Line Break Locale:</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="draw_indicator">True</property>
+                                        <signal name="clicked" handler="onLineBreakChanged" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">2</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEntry" id="t_linebreaklocale">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="halign">start</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">3</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
                                     <property name="position">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_rtl">
-                                    <property name="label" translatable="yes">Right-to-Left Script Layout</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="hexpand">True</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_linebreakon">
-                                    <property name="label" translatable="yes">Specify Line Break Locale:</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onLineBreakChanged" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">4</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkEntry" id="t_linebreaklocale">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="margin_right">6</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">False</property>
-                                    <property name="position">5</property>
                                   </packing>
                                 </child>
                               </object>
@@ -1768,6 +2221,7 @@ Flow options.</property>
                                     <property name="sensitive">False</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">If the required font does not have a BOLD typeface, you can use this setting to create a BOLD effect. (For example, setting Embolden to 2.0 would thicken the Regular typeface making it appear as bold).</property>
+                                    <property name="width_chars">6</property>
                                     <property name="caps_lock_warning">False</property>
                                     <property name="input_purpose">number</property>
                                     <property name="adjustment">a_bolde</property>
@@ -1786,7 +2240,9 @@ Flow options.</property>
                                     <property name="sensitive">False</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">This setting would not normally be used, but is included just in case the Typeface Slant factor needs to be changed for Bold.</property>
+                                    <property name="opacity">0.40000000000000002</property>
                                     <property name="margin_right">6</property>
+                                    <property name="width_chars">6</property>
                                     <property name="caps_lock_warning">False</property>
                                     <property name="input_purpose">number</property>
                                     <property name="adjustment">a_bolds</property>
@@ -1805,6 +2261,8 @@ Flow options.</property>
                                     <property name="sensitive">False</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">This setting would not normally be used, but is included in case the thickness of the Typeface also needs to be changed for Italics. Note that a negative value can also be applied to make it appear less thick.</property>
+                                    <property name="opacity">0.40000000000000002</property>
+                                    <property name="width_chars">6</property>
                                     <property name="caps_lock_warning">False</property>
                                     <property name="input_purpose">number</property>
                                     <property name="adjustment">a_italice</property>
@@ -1824,6 +2282,7 @@ Flow options.</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">If the required font does not have an ITALIC typeface, you can use this setting to create an ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic).</property>
                                     <property name="margin_right">6</property>
+                                    <property name="width_chars">6</property>
                                     <property name="caps_lock_warning">False</property>
                                     <property name="input_purpose">number</property>
                                     <property name="adjustment">a_italics</property>
@@ -1842,6 +2301,7 @@ Flow options.</property>
                                     <property name="sensitive">False</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">If the required font does not have a BOLD-ITALIC typeface, you can use this setting to create the BOLD effect. (For example, setting Embolden to 2.0 would thicken the Regular typeface making it appear as bold), and use the Slant settings for the ITALIC effect.</property>
+                                    <property name="width_chars">6</property>
                                     <property name="caps_lock_warning">False</property>
                                     <property name="input_purpose">number</property>
                                     <property name="adjustment">a_bolditalice</property>
@@ -1861,6 +2321,7 @@ Flow options.</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">If the required font does not have a BOLD-ITALIC typeface, you can use this setting to create the ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic), and use the Embolden settings for the BOLD effect.</property>
                                     <property name="margin_right">6</property>
+                                    <property name="width_chars">6</property>
                                     <property name="caps_lock_warning">False</property>
                                     <property name="input_purpose">number</property>
                                     <property name="adjustment">a_bolditalics</property>
@@ -1943,6 +2404,8 @@ Flow options.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="tooltip_text" translatable="yes">Set the size of the main body text.</property>
+                                        <property name="margin_left">4</property>
+                                        <property name="width_chars">6</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="adjustment">a_fontsize</property>
                                         <property name="climb_rate">0.10000000000000001</property>
@@ -1987,11 +2450,11 @@ Flow options.</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="spacing">5</property>
-                        <property name="homogeneous">True</property>
                         <child>
                           <object class="GtkFrame">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="halign">start</property>
                             <property name="margin_left">6</property>
                             <property name="margin_right">6</property>
                             <property name="margin_top">6</property>
@@ -2007,134 +2470,7 @@ Flow options.</property>
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="column_spacing">5</property>
-                                    <property name="row_homogeneous">True</property>
-                                    <child>
-                                      <object class="GtkBox">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="spacing">6</property>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="label" translatable="yes">Digit style for \c and \v:</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkComboBox" id="cb_digits">
-                                            <property name="width_request">150</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="hexpand">True</property>
-                                            <property name="model">ls_digits</property>
-                                            <property name="active">0</property>
-                                            <property name="popup_fixed_width">False</property>
-                                            <property name="id_column">0</property>
-                                            <property name="active_id">0</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">1</property>
-                                          </packing>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_omitchapternumber">
-                                        <property name="label" translatable="yes">Omit Chapter number(s)</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="halign">start</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_omitverseone">
-                                        <property name="label" translatable="yes">Omit First Verse Number</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="halign">start</property>
-                                        <property name="active">True</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_omitallverses">
-                                        <property name="label" translatable="yes">Omit All Verse Numbers</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="halign">start</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">3</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                            <child type="label">
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="margin_left">4</property>
-                                <property name="margin_right">4</property>
-                                <property name="label" translatable="yes">Numbers</property>
-                              </object>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkFrame">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="halign">end</property>
-                            <property name="margin_left">6</property>
-                            <property name="margin_right">6</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="hexpand">True</property>
-                            <property name="label_xalign">0.019999999552965164</property>
-                            <child>
-                              <object class="GtkAlignment">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="left_padding">10</property>
-                                <property name="right_padding">10</property>
-                                <child>
-                                  <object class="GtkGrid">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="column_spacing">5</property>
+                                    <property name="column_spacing">27</property>
                                     <property name="row_homogeneous">True</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_includefigs">
@@ -2217,6 +2553,73 @@ Flow options.</property>
                                         <property name="top_attach">3</property>
                                       </packing>
                                     </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_usePicList">
+                                        <property name="label" translatable="yes">Use a PicList file to control Size and Position</property>
+                                        <property name="visible">True</property>
+                                        <property name="sensitive">False</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">The size and position of illustrations
+can be controlled using a PicList file.
+This will override the settings in the
+text where illustrations have been
+specified using \fig ...\fig* markup.</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_generatePicList">
+                                        <property name="label" translatable="yes">Generate PicList file from \fig ... \fig* in text</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="tooltip_text" translatable="yes">Click this button to generate the PicList
+in the correct format using the markup
+(\fig ... \fig*) within the text. If a PicList
+file already exists, you will be given a
+choice whether to overwrite the existing
+file, or to append to it.</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_editPicList">
+                                        <property name="label" translatable="yes">Edit...</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="tooltip_text" translatable="yes">Click here to Edit the PicList file
+in your system's default text editor.</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">2</property>
+                                        <property name="top_attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -2233,22 +2636,16 @@ Flow options.</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
+                            <property name="fill">False</property>
+                            <property name="position">0</property>
                           </packing>
                         </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">True</property>
+                        <property name="fill">False</property>
                         <property name="position">2</property>
                       </packing>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
                     </child>
                   </object>
                   <packing>
@@ -2327,6 +2724,7 @@ whether to include Illustrations.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="halign">start</property>
+                                        <property name="width_chars">6</property>
                                         <property name="text" translatable="yes">1.15</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="placeholder_text" translatable="yes">0.0</property>
@@ -2364,6 +2762,7 @@ whether to include Illustrations.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="halign">end</property>
+                                        <property name="width_chars">6</property>
                                         <property name="text" translatable="yes">0.50</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="placeholder_text" translatable="yes">0.0</property>
@@ -2617,7 +3016,7 @@ layout</property>
                                             <property name="can_focus">True</property>
                                             <property name="margin_top">10</property>
                                             <property name="margin_bottom">10</property>
-                                            <property name="width_chars">6</property>
+                                            <property name="width_chars">4</property>
                                             <property name="text" translatable="yes">15</property>
                                             <property name="caps_lock_warning">False</property>
                                             <property name="progress_pulse_step">0</property>
@@ -2701,7 +3100,7 @@ layout</property>
                                       <object class="GtkBox">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="spacing">42</property>
+                                        <property name="spacing">12</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_footnoterule">
                                             <property name="label" translatable="yes">Show footnote rule (to separate body text from notes)</property>
@@ -2721,7 +3120,7 @@ layout</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_blendfnxr">
                                             <property name="label" translatable="yes">Blend/Combine footnotes &amp; cross-references 
-as a single running paragraph (in verse order)</property>
+as a single running paragraph.    Use this Xref caller:</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -2732,6 +3131,23 @@ as a single running paragraph (in verse order)</property>
                                             <property name="expand">False</property>
                                             <property name="fill">True</property>
                                             <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkComboBox" id="cb_blendedXrefCaller">
+                                            <property name="width_request">85</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="halign">start</property>
+                                            <property name="model">ls_XrefCaller</property>
+                                            <property name="active">0</property>
+                                            <property name="id_column">0</property>
+                                            <property name="active_id">1</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">2</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -3165,6 +3581,7 @@ as a single running paragraph (in verse order)</property>
                                       <object class="GtkSpinButton" id="s_bottommarginfactor">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="width_chars">6</property>
                                         <property name="text" translatable="yes">1.15</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="placeholder_text" translatable="yes">0.0</property>
@@ -3202,6 +3619,7 @@ as a single running paragraph (in verse order)</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="halign">end</property>
+                                        <property name="width_chars">6</property>
                                         <property name="text" translatable="yes">0.50</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="placeholder_text" translatable="yes">0.0</property>
@@ -3274,9 +3692,12 @@ and Cross-references.</property>
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="opacity">0.59999999999999998</property>
                         <property name="margin_top">12</property>
                         <property name="margin_bottom">12</property>
-                        <property name="label" translatable="yes">Watch this space... Diglots are coming soon!</property>
+                        <property name="label" translatable="yes">Watch this space... Diglots are coming soon!
+Maybe even Di-script publications through an automated script conversion process.</property>
+                        <property name="justify">center</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -3352,26 +3773,10 @@ Multi-script publication.</property>
                             <property name="can_focus">False</property>
                             <property name="left_padding">12</property>
                             <child>
-                              <object class="GtkBox">
+                              <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="orientation">vertical</property>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_usePrintDraftChanges">
-                                    <property name="label" translatable="yes">Process text using PrintDraftChanges.txt file</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="margin_top">6</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
+                                <property name="column_spacing">7</property>
                                 <child>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
@@ -3382,7 +3787,6 @@ Multi-script publication.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="margin_right">6</property>
                                         <property name="draw_indicator">True</property>
                                         <signal name="clicked" handler="onPreprocessChanged" swapped="no"/>
                                       </object>
@@ -3408,9 +3812,121 @@ Multi-script publication.</property>
                                     </child>
                                   </object>
                                   <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">1</property>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_usePrintDraftChanges">
+                                    <property name="label" translatable="yes">Apply Changes Specified in PrintDraftChanges.txt file</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_editChangesFile">
+                                    <property name="label" translatable="yes">Edit...</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="relief">half</property>
+                                    <signal name="clicked" handler="onEditChangesFile" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_editPython">
+                                    <property name="label" translatable="yes">Edit...</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="margin_bottom">6</property>
+                                    <signal name="clicked" handler="onEditPythonFile" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_editModsTeX">
+                                    <property name="label" translatable="yes">Edit...</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="margin_bottom">6</property>
+                                    <signal name="clicked" handler="onEditModsTeX" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_editModsSty">
+                                    <property name="label" translatable="yes">Edit...</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="margin_bottom">6</property>
+                                    <signal name="clicked" handler="onEditModsSty" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_usePrintDraftChanges1">
+                                    <property name="label" translatable="yes">Also Apply PrintDraft-mods.tex</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">WARNING:
+Enabling this setting will override
+any conflicting settings here, which
+could make it appear as if settings
+here are not working at all.</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_usePrintDraftChanges2">
+                                    <property name="label" translatable="yes">Use Style Overrides Specified in PrintDraft-mods.sty file</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">3</property>
                                   </packing>
                                 </child>
                               </object>
@@ -3427,7 +3943,7 @@ Multi-script publication.</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">True</property>
+                        <property name="fill">False</property>
                         <property name="position">0</property>
                       </packing>
                     </child>
@@ -3512,11 +4028,12 @@ Multi-script publication.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_inclFrontMatter">
-                                    <property name="label" translatable="yes">Include Front Matter PDF</property>
+                                    <property name="label" translatable="yes">Include Front Matter PDF(s)</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">A previously created PDF file can be included BEFORE the scripture material being typeset.</property>
+                                    <property name="tooltip_text" translatable="yes">One or more previously created PDF file(s) can be included BEFORE the scripture material being typeset. If more than one
+file is selected, then these will appear in alphabetical order.</property>
                                     <property name="halign">start</property>
                                     <property name="margin_right">6</property>
                                     <property name="draw_indicator">True</property>
@@ -3529,11 +4046,12 @@ Multi-script publication.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_inclBackMatter">
-                                    <property name="label" translatable="yes">Include Back Matter PDF</property>
+                                    <property name="label" translatable="yes">Include Back Matter PDF(s)</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">A previously created PDF file can be included AFTER the scripture material being typeset.</property>
+                                    <property name="tooltip_text" translatable="yes">One or more previously created PDF file(s) can be included AFTER the scripture material being typeset. If more than one
+file is selected, then these will appear in alphabetical order.</property>
                                     <property name="halign">start</property>
                                     <property name="margin_right">6</property>
                                     <property name="draw_indicator">True</property>
@@ -3567,6 +4085,7 @@ Multi-script publication.</property>
                                     <property name="margin_bottom">6</property>
                                     <property name="create_folders">False</property>
                                     <property name="filter">pdffilter</property>
+                                    <property name="select_multiple">True</property>
                                     <property name="title" translatable="yes"/>
                                   </object>
                                   <packing>
@@ -3583,6 +4102,7 @@ Multi-script publication.</property>
                                     <property name="margin_bottom">6</property>
                                     <property name="create_folders">False</property>
                                     <property name="filter">pdffilter</property>
+                                    <property name="select_multiple">True</property>
                                     <property name="title" translatable="yes"/>
                                   </object>
                                   <packing>
@@ -3635,6 +4155,7 @@ Multi-script publication.</property>
                                       <object class="GtkCheckButton" id="c_autoToC">
                                         <property name="label" translatable="yes">Automatically Generate Table of Contents.      Title for ToC:</property>
                                         <property name="visible">True</property>
+                                        <property name="sensitive">False</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="halign">start</property>
@@ -3650,6 +4171,7 @@ Multi-script publication.</property>
                                     <child>
                                       <object class="GtkEntry" id="t_tocTitle">
                                         <property name="visible">True</property>
+                                        <property name="sensitive">False</property>
                                         <property name="can_focus">True</property>
                                         <property name="margin_right">6</property>
                                         <property name="hexpand">True</property>
@@ -3825,13 +4347,14 @@ TeX code can also be added.</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">True</property>
+                        <property name="fill">False</property>
                         <property name="position">1</property>
                       </packing>
                     </child>
                   </object>
                   <packing>
                     <property name="position">5</property>
+                    <property name="tab_fill">False</property>
                   </packing>
                 </child>
                 <child type="tab">
@@ -3846,10 +4369,168 @@ TeX code can also be added.</property>
                   </packing>
                 </child>
                 <child>
-                  <placeholder/>
+                  <object class="GtkGrid">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="position">6</property>
+                  </packing>
                 </child>
                 <child type="tab">
-                  <placeholder/>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">About</property>
+                  </object>
+                  <packing>
+                    <property name="position">6</property>
+                    <property name="tab_fill">False</property>
+                  </packing>
                 </child>
               </object>
               <packing>
@@ -3873,33 +4554,10 @@ TeX code can also be added.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkTextView">
-                <property name="height_request">60</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="vscroll_policy">natural</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="pack_type">end</property>
-                <property name="position">0</property>
-              </packing>
+              <placeholder/>
             </child>
             <child>
-              <object class="GtkTextView">
-                <property name="height_request">60</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="vscroll_policy">natural</property>
-                <property name="editable">False</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="pack_type">end</property>
-                <property name="position">2</property>
-              </packing>
+              <placeholder/>
             </child>
           </object>
           <packing>

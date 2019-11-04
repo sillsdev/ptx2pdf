@@ -365,7 +365,6 @@ class PtxPrinterDialog:
 
     def onClickChooseBooks(self, btn):
         #Do something to bring up the Book Selector dialog
-        print("This should bring up the 'dlg_multiBookSelector' dialog to select one or more books")
         dia = self.builder.get_object("dlg_multiBookSelector")
         mbs_grid = self.builder.get_object("mbs_grid")
         mbs_grid.forall(mbs_grid.remove)
@@ -383,12 +382,26 @@ class PtxPrinterDialog:
         dia.hide()
 
     def onClickmbs_all(self, btn):
-        print(self)
         for b in self.alltoggles:
             b.set_active(True)
 
+    def onClickmbs_OT(self, btn):
+        for b in self.alltoggles[:38]:   # This isn't right yet (as it depends on which books are in the Project!
+            b.set_active(True)
+
+    def onClickmbs_NT(self, btn):
+        for b in self.alltoggles[40:66]:    # This isn't right yet (as it depends on which books are in the Project!
+            b.set_active(True)
+
+    def onClickmbs_DC(self, btn):
+        for b in self.alltoggles[67:75]:    # This isn't right yet (as it depends on which books are in the Project!
+            b.set_active(True)
+
+    def onClickmbs_xtra(self, btn):
+        for b in self.alltoggles[67:75]:    # This isn't right yet (as it depends on which books are in the Project!
+            b.set_active(True)
+
     def onClickmbs_none(self, btn):
-        print(self)
         for b in self.alltoggles:
             b.set_active(False)
                 
@@ -414,7 +427,30 @@ class PtxPrinterDialog:
             config = configparser.ConfigParser()
             config.read(configfile)
             info.loadConfig(self, config)
-        
+
+    def onEditChangesFile(self, cb_prj):
+        self.prjid = self.get("cb_project")
+        changesfile = os.path.join(self.settings_dir, self.prjid, "PrintDraftChanges.txt")
+        if os.path.exists(changesfile):
+            os.startfile(changesfile)
+
+    def onEditModsTeX(self, cb_prj):
+        self.prjid = self.get("cb_project")
+        modstexfile = os.path.join(self.settings_dir, self.prjid, "PrintDraft-mods.tex")
+        if os.path.exists(modstexfile):
+            os.startfile(modstexfile)
+
+    def onEditModsSty(self, cb_prj):
+        self.prjid = self.get("cb_project")
+        modsstyfile = os.path.join(self.settings_dir, self.prjid, "PrintDraft-mods.sty")
+        if os.path.exists(modsstyfile):
+            os.startfile(modsstyfile)
+
+    def onEditPythonFile(self, cb_prj):
+        self.prjid = self.get("cb_project")
+        self.pythonScriptFile = self.get("fc_preprocess")
+        if os.path.exists(self.pythonScriptFile):
+            os.startfile(self.pythonScriptFile)
 
 class Info:
     _mappings = {
@@ -423,6 +459,8 @@ class Info:
         "paper/height":             (None, lambda w,v: re.sub(r"^.*?, \s*(.+?)\s*(?:\(.*|$)", r"\1", w.get("cb_pagesize")) or "210mm"),
         "paper/width":              (None, lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", w.get("cb_pagesize")) or "148mm"),
         "paper/pagesize":           ("cb_pagesize", None),
+        "paper/watermark":          ("c_applyWatermark", lambda w,v: "" if v else "%"),
+        "paper/watermarkpdf":       ("fc_watermark", lambda w,v: "Draft.pdf" or ""),
         "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),
         "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v else "false"),
         "paper/margins":            ("s_margins", lambda w,v: round(v) or "14"),
@@ -453,7 +491,10 @@ class Info:
         "document/iffighiderefs":   ("c_fighiderefs", lambda w,v :"true" if v else "false"),
         "document/ifjustify":       ("c_justify", lambda w,v: "true" if v else "false"),
         "document/hangpoetry":      ("c_hangpoetry", lambda w,v: "" if v else "%"),
-        "document/supressindent":   ("c_indentafterheading", lambda w,v: "false" if v else "true"),
+        "document/supresssectheads": ("c_omitSectHeads", lambda w,v: "true" if v else "false"),
+        "document/supressbookintro": ("c_omitBookIntro", lambda w,v: "true" if v else "false"),
+        "document/supressintrooutline": ("c_omitIntroOutline", lambda w,v: "true" if v else "false"),
+        "document/supressindent":   ("c_omit1paraIndent", lambda w,v: "false" if v else "true"),
 
         "header/headerposition":    ("s_headerposition", lambda w,v: round(v, 2) or "0.50"),
         "header/footerposition":    ("s_footerposition", lambda w,v: round(v, 2) or "0.50"),
@@ -583,7 +624,7 @@ class Info:
     def convertBook(self, bk, outdir, prjdir):
         if self.ptsettings is None:
             self.ptsettings = ParatextSettings(prjdir)
-        if self.changes is None:
+        if self.changes is None:  # AND if "c_usePrintDraftChanges" is active
             self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'))
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
@@ -593,7 +634,7 @@ class Info:
                     self.ptsettings['FileNamePostPart']
         fname = bknamefmt.format(bkid=bk, bknum=books.get(bk, 0))
         infname = os.path.join(prjdir, fname)
-        if self.changes is not None:
+        if self.changes is not None: # OR if self.localChanges is not None
             outfname = os.path.join(outdir, fname)
             doti = outfname.rfind(".")
             if doti > 0:
@@ -642,7 +683,16 @@ class Info:
             self.localChanges.append((None, regex.compile(r"\\fig .*?\\fig\*", flags=regex.M), ""))             # Drop ALL Figures
         else:
             self.localChanges.append((None, regex.compile(r"\.[Tt][Ii][Ff]", flags=regex.M), ".jpg"))           # Change all TIFs to JPGs
+            if printer.get("c_fighiderefs"):
+                self.localChanges.append((None, regex.compile(r"(\\fig .*?)(\d+\:\d+(\-\d+)?)(.*?\\fig\*)", flags=regex.M), r"\1\4")) # remove ch:vs ref from caption
         
+        if printer.get("c_omitBookIntro"):
+            self.localChanges.append((None, regex.compile(r"\\i(s|m|mi|p|pi|li\d?|pq|mq|pr|b|q\d?) [^\\]+", flags=regex.M), "")) # Drop Introductory matter
+        if printer.get("c_omitIntroOutline"):
+            self.localChanges.append((None, regex.compile(r"\\(iot|io\d) [^\\]+", flags=regex.M), "")) # Drop ALL Intro Outline matter
+            self.localChanges.append((None, regex.compile(r"\\ior .+?\\ior\*", flags=regex.M), ""))              # and remove Intro Outline References
+        if printer.get("c_omitSectHeads"):
+            self.localChanges.append((None, regex.compile(r"\\s .+", flags=regex.M), ""))                 # Drop ALL Section Headings
         if not printer.get("c_includeFootnotes"):
             self.localChanges.append((None, regex.compile(r"\\f .+?\\f\*", flags=regex.M), ""))                 # Drop ALL Footnotes
         if not printer.get("c_includeXrefs"):
