@@ -246,7 +246,7 @@ class PtxPrinterDialog:
         vrul = self.builder.get_object("c_verticalrule")
         gtrl = self.builder.get_object("l_gutterWidth")
         gtrw = self.builder.get_object("s_colgutterfactor")
-        if self.get("cb_columns") == "2":
+        if self.get("cb_columns") == "Double":
             vrul.set_sensitive(True)
             gtrl.set_sensitive(True)
             gtrw.set_sensitive(True)
@@ -469,7 +469,7 @@ class Info:
         #\def\SideMarginFactor{{1.0}} % not needed/wanted at this point
         #"paper/gutter":            ("s_pagegutter", lambda w,v: round(v) or "14"),
 
-        "paper/columns":            ("cb_columns", lambda w,v: v),
+        "paper/columns":            ("cb_columns", lambda w,v: "1" if v == "Single" else "2"),
 #        "paper/fontfactor":         (None, lambda w,v: float(w.get("f_body")[2]) / 12),  # This is now its own spin button for FONT SIZE
         "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
 
@@ -712,10 +712,15 @@ class Info:
             self.localChanges.append((None, regex.compile(r"\\xq ", flags=regex.M), r"\\fq "))
             self.localChanges.append((None, regex.compile(r"\\xt ", flags=regex.M), r"\\ft "))
         
-        if True:
-            self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+) (\S+\s*\n)", flags=regex.M), r"\1\u00A0\4"))   # Keep final two words of \q lines together
+        if printer.get("c_preventorphans"): 
+            # Keep final two words of \q lines together [but this doesn't work if there is an \f or \x at the end of the line] 
+            self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+) (\S+\s*\n)", flags=regex.M), r"\1\u00A0\4"))   
+            # Push the verse number onto the next line if there is a short widow word at the end of the line
+            self.localChanges.append((None, regex.compile(r"(\d [\S][\S]?) ", flags=regex.M), r"\1\u00A0")) 
+
+        # if True:
             # self.localChanges.append((None, regex.compile(r"(?<=[ ])(\S\S\S+)[- ]*\1(?=[\s,.!?])", flags=regex.M), r"\1\u00A0\1")) # keep reduplicated words together
-            self.localChanges.append((None, regex.compile(r"(\d [\S][\S]?) ", flags=regex.M), r"\1\u00A0")) # Push verse followed by 2-letter word to next line
+
         return self.localChanges
 
     def createConfig(self, printer):
