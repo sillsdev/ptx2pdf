@@ -153,6 +153,11 @@
 
 %\includepdf{{mytitlepage.pdf}}
 
+{document/toc}\GenerateTOC[{document/toctitle}]{{combined.toc}}
+{document/toc}\BodyColumns=1
+{document/toc}\ptxfile{{combined.toc}}
+{document/toc}\BodyColumns=2
+
 %%%%% Load Paratext USFM %%%%%
 \XeTeXdefaultencoding "utf-8"
 % job files. The next \ptxfile line is replaced, content is not used

@@ -383,7 +383,8 @@ class PtxPrinterDialog:
             self.alltoggles.append(tbox)
             mbs_grid.attach(tbox, i // 20, i % 20, 1, 1)
         # response = dia.run()
-        self.booklist = ["GEN", "MRK", "REV"]
+        # self.booklist = ["GEN", "MRK", "REV"]
+        self.booklist = ["MAT", "MRK", "LUK", "JHN", "ACT", "ROM", "1CO", "2CO", "GAL", "EPH", "PHP", "COL", "1TH", "2TH", "1TI", "2TI", "TIT", "PHM", "HEB", "JAS", "1PE", "2PE", "1JN", "2JN", "3JN", "JUD", "REV"]
         # if response == Gtk.ResponseType.OK:
             # self.booklist = [b.get_label() for b in self.alltoggles if b.get_active()]
         print(self.booklist)
@@ -485,6 +486,9 @@ class Info:
 
         "paragraph/linespacing":    ("s_linespacing", lambda w,v: round(v, 1)),
 
+        # "document/toc":             ("c_autoToC", lambda w,v: r"\ptxfile" if v else "%"),
+        "document/toc":             ("c_autoToC", lambda w,v: "" if v else "%"),
+        "document/toctitle":        ("t_tocTitle", lambda w,v: v or ""),
         "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: round(v) or "15"),
         "document/ifrtl":           ("c_rtl", lambda w,v :"true" if v else "false"),
         "document/iflinebreakon":   ("c_linebreakon", lambda w,v: "" if v else "%"),
