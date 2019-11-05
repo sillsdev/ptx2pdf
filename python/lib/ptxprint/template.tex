@@ -6,8 +6,14 @@
 \stylesheet{{{/ptxpath}/{project/id}/custom.sty}}
 %\stylesheet{{NestedStyles.sty}}
 
-\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.sty}}% override project stylesheet settings here
-{document/ifomitallverses}\stylesheet{{D:/Temp/NoVerseNums-mods.sty}}
+\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.sty}} % override project stylesheet settings here
+
+% Where to put these kinds of little files? In PrintDraft folder? 
+% Maybe we make ONE file and put all/any .sty tweaks in it (instead of multiple smaller files)  IS THAT WHAT NestedStyles.sty IS FOR??? Duh!
+% Temporarily these have been manually copied to the PrintDraft folder (proof of concept)
+{document/ifomitallverses}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/SuppressVerseNums.sty}}
+{notes/includefootnotes}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/SuppressFootnotes.sty}}
+{notes/includexrefs}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/SuppressXrefs.sty}}
 
 %%%%% Page Setup %%%%%
 % Dimensions
@@ -16,11 +22,12 @@
 \CropMarks{paper/ifcropmarks}
 
 %% Margins
-%\BindingGutter= mm % paper/gutter mm
 \MarginUnit={paper/margins}mm
 \def\TopMarginFactor{{{paper/topmarginfactor}}}
 \def\BottomMarginFactor{{{paper/bottommarginfactor}}}
-%\def\SideMarginFactor{{1.0}} % Not yet sure why we would want this anything other than 1.0
+\def\SideMarginFactor{{{paper/sidemarginfactor}}}
+\BindingGutter{paper/ifaddgutter}
+\BindingGutter={paper/gutter}mm
 
 %% Columns
 \TitleColumns=1
@@ -140,8 +147,11 @@
 %%%%% Hyphenation %%%%%
 \hyphenpenalty=10000
 
-{paper/watermark}\def\PageBorder{{D:/Temp/A4-Draft.pdf}}
-%{paper/watermark}\def\PageBorder{{D:/Temp/A5-Draft.pdf}}
+% Where to put these kinds of files? 
+{paper/watermark}\def\PageBorder{{{/ptxpath}/{project/id}/PrintDraft/A4-Draft.pdf}}
+%{paper/watermark}\def\PageBorder{{D:/Temp/A5-Draft.pdf}}  % and also pretty border PDFs etc.
+
+%\includepdf{{mytitlepage.pdf}}
 
 %%%%% Load Paratext USFM %%%%%
 \XeTeXdefaultencoding "utf-8"
@@ -149,5 +159,7 @@
 \catcode`\%=12
 \ptxfile{{PrintDraft/41MATprojid-draft.SFM}}
 \catcode`\%=14
+
+%\includepdf{{myendofbookfile.pdf}}
 
 \end

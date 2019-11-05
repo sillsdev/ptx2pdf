@@ -737,7 +737,7 @@
                         <property name="margin_right">6</property>
                         <property name="margin_top">6</property>
                         <property name="margin_bottom">6</property>
-                        <property name="label_xalign">0.0099999997764825821</property>
+                        <property name="label_xalign">0.019999999552965164</property>
                         <child>
                           <object class="GtkAlignment">
                             <property name="visible">True</property>
@@ -1063,11 +1063,9 @@ into single PDF</property>
                           <object class="GtkFrame">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="margin_left">6</property>
-                            <property name="margin_right">2</property>
                             <property name="margin_top">4</property>
                             <property name="margin_bottom">4</property>
-                            <property name="label_xalign">0.0099999997764825821</property>
+                            <property name="label_xalign">0.019999999552965164</property>
                             <child>
                               <object class="GtkAlignment">
                                 <property name="visible">True</property>
@@ -1160,7 +1158,7 @@ into single PDF</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton">
+                                      <object class="GtkCheckButton" id="c_pagegutter">
                                         <property name="label" translatable="yes">Add Binding
 Gutter (mm):</property>
                                         <property name="visible">True</property>
@@ -1168,6 +1166,7 @@ Gutter (mm):</property>
                                         <property name="receives_default">False</property>
                                         <property name="halign">end</property>
                                         <property name="draw_indicator">True</property>
+                                        <signal name="clicked" handler="onPageGutterChanged" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">2</property>
@@ -1175,7 +1174,7 @@ Gutter (mm):</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkSpinButton" id="s_bindingGutter">
+                                      <object class="GtkSpinButton" id="s_pagegutter">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="halign">start</property>
@@ -1296,10 +1295,9 @@ Factor:</property>
                           <object class="GtkFrame">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="margin_right">2</property>
                             <property name="margin_top">4</property>
                             <property name="margin_bottom">4</property>
-                            <property name="label_xalign">0.029999999329447746</property>
+                            <property name="label_xalign">0.039999999105930328</property>
                             <child>
                               <object class="GtkAlignment">
                                 <property name="visible">True</property>
@@ -1321,10 +1319,11 @@ Factor:</property>
                                         <property name="can_focus">False</property>
                                         <child>
                                           <object class="GtkComboBox" id="cb_columns">
-                                            <property name="width_request">110</property>
+                                            <property name="width_request">90</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="halign">start</property>
+                                            <property name="margin_left">16</property>
                                             <property name="model">ls_columns</property>
                                             <property name="active">0</property>
                                             <property name="id_column">0</property>
@@ -1486,7 +1485,6 @@ Balancing:</property>
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">False</property>
-                            <property name="padding">5</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
@@ -1505,7 +1503,7 @@ Balancing:</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">6</property>
                         <property name="margin_bottom">6</property>
-                        <property name="label_xalign">0.0099999997764825821</property>
+                        <property name="label_xalign">0.019999999552965164</property>
                         <child>
                           <object class="GtkAlignment">
                             <property name="visible">True</property>
@@ -1520,7 +1518,7 @@ Balancing:</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="row_spacing">7</property>
-                                <property name="column_spacing">23</property>
+                                <property name="column_spacing">16</property>
                                 <property name="row_homogeneous">True</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_justify">
@@ -1549,22 +1547,6 @@ Balancing:</property>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_preventorphans">
-                                    <property name="label" translatable="yes">Prevent Orphan Words in Poertry (\q#)</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">[Not yet implemented]</property>
-                                    <property name="halign">start</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -1600,7 +1582,7 @@ Balancing:</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_omit1paraIndent">
-                                    <property name="label" translatable="yes">Suppress First Para Indentation</property>
+                                    <property name="label" translatable="yes">Suppress First Paragraph Indentation</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -1659,8 +1641,23 @@ Balancing:</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_omitchapternumber">
-                                    <property name="label" translatable="yes">Omit Chapter number(s)</property>
+                                  <object class="GtkCheckButton" id="c_preventorphans">
+                                    <property name="label" translatable="yes">Prevent Orphan Words in Poertry (\q#)</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_omitallverses">
+                                    <property name="label" translatable="yes">Omit All Verse Numbers</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -1669,7 +1666,7 @@ Balancing:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
-                                    <property name="top_attach">0</property>
+                                    <property name="top_attach">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -1684,27 +1681,80 @@ Balancing:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
-                                    <property name="top_attach">1</property>
+                                    <property name="top_attach">2</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_omitallverses">
-                                    <property name="label" translatable="yes">Omit All Verse Numbers</property>
+                                  <object class="GtkCheckButton" id="c_omitchapternumber">
+                                    <property name="label" translatable="yes">Omit Chapter number(s)</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">This setting simply removes the
-space after verse numbers. So, in
-order for this to work, you also need
-to modify the .sty file so that it has:
-\Marker v
-\FontSize 0.0001</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
-                                    <property name="top_attach">2</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_ch1pagebreak">
+                                    <property name="label" translatable="yes">Always Start Ch 1 on a New Page</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Use this option to automatically make a page break after a book's introduction section. The break will come right before the \c 1 marker.</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_preventwidows">
+                                    <property name="label" translatable="yes">Prevent Verse Widow Words </property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">This option prevents short words
+(of 3 characters or less) from occurring
+AFTER a verse begins at the end of 
+a line.</property>
+                                    <property name="halign">start</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_glueredupwords">
+                                    <property name="label" translatable="yes">Keep Re-duplicated Words Together </property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">This option ensures that re-duplicated
+words (i.e. those which are intentionally
+repeated) come together on the same line
+by inserting a NoBreakSpace between them.
+For example, "gama gama", or "kala kala" 
+need to be stuck together (with a NBSP)
+in order to be read meaningfully.
+However, if there are many of these in the
+language, then it may create other unwanted
+typesetting issues. Use with care!
+</property>
+                                    <property name="halign">start</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">4</property>
                                   </packing>
                                 </child>
                               </object>
@@ -1715,7 +1765,7 @@ to modify the .sty file so that it has:
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Text Flow and Content</property>
+                            <property name="label" translatable="yes">Text Flow and Content Options</property>
                           </object>
                         </child>
                       </object>
@@ -1876,7 +1926,7 @@ for \c and \v:</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="halign">end</property>
-                                        <property name="width_chars">14</property>
+                                        <property name="width_chars">12</property>
                                         <property name="max_width_chars">4</property>
                                       </object>
                                       <packing>
@@ -1907,7 +1957,7 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="halign">start</property>
-                                            <property name="width_chars">8</property>
+                                            <property name="width_chars">6</property>
                                             <property name="progress_pulse_step">0</property>
                                           </object>
                                         </child>
@@ -1927,9 +1977,8 @@ Some: Spaces between words are adjusted, but the rendering of individual words i
 
 Full: Spaces between words are adjusted, and the rendering of individual words *IS* affected by the spaces.</property>
                                         <property name="halign">end</property>
-                                        <property name="margin_right">6</property>
-                                        <property name="label" translatable="yes">Cross-space 
-contextualization:</property>
+                                        <property name="margin_right">4</property>
+                                        <property name="label" translatable="yes">Cross-space Contextualization:</property>
                                         <property name="justify">right</property>
                                       </object>
                                       <packing>

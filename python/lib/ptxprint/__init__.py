@@ -242,6 +242,14 @@ class PtxPrinterDialog:
             xrr.set_sensitive(False)
             xrp.set_sensitive(False)
 
+    def onPageGutterChanged(self, c_pagegutter):
+        gtr = self.builder.get_object("s_pagegutter")
+        if self.get("c_pagegutter"):
+            gtr.set_sensitive(True)
+            gtr.grab_focus() 
+        else:   
+            gtr.set_sensitive(False)
+
     def onColumnsChanged(self, cb_Columns):
         vrul = self.builder.get_object("c_verticalrule")
         gtrl = self.builder.get_object("l_gutterWidth")
@@ -374,11 +382,12 @@ class PtxPrinterDialog:
             tbox.show()
             self.alltoggles.append(tbox)
             mbs_grid.attach(tbox, i // 20, i % 20, 1, 1)
-        response = dia.run()
-        if response == Gtk.ResponseType.OK:
-            self.booklist = [b.get_label() for b in self.alltoggles if b.get_active()]
-            # print(self.booklist)
-        dia.hide()
+        # response = dia.run()
+        self.booklist = ["GEN", "MRK", "REV"]
+        # if response == Gtk.ResponseType.OK:
+            # self.booklist = [b.get_label() for b in self.alltoggles if b.get_active()]
+        print(self.booklist)
+        # dia.hide()
 
     def onClickmbs_all(self, btn):
         for b in self.alltoggles:
@@ -456,7 +465,7 @@ class Info:
     _mappings = {
         "project/id":               (None, lambda w,v: w.get("cb_project")),
         "project/book":             ("cb_book", None),
-        "paper/height":             (None, lambda w,v: re.sub(r"^.*?, \s*(.+?)\s*(?:\(.*|$)", r"\1", w.get("cb_pagesize")) or "210mm"),
+        "paper/height":             (None, lambda w,v: re.sub(r"^.*?,\s*(.+?)\s*(?:\(.*|$)", r"\1", w.get("cb_pagesize")) or "210mm"),
         "paper/width":              (None, lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", w.get("cb_pagesize")) or "148mm"),
         "paper/pagesize":           ("cb_pagesize", None),
         "paper/watermark":          ("c_applyWatermark", lambda w,v: "" if v else "%"),
@@ -466,8 +475,9 @@ class Info:
         "paper/margins":            ("s_margins", lambda w,v: round(v) or "14"),
         "paper/topmarginfactor":    ("s_topmarginfactor", lambda w,v: round(v, 2) or "1.15"),
         "paper/bottommarginfactor": ("s_bottommarginfactor", lambda w,v: round(v, 2) or "1.15"),
-        #\def\SideMarginFactor{{1.0}} % not needed/wanted at this point
-        #"paper/gutter":            ("s_pagegutter", lambda w,v: round(v) or "14"),
+        "paper/sidemarginfactor":   ("s_sidemarginfactor", lambda w,v: round(v, 2) or "1.00"),
+        "paper/ifaddgutter":        ("c_pagegutter", lambda w,v :"true" if v else "false"),
+        "paper/gutter":             ("s_pagegutter", lambda w,v: round(v) or "14"),
 
         "paper/columns":            ("cb_columns", lambda w,v: "1" if v == "Single" else "2"),
 #        "paper/fontfactor":         (None, lambda w,v: float(w.get("f_body")[2]) / 12),  # This is now its own spin button for FONT SIZE
@@ -483,6 +493,7 @@ class Info:
         "document/digitmapping":    ("cb_digits", lambda w,v: ";mapping="+v.lower()+"digits" if len(v) else ""),
 
         "document/linebreaklocale": ("t_linebreaklocale", lambda w,v: v or ""),
+        "document/ch1pagebreak":    ("c_ch1pagebreak", lambda w,v: "true" if v else "false"),
         "document/ifomitchapternum": ("c_omitchapternumber", lambda w,v: "true" if v else "false"),
         "document/ifomitallchapters": ("c_omitchapternumber", lambda w,v: "" if v else "%"),
         "document/ifomitverseone":  ("c_omitverseone", lambda w,v: "true" if v else "false"),
@@ -494,6 +505,8 @@ class Info:
         "document/ifjustify":       ("c_justify", lambda w,v: "true" if v else "false"),
         "document/crossspacecntxt": ("cb_crossSpaceContextualization", lambda w,v: "0" if v == "None" else "1" if v == "Some" else "2"),
         "document/hangpoetry":      ("c_hangpoetry", lambda w,v: "" if v else "%"),
+        "document/preventorphans":  ("c_preventorphans", lambda w,v: "true" if v else "false"),
+        "document/preventwidows":   ("c_preventwidows", lambda w,v: "true" if v else "false"),
         "document/supresssectheads": ("c_omitSectHeads", lambda w,v: "true" if v else "false"),
         "document/supressbookintro": ("c_omitBookIntro", lambda w,v: "true" if v else "false"),
         "document/supressintrooutline": ("c_omitIntroOutline", lambda w,v: "true" if v else "false"),
@@ -515,11 +528,13 @@ class Info:
         "notes/ifomitfootnoterule": (None, lambda w,v: "%" if w.get("c_footnoterule") else ""),
         "notes/blendfnxr":          ("c_blendfnxr", lambda w,v :"true" if v else "false"),
 
+        "notes/includefootnotes":   ("c_includeFootnotes", lambda w,v: "%" if v else ""),
         "notes/fncallers":          ("t_fncallers", lambda w,v: v if w.get("c_fnautocallers") else ""),
         "notes/fnresetcallers":     ("c_fnpageresetcallers", lambda w,v: "" if v else "%"),
         "notes/fnomitcaller":       ("c_fnomitcaller", lambda w,v: "%" if v else ""),
         "notes/fnparagraphednotes": ("c_fnparagraphednotes", lambda w,v: "" if v else "%"),
 
+        "notes/includexrefs":       ("c_includeXrefs", lambda w,v: "%" if v else ""),
         "notes/xrcallers":          ("t_xrcallers", lambda w,v: v if w.get("c_xrautocallers") else ""),
         "notes/xrresetcallers":     ("c_xrpageresetcallers", lambda w,v: "" if v else "%"),
         "notes/xromitcaller":       ("c_xromitcaller", lambda w,v: "%" if v else ""),
@@ -682,6 +697,10 @@ class Info:
             
     def makelocalChanges(self, printer):
         self.localChanges = []
+        if True: # We always want to do this (strip out the Glossary Word markup) BUT how best to mark them up for the user? and what options are needed
+        #	Remove the second half of the \w word-in-text|glossary-form-of-word\w*  Should we mark ⸤glossary⸥ words like this?
+            self.localChanges.append((None, regex.compile(r"\\w (.+?)(\|.+?)?\\w\*", flags=regex.M), r"\u2E24\1\u2E25"))   # Drop 2nd half of Glossary words
+        
         if not printer.get("c_includefigs"):
             self.localChanges.append((None, regex.compile(r"\\fig .*?\\fig\*", flags=regex.M), ""))             # Drop ALL Figures
         else:
@@ -690,20 +709,22 @@ class Info:
                 self.localChanges.append((None, regex.compile(r"(\\fig .*?)(\d+\:\d+(\-\d+)?)(.*?\\fig\*)", flags=regex.M), r"\1\4")) # remove ch:vs ref from caption
         
         if printer.get("c_omitBookIntro"):
-            self.localChanges.append((None, regex.compile(r"\\i(s|m|mi|p|pi|li\d?|pq|mq|pr|b|q\d?) [^\\]+", flags=regex.M), "")) # Drop Introductory matter
+            self.localChanges.append((None, regex.compile(r"\\i(s|m|mi|p|pi|li\d?|pq|mq|pr|b|q\d?) [^\\]+\r?\n", flags=regex.M), "")) # Drop Introductory matter
 
         if printer.get("c_omitIntroOutline"):
             self.localChanges.append((None, regex.compile(r"\\(iot|io\d) [^\\]+", flags=regex.M), ""))          # Drop ALL Intro Outline matter
-            self.localChanges.append((None, regex.compile(r"\\ior .+?\\ior\*", flags=regex.M), ""))             # and remove Intro Outline References
+            self.localChanges.append((None, regex.compile(r"\\ior .+?\\ior\*\s?\r?\n", flags=regex.M), ""))             # and remove Intro Outline References
 
         if printer.get("c_omitSectHeads"):
             self.localChanges.append((None, regex.compile(r"\\s .+", flags=regex.M), ""))                       # Drop ALL Section Headings
 
-        if not printer.get("c_includeFootnotes"):
-            self.localChanges.append((None, regex.compile(r"\\f .+?\\f\*", flags=regex.M), ""))                 # Drop ALL Footnotes
+        # Note that this is probably easier to do using a -mods.sty file with: \Marker f  \TextProperties nonpublishable
+        # if not printer.get("c_includeFootnotes"):
+            # self.localChanges.append((None, regex.compile(r"\\f .+?\\f\*", flags=regex.M), ""))                 # Drop ALL Footnotes
 
-        if not printer.get("c_includeXrefs"):
-            self.localChanges.append((None, regex.compile(r"\\x .+?\\x\*", flags=regex.M), ""))                 # Drop ALL Cross-references
+        # Note that this is probably easier to do using a -mods.sty file with: \Marker x  \TextProperties nonpublishable
+        # if not printer.get("c_includeXrefs"):
+            # self.localChanges.append((None, regex.compile(r"\\x .+?\\x\*", flags=regex.M), ""))                 # Drop ALL Cross-references
 
         if printer.get("c_blendfnxr"): # this is a bit of a hack, but it works! (any better ideas?) - we could at least make it a single RegEx instead of 4!
             # To merge/blend \f and \x together, simply change all (\x to \f) (\xo to \fr) (\xq to \fq) (\xt to \ft) and (\f* to \x*)
@@ -715,11 +736,16 @@ class Info:
         if printer.get("c_preventorphans"): 
             # Keep final two words of \q lines together [but this doesn't work if there is an \f or \x at the end of the line] 
             self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+) (\S+\s*\n)", flags=regex.M), r"\1\u00A0\4"))   
-            # Push the verse number onto the next line if there is a short widow word at the end of the line
-            self.localChanges.append((None, regex.compile(r"(\d [\S][\S]?) ", flags=regex.M), r"\1\u00A0")) 
 
-        # if True:
-            # self.localChanges.append((None, regex.compile(r"(?<=[ ])(\S\S\S+)[- ]*\1(?=[\s,.!?])", flags=regex.M), r"\1\u00A0\1")) # keep reduplicated words together
+        if printer.get("c_preventwidows"):
+            # Push the verse number onto the next line (using NBSP) if there is a short widow word (3 characters or less) at the end of the line
+            self.localChanges.append((None, regex.compile(r"(\\v \d+ [\w][\w]?[\w]?) ", flags=regex.M), r"\1\u00A0")) 
+
+        if printer.get("c_ch1pagebreak"):
+            self.localChanges.append((None, regex.compile(r"(\\c 1\r?\n)", flags=regex.M), r"\pagebreak\r\n\1"))
+
+        # if printer.get("c_glueredupwords"):  # broken??? at present as it 
+            # self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w\w\w+) *\1(?=[\s,.!?])", flags=regex.M), r"\1\u00A0\1")) # keep reduplicated words together
 
         return self.localChanges
 
