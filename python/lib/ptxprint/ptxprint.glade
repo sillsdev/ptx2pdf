@@ -566,41 +566,21 @@
     <columns>
       <!-- column-name name -->
       <column type="gchararray"/>
-      <!-- column-name code -->
-      <column type="gchararray"/>
       <!-- column-name id -->
-      <column type="guint"/>
+      <column type="gchararray"/>
     </columns>
     <data>
       <row>
         <col id="0" translatable="yes">Arabic</col>
-        <col id="1" translatable="yes">Arab</col>
-        <col id="2">0</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Devanagari</col>
-        <col id="1" translatable="yes">Deva</col>
-        <col id="2">1</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Latin</col>
-        <col id="1" translatable="yes">Latn</col>
-        <col id="2">2</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Gunjala Gondi</col>
-        <col id="1" translatable="yes">Gong</col>
-        <col id="2">3</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Masaram Gondi</col>
-        <col id="1" translatable="yes">Gonm</col>
-        <col id="2">4</col>
+        <col id="1" translatable="yes">arab</col>
       </row>
       <row>
         <col id="0" translatable="yes">Telugu</col>
-        <col id="1" translatable="yes">Telu</col>
-        <col id="2">5</col>
+        <col id="1" translatable="yes">telu</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Tai Tham</col>
+        <col id="1" translatable="yes">lana</col>
       </row>
     </data>
   </object>
@@ -1867,7 +1847,7 @@ for \c and \v:</property>
                                         <property name="model">ls_scripts</property>
                                         <property name="active">0</property>
                                         <property name="popup_fixed_width">False</property>
-                                        <property name="id_column">0</property>
+                                        <property name="id_column">1</property>
                                         <property name="active_id">0</property>
                                       </object>
                                       <packing>

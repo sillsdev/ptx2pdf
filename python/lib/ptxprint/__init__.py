@@ -25,6 +25,47 @@ _bookslist = """GEN|50 EXO|40 LEV|27 NUM|36 DEU|34 JOS|24 JDG|21 RUT|4 1SA|31 2S
         INT|0 CNC|0 GLO|0 TDX|0 NDX|0 DAG|14 
         ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0
         LAO|1"""
+
+# xmlstarlet sel -t -m '//iso_15924_entry' -o '"' -v '@alpha_4_code' -o '" : "' -v '@name' -o '",' -n /usr/share/xml/iso-codes/iso_15924.xml
+_allscripts = { "Adlm" : "Adlam", "Afak" : "Afaka", "Aghb" : "Caucasian Albanian", "Ahom" : "Ahom, Tai Ahom", "Arab" : "Arabic",
+    "Aran" : "Arabic (Nastaliq variant)", "Armi" : "Imperial Aramaic", "Armn" : "Armenian", "Avst" : "Avestan", "Bali" : "Balinese",
+    "Bamu" : "Bamum", "Bass" : "Bassa Vah", "Batk" : "Batak", "Beng" : "Bengali", "Bhks" : "Bhaiksuki", "Blis" : "Blissymbols", "Bopo" : "Bopomofo",
+    "Brah" : "Brahmi", "Brai" : "Braille", "Bugi" : "Buginese", "Buhd" : "Buhid", "Cakm" : "Chakma", "Cans" : "Unified Canadian Aboriginal Syllabics",
+    "Cari" : "Carian", "Cham" : "Cham", "Cher" : "Cherokee", "Cirt" : "Cirth", "Copt" : "Coptic", "Cprt" : "Cypriot", "Cyrl" : "Cyrillic",
+    "Cyrs" : "Cyrillic (Old Church Slavonic variant)", "Deva" : "Devanagari (Nagari)", "Dsrt" : "Deseret (Mormon)",
+    "Dupl" : "Duployan shorthand, Duployan stenography", "Egyd" : "Egyptian demotic", "Egyh" : "Egyptian hieratic", "Egyp" : "Egyptian hieroglyphs",
+    "Elba" : "Elbasan", "Ethi" : "Ethiopic (Geʻez)", "Geok" : "Khutsuri (Asomtavruli and Nuskhuri)", "Geor" : "Georgian (Mkhedruli)",
+    "Glag" : "Glagolitic", "Goth" : "Gothic", "Gran" : "Grantha", "Grek" : "Greek", "Gujr" : "Gujarati", "Guru" : "Gurmukhi",
+    "Hanb" : "Han with Bopomofo (alias for Han + Bopomofo)", "Hang" : "Hangul (Hangŭl, Hangeul)", "Hani" : "Han (Hanzi, Kanji, Hanja)",
+    "Hano" : "Hanunoo (Hanunóo)", "Hans" : "Han (Simplified variant)", "Hant" : "Han (Traditional variant)", "Hatr" : "Hatran", "Hebr" : "Hebrew",
+    "Hira" : "Hiragana", "Hluw" : "Anatolian Hieroglyphs (Luwian Hieroglyphs, Hittite Hieroglyphs)", "Hmng" : "Pahawh Hmong",
+    "Hrkt" : "Japanese syllabaries (alias for Hiragana + Katakana)", "Hung" : "Old Hungarian (Hungarian Runic)", "Inds" : "Indus (Harappan)",
+    "Ital" : "Old Italic (Etruscan, Oscan, etc.)", "Jamo" : "Jamo (alias for Jamo subset of Hangul)", "Java" : "Javanese",
+    "Jpan" : "Japanese (alias for Han + Hiragana + Katakana)", "Jurc" : "Jurchen", "Kali" : "Kayah Li", "Kana" : "Katakana", "Khar" : "Kharoshthi",
+    "Khmr" : "Khmer", "Khoj" : "Khojki", "Kitl" : "Khitan large script", "Kits" : "Khitan small script", "Knda" : "Kannada", "Kore" : "Korean (alias for Hangul + Han)",
+    "Kpel" : "Kpelle", "Kthi" : "Kaithi", "Lana" : "Tai Tham (Lanna)", "Laoo" : "Lao", "Latf" : "Latin (Fraktur variant)",
+    "Latg" : "Latin (Gaelic variant)", "Latn" : "Latin", "Leke" : "Leke", "Lepc" : "Lepcha (Róng)", "Limb" : "Limbu", "Lina" : "Linear A",
+    "Linb" : "Linear B", "Lisu" : "Lisu (Fraser)", "Loma" : "Loma", "Lyci" : "Lycian", "Lydi" : "Lydian", "Mahj" : "Mahajani", "Mand" : "Mandaic, Mandaean",
+    "Mani" : "Manichaean", "Marc" : "Marchen", "Maya" : "Mayan hieroglyphs", "Mend" : "Mende Kikakui", "Merc" : "Meroitic Cursive",
+    "Mero" : "Meroitic Hieroglyphs", "Mlym" : "Malayalam", "Modi" : "Modi, Moḍī", "Mong" : "Mongolian", "Moon" : "Moon (Moon code, Moon script, Moon type)",
+    "Mroo" : "Mro, Mru", "Mtei" : "Meitei Mayek (Meithei, Meetei)", "Mult" : "Multani", "Mymr" : "Myanmar (Burmese)",
+    "Narb" : "Old North Arabian (Ancient North Arabian)", "Nbat" : "Nabataean", "Newa" : "Newa, Newar, Newari, Nepāla lipi",
+    "Nkgb" : "Nakhi Geba ('Na-'Khi ²Ggŏ-¹baw, Naxi Geba)", "Nkoo" : "N’Ko", "Nshu" : "Nüshu", "Ogam" : "Ogham",
+    "Olck" : "Ol Chiki (Ol Cemet’, Ol, Santali)", "Orkh" : "Old Turkic, Orkhon Runic", "Orya" : "Oriya", "Osge" : "Osage", "Osma" : "Osmanya",
+    "Palm" : "Palmyrene", "Pauc" : "Pau Cin Hau", "Perm" : "Old Permic", "Phag" : "Phags-pa", "Phli" : "Inscriptional Pahlavi", "Phlp" : "Psalter Pahlavi",
+    "Phlv" : "Book Pahlavi", "Phnx" : "Phoenician", "Piqd" : "Klingon (KLI pIqaD)", "Plrd" : "Miao (Pollard)", "Prti" : "Inscriptional Parthian",
+    "Qaaa" : "Reserved for private use (start)", "Qabx" : "Reserved for private use (end)", "Rjng" : "Rejang (Redjang, Kaganga)", "Roro" : "Rongorongo",
+    "Runr" : "Runic", "Samr" : "Samaritan", "Sara" : "Sarati", "Sarb" : "Old South Arabian", "Saur" : "Saurashtra", "Sgnw" : "SignWriting",
+    "Shaw" : "Shavian (Shaw)", "Shrd" : "Sharada, Śāradā", "Sidd" : "Siddham, Siddhaṃ, Siddhamātṛkā", "Sind" : "Khudawadi, Sindhi",
+    "Sinh" : "Sinhala", "Sora" : "Sora Sompeng", "Sund" : "Sundanese", "Sylo" : "Syloti Nagri", "Syrc" : "Syriac", "Syre" : "Syriac (Estrangelo variant)",
+    "Syrj" : "Syriac (Western variant)", "Syrn" : "Syriac (Eastern variant)", "Tagb" : "Tagbanwa", "Takr" : "Takri, Ṭākrī, Ṭāṅkrī", "Tale" : "Tai Le",
+    "Talu" : "New Tai Lue", "Taml" : "Tamil", "Tang" : "Tangut", "Tavt" : "Tai Viet", "Telu" : "Telugu", "Teng" : "Tengwar", "Tfng" : "Tifinagh (Berber)",
+    "Tglg" : "Tagalog (Baybayin, Alibata)", "Thaa" : "Thaana", "Thai" : "Thai", "Tibt" : "Tibetan", "Tirh" : "Tirhuta", "Ugar" : "Ugaritic", "Vaii" : "Vai",
+    "Visp" : "Visible Speech", "Wara" : "Warang Citi (Varang Kshiti)", "Wole" : "Woleai", "Xpeo" : "Old Persian", "Xsux" : "Cuneiform, Sumero-Akkadian",
+    "Yiii" : "Yi", "Zinh" : "Code for inherited script", "Zmth" : "Mathematical notation", "Zsye" : "Symbols (Emoji variant)", "Zsym" : "Symbols",
+    "Zxxx" : "Code for unwritten documents", "Zyyy" : "Code for undetermined script", "Zzzz" : "Code for uncoded script",
+}
+
 allbooks = [b.split("|")[0] for b in _bookslist.split() if b != "ZZZ|0"]
 books = dict((b.split("|")[0], i+1) for i, b in enumerate(_bookslist.split()))
 chaps = dict(b.split("|") for b in _bookslist.split())
@@ -35,6 +76,16 @@ class ParatextSettings:
         doc = et.parse(os.path.join(basedir, prjid, "Settings.xml"))
         for c in doc.getroot():
             self.dict[c.tag] = c.text
+        langid = regex.sub('-(?=-|$)', '', self.dict['LanguageIsoCode'].replace(":", "-"))
+        print(langid)
+        fname = os.path.join(basedir, prjid, langid+".ldml")
+        if os.path.exists(fname):
+            doc = et.parse(fname)
+            for k in ['footnotes', 'crossrefs']:
+                d = doc.find('.//characters/special/{{urn://www.sil.org/ldml/0.1}}exemplarCharacters[@type="{}"]'.format(k))
+                if d is not None:
+                    self.dict[k] = ",".join(regex.sub(r'^\[\s*(.*?)\s*\]', r'\1', d.text).split())
+                    # print(k, self.dict[k].encode("unicode_escape"))
 
     def __getitem__(self, key):
         return self.dict[key]
@@ -50,6 +101,12 @@ class PtxPrinterDialog:
         self.builder.connect_signals(self)
         self.addCR("cb_digits", 0)
         self.addCR("cb_columns", 0)
+        self.addCR("cb_script", 0)
+        scripts = self.builder.get_object("ls_scripts")
+        scripts.clear()
+        for k, v in _allscripts.items():
+            scripts.append([v, k])
+        self.cb_script.set_active_id('Zyyy')
         self.mw = self.builder.get_object("ptxprint")
         self.projects = self.builder.get_object("ls_projects")
         self.settings_dir = settings_dir
@@ -492,9 +549,9 @@ class Info:
         "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: round(v) or "15"),
         "document/ifrtl":           ("c_rtl", lambda w,v :"true" if v else "false"),
         "document/iflinebreakon":   ("c_linebreakon", lambda w,v: "" if v else "%"),
-        # "document/script":          ("cb_script", lambda w,v: ";script="+v.lower() if len(v) else ""),
-        # "document/script":          "mymr",
-        "document/digitmapping":    ("cb_digits", lambda w,v: ";mapping="+v.lower()+"digits" if len(v) else ""),
+        "document/script":          ("cb_script", lambda w,v: ";script="+w.builder.get_object('cb_script').get_active_id().lower() if w.builder.get_object('cb_script').get_active_id() != "Zyyy" else ""),
+        # "document/script":        ("cb_script", lambda w,v: "mymr"),
+        "document/digitmapping":    ("cb_digits", lambda w,v: ";mapping="+v.lower()+"digits" if v != "Default" else ""),
 
         "document/linebreaklocale": ("t_linebreaklocale", lambda w,v: v or ""),
         "document/ch1pagebreak":    ("c_ch1pagebreak", lambda w,v: "true" if v else "false"),
@@ -570,6 +627,10 @@ class Info:
         "Reference Range":  r"\rangeref",
         "-empty-":          r"\empty"
     }
+    _settingmappings = {
+        "notes/xrcallers": "crossrefs",
+        "notes/fncallers": "footnotes"
+    }
 
     def __init__(self, printer, path, ptsettings=None):
         self.ptsettings = ptsettings
@@ -582,7 +643,6 @@ class Info:
                 self.dict[k] = v[1](printer, val)
         self.processFonts(printer)
         self.processHdrFtr(printer)
-        self.processCallers(printer)
         self.makelocalChanges(printer)
 
     def __getitem__(self, key):
@@ -626,13 +686,11 @@ class Info:
             
             self.dict['header/odd{}'.format(side)] = t
 
-    def processCallers(self, printer):
-        default = "a b c d e f g h i j k l m n o p q r s t u v w x y z"
-        self.dict['notes/fncallers'] = \
-                ",".join(self.ptsettings.get('CallerSequence', default).split())
-
     def asTex(self, template="template.tex"):
  #       import pdb;pdb.set_trace()
+        for k, v in self._settingmappings.items():
+            if self.dict[k] == "":
+                self.dict[k] = self.ptsettings.dict.get(v, "a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z")
         res = []
         with open(os.path.join(os.path.dirname(__file__), template)) as inf:
             for l in inf.readlines():
@@ -646,7 +704,7 @@ class Info:
     def convertBook(self, bk, outdir, prjdir):
         if self.ptsettings is None:
             self.ptsettings = ParatextSettings(prjdir)
-        if self.changes is None:  # AND if "c_usePrintDraftChanges" is active
+        if self.changes is None:  # AND if "c_usePrintDraftChanges" is active self.dict['printer/usePrintDraftChanges']
             self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'))
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
@@ -656,7 +714,7 @@ class Info:
                     self.ptsettings['FileNamePostPart']
         fname = bknamefmt.format(bkid=bk, bknum=books.get(bk, 0))
         infname = os.path.join(prjdir, fname)
-        if self.changes is not None: # OR if self.localChanges is not None
+        if self.changes is not None or self.localChanges is not None:
             outfname = os.path.join(outdir, fname)
             doti = outfname.rfind(".")
             if doti > 0:
@@ -689,7 +747,7 @@ class Info:
                     continue
                 m = re.match(r"^(['\"])(.*?)(?<!\\)\1\s*>\s*(['\"])(.*?)(?<!\\)\3", l)
                 if m:
-                    # print(m.group(2) + " > " + m.group(4))
+                    # print(m.group(2).encode("utf-8") + " > " + m.group(4).encode("utf-8"))
                     changes.append((None, regex.compile(m.group(2), flags=regex.M), m.group(4)))
                     continue
                 m = re.match(r"^in\s+(['\"])(.*?)(?<!\\)\1\s*:\s*(['\"])(.*?)(?<!\\)\3\s*>\s*(['\"])(.*?)(?<!\\)\5", l)
@@ -762,6 +820,10 @@ class Info:
             if not config.has_section(sect):
                 config.add_section(sect)
             val = printer.get(v[0], asstr=True)
+            if k in self._settingmappings:
+                print("Testing {} against '{}'".format(k, val))
+                if val == "" or val == self.ptsettings.dict.get(self._settingmappings[k], ""):
+                    continue
             config.set(sect, key, str(val))
         for k, v in self._fonts.items():
             (sect, key) = k.split("/")
@@ -777,15 +839,26 @@ class Info:
                 if key in self._mappings:
                     v = self._mappings[key]
                     #print(sect + "/" + opt + ": " + v[0])
+                    val = None
                     if v[0] is None:
                         continue
                     if v[0].startswith("cb_") or v[0].startswith("t_") or v[0].startswith("f_"):
-                        printer.set(v[0], config.get(sect, opt))
+                        val = config.get(sect, opt)
                     if v[0].startswith("s_"):
-                        printer.set(v[0], float(config.get(sect, opt)))
+                        val = float(config.get(sect, opt))
                         #printer.set(v[0], round(config.get(sect, opt)),2)
                     elif v[0].startswith("c_"):
-                        printer.set(v[0], config.getboolean(sect, opt))
+                        val = config.getboolean(sect, opt)
+                    if val is not None:
+                        self.dict[key] = val
+                        printer.set(v[0], val)
                 elif key in self._fonts:
                     v = self._fonts[key]
                     printer.set(v, config.get(sect, opt))
+        for k, v in self._settingmappings.items():
+            (sect, name) = k.split("/")
+            try:
+                val = config.get(sect, name)
+            except configparser.NoOptionError:
+                printer.set(self._mappings[k][0], self.ptsettings.dict.get(v, ""))
+                self.dict[k] = self.ptsettings.get(v, "")
