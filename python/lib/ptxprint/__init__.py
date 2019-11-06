@@ -159,6 +159,8 @@ class PtxPrinterDialog:
             v = w.get_active()
         elif wid.startswith("s_"):
             v = w.get_value()
+        elif wid.startswith("fc_"):
+            v = w.get_filenames()
         return v
 
     def set(self, wid, value):
@@ -322,22 +324,10 @@ class PtxPrinterDialog:
 
     def onBookSelectorChange(self, c_onebook):
         cmb = self.builder.get_object("c_combine")
-        lcf = self.builder.get_object("l_chapfrom")
-        ccf = self.builder.get_object("cb_chapfrom")
-        lct = self.builder.get_object("l_chapto")
-        cct = self.builder.get_object("cb_chapto")
-        if self.get("c_onebook"):
-            cmb.set_sensitive(False)
-            lcf.set_sensitive(True)
-            ccf.set_sensitive(True)
-            lct.set_sensitive(True)
-            cct.set_sensitive(True)
-        else:
-            cmb.set_sensitive(True)
-            lcf.set_sensitive(False)
-            ccf.set_sensitive(False)
-            lct.set_sensitive(False)
-            cct.set_sensitive(False)
+        onep = self.get("c_onebook")
+        cmb.set_sensitive(not onep)
+        for c in ('l_chapfrom', 'cb_chapfrom', 'l_chapto', 'cb_chapto'):
+            self.builder.get_object(c).set_sensitive(onep)
             
     def onFigsChanged(self, c_figs):
         xcl = self.builder.get_object("c_figexclwebapp")
@@ -353,11 +343,7 @@ class PtxPrinterDialog:
             hdr.set_sensitive(False)
 
     def onPreprocessChanged(self, c_preprocess):
-        pre = self.builder.get_object("fc_preprocess")
-        if self.get("c_preprocess"):
-            pre.set_sensitive(True)
-        else:
-            pre.set_sensitive(False)
+        self.builder.get_object("fc_preprocess").set_sensitive(self.get("c_preprocess"))
 
     def onInclFrontMatterChanged(self, c_inclFrontMatter):
         fcfm = self.builder.get_object("fc_frontMatter")
@@ -470,7 +456,7 @@ class PtxPrinterDialog:
     def onClickmbs_none(self, btn):
         for b in self.alltoggles:
             b.set_active(False)
-                
+
     def onProjectChange(self, cb_prj):
         self.prjid = self.get("cb_project")
         self.ptsettings = None
@@ -523,6 +509,7 @@ class Info:
     _mappings = {
         "project/id":               (None, lambda w,v: w.get("cb_project")),
         "project/book":             ("cb_book", None),
+        "project/frontincludes":    ("fc_frontMatter", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s) for s in v)),
         "paper/height":             (None, lambda w,v: re.sub(r"^.*?,\s*(.+?)\s*(?:\(.*|$)", r"\1", w.get("cb_pagesize")) or "210mm"),
         "paper/width":              (None, lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", w.get("cb_pagesize")) or "148mm"),
         "paper/pagesize":           ("cb_pagesize", None),

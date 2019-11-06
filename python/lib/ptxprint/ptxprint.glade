@@ -593,6 +593,45 @@
       <pattern>*.[Pp][Dd][Ff]</pattern>
     </patterns>
   </object>
+  <object class="GtkFileChooserDialog" id="fc_pdf">
+    <property name="can_focus">False</property>
+    <property name="modal">True</property>
+    <property name="type_hint">dialog</property>
+    <property name="gravity">north</property>
+    <property name="create_folders">False</property>
+    <property name="filter">pdffilter</property>
+    <property name="select_multiple">True</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkEntryBuffer" id="tb_logging">
+    <property name="text" translatable="yes">The output log:</property>
+  </object>
   <object class="GtkDialog" id="ptxprint">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">PTXprint App</property>
@@ -4087,7 +4126,8 @@ file is selected, then these will appear in alphabetical order.</property>
                                     <property name="margin_bottom">6</property>
                                     <property name="create_folders">False</property>
                                     <property name="filter">pdffilter</property>
-                                    <property name="title" translatable="yes"/>
+                                    <property name="select_multiple">True</property>
+                                    <property name="title" translatable="yes">Include Front Matter PDF</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
@@ -4313,48 +4353,24 @@ TeX code can also be added.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkGrid">
+                  <object class="GtkBox">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkFrame">
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <object class="GtkEntry" id="te_logging">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="margin_top">6</property>
-                        <property name="margin_bottom">6</property>
-                        <property name="label_xalign">0.019999999552965164</property>
-                        <child>
-                          <object class="GtkAlignment">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="top_padding">6</property>
-                            <property name="bottom_padding">6</property>
-                            <property name="left_padding">12</property>
-                            <child>
-                              <object class="GtkTextView" id="t_customCode">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="tooltip_text" translatable="yes">Type or paste any TeX code from the ptx2pdf Cookbook.</property>
-                                <property name="left_margin">2</property>
-                                <property name="right_margin">2</property>
-                                <property name="top_margin">2</property>
-                                <property name="bottom_margin">2</property>
-                                <property name="monospace">True</property>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-                        <child type="label">
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Custom TeX Code</property>
-                          </object>
-                        </child>
+                        <property name="can_focus">True</property>
+                        <property name="buffer">tb_logging</property>
+                        <property name="editable">False</property>
+                        <property name="has_frame">False</property>
                       </object>
                       <packing>
-                        <property name="left_attach">0</property>
-                        <property name="top_attach">0</property>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
                       </packing>
                     </child>
                   </object>
@@ -4366,7 +4382,7 @@ TeX code can also be added.</property>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">About</property>
+                    <property name="label" translatable="yes">Logging</property>
                   </object>
                   <packing>
                     <property name="position">6</property>
