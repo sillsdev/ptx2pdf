@@ -69,6 +69,10 @@ _allscripts = { "Adlm" : "Adlam", "Afak" : "Afaka", "Aghb" : "Caucasian Albanian
 allbooks = [b.split("|")[0] for b in _bookslist.split() if b != "ZZZ|0"]
 books = dict((b.split("|")[0], i+1) for i, b in enumerate(_bookslist.split()))
 chaps = dict(b.split("|") for b in _bookslist.split())
+# print("allbooks: ", allbooks)
+# print("books: ", books)
+# print("chaps: ", chaps)
+# print(chaps.get("GEN"))
 
 class ParatextSettings:
     def __init__(self, basedir, prjid):
@@ -102,11 +106,15 @@ class PtxPrinterDialog:
         self.addCR("cb_digits", 0)
         self.addCR("cb_columns", 0)
         self.addCR("cb_script", 0)
+        self.addCR("cb_chapfrom", 0)
+        self.addCR("cb_chapto", 0)
+
         scripts = self.builder.get_object("ls_scripts")
         scripts.clear()
         for k, v in _allscripts.items():
             scripts.append([v, k])
         self.cb_script.set_active_id('Zyyy')
+
         self.mw = self.builder.get_object("ptxprint")
         self.projects = self.builder.get_object("ls_projects")
         self.settings_dir = settings_dir
@@ -221,85 +229,37 @@ class PtxPrinterDialog:
                 self.set("s_{}slant".format(sid), 0.27)
 
     def updateFakeLabels(self):
-        lb = self.builder.get_object("l_embolden")
-        ls = self.builder.get_object("l_slant")
-        if self.get("c_fakebold") or self.get("c_fakeitalic") or self.get("c_fakebolditalic"):
-            lb.set_sensitive(True)
-            ls.set_sensitive(True)
-        else:
-            lb.set_sensitive(False)
-            ls.set_sensitive(False)
+        status = self.get("c_fakebold") or self.get("c_fakeitalic") or self.get("c_fakebolditalic")
+        for c in ("l_embolden", "l_slant"):
+            self.builder.get_object(c).set_sensitive(status)
 
     def onFakeboldClicked(self, c_fakebold):
-        bdb = self.builder.get_object("s_boldembolden")
-        bds = self.builder.get_object("s_boldslant")
-        if self.get("c_fakebold"):
-            bdb.set_sensitive(True)
-            bds.set_sensitive(True)
-        else:
-            bdb.set_sensitive(False)
-            bds.set_sensitive(False)
+        status = self.get("c_fakebold")
+        for c in ("s_boldembolden", "s_boldslant"):
+            self.builder.get_object(c).set_sensitive(status)
         self.updateFakeLabels()
         
     def onFakeitalicClicked(self, c_fakeitalic):
-        itb = self.builder.get_object("s_italicembolden")
-        its = self.builder.get_object("s_italicslant")
-        if self.get("c_fakeitalic"):
-            itb.set_sensitive(True)
-            its.set_sensitive(True)
-        else:
-            itb.set_sensitive(False)
-            its.set_sensitive(False)
+        status = self.get("c_fakeitalic")
+        for c in ("s_italicembolden", "s_italicslant"):
+            self.builder.get_object(c).set_sensitive(status)
         self.updateFakeLabels()
 
     def onFakebolditalicClicked(self, c_fakebolditalic):
-        bib = self.builder.get_object("s_bolditalicembolden")
-        bis = self.builder.get_object("s_bolditalicslant")
-        if self.get("c_fakebolditalic"):
-            bib.set_sensitive(True)
-            bis.set_sensitive(True)
-        else:
-            bib.set_sensitive(False)
-            bis.set_sensitive(False)
+        status = self.get("c_fakebolditalic")
+        for c in ("s_bolditalicembolden", "s_bolditalicslant"):
+            self.builder.get_object(c).set_sensitive(status)
         self.updateFakeLabels()
 
     def onClickedIncludeFootnotes(self, c_includeFootnotes):
-        fna = self.builder.get_object("c_fnautocallers")
-        fnc = self.builder.get_object("t_fncallers")
-        fno = self.builder.get_object("c_fnomitcaller")
-        fnr = self.builder.get_object("c_fnpageresetcallers")
-        fnp = self.builder.get_object("c_fnparagraphednotes") 
-        if self.get("c_includeFootnotes"):
-            fna.set_sensitive(True)
-            fnc.set_sensitive(True)
-            fno.set_sensitive(True)
-            fnr.set_sensitive(True)
-            fnp.set_sensitive(True)
-        else:
-            fna.set_sensitive(False)
-            fnc.set_sensitive(False)
-            fno.set_sensitive(False)
-            fnr.set_sensitive(False)
-            fnp.set_sensitive(False)
+        status = self.get("c_includeFootnotes")
+        for c in ("c_fnautocallers", "t_fncallers", "c_fnomitcaller", "c_fnpageresetcallers", "c_fnparagraphednotes"):
+            self.builder.get_object(c).set_sensitive(status)
         
     def onClickedIncludeXrefs(self, c_includeXrefs):
-        xra = self.builder.get_object("c_xrautocallers")
-        xrc = self.builder.get_object("t_xrcallers")
-        xro = self.builder.get_object("c_xromitcaller")
-        xrr = self.builder.get_object("c_xrpageresetcallers")
-        xrp = self.builder.get_object("c_paragraphedxrefs") 
-        if self.get("c_includeXrefs"):
-            xra.set_sensitive(True)
-            xrc.set_sensitive(True)
-            xro.set_sensitive(True)
-            xrr.set_sensitive(True)
-            xrp.set_sensitive(True)
-        else:
-            xra.set_sensitive(False)
-            xrc.set_sensitive(False)
-            xro.set_sensitive(False)
-            xrr.set_sensitive(False)
-            xrp.set_sensitive(False)
+        status = self.get("c_includeXrefs")
+        for c in ("c_xrautocallers", "t_xrcallers", "c_xromitcaller", "c_xrpageresetcallers", "c_paragraphedxrefs"):
+            self.builder.get_object(c).set_sensitive(status)
 
     def onPageGutterChanged(self, c_pagegutter):
         gtr = self.builder.get_object("s_pagegutter")
@@ -310,61 +270,35 @@ class PtxPrinterDialog:
             gtr.set_sensitive(False)
 
     def onColumnsChanged(self, cb_Columns):
-        vrul = self.builder.get_object("c_verticalrule")
-        gtrl = self.builder.get_object("l_gutterWidth")
-        gtrw = self.builder.get_object("s_colgutterfactor")
-        if self.get("cb_columns") == "Double":
-            vrul.set_sensitive(True)
-            gtrl.set_sensitive(True)
-            gtrw.set_sensitive(True)
-        else:
-            vrul.set_sensitive(False)
-            gtrl.set_sensitive(False)
-            gtrw.set_sensitive(False)
+        print(self.builder.get_object('cb_columns').get_active_id())
+        status = self.get("cb_columns") == "Double"
+        print("cb_columns: ", status)
+        for c in ("c_verticalrule", "l_gutterWidth", "s_colgutterfactor"):
+            self.builder.get_object(c).set_sensitive(status)
 
     def onBookSelectorChange(self, c_onebook):
         cmb = self.builder.get_object("c_combine")
-        onep = self.get("c_onebook")
-        cmb.set_sensitive(not onep)
-        for c in ('l_chapfrom', 'cb_chapfrom', 'l_chapto', 'cb_chapto'):
-            self.builder.get_object(c).set_sensitive(onep)
+        status = self.get("c_onebook")
+        cmb.set_sensitive(not status)
+        for c in ("l_chapfrom", "cb_chapfrom", "l_chapto", "cb_chapto"):
+            self.builder.get_object(c).set_sensitive(status)
             
-    def onFigsChanged(self, c_figs):
-        xcl = self.builder.get_object("c_figexclwebapp")
-        plc = self.builder.get_object("c_figplaceholders")
-        hdr = self.builder.get_object("c_fighiderefs")
-        if self.get("c_includefigs"):
-            xcl.set_sensitive(True)
-            plc.set_sensitive(True)
-            hdr.set_sensitive(True)
-        else:
-            xcl.set_sensitive(False)
-            plc.set_sensitive(False)
-            hdr.set_sensitive(False)
+    def onFigsChanged(self, c_includefigs):
+        status = self.get("c_includefigs")
+        for c in ("c_figexclwebapp", "c_figplaceholders", "c_fighiderefs"):
+            self.builder.get_object(c).set_sensitive(status)
 
     def onPreprocessChanged(self, c_preprocess):
         self.builder.get_object("fc_preprocess").set_sensitive(self.get("c_preprocess"))
 
     def onInclFrontMatterChanged(self, c_inclFrontMatter):
-        fcfm = self.builder.get_object("fc_frontMatter")
-        if self.get("c_inclFrontMatter"):
-            fcfm.set_sensitive(True)
-        else:
-            fcfm.set_sensitive(False)
+        self.builder.get_object("fc_frontMatter").set_sensitive(self.get("c_inclFrontMatter"))
 
     def onApplyWatermarkChanged(self, c_applyWatermark):
-        fcwm = self.builder.get_object("fc_watermark")
-        if self.get("c_applyWatermark"):
-            fcwm.set_sensitive(True)
-        else:
-            fcwm.set_sensitive(False)
+        self.builder.get_object("fc_watermark").set_sensitive(self.get("c_applyWatermark"))
     
     def onInclBackMatterChanged(self, c_inclBackMatter):
-        fcbm = self.builder.get_object("fc_backMatter")
-        if self.get("c_inclBackMatter"):
-            fcbm.set_sensitive(True)
-        else:
-            fcbm.set_sensitive(False)
+        self.builder.get_object("fc_backMatter").set_sensitive(self.get("c_inclBackMatter"))
             
     def onAutoTocChanged(self, c_autoToC):
         atoc = self.builder.get_object("t_tocTitle")
@@ -413,6 +347,14 @@ class PtxPrinterDialog:
             rhr.grab_focus() 
         else:   
             rhr.set_sensitive(False)
+            
+    def onSelectBackPDFsClicked(self, btn_selectBackPDFs):
+        print("Clicked on the button to Select one or more PDFs to be added to the end of the publication")
+        win = FileChooserWindow()
+        print(path)
+
+    def onSelectFileClicked(self, btn_editPython):
+        print("Choose one or more PDF files for Front Matter - dud!")
 
     def onClickChooseBooks(self, btn):
         dia = self.builder.get_object("dlg_multiBookSelector")
@@ -457,6 +399,31 @@ class PtxPrinterDialog:
         for b in self.alltoggles:
             b.set_active(False)
 
+    def onBookChange(self, cb_book):
+        bk = self.get("cb_book")
+        chs = chaps.get(bk)
+        chapfrom = self.builder.get_object("ls_chapfrom")
+        chapfrom.clear()
+        for c in range(1,int(chs) + 1):
+            chapfrom.append([str(c)])
+        self.cb_chapfrom.set_active_id('1')
+        
+        chapto = self.builder.get_object("ls_chapto")
+        chapto.clear()
+        for c in range(2,int(chs) + 1):
+            chapto.append([c])
+        self.cb_chapto.set_active_id(str((int(chs) + 1)))
+
+    def onChapFrmChg(self, cb_chapfrom):
+        bk = self.get("cb_book")
+        chs = chaps.get(bk)
+        strt = self.get("cb_chapfrom")
+        chapto = self.builder.get_object("ls_chapto")
+        chapto.clear()
+        for c in range(int(strt) + 1,int(chs) + 1):
+            chapto.append([c])
+        self.cb_chapto.set_active_id(str((int(chs) + 1)))
+        
     def onProjectChange(self, cb_prj):
         self.prjid = self.get("cb_project")
         self.ptsettings = None
@@ -504,12 +471,58 @@ class PtxPrinterDialog:
         if os.path.exists(pyScript):
             os.startfile(pyScript)
 
+class FileChooserWindow(Gtk.Window):
+
+    def __init__(self):
+        global path
+
+        dialog = Gtk.FileChooserDialog("Please choose one or more PDF files", None,
+            Gtk.FileChooserAction.OPEN,
+            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+             Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+        dialog.set_select_multiple(True)
+        self.add_filters(dialog)
+
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            # print("Open clicked")
+            print("File selected: " + dialog.get_filename())
+            path = dialog.get_filenames()
+        elif response == Gtk.ResponseType.CANCEL:
+            path = None
+            # print("Cancel clicked")
+        dialog.destroy()
+        
+    def add_filters(self, dialog):
+        filter_pdf = Gtk.FileFilter()
+        filter_pdf.set_name("PDF files")
+        filter_pdf.add_pattern("*.pdf")
+        filter_pdf.add_mime_type('application/pdf')
+        dialog.add_filter(filter_pdf)
+
+    # def on_folder_clicked(self, widget):
+        # dialog = Gtk.FileChooserDialog("Please choose a folder", self,
+            # Gtk.FileChooserAction.SELECT_FOLDER,
+            # (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+             # "Select", Gtk.ResponseType.OK))
+        # dialog.set_default_size(800, 400)
+
+        # response = dialog.run()
+        # if response == Gtk.ResponseType.OK:
+            # print("Select clicked")
+            # print("Folder selected: " + dialog.get_filename())
+        # elif response == Gtk.ResponseType.CANCEL:
+            # print("Cancel clicked")
+
+        # dialog.destroy()
 
 class Info:
     _mappings = {
         "project/id":               (None, lambda w,v: w.get("cb_project")),
         "project/book":             ("cb_book", None),
         "project/frontincludes":    ("fc_frontMatter", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s) for s in v)),
+        "project/usechangesfile":   ("usePrintDraftChanges", lambda w,v :"true" if v else "false"),
+
         "paper/height":             (None, lambda w,v: re.sub(r"^.*?,\s*(.+?)\s*(?:\(.*|$)", r"\1", w.get("cb_pagesize")) or "210mm"),
         "paper/width":              (None, lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", w.get("cb_pagesize")) or "148mm"),
         "paper/pagesize":           ("cb_pagesize", None),
@@ -523,29 +536,28 @@ class Info:
         "paper/sidemarginfactor":   ("s_sidemarginfactor", lambda w,v: round(v, 2) or "1.00"),
         "paper/ifaddgutter":        ("c_pagegutter", lambda w,v :"true" if v else "false"),
         "paper/gutter":             ("s_pagegutter", lambda w,v: round(v) or "14"),
-
-        "paper/columns":            ("cb_columns", lambda w,v: "1" if v == "Single" else "2"),
-#        "paper/fontfactor":         (None, lambda w,v: float(w.get("f_body")[2]) / 12),  # This is now its own spin button for FONT SIZE
+        #"paper/columns":            ("cb_columns", lambda w,v: "1" if v == "Single" else "2"),
+        "paper/columns":            ("cb_columns", lambda w,v: w.builder.get_object('cb_columns').get_active_id()),
         "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
 
         "paragraph/linespacing":    ("s_linespacing", lambda w,v: round(v, 1)),
 
-        # "document/toc":             ("c_autoToC", lambda w,v: r"\ptxfile" if v else "%"),
         "document/toc":             ("c_autoToC", lambda w,v: "" if v else "%"),
         "document/toctitle":        ("t_tocTitle", lambda w,v: v or ""),
+        "document/chapfrom":        ("cb_chapfrom", lambda w,v: w.builder.get_object("cb_chapfrom").get_active_id()),
+        "document/chapto":          ("cb_chapto", lambda w,v: w.builder.get_object("cb_chapto").get_active_id()),
         "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: round(v) or "15"),
         "document/ifrtl":           ("c_rtl", lambda w,v :"true" if v else "false"),
         "document/iflinebreakon":   ("c_linebreakon", lambda w,v: "" if v else "%"),
-        "document/script":          ("cb_script", lambda w,v: ";script="+w.builder.get_object('cb_script').get_active_id().lower() if w.builder.get_object('cb_script').get_active_id() != "Zyyy" else ""),
         # "document/script":        ("cb_script", lambda w,v: "mymr"),
+        "document/script":          ("cb_script", lambda w,v: ";script="+w.builder.get_object('cb_script').get_active_id().lower() if w.builder.get_object('cb_script').get_active_id() != "Zyyy" else ""),
         "document/digitmapping":    ("cb_digits", lambda w,v: ";mapping="+v.lower()+"digits" if v != "Default" else ""),
-
         "document/linebreaklocale": ("t_linebreaklocale", lambda w,v: v or ""),
         "document/ch1pagebreak":    ("c_ch1pagebreak", lambda w,v: "true" if v else "false"),
         "document/ifomitchapternum": ("c_omitchapternumber", lambda w,v: "true" if v else "false"),
         "document/ifomitallchapters": ("c_omitchapternumber", lambda w,v: "" if v else "%"),
         "document/ifomitverseone":  ("c_omitverseone", lambda w,v: "true" if v else "false"),
-        "document/ifomitallverses": ("c_omitallverses", lambda w,v: "" if v else "%"),  # This also needs \Marker v \FontSize 0.0001 to be set in .sty file
+        "document/ifomitallverses": ("c_omitallverses", lambda w,v: "" if v else "%"),
         "document/iffigures":       ("c_includefigs", lambda w,v :"true" if v else "false"),
         "document/iffigexclwebapp": ("c_figexclwebapp", lambda w,v: "true" if v else "false"),
         "document/iffigplaceholders": ("c_figplaceholders", lambda w,v :"true" if v else "false"),
@@ -591,9 +603,6 @@ class Info:
         "fontbold/fakeit":          ("c_fakebold", lambda w,v :"true" if v else "false"),
         "fontitalic/fakeit":        ("c_fakeitalic", lambda w,v :"true" if v else "false"),
         "fontbolditalic/fakeit":    ("c_fakebolditalic", lambda w,v :"true" if v else "false"),
-        # Comment from MP to MH: I have built in some limits into the glade interface, but *do* allow for -ve values, so any non-zero value is OK
-        # For example, we have a very heavy, but beautiful "bold" font, but need it to be lighter so a -2.0 embolden makes it about right
-        # Having tried this out, I'm now wondering whether this is true or not. I can't get -ve Embolden values to work at all now. (but -ve Italics works!)
         "fontbold/embolden":        ("s_boldembolden", lambda w,v: ";embolden={:.2f}".format(v) if v != 0.00 and w.get("c_fakebold") else ""),
         "fontitalic/embolden":      ("s_italicembolden", lambda w,v: ";embolden={:.2f}".format(v) if v != 0.00 and w.get("c_fakeitalic") else ""),
         "fontbolditalic/embolden":  ("s_bolditalicembolden", lambda w,v: ";embolden={:.2f}".format(v) if v != 0.00 and w.get("c_fakebolditalic") else ""),
@@ -607,7 +616,7 @@ class Info:
         "fontitalic/name": "f_italic",
         "fontbolditalic/name": "f_bolditalic"
     }
-    _hdrmappings = {                         # TO-DO! These aren't being saved/remembered yet in the UI!
+    _hdrmappings = {
         "First Reference":  r"\firstref",
         "Last Reference":   r"\lastref",
         "Page Number":      r"\pagenumber",
@@ -691,7 +700,7 @@ class Info:
     def convertBook(self, bk, outdir, prjdir):
         if self.ptsettings is None:
             self.ptsettings = ParatextSettings(prjdir)
-        if self.changes is None:  # AND if "c_usePrintDraftChanges" is active self.dict['printer/usePrintDraftChanges']
+        if self.changes is None and self.dict['project/usechangesfile']:  # TO-DO: check that this is doing what it should 
             self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'))
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
@@ -708,7 +717,7 @@ class Info:
                 outfname = outfname[:doti] + "-draft" + outfname[doti:]
             with open(infname, "r", encoding="utf-8") as inf:
                 dat = inf.read()
-                for c in self.changes + self.localChanges:  # Is there a better/neater way of doing this?
+                for c in self.changes + self.localChanges:
                     if c[0] is None:
                         dat = c[1].sub(c[2], dat)
                     else:
@@ -746,6 +755,16 @@ class Info:
             
     def makelocalChanges(self, printer):
         self.localChanges = []
+        bk = printer.get("cb_book")
+        chs = int(chaps.get(bk))
+        first = int(printer.get("cb_chapfrom"))
+        last = int(printer.get("cb_chapto"))
+        if True:
+            if first > 1: # i.e. it doesn't start at the beginning
+                self.localChanges.append((None, regex.compile(r"\\c 1\r?\n.+(?=\\c {}\r?\n)".format(first), flags=regex.S), ""))
+            if last < chs: # number of chapters in book
+                self.localChanges.append((None, regex.compile(r"\\c {}\r?\n.+".format(last+1), flags=regex.S), ""))
+          
         if True: # We always want to do this (strip out the Glossary Word markup) BUT how best to mark them up for the user? and what options are needed
         #	Remove the second half of the \w word-in-text|glossary-form-of-word\w*  Should we mark ⸤glossary⸥ words like this?
             self.localChanges.append((None, regex.compile(r"\\w (.+?)(\|.+?)?\\w\*", flags=regex.M), r"\u2E24\1\u2E25"))   # Drop 2nd half of Glossary words
@@ -758,29 +777,22 @@ class Info:
                 self.localChanges.append((None, regex.compile(r"(\\fig .*?)(\d+\:\d+(\-\d+)?)(.*?\\fig\*)", flags=regex.M), r"\1\4")) # remove ch:vs ref from caption
         
         if printer.get("c_omitBookIntro"):
-            self.localChanges.append((None, regex.compile(r"\\i(s|m|mi|p|pi|li\d?|pq|mq|pr|b|q\d?) [^\\]+\r?\n", flags=regex.M), "")) # Drop Introductory matter
+            self.localChanges.append((None, regex.compile(r"\\i(s|m|mi|p|pi|li\d?|pq|mq|pr|b|q\d?) .+?\r?\n", flags=regex.M), "")) # Drop Introductory matter
 
         if printer.get("c_omitIntroOutline"):
             self.localChanges.append((None, regex.compile(r"\\(iot|io\d) [^\\]+", flags=regex.M), ""))          # Drop ALL Intro Outline matter
-            self.localChanges.append((None, regex.compile(r"\\ior .+?\\ior\*\s?\r?\n", flags=regex.M), ""))             # and remove Intro Outline References
+            self.localChanges.append((None, regex.compile(r"\\ior .+?\\ior\*\s?\r?\n", flags=regex.M), ""))     # and remove Intro Outline References
 
         if printer.get("c_omitSectHeads"):
             self.localChanges.append((None, regex.compile(r"\\s .+", flags=regex.M), ""))                       # Drop ALL Section Headings
 
-        # Note that this is probably easier to do using a -mods.sty file with: \Marker f  \TextProperties nonpublishable
-        # if not printer.get("c_includeFootnotes"):
-            # self.localChanges.append((None, regex.compile(r"\\f .+?\\f\*", flags=regex.M), ""))                 # Drop ALL Footnotes
-
-        # Note that this is probably easier to do using a -mods.sty file with: \Marker x  \TextProperties nonpublishable
-        # if not printer.get("c_includeXrefs"):
-            # self.localChanges.append((None, regex.compile(r"\\x .+?\\x\*", flags=regex.M), ""))                 # Drop ALL Cross-references
-
-        if printer.get("c_blendfnxr"): # this is a bit of a hack, but it works! (any better ideas?) - we could at least make it a single RegEx instead of 4!
+        if printer.get("c_blendfnxr"): 
+            self.localChanges.append((None, regex.compile(r"\\x(\s.+?)\\xo(\s\d+:\d+) \\xt(.+?)\\x\*", flags=regex.M), r"\\f\1\\fr\2 \\ft\3\\f*"))
             # To merge/blend \f and \x together, simply change all (\x to \f) (\xo to \fr) (\xq to \fq) (\xt to \ft) and (\f* to \x*)
-            self.localChanges.append((None, regex.compile(r"\\x . ", flags=regex.M), r"\\f # "))
-            self.localChanges.append((None, regex.compile(r"\\x\* ", flags=regex.M), r"\\f* "))
-            self.localChanges.append((None, regex.compile(r"\\xq ", flags=regex.M), r"\\fq "))
-            self.localChanges.append((None, regex.compile(r"\\xt ", flags=regex.M), r"\\ft "))
+            # self.localChanges.append((None, regex.compile(r"\\x . ", flags=regex.M), r"\\f # "))
+            # self.localChanges.append((None, regex.compile(r"\\x\* ", flags=regex.M), r"\\f* "))
+            # self.localChanges.append((None, regex.compile(r"\\xq ", flags=regex.M), r"\\fq "))
+            # self.localChanges.append((None, regex.compile(r"\\xt ", flags=regex.M), r"\\ft "))
         
         if printer.get("c_preventorphans"): 
             # Keep final two words of \q lines together [but this doesn't work if there is an \f or \x at the end of the line] 
@@ -797,6 +809,15 @@ class Info:
             # self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w\w\w+) *\1(?=[\s,.!?])", flags=regex.M), r"\1\u00A0\1")) # keep reduplicated words together
 
         return self.localChanges
+        # Examples: from textPreprocess.py RaPuMa
+        # Change cross reference into footnotes
+        #contents = re.sub(ur'\\x(\s.+?)\\xo(\s\d+:\d+)(.+?)\\x\*', ur'\\f\1\\fr\2 \\ft\3\\f*', contents)
+
+        # Insert horizontal rule after intro section
+        #contents = re.sub(ur'(\\c\s1\r\n)', ur'\skipline\n\hrule\r\n\1', contents)
+
+        # Insert a chapter label marker with zwsp to center the chapter number
+        #contents = re.sub(ur'(\\c\s1\r\n)', ur'\cl \u200b\r\n\1', contents)
 
     def createConfig(self, printer):
         config = configparser.ConfigParser()

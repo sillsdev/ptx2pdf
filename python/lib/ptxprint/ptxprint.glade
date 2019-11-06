@@ -128,6 +128,7 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -464,17 +465,79 @@
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="ls_chapfrom">
+    <columns>
+      <!-- column-name num -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">1</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">2</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">3</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">4</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="ls_chapto">
+    <columns>
+      <!-- column-name num -->
+      <column type="gint"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">5</col>
+      </row>
+      <row>
+        <col id="0">6</col>
+      </row>
+      <row>
+        <col id="0">7</col>
+      </row>
+      <row>
+        <col id="0">8</col>
+      </row>
+      <row>
+        <col id="0">9</col>
+      </row>
+      <row>
+        <col id="0">10</col>
+      </row>
+      <row>
+        <col id="0">11</col>
+      </row>
+      <row>
+        <col id="0">12</col>
+      </row>
+      <row>
+        <col id="0">13</col>
+      </row>
+      <row>
+        <col id="0">14</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="ls_columns">
     <columns>
       <!-- column-name number -->
+      <column type="gchararray"/>
+      <!-- column-name id -->
       <column type="gchararray"/>
     </columns>
     <data>
       <row>
         <col id="0" translatable="yes">Single</col>
+        <col id="1" translatable="yes">1</col>
       </row>
       <row>
         <col id="0" translatable="yes">Double</col>
+        <col id="1" translatable="yes">2</col>
       </row>
     </data>
   </object>
@@ -601,6 +664,9 @@
     <property name="create_folders">False</property>
     <property name="filter">pdffilter</property>
     <property name="select_multiple">True</property>
+    <child>
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can_focus">False</property>
@@ -913,6 +979,7 @@ existing PrintDraft Folder</property>
                                             <property name="has_entry">True</property>
                                             <property name="entry_text_column">0</property>
                                             <property name="id_column">0</property>
+                                            <signal name="changed" handler="onBookChange" swapped="no"/>
                                             <child internal-child="entry">
                                               <object class="GtkEntry">
                                                 <property name="can_focus">False</property>
@@ -927,10 +994,14 @@ existing PrintDraft Folder</property>
                                         </child>
                                         <child>
                                           <object class="GtkComboBox" id="cb_chapto">
-                                            <property name="width_request">100</property>
+                                            <property name="width_request">70</property>
                                             <property name="visible">True</property>
                                             <property name="sensitive">False</property>
                                             <property name="can_focus">False</property>
+                                            <property name="model">ls_chapto</property>
+                                            <property name="active">0</property>
+                                            <property name="id_column">0</property>
+                                            <property name="active_id">0</property>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -962,6 +1033,11 @@ existing PrintDraft Folder</property>
                                             <property name="visible">True</property>
                                             <property name="sensitive">False</property>
                                             <property name="can_focus">False</property>
+                                            <property name="model">ls_chapfrom</property>
+                                            <property name="active">0</property>
+                                            <property name="id_column">0</property>
+                                            <property name="active_id">0</property>
+                                            <signal name="changed" handler="onChapFrmChg" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -1345,7 +1421,7 @@ Factor:</property>
                                             <property name="margin_left">16</property>
                                             <property name="model">ls_columns</property>
                                             <property name="active">0</property>
-                                            <property name="id_column">0</property>
+                                            <property name="id_column">1</property>
                                             <property name="active_id">1</property>
                                             <signal name="changed" handler="onColumnsChanged" swapped="no"/>
                                             <signal name="popup" handler="onColumnsChanged" swapped="no"/>
@@ -3910,13 +3986,13 @@ here are not working at all.</property>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="btn_editPython">
-                                    <property name="label" translatable="yes">Edit...</property>
+                                    <property name="label" translatable="yes">Select...</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
-                                    <signal name="clicked" handler="onEditPythonFile" swapped="no"/>
+                                    <signal name="clicked" handler="onSelectFileClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -4019,22 +4095,6 @@ here are not working at all.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkFileChooserButton" id="fc_watermark">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">A watermark can be applied to all pages of the publication. The text needs to be in a PDF.</property>
-                                    <property name="margin_top">6</property>
-                                    <property name="margin_bottom">6</property>
-                                    <property name="create_folders">False</property>
-                                    <property name="filter">pdffilter</property>
-                                    <property name="title" translatable="yes"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkCheckButton" id="c_applyWatermark">
                                     <property name="label" translatable="yes">Apply Watermark PDF</property>
                                     <property name="visible">True</property>
@@ -4102,22 +4162,6 @@ file is selected, then these will appear in alphabetical order.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkFileChooserButton" id="fc_backMatter">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">A previously created PDF file can be included AFTER the scripture material being typeset.</property>
-                                    <property name="margin_top">6</property>
-                                    <property name="margin_bottom">6</property>
-                                    <property name="create_folders">False</property>
-                                    <property name="filter">pdffilter</property>
-                                    <property name="title" translatable="yes"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
-                                    <property name="top_attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkFileChooserButton" id="fc_frontMatter">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
@@ -4132,6 +4176,37 @@ file is selected, then these will appear in alphabetical order.</property>
                                   <packing>
                                     <property name="left_attach">2</property>
                                     <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkFileChooserButton" id="fc_watermark">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">A watermark can be applied to all pages of the publication. The text needs to be in a PDF.</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="create_folders">False</property>
+                                    <property name="filter">pdffilter</property>
+                                    <property name="title" translatable="yes"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_selectBackPDFs">
+                                    <property name="label" translatable="yes">Select...</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="margin_bottom">6</property>
+                                    <signal name="clicked" handler="onSelectBackPDFsClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">2</property>
                                   </packing>
                                 </child>
                               </object>
