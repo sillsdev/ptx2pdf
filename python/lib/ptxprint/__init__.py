@@ -60,23 +60,14 @@ _allscripts = { "Zyyy" : "Default (Auto-detect script)", "Adlm" : "Adlam", "Afak
 allbooks = [b.split("|")[0] for b in _bookslist.split() if b != "ZZZ|0"]
 books = dict((b.split("|")[0], i+1) for i, b in enumerate(_bookslist.split()))
 chaps = dict(b.split("|") for b in _bookslist.split())
-# print("books: ", books)
-# print("allbooks: ", allbooks)
-# print("chaps: ", chaps)
-# print(chaps.get("GEN"))
-OTbks = allbooks[0:39]
-# print(OTbks)
-NTbks = allbooks[40:66]
-# print(NTbks)
-DCbks = allbooks[67:84]
-# print(DCbks)
-XTRAbks = allbooks [85:]
-# print(XTRAbks)
-print("--------------------------------------------------------")
-str = "C:\\myfile.pdf\nD:\\myOtherPDFile.pdf"
-x = "\n".join('\\includepdf{{{}}}'.format(s) for s in str.split("\n"))
-print(str)
-print(x)
+global CustomProcess
+CustomProcess = []
+global FrontPDFs
+FrontPDFs = []
+global BackPDFs
+BackPDFs = []
+global WatermarkPDF
+WatermarkPDF = []
 
 class ParatextSettings:
     def __init__(self, basedir, prjid):
@@ -85,7 +76,7 @@ class ParatextSettings:
         for c in doc.getroot():
             self.dict[c.tag] = c.text
         langid = regex.sub('-(?=-|$)', '', self.dict['LanguageIsoCode'].replace(":", "-"))
-        print(langid)
+        # print(langid)
         fname = os.path.join(basedir, prjid, langid+".ldml")
         if os.path.exists(fname):
             doc = et.parse(fname)
@@ -269,9 +260,7 @@ class PtxPrinterDialog:
             gtr.grab_focus() 
 
     def onColumnsChanged(self, cb_Columns):
-        print(self.builder.get_object('cb_columns').get_active_id())
         status = self.get("cb_columns") == "Double"
-        print("cb_columns: ", status)
         for c in ("c_verticalrule", "l_gutterWidth", "s_colgutterfactor"):
             self.builder.get_object(c).set_sensitive(status)
 
@@ -292,7 +281,7 @@ class PtxPrinterDialog:
 
     def onInclFrontMatterChanged(self, c_inclFrontMatter):
         self.builder.get_object("btn_selectFrontPDFs").set_sensitive(self.get("c_inclFrontMatter"))
-        self.builder.get_object("t_frontMatterPDFs").set_sensitive(self.get("c_inclFrontMatter"))
+        self.builder.get_object("l_frontMatterPDFs").set_sensitive(self.get("c_inclFrontMatter"))
 
     def onInclBackMatterChanged(self, c_inclBackMatter):
         self.builder.get_object("btn_selectBackPDFs").set_sensitive(self.get("c_inclBackMatter"))
@@ -368,6 +357,11 @@ class PtxPrinterDialog:
         
     def onClickChooseBooks(self, btn):
         dia = self.builder.get_object("dlg_multiBookSelector")
+
+        # How to add these kinds of options to the dialogue object?
+            # (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+             # Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+
         mbs_grid = self.builder.get_object("mbs_grid")
         mbs_grid.forall(mbs_grid.remove)
         lsbooks = self.builder.get_object("ls_books")
@@ -377,62 +371,68 @@ class PtxPrinterDialog:
             tbox.show()
             self.alltoggles.append(tbox)
             mbs_grid.attach(tbox, i // 20, i % 20, 1, 1)
-        # response = dia.run()
-        # self.booklist = ["GEN", "MRK", "REV"]
-        self.booklist = ["MAT", "MRK", "LUK", "JHN", "ACT", "ROM", "1CO", "2CO", "GAL", "EPH", "PHP", "COL", "1TH", "2TH", "1TI", "2TI", "TIT", "PHM", "HEB", "JAS", "1PE", "2PE", "1JN", "2JN", "3JN", "JUD", "REV"]
+        response = dia.run()
         # if response == Gtk.ResponseType.OK:
-            # self.booklist = [b.get_label() for b in self.alltoggles if b.get_active()]
+        self.booklist = [b.get_label() for b in self.alltoggles if b.get_active()]
         print(self.booklist)
-        # dia.hide()
+        dia.hide()
+        # dia.destroy()
 
     def onClickmbs_all(self, btn):
         for b in self.alltoggles:
             b.set_active(True)
 
     def onClickmbs_OT(self, btn):
-        for b in self.alltoggles[:39]:   # This isn't right yet (as it depends on which books are in the Project!
-            b.set_active(True)
+        for b in self.alltoggles:
+            if b.get_label() in allbooks[0:39]:
+                b.set_active(True)
 
     def onClickmbs_NT(self, btn):
-        for b in self.alltoggles[39:66]:    # This isn't right yet (as it depends on which books are in the Project!
-            b.set_active(True)
+        for b in self.alltoggles:
+            if b.get_label() in allbooks[39:66]:
+                b.set_active(True)
 
     def onClickmbs_DC(self, btn):
-        for b in self.alltoggles[66:74]:    # This isn't right yet (as it depends on which books are in the Project!
-            b.set_active(True)
+        for b in self.alltoggles:
+            if b.get_label() in allbooks[66:84]:
+                b.set_active(True)
 
     def onClickmbs_xtra(self, btn):
-        for b in self.alltoggles[76:]:    # This isn't right yet (as it depends on which books are in the Project!
-            b.set_active(True)
+        for b in self.alltoggles:
+            if b.get_label() in allbooks[84:]:
+                b.set_active(True)
 
     def onClickmbs_none(self, btn):
         for b in self.alltoggles:
             b.set_active(False)
 
     def onBookChange(self, cb_book):
-        bk = self.get("cb_book")
-        chs = int(chaps.get(bk)) + 1
-        chapfrom = self.builder.get_object("ls_chapfrom")
-        chapfrom.clear()
-        for c in range(1,chs):
-            chapfrom.append([str(c)])
-        self.cb_chapfrom.set_active_id('1')
+        self.bk = self.get("cb_book")
+        if self.bk != "":
+            self.chs = int(chaps.get(str(self.bk)))
+            self.chapfrom = self.builder.get_object("ls_chapfrom")
+            self.chapfrom.clear()
+            for c in range(1,self.chs+1):
+                self.chapfrom.append([str(c)])
+            self.cb_chapfrom.set_active_id('1')
         
-        chapto = self.builder.get_object("ls_chapto")
-        chapto.clear()
-        for c in range(1,chs):
-            chapto.append([str(c)])
-        self.cb_chapto.set_active_id(str(chs - 1))
+            self.chapto = self.builder.get_object("ls_chapto")
+            self.chapto.clear()
+            for c in range(1,self.chs+1):
+                self.chapto.append([str(c)])
+            self.cb_chapto.set_active_id(str(self.chs))
 
     def onChapFrmChg(self, cb_chapfrom):
-        bk = self.get("cb_book")
-        chs = int(chaps.get(bk)) + 1
-        strt = self.get("cb_chapfrom")
-        chapto = self.builder.get_object("ls_chapto")
-        chapto.clear()
-        for c in range(int(strt),chs):
-            chapto.append([str(c)])
-        self.cb_chapto.set_active_id(str(chs - 1))
+        self.bk = self.get("cb_book")
+        if self.bk != "":
+            self.chs = int(chaps.get(str(self.bk)))
+            self.strt = self.builder.get_object("cb_chapfrom").get_active_id()
+            self.chapto = self.builder.get_object("ls_chapto")
+            self.chapto.clear()
+            if self.strt != None:
+                for c in range(int(self.strt),self.chs+1):
+                    self.chapto.append([str(c)])
+            self.cb_chapto.set_active_id(str(self.chs))
         
     def onProjectChange(self, cb_prj):
         self.prjid = self.get("cb_project")
@@ -459,7 +459,7 @@ class PtxPrinterDialog:
 
     def onSelectScriptClicked(self, btn_selectScript):
         win = FileChooserWindow()
-        if path != None:
+        if fcFilepath != None:
             self.builder.get_object("l_script2process").set_text("Sorry, this hasn't been implemented yet!")
             # self.builder.get_object("l_script2process").set_text("\n".join('{}'.format(s) for s in path))
         else:
@@ -487,30 +487,37 @@ class PtxPrinterDialog:
             os.startfile(modsstyfile)
 
     def onFrontPDFsClicked(self, btn_selectFrontPDFs):
-        fpdfbuff = self.builder.get_object("tb_frontPDFs")
-        self.builder.get_object("t_myEntry").set_text("List of one or more PDF\nfiles will appear here.")
+        global FrontPDFs
         win = FileChooserWindow()
-        if path != None:
-            fpdfbuff.set_text("\n".join('{}'.format(s) for s in path))
+        if fcFilepath != None:
+            FrontPDFs = fcFilepath
+            self.builder.get_object("l_frontMatterPDFs").set_text("\n".join('{}'.format(s) for s in fcFilepath))
         else:
+            FrontPDFs = []
             fpdfbuff.set_text("List of one or more PDF\nfiles will appear here.")
             self.builder.get_object("btn_selectFrontPDFs").set_sensitive(False)
             self.builder.get_object("c_inclFrontMatter").set_active(False)
 
     def onBackPDFsClicked(self, btn_selectBackPDFs):
+        global BackPDFs
         win = FileChooserWindow()
-        if path != None:
-            self.builder.get_object("l_backMatterPDFs").set_text("\n".join('{}'.format(s) for s in path))
+        if fcFilepath != None:
+            BackPDFs = fcFilepath
+            self.builder.get_object("l_backMatterPDFs").set_text("\n".join('{}'.format(s) for s in fcFilepath))
         else:
+            BackPDFs = []
             self.builder.get_object("l_backMatterPDFs").set_text("List of one or more PDF\nfiles will appear here.")
             self.builder.get_object("btn_selectBackPDFs").set_sensitive(False)
             self.builder.get_object("c_inclBackMatter").set_active(False)
 
     def onWatermarkPDFclicked(self, selectWatermarkPDF):
+        global WatermarkPDF
         win = FileChooserWindow()
-        if path != None:
-            self.builder.get_object("l_watermarkPDF").set_text(path[0])
+        if fcFilepath != None:
+            WatermarkPDF = fcFilepath
+            self.builder.get_object("l_watermarkPDF").set_text(fcFilepath[0])
         else:
+            WatermarkPDF = []
             self.builder.get_object("l_watermarkPDF").set_text("Only one PDF file will appear here.")
             self.builder.get_object("btn_selectWatermarkPDF").set_sensitive(False)
             self.builder.get_object("c_applyWatermark").set_active(False)
@@ -518,7 +525,7 @@ class PtxPrinterDialog:
 class FileChooserWindow(Gtk.Window):
 
     def __init__(self):
-        global path
+        global fcFilepath
 
         dialog = Gtk.FileChooserDialog("Please Select PDF file(s)", None,
             Gtk.FileChooserAction.OPEN,
@@ -531,9 +538,9 @@ class FileChooserWindow(Gtk.Window):
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             # print("Files selected: " + dialog.get_filenames())
-            path = dialog.get_filenames()
+            fcFilepath = dialog.get_filenames()
         elif response == Gtk.ResponseType.CANCEL:
-            path = None
+            fcFilepath = None
         dialog.destroy()
         
     def add_filters(self, dialog):
@@ -553,19 +560,18 @@ class FileChooserWindow(Gtk.Window):
         # response = dialog.run()
         # if response == Gtk.ResponseType.OK:
             # print("Folder selected: " + dialog.get_filename())
-            # path = dialog.get_filename()
+            # fcFilepath = dialog.get_filename()
         # elif response == Gtk.ResponseType.CANCEL:
-            # path = None
+            # fcFilepath = None
         # dialog.destroy()
 
 class Info:
     _mappings = {
         "project/id":               (None, lambda w,v: w.get("cb_project")),
         "project/book":             ("cb_book", None),
-        # "project/frontincludes":    (None, lambda w,v: w.builder.get_object("tb_frontPDFs").get_text()),
         # "project/frontincludes":    (None, lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s) for s in w.builder.get_object("tb_frontPDFs").get_text().split("\n"))),
-        "project/backincludes":     ("fc_backMatter", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s) for s in v.split("\n"))),
-        # "project/backincludes":     ("fc_backMatter", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s) for s in v)),
+        "project/frontincludes":    (None, lambda w,v: "\n".join('\\includepdf{{"{}"}}'.format(re.sub(r"\\","/",s)) for s in FrontPDFs)),
+        "project/backincludes":     (None, lambda w,v: "\n".join('\\includepdf{{"{}"}}'.format(re.sub(r"\\","/",s)) for s in BackPDFs)),
         "project/usechangesfile":   ("usePrintDraftChanges", lambda w,v :"true" if v else "false"),
         "project/processscript":    ("c_processScript", lambda w,v :"true" if v else "false"),
 
@@ -573,7 +579,8 @@ class Info:
         "paper/width":              (None, lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", w.get("cb_pagesize")) or "148mm"),
         "paper/pagesize":           ("cb_pagesize", None),
         "paper/watermark":          ("c_applyWatermark", lambda w,v: "" if v else "%"),
-        "paper/watermarkpdf":       ("fc_watermark", lambda w,v: "Draft.pdf" or ""),
+        # "paper/watermarkpdf":       (None, lambda w,v: "A4-Draft.pdf"),
+        "paper/watermarkpdf":       (None, lambda w,v: re.sub(r"\\","/",WatermarkPDF[0]) if WatermarkPDF != [] else "A5-Draft.pdf"),
         "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),
         "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v else "false"),
         "paper/margins":            ("s_margins", lambda w,v: round(v) or "14"),
@@ -604,6 +611,7 @@ class Info:
         "document/ifomitallchapters": ("c_omitchapternumber", lambda w,v: "" if v else "%"),
         "document/ifomitverseone":  ("c_omitverseone", lambda w,v: "true" if v else "false"),
         "document/ifomitallverses": ("c_omitallverses", lambda w,v: "" if v else "%"),
+        "document/ifomitallversetext": ("c_omitallverseText", lambda w,v: "true" if v else "false"),
         "document/iffigures":       ("c_includefigs", lambda w,v :"true" if v else "false"),
         "document/iffigexclwebapp": ("c_figexclwebapp", lambda w,v: "true" if v else "false"),
         "document/iffigplaceholders": ("c_figplaceholders", lambda w,v :"true" if v else "false"),
@@ -805,13 +813,14 @@ class Info:
         self.localChanges = []
         
         # This section handles PARTIAL books (from chapter X to chapter Y)
-        bk = printer.get("cb_book")
-        first = int(printer.get("cb_chapfrom"))
-        last = int(printer.get("cb_chapto"))
-        if first > 1:
-            self.localChanges.append((None, regex.compile(r"\\c 1\r?\n.+(?=\\c {}\r?\n)".format(first), flags=regex.S), ""))
-        if last < int(chaps.get(bk)):
-            self.localChanges.append((None, regex.compile(r"\\c {}\r?\n.+".format(last+1), flags=regex.S), ""))
+        if printer.get("c_onebook"):
+            bk = printer.get("cb_book")
+            first = int(printer.get("cb_chapfrom"))
+            last = int(printer.get("cb_chapto"))
+            if first > 1:
+                self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+(?=\\c {} ?\r?\n)".format(first), flags=regex.S), ""))
+            if last < int(chaps.get(bk)):
+                self.localChanges.append((None, regex.compile(r"\\c {} ?\r?\n.+".format(last+1), flags=regex.S), ""))
             
         # Glossary Word markup: We always want to strip out the 2nd word (which links to the Glossary book)
         # BUT how to best mark up the actual glossary word for user? Give user some good options in the UI.
@@ -856,14 +865,25 @@ class Info:
             self.localChanges.append((None, regex.compile(r"(\\v \d+ [\w][\w]?[\w]?) ", flags=regex.M), r"\1\u00A0")) 
 
         if printer.get("c_ch1pagebreak"):
-            self.localChanges.append((None, regex.compile(r"(\\c 1\r?\n)", flags=regex.M), r"\pagebreak\r\n\1"))
+            self.localChanges.append((None, regex.compile(r"(\\c 1 ?\r?\n)", flags=regex.M), r"\pagebreak\r\n\1"))
 
         # if printer.get("c_glueredupwords"):  # broken??? at present as it 
             # self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w\w\w+) *\1(?=[\s,.!?])", flags=regex.M), r"\1\u00A0\1")) # keep reduplicated words together
             
-        if True:
-            self.localChanges.append((None, regex.compile(r"(\\toc3 .+)", flags=regex.M), r""))
-            # self.localChanges.append((None, regex.compile(r"(\\c\s1\r?\n)", flags=regex.S), r"\skipline\n\hrule\r\n\1")) # this didn't work. I wonder why.
+        for c in range(1,3):
+            print(c)
+            if not printer.get("c_usetoc{}".format(c)):
+                print("{} is about to be deleted from ToC".format(c))
+                self.localChanges.append((None, regex.compile(r"(\\toc{} .+)".format(c), flags=regex.M), r""))
+            
+            # self.builder.get_object(c).set_sensitive(status)
+        
+        # if True:
+            # self.localChanges.append((None, regex.compile(r"(\\toc3 .+)", flags=regex.M), r""))
+            # self.localChanges.append((None, regex.compile(r"(\\c\s1\s?\r?\n)", flags=regex.S), r"\skipline\n\hrule\r\n\1")) # this didn't work. I wonder why.
+
+        if printer.get("c_omitallverseText"):
+            self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+".format(first), flags=regex.S), ""))
             
         return self.localChanges
         # Examples: from textPreprocess.py RaPuMa
@@ -886,7 +906,7 @@ class Info:
                 config.add_section(sect)
             val = printer.get(v[0], asstr=True)
             if k in self._settingmappings:
-                print("Testing {} against '{}'".format(k, val))
+                # print("Testing {} against '{}'".format(k, val))
                 if val == "" or val == self.ptsettings.dict.get(self._settingmappings[k], ""):
                     continue
             config.set(sect, key, str(val))
