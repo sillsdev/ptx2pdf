@@ -15,27 +15,22 @@ import configparser
 
 _bookslist = """GEN|50 EXO|40 LEV|27 NUM|36 DEU|34 JOS|24 JDG|21 RUT|4 1SA|31 2SA|24 1KI|22 2KI|25 1CH|29 2CH|36 EZR|10 NEH|13
         EST|10 JOB|42 PSA|150 PRO|31 ECC|12 SNG|8 ISA|66 JER|52 LAM|5 EZK|48 DAN|12 HOS|14 JOL|3 AMO|9 OBA|1 JON|4 MIC|7 NAM|3
-        HAB|3 ZEP|3 HAG|2 ZEC|14 MAL|4 ZZZ|0
-        MAT|28 MRK|16 LUK|24 JHN|21 ACT|28 ROM|16 1CO|16 2CO|13 GAL|6 EPH|6 PHP|4 COL|4 1TH|5 2TH|3 1TI|6 2TI|4 TIT|3 PHM|1
-        HEB|13 JAS|5 1PE|5 2PE|3 1JN|5 2JN|1 3JN|1 JUD|1 REV|22
+        HAB|3 ZEP|3 HAG|2 ZEC|14 MAL|4 ZZZ|0   MAT|28 MRK|16 LUK|24 JHN|21 ACT|28 ROM|16 1CO|16 2CO|13 GAL|6 EPH|6 PHP|4 COL|4 
+        1TH|5 2TH|3 1TI|6 2TI|4 TIT|3 PHM|1 HEB|13 JAS|5 1PE|5 2PE|3 1JN|5 2JN|1 3JN|1 JUD|1 REV|22
         TOB|14 JDT|16 ESG|10 WIS|19 SIR|51 BAR|6 LJE|1 S3Y|1 SUS|1 BEL|1 1MA|16 2MA|15 3MA|7 4MA|18 1ES|9 2ES|16 MAN|1 PS2|1
-        ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0
-        XXA|0 XXB|0 XXC|0 XXD|0 XXE|0 XXF|0 XXG|0 FRT|0 BAK|0 OTH|0 
-        ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0
-        INT|0 CNC|0 GLO|0 TDX|0 NDX|0 DAG|14 
-        ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0
-        LAO|1"""
+        ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 XXA|0 XXB|0 XXC|0 XXD|0 XXE|0 XXF|0 XXG|0 FRT|0 BAK|0 OTH|0 ZZZ|0 ZZZ|0 
+        ZZZ|0 ZZZ|0 INT|0 CNC|0 GLO|0 TDX|0 NDX|0 DAG|14 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 LAO|1"""
 
 # xmlstarlet sel -t -m '//iso_15924_entry' -o '"' -v '@alpha_4_code' -o '" : "' -v '@name' -o '",' -n /usr/share/xml/iso-codes/iso_15924.xml
-_allscripts = { "Adlm" : "Adlam", "Afak" : "Afaka", "Aghb" : "Caucasian Albanian", "Ahom" : "Ahom, Tai Ahom", "Arab" : "Arabic",
-    "Aran" : "Arabic (Nastaliq)", "Armi" : "Imperial Aramaic", "Armn" : "Armenian", "Avst" : "Avestan", "Bali" : "Balinese", "Bamu" : "Bamum", 
-    "Bass" : "Bassa Vah", "Batk" : "Batak", "Beng" : "Bengali", "Bhks" : "Bhaiksuki", "Blis" : "Blissymbols", "Bopo" : "Bopomofo",
+_allscripts = { "Zyyy" : "Default (Auto-detect script)", "Adlm" : "Adlam", "Afak" : "Afaka", "Aghb" : "Caucasian Albanian", "Ahom" : "Ahom, Tai Ahom", 
+    "Arab" : "Arabic", "Aran" : "Arabic (Nastaliq)", "Armi" : "Imperial Aramaic", "Armn" : "Armenian", "Avst" : "Avestan", "Bali" : "Balinese",
+    "Bamu" : "Bamum", "Bass" : "Bassa Vah", "Batk" : "Batak", "Beng" : "Bengali", "Bhks" : "Bhaiksuki", "Blis" : "Blissymbols", "Bopo" : "Bopomofo",
     "Brah" : "Brahmi", "Brai" : "Braille", "Bugi" : "Buginese", "Buhd" : "Buhid", "Cakm" : "Chakma", "Cans" : "Canadian Aboriginal Syllabics",
     "Cari" : "Carian", "Cham" : "Cham", "Cher" : "Cherokee", "Cirt" : "Cirth", "Copt" : "Coptic", "Cprt" : "Cypriot", "Cyrl" : "Cyrillic",
     "Cyrs" : "Cyrillic (Old Church Slavonic)", "Deva" : "Devanagari", "Dsrt" : "Deseret (Mormon)", "Egyd" : "Egyptian demotic", 
     "Egyh" : "Egyptian hieratic", "Elba" : "Elbasan", "Ethi" : "Ethiopic (Geʻez)", "Geok" : "Khutsuri (Asomtavruli & Nuskhuri)", 
-    "Geor" : "Georgian (Mkhedruli)", "Gong" : "Gunjala Gondi", "Gonm" : "Masaram Gondi",
-    "Glag" : "Glagolitic", "Goth" : "Gothic", "Gran" : "Grantha", "Grek" : "Greek", "Gujr" : "Gujarati", "Guru" : "Gurmukhi",
+    "Geor" : "Georgian (Mkhedruli)", "Glag" : "Glagolitic", "Gong" : "Gondi (Gunjala)", "Gonm" : "Gondi (Masaram)",
+    "Goth" : "Gothic", "Gran" : "Grantha", "Grek" : "Greek", "Gujr" : "Gujarati", "Guru" : "Gurmukhi",
     "Hanb" : "Han with Bopomofo", "Hang" : "Hangul (Hangŭl, Hangeul)", "Hani" : "Han (Hanzi, Kanji, Hanja)",
     "Hano" : "Hanunoo (Hanunóo)", "Hans" : "Han (Simplified)", "Hant" : "Han (Traditional)", "Hatr" : "Hatran", "Hebr" : "Hebrew",
     "Hira" : "Hiragana", "Hmng" : "Pahawh Hmong", "Hrkt" : "Japanese (Hiragana+Katakana)", "Hung" : "Old Hungarian (Runic)",
@@ -47,7 +42,7 @@ _allscripts = { "Adlm" : "Adlam", "Afak" : "Afaka", "Aghb" : "Caucasian Albanian
     "Linb" : "Linear B", "Lisu" : "Lisu (Fraser)", "Loma" : "Loma", "Lyci" : "Lycian", "Lydi" : "Lydian", "Mahj" : "Mahajani", 
     "Mand" : "Mandaic, Mandaean", "Mani" : "Manichaean", "Marc" : "Marchen", "Mend" : "Mende Kikakui", "Merc" : "Meroitic Cursive",
     "Mlym" : "Malayalam", "Modi" : "Modi", "Mong" : "Mongolian", "Mroo" : "Mro, Mru", "Mtei" : "Meitei Mayek", "Mult" : "Multani", 
-    "Mymr" : "Myanmar (Burmese)", "Narb" : "Old North Arabian (Ancient North Arabian)", "Nbat" : "Nabataean", "Newa" : "New (Newar, Newari)",
+    "Mymr" : "Myanmar (Burmese)", "Narb" : "North Arabian (Ancient)", "Nbat" : "Nabataean", "Newa" : "New (Newar, Newari)",
     "Nkgb" : "Nakhi Geba (Naxi Geba)", "Nkoo" : "N’Ko", "Nshu" : "Nüshu", "Ogam" : "Ogham", "Olck" : "Ol Chiki (Ol Cemet’, Santali)", 
     "Orkh" : "Old Turkic, Orkhon Runic", "Orya" : "Oriya", "Osge" : "Osage", "Osma" : "Osmanya", "Palm" : "Palmyrene",
     "Pauc" : "Pau Cin Hau", "Perm" : "Old Permic", "Phag" : "Phags-pa", "Phli" : "Inscriptional Pahlavi", "Phlp" : "Psalter Pahlavi",
@@ -59,8 +54,7 @@ _allscripts = { "Adlm" : "Adlam", "Afak" : "Afaka", "Aghb" : "Caucasian Albanian
     "Syrn" : "Syriac (Eastern)", "Tagb" : "Tagbanwa", "Takr" : "Takri, Ṭāṅkrī", "Tale" : "Tai Le", "Talu" : "Tai Lue (New)", 
     "Taml" : "Tamil", "Tang" : "Tangut", "Tavt" : "Tai Viet", "Telu" : "Telugu", "Teng" : "Tengwar", "Tfng" : "Tifinagh (Berber)",
     "Tglg" : "Tagalog (Baybayin, Alibata)", "Thaa" : "Thaana", "Thai" : "Thai", "Tibt" : "Tibetan", "Tirh" : "Tirhuta", "Ugar" : "Ugaritic",
-    "Vaii" : "Vai", "Wara" : "Warang Citi (Varang Kshiti)", "Wole" : "Woleai", "Xpeo" : "Old Persian", "Yiii" : "Yi",
-    "Zyyy" : "Auto-detect script (default)", "Zzzz" : "Uncoded script",
+    "Vaii" : "Vai", "Wara" : "Warang Citi (Varang Kshiti)", "Wole" : "Woleai", "Xpeo" : "Old Persian", "Yiii" : "Yi", "Zzzz" : "Uncoded script"
 }
 
 allbooks = [b.split("|")[0] for b in _bookslist.split() if b != "ZZZ|0"]
@@ -78,6 +72,11 @@ DCbks = allbooks[67:84]
 # print(DCbks)
 XTRAbks = allbooks [85:]
 # print(XTRAbks)
+print("--------------------------------------------------------")
+str = "C:\\myfile.pdf\nD:\\myOtherPDFile.pdf"
+x = "\n".join('\\includepdf{{{}}}'.format(s) for s in str.split("\n"))
+print(str)
+print(x)
 
 class ParatextSettings:
     def __init__(self, basedir, prjid):
@@ -101,7 +100,6 @@ class ParatextSettings:
 
     def get(self, key, default=None):
         return self.dict.get(key, default)
-
 
 class PtxPrinterDialog:
     def __init__(self, allprojects, settings_dir):
@@ -172,8 +170,6 @@ class PtxPrinterDialog:
             v = w.get_active()
         elif wid.startswith("s_"):
             v = w.get_value()
-        # elif wid.startswith("fc_"):
-            # v = w.get_filenames()
         return v
 
     def set(self, wid, value):
@@ -220,7 +216,6 @@ class PtxPrinterDialog:
         (family, style, size) = self.parse_fontname(font)
         style = [s.lower() for s in style if s not in ("Regular", "Medium")]
         label = self.builder.get_object("l_font")
-        # label.set_text(font) # No longer used after re-doing the UI
         for s in ('bold', 'italic', 'bold italic'):
             sid = s.replace(" ", "")
             w = self.builder.get_object("f_"+sid)
@@ -281,9 +276,12 @@ class PtxPrinterDialog:
             self.builder.get_object(c).set_sensitive(status)
 
     def onBookSelectorChange(self, c_onebook):
-        cmb = self.builder.get_object("c_combine")
         status = self.get("c_onebook")
+        cmb = self.builder.get_object("c_combine")
         cmb.set_sensitive(not status)
+        toc = self.builder.get_object("c_autoToC") # Ensure that we're not trying to build a ToC for a single book!
+        toc.set_sensitive(not status)
+        toc.set_active(False)
         for c in ("l_chapfrom", "cb_chapfrom", "l_chapto", "cb_chapto"):
             self.builder.get_object(c).set_sensitive(status)
             
@@ -292,18 +290,18 @@ class PtxPrinterDialog:
         for c in ("c_figexclwebapp", "c_figplaceholders", "c_fighiderefs"):
             self.builder.get_object(c).set_sensitive(status)
 
-    def onPreprocessChanged(self, c_preprocess):
-        self.builder.get_object("fc_preprocess").set_sensitive(self.get("c_preprocess"))
-
     def onInclFrontMatterChanged(self, c_inclFrontMatter):
-        self.builder.get_object("fc_frontMatter").set_sensitive(self.get("c_inclFrontMatter"))
+        self.builder.get_object("btn_selectFrontPDFs").set_sensitive(self.get("c_inclFrontMatter"))
+        self.builder.get_object("t_frontMatterPDFs").set_sensitive(self.get("c_inclFrontMatter"))
 
-    def onApplyWatermarkChanged(self, c_applyWatermark):
-        self.builder.get_object("fc_watermark").set_sensitive(self.get("c_applyWatermark"))
-    
     def onInclBackMatterChanged(self, c_inclBackMatter):
-        self.builder.get_object("fc_backMatter").set_sensitive(self.get("c_inclBackMatter"))
+        self.builder.get_object("btn_selectBackPDFs").set_sensitive(self.get("c_inclBackMatter"))
+        self.builder.get_object("l_backMatterPDFs").set_sensitive(self.get("c_inclBackMatter"))
             
+    def onApplyWatermarkChanged(self, c_applyWatermark):
+        self.builder.get_object("btn_selectWatermarkPDF").set_sensitive(self.get("c_applyWatermark"))
+        self.builder.get_object("l_watermarkPDF").set_sensitive(self.get("c_applyWatermark"))
+    
     def onAutoTocChanged(self, c_autoToC):
         atoc = self.builder.get_object("t_tocTitle")
         if self.get("c_autoToC"):
@@ -351,15 +349,23 @@ class PtxPrinterDialog:
             rhr.grab_focus() 
         else:   
             rhr.set_sensitive(False)
+
+    def onProcessScriptClicked(self, c_processScript):
+        status = self.get("c_processScript")
+        for c in ("c_processScriptBefore", "c_processScriptAfter", "l_processScript", "btn_selectScript"):
+            self.builder.get_object(c).set_sensitive(status)
             
-    def onSelectBackPDFsClicked(self, btn_selectBackPDFs):
-        print("Clicked on the button to Select one or more PDFs to be added to the end of the publication")
-        win = FileChooserWindow()
-        print(path)
-
-    def onSelectFileClicked(self, btn_editPython):
-        print("Choose one or more PDF files for Front Matter - dud!")
-
+    def onUsePrintDraftChangesClicked(self, c_usePrintDraftChanges):
+        status = self.get("c_usePrintDraftChanges")
+        for c in ("btn_editChangesFile", "c_processScriptBefore", "c_processScriptAfter", "l_processScript"):
+            self.builder.get_object(c).set_sensitive(status)
+        
+    def onUseModsTexClicked(self, c_useModsTex):
+        self.builder.get_object("btn_editModsTeX").set_sensitive(self.get("c_useModsTex"))
+        
+    def onUseModsStyClicked(self, c_useModsSty):
+        self.builder.get_object("btn_editModsSty").set_sensitive(self.get("c_useModsSty"))
+        
     def onClickChooseBooks(self, btn):
         dia = self.builder.get_object("dlg_multiBookSelector")
         mbs_grid = self.builder.get_object("mbs_grid")
@@ -451,6 +457,17 @@ class PtxPrinterDialog:
             config.read(configfile)
             info.loadConfig(self, config)
 
+    def onSelectScriptClicked(self, btn_selectScript):
+        win = FileChooserWindow()
+        if path != None:
+            self.builder.get_object("l_script2process").set_text("Sorry, this hasn't been implemented yet!")
+            # self.builder.get_object("l_script2process").set_text("\n".join('{}'.format(s) for s in path))
+        else:
+            for c in ("btn_selectScript", "c_processScriptBefore", "c_processScriptAfter", "l_processScript", "l_script2process"):
+                self.builder.get_object(c).set_sensitive(False)
+            self.builder.get_object("l_script2process").set_text("")
+            self.builder.get_object("c_processScript").set_active(False)
+
     def onEditChangesFile(self, cb_prj):
         self.prjid = self.get("cb_project")
         changesfile = os.path.join(self.settings_dir, self.prjid, "PrintDraftChanges.txt")
@@ -469,32 +486,54 @@ class PtxPrinterDialog:
         if os.path.exists(modsstyfile):
             os.startfile(modsstyfile)
 
-    def onEditPythonFile(self, widget):
-        pyScript = "??????????????"
-        # print(pyScript)
-        if os.path.exists(pyScript):
-            os.startfile(pyScript)
+    def onFrontPDFsClicked(self, btn_selectFrontPDFs):
+        fpdfbuff = self.builder.get_object("tb_frontPDFs")
+        self.builder.get_object("t_myEntry").set_text("List of one or more PDF\nfiles will appear here.")
+        win = FileChooserWindow()
+        if path != None:
+            fpdfbuff.set_text("\n".join('{}'.format(s) for s in path))
+        else:
+            fpdfbuff.set_text("List of one or more PDF\nfiles will appear here.")
+            self.builder.get_object("btn_selectFrontPDFs").set_sensitive(False)
+            self.builder.get_object("c_inclFrontMatter").set_active(False)
+
+    def onBackPDFsClicked(self, btn_selectBackPDFs):
+        win = FileChooserWindow()
+        if path != None:
+            self.builder.get_object("l_backMatterPDFs").set_text("\n".join('{}'.format(s) for s in path))
+        else:
+            self.builder.get_object("l_backMatterPDFs").set_text("List of one or more PDF\nfiles will appear here.")
+            self.builder.get_object("btn_selectBackPDFs").set_sensitive(False)
+            self.builder.get_object("c_inclBackMatter").set_active(False)
+
+    def onWatermarkPDFclicked(self, selectWatermarkPDF):
+        win = FileChooserWindow()
+        if path != None:
+            self.builder.get_object("l_watermarkPDF").set_text(path[0])
+        else:
+            self.builder.get_object("l_watermarkPDF").set_text("Only one PDF file will appear here.")
+            self.builder.get_object("btn_selectWatermarkPDF").set_sensitive(False)
+            self.builder.get_object("c_applyWatermark").set_active(False)
 
 class FileChooserWindow(Gtk.Window):
 
     def __init__(self):
         global path
 
-        dialog = Gtk.FileChooserDialog("Please choose one or more PDF files", None,
+        dialog = Gtk.FileChooserDialog("Please Select PDF file(s)", None,
             Gtk.FileChooserAction.OPEN,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
              Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+        dialog.set_default_size(1000, 600)
         dialog.set_select_multiple(True)
         self.add_filters(dialog)
 
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            # print("Open clicked")
-            print("File selected: " + dialog.get_filename())
+            # print("Files selected: " + dialog.get_filenames())
             path = dialog.get_filenames()
         elif response == Gtk.ResponseType.CANCEL:
             path = None
-            # print("Cancel clicked")
         dialog.destroy()
         
     def add_filters(self, dialog):
@@ -509,23 +548,26 @@ class FileChooserWindow(Gtk.Window):
             # Gtk.FileChooserAction.SELECT_FOLDER,
             # (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
              # "Select", Gtk.ResponseType.OK))
-        # dialog.set_default_size(800, 400)
+        # dialog.set_default_size(1000, 600)
 
         # response = dialog.run()
         # if response == Gtk.ResponseType.OK:
-            # print("Select clicked")
             # print("Folder selected: " + dialog.get_filename())
+            # path = dialog.get_filename()
         # elif response == Gtk.ResponseType.CANCEL:
-            # print("Cancel clicked")
-
+            # path = None
         # dialog.destroy()
 
 class Info:
     _mappings = {
         "project/id":               (None, lambda w,v: w.get("cb_project")),
         "project/book":             ("cb_book", None),
-        "project/frontincludes":    ("fc_frontMatter", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s) for s in v)),
+        # "project/frontincludes":    (None, lambda w,v: w.builder.get_object("tb_frontPDFs").get_text()),
+        # "project/frontincludes":    (None, lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s) for s in w.builder.get_object("tb_frontPDFs").get_text().split("\n"))),
+        "project/backincludes":     ("fc_backMatter", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s) for s in v.split("\n"))),
+        # "project/backincludes":     ("fc_backMatter", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s) for s in v)),
         "project/usechangesfile":   ("usePrintDraftChanges", lambda w,v :"true" if v else "false"),
+        "project/processscript":    ("c_processScript", lambda w,v :"true" if v else "false"),
 
         "paper/height":             (None, lambda w,v: re.sub(r"^.*?,\s*(.+?)\s*(?:\(.*|$)", r"\1", w.get("cb_pagesize")) or "210mm"),
         "paper/width":              (None, lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", w.get("cb_pagesize")) or "148mm"),
@@ -821,7 +863,7 @@ class Info:
             
         if True:
             self.localChanges.append((None, regex.compile(r"(\\toc3 .+)", flags=regex.M), r""))
-            # self.localChanges.append((None, regex.compile(r"(\\c\s1\r?\n)", flags=regex.S), r"\skipline\n\hrule\r\n\1"))
+            # self.localChanges.append((None, regex.compile(r"(\\c\s1\r?\n)", flags=regex.S), r"\skipline\n\hrule\r\n\1")) # this didn't work. I wonder why.
             
         return self.localChanges
         # Examples: from textPreprocess.py RaPuMa

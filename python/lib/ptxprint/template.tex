@@ -147,14 +147,18 @@
 \input "{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.tex"% adjust/override setup parameters here
 
 %%%%% Hyphenation %%%%%
+%% Allocating and using a new language without any hyphenation rules defined effectively disables hyphenation.
+%% Hyphenation support is provided through hyphenatedWords.txt.
+% \newlanguage\printDraftLanguage
+% \language\printDraftLanguage
 \hyphenpenalty=10000
 
 % Where to put these kinds of files? 
 {paper/watermark}\def\PageBorder{{{/ptxpath}/{project/id}/PrintDraft/A4-Draft.pdf}}
 %{paper/watermark}\def\PageBorder{{D:/Temp/A5-Draft.pdf}}  % and also pretty border PDFs etc.
 
-%{project/frontincludes}
 %\includepdf{{mytitlepage.pdf}}
+%{project/frontincludes}
 
 {document/toc}\GenerateTOC[{document/toctitle}]{{combined.toc}}
 {document/toc}\BodyColumns=1                   % Temporarily set this to Single Column for the ToC page(s)
@@ -169,5 +173,6 @@
 \catcode`\%=14
 
 %\includepdf{{myendofbookfile.pdf}}
+%{project/backincludes}
 
 \end

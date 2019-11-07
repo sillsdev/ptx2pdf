@@ -638,6 +638,7 @@
       <pattern>*.[Pp][Dd][Ff]</pattern>
     </patterns>
   </object>
+  <object class="GtkTextBuffer" id="tb_frontPDFs"/>
   <object class="GtkEntryBuffer" id="tb_logging">
     <property name="text" translatable="yes">The output log:</property>
   </object>
@@ -1627,49 +1628,6 @@ Balancing:</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_omitallverses">
-                                    <property name="label" translatable="yes">Omit All Verse Numbers</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_omitverseone">
-                                    <property name="label" translatable="yes">Omit First Verse Number</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_omitchapternumber">
-                                    <property name="label" translatable="yes">Omit Chapter number(s)</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkCheckButton" id="c_ch1pagebreak">
                                     <property name="label" translatable="yes">Always Start Ch 1 on a New Page</property>
                                     <property name="visible">True</property>
@@ -1802,6 +1760,49 @@ typesetting issues. Use with care!
                                   <packing>
                                     <property name="left_attach">2</property>
                                     <property name="top_attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_omitchapternumber">
+                                    <property name="label" translatable="yes">Omit Chapter number(s)</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_omitverseone">
+                                    <property name="label" translatable="yes">Omit First Verse Number</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_omitallverses">
+                                    <property name="label" translatable="yes">Omit All Verse Numbers</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2541,7 +2542,6 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
                                             <property name="halign">start</property>
-                                            <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
                                         </child>
@@ -3865,8 +3865,8 @@ Multi-script publication.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_usePrintDraftChanges1">
-                                    <property name="label" translatable="yes">Also Apply PrintDraft-mods.tex</property>
+                                  <object class="GtkCheckButton" id="c_useModsTex">
+                                    <property name="label" translatable="yes">Apply Customized Settings (in PrintDraft-mods.tex)</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -3878,6 +3878,7 @@ here are not working at all.</property>
                                     <property name="halign">start</property>
                                     <property name="margin_top">6</property>
                                     <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onUseModsTexClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -3885,8 +3886,8 @@ here are not working at all.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_usePrintDraftChanges2">
-                                    <property name="label" translatable="yes">Use Style Overrides Specified in PrintDraft-mods.sty file</property>
+                                  <object class="GtkCheckButton" id="c_useModsSty">
+                                    <property name="label" translatable="yes">Apply Stylesheet Overrides (in PrintDraft-mods.sty)</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -3894,6 +3895,7 @@ here are not working at all.</property>
                                     <property name="margin_top">6</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onUseModsStyClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -3905,13 +3907,14 @@ here are not working at all.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <child>
-                                      <object class="GtkCheckButton" id="c_preprocess">
-                                        <property name="label" translatable="yes">Pre-process text with custom Python script</property>
+                                      <object class="GtkCheckButton" id="c_processScript">
+                                        <property name="label" translatable="yes">Process text with 
+custom script</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="draw_indicator">True</property>
-                                        <signal name="clicked" handler="onPreprocessChanged" swapped="no"/>
+                                        <signal name="clicked" handler="onProcessScriptClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -3920,17 +3923,61 @@ here are not working at all.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkFileChooserButton" id="fc_preprocess">
+                                      <object class="GtkBox">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="margin_top">6</property>
-                                        <property name="margin_bottom">6</property>
-                                        <property name="title" translatable="yes"/>
+                                        <property name="orientation">vertical</property>
+                                        <property name="homogeneous">True</property>
+                                        <child>
+                                          <object class="GtkRadioButton" id="c_processScriptBefore">
+                                            <property name="label" translatable="yes">Before</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="active">True</property>
+                                            <property name="draw_indicator">True</property>
+                                            <property name="group">c_processScriptAfter</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkRadioButton" id="c_processScriptAfter">
+                                            <property name="label" translatable="yes">After</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="draw_indicator">True</property>
+                                            <property name="group">c_processScriptBefore</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">True</property>
                                         <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_processScript">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="margin_left">4</property>
+                                        <property name="label" translatable="yes">PrintDraftChanges 
+are processed</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">2</property>
                                       </packing>
                                     </child>
                                   </object>
@@ -3940,14 +3987,15 @@ here are not working at all.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="btn_editPython">
+                                  <object class="GtkButton" id="btn_selectScript">
                                     <property name="label" translatable="yes">Select...</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
+                                    <property name="valign">center</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
-                                    <signal name="clicked" handler="onSelectFileClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onSelectScriptClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -3956,7 +4004,7 @@ here are not working at all.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_usePrintDraftChanges">
-                                    <property name="label" translatable="yes">Apply Changes Specified in PrintDraftChanges.txt file</property>
+                                    <property name="label" translatable="yes">Apply Changes Specified (in PrintDraftChanges.txt)</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -3964,6 +4012,7 @@ here are not working at all.</property>
                                     <property name="margin_top">6</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onUsePrintDraftChangesClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -3983,6 +4032,64 @@ here are not working at all.</property>
                                   <packing>
                                     <property name="left_attach">1</property>
                                     <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_script2process">
+                                    <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkTextView" id="xcv">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="valign">center</property>
+                                    <property name="editable">False</property>
+                                    <property name="cursor_visible">False</property>
+                                    <property name="accepts_tab">False</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="t_myEntry">
+                                    <property name="width_request">350</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="editable">False</property>
+                                    <property name="has_frame">False</property>
+                                    <property name="shadow_type">none</property>
+                                    <property name="caps_lock_warning">False</property>
+                                    <property name="truncate-multiline">False</property>
+                                    <property name="placeholder_text" translatable="yes">This is my text multiline GtkEntry box but it doesn't seem to wrap on New lines</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkTextView" id="t_frontMatterPDFs">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="editable">False</property>
+                                    <property name="cursor_visible">False</property>
+                                    <property name="buffer">tb_frontPDFs</property>
+                                    <property name="accepts_tab">False</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">3</property>
                                   </packing>
                                 </child>
                               </object>
@@ -4021,6 +4128,7 @@ here are not working at all.</property>
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="column_spacing">10</property>
                                 <child>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
@@ -4055,7 +4163,8 @@ here are not working at all.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">A watermark can be applied to all pages of the publication. The text needs to be in a PDF.</property>
+                                    <property name="tooltip_text" translatable="yes">A watermark can be applied to all pages of the publication. The file
+must be a PDF.</property>
                                     <property name="halign">start</property>
                                     <property name="margin_right">6</property>
                                     <property name="draw_indicator">True</property>
@@ -4117,16 +4226,74 @@ file is selected, then these will appear in alphabetical order.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkFileChooserButton" id="fc_frontMatter">
+                                  <object class="GtkButton" id="btn_selectBackPDFs">
+                                    <property name="label" translatable="yes">Select...</property>
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">A previously created PDF file can be included BEFORE the scripture material being typeset.</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
-                                    <property name="create_folders">False</property>
-                                    <property name="filter">pdffilter</property>
-                                    <property name="select_multiple">True</property>
-                                    <property name="title" translatable="yes">Include Front Matter PDF</property>
+                                    <signal name="clicked" handler="onBackPDFsClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_frontMatterPDFs">
+                                    <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="label" translatable="yes">List of one or more PDF 
+files will appear here.</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_watermarkPDF">
+                                    <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="label" translatable="yes">Only one PDF file will appear here.</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_backMatterPDFs">
+                                    <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="label" translatable="yes">List of one or more PDF 
+files will appear here.</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_selectFrontPDFs">
+                                    <property name="label" translatable="yes">Select...</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="margin_bottom">6</property>
+                                    <signal name="clicked" handler="onFrontPDFsClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
@@ -4134,34 +4301,20 @@ file is selected, then these will appear in alphabetical order.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkFileChooserButton" id="fc_watermark">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">A watermark can be applied to all pages of the publication. The text needs to be in a PDF.</property>
-                                    <property name="margin_top">6</property>
-                                    <property name="margin_bottom">6</property>
-                                    <property name="create_folders">False</property>
-                                    <property name="filter">pdffilter</property>
-                                    <property name="title" translatable="yes"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="btn_selectBackPDFs">
+                                  <object class="GtkButton" id="btn_selectWatermarkPDF">
                                     <property name="label" translatable="yes">Select...</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
-                                    <signal name="clicked" handler="onSelectBackPDFsClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onWatermarkPDFclicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
-                                    <property name="top_attach">2</property>
+                                    <property name="top_attach">1</property>
                                   </packing>
                                 </child>
                               </object>
