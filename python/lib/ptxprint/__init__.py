@@ -28,51 +28,56 @@ _bookslist = """GEN|50 EXO|40 LEV|27 NUM|36 DEU|34 JOS|24 JDG|21 RUT|4 1SA|31 2S
 
 # xmlstarlet sel -t -m '//iso_15924_entry' -o '"' -v '@alpha_4_code' -o '" : "' -v '@name' -o '",' -n /usr/share/xml/iso-codes/iso_15924.xml
 _allscripts = { "Adlm" : "Adlam", "Afak" : "Afaka", "Aghb" : "Caucasian Albanian", "Ahom" : "Ahom, Tai Ahom", "Arab" : "Arabic",
-    "Aran" : "Arabic (Nastaliq variant)", "Armi" : "Imperial Aramaic", "Armn" : "Armenian", "Avst" : "Avestan", "Bali" : "Balinese",
-    "Bamu" : "Bamum", "Bass" : "Bassa Vah", "Batk" : "Batak", "Beng" : "Bengali", "Bhks" : "Bhaiksuki", "Blis" : "Blissymbols", "Bopo" : "Bopomofo",
-    "Brah" : "Brahmi", "Brai" : "Braille", "Bugi" : "Buginese", "Buhd" : "Buhid", "Cakm" : "Chakma", "Cans" : "Unified Canadian Aboriginal Syllabics",
+    "Aran" : "Arabic (Nastaliq)", "Armi" : "Imperial Aramaic", "Armn" : "Armenian", "Avst" : "Avestan", "Bali" : "Balinese", "Bamu" : "Bamum", 
+    "Bass" : "Bassa Vah", "Batk" : "Batak", "Beng" : "Bengali", "Bhks" : "Bhaiksuki", "Blis" : "Blissymbols", "Bopo" : "Bopomofo",
+    "Brah" : "Brahmi", "Brai" : "Braille", "Bugi" : "Buginese", "Buhd" : "Buhid", "Cakm" : "Chakma", "Cans" : "Canadian Aboriginal Syllabics",
     "Cari" : "Carian", "Cham" : "Cham", "Cher" : "Cherokee", "Cirt" : "Cirth", "Copt" : "Coptic", "Cprt" : "Cypriot", "Cyrl" : "Cyrillic",
-    "Cyrs" : "Cyrillic (Old Church Slavonic variant)", "Deva" : "Devanagari (Nagari)", "Dsrt" : "Deseret (Mormon)",
-    "Dupl" : "Duployan shorthand, Duployan stenography", "Egyd" : "Egyptian demotic", "Egyh" : "Egyptian hieratic", "Egyp" : "Egyptian hieroglyphs",
-    "Elba" : "Elbasan", "Ethi" : "Ethiopic (Geʻez)", "Geok" : "Khutsuri (Asomtavruli and Nuskhuri)", "Geor" : "Georgian (Mkhedruli)",
+    "Cyrs" : "Cyrillic (Old Church Slavonic)", "Deva" : "Devanagari", "Dsrt" : "Deseret (Mormon)", "Egyd" : "Egyptian demotic", 
+    "Egyh" : "Egyptian hieratic", "Elba" : "Elbasan", "Ethi" : "Ethiopic (Geʻez)", "Geok" : "Khutsuri (Asomtavruli & Nuskhuri)", 
+    "Geor" : "Georgian (Mkhedruli)", "Gong" : "Gunjala Gondi", "Gonm" : "Masaram Gondi",
     "Glag" : "Glagolitic", "Goth" : "Gothic", "Gran" : "Grantha", "Grek" : "Greek", "Gujr" : "Gujarati", "Guru" : "Gurmukhi",
-    "Hanb" : "Han with Bopomofo (alias for Han + Bopomofo)", "Hang" : "Hangul (Hangŭl, Hangeul)", "Hani" : "Han (Hanzi, Kanji, Hanja)",
-    "Hano" : "Hanunoo (Hanunóo)", "Hans" : "Han (Simplified variant)", "Hant" : "Han (Traditional variant)", "Hatr" : "Hatran", "Hebr" : "Hebrew",
-    "Hira" : "Hiragana", "Hluw" : "Anatolian Hieroglyphs (Luwian Hieroglyphs, Hittite Hieroglyphs)", "Hmng" : "Pahawh Hmong",
-    "Hrkt" : "Japanese syllabaries (alias for Hiragana + Katakana)", "Hung" : "Old Hungarian (Hungarian Runic)", "Inds" : "Indus (Harappan)",
-    "Ital" : "Old Italic (Etruscan, Oscan, etc.)", "Jamo" : "Jamo (alias for Jamo subset of Hangul)", "Java" : "Javanese",
-    "Jpan" : "Japanese (alias for Han + Hiragana + Katakana)", "Jurc" : "Jurchen", "Kali" : "Kayah Li", "Kana" : "Katakana", "Khar" : "Kharoshthi",
-    "Khmr" : "Khmer", "Khoj" : "Khojki", "Kitl" : "Khitan large script", "Kits" : "Khitan small script", "Knda" : "Kannada", "Kore" : "Korean (alias for Hangul + Han)",
-    "Kpel" : "Kpelle", "Kthi" : "Kaithi", "Lana" : "Tai Tham (Lanna)", "Laoo" : "Lao", "Latf" : "Latin (Fraktur variant)",
-    "Latg" : "Latin (Gaelic variant)", "Latn" : "Latin", "Leke" : "Leke", "Lepc" : "Lepcha (Róng)", "Limb" : "Limbu", "Lina" : "Linear A",
-    "Linb" : "Linear B", "Lisu" : "Lisu (Fraser)", "Loma" : "Loma", "Lyci" : "Lycian", "Lydi" : "Lydian", "Mahj" : "Mahajani", "Mand" : "Mandaic, Mandaean",
-    "Mani" : "Manichaean", "Marc" : "Marchen", "Maya" : "Mayan hieroglyphs", "Mend" : "Mende Kikakui", "Merc" : "Meroitic Cursive",
-    "Mero" : "Meroitic Hieroglyphs", "Mlym" : "Malayalam", "Modi" : "Modi, Moḍī", "Mong" : "Mongolian", "Moon" : "Moon (Moon code, Moon script, Moon type)",
-    "Mroo" : "Mro, Mru", "Mtei" : "Meitei Mayek (Meithei, Meetei)", "Mult" : "Multani", "Mymr" : "Myanmar (Burmese)",
-    "Narb" : "Old North Arabian (Ancient North Arabian)", "Nbat" : "Nabataean", "Newa" : "Newa, Newar, Newari, Nepāla lipi",
-    "Nkgb" : "Nakhi Geba ('Na-'Khi ²Ggŏ-¹baw, Naxi Geba)", "Nkoo" : "N’Ko", "Nshu" : "Nüshu", "Ogam" : "Ogham",
-    "Olck" : "Ol Chiki (Ol Cemet’, Ol, Santali)", "Orkh" : "Old Turkic, Orkhon Runic", "Orya" : "Oriya", "Osge" : "Osage", "Osma" : "Osmanya",
-    "Palm" : "Palmyrene", "Pauc" : "Pau Cin Hau", "Perm" : "Old Permic", "Phag" : "Phags-pa", "Phli" : "Inscriptional Pahlavi", "Phlp" : "Psalter Pahlavi",
-    "Phlv" : "Book Pahlavi", "Phnx" : "Phoenician", "Piqd" : "Klingon (KLI pIqaD)", "Plrd" : "Miao (Pollard)", "Prti" : "Inscriptional Parthian",
-    "Qaaa" : "Reserved for private use (start)", "Qabx" : "Reserved for private use (end)", "Rjng" : "Rejang (Redjang, Kaganga)", "Roro" : "Rongorongo",
-    "Runr" : "Runic", "Samr" : "Samaritan", "Sara" : "Sarati", "Sarb" : "Old South Arabian", "Saur" : "Saurashtra", "Sgnw" : "SignWriting",
-    "Shaw" : "Shavian (Shaw)", "Shrd" : "Sharada, Śāradā", "Sidd" : "Siddham, Siddhaṃ, Siddhamātṛkā", "Sind" : "Khudawadi, Sindhi",
-    "Sinh" : "Sinhala", "Sora" : "Sora Sompeng", "Sund" : "Sundanese", "Sylo" : "Syloti Nagri", "Syrc" : "Syriac", "Syre" : "Syriac (Estrangelo variant)",
-    "Syrj" : "Syriac (Western variant)", "Syrn" : "Syriac (Eastern variant)", "Tagb" : "Tagbanwa", "Takr" : "Takri, Ṭākrī, Ṭāṅkrī", "Tale" : "Tai Le",
-    "Talu" : "New Tai Lue", "Taml" : "Tamil", "Tang" : "Tangut", "Tavt" : "Tai Viet", "Telu" : "Telugu", "Teng" : "Tengwar", "Tfng" : "Tifinagh (Berber)",
-    "Tglg" : "Tagalog (Baybayin, Alibata)", "Thaa" : "Thaana", "Thai" : "Thai", "Tibt" : "Tibetan", "Tirh" : "Tirhuta", "Ugar" : "Ugaritic", "Vaii" : "Vai",
-    "Visp" : "Visible Speech", "Wara" : "Warang Citi (Varang Kshiti)", "Wole" : "Woleai", "Xpeo" : "Old Persian", "Xsux" : "Cuneiform, Sumero-Akkadian",
-    "Yiii" : "Yi", "Zinh" : "Code for inherited script", "Zmth" : "Mathematical notation", "Zsye" : "Symbols (Emoji variant)", "Zsym" : "Symbols",
-    "Zxxx" : "Code for unwritten documents", "Zyyy" : "Code for undetermined script", "Zzzz" : "Code for uncoded script",
+    "Hanb" : "Han with Bopomofo", "Hang" : "Hangul (Hangŭl, Hangeul)", "Hani" : "Han (Hanzi, Kanji, Hanja)",
+    "Hano" : "Hanunoo (Hanunóo)", "Hans" : "Han (Simplified)", "Hant" : "Han (Traditional)", "Hatr" : "Hatran", "Hebr" : "Hebrew",
+    "Hira" : "Hiragana", "Hmng" : "Pahawh Hmong", "Hrkt" : "Japanese (Hiragana+Katakana)", "Hung" : "Old Hungarian (Runic)",
+    "Ital" : "Old Italic (Etruscan, Oscan)", "Jamo" : "Jamo (subset of Hangul)", "Java" : "Javanese",
+    "Jpan" : "Japanese (Han+Hiragana+Katakana)", "Jurc" : "Jurchen", "Kali" : "Kayah Li", "Kana" : "Katakana", "Khar" : "Kharoshthi",
+    "Khmr" : "Khmer", "Khoj" : "Khojki", "Kitl" : "Khitan (large)", "Kits" : "Khitan (small)", "Knda" : "Kannada", "Kore" : "Korean (Hangul+Han)",
+    "Kpel" : "Kpelle", "Kthi" : "Kaithi", "Lana" : "Tai Tham (Lanna)", "Laoo" : "Lao", "Latf" : "Latin (Fraktur)",
+    "Latg" : "Latin (Gaelic)", "Latn" : "Latin", "Leke" : "Leke", "Lepc" : "Lepcha (Róng)", "Limb" : "Limbu", "Lina" : "Linear A",
+    "Linb" : "Linear B", "Lisu" : "Lisu (Fraser)", "Loma" : "Loma", "Lyci" : "Lycian", "Lydi" : "Lydian", "Mahj" : "Mahajani", 
+    "Mand" : "Mandaic, Mandaean", "Mani" : "Manichaean", "Marc" : "Marchen", "Mend" : "Mende Kikakui", "Merc" : "Meroitic Cursive",
+    "Mlym" : "Malayalam", "Modi" : "Modi", "Mong" : "Mongolian", "Mroo" : "Mro, Mru", "Mtei" : "Meitei Mayek", "Mult" : "Multani", 
+    "Mymr" : "Myanmar (Burmese)", "Narb" : "Old North Arabian (Ancient North Arabian)", "Nbat" : "Nabataean", "Newa" : "New (Newar, Newari)",
+    "Nkgb" : "Nakhi Geba (Naxi Geba)", "Nkoo" : "N’Ko", "Nshu" : "Nüshu", "Ogam" : "Ogham", "Olck" : "Ol Chiki (Ol Cemet’, Santali)", 
+    "Orkh" : "Old Turkic, Orkhon Runic", "Orya" : "Oriya", "Osge" : "Osage", "Osma" : "Osmanya", "Palm" : "Palmyrene",
+    "Pauc" : "Pau Cin Hau", "Perm" : "Old Permic", "Phag" : "Phags-pa", "Phli" : "Inscriptional Pahlavi", "Phlp" : "Psalter Pahlavi",
+    "Phlv" : "Book Pahlavi", "Phnx" : "Phoenician", "Plrd" : "Miao (Pollard)", "Prti" : "Inscriptional Parthian",
+    "Rjng" : "Rejang (Redjang, Kaganga)", "Roro" : "Rongorongo",
+    "Runr" : "Runic", "Samr" : "Samaritan", "Sara" : "Sarati", "Sarb" : "Old South Arabian", "Saur" : "Saurashtra", "Shaw" : "Shavian (Shaw)", 
+    "Shrd" : "Sharada", "Sidd" : "Siddham, Siddhamātṛkā", "Sind" : "Sindhi, Khudawadi", "Sinh" : "Sinhala", "Sora" : "Sora Sompeng",
+    "Sund" : "Sundanese", "Sylo" : "Syloti Nagri", "Syrc" : "Syriac", "Syre" : "Syriac (Estrangelo)", "Syrj" : "Syriac (Western)",
+    "Syrn" : "Syriac (Eastern)", "Tagb" : "Tagbanwa", "Takr" : "Takri, Ṭāṅkrī", "Tale" : "Tai Le", "Talu" : "Tai Lue (New)", 
+    "Taml" : "Tamil", "Tang" : "Tangut", "Tavt" : "Tai Viet", "Telu" : "Telugu", "Teng" : "Tengwar", "Tfng" : "Tifinagh (Berber)",
+    "Tglg" : "Tagalog (Baybayin, Alibata)", "Thaa" : "Thaana", "Thai" : "Thai", "Tibt" : "Tibetan", "Tirh" : "Tirhuta", "Ugar" : "Ugaritic",
+    "Vaii" : "Vai", "Wara" : "Warang Citi (Varang Kshiti)", "Wole" : "Woleai", "Xpeo" : "Old Persian", "Yiii" : "Yi",
+    "Zyyy" : "Auto-detect script (default)", "Zzzz" : "Uncoded script",
 }
 
 allbooks = [b.split("|")[0] for b in _bookslist.split() if b != "ZZZ|0"]
 books = dict((b.split("|")[0], i+1) for i, b in enumerate(_bookslist.split()))
 chaps = dict(b.split("|") for b in _bookslist.split())
-# print("allbooks: ", allbooks)
 # print("books: ", books)
+# print("allbooks: ", allbooks)
 # print("chaps: ", chaps)
 # print(chaps.get("GEN"))
+OTbks = allbooks[0:39]
+# print(OTbks)
+NTbks = allbooks[40:66]
+# print(NTbks)
+DCbks = allbooks[67:84]
+# print(DCbks)
+XTRAbks = allbooks [85:]
+# print(XTRAbks)
 
 class ParatextSettings:
     def __init__(self, basedir, prjid):
@@ -167,8 +172,8 @@ class PtxPrinterDialog:
             v = w.get_active()
         elif wid.startswith("s_"):
             v = w.get_value()
-        elif wid.startswith("fc_"):
-            v = w.get_filenames()
+        # elif wid.startswith("fc_"):
+            # v = w.get_filenames()
         return v
 
     def set(self, wid, value):
@@ -262,12 +267,11 @@ class PtxPrinterDialog:
             self.builder.get_object(c).set_sensitive(status)
 
     def onPageGutterChanged(self, c_pagegutter):
+        status = self.get("c_pagegutter")
         gtr = self.builder.get_object("s_pagegutter")
-        if self.get("c_pagegutter"):
-            gtr.set_sensitive(True)
+        gtr.set_sensitive(status)
+        if status:
             gtr.grab_focus() 
-        else:   
-            gtr.set_sensitive(False)
 
     def onColumnsChanged(self, cb_Columns):
         print(self.builder.get_object('cb_columns').get_active_id())
@@ -401,28 +405,28 @@ class PtxPrinterDialog:
 
     def onBookChange(self, cb_book):
         bk = self.get("cb_book")
-        chs = chaps.get(bk)
+        chs = int(chaps.get(bk)) + 1
         chapfrom = self.builder.get_object("ls_chapfrom")
         chapfrom.clear()
-        for c in range(1,int(chs) + 1):
+        for c in range(1,chs):
             chapfrom.append([str(c)])
         self.cb_chapfrom.set_active_id('1')
         
         chapto = self.builder.get_object("ls_chapto")
         chapto.clear()
-        for c in range(2,int(chs) + 1):
-            chapto.append([c])
-        self.cb_chapto.set_active_id(str((int(chs) + 1)))
+        for c in range(1,chs):
+            chapto.append([str(c)])
+        self.cb_chapto.set_active_id(str(chs - 1))
 
     def onChapFrmChg(self, cb_chapfrom):
         bk = self.get("cb_book")
-        chs = chaps.get(bk)
+        chs = int(chaps.get(bk)) + 1
         strt = self.get("cb_chapfrom")
         chapto = self.builder.get_object("ls_chapto")
         chapto.clear()
-        for c in range(int(strt) + 1,int(chs) + 1):
-            chapto.append([c])
-        self.cb_chapto.set_active_id(str((int(chs) + 1)))
+        for c in range(int(strt),chs):
+            chapto.append([str(c)])
+        self.cb_chapto.set_active_id(str(chs - 1))
         
     def onProjectChange(self, cb_prj):
         self.prjid = self.get("cb_project")
@@ -568,6 +572,7 @@ class Info:
         "document/preventorphans":  ("c_preventorphans", lambda w,v: "true" if v else "false"),
         "document/preventwidows":   ("c_preventwidows", lambda w,v: "true" if v else "false"),
         "document/supresssectheads": ("c_omitSectHeads", lambda w,v: "true" if v else "false"),
+        "document/supressparallels": ("c_omitParallelRefs", lambda w,v: "true" if v else "false"),
         "document/supressbookintro": ("c_omitBookIntro", lambda w,v: "true" if v else "false"),
         "document/supressintrooutline": ("c_omitIntroOutline", lambda w,v: "true" if v else "false"),
         "document/supressindent":   ("c_omit1paraIndent", lambda w,v: "false" if v else "true"),
@@ -583,6 +588,7 @@ class Info:
         "header/hdrrightouter":     ("cb_hdrright", lambda w,v: v or "-empty-"),
         "header/mirrorlayout":      ("c_mirrorpages", lambda w,v: "true" if v else "false"),
         
+        "footer/includefooter":     ("c_runningFooter", lambda w,v :"true" if v else "false"),
         "footer/ftrcenter":         ("t_runningFooter", lambda w,v: v if w.get("c_runningFooter") else ""),
 
         "notes/ifomitfootnoterule": (None, lambda w,v: "%" if w.get("c_footnoterule") else ""),
@@ -755,17 +761,19 @@ class Info:
             
     def makelocalChanges(self, printer):
         self.localChanges = []
+        
+        # This section handles PARTIAL books (from chapter X to chapter Y)
         bk = printer.get("cb_book")
-        chs = int(chaps.get(bk))
         first = int(printer.get("cb_chapfrom"))
         last = int(printer.get("cb_chapto"))
-        if True:
-            if first > 1: # i.e. it doesn't start at the beginning
-                self.localChanges.append((None, regex.compile(r"\\c 1\r?\n.+(?=\\c {}\r?\n)".format(first), flags=regex.S), ""))
-            if last < chs: # number of chapters in book
-                self.localChanges.append((None, regex.compile(r"\\c {}\r?\n.+".format(last+1), flags=regex.S), ""))
-          
-        if True: # We always want to do this (strip out the Glossary Word markup) BUT how best to mark them up for the user? and what options are needed
+        if first > 1:
+            self.localChanges.append((None, regex.compile(r"\\c 1\r?\n.+(?=\\c {}\r?\n)".format(first), flags=regex.S), ""))
+        if last < int(chaps.get(bk)):
+            self.localChanges.append((None, regex.compile(r"\\c {}\r?\n.+".format(last+1), flags=regex.S), ""))
+            
+        # Glossary Word markup: We always want to strip out the 2nd word (which links to the Glossary book)
+        # BUT how to best mark up the actual glossary word for user? Give user some good options in the UI.
+        if True: 
         #	Remove the second half of the \w word-in-text|glossary-form-of-word\w*  Should we mark ⸤glossary⸥ words like this?
             self.localChanges.append((None, regex.compile(r"\\w (.+?)(\|.+?)?\\w\*", flags=regex.M), r"\u2E24\1\u2E25"))   # Drop 2nd half of Glossary words
         
@@ -786,7 +794,10 @@ class Info:
         if printer.get("c_omitSectHeads"):
             self.localChanges.append((None, regex.compile(r"\\s .+", flags=regex.M), ""))                       # Drop ALL Section Headings
 
-        if printer.get("c_blendfnxr"): 
+        if printer.get("c_omitParallelRefs"):
+            self.localChanges.append((None, regex.compile(r"\\r .+", flags=regex.M), ""))                       # Drop ALL Parallel Passage References
+
+        if printer.get("c_blendfnxr"):  # this needs further testing before deleting the 4 older RegExs
             self.localChanges.append((None, regex.compile(r"\\x(\s.+?)\\xo(\s\d+:\d+) \\xt(.+?)\\x\*", flags=regex.M), r"\\f\1\\fr\2 \\ft\3\\f*"))
             # To merge/blend \f and \x together, simply change all (\x to \f) (\xo to \fr) (\xq to \fq) (\xt to \ft) and (\f* to \x*)
             # self.localChanges.append((None, regex.compile(r"\\x . ", flags=regex.M), r"\\f # "))
@@ -807,7 +818,11 @@ class Info:
 
         # if printer.get("c_glueredupwords"):  # broken??? at present as it 
             # self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w\w\w+) *\1(?=[\s,.!?])", flags=regex.M), r"\1\u00A0\1")) # keep reduplicated words together
-
+            
+        if True:
+            self.localChanges.append((None, regex.compile(r"(\\toc3 .+)", flags=regex.M), r""))
+            # self.localChanges.append((None, regex.compile(r"(\\c\s1\r?\n)", flags=regex.S), r"\skipline\n\hrule\r\n\1"))
+            
         return self.localChanges
         # Examples: from textPreprocess.py RaPuMa
         # Change cross reference into footnotes

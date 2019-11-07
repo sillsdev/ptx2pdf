@@ -157,9 +157,9 @@
 %\includepdf{{mytitlepage.pdf}}
 
 {document/toc}\GenerateTOC[{document/toctitle}]{{combined.toc}}
-{document/toc}\BodyColumns=1
+{document/toc}\BodyColumns=1                   % Temporarily set this to Single Column for the ToC page(s)
 {document/toc}\ptxfile{{combined.toc}}
-{document/toc}\BodyColumns=2
+{document/toc}\BodyColumns={paper/columns}     % But ensure it goes back to the chosen Single/Double setting for the main body text
 
 %%%%% Load Paratext USFM %%%%%
 \XeTeXdefaultencoding "utf-8"

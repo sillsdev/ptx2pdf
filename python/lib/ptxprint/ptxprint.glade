@@ -488,38 +488,20 @@
   <object class="GtkListStore" id="ls_chapto">
     <columns>
       <!-- column-name num -->
-      <column type="gint"/>
+      <column type="gchararray"/>
     </columns>
     <data>
       <row>
-        <col id="0">5</col>
+        <col id="0" translatable="yes">5</col>
       </row>
       <row>
-        <col id="0">6</col>
+        <col id="0" translatable="yes">6</col>
       </row>
       <row>
-        <col id="0">7</col>
+        <col id="0" translatable="yes">7</col>
       </row>
       <row>
-        <col id="0">8</col>
-      </row>
-      <row>
-        <col id="0">9</col>
-      </row>
-      <row>
-        <col id="0">10</col>
-      </row>
-      <row>
-        <col id="0">11</col>
-      </row>
-      <row>
-        <col id="0">12</col>
-      </row>
-      <row>
-        <col id="0">13</col>
-      </row>
-      <row>
-        <col id="0">14</col>
+        <col id="0" translatable="yes">8</col>
       </row>
     </data>
   </object>
@@ -655,45 +637,6 @@
       <pattern>*.pdf</pattern>
       <pattern>*.[Pp][Dd][Ff]</pattern>
     </patterns>
-  </object>
-  <object class="GtkFileChooserDialog" id="fc_pdf">
-    <property name="can_focus">False</property>
-    <property name="modal">True</property>
-    <property name="type_hint">dialog</property>
-    <property name="gravity">north</property>
-    <property name="create_folders">False</property>
-    <property name="filter">pdffilter</property>
-    <property name="select_multiple">True</property>
-    <child>
-      <placeholder/>
-    </child>
-    <child internal-child="vbox">
-      <object class="GtkBox">
-        <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox">
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-      </object>
-    </child>
   </object>
   <object class="GtkEntryBuffer" id="tb_logging">
     <property name="text" translatable="yes">The output log:</property>
@@ -1363,10 +1306,33 @@ Factor:</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <placeholder/>
+                                      <object class="GtkCheckButton" id="c_justify">
+                                        <property name="label" translatable="yes">Justify Paragraphs</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="active">True</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">2</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
                                     </child>
                                     <child>
-                                      <placeholder/>
+                                      <object class="GtkCheckButton" id="c_hyphenate">
+                                        <property name="label" translatable="yes">Hyphenate</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">3</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
                                     </child>
                                   </object>
                                 </child>
@@ -1616,81 +1582,6 @@ Balancing:</property>
                                 <property name="column_spacing">16</property>
                                 <property name="row_homogeneous">True</property>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_justify">
-                                    <property name="label" translatable="yes">Justify Paragraphs</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_hyphenate">
-                                    <property name="label" translatable="yes">Hyphenate</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_marginverses">
-                                    <property name="label" translatable="yes">Use Marginal Verses (beside body text)</property>
-                                    <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">[Not yet implemented]</property>
-                                    <property name="halign">start</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_hangpoetry">
-                                    <property name="label" translatable="yes">Hanging Verse Numbers (for poetry)</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_omit1paraIndent">
-                                    <property name="label" translatable="yes">Suppress First Paragraph Indentation</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Don't indent the first paragraph after a section heading. It will appear as an \m(argin) paragraph instead of a normal \p.</property>
-                                    <property name="halign">start</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
-                                    <property name="top_attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkCheckButton" id="c_omitBookIntro">
                                     <property name="label" translatable="yes">Suppress Book Introduction (\i..)</property>
                                     <property name="visible">True</property>
@@ -1733,21 +1624,6 @@ Balancing:</property>
                                   <packing>
                                     <property name="left_attach">2</property>
                                     <property name="top_attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_preventorphans">
-                                    <property name="label" translatable="yes">Prevent Orphan Words in Poertry (\q#)</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -1803,8 +1679,54 @@ Balancing:</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">1</property>
+                                    <property name="left_attach">0</property>
                                     <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_marginverses">
+                                    <property name="label" translatable="yes">Use Marginal Verses (beside body text)</property>
+                                    <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">[Not yet implemented]</property>
+                                    <property name="halign">start</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_hangpoetry">
+                                    <property name="label" translatable="yes">Hanging Verse Numbers (for poetry)</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_preventorphans">
+                                    <property name="label" translatable="yes">Prevent Orphan Words in Poertry (\q#)</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -1822,7 +1744,7 @@ a line.</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">1</property>
+                                    <property name="left_attach">0</property>
                                     <property name="top_attach">4</property>
                                   </packing>
                                 </child>
@@ -1848,9 +1770,42 @@ typesetting issues. Use with care!
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_omit1paraIndent">
+                                    <property name="label" translatable="yes">Suppress First Paragraph Indentation</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Don't indent the first paragraph after a section heading. It will appear as an \m(argin) paragraph instead of a normal \p.</property>
+                                    <property name="halign">start</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
                                     <property name="left_attach">2</property>
                                     <property name="top_attach">4</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_omitParallelRefs">
+                                    <property name="label" translatable="yes">Suppress Parallel Passage References (\r)   </property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Remove all section headings.</property>
+                                    <property name="halign">start</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                               </object>
                             </child>
