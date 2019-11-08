@@ -89,13 +89,13 @@ elif sys.platform == "win32":
 
     LPDWORD = POINTER(DWORD)
 
-    PIPE_NOWAIT = wintypes.DWORD(0x00000001)
     SetNamedPipeHandleState = windll.kernel32.SetNamedPipeHandleState
     SetNamedPipeHandleState.argtypes = [HANDLE, LPDWORD, LPDWORD, LPDWORD]
     SetNamedPipeHandleState.restype = BOOL
 
-    def unblock_fd(pipefd):
-        h = msvcrt.get_osfhandle(pipefd)
+    def unblock_fd(stream):
+        PIPE_NOWAIT = wintypes.DWORD(0x00000001)
+        h = msvcrt.get_osfhandle(stream.fileno)
         res = windll.kernel32.SetNamedPipeHandleState(h, byref(PIPE_NOWAIT), None, None)
         if res == 0:
             print(WinError())
