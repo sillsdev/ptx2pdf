@@ -154,11 +154,8 @@
 \hyphenpenalty=10000
 
 % Where to put these kinds of files? 
-%\def\PageBorder{{"C:/My Paratext 9 Projects/WSGlatin/PrintDraft/A4-Draft.pdf"}}
-%{paper/watermark}\def\PageBorder{{{/ptxpath}/{project/id}/PrintDraft/A4-Draft.pdf}}
-{paper/watermark}\def\PageBorder{{"{paper/watermarkpdf}"}}  % and also pretty border PDFs etc.
+{paper/ifwatermark}\def\PageBorder{{"{paper/watermarkpdf}"}}  % and also pretty border PDFs etc.
 
-%\includepdf{{mytitlepage.pdf}}
 {project/frontincludes}
 
 {document/toc}\GenerateTOC[{document/toctitle}]{{combined.toc}}
@@ -173,7 +170,6 @@
 \ptxfile{{PrintDraft/41MATprojid-draft.SFM}}
 \catcode`\%=14
 
-%\includepdf{{myendofbookfile.pdf}}
 {project/backincludes}
 
 \end

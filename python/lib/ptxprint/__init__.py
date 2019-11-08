@@ -108,12 +108,17 @@ class PtxPrinterDialog:
         for k, v in _allscripts.items():
             scripts.append([v, k])
         self.cb_script.set_active_id('Zyyy')
+        dia = self.builder.get_object("dlg_multiBookSelector")
+        dia.add_buttons(
+            Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_OPEN, Gtk.ResponseType.OK)
 
         self.mw = self.builder.get_object("ptxprint")
         self.projects = self.builder.get_object("ls_projects")
         self.settings_dir = settings_dir
         self.ptsettings = None
         self.booklist = []
+        self.watermarks = None
         for p in allprojects:
             self.projects.append([p])
 
@@ -357,11 +362,6 @@ class PtxPrinterDialog:
         
     def onClickChooseBooks(self, btn):
         dia = self.builder.get_object("dlg_multiBookSelector")
-
-        # How to add these kinds of options to the dialogue object?
-            # (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-             # Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
-
         mbs_grid = self.builder.get_object("mbs_grid")
         mbs_grid.forall(mbs_grid.remove)
         lsbooks = self.builder.get_object("ls_books")
@@ -372,11 +372,9 @@ class PtxPrinterDialog:
             self.alltoggles.append(tbox)
             mbs_grid.attach(tbox, i // 20, i % 20, 1, 1)
         response = dia.run()
-        # if response == Gtk.ResponseType.OK:
-        self.booklist = [b.get_label() for b in self.alltoggles if b.get_active()]
-        print(self.booklist)
+        if response == Gtk.ResponseType.OK:
+            self.booklist = [b.get_label() for b in self.alltoggles if b.get_active()]
         dia.hide()
-        # dia.destroy()
 
     def onClickmbs_all(self, btn):
         for b in self.alltoggles:
@@ -406,20 +404,21 @@ class PtxPrinterDialog:
         for b in self.alltoggles:
             b.set_active(False)
 
+    def _setchap(self, ls, start, end):
+        ls.clear()
+        for c in range(start, end+1):
+            ls.append([str(c)])
+
     def onBookChange(self, cb_book):
         self.bk = self.get("cb_book")
         if self.bk != "":
             self.chs = int(chaps.get(str(self.bk)))
             self.chapfrom = self.builder.get_object("ls_chapfrom")
-            self.chapfrom.clear()
-            for c in range(1,self.chs+1):
-                self.chapfrom.append([str(c)])
+            self._setchap(self.chapfrom, 1, self.chs)
             self.cb_chapfrom.set_active_id('1')
         
             self.chapto = self.builder.get_object("ls_chapto")
-            self.chapto.clear()
-            for c in range(1,self.chs+1):
-                self.chapto.append([str(c)])
+            self._setchap(self.chapto, 1, self.chs)
             self.cb_chapto.set_active_id(str(self.chs))
 
     def onChapFrmChg(self, cb_chapfrom):
@@ -428,10 +427,7 @@ class PtxPrinterDialog:
             self.chs = int(chaps.get(str(self.bk)))
             self.strt = self.builder.get_object("cb_chapfrom").get_active_id()
             self.chapto = self.builder.get_object("ls_chapto")
-            self.chapto.clear()
-            if self.strt != None:
-                for c in range(int(self.strt),self.chs+1):
-                    self.chapto.append([str(c)])
+            self._setchap(self.chapto, (int(self.strt) if self.strt is not None else 0), self.chs)
             self.cb_chapto.set_active_id(str(self.chs))
         
     def onProjectChange(self, cb_prj):
@@ -511,59 +507,45 @@ class PtxPrinterDialog:
             self.builder.get_object("c_inclBackMatter").set_active(False)
 
     def onWatermarkPDFclicked(self, selectWatermarkPDF):
-        global WatermarkPDF
-        win = FileChooserWindow()
-        if fcFilepath != None:
-            WatermarkPDF = fcFilepath
-            self.builder.get_object("l_watermarkPDF").set_text(fcFilepath[0])
+        watermarks = self.fileChooser("Select Watermark PDF file", 
+                filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
+                multiple = False)
+        if watermarks is not None:
+            self.watermarks = watermarks[0]
+            selectWatermarkPDF.set_tooltip_text(watermarks[0])
         else:
-            WatermarkPDF = []
-            self.builder.get_object("l_watermarkPDF").set_text("Only one PDF file will appear here.")
-            self.builder.get_object("btn_selectWatermarkPDF").set_sensitive(False)
-            self.builder.get_object("c_applyWatermark").set_active(False)
+            selectWatermarkPDF.set_tooltip_text("")
+            self.watermarks = None
 
-class FileChooserWindow(Gtk.Window):
-
-    def __init__(self):
-        global fcFilepath
-
-        dialog = Gtk.FileChooserDialog("Please Select PDF file(s)", None,
-            Gtk.FileChooserAction.OPEN,
+    def fileChooser(self, title, filters = None, multiple = True, folder = False):
+        dialog = Gtk.FileChooserDialog(title, None,
+            (Gtk.FileChooserAction.SELECT_FOLDER if folder else Gtk.FileChooserAction.OPEN),
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
              Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
         dialog.set_default_size(1000, 600)
-        dialog.set_select_multiple(True)
-        self.add_filters(dialog)
+        dialog.set_select_multiple(multiple)
+        if len(filters):
+            # filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}}
+            filter_in = Gtk.FileFilter()
+            for k, f in filters.items():
+                filter_in.set_name(k)
+                for t, v in f.items():
+                    if t == "pattern":
+                        filter_in.add_pattern(v)
+                    elif t == "patterns":
+                        for p in v:
+                            filter_in.add_pattern(p)
+                    if t == "mime":
+                        filter_in.add_mime_type(v)
+            dialog.add_filter(filter_in)
 
         response = dialog.run()
+        fcFilepath = None
         if response == Gtk.ResponseType.OK:
-            # print("Files selected: " + dialog.get_filenames())
             fcFilepath = dialog.get_filenames()
-        elif response == Gtk.ResponseType.CANCEL:
-            fcFilepath = None
         dialog.destroy()
-        
-    def add_filters(self, dialog):
-        filter_pdf = Gtk.FileFilter()
-        filter_pdf.set_name("PDF files")
-        filter_pdf.add_pattern("*.pdf")
-        filter_pdf.add_mime_type('application/pdf')
-        dialog.add_filter(filter_pdf)
+        return fcFilepath
 
-    # def on_folder_clicked(self, widget):
-        # dialog = Gtk.FileChooserDialog("Please choose a folder", self,
-            # Gtk.FileChooserAction.SELECT_FOLDER,
-            # (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-             # "Select", Gtk.ResponseType.OK))
-        # dialog.set_default_size(1000, 600)
-
-        # response = dialog.run()
-        # if response == Gtk.ResponseType.OK:
-            # print("Folder selected: " + dialog.get_filename())
-            # fcFilepath = dialog.get_filename()
-        # elif response == Gtk.ResponseType.CANCEL:
-            # fcFilepath = None
-        # dialog.destroy()
 
 class Info:
     _mappings = {
@@ -578,9 +560,9 @@ class Info:
         "paper/height":             (None, lambda w,v: re.sub(r"^.*?,\s*(.+?)\s*(?:\(.*|$)", r"\1", w.get("cb_pagesize")) or "210mm"),
         "paper/width":              (None, lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", w.get("cb_pagesize")) or "148mm"),
         "paper/pagesize":           ("cb_pagesize", None),
-        "paper/watermark":          ("c_applyWatermark", lambda w,v: "" if v else "%"),
+        "paper/ifwatermark":          ("c_applyWatermark", lambda w,v: "" if v else "%"),
         # "paper/watermarkpdf":       (None, lambda w,v: "A4-Draft.pdf"),
-        "paper/watermarkpdf":       (None, lambda w,v: re.sub(r"\\","/",WatermarkPDF[0]) if WatermarkPDF != [] else "A5-Draft.pdf"),
+        "paper/watermarkpdf":       (None, lambda w,v: re.sub(r"\\","/", w.watermarks) if w.watermarks is not None else "A5-Draft.pdf"),
         "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),
         "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v else "false"),
         "paper/margins":            ("s_margins", lambda w,v: round(v) or "14"),
