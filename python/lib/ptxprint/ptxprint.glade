@@ -778,6 +778,8 @@
                                         <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">c_choosebooks</property>
+                                        <signal name="clicked" handler="onBookSelectorChange" swapped="no"/>
+                                        <signal name="group-changed" handler="onBookSelectorChange" swapped="no"/>
                                         <signal name="toggled" handler="onBookSelectorChange" swapped="no"/>
                                       </object>
                                       <packing>
@@ -796,6 +798,9 @@
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">c_onebook</property>
+                                        <signal name="clicked" handler="onBookSelectorChange" swapped="no"/>
+                                        <signal name="group-changed" handler="onBookSelectorChange" swapped="no"/>
+                                        <signal name="toggled" handler="onBookSelectorChange" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -991,6 +996,8 @@ existing PrintDraft Folder</property>
                                             <property name="name">t_books</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
+                                            <property name="editable">False</property>
+                                            <property name="caps_lock_warning">False</property>
                                           </object>
                                           <packing>
                                             <property name="expand">True</property>
@@ -1016,12 +1023,12 @@ into single PDF</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkButton" id="btn">
+                                          <object class="GtkButton" id="btn_chooseBooks">
                                             <property name="label" translatable="yes">Choose...</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
-                                            <signal name="clicked" handler="onClickChooseBooks" swapped="no"/>
+                                            <signal name="clicked" handler="onChooseBooksClicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -4020,16 +4027,7 @@ are processed</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel" id="l_script2process">
-                                    <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
+                                  <placeholder/>
                                 </child>
                                 <child>
                                   <placeholder/>
@@ -4191,47 +4189,6 @@ file is selected, then these will appear in alphabetical order.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel" id="l_frontMatterPDFs">
-                                    <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="label" translatable="yes">List of one or more PDF 
-files will appear here.</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">3</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_watermarkPDF">
-                                    <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="label" translatable="yes">Only one PDF file will appear here.</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">3</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_backMatterPDFs">
-                                    <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="label" translatable="yes">List of one or more PDF 
-files will appear here.</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">3</property>
-                                    <property name="top_attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkButton" id="btn_selectFrontPDFs">
                                     <property name="label" translatable="yes">Select...</property>
                                     <property name="visible">True</property>
@@ -4264,6 +4221,15 @@ files will appear here.</property>
                                     <property name="left_attach">2</property>
                                     <property name="top_attach">1</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                               </object>
                             </child>
@@ -4675,14 +4641,4 @@ TeX code can also be added.</property>
       </object>
     </child>
   </object>
-  <object class="GtkFileFilter" id="pdffilter">
-    <mime-types>
-      <mime-type>application/pdf</mime-type>
-    </mime-types>
-    <patterns>
-      <pattern>*.pdf</pattern>
-      <pattern>*.[Pp][Dd][Ff]</pattern>
-    </patterns>
-  </object>
-  <object class="GtkTextBuffer" id="tb_frontPDFs"/>
 </interface>

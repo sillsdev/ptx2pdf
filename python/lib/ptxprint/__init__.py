@@ -67,14 +67,6 @@ _alldigits = [ "Default (0123456789)", "Arabic-Farsi", "Arabic-Hindi", "Bengali"
 allbooks = [b.split("|")[0] for b in _bookslist.split() if b != "ZZZ|0"]
 books = dict((b.split("|")[0], i+1) for i, b in enumerate(_bookslist.split()))
 chaps = dict(b.split("|") for b in _bookslist.split())
-global CustomProcess
-CustomProcess = []
-global FrontPDFs
-FrontPDFs = []
-global BackPDFs
-BackPDFs = []
-global WatermarkPDF
-WatermarkPDF = []
 
 class ParatextSettings:
     def __init__(self, basedir, prjid):
@@ -109,6 +101,7 @@ class PtxPrinterDialog:
         self.addCR("cb_script", 0)
         self.addCR("cb_chapfrom", 0)
         self.addCR("cb_chapto", 0)
+        self.addCR("cb_blendedXrefCaller", 0)
 
         scripts = self.builder.get_object("ls_scripts")
         scripts.clear()
@@ -134,6 +127,9 @@ class PtxPrinterDialog:
         self.settings_dir = settings_dir
         self.ptsettings = None
         self.booklist = []
+        self.processScript = None
+        self.FrontPDFs = None
+        self.BackPDFs = None
         self.watermarks = None
         for p in allprojects:
             self.projects.append([p])
@@ -195,6 +191,7 @@ class PtxPrinterDialog:
                 for i, v in enumerate(model):
                     if v[w.get_id_column()] == value:
                         w.set_active_id(value)
+                        w.emit("changed")
                         break
         elif wid.startswith("t_"):
             w.set_text(value)
@@ -369,7 +366,7 @@ class PtxPrinterDialog:
 
     def onProcessScriptClicked(self, c_processScript):
         status = self.get("c_processScript")
-        for c in ("c_processScriptBefore", "c_processScriptAfter", "l_processScript", "btn_selectScript"):
+        for c in ("c_processScriptBefore", "c_processScriptAfter", "btn_selectScript"):
             self.builder.get_object(c).set_sensitive(status)
             
     def onUsePrintDraftChangesClicked(self, c_usePrintDraftChanges):
@@ -383,7 +380,7 @@ class PtxPrinterDialog:
     def onUseModsStyClicked(self, c_useModsSty):
         self.builder.get_object("btn_editModsSty").set_sensitive(self.get("c_useModsSty"))
         
-    def onClickChooseBooks(self, btn):
+    def onChooseBooksClicked(self, btn):
         dia = self.builder.get_object("dlg_multiBookSelector")
         mbs_grid = self.builder.get_object("mbs_grid")
         mbs_grid.forall(mbs_grid.remove)
@@ -397,7 +394,8 @@ class PtxPrinterDialog:
         response = dia.run()
         if response == Gtk.ResponseType.OK:
             self.booklist = [b.get_label() for b in self.alltoggles if b.get_active()]
-        dia.hide()
+            t_booklist = " ".join(self.booklist)
+        dia.hide()  
 
     def onClickmbs_all(self, btn):
         for b in self.alltoggles:
@@ -476,17 +474,6 @@ class PtxPrinterDialog:
             config.read(configfile)
             info.loadConfig(self, config)
 
-    def onSelectScriptClicked(self, btn_selectScript):
-        win = FileChooserWindow()
-        if fcFilepath != None:
-            self.builder.get_object("l_script2process").set_text("Sorry, this hasn't been implemented yet!")
-            # self.builder.get_object("l_script2process").set_text("\n".join('{}'.format(s) for s in path))
-        else:
-            for c in ("btn_selectScript", "c_processScriptBefore", "c_processScriptAfter", "l_processScript", "l_script2process"):
-                self.builder.get_object(c).set_sensitive(False)
-            self.builder.get_object("l_script2process").set_text("")
-            self.builder.get_object("c_processScript").set_active(False)
-
     def onEditChangesFile(self, cb_prj):
         self.prjid = self.get("cb_project")
         changesfile = os.path.join(self.settings_dir, self.prjid, "PrintDraftChanges.txt")
@@ -504,6 +491,30 @@ class PtxPrinterDialog:
         modsstyfile = os.path.join(self.settings_dir, self.prjid, "PrintDraft", "PrintDraft-mods.sty")
         if os.path.exists(modsstyfile):
             os.startfile(modsstyfile)
+
+    def onSelectScriptClicked(self, btn_selectScript):
+        CustomScript = self.fileChooser("Select a Custom Script file", 
+                filters = {"Executable Scripts": {"patterns": "*.bat", "mime": "application/bat"}},
+                # ),("*.sh", "mime": "application/x-sh")
+                multiple = False)
+        if FrontPDFs is not None:
+            self.FrontPDFs = FrontPDFs
+            selectFrontPDFs.set_tooltip_text("\n".join('{}'.format(s) for s in FrontPDFs))
+        else:
+            self.FrontPDFs = None
+            selectFrontPDFs.set_tooltip_text("")
+            self.builder.get_object("btn_selectFrontPDFs").set_sensitive(False)
+            self.builder.get_object("c_inclFrontMatter").set_active(False)
+
+
+        win = FileChooserWindow()
+        if fcFilepath != None:
+            self.builder.get_object("l_script2process").set_text("Sorry, this hasn't been implemented yet!")
+            # self.builder.get_object("l_script2process").set_text("\n".join('{}'.format(s) for s in path))
+        else:
+            for c in ("btn_selectScript", "c_processScriptBefore", "c_processScriptAfter", "l_script2process"):
+                self.builder.get_object(c).set_sensitive(False)
+            self.builder.get_object("c_processScript").set_active(False)
 
     def onFrontPDFsClicked(self, btn_selectFrontPDFs):
         FrontPDFs = self.fileChooser("Select one or more PDF(s) for FRONT matter", 
@@ -583,7 +594,8 @@ class Info:
         "project/id":               (None, lambda w,v: w.get("cb_project")),
         "project/book":             ("cb_book", None),
         # "project/frontincludes":    (None, lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s) for s in w.builder.get_object("tb_frontPDFs").get_text().split("\n"))),
-        "project/frontincludes":    (None, lambda w,v: "\n".join('\\includepdf{{"{}"}}'.format(re.sub(r"\\","/",s)) for s in FrontPDFs)),
+        # "project/watermarkpdf":     (None, lambda w,v: re.sub(r"\\","/", w.watermarks) if w.watermarks is not None else "A5-Draft.pdf"),
+        "project/frontincludes":    (None, lambda w,v: "\n".join('\\includepdf{{"{}"}}'.format(s)) for s in FrontPDFs if FrontPDFs is not None else ""),
         "project/backincludes":     (None, lambda w,v: "\n".join('\\includepdf{{"{}"}}'.format(re.sub(r"\\","/",s)) for s in BackPDFs)),
         "project/usechangesfile":   ("usePrintDraftChanges", lambda w,v :"true" if v else "false"),
         "project/processscript":    ("c_processScript", lambda w,v :"true" if v else "false"),
@@ -592,7 +604,6 @@ class Info:
         "paper/width":              (None, lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", w.get("cb_pagesize")) or "148mm"),
         "paper/pagesize":           ("cb_pagesize", None),
         "paper/ifwatermark":          ("c_applyWatermark", lambda w,v: "" if v else "%"),
-        # "paper/watermarkpdf":       (None, lambda w,v: "A4-Draft.pdf"),
         "paper/watermarkpdf":       (None, lambda w,v: re.sub(r"\\","/", w.watermarks) if w.watermarks is not None else "A5-Draft.pdf"),
         "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),
         "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v else "false"),
@@ -884,9 +895,7 @@ class Info:
             # self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w\w\w+) *\1(?=[\s,.!?])", flags=regex.M), r"\1\u00A0\1")) # keep reduplicated words together
             
         for c in range(1,3):
-            print(c)
             if not printer.get("c_usetoc{}".format(c)):
-                print("{} is about to be deleted from ToC".format(c))
                 self.localChanges.append((None, regex.compile(r"(\\toc{} .+)".format(c), flags=regex.M), r""))
             
             # self.builder.get_object(c).set_sensitive(status)
