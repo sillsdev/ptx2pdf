@@ -82,33 +82,25 @@ if sys.platform == "linux":
 
 elif sys.platform == "win32":
     import winreg
+    import msvcrt
 
-    def unlock_fd(fd):
-        # Constant could define globally but avoid polluting the name-space
-        # thanks to: https://stackoverflow.com/questions/34504970
-        import msvcrt
+    from ctypes import windll, byref, wintypes, WinError, POINTER
+    from ctypes.wintypes import HANDLE, DWORD, BOOL
 
-        from ctypes import windll, byref, wintypes, WinError, POINTER
-        from ctypes.wintypes import HANDLE, DWORD, BOOL
+    LPDWORD = POINTER(DWORD)
 
-        LPDWORD = POINTER(DWORD)
+    PIPE_NOWAIT = wintypes.DWORD(0x00000001)
+    SetNamedPipeHandleState = windll.kernel32.SetNamedPipeHandleState
+    SetNamedPipeHandleState.argtypes = [HANDLE, LPDWORD, LPDWORD, LPDWORD]
+    SetNamedPipeHandleState.restype = BOOL
 
-        PIPE_NOWAIT = wintypes.DWORD(0x00000001)
-
-        def pipe_no_wait(pipefd):
-            SetNamedPipeHandleState = windll.kernel32.SetNamedPipeHandleState
-            SetNamedPipeHandleState.argtypes = [HANDLE, LPDWORD, LPDWORD, LPDWORD]
-            SetNamedPipeHandleState.restype = BOOL
-
-            h = msvcrt.get_osfhandle(pipefd)
-
-            res = windll.kernel32.SetNamedPipeHandleState(h, byref(PIPE_NOWAIT), None, None)
-            if res == 0:
-                print(WinError())
-                return False
-            return True
-
-        return pipe_no_wait(fd)
+    def unblock_fd(pipefd):
+        h = msvcrt.get_osfhandle(pipefd)
+        res = windll.kernel32.SetNamedPipeHandleState(h, byref(PIPE_NOWAIT), None, None)
+        if res == 0:
+            print(WinError())
+            return False
+        return True
 
     def openkey(path):
         return winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\\" + path.replace("/", "\\"))
