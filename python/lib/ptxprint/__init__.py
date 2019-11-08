@@ -56,6 +56,12 @@ _allscripts = { "Zyyy" : "Default (Auto-detect script)", "Adlm" : "Adlam", "Afak
     "Tglg" : "Tagalog (Baybayin, Alibata)", "Thaa" : "Thaana", "Thai" : "Thai", "Tibt" : "Tibetan", "Tirh" : "Tirhuta", "Ugar" : "Ugaritic",
     "Vaii" : "Vai", "Wara" : "Warang Citi (Varang Kshiti)", "Wole" : "Woleai", "Xpeo" : "Old Persian", "Yiii" : "Yi", "Zzzz" : "Uncoded script"
 }
+_alldigits = [ "Default (0123456789)", "Arabic-Farsi", "Arabic-Hindi", "Bengali", "Burmese", "Devanagari", "Gujarati", "Gurmukhi", "Kannada", 
+    "Khmer", "Lao", "Malayalam", "Oriya", "Tamil", "Telugu", "Thai", "Tibetan", "----", "Gondi-Gunjala", "Gondi-Masaram", "----", "Adlam", 
+    "Ahom", "Balinese", "Bhaiksuki", "Brahmi", "Chakma", "Cham", "Gurmukhi", "Hanifi-Rohingya", "Javanese", "Kayah-Li", "Khudawadi", "Lepcha", 
+    "Limbu", "Meetei-Mayek", "Modi", "Mongolian", "Mro", "Myanmar", "Myanmar-Shan", "Myanmar-Tai-Laing", "New-Tai-Lue", "Newa", "Nko", 
+    "Nyiakeng-Puachue-Hmong", "Ol-Chiki", "Osmanya", "Pahawh-Hmong", "Persian", "Saurashtra", "Sharada", "Sinhala-Lith", "Sora-Sompeng", 
+    "Sundanese", "Tai-Tham-Hora", "Tai-Tham-Tham", "Takri", "Tirhuta", "Urdu", "Vai", "Wancho", "Warang-Citi" ]
 
 allbooks = [b.split("|")[0] for b in _bookslist.split() if b != "ZZZ|0"]
 books = dict((b.split("|")[0], i+1) for i, b in enumerate(_bookslist.split()))
@@ -108,6 +114,13 @@ class PtxPrinterDialog:
         for k, v in _allscripts.items():
             scripts.append([v, k])
         self.cb_script.set_active_id('Zyyy')
+
+        digits = self.builder.get_object("ls_digits")
+        digits.clear()
+        for d in _alldigits: # .items():
+            digits.append([d])
+        self.cb_digits.set_active_id(_alldigits[0])
+
         dia = self.builder.get_object("dlg_multiBookSelector")
         dia.add_buttons(
             Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
@@ -206,6 +219,13 @@ class PtxPrinterDialog:
 
     def onCancel(self, btn):
         self.onDestroy(btn)
+
+    def onScriptChanged(self, cb_script):
+        # If there is a matching digit style for the script that has just been set, then turn that on (but it can be overridden later).
+        try:
+            self.cb_digits.set_active_id(self.get('cb_script'))
+        except:
+            self.cb_digits.grab_focus()  # this doesn't appear to do anything yet!
 
     def onFontChange(self, fbtn):
         font = fbtn.get_font_name()
@@ -495,18 +515,19 @@ class PtxPrinterDialog:
             self.builder.get_object("c_inclFrontMatter").set_active(False)
 
     def onBackPDFsClicked(self, btn_selectBackPDFs):
-        global BackPDFs
-        win = FileChooserWindow()
-        if fcFilepath != None:
-            BackPDFs = fcFilepath
-            self.builder.get_object("l_backMatterPDFs").set_text("\n".join('{}'.format(s) for s in fcFilepath))
+        BackPDFs = self.fileChooser("Select one or more PDF(s) for BACK matter", 
+                filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
+                multiple = True)
+        if BackPDFs is not None:
+            self.BackPDFs = BackPDFs
+            selectBackPDFs.set_tooltip_text("\n".join('{}'.format(s) for s in BackPDFs))
         else:
-            BackPDFs = []
-            self.builder.get_object("l_backMatterPDFs").set_text("List of one or more PDF\nfiles will appear here.")
+            self.BackPDFs = None
+            selectBackPDFs.set_tooltip_text("")
             self.builder.get_object("btn_selectBackPDFs").set_sensitive(False)
             self.builder.get_object("c_inclBackMatter").set_active(False)
 
-    def onWatermarkPDFclicked(self, selectWatermarkPDF):
+    def onWatermarkPDFclicked(self, btn_selectWatermarkPDF):
         watermarks = self.fileChooser("Select Watermark PDF file", 
                 filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
                 multiple = False)
@@ -514,8 +535,10 @@ class PtxPrinterDialog:
             self.watermarks = watermarks[0]
             selectWatermarkPDF.set_tooltip_text(watermarks[0])
         else:
-            selectWatermarkPDF.set_tooltip_text("")
             self.watermarks = None
+            selectWatermarkPDF.set_tooltip_text("")
+            self.builder.get_object("btn_selectWatermarkPDF").set_sensitive(False)
+            self.builder.get_object("c_applyWatermark").set_active(False)
 
     def fileChooser(self, title, filters = None, multiple = True, folder = False):
         dialog = Gtk.FileChooserDialog(title, None,
@@ -545,7 +568,6 @@ class PtxPrinterDialog:
             fcFilepath = dialog.get_filenames()
         dialog.destroy()
         return fcFilepath
-
 
 class Info:
     _mappings = {

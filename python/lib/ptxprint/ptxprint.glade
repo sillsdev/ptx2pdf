@@ -525,79 +525,60 @@
   </object>
   <object class="GtkListStore" id="ls_digits">
     <columns>
-      <!-- column-name name -->
+      <!-- column-name digitscript -->
       <column type="gchararray"/>
-      <!-- column-name id -->
-      <column type="guint"/>
     </columns>
     <data>
       <row>
         <col id="0" translatable="yes">Default</col>
-        <col id="1">0</col>
       </row>
       <row>
         <col id="0" translatable="yes">Arabic-Hindi</col>
-        <col id="1">1</col>
       </row>
       <row>
         <col id="0" translatable="yes">Arabic-Farsi</col>
-        <col id="1">2</col>
       </row>
       <row>
         <col id="0" translatable="yes">Bengali</col>
-        <col id="1">3</col>
       </row>
       <row>
         <col id="0" translatable="yes">Burmese</col>
-        <col id="1">4</col>
       </row>
       <row>
         <col id="0" translatable="yes">Devanagari</col>
-        <col id="1">5</col>
       </row>
       <row>
         <col id="0" translatable="yes">Gujarati</col>
-        <col id="1">6</col>
       </row>
       <row>
         <col id="0" translatable="yes">Gurmukhi</col>
-        <col id="1">7</col>
       </row>
       <row>
         <col id="0" translatable="yes">Kannada</col>
-        <col id="1">8</col>
       </row>
       <row>
         <col id="0" translatable="yes">Khmer</col>
-        <col id="1">9</col>
       </row>
       <row>
         <col id="0" translatable="yes">Lao</col>
-        <col id="1">10</col>
       </row>
       <row>
         <col id="0" translatable="yes">Malayalam</col>
-        <col id="1">11</col>
       </row>
       <row>
         <col id="0" translatable="yes">Oriya</col>
-        <col id="1">12</col>
       </row>
       <row>
         <col id="0" translatable="yes">Tamil</col>
-        <col id="1">13</col>
       </row>
       <row>
         <col id="0" translatable="yes">Telugu</col>
-        <col id="1">14</col>
       </row>
       <row>
         <col id="0" translatable="yes">Thai</col>
-        <col id="1">15</col>
       </row>
       <row>
         <col id="0" translatable="yes">Tibetan</col>
-        <col id="1">16</col>
       </row>
     </data>
   </object>
@@ -1936,6 +1917,7 @@ for \c and \v:</property>
                                         <property name="popup_fixed_width">False</property>
                                         <property name="id_column">1</property>
                                         <property name="active_id">0</property>
+                                        <signal name="changed" handler="onScriptChanged" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
