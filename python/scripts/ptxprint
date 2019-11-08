@@ -40,7 +40,7 @@ mainw = ptxprint.PtxPrinterDialog(allprojects, args.paratext)
 if args.pid:
     mainw.set("cb_project", args.pid)
 
-def dojob(jobs, info, prjid, prjdir, tmpdir):
+def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
     donebooks = []
     for b in jobs:
         out = info.convertBook(b, tmpdir, prjdir)
@@ -55,7 +55,7 @@ def dojob(jobs, info, prjid, prjdir, tmpdir):
     if sys.platform == "linux":
         mdirs = args.macros or "/usr/lib/Paratext8/xetex/share/texmf-dist/tex/ptx2pdf:/usr/lib/Paratext9/xetex/share/texmf-dist/tex/ptx2pdf"
         os.putenv('TEXINPUTS', ".:" + mdirs)
-    ptxprint.runner.call(["xetex", outfname], cwd=tmpdir)
+    ptxprint.runner.call(["xetex", "--halt-on-error", outfname], cwd=tmpdir, logbuffer=logbuffer)
     print("cd {}; xetex {}".format(tmpdir, outfname))
 
 def doit(printer):
@@ -69,9 +69,9 @@ def doit(printer):
     tmpdir = os.path.join(prjdir, 'PrintDraft') if printer.get("c_printdraft") else args.directory
     jobs = printer.getBooks()
     if printer.get("c_combine"):
-        dojob(jobs, info, prjid, prjdir, tmpdir)
+        dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=printer.logbuffer)
     else:
         for j in jobs:
-            dojob([j], info, prjid, prjdir, tmpdir)
+            dojob([j], info, prjid, prjdir, tmpdir, logbuffer=printer.logbuffer)
 
 mainw.run(doit)

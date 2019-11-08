@@ -610,19 +610,6 @@
       </row>
     </data>
   </object>
-  <object class="GtkFileFilter" id="pdffilter">
-    <mime-types>
-      <mime-type>application/pdf</mime-type>
-    </mime-types>
-    <patterns>
-      <pattern>*.pdf</pattern>
-      <pattern>*.[Pp][Dd][Ff]</pattern>
-    </patterns>
-  </object>
-  <object class="GtkTextBuffer" id="tb_frontPDFs"/>
-  <object class="GtkEntryBuffer" id="tb_logging">
-    <property name="text" translatable="yes">The output log:</property>
-  </object>
   <object class="GtkDialog" id="ptxprint">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">PTXprint App</property>
@@ -4621,12 +4608,19 @@ TeX code can also be added.</property>
                       <placeholder/>
                     </child>
                     <child>
-                      <object class="GtkEntry" id="te_logging">
+                      <object class="GtkScrolledWindow">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="buffer">tb_logging</property>
-                        <property name="editable">False</property>
-                        <property name="has_frame">False</property>
+                        <property name="shadow_type">in</property>
+                        <child>
+                          <object class="GtkTextView" id="tv_logging">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="editable">False</property>
+                            <property name="accepts_tab">False</property>
+                            <signal name="size-allocate" handler="ontv_sizeallocate" swapped="no"/>
+                          </object>
+                        </child>
                       </object>
                       <packing>
                         <property name="expand">True</property>
@@ -4681,4 +4675,14 @@ TeX code can also be added.</property>
       </object>
     </child>
   </object>
+  <object class="GtkFileFilter" id="pdffilter">
+    <mime-types>
+      <mime-type>application/pdf</mime-type>
+    </mime-types>
+    <patterns>
+      <pattern>*.pdf</pattern>
+      <pattern>*.[Pp][Dd][Ff]</pattern>
+    </patterns>
+  </object>
+  <object class="GtkTextBuffer" id="tb_frontPDFs"/>
 </interface>

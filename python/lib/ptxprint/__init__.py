@@ -5,6 +5,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 import xml.etree.ElementTree as et
 from ptxprint.font import TTFont
+from ptxprint.runner import StreamTextBuffer
 import configparser
 
 # For future Reference on how Paratext treats this list:
@@ -126,6 +127,8 @@ class PtxPrinterDialog:
             Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
             Gtk.STOCK_OPEN, Gtk.ResponseType.OK)
 
+        self.logbuffer = StreamTextBuffer()
+        self.builder.get_object("tv_logging").set_buffer(self.logbuffer)
         self.mw = self.builder.get_object("ptxprint")
         self.projects = self.builder.get_object("ls_projects")
         self.settings_dir = settings_dir
@@ -540,6 +543,11 @@ class PtxPrinterDialog:
             self.builder.get_object("btn_selectWatermarkPDF").set_sensitive(False)
             self.builder.get_object("c_applyWatermark").set_active(False)
 
+    def ontv_sizeallocate(self, atv, dummy):
+        b = atv.get_buffer()
+        it = b.get_iter_at_offset(-1)
+        atv.scroll_to_iter(it, 0, False, 0, 0)
+
     def fileChooser(self, title, filters = None, multiple = True, folder = False):
         dialog = Gtk.FileChooserDialog(title, None,
             (Gtk.FileChooserAction.SELECT_FOLDER if folder else Gtk.FileChooserAction.OPEN),
@@ -951,3 +959,4 @@ class Info:
             except configparser.NoOptionError:
                 printer.set(self._mappings[k][0], self.ptsettings.dict.get(v, ""))
                 self.dict[k] = self.ptsettings.get(v, "")
+
