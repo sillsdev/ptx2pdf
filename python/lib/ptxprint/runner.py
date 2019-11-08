@@ -3,13 +3,7 @@ import sys, subprocess, os
 import xml.etree.ElementTree as et
 
 # Thank you to rho https://stackoverflow.com/questions/10514094/gobject-and-subprocess-popen-to-communicate-in-a-gtk-gui
-import fcntl
 from gi.repository import GObject, Gtk, Pango
-
-def unblock_fd(stream):
-    fd = stream.fileno()
-    fl = fcntl.fcntl(fd, fcntl.F_GETFL)
-    fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
 
 class StreamTextBuffer(Gtk.TextBuffer):
     def __init__(self):
@@ -40,6 +34,7 @@ class StreamTextBuffer(Gtk.TextBuffer):
         return True
 
     def add_heading(self, txt):
+        self.insert_at_cursor("\n")
         self.move_mark_by_name("currend", self.get_iter_at_offset(-1))
         self.insert_at_cursor(txt + "\n")
         end = self.get_iter_at_offset(-1)
@@ -48,6 +43,12 @@ class StreamTextBuffer(Gtk.TextBuffer):
 
 if sys.platform == "linux":
     import os
+    import fcntl
+
+    def unblock_fd(stream):
+        fd = stream.fileno()
+        fl = fcntl.fcntl(fd, fcntl.F_GETFL)
+        fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
 
     def checkoutput(*a, **kw):
         res = subprocess.check_output(*a, **kw).decode("utf-8")
@@ -81,6 +82,33 @@ if sys.platform == "linux":
 
 elif sys.platform == "win32":
     import winreg
+
+    def unlock_fd(fd):
+        # Constant could define globally but avoid polluting the name-space
+        # thanks to: https://stackoverflow.com/questions/34504970
+        import msvcrt
+
+        from ctypes import windll, byref, wintypes, WinError, POINTER
+        from ctypes.wintypes import HANDLE, DWORD, BOOL
+
+        LPDWORD = POINTER(DWORD)
+
+        PIPE_NOWAIT = wintypes.DWORD(0x00000001)
+
+        def pipe_no_wait(pipefd):
+            SetNamedPipeHandleState = windll.kernel32.SetNamedPipeHandleState
+            SetNamedPipeHandleState.argtypes = [HANDLE, LPDWORD, LPDWORD, LPDWORD]
+            SetNamedPipeHandleState.restype = BOOL
+
+            h = msvcrt.get_osfhandle(pipefd)
+
+            res = windll.kernel32.SetNamedPipeHandleState(h, byref(PIPE_NOWAIT), None, None)
+            if res == 0:
+                print(WinError())
+                return False
+            return True
+
+        return pipe_no_wait(fd)
 
     def openkey(path):
         return winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\\" + path.replace("/", "\\"))
