@@ -6,7 +6,7 @@
 \stylesheet{{{/ptxpath}/{project/id}/custom.sty}}
 %\stylesheet{{NestedStyles.sty}}
 
-\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.sty}} % override project stylesheet settings here
+{paper/ifusemodssty}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.sty}} % override project stylesheet settings here
 
 % Where to put these kinds of little files? In PrintDraft folder? 
 % Maybe we make ONE file and put all/any .sty tweaks in it (instead of multiple smaller files)  IS THAT WHAT NestedStyles.sty IS FOR??? Duh!
@@ -50,26 +50,16 @@
 \FontSizeUnit={paper/fontfactor:.6f}pt   % Q (from MP to MH): Can you explain what's happening here?
 
 %% Faces
-%\def\regular{{"Padauk Book/GR:;script=mymr;mapping=burmesedigits"}}
-%\def\bold{{"Padauk Book/GR/B:script=mymr;mapping=burmesedigits"}}
-%\def\italic{{"Padauk/GR/I:script=mymr;mapping=burmesedigits"}}
-%\def\bolditalic{{"Padauk/GR/BI:script=mymr;mapping=burmesedigits"}}
-
 \def\regular{{"{fontregular/name}:{document/script}{document/digitmapping}"}}
 \def\bold{{"{fontbold/name}:{document/script}{document/digitmapping}{fontbold/embolden}{fontbold/slant}"}}
 \def\italic{{"{fontitalic/name}:{document/script}{document/digitmapping}{fontitalic/embolden}{fontitalic/slant}"}}
 \def\bolditalic{{"{fontbolditalic/name}:{document/script}{document/digitmapping}{fontbolditalic/embolden}{fontbolditalic/slant}"}}
 
-%\def\regular{{"{fontregular/name}"}}
-%\def\bold{{"{fontbold/name}:{fontbold/embolden}{fontbold/slant}"}}
-%\def\italic{{"{fontitalic/name}:{fontitalic/embolden}{fontitalic/slant}"}}
-%\def\bolditalic{{"{fontbolditalic/name}:{fontbolditalic/embolden}{fontbolditalic/slant}"}}
-
 %%%%% Layout %%%%%
 \RTL{document/ifrtl}   % Use right-to-left layout mode?
 % Specify ISO 639-1 language code.
 % XeTeX will use ICU line break info (useful for scripts which do not use word spaces).
-% script is {document/script}
+% {document/script}
 
 {document/iflinebreakon}\XeTeXlinebreaklocale "{document/linebreaklocale}"
 % Introduce some stretchability (glue) at each potential break
@@ -86,7 +76,6 @@
 %%% Poetry - Hang Verse Numbers
 {document/hangpoetry}\sethook{{start}}{{q1}}{{\hangversenumber}}
 {document/hangpoetry}\sethook{{start}}{{q2}}{{\hangversenumber}}
-
 
 %%%%% Notes %%%%%
 
@@ -144,7 +133,7 @@
 % restore page break definition (if present in USFM stylesheet, it has been re-defined and will not work)
 \let\pb=\pagebreak
 
-\input "{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.tex"% adjust/override setup parameters here
+{paper/ifusemodstex}\input "{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.tex"% adjust/override setup parameters here
 
 %%%%% Hyphenation %%%%%
 %% Allocating and using a new language without any hyphenation rules defined effectively disables hyphenation.
@@ -156,6 +145,7 @@
 %%%%% Watermark PDF file %%%%%
 {paper/ifwatermark}\def\PageBorder{{"{paper/watermarkpdf}"}}  % and also pretty border PDFs etc.
 
+%%%%% Front Matter PDF file(s) get included here %%%%%
 {project/frontincludes}
 
 {document/toc}\GenerateTOC[{document/toctitle}]{{combined.toc}}
@@ -170,6 +160,7 @@
 \ptxfile{{PrintDraft/41MATprojid-draft.SFM}}
 \catcode`\%=14
 
+%%%%% Back Matter PDF file(s) get included here %%%%%
 {project/backincludes}
 
 \end

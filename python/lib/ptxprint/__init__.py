@@ -596,8 +596,10 @@ class Info:
         "project/ifinclbackpdf":    ("c_inclBackMatter", lambda w,v: "true" if v else "false"),
         "project/backincludes":     ("btn_selectBackPDFs", lambda w,v: "\n".join('\\includepdf{{"{}"}}'.format(re.sub(r"\\","/", s)) for s in w.BackPDFs) if w.BackPDFs is not None else ""),
         "project/useprintdraftfolder": ("c_useprintdraftfolder", lambda w,v :"true" if v else "false"),
-        "project/usechangesfile":   ("c_usePrintDraftChanges", lambda w,v :"true" if v else "false"),
         "project/processscript":    ("c_processScript", lambda w,v :"true" if v else "false"),
+        "project/usechangesfile":   ("c_usePrintDraftChanges", lambda w,v :"true" if v else "false"),
+        "paper/ifusemodstex":       ("c_useModsTex", lambda w,v: "" if v else "%"),
+        "paper/ifusemodssty":       ("c_useModsSty", lambda w,v: "" if v else "%"),
 
         "paper/height":             (None, lambda w,v: re.sub(r"^.*?,\s*(.+?)\s*(?:\(.*|$)", r"\1", w.get("cb_pagesize")) or "210mm"),
         "paper/width":              (None, lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", w.get("cb_pagesize")) or "148mm"),
