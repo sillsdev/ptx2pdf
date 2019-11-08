@@ -66,7 +66,7 @@ def doit(printer):
     config = info.createConfig(printer)
     with open(os.path.join(prjdir, "ptxprint.cfg"), "w") as outf:
         config.write(outf)
-    tmpdir = os.path.join(prjdir, 'PrintDraft') if printer.get("c_printdraft") else args.directory
+    tmpdir = os.path.join(prjdir, 'PrintDraft') if printer.get("c_useprintdraftfolder") else args.directory
     jobs = printer.getBooks()
     if printer.get("c_combine"):
         dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=printer.logbuffer)

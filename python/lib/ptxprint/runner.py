@@ -95,7 +95,7 @@ elif sys.platform == "win32":
 
     def unblock_fd(stream):
         PIPE_NOWAIT = wintypes.DWORD(0x00000001)
-        h = msvcrt.get_osfhandle(stream.fileno)
+        h = msvcrt.get_osfhandle(stream.fileno())
         res = windll.kernel32.SetNamedPipeHandleState(h, byref(PIPE_NOWAIT), None, None)
         if res == 0:
             print(WinError())
@@ -117,6 +117,7 @@ elif sys.platform == "win32":
     def call(*a, **kw):
         path = os.path.join(pt_bindir, "xetex", "bin", a[0][0]+".exe").replace("/", "\\")
         newa = [[path] + a[0][1:]] + list(a)[1:]
+        del kw['logbuffer'] # Temporary hack as a work-around. Remove later.
         if 'logbuffer' in kw:
             b = kw['logbuffer']
             del kw['logbuffer']

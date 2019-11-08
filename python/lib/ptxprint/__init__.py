@@ -23,7 +23,7 @@ _bookslist = """GEN|50 EXO|40 LEV|27 NUM|36 DEU|34 JOS|24 JDG|21 RUT|4 1SA|31 2S
         ZZZ|0 ZZZ|0 INT|0 CNC|0 GLO|0 TDX|0 NDX|0 DAG|14 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 LAO|1"""
 
 # xmlstarlet sel -t -m '//iso_15924_entry' -o '"' -v '@alpha_4_code' -o '" : "' -v '@name' -o '",' -n /usr/share/xml/iso-codes/iso_15924.xml
-_allscripts = { "Zyyy" : "Default (Auto-detect script)", "Adlm" : "Adlam", "Afak" : "Afaka", "Aghb" : "Caucasian Albanian", "Ahom" : "Ahom, Tai Ahom", 
+_allscripts = { "Zyyy" : "Default", "Adlm" : "Adlam", "Afak" : "Afaka", "Aghb" : "Caucasian Albanian", "Ahom" : "Ahom, Tai Ahom", 
     "Arab" : "Arabic", "Aran" : "Arabic (Nastaliq)", "Armi" : "Imperial Aramaic", "Armn" : "Armenian", "Avst" : "Avestan", "Bali" : "Balinese",
     "Bamu" : "Bamum", "Bass" : "Bassa Vah", "Batk" : "Batak", "Beng" : "Bengali", "Bhks" : "Bhaiksuki", "Blis" : "Blissymbols", "Bopo" : "Bopomofo",
     "Brah" : "Brahmi", "Brai" : "Braille", "Bugi" : "Buginese", "Buhd" : "Buhid", "Cakm" : "Chakma", "Cans" : "Canadian Aboriginal Syllabics",
@@ -57,7 +57,7 @@ _allscripts = { "Zyyy" : "Default (Auto-detect script)", "Adlm" : "Adlam", "Afak
     "Tglg" : "Tagalog (Baybayin, Alibata)", "Thaa" : "Thaana", "Thai" : "Thai", "Tibt" : "Tibetan", "Tirh" : "Tirhuta", "Ugar" : "Ugaritic",
     "Vaii" : "Vai", "Wara" : "Warang Citi (Varang Kshiti)", "Wole" : "Woleai", "Xpeo" : "Old Persian", "Yiii" : "Yi", "Zzzz" : "Uncoded script"
 }
-_alldigits = [ "Default (0123456789)", "Arabic-Farsi", "Arabic-Hindi", "Bengali", "Burmese", "Devanagari", "Gujarati", "Gurmukhi", "Kannada", 
+_alldigits = [ "Default", "Arabic-Farsi", "Arabic-Hindi", "Bengali", "Burmese", "Devanagari", "Gujarati", "Gurmukhi", "Kannada", 
     "Khmer", "Lao", "Malayalam", "Oriya", "Tamil", "Telugu", "Thai", "Tibetan", "----", "Gondi-Gunjala", "Gondi-Masaram", "----", "Adlam", 
     "Ahom", "Balinese", "Bhaiksuki", "Brahmi", "Chakma", "Cham", "Gurmukhi", "Hanifi-Rohingya", "Javanese", "Kayah-Li", "Khudawadi", "Lepcha", 
     "Limbu", "Meetei-Mayek", "Modi", "Mongolian", "Mro", "Myanmar", "Myanmar-Shan", "Myanmar-Tai-Laing", "New-Tai-Lue", "Newa", "Nko", 
@@ -178,6 +178,8 @@ class PtxPrinterDialog:
             v = w.get_active()
         elif wid.startswith("s_"):
             v = w.get_value()
+        elif wid.startswith("btn_"):
+            v = w.get_tooltip_text()
         return v
 
     def set(self, wid, value):
@@ -187,11 +189,12 @@ class PtxPrinterDialog:
             e = w.get_child()
             if e is not None and isinstance(e, Gtk.Entry):
                 e.set_text(value)
+                # e.emit("changed")
             else:
                 for i, v in enumerate(model):
                     if v[w.get_id_column()] == value:
                         w.set_active_id(value)
-                        w.emit("changed")
+                        # w.emit("changed")
                         break
         elif wid.startswith("t_"):
             w.set_text(value)
@@ -202,6 +205,8 @@ class PtxPrinterDialog:
             w.set_active(value)
         elif wid.startswith("s_"):
             w.set_value(value)
+        elif wid.startswith("btn_"):
+            w.set_tooltip_text(value)
 
     def getBooks(self):
         if self.get('c_onebook'):
@@ -286,6 +291,7 @@ class PtxPrinterDialog:
 
     def onColumnsChanged(self, cb_Columns):
         status = self.get("cb_columns") == "Double"
+        print("CB Column Staus: ", status)
         for c in ("c_verticalrule", "l_gutterWidth", "s_colgutterfactor"):
             self.builder.get_object(c).set_sensitive(status)
 
@@ -306,15 +312,12 @@ class PtxPrinterDialog:
 
     def onInclFrontMatterChanged(self, c_inclFrontMatter):
         self.builder.get_object("btn_selectFrontPDFs").set_sensitive(self.get("c_inclFrontMatter"))
-        # self.builder.get_object("l_frontMatterPDFs").set_sensitive(self.get("c_inclFrontMatter"))
 
     def onInclBackMatterChanged(self, c_inclBackMatter):
         self.builder.get_object("btn_selectBackPDFs").set_sensitive(self.get("c_inclBackMatter"))
-        # self.builder.get_object("l_backMatterPDFs").set_sensitive(self.get("c_inclBackMatter"))
             
     def onApplyWatermarkChanged(self, c_applyWatermark):
         self.builder.get_object("btn_selectWatermarkPDF").set_sensitive(self.get("c_applyWatermark"))
-        # self.builder.get_object("l_watermarkPDF").set_sensitive(self.get("c_applyWatermark"))
     
     def onAutoTocChanged(self, c_autoToC):
         atoc = self.builder.get_object("t_tocTitle")
@@ -385,6 +388,7 @@ class PtxPrinterDialog:
         mbs_grid = self.builder.get_object("mbs_grid")
         mbs_grid.forall(mbs_grid.remove)
         lsbooks = self.builder.get_object("ls_books")
+        bl = self.builder.get_object("t_booklist")
         self.alltoggles = []
         for i, b in enumerate(lsbooks):
             tbox = Gtk.ToggleButton(b[0])
@@ -394,8 +398,9 @@ class PtxPrinterDialog:
         response = dia.run()
         if response == Gtk.ResponseType.OK:
             self.booklist = [b.get_label() for b in self.alltoggles if b.get_active()]
-            t_booklist = " ".join(self.booklist)
-        dia.hide()  
+            bl.set_text(" ".join(b for b in self.booklist))
+        dia.hide()
+        # bl.set_text("MAT MRK LUK JHN")
 
     def onClickmbs_all(self, btn):
         for b in self.alltoggles:
@@ -497,24 +502,16 @@ class PtxPrinterDialog:
                 filters = {"Executable Scripts": {"patterns": "*.bat", "mime": "application/bat"}},
                 # ),("*.sh", "mime": "application/x-sh")
                 multiple = False)
-        if FrontPDFs is not None:
-            self.FrontPDFs = FrontPDFs
-            selectFrontPDFs.set_tooltip_text("\n".join('{}'.format(s) for s in FrontPDFs))
+        if CustomScript is not None:
+            self.CustomScript = CustomScript
+            btn_selectScript.set_tooltip_text("\n".join('{}'.format(s) for s in CustomScript))
         else:
-            self.FrontPDFs = None
-            selectFrontPDFs.set_tooltip_text("")
-            self.builder.get_object("btn_selectFrontPDFs").set_sensitive(False)
-            self.builder.get_object("c_inclFrontMatter").set_active(False)
-
-
-        win = FileChooserWindow()
-        if fcFilepath != None:
-            self.builder.get_object("l_script2process").set_text("Sorry, this hasn't been implemented yet!")
-            # self.builder.get_object("l_script2process").set_text("\n".join('{}'.format(s) for s in path))
-        else:
+            self.CustomScript = None
+            btn_selectScript.set_tooltip_text("")
+            self.builder.get_object("btn_selectScript").set_sensitive(False)
+            self.builder.get_object("c_processScript").set_active(False)
             for c in ("btn_selectScript", "c_processScriptBefore", "c_processScriptAfter", "l_script2process"):
                 self.builder.get_object(c).set_sensitive(False)
-            self.builder.get_object("c_processScript").set_active(False)
 
     def onFrontPDFsClicked(self, btn_selectFrontPDFs):
         FrontPDFs = self.fileChooser("Select one or more PDF(s) for FRONT matter", 
@@ -522,10 +519,10 @@ class PtxPrinterDialog:
                 multiple = True)
         if FrontPDFs is not None:
             self.FrontPDFs = FrontPDFs
-            selectFrontPDFs.set_tooltip_text("\n".join('{}'.format(s) for s in FrontPDFs))
+            btn_selectFrontPDFs.set_tooltip_text("\n".join('{}'.format(s) for s in FrontPDFs))
         else:
             self.FrontPDFs = None
-            selectFrontPDFs.set_tooltip_text("")
+            btn_selectFrontPDFs.set_tooltip_text("")
             self.builder.get_object("btn_selectFrontPDFs").set_sensitive(False)
             self.builder.get_object("c_inclFrontMatter").set_active(False)
 
@@ -535,10 +532,10 @@ class PtxPrinterDialog:
                 multiple = True)
         if BackPDFs is not None:
             self.BackPDFs = BackPDFs
-            selectBackPDFs.set_tooltip_text("\n".join('{}'.format(s) for s in BackPDFs))
+            btn_selectBackPDFs.set_tooltip_text("\n".join('{}'.format(s) for s in BackPDFs))
         else:
             self.BackPDFs = None
-            selectBackPDFs.set_tooltip_text("")
+            btn_selectBackPDFs.set_tooltip_text("")
             self.builder.get_object("btn_selectBackPDFs").set_sensitive(False)
             self.builder.get_object("c_inclBackMatter").set_active(False)
 
@@ -548,10 +545,10 @@ class PtxPrinterDialog:
                 multiple = False)
         if watermarks is not None:
             self.watermarks = watermarks[0]
-            selectWatermarkPDF.set_tooltip_text(watermarks[0])
+            btn_selectWatermarkPDF.set_tooltip_text(watermarks[0])
         else:
             self.watermarks = None
-            selectWatermarkPDF.set_tooltip_text("")
+            btn_selectWatermarkPDF.set_tooltip_text("")
             self.builder.get_object("btn_selectWatermarkPDF").set_sensitive(False)
             self.builder.get_object("c_applyWatermark").set_active(False)
 
@@ -593,19 +590,21 @@ class Info:
     _mappings = {
         "project/id":               (None, lambda w,v: w.get("cb_project")),
         "project/book":             ("cb_book", None),
-        # "project/frontincludes":    (None, lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s) for s in w.builder.get_object("tb_frontPDFs").get_text().split("\n"))),
-        # "project/watermarkpdf":     (None, lambda w,v: re.sub(r"\\","/", w.watermarks) if w.watermarks is not None else "A5-Draft.pdf"),
-        "project/frontincludes":    (None, lambda w,v: "\n".join('\\includepdf{{"{}"}}'.format(s)) for s in FrontPDFs if FrontPDFs is not None else ""),
-        "project/backincludes":     (None, lambda w,v: "\n".join('\\includepdf{{"{}"}}'.format(re.sub(r"\\","/",s)) for s in BackPDFs)),
-        "project/usechangesfile":   ("usePrintDraftChanges", lambda w,v :"true" if v else "false"),
+        "project/booklist":         ("t_booklist", lambda w,v: v or ""),
+        "project/ifinclfrontpdf":   ("c_inclFrontMatter", lambda w,v: "true" if v else "false"),
+        "project/frontincludes":    ("btn_selectFrontPDFs", lambda w,v: "\n".join('\\includepdf{{"{}"}}'.format(re.sub(r"\\","/", s)) for s in w.FrontPDFs) if w.FrontPDFs is not None else ""),
+        "project/ifinclbackpdf":    ("c_inclBackMatter", lambda w,v: "true" if v else "false"),
+        "project/backincludes":     ("btn_selectBackPDFs", lambda w,v: "\n".join('\\includepdf{{"{}"}}'.format(re.sub(r"\\","/", s)) for s in w.BackPDFs) if w.BackPDFs is not None else ""),
+        "project/useprintdraftfolder": ("c_useprintdraftfolder", lambda w,v :"true" if v else "false"),
+        "project/usechangesfile":   ("c_usePrintDraftChanges", lambda w,v :"true" if v else "false"),
         "project/processscript":    ("c_processScript", lambda w,v :"true" if v else "false"),
 
         "paper/height":             (None, lambda w,v: re.sub(r"^.*?,\s*(.+?)\s*(?:\(.*|$)", r"\1", w.get("cb_pagesize")) or "210mm"),
         "paper/width":              (None, lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", w.get("cb_pagesize")) or "148mm"),
         "paper/pagesize":           ("cb_pagesize", None),
-        "paper/ifwatermark":          ("c_applyWatermark", lambda w,v: "" if v else "%"),
-        "paper/watermarkpdf":       (None, lambda w,v: re.sub(r"\\","/", w.watermarks) if w.watermarks is not None else "A5-Draft.pdf"),
-        "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),
+        "paper/ifwatermark":        ("c_applyWatermark", lambda w,v: "" if v else "%"),
+        "paper/watermarkpdf":       ("btn_selectWatermarkPDF", lambda w,v: re.sub(r"\\","/", w.watermarks) if w.watermarks is not None else "A5-Draft.pdf"),
+        "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),  
         "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v else "false"),
         "paper/margins":            ("s_margins", lambda w,v: round(v) or "14"),
         "paper/topmarginfactor":    ("s_topmarginfactor", lambda w,v: round(v, 2) or "1.15"),
@@ -613,7 +612,6 @@ class Info:
         "paper/sidemarginfactor":   ("s_sidemarginfactor", lambda w,v: round(v, 2) or "1.00"),
         "paper/ifaddgutter":        ("c_pagegutter", lambda w,v :"true" if v else "false"),
         "paper/gutter":             ("s_pagegutter", lambda w,v: round(v) or "14"),
-        #"paper/columns":            ("cb_columns", lambda w,v: "1" if v == "Single" else "2"),
         "paper/columns":            ("cb_columns", lambda w,v: w.builder.get_object('cb_columns').get_active_id()),
         "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
 
@@ -621,6 +619,9 @@ class Info:
 
         "document/toc":             ("c_autoToC", lambda w,v: "" if v else "%"),
         "document/toctitle":        ("t_tocTitle", lambda w,v: v or ""),
+        "document/usetoc1":         ("c_usetoc1", lambda w,v :"true" if v else "false"),
+        "document/usetoc2":         ("c_usetoc2", lambda w,v :"true" if v else "false"),
+        "document/usetoc3":         ("c_usetoc3", lambda w,v :"true" if v else "false"),
         "document/chapfrom":        ("cb_chapfrom", lambda w,v: w.builder.get_object("cb_chapfrom").get_active_id()),
         "document/chapto":          ("cb_chapto", lambda w,v: w.builder.get_object("cb_chapto").get_active_id()),
         "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: round(v) or "15"),
@@ -949,7 +950,7 @@ class Info:
                     val = None
                     if v[0] is None:
                         continue
-                    if v[0].startswith("cb_") or v[0].startswith("t_") or v[0].startswith("f_"):
+                    if v[0].startswith("cb_") or v[0].startswith("t_") or v[0].startswith("f_") or v[0].startswith("btn_"):
                         val = config.get(sect, opt)
                     if v[0].startswith("s_"):
                         val = float(config.get(sect, opt))

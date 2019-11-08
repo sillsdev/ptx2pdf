@@ -55,15 +55,15 @@
 %\def\italic{{"Padauk/GR/I:script=mymr;mapping=burmesedigits"}}
 %\def\bolditalic{{"Padauk/GR/BI:script=mymr;mapping=burmesedigits"}}
 
-%\def\regular{{"{fontregular/name}{document/digitmapping}"}}
-%\def\bold{{"{fontbold/name}:{document/digitmapping}{fontbold/embolden}{fontbold/slant}"}}
-%\def\italic{{"{fontitalic/name}:{document/digitmapping}{fontitalic/embolden}{fontitalic/slant}"}}
-%\def\bolditalic{{"{fontbolditalic/name}:{document/digitmapping}{fontbolditalic/embolden}{fontbolditalic/slant}"}}
+\def\regular{{"{fontregular/name}:{document/script}{document/digitmapping}"}}
+\def\bold{{"{fontbold/name}:{document/script}{document/digitmapping}{fontbold/embolden}{fontbold/slant}"}}
+\def\italic{{"{fontitalic/name}:{document/script}{document/digitmapping}{fontitalic/embolden}{fontitalic/slant}"}}
+\def\bolditalic{{"{fontbolditalic/name}:{document/script}{document/digitmapping}{fontbolditalic/embolden}{fontbolditalic/slant}"}}
 
-\def\regular{{"{fontregular/name}"}}
-\def\bold{{"{fontbold/name}:{fontbold/embolden}{fontbold/slant}"}}
-\def\italic{{"{fontitalic/name}:{fontitalic/embolden}{fontitalic/slant}"}}
-\def\bolditalic{{"{fontbolditalic/name}:{fontbolditalic/embolden}{fontbolditalic/slant}"}}
+%\def\regular{{"{fontregular/name}"}}
+%\def\bold{{"{fontbold/name}:{fontbold/embolden}{fontbold/slant}"}}
+%\def\italic{{"{fontitalic/name}:{fontitalic/embolden}{fontitalic/slant}"}}
+%\def\bolditalic{{"{fontbolditalic/name}:{fontbolditalic/embolden}{fontbolditalic/slant}"}}
 
 %%%%% Layout %%%%%
 \RTL{document/ifrtl}   % Use right-to-left layout mode?
@@ -153,7 +153,7 @@
 % \language\printDraftLanguage
 \hyphenpenalty=10000
 
-% Where to put these kinds of files? 
+%%%%% Watermark PDF file %%%%%
 {paper/ifwatermark}\def\PageBorder{{"{paper/watermarkpdf}"}}  % and also pretty border PDFs etc.
 
 {project/frontincludes}

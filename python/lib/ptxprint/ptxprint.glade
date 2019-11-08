@@ -855,7 +855,7 @@
                                           <placeholder/>
                                         </child>
                                         <child>
-                                          <object class="GtkCheckButton" id="c_printdraft">
+                                          <object class="GtkCheckButton" id="c_useprintdraftfolder">
                                             <property name="label" translatable="yes">Use Paratext Project's
 existing PrintDraft Folder</property>
                                             <property name="visible">True</property>
@@ -887,7 +887,6 @@ existing PrintDraft Folder</property>
                                         <property name="spacing">6</property>
                                         <child>
                                           <object class="GtkComboBox" id="cb_book">
-                                            <property name="name">cb_onebook</property>
                                             <property name="width_request">160</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
@@ -993,7 +992,6 @@ existing PrintDraft Folder</property>
                                         <property name="spacing">12</property>
                                         <child>
                                           <object class="GtkEntry" id="t_booklist">
-                                            <property name="name">t_books</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="editable">False</property>
@@ -1904,6 +1902,10 @@ for \c and \v:</property>
                                         <property name="width_request">150</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">In most cases XeTeX can auto-detect
+the appropriate script, so leave this
+set as "Default" unless there are
+script-specific rendering issues.</property>
                                         <property name="halign">start</property>
                                         <property name="margin_left">6</property>
                                         <property name="model">ls_scripts</property>
@@ -4026,18 +4028,6 @@ are processed</property>
                                     <property name="top_attach">1</property>
                                   </packing>
                                 </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
                               </object>
                             </child>
                           </object>
@@ -4221,15 +4211,6 @@ file is selected, then these will appear in alphabetical order.</property>
                                     <property name="left_attach">2</property>
                                     <property name="top_attach">1</property>
                                   </packing>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
                                 </child>
                               </object>
                             </child>
