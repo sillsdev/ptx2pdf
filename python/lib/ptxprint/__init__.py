@@ -309,15 +309,15 @@ class PtxPrinterDialog:
 
     def onInclFrontMatterChanged(self, c_inclFrontMatter):
         self.builder.get_object("btn_selectFrontPDFs").set_sensitive(self.get("c_inclFrontMatter"))
-        self.builder.get_object("l_frontMatterPDFs").set_sensitive(self.get("c_inclFrontMatter"))
+        # self.builder.get_object("l_frontMatterPDFs").set_sensitive(self.get("c_inclFrontMatter"))
 
     def onInclBackMatterChanged(self, c_inclBackMatter):
         self.builder.get_object("btn_selectBackPDFs").set_sensitive(self.get("c_inclBackMatter"))
-        self.builder.get_object("l_backMatterPDFs").set_sensitive(self.get("c_inclBackMatter"))
+        # self.builder.get_object("l_backMatterPDFs").set_sensitive(self.get("c_inclBackMatter"))
             
     def onApplyWatermarkChanged(self, c_applyWatermark):
         self.builder.get_object("btn_selectWatermarkPDF").set_sensitive(self.get("c_applyWatermark"))
-        self.builder.get_object("l_watermarkPDF").set_sensitive(self.get("c_applyWatermark"))
+        # self.builder.get_object("l_watermarkPDF").set_sensitive(self.get("c_applyWatermark"))
     
     def onAutoTocChanged(self, c_autoToC):
         atoc = self.builder.get_object("t_tocTitle")
@@ -506,14 +506,15 @@ class PtxPrinterDialog:
             os.startfile(modsstyfile)
 
     def onFrontPDFsClicked(self, btn_selectFrontPDFs):
-        global FrontPDFs
-        win = FileChooserWindow()
-        if fcFilepath != None:
-            FrontPDFs = fcFilepath
-            self.builder.get_object("l_frontMatterPDFs").set_text("\n".join('{}'.format(s) for s in fcFilepath))
+        FrontPDFs = self.fileChooser("Select one or more PDF(s) for FRONT matter", 
+                filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
+                multiple = True)
+        if FrontPDFs is not None:
+            self.FrontPDFs = FrontPDFs
+            selectFrontPDFs.set_tooltip_text("\n".join('{}'.format(s) for s in FrontPDFs))
         else:
-            FrontPDFs = []
-            fpdfbuff.set_text("List of one or more PDF\nfiles will appear here.")
+            self.FrontPDFs = None
+            selectFrontPDFs.set_tooltip_text("")
             self.builder.get_object("btn_selectFrontPDFs").set_sensitive(False)
             self.builder.get_object("c_inclFrontMatter").set_active(False)
 
