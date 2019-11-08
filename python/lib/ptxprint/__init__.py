@@ -520,6 +520,11 @@ class PtxPrinterDialog:
             selectWatermarkPDF.set_tooltip_text("")
             self.watermarks = None
 
+    def ontv_sizeallocate(self, atv, dummy):
+        b = atv.get_buffer()
+        it = b.get_iter_at_offset(-1)
+        atv.scroll_to_iter(it, 0, False, 0, 0)
+
     def fileChooser(self, title, filters = None, multiple = True, folder = False):
         dialog = Gtk.FileChooserDialog(title, None,
             (Gtk.FileChooserAction.SELECT_FOLDER if folder else Gtk.FileChooserAction.OPEN),

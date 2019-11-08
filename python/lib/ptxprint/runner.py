@@ -4,7 +4,7 @@ import xml.etree.ElementTree as et
 
 # Thank you to rho https://stackoverflow.com/questions/10514094/gobject-and-subprocess-popen-to-communicate-in-a-gtk-gui
 import fcntl
-from gi.repository import GObject, Gtk
+from gi.repository import GObject, Gtk, Pango
 
 def unblock_fd(stream):
     fd = stream.fileno()
@@ -16,6 +16,8 @@ class StreamTextBuffer(Gtk.TextBuffer):
         super(StreamTextBuffer, self).__init__()
         self.IO_WATCH_ID = []
         self.proc = None
+        self.create_tag("bold", weight=Pango.Weight.BOLD)
+        self.create_mark("currend", self.get_iter_at_offset(0), True)
 
     def bind_subprocess(self, proc):
         if len(self.IO_WATCH_ID):
@@ -37,6 +39,12 @@ class StreamTextBuffer(Gtk.TextBuffer):
         self.insert_at_cursor(stream.read())
         return True
 
+    def add_heading(self, txt):
+        self.move_mark_by_name("currend", self.get_iter_at_offset(-1))
+        self.insert_at_cursor(txt + "\n")
+        end = self.get_iter_at_offset(-1)
+        self.apply_tag_by_name("bold", self.get_iter_at_mark(self.get_mark("currend")), end)
+
 
 if sys.platform == "linux":
     import os
@@ -49,6 +57,7 @@ if sys.platform == "linux":
         if 'logbuffer' in kw:
             b = kw['logbuffer']
             del kw['logbuffer']
+            b.add_heading("Execute: " + " ".join(a[0]))
             p = subprocess.Popen(*a, stdout = subprocess.PIPE, stderr = subprocess.PIPE,
                                  universal_newlines = True, encoding="utf-8", errors="backslashreplace", **kw)
             b.bind_subprocess(p)
@@ -91,8 +100,9 @@ elif sys.platform == "win32":
         if 'logbuffer' in kw:
             b = kw['logbuffer']
             del kw['logbuffer']
+            b.add_heading("Execute: " + " ".join(a[0]))
             p = subprocess.Popen(*newa, stdout = subprocess.PIPE, stderr = subprocess.PIPE,
-                                 universal_newlines = True, **kw)
+                                 universal_newlines = True, encoding="utf-8", errors="backslashreplace", **kw)
             b.bind_subprocess(p)
             return None
         else:
