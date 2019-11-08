@@ -2,6 +2,42 @@
 import sys, subprocess, os
 import xml.etree.ElementTree as et
 
+# Thank you to rho https://stackoverflow.com/questions/10514094/gobject-and-subprocess-popen-to-communicate-in-a-gtk-gui
+import fcntl
+from gi.repository import GObject, Gtk
+
+def unblock_fd(stream):
+    fd = stream.fileno()
+    fl = fcntl.fcntl(fd, fcntl.F_GETFL)
+    fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
+
+class StreamTextBuffer(Gtk.TextBuffer):
+    def __init__(self):
+        super(StreamTextBuffer, self).__init__()
+        self.IO_WATCH_ID = []
+        self.proc = None
+
+    def bind_subprocess(self, proc):
+        if len(self.IO_WATCH_ID):
+            for id_ in self.IO_WATCH_ID:
+                GObject.source_remove(id_)
+            if self.proc.returncode is None:
+                self.proc.terminate()
+            self.proc = None
+        self.IO_WATCH_ID = []
+        for p in (proc.stdout, proc.stderr):
+            unblock_fd(p)
+            self.IO_WATCH_ID.append(GObject.io_add_watch(
+                    channel = p, priority_ = GObject.IO_IN,
+                    condition = self.buffer_update))
+        self.proc = proc
+        return self.IO_WATCH_ID
+
+    def buffer_update(self, stream, condition):
+        self.insert_at_cursor(stream.read())
+        return True
+
+
 if sys.platform == "linux":
     import os
 
@@ -10,8 +46,16 @@ if sys.platform == "linux":
         return res
 
     def call(*a, **kw):
-        res = subprocess.call(*a, **kw)
-        return res
+        if 'logbuffer' in kw:
+            b = kw['logbuffer']
+            del kw['logbuffer']
+            p = subprocess.Popen(*a, stdout = subprocess.PIPE, stderr = subprocess.PIPE,
+                                 universal_newlines = True, encoding="utf-8", errors="backslashreplace", **kw)
+            b.bind_subprocess(p)
+            return None
+        else:
+            res = subprocess.call(*a, **kw)
+            return res
 
     def openkey(path):
         basepath = os.path.expanduser("~/.config/paratext/registry/LocalMachine/software")
@@ -44,8 +88,16 @@ elif sys.platform == "win32":
     def call(*a, **kw):
         path = os.path.join(pt_bindir, "xetex", "bin", a[0][0]+".exe").replace("/", "\\")
         newa = [[path] + a[0][1:]] + list(a)[1:]
-        res = subprocess.call(*newa, **kw)
-        return res
+        if 'logbuffer' in kw:
+            b = kw['logbuffer']
+            del kw['logbuffer']
+            p = subprocess.Popen(*newa, stdout = subprocess.PIPE, stderr = subprocess.PIPE,
+                                 universal_newlines = True, **kw)
+            b.bind_subprocess(p)
+            return None
+        else:
+            res = subprocess.call(*newa, **kw)
+            return res
 
 ptob = openkey("Paratext/8")
 ptv = queryvalue(ptob, "ParatextVersion")

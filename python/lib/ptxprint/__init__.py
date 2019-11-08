@@ -5,6 +5,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 import xml.etree.ElementTree as et
 from ptxprint.font import TTFont
+from ptxprint.runner import StreamTextBuffer
 import configparser
 
 # For future Reference on how Paratext treats this list:
@@ -113,6 +114,8 @@ class PtxPrinterDialog:
             Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
             Gtk.STOCK_OPEN, Gtk.ResponseType.OK)
 
+        self.logbuffer = StreamTextBuffer()
+        self.builder.get_object("tv_logging").set_buffer(self.logbuffer)
         self.mw = self.builder.get_object("ptxprint")
         self.projects = self.builder.get_object("ls_projects")
         self.settings_dir = settings_dir
@@ -929,3 +932,4 @@ class Info:
             except configparser.NoOptionError:
                 printer.set(self._mappings[k][0], self.ptsettings.dict.get(v, ""))
                 self.dict[k] = self.ptsettings.get(v, "")
+
