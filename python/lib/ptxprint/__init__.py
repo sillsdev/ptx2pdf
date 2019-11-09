@@ -102,6 +102,7 @@ class PtxPrinterDialog:
         self.addCR("cb_chapfrom", 0)
         self.addCR("cb_chapto", 0)
         self.addCR("cb_blendedXrefCaller", 0)
+        self.addCR("cb_glossaryMarkupStyle", 0)
 
         scripts = self.builder.get_object("ls_scripts")
         scripts.clear()
@@ -639,11 +640,11 @@ class Info:
         "document/colbalancing":    ("cb_colbalancing", lambda w,v: w.builder.get_object('cb_colbalancing').get_active_id()),
         "document/ifrtl":           ("c_rtl", lambda w,v :"true" if v else "false"),
         "document/iflinebreakon":   ("c_linebreakon", lambda w,v: "" if v else "%"),
+        "document/linebreaklocale": ("t_linebreaklocale", lambda w,v: v or ""),
         "document/script":          ("cb_script", lambda w,v: ";script="+w.builder.get_object('cb_script').get_active_id().lower() if w.builder.get_object('cb_script').get_active_id() != "Zyyy" else ""),
         "document/digitmapping":    ("cb_digits", lambda w,v: ";mapping="+v.lower()+"digits" if v != "Default" else ""),
-        "document/linebreaklocale": ("t_linebreaklocale", lambda w,v: v or ""),
         "document/ch1pagebreak":    ("c_ch1pagebreak", lambda w,v: "true" if v else "false"),
-        "document/marginalverses":  ("c_marginalverses", lambda w,v: "true" if v else "false"),
+        # "document/marginalverses":  ("c_marginalverses", lambda w,v: "true" if v else "false"),
         "document/ifomitchapternum":  ("c_omitchapternumber", lambda w,v: "true" if v else "false"),
         "document/ifomitallchapters": ("c_omitchapternumber", lambda w,v: "" if v else "%"),
         "document/ifomitverseone":  ("c_omitverseone", lambda w,v: "true" if v else "false"),
@@ -656,6 +657,7 @@ class Info:
         "document/iffighiderefs":   ("c_fighiderefs", lambda w,v :"true" if v else "false"),
         "document/ifusepiclist":    ("c_usePicList", lambda w,v :"true" if v else "false"),
         "document/spacecntxtlztn":  ("cb_spaceCntxtlztn", lambda w,v: "0" if v == "None" else "1" if v == "Some" else "2"),
+        "document/glossarymarkupstyle":  ("cb_glossaryMarkupStyle", lambda w,v: w.builder.get_object("cb_glossaryMarkupStyle").get_active_id()),
         "document/hangpoetry":      ("c_hangpoetry", lambda w,v: "" if v else "%"),
         "document/preventorphans":  ("c_preventorphans", lambda w,v: "true" if v else "false"),
         "document/preventwidows":   ("c_preventwidows", lambda w,v: "true" if v else "false"),
@@ -723,7 +725,19 @@ class Info:
         "notes/xrcallers": "crossrefs",
         "notes/fncallers": "footnotes"
     }
-
+    _glossarymarkup = {
+        "None":                    r"\1",
+        "format as bold":          r"\\bd \1\\bd*",
+        "format as italics":       r"\\it \1\\it*",
+        "format as bold italics":  r"\\bdit \1\\bdit*",
+        "format with emphasis":    r"\\em \1\\em*",
+        "bottom ⸤half⸥ brackets":  r"\\u2E24\1\\u2E25", # Question for MH - using this option makes it crash with an encoding issue. Help!
+        "star *before word":       r"*\1",
+        "star after* word":        r"\1*",
+        "circumflex ^before word": r"^\1",
+        "circumflex after^ word":  r"\1^"
+    }
+        
     def __init__(self, printer, path, ptsettings=None):
         self.ptsettings = ptsettings
         self.changes = None
@@ -796,7 +810,7 @@ class Info:
     def convertBook(self, bk, outdir, prjdir):
         if self.ptsettings is None:
             self.ptsettings = ParatextSettings(prjdir)
-        if self.changes is None and self.dict['project/usechangesfile']:  # TO-DO: check that this is doing what it should 
+        if self.changes is None and self.dict['project/usechangesfile']:
             self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'))
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
@@ -862,12 +876,10 @@ class Info:
             if last < int(chaps.get(bk)):
                 self.localChanges.append((None, regex.compile(r"\\c {} ?\r?\n.+".format(last+1), flags=regex.S), ""))
             
-        # Glossary Word markup: We always want to strip out the 2nd word (which links to the Glossary book)
-        # BUT how to best mark up the actual glossary word for user? Give user some good options in the UI.
-        if True: 
-        #	Remove the second half of the \w word-in-text|glossary-form-of-word\w*  Should we mark ⸤glossary⸥ words like this?
-            # self.localChanges.append((None, regex.compile(r"\\w (.+?)(\|.+?)?\\w\*", flags=regex.M), r"\u2E24\1\u2E25"))   # Drop 2nd half of Glossary words
-            self.localChanges.append((None, regex.compile(r"\\w (.+?)(\|.+?)?\\w\*", flags=regex.M), r"\\bd \1\\bd* "))   # Drop 2nd half of Glossary words
+        # Glossary Word markup: Remove the second half of the \w word|glossary-form\w* and apply chosen glossary markup
+        v = printer.get("cb_glossaryMarkupStyle")
+        gloStyle = self._glossarymarkup.get(v, v)
+        self.localChanges.append((None, regex.compile(r"\\w (.+?)(\|.+?)?\\w\*", flags=regex.M), gloStyle))
         
         if not printer.get("c_includefigs"):
             self.localChanges.append((None, regex.compile(r"\\fig .*?\\fig\*", flags=regex.M), ""))             # Drop ALL Figures

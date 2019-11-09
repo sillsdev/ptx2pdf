@@ -579,6 +579,44 @@
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="ls_glossaryMarkupStyle">
+    <columns>
+      <!-- column-name glossaryMarkupStyle -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">None</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">format as bold</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">format as italics</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">format as bold italics</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">format with emphasis</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">bottom ⸤half⸥ brackets</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">star *before word</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">star after* word</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">circumflex ^before word</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">circumflex after^ word</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="ls_projects">
     <columns>
       <!-- column-name projid -->
@@ -4306,7 +4344,7 @@ next run.</property>
                                       <object class="GtkGrid">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="column_spacing">6</property>
+                                        <property name="column_spacing">10</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_usetoc1">
                                             <property name="visible">True</property>
@@ -4404,7 +4442,7 @@ next run.</property>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="margin_left">3</property>
+                                        <property name="margin_left">10</property>
                                         <property name="margin_right">10</property>
                                         <property name="label" translatable="yes">To be listed
 in the Table
@@ -4427,43 +4465,99 @@ of Contents</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_prettyIntroOutline">
-                                    <property name="label" translatable="yes">Format Introductory Outline with right-aligned \ior and tabbed leaders</property>
+                                  <object class="GtkBox">
                                     <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin_top">4</property>
-                                    <property name="margin_bottom">4</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_startOnHalfPage">
-                                    <property name="label" translatable="yes">If space permits, begin next book on last page of previous book</property>
-                                    <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">If the last page of a book uses less than
+                                    <property name="can_focus">False</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="orientation">vertical</property>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_prettyIntroOutline">
+                                            <property name="label" translatable="yes">Format Introductory Outline with right-aligned \ior and tabbed leaders</property>
+                                            <property name="visible">True</property>
+                                            <property name="sensitive">False</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="halign">start</property>
+                                            <property name="margin_top">4</property>
+                                            <property name="margin_bottom">4</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_startOnHalfPage">
+                                            <property name="label" translatable="yes">If space permits, begin next book on last page of previous book</property>
+                                            <property name="visible">True</property>
+                                            <property name="sensitive">False</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">If the last page of a book uses less than
 half the page, then the next book will
 start on the same page.
 (This feature has not been implemented yet)</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin_top">6</property>
-                                    <property name="margin_bottom">4</property>
-                                    <property name="draw_indicator">True</property>
+                                            <property name="halign">start</property>
+                                            <property name="margin_top">6</property>
+                                            <property name="margin_bottom">4</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="margin_left">30</property>
+                                        <property name="margin_right">6</property>
+                                        <property name="label" translatable="yes">Glossary word markup:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkComboBox" id="cb_glossaryMarkupStyle">
+                                        <property name="width_request">180</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="model">ls_glossaryMarkupStyle</property>
+                                        <property name="active">0</property>
+                                        <property name="id_column">0</property>
+                                        <property name="active_id">1</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">2</property>
+                                      </packing>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
-                                    <property name="position">2</property>
+                                    <property name="position">3</property>
                                   </packing>
                                 </child>
                               </object>
