@@ -127,7 +127,7 @@ class PtxPrinterDialog:
         self.settings_dir = settings_dir
         self.ptsettings = None
         self.booklist = []
-        self.processScript = None
+        self.CustomScript = None
         self.FrontPDFs = None
         self.BackPDFs = None
         self.watermarks = None
@@ -589,6 +589,9 @@ class PtxPrinterDialog:
 class Info:
     _mappings = {
         "project/id":               (None, lambda w,v: w.get("cb_project")),
+        "project/multiplebooks":    ("c_multiplebooks", lambda w,v: "true" if v else "false"),
+        # "project/choosebooks":      ("btn_chooseBooks", lambda w,v: v or ""),
+        "project/combinebooks":     ("c_combine", lambda w,v: "true" if v else "false"),
         "project/book":             ("cb_book", None),
         "project/booklist":         ("t_booklist", lambda w,v: v or ""),
         "project/ifinclfrontpdf":   ("c_inclFrontMatter", lambda w,v: "true" if v else "false"),
@@ -597,9 +600,13 @@ class Info:
         "project/backincludes":     ("btn_selectBackPDFs", lambda w,v: "\n".join('\\includepdf{{"{}"}}'.format(re.sub(r"\\","/", s)) for s in w.BackPDFs) if w.BackPDFs is not None else ""),
         "project/useprintdraftfolder": ("c_useprintdraftfolder", lambda w,v :"true" if v else "false"),
         "project/processscript":    ("c_processScript", lambda w,v :"true" if v else "false"),
+        "project/runscriptafter":   ("c_processScriptAfter", lambda w,v :"true" if v else "false"),
+        "project/selectscript":     ("btn_selectScript", lambda w,v: re.sub(r"\\","/", w.CustomScript) if w.CustomScript is not None else ""),
         "project/usechangesfile":   ("c_usePrintDraftChanges", lambda w,v :"true" if v else "false"),
-        "paper/ifusemodstex":       ("c_useModsTex", lambda w,v: "" if v else "%"),
-        "paper/ifusemodssty":       ("c_useModsSty", lambda w,v: "" if v else "%"),
+        "project/ifusemodstex":     ("c_useModsTex", lambda w,v: "" if v else "%"),
+        "project/ifusemodssty":     ("c_useModsSty", lambda w,v: "" if v else "%"),
+        # "project/ifprettyOutline":  ("c_prettyIntroOutline", lambda w,v :"true" if v else "false"),
+        # "project/ifstarthalfpage":  ("c_startOnHalfPage", lambda w,v :"true" if v else "false"),
 
         "paper/height":             (None, lambda w,v: re.sub(r"^.*?,\s*(.+?)\s*(?:\(.*|$)", r"\1", w.get("cb_pagesize")) or "210mm"),
         "paper/width":              (None, lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", w.get("cb_pagesize")) or "148mm"),
@@ -618,6 +625,8 @@ class Info:
         "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
 
         "paragraph/linespacing":    ("s_linespacing", lambda w,v: round(v, 1)),
+        "paragraph/ifjustify":       ("c_justify", lambda w,v: "true" if v else "false"),
+        "paragraph/ifhyphenate":     ("c_hyphenate", lambda w,v: "true" if v else "false"),
 
         "document/toc":             ("c_autoToC", lambda w,v: "" if v else "%"),
         "document/toctitle":        ("t_tocTitle", lambda w,v: v or ""),
@@ -627,24 +636,26 @@ class Info:
         "document/chapfrom":        ("cb_chapfrom", lambda w,v: w.builder.get_object("cb_chapfrom").get_active_id()),
         "document/chapto":          ("cb_chapto", lambda w,v: w.builder.get_object("cb_chapto").get_active_id()),
         "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: round(v) or "15"),
+        "document/colbalancing":    ("cb_colbalancing", lambda w,v: w.builder.get_object('cb_colbalancing').get_active_id()),
         "document/ifrtl":           ("c_rtl", lambda w,v :"true" if v else "false"),
         "document/iflinebreakon":   ("c_linebreakon", lambda w,v: "" if v else "%"),
-        # "document/script":        ("cb_script", lambda w,v: "mymr"),
         "document/script":          ("cb_script", lambda w,v: ";script="+w.builder.get_object('cb_script').get_active_id().lower() if w.builder.get_object('cb_script').get_active_id() != "Zyyy" else ""),
         "document/digitmapping":    ("cb_digits", lambda w,v: ";mapping="+v.lower()+"digits" if v != "Default" else ""),
         "document/linebreaklocale": ("t_linebreaklocale", lambda w,v: v or ""),
         "document/ch1pagebreak":    ("c_ch1pagebreak", lambda w,v: "true" if v else "false"),
-        "document/ifomitchapternum": ("c_omitchapternumber", lambda w,v: "true" if v else "false"),
+        "document/marginalverses":  ("c_marginalverses", lambda w,v: "true" if v else "false"),
+        "document/ifomitchapternum":  ("c_omitchapternumber", lambda w,v: "true" if v else "false"),
         "document/ifomitallchapters": ("c_omitchapternumber", lambda w,v: "" if v else "%"),
         "document/ifomitverseone":  ("c_omitverseone", lambda w,v: "true" if v else "false"),
         "document/ifomitallverses": ("c_omitallverses", lambda w,v: "" if v else "%"),
         "document/ifomitallversetext": ("c_omitallverseText", lambda w,v: "true" if v else "false"),
+        "document/glueredupwords":  ("c_glueredupwords", lambda w,v :"true" if v else "false"),
         "document/iffigures":       ("c_includefigs", lambda w,v :"true" if v else "false"),
         "document/iffigexclwebapp": ("c_figexclwebapp", lambda w,v: "true" if v else "false"),
         "document/iffigplaceholders": ("c_figplaceholders", lambda w,v :"true" if v else "false"),
         "document/iffighiderefs":   ("c_fighiderefs", lambda w,v :"true" if v else "false"),
-        "document/ifjustify":       ("c_justify", lambda w,v: "true" if v else "false"),
-        "document/crossspacecntxt": ("cb_crossSpaceContextualization", lambda w,v: "0" if v == "None" else "1" if v == "Some" else "2"),
+        "document/ifusepiclist":    ("c_usePicList", lambda w,v :"true" if v else "false"),
+        "document/spacecntxtlztn":  ("cb_spaceCntxtlztn", lambda w,v: "0" if v == "None" else "1" if v == "Some" else "2"),
         "document/hangpoetry":      ("c_hangpoetry", lambda w,v: "" if v else "%"),
         "document/preventorphans":  ("c_preventorphans", lambda w,v: "true" if v else "false"),
         "document/preventwidows":   ("c_preventwidows", lambda w,v: "true" if v else "false"),
@@ -668,16 +679,18 @@ class Info:
         "footer/includefooter":     ("c_runningFooter", lambda w,v :"true" if v else "false"),
         "footer/ftrcenter":         ("t_runningFooter", lambda w,v: v if w.get("c_runningFooter") else ""),
 
-        "notes/ifomitfootnoterule": (None, lambda w,v: "%" if w.get("c_footnoterule") else ""),
-        "notes/blendfnxr":          ("c_blendfnxr", lambda w,v :"true" if v else "false"),
+        "notes/iffootnoterule":     ("c_footnoterule", lambda w,v: "%" if v else ""),
+        "notes/ifblendfnxr":        ("c_blendfnxr", lambda w,v :"true" if v else "false"),
 
         "notes/includefootnotes":   ("c_includeFootnotes", lambda w,v: "%" if v else ""),
+        "notes/iffnautocallers":    ("c_fnautocallers", lambda w,v :"true" if v else "false"),
         "notes/fncallers":          ("t_fncallers", lambda w,v: v if w.get("c_fnautocallers") else ""),
         "notes/fnresetcallers":     ("c_fnpageresetcallers", lambda w,v: "" if v else "%"),
         "notes/fnomitcaller":       ("c_fnomitcaller", lambda w,v: "%" if v else ""),
         "notes/fnparagraphednotes": ("c_fnparagraphednotes", lambda w,v: "" if v else "%"),
 
         "notes/includexrefs":       ("c_includeXrefs", lambda w,v: "%" if v else ""),
+        "notes/ifxrautocallers":    ("c_xrautocallers", lambda w,v :"true" if v else "false"),
         "notes/xrcallers":          ("t_xrcallers", lambda w,v: v if w.get("c_xrautocallers") else ""),
         "notes/xrresetcallers":     ("c_xrpageresetcallers", lambda w,v: "" if v else "%"),
         "notes/xromitcaller":       ("c_xromitcaller", lambda w,v: "%" if v else ""),
@@ -838,12 +851,12 @@ class Info:
             
     def makelocalChanges(self, printer):
         self.localChanges = []
+        first = int(printer.get("cb_chapfrom"))
+        last = int(printer.get("cb_chapto"))
         
         # This section handles PARTIAL books (from chapter X to chapter Y)
         if printer.get("c_onebook"):
             bk = printer.get("cb_book")
-            first = int(printer.get("cb_chapfrom"))
-            last = int(printer.get("cb_chapto"))
             if first > 1:
                 self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+(?=\\c {} ?\r?\n)".format(first), flags=regex.S), ""))
             if last < int(chaps.get(bk)):
@@ -853,7 +866,8 @@ class Info:
         # BUT how to best mark up the actual glossary word for user? Give user some good options in the UI.
         if True: 
         #	Remove the second half of the \w word-in-text|glossary-form-of-word\w*  Should we mark ⸤glossary⸥ words like this?
-            self.localChanges.append((None, regex.compile(r"\\w (.+?)(\|.+?)?\\w\*", flags=regex.M), r"\u2E24\1\u2E25"))   # Drop 2nd half of Glossary words
+            # self.localChanges.append((None, regex.compile(r"\\w (.+?)(\|.+?)?\\w\*", flags=regex.M), r"\u2E24\1\u2E25"))   # Drop 2nd half of Glossary words
+            self.localChanges.append((None, regex.compile(r"\\w (.+?)(\|.+?)?\\w\*", flags=regex.M), r"\\bd \1\\bd* "))   # Drop 2nd half of Glossary words
         
         if not printer.get("c_includefigs"):
             self.localChanges.append((None, regex.compile(r"\\fig .*?\\fig\*", flags=regex.M), ""))             # Drop ALL Figures

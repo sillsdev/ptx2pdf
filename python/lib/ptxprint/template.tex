@@ -6,7 +6,7 @@
 \stylesheet{{{/ptxpath}/{project/id}/custom.sty}}
 %\stylesheet{{NestedStyles.sty}}
 
-{paper/ifusemodssty}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.sty}} % override project stylesheet settings here
+{project/ifusemodssty}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.sty}} % override project stylesheet settings here
 
 % Where to put these kinds of little files? In PrintDraft folder? 
 % Maybe we make ONE file and put all/any .sty tweaks in it (instead of multiple smaller files)  IS THAT WHAT NestedStyles.sty IS FOR??? Duh!
@@ -44,7 +44,7 @@
 % None=0 This is how XeTeX behaves by default. Most projects will use this setting.
 % Some=1 Spaces between words are adjusted, but the rendering of individual words is *NOT* affected by the spaces.
 % Full=2 Spaces between words are adjusted, and the rendering of individual words *IS* affected by the spaces.
-\XeTeXinterwordspaceshaping = {document/crossspacecntxt}
+\XeTeXinterwordspaceshaping = {document/spacecntxtlztn}
 
 %%%%% Fonts %%%%%
 \FontSizeUnit={paper/fontfactor:.6f}pt   % Q (from MP to MH): Can you explain what's happening here?
@@ -64,7 +64,7 @@
 {document/iflinebreakon}\XeTeXlinebreaklocale "{document/linebreaklocale}"
 % Introduce some stretchability (glue) at each potential break
 %\XeTeXlinebreakskip=0em plus 0.1em minus 0.01em
-\JustifyPars{document/ifjustify}
+\JustifyPars{paragraph/ifjustify}
 \IndentAfterHeading{document/supressindent}
 
 %%% Chapters & Verses %%%
@@ -79,20 +79,17 @@
 
 %%%%% Notes %%%%%
 
-%% Disable footnote rule (if next line is commented out then the footnote rule will show and vice versa)
-{notes/ifomitfootnoterule}\def\footnoterule{{}} 
+%% Disable footnote rule (when line is commented out, the footnote rule will show)
+{notes/iffootnoterule}\def\footnoterule{{}} 
 
 %\AutoCallerStartChar=97
 %\AutoCallerNumChars=26
-%\AutoCallers{{f}}{{*,+,¶,§,**,++,¶¶,§§}}
-%\AutoCallers{{f}}{{a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}}
 \AutoCallers{{f}}{{{notes/fncallers}}} % to hide callers in body text this needs to be empty
 {notes/fnresetcallers}\PageResetCallers{{f}}
 {notes/fnomitcaller}\OmitCallerInNote{{f}}
 {notes/fnparagraphednotes}\ParagraphedNotes{{f}}
 %\NumericCallers{{f}}
 
-%\AutoCallers{{x}}{{a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}}
 \AutoCallers{{x}}{{{notes/xrcallers}}} % to hide callers in body text this needs to be empty
 {notes/xrresetcallers}\PageResetCallers{{x}}
 {notes/xromitcaller}\OmitCallerInNote{{x}}
@@ -133,7 +130,7 @@
 % restore page break definition (if present in USFM stylesheet, it has been re-defined and will not work)
 \let\pb=\pagebreak
 
-{paper/ifusemodstex}\input "{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.tex"% adjust/override setup parameters here
+{project/ifusemodstex}\input "{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.tex"% adjust/override setup parameters here
 
 %%%%% Hyphenation %%%%%
 %% Allocating and using a new language without any hyphenation rules defined effectively disables hyphenation.

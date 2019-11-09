@@ -8,14 +8,12 @@
     <property name="page_increment">5</property>
   </object>
   <object class="GtkAdjustment" id="a_bolde">
-    <property name="lower">-10</property>
     <property name="upper">10</property>
     <property name="value">2</property>
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_bolditalice">
-    <property name="lower">-10</property>
     <property name="upper">10</property>
     <property name="value">2</property>
     <property name="step_increment">0.10000000000000001</property>
@@ -67,7 +65,6 @@
     <property name="page_increment">0.10000000000000001</property>
   </object>
   <object class="GtkAdjustment" id="a_italice">
-    <property name="lower">-10</property>
     <property name="upper">10</property>
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">1</property>
@@ -777,7 +774,7 @@
                                         <property name="receives_default">False</property>
                                         <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
-                                        <property name="group">c_choosebooks</property>
+                                        <property name="group">c_multiplebooks</property>
                                         <signal name="clicked" handler="onBookSelectorChange" swapped="no"/>
                                         <signal name="group-changed" handler="onBookSelectorChange" swapped="no"/>
                                         <signal name="toggled" handler="onBookSelectorChange" swapped="no"/>
@@ -789,7 +786,7 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkRadioButton" id="c_choosebooks">
+                                      <object class="GtkRadioButton" id="c_multiplebooks">
                                         <property name="label" translatable="yes">Multiple Books</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
@@ -1615,7 +1612,7 @@ Balancing:</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_marginverses">
+                                  <object class="GtkCheckButton" id="c_marginalverses">
                                     <property name="label" translatable="yes">Use Marginal Verses (beside body text)</property>
                                     <property name="visible">True</property>
                                     <property name="sensitive">False</property>
@@ -1980,7 +1977,7 @@ script-specific rendering issues.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkComboBoxText" id="cb_crossSpaceContextualization">
+                                      <object class="GtkComboBoxText" id="cb_spaceCntxtlztn">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">None (default): Most projects will use this setting.
@@ -3909,7 +3906,7 @@ checked (on).</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_processScript">
                                         <property name="label" translatable="yes">Process text with 
-custom script</property>
+custom script ...</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -3930,7 +3927,7 @@ custom script</property>
                                         <property name="homogeneous">True</property>
                                         <child>
                                           <object class="GtkRadioButton" id="c_processScriptBefore">
-                                            <property name="label" translatable="yes">Before</property>
+                                            <property name="label" translatable="yes">before</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -3946,7 +3943,7 @@ custom script</property>
                                         </child>
                                         <child>
                                           <object class="GtkRadioButton" id="c_processScriptAfter">
-                                            <property name="label" translatable="yes">After</property>
+                                            <property name="label" translatable="yes">after</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -3971,7 +3968,7 @@ custom script</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="margin_left">4</property>
-                                        <property name="label" translatable="yes">PrintDraftChanges 
+                                        <property name="label" translatable="yes">... PrintDraftChanges 
 are processed</property>
                                       </object>
                                       <packing>
@@ -4261,7 +4258,7 @@ file is selected, then these will appear in alphabetical order.</property>
                                     <property name="can_focus">False</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_autoToC">
-                                        <property name="label" translatable="yes">Automatically Generate Table of Contents.      Title for ToC:</property>
+                                        <property name="label" translatable="yes">Generate Table of Contents.         Title for ToC:</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -4287,8 +4284,13 @@ been selected on the Basic tab.]</property>
                                     </child>
                                     <child>
                                       <object class="GtkEntry" id="t_tocTitle">
+                                        <property name="width_request">250</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">A file called "combined.toc" will be created with the outline of the Table
+of Contents. It can be manually modified or enhanced before the 
+next run.</property>
+                                        <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="margin_right">6</property>
                                         <property name="hexpand">True</property>
@@ -4304,7 +4306,7 @@ been selected on the Basic tab.]</property>
                                       <object class="GtkGrid">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="column_spacing">4</property>
+                                        <property name="column_spacing">6</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_usetoc1">
                                             <property name="visible">True</property>
@@ -4403,9 +4405,13 @@ been selected on the Basic tab.]</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="margin_left">3</property>
-                                        <property name="margin_right">6</property>
-                                        <property name="label" translatable="yes">Listed
-in ToC</property>
+                                        <property name="margin_right">10</property>
+                                        <property name="label" translatable="yes">To be listed
+in the Table
+of Contents</property>
+                                        <attributes>
+                                          <attribute name="scale" value="0.80000000000000004"/>
+                                        </attributes>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -4421,7 +4427,7 @@ in ToC</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_formatIntoOutline">
+                                  <object class="GtkCheckButton" id="c_prettyIntroOutline">
                                     <property name="label" translatable="yes">Format Introductory Outline with right-aligned \ior and tabbed leaders</property>
                                     <property name="visible">True</property>
                                     <property name="sensitive">False</property>
@@ -4440,11 +4446,15 @@ in ToC</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_startOnHalfPage">
-                                    <property name="label" translatable="yes">Begin next book on last page of previous book (if more than half a page is available)</property>
+                                    <property name="label" translatable="yes">If space permits, begin next book on last page of previous book</property>
                                     <property name="visible">True</property>
                                     <property name="sensitive">False</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">If the last page of a book uses less than
+half the page, then the next book will
+start on the same page.
+(This feature has not been implemented yet)</property>
                                     <property name="halign">start</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">4</property>
