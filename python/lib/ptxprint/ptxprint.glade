@@ -483,13 +483,13 @@ Are you sure you want to overwrite the existing file?</property>
         <col id="0" translatable="yes">‡</col>
       </row>
       <row>
+        <col id="0" translatable="yes">-</col>
+      </row>
+      <row>
         <col id="0" translatable="yes">+</col>
       </row>
       <row>
         <col id="0" translatable="yes">#</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">↗</col>
       </row>
     </data>
   </object>
@@ -2574,7 +2574,6 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                           <object class="GtkFrame">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="halign">start</property>
                             <property name="margin_left">6</property>
                             <property name="margin_right">6</property>
                             <property name="margin_top">6</property>
@@ -2584,23 +2583,23 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                               <object class="GtkAlignment">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="margin_left">10</property>
                                 <property name="left_padding">10</property>
                                 <property name="right_padding">10</property>
                                 <child>
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="row_spacing">5</property>
-                                    <property name="column_spacing">20</property>
+                                    <property name="column_spacing">5</property>
                                     <property name="row_homogeneous">True</property>
                                     <child>
                                       <object class="GtkAlignment">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="left_padding">20</property>
+                                        <property name="left_padding">40</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_figexclwebapp">
-                                            <property name="label" translatable="yes">Exclude figures exclusively for Web or App</property>
+                                            <property name="label" translatable="yes">Exclude figures only meant for Web or App</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -2618,7 +2617,7 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                                       <object class="GtkAlignment">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="left_padding">20</property>
+                                        <property name="left_padding">40</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_figplaceholders">
                                             <property name="label" translatable="yes">Only show empty place-holders</property>
@@ -2640,7 +2639,7 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                                       <object class="GtkAlignment">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="left_padding">20</property>
+                                        <property name="left_padding">40</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_fighiderefs">
                                             <property name="label" translatable="yes">Hide references (ch:vs)</property>
@@ -2658,11 +2657,13 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkRadioButton" id="c_includefigs">
-                                        <property name="label" translatable="yes">Include figures (illustrations) marked in the text (\fig ... \fig*)</property>
+                                      <object class="GtkRadioButton" id="c_includefigsfromtext">
+                                        <property name="label" translatable="yes">Use the illustrations marked in the text (\fig ... \fig*)</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="margin_left">20</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">c_usePicList</property>
@@ -2679,8 +2680,10 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="margin_left">20</property>
                                         <property name="draw_indicator">True</property>
-                                        <property name="group">c_includefigs</property>
+                                        <property name="group">c_includefigsfromtext</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
@@ -2694,6 +2697,7 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
                                         <property name="halign">start</property>
+                                        <signal name="clicked" handler="onSelectFigureFolderClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">2</property>
@@ -2702,10 +2706,12 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                                     </child>
                                     <child>
                                       <object class="GtkRadioButton" id="c_useFiguresFolder">
-                                        <property name="label" translatable="yes">Project's "Figures" folder</property>
+                                        <property name="label" translatable="yes">Project's "Figures" Folder:</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="margin_left">40</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">c_useLocalFiguresFolder</property>
@@ -2717,10 +2723,12 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                                     </child>
                                     <child>
                                       <object class="GtkRadioButton" id="c_useLocalFiguresFolder">
-                                        <property name="label" translatable="yes">Project's "local\figures" folder</property>
+                                        <property name="label" translatable="yes">Use "local\figures" Folder:</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="margin_left">40</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">c_useFiguresFolder</property>
@@ -2732,13 +2740,16 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                                     </child>
                                     <child>
                                       <object class="GtkRadioButton" id="c_useCustomFolder">
-                                        <property name="label" translatable="yes">Custom location:</property>
+                                        <property name="label" translatable="yes">Specify a Custom Folder:  </property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="margin_left">40</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">c_useLocalFiguresFolder</property>
+                                        <signal name="clicked" handler="onUseCustomFolderclicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
@@ -2746,12 +2757,13 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="l_useFolder">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">start</property>
                                         <property name="valign">end</property>
-                                        <property name="label" translatable="yes">Use illustrations from:</property>
+                                        <property name="margin_left">30</property>
+                                        <property name="label" translatable="yes">Location of image files:</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
@@ -2760,25 +2772,44 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_convertTIFtoPNG">
-                                        <property name="label" translatable="yes">Convert .TIFs to .PNGs</property>
+                                        <property name="label" translatable="yes">Convert all TIFs to PNGs</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">XeTeX is unable to use .TIF formatted illustrations
 but it can convert the .TIF files to .PNG. These will
 be placed in the Project's local/figure folder.</property>
+                                        <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">2</property>
+                                        <property name="top_attach">4</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_useFiguresFolder">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="label" translatable="yes">(contains lo-res JPG files)</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">2</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_useLocalFiguresFolder">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="label" translatable="yes">(contains original TIF files)</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">2</property>
                                         <property name="top_attach">2</property>
                                       </packing>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
                                     </child>
                                     <child>
                                       <placeholder/>
@@ -2791,18 +2822,19 @@ be placed in the Project's local/figure folder.</property>
                               </object>
                             </child>
                             <child type="label">
-                              <object class="GtkLabel">
+                              <object class="GtkCheckButton" id="c_includeillustrations">
+                                <property name="label" translatable="yes">Include illustrations</property>
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="margin_left">4</property>
-                                <property name="margin_right">4</property>
-                                <property name="label" translatable="yes">Illustrations</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="draw_indicator">True</property>
+                                <signal name="clicked" handler="onUseIllustrationsClicked" swapped="no"/>
                               </object>
                             </child>
                           </object>
                           <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
@@ -3308,6 +3340,7 @@ as a single running paragraph.    Use this Xref caller:</property>
                                             <property name="receives_default">False</property>
                                             <property name="halign">start</property>
                                             <property name="draw_indicator">True</property>
+                                            <signal name="clicked" handler="onBlendedXrsClicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -3364,21 +3397,7 @@ as a single running paragraph.    Use this Xref caller:</property>
                                                 <property name="orientation">vertical</property>
                                                 <property name="homogeneous">True</property>
                                                 <child>
-                                                  <object class="GtkCheckButton" id="c_includeFootnotes">
-                                                    <property name="label" translatable="yes">Include Footnotes</property>
-                                                    <property name="visible">True</property>
-                                                    <property name="can_focus">True</property>
-                                                    <property name="receives_default">False</property>
-                                                    <property name="halign">start</property>
-                                                    <property name="active">True</property>
-                                                    <property name="draw_indicator">True</property>
-                                                    <signal name="clicked" handler="onClickedIncludeFootnotes" swapped="no"/>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="expand">False</property>
-                                                    <property name="fill">True</property>
-                                                    <property name="position">0</property>
-                                                  </packing>
+                                                  <placeholder/>
                                                 </child>
                                                 <child>
                                                   <object class="GtkBox">
@@ -3484,10 +3503,15 @@ as a single running paragraph.    Use this Xref caller:</property>
                                           </object>
                                         </child>
                                         <child type="label">
-                                          <object class="GtkLabel">
+                                          <object class="GtkCheckButton" id="c_includeFootnotes">
+                                            <property name="label" translatable="yes">Include Footnotes</property>
                                             <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="label" translatable="yes">Footnotes</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="halign">start</property>
+                                            <property name="active">True</property>
+                                            <property name="draw_indicator">True</property>
+                                            <signal name="clicked" handler="onClickedIncludeFootnotes" swapped="no"/>
                                           </object>
                                         </child>
                                       </object>
@@ -3515,21 +3539,7 @@ as a single running paragraph.    Use this Xref caller:</property>
                                                 <property name="orientation">vertical</property>
                                                 <property name="homogeneous">True</property>
                                                 <child>
-                                                  <object class="GtkCheckButton" id="c_includeXrefs">
-                                                    <property name="label" translatable="yes">Include Cross-References</property>
-                                                    <property name="visible">True</property>
-                                                    <property name="can_focus">True</property>
-                                                    <property name="receives_default">False</property>
-                                                    <property name="halign">start</property>
-                                                    <property name="active">True</property>
-                                                    <property name="draw_indicator">True</property>
-                                                    <signal name="clicked" handler="onClickedIncludeXrefs" swapped="no"/>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="expand">False</property>
-                                                    <property name="fill">True</property>
-                                                    <property name="position">0</property>
-                                                  </packing>
+                                                  <placeholder/>
                                                 </child>
                                                 <child>
                                                   <object class="GtkBox">
@@ -3635,10 +3645,15 @@ as a single running paragraph.    Use this Xref caller:</property>
                                           </object>
                                         </child>
                                         <child type="label">
-                                          <object class="GtkLabel">
+                                          <object class="GtkCheckButton" id="c_includeXrefs">
+                                            <property name="label" translatable="yes">Include Cross-References</property>
                                             <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="label" translatable="yes">Cross-references</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="halign">start</property>
+                                            <property name="active">True</property>
+                                            <property name="draw_indicator">True</property>
+                                            <signal name="clicked" handler="onClickedIncludeXrefs" swapped="no"/>
                                           </object>
                                         </child>
                                       </object>
@@ -4021,8 +4036,8 @@ here are not working at all.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">It is recommended to leave this option
-checked (on).</property>
+                                        <property name="tooltip_text" translatable="yes">It is recommended to leave 
+this option checked (on).</property>
                                         <property name="halign">start</property>
                                         <property name="margin_top">6</property>
                                         <property name="active">True</property>
@@ -4190,6 +4205,7 @@ are processed</property>
                             <property name="can_focus">False</property>
                             <property name="valign">end</property>
                             <property name="margin_left">10</property>
+                            <property name="margin_right">6</property>
                             <property name="margin_top">6</property>
                             <property name="margin_bottom">6</property>
                             <property name="hexpand">True</property>
@@ -4357,7 +4373,7 @@ file is selected, then these will appear in alphabetical order.</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
-                            <property name="fill">False</property>
+                            <property name="fill">True</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
@@ -4430,7 +4446,9 @@ in your system's default text editor.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
-                                    <property name="tooltip_text" translatable="yes">Click this button to generate a list of paragraphs that may be adjusted (using shrink or expand). If an .adj file
+                                    <property name="tooltip_text" translatable="yes">Click this button to generate a list 
+of paragraphs that may be adjusted 
+(using shrink or expand). If an .adj file
 already exists, you will be asked if you
 really want to overwrite it.</property>
                                     <signal name="clicked" handler="onGenerateParaAdjList" swapped="no"/>
@@ -4471,7 +4489,8 @@ to specify paragraphs adjustments (shrink or expand):</property>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">When the PicList is generated, it will randomly assign a position on the page.
+                                    <property name="tooltip_text" translatable="yes">When the PicList is generated, it will 
+randomly assign a position on the page.
 By editing the PicList, you can specify
 any one of the following:
 for "span": t=top, b=bottom  of page

@@ -132,6 +132,7 @@ class PtxPrinterDialog:
         self.FrontPDFs = None
         self.BackPDFs = None
         self.watermarks = None
+        self.customFigFolder = None
         for p in allprojects:
             self.projects.append([p])
 
@@ -273,6 +274,21 @@ class PtxPrinterDialog:
             self.builder.get_object(c).set_sensitive(status)
         self.updateFakeLabels()
 
+    def onUseIllustrationsClicked(self, c_includeillustrations):
+        status = self.get("c_includeillustrations")
+        for c in ("c_includefigsfromtext", "c_usePicList", "l_useFolder", "c_useFiguresFolder", "c_useLocalFiguresFolder", "c_useCustomFolder",
+                  "c_convertTIFtoPNG", "btn_selectFigureFolder", "l_useFiguresFolder", "l_useLocalFiguresFolder"):
+            self.builder.get_object(c).set_sensitive(status)
+
+    def onUseCustomFolderclicked(self, c_useCustomFolder):
+        self.builder.get_object("btn_selectFigureFolder").set_sensitive(self.get("c_useCustomFolder"))
+
+    def onBlendedXrsClicked(self, c_blendfnxr):
+        status = self.get("c_blendfnxr")
+        for c in ("c_includeXrefs", "c_xrautocallers", "t_xrcallers", "c_xromitcaller", "c_xrpageresetcallers", "c_paragraphedxrefs"):
+            self.builder.get_object(c).set_sensitive(not status)
+        self.builder.get_object("cb_blendedXrefCaller").set_sensitive(status)
+    
     def onClickedIncludeFootnotes(self, c_includeFootnotes):
         status = self.get("c_includeFootnotes")
         for c in ("c_fnautocallers", "t_fncallers", "c_fnomitcaller", "c_fnpageresetcallers", "c_fnparagraphednotes"):
@@ -292,7 +308,6 @@ class PtxPrinterDialog:
 
     def onColumnsChanged(self, cb_columns):
         status = self.get("cb_columns") == "Double"
-        print("CB Column Staus: ", status)
         for c in ("c_verticalrule", "l_gutterWidth", "s_colgutterfactor"):
             self.builder.get_object(c).set_sensitive(status)
 
@@ -306,8 +321,8 @@ class PtxPrinterDialog:
         for c in ("l_chapfrom", "cb_chapfrom", "l_chapto", "cb_chapto"):
             self.builder.get_object(c).set_sensitive(status)
             
-    def onFigsChanged(self, c_includefigs):
-        status = self.get("c_includefigs")
+    def onFigsChanged(self, c_includefigsfromtext):
+        status = self.get("c_includefigsfromtext")
         for c in ("c_figexclwebapp", "c_figplaceholders", "c_fighiderefs"):
             self.builder.get_object(c).set_sensitive(status)
 
@@ -553,6 +568,19 @@ class PtxPrinterDialog:
             self.builder.get_object("btn_selectWatermarkPDF").set_sensitive(False)
             self.builder.get_object("c_applyWatermark").set_active(False)
 
+    def onSelectFigureFolderClicked(self, btn_selectFigureFolder):
+        customFigFolder = self.fileChooser("Select the folder of image files", 
+                filters = {"Folder of Image Files": {"pattern": "*.*", "mime": "folder"}},
+                multiple = False, folder = True)
+        if customFigFolder is not None:
+            self.customFigFolder = customFigFolder[0]
+            btn_selectFigureFolder.set_tooltip_text(customFigFolder[0])
+        else:
+            self.watermarks = None
+            btn_selectFigureFolder.set_tooltip_text("")
+            self.builder.get_object("btn_selectFigureFolder").set_sensitive(False)
+            self.builder.get_object("c_useFiguresFolder").set_active(True)
+
     def onGenerateParaAdjList(self, btn_generateParaAdjList):
         print("Need to call the Generate Para List function")
         
@@ -657,10 +685,15 @@ class Info:
         "document/ifomitallverses": ("c_omitallverses", lambda w,v: "" if v else "%"),
         "document/ifomitallversetext": ("c_omitallverseText", lambda w,v: "true" if v else "false"),
         "document/glueredupwords":  ("c_glueredupwords", lambda w,v :"true" if v else "false"),
-        "document/iffigures":       ("c_includefigs", lambda w,v :"true" if v else "false"),
+        "document/ifinclfigs":      ("c_includeillustrations", lambda w,v :"true" if v else "false"),
+        "document/iffigfrmtext":    ("c_includefigsfromtext", lambda w,v :"true" if v else "false"),
         "document/iffigexclwebapp": ("c_figexclwebapp", lambda w,v: "true" if v else "false"),
         "document/iffigplaceholders": ("c_figplaceholders", lambda w,v :"true" if v else "false"),
         "document/iffighiderefs":   ("c_fighiderefs", lambda w,v :"true" if v else "false"),
+        "document/usefigsfolder":   ("c_useFiguresFolder", lambda w,v :"" if v else "%"),
+        "document/uselocalfigs":    ("c_useLocalFiguresFolder", lambda w,v :"" if v else "%"),
+        "document/customfiglocn":   ("c_useCustomFolder", lambda w,v :"" if v else "%"),
+        "document/customfigfolder": ("btn_selectFigureFolder", lambda w,v: re.sub(r"\\","/", w.customFigFolder) if w.customFigFolder is not None else ""),
         "document/ifusepiclist":    ("c_usePicList", lambda w,v :"true" if v else "false"),
         "document/spacecntxtlztn":  ("cb_spaceCntxtlztn", lambda w,v: "0" if v == "None" else "1" if v == "Some" else "2"),
         "document/glossarymarkupstyle":  ("cb_glossaryMarkupStyle", lambda w,v: w.builder.get_object("cb_glossaryMarkupStyle").get_active_id()),
@@ -689,6 +722,7 @@ class Info:
 
         "notes/iffootnoterule":     ("c_footnoterule", lambda w,v: "%" if v else ""),
         "notes/ifblendfnxr":        ("c_blendfnxr", lambda w,v :"true" if v else "false"),
+        "notes/blendedxrmkr":       ("cb_blendedXrefCaller", lambda w,v: w.builder.get_object("cb_blendedXrefCaller").get_active_id()),
 
         "notes/includefootnotes":   ("c_includeFootnotes", lambda w,v: "%" if v else ""),
         "notes/iffnautocallers":    ("c_fnautocallers", lambda w,v :"true" if v else "false"),
@@ -979,12 +1013,12 @@ class Info:
         gloStyle = self._glossarymarkup.get(v, v)
         self.localChanges.append((None, regex.compile(r"\\w (.+?)(\|.+?)?\\w\*", flags=regex.M), gloStyle))
         
-        if not printer.get("c_includefigs"):
+        if not printer.get("c_includefigsfromtext"):
             self.localChanges.append((None, regex.compile(r"\\fig .*?\\fig\*", flags=regex.M), ""))             # Drop ALL Figures
         else:
             self.localChanges.append((None, regex.compile(r"\.[Tt][Ii][Ff]", flags=regex.M), ".jpg"))           # Change all TIFs to JPGs
             if printer.get("c_fighiderefs"):
-                self.localChanges.append((None, regex.compile(r"(\\fig .*?)(\d+\:\d+(\-\d+)?)(.*?\\fig\*)", flags=regex.M), r"\1\4")) # remove ch:vs ref from caption
+                self.localChanges.append((None, regex.compile(r"(\\fig .*?)(\d+\:\d+([-,]\d+)?)(.*?\\fig\*)", flags=regex.M), r"\1\4")) # remove ch:vs ref from caption
         
         if printer.get("c_omitBookIntro"):
             self.localChanges.append((None, regex.compile(r"\\i(s|m|mi|p|pi|li\d?|pq|mq|pr|b|q\d?) .+?\r?\n", flags=regex.M), "")) # Drop Introductory matter
@@ -999,9 +1033,14 @@ class Info:
         if printer.get("c_omitParallelRefs"):
             self.localChanges.append((None, regex.compile(r"\\r .+", flags=regex.M), ""))                       # Drop ALL Parallel Passage References
 
-        if printer.get("c_blendfnxr"):  # this needs further testing before deleting the 4 older RegExs # insert the other marker here.
-            self.localChanges.append((None, regex.compile(r"\\x(\s.+?)\\xo(\s\d+:\d+) \\xt(.+?)\\x\*", flags=regex.M), r"\\f\1\\fr\2 \\ft\3\\f*"))
-        
+        if printer.get("c_blendfnxr"): 
+            XrefCaller = printer.get("cb_blendedXrefCaller")
+            # To merge/blend \f and \x together, simply change all (\x to \f) (\xo to \fr) (\xq to \fq) (\xt to \ft) and (\f* to \x*)
+            self.localChanges.append((None, regex.compile(r"\\x . ", flags=regex.M), r"\\f {} ".format(XrefCaller)))
+            self.localChanges.append((None, regex.compile(r"\\x\* ", flags=regex.M), r"\\f* "))
+            self.localChanges.append((None, regex.compile(r"\\xq ", flags=regex.M), r"\\fq "))
+            self.localChanges.append((None, regex.compile(r"\\xt ", flags=regex.M), r"\\ft "))
+
         if printer.get("c_preventorphans"): 
             # Keep final two words of \q lines together [but this doesn't work if there is an \f or \x at the end of the line] 
             self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+) (\S+\s*\n)", flags=regex.M), r"\1\u00A0\4"))   

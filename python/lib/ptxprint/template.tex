@@ -15,9 +15,6 @@
 {notes/includefootnotes}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/SuppressFootnotes.sty}}
 {notes/includexrefs}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/SuppressXrefs.sty}}
 
-\AdjListPath={{"{/ptxpath}/{project/id}/PrintDraft/ParaAdjLists"}}
-\PicListPath={{"{/ptxpath}/{project/id}/PrintDraft/PicLists"}}
-
 %%%%% Page Setup %%%%%
 % Dimensions
 \PaperWidth={paper/width}
@@ -124,9 +121,12 @@
 
 %%%%% Illustrations %%%%%
 \IncludeFigures{document/iffigures}
-\PicPath={{{/ptxpath}/{project/id}/figures/}}
-%\PicPath={{{/ptxpath}/{project/id}/local/figures/}} % should check if this folder exists (with HiRes figures)
+{document/usefigsfolder}\PicPath={{{/ptxpath}/{project/id}/figures/}}
+{document/uselocalfigs}\PicPath={{{/ptxpath}/{project/id}/local/figures/}}
+{document/customfiglocn}\PicPath={{{document/customfigfolder}}}
 \FigurePlaceholders{document/iffigplaceholders}
+\AdjListPath={{"{/ptxpath}/{project/id}/PrintDraft/ParaAdjLists"}}
+\PicListPath={{"{/ptxpath}/{project/id}/PrintDraft/PicLists"}}
 
 % tweak to enable blank lines
 \def\b{{\par\vskip\baselineskip}}
