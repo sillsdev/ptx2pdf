@@ -716,8 +716,13 @@ Are you sure you want to overwrite the existing file?</property>
               <object class="GtkButton">
                 <property name="label" translatable="yes">Reset All Settings to Default</property>
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="tooltip_text" translatable="yes">If you are unable to create a PDF due to conflicting
+settings, it may be worth starting over with a clean
+set of default settings. This will remove all current
+settings for this project, and restore the defaults.</property>
                 <property name="halign">start</property>
               </object>
               <packing>
@@ -727,18 +732,18 @@ Are you sure you want to overwrite the existing file?</property>
               </packing>
             </child>
             <child>
-              <object class="GtkCheckButton" id="c_closePDF">
-                <property name="label" translatable="yes">[Close and] Overwrite Existing PDF file (if it exists)</property>
+              <object class="GtkCheckButton" id="c_hideAdvancedSettings">
+                <property name="label" translatable="yes">Hide Advanced Settings</property>
+                <property name="width_request">300</property>
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
                 <property name="halign">start</property>
-                <property name="hexpand">True</property>
-                <property name="image_position">right</property>
                 <property name="draw_indicator">True</property>
               </object>
               <packing>
-                <property name="expand">True</property>
+                <property name="expand">False</property>
                 <property name="fill">False</property>
                 <property name="position">1</property>
               </packing>
@@ -833,7 +838,7 @@ Are you sure you want to overwrite the existing file?</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="orientation">vertical</property>
-                                    <property name="spacing">18</property>
+                                    <property name="spacing">22</property>
                                     <property name="baseline_position">top</property>
                                     <child>
                                       <object class="GtkLabel">
@@ -900,7 +905,7 @@ Are you sure you want to overwrite the existing file?</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="orientation">vertical</property>
-                                    <property name="spacing">6</property>
+                                    <property name="spacing">12</property>
                                     <child>
                                       <object class="GtkBox">
                                         <property name="visible">True</property>
@@ -1172,7 +1177,7 @@ into single PDF</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
                                     <property name="hexpand">True</property>
-                                    <property name="row_spacing">6</property>
+                                    <property name="row_spacing">12</property>
                                     <property name="column_spacing">4</property>
                                     <child>
                                       <object class="GtkLabel">
@@ -1427,7 +1432,7 @@ Factor:</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
                                     <property name="orientation">vertical</property>
-                                    <property name="spacing">6</property>
+                                    <property name="spacing">12</property>
                                     <child>
                                       <object class="GtkBox">
                                         <property name="visible">True</property>
@@ -1565,6 +1570,10 @@ Balancing:</property>
                                               <object class="GtkEntry">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
+                                                <property name="tooltip_text" translatable="yes">Currently this tool only supports
+"Manually Adjusted" column 
+balancing. See the "Advanced" tab
+for how to adjust Paragraphs.</property>
                                                 <property name="halign">start</property>
                                                 <property name="width_chars">20</property>
                                                 <property name="progress_pulse_step">0</property>
@@ -1631,7 +1640,7 @@ Balancing:</property>
                                 <property name="margin_right">6</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
-                                <property name="row_spacing">7</property>
+                                <property name="row_spacing">12</property>
                                 <property name="column_spacing">16</property>
                                 <property name="row_homogeneous">True</property>
                                 <child>
@@ -2778,8 +2787,10 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">XeTeX is unable to use .TIF formatted illustrations
 but it can convert the .TIF files to .PNG. These will
-be placed in the Project's local/figure folder.</property>
+be generated in the same folder as the TIF files.
+(Not yet implemented. Coming soon!)</property>
                                         <property name="halign">start</property>
+                                        <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -2812,7 +2823,24 @@ be placed in the Project's local/figure folder.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <placeholder/>
+                                      <object class="GtkCheckButton" id="c_skipmissingimages">
+                                        <property name="label" translatable="yes">Skip/Ignore any missing images</property>
+                                        <property name="name">c_skipmissingimages</property>
+                                        <property name="visible">True</property>
+                                        <property name="sensitive">False</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">Rather than aborting the PDF export process, pre-process
+the list of illustrations and skip/ignore/remove any which
+are not found in the specified location of image files.
+(Not yet implemented. Coming soon!)</property>
+                                        <property name="active">True</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">4</property>
+                                      </packing>
                                     </child>
                                     <child>
                                       <placeholder/>
@@ -2827,6 +2855,7 @@ be placed in the Project's local/figure folder.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
+                                <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="clicked" handler="onUseIllustrationsClicked" swapped="no"/>
                               </object>
@@ -3909,8 +3938,8 @@ and Cross-references.</property>
                         <property name="can_focus">False</property>
                         <property name="tooltip_text" translatable="yes">Maybe even Di-script publications through an automated script conversion process.</property>
                         <property name="opacity">0.59999999999999998</property>
-                        <property name="margin_top">6</property>
-                        <property name="margin_bottom">6</property>
+                        <property name="margin_top">10</property>
+                        <property name="margin_bottom">10</property>
                         <property name="label" translatable="yes">Watch this space... Diglots are also coming soon!</property>
                         <property name="justify">center</property>
                       </object>
@@ -4406,11 +4435,11 @@ file is selected, then these will appear in alphabetical order.</property>
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="row_spacing">6</property>
+                                <property name="row_spacing">12</property>
                                 <property name="column_spacing">10</property>
                                 <child>
                                   <object class="GtkButton" id="btn_generatePicList">
-                                    <property name="label" translatable="yes">Generate PicList(s) file from \fig ... \fig* in text</property>
+                                    <property name="label" translatable="yes">Generate PicList(s) from \fig ... \fig* in text</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
@@ -4419,6 +4448,8 @@ in the correct format using the markup
 (\fig ... \fig*) within the text. If a .piclist
 file already exists, you will be asked if
 you really want to overwrite it.</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin_bottom">6</property>
                                     <signal name="clicked" handler="onGeneratePicList" swapped="no"/>
                                   </object>
                                   <packing>
@@ -4432,8 +4463,10 @@ you really want to overwrite it.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
-                                    <property name="tooltip_text" translatable="yes">Click here to Edit the PicList file
-in your system's default text editor.</property>
+                                    <property name="tooltip_text" translatable="yes">Click to Edit PicList(s) in your
+system's default text editor.</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin_bottom">6</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
@@ -4464,8 +4497,8 @@ really want to overwrite it.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
-                                    <property name="tooltip_text" translatable="yes">Click here to Edit the Paragraph Adjust
-List file in your system's default text editor.</property>
+                                    <property name="tooltip_text" translatable="yes">Click to Edit Paragraph Adjust List(s)
+in your system's default text editor.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
@@ -4476,6 +4509,15 @@ List file in your system's default text editor.</property>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">A Paragraph Adjust List needs to be in this format:
+MRK 2.7 +1    (i.e. expand the para at Mark 2.7 by one line) 
+MRK 3.20 -1   (i.e. shrink the para at Mark 3:20 by one line)
+%MARK 4.14 +1   (ignore this line - treat it as a comment)   
+MRK 5.8 +2    (i.e. expand the para at Mark 2.7 by two lines)
+etc.
+Note that adjusting paragraphs needs to be done right at the
+end when all other settings have been finalized. Otherwise you
+are likely to have to re-do it all again.</property>
                                     <property name="halign">start</property>
                                     <property name="label" translatable="yes">To balance columns of text on a page it is possible
 to specify paragraphs adjustments (shrink or expand):</property>
@@ -4497,6 +4539,8 @@ for "span": t=top, b=bottom  of page
 for "col": tl=top left, tr=top right,
         bl=bottom left,  br=bottom right</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin_bottom">6</property>
                                     <property name="label" translatable="yes">Illustrations may be positioned more intentionally
 using a PicList which specifies the location on the page:</property>
                                   </object>
@@ -4957,20 +5001,6 @@ TeX code can also be added.</property>
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkTextView">
-                <property name="height_request">60</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="vscroll_policy">natural</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="pack_type">end</property>
                 <property name="position">0</property>
               </packing>
             </child>

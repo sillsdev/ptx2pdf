@@ -160,6 +160,7 @@ class PtxPrinterDialog:
             return [font, [], 0]
 
     def get(self, wid, sub=0, asstr=False):
+        # print(wid) # This is useful for troubleshooting errors with getting (misnamed) widgets
         w = self.builder.get_object(wid)
         v = ""
         if wid.startswith("cb_"):
@@ -277,8 +278,13 @@ class PtxPrinterDialog:
     def onUseIllustrationsClicked(self, c_includeillustrations):
         status = self.get("c_includeillustrations")
         for c in ("c_includefigsfromtext", "c_usePicList", "l_useFolder", "c_useFiguresFolder", "c_useLocalFiguresFolder", "c_useCustomFolder",
-                  "c_convertTIFtoPNG", "btn_selectFigureFolder", "l_useFiguresFolder", "l_useLocalFiguresFolder"):
+                  "c_convertTIFtoPNG", "btn_selectFigureFolder", "l_useFiguresFolder", "l_useLocalFiguresFolder",
+                  "c_figexclwebapp", "c_figplaceholders", "c_fighiderefs"):
             self.builder.get_object(c).set_sensitive(status)
+        if status:
+            status = self.get("c_includefigsfromtext")
+            for c in ("c_figexclwebapp", "c_figplaceholders", "c_fighiderefs"):
+                self.builder.get_object(c).set_sensitive(status)
 
     def onUseCustomFolderclicked(self, c_useCustomFolder):
         self.builder.get_object("btn_selectFigureFolder").set_sensitive(self.get("c_useCustomFolder"))
@@ -409,14 +415,16 @@ class PtxPrinterDialog:
         for i, b in enumerate(lsbooks):
             tbox = Gtk.ToggleButton(b[0])
             tbox.show()
+            if tbox.get_label() in bl.get_text().split(" "):
+                tbox.set_active(True)
             self.alltoggles.append(tbox)
             mbs_grid.attach(tbox, i // 20, i % 20, 1, 1)
         response = dia.run()
         if response == Gtk.ResponseType.OK:
             self.booklist = [b.get_label() for b in self.alltoggles if b.get_active()]
             bl.set_text(" ".join(b for b in self.booklist))
+            self.builder.get_object("c_multiplebooks").set_active(True)
         dia.hide()
-        # bl.set_text("MAT MRK LUK JHN")
 
     def onClickmbs_all(self, btn):
         for b in self.alltoggles:
@@ -569,12 +577,12 @@ class PtxPrinterDialog:
             self.builder.get_object("c_applyWatermark").set_active(False)
 
     def onSelectFigureFolderClicked(self, btn_selectFigureFolder):
-        customFigFolder = self.fileChooser("Select the folder of image files", 
-                filters = {"Folder of Image Files": {"pattern": "*.*", "mime": "folder"}},
-                multiple = False, folder = True)
+        customFigFolder = self.fileChooser("Select the folder containing image files", 
+                filters = None, multiple = False, folder = True)
         if customFigFolder is not None:
             self.customFigFolder = customFigFolder[0]
             btn_selectFigureFolder.set_tooltip_text(customFigFolder[0])
+            self.builder.get_object("c_useCustomFolder").set_active(True)
         else:
             self.watermarks = None
             btn_selectFigureFolder.set_tooltip_text("")
@@ -596,10 +604,10 @@ class PtxPrinterDialog:
         dialog = Gtk.FileChooserDialog(title, None,
             (Gtk.FileChooserAction.SELECT_FOLDER if folder else Gtk.FileChooserAction.OPEN),
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-             Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
-        dialog.set_default_size(1000, 600)
+            ("Select" if folder else Gtk.STOCK_OPEN), Gtk.ResponseType.OK))
+        dialog.set_default_size(800, 600)
         dialog.set_select_multiple(multiple)
-        if len(filters):
+        if filters != None: # was len(filters):
             # filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}}
             filter_in = Gtk.FileFilter()
             for k, f in filters.items():
@@ -617,13 +625,17 @@ class PtxPrinterDialog:
         response = dialog.run()
         fcFilepath = None
         if response == Gtk.ResponseType.OK:
-            fcFilepath = dialog.get_filenames()
+            if folder:
+                fcFilepath = [dialog.get_filename()+"/"]
+            else:
+                fcFilepath = dialog.get_filenames()
         dialog.destroy()
         return fcFilepath
 
 class Info:
     _mappings = {
         "project/id":               (None, lambda w,v: w.get("cb_project")),
+        "project/hideadvancedsettings": ("c_hideAdvancedSettings", lambda w,v: "true" if v else "false"),
         "project/multiplebooks":    ("c_multiplebooks", lambda w,v: "true" if v else "false"),
         # "project/choosebooks":      ("btn_chooseBooks", lambda w,v: v or ""),
         "project/combinebooks":     ("c_combine", lambda w,v: "true" if v else "false"),
@@ -688,6 +700,7 @@ class Info:
         "document/ifinclfigs":      ("c_includeillustrations", lambda w,v :"true" if v else "false"),
         "document/iffigfrmtext":    ("c_includefigsfromtext", lambda w,v :"true" if v else "false"),
         "document/iffigexclwebapp": ("c_figexclwebapp", lambda w,v: "true" if v else "false"),
+        "document/iffigskipmissing": ("c_skipmissingimages", lambda w,v: "true" if v else "false"),
         "document/iffigplaceholders": ("c_figplaceholders", lambda w,v :"true" if v else "false"),
         "document/iffighiderefs":   ("c_fighiderefs", lambda w,v :"true" if v else "false"),
         "document/usefigsfolder":   ("c_useFiguresFolder", lambda w,v :"" if v else "%"),
@@ -886,6 +899,12 @@ class Info:
             return infname
 
     def generatePicList(self, bk, outdir, prjdir):
+    # % Format of lines in pic-list file:
+    # %     BBB C.V desc|file|size|loc|copyright|caption|ref
+    # % where BBB is the book code, C.V is the chapter/verse reference,
+    # % and the remaining data corresponds to USFM's \fig marker fields
+    # % eg:
+    # % MRK 1.16 |hk00207b.png|span|b||fishermen...catching fish with a net.|1.16
         if self.ptsettings is None:
             self.ptsettings = ParatextSettings(prjdir)
         fbkfm = self.ptsettings['FileNameBookNameForm']
@@ -893,10 +912,13 @@ class Info:
                     self.ptsettings['FileNamePostPart']
         fname = bknamefmt.format(bkid=bk, bknum=books.get(bk, 0))
         infname = os.path.join(prjdir, fname)
-        outfname = os.path.join(outdir, fname+".piclist")
+        # outfname = os.path.join(outdir, "PicLists", fname)
+        outfname = os.path.join(outdir, fname)
         doti = outfname.rfind(".")
         if doti > 0:
-            outfname = outfname[:doti] + "-draft" + outfname[doti:]
+            outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".piclist"
+        # Adjustment list: "C:/My Paratext 9 Projects/WSGlatin/PrintDraft/41MATWSGlatin-draft.SFM.adj" found)
+        # Picture list:    "C:/My Paratext 9 Projects/WSGlatin/PrintDraft/41MATWSGlatin-draft.SFM.piclist" found)
         # TO DO: if outfname already exists then we need to give the user a chance to abandon 
         # this task (so that it doesn't overwrite manual changes that could have been made).
         piclist = []
@@ -907,15 +929,15 @@ class Info:
             # \\fig .*\|(.+?\....)\|(....?)\|(.*)\|(.*)\|(.+?)\|(\d+[:.]\d+([-,]\d+)?)\\fig\*
             # \fig |CN01684C.jpg|col|||key-kālk arsi manvan yēsunaga tarval|9:2\fig*
             #           0         1  2 3          4                          5  [6]
-            # BKN \5 \4\|\0\|\1\|tr\|\|\|\5\6
-            # MAT 9.2 key-kālk arsi manvan yēsunaga tarval|CN01684C.jpg|col|tr|||9:2
+            # BKN \5 \|\0\|\1\|tr\|\|\4\|\5\6
+            # MAT 9.2 bringing the paralyzed man to Jesus|CN01684C.jpg|col|tr||key-kālk arsi manvan yēsunaga tarval|9:2
             m = re.findall(r"\\fig .*\|(.+?\....)\|(....?)\|(.+)?\|(.+)?\|(.+)?\|(\d+[\:\.]\d+)([\-,]\d+)?\\fig\*", dat)
             if m is not None:
                 for f in m:
                     # print(f[0]+"|"+f[1]+"|"+f[5]+f[6])
                     picfname = re.sub(r"\.[Tt][Ii][Ff]",".jpg",f[0])           # Change all TIFs to JPGs
                     pageposn = random.choice(self._picposn.get(f[1], f[1]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
-                    piclist.append(bk+" "+re.sub(r":",".", f[5])+" "+f[4]+"|"+picfname+"|"+f[1]+"|"+pageposn+"|||"+f[5]+f[6]+"\n")
+                    piclist.append(bk+" "+re.sub(r":",".", f[5])+" |"+picfname+"|"+f[1]+"|"+pageposn+"||"+f[4]+"|"+f[5]+f[6]+"\n")
             else:
                 # If none of the USFM2-styled illustrations were found then look for USFM3-styled markup in text 
                 # (Q: How to handle any additional/non-standard xyz="data" ? Will the .* before \\fig\* take care of it adequately?)
@@ -923,24 +945,27 @@ class Info:
                 # \\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,]\d+)?)".*\\fig\*
                 # \fig hāgartun saṅga dūtal vaḍkval|src="CO00659B.TIF" size="span" ref="21:16"\fig*
                 #                   0                         1                2          3  [4]
-                # BKN \3 \0\|\1\|\2\|tr\|\|\|\3\4
-                # GEN 21.16 hāgartun saṅga dūtal vaḍkval|CO00659B.TIF|span|t|||21:16
+                # BKN \3 \|\1\|\2\|tr\|\|\0\|\3\4
+                # GEN 21.16 an angel speaking to Hagar|CO00659B.TIF|span|t||hāgartun saṅga dūtal vaḍkval|21:16
                 m = re.findall(r'\\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,]\d+)?)".*\\fig\*', dat)
                 if m is not None:
                     # print(m)
                     for f in m:
                         picfname = re.sub(r"\.[Tt][Ii][Ff]",".jpg",f[1])           # Change all TIFs to JPGs
                         pageposn = random.choice(self._picposn.get(f[2], f[2]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
-                        piclist.append(bk+" "+re.sub(r":",".", f[3])+" "+f[0]+"|"+picfname+"|"+f[2]+"|"+pageposn+"|||"+f[3]+f[4]+"\n")
+                        piclist.append(bk+" "+re.sub(r":",".", f[3])+" |"+picfname+"|"+f[2]+"|"+pageposn+"||"+f[0]+"|"+f[3]+f[4]+"\n")
             if len(m):
-                with open(outfname, "w", encoding="utf-8") as outf:
-                    outf.write("".join(piclist))
+                if not os.path.exists(outfname):
+                    with open(outfname, "w", encoding="utf-8") as outf:
+                        outf.write("".join(piclist))
+                else:
+                    print("PicList file already exists: " + outfname)
             else:
                 print("No figs found in book/file!") # This needs to the log/console: 
                     
     def generateAdjList(self, bk, outdir, prjdir):
     
-        #### Seeing as this piece (below) is used at least 3 times so far, we should put it in its own def and call it
+        #### As this piece (below) is used at least 3 times so far, we should put it in its own def and call it
         # Send bk and get fname back
         if self.ptsettings is None:
             self.ptsettings = ParatextSettings(prjdir)
@@ -949,13 +974,14 @@ class Info:
                     self.ptsettings['FileNamePostPart']
         fname = bknamefmt.format(bkid=bk, bknum=books.get(bk, 0))
         infname = os.path.join(prjdir, fname)
-        #### Seeing as this piece (above) is used at least 3 times so far, we should put it in its own def and call it
+        #### As this piece (above) is used at least 3 times so far, we should put it in its own def and call it
 
-        # outfname = os.path.join(outdir, fname+".adj")
-        outfname = os.path.join(prjdir, fname+".adj")
-        # doti = outfname.rfind(".")
-        # if doti > 0:
-            # outfname = outfname[:doti] + "-draft" + outfname[doti:]
+        # outfname = os.path.join(prjdir, "PrintDraft/ParaAdjLists", fname+".adj")
+        # outfname = os.path.join(prjdir, fname)
+        outfname = os.path.join(outdir, fname)
+        doti = outfname.rfind(".")
+        if doti > 0:
+            outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".adj"
         # TO DO: if outfname already exists then we need to give the user a chance to abandon 
         # this task (so that it doesn't overwrite manual changes that could have been made).
         adjlist = []
@@ -970,8 +996,11 @@ class Info:
                         ch = ch + 1
                     adjlist.append(bk+" "+str(ch)+"."+v+" +2\n")
                     prv = v
-                with open(outfname, "w", encoding="utf-8") as outf:
-                    outf.write("".join(adjlist))
+                if not os.path.exists(outfname):
+                    with open(outfname, "w", encoding="utf-8") as outf:
+                        outf.write("".join(adjlist))
+                else:
+                    print("PicList file already exists: " + outfname)
 
     def readChanges(self, fname):
         changes = []
