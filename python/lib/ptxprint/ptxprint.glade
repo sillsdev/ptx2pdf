@@ -2590,7 +2590,7 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="row_spacing">6</property>
+                                    <property name="row_spacing">5</property>
                                     <property name="column_spacing">20</property>
                                     <property name="row_homogeneous">True</property>
                                     <child>
@@ -2746,19 +2746,6 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="c_convertTIFtoPNG">
-                                        <property name="label" translatable="yes">Convert .TIFs to .PNGs</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">2</property>
-                                        <property name="top_attach">4</property>
-                                      </packing>
-                                    </child>
-                                    <child>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
@@ -2769,6 +2756,22 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_convertTIFtoPNG">
+                                        <property name="label" translatable="yes">Convert .TIFs to .PNGs</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">XeTeX is unable to use .TIF formatted illustrations
+but it can convert the .TIF files to .PNG. These will
+be placed in the Project's local/figure folder.</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">2</property>
+                                        <property name="top_attach">2</property>
                                       </packing>
                                     </child>
                                     <child>
