@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import sys, os, re, regex, gi
+import sys, os, re, regex, gi, random
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 import xml.etree.ElementTree as et
@@ -290,7 +290,7 @@ class PtxPrinterDialog:
         if status:
             gtr.grab_focus() 
 
-    def onColumnsChanged(self, cb_Columns):
+    def onColumnsChanged(self, cb_columns):
         status = self.get("cb_columns") == "Double"
         print("CB Column Staus: ", status)
         for c in ("c_verticalrule", "l_gutterWidth", "s_colgutterfactor"):
@@ -553,6 +553,12 @@ class PtxPrinterDialog:
             self.builder.get_object("btn_selectWatermarkPDF").set_sensitive(False)
             self.builder.get_object("c_applyWatermark").set_active(False)
 
+    def onGenerateParaAdjList(self, btn_generateParaAdjList):
+        print("Need to call the Generate Para List function")
+        
+    def onGeneratePicList(self, btn_generateParaAdjList):
+        print("Need to call the Generate Para List function")
+
     def ontv_sizeallocate(self, atv, dummy):
         b = atv.get_buffer()
         it = b.get_iter_at_offset(-1)
@@ -737,6 +743,10 @@ class Info:
         "circumflex ^before word": r"^\1",
         "circumflex after^ word":  r"\1^"
     }
+    _picposn = {
+        "col":      ("tl", "tr", "bl", "br"),
+        "span":     ("t", "b")
+    }
         
     def __init__(self, printer, path, ptsettings=None):
         self.ptsettings = ptsettings
@@ -841,6 +851,94 @@ class Info:
         else:
             return infname
 
+    def generatePicList(self, bk, outdir, prjdir):
+        if self.ptsettings is None:
+            self.ptsettings = ParatextSettings(prjdir)
+        fbkfm = self.ptsettings['FileNameBookNameForm']
+        bknamefmt = fbkfm.replace("MAT","{bkid}").replace("41","{bknum:02d}") + \
+                    self.ptsettings['FileNamePostPart']
+        fname = bknamefmt.format(bkid=bk, bknum=books.get(bk, 0))
+        infname = os.path.join(prjdir, fname)
+        outfname = os.path.join(outdir, fname+".piclist")
+        doti = outfname.rfind(".")
+        if doti > 0:
+            outfname = outfname[:doti] + "-draft" + outfname[doti:]
+        # TO DO: if outfname already exists then we need to give the user a chance to abandon 
+        # this task (so that it doesn't overwrite manual changes that could have been made).
+        piclist = []
+        with open(infname, "r", encoding="utf-8") as inf:
+            dat = inf.read()
+            # Finds USFM2-styled markup in text:
+            #                0         1       2     3     4           5       [6]
+            # \\fig .*\|(.+?\....)\|(....?)\|(.*)\|(.*)\|(.+?)\|(\d+[:.]\d+([-,]\d+)?)\\fig\*
+            # \fig |CN01684C.jpg|col|||key-kālk arsi manvan yēsunaga tarval|9:2\fig*
+            #           0         1  2 3          4                          5  [6]
+            # BKN \5 \4\|\0\|\1\|tr\|\|\|\5\6
+            # MAT 9.2 key-kālk arsi manvan yēsunaga tarval|CN01684C.jpg|col|tr|||9:2
+            m = re.findall(r"\\fig .*\|(.+?\....)\|(....?)\|(.+)?\|(.+)?\|(.+)?\|(\d+[\:\.]\d+)([\-,]\d+)?\\fig\*", dat)
+            if m is not None:
+                for f in m:
+                    # print(f[0]+"|"+f[1]+"|"+f[5]+f[6])
+                    picfname = re.sub(r"\.[Tt][Ii][Ff]",".jpg",f[0])           # Change all TIFs to JPGs
+                    pageposn = random.choice(self._picposn.get(f[1], f[1]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
+                    piclist.append(bk+" "+re.sub(r":",".", f[5])+" "+f[4]+"|"+picfname+"|"+f[1]+"|"+pageposn+"|||"+f[5]+f[6]+"\n")
+            else:
+                # If none of the USFM2-styled illustrations were found then look for USFM3-styled markup in text 
+                # (Q: How to handle any additional/non-standard xyz="data" ? Will the .* before \\fig\* take care of it adequately?)
+                #         0              1               2                  3      [4]
+                # \\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,]\d+)?)".*\\fig\*
+                # \fig hāgartun saṅga dūtal vaḍkval|src="CO00659B.TIF" size="span" ref="21:16"\fig*
+                #                   0                         1                2          3  [4]
+                # BKN \3 \0\|\1\|\2\|tr\|\|\|\3\4
+                # GEN 21.16 hāgartun saṅga dūtal vaḍkval|CO00659B.TIF|span|t|||21:16
+                m = re.findall(r'\\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,]\d+)?)".*\\fig\*', dat)
+                if m is not None:
+                    # print(m)
+                    for f in m:
+                        picfname = re.sub(r"\.[Tt][Ii][Ff]",".jpg",f[1])           # Change all TIFs to JPGs
+                        pageposn = random.choice(self._picposn.get(f[2], f[2]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
+                        piclist.append(bk+" "+re.sub(r":",".", f[3])+" "+f[0]+"|"+picfname+"|"+f[2]+"|"+pageposn+"|||"+f[3]+f[4]+"\n")
+            if len(m):
+                with open(outfname, "w", encoding="utf-8") as outf:
+                    outf.write("".join(piclist))
+            else:
+                print("No figs found in book/file!") # This needs to the log/console: 
+                    
+    def generateAdjList(self, bk, outdir, prjdir):
+    
+        #### Seeing as this piece (below) is used at least 3 times so far, we should put it in its own def and call it
+        # Send bk and get fname back
+        if self.ptsettings is None:
+            self.ptsettings = ParatextSettings(prjdir)
+        fbkfm = self.ptsettings['FileNameBookNameForm']
+        bknamefmt = fbkfm.replace("MAT","{bkid}").replace("41","{bknum:02d}") + \
+                    self.ptsettings['FileNamePostPart']
+        fname = bknamefmt.format(bkid=bk, bknum=books.get(bk, 0))
+        infname = os.path.join(prjdir, fname)
+        #### Seeing as this piece (above) is used at least 3 times so far, we should put it in its own def and call it
+
+        # outfname = os.path.join(outdir, fname+".adj")
+        outfname = os.path.join(prjdir, fname+".adj")
+        # doti = outfname.rfind(".")
+        # if doti > 0:
+            # outfname = outfname[:doti] + "-draft" + outfname[doti:]
+        # TO DO: if outfname already exists then we need to give the user a chance to abandon 
+        # this task (so that it doesn't overwrite manual changes that could have been made).
+        adjlist = []
+        with open(infname, "r", encoding="utf-8") as inf:
+            dat = inf.read()
+            m = re.findall(r"\\p ?\r?\n\\v (\d+)",dat)
+            if m is not None:
+                prv = 0
+                ch = 1
+                for v in m:
+                    if int(v) < int(prv):
+                        ch = ch + 1
+                    adjlist.append(bk+" "+str(ch)+"."+v+" +2\n")
+                    prv = v
+                with open(outfname, "w", encoding="utf-8") as outf:
+                    outf.write("".join(adjlist))
+
     def readChanges(self, fname):
         changes = []
         if not os.path.exists(fname):
@@ -901,13 +999,8 @@ class Info:
         if printer.get("c_omitParallelRefs"):
             self.localChanges.append((None, regex.compile(r"\\r .+", flags=regex.M), ""))                       # Drop ALL Parallel Passage References
 
-        if printer.get("c_blendfnxr"):  # this needs further testing before deleting the 4 older RegExs
+        if printer.get("c_blendfnxr"):  # this needs further testing before deleting the 4 older RegExs # insert the other marker here.
             self.localChanges.append((None, regex.compile(r"\\x(\s.+?)\\xo(\s\d+:\d+) \\xt(.+?)\\x\*", flags=regex.M), r"\\f\1\\fr\2 \\ft\3\\f*"))
-            # To merge/blend \f and \x together, simply change all (\x to \f) (\xo to \fr) (\xq to \fq) (\xt to \ft) and (\f* to \x*)
-            # self.localChanges.append((None, regex.compile(r"\\x . ", flags=regex.M), r"\\f # "))
-            # self.localChanges.append((None, regex.compile(r"\\x\* ", flags=regex.M), r"\\f* "))
-            # self.localChanges.append((None, regex.compile(r"\\xq ", flags=regex.M), r"\\fq "))
-            # self.localChanges.append((None, regex.compile(r"\\xt ", flags=regex.M), r"\\ft "))
         
         if printer.get("c_preventorphans"): 
             # Keep final two words of \q lines together [but this doesn't work if there is an \f or \x at the end of the line] 
