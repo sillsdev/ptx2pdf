@@ -198,7 +198,7 @@ class PtxPrinterDialog:
         elif wid.startswith("t_"):
             w.set_text(value)
         elif wid.startswith("f_"):
-            print("setting font {} to {}".format(wid, value))
+            # print("setting font {} to {}".format(wid, value))
             w.set_font_name(value)
             w.emit("font-set")
         elif wid.startswith("c_"):
@@ -252,7 +252,7 @@ class PtxPrinterDialog:
             f = TTFont(name, style = " ".join(s.split()))
             fname = f.family + ", " + f.style + " " + str(size)
             w.set_font_name(fname)
-            print(fname, f.family, f.style, f.filename)
+            # print(fname, f.family, f.style, f.filename)
             # print(s, fname, f.extrastyles)
             if 'bold' in f.style.lower():
                 self.set("s_{}embolden".format(sid), 2)
@@ -651,7 +651,7 @@ class PtxPrinterDialog:
                     if not os.path.exists(plpath):
                         os.mkdir(plpath)
                     if not os.path.exists(outfname):
-                        print("Outfname: ", outfname)
+                        # print("Outfname: ", outfname)
                         with open(outfname, "w", encoding="utf-8") as outf:
                             outf.write("".join(piclist))
                     else:
@@ -680,7 +680,7 @@ class PtxPrinterDialog:
                     for v in m:
                         if int(v) < int(prv):
                             ch = ch + 1
-                        adjlist.append(bk+" "+str(ch)+"."+v+" +2\n")
+                        adjlist.append(bk+" "+str(ch)+"."+v+" +0\n")
                         prv = v
                     adjpath = os.path.join(prjdir, "PrintDraft\AdjLists")
                     if not os.path.exists(adjpath):
@@ -764,7 +764,7 @@ class Info:
         "paper/sidemarginfactor":   ("s_sidemarginfactor", lambda w,v: round(v, 2) or "1.00"),
         "paper/ifaddgutter":        ("c_pagegutter", lambda w,v :"true" if v else "false"),
         "paper/gutter":             ("s_pagegutter", lambda w,v: round(v) or "14"),
-        "paper/columns":            ("cb_columns", lambda w,v: w.builder.get_object('cb_columns').get_active_id()),
+        "paper/columns":            ("cb_columns", lambda w,v: "2" if w.builder.get_object('cb_columns').get_active_id() == "Double" else "1"),
         "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
 
         "paragraph/linespacing":    ("s_linespacing", lambda w,v: round(v, 1)),
@@ -941,7 +941,10 @@ class Info:
             
             self.dict['header/odd{}'.format(side)] = t
 
-    def asTex(self, template="template.tex"):
+    def texfix(self, path):
+        return path.replace(" ", r"\ ")
+
+    def asTex(self, template="template.tex", filedir="."):
  #       import pdb;pdb.set_trace()
         for k, v in self._settingmappings.items():
             if self.dict[k] == "":
@@ -950,13 +953,14 @@ class Info:
         with open(os.path.join(os.path.dirname(__file__), template)) as inf:
             for l in inf.readlines():
                 if l.startswith(r"\ptxfile"):
+                    res.append("\\PtxFilePath={"+filedir+"/}\n")
                     le = len(self.dict['project/books'])
-                    if le > 1:
-                        res.append("\\lastptxfilefalse")
+                    # if le > 1:
+                        # res.append("\\lastptxfilefalse")
                     for i, f in enumerate(self.dict['project/books']):
-                        if i+1 == le and i > 0:
-                            res.append("\\lastptxfilefalse")
-                        res.append("\\ptxfile{{{}}}\n".format(os.path.abspath(f)))
+                        # if i+1 == le and i > 0:
+                            # res.append("\\lastptxfilefalse")
+                        res.append("\\ptxfile{{{}}}\n".format(f))
 
                 else:
                     res.append(l.format(**self.dict))
@@ -976,28 +980,29 @@ class Info:
         fname = bknamefmt.format(bkid=bk, bknum=books.get(bk, 0))
         infname = os.path.join(prjdir, fname)
         if self.changes is not None or self.localChanges is not None:
-            outfname = os.path.join(outdir, fname)
+            outfname = fname
             doti = outfname.rfind(".")
             if doti > 0:
                 outfname = outfname[:doti] + "-draft" + outfname[doti:]
+            outfpath = os.path.join(outdir, outfname)
             with open(infname, "r", encoding="utf-8") as inf:
                 dat = inf.read()
-                print("changes: ", self.changes)
-                print("localchanges: ", self.localChanges)
+                # print("changes: ", self.changes)
+                # print("localchanges: ", self.localChanges)
                 for c in self.changes + self.localChanges:
                     if c[0] is None:
                         dat = c[1].sub(c[2], dat)
                     else:
                         newdat = [c[0].split(dat)]
                         for i in range(1, len(newdat), 2):
-                            print("i: ", i)
+                            # print("i: ", i)
                             newdat[i] = c[  1].sub(c[2], newdat[i])
                         dat = "".join(newdat)
-            with open(outfname, "w", encoding="utf-8") as outf:
+            with open(outfpath, "w", encoding="utf-8") as outf:
                 outf.write(dat)
             return outfname
         else:
-            return infname
+            return fname
 
     def readChanges(self, fname):
         changes = []
@@ -1069,7 +1074,7 @@ class Info:
 
         if printer.get("c_preventorphans"): 
             # Keep final two words of \q lines together [but this doesn't work if there is an \f or \x at the end of the line] 
-            self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+) (\S+\s*\n)", flags=regex.M), r"\1\u00A0\4"))   
+            self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)\S+)) (\S+\s*\n)", flags=regex.M), r"\1\u00A0\5"))   
 
         if printer.get("c_preventwidows"):
             # Push the verse number onto the next line (using NBSP) if there is a short widow word (3 characters or less) at the end of the line

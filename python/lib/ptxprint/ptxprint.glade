@@ -1446,7 +1446,7 @@ Factor:</property>
                                             <property name="margin_left">16</property>
                                             <property name="model">ls_columns</property>
                                             <property name="active">0</property>
-                                            <property name="id_column">1</property>
+                                            <property name="id_column">0</property>
                                             <property name="active_id">1</property>
                                             <signal name="changed" handler="onColumnsChanged" swapped="no"/>
                                           </object>
