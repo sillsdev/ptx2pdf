@@ -4225,175 +4225,201 @@ are processed</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkFrame">
+                          <object class="GtkBox">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="valign">end</property>
-                            <property name="margin_left">10</property>
-                            <property name="margin_right">6</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="hexpand">True</property>
-                            <property name="label_xalign">0.019999999552965164</property>
+                            <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkAlignment">
+                              <object class="GtkCheckButton" id="c_usePTmacros">
+                                <property name="label" translatable="yes">Use Paratext's (old) Macros</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkFrame">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="left_padding">12</property>
+                                <property name="valign">end</property>
+                                <property name="margin_left">10</property>
+                                <property name="margin_right">6</property>
+                                <property name="margin_top">6</property>
+                                <property name="margin_bottom">6</property>
+                                <property name="hexpand">True</property>
+                                <property name="label_xalign">0.019999999552965164</property>
                                 <child>
-                                  <object class="GtkGrid">
+                                  <object class="GtkAlignment">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="margin_right">6</property>
-                                    <property name="column_spacing">10</property>
+                                    <property name="left_padding">12</property>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkGrid">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="margin_top">6</property>
-                                        <property name="margin_bottom">6</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="margin_top">6</property>
-                                        <property name="margin_bottom">6</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_applyWatermark">
-                                        <property name="label" translatable="yes">Apply Watermark PDF</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">A watermark can be applied to all pages of the publication. The file
+                                        <property name="margin_right">6</property>
+                                        <property name="column_spacing">10</property>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="margin_top">6</property>
+                                            <property name="margin_bottom">6</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">1</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="margin_top">6</property>
+                                            <property name="margin_bottom">6</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">1</property>
+                                            <property name="top_attach">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_applyWatermark">
+                                            <property name="label" translatable="yes">Apply Watermark PDF</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">A watermark can be applied to all pages of the publication. The file
 must be a PDF.</property>
-                                        <property name="halign">start</property>
-                                        <property name="draw_indicator">True</property>
-                                        <signal name="clicked" handler="onApplyWatermarkChanged" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_inclFrontMatter">
-                                        <property name="label" translatable="yes">Include Front Matter PDF(s)</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">One or more previously created PDF file(s) can be included BEFORE the scripture material being typeset. If more than one
+                                            <property name="halign">start</property>
+                                            <property name="draw_indicator">True</property>
+                                            <signal name="clicked" handler="onApplyWatermarkChanged" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_inclFrontMatter">
+                                            <property name="label" translatable="yes">Include Front Matter PDF(s)</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">One or more previously created PDF file(s) can be included BEFORE the scripture material being typeset. If more than one
 file is selected, then these will appear in alphabetical order.</property>
-                                        <property name="halign">start</property>
-                                        <property name="draw_indicator">True</property>
-                                        <signal name="clicked" handler="onInclFrontMatterChanged" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_inclBackMatter">
-                                        <property name="label" translatable="yes">Include Back Matter PDF(s)</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">One or more previously created PDF file(s) can be included AFTER the scripture material being typeset. If more than one
+                                            <property name="halign">start</property>
+                                            <property name="draw_indicator">True</property>
+                                            <signal name="clicked" handler="onInclFrontMatterChanged" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_inclBackMatter">
+                                            <property name="label" translatable="yes">Include Back Matter PDF(s)</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">One or more previously created PDF file(s) can be included AFTER the scripture material being typeset. If more than one
 file is selected, then these will appear in alphabetical order.</property>
-                                        <property name="halign">start</property>
-                                        <property name="draw_indicator">True</property>
-                                        <signal name="clicked" handler="onInclBackMatterChanged" swapped="no"/>
+                                            <property name="halign">start</property>
+                                            <property name="draw_indicator">True</property>
+                                            <signal name="clicked" handler="onInclBackMatterChanged" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="margin_top">6</property>
+                                            <property name="margin_bottom">6</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">1</property>
+                                            <property name="top_attach">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="btn_selectBackPDFs">
+                                            <property name="label" translatable="yes">Select...</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">True</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="margin_top">6</property>
+                                            <property name="margin_bottom">6</property>
+                                            <signal name="clicked" handler="onBackPDFsClicked" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">2</property>
+                                            <property name="top_attach">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="btn_selectFrontPDFs">
+                                            <property name="label" translatable="yes">Select...</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">True</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="margin_top">6</property>
+                                            <property name="margin_bottom">6</property>
+                                            <signal name="clicked" handler="onFrontPDFsClicked" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">2</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="btn_selectWatermarkPDF">
+                                            <property name="label" translatable="yes">Select...</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">True</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="margin_top">6</property>
+                                            <property name="margin_bottom">6</property>
+                                            <signal name="clicked" handler="onWatermarkPDFclicked" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">2</property>
+                                            <property name="top_attach">1</property>
+                                          </packing>
+                                        </child>
                                       </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="margin_top">6</property>
-                                        <property name="margin_bottom">6</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkButton" id="btn_selectBackPDFs">
-                                        <property name="label" translatable="yes">Select...</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="margin_top">6</property>
-                                        <property name="margin_bottom">6</property>
-                                        <signal name="clicked" handler="onBackPDFsClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">2</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkButton" id="btn_selectFrontPDFs">
-                                        <property name="label" translatable="yes">Select...</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="margin_top">6</property>
-                                        <property name="margin_bottom">6</property>
-                                        <signal name="clicked" handler="onFrontPDFsClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">2</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkButton" id="btn_selectWatermarkPDF">
-                                        <property name="label" translatable="yes">Select...</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="margin_top">6</property>
-                                        <property name="margin_bottom">6</property>
-                                        <signal name="clicked" handler="onWatermarkPDFclicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">2</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
                                     </child>
                                   </object>
                                 </child>
+                                <child type="label">
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">Include Other PDFs</property>
+                                  </object>
+                                </child>
                               </object>
-                            </child>
-                            <child type="label">
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Include Other PDFs</property>
-                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
                             </child>
                           </object>
                           <packing>
