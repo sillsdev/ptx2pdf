@@ -732,6 +732,7 @@ class Info:
     _mappings = {
         "project/id":               (None, lambda w,v: w.get("cb_project")),
         "project/hideadvancedsettings": ("c_hideAdvancedSettings", lambda w,v: "true" if v else "false"),
+        "project/useptmacros":      ("c_usePTmacros", lambda w,v: "true" if v else "false"),
         "project/multiplebooks":    ("c_multiplebooks", lambda w,v: "true" if v else "false"),
         # "project/choosebooks":      ("btn_chooseBooks", lambda w,v: v or ""),
         "project/combinebooks":     ("c_combine", lambda w,v: "true" if v else "false"),

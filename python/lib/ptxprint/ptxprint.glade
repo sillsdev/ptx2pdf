@@ -4231,10 +4231,25 @@ are processed</property>
                             <property name="orientation">vertical</property>
                             <child>
                               <object class="GtkCheckButton" id="c_usePTmacros">
-                                <property name="label" translatable="yes">Use Paratext's (old) Macros</property>
+                                <property name="label" translatable="yes">Use Paratext's (older) Macros</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">By default, PTXprint uses the latest
+(improved) XeTeX macros. However
+these have only had minimal testing
+(i.e. they are EXPERIMENTAL) and could
+malfunction under rare circumstances. 
+
+Check this option if you want to 
+revert back to using the older more
+stable version of XeTeX macros
+(i.e. those that come with Paratext).</property>
+                                <property name="opacity">0.69999999999999996</property>
+                                <property name="halign">end</property>
+                                <property name="margin_right">6</property>
+                                <property name="margin_top">20</property>
+                                <property name="margin_bottom">6</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>

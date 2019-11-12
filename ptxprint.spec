@@ -4,7 +4,12 @@ block_cipher = None
 
 
 a = Analysis(['python\\scripts\\ptxprint'],
-             pathex=['python/lib', 'C:\\ptx2pdf'],
+             pathex=['python/lib', 'C:\\ptx2pdf', 
+					'C:\msys64\mingw64\lib\python3.7', 
+					'C:\msys64\mingw64\lib\python3.7\site-packages', 
+					'C:\msys64\mingw64\lib\python3.7\site-packages\gi', 
+					'C:\msys64\mingw64\lib\python3.7\site-packages\cairo', 
+					'C:\msys64\mingw64\lib\python3.7\site-packages\future\moves'],
              binaries=[],
              datas=[('python/lib/ptxprint/ptxprint.glade', 'ptxprint'),
 					('python/lib/ptxprint/template.tex', 'ptxprint'),
