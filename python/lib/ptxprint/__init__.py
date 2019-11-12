@@ -628,9 +628,9 @@ class PtxPrinterDialog:
                 if m is not None:
                     for f in m:
                         # print(f[0]+"|"+f[1]+"|"+f[5]+f[6])
-                        adjfname = re.sub(r"\.[Tt][Ii][Ff]",".jpg",f[0])           # Change all TIFs to JPGs
+                        picfname = re.sub(r"\.[Tt][Ii][Ff]",".jpg",f[0])           # Change all TIFs to JPGs
                         pageposn = random.choice(_picposn.get(f[1], f[1]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
-                        piclist.append(bk+" "+re.sub(r":",".", f[5])+" |"+adjfname+"|"+f[1]+"|"+pageposn+"||"+f[4]+"|"+f[5]+"\n")
+                        piclist.append(bk+" "+re.sub(r":",".", f[5])+" |"+picfname+"|"+f[1]+"|"+pageposn+"||"+f[4]+"|"+f[5]+"\n")
                 else:
                     # If none of the USFM2-styled illustrations were found then look for USFM3-styled markup in text 
                     # (Q: How to handle any additional/non-standard xyz="data" ? Will the .* before \\fig\* take care of it adequately?)
@@ -644,9 +644,9 @@ class PtxPrinterDialog:
                     if m is not None:
                         # print(m)
                         for f in m:
-                            adjfname = re.sub(r"\.[Tt][Ii][Ff]",".jpg",f[1])           # Change all TIFs to JPGs
+                            picfname = re.sub(r"\.[Tt][Ii][Ff]",".jpg",f[1])           # Change all TIFs to JPGs
                             pageposn = random.choice(_picposn.get(f[2], f[2]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
-                            piclist.append(bk+" "+re.sub(r":",".", f[3])+" |"+adjfname+"|"+f[2]+"|"+pageposn+"||"+f[0]+"|"+f[3]+"\n")
+                            piclist.append(bk+" "+re.sub(r":",".", f[3])+" |"+picfname+"|"+f[2]+"|"+pageposn+"||"+f[0]+"|"+f[3]+"\n")
                 if len(m):
                     plpath = os.path.join(prjdir, "PrintDraft\PicLists")
                     if not os.path.exists(plpath):
@@ -708,7 +708,7 @@ class PtxPrinterDialog:
                 # print("You need to generate the file first!")
         else:
             adjfname = self.fileChooser("Select an Adjust file to edit", 
-                    filters = {"PicList files": {"pattern": "*.adj", "mime": "none"}},
+                    filters = {"Adjust files": {"pattern": "*.adj", "mime": "none"}},
                     multiple = True)
             if adjfname is not None:
                 if os.path.exists(adjfname):
@@ -720,21 +720,21 @@ class PtxPrinterDialog:
             prjid = self.get("cb_project")
             prjdir = os.path.join(self.settings_dir, self.prjid)
             fname = self.getBookFilename(bk, prjdir)
-            adjfname = os.path.join(prjdir, "PrintDraft\PicLists", fname)
-            doti = adjfname.rfind(".")
+            picfname = os.path.join(prjdir, "PrintDraft\PicLists", fname)
+            doti = picfname.rfind(".")
             if doti > 0:
-                adjfname = adjfname[:doti] + "-draft" + adjfname[doti:] + ".piclist"
-            if os.path.exists(adjfname):
-                os.startfile(adjfname)
+                picfname = picfname[:doti] + "-draft" + picfname[doti:] + ".piclist"
+            if os.path.exists(picfname):
+                os.startfile(picfname)
             # else:
                 # print("You need to generate the file first!")
         else:
-            adjfname = self.fileChooser("Select a PicList file to edit", 
+            picfname = self.fileChooser("Select a PicList file to edit", 
                     filters = {"PicList files": {"pattern": "*.piclist", "mime": "none"}},
                     multiple = True)
-            if adjfname is not None:
-                if os.path.exists(adjfname):
-                    os.startfile(adjfname)
+            if picfname is not None:
+                if os.path.exists(picfname):
+                    os.startfile(picfname)
     
     def ontv_sizeallocate(self, atv, dummy):
         b = atv.get_buffer()
