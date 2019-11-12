@@ -2608,6 +2608,11 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">If the illustrations have been marked up with
+the w/a/p notation, then it is easy to exclude
+any illustrations that do not have the 'p'
+attribute.  Note: w= web, a=app, p=print.
+(Yet to be implemented. Coming soon.)</property>
                                             <property name="halign">start</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
@@ -4504,6 +4509,7 @@ you really want to overwrite it.</property>
 system's default text editor.</property>
                                     <property name="valign">center</property>
                                     <property name="margin_bottom">6</property>
+                                    <signal name="clicked" handler="onEditPicListClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
@@ -4536,6 +4542,7 @@ really want to overwrite it.</property>
                                     <property name="receives_default">True</property>
                                     <property name="tooltip_text" translatable="yes">Click to Edit Paragraph Adjust List(s)
 in your system's default text editor.</property>
+                                    <signal name="clicked" handler="onEditAdjListClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>

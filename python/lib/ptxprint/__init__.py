@@ -6,6 +6,7 @@ from gi.repository import Gtk
 import xml.etree.ElementTree as et
 from ptxprint.font import TTFont
 from ptxprint.runner import StreamTextBuffer
+# from PIL import Image
 import configparser
 import traceback
 
@@ -617,19 +618,19 @@ class PtxPrinterDialog:
             with open(infname, "r", encoding="utf-8") as inf:
                 dat = inf.read()
                 # Finds USFM2-styled markup in text:
-                #                0         1       2     3     4           5       [6]
+                #                0         1       2     3     4              5       
                 # \\fig .*\|(.+?\....)\|(....?)\|(.*)\|(.*)\|(.+?)\|(\d+[:.]\d+([-,]\d+)?)\\fig\*
                 # \fig |CN01684C.jpg|col|||key-kālk arsi manvan yēsunaga tarval|9:2\fig*
-                #           0         1  2 3          4                          5  [6]
-                # BKN \5 \|\0\|\1\|tr\|\|\4\|\5\6
+                #           0         1  2 3          4                          5  
+                # BKN \5 \|\0\|\1\|tr\|\|\4\|\5
                 # MAT 9.2 bringing the paralyzed man to Jesus|CN01684C.jpg|col|tr||key-kālk arsi manvan yēsunaga tarval|9:2
-                m = re.findall(r"\\fig .*\|(.+?\....)\|(....?)\|(.+)?\|(.+)?\|(.+)?\|(\d+[\:\.]\d+)([\-,]\d+)?\\fig\*", dat)
+                m = re.findall(r"\\fig .*\|(.+?\....)\|(....?)\|(.+)?\|(.+)?\|(.+)?\|(\d+[\:\.]\d+([\-,]\d+)?)\\fig\*", dat)
                 if m is not None:
                     for f in m:
                         # print(f[0]+"|"+f[1]+"|"+f[5]+f[6])
-                        picfname = re.sub(r"\.[Tt][Ii][Ff]",".jpg",f[0])           # Change all TIFs to JPGs
+                        adjfname = re.sub(r"\.[Tt][Ii][Ff]",".jpg",f[0])           # Change all TIFs to JPGs
                         pageposn = random.choice(_picposn.get(f[1], f[1]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
-                        piclist.append(bk+" "+re.sub(r":",".", f[5])+" |"+picfname+"|"+f[1]+"|"+pageposn+"||"+f[4]+"|"+f[5]+f[6]+"\n")
+                        piclist.append(bk+" "+re.sub(r":",".", f[5])+" |"+adjfname+"|"+f[1]+"|"+pageposn+"||"+f[4]+"|"+f[5]+"\n")
                 else:
                     # If none of the USFM2-styled illustrations were found then look for USFM3-styled markup in text 
                     # (Q: How to handle any additional/non-standard xyz="data" ? Will the .* before \\fig\* take care of it adequately?)
@@ -637,15 +638,15 @@ class PtxPrinterDialog:
                     # \\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,]\d+)?)".*\\fig\*
                     # \fig hāgartun saṅga dūtal vaḍkval|src="CO00659B.TIF" size="span" ref="21:16"\fig*
                     #                   0                         1                2          3  [4]
-                    # BKN \3 \|\1\|\2\|tr\|\|\0\|\3\4
+                    # BKN \3 \|\1\|\2\|tr\|\|\0\|\3
                     # GEN 21.16 an angel speaking to Hagar|CO00659B.TIF|span|t||hāgartun saṅga dūtal vaḍkval|21:16
                     m = re.findall(r'\\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,]\d+)?)".*\\fig\*', dat)
                     if m is not None:
                         # print(m)
                         for f in m:
-                            picfname = re.sub(r"\.[Tt][Ii][Ff]",".jpg",f[1])           # Change all TIFs to JPGs
+                            adjfname = re.sub(r"\.[Tt][Ii][Ff]",".jpg",f[1])           # Change all TIFs to JPGs
                             pageposn = random.choice(_picposn.get(f[2], f[2]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
-                            piclist.append(bk+" "+re.sub(r":",".", f[3])+" |"+picfname+"|"+f[2]+"|"+pageposn+"||"+f[0]+"|"+f[3]+f[4]+"\n")
+                            piclist.append(bk+" "+re.sub(r":",".", f[3])+" |"+adjfname+"|"+f[2]+"|"+pageposn+"||"+f[0]+"|"+f[3]+"\n")
                 if len(m):
                     plpath = os.path.join(prjdir, "PrintDraft\PicLists")
                     if not os.path.exists(plpath):
@@ -656,8 +657,8 @@ class PtxPrinterDialog:
                             outf.write("".join(piclist))
                     else:
                         print("PicList file already exists (this will NOT be overwritten): " + outfname)
-                else:
-                    print(r"No illustrations \fig ...\fig* found in book/file!") # This needs to the log/console: 
+                # else:
+                    # print(r"No illustrations \fig ...\fig* found in book/file!") # This needs to the log/console: 
 
     def onGenerateParaAdjList(self, btn_generateParaAdjList):
         for bk in self.getBooks():
@@ -691,6 +692,50 @@ class PtxPrinterDialog:
                     else:
                         print("Adj List already exists (this will NOT be overwritten): " + outfname)
 
+    def onEditAdjListClicked(self, btn_editParaAdjList):
+        if self.get("c_onebook"):
+            bk = self.get("cb_book")
+            prjid = self.get("cb_project")
+            prjdir = os.path.join(self.settings_dir, self.prjid)
+            fname = self.getBookFilename(bk, prjdir)
+            adjfname = os.path.join(prjdir, "PrintDraft\AdjLists", fname)
+            doti = adjfname.rfind(".")
+            if doti > 0:
+                adjfname = adjfname[:doti] + "-draft" + adjfname[doti:] + ".adj"
+            if os.path.exists(adjfname):
+                os.startfile(adjfname)
+            # else:
+                # print("You need to generate the file first!")
+        else:
+            adjfname = self.fileChooser("Select an Adjust file to edit", 
+                    filters = {"PicList files": {"pattern": "*.adj", "mime": "none"}},
+                    multiple = True)
+            if adjfname is not None:
+                if os.path.exists(adjfname):
+                    os.startfile(adjfname)
+
+    def onEditPicListClicked(self, btn_editPicList):
+        if self.get("c_onebook"):
+            bk = self.get("cb_book")
+            prjid = self.get("cb_project")
+            prjdir = os.path.join(self.settings_dir, self.prjid)
+            fname = self.getBookFilename(bk, prjdir)
+            adjfname = os.path.join(prjdir, "PrintDraft\PicLists", fname)
+            doti = adjfname.rfind(".")
+            if doti > 0:
+                adjfname = adjfname[:doti] + "-draft" + adjfname[doti:] + ".piclist"
+            if os.path.exists(adjfname):
+                os.startfile(adjfname)
+            # else:
+                # print("You need to generate the file first!")
+        else:
+            adjfname = self.fileChooser("Select a PicList file to edit", 
+                    filters = {"PicList files": {"pattern": "*.piclist", "mime": "none"}},
+                    multiple = True)
+            if adjfname is not None:
+                if os.path.exists(adjfname):
+                    os.startfile(adjfname)
+    
     def ontv_sizeallocate(self, atv, dummy):
         b = atv.get_buffer()
         it = b.get_iter_at_offset(-1)
@@ -727,6 +772,21 @@ class PtxPrinterDialog:
                 fcFilepath = dialog.get_filenames()
         dialog.destroy()
         return fcFilepath
+
+    # def convertTIFtoPNG(self, adjfname):
+        # if os.path.splitext(os.path.join(root, adjfname))[1].lower() == ".tif":
+            # if os.path.isfile(os.path.splitext(os.path.join(root, adjfname))[0] + ".png"):
+                # print("A PNG file already exists for {}".format(adjfname))
+            # else:
+                # outputfile = os.path.splitext(os.path.join(root, adjfname))[0] + ".png"
+                # try:
+                    # im = Image.open(os.path.join(root, adjfname))
+                    # print("Converting TIF for {}".format(adjfname))
+                    # if im.mode == "CMYK":
+                        # im = im.convert("Gray")
+                    # im.save(outputfile, "PNG")
+                # except Exception, e:
+                    # print(e)
 
 class Info:
     _mappings = {
@@ -804,7 +864,7 @@ class Info:
         "document/uselocalfigs":    ("c_useLocalFiguresFolder", lambda w,v :"" if v else "%"),
         "document/customfiglocn":   ("c_useCustomFolder", lambda w,v :"" if v else "%"),
         "document/customfigfolder": ("btn_selectFigureFolder", lambda w,v: re.sub(r"\\","/", w.customFigFolder) if w.customFigFolder is not None else ""),
-        "document/ifusepiclist":    ("c_usePicList", lambda w,v :"true" if v else "false"),
+        "document/ifusepiclist":    ("c_usePicList", lambda w,v :"" if v else "%"),
         "document/spacecntxtlztn":  ("cb_spaceCntxtlztn", lambda w,v: "0" if v == "None" else "1" if v == "Some" else "2"),
         "document/glossarymarkupstyle":  ("cb_glossaryMarkupStyle", lambda w,v: w.builder.get_object("cb_glossaryMarkupStyle").get_active_id()),
         "document/hangpoetry":      ("c_hangpoetry", lambda w,v: "" if v else "%"),
@@ -1044,13 +1104,13 @@ class Info:
         v = printer.get("cb_glossaryMarkupStyle")
         gloStyle = self._glossarymarkup.get(v, v)
         self.localChanges.append((None, regex.compile(r"\\w (.+?)(\|.+?)?\\w\*", flags=regex.M), gloStyle))
-        
-        if not printer.get("c_includefigsfromtext"):
-            self.localChanges.append((None, regex.compile(r"\\fig .*?\\fig\*", flags=regex.M), ""))             # Drop ALL Figures
-        else:
-            self.localChanges.append((None, regex.compile(r"\.[Tt][Ii][Ff]", flags=regex.M), ".jpg"))           # Change all TIFs to JPGs
+
+        if printer.get("c_includeillustrations") and printer.get("c_includefigsfromtext"):
+            self.localChanges.append((None, regex.compile(r"\.[Tt][Ii][Ff]", flags=regex.M), ".jpg"))           # Change all TIFs extensions to JPGs
             if printer.get("c_fighiderefs"):
                 self.localChanges.append((None, regex.compile(r"(\\fig .*?)(\d+\:\d+([-,]\d+)?)(.*?\\fig\*)", flags=regex.M), r"\1\4")) # remove ch:vs ref from caption
+        else:
+            self.localChanges.append((None, regex.compile(r"\\fig .*?\\fig\*", flags=regex.M), ""))             # Drop ALL Figures
         
         if printer.get("c_omitBookIntro"):
             self.localChanges.append((None, regex.compile(r"\\i(s|m|mi|p|pi|li\d?|pq|mq|pr|b|q\d?) .+?\r?\n", flags=regex.M), "")) # Drop Introductory matter

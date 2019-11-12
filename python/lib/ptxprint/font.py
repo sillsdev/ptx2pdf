@@ -25,7 +25,7 @@ class TTFont:
         pattern = pattern.replace("-", r"\-")
         files = checkoutput(["fc-list", pattern, "file"], shell=1)
         self.filename = re.split(r":\s", files, flags=re.M)[0].strip()
-        print(pattern, self.filename)
+        # print(pattern, self.filename)
         return self.filename
 
     def readfont(self):
