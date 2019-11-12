@@ -4942,6 +4942,7 @@ TeX code can also be added.</property>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="opacity">0.5</property>
                     <property name="label" translatable="yes">Markers</property>
                   </object>
                   <packing>
@@ -4986,6 +4987,7 @@ TeX code can also be added.</property>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="opacity">0.5</property>
                     <property name="label" translatable="yes">Logging</property>
                   </object>
                   <packing>

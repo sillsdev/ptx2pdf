@@ -216,6 +216,15 @@ class PtxPrinterDialog:
         else:
             return self.get('t_booklist').split()
 
+    def getBookFilename(self, bk, prjdir):
+        if self.ptsettings is None:
+            self.ptsettings = ParatextSettings(prjdir)
+        fbkfm = self.ptsettings['FileNameBookNameForm']
+        bknamefmt = fbkfm.replace("MAT","{bkid}").replace("41","{bknum:02d}") + \
+                    self.ptsettings['FileNamePostPart']
+        fname = bknamefmt.format(bkid=bk, bknum=books.get(bk, 0))
+        return fname
+        
     def onDestroy(self, btn):
         Gtk.main_quit()
 
@@ -587,11 +596,100 @@ class PtxPrinterDialog:
             self.builder.get_object("btn_selectFigureFolder").set_sensitive(False)
             self.builder.get_object("c_useFiguresFolder").set_active(True)
 
-    def onGenerateParaAdjList(self, btn_generateParaAdjList):
-        print("Need to call the Generate Para List function")
-        
     def onGeneratePicList(self, btn_generateParaAdjList):
-        print("Need to call the Generate Para List function")
+        # Format of lines in pic-list file: BBB C.V desc|file|size|loc|copyright|caption|ref
+        # MRK 1.16 fishermen...catching fish with a net.|hk00207b.png|span|b||Jesus calling the disciples to follow him.|1.16
+        _picposn = {
+            "col":      ("tl", "tr", "bl", "br"),
+            "span":     ("t", "b")
+        }
+        for bk in self.getBooks():
+            prjid = self.get("cb_project")
+            prjdir = os.path.join(self.settings_dir, self.prjid)
+            tmpdir = os.path.join(prjdir, 'PrintDraft') if self.get("c_useprintdraftfolder") else r"C:\temp"  # args.directory
+            fname = self.getBookFilename(bk, prjdir)
+            infname = os.path.join(prjdir, fname)
+            outfname = os.path.join(prjdir, "PrintDraft\PicLists", fname)
+            doti = outfname.rfind(".")
+            if doti > 0:
+                outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".piclist"
+            piclist = []
+            with open(infname, "r", encoding="utf-8") as inf:
+                dat = inf.read()
+                # Finds USFM2-styled markup in text:
+                #                0         1       2     3     4           5       [6]
+                # \\fig .*\|(.+?\....)\|(....?)\|(.*)\|(.*)\|(.+?)\|(\d+[:.]\d+([-,]\d+)?)\\fig\*
+                # \fig |CN01684C.jpg|col|||key-kālk arsi manvan yēsunaga tarval|9:2\fig*
+                #           0         1  2 3          4                          5  [6]
+                # BKN \5 \|\0\|\1\|tr\|\|\4\|\5\6
+                # MAT 9.2 bringing the paralyzed man to Jesus|CN01684C.jpg|col|tr||key-kālk arsi manvan yēsunaga tarval|9:2
+                m = re.findall(r"\\fig .*\|(.+?\....)\|(....?)\|(.+)?\|(.+)?\|(.+)?\|(\d+[\:\.]\d+)([\-,]\d+)?\\fig\*", dat)
+                if m is not None:
+                    for f in m:
+                        # print(f[0]+"|"+f[1]+"|"+f[5]+f[6])
+                        picfname = re.sub(r"\.[Tt][Ii][Ff]",".jpg",f[0])           # Change all TIFs to JPGs
+                        pageposn = random.choice(_picposn.get(f[1], f[1]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
+                        piclist.append(bk+" "+re.sub(r":",".", f[5])+" |"+picfname+"|"+f[1]+"|"+pageposn+"||"+f[4]+"|"+f[5]+f[6]+"\n")
+                else:
+                    # If none of the USFM2-styled illustrations were found then look for USFM3-styled markup in text 
+                    # (Q: How to handle any additional/non-standard xyz="data" ? Will the .* before \\fig\* take care of it adequately?)
+                    #         0              1               2                  3      [4]
+                    # \\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,]\d+)?)".*\\fig\*
+                    # \fig hāgartun saṅga dūtal vaḍkval|src="CO00659B.TIF" size="span" ref="21:16"\fig*
+                    #                   0                         1                2          3  [4]
+                    # BKN \3 \|\1\|\2\|tr\|\|\0\|\3\4
+                    # GEN 21.16 an angel speaking to Hagar|CO00659B.TIF|span|t||hāgartun saṅga dūtal vaḍkval|21:16
+                    m = re.findall(r'\\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,]\d+)?)".*\\fig\*', dat)
+                    if m is not None:
+                        # print(m)
+                        for f in m:
+                            picfname = re.sub(r"\.[Tt][Ii][Ff]",".jpg",f[1])           # Change all TIFs to JPGs
+                            pageposn = random.choice(_picposn.get(f[2], f[2]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
+                            piclist.append(bk+" "+re.sub(r":",".", f[3])+" |"+picfname+"|"+f[2]+"|"+pageposn+"||"+f[0]+"|"+f[3]+f[4]+"\n")
+                if len(m):
+                    plpath = os.path.join(prjdir, "PrintDraft\PicLists")
+                    if not os.path.exists(plpath):
+                        os.mkdir(plpath)
+                    if not os.path.exists(outfname):
+                        print("Outfname: ", outfname)
+                        with open(outfname, "w", encoding="utf-8") as outf:
+                            outf.write("".join(piclist))
+                    else:
+                        print("PicList file already exists (this will NOT be overwritten): " + outfname)
+                else:
+                    print(r"No illustrations \fig ...\fig* found in book/file!") # This needs to the log/console: 
+
+    def onGenerateParaAdjList(self, btn_generateParaAdjList):
+        for bk in self.getBooks():
+            prjid = self.get("cb_project")
+            prjdir = os.path.join(self.settings_dir, self.prjid)
+            tmpdir = os.path.join(prjdir, 'PrintDraft') if self.get("c_useprintdraftfolder") else r"C:\temp"
+            fname = self.getBookFilename(bk, prjdir)
+            infname = os.path.join(prjdir, fname)
+            outfname = os.path.join(prjdir, "PrintDraft/AdjLists", fname)
+            doti = outfname.rfind(".")
+            if doti > 0:
+                outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".adj"
+            adjlist = []
+            with open(infname, "r", encoding="utf-8") as inf:
+                dat = inf.read()
+                m = re.findall(r"\\p ?\r?\n\\v (\d+)",dat)
+                if m is not None:
+                    prv = 0
+                    ch = 1
+                    for v in m:
+                        if int(v) < int(prv):
+                            ch = ch + 1
+                        adjlist.append(bk+" "+str(ch)+"."+v+" +2\n")
+                        prv = v
+                    adjpath = os.path.join(prjdir, "PrintDraft\AdjLists")
+                    if not os.path.exists(adjpath):
+                        os.mkdir(adjpath)
+                    if not os.path.exists(outfname):
+                        with open(outfname, "w", encoding="utf-8") as outf:
+                            outf.write("".join(adjlist))
+                    else:
+                        print("Adj List already exists (this will NOT be overwritten): " + outfname)
 
     def ontv_sizeallocate(self, atv, dummy):
         b = atv.get_buffer()
@@ -788,10 +886,6 @@ class Info:
         "circumflex ^before word": r"^\1",
         "circumflex after^ word":  r"\1^"
     }
-    _picposn = {
-        "col":      ("tl", "tr", "bl", "br"),
-        "span":     ("t", "b")
-    }
         
     def __init__(self, printer, path, ptsettings=None):
         self.ptsettings = ptsettings
@@ -888,123 +982,22 @@ class Info:
                 outfname = outfname[:doti] + "-draft" + outfname[doti:]
             with open(infname, "r", encoding="utf-8") as inf:
                 dat = inf.read()
+                print("changes: ", self.changes)
+                print("localchanges: ", self.localChanges)
                 for c in self.changes + self.localChanges:
                     if c[0] is None:
                         dat = c[1].sub(c[2], dat)
                     else:
                         newdat = [c[0].split(dat)]
                         for i in range(1, len(newdat), 2):
-                            newdat[i] = c[1].sub(c[2], newdat[i])
+                            print("i: ", i)
+                            newdat[i] = c[  1].sub(c[2], newdat[i])
                         dat = "".join(newdat)
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write(dat)
             return outfname
         else:
             return infname
-
-    def generatePicList(self, bk, outdir, prjdir):
-    # % Format of lines in pic-list file:
-    # %     BBB C.V desc|file|size|loc|copyright|caption|ref
-    # % where BBB is the book code, C.V is the chapter/verse reference,
-    # % and the remaining data corresponds to USFM's \fig marker fields
-    # % eg:
-    # % MRK 1.16 |hk00207b.png|span|b||fishermen...catching fish with a net.|1.16
-        if self.ptsettings is None:
-            self.ptsettings = ParatextSettings(prjdir)
-        fbkfm = self.ptsettings['FileNameBookNameForm']
-        bknamefmt = fbkfm.replace("MAT","{bkid}").replace("41","{bknum:02d}") + \
-                    self.ptsettings['FileNamePostPart']
-        fname = bknamefmt.format(bkid=bk, bknum=books.get(bk, 0))
-        infname = os.path.join(prjdir, fname)
-        # outfname = os.path.join(outdir, "PicLists", fname)
-        outfname = os.path.join(outdir, fname)
-        doti = outfname.rfind(".")
-        if doti > 0:
-            outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".piclist"
-        # Adjustment list: "C:/My Paratext 9 Projects/WSGlatin/PrintDraft/41MATWSGlatin-draft.SFM.adj" found)
-        # Picture list:    "C:/My Paratext 9 Projects/WSGlatin/PrintDraft/41MATWSGlatin-draft.SFM.piclist" found)
-        # TO DO: if outfname already exists then we need to give the user a chance to abandon 
-        # this task (so that it doesn't overwrite manual changes that could have been made).
-        piclist = []
-        with open(infname, "r", encoding="utf-8") as inf:
-            dat = inf.read()
-            # Finds USFM2-styled markup in text:
-            #                0         1       2     3     4           5       [6]
-            # \\fig .*\|(.+?\....)\|(....?)\|(.*)\|(.*)\|(.+?)\|(\d+[:.]\d+([-,]\d+)?)\\fig\*
-            # \fig |CN01684C.jpg|col|||key-kālk arsi manvan yēsunaga tarval|9:2\fig*
-            #           0         1  2 3          4                          5  [6]
-            # BKN \5 \|\0\|\1\|tr\|\|\4\|\5\6
-            # MAT 9.2 bringing the paralyzed man to Jesus|CN01684C.jpg|col|tr||key-kālk arsi manvan yēsunaga tarval|9:2
-            m = re.findall(r"\\fig .*\|(.+?\....)\|(....?)\|(.+)?\|(.+)?\|(.+)?\|(\d+[\:\.]\d+)([\-,]\d+)?\\fig\*", dat)
-            if m is not None:
-                for f in m:
-                    # print(f[0]+"|"+f[1]+"|"+f[5]+f[6])
-                    picfname = re.sub(r"\.[Tt][Ii][Ff]",".jpg",f[0])           # Change all TIFs to JPGs
-                    pageposn = random.choice(self._picposn.get(f[1], f[1]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
-                    piclist.append(bk+" "+re.sub(r":",".", f[5])+" |"+picfname+"|"+f[1]+"|"+pageposn+"||"+f[4]+"|"+f[5]+f[6]+"\n")
-            else:
-                # If none of the USFM2-styled illustrations were found then look for USFM3-styled markup in text 
-                # (Q: How to handle any additional/non-standard xyz="data" ? Will the .* before \\fig\* take care of it adequately?)
-                #         0              1               2                  3      [4]
-                # \\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,]\d+)?)".*\\fig\*
-                # \fig hāgartun saṅga dūtal vaḍkval|src="CO00659B.TIF" size="span" ref="21:16"\fig*
-                #                   0                         1                2          3  [4]
-                # BKN \3 \|\1\|\2\|tr\|\|\0\|\3\4
-                # GEN 21.16 an angel speaking to Hagar|CO00659B.TIF|span|t||hāgartun saṅga dūtal vaḍkval|21:16
-                m = re.findall(r'\\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,]\d+)?)".*\\fig\*', dat)
-                if m is not None:
-                    # print(m)
-                    for f in m:
-                        picfname = re.sub(r"\.[Tt][Ii][Ff]",".jpg",f[1])           # Change all TIFs to JPGs
-                        pageposn = random.choice(self._picposn.get(f[2], f[2]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
-                        piclist.append(bk+" "+re.sub(r":",".", f[3])+" |"+picfname+"|"+f[2]+"|"+pageposn+"||"+f[0]+"|"+f[3]+f[4]+"\n")
-            if len(m):
-                if not os.path.exists(outfname):
-                    with open(outfname, "w", encoding="utf-8") as outf:
-                        outf.write("".join(piclist))
-                else:
-                    print("PicList file already exists: " + outfname)
-            else:
-                print("No figs found in book/file!") # This needs to the log/console: 
-                    
-    def generateAdjList(self, bk, outdir, prjdir):
-    
-        #### As this piece (below) is used at least 3 times so far, we should put it in its own def and call it
-        # Send bk and get fname back
-        if self.ptsettings is None:
-            self.ptsettings = ParatextSettings(prjdir)
-        fbkfm = self.ptsettings['FileNameBookNameForm']
-        bknamefmt = fbkfm.replace("MAT","{bkid}").replace("41","{bknum:02d}") + \
-                    self.ptsettings['FileNamePostPart']
-        fname = bknamefmt.format(bkid=bk, bknum=books.get(bk, 0))
-        infname = os.path.join(prjdir, fname)
-        #### As this piece (above) is used at least 3 times so far, we should put it in its own def and call it
-
-        # outfname = os.path.join(prjdir, "PrintDraft/ParaAdjLists", fname+".adj")
-        # outfname = os.path.join(prjdir, fname)
-        outfname = os.path.join(outdir, fname)
-        doti = outfname.rfind(".")
-        if doti > 0:
-            outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".adj"
-        # TO DO: if outfname already exists then we need to give the user a chance to abandon 
-        # this task (so that it doesn't overwrite manual changes that could have been made).
-        adjlist = []
-        with open(infname, "r", encoding="utf-8") as inf:
-            dat = inf.read()
-            m = re.findall(r"\\p ?\r?\n\\v (\d+)",dat)
-            if m is not None:
-                prv = 0
-                ch = 1
-                for v in m:
-                    if int(v) < int(prv):
-                        ch = ch + 1
-                    adjlist.append(bk+" "+str(ch)+"."+v+" +2\n")
-                    prv = v
-                if not os.path.exists(outfname):
-                    with open(outfname, "w", encoding="utf-8") as outf:
-                        outf.write("".join(adjlist))
-                else:
-                    print("PicList file already exists: " + outfname)
 
     def readChanges(self, fname):
         changes = []
