@@ -54,7 +54,7 @@ class TTFont:
                 self.style = style
             pattern = '"' + self.fname() + '"' + (":style=\""+style.title()+'"' if style else ":style=Regular")
             pattern = pattern.replace("-", r"\-")
-            files = checkoutput("fc-list " + pattern + " file", shell=1)
+            files = checkoutput(["fc-list", pattern, "file"], shell=1)
             f = re.split(r":\s", files, flags=re.M)[0].strip()
             if f != "" or style == "":
                 break

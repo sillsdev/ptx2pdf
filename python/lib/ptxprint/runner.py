@@ -51,6 +51,8 @@ if sys.platform == "linux":
         fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
 
     def checkoutput(*a, **kw):
+        if 'shell' in kw and not isinstance(a[0], str):
+            a[0] = " ".join(a[0])
         res = subprocess.check_output(*a, **kw).decode("utf-8")
         return res
 
