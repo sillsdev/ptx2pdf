@@ -23,7 +23,7 @@ class TTFont:
     def getfname(self):
         pattern = '"' + self.family + '"' + (":style=\""+self.style.title()+'"' if self.style else ":style=Regular")
         pattern = pattern.replace("-", r"\-")
-        files = checkoutput("fc-list " + pattern + " file", shell=1)
+        files = checkoutput(["fc-list", pattern, "file"], shell=1)
         self.filename = re.split(r":\s", files, flags=re.M)[0].strip()
         print(pattern, self.filename)
         return self.filename
