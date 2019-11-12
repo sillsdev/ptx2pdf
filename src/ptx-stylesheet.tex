@@ -336,12 +336,14 @@
  \let\italic=\save@italic
 }
 
+\newif\iflastptxfile
 \def\@netimesetup{
  % stuff to execute after loading all stylesheets but before processing the first USFM file
  \s@tupsizes
  \defineheads
  \@ddcvhooks
  \@ddspecialhooks
+ \global\lastptxfiletrue
  \the\@nithooks
  \let\@netimesetup=\relax}
 
@@ -374,7 +376,7 @@
  \m@kedigitsother
  \deactiv@tecustomch@rs
  \catcode13=5
- \closepiclist
+ \iflastptxfile\closepiclist\fi
  \closeadjlist
  \catcode`\/=12
  \catcode`\#=6 \catcode`\%=14 % restore TeX meanings for those we might use

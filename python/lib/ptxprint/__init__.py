@@ -7,6 +7,7 @@ import xml.etree.ElementTree as et
 from ptxprint.font import TTFont
 from ptxprint.runner import StreamTextBuffer
 import configparser
+import traceback
 
 # For future Reference on how Paratext treats this list:
 # G                                    MzM                         RT                P        X      FBO    ICGTND          L  OT z NT DC  -  X Y  -  Z  --  L
@@ -149,15 +150,11 @@ class PtxPrinterDialog:
         v.add_attribute(c, "text", index)
 
     def parse_fontname(self, font):
-        m = re.match(r"^(.*?),?\s*((?:[^,\s]+\s+)*)(\d+(?:\.\d+)?)$", font)
+        m = re.match(r"^(.*?)(\d+(?:\.\d+)?)$", font)
         if m:
-            styles = m.group(2).strip().split()
-            if not m.group(1):
-                return [styles[0], styles[1:], m.group(3)]
-            else:
-                return [m.group(1), styles, m.group(3)]
+            return [m.group(1), int(m.group(2))]
         else:
-            return [font, [], 0]
+            return [font, 0]
 
     def get(self, wid, sub=0, asstr=False):
         # print(wid) # This is useful for troubleshooting errors with getting (misnamed) widgets
@@ -175,8 +172,7 @@ class PtxPrinterDialog:
         elif wid.startswith("t_"):
             v = w.get_text()
         elif wid.startswith("f_"):
-            val = w.get_font_name()
-            v = val if asstr else self.parse_fontname(val)
+            v = w.get_font_name()
         elif wid.startswith("c_"):
             v = w.get_active()
         elif wid.startswith("s_"):
@@ -202,6 +198,7 @@ class PtxPrinterDialog:
         elif wid.startswith("t_"):
             w.set_text(value)
         elif wid.startswith("f_"):
+            print("setting font {} to {}".format(wid, value))
             w.set_font_name(value)
             w.emit("font-set")
         elif wid.startswith("c_"):
@@ -236,20 +233,21 @@ class PtxPrinterDialog:
             self.cb_digits.grab_focus()  # this doesn't appear to do anything yet!
 
     def onFontChange(self, fbtn):
+        # traceback.print_stack(limit=3)
         font = fbtn.get_font_name()
-        (family, style, size) = self.parse_fontname(font)
-        style = [s.lower() for s in style if s not in ("Regular", "Medium")]
+        (name, size) = self.parse_fontname(font)
         label = self.builder.get_object("l_font")
         for s in ('bold', 'italic', 'bold italic'):
             sid = s.replace(" ", "")
             w = self.builder.get_object("f_"+sid)
-            f = TTFont(family, " ".join(style + s.split()))
-            fname = family + ", " + f.style + " " + size
+            f = TTFont(name, style = " ".join(s.split()))
+            fname = f.family + ", " + f.style + " " + str(size)
             w.set_font_name(fname)
+            print(fname, f.family, f.style, f.filename)
             # print(s, fname, f.extrastyles)
-            if 'bold' in f.extrastyles:
+            if 'bold' in f.style.lower():
                 self.set("s_{}embolden".format(sid), 2)
-            if 'italic' in f.extrastyles:
+            if 'italic' in f.style.lower():
                 self.set("s_{}slant".format(sid), 0.27)
 
     def updateFakeLabels(self):
@@ -816,17 +814,17 @@ class Info:
 
     def processFonts(self, printer):
 #        import pdb;pdb.set_trace()
+        # traceback.print_stack(limit=3)
         for p, wid in self._fonts.items():
-            (family, style, size) = printer.get(wid)
-            f = TTFont(family, " ".join(style))
+            f = TTFont(printer.get(wid))
             if 'Silf' in f:
                 engine = "/GR"
             else:
                 engine = ""
             s = ""
-            if len(style):
-                s = "/" + "".join(x[0].upper() for x in style)
-            self.dict[p] = family + engine + s
+            if len(f.style):
+                s = "/" + "".join(x[0].upper() for x in f.style)
+            self.dict[p] = f.family + engine + s
 
     def processHdrFtr(self, printer):
         mirror = printer.get('c_mirrorpages')
@@ -858,8 +856,14 @@ class Info:
         with open(os.path.join(os.path.dirname(__file__), template)) as inf:
             for l in inf.readlines():
                 if l.startswith(r"\ptxfile"):
-                    for f in self.dict['project/books']:
+                    le = len(self.dict['project/books'])
+                    if le > 1:
+                        res.append("\\lastptxfilefalse")
+                    for i, f in enumerate(self.dict['project/books']):
+                        if i+1 == le and i > 0:
+                            res.append("\\lastptxfilefalse")
                         res.append("\\ptxfile{{{}}}\n".format(os.path.abspath(f)))
+
                 else:
                     res.append(l.format(**self.dict))
         return "".join(res)

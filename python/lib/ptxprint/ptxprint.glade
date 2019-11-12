@@ -2235,7 +2235,6 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
                                     <property name="font">Sans 12</property>
-                                    <property name="level">GTK_FONT_CHOOSER_LEVEL_STYLE | GTK_FONT_CHOOSER_LEVEL_FAMILY</property>
                                     <property name="preview_text"/>
                                     <property name="show_size">False</property>
                                   </object>
@@ -2250,7 +2249,6 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
                                     <property name="font">Sans 12</property>
-                                    <property name="level">GTK_FONT_CHOOSER_LEVEL_STYLE | GTK_FONT_CHOOSER_LEVEL_FAMILY</property>
                                     <property name="preview_text"/>
                                     <property name="show_size">False</property>
                                   </object>
@@ -2265,7 +2263,6 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
                                     <property name="font">Sans 12</property>
-                                    <property name="level">GTK_FONT_CHOOSER_LEVEL_STYLE | GTK_FONT_CHOOSER_LEVEL_FAMILY</property>
                                     <property name="preview_text"/>
                                     <property name="show_size">False</property>
                                   </object>
@@ -2487,7 +2484,6 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                                     <property name="receives_default">True</property>
                                     <property name="valign">center</property>
                                     <property name="font">Sans 12</property>
-                                    <property name="level">GTK_FONT_CHOOSER_LEVEL_STYLE | GTK_FONT_CHOOSER_LEVEL_FAMILY</property>
                                     <property name="preview_text"/>
                                     <property name="show_size">False</property>
                                     <signal name="font-set" handler="onFontChange" swapped="no"/>
