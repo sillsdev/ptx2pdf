@@ -64,10 +64,10 @@ if sys.platform == "linux":
             p = subprocess.Popen(*a, stdout = subprocess.PIPE, stderr = subprocess.PIPE,
                                  universal_newlines = True, encoding="utf-8", errors="backslashreplace", **kw)
             b.bind_subprocess(p)
-            return None
+            return p
         else:
             res = subprocess.call(*a, **kw)
-            return res
+            return None
 
     def openkey(path):
         basepath = os.path.expanduser("~/.config/paratext/registry/LocalMachine/software")
@@ -127,10 +127,10 @@ elif sys.platform == "win32":
             p = subprocess.Popen(*newa, stdout = subprocess.PIPE, stderr = subprocess.PIPE,
                                  universal_newlines = True, encoding="utf-8", errors="backslashreplace", **kw)
             b.bind_subprocess(p)
-            return None
+            return p
         else:
             res = subprocess.call(*newa, **kw)
-            return res
+            return None
 
 ptob = openkey("Paratext/8")
 ptv = queryvalue(ptob, "ParatextVersion")
