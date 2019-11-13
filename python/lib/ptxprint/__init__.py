@@ -99,7 +99,6 @@ class PtxPrinterDialog:
         self.builder.add_from_file(os.path.join(os.path.dirname(__file__), "ptxprint.glade"))
         self.builder.connect_signals(self)
         self.addCR("cb_digits", 0)
-        self.addCR("cb_columns", 0)
         self.addCR("cb_script", 0)
         self.addCR("cb_chapfrom", 0)
         self.addCR("cb_chapto", 0)
@@ -210,7 +209,7 @@ class PtxPrinterDialog:
             w.set_tooltip_text(value)
 
     def getBooks(self):
-        if self.get('c_onebook'):
+        if not self.get('c_multiplebooks'):
             return [self.get('cb_book')]
         elif len(self.booklist):
             return self.booklist
@@ -283,6 +282,11 @@ class PtxPrinterDialog:
             self.builder.get_object(c).set_sensitive(status)
         self.updateFakeLabels()
 
+    def onVariableLineSpacingClicked(self, c_variableLineSpacing):
+        status = self.get("c_variableLineSpacing")
+        for c in ("s_linespacingmin", "s_linespacingmax", "l_min", "l_max"):
+            self.builder.get_object(c).set_sensitive(status)
+
     def onUseIllustrationsClicked(self, c_includeillustrations):
         status = self.get("c_includeillustrations")
         for c in ("c_includefigsfromtext", "c_usePicList", "l_useFolder", "c_useFiguresFolder", "c_useLocalFiguresFolder", "c_useCustomFolder",
@@ -307,11 +311,13 @@ class PtxPrinterDialog:
         status = self.get("c_includeFootnotes")
         for c in ("c_fnautocallers", "t_fncallers", "c_fnomitcaller", "c_fnpageresetcallers", "c_fnparagraphednotes"):
             self.builder.get_object(c).set_sensitive(status)
+        self.GenerateNestedStyles(None)
         
     def onClickedIncludeXrefs(self, c_includeXrefs):
         status = self.get("c_includeXrefs")
         for c in ("c_xrautocallers", "t_xrcallers", "c_xromitcaller", "c_xrpageresetcallers", "c_paragraphedxrefs"):
             self.builder.get_object(c).set_sensitive(status)
+        self.GenerateNestedStyles(None)
 
     def onPageGutterChanged(self, c_pagegutter):
         status = self.get("c_pagegutter")
@@ -320,20 +326,21 @@ class PtxPrinterDialog:
         if status:
             gtr.grab_focus() 
 
-    def onColumnsChanged(self, cb_columns):
-        status = self.get("cb_columns") == "Double"
+    def onDoubleColumnChanged(self, c_doublecolumn):
+        status = self.get("c_doublecolumn")
         for c in ("c_verticalrule", "l_gutterWidth", "s_colgutterfactor"):
             self.builder.get_object(c).set_sensitive(status)
 
-    def onBookSelectorChange(self, c_onebook):
-        status = self.get("c_onebook")
-        cmb = self.builder.get_object("c_combine")
-        cmb.set_sensitive(not status)
-        toc = self.builder.get_object("c_autoToC") # Ensure that we're not trying to build a ToC for a single book!
-        toc.set_sensitive(not status)
-        toc.set_active(False)
-        for c in ("l_chapfrom", "cb_chapfrom", "l_chapto", "cb_chapto"):
+    def onBookSelectorChange(self, c_multiplebooks):
+        status = self.get("c_multiplebooks")
+        for c in ("c_combine", "t_booklist"):
             self.builder.get_object(c).set_sensitive(status)
+        toc = self.builder.get_object("c_autoToC") # Ensure that we're not trying to build a ToC for a single book!
+        toc.set_sensitive(status)
+        if not status:
+            toc.set_active(False)
+        for c in ("l_singlebook", "cb_book", "l_chapfrom", "cb_chapfrom", "l_chapto", "cb_chapto"):
+            self.builder.get_object(c).set_sensitive(not status)
             
     def onFigsChanged(self, c_includefigsfromtext):
         status = self.get("c_includefigsfromtext")
@@ -510,6 +517,15 @@ class PtxPrinterDialog:
             config = configparser.ConfigParser()
             config.read(configfile)
             info.loadConfig(self, config)
+        status = self.get("c_multiplebooks")
+        for c in ("c_combine", "t_booklist"):
+            self.builder.get_object(c).set_sensitive(status)
+        toc = self.builder.get_object("c_autoToC") # Ensure that we're not trying to build a ToC for a single book!
+        toc.set_sensitive(status)
+        if not status:
+            toc.set_active(False)
+        for c in ("l_singlebook", "cb_book", "l_chapfrom", "cb_chapfrom", "l_chapto", "cb_chapto"):
+            self.builder.get_object(c).set_sensitive(not status)
 
     def onEditChangesFile(self, cb_prj):
         self.prjid = self.get("cb_project")
@@ -692,8 +708,22 @@ class PtxPrinterDialog:
                     else:
                         print("Adj List already exists (this will NOT be overwritten): " + outfname)
 
+    def GenerateNestedStyles(self, c_omitallverses):
+        prjid = self.get("cb_project")
+        prjdir = os.path.join(self.settings_dir, self.prjid)
+        nstyfname = os.path.join(prjdir, "PrintDraft/NestedStyles.sty")
+        nstylist = []
+        if self.get("c_omitallverses"):
+            nstylist.append("##### Remove all verse numbers\n\\Marker v\n\\TextProperties nonpublishable\n\n")
+        if not self.get("c_includeFootnotes"):
+            nstylist.append("##### Remove all footnotes\n\\Marker f\n\\TextProperties nonpublishable\n\n")
+        if not self.get("c_includeXrefs"):
+            nstylist.append("##### Remove all cross-references\n\\Marker x\n\\TextProperties nonpublishable\n\n")
+        with open(nstyfname, "w", encoding="utf-8") as outf:
+            outf.write("".join(nstylist))
+
     def onEditAdjListClicked(self, btn_editParaAdjList):
-        if self.get("c_onebook"):
+        if not self.get("c_multiplebooks"):
             bk = self.get("cb_book")
             prjid = self.get("cb_project")
             prjdir = os.path.join(self.settings_dir, self.prjid)
@@ -715,7 +745,7 @@ class PtxPrinterDialog:
                     os.startfile(adjfname)
 
     def onEditPicListClicked(self, btn_editPicList):
-        if self.get("c_onebook"):
+        if not self.get("c_multiplebooks"):
             bk = self.get("cb_book")
             prjid = self.get("cb_project")
             prjdir = os.path.join(self.settings_dir, self.prjid)
@@ -809,6 +839,7 @@ class Info:
         "project/usechangesfile":   ("c_usePrintDraftChanges", lambda w,v :"true" if v else "false"),
         "project/ifusemodstex":     ("c_useModsTex", lambda w,v: "" if v else "%"),
         "project/ifusemodssty":     ("c_useModsSty", lambda w,v: "" if v else "%"),
+        "project/ifusenested":      (None, lambda w,v: "" if (w.get("c_omitallverses") or not w.get("c_includeFootnotes") or not w.get("c_includeXrefs")) else "%"),
         # "project/ifprettyOutline":  ("c_prettyIntroOutline", lambda w,v :"true" if v else "false"),
         # "project/ifstarthalfpage":  ("c_startOnHalfPage", lambda w,v :"true" if v else "false"),
 
@@ -825,10 +856,10 @@ class Info:
         "paper/sidemarginfactor":   ("s_sidemarginfactor", lambda w,v: round(v, 2) or "1.00"),
         "paper/ifaddgutter":        ("c_pagegutter", lambda w,v :"true" if v else "false"),
         "paper/gutter":             ("s_pagegutter", lambda w,v: round(v) or "14"),
-        "paper/columns":            ("cb_columns", lambda w,v: "2" if w.builder.get_object('cb_columns').get_active_id() == "Double" else "1"),
+        "paper/columns":            ("c_doublecolumn", lambda w,v: "2" if v else "1"),
         "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
 
-        "paragraph/linespacing":    ("s_linespacing", lambda w,v: round(v, 1)),
+        "paragraph/linespacing":    ("s_linespacing", lambda w,v: round((v / 12), 3)),  # This needs to change now as it is (pts) rather than a factor of the Font size.
         "paragraph/ifjustify":       ("c_justify", lambda w,v: "true" if v else "false"),
         "paragraph/ifhyphenate":     ("c_hyphenate", lambda w,v: "true" if v else "false"),
 
@@ -840,7 +871,7 @@ class Info:
         "document/chapfrom":        ("cb_chapfrom", lambda w,v: w.builder.get_object("cb_chapfrom").get_active_id()),
         "document/chapto":          ("cb_chapto", lambda w,v: w.builder.get_object("cb_chapto").get_active_id()),
         "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: round(v) or "15"),
-        "document/colbalancing":    ("cb_colbalancing", lambda w,v: w.builder.get_object('cb_colbalancing').get_active_id()),
+        # "document/colbalancing":    ("cb_colbalancing", lambda w,v: w.builder.get_object('cb_colbalancing').get_active_id()),
         "document/ifrtl":           ("c_rtl", lambda w,v :"true" if v else "false"),
         "document/iflinebreakon":   ("c_linebreakon", lambda w,v: "" if v else "%"),
         "document/linebreaklocale": ("t_linebreaklocale", lambda w,v: v or ""),
@@ -986,7 +1017,6 @@ class Info:
         for side in ('left', 'center', 'right'):
             v = printer.get("cb_hdr" + side)
             t = self._hdrmappings.get(v, v)
-            # I'm not sure if there is a more elegant/shorter/Pythonic way of doing this; but this works!
             if side == 'left':
                 if mirror:
                     self.dict['header/even{}'.format('right')] = t
@@ -1030,8 +1060,10 @@ class Info:
     def convertBook(self, bk, outdir, prjdir):
         if self.ptsettings is None:
             self.ptsettings = ParatextSettings(prjdir)
-        if self.changes is None and self.dict['project/usechangesfile']:
+        if self.changes is None and self.dict['project/usechangesfile'] == "true":
             self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'))
+        else:
+            self.changes = []
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
             open(customsty, "w").close()
@@ -1048,8 +1080,6 @@ class Info:
             outfpath = os.path.join(outdir, outfname)
             with open(infname, "r", encoding="utf-8") as inf:
                 dat = inf.read()
-                # print("changes: ", self.changes)
-                # print("localchanges: ", self.localChanges)
                 for c in self.changes + self.localChanges:
                     if c[0] is None:
                         dat = c[1].sub(c[2], dat)
@@ -1079,10 +1109,12 @@ class Info:
                 if m:
                     # print(m.group(2).encode("utf-8") + " > " + m.group(4).encode("utf-8"))
                     changes.append((None, regex.compile(m.group(2), flags=regex.M), m.group(4)))
-                    continue
+                    continue  # This change in my PrintDraftChanges.txt is causing it to fail
+                    # in "\\w .+?\\w\*": "\|.+?\\w\*" > "\w*"
                 m = re.match(r"^in\s+(['\"])(.*?)(?<!\\)\1\s*:\s*(['\"])(.*?)(?<!\\)\3\s*>\s*(['\"])(.*?)(?<!\\)\5", l)
                 if m:
                     changes.append((regex.compile("("+m.group(2)+")", flags=regex.M), regex.compile(m.group(4), flags=regex.M), m.group(6)))
+                    # print("Appended in Group 2: ", m)
         if not len(changes):
             return None
         return changes
@@ -1093,7 +1125,7 @@ class Info:
         last = int(printer.get("cb_chapto"))
         
         # This section handles PARTIAL books (from chapter X to chapter Y)
-        if printer.get("c_onebook"):
+        if not printer.get("c_multiplebooks"):
             bk = printer.get("cb_book")
             if first > 1:
                 self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+(?=\\c {} ?\r?\n)".format(first), flags=regex.S), ""))

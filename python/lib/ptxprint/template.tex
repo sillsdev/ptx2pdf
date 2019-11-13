@@ -4,16 +4,8 @@
 %%%%% Stylesheets %%%%%
 \stylesheet{{{/ptxpath}/usfm.sty}}
 \stylesheet{{{/ptxpath}/{project/id}/custom.sty}}
-%\stylesheet{{NestedStyles.sty}}
-
-{project/ifusemodssty}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.sty}} % override project stylesheet settings here
-
-% Where to put these kinds of little files? In PrintDraft folder? 
-% Maybe we make ONE file and put all/any .sty tweaks in it (instead of multiple smaller files)  IS THAT WHAT NestedStyles.sty IS FOR??? Duh!
-% Temporarily these have been manually copied to the PrintDraft folder (proof of concept)
-{document/ifomitallverses}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/SuppressVerseNums.sty}}
-{notes/includefootnotes}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/SuppressFootnotes.sty}}
-{notes/includexrefs}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/SuppressXrefs.sty}}
+{project/ifusemodssty}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.sty}} % User can override project stylesheet settings here
+{project/ifusenested}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/NestedStyles.sty}}     % PTXprint overrides all others (for versenums, ftnts,xref)
 
 %%%%% Page Setup %%%%%
 % Dimensions
@@ -37,8 +29,10 @@
 \def\ColumnGutterFactor{{{document/colgutterfactor}}}
 
 %%%%% Text Spacing %%%%%
+% % multiplied by font size unit and becomes leading unit; which gets multiplied by Baseline lnspc x fontsz x 14
 \def\LineSpacingFactor{{{paragraph/linespacing}}}
 \def\VerticalSpaceFactor{{1.0}}
+% And where do the mix and max values get set? (which allows the vertical justification to happen)
 
 %% Cross-space contextualization
 % None=0 This is how XeTeX behaves by default. Most projects will use this setting.
@@ -125,9 +119,9 @@
 {document/usefigsfolder}\PicPath={{{/ptxpath}/{project/id}/Figures/}}
 {document/uselocalfigs}\PicPath={{{/ptxpath}/{project/id}/local/Figures/}}
 {document/customfiglocn}\PicPath={{{document/customfigfolder}}}
+{document/ifusepiclist}\PicListPath={{{/ptxpath}/{project/id}/PrintDraft/PicLists/}}
 
 \AdjListPath={{{/ptxpath}/{project/id}/PrintDraft/AdjLists/}}
-{document/ifusepiclist}\PicListPath={{{/ptxpath}/{project/id}/PrintDraft/PicLists/}}
 
 % tweak to enable blank lines
 \def\b{{\par\vskip\baselineskip}}
