@@ -565,109 +565,6 @@ Are you sure you want to overwrite the existing file?</property>
       </row>
     </data>
   </object>
-  <object class="GtkListStore" id="ls_digits">
-    <columns>
-      <!-- column-name digitscript -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Default</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Arabic-Hindi</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Arabic-Farsi</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Bengali</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Burmese</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Devanagari</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Gujarati</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Gurmukhi</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Kannada</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Khmer</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Lao</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Malayalam</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Oriya</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Tamil</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Telugu</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Thai</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Tibetan</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="ls_glossaryMarkupStyle">
-    <columns>
-      <!-- column-name glossaryMarkupStyle -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">None</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">format as bold</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">format as italics</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">format as bold italics</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">format with emphasis</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">bottom ⸤half⸥ brackets</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">star *before word</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">star after* word</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">circumflex ^before word</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">circumflex after^ word</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="ls_projects">
-    <columns>
-      <!-- column-name projid -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
   <object class="GtkDialog" id="ptxprint">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">PTXprint App</property>
@@ -811,6 +708,7 @@ settings for this project, and restore the defaults.</property>
                                 <property name="margin_right">6</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
+                                <property name="orientation">vertical</property>
                                 <child>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
@@ -819,18 +717,7 @@ settings for this project, and restore the defaults.</property>
                                     <property name="spacing">22</property>
                                     <property name="baseline_position">top</property>
                                     <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="halign">start</property>
-                                        <property name="label" translatable="yes">                   Project:</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="padding">8</property>
-                                        <property name="position">0</property>
-                                      </packing>
+                                      <placeholder/>
                                     </child>
                                     <child>
                                       <object class="GtkRadioButton" id="c_onebook">
@@ -889,30 +776,7 @@ settings for this project, and restore the defaults.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <child>
-                                          <object class="GtkComboBox" id="cb_project">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="halign">start</property>
-                                            <property name="model">ls_projects</property>
-                                            <property name="has_entry">True</property>
-                                            <property name="entry_text_column">0</property>
-                                            <property name="id_column">0</property>
-                                            <signal name="changed" handler="onProjectChange" swapped="no"/>
-                                            <child internal-child="entry">
-                                              <object class="GtkEntry">
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">True</property>
-                                                <property name="halign">start</property>
-                                                <property name="max_length">8</property>
-                                                <property name="width_chars">18</property>
-                                              </object>
-                                            </child>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">False</property>
-                                            <property name="position">0</property>
-                                          </packing>
+                                          <placeholder/>
                                         </child>
                                         <child>
                                           <placeholder/>
@@ -933,46 +797,10 @@ settings for this project, and restore the defaults.</property>
                                         <property name="can_focus">False</property>
                                         <property name="spacing">6</property>
                                         <child>
-                                          <object class="GtkComboBox" id="cb_book">
-                                            <property name="width_request">160</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="model">ls_books</property>
-                                            <property name="active">0</property>
-                                            <property name="has_entry">True</property>
-                                            <property name="entry_text_column">0</property>
-                                            <property name="id_column">0</property>
-                                            <signal name="changed" handler="onBookChange" swapped="no"/>
-                                            <child internal-child="entry">
-                                              <object class="GtkEntry">
-                                                <property name="can_focus">False</property>
-                                              </object>
-                                            </child>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">False</property>
-                                            <property name="position">0</property>
-                                          </packing>
+                                          <placeholder/>
                                         </child>
                                         <child>
-                                          <object class="GtkComboBox" id="cb_chapto">
-                                            <property name="width_request">70</property>
-                                            <property name="visible">True</property>
-                                            <property name="sensitive">False</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="model">ls_chapto</property>
-                                            <property name="active">0</property>
-                                            <property name="id_column">0</property>
-                                            <property name="active_id">0</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="padding">6</property>
-                                            <property name="pack_type">end</property>
-                                            <property name="position">1</property>
-                                          </packing>
+                                          <placeholder/>
                                         </child>
                                         <child>
                                           <object class="GtkLabel" id="l_chapto">
@@ -1095,6 +923,123 @@ into single PDF</property>
                                     <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="label" translatable="yes">                   Project:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="padding">8</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkComboBox" id="cb_project">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="model">ls_projects</property>
+                                        <property name="has_entry">True</property>
+                                        <property name="entry_text_column">0</property>
+                                        <property name="id_column">0</property>
+                                        <signal name="changed" handler="onProjectChange" swapped="no"/>
+                                        <child internal-child="entry">
+                                          <object class="GtkEntry">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="halign">start</property>
+                                            <property name="max_length">8</property>
+                                            <property name="width_chars">18</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="label" translatable="yes">label</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkComboBox" id="cb_book">
+                                        <property name="width_request">160</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="model">ls_books</property>
+                                        <property name="active">0</property>
+                                        <property name="has_entry">True</property>
+                                        <property name="entry_text_column">0</property>
+                                        <property name="id_column">0</property>
+                                        <signal name="changed" handler="onBookChange" swapped="no"/>
+                                        <child internal-child="entry">
+                                          <object class="GtkEntry">
+                                            <property name="can_focus">True</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <object class="GtkComboBox" id="cb_chapto">
+                                        <property name="width_request">70</property>
+                                        <property name="visible">True</property>
+                                        <property name="sensitive">False</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="model">ls_chapto</property>
+                                        <property name="active">0</property>
+                                        <property name="id_column">0</property>
+                                        <property name="active_id">0</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="padding">6</property>
+                                        <property name="pack_type">end</property>
+                                        <property name="position">7</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                               </object>
                             </child>
@@ -2018,6 +1963,7 @@ Flow options.</property>
                           <object class="GtkAlignment">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="margin_bottom">6</property>
                             <property name="left_padding">12</property>
                             <child>
                               <object class="GtkBox">
@@ -2186,31 +2132,15 @@ of Contents</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
-                                <child>
-                                  <object class="GtkBox">
+                                <child type="center">
+                                  <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <child>
-                                      <object class="GtkBox">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="orientation">vertical</property>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
+                                    <property name="row_spacing">4</property>
+                                    <property name="column_homogeneous">True</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_prettyIntroOutline">
-                                        <property name="label" translatable="yes">Format Introductory Outline with right-aligned \ior and tabbed leaders</property>
+                                        <property name="label" translatable="yes">Right-align \ior with tabbed leaders</property>
                                         <property name="visible">True</property>
                                         <property name="sensitive">False</property>
                                         <property name="can_focus">True</property>
@@ -2221,23 +2151,101 @@ of Contents</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">1</property>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">1</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <placeholder/>
+                                      <object class="GtkCheckButton" id="c_omitIntroOutline">
+                                        <property name="label" translatable="yes">Suppress Introductory Outline (\io..)</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">Remove the Introductory Outline.</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_omitBookIntro">
+                                        <property name="label" translatable="yes">Suppress Book Introduction (\i..)</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">Remove the entire Book Introduction.</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_startOnHalfPage">
+                                        <property name="label" translatable="yes">Begin next book on last page of previous book (space permitting)</property>
+                                        <property name="visible">True</property>
+                                        <property name="sensitive">False</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">If the last page of a book uses less than
+half the page, then the next book will
+start on the same page.
+(This feature has not been implemented yet)</property>
+                                        <property name="halign">start</property>
+                                        <property name="margin_top">6</property>
+                                        <property name="margin_bottom">4</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_ch1pagebreak">
+                                        <property name="label" translatable="yes">Always Start Ch 1 on a New Page</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">Use this option to automatically make a page break after a book's introduction section. The break will come right before the \c 1 marker.</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_omitallverseText">
+                                        <property name="label" translatable="yes">Only Show Introductions (omit all body text)</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">If you require a printout of only the
+book introductions (usually for the
+purpose of final checking, or looking
+for consistency) then this option is
+very useful.</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">2</property>
+                                      </packing>
                                     </child>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
-                                    <property name="position">3</property>
+                                    <property name="position">2</property>
                                   </packing>
-                                </child>
-                                <child type="center">
-                                  <placeholder/>
                                 </child>
                               </object>
                             </child>
@@ -2278,62 +2286,31 @@ of Contents</property>
                                 <property name="row_spacing">12</property>
                                 <property name="column_spacing">16</property>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_omitBookIntro">
-                                    <property name="label" translatable="yes">Suppress Book Introduction (\i..)</property>
+                                  <object class="GtkCheckButton" id="c_omitchapternumber">
+                                    <property name="label" translatable="yes">Omit Chapter number(s)</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Remove the entire Book Introduction.</property>
-                                    <property name="halign">start</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_omitIntroOutline">
-                                    <property name="label" translatable="yes">Suppress Introductory Outline (\io..)</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Remove the Introductory Outline.</property>
-                                    <property name="halign">start</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_omitSectHeads">
-                                    <property name="label" translatable="yes">Suppress Section Headings (\s)</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Remove all section headings.</property>
-                                    <property name="halign">start</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
-                                    <property name="top_attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_ch1pagebreak">
-                                    <property name="label" translatable="yes">Always Start Ch 1 on a New Page</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Use this option to automatically make a page break after a book's introduction section. The break will come right before the \c 1 marker.</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_preventorphans">
+                                    <property name="label" translatable="yes">Prevent Orphan Words in Poetry (\q#)</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
                                     <property name="top_attach">0</property>
                                   </packing>
                                 </child>
@@ -2350,7 +2327,7 @@ of Contents</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">1</property>
+                                    <property name="top_attach">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2365,12 +2342,12 @@ of Contents</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">2</property>
+                                    <property name="top_attach">4</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_preventorphans">
-                                    <property name="label" translatable="yes">Prevent Orphan Words in Poetry (\q#)</property>
+                                  <object class="GtkCheckButton" id="c_omitverseone">
+                                    <property name="label" translatable="yes">Omit First Verse Number</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -2380,7 +2357,21 @@ of Contents</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">3</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_omitallverses">
+                                    <property name="label" translatable="yes">Omit All Verse Numbers</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2398,8 +2389,8 @@ a line.</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">4</property>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2425,22 +2416,22 @@ typesetting issues. Use with care!
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
-                                    <property name="top_attach">4</property>
+                                    <property name="top_attach">2</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_omit1paraIndent">
-                                    <property name="label" translatable="yes">Suppress First Paragraph Indentation</property>
+                                  <object class="GtkCheckButton" id="c_omitSectHeads">
+                                    <property name="label" translatable="yes">Suppress Section Headings (\s)</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Don't indent the first paragraph after a section heading. It will appear as an \m(argin) paragraph instead of a normal \p.</property>
+                                    <property name="tooltip_text" translatable="yes">Remove all section headings.</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
-                                    <property name="top_attach">4</property>
+                                    <property name="top_attach">0</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2455,69 +2446,22 @@ typesetting issues. Use with care!
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
-                                    <property name="top_attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_omitchapternumber">
-                                    <property name="label" translatable="yes">Omit Chapter number(s)</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_omitverseone">
-                                    <property name="label" translatable="yes">Omit First Verse Number</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
                                     <property name="top_attach">1</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_omitallverses">
-                                    <property name="label" translatable="yes">Omit All Verse Numbers</property>
+                                  <object class="GtkCheckButton" id="c_omit1paraIndent">
+                                    <property name="label" translatable="yes">Suppress First Paragraph Indentation</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Don't indent the first paragraph after a section heading. It will appear as an \m(argin) paragraph instead of a normal \p.</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">1</property>
+                                    <property name="left_attach">2</property>
                                     <property name="top_attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_omitallverseText">
-                                    <property name="label" translatable="yes">Omit All Verse Text (to check intros)</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">If you require a printout of only the
-book introductions (usually for the
-purpose of final checking, or looking
-for consistency) then this option is
-very useful.</property>
-                                    <property name="halign">start</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2534,7 +2478,7 @@ very useful.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
-                                    <property name="top_attach">5</property>
+                                    <property name="top_attach">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2546,29 +2490,14 @@ very useful.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
-                                    <property name="top_attach">5</property>
+                                    <property name="top_attach">4</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_startOnHalfPage">
-                                    <property name="label" translatable="yes">If space permits, begin next book on last page of previous book</property>
-                                    <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">If the last page of a book uses less than
-half the page, then the next book will
-start on the same page.
-(This feature has not been implemented yet)</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin_top">6</property>
-                                    <property name="margin_bottom">4</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">5</property>
-                                  </packing>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                               </object>
                             </child>
@@ -2578,7 +2507,7 @@ start on the same page.
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Text Flow and Content Options</property>
+                            <property name="label" translatable="yes">Numbering, Keep-with &amp; Section Headings</property>
                           </object>
                         </child>
                       </object>
@@ -4693,40 +4622,6 @@ using a PicList which specifies the location on the page:</property>
                       </packing>
                     </child>
                     <child>
-                      <placeholder/>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="position">4</property>
-                    <property name="tab_fill">False</property>
-                    <property name="reorderable">True</property>
-                  </packing>
-                </child>
-                <child type="tab">
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">
-Pre-process the text prior
-to creating the PDF, add Front
-and Back Matter, including
-Table of Contents. Custom
-TeX code can also be added.</property>
-                    <property name="margin_bottom">2</property>
-                    <property name="label" translatable="yes">Advanced</property>
-                    <property name="justify">center</property>
-                  </object>
-                  <packing>
-                    <property name="position">4</property>
-                    <property name="tab_fill">False</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkBox">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="orientation">vertical</property>
-                    <child>
                       <object class="GtkFrame">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -4949,8 +4844,42 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">0</property>
+                        <property name="position">2</property>
                       </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="position">4</property>
+                    <property name="tab_fill">False</property>
+                    <property name="reorderable">True</property>
+                  </packing>
+                </child>
+                <child type="tab">
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">
+Pre-process the text prior
+to creating the PDF, add Front
+and Back Matter, including
+Table of Contents. Custom
+TeX code can also be added.</property>
+                    <property name="margin_bottom">2</property>
+                    <property name="label" translatable="yes">Advanced</property>
+                    <property name="justify">center</property>
+                  </object>
+                  <packing>
+                    <property name="position">4</property>
+                    <property name="tab_fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <placeholder/>
                     </child>
                     <child>
                       <placeholder/>
@@ -5036,6 +4965,109 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkListStore" id="ls_digits">
+    <columns>
+      <!-- column-name digitscript -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Default</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Arabic-Hindi</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Arabic-Farsi</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Bengali</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Burmese</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Devanagari</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Gujarati</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Gurmukhi</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Kannada</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Khmer</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Lao</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Malayalam</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Oriya</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Tamil</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Telugu</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Thai</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Tibetan</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="ls_glossaryMarkupStyle">
+    <columns>
+      <!-- column-name glossaryMarkupStyle -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">None</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">format as bold</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">format as italics</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">format as bold italics</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">format with emphasis</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">bottom ⸤half⸥ brackets</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">star *before word</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">star after* word</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">circumflex ^before word</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">circumflex after^ word</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="ls_projects">
+    <columns>
+      <!-- column-name projid -->
+      <column type="gchararray"/>
+    </columns>
   </object>
   <object class="GtkListStore" id="ls_scripts">
     <columns>
