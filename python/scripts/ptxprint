@@ -54,7 +54,8 @@ def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
         texf.write(info.asTex(filedir=tmpdir))
     if info['project/useptmacros'] == "false":
         if not os.getenv('TEXINPUTS'):
-            os.putenv('TEXINPUTS', ".:" + os.path.abspath(os.path.join(os.path.dirname(__file__), "../../src")))
+            texinputs = [os.path.abspath(tmpdir), os.path.abspath(os.path.join(os.path.dirname(__file__), "../../src"))]
+            os.putenv('TEXINPUTS', (";" if sys.platform=="win32" else ":").join(texinputs))
     elif sys.platform == "linux":
         if not os.getenv('TEXINPUTS'):
             mdirs = args.macros or "/usr/lib/Paratext8/xetex/share/texmf-dist/tex/ptx2pdf:/usr/lib/Paratext9/xetex/share/texmf-dist/tex/ptx2pdf"
