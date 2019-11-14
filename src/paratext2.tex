@@ -191,7 +191,8 @@
   \penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
 }
 \def\onecoltrial{% single-column version of \twocoltrial (see below)
-%%%  \msg{TRIAL with ht=\the\trialheight, vsize=\the\vsize}
+  %\tracingall=1\tracingoutput=0\tracingpages=0\tracingparagraphs=0\tracingassigns=0\tracingscantokens=0
+  \msg{TRIAL with ht=\the\trialheight, vsize=\the\vsize}
   \edef\p@gebotmark{\botmark}% remember last \mark for running header
   \edef\t@st{\p@gefirstmark}%
   \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi % remember first, if not already set
@@ -206,7 +207,7 @@
   % and check if it all fit; if not, we'll have to back up and try again
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
   \iffitonpage
-%%%    \msg{SUCCEEDED, shipping page}
+    \msg{SUCCEEDED, shipping page}
 % at this point:
 %   \box\colA is the page content
 %   \availht is ht that definitely works
@@ -236,7 +237,7 @@
     \else\global\output={\onecol}\fi
   \else % the contents of the "galley" didn't fit into the actual page,
         % so reduce \vsize and try again with an earlier break
-%%%    \msg{REDUCING VSIZE}
+    \msg{REDUCING VSIZE}
     \global\advance\vsize by -\baselineskip
     \global\setbox\topins=\box\voidb@x
     \global\setbox\bottomins=\box\voidb@x
@@ -246,16 +247,17 @@
     \global\let\whichtrial=\onecoltrial
     \global\output={\backingup}
     \unvbox\galley \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
-  \fi}
+  \fi
+}
 
 \def\pagebody{\vbox to\textheight{\boxmaxdepth\maxdepth \pagecontents}}
 \def\makeheadline{%
   \vbox to 0pt{\kern-\topm@rgin
    \vbox{\kern\HeaderPosition\MarginUnit
-    \setbox0=\hbox to \textwidth{\the\headline}
+    \setbox0=\vbox{\hbox to \textwidth{\the\headline}}
     \ht0=0.7\fontdimen6\csname font<h>\endcsname \dp0=0pt \box0
     \ifrhr@le\ifdim\RHruleposition=\maxdimen\else
-      \kern\RHruleposition\hrule
+      \kern\RHruleposition \hrule
     \fi\fi}\vss}\nointerlineskip}
 \newif\ifrhr@le
 \def\makefootline{%

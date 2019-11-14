@@ -116,12 +116,12 @@
     \offinterlineskip
     \vbox to \ifrotate\pdfpagewidth\else\pdfpageheight\fi{\vss
       \kern\topm@rgin
-      \hbox to \ifrotate\pdfpageheight\else\pdfpagewidth\fi{\hss\hbox{%
+      \vbox{\hbox to \ifrotate\pdfpageheight\else\pdfpagewidth\fi{\hss\hbox{%
         \if\g@tterside L\kern\BindingGutter\fi
         \XeTeXupwardsmode=\oldup
         #1%
         \if\g@tterside R\kern\BindingGutter\fi
-      }\hss}
+      }\hss}}
       \kern\bottomm@rgin
       \vss}
     \vss
@@ -192,8 +192,7 @@
 \fi}
 
 % redefine plain TeX's output routine to add the cropmarks
-\def\plainoutput{\shipwithcr@pmarks
-    {\vbox{\makeheadline\pagebody\makefootline}}%
+\def\plainoutput{\shipwithcr@pmarks{\vbox{\makeheadline\pagebody\makefootline}}%
   \advancepageno
   \ifnum\outputpenalty>-\@MM \else\dosupereject\fi}
 
