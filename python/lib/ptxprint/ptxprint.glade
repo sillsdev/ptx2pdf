@@ -720,6 +720,7 @@ Are you sure you want to overwrite the existing file?</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can_focus">False</property>
+            <property name="halign">start</property>
             <property name="margin_left">6</property>
             <property name="margin_right">6</property>
             <property name="hexpand">True</property>
@@ -2104,6 +2105,7 @@ Flow options.</property>
                   <object class="GtkBox">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="halign">start</property>
                     <property name="valign">start</property>
                     <property name="margin_left">6</property>
                     <property name="margin_right">6</property>
@@ -2112,6 +2114,7 @@ Flow options.</property>
                       <object class="GtkFrame">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
                         <property name="margin_top">6</property>
                         <property name="margin_bottom">6</property>
                         <property name="label_xalign">0.019999999552965164</property>
@@ -2119,12 +2122,14 @@ Flow options.</property>
                           <object class="GtkAlignment">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="halign">start</property>
                             <property name="margin_bottom">6</property>
                             <property name="left_padding">12</property>
                             <child>
                               <object class="GtkBox">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="halign">start</property>
                                 <property name="orientation">vertical</property>
                                 <child>
                                   <object class="GtkBox">
@@ -2302,8 +2307,8 @@ of Contents</property>
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
                                     <property name="row_spacing">3</property>
-                                    <property name="column_homogeneous">True</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_prettyIntroOutline">
                                         <property name="label" translatable="yes">Right-align \ior with tabbed leaders</property>
@@ -2435,6 +2440,7 @@ very useful.</property>
                       <object class="GtkFrame">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
                         <property name="margin_top">6</property>
                         <property name="margin_bottom">6</property>
                         <property name="label_xalign">0.019999999552965164</property>
@@ -2442,6 +2448,7 @@ very useful.</property>
                           <object class="GtkAlignment">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="halign">start</property>
                             <property name="left_padding">12</property>
                             <child>
                               <object class="GtkGrid">
@@ -2751,6 +2758,7 @@ a line.</property>
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
                                     <property name="row_spacing">8</property>
                                     <property name="column_spacing">5</property>
                                     <child>
@@ -3193,6 +3201,7 @@ whether to include Illustrations.</property>
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
                                     <property name="row_spacing">4</property>
                                     <property name="column_spacing">15</property>
                                     <child>
@@ -3348,6 +3357,7 @@ layout</property>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
                                     <property name="spacing">60</property>
                                     <child>
                                       <object class="GtkBox">
@@ -4129,6 +4139,7 @@ Multi-script publication.</property>
                       <object class="GtkBox">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
                         <child>
                           <object class="GtkFrame">
                             <property name="visible">True</property>
@@ -4651,6 +4662,7 @@ file is selected, then these will appear in alphabetical order.</property>
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="halign">start</property>
                                 <property name="row_spacing">12</property>
                                 <property name="column_spacing">10</property>
                                 <child>
@@ -4801,6 +4813,7 @@ using a PicList which specifies the location on the page:</property>
                               <object class="GtkBox">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="halign">start</property>
                                 <property name="orientation">vertical</property>
                                 <child>
                                   <object class="GtkGrid">

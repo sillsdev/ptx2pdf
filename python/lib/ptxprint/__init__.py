@@ -536,7 +536,7 @@ class PtxPrinterDialog:
         if os.path.exists(configfile):
             info = Info(self, self.settings_dir, self.ptsettings)
             config = configparser.ConfigParser()
-            config.read(configfile)
+            config.read(configfile, encoding="utf-8")
             info.loadConfig(self, config)
         status = self.get("c_multiplebooks")
         for c in ("c_combine", "t_booklist"):
@@ -883,9 +883,9 @@ class Info:
         "paper/columns":            ("c_doublecolumn", lambda w,v: "2" if v else "1"),
         "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
 
-        "paragraph/linespacing":    ("s_linespacing", lambda w,v: round((v / 12), 3) or "1.000"),  # This needs to change now as it is (pts) rather than a factor of the Font size.
-        "paragraph/linespacingmin": ("s_linespacingmin", lambda w,v: round((v / 12), 3) or "1.000"),
-        "paragraph/linespacingmax": ("s_linespacingmax", lambda w,v: round((v / 12), 3) or "1.000"),
+        "paragraph/linespacing":    ("s_linespacing", lambda w,v: v or "1.000"),
+        "paragraph/linemin": ("s_linespacingmin", lambda w,v: w.get("s_linespacing") - v if v <= w.get("s_linespacing") else "0"),
+        "paragraph/linemax": ("s_linespacingmax", lambda w,v: v - w.get("s_linespacing") if v >= w.get("s_linespacing") else "0"),
         "paragraph/ifjustify":       ("c_justify", lambda w,v: "true" if v else "false"),
         "paragraph/ifhyphenate":     ("c_hyphenate", lambda w,v: "true" if v else "false"),
 
@@ -1131,6 +1131,8 @@ class Info:
                 l = re.sub(r"\s*#.*$", "", l)
                 if not len(l):
                     continue
+                if l.startswith("in"):
+                    continue
                 m = re.match(r"^(['\"])(.*?)(?<!\\)\1\s*>\s*(['\"])(.*?)(?<!\\)\3", l)
                 if m:
                     # print(m.group(2).encode("utf-8") + " > " + m.group(4).encode("utf-8"))
@@ -1274,4 +1276,6 @@ class Info:
             except configparser.NoOptionError:
                 printer.set(self._mappings[k][0], self.ptsettings.dict.get(v, ""))
                 self.dict[k] = self.ptsettings.get(v, "")
+        # Handle specials here:
+        self.printer.watermarks = self.dict['paper/watermarkpdf']
 
