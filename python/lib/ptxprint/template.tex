@@ -29,12 +29,11 @@
 \def\ColumnGutterFactor{{{document/colgutterfactor}}}
 
 %%%%% Text Spacing %%%%%
-% % multiplied by font size unit and becomes leading unit; which gets multiplied by Baseline lnspc x fontsz x 14
-%\def\LineSpacingFactor{{{paragraph/linespacing}}}
+{paragraph/fixlinespacing}\def\LineSpacingFactor{{{paragraph/linespacing}}}
 \def\LineSpacingFactor{{1.0}}
 \def\VerticalSpaceFactor{{1.0}}
-% And where do the mix and max values get set? (which allows the vertical justification to happen)
-\baselineskip={paragraph/linespacing}pt plus {paragraph/linemax}pt minus {paragraph/linemin}pt
+{paragraph/varlinespacing}\baselineskip={paragraph/linespacing}pt plus {paragraph/linemax}pt minus {paragraph/linemin}pt
+
 %% Cross-space contextualization
 % None=0 This is how XeTeX behaves by default. Most projects will use this setting.
 % Some=1 Spaces between words are adjusted, but the rendering of individual words is *NOT* affected by the spaces.

@@ -198,7 +198,6 @@ class PtxPrinterDialog:
         elif wid.startswith("t_"):
             w.set_text(value)
         elif wid.startswith("f_"):
-            # print("setting font {} to {}".format(wid, value))
             w.set_font_name(value)
             w.emit("font-set")
         elif wid.startswith("c_"):
@@ -235,7 +234,8 @@ class PtxPrinterDialog:
         self.onDestroy(btn)
 
     def onScriptChanged(self, cb_script):
-        # If there is a matching digit style for the script that has just been set, then turn that on (but it can be overridden later).
+        # If there is a matching digit style for the script that has just been set, 
+        # then turn that on (but it can be overridden later).
         try:
             self.cb_digits.set_active_id(self.get('cb_script'))
         except:
@@ -257,7 +257,7 @@ class PtxPrinterDialog:
             if 'bold' in f.style.lower():
                 self.set("s_{}embolden".format(sid), 2)
             if 'italic' in f.style.lower():
-                self.set("s_{}slant".format(sid), 0.27)
+                self.set("s_{}slant".format(sid), 0.15)
 
     def updateFakeLabels(self):
         status = self.get("c_fakebold") or self.get("c_fakeitalic") or self.get("c_fakebolditalic")
@@ -566,6 +566,9 @@ class PtxPrinterDialog:
         if os.path.exists(modsstyfile):
             os.startfile(modsstyfile)
 
+    def onMainBodyTextChanged(self, c_mainBodyText):
+        self.builder.get_object("gr_mainBodyText").set_sensitive(self.get("c_mainBodyText"))
+
     def onSelectScriptClicked(self, btn_selectScript):
         CustomScript = self.fileChooser("Select a Custom Script file", 
                 filters = {"Executable Scripts": {"patterns": "*.bat", "mime": "application/bat"}},
@@ -692,8 +695,8 @@ class PtxPrinterDialog:
                         # print("Outfname: ", outfname)
                         with open(outfname, "w", encoding="utf-8") as outf:
                             outf.write("".join(piclist))
-                    else:
-                        print("PicList file already exists (this will NOT be overwritten): " + outfname)
+                    # else:
+                        # print("PicList file already exists (this will NOT be overwritten): " + outfname)
                 # else:
                     # print(r"No illustrations \fig ...\fig* found in book/file!") # This needs to the log/console: 
 
@@ -726,8 +729,8 @@ class PtxPrinterDialog:
                     if not os.path.exists(outfname):
                         with open(outfname, "w", encoding="utf-8") as outf:
                             outf.write("".join(adjlist))
-                    else:
-                        print("Adj List already exists (this will NOT be overwritten): " + outfname)
+                    # else:
+                        # print("Adj List already exists (this will NOT be overwritten): " + outfname)
 
     def GenerateNestedStyles(self, c_omitallverses):
         prjid = self.get("cb_project")
@@ -827,6 +830,7 @@ class PtxPrinterDialog:
         dialog.destroy()
         return fcFilepath
 
+    # Awaiting installation of the PIL/Pillow library to do TIF to PNG conversions
     # def convertTIFtoPNG(self, adjfname):
         # if os.path.splitext(os.path.join(root, adjfname))[1].lower() == ".tif":
             # if os.path.isfile(os.path.splitext(os.path.join(root, adjfname))[0] + ".png"):
@@ -864,6 +868,7 @@ class Info:
         "project/ifusemodstex":     ("c_useModsTex", lambda w,v: "" if v else "%"),
         "project/ifusemodssty":     ("c_useModsSty", lambda w,v: "" if v else "%"),
         "project/ifusenested":      (None, lambda w,v: "" if (w.get("c_omitallverses") or not w.get("c_includeFootnotes") or not w.get("c_includeXrefs")) else "%"),
+        # Still to be implemented:
         # "project/ifprettyOutline":  ("c_prettyIntroOutline", lambda w,v :"true" if v else "false"),
         # "project/ifstarthalfpage":  ("c_startOnHalfPage", lambda w,v :"true" if v else "false"),
 
@@ -883,6 +888,8 @@ class Info:
         "paper/columns":            ("c_doublecolumn", lambda w,v: "2" if v else "1"),
         "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
 
+        "paragraph/fixlinespacing": ("c_variableLineSpacing", lambda w,v: "%" if v else ""),
+        "paragraph/varlinespacing": ("c_variableLineSpacing", lambda w,v: "" if v else "%"),
         "paragraph/linespacing":    ("s_linespacing", lambda w,v: v or "1.000"),
         "paragraph/linemin": ("s_linespacingmin", lambda w,v: w.get("s_linespacing") - v if v <= w.get("s_linespacing") else "0"),
         "paragraph/linemax": ("s_linespacingmax", lambda w,v: v - w.get("s_linespacing") if v >= w.get("s_linespacing") else "0"),
@@ -897,7 +904,6 @@ class Info:
         "document/chapfrom":        ("cb_chapfrom", lambda w,v: w.builder.get_object("cb_chapfrom").get_active_id()),
         "document/chapto":          ("cb_chapto", lambda w,v: w.builder.get_object("cb_chapto").get_active_id()),
         "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: round(v) or "15"),
-        # "document/colbalancing":    ("cb_colbalancing", lambda w,v: w.builder.get_object('cb_colbalancing').get_active_id()),
         "document/ifrtl":           ("c_rtl", lambda w,v :"true" if v else "false"),
         "document/iflinebreakon":   ("c_linebreakon", lambda w,v: "" if v else "%"),
         "document/linebreaklocale": ("t_linebreaklocale", lambda w,v: v or ""),
@@ -909,7 +915,7 @@ class Info:
         "document/ifomitallchapters": ("c_omitchapternumber", lambda w,v: "" if v else "%"),
         "document/ifomitverseone":  ("c_omitverseone", lambda w,v: "true" if v else "false"),
         "document/ifomitallverses": ("c_omitallverses", lambda w,v: "" if v else "%"),
-        "document/ifomitallversetext": ("c_omitallverseText", lambda w,v: "true" if v else "false"),
+        "document/ifmainbodytext":  ("c_mainBodyText", lambda w,v: "true" if v else "false"),
         "document/glueredupwords":  ("c_glueredupwords", lambda w,v :"true" if v else "false"),
         "document/ifinclfigs":      ("c_includeillustrations", lambda w,v :"true" if v else "false"),
         "document/iffigfrmtext":    ("c_includefigsfromtext", lambda w,v :"true" if v else "false"),
@@ -998,7 +1004,7 @@ class Info:
         "format as italics":       r"\\it \1\\it*",
         "format as bold italics":  r"\\bdit \1\\bdit*",
         "format with emphasis":    r"\\em \1\\em*",
-        "bottom ⸤half⸥ brackets":  r"\\u2E24\1\\u2E25", # Question for MH - using this option makes it crash with an encoding issue. Help!
+        "with ⸤floor⸥ brackets":   r"\\u2E24\1\\u2E25",
         "star *before word":       r"*\1",
         "star after* word":        r"\1*",
         "circumflex ^before word": r"^\1",
@@ -1215,7 +1221,7 @@ class Info:
         
         # self.localChanges.append((None, regex.compile(r"(\\c\s1\s?\r?\n)", flags=regex.S), r"\skipline\n\hrule\r\n\1")) # this didn't work. I wonder why.
 
-        if printer.get("c_omitallverseText"):
+        if not printer.get("c_mainBodyText"):
             self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+".format(first), flags=regex.S), ""))
             
         return self.localChanges
@@ -1277,5 +1283,9 @@ class Info:
                 printer.set(self._mappings[k][0], self.ptsettings.dict.get(v, ""))
                 self.dict[k] = self.ptsettings.get(v, "")
         # Handle specials here:
-        self.printer.watermarks = self.dict['paper/watermarkpdf']
+        printer.CustomScript = self.dict['project/selectscript']
+        printer.customFigFolder = self.dict['document/customfigfolder']
+        printer.FrontPDFs = self.dict['project/frontincludes']
+        printer.watermarks = self.dict['paper/watermarkpdf']
+        printer.BackPDFs = self.dict['project/backincludes']
 
