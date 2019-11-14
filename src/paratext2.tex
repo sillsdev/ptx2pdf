@@ -192,7 +192,7 @@
 }
 \def\onecoltrial{% single-column version of \twocoltrial (see below)
   %\tracingall=1\tracingoutput=0\tracingpages=0\tracingparagraphs=0\tracingassigns=0\tracingscantokens=0
-  \msg{TRIAL with ht=\the\trialheight, vsize=\the\vsize}
+%%%  \msg{TRIAL with ht=\the\trialheight, vsize=\the\vsize}
   \edef\p@gebotmark{\botmark}% remember last \mark for running header
   \edef\t@st{\p@gefirstmark}%
   \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi % remember first, if not already set
@@ -207,7 +207,7 @@
   % and check if it all fit; if not, we'll have to back up and try again
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
   \iffitonpage
-    \msg{SUCCEEDED, shipping page}
+%%%    \msg{SUCCEEDED, shipping page}
 % at this point:
 %   \box\colA is the page content
 %   \availht is ht that definitely works
@@ -237,7 +237,7 @@
     \else\global\output={\onecol}\fi
   \else % the contents of the "galley" didn't fit into the actual page,
         % so reduce \vsize and try again with an earlier break
-    \msg{REDUCING VSIZE}
+%%%    \msg{REDUCING VSIZE}
     \global\advance\vsize by -\baselineskip
     \global\setbox\topins=\box\voidb@x
     \global\setbox\bottomins=\box\voidb@x
