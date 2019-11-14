@@ -11,14 +11,14 @@ import configparser
 import traceback
 
 # For future Reference on how Paratext treats this list:
-# G                                    MzM                         RT                P        X      FBO    ICGTND          L  OT z NT DC  -  X Y  -  Z  --  L
-# E                                    AzA                         EO                S        X      RAT    NNLDDA          A  
-# N                                    LzT                         VB                2        ABCDEFGTKH    TCOXXG          O  39+1+27+18+(8)+7+3+(4)+6+(10)+1 = 124
+# G                                     MM                         RT                P        X      FBO    ICGTND          L  OT NT DC  -  X Y  -  Z  --  L
+# E                                     AA                         EO                S        X      RAT    NNLDDA          A  
+# N                                     LT                         VB                2        ABCDEFGTKH    TCOXXG          O  39+27+18+(8)+7+3+(4)+6+(10)+1 = 123
 # 111111111111111111111111111111111111111111111111111111111111111111111111111111111111000000001111111111000011111100000000001  CompleteCanon (all books possible)
 
-_bookslist = """GEN|50 EXO|40 LEV|27 NUM|36 DEU|34 JOS|24 JDG|21 RUT|4 1SA|31 2SA|24 1KI|22 2KI|25 1CH|29 2CH|36 EZR|10 NEH|13
+_bookslist = """GEN|50 EXO|40 LEV|27 NUM|36 DEU|34 JOS|24 JDG|21 RUT|4 1SA|31 2SA|24 1KI|22 2KI|25 1CH|29 32CH|36 EZR|10 NEH|13
         EST|10 JOB|42 PSA|150 PRO|31 ECC|12 SNG|8 ISA|66 JER|52 LAM|5 EZK|48 DAN|12 HOS|14 JOL|3 AMO|9 OBA|1 JON|4 MIC|7 NAM|3
-        HAB|3 ZEP|3 HAG|2 ZEC|14 MAL|4 ZZZ|0   MAT|28 MRK|16 LUK|24 JHN|21 ACT|28 ROM|16 1CO|16 2CO|13 GAL|6 EPH|6 PHP|4 COL|4 
+        HAB|3 ZEP|3 HAG|2 ZEC|14 MAL|4 MAT|28 MRK|16 LUK|24 JHN|21 ACT|28 ROM|16 1CO|16 2CO|13 GAL|6 EPH|6 PHP|4 COL|4
         1TH|5 2TH|3 1TI|6 2TI|4 TIT|3 PHM|1 HEB|13 JAS|5 1PE|5 2PE|3 1JN|5 2JN|1 3JN|1 JUD|1 REV|22
         TOB|14 JDT|16 ESG|10 WIS|19 SIR|51 BAR|6 LJE|1 S3Y|1 SUS|1 BEL|1 1MA|16 2MA|15 3MA|7 4MA|18 1ES|9 2ES|16 MAN|1 PS2|1
         ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 XXA|0 XXB|0 XXC|0 XXD|0 XXE|0 XXF|0 XXG|0 FRT|0 BAK|0 OTH|0 ZZZ|0 ZZZ|0 
@@ -66,8 +66,8 @@ _alldigits = [ "Default", "Arabic-Farsi", "Arabic-Hindi", "Bengali", "Burmese", 
     "Nyiakeng-Puachue-Hmong", "Ol-Chiki", "Osmanya", "Pahawh-Hmong", "Persian", "Saurashtra", "Sharada", "Sinhala-Lith", "Sora-Sompeng", 
     "Sundanese", "Tai-Tham-Hora", "Tai-Tham-Tham", "Takri", "Tirhuta", "Urdu", "Vai", "Wancho", "Warang-Citi" ]
 
-allbooks = [b.split("|")[0] for b in _bookslist.split() if b != "ZZZ|0"]
-books = dict((b.split("|")[0], i+1) for i, b in enumerate(_bookslist.split()))
+allbooks = [b.split("|")[0] for b in _bookslist.split()] # if b != "ZZZ|0"]
+books = dict((b.split("|")[0], i+1) for i, b in enumerate(_bookslist.split()) if b != "ZZZ|0")
 chaps = dict(b.split("|") for b in _bookslist.split())
 
 class ParatextSettings:
@@ -445,25 +445,31 @@ class PtxPrinterDialog:
         for b in self.alltoggles:
             b.set_active(True)
 
-    def onClickmbs_OT(self, btn):
+    def toggleBooks(self,start,end):
+        bp = self.ptsettings['BooksPresent']
+        cPresent = sum(1 for x in bp[start:end] if x == "1")
+        cActive = 0
+        toggle = False
         for b in self.alltoggles:
-            if b.get_label() in allbooks[0:39]:
-                b.set_active(True)
+            if b.get_active() and b.get_label() in allbooks[start:end]:
+                cActive += 1
+        if cActive < cPresent:
+            toggle = True
+        for b in self.alltoggles:
+            if b.get_label() in allbooks[start:end]:
+                b.set_active(toggle)
 
+    def onClickmbs_OT(self, btn):
+        self.toggleBooks(0,39)
+        
     def onClickmbs_NT(self, btn):
-        for b in self.alltoggles:
-            if b.get_label() in allbooks[39:66]:
-                b.set_active(True)
+        self.toggleBooks(39,66)
 
     def onClickmbs_DC(self, btn):
-        for b in self.alltoggles:
-            if b.get_label() in allbooks[66:84]:
-                b.set_active(True)
+        self.toggleBooks(66,84)
 
     def onClickmbs_xtra(self, btn):
-        for b in self.alltoggles:
-            if b.get_label() in allbooks[84:]:
-                b.set_active(True)
+        self.toggleBooks(84,123)
 
     def onClickmbs_none(self, btn):
         for b in self.alltoggles:
@@ -505,7 +511,7 @@ class PtxPrinterDialog:
         self.ptsettings = ParatextSettings(self.settings_dir, self.prjid)
         bp = self.ptsettings['BooksPresent']
         for i, b in enumerate(allbooks):
-            if i < len(bp) and bp[i] == "1":
+            if i < len(bp) and bp[i] == "1" and b != "ZZZ|0":
                 lsbooks.append([b])
         cb_bk = self.builder.get_object("cb_book")
         cb_bk.set_active(0)
@@ -1194,10 +1200,6 @@ class Info:
             self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+".format(first), flags=regex.S), ""))
             
         return self.localChanges
-        # Examples: from textPreprocess.py RaPuMa
-        # Change cross reference into footnotes
-        #contents = re.sub(ur'\\x(\s.+?)\\xo(\s\d+:\d+)(.+?)\\x\*', ur'\\f\1\\fr\2 \\ft\3\\f*', contents)
-
         # Insert horizontal rule after intro section
         #contents = re.sub(ur'(\\c\s1\r\n)', ur'\skipline\n\hrule\r\n\1', contents)
 
