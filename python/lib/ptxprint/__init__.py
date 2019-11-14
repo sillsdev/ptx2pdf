@@ -286,6 +286,15 @@ class PtxPrinterDialog:
         status = self.get("c_variableLineSpacing")
         for c in ("s_linespacingmin", "s_linespacingmax", "l_min", "l_max"):
             self.builder.get_object(c).set_sensitive(status)
+        lnsp = self.builder.get_object("s_linespacing")
+        min = self.builder.get_object("s_linespacingmin")
+        max = self.builder.get_object("s_linespacingmax")
+        lnspVal = round(lnsp.get_value(),1)
+        minVal = round(min.get_value(),1)
+        maxVal = round(max.get_value(),1)
+        if status and lnspVal == minVal and lnspVal == maxVal:
+            min.set_value(lnspVal-1) 
+            max.set_value(lnspVal+2) 
 
     def onUseIllustrationsClicked(self, c_includeillustrations):
         status = self.get("c_includeillustrations")
@@ -475,6 +484,11 @@ class PtxPrinterDialog:
         for b in self.alltoggles:
             b.set_active(False)
 
+    def onTocClicked(self, c_toc):
+        if not self.get("c_usetoc1") and not self.get("c_usetoc2") and not self.get("c_usetoc3"):
+            toc = self.builder.get_object("c_usetoc1")
+            toc.set_active(True)
+            
     def _setchap(self, ls, start, end):
         ls.clear()
         for c in range(start, end+1):
@@ -868,7 +882,9 @@ class Info:
         "paper/columns":            ("c_doublecolumn", lambda w,v: "2" if v else "1"),
         "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
 
-        "paragraph/linespacing":    ("s_linespacing", lambda w,v: round((v / 12), 3)),  # This needs to change now as it is (pts) rather than a factor of the Font size.
+        "paragraph/linespacing":    ("s_linespacing", lambda w,v: round((v / 12), 3) or "1.000"),  # This needs to change now as it is (pts) rather than a factor of the Font size.
+        "paragraph/linespacingmin": ("s_linespacingmin", lambda w,v: round((v / 12), 3) or "1.000"),
+        "paragraph/linespacingmax": ("s_linespacingmax", lambda w,v: round((v / 12), 3) or "1.000"),
         "paragraph/ifjustify":       ("c_justify", lambda w,v: "true" if v else "false"),
         "paragraph/ifhyphenate":     ("c_hyphenate", lambda w,v: "true" if v else "false"),
 

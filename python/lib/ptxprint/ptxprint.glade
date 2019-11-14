@@ -2191,6 +2191,7 @@ next run.</property>
                                             <property name="valign">center</property>
                                             <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
+                                            <signal name="clicked" handler="onTocClicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>
@@ -2242,6 +2243,7 @@ next run.</property>
                                             <property name="valign">center</property>
                                             <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
+                                            <signal name="clicked" handler="onTocClicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">1</property>
@@ -2256,6 +2258,7 @@ next run.</property>
                                             <property name="halign">center</property>
                                             <property name="valign">center</property>
                                             <property name="draw_indicator">True</property>
+                                            <signal name="clicked" handler="onTocClicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">2</property>
