@@ -719,8 +719,11 @@ class PtxPrinterDialog:
             nstylist.append("##### Remove all footnotes\n\\Marker f\n\\TextProperties nonpublishable\n\n")
         if not self.get("c_includeXrefs"):
             nstylist.append("##### Remove all cross-references\n\\Marker x\n\\TextProperties nonpublishable\n\n")
-        with open(nstyfname, "w", encoding="utf-8") as outf:
-            outf.write("".join(nstylist))
+        if nstylist == []:
+            os.remove(nstyfname)
+        else:
+            with open(nstyfname, "w", encoding="utf-8") as outf:
+                outf.write("".join(nstylist))
 
     def onEditAdjListClicked(self, btn_editParaAdjList):
         if not self.get("c_multiplebooks"):
@@ -1179,15 +1182,13 @@ class Info:
         # if printer.get("c_glueredupwords"):  # broken??? at present as it 
             # self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w\w\w+) *\1(?=[\s,.!?])", flags=regex.M), r"\1\u00A0\1")) # keep reduplicated words together
             
-        for c in range(1,3):
+        for c in range(1,4):
             if not printer.get("c_usetoc{}".format(c)):
-                self.localChanges.append((None, regex.compile(r"(\\toc{} .+)".format(c), flags=regex.M), r""))
+                self.localChanges.append((None, regex.compile(r"(\\toc{} .+)".format(c), flags=regex.M), ""))
             
             # self.builder.get_object(c).set_sensitive(status)
         
-        # if True:
-            # self.localChanges.append((None, regex.compile(r"(\\toc3 .+)", flags=regex.M), r""))
-            # self.localChanges.append((None, regex.compile(r"(\\c\s1\s?\r?\n)", flags=regex.S), r"\skipline\n\hrule\r\n\1")) # this didn't work. I wonder why.
+        # self.localChanges.append((None, regex.compile(r"(\\c\s1\s?\r?\n)", flags=regex.S), r"\skipline\n\hrule\r\n\1")) # this didn't work. I wonder why.
 
         if printer.get("c_omitallverseText"):
             self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+".format(first), flags=regex.S), ""))
