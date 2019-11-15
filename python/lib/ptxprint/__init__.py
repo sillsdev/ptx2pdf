@@ -1049,8 +1049,15 @@ class Info:
             f = TTFont(printer.get(wid))
             d = self.ptsettings.ldml.find('.//special/{1}external-resources/{1}font[@name="{0}"]'.format(f.family, silns))
             if d is not None:
-                f.features = regex.split(r"\s*,\s*", d.get('features', ''))
-                self.dict['font/features'] = ";".join(f.features) + (";" if len(f.features) else "")
+                f.features = {}
+                for l in d.get('features', '').split(','):
+                    if '=' in l:
+                        k, v = l.split('=')
+                        f.features[k.strip()] = v.strip()
+                self.dict['font/features'] = ";".join("{0}={1}".format(f.feats.get(fid, fid), v) for fid, v in f.features.items()) + \
+                                             (";" if len(f.features) else "")
+            else:
+                self.dict['font/features'] = ""
             if 'Silf' in f:
                 engine = "/GR"
             else:

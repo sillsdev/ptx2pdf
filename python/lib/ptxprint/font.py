@@ -12,11 +12,19 @@ pango_styles = {Pango.Style.ITALIC: "italic",
     Pango.Weight.HEAVY: "heavy"
 }
 
+def num2tag(n):
+    if n < 0x200000:
+        return str(n)
+    else:
+        return struct.unpack('4s', struct.pack('>L', n))[0].replace(b'\000', b'').decode()
+
 class TTFont:
     def __init__(self, name, style=""):
         p = Pango.font_description_from_string(name + (" " + style if style else ""))
         self.style = " ".join([self.style2str(p.get_weight()), self.style2str(p.get_style())]).strip()
         self.family = p.get_family()
+        self.feats = {}
+        self.names = {}
         self.getfname()
         self.readfont()
 
@@ -39,6 +47,43 @@ class TTFont:
             for i in range(numtables):
                 (tag, csum, offset, length) = struct.unpack(">4sLLL", dat[i * 16: (i+1) * 16])
                 self.dict[tag.decode("utf-8")] = [offset, length]
+            self.readNames(inf)
+            self.readFeat(inf)
+
+    def readFeat(self, inf):
+        self.feats = {}
+        if 'Feat' not in self.dict:
+            return
+        inf.seek(self.dict['Feat'][0])
+        data = inf.read(self.dict['Feat'][1])
+        (version, subversion) = struct.unpack(">HH", data[:4])
+        numFeats, = struct.unpack(">H", data[4:6])
+        for i in range(numFeats):
+            if version >= 2:
+                (fid, nums, _, offset, flags, lid) = struct.unpack(">LHHLHH", data[12+16*i:28+16*i])
+                offset = int((offset - 4 - 16 * numFeats) / 4)
+            else:
+                (fid, nums, offset, flags, lid) = struct.unpack(">HHLHH", data[12+12*i:24+12*i])
+                offset = int((offset - 4 - 12 * numFeats) / 4)
+            self.feats[num2tag(fid)] = self.names.get(lid, "")
+
+    def readNames(self, inf):
+        self.names = {}
+        if 'name' not in self.dict:
+            return
+        inf.seek(self.dict['name'][0])
+        data = inf.read(self.dict['name'][1])
+        fmt, n, stringOffset = struct.unpack(b">HHH", data[:6])
+        stringData = data[stringOffset:]
+        data = data[6:]
+        for i in range(n):
+            if len(data) < 12:
+                break
+            (pid, eid, lid, nid, length, offset) = struct.unpack(b">HHHHHH", data[12*i:12*(i+1)])
+            # only get unicode strings
+            if pid == 0 or (pid == 3 and (eid < 2 or eid == 10)):
+                self.names[nid] = stringData[offset:offset+length].decode("utf_16_be")
+            
 
     def style2str(self, style):
         return pango_styles.get(style, str(style))
