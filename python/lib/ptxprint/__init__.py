@@ -79,13 +79,16 @@ class ParatextSettings:
         langid = regex.sub('-(?=-|$)', '', self.dict['LanguageIsoCode'].replace(":", "-"))
         # print(langid)
         fname = os.path.join(basedir, prjid, langid+".ldml")
+        silns = "{urn://www.sil.org/ldml/0.1}"
         if os.path.exists(fname):
-            doc = et.parse(fname)
+            self.ldml = et.parse(fname)
             for k in ['footnotes', 'crossrefs']:
-                d = doc.find('.//characters/special/{{urn://www.sil.org/ldml/0.1}}exemplarCharacters[@type="{}"]'.format(k))
+                d = self.ldml.find('.//characters/special/{1}exemplarCharacters[@type="{0}"]'.format(k, silns))
                 if d is not None:
                     self.dict[k] = ",".join(regex.sub(r'^\[\s*(.*?)\s*\]', r'\1', d.text).split())
                     # print(k, self.dict[k].encode("unicode_escape"))
+        else:
+            self.ldml = None
 
     def __getitem__(self, key):
         return self.dict[key]
@@ -669,7 +672,10 @@ class PtxPrinterDialog:
                     for f in m:
                         # print(f[0]+"|"+f[1]+"|"+f[5]+f[6])
                         picfname = re.sub(r"\.[Tt][Ii][Ff]",".jpg",f[0])           # Change all TIFs to JPGs
-                        pageposn = random.choice(_picposn.get(f[1], f[1]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
+                        if self.get("c_randomPicPosn"):
+                            pageposn = random.choice(_picposn.get(f[1], f[1]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
+                        else:
+                            pageposn = (_picposn.get(f[1], f[1]))[0]              # use the t or tl (first in list)
                         piclist.append(bk+" "+re.sub(r":",".", f[5])+" |"+picfname+"|"+f[1]+"|"+pageposn+"||"+f[4]+"|"+f[5]+"\n")
                 else:
                     # If none of the USFM2-styled illustrations were found then look for USFM3-styled markup in text 
@@ -685,7 +691,10 @@ class PtxPrinterDialog:
                         # print(m)
                         for f in m:
                             picfname = re.sub(r"\.[Tt][Ii][Ff]",".jpg",f[1])           # Change all TIFs to JPGs
-                            pageposn = random.choice(_picposn.get(f[2], f[2]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
+                            if self.get("c_randomPicPosn"):
+                                pageposn = random.choice(_picposn.get(f[2], f[2]))     # Randomize location of illustrations on the page (tl,tr,bl,br)
+                            else:
+                                pageposn = (_picposn.get(f[2], f[2]))[0]               # use the t or tl (first in list)
                             piclist.append(bk+" "+re.sub(r":",".", f[3])+" |"+picfname+"|"+f[2]+"|"+pageposn+"||"+f[0]+"|"+f[3]+"\n")
                 if len(m):
                     plpath = os.path.join(prjdir, "PrintDraft\PicLists")
@@ -871,6 +880,7 @@ class Info:
         # Still to be implemented:
         # "project/ifprettyOutline":  ("c_prettyIntroOutline", lambda w,v :"true" if v else "false"),
         # "project/ifstarthalfpage":  ("c_startOnHalfPage", lambda w,v :"true" if v else "false"),
+        "project/randompicposn":    ("c_randomPicPosn", lambda w,v :"true" if v else "false"),
 
         "paper/height":             (None, lambda w,v: re.sub(r"^.*?,\s*(.+?)\s*(?:\(.*|$)", r"\1", w.get("cb_pagesize")) or "210mm"),
         "paper/width":              (None, lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", w.get("cb_pagesize")) or "148mm"),
@@ -1033,15 +1043,21 @@ class Info:
     def processFonts(self, printer):
 #        import pdb;pdb.set_trace()
         # traceback.print_stack(limit=3)
+        # \def\regular{"Gentium Plus/GR:litr=1;ital=1"}   ???
+        silns = "{urn://www.sil.org/ldml/0.1}"
         for p, wid in self._fonts.items():
             f = TTFont(printer.get(wid))
+            d = self.ptsettings.ldml.find('.//special/{1}external-resources/{1}font[@name="{0}"]'.format(f.family, silns))
+            if d is not None:
+                f.features = regex.split(r"\s*,\s*", d.get('features', ''))
+                self.dict['font/features'] = ";".join(f.features) + (";" if len(f.features) else "")
             if 'Silf' in f:
                 engine = "/GR"
             else:
                 engine = ""
             s = ""
             if len(f.style):
-                s = "/" + "".join(x[0].upper() for x in f.style)
+                s = "/" + "".join(x[0].upper() for x in f.style.split(" "))
             self.dict[p] = f.family + engine + s
 
     def processHdrFtr(self, printer):

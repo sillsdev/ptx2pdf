@@ -29,10 +29,10 @@
 \def\ColumnGutterFactor{{{document/colgutterfactor}}}
 
 %%%%% Text Spacing %%%%%
-{paragraph/fixlinespacing}\def\LineSpacingFactor{{{paragraph/linespacing}}}
+{paragraph/fixlinespacing}\def\LineSpacingFactor{{{paragraph/linespacing:.2f}}}
 \def\LineSpacingFactor{{1.0}}
 \def\VerticalSpaceFactor{{1.0}}
-{paragraph/varlinespacing}\baselineskip={paragraph/linespacing}pt plus {paragraph/linemax}pt minus {paragraph/linemin}pt
+{paragraph/varlinespacing}\baselineskip={paragraph/linespacing:.2f}pt plus {paragraph/linemax:.2f}pt minus {paragraph/linemin:.2f}pt
 
 %% Cross-space contextualization
 % None=0 This is how XeTeX behaves by default. Most projects will use this setting.
@@ -41,13 +41,13 @@
 \XeTeXinterwordspaceshaping = {document/spacecntxtlztn}
 
 %%%%% Fonts %%%%%
-\FontSizeUnit={paper/fontfactor:.6f}pt   % Q (from MP to MH): Can you explain what's happening here?
+\FontSizeUnit={paper/fontfactor:.6f}pt
 
 %% Faces
-\def\regular{{"{fontregular/name}:{document/script}{document/digitmapping}"}}
-\def\bold{{"{fontbold/name}:{document/script}{document/digitmapping}{fontbold/embolden}{fontbold/slant}"}}
-\def\italic{{"{fontitalic/name}:{document/script}{document/digitmapping}{fontitalic/embolden}{fontitalic/slant}"}}
-\def\bolditalic{{"{fontbolditalic/name}:{document/script}{document/digitmapping}{fontbolditalic/embolden}{fontbolditalic/slant}"}}
+\def\regular{{"{fontregular/name}:{font/features}{document/script}{document/digitmapping}"}}
+\def\bold{{"{fontbold/name}:{font/features}{document/script}{document/digitmapping}{fontbold/embolden}{fontbold/slant}"}}
+\def\italic{{"{fontitalic/name}:{font/features}{document/script}{document/digitmapping}{fontitalic/embolden}{fontitalic/slant}"}}
+\def\bolditalic{{"{fontbolditalic/name}:{font/features}{document/script}{document/digitmapping}{fontbolditalic/embolden}{fontbolditalic/slant}"}}
 
 %%%%% Layout %%%%%
 \RTL{document/ifrtl}   % Use right-to-left layout mode?

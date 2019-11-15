@@ -4664,13 +4664,21 @@ settings.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton">
+                                  <object class="GtkCheckButton" id="c_randomPicPosn">
                                     <property name="label" translatable="yes">Randomize position of illustrations (top, bottom, left &amp; right)</property>
                                     <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">By default all illustrations are place in the top-left
+corner (when double columns are used) and at the
+top in single column mode. 
+Selecting this option will randomly position the
+illustrations on the page (using top-left, top-right
+bottom-left and bottom-right). 
+By editing the PicList file, you can intentionally
+place illustrations in one of these 4 locations.</property>
                                     <property name="halign">start</property>
+                                    <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
