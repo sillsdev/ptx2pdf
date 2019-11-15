@@ -31,10 +31,10 @@ class TTFont:
     def getfname(self):
         #pattern = '"' + self.family + '"' + 
         pattern = (":style=\""+self.style.title()+'"' if self.style else ":style=Regular")
-        pattern = pattern.replace("-", r"\-")
-        files = checkoutput(["fc-list", self.family, pattern, "file"], shell=1)
+        family = self.family.replace("-", r"\-")
+        files = checkoutput(["fc-list", family, pattern, "file"], shell=1)
         self.filename = re.split(r":\s", files, flags=re.M)[0].strip()
-        print(pattern, self.filename, files)
+        print(family, pattern, self.filename)
         return self.filename
 
     def readfont(self):
@@ -54,6 +54,7 @@ class TTFont:
 
     def readFeat(self, inf):
         self.feats = {}
+        self.featvals = {}
         if 'Feat' not in self.dict:
             return
         inf.seek(self.dict['Feat'][0])
@@ -64,11 +65,16 @@ class TTFont:
         for i in range(numFeats):
             if version >= 2:
                 (fid, nums, _, offset, flags, lid) = struct.unpack(">LHHLHH", data[12+16*i:28+16*i])
-                offset = int((offset - 4 - 16 * numFeats) / 4)
             else:
                 (fid, nums, offset, flags, lid) = struct.unpack(">HHLHH", data[12+12*i:24+12*i])
-                offset = int((offset - 4 - 12 * numFeats) / 4)
             self.feats[num2tag(fid)] = self.names.get(lid, "")
+            valdict = {}
+            self.featvals[num2tag(fid)] = valdict
+            for j in range(1, nums):
+                val, lid = struct.unpack(">HH", data[offset + 4*j:offset + 4*(j+1)])
+                valdict[val] = self.names.get(lid, "")
+        print(self.featvals)
+            
 
     def readNames(self, inf):
         self.names = {}

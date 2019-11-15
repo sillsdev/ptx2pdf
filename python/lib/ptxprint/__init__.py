@@ -1055,7 +1055,8 @@ class Info:
                         k, v = l.split('=')
                         f.features[k.strip()] = v.strip()
                 print(f.features, f.feats)
-                self.dict['font/features'] = ";".join("{0}={1}".format(f.feats.get(fid, fid), v) for fid, v in f.features.items()) + \
+                self.dict['font/features'] = ";".join("{0}={1}".format(f.feats.get(fid, fid),
+                                                    f.featvals.get(fid, {}).get(v, v)) for fid, v in f.features.items()) + \
                                              (";" if len(f.features) else "")
             else:
                 self.dict['font/features'] = ""

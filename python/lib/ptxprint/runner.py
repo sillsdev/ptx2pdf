@@ -52,7 +52,8 @@ if sys.platform == "linux":
 
     def checkoutput(*a, **kw):
         if 'shell' in kw and not isinstance(a[0], str):
-            a = [" ".join(a[0])] + list(a[1:])
+            a = [" ".join([a[0][0], '"'+a[0][1]+'"'+a[0][2], *a[0][3:]])] + list(a[1:])
+        print(a)
         res = subprocess.check_output(*a, **kw).decode("utf-8")
         return res
 
