@@ -1,4 +1,4 @@
-from ptxprint.runner import checkoutput
+from ptxprint.runner import fclist
 import struct, re
 from gi.repository import Pango
 
@@ -30,9 +30,11 @@ class TTFont:
 
     def getfname(self):
         #pattern = '"' + self.family + '"' + 
-        pattern = (":style=\""+self.style.title()+'"' if self.style else ":style=Regular")
+        #pattern = (":style=\""+self.style.title()+'"' if self.style else ":style=Regular")
+        pattern = self.style.title() if self.style else "Regular"
         family = self.family.replace("-", r"\-")
-        files = checkoutput(["fc-list", family, pattern, "file"], shell=1)
+        files=fclist(family, pattern)
+        #files = checkoutput(["fc-list", family, pattern, "file"], shell=1)
         self.filename = re.split(r":\s", files, flags=re.M)[0].strip()
         print(family, pattern, self.filename)
         return self.filename

@@ -50,10 +50,12 @@ if sys.platform == "linux":
         fl = fcntl.fcntl(fd, fcntl.F_GETFL)
         fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
 
-    def checkoutput(*a, **kw):
-        if 'shell' in kw and not isinstance(a[0], str):
-            a = [" ".join([a[0][0], '"'+a[0][1]+'"'+a[0][2], *a[0][3:]])] + list(a[1:])
+    def fclist(family, pattern):
+        a = ["fc-list", '"{0}":style="{1}"'.format(family, pattern), 'file']
         print(a)
+        return subprocess.check_output(" ".join(a), shell=1).decode("utf-8")
+
+    def checkoutput(*a, **kw):
         res = subprocess.check_output(*a, **kw).decode("utf-8")
         return res
 
@@ -110,6 +112,11 @@ elif sys.platform == "win32":
 
     def queryvalue(base, value):
         return winreg.QueryValueEx(base, value)[0]
+
+    def fclist(family, pattern):
+        a = [os.path.join(pt_bindir, "xetex", "bin", "fc-list.exe").replace("\\", "/"),
+                '"'+family+'"', '":style='+style+'"', 'file']
+        return subprocess.check_output(a).decode("utf-8")
 
     def checkoutput(*a, **kw):
         if 'shell' in kw:
