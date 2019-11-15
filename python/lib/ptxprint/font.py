@@ -29,15 +29,17 @@ class TTFont:
         self.readfont()
 
     def getfname(self):
-        pattern = '"' + self.family + '"' + (":style=\""+self.style.title()+'"' if self.style else ":style=Regular")
+        #pattern = '"' + self.family + '"' + 
+        pattern = (":style=\""+self.style.title()+'"' if self.style else ":style=Regular")
         pattern = pattern.replace("-", r"\-")
-        files = checkoutput(["fc-list", pattern, "file"], shell=1)
+        files = checkoutput(["fc-list", self.family, pattern, "file"], shell=1)
         self.filename = re.split(r":\s", files, flags=re.M)[0].strip()
-        # print(pattern, self.filename)
+        print(pattern, self.filename, files)
         return self.filename
 
     def readfont(self):
         self.dict = {}
+        print(self.family, self.style, self.filename)
         if self.filename == "":
             return
         with open(self.filename, "rb") as inf:
@@ -57,6 +59,7 @@ class TTFont:
         inf.seek(self.dict['Feat'][0])
         data = inf.read(self.dict['Feat'][1])
         (version, subversion) = struct.unpack(">HH", data[:4])
+        print(version)
         numFeats, = struct.unpack(">H", data[4:6])
         for i in range(numFeats):
             if version >= 2:

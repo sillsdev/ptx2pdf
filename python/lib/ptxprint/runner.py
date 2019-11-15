@@ -111,8 +111,11 @@ elif sys.platform == "win32":
         return winreg.QueryValueEx(base, value)[0]
 
     def checkoutput(*a, **kw):
-        path = os.path.join(pt_bindir, "xetex", "bin", a[0][0]+".exe").replace("/", "\\")
-        newa = [path] + list(a)[1:]
+        if 'shell' in kw:
+            del kw['shell']
+        path = os.path.join(pt_bindir, "xetex", "bin", a[0][0]+".exe").replace("\\", "/")
+        newa = [[path] + list(a[0])[1:]] + [x.replace('"', '') for x in a[1:]]
+        print(newa)
         res = subprocess.check_output(*newa, **kw).decode("utf-8")
         return res
 
