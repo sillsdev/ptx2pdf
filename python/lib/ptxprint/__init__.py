@@ -6,9 +6,11 @@ from gi.repository import Gtk
 import xml.etree.ElementTree as et
 from ptxprint.font import TTFont
 from ptxprint.runner import StreamTextBuffer
+from ptxprint.snippets import FancyIntro
 # from PIL import Image
 import configparser
 import traceback
+
 
 # For future Reference on how Paratext treats this list:
 # G                                     MM                         RT                P        X      FBO    ICGTND          L  OT NT DC  -  X Y  -  Z  --  L
@@ -752,6 +754,17 @@ class PtxPrinterDialog:
             nstylist.append("##### Remove all footnotes\n\\Marker f\n\\TextProperties nonpublishable\n\n")
         if not self.get("c_includeXrefs"):
             nstylist.append("##### Remove all cross-references\n\\Marker x\n\\TextProperties nonpublishable\n\n")
+
+        if self.get("c_prettyIntroOutline"):
+            print("Need special outline -------------------------------------------------------------------------")
+            print(FancyIntro.styleInfo)
+            nstylist.append(FancyIntro.styleInfo+"\n")
+            
+        # Add any applicable stylesheet snippets
+        # for w, c in info._snippets.items():   # but we can't access the "info" class from here.
+            # if self.get(w): # if the c_checkbox is true then add the stylesheet snippet for that option
+                # nstylist.append(c.styleInfo)
+
         if nstylist == []:
             os.remove(nstyfname)
         else:
@@ -1020,7 +1033,10 @@ class Info:
         "circumflex ^before word": r"^\1",
         "circumflex after^ word":  r"\1^"
     }
-        
+    _snippets = {
+        "c_prettyIntroOutline"     : FancyIntro
+    }
+    
     def __init__(self, printer, path, ptsettings=None):
         self.ptsettings = ptsettings
         self.changes = None
@@ -1056,7 +1072,7 @@ class Info:
                         f.features[k.strip()] = v.strip()
                 print(f.features, f.feats)
                 self.dict['font/features'] = ";".join("{0}={1}".format(f.feats.get(fid, fid),
-                                                    f.featvals.get(fid, {}).get(v, v)) for fid, v in f.features.items()) + \
+                                                    f.featvals.get(fid, {}).get(int(v), v)) for fid, v in f.features.items()) + \
                                              (";" if len(f.features) else "")
             else:
                 self.dict['font/features'] = ""
@@ -1248,7 +1264,12 @@ class Info:
 
         if not printer.get("c_mainBodyText"):
             self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+".format(first), flags=regex.S), ""))
-            
+
+        # Apply any changes specified in snippets
+        for w, c in self._snippets.items():
+            if printer.get(w): # if the c_checkbox is true then extend the list with those changes
+                self.localChanges.extend(c.regexes)
+                
         return self.localChanges
         # Insert horizontal rule after intro section
         #contents = re.sub(ur'(\\c\s1\r\n)', ur'\skipline\n\hrule\r\n\1', contents)

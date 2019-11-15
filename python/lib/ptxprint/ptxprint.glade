@@ -2192,7 +2192,6 @@ of Contents</property>
                                       <object class="GtkCheckButton" id="c_prettyIntroOutline">
                                         <property name="label" translatable="yes">Right-align \ior with tabbed leaders</property>
                                         <property name="visible">True</property>
-                                        <property name="sensitive">False</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="halign">start</property>
