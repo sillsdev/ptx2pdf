@@ -4641,28 +4641,6 @@ in your system's default text editor.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton">
-                                    <property name="label" translatable="yes">Lock all settings that affect dimensions and layout</property>
-                                    <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Once you start adjusting the stretch and shrink on
-individual paragraphs, you really don't want to let
-the settings change (page size, margins, font size,
-line spacing, and so on).
-Select this option to disable changes to all of these
-settings.</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin_bottom">4</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkCheckButton" id="c_randomPicPosn">
                                     <property name="label" translatable="yes">Randomize position of illustrations (top, bottom, left &amp; right)</property>
                                     <property name="visible">True</property>
@@ -4687,13 +4665,26 @@ place illustrations in one of these 4 locations.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
+                                  <object class="GtkCheckButton">
+                                    <property name="label" translatable="yes">Lock all settings that affect dimensions and layout</property>
+                                    <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Once you start adjusting the stretch and shrink on
+individual paragraphs, you really don't want to let
+the settings change (page size, margins, font size,
+line spacing, and so on).
+Select this option to disable changes to all of these
+settings.</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_bottom">4</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
                                 </child>
                               </object>
                             </child>
@@ -4719,7 +4710,6 @@ place illustrations in one of these 4 locations.</property>
                         <property name="can_focus">False</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
-                        <property name="margin_top">6</property>
                         <property name="margin_bottom">6</property>
                         <property name="label_xalign">0.0099999997764825821</property>
                         <child>
@@ -4729,7 +4719,7 @@ place illustrations in one of these 4 locations.</property>
                             <property name="margin_left">6</property>
                             <property name="margin_right">6</property>
                             <property name="margin_bottom">6</property>
-                            <property name="row_spacing">7</property>
+                            <property name="row_spacing">6</property>
                             <property name="column_spacing">6</property>
                             <child>
                               <object class="GtkComboBox" id="cb_script">
@@ -4866,6 +4856,28 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                         <property name="expand">False</property>
                         <property name="fill">True</property>
                         <property name="position">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="c_keepTemporaryFiles">
+                        <property name="label" translatable="yes">Don't Delete Intermediate Files and Logs </property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">False</property>
+                        <property name="tooltip_text" translatable="yes">If the output is not as you expect, it
+is possible to discover what might
+have gone wrong by examining the
+intermediate files and logs. If this
+option is checked, then the folder
+which contains the resulting PDf will
+also contain several other related files.</property>
+                        <property name="halign">end</property>
+                        <property name="draw_indicator">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">3</property>
                       </packing>
                     </child>
                   </object>

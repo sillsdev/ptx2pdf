@@ -5,7 +5,7 @@
 \stylesheet{{{/ptxpath}/usfm.sty}}
 \stylesheet{{{/ptxpath}/{project/id}/custom.sty}}
 {project/ifusemodssty}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.sty}} % User can override project stylesheet settings here
-{project/ifusenested}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/NestedStyles.sty}}     % PTXprint overrides all others (for versenums, ftnts,xref)
+{project/ifusenested}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/NestedStyles.sty}}    % PTXprint overrides all others (for versenums, ftnts, xref)
 
 %%%%% Page Setup %%%%%
 % Dimensions
@@ -129,6 +129,9 @@
 \let\pb=\pagebreak
 
 {project/ifusemodstex}\input "{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.tex"% adjust/override setup parameters here
+
+% This next option is yet to be implemented. Will only be active if "Use PT macros" is False AND "Start half page" is True
+{project/ifuseptmacros}{project/ifstarthalfpage}\StartNextBookOnLastPageOfPrevious
 
 %%%%% Hyphenation %%%%%
 %% Allocating and using a new language without any hyphenation rules defined effectively disables hyphenation.

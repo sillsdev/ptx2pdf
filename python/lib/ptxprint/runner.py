@@ -115,7 +115,7 @@ elif sys.platform == "win32":
 
     def fclist(family, pattern):
         a = [os.path.join(pt_bindir, "xetex", "bin", "fc-list.exe").replace("\\", "/"),
-                '"'+family+'"', '":style='+style+'"', 'file']
+                '"'+family+'"', '":style='+pattern+'"', 'file']
         return subprocess.check_output(a).decode("utf-8")
 
     def checkoutput(*a, **kw):

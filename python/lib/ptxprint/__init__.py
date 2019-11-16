@@ -594,7 +594,7 @@ class PtxPrinterDialog:
         FrontPDFs = self.fileChooser("Select one or more PDF(s) for FRONT matter", 
                 filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
                 multiple = True)
-        if FrontPDFs is not None:
+        if FrontPDFs is not None and FrontPDFs != 'None':
             self.FrontPDFs = FrontPDFs
             btn_selectFrontPDFs.set_tooltip_text("\n".join('{}'.format(s) for s in FrontPDFs))
         else:
@@ -607,7 +607,7 @@ class PtxPrinterDialog:
         BackPDFs = self.fileChooser("Select one or more PDF(s) for BACK matter", 
                 filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
                 multiple = True)
-        if BackPDFs is not None:
+        if BackPDFs is not None and BackPDFs != 'None':
             self.BackPDFs = BackPDFs
             btn_selectBackPDFs.set_tooltip_text("\n".join('{}'.format(s) for s in BackPDFs))
         else:
@@ -620,7 +620,7 @@ class PtxPrinterDialog:
         watermarks = self.fileChooser("Select Watermark PDF file", 
                 filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
                 multiple = False)
-        if watermarks is not None:
+        if watermarks is not None and watermarks != 'None':
             self.watermarks = watermarks[0]
             btn_selectWatermarkPDF.set_tooltip_text(watermarks[0])
         else:
@@ -652,7 +652,7 @@ class PtxPrinterDialog:
         for bk in self.getBooks():
             prjid = self.get("cb_project")
             prjdir = os.path.join(self.settings_dir, self.prjid)
-            tmpdir = os.path.join(prjdir, 'PrintDraft') if self.get("c_useprintdraftfolder") else r"C:\temp"  # args.directory
+            tmpdir = os.path.join(prjdir, 'PrintDraft') if self.get("c_useprintdraftfolder") else r"C:\temp"  # args.directory ???
             fname = self.getBookFilename(bk, prjdir)
             infname = os.path.join(prjdir, fname)
             outfname = os.path.join(prjdir, "PrintDraft\PicLists", fname)
@@ -756,12 +756,10 @@ class PtxPrinterDialog:
             nstylist.append("##### Remove all cross-references\n\\Marker x\n\\TextProperties nonpublishable\n\n")
 
         if self.get("c_prettyIntroOutline"):
-            print("Need special outline -------------------------------------------------------------------------")
-            print(FancyIntro.styleInfo)
             nstylist.append(FancyIntro.styleInfo+"\n")
-            
+
         # Add any applicable stylesheet snippets
-        # for w, c in info._snippets.items():   # but we can't access the "info" class from here.
+        # for w, c in info._snippets.items():   # but we can't access the "info" class from here (should I move this def to the info class?).
             # if self.get(w): # if the c_checkbox is true then add the stylesheet snippet for that option
                 # nstylist.append(c.styleInfo)
 
@@ -872,16 +870,17 @@ class Info:
     _mappings = {
         "project/id":               (None, lambda w,v: w.get("cb_project")),
         "project/hideadvancedsettings": ("c_hideAdvancedSettings", lambda w,v: "true" if v else "false"),
-        "project/useptmacros":      ("c_usePTmacros", lambda w,v: "true" if v else "false"),
+        "project/keeptempfiles":    ("c_keepTemporaryFiles", lambda w,v: "true" if v else "false"),
+        "project/ifuseptmacros":    ("c_usePTmacros", lambda w,v: "%" if v else ""),
         "project/multiplebooks":    ("c_multiplebooks", lambda w,v: "true" if v else "false"),
         # "project/choosebooks":      ("btn_chooseBooks", lambda w,v: v or ""),
         "project/combinebooks":     ("c_combine", lambda w,v: "true" if v else "false"),
         "project/book":             ("cb_book", None),
         "project/booklist":         ("t_booklist", lambda w,v: v or ""),
         "project/ifinclfrontpdf":   ("c_inclFrontMatter", lambda w,v: "true" if v else "false"),
-        "project/frontincludes":    ("btn_selectFrontPDFs", lambda w,v: "\n".join('\\includepdf{{"{}"}}'.format(re.sub(r"\\","/", s)) for s in w.FrontPDFs) if w.FrontPDFs is not None else ""),
+        "project/frontincludes":    ("btn_selectFrontPDFs", lambda w,v: "\n".join('\\includepdf{{"{}"}}'.format(re.sub(r"\\","/", s)) for s in w.FrontPDFs) if (w.FrontPDFs is not None and w.FrontPDFs != 'None') else ""),
         "project/ifinclbackpdf":    ("c_inclBackMatter", lambda w,v: "true" if v else "false"),
-        "project/backincludes":     ("btn_selectBackPDFs", lambda w,v: "\n".join('\\includepdf{{"{}"}}'.format(re.sub(r"\\","/", s)) for s in w.BackPDFs) if w.BackPDFs is not None else ""),
+        "project/backincludes":     ("btn_selectBackPDFs", lambda w,v: "\n".join('\\includepdf{{"{}"}}'.format(re.sub(r"\\","/", s)) for s in w.BackPDFs) if (w.BackPDFs is not None and w.BackPDFs != 'None') else ""),
         "project/useprintdraftfolder": ("c_useprintdraftfolder", lambda w,v :"true" if v else "false"),
         "project/processscript":    ("c_processScript", lambda w,v :"true" if v else "false"),
         "project/runscriptafter":   ("c_processScriptAfter", lambda w,v :"true" if v else "false"),
@@ -890,16 +889,15 @@ class Info:
         "project/ifusemodstex":     ("c_useModsTex", lambda w,v: "" if v else "%"),
         "project/ifusemodssty":     ("c_useModsSty", lambda w,v: "" if v else "%"),
         "project/ifusenested":      (None, lambda w,v: "" if (w.get("c_omitallverses") or not w.get("c_includeFootnotes") or not w.get("c_includeXrefs")) else "%"),
-        # Still to be implemented:
-        # "project/ifprettyOutline":  ("c_prettyIntroOutline", lambda w,v :"true" if v else "false"),
-        # "project/ifstarthalfpage":  ("c_startOnHalfPage", lambda w,v :"true" if v else "false"),
+        # Still to be implemented: What is the .tex code for this to be turned on?
+        # "project/ifstarthalfpage":  ("c_startOnHalfPage", lambda w,v :"" if v else "%"),
         "project/randompicposn":    ("c_randomPicPosn", lambda w,v :"true" if v else "false"),
 
         "paper/height":             (None, lambda w,v: re.sub(r"^.*?,\s*(.+?)\s*(?:\(.*|$)", r"\1", w.get("cb_pagesize")) or "210mm"),
         "paper/width":              (None, lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", w.get("cb_pagesize")) or "148mm"),
         "paper/pagesize":           ("cb_pagesize", None),
         "paper/ifwatermark":        ("c_applyWatermark", lambda w,v: "" if v else "%"),
-        "paper/watermarkpdf":       ("btn_selectWatermarkPDF", lambda w,v: re.sub(r"\\","/", w.watermarks) if w.watermarks is not None else "A5-Draft.pdf"),
+        "paper/watermarkpdf":       ("btn_selectWatermarkPDF", lambda w,v: re.sub(r"\\","/", w.watermarks) if (w.watermarks is not None and w.watermarks != 'None') else "A5-Draft.pdf"),
         "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),  
         "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v else "false"),
         "paper/margins":            ("s_margins", lambda w,v: round(v) or "14"),
@@ -961,6 +959,9 @@ class Info:
         "document/supressbookintro": ("c_omitBookIntro", lambda w,v: "true" if v else "false"),
         "document/supressintrooutline": ("c_omitIntroOutline", lambda w,v: "true" if v else "false"),
         "document/supressindent":   ("c_omit1paraIndent", lambda w,v: "false" if v else "true"),
+        
+# err!! "document/fancyintro":      ("c_prettyIntroOutline", lambda w,v: "\n".join(c.texCode if printer.get(w) for w, c in self._snippets.items()) else ""), 
+        "document/fancyintro":      ("c_prettyIntroOutline", lambda w,v: FancyIntro.texCode+"\n" if v else ""), 
 
         "header/headerposition":    ("s_headerposition", lambda w,v: round(v, 2) or "0.50"),
         "header/footerposition":    ("s_footerposition", lambda w,v: round(v, 2) or "0.50"),
@@ -1070,7 +1071,7 @@ class Info:
                     if '=' in l:
                         k, v = l.split('=')
                         f.features[k.strip()] = v.strip()
-                print(f.features, f.feats)
+                # print(f.features, f.feats)
                 self.dict['font/features'] = ";".join("{0}={1}".format(f.feats.get(fid, fid),
                                                     f.featvals.get(fid, {}).get(int(v), v)) for fid, v in f.features.items()) + \
                                              (";" if len(f.features) else "")
@@ -1125,9 +1126,8 @@ class Info:
                         # if i+1 == le and i > 0:
                             # res.append("\\lastptxfilefalse")
                         res.append("\\ptxfile{{{}}}\n".format(f))
-
                 else:
-                    res.append(l.format(**self.dict))
+                    res.append(l.format(**self.dict))   # ************************************** this is broken ??????????????
         return "".join(res)
 
     def convertBook(self, bk, outdir, prjdir):
@@ -1193,7 +1193,7 @@ class Info:
         if not len(changes):
             return None
         return changes
-            
+
     def makelocalChanges(self, printer):
         self.localChanges = []
         first = int(printer.get("cb_chapfrom"))
@@ -1213,7 +1213,12 @@ class Info:
         self.localChanges.append((None, regex.compile(r"\\w (.+?)(\|.+?)?\\w\*", flags=regex.M), gloStyle))
 
         if printer.get("c_includeillustrations") and printer.get("c_includefigsfromtext"):
-            self.localChanges.append((None, regex.compile(r"\.[Tt][Ii][Ff]", flags=regex.M), ".jpg"))           # Change all TIFs extensions to JPGs
+            self.localChanges.append((None, regex.compile(r"\.[Tt][Ii][Ff]\|", flags=regex.M), r".jpg\|"))           # Change all TIF extensions to JPGs
+            if printer.get("c_skipmissingimages"):
+                msngfigs = ListMissingPics()
+                if len(msngfigs):
+                    for f in msngfigs:
+                        self.localChanges.append((None, regex.compile(r"(\\fig .*\|{}\|.+?\\fig\*".format(f), flags=regex.M), ""))
             if printer.get("c_fighiderefs"):
                 self.localChanges.append((None, regex.compile(r"(\\fig .*?)(\d+\:\d+([-,]\d+)?)(.*?\\fig\*)", flags=regex.M), r"\1\4")) # remove ch:vs ref from caption
         else:
@@ -1258,7 +1263,7 @@ class Info:
             if not printer.get("c_usetoc{}".format(c)):
                 self.localChanges.append((None, regex.compile(r"(\\toc{} .+)".format(c), flags=regex.M), ""))
             
-            # self.builder.get_object(c).set_sensitive(status)
+        # self.builder.get_object(c).set_sensitive(status)
         
         # self.localChanges.append((None, regex.compile(r"(\\c\s1\s?\r?\n)", flags=regex.S), r"\skipline\n\hrule\r\n\1")) # this didn't work. I wonder why.
 
@@ -1271,11 +1276,40 @@ class Info:
                 self.localChanges.extend(c.regexes)
                 
         return self.localChanges
-        # Insert horizontal rule after intro section
-        #contents = re.sub(ur'(\\c\s1\r\n)', ur'\skipline\n\hrule\r\n\1', contents)
 
         # Insert a chapter label marker with zwsp to center the chapter number
         #contents = re.sub(ur'(\\c\s1\r\n)', ur'\cl \u200b\r\n\1', contents)
+
+    def ListMissingPics():
+        msngpiclist = []
+        prjid = printer.get("cb_project")
+        prjdir = os.path.join(printer.settings_dir, self.prjid)
+        if self.dict['document/usefigsfolder']:
+            picdir = os.path.join(prjdir, "Figures")
+        elif self.dict['document/uselocalfigs']:
+            picdir = os.path.join(prjdir, "local", "Figures")
+        elif self.dict['document/customfiglocn'] is not None:
+            picdir = self.dict['document/customfiglocn']
+        else
+            print("No folder of illustrtations has been specified")
+            return(msngpiclist)  # send back an empty list
+        for bk in printer.getBooks():
+            fname = printer.getBookFilename(bk, prjdir)
+            infname = os.path.join(prjdir, fname)
+            with open(infname, "r", encoding="utf-8") as inf:
+                dat = inf.read()
+                # Finds USFM2-styled markup in text:
+                m = re.findall(r"\\fig .*\|(.+?\....)\|.+?\\fig\*", dat)          # Finds USFM2-styled markup in text:
+                if m is None:
+                    m = re.findall(r'\\fig .*+src="(.+?\....)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text:
+                if m is not None:
+                    for f in m:
+                        fname = os.path.join(picdir,f[0]))
+                        print(fname)
+                        if not os.path.exists(fname):
+                            print("{} is missing from {}".format(f[0],picdir))
+                            msngpiclist.append(f[0])
+        return(msngpiclist)
 
     def createConfig(self, printer):
         config = configparser.ConfigParser()
