@@ -20,7 +20,7 @@ import traceback
 
 _bookslist = """GEN|50 EXO|40 LEV|27 NUM|36 DEU|34 JOS|24 JDG|21 RUT|4 1SA|31 2SA|24 1KI|22 2KI|25 1CH|29 32CH|36 EZR|10 NEH|13
         EST|10 JOB|42 PSA|150 PRO|31 ECC|12 SNG|8 ISA|66 JER|52 LAM|5 EZK|48 DAN|12 HOS|14 JOL|3 AMO|9 OBA|1 JON|4 MIC|7 NAM|3
-        HAB|3 ZEP|3 HAG|2 ZEC|14 MAL|4 ZZZ|0 MAT|28 MRK|16 LUK|24 JHN|21 ACT|28 ROM|16 1CO|16 2CO|13 GAL|6 EPH|6 PHP|4 COL|4
+        HAB|3 ZEP|3 HAG|2 ZEC|14 MAL|4 MAT|28 MRK|16 LUK|24 JHN|21 ACT|28 ROM|16 1CO|16 2CO|13 GAL|6 EPH|6 PHP|4 COL|4
         1TH|5 2TH|3 1TI|6 2TI|4 TIT|3 PHM|1 HEB|13 JAS|5 1PE|5 2PE|3 1JN|5 2JN|1 3JN|1 JUD|1 REV|22
         TOB|14 JDT|16 ESG|10 WIS|19 SIR|51 BAR|6 LJE|1 S3Y|1 SUS|1 BEL|1 1MA|16 2MA|15 3MA|7 4MA|18 1ES|9 2ES|16 MAN|1 PS2|1
         ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 XXA|0 XXB|0 XXC|0 XXD|0 XXE|0 XXF|0 XXG|0 FRT|0 BAK|0 OTH|0 ZZZ|0 ZZZ|0 
@@ -1215,10 +1215,10 @@ class Info:
         if printer.get("c_includeillustrations") and printer.get("c_includefigsfromtext"):
             self.localChanges.append((None, regex.compile(r"\.[Tt][Ii][Ff]\|", flags=regex.M), r".jpg\|"))           # Change all TIF extensions to JPGs
             if printer.get("c_skipmissingimages"):
-                msngfigs = ListMissingPics()
+                msngfigs = self.ListMissingPics(printer)
                 if len(msngfigs):
                     for f in msngfigs:
-                        self.localChanges.append((None, regex.compile(r"(\\fig .*\|{}\|.+?\\fig\*".format(f), flags=regex.M), ""))
+                        self.localChanges.append((None, regex.compile(r"\\fig .*\|{}\|.+?\\fig\*".format(f), flags=regex.M), ""))
             if printer.get("c_fighiderefs"):
                 self.localChanges.append((None, regex.compile(r"(\\fig .*?)(\d+\:\d+([-,]\d+)?)(.*?\\fig\*)", flags=regex.M), r"\1\4")) # remove ch:vs ref from caption
         else:
@@ -1280,17 +1280,17 @@ class Info:
         # Insert a chapter label marker with zwsp to center the chapter number
         #contents = re.sub(ur'(\\c\s1\r\n)', ur'\cl \u200b\r\n\1', contents)
 
-    def ListMissingPics():
+    def ListMissingPics(self, printer):
         msngpiclist = []
         prjid = printer.get("cb_project")
-        prjdir = os.path.join(printer.settings_dir, self.prjid)
+        prjdir = os.path.join(printer.settings_dir, prjid)
         if self.dict['document/usefigsfolder']:
             picdir = os.path.join(prjdir, "Figures")
         elif self.dict['document/uselocalfigs']:
             picdir = os.path.join(prjdir, "local", "Figures")
         elif self.dict['document/customfiglocn'] is not None:
             picdir = self.dict['document/customfiglocn']
-        else
+        else:
             print("No folder of illustrtations has been specified")
             return(msngpiclist)  # send back an empty list
         for bk in printer.getBooks():
@@ -1304,7 +1304,7 @@ class Info:
                     m = re.findall(r'\\fig .*+src="(.+?\....)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text:
                 if m is not None:
                     for f in m:
-                        fname = os.path.join(picdir,f[0]))
+                        fname = os.path.join(picdir,f[0])
                         print(fname)
                         if not os.path.exists(fname):
                             print("{} is missing from {}".format(f[0],picdir))

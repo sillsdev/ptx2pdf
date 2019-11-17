@@ -106,6 +106,7 @@ def removeTempFiles(jobs,prjid,tmpdir):
             delfname = os.path.join(tmpdir, "ptxprint-{}_{}{}.{}".format(jobs[0], jobs[-1], prjid, extn))
             print("Deleting: " + delfname)
             try:
+                print("About to delete",delfname)
                 # os.remove(delfname)
             except:
                 print("Failed to delete temporary file: " + delfname)
@@ -114,6 +115,7 @@ def removeTempFiles(jobs,prjid,tmpdir):
             delfname = os.path.join(tmpdir, "ptxprint-{}{}.SFM".format(jobs[0], prjid))
             print("Deleting: " + delfname)
             try:
+                print("About to delete",delfname)
                 # os.remove(delfname)
             except:
                 print("Failed to delete temporary file: " + delfname)

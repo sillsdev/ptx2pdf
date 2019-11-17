@@ -613,7 +613,7 @@
         <col id="0" translatable="yes">format with emphasis</col>
       </row>
       <row>
-        <col id="0" translatable="yes">bottom ⸤half⸥ brackets</col>
+        <col id="0" translatable="yes">with ⸤floor⸥ brackets</col>
       </row>
       <row>
         <col id="0" translatable="yes">star *before word</col>
