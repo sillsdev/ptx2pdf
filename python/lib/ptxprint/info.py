@@ -188,6 +188,7 @@ class Info:
         self.processFonts(printer)
         self.processHdrFtr(printer)
         self.makelocalChanges(printer)
+        self.GenerateNestedStyles(printer)
 
     def __getitem__(self, key):
         return self.dict[key]
@@ -507,4 +508,27 @@ class Info:
         printer.watermarks = self.dict['paper/watermarkpdf']
         printer.BackPDFs = self.dict['project/backincludes']
 
+    def GenerateNestedStyles(self, printer):
+        prjid = printer.get("cb_project")
+        prjdir = os.path.join(printer.settings_dir, prjid)
+        nstyfname = os.path.join(prjdir, "PrintDraft/NestedStyles.sty")
+        nstylist = []
+        if printer.get("c_omitallverses"):
+            nstylist.append("##### Remove all verse numbers\n\\Marker v\n\\TextProperties nonpublishable\n\n")
+        if not printer.get("c_includeFootnotes"):
+            nstylist.append("##### Remove all footnotes\n\\Marker f\n\\TextProperties nonpublishable\n\n")
+        if not printer.get("c_includeXrefs"):
+            nstylist.append("##### Remove all cross-references\n\\Marker x\n\\TextProperties nonpublishable\n\n")
 
+        # if printer.get("c_prettyIntroOutline"):
+            # nstylist.append(FancyIntro.styleInfo+"\n")
+
+        for w, c in info._snippets.items():
+            if self.get(w): # if the c_checkbox is true then add the stylesheet snippet for that option
+                nstylist.append(c.styleInfo+"\n")
+
+        if nstylist == []:
+            os.remove(nstyfname)
+        else:
+            with open(nstyfname, "w", encoding="utf-8") as outf:
+                outf.write("".join(nstylist))

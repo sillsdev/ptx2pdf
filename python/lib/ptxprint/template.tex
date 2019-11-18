@@ -29,10 +29,9 @@
 \def\ColumnGutterFactor{{{document/colgutterfactor}}}
 
 %%%%% Text Spacing %%%%%
-{paragraph/fixlinespacing}\def\LineSpacingFactor{{{paragraph/linespacing}}}
 \def\LineSpacingFactor{{1.0}}
 \def\VerticalSpaceFactor{{1.0}}
-{paragraph/varlinespacing}\baselineskip={paragraph/linespacing}pt plus {paragraph/linemax}pt minus {paragraph/linemin}pt
+\baselineskip={paragraph/linespacing}pt {paragraph/varlinespacing} plus {paragraph/linemax}pt minus {paragraph/linemin}pt
 
 % This next option is yet to be implemented. Will only be active if "Use PT macros" is False AND "Start half page" is True
 %{project/ifuseptmacros}{project/ifstarthalfpage}\StartNextBookOnLastPageOfPrevious

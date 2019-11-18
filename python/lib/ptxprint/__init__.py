@@ -702,30 +702,7 @@ class PtxPrinterDialog:
                         # print("Adj List already exists (this will NOT be overwritten): " + outfname)
 
     def GenerateNestedStyles(self, c_omitallverses):
-        prjid = self.get("cb_project")
-        prjdir = os.path.join(self.settings_dir, self.prjid)
-        nstyfname = os.path.join(prjdir, "PrintDraft/NestedStyles.sty")
-        nstylist = []
-        if self.get("c_omitallverses"):
-            nstylist.append("##### Remove all verse numbers\n\\Marker v\n\\TextProperties nonpublishable\n\n")
-        if not self.get("c_includeFootnotes"):
-            nstylist.append("##### Remove all footnotes\n\\Marker f\n\\TextProperties nonpublishable\n\n")
-        if not self.get("c_includeXrefs"):
-            nstylist.append("##### Remove all cross-references\n\\Marker x\n\\TextProperties nonpublishable\n\n")
-
-        if self.get("c_prettyIntroOutline"):
-            nstylist.append(FancyIntro.styleInfo+"\n")
-
-        # Add any applicable stylesheet snippets
-        # for w, c in info._snippets.items():   # but we can't access the "info" class from here (should I move this def to the info class?).
-            # if self.get(w): # if the c_checkbox is true then add the stylesheet snippet for that option
-                # nstylist.append(c.styleInfo)
-
-        if nstylist == []:
-            os.remove(nstyfname)
-        else:
-            with open(nstyfname, "w", encoding="utf-8") as outf:
-                outf.write("".join(nstylist))
+        print("Need to call this on the other side!")
 
     def onEditAdjListClicked(self, btn_editParaAdjList):
         if not self.get("c_multiplebooks"):

@@ -4873,6 +4873,7 @@ option is checked, then the folder
 which contains the resulting PDf will
 also contain several other related files.</property>
                         <property name="halign">end</property>
+                        <property name="active">True</property>
                         <property name="draw_indicator">True</property>
                       </object>
                       <packing>
