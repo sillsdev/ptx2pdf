@@ -1128,7 +1128,7 @@ class Info:
                             # res.append("\\lastptxfilefalse")
                         res.append("\\ptxfile{{{}}}\n".format(f))
                 else:
-                    res.append(l.format(**self.dict))   # ************************************** this is broken ??????????????
+                    res.append(l.format(**self.dict))
         return "".join(res)
 
     def convertBook(self, bk, outdir, prjdir):

@@ -2593,6 +2593,7 @@ purpose of final checking, or looking
 for consistency) then this option is
 very useful.</property>
                             <property name="halign">start</property>
+                            <property name="active">True</property>
                             <property name="draw_indicator">True</property>
                             <signal name="clicked" handler="onMainBodyTextChanged" swapped="no"/>
                           </object>

@@ -92,8 +92,9 @@ def doit(printer):
         pdfname = os.path.join(tmpdir, "ptxprint-{}{}.pdf".format(jobs[0], prjid))
     if sys.platform == "win32" and os.path.exists(pdfname):
         os.startfile(pdfname)
+    removeTempFiles(jobs,prjid,tmpdir,printer)
 
-def removeTempFiles(jobs,prjid,tmpdir):
+def removeTempFiles(jobs,prjid,tmpdir,printer):
     if not printer.get("c_keepTemporaryFiles"):
         print("Deleting temporary files")
         # First delete files where there is only one per run
@@ -103,20 +104,19 @@ def removeTempFiles(jobs,prjid,tmpdir):
             else:
                 delfname = os.path.join(tmpdir, "ptxprint-{}{}.{}".format(jobs[0], prjid, extn))
         
-            delfname = os.path.join(tmpdir, "ptxprint-{}_{}{}.{}".format(jobs[0], jobs[-1], prjid, extn))
-            print("Deleting: " + delfname)
+            # print("Deleting: " + delfname)
             try:
-                print("About to delete",delfname)
-                # os.remove(delfname)
+                # print("About to delete",delfname)
+                os.remove(delfname)
             except:
                 print("Failed to delete temporary file: " + delfname)
         # Then delete the SFM files (1 per book)
         for j in jobs:
-            delfname = os.path.join(tmpdir, "ptxprint-{}{}.SFM".format(jobs[0], prjid))
-            print("Deleting: " + delfname)
+            delfname = os.path.join(tmpdir, "ptxprint-{}{}.SFM".format(j, prjid))
+            # print("Deleting: " + delfname)
             try:
-                print("About to delete",delfname)
-                # os.remove(delfname)
+                # print("About to delete",delfname)
+                os.remove(delfname)
             except:
                 print("Failed to delete temporary file: " + delfname)
         
