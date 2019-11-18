@@ -77,7 +77,6 @@ class TTFont:
                 valdict[val] = self.names.get(lid, "")
         # print(self.featvals)
             
-
     def readNames(self, inf):
         self.names = {}
         if 'name' not in self.dict:
@@ -91,10 +90,9 @@ class TTFont:
             if len(data) < 12:
                 break
             (pid, eid, lid, nid, length, offset) = struct.unpack(b">HHHHHH", data[12*i:12*(i+1)])
-            # only get unicode strings
-            if pid == 0 or (pid == 3 and (eid < 2 or eid == 10)):
+            # only get unicode strings (US English)
+            if (pid == 0 and lid == 0) or (pid == 3 and (eid < 2 or eid == 10) and lid == 1033):
                 self.names[nid] = stringData[offset:offset+length].decode("utf_16_be")
-            
 
     def style2str(self, style):
         return pango_styles.get(style, str(style))
