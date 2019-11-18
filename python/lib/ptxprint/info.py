@@ -361,6 +361,7 @@ class Info:
                 msngfigs = self.ListMissingPics(printer)
                 if len(msngfigs):
                     for f in msngfigs:
+                        print("Skipping missing illustration: ",f)
                         self.localChanges.append((None, regex.compile(r"\\fig .*\|{}\|.+?\\fig\*".format(f), flags=regex.M), ""))
             if printer.get("c_fighiderefs"):
                 self.localChanges.append((None, regex.compile(r"(\\fig .*?)(\d+\:\d+([-,]\d+)?)(.*?\\fig\*)", flags=regex.M), r"\1\4")) # remove ch:vs ref from caption
@@ -399,8 +400,8 @@ class Info:
         if printer.get("c_ch1pagebreak"):
             self.localChanges.append((None, regex.compile(r"(\\c 1 ?\r?\n)", flags=regex.M), r"\pagebreak\r\n\1"))
 
-        # if printer.get("c_glueredupwords"):  # broken??? at present as it 
-            # self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w\w\w+) *\1(?=[\s,.!?])", flags=regex.M), r"\1\u00A0\1")) # keep reduplicated words together
+        if printer.get("c_glueredupwords"):
+            self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w\w\w+) \1(?=[\s,.!?])", flags=regex.M), r"\1\u00A0\1")) # keep reduplicated words together
             
         for c in range(1,4):
             if not printer.get("c_usetoc{}".format(c)):
@@ -420,18 +421,18 @@ class Info:
                 
         return self.localChanges
 
-        # Insert a chapter label marker with zwsp to center the chapter number
-        #contents = re.sub(ur'(\\c\s1\r?\n)', ur'\cl \u200b\r\n\1', contents)
-
     def ListMissingPics(self, printer):
         msngpiclist = []
         prjid = printer.get("cb_project")
         prjdir = os.path.join(printer.settings_dir, prjid)
         if printer.get("c_useFiguresFolder"):
+            print("c_useFiguresFolder")
             picdir = os.path.join(prjdir, "Figures")
         elif printer.get("c_useLocalFiguresFolder"):
+            print("c_useLocalFiguresFolder")
             picdir = os.path.join(prjdir, "local", "Figures")
         elif printer.get("c_useCustomFolder"):
+            print("c_useCustomFolder")
             picdir = self.dict['document/customfigfolder']
             # picdir = printer.get("btn_selectFigureFolder")
         else:
@@ -446,7 +447,6 @@ class Info:
                 dat = inf.read()
                 # Finds USFM2-styled markup in text:
                 m = re.findall(r"\\fig .*\|(.+?\....)\|.+?\\fig\*", dat)          # Finds USFM2-styled markup in text:
-                # print("m: ",m)
                 if m is None:
                     m = re.findall(r'\\fig .*+src="(.+?\....)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text:
                 if m is not None:
@@ -455,6 +455,7 @@ class Info:
                         fname = os.path.join(picdir,f)
                         if not os.path.exists(fname):
                             msngpiclist.append(f)
+                if len(msngpiclist):
                     print("In {} these pics are missing:\n".format(bk),"\n".join(msngpiclist))
         return(msngpiclist)
 

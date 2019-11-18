@@ -1,6 +1,14 @@
 import regex
 
 class FancyIntro():
+# in '\\iot .+?\r\n': '\r\n' > '\r\n\iotable\r\n\makedigitsother\r\n\catcode`{=1\r\n\catcode`}=2\r\n\makedigitsother\r\n\catcode`{=1\r\n\catcode`}=2'
+# '\\io1 ' > '\iotableleader{'
+# ' \\ior ' > '}{'
+# '\\ior\*'  > '}'
+# ' \\ior\*'  > '}'
+# This next rule makes an assumption that the \io1 lines always finish right before \c 1  [This should be true, but...?]
+# '\\c 1\r\n' > '\catcode`{=11 \catcode`}=11\r\n\makedigitsletters\r\n\c 1\r\n'
+
     _regexbits = [(r'\\io2 ', r'\\io1 \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0'), # Temporary fix so that the special Intro Outline table doesn't break
                (r'(\\iot .+?)\r?\n', r'\1\r\n\iotable\r\n\makedigitsother\r\n\catcode`{=1\r\n\catcode`}=2\r\n\makedigitsother\r\n\catcode`{=1\r\n\catcode`}=2'),
                (r'\\io1 ', r'\iotableleader{'),

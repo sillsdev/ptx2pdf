@@ -13,7 +13,7 @@ parser.add_argument('pid',nargs="?",help="Project id")
 parser.add_argument('-p','--paratext',help="Path to Paratext Projects directory")
 parser.add_argument('-d','--directory',default=".",help="Directory to store temporary files in")
 parser.add_argument('-m','--macros',help="Directory containing TeX macros (paratext2.tex)")
-parser.add_argument('-t','--test', action='store_true',help="Quick start for a lazy typist")
+# parser.add_argument('-t','--test', action='store_true',help="Quick start for a lazy typist")
 args = parser.parse_args()
 
 if args.paratext is None:
@@ -97,6 +97,7 @@ def doit(printer):
         pdfname = os.path.join(tmpdir, "ptxprint-{}{}.pdf".format(jobs[0], prjid))
     if not printer.get("c_keepTemporaryFiles"):
         removeTempFiles(texfiles,tmpdir,info)
+    # Need a way to check if a NEW PDF was generated, and not just open the PREVIOUS one and pretend that everything worked fine! :-(
     if sys.platform == "win32" and os.path.exists(pdfname):
         os.startfile(pdfname)
 

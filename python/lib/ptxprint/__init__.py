@@ -79,6 +79,15 @@ class PtxPrinterDialog:
             digits.append([d])
         self.cb_digits.set_active_id(_alldigits[0])
 
+        # glostyle = self.builder.get_object("ls_glossaryMarkupStyle")
+        # glostyle.clear()
+        # for g in Info._glossarymarkup.keys():
+            # try:
+                # print(g)
+            # except UnicodeEncodeError:
+                # pass
+            # glostyle.append([g])
+
         dia = self.builder.get_object("dlg_multiBookSelector")
         dia.add_buttons(
             Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
@@ -410,7 +419,8 @@ class PtxPrinterDialog:
         if response == Gtk.ResponseType.OK:
             self.booklist = [b.get_label() for b in self.alltoggles if b.get_active()]
             bl.set_text(" ".join(b for b in self.booklist))
-            self.builder.get_object("c_multiplebooks").set_active(True)
+            self.builder.get_object("c_multiplebooks").set_active(not self.booklist == [])
+
         dia.hide()
 
     def toggleBooks(self,start,end):

@@ -883,7 +883,7 @@ settings for this project, and restore the defaults.</property>
                                     <property name="spacing">6</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_multiplebooks">
-                                        <property name="label" translatable="yes">Mulitple Books:</property>
+                                        <property name="label" translatable="yes">Multiple Books:</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -2105,22 +2105,6 @@ of Contents</property>
                                     <property name="halign">start</property>
                                     <property name="row_spacing">3</property>
                                     <child>
-                                      <object class="GtkCheckButton" id="c_prettyIntroOutline">
-                                        <property name="label" translatable="yes">Right-align \ior with tabbed leaders</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="halign">start</property>
-                                        <property name="margin_top">4</property>
-                                        <property name="margin_bottom">4</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
                                       <object class="GtkCheckButton" id="c_omitIntroOutline">
                                         <property name="label" translatable="yes">Suppress Introductory Outlines (\io..)</property>
                                         <property name="visible">True</property>
@@ -2187,7 +2171,35 @@ start on the same page.
                                       </packing>
                                     </child>
                                     <child>
-                                      <placeholder/>
+                                      <object class="GtkCheckButton" id="c_prettyIntroOutline">
+                                        <property name="label" translatable="yes">Right-align \ior with tabbed leaders</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="margin_top">4</property>
+                                        <property name="margin_bottom">4</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_HideChap1ChBooks">
+                                        <property name="label" translatable="yes">Hide Chapter Number in Single Chapter Books</property>
+                                        <property name="visible">True</property>
+                                        <property name="sensitive">False</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">(Coming soon)</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
                                     </child>
                                   </object>
                                   <packing>
@@ -2296,8 +2308,7 @@ need to be stuck together (with a NBSP)
 in order to be read meaningfully.
 However, if there are many of these in the
 language, then it may create other unwanted
-typesetting issues. Use with care!
-</property>
+typesetting issues. Use with care!</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
@@ -2357,6 +2368,10 @@ typesetting issues. Use with care!
                                     <property name="width_request">180</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">Glossary words are marked up with
+special \w glossary\w* tags. Specify
+how these words should be highlighted
+in the printed output.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="model">ls_glossaryMarkupStyle</property>
@@ -2423,6 +2438,10 @@ typesetting issues. Use with care!
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">Glossary words are marked up with
+special \w glossary\w* tags. Specify
+how these words should be highlighted
+in the printed output.</property>
                                         <property name="halign">end</property>
                                         <property name="hexpand">True</property>
                                         <property name="label" translatable="yes">Glossary Words
@@ -2737,6 +2756,7 @@ attribute.  Note: w= web, a=app, p=print.
                                       <object class="GtkCheckButton" id="c_convertTIFtoPNG">
                                         <property name="label" translatable="yes">Convert all TIFs to PNGs</property>
                                         <property name="visible">True</property>
+                                        <property name="sensitive">False</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">XeTeX is unable to use .TIF formatted illustrations
@@ -2745,7 +2765,6 @@ be generated in the same folder as the TIF files.
 (Not yet implemented. Coming soon!)</property>
                                         <property name="halign">start</property>
                                         <property name="margin_bottom">6</property>
-                                        <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -2782,13 +2801,11 @@ be generated in the same folder as the TIF files.
                                         <property name="label" translatable="yes">Skip/Ignore any missing images</property>
                                         <property name="name">c_skipmissingimages</property>
                                         <property name="visible">True</property>
-                                        <property name="sensitive">False</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">Rather than aborting the PDF export process, pre-process
 the list of illustrations and skip/ignore/remove any which
-are not found in the specified location of image files.
-(Not yet implemented. Coming soon!)</property>
+are not found in the specified location of image files.</property>
                                         <property name="margin_bottom">6</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
@@ -3940,6 +3957,7 @@ Multi-script publication.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="margin_right">6</property>
+                                    <property name="row_spacing">5</property>
                                     <property name="column_spacing">7</property>
                                     <child>
                                       <object class="GtkButton" id="btn_editModsTeX">
@@ -4167,10 +4185,28 @@ are processed</property>
                             <property name="can_focus">False</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkBox">
+                              <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="halign">start</property>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_useprintdraftfolder">
+                                    <property name="label" translatable="yes">Use Project's
+PrintDraft Folder</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Use the Project Printdraft directory to store generated files for this conversion?</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_left">6</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_usePTmacros">
                                     <property name="label" translatable="yes">Use Paratext's
@@ -4188,38 +4224,39 @@ Check this option if you want to
 revert back to using the older more
 stable version of XeTeX macros
 (i.e. those that come with Paratext).</property>
-                                    <property name="halign">end</property>
-                                    <property name="margin_left">14</property>
-                                    <property name="margin_right">6</property>
-                                    <property name="margin_top">20</property>
-                                    <property name="margin_bottom">6</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_left">12</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="margin_bottom">3</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">0</property>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_useprintdraftfolder">
-                                    <property name="label" translatable="yes">Use Project's
-PrintDraft Folder</property>
+                                  <object class="GtkCheckButton" id="c_keepTemporaryFiles">
+                                    <property name="label" translatable="yes">Preserve Intermediate Files and Logs </property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Use the Project Printdraft directory to store generated files for this conversion?</property>
+                                    <property name="tooltip_text" translatable="yes">If the output is not as you expect, it
+is possible to discover what might
+have gone wrong by examining the
+intermediate files and logs. If this
+option is checked, then the folder
+which contains the resulting PDf will
+also contain several other related files.</property>
                                     <property name="halign">start</property>
-                                    <property name="margin_top">20</property>
+                                    <property name="margin_left">12</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="padding">40</property>
-                                    <property name="pack_type">end</property>
-                                    <property name="position">1</property>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">1</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                               </object>
@@ -4773,29 +4810,6 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                         <property name="expand">False</property>
                         <property name="fill">True</property>
                         <property name="position">2</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkCheckButton" id="c_keepTemporaryFiles">
-                        <property name="label" translatable="yes">Don't Delete Intermediate Files and Logs </property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
-                        <property name="tooltip_text" translatable="yes">If the output is not as you expect, it
-is possible to discover what might
-have gone wrong by examining the
-intermediate files and logs. If this
-option is checked, then the folder
-which contains the resulting PDf will
-also contain several other related files.</property>
-                        <property name="halign">end</property>
-                        <property name="active">True</property>
-                        <property name="draw_indicator">True</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">3</property>
                       </packing>
                     </child>
                   </object>
