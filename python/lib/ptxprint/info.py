@@ -98,8 +98,7 @@ class Info:
         "document/supressintrooutline": ("c_omitIntroOutline", lambda w,v: "true" if v else "false"),
         "document/supressindent":   ("c_omit1paraIndent", lambda w,v: "false" if v else "true"),
 
-# err!! "document/fancyintro":      ("c_prettyIntroOutline", lambda w,v: "\n".join(c.texCode if printer.get(w) for w, c in self._snippets.items()) else ""), 
-        "document/fancyintro":      ("c_prettyIntroOutline", lambda w,v: FancyIntro.texCode+"\n" if v else ""), 
+        "document/fancyintro":      ("c_prettyIntroOutline", lambda w,v: v ), 
 
         "header/headerposition":    ("s_headerposition", lambda w,v: round(v, 2) or "0.50"),
         "header/footerposition":    ("s_footerposition", lambda w,v: round(v, 2) or "0.50"),
@@ -520,15 +519,13 @@ class Info:
         if not printer.get("c_includeXrefs"):
             nstylist.append("##### Remove all cross-references\n\\Marker x\n\\TextProperties nonpublishable\n\n")
 
-        # if printer.get("c_prettyIntroOutline"):
-            # nstylist.append(FancyIntro.styleInfo+"\n")
-
-        for w, c in info._snippets.items():
-            if self.get(w): # if the c_checkbox is true then add the stylesheet snippet for that option
+        for w, c in self._snippets.items():
+            if printer.get(w): # if the c_checkbox is true then add the stylesheet snippet for that option
                 nstylist.append(c.styleInfo+"\n")
 
         if nstylist == []:
-            os.remove(nstyfname)
+            if os.path.exists(nstyfname):
+                os.remove(nstyfname)
         else:
             with open(nstyfname, "w", encoding="utf-8") as outf:
                 outf.write("".join(nstylist))
