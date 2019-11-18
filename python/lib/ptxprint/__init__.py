@@ -960,7 +960,7 @@ class Info:
         "document/supressbookintro": ("c_omitBookIntro", lambda w,v: "true" if v else "false"),
         "document/supressintrooutline": ("c_omitIntroOutline", lambda w,v: "true" if v else "false"),
         "document/supressindent":   ("c_omit1paraIndent", lambda w,v: "false" if v else "true"),
-        
+
 # err!! "document/fancyintro":      ("c_prettyIntroOutline", lambda w,v: "\n".join(c.texCode if printer.get(w) for w, c in self._snippets.items()) else ""), 
         "document/fancyintro":      ("c_prettyIntroOutline", lambda w,v: FancyIntro.texCode+"\n" if v else ""), 
 
