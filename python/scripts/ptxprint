@@ -66,9 +66,11 @@ def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
     if os.path.exists(delayed):
         if runner is not None:
             runner.wait(200)
-        ptxprint.runner.call(["xetex", "--halt-on-error", outfname], cwd=tmpdir, logbuffer=logbuffer)
+        runner = ptxprint.runner.call(["xetex", "--halt-on-error", outfname], cwd=tmpdir, logbuffer=logbuffer)
     if logbuffer is not None:
-        logbuffer.bind_subprocess(None)
+        if runner is not None:
+            runner.wait(200)
+        # logbuffer.bind_subprocess(None)
     print("cd {}; xetex {}".format(tmpdir, outfname))
     return outfname
 
@@ -94,7 +96,6 @@ def doit(printer):
         pdfname = os.path.join(tmpdir, "ptxprint-{}{}.pdf".format(jobs[0], prjid))
     if not printer.get("c_keepTemporaryFiles"):
         removeTempFiles(texfiles,tmpdir,info)
-        pass
     if sys.platform == "win32" and os.path.exists(pdfname):
         os.startfile(pdfname)
     print("Done")

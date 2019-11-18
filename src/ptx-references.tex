@@ -43,14 +43,21 @@
 %
 \newif\ifOmitBookRef
 \def\f@rstref#1{\edef\t@st{#1}\x@\extr@ctfirst\t@st\relax
- \ifx\@book\empty\else\ifOmitBookRef\else\@book\ \fi\ifOmitChapterNumberRH\else\@chapter\fi\ifVerseRefs\ifOmitChapterNumber\else\cvs@p\fi\@verse\fi\fi}
+ \ifx\@book\empty\else
+  \ifOmitBookRef\else\@book\ \fi
+  \ifOmitChapterNumberRH\else\@chapter\fi
+  \ifVerseRefs
+   \ifOmitChapterNumberRH\else\cvs@p\fi
+  \@verse
+  \fi
+ \fi}
 
 %
 % Print the last reference from the mark data
 % (same as above unless there are bridged verses)
 %
 \def\l@stref#1{\edef\t@st{#1}\x@\extr@ctlast\t@st\relax
- \ifx\@@book\empty\else\ifx\@@book\t@tle\else\ifOmitBookRef\else\@@book\ \fi\ifOmitChapterNumberRH\else\@@chapter\fi\ifVerseRefs\ifOmitChapterNumber\else\cvs@p\fi\@@verse\fi\fi\fi}
+ \ifx\@@book\empty\else\ifx\@@book\t@tle\else\ifOmitBookRef\else\@@book\ \fi\ifOmitChapterNumberRH\else\@@chapter\fi\ifVerseRefs\ifOmitChapterNumberRH\else\cvs@p\fi\@@verse\fi\fi\fi}
 
 %
 % Print the range of references from a pair of marks
@@ -72,17 +79,17 @@
     \else
      \ranges@p\@@book\ \ifOmitChapterNumberRH\else\@@chapter\cvs@p\@@verse\fi
     \fi
-   \else
-    \ifOmitChapterNumberRH\else
-     \ifx\@chapter\empty\else
-      \@chapter
-      \ifx\@chapter\@@chapter\else
-       \setbox0=\hbox{\tracinglostchars=0
-       \global\c@untA=0\@chapter \global\c@untB=0\@@chapter}%
-       \advance\c@untA by 1
-       \ifnum\c@untA=\c@untB \pairs@p \else \ranges@p \fi
-       \@@chapter
-      \fi
+   \fi
+  \else
+   \ifOmitChapterNumberRH\else
+    \ifx\@chapter\empty\else
+     \@chapter
+     \ifx\@chapter\@@chapter\else
+      \setbox0=\hbox{\tracinglostchars=0
+      \global\c@untA=0\@chapter \global\c@untB=0\@@chapter}%
+      \advance\c@untA by 1
+      \ifnum\c@untA=\c@untB \pairs@p \else \ranges@p \fi
+      \@@chapter
      \fi
     \fi
    \fi
