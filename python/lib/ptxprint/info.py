@@ -172,7 +172,7 @@ class Info:
         "circumflex after^ word":  r"\1^"
     }
     _snippets = {
-        "c_prettyIntroOutline"     : FancyIntro
+        "snippets/fancyintro": ("c_prettyIntroOutline", FancyIntro)
     }
     
     def __init__(self, printer, path, ptsettings=None):
@@ -449,41 +449,43 @@ class Info:
                             msngpiclist.append(f[0])
         return(msngpiclist)
 
+    def _configset(self, config, key, value):
+        (sect, k) = key.split("/")
+        if not config.has_section(sect):
+            config.add_section(sect)
+        config.set(sect, k, value)
+
     def createConfig(self, printer):
         config = configparser.ConfigParser()
         for k, v in self._mappings.items():
             if v[0] is None:
                 continue
-            (sect, key) = k.split("/")
-            if not config.has_section(sect):
-                config.add_section(sect)
             val = printer.get(v[0], asstr=True)
             if k in self._settingmappings:
                 # print("Testing {} against '{}'".format(k, val))
                 if val == "" or val == self.ptsettings.dict.get(self._settingmappings[k], ""):
                     continue
-            config.set(sect, key, str(val))
+            self._configset(config, k, str(val))
         for k, v in self._fonts.items():
-            (sect, key) = k.split("/")
-            if not config.has_section(sect):
-                config.add_section(sect)
-            config.set(sect, key, printer.get(v, asstr=True))
+            self._configset(config, k, printer.get(v, asstr=True))
+        for k, v in self._snippets.items():
+            self._configset(config, k, str(printer.get(v[0], asstr=True)))
         return config
 
     def loadConfig(self, printer, config):
         for sect in config.sections():
             for opt in config.options(sect):
                 key = "{}/{}".format(sect, opt)
+                val = config.get(sect, opt)
                 if key in self._mappings:
                     v = self._mappings[key]
                     #print(sect + "/" + opt + ": " + v[0])
-                    val = None
                     if v[0] is None:
-                        continue
+                        val = None
                     if v[0].startswith("cb_") or v[0].startswith("t_") or v[0].startswith("f_") or v[0].startswith("btn_"):
-                        val = config.get(sect, opt)
+                        pass
                     if v[0].startswith("s_"):
-                        val = float(config.get(sect, opt))
+                        val = float(val)
                         #printer.set(v[0], round(config.get(sect, opt)),2)
                     elif v[0].startswith("c_"):
                         val = config.getboolean(sect, opt)
@@ -492,7 +494,9 @@ class Info:
                         printer.set(v[0], val)
                 elif key in self._fonts:
                     v = self._fonts[key]
-                    printer.set(v, config.get(sect, opt))
+                    printer.set(v, val)
+                elif key in self._snippets:
+                    printer.set(self._snippets[k][0], val)
         for k, v in self._settingmappings.items():
             (sect, name) = k.split("/")
             try:
