@@ -1,0 +1,15 @@
+; FC ... 
+LHSName	"Digits"
+RHSName	"RumiDigits"
+
+pass(Unicode)
+U+0031 <> U+10E60 ;
+U+0032 <> U+10E61 ;
+U+0033 <> U+10E62 ;
+U+0034 <> U+10E63 ;
+U+0035 <> U+10E64 ;
+U+0036 <> U+10E65 ;
+U+0037 <> U+10E66 ;
+U+0038 <> U+10E67 ;
+U+0039 <> U+10E68 ;
+

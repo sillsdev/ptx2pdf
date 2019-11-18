@@ -1,0 +1,16 @@
+; FC ... 
+LHSName	"Digits"
+RHSName	"LaoDigits"
+
+pass(Unicode)
+U+0030 <> U+0ED0 ;
+U+0031 <> U+0ED1 ;
+U+0032 <> U+0ED2 ;
+U+0033 <> U+0ED3 ;
+U+0034 <> U+0ED4 ;
+U+0035 <> U+0ED5 ;
+U+0036 <> U+0ED6 ;
+U+0037 <> U+0ED7 ;
+U+0038 <> U+0ED8 ;
+U+0039 <> U+0ED9 ;
+

@@ -1,0 +1,16 @@
+; FC ... 
+LHSName	"Digits"
+RHSName	"TibetanDigits"
+
+pass(Unicode)
+U+0030 <> U+0F20 ;
+U+0031 <> U+0F21 ;
+U+0032 <> U+0F22 ;
+U+0033 <> U+0F23 ;
+U+0034 <> U+0F24 ;
+U+0035 <> U+0F25 ;
+U+0036 <> U+0F26 ;
+U+0037 <> U+0F27 ;
+U+0038 <> U+0F28 ;
+U+0039 <> U+0F29 ;
+

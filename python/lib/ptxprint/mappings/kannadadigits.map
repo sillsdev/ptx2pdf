@@ -1,0 +1,16 @@
+; FC ... 
+LHSName	"Digits"
+RHSName	"KannadaDigits"
+
+pass(Unicode)
+U+0030 <> U+0CE6 ;
+U+0031 <> U+0CE7 ;
+U+0032 <> U+0CE8 ;
+U+0033 <> U+0CE9 ;
+U+0034 <> U+0CEA ;
+U+0035 <> U+0CEB ;
+U+0036 <> U+0CEC ;
+U+0037 <> U+0CED ;
+U+0038 <> U+0CEE ;
+U+0039 <> U+0CEF ;
+

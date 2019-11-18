@@ -1,0 +1,16 @@
+; FC ... 
+LHSName	"Digits"
+RHSName	"OsmanyaDigits"
+
+pass(Unicode)
+U+0030 <> U+104A0 ;
+U+0031 <> U+104A1 ;
+U+0032 <> U+104A2 ;
+U+0033 <> U+104A3 ;
+U+0034 <> U+104A4 ;
+U+0035 <> U+104A5 ;
+U+0036 <> U+104A6 ;
+U+0037 <> U+104A7 ;
+U+0038 <> U+104A8 ;
+U+0039 <> U+104A9 ;
+

@@ -1,0 +1,16 @@
+; FC ... 
+LHSName	"Digits"
+RHSName	"HanifiRohingyaDigits"
+
+pass(Unicode)
+U+0030 <> U+10D30 ;
+U+0031 <> U+10D31 ;
+U+0032 <> U+10D32 ;
+U+0033 <> U+10D33 ;
+U+0034 <> U+10D34 ;
+U+0035 <> U+10D35 ;
+U+0036 <> U+10D36 ;
+U+0037 <> U+10D37 ;
+U+0038 <> U+10D38 ;
+U+0039 <> U+10D39 ;
+

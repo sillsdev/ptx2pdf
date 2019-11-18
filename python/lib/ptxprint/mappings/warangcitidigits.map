@@ -1,0 +1,16 @@
+; FC ... 
+LHSName	"Digits"
+RHSName	"WarangCitiDigits"
+
+pass(Unicode)
+U+0030 <> U+118E0 ;
+U+0031 <> U+118E1 ;
+U+0032 <> U+118E2 ;
+U+0033 <> U+118E3 ;
+U+0034 <> U+118E4 ;
+U+0035 <> U+118E5 ;
+U+0036 <> U+118E6 ;
+U+0037 <> U+118E7 ;
+U+0038 <> U+118E8 ;
+U+0039 <> U+118E9 ;
+

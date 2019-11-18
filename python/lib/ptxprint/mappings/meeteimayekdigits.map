@@ -1,0 +1,16 @@
+; FC ... 
+LHSName	"Digits"
+RHSName	"MeeteiMayekDigits"
+
+pass(Unicode)
+U+0030 <> U+ABF0 ;
+U+0031 <> U+ABF1 ;
+U+0032 <> U+ABF2 ;
+U+0033 <> U+ABF3 ;
+U+0034 <> U+ABF4 ;
+U+0035 <> U+ABF5 ;
+U+0036 <> U+ABF6 ;
+U+0037 <> U+ABF7 ;
+U+0038 <> U+ABF8 ;
+U+0039 <> U+ABF9 ;
+

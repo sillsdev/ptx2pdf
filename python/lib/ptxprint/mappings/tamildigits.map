@@ -1,0 +1,16 @@
+; FC ... 
+LHSName	"Digits"
+RHSName	"TamilDigits"
+
+pass(Unicode)
+U+0030 <> U+0BE6 ;
+U+0031 <> U+0BE7 ;
+U+0032 <> U+0BE8 ;
+U+0033 <> U+0BE9 ;
+U+0034 <> U+0BEA ;
+U+0035 <> U+0BEB ;
+U+0036 <> U+0BEC ;
+U+0037 <> U+0BED ;
+U+0038 <> U+0BEE ;
+U+0039 <> U+0BEF ;
+

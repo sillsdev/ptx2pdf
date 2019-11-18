@@ -1,0 +1,16 @@
+; FC ... 
+LHSName	"Digits"
+RHSName	"TaiThamThamDigits"
+
+pass(Unicode)
+U+0030 <> U+1A90 ;
+U+0031 <> U+1A91 ;
+U+0032 <> U+1A92 ;
+U+0033 <> U+1A93 ;
+U+0034 <> U+1A94 ;
+U+0035 <> U+1A95 ;
+U+0036 <> U+1A96 ;
+U+0037 <> U+1A97 ;
+U+0038 <> U+1A98 ;
+U+0039 <> U+1A99 ;
+

@@ -1,0 +1,16 @@
+; FC ... 
+LHSName	"Digits"
+RHSName	"KhudawadiDigits"
+
+pass(Unicode)
+U+0030 <> U+112F0 ;
+U+0031 <> U+112F1 ;
+U+0032 <> U+112F2 ;
+U+0033 <> U+112F3 ;
+U+0034 <> U+112F4 ;
+U+0035 <> U+112F5 ;
+U+0036 <> U+112F6 ;
+U+0037 <> U+112F7 ;
+U+0038 <> U+112F8 ;
+U+0039 <> U+112F9 ;
+

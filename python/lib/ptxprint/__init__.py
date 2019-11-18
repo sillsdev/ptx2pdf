@@ -129,7 +129,6 @@ class PtxPrinterDialog:
             return [font, 0]
 
     def get(self, wid, sub=0, asstr=False):
-        # print(wid) # This is useful for troubleshooting errors with getting (misnamed) widgets
         w = self.builder.get_object(wid)
         v = ""
         if wid.startswith("cb_"):
@@ -635,7 +634,6 @@ class PtxPrinterDialog:
                 m = re.findall(r"\\fig .*\|(.+?\....)\|(....?)\|(.+)?\|(.+)?\|(.+)?\|(\d+[\:\.]\d+([\-,]\d+)?)\\fig\*", dat)
                 if m is not None:
                     for f in m:
-                        # print(f[0]+"|"+f[1]+"|"+f[5]+f[6])
                         picfname = re.sub(r"\.[Tt][Ii][Ff]",".jpg",f[0])           # Change all TIFs to JPGs
                         if self.get("c_randomPicPosn"):
                             pageposn = random.choice(_picposn.get(f[1], f[1]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
@@ -653,7 +651,6 @@ class PtxPrinterDialog:
                     # GEN 21.16 an angel speaking to Hagar|CO00659B.TIF|span|t||hāgartun saṅga dūtal vaḍkval|21:16
                     m = re.findall(r'\\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,]\d+)?)".*\\fig\*', dat)
                     if m is not None:
-                        # print(m)
                         for f in m:
                             picfname = re.sub(r"\.[Tt][Ii][Ff]",".jpg",f[1])           # Change all TIFs to JPGs
                             if self.get("c_randomPicPosn"):
@@ -666,13 +663,12 @@ class PtxPrinterDialog:
                     if not os.path.exists(plpath):
                         os.mkdir(plpath)
                     if not os.path.exists(outfname):
-                        # print("Outfname: ", outfname)
                         with open(outfname, "w", encoding="utf-8") as outf:
                             outf.write("".join(piclist))
-                    # else:
-                        # print("PicList file already exists (this will NOT be overwritten): " + outfname)
-                # else:
-                    # print(r"No illustrations \fig ...\fig* found in book/file!") # This needs to the log/console: 
+                    else:
+                        print("PicList file already exists (this will NOT be overwritten): " + outfname)
+                else:
+                    print(r"No illustrations \fig ...\fig* found in book/file!") # This needs to the log/console: 
 
     def onGenerateParaAdjList(self, btn_generateParaAdjList):
         for bk in self.getBooks():
@@ -703,8 +699,8 @@ class PtxPrinterDialog:
                     if not os.path.exists(outfname):
                         with open(outfname, "w", encoding="utf-8") as outf:
                             outf.write("".join(adjlist))
-                    # else:
-                        # print("Adj List already exists (this will NOT be overwritten): " + outfname)
+                    else:
+                        print("Adj List already exists (this will NOT be overwritten): " + outfname)
 
     def GenerateNestedStyles(self, c_omitallverses):
         print("Need to call this on the other side!")
@@ -746,6 +742,7 @@ class PtxPrinterDialog:
             # else:
                 # print("You need to generate the file first!")
         else:
+            # Is there a way to force the file chooser to look in the PicList folder?
             picfname = self.fileChooser("Select a PicList file to edit", 
                     filters = {"PicList files": {"pattern": "*.piclist", "mime": "none"}},
                     multiple = True)
@@ -791,15 +788,15 @@ class PtxPrinterDialog:
         return fcFilepath
 
     # Awaiting installation of the PIL/Pillow library to do TIF to PNG conversions
-    # def convertTIFtoPNG(self, adjfname):
-        # if os.path.splitext(os.path.join(root, adjfname))[1].lower() == ".tif":
-            # if os.path.isfile(os.path.splitext(os.path.join(root, adjfname))[0] + ".png"):
-                # print("A PNG file already exists for {}".format(adjfname))
+    # def convertTIFtoPNG(self, picfname):
+        # if os.path.splitext(os.path.join(root, picfname))[1].lower() == ".tif":
+            # if os.path.isfile(os.path.splitext(os.path.join(root, picfname))[0] + ".png"):
+                # print("A PNG file already exists for {}".format(picfname))
             # else:
-                # outputfile = os.path.splitext(os.path.join(root, adjfname))[0] + ".png"
+                # outputfile = os.path.splitext(os.path.join(root, picfname))[0] + ".png"
                 # try:
-                    # im = Image.open(os.path.join(root, adjfname))
-                    # print("Converting TIF for {}".format(adjfname))
+                    # im = Image.open(os.path.join(root, picfname))
+                    # print("Converting TIF for {}".format(picfname))
                     # if im.mode == "CMYK":
                         # im = im.convert("Gray")
                     # im.save(outputfile, "PNG")

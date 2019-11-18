@@ -209,7 +209,6 @@ class Info:
                     if '=' in l:
                         k, v = l.split('=')
                         f.features[k.strip()] = v.strip()
-                # print(f.features, f.feats)
                 self.dict['font/features'] = ";".join("{0}={1}".format(f.feats.get(fid, fid),
                                                     f.featvals.get(fid, {}).get(int(v), v)) for fid, v in f.features.items()) + \
                                              (";" if len(f.features) else "")
@@ -302,7 +301,6 @@ class Info:
                     else:
                         newdat = [c[0].split(dat)]
                         for i in range(1, len(newdat), 2):
-                            # print("i: ", i)
                             newdat[i] = c[  1].sub(c[2], newdat[i])
                         dat = "".join(newdat)
             with open(outfpath, "w", encoding="utf-8") as outf:
@@ -322,17 +320,16 @@ class Info:
                 if not len(l):
                     continue
                 if l.startswith("in"):
+                    # in "\\w .+?\\w\*": "\|.+?\\w\*" > "\w*"
+                    print("WARNING: 'in x: change y to z' rule encountered in PrintDraftChanges has been ignored."
                     continue
                 m = re.match(r"^(['\"])(.*?)(?<!\\)\1\s*>\s*(['\"])(.*?)(?<!\\)\3", l)
                 if m:
-                    # print(m.group(2).encode("utf-8") + " > " + m.group(4).encode("utf-8"))
                     changes.append((None, regex.compile(m.group(2), flags=regex.M), m.group(4)))
-                    continue  # This change in my PrintDraftChanges.txt is causing it to fail
-                    # in "\\w .+?\\w\*": "\|.+?\\w\*" > "\w*"
+                    continue
                 m = re.match(r"^in\s+(['\"])(.*?)(?<!\\)\1\s*:\s*(['\"])(.*?)(?<!\\)\3\s*>\s*(['\"])(.*?)(?<!\\)\5", l)
                 if m:
                     changes.append((regex.compile("("+m.group(2)+")", flags=regex.M), regex.compile(m.group(4), flags=regex.M), m.group(6)))
-                    # print("Appended in Group 2: ", m)
         if not len(changes):
             return None
         return changes
@@ -356,7 +353,7 @@ class Info:
         self.localChanges.append((None, regex.compile(r"\\w (.+?)(\|.+?)?\\w\*", flags=regex.M), gloStyle))
 
         if printer.get("c_includeillustrations") and printer.get("c_includefigsfromtext"):
-            self.localChanges.append((None, regex.compile(r"\.[Tt][Ii][Ff]\|", flags=regex.M), r".jpg\|"))           # Change all TIF extensions to JPGs
+            self.localChanges.append((None, regex.compile(r"\.[Tt][Ii][Ff]\|", flags=regex.M), r".jpg\|"))           # Rename all TIF extensions to JPGs
             if printer.get("c_skipmissingimages"):
                 msngfigs = self.ListMissingPics(printer)
                 if len(msngfigs):
@@ -364,7 +361,7 @@ class Info:
                         print("Skipping missing illustration: ",f)
                         self.localChanges.append((None, regex.compile(r"\\fig .*\|{}\|.+?\\fig\*".format(f), flags=regex.M), ""))
             if printer.get("c_fighiderefs"):
-                self.localChanges.append((None, regex.compile(r"(\\fig .*?)(\d+\:\d+([-,]\d+)?)(.*?\\fig\*)", flags=regex.M), r"\1\4")) # remove ch:vs ref from caption
+                self.localChanges.append((None, regex.compile(r"(\\fig .*?)(\d+\:\d+([-,]\d+)?)(.*?\\fig\*)", flags=regex.M), r"\1\4")) # del ch:vs from caption
         else:
             self.localChanges.append((None, regex.compile(r"\\fig .*?\\fig\*", flags=regex.M), ""))             # Drop ALL Figures
         
@@ -407,9 +404,7 @@ class Info:
             if not printer.get("c_usetoc{}".format(c)):
                 self.localChanges.append((None, regex.compile(r"(\\toc{} .+)".format(c), flags=regex.M), ""))
             
-        # self.builder.get_object(c).set_sensitive(status)
-        
-        # self.localChanges.append((None, regex.compile(r"(\\c\s1\s?\r?\n)", flags=regex.S), r"\skipline\n\hrule\r\n\1")) # this didn't work. I wonder why.
+        # self.localChanges.append((None, regex.compile(r"(\\c\s1\s?\r?\n)", flags=regex.S), r"\skipline\n\hrule\r\n\1")) # this didn't work.
 
         if not printer.get("c_mainBodyText"):
             self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+".format(first), flags=regex.S), ""))
@@ -422,10 +417,11 @@ class Info:
         return self.localChanges
 
     def ListMissingPics(self, printer):
+        # When should this function be called? At present it is happening at startup, and I think it should happen later.
         msngpiclist = []
         prjid = printer.get("cb_project")
         prjdir = os.path.join(printer.settings_dir, prjid)
-        if printer.get("c_useFiguresFolder"):
+        if printer.get("c_useFiguresFolder"): # Therefore this is always true!
             print("c_useFiguresFolder")
             picdir = os.path.join(prjdir, "Figures")
         elif printer.get("c_useLocalFiguresFolder"):
@@ -472,7 +468,6 @@ class Info:
                 continue
             val = printer.get(v[0], asstr=True)
             if k in self._settingmappings:
-                # print("Testing {} against '{}'".format(k, val))
                 if val == "" or val == self.ptsettings.dict.get(self._settingmappings[k], ""):
                     continue
             self._configset(config, k, str(val))
@@ -489,12 +484,10 @@ class Info:
                 val = config.get(sect, opt)
                 if key in self._mappings:
                     v = self._mappings[key]
-                    #print(sect + "/" + opt + ": " + v[0])
                     if v[0].startswith("cb_") or v[0].startswith("t_") or v[0].startswith("f_") or v[0].startswith("btn_"):
                         pass
                     elif v[0].startswith("s_"):
                         val = float(val)
-                        #printer.set(v[0], round(config.get(sect, opt)),2)
                     elif v[0].startswith("c_"):
                         val = config.getboolean(sect, opt)
                     else:

@@ -1,0 +1,15 @@
+; FC ... 
+LHSName	"Digits"
+RHSName	"ParenthesizedDigits"
+
+pass(Unicode)
+U+0031 <> U+2474 ;
+U+0032 <> U+2475 ;
+U+0033 <> U+2476 ;
+U+0034 <> U+2477 ;
+U+0035 <> U+2478 ;
+U+0036 <> U+2479 ;
+U+0037 <> U+247A ;
+U+0038 <> U+247B ;
+U+0039 <> U+247C ;
+
