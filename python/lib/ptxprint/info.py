@@ -427,31 +427,38 @@ class Info:
         msngpiclist = []
         prjid = printer.get("cb_project")
         prjdir = os.path.join(printer.settings_dir, prjid)
-        if self.dict['document/usefigsfolder']:
+        if printer.get("c_useFiguresFolder"):
             picdir = os.path.join(prjdir, "Figures")
-        elif self.dict['document/uselocalfigs']:
+        elif printer.get("c_useLocalFiguresFolder"):
             picdir = os.path.join(prjdir, "local", "Figures")
-        elif self.dict['document/customfiglocn'] is not None:
-            picdir = self.dict['document/customfiglocn']
+        elif printer.get("c_useCustomFolder"):
+            picdir = self.dict['document/customfigfolder']
+            # picdir = printer.get("btn_selectFigureFolder")
         else:
             print("No folder of illustrtations has been specified")
             return(msngpiclist)  # send back an empty list
+        print("Pic Folder:",picdir)
         for bk in printer.getBooks():
+            print("Book: ",bk)
             fname = printer.getBookFilename(bk, prjdir)
+            print(fname)
             infname = os.path.join(prjdir, fname)
             with open(infname, "r", encoding="utf-8") as inf:
                 dat = inf.read()
                 # Finds USFM2-styled markup in text:
                 m = re.findall(r"\\fig .*\|(.+?\....)\|.+?\\fig\*", dat)          # Finds USFM2-styled markup in text:
+                print(m)
                 if m is None:
                     m = re.findall(r'\\fig .*+src="(.+?\....)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text:
                 if m is not None:
                     for f in m:
+                        print(f)
                         fname = os.path.join(picdir,f[0])
                         print(fname)
                         if not os.path.exists(fname):
                             print("{} is missing from {}".format(f[0],picdir))
                             msngpiclist.append(f[0])
+        print(msngpiclist)
         return(msngpiclist)
 
     def _configset(self, config, key, value):
