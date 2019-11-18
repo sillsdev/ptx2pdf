@@ -2,12 +2,20 @@ import regex
 
 class FancyIntro():
     _regexbits = [(r'\\io2 ', r'\\io1 \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0'), # Temporary fix so that the special Intro Outline table doesn't break
-               (r'(\\iot .+?)$', r'\1\r\n\iotable\r\n\makedigitsother\r\n\catcode`{=1\r\n\catcode`}=2\r\n\makedigitsother\r\n'),
+               (r'(\\iot .+?)\r?\n', r'\1\r\n\iotable\r\n\makedigitsother\r\n\catcode`{=1\r\n\catcode`}=2\r\n\makedigitsother\r\n\catcode`{=1\r\n\catcode`}=2'),
                (r'\\io1 ', r'\iotableleader{'),
                (r' \\ior ', r'}{'),
                (r' \\ior\*', r'}'),
-               (r'\\c 1$', r'\catcode`{=11 \catcode`}=11\r\n\makedigitsletters\r\n\c 1\r\n')] # Assumed no other markers is between last \io1 line and \c 1
-    regexes = [(None, regex.compile(r[0], flags=regex.S + regex.M), r[1]) for r in _regexbits]
+               (r'\\c 1\r?\n', r'\catcode`{=11 \catcode`}=11\r\n\makedigitsletters\r\n\c 1\r\n')] # Assumed no other markers is between last \io1 line and \c 1
+    regexes = [(None, regex.compile(r[0], flags=regex.S), r[1]) for r in _regexbits]
+
+    # _regexbits = [(r'\\io2 ', r'\\io1 \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0'), # Temporary fix so that the special Intro Outline table doesn't break
+               # (r'(\\iot .+?)$', r'\1\r\n\iotable\r\n\makedigitsother\r\n\catcode`{=1\r\n\catcode`}=2\r\n\makedigitsother\r\n'),
+               # (r'\\io1 ', r'\iotableleader{'),
+               # (r' \\ior ', r'}{'),
+               # (r' \\ior\*', r'}'),
+               # (r'\\c 1$', r'\catcode`{=11 \catcode`}=11\r\n\makedigitsletters\r\n\c 1\r\n')] # Assumed no other markers is between last \io1 line and \c 1
+    # regexes = [(None, regex.compile(r[0], flags=regex.S + regex.M), r[1]) for r in _regexbits]
 
     styleInfo = r"""
 \Marker iotable

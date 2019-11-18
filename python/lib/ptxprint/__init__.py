@@ -413,10 +413,6 @@ class PtxPrinterDialog:
             self.builder.get_object("c_multiplebooks").set_active(True)
         dia.hide()
 
-    def onClickmbs_all(self, btn):
-        for b in self.alltoggles:
-            b.set_active(True)
-
     def toggleBooks(self,start,end):
         bp = self.ptsettings['BooksPresent']
         cPresent = sum(1 for x in bp[start:end] if x == "1")
@@ -431,21 +427,20 @@ class PtxPrinterDialog:
             if b.get_label() in allbooks[start:end]:
                 b.set_active(toggle)
 
+    def onClickmbs_all(self, btn):
+        self.toggleBooks(0,124)
+
     def onClickmbs_OT(self, btn):
         self.toggleBooks(0,39)
         
     def onClickmbs_NT(self, btn):
-        self.toggleBooks(39,66)
+        self.toggleBooks(40,67)
 
     def onClickmbs_DC(self, btn):
-        self.toggleBooks(66,84)
+        self.toggleBooks(67,85)
 
     def onClickmbs_xtra(self, btn):
-        self.toggleBooks(84,123)
-
-    def onClickmbs_none(self, btn):
-        for b in self.alltoggles:
-            b.set_active(False)
+        self.toggleBooks(85,124)
 
     def onTocClicked(self, c_toc):
         if not self.get("c_usetoc1") and not self.get("c_usetoc2") and not self.get("c_usetoc3"):

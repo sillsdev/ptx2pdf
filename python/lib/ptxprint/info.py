@@ -421,7 +421,7 @@ class Info:
         return self.localChanges
 
         # Insert a chapter label marker with zwsp to center the chapter number
-        #contents = re.sub(ur'(\\c\s1\r\n)', ur'\cl \u200b\r\n\1', contents)
+        #contents = re.sub(ur'(\\c\s1\r?\n)', ur'\cl \u200b\r\n\1', contents)
 
     def ListMissingPics(self, printer):
         msngpiclist = []
@@ -439,7 +439,6 @@ class Info:
             return(msngpiclist)  # send back an empty list
         print("Pic Folder:",picdir)
         for bk in printer.getBooks():
-            print("Book: ",bk)
             fname = printer.getBookFilename(bk, prjdir)
             print(fname)
             infname = os.path.join(prjdir, fname)
@@ -447,18 +446,16 @@ class Info:
                 dat = inf.read()
                 # Finds USFM2-styled markup in text:
                 m = re.findall(r"\\fig .*\|(.+?\....)\|.+?\\fig\*", dat)          # Finds USFM2-styled markup in text:
-                print(m)
+                # print("m: ",m)
                 if m is None:
                     m = re.findall(r'\\fig .*+src="(.+?\....)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text:
                 if m is not None:
                     for f in m:
-                        print(f)
-                        fname = os.path.join(picdir,f[0])
-                        print(fname)
+                        f = re.sub(r"\.[Tt][Ii][Ff]", r".jpg",f)
+                        fname = os.path.join(picdir,f)
                         if not os.path.exists(fname):
-                            print("{} is missing from {}".format(f[0],picdir))
-                            msngpiclist.append(f[0])
-        print(msngpiclist)
+                            msngpiclist.append(f)
+                    print("In {} these pics are missing:\n".format(bk),"\n".join(msngpiclist))
         return(msngpiclist)
 
     def _configset(self, config, key, value):
