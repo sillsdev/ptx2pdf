@@ -20,7 +20,7 @@ import traceback
 
 _bookslist = """GEN|50 EXO|40 LEV|27 NUM|36 DEU|34 JOS|24 JDG|21 RUT|4 1SA|31 2SA|24 1KI|22 2KI|25 1CH|29 32CH|36 EZR|10 NEH|13
         EST|10 JOB|42 PSA|150 PRO|31 ECC|12 SNG|8 ISA|66 JER|52 LAM|5 EZK|48 DAN|12 HOS|14 JOL|3 AMO|9 OBA|1 JON|4 MIC|7 NAM|3
-        HAB|3 ZEP|3 HAG|2 ZEC|14 MAL|4 MAT|28 MRK|16 LUK|24 JHN|21 ACT|28 ROM|16 1CO|16 2CO|13 GAL|6 EPH|6 PHP|4 COL|4
+        HAB|3 ZEP|3 HAG|2 ZEC|14 MAL|4 ZZZ|0 MAT|28 MRK|16 LUK|24 JHN|21 ACT|28 ROM|16 1CO|16 2CO|13 GAL|6 EPH|6 PHP|4 COL|4
         1TH|5 2TH|3 1TI|6 2TI|4 TIT|3 PHM|1 HEB|13 JAS|5 1PE|5 2PE|3 1JN|5 2JN|1 3JN|1 JUD|1 REV|22
         TOB|14 JDT|16 ESG|10 WIS|19 SIR|51 BAR|6 LJE|1 S3Y|1 SUS|1 BEL|1 1MA|16 2MA|15 3MA|7 4MA|18 1ES|9 2ES|16 MAN|1 PS2|1
         ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 XXA|0 XXB|0 XXC|0 XXD|0 XXE|0 XXF|0 XXG|0 FRT|0 BAK|0 OTH|0 ZZZ|0 ZZZ|0 
@@ -871,6 +871,7 @@ class Info:
         "project/id":               (None, lambda w,v: w.get("cb_project")),
         "project/hideadvancedsettings": ("c_hideAdvancedSettings", lambda w,v: "true" if v else "false"),
         "project/keeptempfiles":    ("c_keepTemporaryFiles", lambda w,v: "true" if v else "false"),
+        "project/useptmacros":      ("c_usePTmacros", lambda w,v: "true" if v else "false"),
         "project/ifuseptmacros":    ("c_usePTmacros", lambda w,v: "%" if v else ""),
         "project/multiplebooks":    ("c_multiplebooks", lambda w,v: "true" if v else "false"),
         # "project/choosebooks":      ("btn_chooseBooks", lambda w,v: v or ""),
@@ -889,8 +890,7 @@ class Info:
         "project/ifusemodstex":     ("c_useModsTex", lambda w,v: "" if v else "%"),
         "project/ifusemodssty":     ("c_useModsSty", lambda w,v: "" if v else "%"),
         "project/ifusenested":      (None, lambda w,v: "" if (w.get("c_omitallverses") or not w.get("c_includeFootnotes") or not w.get("c_includeXrefs")) else "%"),
-        # Still to be implemented: What is the .tex code for this to be turned on?
-        # "project/ifstarthalfpage":  ("c_startOnHalfPage", lambda w,v :"" if v else "%"),
+        "project/ifstarthalfpage":  ("c_startOnHalfPage", lambda w,v :"" if v else "%"),
         "project/randompicposn":    ("c_randomPicPosn", lambda w,v :"true" if v else "false"),
 
         "paper/height":             (None, lambda w,v: re.sub(r"^.*?,\s*(.+?)\s*(?:\(.*|$)", r"\1", w.get("cb_pagesize")) or "210mm"),
