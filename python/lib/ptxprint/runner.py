@@ -21,12 +21,13 @@ class StreamTextBuffer(Gtk.TextBuffer):
                 self.proc.terminate()
             self.proc = None
         self.IO_WATCH_ID = []
-        for p in (proc.stdout, proc.stderr):
-            unblock_fd(p)
-            self.IO_WATCH_ID.append(GObject.io_add_watch(
-                    channel = p, priority_ = GObject.IO_IN,
-                    condition = self.buffer_update))
-        self.proc = proc
+        if proc is not None:
+            for p in (proc.stdout, proc.stderr):
+                unblock_fd(p)
+                self.IO_WATCH_ID.append(GObject.io_add_watch(
+                        channel = p, priority_ = GObject.IO_IN,
+                        condition = self.buffer_update))
+            self.proc = proc
         return self.IO_WATCH_ID
 
     def buffer_update(self, stream, condition):
