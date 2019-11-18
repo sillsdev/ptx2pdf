@@ -2,12 +2,12 @@ import regex
 
 class FancyIntro():
     _regexbits = [(r'\\io2 ', r'\\io1 \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0'), # Temporary fix so that the special Intro Outline table doesn't break
-               (r'(\\iot .+?)\r\n', r'\1\r\n\iotable\r\n\makedigitsother\r\n\catcode`{=1\r\n\catcode`}=2\r\n\makedigitsother\r\n\catcode`{=1\r\n\catcode`}=2'),
+               (r'(\\iot .+?)$', r'\1\r\n\iotable\r\n\makedigitsother\r\n\catcode`{=1\r\n\catcode`}=2\r\n\makedigitsother\r\n'),
                (r'\\io1 ', r'\iotableleader{'),
                (r' \\ior ', r'}{'),
                (r' \\ior\*', r'}'),
-               (r'\\c 1\r\n', r'\catcode`{=11 \catcode`}=11\r\n\makedigitsletters\r\n\c 1\r\n')] # Assumed no other markers is between last \io1 line and \c 1
-    regexes = [(None, regex.compile(r[0], flags=regex.S), r[1]) for r in _regexbits]
+               (r'\\c 1$', r'\catcode`{=11 \catcode`}=11\r\n\makedigitsletters\r\n\c 1\r\n')] # Assumed no other markers is between last \io1 line and \c 1
+    regexes = [(None, regex.compile(r[0], flags=regex.S + regex.M), r[1]) for r in _regexbits]
 
     styleInfo = r"""
 \Marker iotable
@@ -25,19 +25,11 @@ class FancyIntro():
 # 1/8 inch first line indent
 
     texCode = r"""
-% Enable commands with digits in them to be processed
-\catcode`@=11
-\def\makedigitsother{\m@kedigitsother}
-\def\makedigitsletters{\m@kedigitsletters}
-\catcode `@=12
-% Usage:
-% This is the macro to use in the source text for placing
-% the introduction text into a table-like format.
-%   \iotableleader{First column text}{Second column text}
 \def\iotableleader#1#2{#1\leaders\hbox to 0.8em{\hss.\hss}\hfill#2\par}%
 """
 
 class FancyBorders(): # Not sure how much of this is needed (perhaps it can be cut down to the basics)
+    regexes = []
     styleInfo = r"""
 # need a smaller verse number to fit in the stars
 \Marker v

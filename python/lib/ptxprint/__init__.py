@@ -88,6 +88,7 @@ class PtxPrinterDialog:
         self.builder.get_object("tv_logging").set_buffer(self.logbuffer)
         self.mw = self.builder.get_object("ptxprint")
         self.projects = self.builder.get_object("ls_projects")
+        self.info = None
         self.settings_dir = settings_dir
         self.ptsettings = None
         self.booklist = []
@@ -187,7 +188,6 @@ class PtxPrinterDialog:
         return fname
         
     def onDestroy(self, btn):
-        print("Dying")
         Gtk.main_quit()
 
     def onOK(self, btn):
@@ -497,10 +497,10 @@ class PtxPrinterDialog:
         self.set('f_body', font_name)
         configfile = os.path.join(self.settings_dir, self.prjid, "ptxprint.cfg")
         if os.path.exists(configfile):
-            info = Info(self, self.settings_dir, self.ptsettings)
+            self.info = Info(self, self.settings_dir, self.ptsettings)
             config = configparser.ConfigParser()
             config.read(configfile, encoding="utf-8")
-            info.loadConfig(self, config)
+            self.info.loadConfig(self, config)
         status = self.get("c_multiplebooks")
         for c in ("c_combine", "t_booklist"):
             self.builder.get_object(c).set_sensitive(status)

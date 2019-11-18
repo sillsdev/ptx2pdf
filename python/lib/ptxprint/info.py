@@ -177,6 +177,7 @@ class Info:
     
     def __init__(self, printer, path, ptsettings=None):
         self.ptsettings = ptsettings
+        self.printer = printer
         self.changes = None
         self.localChanges = None
         self.dict = {"/ptxpath": path}
@@ -187,7 +188,6 @@ class Info:
         self.processFonts(printer)
         self.processHdrFtr(printer)
         self.makelocalChanges(printer)
-        self.GenerateNestedStyles(printer)
 
     def __getitem__(self, key):
         return self.dict[key]
@@ -264,6 +264,11 @@ class Info:
                         # if i+1 == le and i > 0:
                             # res.append("\\lastptxfilefalse")
                         res.append("\\ptxfile{{{}}}\n".format(f))
+                elif l.startswith(r"%\snippets"):
+                    for k, c in self._snippets.items():
+                        v = self.printer.get(c[0])
+                        if v:
+                            res.append(c[1].texCode)
                 else:
                     res.append(l.format(**self.dict))
         return "".join(res)
@@ -410,8 +415,8 @@ class Info:
 
         # Apply any changes specified in snippets
         for w, c in self._snippets.items():
-            if printer.get(w): # if the c_checkbox is true then extend the list with those changes
-                self.localChanges.extend(c.regexes)
+            if printer.get(c[0]): # if the c_checkbox is true then extend the list with those changes
+                self.localChanges.extend(c[1].regexes)
                 
         return self.localChanges
 
@@ -480,15 +485,15 @@ class Info:
                 if key in self._mappings:
                     v = self._mappings[key]
                     #print(sect + "/" + opt + ": " + v[0])
-                    if v[0] is None:
-                        val = None
                     if v[0].startswith("cb_") or v[0].startswith("t_") or v[0].startswith("f_") or v[0].startswith("btn_"):
                         pass
-                    if v[0].startswith("s_"):
+                    elif v[0].startswith("s_"):
                         val = float(val)
                         #printer.set(v[0], round(config.get(sect, opt)),2)
                     elif v[0].startswith("c_"):
                         val = config.getboolean(sect, opt)
+                    else:
+                        val = None
                     if val is not None:
                         self.dict[key] = val
                         printer.set(v[0], val)
@@ -496,7 +501,7 @@ class Info:
                     v = self._fonts[key]
                     printer.set(v, val)
                 elif key in self._snippets:
-                    printer.set(self._snippets[k][0], val)
+                    printer.set(self._snippets[key][0], val)
         for k, v in self._settingmappings.items():
             (sect, name) = k.split("/")
             try:
@@ -511,21 +516,21 @@ class Info:
         printer.watermarks = self.dict['paper/watermarkpdf']
         printer.BackPDFs = self.dict['project/backincludes']
 
-    def GenerateNestedStyles(self, printer):
-        prjid = printer.get("cb_project")
-        prjdir = os.path.join(printer.settings_dir, prjid)
+    def GenerateNestedStyles(self):
+        prjid = self.printer.get("cb_project")
+        prjdir = os.path.join(self.printer.settings_dir, prjid)
         nstyfname = os.path.join(prjdir, "PrintDraft/NestedStyles.sty")
         nstylist = []
-        if printer.get("c_omitallverses"):
+        if self.printer.get("c_omitallverses"):
             nstylist.append("##### Remove all verse numbers\n\\Marker v\n\\TextProperties nonpublishable\n\n")
-        if not printer.get("c_includeFootnotes"):
+        if not self.printer.get("c_includeFootnotes"):
             nstylist.append("##### Remove all footnotes\n\\Marker f\n\\TextProperties nonpublishable\n\n")
-        if not printer.get("c_includeXrefs"):
+        if not self.printer.get("c_includeXrefs"):
             nstylist.append("##### Remove all cross-references\n\\Marker x\n\\TextProperties nonpublishable\n\n")
 
         for w, c in self._snippets.items():
-            if printer.get(w): # if the c_checkbox is true then add the stylesheet snippet for that option
-                nstylist.append(c.styleInfo+"\n")
+            if self.printer.get(c[0]): # if the c_checkbox is true then add the stylesheet snippet for that option
+                nstylist.append(c[1].styleInfo+"\n")
 
         if nstylist == []:
             if os.path.exists(nstyfname):
@@ -533,3 +538,4 @@ class Info:
         else:
             with open(nstyfname, "w", encoding="utf-8") as outf:
                 outf.write("".join(nstylist))
+            self.dict['project/ifusenested'] = ""
