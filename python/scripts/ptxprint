@@ -90,7 +90,7 @@ def doit(printer):
         pdfname = os.path.join(tmpdir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], prjid))
     else:
         pdfname = os.path.join(tmpdir, "ptxprint-{}{}.pdf".format(jobs[0], prjid))
-    if os.path.exists(pdfname):
+    if sys.platform == "win32" and os.path.exists(pdfname):
         os.startfile(pdfname)
 
 def removeTempFiles(jobs,prjid,tmpdir):

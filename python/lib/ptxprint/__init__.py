@@ -532,7 +532,7 @@ class PtxPrinterDialog:
         bp = self.ptsettings['BooksPresent']
         for b in allbooks:
             ind = books.get(b, 0)-1
-            if 0 <= ind < len(bp) and bp[ind] == "1":
+            if 0 <= ind < len(bp) and bp[ind - 1 if ind > 40 else ind] == "1":
                 lsbooks.append([b])
         cb_bk = self.builder.get_object("cb_book")
         cb_bk.set_active(0)
