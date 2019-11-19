@@ -65,7 +65,7 @@ if sys.platform == "linux":
             b = kw['logbuffer']
             del kw['logbuffer']
             b.add_heading("Execute: " + " ".join(a[0]))
-            p = subprocess.Popen(*a, stdout = subprocess.PIPE, stderr = subprocess.PIPE,
+            p = subprocess.Popen(*a, stdout = subprocess.PIPE, stderr = subprocess.PIPE, stdin = subprocess.DEVNULL,
                                  universal_newlines = True, encoding="utf-8", errors="backslashreplace", **kw)
             b.bind_subprocess(p)
             return p

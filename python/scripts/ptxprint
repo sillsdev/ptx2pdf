@@ -56,7 +56,13 @@ def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
     os.putenv("hyph_size", "32749")     # always run with maximum hyphenated words size (xetex is still tiny ~200MB resident)
     if info['project/useptmacros'] == "false":
         if not os.getenv('TEXINPUTS'):
-            texinputs = [os.path.abspath(tmpdir), os.path.abspath(os.path.join(os.path.dirname(__file__), "../../src"))]
+            ptxmacrospath = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../src"))
+            if not os.path.exists(ptxmacrospath):
+                for b in (sys.USER_BASE, sys.prefix):
+                    ptxmacrospath = os.path.abspath(os.path.join(b, 'ptx2pdf'))
+                    if os.path.exists(ptxmacrospath):
+                        break
+            texinputs = [os.path.abspath(tmpdir), ptxmacrospath]
             os.putenv('TEXINPUTS', (";" if sys.platform=="win32" else ":").join(texinputs))
     elif sys.platform == "linux":
         if not os.getenv('TEXINPUTS'):
