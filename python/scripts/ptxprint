@@ -39,6 +39,7 @@ mainw = ptxprint.PtxPrinterDialog(allprojects, args.paratext)
 
 if args.pid:
     mainw.set("cb_project", args.pid)
+    mainw.onProjectChange(None)
 
 def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
     donebooks = []
@@ -51,8 +52,7 @@ def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
     else:
         outfname = "ptxprint-{}{}.tex".format(jobs[0], prjid)
     info.update()
-    info.ListMissingPics(info.printer)
-    info.GenerateNestedStyles()
+    info.ListMissingPics(info.printer)      # should pass it the job to check
     with open(os.path.join(tmpdir, outfname), "w") as texf:
         texf.write(info.asTex(filedir=tmpdir))
     os.putenv("hyph_size", "32749")     # always run with maximum hyphenated words size (xetex is still tiny ~200MB resident)
@@ -97,6 +97,8 @@ def doit(printer):
     prjid = printer.get("cb_project")
     prjdir = os.path.join(args.paratext, prjid)
     # save config
+    info.update()
+    info.GenerateNestedStyles()
     config = info.createConfig(printer)
     with open(os.path.join(prjdir, "ptxprint.cfg"), "w", encoding="utf-8") as outf:
         config.write(outf)

@@ -505,6 +505,7 @@ class PtxPrinterDialog:
         self.set('f_body', font_name)
         configfile = os.path.join(self.settings_dir, self.prjid, "ptxprint.cfg")
         if os.path.exists(configfile):
+            print("Reading configfile {}".format(configfile))
             self.info = Info(self, self.settings_dir, self.ptsettings)
             config = configparser.ConfigParser()
             config.read(configfile, encoding="utf-8")

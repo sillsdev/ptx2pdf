@@ -26,12 +26,16 @@ oneChbooks = [b.split("|")[0] for b in _bookslist.split() if b[-2:] == "|1"]
 class ParatextSettings:
     def __init__(self, basedir, prjid):
         self.dict = {}
-        doc = et.parse(os.path.join(basedir, prjid, "Settings.xml"))
+        self.basedir = basedir
+        self.read_ldml(prjid)
+
+    def read_ldml(self, prjid):
+        doc = et.parse(os.path.join(self.basedir, prjid, "Settings.xml"))
         for c in doc.getroot():
             self.dict[c.tag] = c.text
         langid = regex.sub('-(?=-|$)', '', self.dict['LanguageIsoCode'].replace(":", "-"))
         # print(langid)
-        fname = os.path.join(basedir, prjid, langid+".ldml")
+        fname = os.path.join(self.basedir, prjid, langid+".ldml")
         silns = "{urn://www.sil.org/ldml/0.1}"
         if os.path.exists(fname):
             self.ldml = et.parse(fname)

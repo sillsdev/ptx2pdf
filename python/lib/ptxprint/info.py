@@ -27,7 +27,7 @@ class Info:
         "project/usechangesfile":   ("c_usePrintDraftChanges", lambda w,v :"true" if v else "false"),
         "project/ifusemodstex":     ("c_useModsTex", lambda w,v: "" if v else "%"),
         "project/ifusemodssty":     ("c_useModsSty", lambda w,v: "" if v else "%"),
-        "project/ifusenested":      (None, lambda w,v: "" if (w.get("c_omitallverses") or not w.get("c_includeFootnotes") or not w.get("c_includeXrefs")) else "%"),
+        "project/ifusenested":      (None, lambda w,v: "" if (w.get("c_omitallverses") or not w.get("c_includeFootnotes") or not w.get("c_includeXrefs")) or w.get("c_prettyIntroOutline") else "%"),
         "project/ifstarthalfpage":  ("c_startOnHalfPage", lambda w,v :"true" if v else "false"),
         "project/randompicposn":    ("c_randomPicPosn", lambda w,v :"true" if v else "false"),
 
@@ -544,4 +544,3 @@ class Info:
         else:
             with open(nstyfname, "w", encoding="utf-8") as outf:
                 outf.write("".join(nstylist))
-            self.dict['project/ifusenested'] = ""
