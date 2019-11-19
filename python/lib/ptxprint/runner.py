@@ -146,10 +146,20 @@ elif sys.platform == "win32":
 
 print("before ptob")
 ptob = openkey("Paratext/8")
-print("before ptv")
-ptv = queryvalue(ptob, "ParatextVersion")
-print("after ptv")
-if ptv:
-    version = ptv[:ptv.find(".")]
-    pt_bindir = queryvalue(ptob, 'Program_Files_Directory_Ptw'+version)
-pt_settings = queryvalue(ptob, 'Settings_Directory')
+print("ptob {} before ptv".format(ptob))
+try:
+    ptv = queryvalue(ptob, "ParatextVersion")
+    print("after ptv")
+except FileNotFoundError:
+    print("Within Except") 
+    for v in ('9', '8'):
+        path = "C:\\My Paratext {} Projects".format(v)
+        if os.path.exists(path):
+            pt_settings = path
+            pt_bindir = "C:\\Program Files (x86)\\Paratext {}".format(v)
+    print(pt_settings,"\n",pt_bindir)
+else:
+    if ptv:
+        version = ptv[:ptv.find(".")]
+        pt_bindir = queryvalue(ptob, 'Program_Files_Directory_Ptw'+version)
+    pt_settings = queryvalue(ptob, 'Settings_Directory')
