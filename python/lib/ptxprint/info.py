@@ -259,13 +259,9 @@ class Info:
         with open(os.path.join(os.path.dirname(__file__), template)) as inf:
             for l in inf.readlines():
                 if l.startswith(r"\ptxfile"):
-                    res.append("\\PtxFilePath={"+filedir+"/}\n")
+                    res.append("\\PtxFilePath={"+filedir.replace("\\","/")+"/}\n")
                     le = len(self.dict['project/books'])
-                    # if le > 1:
-                        # res.append("\\lastptxfilefalse")
                     for i, f in enumerate(self.dict['project/books']):
-                        # if i+1 == le and i > 0:
-                            # res.append("\\lastptxfilefalse")
                         res.append("\\ptxfile{{{}}}\n".format(f))
                 elif l.startswith(r"%\snippets"):
                     for k, c in self._snippets.items():
