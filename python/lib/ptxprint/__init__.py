@@ -270,8 +270,8 @@ class PtxPrinterDialog:
     def onUseIllustrationsClicked(self, c_includeillustrations):
         status = self.get("c_includeillustrations")
         for c in ("c_includefigsfromtext", "c_usePicList", "l_useFolder", "c_useFiguresFolder", "c_useLocalFiguresFolder", "c_useCustomFolder",
-                  "c_convertTIFtoPNG", "btn_selectFigureFolder", "l_useFiguresFolder", "l_useLocalFiguresFolder",
-                  "c_figexclwebapp", "c_figplaceholders", "c_fighiderefs"):
+                  "btn_selectFigureFolder", "l_useFiguresFolder", "l_useLocalFiguresFolder",
+                  "c_figexclwebapp", "c_figplaceholders", "c_fighiderefs"):  # add this later: "c_convertTIFtoPNG", 
             self.builder.get_object(c).set_sensitive(status)
         if status:
             status = self.get("c_includefigsfromtext")
@@ -401,8 +401,12 @@ class PtxPrinterDialog:
         self.builder.get_object("btn_editModsSty").set_sensitive(self.get("c_useModsSty"))
         
     def onSuppressOutlineClicked(self, c_omitIntroOutline):
-        self.builder.get_object("c_prettyIntroOutline").set_sensitive(self.get("c_omitIntroOutline"))
-        self.builder.get_object("c_prettyIntroOutline").set_active(self.get("c_omitIntroOutline"))
+        self.builder.get_object("c_prettyIntroOutline").set_sensitive(not self.get("c_omitIntroOutline"))
+        self.builder.get_object("c_prettyIntroOutline").set_active(not self.get("c_omitIntroOutline"))
+        self.GenerateNestedStyles(None)
+
+    def onPrettyIntroOutlineClicked(self, c_prettyIntroOutline):
+        self.GenerateNestedStyles(None)
         
     def onChooseBooksClicked(self, btn):
         dia = self.builder.get_object("dlg_multiBookSelector")
@@ -673,7 +677,7 @@ class PtxPrinterDialog:
                     else:
                         print("PicList file already exists (this will NOT be overwritten): " + outfname)
                 else:
-                    print(r"No illustrations \fig ...\fig* found in book/file!") # This needs to the log/console: 
+                    print(r"No illustrations \fig ...\fig* found in book/file!") # This needs to go to the log/console: 
 
     def onGenerateParaAdjList(self, btn_generateParaAdjList):
         for bk in self.getBooks():
@@ -708,7 +712,7 @@ class PtxPrinterDialog:
                         print("Adj List already exists (this will NOT be overwritten): " + outfname)
 
     def GenerateNestedStyles(self, c_omitallverses):
-        print("Need to call this on the other side!")
+        print(".") # Need to call this on the other side!")
 
     def onEditAdjListClicked(self, btn_editParaAdjList):
         if not self.get("c_multiplebooks"):

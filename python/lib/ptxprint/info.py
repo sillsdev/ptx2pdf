@@ -357,7 +357,7 @@ class Info:
                 msngfigs = self.ListMissingPics(printer)
                 if len(msngfigs):
                     for f in msngfigs:
-                        print("Skipping missing illustration: ",f)
+                        print("Skipping over missing illustration: ",f)
                         self.localChanges.append((None, regex.compile(r"\\fig .*\|{}\|.+?\\fig\*".format(f), flags=regex.M), ""))
             if printer.get("c_fighiderefs"):
                 self.localChanges.append((None, regex.compile(r"(\\fig .*?)(\d+\:\d+([-,]\d+)?)(.*?\\fig\*)", flags=regex.M), r"\1\4")) # del ch:vs from caption
@@ -410,9 +410,9 @@ class Info:
 
         # Apply any changes specified in snippets
         for w, c in self._snippets.items():
-            print("In snippets Changes................................")
+            # print("In snippets Changes................................")
             if self.printer.get(c[0]): # if the c_checkbox is true then extend the list with those changes
-                print("Snippet {} is ON.".format(w))
+                # print("Snippet {} is ON.".format(w))
                 self.localChanges.extend(c[1].regexes)
 
         if printer.get("c_tracing"):
@@ -429,22 +429,17 @@ class Info:
         prjid = printer.get("cb_project")
         prjdir = os.path.join(printer.settings_dir, prjid)
         if printer.get("c_useFiguresFolder"): # Therefore this is always true!
-            print("c_useFiguresFolder")
             picdir = os.path.join(prjdir, "Figures")
         elif printer.get("c_useLocalFiguresFolder"):
-            print("c_useLocalFiguresFolder")
             picdir = os.path.join(prjdir, "local", "Figures")
         elif printer.get("c_useCustomFolder"):
-            print("c_useCustomFolder")
             picdir = self.dict['document/customfigfolder']
-            # picdir = printer.get("btn_selectFigureFolder")
-        else:
+        if picdir is None or picdir == "": # shouldn't happen, but just in case!
             print("No folder of illustrtations has been specified")
             return(msngpiclist)  # send back an empty list
-        print("Pic Folder:",picdir)
+        print("Picture Path:",picdir)
         for bk in printer.getBooks():
             fname = printer.getBookFilename(bk, prjdir)
-            print(fname)
             infname = os.path.join(prjdir, fname)
             with open(infname, "r", encoding="utf-8") as inf:
                 dat = inf.read()

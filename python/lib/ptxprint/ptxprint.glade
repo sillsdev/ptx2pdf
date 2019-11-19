@@ -2179,6 +2179,7 @@ start on the same page.
                                         <property name="margin_top">4</property>
                                         <property name="margin_bottom">4</property>
                                         <property name="draw_indicator">True</property>
+                                        <signal name="clicked" handler="onPrettyIntroOutlineClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
