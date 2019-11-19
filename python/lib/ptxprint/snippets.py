@@ -10,7 +10,7 @@ class FancyIntro():
 # '\\c 1\r\n' > '\catcode`{=11 \catcode`}=11\r\n\makedigitsletters\r\n\c 1\r\n'
 
     _regexbits = [(r'\\io2 ', r'\\io1 \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0'), # Temporary fix so that the special Intro Outline table doesn't break
-               (r'(\\iot .+?)\r?\n', r'\1\r\n\iotable\r\n\makedigitsother\r\n\catcode`{=1\r\n\catcode`}=2\r\n\makedigitsother\r\n\catcode`{=1\r\n\catcode`}=2'),
+               (r'(\\iot .+?)\r?\n', r'\1\r\n\iotable\r\n\makedigitsother\r\n\catcode`{=1\r\n\catcode`}=2\r\n'),
                (r'\\io1 ', r'\iotableleader{'),
                (r' \\ior ', r'}{'),
                (r' \\ior\*', r'}'),
@@ -41,6 +41,11 @@ class FancyIntro():
 # 1/8 inch first line indent
 
     texCode = r"""
+% Enable commands with digits in them to be processed
+\catcode`@=11
+\def\makedigitsother{\m@kedigitsother}
+\def\makedigitsletters{\m@kedigitsletters}
+\catcode `@=12
 \def\iotableleader#1#2{#1\leaders\hbox to 0.8em{\hss.\hss}\hfill#2\par}%
 """
 

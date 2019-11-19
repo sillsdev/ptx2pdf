@@ -181,6 +181,10 @@ class Info:
         self.changes = None
         self.localChanges = None
         self.dict = {"/ptxpath": path}
+        self.update()
+
+    def update(self):
+        printer = self.printer
         for k, v in self._mappings.items():
             val = printer.get(v[0]) if v[0] is not None else None
             if v[1] is not None:
@@ -321,7 +325,7 @@ class Info:
                     continue
                 if l.startswith("in"):
                     # in "\\w .+?\\w\*": "\|.+?\\w\*" > "\w*"
-                    print("WARNING: 'in x: change y to z' rule encountered in PrintDraftChanges has been ignored."
+                    print("WARNING: 'in x: change y to z' rule encountered in PrintDraftChanges has been ignored.")
                     continue
                 m = re.match(r"^(['\"])(.*?)(?<!\\)\1\s*>\s*(['\"])(.*?)(?<!\\)\3", l)
                 if m:
@@ -513,6 +517,7 @@ class Info:
         printer.FrontPDFs = self.dict['project/frontincludes']
         printer.watermarks = self.dict['paper/watermarkpdf']
         printer.BackPDFs = self.dict['project/backincludes']
+        self.update()
 
     def GenerateNestedStyles(self):
         prjid = self.printer.get("cb_project")
