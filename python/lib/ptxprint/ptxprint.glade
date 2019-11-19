@@ -529,9 +529,6 @@
         <col id="0" translatable="yes">format with emphasis</col>
       </row>
       <row>
-        <col id="0" translatable="yes">with ⸤floor⸥ brackets</col>
-      </row>
-      <row>
         <col id="0" translatable="yes">star *before word</col>
       </row>
       <row>
@@ -1329,6 +1326,7 @@ Justification</property>
                                         <property name="halign">end</property>
                                         <property name="draw_indicator">True</property>
                                         <signal name="clicked" handler="onVariableLineSpacingClicked" swapped="no"/>
+                                        <signal name="toggled" handler="onVariableLineSpacingClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">2</property>
@@ -2113,6 +2111,7 @@ of Contents</property>
                                         <property name="tooltip_text" translatable="yes">Remove the Introductory Outline.</property>
                                         <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
+                                        <signal name="clicked" handler="onSuppressOutlineClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
@@ -4038,6 +4037,7 @@ this option checked (on).</property>
                                             <property name="label" translatable="yes">Process text with 
 custom script ...</property>
                                             <property name="visible">True</property>
+                                            <property name="sensitive">False</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
                                             <property name="draw_indicator">True</property>

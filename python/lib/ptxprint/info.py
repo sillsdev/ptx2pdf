@@ -28,7 +28,7 @@ class Info:
         "project/ifusemodstex":     ("c_useModsTex", lambda w,v: "" if v else "%"),
         "project/ifusemodssty":     ("c_useModsSty", lambda w,v: "" if v else "%"),
         "project/ifusenested":      (None, lambda w,v: "" if (w.get("c_omitallverses") or not w.get("c_includeFootnotes") or not w.get("c_includeXrefs")) else "%"),
-        "project/ifstarthalfpage":  ("c_startOnHalfPage", lambda w,v :"" if v else "%"),
+        "project/ifstarthalfpage":  ("c_startOnHalfPage", lambda w,v :"true" if v else "false"),
         "project/randompicposn":    ("c_randomPicPosn", lambda w,v :"true" if v else "false"),
 
         "paper/height":             (None, lambda w,v: re.sub(r"^.*?,\s*(.+?)\s*(?:\(.*|$)", r"\1", w.get("cb_pagesize")) or "210mm"),
@@ -47,9 +47,9 @@ class Info:
         "paper/columns":            ("c_doublecolumn", lambda w,v: "2" if v else "1"),
         "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
 
-        "paragraph/fixlinespacing": ("c_variableLineSpacing", lambda w,v: "%" if v else ""),
+        # "paragraph/fixlinespacing": ("c_variableLineSpacing", lambda w,v: "%" if v else ""),
         "paragraph/varlinespacing": ("c_variableLineSpacing", lambda w,v: "" if v else "%"),
-        "paragraph/linespacing":    ("s_linespacing", lambda w,v: v or "1.000"),
+        "paragraph/linespacing":    ("s_linespacing", lambda w,v: v or "15.000"),
         "paragraph/linemin": ("s_linespacingmin", lambda w,v: w.get("s_linespacing") - v if v <= w.get("s_linespacing") else "0"),
         "paragraph/linemax": ("s_linespacingmax", lambda w,v: v - w.get("s_linespacing") if v >= w.get("s_linespacing") else "0"),
         "paragraph/ifjustify":       ("c_justify", lambda w,v: "true" if v else "false"),
@@ -69,7 +69,7 @@ class Info:
         "document/script":          ("cb_script", lambda w,v: ";script="+w.builder.get_object('cb_script').get_active_id().lower() if w.builder.get_object('cb_script').get_active_id() != "Zyyy" else ""),
         "document/digitmapping":    ("cb_digits", lambda w,v: ";mapping="+v.lower()+"digits" if v != "Default" else ""),
         "document/ch1pagebreak":    ("c_ch1pagebreak", lambda w,v: "true" if v else "false"),
-        # "document/marginalverses":  ("c_marginalverses", lambda w,v: "true" if v else "false"),
+        "document/marginalverses":  ("c_marginalverses", lambda w,v: "" if v else "%"),
         "document/ifomitchapternum":  ("c_omitchapternumber", lambda w,v: "true" if v else "false"),
         "document/ifomitallchapters": ("c_omitchapternumber", lambda w,v: "" if v else "%"),
         "document/ifomitverseone":  ("c_omitverseone", lambda w,v: "true" if v else "false"),
@@ -165,7 +165,6 @@ class Info:
         "format as italics":       r"\\it \1\\it*",
         "format as bold italics":  r"\\bdit \1\\bdit*",
         "format with emphasis":    r"\\em \1\\em*",
-        "with ⸤floor⸥ brackets":   r"\\u2E24\1\\u2E25",
         "star *before word":       r"*\1",
         "star after* word":        r"\1*",
         "circumflex ^before word": r"^\1",
@@ -411,7 +410,9 @@ class Info:
 
         # Apply any changes specified in snippets
         for w, c in self._snippets.items():
-            if printer.get(c[0]): # if the c_checkbox is true then extend the list with those changes
+            print("In snippets Changes................................")
+            if self.printer.get(c[0]): # if the c_checkbox is true then extend the list with those changes
+                print("Snippet {} is ON.".format(w))
                 self.localChanges.extend(c[1].regexes)
 
         if printer.get("c_tracing"):

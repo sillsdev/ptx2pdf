@@ -400,6 +400,10 @@ class PtxPrinterDialog:
     def onUseModsStyClicked(self, c_useModsSty):
         self.builder.get_object("btn_editModsSty").set_sensitive(self.get("c_useModsSty"))
         
+    def onSuppressOutlineClicked(self, c_omitIntroOutline):
+        self.builder.get_object("c_prettyIntroOutline").set_sensitive(self.get("c_omitIntroOutline"))
+        self.builder.get_object("c_prettyIntroOutline").set_active(self.get("c_omitIntroOutline"))
+        
     def onChooseBooksClicked(self, btn):
         dia = self.builder.get_object("dlg_multiBookSelector")
         mbs_grid = self.builder.get_object("mbs_grid")
@@ -413,7 +417,7 @@ class PtxPrinterDialog:
             if tbox.get_label() in bl.get_text().split(" "):
                 tbox.set_active(True)
             self.alltoggles.append(tbox)
-            mbs_grid.attach(tbox, i // 20, i % 20, 1, 1)
+            mbs_grid.attach(tbox, i // 13, i % 13, 1, 1)
         response = dia.run()
         if response == Gtk.ResponseType.OK:
             self.booklist = [b.get_label() for b in self.alltoggles if b.get_active()]
