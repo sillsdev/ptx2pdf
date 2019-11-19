@@ -357,7 +357,7 @@ class Info:
         self.localChanges.append((None, regex.compile(r"\\w (.+?)(\|.+?)?\\w\*", flags=regex.M), gloStyle))
 
         if printer.get("c_includeillustrations") and printer.get("c_includefigsfromtext"):
-            self.localChanges.append((None, regex.compile(r"\.[Tt][Ii][Ff]\|", flags=regex.M), r".jpg\|"))           # Rename all TIF extensions to JPGs
+            self.localChanges.append((None, regex.compile(r"\.[Tt][Ii][Ff]\|", flags=regex.M), r".jpg|"))           # Rename all TIF extensions to JPGs
             if printer.get("c_skipmissingimages"):
                 msngfigs = self.ListMissingPics(printer)
                 if len(msngfigs):

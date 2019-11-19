@@ -71,7 +71,7 @@ if sys.platform == "linux":
             return p
         else:
             res = subprocess.call(*a, **kw)
-            return None
+            return res
 
     def openkey(path):
         basepath = os.path.expanduser("~/.config/paratext/registry/LocalMachine/software")
@@ -142,7 +142,8 @@ elif sys.platform == "win32":
             return p
         else:
             res = subprocess.call(*newa, **kw)
-            return None
+            return res
+
 print("before ptob")
 ptob = openkey("Paratext/8")
 print("before ptv")
