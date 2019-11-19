@@ -143,9 +143,11 @@ elif sys.platform == "win32":
         else:
             res = subprocess.call(*newa, **kw)
             return None
-
+print("before ptob")
 ptob = openkey("Paratext/8")
+print("before ptv")
 ptv = queryvalue(ptob, "ParatextVersion")
+print("after ptv")
 if ptv:
     version = ptv[:ptv.find(".")]
     pt_bindir = queryvalue(ptob, 'Program_Files_Directory_Ptw'+version)
