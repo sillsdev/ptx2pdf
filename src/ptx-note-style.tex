@@ -102,7 +102,7 @@
     \getp@ram{callerstyle}{\newn@testyle}% see if a caller style was defined
     \ifx\p@ram\relax\def\c@llerstyle{v}\else\edef\c@llerstyle{\p@ram}\fi % if not, treat it like "v"
     \setbox0=\hbox{\ch@rstyle{\c@llerstyle}~\them@rk\ch@rstyle{\c@llerstyle}*}%
-    \ht0=0pt \getp@ram{textcallerraise}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi % suppress height of caller
+    \ht0=0pt \getp@ram{callerraise}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi % suppress height of caller
     }{\getp@ram{notecallerstyle}{\newn@testyle}\ifx\p@ram\relax\else\edef\c@llerstyle{\p@ram}%
         \setbox0=\hbox{\ch@rstyle{\c@llerstyle}~\them@rk\ch@rstyle{\c@llerstyle}*}%
         \ht0=0pt \getp@ram{notecallerraise}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi\fi}\bgroup
