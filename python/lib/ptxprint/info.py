@@ -413,7 +413,13 @@ class Info:
         for w, c in self._snippets.items():
             if printer.get(c[0]): # if the c_checkbox is true then extend the list with those changes
                 self.localChanges.extend(c[1].regexes)
-                
+
+        if printer.get("c_tracing"):
+            report = "\n".join("{} -> {}".format(p[1].pattern, p[2]) for p in self.localChanges)
+            if getattr(printer, "logger", None) is not None:
+                printer.logger.insert_at_cursor(v)
+            else:
+                print(report)
         return self.localChanges
 
     def ListMissingPics(self, printer):
