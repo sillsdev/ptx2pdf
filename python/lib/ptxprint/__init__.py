@@ -511,7 +511,7 @@ class PtxPrinterDialog:
                 lsbooks.append([b])
         cb_bk = self.builder.get_object("cb_book")
         cb_bk.set_active(0)
-        font_name = self.ptsettings['DefaultFont'] + ", " + self.ptsettings['DefaultFontSize']
+        font_name = self.ptsettings.get('DefaultFont', 'Arial') + ", " + self.ptsettings.get('DefaultFontSize', '12')
         self.set('f_body', font_name)
         configfile = os.path.join(self.settings_dir, self.prjid, "ptxprint.cfg")
         if os.path.exists(configfile):

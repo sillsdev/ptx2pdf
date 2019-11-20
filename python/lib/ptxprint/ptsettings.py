@@ -44,6 +44,12 @@ class ParatextSettings:
                 if d is not None:
                     self.dict[k] = ",".join(regex.sub(r'^\[\s*(.*?)\s*\]', r'\1', d.text).split())
                     # print(k, self.dict[k].encode("unicode_escape"))
+            fonts = self.ldml.findall('.//special/{0}external-resources/{0}font'.format(silns))
+            for t in (None, "default"):
+                for f in fonts:
+                    if f.get('type', None) == t:
+                        self.dict['DefaultFont'] = f.get('name', '')
+                        self.dict['DeafultFontSize'] = float(f.get('size', 1.0)) * 12
         else:
             self.ldml = None
 
