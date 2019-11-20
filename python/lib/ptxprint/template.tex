@@ -31,6 +31,8 @@
 %%%%% Text Spacing %%%%%
 \def\LineSpacingFactor{{1.0}}
 \def\VerticalSpaceFactor{{1.0}}
+% This still needs to be fixed. Back in Info, we need to calculate if linemin or linemax == 0, 
+% and if so, don't output '0pt' (as it causes it to crash)
 \baselineskip={paragraph/linespacing}pt {paragraph/varlinespacing} plus {paragraph/linemax}pt minus {paragraph/linemin}pt
 
 %% Cross-space contextualization

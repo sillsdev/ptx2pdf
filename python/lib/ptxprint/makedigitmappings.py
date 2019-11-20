@@ -28,6 +28,8 @@
 # U+0038 <> U+0E58 ;
 # U+0039 <> U+0E59 ;
 
+# C:\Program Files (x86)\Paratext 9\xetex\share\texmf-dist\fonts\misc\xetex\fontmapping\ (both .map and .tec files go here)
+
 import re, os, subprocess
 digifile = r"C:\ptx2pdf\python\lib\ptxprint\UnicodeDigits.lst"
 outpath = r"C:\ptx2pdf\python\lib\ptxprint\mappings"
@@ -43,7 +45,7 @@ with open(digifile, "r", encoding="utf-8") as inf:
         try:
             script = a[1].split(" DIGIT ")[0]
             RHSName = re.sub("[ -]","",script.title())
-            outfname = os.path.join(outpath,RHSName.lower()+"digits.map")
+            outfname = os.path.join(outpath,re.sub("[ ]","-",script.lower()+"digits.map"))
             digit = a[1].split(" DIGIT ")[1]
             if digit in diginames:
                 if digit == 'ZERO' or prevscript != script:
