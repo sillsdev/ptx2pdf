@@ -408,9 +408,11 @@ class PtxPrinterDialog:
 
     def onUsePTmacrosClicked(self, c_usePTmacros):
         status = self.get("c_usePTmacros")
-        for c in ("c_variableLineSpacing", "s_linespacingmin", "s_linespacingmax", "l_min", "l_max",
-                  "c_startOnHalfPage", "c_HideChap1ChBooks", "c_marginalverses"):
+        for c in ("c_variableLineSpacing", "s_linespacingmin", "s_linespacingmax", "l_min", "l_max"):
             self.builder.get_object(c).set_sensitive(not status)
+        # These are (temporarily) disabled until we get them working properly and predictably
+        for c in ("c_startOnHalfPage", "c_HideChap1ChBooks", "c_marginalverses"):
+            self.builder.get_object(c).set_sensitive(False)
 
     def onPrettyIntroOutlineClicked(self, c_prettyIntroOutline):
         self.GenerateNestedStyles(None)
