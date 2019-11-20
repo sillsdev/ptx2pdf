@@ -95,6 +95,8 @@ def doit(printer):
     info = printer.info or ptxprint.Info(printer, args.paratext, printer.ptsettings)
     prjid = printer.get("cb_project")
     prjdir = os.path.join(args.paratext, prjid)
+    if prjid is None or not len(prjid):     # can't print no project
+        return
     # save config
     info.update()
     info.GenerateNestedStyles()

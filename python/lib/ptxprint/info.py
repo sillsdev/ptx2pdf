@@ -1,7 +1,7 @@
 import configparser, re, os
 import regex
 from ptxprint.font import TTFont
-from ptxprint.ptsettings import ParatextSettings, chaps, books
+from ptxprint.ptsettings import chaps, books
 from ptxprint.snippets import FancyIntro
 
 class Info:
@@ -174,12 +174,12 @@ class Info:
         "snippets/fancyintro": ("c_prettyIntroOutline", FancyIntro)
     }
     
-    def __init__(self, printer, path, ptsettings=None):
-        self.ptsettings = ptsettings
+    def __init__(self, printer, path, prjid = None):
         self.printer = printer
         self.changes = None
         self.localChanges = None
         self.dict = {"/ptxpath": path}
+        self.prjid = prjid
         self.update()
 
     def update(self):
@@ -188,6 +188,8 @@ class Info:
             val = printer.get(v[0]) if v[0] is not None else None
             if v[1] is not None:
                 self.dict[k] = v[1](printer, val)
+        if self.prjid is not None:
+            self.dict['project/id'] = self.prjid
         self.processFonts(printer)
         self.processHdrFtr(printer)
         self.makelocalChanges(printer)
@@ -205,7 +207,7 @@ class Info:
         silns = "{urn://www.sil.org/ldml/0.1}"
         for p, wid in self._fonts.items():
             f = TTFont(printer.get(wid))
-            d = self.ptsettings.ldml.find('.//special/{1}external-resources/{1}font[@name="{0}"]'.format(f.family, silns))
+            d = self.printer.ptsettings.ldml.find('.//special/{1}external-resources/{1}font[@name="{0}"]'.format(f.family, silns))
             if d is not None:
                 f.features = {}
                 for l in d.get('features', '').split(','):
@@ -253,7 +255,7 @@ class Info:
  #       import pdb;pdb.set_trace()
         for k, v in self._settingmappings.items():
             if self.dict[k] == "":
-                self.dict[k] = self.ptsettings.dict.get(v, "a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z")
+                self.dict[k] = self.printer.ptsettings.dict.get(v, "a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z")
         res = []
         with open(os.path.join(os.path.dirname(__file__), template)) as inf:
             for l in inf.readlines():
@@ -272,8 +274,6 @@ class Info:
         return "".join(res)
 
     def convertBook(self, bk, outdir, prjdir):
-        if self.ptsettings is None:
-            self.ptsettings = ParatextSettings(prjdir)
         if self.changes is None and self.dict['project/usechangesfile'] == "true":
             self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'))
         else:
@@ -281,9 +281,9 @@ class Info:
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
             open(customsty, "w").close()
-        fbkfm = self.ptsettings['FileNameBookNameForm']
+        fbkfm = self.printer.ptsettings['FileNameBookNameForm']
         bknamefmt = fbkfm.replace("MAT","{bkid}").replace("41","{bknum:02d}") + \
-                    self.ptsettings['FileNamePostPart']
+                    self.printer.ptsettings['FileNamePostPart']
         fname = bknamefmt.format(bkid=bk, bknum=books.get(bk, 0))
         infname = os.path.join(prjdir, fname)
         if self.changes is not None or self.localChanges is not None:
@@ -426,7 +426,7 @@ class Info:
     def ListMissingPics(self, printer):
         # When should this function be called? At present it is happening at startup, and I think it should happen later.
         msngpiclist = []
-        prjid = printer.get("cb_project")
+        prjid = self.dict['project/id']
         prjdir = os.path.join(printer.settings_dir, prjid)
         if printer.get("c_useFiguresFolder"): # Therefore this is always true!
             picdir = os.path.join(prjdir, "Figures")
@@ -470,7 +470,7 @@ class Info:
                 continue
             val = printer.get(v[0], asstr=True)
             if k in self._settingmappings:
-                if val == "" or val == self.ptsettings.dict.get(self._settingmappings[k], ""):
+                if val == "" or val == self.printer.ptsettings.dict.get(self._settingmappings[k], ""):
                     continue
             self._configset(config, k, str(val))
         for k, v in self._fonts.items():
@@ -507,8 +507,8 @@ class Info:
             try:
                 val = config.get(sect, name)
             except configparser.NoOptionError:
-                printer.set(self._mappings[k][0], self.ptsettings.dict.get(v, ""))
-                self.dict[k] = self.ptsettings.get(v, "")
+                printer.set(self._mappings[k][0], self.printer.ptsettings.dict.get(v, ""))
+                self.dict[k] = self.printer.ptsettings.get(v, "")
         # Handle specials here:
         printer.CustomScript = self.dict['project/selectscript']
         printer.customFigFolder = self.dict['document/customfigfolder']

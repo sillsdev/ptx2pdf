@@ -493,6 +493,12 @@ class PtxPrinterDialog:
         
     def onProjectChange(self, cb_prj):
         currprj = self.prjid
+        if currprj is not None:
+            if self.info is None:
+                self.info = Info(self, self.settings_dir, prjid = currprj)
+            config = self.info.createConfig(self)
+            with open(os.path.join(self.settings_dir, currprj, "ptxprint.cfg"), "w", encoding="utf-8") as outf:
+                config.write(outf)
         self.prjid = self.get("cb_project")
         self.ptsettings = None
         lsbooks = self.builder.get_object("ls_books")
@@ -516,7 +522,7 @@ class PtxPrinterDialog:
         configfile = os.path.join(self.settings_dir, self.prjid, "ptxprint.cfg")
         if os.path.exists(configfile):
             print("Reading configfile {}".format(configfile))
-            self.info = Info(self, self.settings_dir, self.ptsettings)
+            self.info = Info(self, self.settings_dir)
             config = configparser.ConfigParser()
             config.read(configfile, encoding="utf-8")
             self.info.loadConfig(self, config)
