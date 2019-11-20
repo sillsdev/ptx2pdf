@@ -106,6 +106,7 @@ class PtxPrinterDialog:
         self.BackPDFs = None
         self.watermarks = None
         self.customFigFolder = None
+        self.prjid = None
         for p in allprojects:
             self.projects.append([p])
 
@@ -491,10 +492,12 @@ class PtxPrinterDialog:
             self.cb_chapto.set_active_id(str(self.chs))
         
     def onProjectChange(self, cb_prj):
+        currprj = self.prjid
         self.prjid = self.get("cb_project")
         self.ptsettings = None
         lsbooks = self.builder.get_object("ls_books")
-        lsbooks.clear()
+        if currprj is not None:
+           lsbooks.clear()
         if not self.prjid:
             return
         self.ptsettings = ParatextSettings(self.settings_dir, self.prjid)

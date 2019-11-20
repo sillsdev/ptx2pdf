@@ -39,7 +39,6 @@ mainw = ptxprint.PtxPrinterDialog(allprojects, args.paratext)
 
 if args.pid:
     mainw.set("cb_project", args.pid)
-    mainw.onProjectChange(None)
 
 def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
     donebooks = []
