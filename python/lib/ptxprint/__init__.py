@@ -497,7 +497,10 @@ class PtxPrinterDialog:
         self.ptsettings = None
         lsbooks = self.builder.get_object("ls_books")
         if currprj is not None:
-           lsbooks.clear()
+            cbbook = self.builder.get_object("cb_book")
+            cbbook.set_model(None)
+            lsbooks.clear()
+            cbbook.set_model(lsbooks)
         if not self.prjid:
             return
         self.ptsettings = ParatextSettings(self.settings_dir, self.prjid)

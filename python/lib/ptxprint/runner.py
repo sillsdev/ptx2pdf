@@ -162,4 +162,5 @@ else:
         version = ptv[:ptv.find(".")]
         pt_bindir = queryvalue(ptob, 'Program_Files_Directory_Ptw'+version)
     pt_settings = queryvalue(ptob, 'Settings_Directory')
-print("Paratext Data Folder in use: ",pt_settings,"\nParatext Program Folder in use: ",pt_bindir)
+if ptv:
+    print("Paratext Data Folder in use: ",pt_settings,"\nParatext Program Folder in use: ",pt_bindir)
