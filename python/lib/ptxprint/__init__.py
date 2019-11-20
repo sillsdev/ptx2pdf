@@ -272,7 +272,7 @@ class PtxPrinterDialog:
         status = self.get("c_includeillustrations")
         for c in ("c_includefigsfromtext", "c_usePicList", "l_useFolder", "c_useFiguresFolder", "c_useLocalFiguresFolder", "c_useCustomFolder",
                   "btn_selectFigureFolder", "l_useFiguresFolder", "l_useLocalFiguresFolder",
-                  "c_figexclwebapp", "c_figplaceholders", "c_fighiderefs"):  # add this later: "c_convertTIFtoPNG", 
+                  "c_figexclwebapp", "c_figplaceholders", "c_fighiderefs", "c_skipmissingimages"):  # add this later: "c_convertTIFtoPNG", 
             self.builder.get_object(c).set_sensitive(status)
         if status:
             status = self.get("c_includefigsfromtext")
@@ -403,8 +403,14 @@ class PtxPrinterDialog:
         
     def onSuppressOutlineClicked(self, c_omitIntroOutline):
         self.builder.get_object("c_prettyIntroOutline").set_sensitive(not self.get("c_omitIntroOutline"))
-        self.builder.get_object("c_prettyIntroOutline").set_active(not self.get("c_omitIntroOutline"))
+        self.builder.get_object("c_prettyIntroOutline").set_active(False)
         self.GenerateNestedStyles(None)
+
+    def onUsePTmacrosClicked(self, c_usePTmacros):
+        status = self.get("c_usePTmacros")
+        for c in ("c_variableLineSpacing", "s_linespacingmin", "s_linespacingmax", "l_min", "l_max",
+                  "c_startOnHalfPage", "c_HideChap1ChBooks", "c_marginalverses"):
+            self.builder.get_object(c).set_sensitive(not status)
 
     def onPrettyIntroOutlineClicked(self, c_prettyIntroOutline):
         self.GenerateNestedStyles(None)

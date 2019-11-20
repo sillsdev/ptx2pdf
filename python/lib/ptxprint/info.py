@@ -12,7 +12,6 @@ class Info:
         "project/useptmacros":      ("c_usePTmacros", lambda w,v: "true" if v else "false"),
         "project/ifuseptmacros":    ("c_usePTmacros", lambda w,v: "%" if v else ""),
         "project/multiplebooks":    ("c_multiplebooks", lambda w,v: "true" if v else "false"),
-        # "project/choosebooks":      ("btn_chooseBooks", lambda w,v: v or ""),
         "project/combinebooks":     ("c_combine", lambda w,v: "true" if v else "false"),
         "project/book":             ("cb_book", None),
         "project/booklist":         ("t_booklist", lambda w,v: v or ""),
@@ -47,11 +46,10 @@ class Info:
         "paper/columns":            ("c_doublecolumn", lambda w,v: "2" if v else "1"),
         "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
 
-        # "paragraph/fixlinespacing": ("c_variableLineSpacing", lambda w,v: "%" if v else ""),
         "paragraph/varlinespacing": ("c_variableLineSpacing", lambda w,v: "" if v else "%"),
-        "paragraph/linespacing":    ("s_linespacing", lambda w,v: v or "15.000"),
-        "paragraph/linemin": ("s_linespacingmin", lambda w,v: w.get("s_linespacing") - v if v <= w.get("s_linespacing") else "0"),
-        "paragraph/linemax": ("s_linespacingmax", lambda w,v: v - w.get("s_linespacing") if v >= w.get("s_linespacing") else "0"),
+        "paragraph/linespacing":    ("s_linespacing", lambda w,v: "{:.3f}".format(v) or "15.000"),
+        "paragraph/linemin": ("s_linespacingmin", lambda w,v: "minus {:.3f}pt".format(w.get("s_linespacing") - v) if v < w.get("s_linespacing") else ""),
+        "paragraph/linemax": ("s_linespacingmax", lambda w,v: "plus {:.3f}pt".format(v - w.get("s_linespacing")) if v > w.get("s_linespacing") else ""),
         "paragraph/ifjustify":       ("c_justify", lambda w,v: "true" if v else "false"),
         "paragraph/ifhyphenate":     ("c_hyphenate", lambda w,v: "true" if v else "false"),
 

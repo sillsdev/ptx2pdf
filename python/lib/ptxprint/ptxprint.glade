@@ -381,14 +381,6 @@
       <!-- column-name book -->
       <column type="gchararray"/>
     </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">MAT</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">MRK</col>
-      </row>
-    </data>
   </object>
   <object class="GtkListStore" id="ls_chapfrom">
     <columns>
@@ -2932,7 +2924,7 @@ whether to include Illustrations.</property>
                                         <property name="digits">2</property>
                                         <property name="numeric">True</property>
                                         <property name="update_policy">if-valid</property>
-                                        <property name="value">1.1499999999999999</property>
+                                        <property name="value">1.6000000000000001</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -2969,7 +2961,7 @@ whether to include Illustrations.</property>
                                         <property name="digits">2</property>
                                         <property name="numeric">True</property>
                                         <property name="update_policy">if-valid</property>
-                                        <property name="value">0.5</property>
+                                        <property name="value">0.80000000000000004</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -3181,7 +3173,7 @@ layout</property>
                                         <property name="climb_rate">1</property>
                                         <property name="numeric">True</property>
                                         <property name="update_policy">if-valid</property>
-                                        <property name="value">15</property>
+                                        <property name="value">14</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">2</property>
@@ -3739,7 +3731,7 @@ single running paragraph. Use this Xref caller:</property>
                                         <property name="digits">2</property>
                                         <property name="numeric">True</property>
                                         <property name="update_policy">if-valid</property>
-                                        <property name="value">1.1499999999999999</property>
+                                        <property name="value">1</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -3776,7 +3768,7 @@ single running paragraph. Use this Xref caller:</property>
                                         <property name="digits">2</property>
                                         <property name="numeric">True</property>
                                         <property name="update_policy">if-valid</property>
-                                        <property name="value">0.5</property>
+                                        <property name="value">0.69999999999999996</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -4230,6 +4222,7 @@ stable version of XeTeX macros
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">3</property>
                                     <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onUsePTmacrosClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
