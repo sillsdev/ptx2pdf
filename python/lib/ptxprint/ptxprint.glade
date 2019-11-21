@@ -2187,7 +2187,6 @@ etc.
                                       <object class="GtkCheckButton" id="c_startOnHalfPage">
                                         <property name="label" translatable="yes">Begin next book on last page of previous book</property>
                                         <property name="visible">True</property>
-                                        <property name="sensitive">False</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">If the last page of a book uses less than
@@ -2387,7 +2386,6 @@ in the printed output.</property>
                                   <object class="GtkCheckButton" id="c_marginalverses">
                                     <property name="label" translatable="yes">Use Marginal Verses (beside body text)</property>
                                     <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">[Not yet implemented]</property>
@@ -4932,7 +4930,7 @@ styles in the StyleSheet.)</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkEntry">
+                                  <object class="GtkEntry" id="t_PTsettingsFolder">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="margin_right">6</property>
@@ -4944,7 +4942,7 @@ styles in the StyleSheet.)</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkEntry">
+                                  <object class="GtkEntry" id="t_PTprogramFolder">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="margin_right">6</property>

@@ -264,13 +264,13 @@ class Info:
             for l in inf.readlines():
                 if l.startswith(r"\ptxfile"):
                     res.append("\\PtxFilePath={"+filedir.replace("\\","/")+"/}\n")
-                    le = len(self.dict['project/books'])
                     for i, f in enumerate(self.dict['project/books']):
-                        if self.dict['document/ifomitsinglechnum'] and f[2:5] in oneChbooks:
+                        if self.dict['document/ifomitsinglechnum'] == 'true' and self.dict['document/ifomitchapternum'] == "false" and f[2:5] in oneChbooks:
                             res.append("\\OmitChapterNumbertrue\n")
                             res.append("\\ptxfile{{{}}}\n".format(f))
                             res.append("\\OmitChapterNumberfalse\n")
                         else:
+                            print("Else for book: ",f[2:5])
                             res.append("\\ptxfile{{{}}}\n".format(f))
                 elif l.startswith(r"%\snippets"):
                     for k, c in self._snippets.items():
