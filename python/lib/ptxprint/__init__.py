@@ -292,13 +292,13 @@ class PtxPrinterDialog:
         status = self.get("c_includeFootnotes")
         for c in ("c_fnautocallers", "t_fncallers", "c_fnomitcaller", "c_fnpageresetcallers", "c_fnparagraphednotes"):
             self.builder.get_object(c).set_sensitive(status)
-        self.GenerateNestedStyles(None)
+        # self.GenerateNestedStyles(None)
         
     def onClickedIncludeXrefs(self, c_includeXrefs):
         status = self.get("c_includeXrefs")
         for c in ("c_xrautocallers", "t_xrcallers", "c_xromitcaller", "c_xrpageresetcallers", "c_paragraphedxrefs"):
             self.builder.get_object(c).set_sensitive(status)
-        self.GenerateNestedStyles(None)
+        # self.GenerateNestedStyles(None)
 
     def onPageGutterChanged(self, c_pagegutter):
         status = self.get("c_pagegutter")
@@ -404,18 +404,59 @@ class PtxPrinterDialog:
     def onSuppressOutlineClicked(self, c_omitIntroOutline):
         self.builder.get_object("c_prettyIntroOutline").set_sensitive(not self.get("c_omitIntroOutline"))
         self.builder.get_object("c_prettyIntroOutline").set_active(False)
-        self.GenerateNestedStyles(None)
+        # self.GenerateNestedStyles(None)
 
     def onUsePTmacrosClicked(self, c_usePTmacros):
         status = self.get("c_usePTmacros")
         for c in ("c_variableLineSpacing", "s_linespacingmin", "s_linespacingmax", "l_min", "l_max"):
             self.builder.get_object(c).set_sensitive(not status)
         # These are (temporarily) disabled until we get them working properly and predictably
-        for c in ("c_startOnHalfPage", "c_HideChap1ChBooks", "c_marginalverses"):
+        for c in ("c_startOnHalfPage", "c_marginalverses"):
             self.builder.get_object(c).set_sensitive(False)
 
-    def onPrettyIntroOutlineClicked(self, c_prettyIntroOutline):
-        self.GenerateNestedStyles(None)
+    def onHideAdvancedSettingsClicked(self, c_hideAdvancedSettings):
+        # Turn Dangerous Settings OFF
+        for c in ("c_startOnHalfPage", "c_marginalverses", "c_prettyIntroOutline", "c_blendfnxr"):
+            self.builder.get_object(c).set_active(False)
+            
+        # Turn Essential Settings ON
+        for c in ("c_mainBodyText", "c_footnoterule",
+                  "c_includefigsfromtext", "c_skipmissingimages", "c_convertTIFtoPNG", "c_useFiguresFolder"):
+            self.builder.get_object(c).set_active(True)
+            
+        # Hide a whole bunch of stuff that they don't need to see
+        for c in ("tb_Diglot", "tb_Advanced","tb_Markers", "tb_Logging", "fr_FontConfig", "row_ToC",
+                  "bx_BottomMarginSettings", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "box_AdvFootnoteConfig", 
+                  "c_usePicList", "c_skipmissingimages", "c_convertTIFtoPNG", "c_useCustomFolder", "btn_selectFigureFolder", 
+                  "c_startOnHalfPage", "c_marginalverses", "c_prettyIntroOutline"):
+            self.builder.get_object(c).set_visible(not self.get("c_hideAdvancedSettings"))
+        
+    def onKeepTemporaryFilesClicked(self, c_keepTemporaryFiles):
+        self.builder.get_object("gr_debugTools").set_sensitive(self.get("c_keepTemporaryFiles"))
+        
+    def onViewSFMfileClicked(self, btn_viewSFMfile):
+        bk = self.get("cb_examineBook")
+        prjid = self.get("cb_project")
+        prjdir = os.path.join(self.settings_dir, self.prjid)
+        fname = self.getBookFilename(bk, prjdir)
+        viewfile = os.path.join(prjdir, "PrintDraft", fname)
+        doti = viewfile.rfind(".")
+        if doti > 0:
+            viewfile = viewfile[:doti] + "-draft" + viewfile[doti:] + ".SFM"
+        if os.path.exists(viewfile):
+            os.startfile(viewfile)
+        
+    def onViewTeXfileClicked(self, btn_viewTeXfile):
+        self.prjid = self.get("cb_project")
+        viewfile = os.path.join(self.settings_dir, self.prjid, "PrintDraft", "Something-draft.tex") # Do we have the name of the main .tex file at this point?
+        if os.path.exists(viewfile):
+            os.startfile(viewfile)
+        
+    def onViewLogFileClicked(self, btn_viewLogFile):
+        self.prjid = self.get("cb_project")
+        viewfile = os.path.join(self.settings_dir, self.prjid, "PrintDraft", "Something-draft.log") # Do we have the name of the .log file at this point?
+        if os.path.exists(viewfile):
+            os.startfile(viewfile)
         
     def onChooseBooksClicked(self, btn):
         dia = self.builder.get_object("dlg_multiBookSelector")
@@ -731,8 +772,8 @@ class PtxPrinterDialog:
                     else:
                         print("Adj List already exists (this will NOT be overwritten): " + outfname)
 
-    def GenerateNestedStyles(self, c_omitallverses):
-        print(".") # Need to call this on the other side!")
+    # def GenerateNestedStyles(self, c_omitallverses):
+        # print(".") # Need to call this on the other side!")
 
     def onEditAdjListClicked(self, btn_editParaAdjList):
         if not self.get("c_multiplebooks"):

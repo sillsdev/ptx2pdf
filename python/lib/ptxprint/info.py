@@ -1,7 +1,7 @@
 import configparser, re, os
 import regex
 from ptxprint.font import TTFont
-from ptxprint.ptsettings import chaps, books
+from ptxprint.ptsettings import chaps, books, oneChbooks
 from ptxprint.snippets import FancyIntro
 
 class Info:
@@ -68,8 +68,9 @@ class Info:
         "document/digitmapping":    ("cb_digits", lambda w,v: ";mapping="+v.lower()+"digits" if v != "Default" else ""),
         "document/ch1pagebreak":    ("c_ch1pagebreak", lambda w,v: "true" if v else "false"),
         "document/marginalverses":  ("c_marginalverses", lambda w,v: "" if v else "%"),
-        "document/ifomitchapternum":  ("c_omitchapternumber", lambda w,v: "true" if v else "false"),
-        "document/ifomitallchapters": ("c_omitchapternumber", lambda w,v: "" if v else "%"),
+        "document/ifomitchapternum":   ("c_omitchapternumber", lambda w,v: "true" if v else "false"),
+        "document/ifomitallchapters":  ("c_omitchapternumber", lambda w,v: "" if v else "%"),
+        "document/ifomitsinglechnum":  ("c_omitChap1ChBooks", lambda w,v: "true" if v else "false"),
         "document/ifomitverseone":  ("c_omitverseone", lambda w,v: "true" if v else "false"),
         "document/ifomitallverses": ("c_omitallverses", lambda w,v: "" if v else "%"),
         "document/ifmainbodytext":  ("c_mainBodyText", lambda w,v: "true" if v else "false"),
@@ -96,7 +97,8 @@ class Info:
         "document/supressintrooutline": ("c_omitIntroOutline", lambda w,v: "true" if v else "false"),
         "document/supressindent":   ("c_omit1paraIndent", lambda w,v: "false" if v else "true"),
 
-        "document/fancyintro":      ("c_prettyIntroOutline", lambda w,v: v ), 
+        # "document/fancyintro":      ("c_prettyIntroOutline", lambda w,v: v ), 
+        "document/fancyintro":      ("c_prettyIntroOutline", lambda w,v: "true" if v else "false"), 
 
         "header/headerposition":    ("s_headerposition", lambda w,v: round(v, 2) or "0.50"),
         "header/footerposition":    ("s_footerposition", lambda w,v: round(v, 2) or "0.50"),
@@ -258,10 +260,13 @@ class Info:
                 if l.startswith(r"\ptxfile"):
                     res.append("\\PtxFilePath={"+filedir.replace("\\","/")+"/}\n")
                     le = len(self.dict['project/books'])
-                    # print(ParatextSettings.oneChbooks)
                     for i, f in enumerate(self.dict['project/books']):
-                        print(i,f)
-                        res.append("\\ptxfile{{{}}}\n".format(f))
+                        if self.dict['document/ifomitsinglechnum'] and f[2:5] in oneChbooks:
+                            res.append("\\OmitChapterNumbertrue\n")
+                            res.append("\\ptxfile{{{}}}\n".format(f))
+                            res.append("\\OmitChapterNumberfalse\n")
+                        else:
+                            res.append("\\ptxfile{{{}}}\n".format(f))
                 elif l.startswith(r"%\snippets"):
                     for k, c in self._snippets.items():
                         v = self.printer.get(c[0])

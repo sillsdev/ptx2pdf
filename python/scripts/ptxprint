@@ -72,7 +72,7 @@ def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
         if not os.getenv('TEXINPUTS'):
             mdirs = args.macros or "/usr/lib/Paratext8/xetex/share/texmf-dist/tex/ptx2pdf:/usr/lib/Paratext9/xetex/share/texmf-dist/tex/ptx2pdf"
             os.putenv('TEXINPUTS', ".:" + mdirs)
-    runner = ptxprint.runner.call(["xetex", "--halt-on-error", outfname], cwd=tmpdir, logbuffer=(logbuffer if not args.logger else None))
+    runner = ptxprint.runner.call(["xetex", "--halt-on-error", outfname], cwd=tmpdir, logbuffer=(logbuffer if not args.logging else None))
     delayed = outfname.replace(".tex", ".delayed")
     if os.path.exists(delayed):
         if isinstance(runner, subprocess.Popen) and runner is not None:
@@ -81,7 +81,7 @@ def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
         else:
             res = runner
         if res == 0:
-            runner = ptxprint.runner.call(["xetex", "--halt-on-error", outfname], cwd=tmpdir, logbuffer=(logbuffer if not args.logger else None))
+            runner = ptxprint.runner.call(["xetex", "--halt-on-error", outfname], cwd=tmpdir, logbuffer=(logbuffer if not args.logging else None))
     if logbuffer is not None:
         if isinstance(runner, subprocess.Popen) and runner is not None:
             runner.wait(200)
