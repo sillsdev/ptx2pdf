@@ -97,9 +97,6 @@ class Info:
         "document/supressintrooutline": ("c_omitIntroOutline", lambda w,v: "true" if v else "false"),
         "document/supressindent":   ("c_omit1paraIndent", lambda w,v: "false" if v else "true"),
 
-        # "document/fancyintro":      ("c_prettyIntroOutline", lambda w,v: v ), 
-        "document/fancyintro":      ("c_prettyIntroOutline", lambda w,v: "true" if v else "false"), 
-
         "header/headerposition":    ("s_headerposition", lambda w,v: round(v, 2) or "0.50"),
         "header/footerposition":    ("s_footerposition", lambda w,v: round(v, 2) or "0.50"),
         "header/ifomitrhchapnum":   ("c_omitrhchapnum", lambda w,v :"true" if v else "false"),
@@ -504,7 +501,7 @@ class Info:
                     v = self._fonts[key]
                     printer.set(v, val)
                 elif key in self._snippets:
-                    printer.set(self._snippets[key][0], val)
+                    printer.set(self._snippets[key][0], val.lower() == "true")
         for k, v in self._settingmappings.items():
             (sect, name) = k.split("/")
             try:
