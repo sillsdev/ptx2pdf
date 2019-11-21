@@ -97,6 +97,9 @@ class Info:
         "document/supressintrooutline": ("c_omitIntroOutline", lambda w,v: "true" if v else "false"),
         "document/supressindent":   ("c_omit1paraIndent", lambda w,v: "false" if v else "true"),
 
+        # "document/fancyintro":      ("c_prettyIntroOutline", lambda w,v: v ), 
+        # "document/fancyintro":      ("c_prettyIntroOutline", lambda w,v: "true" if v else "false"), 
+
         "header/headerposition":    ("s_headerposition", lambda w,v: round(v, 2) or "0.50"),
         "header/footerposition":    ("s_footerposition", lambda w,v: round(v, 2) or "0.50"),
         "header/ifomitrhchapnum":   ("c_omitrhchapnum", lambda w,v :"true" if v else "false"),
