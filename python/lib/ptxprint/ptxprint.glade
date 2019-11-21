@@ -3921,6 +3921,7 @@ and Cross-references.</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Create a Diglot or
 Multi-script publication.</property>
+                    <property name="opacity">0.69999999999999996</property>
                     <property name="label" translatable="yes">Diglot</property>
                   </object>
                   <packing>
@@ -4826,7 +4827,7 @@ TeX code can also be added.</property>
                 </child>
                 <child>
                   <object class="GtkBox" id="tb_Markers">
-                    <property name="visible">True</property>
+                    <property name="sensitive">False</property>
                     <property name="can_focus">False</property>
                     <property name="orientation">vertical</property>
                     <child>
@@ -4845,7 +4846,7 @@ TeX code can also be added.</property>
                 </child>
                 <child type="tab">
                   <object class="GtkLabel">
-                    <property name="visible">True</property>
+                    <property name="sensitive">False</property>
                     <property name="can_focus">False</property>
                     <property name="opacity">0.69999999999999996</property>
                     <property name="label" translatable="yes">Markers</property>
@@ -5155,7 +5156,6 @@ also contain several other related files.</property>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="opacity">0.69999999999999996</property>
                     <property name="label" translatable="yes">Logging</property>
                   </object>
                   <packing>

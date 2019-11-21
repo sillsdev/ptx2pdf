@@ -416,7 +416,8 @@ class PtxPrinterDialog:
 
     def onHideAdvancedSettingsClicked(self, c_hideAdvancedSettings):
         # Turn Dangerous Settings OFF
-        for c in ("c_startOnHalfPage", "c_marginalverses", "c_prettyIntroOutline", "c_blendfnxr"):
+        for c in ("c_startOnHalfPage", "c_marginalverses", "c_prettyIntroOutline", "c_blendfnxr", "c_autoToC", 
+                  "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", "c_preventwidows"):
             self.builder.get_object(c).set_active(False)
             
         # Turn Essential Settings ON
@@ -425,10 +426,11 @@ class PtxPrinterDialog:
             self.builder.get_object(c).set_active(True)
             
         # Hide a whole bunch of stuff that they don't need to see
-        for c in ("tb_Diglot", "tb_Advanced","tb_Markers", "tb_Logging", "fr_FontConfig", "row_ToC",
+        for c in ("tb_Markers", "tb_Diglot", "tb_Advanced","tb_Logging", "fr_FontConfig", "row_ToC",
                   "bx_BottomMarginSettings", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "box_AdvFootnoteConfig", 
                   "c_usePicList", "c_skipmissingimages", "c_convertTIFtoPNG", "c_useCustomFolder", "btn_selectFigureFolder", 
-                  "c_startOnHalfPage", "c_marginalverses", "c_prettyIntroOutline"):
+                  "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses",
+                  "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", "c_preventwidows"):
             self.builder.get_object(c).set_visible(not self.get("c_hideAdvancedSettings"))
         
     def onKeepTemporaryFilesClicked(self, c_keepTemporaryFiles):
@@ -442,21 +444,27 @@ class PtxPrinterDialog:
         viewfile = os.path.join(prjdir, "PrintDraft", fname)
         doti = viewfile.rfind(".")
         if doti > 0:
-            viewfile = viewfile[:doti] + "-draft" + viewfile[doti:] + ".SFM"
+            viewfile = viewfile[:doti] + "-draft" + viewfile[doti:]
+        if os.path.exists(viewfile):
+            os.startfile(viewfile)
+            
+    def ViewOutputFile(self, extn):
+        prjid = self.get("cb_project")
+        bks = self.getBooks()
+        prjdir = os.path.join(self.settings_dir, self.prjid)
+        if len(bks) > 1:
+            fname = "ptxprint-{}_{}{}.{}".format(bks[0], bks[-1], prjid, extn)
+        else:
+            fname = "ptxprint-{}{}.{}".format(bks[0], prjid, extn)
+        viewfile = os.path.join(prjdir, "PrintDraft", fname)
         if os.path.exists(viewfile):
             os.startfile(viewfile)
         
     def onViewTeXfileClicked(self, btn_viewTeXfile):
-        self.prjid = self.get("cb_project")
-        viewfile = os.path.join(self.settings_dir, self.prjid, "PrintDraft", "Something-draft.tex") # Do we have the name of the main .tex file at this point?
-        if os.path.exists(viewfile):
-            os.startfile(viewfile)
+        self.ViewOutputFile("tex")
         
     def onViewLogFileClicked(self, btn_viewLogFile):
-        self.prjid = self.get("cb_project")
-        viewfile = os.path.join(self.settings_dir, self.prjid, "PrintDraft", "Something-draft.log") # Do we have the name of the .log file at this point?
-        if os.path.exists(viewfile):
-            os.startfile(viewfile)
+        self.ViewOutputFile("log")
         
     def onChooseBooksClicked(self, btn):
         dia = self.builder.get_object("dlg_multiBookSelector")

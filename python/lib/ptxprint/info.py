@@ -171,8 +171,8 @@ class Info:
         "circumflex after^ word":  r"\1^"
     }
     _snippets = {
-        "snippets/fancyintro": ("c_prettyIntroOutline", FancyIntro)
-    }
+        "snippets/fancyintro": ("c_prettyIntroOutline", FancyIntro)  # This is the culprit (which is always turning that c_box on!!!)
+    }                                                                # But what do you want it to do?
     
     def __init__(self, printer, path, prjid = None):
         self.printer = printer
@@ -274,7 +274,7 @@ class Info:
                             res.append(c[1].texCode)
                 else:
                     res.append(l.format(**self.dict))
-        return "".join(res)
+        return "".join(res).replace("\OmitChapterNumberfalse\n\OmitChapterNumbertrue\n","")
 
     def convertBook(self, bk, outdir, prjdir):
         if self.changes is None and self.dict['project/usechangesfile'] == "true":

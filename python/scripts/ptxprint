@@ -118,7 +118,8 @@ def doit(printer):
         pdfname = os.path.join(tmpdir, "ptxprint-{}{}.pdf".format(jobs[0], prjid))
     if not printer.get("c_keepTemporaryFiles"):
         removeTempFiles(texfiles,tmpdir,info)
-    # Need a way to check if a NEW PDF was generated, and not just open the PREVIOUS one and pretend that everything worked fine! :-(
+    # Need to check the return code to see if generating the PDF was successful. And if not, then issue some 
+    # warning or error message rather than leave the PREVIOUS PDF open and pretend that everything worked fine! :-(
     if sys.platform == "win32" and os.path.exists(pdfname):
         os.startfile(pdfname)
 
