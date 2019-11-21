@@ -253,12 +253,12 @@ class Info:
             if self.dict[k] == "":
                 self.dict[k] = self.printer.ptsettings.dict.get(v, "a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z")
         res = []
-        with open(os.path.join(os.path.dirname(__file__), template, encoding="utf-8")) as inf:
+        with open(os.path.join(os.path.dirname(__file__), template), encoding="utf-8") as inf:
             for l in inf.readlines():
                 if l.startswith(r"\ptxfile"):
                     res.append("\\PtxFilePath={"+filedir.replace("\\","/")+"/}\n")
                     le = len(self.dict['project/books'])
-                    print(self.ptsettings.oneChbooks)
+                    # print(ParatextSettings.oneChbooks)
                     for i, f in enumerate(self.dict['project/books']):
                         print(i,f)
                         res.append("\\ptxfile{{{}}}\n".format(f))
