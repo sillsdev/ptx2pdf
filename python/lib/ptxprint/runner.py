@@ -61,15 +61,16 @@ if sys.platform == "linux":
         return res
 
     def call(*a, **kw):
-        if 'logbuffer' in kw:
+        if kw.get('logbuffer', None) is not None:
             b = kw['logbuffer']
             del kw['logbuffer']
             b.add_heading("Execute: " + " ".join(a[0]))
             p = subprocess.Popen(*a, stdout = subprocess.PIPE, stderr = subprocess.PIPE, stdin = subprocess.DEVNULL,
-                                 universal_newlines = True, encoding="utf-8", errors="backslashreplace", **kw)
+                                 universal_newlines = True, encoding="utf-8", errors="backslashreplace", bufsize=1, **kw)
             b.bind_subprocess(p)
             return p
         else:
+            del kw['logbuffer']
             res = subprocess.call(*a, **kw)
             return res
 
@@ -146,6 +147,7 @@ elif sys.platform == "win32":
 
 # print("before ptob")
 ptob = openkey("Paratext/8")
+pt_settings = "."
 # print("ptob {} before ptv".format(ptob))
 try:
     ptv = queryvalue(ptob, "ParatextVersion")
@@ -157,6 +159,7 @@ except FileNotFoundError:
         if os.path.exists(path):
             pt_settings = path
             pt_bindir = "C:\\Program Files (x86)\\Paratext {}".format(v)
+            break
 else:
     if ptv:
         version = ptv[:ptv.find(".")]
