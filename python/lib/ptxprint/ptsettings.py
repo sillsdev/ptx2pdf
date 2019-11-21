@@ -21,7 +21,6 @@ allbooks = [b.split("|")[0] for b in _bookslist.split()] # if b != "ZZZ|0"]
 books = dict((b.split("|")[0], i+1) for i, b in enumerate(_bookslist.split()) if b != "ZZZ|0")
 chaps = dict(b.split("|") for b in _bookslist.split())
 oneChbooks = [b.split("|")[0] for b in _bookslist.split() if b[-2:] == "|1"]
-# print("Single Chapter Books: ",oneChbooks)
 
 class ParatextSettings:
     def __init__(self, basedir, prjid):

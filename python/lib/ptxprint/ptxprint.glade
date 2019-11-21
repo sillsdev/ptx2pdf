@@ -521,6 +521,9 @@
         <col id="0" translatable="yes">format with emphasis</col>
       </row>
       <row>
+        <col id="0" translatable="yes">with ⸤floor⸥ brackets</col>
+      </row>
+      <row>
         <col id="0" translatable="yes">star *before word</col>
       </row>
       <row>
@@ -558,10 +561,9 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can_focus">False</property>
-            <property name="halign">end</property>
             <property name="margin_left">6</property>
             <property name="margin_right">6</property>
-            <property name="layout_style">start</property>
+            <property name="layout_style">spread</property>
             <child>
               <object class="GtkButton">
                 <property name="label" translatable="yes">Reset All Settings to Default</property>
@@ -573,7 +575,6 @@
 settings, it may be worth starting over with a clean
 set of default settings. This will remove all current
 settings for this project, and restore the defaults.</property>
-                <property name="halign">start</property>
                 <property name="margin_top">3</property>
                 <property name="margin_bottom">3</property>
               </object>
@@ -592,14 +593,15 @@ settings for this project, and restore the defaults.</property>
                 <property name="tooltip_text" translatable="yes">Many of the settings in this tool only need to be
 used one rare occasions. These can be hidden
 away most of the time.</property>
-                <property name="halign">start</property>
                 <property name="hexpand">True</property>
                 <property name="draw_indicator">True</property>
                 <signal name="clicked" handler="onHideAdvancedSettingsClicked" swapped="no"/>
+                <signal name="toggled" handler="onHideAdvancedSettingsClicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
+                <property name="pack_type">end</property>
                 <property name="position">1</property>
               </packing>
             </child>
@@ -1032,7 +1034,7 @@ in millimeters (mm).</property>
                                         <property name="climb_rate">1</property>
                                         <property name="numeric">True</property>
                                         <property name="update_policy">if-valid</property>
-                                        <property name="value">14</property>
+                                        <property name="value">12</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
@@ -1146,7 +1148,7 @@ space between lines of text.</property>
                                         <property name="digits">1</property>
                                         <property name="numeric">True</property>
                                         <property name="update_policy">if-valid</property>
-                                        <property name="value">16</property>
+                                        <property name="value">16.5</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">5</property>
@@ -1358,7 +1360,7 @@ when thin paper is being used.</property>
                                 <property name="valign">start</property>
                                 <property name="margin_top">4</property>
                                 <property name="margin_bottom">4</property>
-                                <property name="label_xalign">0.019999999552965164</property>
+                                <property name="label_xalign">0.029999999329447746</property>
                                 <child>
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
@@ -1379,7 +1381,7 @@ when thin paper is being used.</property>
                                         <property name="adjustment">a_colgutterwidth</property>
                                         <property name="climb_rate">1</property>
                                         <property name="numeric">True</property>
-                                        <property name="value">15</property>
+                                        <property name="value">12</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
@@ -1396,6 +1398,7 @@ when thin paper is being used.</property>
                                         <property name="margin_left">12</property>
                                         <property name="margin_top">6</property>
                                         <property name="margin_bottom">6</property>
+                                        <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -1434,7 +1437,7 @@ when thin paper is being used.</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
-                                <property name="fill">True</property>
+                                <property name="fill">False</property>
                                 <property name="position">0</property>
                               </packing>
                             </child>
@@ -1690,7 +1693,7 @@ script (such as Arabic).</property>
                                     <property name="climb_rate">0.10000000000000001</property>
                                     <property name="digits">1</property>
                                     <property name="numeric">True</property>
-                                    <property name="value">2</property>
+                                    <property name="value">1.8</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">3</property>
@@ -1774,7 +1777,7 @@ script (such as Arabic).</property>
                                     <property name="climb_rate">0.10000000000000001</property>
                                     <property name="digits">1</property>
                                     <property name="numeric">True</property>
-                                    <property name="value">2</property>
+                                    <property name="value">1.8</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">3</property>
@@ -1876,8 +1879,8 @@ script (such as Arabic).</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Set the Project, Book(s),
-Page Layout and Text
-Flow options.</property>
+Page Setup, Columns,
+and Font options.</property>
                     <property name="label" translatable="yes">Basic</property>
                     <property name="justify">center</property>
                   </object>
@@ -1911,13 +1914,11 @@ Flow options.</property>
                               <object class="GtkBox">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="halign">start</property>
                                 <property name="orientation">vertical</property>
                                 <child>
                                   <object class="GtkBox" id="row_ToC">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_autoToC">
                                         <property name="label" translatable="yes">Generate Table of Contents.         Title for ToC:</property>
@@ -2203,7 +2204,7 @@ start on the same page.
                                     </child>
                                   </object>
                                   <packing>
-                                    <property name="expand">False</property>
+                                    <property name="expand">True</property>
                                     <property name="fill">True</property>
                                     <property name="position">2</property>
                                   </packing>
@@ -2237,18 +2238,17 @@ start on the same page.
                           <object class="GtkAlignment">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="halign">start</property>
                             <property name="margin_left">10</property>
                             <property name="left_padding">12</property>
                             <child>
                               <object class="GtkGrid" id="gr_mainBodyText">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="halign">start</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="row_spacing">8</property>
                                 <property name="column_spacing">6</property>
+                                <property name="column_homogeneous">True</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_omitchapternumber">
                                     <property name="label" translatable="yes">Omit Chapter number(s)</property>
@@ -2600,12 +2600,11 @@ attribute.  Note: w= web, a=app, p=print.
                                         <property name="can_focus">False</property>
                                         <property name="left_padding">40</property>
                                         <child>
-                                          <object class="GtkCheckButton" id="c_figplaceholders">
-                                            <property name="label" translatable="yes">Only show empty place-holders</property>
+                                          <object class="GtkCheckButton" id="c_fighiderefs">
+                                            <property name="label" translatable="yes">Hide (ch:vs) references at end of caption </property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">Useful for creating smaller files to check text layout without illustrations shown.</property>
                                             <property name="halign">start</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
@@ -2622,11 +2621,12 @@ attribute.  Note: w= web, a=app, p=print.
                                         <property name="can_focus">False</property>
                                         <property name="left_padding">40</property>
                                         <child>
-                                          <object class="GtkCheckButton" id="c_fighiderefs">
-                                            <property name="label" translatable="yes">Hide references (ch:vs)</property>
+                                          <object class="GtkCheckButton" id="c_figplaceholders">
+                                            <property name="label" translatable="yes">Only show empty place-holders</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">Useful for creating smaller files to check text layout without illustrations shown.</property>
                                             <property name="halign">start</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
@@ -2857,9 +2857,9 @@ are not found in the specified location of image files.</property>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Define the Writing System,
-Fonts, style of Digits and 
-whether to include Illustrations.</property>
+                    <property name="tooltip_text" translatable="yes">Introductory Material,
+Main Scripture Text,
+and Illustrations.</property>
                     <property name="label" translatable="yes">Body</property>
                     <property name="justify">center</property>
                   </object>
@@ -3058,7 +3058,7 @@ whether to include Illustrations.</property>
                                       <object class="GtkComboBoxText" id="cb_hdrcenter">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="active">0</property>
+                                        <property name="active">1</property>
                                         <property name="has_entry">True</property>
                                         <items>
                                           <item translatable="yes">-empty-</item>
@@ -3086,7 +3086,7 @@ whether to include Illustrations.</property>
                                       <object class="GtkComboBoxText" id="cb_hdrright">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="active">0</property>
+                                        <property name="active">4</property>
                                         <property name="has_entry">True</property>
                                         <items>
                                           <item translatable="yes">-empty-</item>
@@ -3144,6 +3144,7 @@ layout</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">When this option is checked, the left header will be the inner header and the right header will be shown on the outer edge.</property>
                                         <property name="halign">start</property>
+                                        <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -3198,6 +3199,7 @@ layout</property>
                                         <property name="receives_default">False</property>
                                         <property name="halign">start</property>
                                         <property name="margin_left">5</property>
+                                        <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                         <signal name="clicked" handler="onRHruleChanged" swapped="no"/>
                                       </object>
@@ -3385,10 +3387,12 @@ single running paragraph. Use this Xref caller:</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="halign">start</property>
                                                 <property name="margin_left">6</property>
+                                                <property name="margin_top">4</property>
+                                                <property name="margin_bottom">4</property>
                                                 <property name="orientation">vertical</property>
                                                 <property name="homogeneous">True</property>
                                                 <child>
-                                                  <object class="GtkBox">
+                                                  <object class="GtkBox" id="bx_fnCallers">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="halign">start</property>
@@ -3428,7 +3432,7 @@ single running paragraph. Use this Xref caller:</property>
                                                   </packing>
                                                 </child>
                                                 <child>
-                                                  <object class="GtkBox">
+                                                  <object class="GtkBox" id="bx_fnCalleeCaller">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="halign">start</property>
@@ -3479,6 +3483,9 @@ single running paragraph. Use this Xref caller:</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
                                                     <property name="halign">start</property>
+                                                    <property name="margin_right">6</property>
+                                                    <property name="margin_top">2</property>
+                                                    <property name="margin_bottom">6</property>
                                                     <property name="active">True</property>
                                                     <property name="draw_indicator">True</property>
                                                   </object>
@@ -3530,10 +3537,13 @@ single running paragraph. Use this Xref caller:</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="halign">start</property>
                                                 <property name="margin_left">6</property>
+                                                <property name="margin_right">6</property>
+                                                <property name="margin_top">4</property>
+                                                <property name="margin_bottom">4</property>
                                                 <property name="orientation">vertical</property>
                                                 <property name="homogeneous">True</property>
                                                 <child>
-                                                  <object class="GtkBox">
+                                                  <object class="GtkBox" id="bx_xrCallers">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="halign">start</property>
@@ -3573,7 +3583,7 @@ single running paragraph. Use this Xref caller:</property>
                                                   </packing>
                                                 </child>
                                                 <child>
-                                                  <object class="GtkBox">
+                                                  <object class="GtkBox" id="bx_xrCalleeCaller">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="halign">start</property>
@@ -3624,6 +3634,8 @@ single running paragraph. Use this Xref caller:</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
                                                     <property name="halign">start</property>
+                                                    <property name="margin_right">6</property>
+                                                    <property name="margin_bottom">6</property>
                                                     <property name="active">True</property>
                                                     <property name="draw_indicator">True</property>
                                                   </object>
@@ -3740,7 +3752,7 @@ single running paragraph. Use this Xref caller:</property>
                                         <property name="digits">2</property>
                                         <property name="numeric">True</property>
                                         <property name="update_policy">if-valid</property>
-                                        <property name="value">1</property>
+                                        <property name="value">0.90000000000000002</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -3777,7 +3789,7 @@ single running paragraph. Use this Xref caller:</property>
                                         <property name="digits">2</property>
                                         <property name="numeric">True</property>
                                         <property name="update_policy">if-valid</property>
-                                        <property name="value">0.69999999999999996</property>
+                                        <property name="value">0.44999999977648258</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -3864,10 +3876,8 @@ single running paragraph. Use this Xref caller:</property>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Set the position and content
-of Headers, Footers. And control
-the appearance of  Footnotes
-and Cross-references.</property>
+                    <property name="tooltip_text" translatable="yes">Headers and Footers.
+Footnotes and Cross-references.</property>
                     <property name="label" translatable="yes">Head &amp; Foot</property>
                   </object>
                   <packing>
@@ -4096,7 +4106,6 @@ are processed</property>
                                         <property name="receives_default">False</property>
                                         <property name="halign">start</property>
                                         <property name="margin_top">6</property>
-                                        <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                         <signal name="clicked" handler="onUsePrintDraftChangesClicked" swapped="no"/>
                                       </object>
@@ -4232,7 +4241,8 @@ PrintDraft Folder</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Use the Project Printdraft directory to store generated files for this conversion?</property>
+                                    <property name="tooltip_text" translatable="yes">Use the Project Printdraft directory 
+to store generated PDF file(s).</property>
                                     <property name="halign">start</property>
                                     <property name="margin_left">6</property>
                                     <property name="active">True</property>
@@ -4301,9 +4311,10 @@ PrintDraft Folder</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">A watermark can be applied to all pages of the publication. The file
-must be a PDF.</property>
+                                            <property name="tooltip_text" translatable="yes">A watermark can be applied to all pages of 
+the publication. The file must be a PDF.</property>
                                             <property name="halign">start</property>
+                                            <property name="margin_left">30</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="clicked" handler="onApplyWatermarkChanged" swapped="no"/>
                                           </object>
@@ -4335,7 +4346,8 @@ file is selected, then these will appear in alphabetical order.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">One or more previously created PDF file(s) can be included AFTER the scripture material being typeset. If more than one
+                                            <property name="tooltip_text" translatable="yes">One or more previously created PDF file(s) can be included
+AFTER the scripture material being typeset. If more than one
 file is selected, then these will appear in alphabetical order.</property>
                                             <property name="halign">start</property>
                                             <property name="draw_indicator">True</property>
@@ -4490,7 +4502,7 @@ using a PicList which specifies the location on the page:</property>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="btn_generatePicList">
-                                    <property name="label" translatable="yes">Generate PicList(s) from \fig ... \fig* in text</property>
+                                    <property name="label" translatable="yes">Generate PicList(s) from \fig in text</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
@@ -4810,12 +4822,10 @@ script-specific rendering issues.</property>
                   <object class="GtkLabel" id="tb_AdvancedTitle">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">
-Pre-process the text prior
+                    <property name="tooltip_text" translatable="yes">Pre-process the text prior
 to creating the PDF, add Front
-and Back Matter, including
-Table of Contents. Custom
-TeX code can also be added.</property>
+and Back Matter. Generate
+and Edit PicLists and Adj Lists.</property>
                     <property name="margin_bottom">2</property>
                     <property name="label" translatable="yes">Advanced</property>
                     <property name="justify">center</property>
@@ -4848,6 +4858,9 @@ TeX code can also be added.</property>
                   <object class="GtkLabel">
                     <property name="sensitive">False</property>
                     <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">(Coming soon: A Graphical
+method to edit the various
+styles in the StyleSheet.)</property>
                     <property name="opacity">0.69999999999999996</property>
                     <property name="label" translatable="yes">Markers</property>
                   </object>
@@ -5135,9 +5148,9 @@ option is checked, then the folder
 which contains the resulting PDf will
 also contain several other related files.</property>
                             <property name="halign">start</property>
-                            <property name="active">True</property>
                             <property name="draw_indicator">True</property>
                             <signal name="clicked" handler="onKeepTemporaryFilesClicked" swapped="no"/>
+                            <signal name="toggled" handler="onKeepTemporaryFilesClicked" swapped="no"/>
                           </object>
                         </child>
                       </object>
@@ -5156,6 +5169,10 @@ also contain several other related files.</property>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Display the output log 
+from XeTeX processing. 
+Set folder locations. 
+Use trouble-shooting tools.</property>
                     <property name="label" translatable="yes">Logging</property>
                   </object>
                   <packing>

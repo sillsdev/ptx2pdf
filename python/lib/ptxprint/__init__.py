@@ -57,6 +57,7 @@ _alldigits = [ "Default", "Adlam", "Ahom", "Arabic-Farsi", "Arabic-Hindi", "Bali
 
 class PtxPrinterDialog:
     def __init__(self, allprojects, settings_dir):
+        print(" init: __init__",self, allprojects, settings_dir)
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(os.path.dirname(__file__), "ptxprint.glade"))
         self.builder.connect_signals(self)
@@ -111,11 +112,14 @@ class PtxPrinterDialog:
             self.projects.append([p])
 
     def run(self, callback):
+        print(" init: run",callback)
         self.callback = callback
         self.mw.show_all()
+        self.onHideAdvancedSettingsClicked(None)
         Gtk.main()
 
     def addCR(self, name, index):
+        # print(" init: addCR",self, name, index)
         v = self.builder.get_object(name)
         setattr(self, name, v)
         c = Gtk.CellRendererText()
@@ -123,6 +127,7 @@ class PtxPrinterDialog:
         v.add_attribute(c, "text", index)
 
     def parse_fontname(self, font):
+        print(" init: parse_fontname",self, font)
         m = re.match(r"^(.*?)(\d+(?:\.\d+)?)$", font)
         if m:
             return [m.group(1), int(m.group(2))]
@@ -130,6 +135,7 @@ class PtxPrinterDialog:
             return [font, 0]
 
     def get(self, wid, sub=0, asstr=False):
+        # print(" init: get",self, wid, "sub=0, asstr=False")
         w = self.builder.get_object(wid)
         v = ""
         if wid.startswith("cb_"):
@@ -154,6 +160,7 @@ class PtxPrinterDialog:
         return v
 
     def set(self, wid, value):
+        # print(" init: set",self, wid, value)
         w = self.builder.get_object(wid)
         if wid.startswith("cb_"):
             model = w.get_model()
@@ -180,6 +187,7 @@ class PtxPrinterDialog:
             w.set_tooltip_text(value)
 
     def getBooks(self):
+        print(" init: getBooks",self)
         if not self.get('c_multiplebooks'):
             return [self.get('cb_book')]
         elif len(self.booklist):
@@ -188,6 +196,7 @@ class PtxPrinterDialog:
             return self.get('t_booklist').split()
 
     def getBookFilename(self, bk, prjdir):
+        print(" init: getBookFilename",self, bk, prjdir)
         if self.ptsettings is None:
             self.ptsettings = ParatextSettings(prjdir)
         fbkfm = self.ptsettings['FileNameBookNameForm']
@@ -200,12 +209,14 @@ class PtxPrinterDialog:
         Gtk.main_quit()
 
     def onOK(self, btn):
+        print("\n init: onOK",self, btn,"\n")
         self.callback(self)
 
     def onCancel(self, btn):
         self.onDestroy(btn)
 
     def onScriptChanged(self, cb_script):
+        print(" init: onScriptChanged",self, cb_script)
         # If there is a matching digit style for the script that has just been set, 
         # then turn that on (but it can be overridden later).
         try:
@@ -214,6 +225,7 @@ class PtxPrinterDialog:
             self.cb_digits.grab_focus()  # this doesn't appear to do anything yet!
 
     def onFontChange(self, fbtn):
+        print(" init: onFontChange",self, fbtn)
         # traceback.print_stack(limit=3)
         font = fbtn.get_font_name()
         (name, size) = self.parse_fontname(font)
@@ -416,7 +428,7 @@ class PtxPrinterDialog:
 
     def onHideAdvancedSettingsClicked(self, c_hideAdvancedSettings):
         # Turn Dangerous Settings OFF
-        for c in ("c_startOnHalfPage", "c_marginalverses", "c_prettyIntroOutline", "c_blendfnxr", "c_autoToC", 
+        for c in ("c_startOnHalfPage", "c_marginalverses", "c_prettyIntroOutline", "c_blendfnxr", "c_autoToC", "c_figplaceholders",
                   "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", "c_preventwidows"):
             self.builder.get_object(c).set_active(False)
             
@@ -426,10 +438,11 @@ class PtxPrinterDialog:
             self.builder.get_object(c).set_active(True)
             
         # Hide a whole bunch of stuff that they don't need to see
-        for c in ("tb_Markers", "tb_Diglot", "tb_Advanced","tb_Logging", "fr_FontConfig", "row_ToC",
+        for c in ("tb_Markers", "tb_Diglot", "tb_Advanced","tb_Logging", "fr_FontConfig", "row_ToC", "c_figplaceholders",
                   "bx_BottomMarginSettings", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "box_AdvFootnoteConfig", 
                   "c_usePicList", "c_skipmissingimages", "c_convertTIFtoPNG", "c_useCustomFolder", "btn_selectFigureFolder", 
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses",
+                  "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller",
                   "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", "c_preventwidows"):
             self.builder.get_object(c).set_visible(not self.get("c_hideAdvancedSettings"))
         
@@ -528,6 +541,7 @@ class PtxPrinterDialog:
             ls.append([str(c)])
 
     def onBookChange(self, cb_book):
+        print(" init: onBookChange",self, cb_book)
         self.bk = self.get("cb_book")
         if self.bk != "":
             self.chs = int(chaps.get(str(self.bk)))
@@ -880,4 +894,3 @@ class PtxPrinterDialog:
                     # im.save(outputfile, "PNG")
                 # except Exception, e:
                     # print(e)
-

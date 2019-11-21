@@ -31,14 +31,9 @@
 %%%%% Text Spacing %%%%%
 \def\LineSpacingFactor{{1.0}}
 \def\VerticalSpaceFactor{{1.0}}
-% This still needs to be fixed. Back in Info, we need to calculate if linemin or linemax == 0, 
-% and if so, don't output '0pt' (as it causes it to crash)
 \baselineskip={paragraph/linespacing}pt {paragraph/varlinespacing} {paragraph/linemax} {paragraph/linemin}
 
 %% Cross-space contextualization
-% None=0 This is how XeTeX behaves by default. Most projects will use this setting.
-% Some=1 Spaces between words are adjusted, but the rendering of individual words is *NOT* affected by the spaces.
-% Full=2 Spaces between words are adjusted, and the rendering of individual words *IS* affected by the spaces.
 \XeTeXinterwordspaceshaping = {document/spacecntxtlztn}
 
 %%%%% Fonts %%%%%

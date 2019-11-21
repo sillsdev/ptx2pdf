@@ -7,7 +7,7 @@ from ptxprint.snippets import FancyIntro
 class Info:
     _mappings = {
         "project/id":               (None, lambda w,v: w.get("cb_project")),
-        "project/hideadvancedsettings": ("c_hideAdvancedSettings", lambda w,v: "true" if v else "false"),
+        "project/hideadvsettings":  ("c_hideAdvancedSettings", lambda w,v: "true" if v else "false"),
         "project/keeptempfiles":    ("c_keepTemporaryFiles", lambda w,v: "true" if v else "false"),
         "project/useptmacros":      ("c_usePTmacros", lambda w,v: "true" if v else "false"),
         "project/ifuseptmacros":    ("c_usePTmacros", lambda w,v: "%" if v else ""),
@@ -97,9 +97,6 @@ class Info:
         "document/supressintrooutline": ("c_omitIntroOutline", lambda w,v: "true" if v else "false"),
         "document/supressindent":   ("c_omit1paraIndent", lambda w,v: "false" if v else "true"),
 
-        # "document/fancyintro":      ("c_prettyIntroOutline", lambda w,v: v ), 
-        # "document/fancyintro":      ("c_prettyIntroOutline", lambda w,v: "true" if v else "false"), 
-
         "header/headerposition":    ("s_headerposition", lambda w,v: round(v, 2) or "0.50"),
         "header/footerposition":    ("s_footerposition", lambda w,v: round(v, 2) or "0.50"),
         "header/ifomitrhchapnum":   ("c_omitrhchapnum", lambda w,v :"true" if v else "false"),
@@ -165,16 +162,18 @@ class Info:
         "format as italics":       r"\\it \1\\it*",
         "format as bold italics":  r"\\bdit \1\\bdit*",
         "format with emphasis":    r"\\em \1\\em*",
+        "with ⸤floor⸥ brackets":   r"\u2E24\1\u2E25", # Question for MH - using this option makes it crash with an encoding issue. Help!
         "star *before word":       r"*\1",
         "star after* word":        r"\1*",
         "circumflex ^before word": r"^\1",
         "circumflex after^ word":  r"\1^"
     }
     _snippets = {
-        "snippets/fancyintro": ("c_prettyIntroOutline", FancyIntro)  # This is the culprit (which is always turning that c_box on!!!)
-    }                                                                # But what do you want it to do?
+        "snippets/fancyintro": ("c_prettyIntroOutline", FancyIntro)
+    }
     
     def __init__(self, printer, path, prjid = None):
+        print("  info: __init__",self, printer, path)
         self.printer = printer
         self.changes = None
         self.localChanges = None
@@ -183,6 +182,7 @@ class Info:
         self.update()
 
     def update(self):
+        print("  info: update",self)
         printer = self.printer
         for k, v in self._mappings.items():
             val = printer.get(v[0]) if v[0] is not None else None
@@ -195,12 +195,15 @@ class Info:
         self.makelocalChanges(printer)
 
     def __getitem__(self, key):
+        print("  info: __getitem__",self, key)
         return self.dict[key]
 
     def __setitem__(self, key, value):
+        print("  info: __setitem__",self, key, value)
         self.dict[key] = value
 
     def processFonts(self, printer):
+        print("  info: processFonts",self, printer)
         # \def\regular{"Gentium Plus/GR:litr=1;ital=1"}   ???
         silns = "{urn://www.sil.org/ldml/0.1}"
         for p, wid in self._fonts.items():
@@ -227,6 +230,7 @@ class Info:
             self.dict[p] = f.family + engine + s
 
     def processHdrFtr(self, printer):
+        print("  info: processHdrFtr",self, printer)
         mirror = printer.get('c_mirrorpages')
         for side in ('left', 'center', 'right'):
             v = printer.get("cb_hdr" + side)
@@ -250,6 +254,7 @@ class Info:
         return path.replace(" ", r"\ ")
 
     def asTex(self, template="template.tex", filedir="."):
+        print("  info: asTex",self, "template.tex", "filedir=.")
  #       import pdb;pdb.set_trace()
         for k, v in self._settingmappings.items():
             if self.dict[k] == "":
@@ -277,6 +282,7 @@ class Info:
         return "".join(res).replace("\OmitChapterNumberfalse\n\OmitChapterNumbertrue\n","")
 
     def convertBook(self, bk, outdir, prjdir):
+        print("  info: convertBook",self, bk, outdir, prjdir)
         if self.changes is None and self.dict['project/usechangesfile'] == "true":
             self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'))
         else:
@@ -312,6 +318,7 @@ class Info:
             return fname
 
     def readChanges(self, fname):
+        print("  info: readChanges",self, fname)
         changes = []
         if not os.path.exists(fname):
             return []
@@ -337,6 +344,7 @@ class Info:
         return changes
 
     def makelocalChanges(self, printer):
+        print("  info: makelocalChanges",self, printer)
         self.localChanges = []
         first = int(printer.get("cb_chapfrom"))
         last = int(printer.get("cb_chapto"))
@@ -427,10 +435,12 @@ class Info:
         return self.localChanges
 
     def ListMissingPics(self, printer):
+        print("  info: ListMissingPics",self, printer)
         # When should this function be called? At present it is happening at startup, and I think it should happen later.
         msngpiclist = []
         prjid = self.dict['project/id']
-        prjdir = os.path.join(printer.settings_dir, prjid)
+        prjdir = os.path.join(self.dict['/ptxpath'], prjid)
+        # prjdir = os.path.join(self.printer.settings_dir, prjid)
         if printer.get("c_useFiguresFolder"): # Therefore this is always true!
             picdir = os.path.join(prjdir, "Figures")
         elif printer.get("c_useLocalFiguresFolder"):
@@ -467,6 +477,7 @@ class Info:
         config.set(sect, k, value)
 
     def createConfig(self, printer):
+        print("  info: createConfig",self, printer)
         config = configparser.ConfigParser()
         for k, v in self._mappings.items():
             if v[0] is None:
@@ -483,6 +494,7 @@ class Info:
         return config
 
     def loadConfig(self, printer, config):
+        print("  info: loadConfig",self, printer, config)
         for sect in config.sections():
             for opt in config.options(sect):
                 key = "{}/{}".format(sect, opt)
@@ -521,6 +533,7 @@ class Info:
         self.update()
 
     def GenerateNestedStyles(self):
+        print("  info: GenerateNestedStyles",self)
         prjid = self.printer.get("cb_project")
         prjdir = os.path.join(self.printer.settings_dir, prjid)
         nstyfname = os.path.join(prjdir, "PrintDraft/NestedStyles.sty")
