@@ -45,6 +45,7 @@ class TTFontCache:
             for n in names:
                 for s in styles:
                     self.cache["{}|{}".format(n, s)] = path
+        print("FontCache size:" + str(len(self.cache)))
 
     def find(self, name, style):
         orgname = name
@@ -81,6 +82,7 @@ class TTFont:
         self.family = p.get_family()
         self.filename = fontcache.get(self.family, self.style)
         self.feats = {}
+        self.featvals = {}
         self.names = {}
         if self.filename is not None:
             self.readfont()

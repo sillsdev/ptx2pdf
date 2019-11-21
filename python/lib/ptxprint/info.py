@@ -199,8 +199,6 @@ class Info:
         self.dict[key] = value
 
     def processFonts(self, printer):
-#        import pdb;pdb.set_trace()
-        # traceback.print_stack(limit=3)
         # \def\regular{"Gentium Plus/GR:litr=1;ital=1"}   ???
         silns = "{urn://www.sil.org/ldml/0.1}"
         for p, wid in self._fonts.items():
