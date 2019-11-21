@@ -258,7 +258,9 @@ class Info:
                 if l.startswith(r"\ptxfile"):
                     res.append("\\PtxFilePath={"+filedir.replace("\\","/")+"/}\n")
                     le = len(self.dict['project/books'])
+                    print(self.ptsettings.oneChbooks)
                     for i, f in enumerate(self.dict['project/books']):
+                        print(i,f)
                         res.append("\\ptxfile{{{}}}\n".format(f))
                 elif l.startswith(r"%\snippets"):
                     for k, c in self._snippets.items():
