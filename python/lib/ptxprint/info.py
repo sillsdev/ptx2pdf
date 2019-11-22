@@ -38,11 +38,11 @@ class Info:
         "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),  
         "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v else "false"),
         "paper/margins":            ("s_margins", lambda w,v: round(v) or "14"),
-        "paper/topmarginfactor":    ("s_topmarginfactor", lambda w,v: round(v, 2) or "1.15"),
-        "paper/bottommarginfactor": ("s_bottommarginfactor", lambda w,v: round(v, 2) or "1.15"),
+        "paper/topmarginfactor":    ("s_topmarginfactor", lambda w,v: round(v, 2) or "1.60"),
+        "paper/bottommarginfactor": ("s_bottommarginfactor", lambda w,v: round(v, 2) or "1.00"),
         "paper/sidemarginfactor":   ("s_sidemarginfactor", lambda w,v: round(v, 2) or "1.00"),
         "paper/ifaddgutter":        ("c_pagegutter", lambda w,v :"true" if v else "false"),
-        "paper/gutter":             ("s_pagegutter", lambda w,v: round(v) or "14"),
+        "paper/gutter":             ("s_pagegutter", lambda w,v: round(v) or "12"),
         "paper/columns":            ("c_doublecolumn", lambda w,v: "2" if v else "1"),
         "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
 
@@ -60,7 +60,7 @@ class Info:
         "document/usetoc3":         ("c_usetoc3", lambda w,v :"true" if v else "false"),
         "document/chapfrom":        ("cb_chapfrom", lambda w,v: w.builder.get_object("cb_chapfrom").get_active_id()),
         "document/chapto":          ("cb_chapto", lambda w,v: w.builder.get_object("cb_chapto").get_active_id()),
-        "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: round(v) or "15"),
+        "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: round(v) or "12"),
         "document/ifrtl":           ("c_rtl", lambda w,v :"true" if v else "false"),
         "document/iflinebreakon":   ("c_linebreakon", lambda w,v: "" if v else "%"),
         "document/linebreaklocale": ("t_linebreaklocale", lambda w,v: v or ""),
@@ -97,8 +97,8 @@ class Info:
         "document/supressintrooutline": ("c_omitIntroOutline", lambda w,v: "true" if v else "false"),
         "document/supressindent":   ("c_omit1paraIndent", lambda w,v: "false" if v else "true"),
 
-        "header/headerposition":    ("s_headerposition", lambda w,v: round(v, 2) or "0.50"),
-        "header/footerposition":    ("s_footerposition", lambda w,v: round(v, 2) or "0.50"),
+        "header/headerposition":    ("s_headerposition", lambda w,v: round(v, 2) or "0.80"),
+        "header/footerposition":    ("s_footerposition", lambda w,v: round(v, 2) or "0.70"),
         "header/ifomitrhchapnum":   ("c_omitrhchapnum", lambda w,v :"true" if v else "false"),
         "header/ifverses":          ("c_hdrverses", lambda w,v :"true" if v else "false"),
         "header/ifrhrule":          ("c_rhrule", lambda w,v: "" if v else "%"),
@@ -140,10 +140,10 @@ class Info:
         "fontbolditalic/slant":     ("s_bolditalicslant", lambda w,v: ";slant={:.4f}".format(v) if v != 0.0000 and w.get("c_fakebolditalic") else ""),
     }
     _fonts = {
-        "fontregular/name": ("f_body", None, None),
-        "fontbold/name": ("f_bold", "c_fakebold", "fontbold/embolden"),
-        "fontitalic/name": ("f_italic", "c_fakeitalic", "fontitalic/embolden"),
-        "fontbolditalic/name": ("f_bolditalic", "c_fakebolditalic", "fontbolditalic/embolden")
+        "fontregular/name": ("f_body", None, None, None),
+        "fontbold/name": ("f_bold", "c_fakebold", "fontbold/embolden", "fontbold/slant"),
+        "fontitalic/name": ("f_italic", "c_fakeitalic", "fontitalic/embolden", "fontitalic/slant"),
+        "fontbolditalic/name": ("f_bolditalic", "c_fakebolditalic", "fontbolditalic/embolden", "fontbolditalic/slant")
     }
     _hdrmappings = {
         "First Reference":  r"\firstref",
@@ -173,7 +173,7 @@ class Info:
     }
     
     def __init__(self, printer, path, prjid = None):
-        print("  info: __init__",self, printer, path)
+        # print("  info: __init__",self, printer, path)
         self.printer = printer
         self.changes = None
         self.localChanges = None
@@ -183,7 +183,7 @@ class Info:
         self.update()
 
     def update(self):
-        print("  info: update",self)
+        # print("  info: update",self)
         printer = self.printer
         self.updatefields(self._mappings.keys())
         if self.prjid is not None:
@@ -200,15 +200,15 @@ class Info:
                 self.dict[k] = v[1](self.printer, val)
 
     def __getitem__(self, key):
-        print("  info: __getitem__",self, key)
+        # print("  info: __getitem__",self, key)
         return self.dict[key]
 
     def __setitem__(self, key, value):
-        print("  info: __setitem__",self, key, value)
+        # print("  info: __setitem__",self, key, value)
         self.dict[key] = value
 
     def processFonts(self, printer):
-        print("  info: processFonts",self, printer)
+        # print("  info: processFonts",self, printer)
         # \def\regular{"Gentium Plus/GR:litr=1;ital=1"}   ???
         silns = "{urn://www.sil.org/ldml/0.1}"
         for p in self._fonts.keys():
@@ -219,14 +219,14 @@ class Info:
             if p in self.dict:
                 continue
             f = TTFont(printer.get(wid))
-            print(p, wid, f.filename, f.family, f.style)
+            # print(p, wid, f.filename, f.family, f.style)
             if f.filename is None and p != "fontregular/name":
                 reg = printer.get(self._fonts['fontregular/name'][0])
                 f = TTFont(reg)
                 printer.set(self._fonts[p][1], True)
                 printer.set(wid, reg)
                 self.updatefields([self._fonts[p][2]])
-                print("Setting {} to {}".format(p, reg))
+                # print("Setting {} to {}".format(p, reg))
             d = self.printer.ptsettings.find_ldml('.//special/{1}external-resources/{1}font[@name="{0}"]'.format(f.family, silns))
             if d is not None:
                 f.features = {}
@@ -249,7 +249,7 @@ class Info:
             self.dict[p] = fname + engine
 
     def processHdrFtr(self, printer):
-        print("  info: processHdrFtr",self, printer)
+        # print("  info: processHdrFtr",self, printer)
         mirror = printer.get('c_mirrorpages')
         for side in ('left', 'center', 'right'):
             v = printer.get("cb_hdr" + side)
@@ -273,7 +273,7 @@ class Info:
         return path.replace(" ", r"\ ")
 
     def asTex(self, template="template.tex", filedir="."):
-        print("  info: asTex",self, "template.tex", "filedir=.")
+        # print("  info: asTex",self, "template.tex", "filedir=.")
  #       import pdb;pdb.set_trace()
         for k, v in self._settingmappings.items():
             if self.dict[k] == "":
@@ -289,7 +289,7 @@ class Info:
                             res.append("\\ptxfile{{{}}}\n".format(f))
                             res.append("\\OmitChapterNumberfalse\n")
                         else:
-                            print("Else for book: ",f[2:5])
+                            # print("Else for book: ",f[2:5])
                             res.append("\\ptxfile{{{}}}\n".format(f))
                 elif l.startswith(r"%\snippets"):
                     for k, c in self._snippets.items():
@@ -301,7 +301,7 @@ class Info:
         return "".join(res).replace("\OmitChapterNumberfalse\n\OmitChapterNumbertrue\n","")
 
     def convertBook(self, bk, outdir, prjdir):
-        print("  info: convertBook",self, bk, outdir, prjdir)
+        # print("  info: convertBook",self, bk, outdir, prjdir)
         if self.changes is None and self.dict['project/usechangesfile'] == "true":
             self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'))
         else:
@@ -337,7 +337,7 @@ class Info:
             return fname
 
     def readChanges(self, fname):
-        print("  info: readChanges",self, fname)
+        # print("  info: readChanges",self, fname)
         changes = []
         if not os.path.exists(fname):
             return []
@@ -363,7 +363,7 @@ class Info:
         return changes
 
     def makelocalChanges(self, printer):
-        print("  info: makelocalChanges",self, printer)
+        # print("  info: makelocalChanges",self, printer)
         self.localChanges = []
         first = int(printer.get("cb_chapfrom"))
         last = int(printer.get("cb_chapto"))
@@ -387,7 +387,7 @@ class Info:
                 msngfigs = self.ListMissingPics(printer)
                 if len(msngfigs):
                     for f in msngfigs:
-                        print("Skipping over missing illustration: ",f)
+                        # print("Skipping over missing illustration: ",f)
                         self.localChanges.append((None, regex.compile(r"\\fig .*\|{}\|.+?\\fig\*".format(f), flags=regex.M), ""))
             if printer.get("c_fighiderefs"):
                 self.localChanges.append((None, regex.compile(r"(\\fig .*?)(\d+\:\d+([-,]\d+)?)(.*?\\fig\*)", flags=regex.M), r"\1\4")) # del ch:vs from caption
@@ -454,11 +454,11 @@ class Info:
         return self.localChanges
 
     def ListMissingPics(self, printer):
-        print("  info: ListMissingPics",self, printer)
+        # print("  info: ListMissingPics",self, printer)
         # When should this function be called? At present it is happening at startup, and I think it should happen later.
         msngpiclist = []
         prjid = self.dict['project/id']
-        print([prjid, self.printer.settings_dir, printer.get("cb_project")])
+        # print([prjid, self.printer.settings_dir, printer.get("cb_project")])
         prjdir = os.path.join(self.printer.settings_dir, prjid)
         # prjdir = os.path.join(self.printer.settings_dir, prjid)
         if printer.get("c_useFiguresFolder"): # Therefore this is always true!
@@ -486,8 +486,8 @@ class Info:
                         fname = os.path.join(picdir,f)
                         if not os.path.exists(fname):
                             msngpiclist.append(f)
-                if len(msngpiclist):
-                    print("In {} these pics are missing:\n".format(bk),"\n".join(msngpiclist))
+                # if len(msngpiclist):
+                    # print("In {} these pics are missing:\n".format(bk),"\n".join(msngpiclist))
         return(msngpiclist)
 
     def _configset(self, config, key, value):
@@ -497,7 +497,7 @@ class Info:
         config.set(sect, k, value)
 
     def createConfig(self, printer):
-        print("  info: createConfig",self, printer)
+        # print("  info: createConfig",self, printer)
         config = configparser.ConfigParser()
         for k, v in self._mappings.items():
             if v[0] is None:
@@ -514,7 +514,7 @@ class Info:
         return config
 
     def loadConfig(self, printer, config):
-        print("  info: loadConfig",self, printer, config)
+        # print("  info: loadConfig",self, printer, config)
         for sect in config.sections():
             for opt in config.options(sect):
                 key = "{}/{}".format(sect, opt)
@@ -560,7 +560,7 @@ class Info:
         self.update()
 
     def GenerateNestedStyles(self):
-        print("  info: GenerateNestedStyles",self)
+        # print("  info: GenerateNestedStyles",self)
         prjid = self.dict['project/id']
         prjdir = os.path.join(self.printer.settings_dir, prjid)
         nstyfname = os.path.join(prjdir, "PrintDraft/NestedStyles.sty")

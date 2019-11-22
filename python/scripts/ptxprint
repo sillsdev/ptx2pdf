@@ -42,7 +42,7 @@ if args.pid:
     mainw.set("cb_project", args.pid)
 
 def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
-    print("   ptxp: dojob",jobs, info, prjid, prjdir, tmpdir)
+    # print("   ptxp: dojob",jobs, info, prjid, prjdir, tmpdir)
     donebooks = []
     for b in jobs:
         out = info.convertBook(b, tmpdir, prjdir)
@@ -94,7 +94,7 @@ def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
     return outfname
 
 def doit(printer):
-    print("   ptxp: doit",printer)
+    # print("   ptxp: doit",printer)
     info = printer.info or ptxprint.Info(printer, args.paratext, printer.prjid)
     prjid = printer.get("cb_project")
     prjdir = os.path.join(args.paratext, prjid)
@@ -114,7 +114,6 @@ def doit(printer):
         texfiles = [dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=printer.logbuffer)]
     else:
         texfiles = [dojob([j], info, prjid, prjdir, tmpdir, logbuffer=printer.logbuffer) for j in jobs]
-
     # Open the resulting PDF if it exists
     if len(jobs) > 1:
         pdfname = os.path.join(tmpdir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], prjid))
@@ -124,29 +123,32 @@ def doit(printer):
         removeTempFiles(texfiles,tmpdir,info)
     # Need to check the return code to see if generating the PDF was successful. And if not, then issue some 
     # warning or error message rather than leave the PREVIOUS PDF open and pretend that everything worked fine! :-(
-    if sys.platform == "win32" and os.path.exists(pdfname):
-        os.startfile(pdfname)
+    if os.path.exists(pdfname):
+        if sys.platform == "win32":
+            os.startfile(pdfname)
+        elif sys.platform == "linux":
+            subprocess.call(('xdg-open', pdfname))
 
 def removeTempFiles(texfiles,tmpdir,info):
-    print("   ptxp: removeTempFiles",texfiles,tmpdir,info)
-    print("Deleting temporary files")
-    # First delete files where there is only one per run
     for extn in ('delayed','parlocs','notepages', 'tex','log'):
         for t in texfiles:
             delfname = os.path.join(tmpdir, t.replace(".tex", "."+extn))
-            # print("Deleting: " + delfname)
             try:
-                # print("About to delete",delfname)
                 os.remove(delfname)
             except OSError:
-                print("Failed to delete temporary file: " + delfname)
-    # Then delete the SFM files (1 per book)
+                dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK,
+                    "Warning: Could not delete temporary file.")
+                dialog.format_secondary_text("File: " + delfname)
+                dialog.run()
+                dialog.destroy()
     for delfname in info['project/books']:
-        print("Deleting: " + delfname)
         try:
-            # print("About to delete",delfname)
             os.remove(os.path.join(tmpdir, delfname))
         except OSError:
-            print("Failed to delete temporary file: " + delfname)
+            dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK,
+                "Warning: Could not delete temporary file.")
+            dialog.format_secondary_text("File: " + delfname)
+            dialog.run()
+            dialog.destroy()
         
 mainw.run(doit)

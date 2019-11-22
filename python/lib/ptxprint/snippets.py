@@ -1,12 +1,13 @@
 import regex
 
 class FancyIntro():
-    _regexbits = [(r'\\io2 ', r'\\io1 \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0'), # Temporary fix so that the special Intro Outline table doesn't break
+    _regexbits = [(r'\\io2 ', r'\\io1 \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0'), # Temporary fix for \io2 and \io3 so table doesn't break!
+               (r'\\io3 ', r'\\io1 \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0'),
                (r'(\\iot .+?)\r?\n', r'\1\r\n\iotable\r\n\makedigitsother\r\n\catcode`{=1\r\n\catcode`}=2\r\n'),
                (r'\\io1 ', r'\iotableleader{'),
                (r' \\ior ', r'}{'),
                (r' \\ior\*', r'}'),
-               (r'\\c 1\r?\n', r'\catcode`{=11 \catcode`}=11\r\n\makedigitsletters\r\n\c 1\r\n')] # Assumed no other markers is between last \io1 line and \c 1
+               (r'\\c 1\r?\n', r'\catcode`{=11 \catcode`}=11\r\n\makedigitsletters\r\n\c 1\r\n')] # Assumes no markers between last \io1 line & \c 1
     regexes = [(None, regex.compile(r[0], flags=regex.S), r[1]) for r in _regexbits]
 
     styleInfo = r"""
@@ -23,7 +24,7 @@ class FancyIntro():
 \RightMargin .5
 \FirstLineIndent .5
 """
-# 1/8 inch first line indent
+# Indent is in inches
 
     texCode = r"""
 % Enable commands with digits in them to be processed

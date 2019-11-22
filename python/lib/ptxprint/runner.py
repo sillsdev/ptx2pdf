@@ -53,7 +53,7 @@ if sys.platform == "linux":
 
     def fclist(family, pattern):
         a = ["fc-list", '"{0}":style="{1}"'.format(family, pattern), 'file']
-        print(a)
+        # print(a)
         return subprocess.check_output(" ".join(a), shell=1).decode("utf-8")
 
     def checkoutput(*a, **kw):
@@ -125,7 +125,7 @@ elif sys.platform == "win32":
             del kw['shell']
         path = os.path.join(pt_bindir, "xetex", "bin", a[0][0]+".exe").replace("\\", "/")
         newa = [[path] + list(a[0])[1:]] + [x.replace('"', '') for x in a[1:]]
-        print(newa)
+        # print(newa)
         res = subprocess.check_output(*newa, **kw).decode("utf-8")
         return res
 
@@ -166,4 +166,4 @@ else:
         pt_bindir = queryvalue(ptob, 'Program_Files_Directory_Ptw'+version)
     pt_settings = queryvalue(ptob, 'Settings_Directory')
 if ptv:
-    print("Paratext Data Folder in use: ",pt_settings,"\nParatext Program Folder in use: ",pt_bindir)
+    print("Paratext Projects Folder: ",pt_settings,"\nParatext Program Folder:  ",pt_bindir)

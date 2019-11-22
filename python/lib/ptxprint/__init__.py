@@ -57,7 +57,7 @@ _alldigits = [ "Default", "Adlam", "Ahom", "Arabic-Farsi", "Arabic-Hindi", "Bali
 
 class PtxPrinterDialog:
     def __init__(self, allprojects, settings_dir):
-        print(" init: __init__",self, allprojects, settings_dir)
+        # print(" init: __init__",self, allprojects, settings_dir)
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(os.path.dirname(__file__), "ptxprint.glade"))
         self.builder.connect_signals(self)
@@ -112,7 +112,7 @@ class PtxPrinterDialog:
             self.projects.append([p])
 
     def run(self, callback):
-        print(" init: run",callback)
+        # print(" init: run",callback)
         self.callback = callback
         self.mw.show_all()
         self.onHideAdvancedSettingsClicked(None)
@@ -127,7 +127,7 @@ class PtxPrinterDialog:
         v.add_attribute(c, "text", index)
 
     def parse_fontname(self, font):
-        print(" init: parse_fontname",self, font)
+        # print(" init: parse_fontname",self, font)
         m = re.match(r"^(.*?)(\d+(?:\.\d+)?)$", font)
         if m:
             return [m.group(1), int(m.group(2))]
@@ -187,7 +187,7 @@ class PtxPrinterDialog:
             w.set_tooltip_text(value)
 
     def getBooks(self):
-        print(" init: getBooks",self)
+        # print(" init: getBooks",self)
         if not self.get('c_multiplebooks'):
             return [self.get('cb_book')]
         elif len(self.booklist):
@@ -196,7 +196,7 @@ class PtxPrinterDialog:
             return self.get('t_booklist').split()
 
     def getBookFilename(self, bk, prjdir):
-        print(" init: getBookFilename",self, bk, prjdir)
+        # print(" init: getBookFilename",self, bk, prjdir)
         if self.ptsettings is None:
             self.ptsettings = ParatextSettings(prjdir)
         fbkfm = self.ptsettings['FileNameBookNameForm']
@@ -209,20 +209,22 @@ class PtxPrinterDialog:
         Gtk.main_quit()
 
     def onOK(self, btn):
-        print("\n init: onOK",self, btn,"\n")
+        # print("\n init: onOK",self, btn,"\n")
         if self.prjid is not None:
             self.callback(self)
         else:
             dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK,
-                "Cannot create a PDF without a Paratext Project Selected.\n\nSelect a project and try again.")
+                "Cannot create a PDF without a Project selected")
+            dialog.format_secondary_text("Please select a Paratext Project and try again.")
             dialog.run()
             dialog.destroy()
+            self.cb_project.grab_focus() # this doesn't appear to do anything yet!
 
     def onCancel(self, btn):
         self.onDestroy(btn)
 
     def onScriptChanged(self, cb_script):
-        print(" init: onScriptChanged",self, cb_script)
+        # print(" init: onScriptChanged",self, cb_script)
         # If there is a matching digit style for the script that has just been set, 
         # then turn that on (but it can be overridden later).
         try:
@@ -231,7 +233,7 @@ class PtxPrinterDialog:
             self.cb_digits.grab_focus()  # this doesn't appear to do anything yet!
 
     def onFontChange(self, fbtn):
-        print(" init: onFontChange",self, fbtn)
+        # print(" init: onFontChange",self, fbtn)
         # traceback.print_stack(limit=3)
         font = fbtn.get_font_name()
         (name, size) = self.parse_fontname(font)
@@ -465,7 +467,10 @@ class PtxPrinterDialog:
         if doti > 0:
             viewfile = viewfile[:doti] + "-draft" + viewfile[doti:]
         if os.path.exists(viewfile):
-            os.startfile(viewfile)
+            if sys.platform == "win32":
+                os.startfile(viewfile)
+            elif sys.platform == "linux":
+                subprocess.call(('xdg-open', viewfile))
             
     def ViewOutputFile(self, extn):
         prjid = self.get("cb_project")
@@ -477,7 +482,10 @@ class PtxPrinterDialog:
             fname = "ptxprint-{}{}.{}".format(bks[0], prjid, extn)
         viewfile = os.path.join(prjdir, "PrintDraft", fname)
         if os.path.exists(viewfile):
-            os.startfile(viewfile)
+            if sys.platform == "win32":
+                os.startfile(viewfile)
+            elif sys.platform == "linux":
+                subprocess.call(('xdg-open', viewfile))
         
     def onViewTeXfileClicked(self, btn_viewTeXfile):
         self.ViewOutputFile("tex")
@@ -547,7 +555,7 @@ class PtxPrinterDialog:
             ls.append([str(c)])
 
     def onBookChange(self, cb_book):
-        print(" init: onBookChange",self, cb_book)
+        # print(" init: onBookChange",self, cb_book)
         self.bk = self.get("cb_book")
         if self.bk != "":
             self.chs = int(chaps.get(str(self.bk)))
@@ -617,19 +625,28 @@ class PtxPrinterDialog:
         self.prjid = self.get("cb_project")
         changesfile = os.path.join(self.settings_dir, self.prjid, "PrintDraftChanges.txt")
         if os.path.exists(changesfile):
-            os.startfile(changesfile)
+            if sys.platform == "win32":
+                os.startfile(changesfile)
+            elif sys.platform == "linux":
+                subprocess.call(('xdg-open', changesfile))
 
     def onEditModsTeX(self, cb_prj):
         self.prjid = self.get("cb_project")
         modstexfile = os.path.join(self.settings_dir, self.prjid, "PrintDraft", "PrintDraft-mods.tex")
         if os.path.exists(modstexfile):
-            os.startfile(modstexfile)
+            if sys.platform == "win32":
+                os.startfile(modstexfile)
+            elif sys.platform == "linux":
+                subprocess.call(('xdg-open', modstexfile))
 
     def onEditModsSty(self, cb_prj):
         self.prjid = self.get("cb_project")
         modsstyfile = os.path.join(self.settings_dir, self.prjid, "PrintDraft", "PrintDraft-mods.sty")
         if os.path.exists(modsstyfile):
-            os.startfile(modsstyfile)
+            if sys.platform == "win32":
+                os.startfile(modsstyfile)
+            elif sys.platform == "linux":
+                subprocess.call(('xdg-open', modsstyfile))
 
     def onMainBodyTextChanged(self, c_mainBodyText):
         self.builder.get_object("gr_mainBodyText").set_sensitive(self.get("c_mainBodyText"))
@@ -709,6 +726,7 @@ class PtxPrinterDialog:
             "col":      ("tl", "tr", "bl", "br"),
             "span":     ("t", "b")
         }
+        existingFilelist = []
         for bk in self.getBooks():
             prjid = self.get("cb_project")
             prjdir = os.path.join(self.settings_dir, self.prjid)
@@ -764,11 +782,24 @@ class PtxPrinterDialog:
                         with open(outfname, "w", encoding="utf-8") as outf:
                             outf.write("".join(piclist))
                     else:
-                        print("PicList file already exists (this will NOT be overwritten): " + outfname)
+                        existingFilelist.append(outfname.split("/")[-1])
                 else:
-                    print(r"No illustrations \fig ...\fig* found in book/file!") # This needs to go to the log/console: 
+                    print(r"No illustrations \fig ...\fig* found in {}".format(bk)) # This needs to go to the log/console: 
+        if len(existingFilelist):
+            if len(existingFilelist) > 1:
+                m1 = "Several PicList files already exist:"
+                m2 = "\n".join(existingFilelist)+"\n\nThese have not been overwritten. Click Edit PicList...\nto select a PicList file to be edited."
+            else: # if only 1 file found
+                m1 = "This PicList file already exists:"
+                m2 = "\n".join(existingFilelist)+"\n\nIt has not been overwritten. Now just click Edit PicList..."
+            dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, m1)
+            dialog.format_secondary_text(m2)
+            dialog.format_secondary_text(m2)
+            dialog.run()
+            dialog.destroy()
 
     def onGenerateParaAdjList(self, btn_generateParaAdjList):
+        existingFilelist = []
         for bk in self.getBooks():
             prjid = self.get("cb_project")
             prjdir = os.path.join(self.settings_dir, self.prjid)
@@ -798,10 +829,19 @@ class PtxPrinterDialog:
                         with open(outfname, "w", encoding="utf-8") as outf:
                             outf.write("".join(adjlist))
                     else:
-                        print("Adj List already exists (this will NOT be overwritten): " + outfname)
-
-    # def GenerateNestedStyles(self, c_omitallverses):
-        # print(".") # Need to call this on the other side!")
+                        existingFilelist.append(outfname.split("/")[-1])
+        if len(existingFilelist):
+            if len(existingFilelist) > 1:
+                m1 = "Several Paragraph Adjust files already exist:"
+                m2 = "\n".join(existingFilelist)+"\n\nThese have not been overwritten. Click on Edit Adjust List...\nto select a Paragraph Adjust List file to be edited."
+            else: # if only 1 file found
+                m1 = "This Paragraph Adjust List already exists:"
+                m2 = "\n".join(existingFilelist)+"\n\nIt has not been overwritten. Click on Edit Adjust List..."
+            dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, m1)
+            dialog.format_secondary_text(m2)
+            dialog.format_secondary_text(m2)
+            dialog.run()
+            dialog.destroy()
 
     def onEditAdjListClicked(self, btn_editParaAdjList):
         if not self.get("c_multiplebooks"):
@@ -814,16 +854,26 @@ class PtxPrinterDialog:
             if doti > 0:
                 adjfname = adjfname[:doti] + "-draft" + adjfname[doti:] + ".adj"
             if os.path.exists(adjfname):
-                os.startfile(adjfname)
-            # else:
-                # print("You need to generate the file first!")
+                if sys.platform == "win32":
+                    os.startfile(adjfname)
+                elif sys.platform == "linux":
+                    subprocess.call(('xdg-open', adjfname))
+            else:
+                dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK,
+                    "Unable to edit Adj List file!")
+                dialog.format_secondary_text("Please click the Generate button first\nto create the file(s). Then try again.")
+                dialog.run()
+                dialog.destroy()
         else:
             adjfname = self.fileChooser("Select an Adjust file to edit", 
                     filters = {"Adjust files": {"pattern": "*.adj", "mime": "none"}},
                     multiple = True)
             if adjfname is not None:
                 if os.path.exists(adjfname):
-                    os.startfile(adjfname)
+                    if sys.platform == "win32":
+                        os.startfile(adjfname)
+                    elif sys.platform == "linux":
+                        subprocess.call(('xdg-open', adjfname))
 
     def onEditPicListClicked(self, btn_editPicList):
         if not self.get("c_multiplebooks"):
@@ -836,9 +886,16 @@ class PtxPrinterDialog:
             if doti > 0:
                 picfname = picfname[:doti] + "-draft" + picfname[doti:] + ".piclist"
             if os.path.exists(picfname):
-                os.startfile(picfname)
-            # else:
-                # print("You need to generate the file first!")
+                if sys.platform == "win32":
+                    os.startfile(picfname)
+                elif sys.platform == "linux":
+                    subprocess.call(('xdg-open', picfname))
+            else:
+                dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK,
+                    "Unable to edit Pic List file!")
+                dialog.format_secondary_text("Please click the Generate button first\nto create the file(s). Then try again.")
+                dialog.run()
+                dialog.destroy()
         else:
             # Is there a way to force the file chooser to look in the PicList folder?
             picfname = self.fileChooser("Select a PicList file to edit", 
@@ -846,7 +903,10 @@ class PtxPrinterDialog:
                     multiple = True)
             if picfname is not None:
                 if os.path.exists(picfname):
-                    os.startfile(picfname)
+                    if sys.platform == "win32":
+                        os.startfile(picfname)
+                    elif sys.platform == "linux":
+                        subprocess.call(('xdg-open', picfname))
     
     def ontv_sizeallocate(self, atv, dummy):
         b = atv.get_buffer()
