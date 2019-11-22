@@ -140,10 +140,10 @@ class Info:
         "fontbolditalic/slant":     ("s_bolditalicslant", lambda w,v: ";slant={:.4f}".format(v) if v != 0.0000 and w.get("c_fakebolditalic") else ""),
     }
     _fonts = {
-        "fontregular/name": ("f_body", None),
-        "fontbold/name": ("f_bold", "c_fakebold"),
-        "fontitalic/name": ("f_italic", "c_fakeitalic"),
-        "fontbolditalic/name": ("f_bolditalic", "c_fakebolditalic")
+        "fontregular/name": ("f_body", None, None),
+        "fontbold/name": ("f_bold", "c_fakebold", "fontbold/embolden"),
+        "fontitalic/name": ("f_italic", "c_fakeitalic", "fontitalic/embolden"),
+        "fontbolditalic/name": ("f_bolditalic", "c_fakebolditalic", "fontbolditalic/embolden")
     }
     _hdrmappings = {
         "First Reference":  r"\firstref",
@@ -185,15 +185,19 @@ class Info:
     def update(self):
         print("  info: update",self)
         printer = self.printer
-        for k, v in self._mappings.items():
-            val = printer.get(v[0]) if v[0] is not None else None
-            if v[1] is not None:
-                self.dict[k] = v[1](printer, val)
+        self.updatefields(self._mappings.keys())
         if self.prjid is not None:
             self.dict['project/id'] = self.prjid
         self.processFonts(printer)
         self.processHdrFtr(printer)
         self.makelocalChanges(printer)
+
+    def updatefields(self, a):
+        for k in a:
+            v = self._mappings[k]
+            val = self.printer.get(v[0]) if v[0] is not None else None
+            if v[1] is not None:
+                self.dict[k] = v[1](self.printer, val)
 
     def __getitem__(self, key):
         print("  info: __getitem__",self, key)
@@ -220,7 +224,12 @@ class Info:
                 reg = printer.get(self._fonts['fontregular/name'][0])
                 f = TTFont(reg)
                 printer.set(self._fonts[p][1], True)
-                printer.set(wid, reg) 
+                printer.set(wid, reg)
+                self.updatefields([self._fonts[p][2]])
+                print("Setting {} to {}".format(p, reg))
+            elif self._fonts[p][1] is not None and printer.get(self._fonts[p][1]):
+                printer.set(self._fonts[p][1], False)
+                self.updatefields([self._fonts[p][2]])
             d = self.printer.ptsettings.find_ldml('.//special/{1}external-resources/{1}font[@name="{0}"]'.format(f.family, silns))
             if d is not None:
                 f.features = {}
@@ -239,7 +248,7 @@ class Info:
                 engine = ""
             fname = f.family
             if len(f.style):
-                fname = f.family + "-" + f.style
+                fname = f.family + " " + f.style.title()
             self.dict[p] = fname + engine
 
     def processHdrFtr(self, printer):
