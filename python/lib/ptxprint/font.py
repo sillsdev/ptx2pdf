@@ -89,7 +89,7 @@ class TTFont:
     def __init__(self, name, style=""):
         p = Pango.font_description_from_string(name + (" " + style if style else ""))
         self.style = " ".join([self.style2str(p.get_weight()), self.style2str(p.get_style())]).strip()
-        self.family = p.get_family()
+        self.family = p.get_family().replace("-", "\\-")
         self.filename = fontcache.get(self.family, self.style.title())
         self.feats = {}
         self.featvals = {}

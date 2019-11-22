@@ -140,10 +140,10 @@ class Info:
         "fontbolditalic/slant":     ("s_bolditalicslant", lambda w,v: ";slant={:.4f}".format(v) if v != 0.0000 and w.get("c_fakebolditalic") else ""),
     }
     _fonts = {
-        "fontregular/name": "f_body",
-        "fontbold/name": "f_bold",
-        "fontitalic/name": "f_italic",
-        "fontbolditalic/name": "f_bolditalic"
+        "fontregular/name": ("f_body", None),
+        "fontbold/name": ("f_bold", "c_fakebold"),
+        "fontitalic/name": ("f_italic", "c_fakeitalic"),
+        "fontbolditalic/name": ("f_bolditalic", "c_fakebolditalic")
     }
     _hdrmappings = {
         "First Reference":  r"\firstref",
@@ -207,8 +207,20 @@ class Info:
         print("  info: processFonts",self, printer)
         # \def\regular{"Gentium Plus/GR:litr=1;ital=1"}   ???
         silns = "{urn://www.sil.org/ldml/0.1}"
-        for p, wid in self._fonts.items():
+        for p in self._fonts.keys():
+            if p in self.dict:
+                del self.dict[p]
+        for p in ['fontregular/name'] + list(self._fonts.keys()):
+            wid = self._fonts[p][0]
+            if p in self.dict:
+                continue
             f = TTFont(printer.get(wid))
+            print(p, wid, f.filename, f.family, f.style)
+            if f.filename is None and p != "fontregular/name":
+                reg = printer.get(self._fonts['fontregular/name'][0])
+                f = TTFont(reg)
+                printer.set(self._fonts[p][1], True)
+                printer.set(wid, reg) 
             d = self.printer.ptsettings.find_ldml('.//special/{1}external-resources/{1}font[@name="{0}"]'.format(f.family, silns))
             if d is not None:
                 f.features = {}
@@ -225,10 +237,10 @@ class Info:
                 engine = "/GR"
             else:
                 engine = ""
-            s = ""
+            fname = f.family
             if len(f.style):
-                s = "/" + "".join(x[0].upper() for x in f.style.split(" "))
-            self.dict[p] = f.family + engine + s
+                fname = f.family + "-" + f.style
+            self.dict[p] = fname + engine
 
     def processHdrFtr(self, printer):
         print("  info: processHdrFtr",self, printer)
@@ -490,7 +502,7 @@ class Info:
                     continue
             self._configset(config, k, str(val))
         for k, v in self._fonts.items():
-            self._configset(config, k, printer.get(v, asstr=True))
+            self._configset(config, k, printer.get(v[0], asstr=True))
         for k, v in self._snippets.items():
             self._configset(config, k, str(printer.get(v[0], asstr=True)))
         return config
@@ -516,7 +528,7 @@ class Info:
                         printer.set(v[0], val)
                 elif key in self._fonts:
                     v = self._fonts[key]
-                    printer.set(v, val)
+                    printer.set(v[0], val)
                 elif key in self._snippets:
                     printer.set(self._snippets[key][0], val.lower() == "true")
         for k, v in self._settingmappings.items():
