@@ -162,7 +162,7 @@ class Info:
         "format as italics":       r"\\it \1\\it*",
         "format as bold italics":  r"\\bdit \1\\bdit*",
         "format with emphasis":    r"\\em \1\\em*",
-        "with ⸤floor⸥ brackets":   r"\u2E24\1\u2E25", # Question for MH - using this option makes it crash with an encoding issue. Help!
+        "with ⸤floor⸥ brackets":   r"\u2E24\1\u2E25",
         "star *before word":       r"*\1",
         "star after* word":        r"\1*",
         "circumflex ^before word": r"^\1",

@@ -108,7 +108,7 @@ class PtxPrinterDialog:
         self.watermarks = None
         self.customFigFolder = None
         self.prjid = None
-        for p in allprojects:
+        for p in sorted(allprojects, key = lambda s: s.casefold()):
             self.projects.append([p])
 
     def run(self, callback):
@@ -214,7 +214,7 @@ class PtxPrinterDialog:
             self.callback(self)
         else:
             dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK,
-                "Cannot print with no project id")
+                "Cannot create a PDF without a Paratext Project Selected.\n\nSelect a project and try again.")
             dialog.run()
             dialog.destroy()
 

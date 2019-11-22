@@ -29,21 +29,27 @@ class TTFontCache:
                 (path, full) = f.strip().split(": ")
                 if ":style=" in full:
                     (name, style) = full.split(':style=')
+                    # print(f.encode("unicode_escape"))
                 else:
                     name = full
                     style = ""
                 if "," in name:
+                    # print(f.encode("unicode_escape"))
                     names = name.split(",")
+                    # print names.encode("unicode_escape")
                 else:
                     names = [name]
                 if "," in style:
                     styles = style.split(",")
+                    # print styles.encode("unicode_escape")
                 else:
                     styles = [style]
             except ValueError:
-                raise SyntaxError("Can't parse: {}".format(f))
+                raise SyntaxError("Can't parse: {}".format(f).encode("unicode_escape"))
             for n in names:
                 for s in styles:
+                    # if n == "Awami Nastaliq":
+                        # print(n.encode("unicode_escape"),s.encode("unicode_escape"))
                     self.cache["{}|{}".format(n, s)] = path
         print("FontCache size:" + str(len(self.cache)))
 
@@ -71,7 +77,11 @@ class TTFontCache:
         return (res, name, style)
 
     def get(self, name, style):
-        return self.cache.get("{}|{}".format(name, style), None)
+        if len(style) == 0:
+            style = "Regular"
+        k = "{}|{}".format(name, style)
+        # print(k,self.cache.get(k, None))
+        return self.cache.get(k, None)
 
 fontcache = TTFontCache()
 
@@ -80,7 +90,7 @@ class TTFont:
         p = Pango.font_description_from_string(name + (" " + style if style else ""))
         self.style = " ".join([self.style2str(p.get_weight()), self.style2str(p.get_style())]).strip()
         self.family = p.get_family()
-        self.filename = fontcache.get(self.family, self.style)
+        self.filename = fontcache.get(self.family, self.style.title())
         self.feats = {}
         self.featvals = {}
         self.names = {}
