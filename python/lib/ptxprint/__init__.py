@@ -210,10 +210,13 @@ class PtxPrinterDialog:
 
     def onOK(self, btn):
         print("\n init: onOK",self, btn,"\n")
-        #if self.prjid is not None:
-        self.callback(self)
-        #else:
-        #    print("Can't print a project with no id")        # create dialog message to complain
+        if self.prjid is not None:
+            self.callback(self)
+        else:
+            dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK,
+                "Cannot print with no project id")
+            dialog.run()
+            dialog.destroy()
 
     def onCancel(self, btn):
         self.onDestroy(btn)
