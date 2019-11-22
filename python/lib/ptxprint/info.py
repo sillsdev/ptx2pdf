@@ -227,9 +227,6 @@ class Info:
                 printer.set(wid, reg)
                 self.updatefields([self._fonts[p][2]])
                 print("Setting {} to {}".format(p, reg))
-            elif self._fonts[p][1] is not None and printer.get(self._fonts[p][1]):
-                printer.set(self._fonts[p][1], False)
-                self.updatefields([self._fonts[p][2]])
             d = self.printer.ptsettings.find_ldml('.//special/{1}external-resources/{1}font[@name="{0}"]'.format(f.family, silns))
             if d is not None:
                 f.features = {}
