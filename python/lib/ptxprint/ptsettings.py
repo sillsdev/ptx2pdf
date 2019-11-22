@@ -58,3 +58,7 @@ class ParatextSettings:
     def get(self, key, default=None):
         return self.dict.get(key, default)
 
+    def find_ldml(self, path):
+        if self.ldml is None:
+            return None
+        return self.ldml.find(path)

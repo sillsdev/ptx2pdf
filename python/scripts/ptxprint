@@ -95,7 +95,7 @@ def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
 
 def doit(printer):
     print("   ptxp: doit",printer)
-    info = printer.info or ptxprint.Info(printer, args.paratext, printer.ptsettings)
+    info = printer.info or ptxprint.Info(printer, args.paratext, printer.prjid)
     prjid = printer.get("cb_project")
     prjdir = os.path.join(args.paratext, prjid)
     if prjid is None or not len(prjid):     # can't print no project
@@ -107,6 +107,8 @@ def doit(printer):
     with open(os.path.join(prjdir, "ptxprint.cfg"), "w", encoding="utf-8") as outf:
         config.write(outf)
     tmpdir = os.path.join(prjdir, 'PrintDraft') if printer.get("c_useprintdraftfolder") else args.directory
+    if not os.path.exists(tmpdir):
+        os.makedirs(tmpdir)
     jobs = printer.getBooks()
     if printer.get("c_combine"):
         texfiles = [dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=printer.logbuffer)]

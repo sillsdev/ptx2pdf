@@ -179,6 +179,7 @@ class Info:
         self.localChanges = None
         self.dict = {"/ptxpath": path}
         self.prjid = prjid
+        print([self.prjid])
         self.update()
 
     def update(self):
@@ -208,7 +209,7 @@ class Info:
         silns = "{urn://www.sil.org/ldml/0.1}"
         for p, wid in self._fonts.items():
             f = TTFont(printer.get(wid))
-            d = self.printer.ptsettings.ldml.find('.//special/{1}external-resources/{1}font[@name="{0}"]'.format(f.family, silns))
+            d = self.printer.ptsettings.find_ldml('.//special/{1}external-resources/{1}font[@name="{0}"]'.format(f.family, silns))
             if d is not None:
                 f.features = {}
                 for l in d.get('features', '').split(','):
@@ -439,7 +440,8 @@ class Info:
         # When should this function be called? At present it is happening at startup, and I think it should happen later.
         msngpiclist = []
         prjid = self.dict['project/id']
-        prjdir = os.path.join(self.dict['/ptxpath'], prjid)
+        print([prjid, self.printer.settings_dir, printer.get("cb_project")])
+        prjdir = os.path.join(self.printer.settings_dir, prjid)
         # prjdir = os.path.join(self.printer.settings_dir, prjid)
         if printer.get("c_useFiguresFolder"): # Therefore this is always true!
             picdir = os.path.join(prjdir, "Figures")
@@ -530,11 +532,18 @@ class Info:
         printer.FrontPDFs = self.dict['project/frontincludes']
         printer.watermarks = self.dict['paper/watermarkpdf']
         printer.BackPDFs = self.dict['project/backincludes']
+        # update UI to reflect the world it is in
+        prjdir = os.path.join(printer.settings_dir, printer.prjid)
+        for (f, c) in (("PrintDraft-mods.sty", "c_useModsSty"),
+                       ("PrintDraft-mods.tex", "c_useModsTex")):
+            if printer.get(c):
+                if not os.path.exists(os.path.join(prjdir, f)):
+                    printer.set(c, False)
         self.update()
 
     def GenerateNestedStyles(self):
         print("  info: GenerateNestedStyles",self)
-        prjid = self.printer.get("cb_project")
+        prjid = self.dict['project/id']
         prjdir = os.path.join(self.printer.settings_dir, prjid)
         nstyfname = os.path.join(prjdir, "PrintDraft/NestedStyles.sty")
         nstylist = []

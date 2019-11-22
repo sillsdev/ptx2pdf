@@ -210,7 +210,10 @@ class PtxPrinterDialog:
 
     def onOK(self, btn):
         print("\n init: onOK",self, btn,"\n")
+        #if self.prjid is not None:
         self.callback(self)
+        #else:
+        #    print("Can't print a project with no id")        # create dialog message to complain
 
     def onCancel(self, btn):
         self.onDestroy(btn)
@@ -593,7 +596,7 @@ class PtxPrinterDialog:
         configfile = os.path.join(self.settings_dir, self.prjid, "ptxprint.cfg")
         if os.path.exists(configfile):
             print("Reading configfile {}".format(configfile))
-            self.info = Info(self, self.settings_dir)
+            self.info = Info(self, self.settings_dir, self.prjid)
             config = configparser.ConfigParser()
             config.read(configfile, encoding="utf-8")
             self.info.loadConfig(self, config)

@@ -26,7 +26,7 @@ class TTFontCache:
             if ": " not in f:
                 continue
             try:
-                (path, full) = f.split(": ")
+                (path, full) = f.strip().split(": ")
                 if ":style=" in full:
                     (name, style) = full.split(':style=')
                 else:
