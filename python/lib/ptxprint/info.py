@@ -322,13 +322,13 @@ class Info:
             outfpath = os.path.join(outdir, outfname)
             with open(infname, "r", encoding="utf-8") as inf:
                 dat = inf.read()
-                for c in self.changes + self.localChanges:
+                for c in (self.changes or []) + (self.localChanges or []):
                     if c[0] is None:
                         dat = c[1].sub(c[2], dat)
                     else:
                         newdat = [c[0].split(dat)]
                         for i in range(1, len(newdat), 2):
-                            newdat[i] = c[  1].sub(c[2], newdat[i])
+                            newdat[i] = c[1].sub(c[2], newdat[i])
                         dat = "".join(newdat)
             with open(outfpath, "w", encoding="utf-8") as outf:
                 outf.write(dat)
@@ -341,23 +341,20 @@ class Info:
         changes = []
         if not os.path.exists(fname):
             return []
+        qreg = r'(?:"((?:[^"\\]|\\.)*?)"|' + r"'((?:[^'\\]|\\.)*?)')"
         with open(fname, "r", encoding="utf-8") as inf:
             for l in inf.readlines():
                 l = l.strip().replace(u"\uFEFF", "")
                 l = re.sub(r"\s*#.*$", "", l)
                 if not len(l):
                     continue
-                if l.startswith("in"):
-                    # in "\\w .+?\\w\*": "\|.+?\\w\*" > "\w*"
-                    print("WARNING: 'in x: change y to z' rule encountered in PrintDraftChanges has been ignored.")
-                    continue
-                m = re.match(r"^(['\"])(.*?)(?<!\\)\1\s*>\s*(['\"])(.*?)(?<!\\)\3", l)
+                m = re.match(r"^"+qreg+r"\s*>\s*"+qreg, l)
                 if m:
-                    changes.append((None, regex.compile(m.group(2), flags=regex.M), m.group(4)))
+                    changes.append((None, regex.compile(m.group(1) or m.group(2), flags=regex.M), m.group(3) or m.group(4)))
                     continue
-                m = re.match(r"^in\s+(['\"])(.*?)(?<!\\)\1\s*:\s*(['\"])(.*?)(?<!\\)\3\s*>\s*(['\"])(.*?)(?<!\\)\5", l)
+                m = re.match(r"^in\s+"+qreg+r"\s*:\s*"+qreg+r"\s*>\s*"+qreg, l)
                 if m:
-                    changes.append((regex.compile("("+m.group(2)+")", flags=regex.M), regex.compile(m.group(4), flags=regex.M), m.group(6)))
+                    changes.append((regex.compile("("+(m.group(1) or m.group(2))+")", flags=regex.M), regex.compile((m.group(3) or m.group(4)), flags=regex.M), (m.group(5) or m.group(6))))
         if not len(changes):
             return None
         return changes

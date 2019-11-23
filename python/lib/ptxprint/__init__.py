@@ -414,6 +414,9 @@ class PtxPrinterDialog:
         status = self.get("c_usePrintDraftChanges")
         for c in ("btn_editChangesFile", "c_processScriptBefore", "c_processScriptAfter", "l_processScript"):
             self.builder.get_object(c).set_sensitive(status)
+        if self.info is not None:           # trigger a rereading of the changes
+            # this is a kludge. Better to keep the last modified date and test in Info.convertBook
+            self.info.changes = None
         
     def onUseModsTexClicked(self, c_useModsTex):
         self.builder.get_object("btn_editModsTeX").set_sensitive(self.get("c_useModsTex"))
