@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import sys, os, re, regex, gi, random
+import sys, os, re, regex, gi, random, subprocess
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 import xml.etree.ElementTree as et
@@ -1008,4 +1008,22 @@ class PtxPrinterDialog:
         self.builder.get_object("l_diglotString").set_text(DiglotString)
 
     def onBlendPDFsClicked(self, btn):
-        print("Click OK instead!")
+        if sys.platform == "win32":
+            priprjid = self.get("cb_diglotPriProject")
+            secprjid = self.get("cb_diglotSecProject")
+            pritmpdir = os.path.join(self.settings_dir, priprjid, 'PrintDraft') # if self.get("c_useprintdraftfolder") else args.directory
+            sectmpdir = os.path.join(self.settings_dir, secprjid, 'PrintDraft') # if self.get("c_useprintdraftfolder") else args.directory
+            bkid = self.get("cb_book")
+            prifname = os.path.join(pritmpdir, "ptxprint-{}{}.pdf".format(bkid, priprjid))
+            secfname = os.path.join(sectmpdir, "ptxprint-{}{}.pdf".format(bkid, secprjid))
+            pdffname = os.path.join(pritmpdir, "ptxprint-diglot-{}-{}-{}.pdf".format(bkid, secprjid, priprjid))
+            PDFtkEXE = r"C:\Program Files (x86)\PDFtk Server\bin\pdftk.exe"
+            params = '"'+PDFtkEXE+'" "'+prifname+'" '+"multibackground"+' "'+secfname+'" '+"output"+' "'+pdffname+'"'
+            params = re.sub(r"/",r"\\", params)
+            # pdftk A.pdf multibackground B.pdf output A_B_Diglot.pdf
+            print(params)
+            # subprocess.run([PDFtkEXE, params])
+            subprocess.run([params])
+        if os.path.exists(pdffname):
+            if sys.platform == "win32":
+                os.startfile(pdffname)

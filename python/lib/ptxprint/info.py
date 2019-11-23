@@ -97,7 +97,9 @@ class Info:
         "document/supressintrooutline": ("c_omitIntroOutline", lambda w,v: "true" if v else "false"),
         "document/supressindent":   ("c_omit1paraIndent", lambda w,v: "false" if v else "true"),
         "document/ifdiglot":        ("c_diglot", lambda w,v :"" if v else "%"),
-        "document/diglotsettings":  ("l_diglotString", lambda w,v: w.builder.get_object("l_diglotString").get_text()),
+        "document/diglotsettings":  ("l_diglotString", lambda w,v: w.builder.get_object("l_diglotString").get_text() if w.get("c_diglot") else ""),
+        "document/diglotpriprj":    ("cb_diglotPriProject", lambda w,v: w.builder.get_object("cb_diglotPriProject").get_active_id()),
+        "document/diglotsecprj":    ("cb_diglotSecProject", lambda w,v: w.builder.get_object("cb_diglotSecProject").get_active_id()),
 
         "header/headerposition":    ("s_headerposition", lambda w,v: round(v, 2) or "0.80"),
         "header/footerposition":    ("s_footerposition", lambda w,v: round(v, 2) or "0.70"),
