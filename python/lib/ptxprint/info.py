@@ -34,7 +34,7 @@ class Info:
         "paper/width":              (None, lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", w.get("cb_pagesize")) or "148mm"),
         "paper/pagesize":           ("cb_pagesize", None),
         "paper/ifwatermark":        ("c_applyWatermark", lambda w,v: "" if v else "%"),
-        "paper/watermarkpdf":       ("btn_selectWatermarkPDF", lambda w,v: re.sub(r"\\","/", w.watermarks) if (w.watermarks is not None and w.watermarks != 'None') else "A5-Draft.pdf"),
+        "paper/watermarkpdf":       ("btn_selectWatermarkPDF", lambda w,v: re.sub(r"\\","/", w.watermarks) if (w.watermarks is not None and w.watermarks != 'None') else "ptxprint/A5-Draft.pdf"),
         "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),  
         "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v else "false"),
         "paper/margins":            ("s_margins", lambda w,v: round(v) or "14"),
@@ -96,6 +96,8 @@ class Info:
         "document/supressbookintro": ("c_omitBookIntro", lambda w,v: "true" if v else "false"),
         "document/supressintrooutline": ("c_omitIntroOutline", lambda w,v: "true" if v else "false"),
         "document/supressindent":   ("c_omit1paraIndent", lambda w,v: "false" if v else "true"),
+        "document/ifdiglot":        ("c_diglot", lambda w,v :"" if v else "%"),
+        "document/diglotsettings":  ("l_diglotString", lambda w,v: w.builder.get_object("l_diglotString").get_text()),
 
         "header/headerposition":    ("s_headerposition", lambda w,v: round(v, 2) or "0.80"),
         "header/footerposition":    ("s_footerposition", lambda w,v: round(v, 2) or "0.70"),
@@ -425,6 +427,8 @@ class Info:
 
         if printer.get("c_glueredupwords"):
             self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w\w\w+) \1(?=[\s,.!?])", flags=regex.M), r"\1\u00A0\1")) # keep reduplicated words together
+        
+        self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) # Paratext marks no-break space as a tilde ~
             
         for c in range(1,4):
             if not printer.get("c_usetoc{}".format(c)):

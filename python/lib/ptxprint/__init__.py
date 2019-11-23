@@ -67,6 +67,8 @@ class PtxPrinterDialog:
         self.addCR("cb_chapto", 0)
         self.addCR("cb_blendedXrefCaller", 0)
         self.addCR("cb_glossaryMarkupStyle", 0)
+        # self.addCR("cb_diglotPriProject", 0)
+        # self.addCR("cb_diglotSecProject", 0)
 
         scripts = self.builder.get_object("ls_scripts")
         scripts.clear()
@@ -963,3 +965,47 @@ class PtxPrinterDialog:
                     # im.save(outputfile, "PNG")
                 # except Exception, e:
                     # print(e)
+    def onDiglotClicked(self, c_diglot):
+        self.builder.get_object("gr_diglot").set_sensitive(self.get("c_diglot"))
+        self.onDiglotDimensionsChanged(None)
+
+    def onDiglotDimensionsChanged(self, btn):
+        PageWidth = 210 
+        Margins = self.get("s_margins")
+        MiddleGutter = self.get("s_diglotMiddleGutter")
+        BindingGutter = self.get("s_pagegutter")
+        PriColWid = self.get("s_PriColWidth")
+        SecColWid = PageWidth - PriColWid - MiddleGutter - BindingGutter - (2*Margins)
+        self.builder.get_object("s_SecColWidth").set_value(SecColWid)
+        
+        # Calc Pri Settings (righ   t side of page; or outer if mirrored)
+        PriColWid = self.get("s_PriColWidth") # this is the only parameter we want them to tweak with a slider (<--40%--|---60%--->)
+        PriSideMarginFactor = 1
+        PriBindingGutter = PageWidth - PriColWid - (2*Margins)
+        
+        # Calc Sec Settings (left side of page; or inner if mirrored)
+        SecColWid = PageWidth - PriColWid - MiddleGutter - BindingGutter - (2*Margins)
+        SecSideMarginFactor = (PriColWid + Margins + MiddleGutter) / Margins
+        SecBindingGutter = PageWidth - SecColWid - (2*Margins*SecSideMarginFactor)
+        
+        PriPercent = round((PriColWid / (PriColWid + SecColWid) * 100),1)
+        SecPercent = 100 - PriPercent
+        self.builder.get_object("t_PriPercent").set_text(str(PriPercent)+"%")
+        self.builder.get_object("t_SecPercent").set_text(str(SecPercent)+"%")
+        
+        if self.get("c_outputSecText"):
+            DiglotString = "\BindingGuttertrue"+ \
+                           "\n\BindingGutter={}mm".format(SecBindingGutter)+ \
+                           "\n\def\SideMarginFactor{{{:.2f}}}".format(SecSideMarginFactor)+ \
+                           "\n\BodyColumns=1"
+
+        else:
+            DiglotString = "\BindingGuttertrue"+ \
+                           "\n\BindingGutter={}mm".format(PriBindingGutter)+ \
+                           "\n\def\SideMarginFactor{{{:.2f}}}".format(PriSideMarginFactor)+ \
+                           "\n\BodyColumns=1"
+            # DiglotString = "\BindingGutter={}mm".format(PriBindingGutter)+"\n\def\SideMarginFactor{{{:.2f}}}".format(PriSideMarginFactor)+"\n\BodyColumns=1"
+        self.builder.get_object("l_diglotString").set_text(DiglotString)
+
+    def onBlendPDFsClicked(self, btn):
+        print("Click OK instead!")
