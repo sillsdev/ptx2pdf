@@ -1606,7 +1606,6 @@ script (such as Arabic).</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
                                     <property name="font">Sans 12</property>
-                                    <property name="level">GTK_FONT_CHOOSER_LEVEL_STYLE | GTK_FONT_CHOOSER_LEVEL_FAMILY</property>
                                     <property name="preview_text"/>
                                     <property name="show_preview_entry">False</property>
                                     <property name="show_size">False</property>
@@ -1622,7 +1621,6 @@ script (such as Arabic).</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
                                     <property name="font">Sans 12</property>
-                                    <property name="level">GTK_FONT_CHOOSER_LEVEL_STYLE | GTK_FONT_CHOOSER_LEVEL_FAMILY</property>
                                     <property name="preview_text"/>
                                     <property name="show_preview_entry">False</property>
                                     <property name="show_size">False</property>
@@ -1638,7 +1636,6 @@ script (such as Arabic).</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
                                     <property name="font">Sans 12</property>
-                                    <property name="level">GTK_FONT_CHOOSER_LEVEL_STYLE | GTK_FONT_CHOOSER_LEVEL_FAMILY</property>
                                     <property name="preview_text"/>
                                     <property name="show_preview_entry">False</property>
                                     <property name="show_size">False</property>
@@ -1867,7 +1864,6 @@ script (such as Arabic).</property>
                                     <property name="receives_default">True</property>
                                     <property name="valign">center</property>
                                     <property name="font">Sans 12</property>
-                                    <property name="level">GTK_FONT_CHOOSER_LEVEL_STYLE | GTK_FONT_CHOOSER_LEVEL_FAMILY</property>
                                     <property name="preview_text"/>
                                     <property name="show_preview_entry">False</property>
                                     <property name="show_size">False</property>

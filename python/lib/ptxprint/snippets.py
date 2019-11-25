@@ -3,8 +3,9 @@ import regex
 class PDFx1aOutput():
     regexes = []
     styleInfo = ""
+    processTex = True
     texCode = r"""
-\special{pdf:docinfo<< 
+\special{{pdf:docinfo<< 
 /Title({document/title})% 
 /Subject({document/subject})% 
 /Author({document/author})% 
@@ -15,11 +16,11 @@ class PDFx1aOutput():
 /Trapped /False 
 /GTS_PDFXVersion(PDF/X-1:2003)% 
 /GTS_PDFXConformance(PDF/X-1a:2003)% 
->> } 
-\special{pdf:fstream @OBJCVR ({/ptxprintlibpath}/ps_cmyk.icc)} 
-\special{pdf:put @OBJCVR <</N 4>>} 
-%\special{pdf:close @OBJCVR} 
-\special{pdf:docview << 
+>> }} 
+\special{{pdf:fstream @OBJCVR ({/ptxprintlibpath}/ps_cmyk.icc)}} 
+\special{{pdf:put @OBJCVR <</N 4>>}} 
+%\special{{pdf:close @OBJCVR}} 
+\special{{pdf:docview << 
 /OutputIntents [ << 
 /Type/OutputIndent 
 /S/GTS_PDFX 
@@ -27,7 +28,7 @@ class PDFx1aOutput():
 /OutputConditionIdentifier (Custom) 
 /DestOutputProfile @OBJCVR 
 /RegistryName (http://www.color.og) 
->> ] >>} 
+>> ] >>}} 
     """
     
 class FancyIntro():
@@ -56,6 +57,7 @@ class FancyIntro():
 """
 # Indent is in inches
 
+    processTex = False
     texCode = r"""
 % Enable commands with digits in them to be processed
 \catcode`@=11

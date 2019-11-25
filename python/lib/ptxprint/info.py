@@ -1,4 +1,5 @@
-import configparser, re, os, datetime
+import configparser, re, os
+from datetime import datetime
 import regex
 from ptxprint.font import TTFont
 from ptxprint.ptsettings import chaps, books, oneChbooks
@@ -53,10 +54,10 @@ class Info:
         "paragraph/ifjustify":       ("c_justify", lambda w,v: "true" if v else "false"),
         "paragraph/ifhyphenate":     ("c_hyphenate", lambda w,v: "true" if v else "false"),
 
-        "document/title}":          (None, "Experimental Feature for PDF/X-1a Compliance Testing"),
+        "document/title":          (None, lambda w,v: "Experimental Feature for PDF/X-1a Compliance Testing"),
         "document/subject":         ("t_booklist", lambda w,v: v or ""),
-        "document/author":          (None, "This is where the author goes (=God?)"),
-        "document/creator":         (None, "And I wonder who created this."),
+        "document/author":          (None, lambda w,v: "This is where the author goes (=God?)"),
+        "document/creator":         (None, lambda w,v: "And I wonder who created this."),
 
         "document/toc":             ("c_autoToC", lambda w,v: "" if v else "%"),
         "document/toctitle":        ("t_tocTitle", lambda w,v: v or ""),
@@ -191,10 +192,13 @@ class Info:
         self.localChanges = None
         t = datetime.now()
         tz = t.utcoffset()
-        tzstr = "{0:02}'{1:02}'".format(int(tz.seconds / 3600), int((tz.seconds % 3600) / 60))
+        if tz is None:
+            tzstr = "Z"
+        else:
+            tzstr = "{0:+03}'{1:02}'".format(int(tz.seconds / 3600), int((tz.seconds % 3600) / 60))
         self.dict = {"/ptxpath": path,
                      "/ptxprintlibpath": os.path.abspath(os.path.dirname(__file__)),
-                     "document/date": datetime.now.strftime("%Y%m%d%H%M%S")+tzstr }
+                     "document/date": t.strftime("%Y%m%d%H%M%S")+tzstr }
         self.prjid = prjid
         print([self.prjid])
         self.update()
@@ -312,7 +316,10 @@ class Info:
                     for k, c in self._snippets.items():
                         v = self.printer.get(c[0])
                         if v:
-                            res.append(c[1].texCode)
+                            if c[1].processTex:
+                                res.append(c[1].texCode.format(**self.dict))
+                            else:
+                                res.append(c[1].texCode)
                 else:
                     res.append(l.format(**self.dict))
         return "".join(res).replace("\OmitChapterNumberfalse\n\OmitChapterNumbertrue\n","")
