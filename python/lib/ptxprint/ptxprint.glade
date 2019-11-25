@@ -3963,7 +3963,7 @@ Footnotes and Cross-references.</property>
                   </packing>
                 </child>
                 <child type="tab">
-                  <object class="GtkLabel">
+                  <object class="GtkLabel" id="lb_Diglot">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Create a Diglot or
@@ -4887,9 +4887,9 @@ script-specific rendering issues.</property>
                                   <object class="GtkCheckButton" id="c_PDFx1aOutput">
                                     <property name="label" translatable="yes">Output in PDF/X-1a:2003 format</property>
                                     <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -4948,6 +4948,7 @@ and Edit PicLists and Adj Lists.</property>
                 </child>
                 <child>
                   <object class="GtkBox" id="tb_Markers">
+                    <property name="visible">True</property>
                     <property name="sensitive">False</property>
                     <property name="can_focus">False</property>
                     <property name="orientation">vertical</property>
@@ -4966,7 +4967,7 @@ and Edit PicLists and Adj Lists.</property>
                   </packing>
                 </child>
                 <child type="tab">
-                  <object class="GtkLabel">
+                  <object class="GtkLabel" id="lb_Markers">
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
                     <property name="can_focus">False</property>
@@ -5047,6 +5048,7 @@ styles in the StyleSheet.)</property>
                                   <object class="GtkEntry" id="t_PTsettingsFolder">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
+                                    <property name="halign">start</property>
                                     <property name="margin_right">6</property>
                                     <property name="hexpand">True</property>
                                   </object>
@@ -5059,6 +5061,7 @@ styles in the StyleSheet.)</property>
                                   <object class="GtkEntry" id="t_PTprogramFolder">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
+                                    <property name="halign">start</property>
                                     <property name="margin_right">6</property>
                                     <property name="hexpand">True</property>
                                   </object>
@@ -5071,8 +5074,8 @@ styles in the StyleSheet.)</property>
                                   <object class="GtkEntry">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
+                                    <property name="halign">start</property>
                                     <property name="margin_right">6</property>
-                                    <property name="hexpand">True</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -5294,6 +5297,7 @@ Use trouble-shooting tools.</property>
                 </child>
                 <child>
                   <object class="GtkBox" id="tb_ViewerEditor">
+                    <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="orientation">vertical</property>
                     <child>
@@ -5390,7 +5394,7 @@ Use trouble-shooting tools.</property>
                   </packing>
                 </child>
                 <child type="tab">
-                  <object class="GtkLabel">
+                  <object class="GtkLabel" id="lb_ViewerEditor">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Viewer/Editor</property>
@@ -5402,6 +5406,7 @@ Use trouble-shooting tools.</property>
                 </child>
                 <child>
                   <object class="GtkBox" id="tb_DiglotTesting">
+                    <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="orientation">vertical</property>
                     <child>
@@ -5766,7 +5771,7 @@ and Secondary
                   </packing>
                 </child>
                 <child type="tab">
-                  <object class="GtkLabel">
+                  <object class="GtkLabel" id="lb_DiglotTesting">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Diglot Testing</property>

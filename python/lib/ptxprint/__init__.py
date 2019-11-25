@@ -118,10 +118,13 @@ class PtxPrinterDialog:
         self.callback = callback
         self.mw.show_all()
         self.onHideAdvancedSettingsClicked(None)
+        self.ExperimentalFeatures(False)
         Gtk.main()
 
-    def enableExperimental(self):
-        pass
+    def ExperimentalFeatures(self,set=False):
+        for w in ("tb_", "lb_"):
+            for exp in ("Diglot", "Markers", "ViewerEditor", "DiglotTesting"):
+                self.builder.get_object(w+exp).set_visible(set)
         
     def addCR(self, name, index):
         # print(" init: addCR",self, name, index)
@@ -223,7 +226,6 @@ class PtxPrinterDialog:
             dialog.format_secondary_text("Please select a Paratext Project and try again.")
             dialog.run()
             dialog.destroy()
-            self.cb_project.grab_focus() # this doesn't appear to do anything yet!
 
     def onCancel(self, btn):
         self.onDestroy(btn)
@@ -235,7 +237,8 @@ class PtxPrinterDialog:
         try:
             self.cb_digits.set_active_id(self.get('cb_script'))
         except:
-            self.cb_digits.grab_focus()  # this doesn't appear to do anything yet!
+            pass
+            # self.cb_digits.grab_focus()  # this doesn't appear to do anything yet!
 
     def onFontChange(self, fbtn):
         # print(" init: onFontChange",self, fbtn)
@@ -251,10 +254,13 @@ class PtxPrinterDialog:
             w.set_font_name(fname)
             # print(fname, f.family, f.style, f.filename)
             # print(s, fname, f.extrastyles)
-            if 'bold' in f.style.lower():
-                self.set("s_{}embolden".format(sid), 2)
-            if 'italic' in f.style.lower():
-                self.set("s_{}slant".format(sid), 0.15)
+            # if 'bold' in f.style.lower():
+                # self.set("s_{}embolden".format(sid), 2)
+            # if 'italic' in f.style.lower():
+                # self.set("s_{}slant".format(sid), 0.15)
+        self.setEntryBoxFont()
+        
+    def setEntryBoxFont(self):
         # Set the font of any GtkEntry boxes to the primary body text font for this project
         p = Pango.font_description_from_string(self.get("f_body"))
         for w in ("t_tocTitle", "t_runningFooter"): 
@@ -449,23 +455,25 @@ class PtxPrinterDialog:
     def onHideAdvancedSettingsClicked(self, c_hideAdvancedSettings):
         # Turn Dangerous Settings OFF
         for c in ("c_startOnHalfPage", "c_marginalverses", "c_prettyIntroOutline", "c_blendfnxr", "c_autoToC", "c_figplaceholders",
-                  "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", "c_preventwidows"):
+                  "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", "c_preventwidows", "c_PDFx1aOutput",
+                  "c_diglot"):
             self.builder.get_object(c).set_active(False)
-            
+
         # Turn Essential Settings ON
         for c in ("c_mainBodyText", "c_footnoterule",
                   "c_includefigsfromtext", "c_skipmissingimages", "c_convertTIFtoPNG", "c_useFiguresFolder"):
             self.builder.get_object(c).set_active(True)
-            
+
         # Hide a whole bunch of stuff that they don't need to see
-        for c in ("tb_Markers", "tb_Diglot", "tb_Advanced","tb_Logging", "fr_FontConfig", "row_ToC", "c_figplaceholders",
+        for c in ("tb_Markers", "tb_Diglot", "tb_Advanced","tb_Logging", "tb_ViewerEditor", "tb_DiglotTesting",
                   "bx_BottomMarginSettings", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "box_AdvFootnoteConfig", 
                   "c_usePicList", "c_skipmissingimages", "c_convertTIFtoPNG", "c_useCustomFolder", "btn_selectFigureFolder", 
-                  "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses",
-                  "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller",
+                  "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "c_figplaceholders",  "fr_FontConfig", 
+                  "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "row_ToC",
                   "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", "c_preventwidows"):
             self.builder.get_object(c).set_visible(not self.get("c_hideAdvancedSettings"))
-        
+        self.ExperimentalFeatures(False) # Until we can get the args toggle working properly
+
     def onKeepTemporaryFilesClicked(self, c_keepTemporaryFiles):
         self.builder.get_object("gr_debugTools").set_sensitive(self.get("c_keepTemporaryFiles"))
         
@@ -634,6 +642,7 @@ class PtxPrinterDialog:
             toc.set_active(False)
         for c in ("l_singlebook", "cb_book", "l_chapfrom", "cb_chapfrom", "l_chapto", "cb_chapto"):
             self.builder.get_object(c).set_sensitive(not status)
+        self.setEntryBoxFont()
 
     def onEditChangesFile(self, cb_prj):
         self.prjid = self.get("cb_project")
@@ -1022,22 +1031,23 @@ class PtxPrinterDialog:
         self.builder.get_object("l_diglotString").set_text(DiglotString)
 
     def onBlendPDFsClicked(self, btn):
-        if sys.platform == "win32":
-            priprjid = self.get("cb_diglotPriProject")
-            secprjid = self.get("cb_diglotSecProject")
-            pritmpdir = os.path.join(self.settings_dir, priprjid, 'PrintDraft') # if self.get("c_useprintdraftfolder") else args.directory
-            sectmpdir = os.path.join(self.settings_dir, secprjid, 'PrintDraft') # if self.get("c_useprintdraftfolder") else args.directory
-            bkid = self.get("cb_book")
-            prifname = os.path.join(pritmpdir, "ptxprint-{}{}.pdf".format(bkid, priprjid))
-            secfname = os.path.join(sectmpdir, "ptxprint-{}{}.pdf".format(bkid, secprjid))
-            pdffname = os.path.join(pritmpdir, "ptxprint-diglot-{}-{}-{}.pdf".format(bkid, secprjid, priprjid))
-            PDFtkEXE = r"C:\Program Files (x86)\PDFtk Server\bin\pdftk.exe"
-            params = '"'+PDFtkEXE+'" "'+prifname+'" '+"multibackground"+' "'+secfname+'" '+"output"+' "'+pdffname+'"'
-            params = re.sub(r"/",r"\\", params)
+        pass
+        # if sys.platform == "win32":
+            # priprjid = self.get("cb_diglotPriProject")
+            # secprjid = self.get("cb_diglotSecProject")
+            # pritmpdir = os.path.join(self.settings_dir, priprjid, 'PrintDraft') # if self.get("c_useprintdraftfolder") else args.directory
+            # sectmpdir = os.path.join(self.settings_dir, secprjid, 'PrintDraft') # if self.get("c_useprintdraftfolder") else args.directory
+            # bkid = self.get("cb_book")
+            # prifname = os.path.join(pritmpdir, "ptxprint-{}{}.pdf".format(bkid, priprjid))
+            # secfname = os.path.join(sectmpdir, "ptxprint-{}{}.pdf".format(bkid, secprjid))
+            # pdffname = os.path.join(pritmpdir, "ptxprint-diglot-{}-{}-{}.pdf".format(bkid, secprjid, priprjid))
+            # PDFtkEXE = r"C:\Program Files (x86)\PDFtk Server\bin\pdftk.exe"
+            # params = '"'+PDFtkEXE+'" "'+prifname+'" '+"multibackground"+' "'+secfname+'" '+"output"+' "'+pdffname+'"'
+            # params = re.sub(r"/",r"\\", params)
             # pdftk A.pdf multibackground B.pdf output A_B_Diglot.pdf
-            print(params)
+            # print(params)
             # subprocess.run([PDFtkEXE, params])
-            subprocess.run([params])
-        if os.path.exists(pdffname):
-            if sys.platform == "win32":
-                os.startfile(pdffname)
+            # subprocess.run([params])
+        # if os.path.exists(pdffname):
+            # if sys.platform == "win32":
+                # os.startfile(pdffname)
