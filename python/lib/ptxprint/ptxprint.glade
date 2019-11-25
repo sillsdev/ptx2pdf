@@ -1914,7 +1914,7 @@ script (such as Arabic).</property>
                   </object>
                 </child>
                 <child type="tab">
-                  <object class="GtkLabel">
+                  <object class="GtkLabel" id="tb_Basic">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Set the Project, Book(s),
@@ -1928,7 +1928,7 @@ and Font options.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox">
+                  <object class="GtkBox" id="tb_Body">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="valign">start</property>
@@ -2906,7 +2906,7 @@ and Illustrations.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox">
+                  <object class="GtkBox" id="tb_HeadFoot">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="orientation">vertical</property>
@@ -4883,6 +4883,20 @@ script-specific rendering issues.</property>
                                     <property name="top_attach">0</property>
                                   </packing>
                                 </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_PDFx1aOutput">
+                                    <property name="label" translatable="yes">Output in PDF/X-1a:2003 format</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
                               </object>
                             </child>
                             <child type="label">
@@ -4953,6 +4967,7 @@ and Edit PicLists and Adj Lists.</property>
                 </child>
                 <child type="tab">
                   <object class="GtkLabel">
+                    <property name="visible">True</property>
                     <property name="sensitive">False</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">(Coming soon: A Graphical
@@ -5278,8 +5293,7 @@ Use trouble-shooting tools.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox">
-                    <property name="visible">True</property>
+                  <object class="GtkBox" id="tb_ViewerEditor">
                     <property name="can_focus">False</property>
                     <property name="orientation">vertical</property>
                     <child>
@@ -5387,8 +5401,7 @@ Use trouble-shooting tools.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox">
-                    <property name="visible">True</property>
+                  <object class="GtkBox" id="tb_DiglotTesting">
                     <property name="can_focus">False</property>
                     <property name="orientation">vertical</property>
                     <child>

@@ -2,7 +2,7 @@ import configparser, re, os, datetime
 import regex
 from ptxprint.font import TTFont
 from ptxprint.ptsettings import chaps, books, oneChbooks
-from ptxprint.snippets import FancyIntro
+from ptxprint.snippets import FancyIntro, PDFx1aOutput
 
 class Info:
     _mappings = {
@@ -52,6 +52,11 @@ class Info:
         "paragraph/linemax": ("s_linespacingmax", lambda w,v: "plus {:.3f}pt".format(v - w.get("s_linespacing")) if v > w.get("s_linespacing") else ""),
         "paragraph/ifjustify":       ("c_justify", lambda w,v: "true" if v else "false"),
         "paragraph/ifhyphenate":     ("c_hyphenate", lambda w,v: "true" if v else "false"),
+
+        "document/title}":          (None, "Experimental Feature for PDF/X-1a Compliance Testing"),
+        "document/subject":         ("t_booklist", lambda w,v: v or ""),
+        "document/author":          (None, "This is where the author goes (=God?)"),
+        "document/creator":         (None, "And I wonder who created this."),
 
         "document/toc":             ("c_autoToC", lambda w,v: "" if v else "%"),
         "document/toctitle":        ("t_tocTitle", lambda w,v: v or ""),
@@ -175,7 +180,8 @@ class Info:
         "circumflex after^ word":  r"\1^"
     }
     _snippets = {
-        "snippets/fancyintro": ("c_prettyIntroOutline", FancyIntro)
+        "snippets/fancyintro":     ("c_prettyIntroOutline", FancyIntro),
+        "snippets/pdfx1aoutput":   ("c_PDFx1aOutput", PDFx1aOutput)
     }
     
     def __init__(self, printer, path, prjid = None):

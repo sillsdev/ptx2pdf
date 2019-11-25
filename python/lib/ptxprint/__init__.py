@@ -120,6 +120,9 @@ class PtxPrinterDialog:
         self.onHideAdvancedSettingsClicked(None)
         Gtk.main()
 
+    def enableExperimental(self):
+        pass
+        
     def addCR(self, name, index):
         # print(" init: addCR",self, name, index)
         v = self.builder.get_object(name)

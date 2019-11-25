@@ -1,5 +1,35 @@
 import regex
 
+class PDFx1aOutput():
+    regexes = []
+    styleInfo = ""
+    texCode = r"""
+\special{pdf:docinfo<< 
+/Title({document/title})% 
+/Subject({document/subject})% 
+/Author({document/author})% 
+/Creator({document/creator})% 
+/CreationDate(D:{document/date})% 
+/ModDate(D:{document/date})% 
+/Producer(XeTeX with PTXprint)% 
+/Trapped /False 
+/GTS_PDFXVersion(PDF/X-1:2003)% 
+/GTS_PDFXConformance(PDF/X-1a:2003)% 
+>> } 
+\special{pdf:fstream @OBJCVR ({/ptxprintlibpath}/ps_cmyk.icc)} 
+\special{pdf:put @OBJCVR <</N 4>>} 
+%\special{pdf:close @OBJCVR} 
+\special{pdf:docview << 
+/OutputIntents [ << 
+/Type/OutputIndent 
+/S/GTS_PDFX 
+/OutputCondition (An Unknown print device) 
+/OutputConditionIdentifier (Custom) 
+/DestOutputProfile @OBJCVR 
+/RegistryName (http://www.color.og) 
+>> ] >>} 
+    """
+    
 class FancyIntro():
     _regexbits = [(r'\\io2 ', r'\\io1 \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0'), # Temporary fix for \io2 and \io3 so table doesn't break!
                (r'\\io3 ', r'\\io1 \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0'),
