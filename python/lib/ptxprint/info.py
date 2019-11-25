@@ -49,12 +49,12 @@ class Info:
 
         "paragraph/varlinespacing": ("c_variableLineSpacing", lambda w,v: "" if v else "%"),
         "paragraph/linespacing":    ("s_linespacing", lambda w,v: "{:.3f}".format(v) or "15.000"),
-        "paragraph/linemin": ("s_linespacingmin", lambda w,v: "minus {:.3f}pt".format(w.get("s_linespacing") - v) if v < w.get("s_linespacing") else ""),
-        "paragraph/linemax": ("s_linespacingmax", lambda w,v: "plus {:.3f}pt".format(v - w.get("s_linespacing")) if v > w.get("s_linespacing") else ""),
-        "paragraph/ifjustify":       ("c_justify", lambda w,v: "true" if v else "false"),
-        "paragraph/ifhyphenate":     ("c_hyphenate", lambda w,v: "true" if v else "false"),
+        "paragraph/linemin":        ("s_linespacingmin", lambda w,v: "minus {:.3f}pt".format(w.get("s_linespacing") - v) if v < w.get("s_linespacing") else ""),
+        "paragraph/linemax":        ("s_linespacingmax", lambda w,v: "plus {:.3f}pt".format(v - w.get("s_linespacing")) if v > w.get("s_linespacing") else ""),
+        "paragraph/ifjustify":      ("c_justify", lambda w,v: "true" if v else "false"),
+        "paragraph/ifhyphenate":    ("c_hyphenate", lambda w,v: "true" if v else "false"),
 
-        "document/title":          (None, lambda w,v: "Experimental Feature for PDF/X-1a Compliance Testing"),
+        "document/title":           (None, lambda w,v: "Experimental Feature for PDF/X-1a Compliance Testing"),
         "document/subject":         ("t_booklist", lambda w,v: v or ""),
         "document/author":          (None, lambda w,v: "This is where the author goes (=God?)"),
         "document/creator":         (None, lambda w,v: "And I wonder who created this."),
@@ -236,9 +236,9 @@ class Info:
             if p in self.dict:
                 del self.dict[p]
         for p in ['fontregular/name'] + list(self._fonts.keys()):
-            wid = self._fonts[p][0]
             if p in self.dict:
                 continue
+            wid = self._fonts[p][0]
             f = TTFont(printer.get(wid))
             # print(p, wid, f.filename, f.family, f.style)
             if f.filename is None and p != "fontregular/name":

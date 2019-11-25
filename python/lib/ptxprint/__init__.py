@@ -183,7 +183,7 @@ class PtxPrinterDialog:
             w.set_text(value)
         elif wid.startswith("f_"):
             w.set_font_name(value)
-            w.emit("font-set")
+            # w.emit("font-set")
         elif wid.startswith("c_"):
             w.set_active(value)
         elif wid.startswith("s_"):

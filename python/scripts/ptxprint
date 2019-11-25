@@ -3,7 +3,6 @@
 import argparse, sys, os, subprocess
 from gi.repository import Gtk
 
-
 try:
     import ptxprint
 except ImportError:
@@ -16,6 +15,7 @@ parser.add_argument('-p','--paratext',help="Path to Paratext Projects directory"
 parser.add_argument('-d','--directory',default=".",help="Directory to store temporary files in")
 parser.add_argument('-m','--macros',help="Directory containing TeX macros (paratext2.tex)")
 parser.add_argument('-l','--logging',action="store_true",help="Output logging to terminal instead of logging window")
+parser.add_argument('-e','--experimental',action="store_true",help="Enable experimental features")
 # parser.add_argument('-t','--test', action='store_true',help="Quick start for a lazy typist")
 args = parser.parse_args()
 
@@ -39,6 +39,8 @@ for d in os.listdir(args.paratext):
 allprojects.sort()
 
 mainw = ptxprint.PtxPrinterDialog(allprojects, args.paratext)
+if args.experimental:
+    mainw.enableExperimental()
 
 if args.pid:
     mainw.set("cb_project", args.pid)
@@ -123,27 +125,6 @@ def doit(printer):
         pdfname = os.path.join(tmpdir, "ptxprint-{}{}.pdf".format(jobs[0], prjid))
     if not printer.get("c_keepTemporaryFiles"):
         removeTempFiles(texfiles,tmpdir,info)
-    # if printer.get("c_diglot") and printer.get("c_outputPriText"):
-        # print("About to stitch together Diglot")
-        # if sys.platform == "win32":
-            # priprjid = printer.get("cb_diglotPriProject")
-            # secprjid = printer.get("cb_diglotSecProject")
-            # sectmpdir = os.path.join(args.paratext, secprjid, 'PrintDraft') if printer.get("c_useprintdraftfolder") else args.directory
-            # bkid = printer.get("cb_book")
-            # prifname = os.path.join(tmpdir, "ptxprint-{}{}.pdf".format(bkid, priprjid))
-            # secfname = os.path.join(sectmpdir, "ptxprint-{}{}.pdf".format(bkid, secprjid))
-            # pdffname = os.path.join(tmpdir, "ptxprint-diglot-{}-{}-{}.pdf".format(bkid, secprjid, priprjid))
-            # PDFtkEXE = r"C:\Program Files (x86)\PDFtk Server\bin\pdftk.exe"
-            # PDFtkEXE = "pdftk.exe"
-            # params = '"'+prifname+'" '+"multibackground"+' "'+secfname+'" '+"output"+' "'+pdffname+'"'
-            # # pdftk A.pdf multibackground B.pdf output A_B_Diglot.pdf
-            # print(params)
-            # subprocess.run([PDFtkEXE, params])
-            # dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK,
-                # "Diglot PDF created!")
-            # dialog.format_secondary_text(pdffname)
-            # dialog.run()
-            # dialog.destroy()
         
     # Need to check the return code to see if generating the PDF was successful. And if not, then issue some 
     # warning or error message rather than leave the PREVIOUS PDF open and pretend that everything worked fine! :-(
