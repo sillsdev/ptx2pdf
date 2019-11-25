@@ -96,6 +96,8 @@ class Info:
         "document/supressbookintro": ("c_omitBookIntro", lambda w,v: "true" if v else "false"),
         "document/supressintrooutline": ("c_omitIntroOutline", lambda w,v: "true" if v else "false"),
         "document/supressindent":   ("c_omit1paraIndent", lambda w,v: "false" if v else "true"),
+        "document/ifhidehboxerrors": ("c_showHboxErrorBars", lambda w,v :"%" if v else ""),
+
         "document/ifdiglot":        ("c_diglot", lambda w,v :"" if v else "%"),
         "document/diglotsettings":  ("l_diglotString", lambda w,v: w.builder.get_object("l_diglotString").get_text() if w.get("c_diglot") else ""),
         "document/diglotpriprj":    ("cb_diglotPriProject", lambda w,v: w.builder.get_object("cb_diglotPriProject").get_active_id()),
@@ -431,6 +433,7 @@ class Info:
             self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w\w\w+) \1(?=[\s,.!?])", flags=regex.M), r"\1\u00A0\1")) # keep reduplicated words together
         
         self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) # Paratext marks no-break space as a tilde ~
+        self.localChanges.append((None, regex.compile(r"\\\+", flags=regex.M), r"\\"))  # Remove the + of embedded markup (xetex handles it)
             
         for c in range(1,4):
             if not printer.get("c_usetoc{}".format(c)):

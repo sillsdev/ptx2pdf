@@ -589,12 +589,14 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can_focus">False</property>
+            <property name="halign">start</property>
             <property name="margin_left">6</property>
             <property name="margin_right">6</property>
-            <property name="layout_style">spread</property>
+            <property name="hexpand">True</property>
+            <property name="layout_style">center</property>
             <child>
-              <object class="GtkButton">
-                <property name="label" translatable="yes">Reset All Settings to Default</property>
+              <object class="GtkButton" id="btn_revertSettings">
+                <property name="label" translatable="yes">Revert to Previous Settings</property>
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
@@ -615,6 +617,7 @@ settings for this project, and restore the defaults.</property>
             <child>
               <object class="GtkCheckButton" id="c_hideAdvancedSettings">
                 <property name="label" translatable="yes">Hide Advanced Settings</property>
+                <property name="width_request">259</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
@@ -674,8 +677,8 @@ away most of the time.</property>
             </child>
           </object>
           <packing>
-            <property name="expand">True</property>
-            <property name="fill">True</property>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
             <property name="pack_type">end</property>
             <property name="position">0</property>
           </packing>
@@ -1603,7 +1606,9 @@ script (such as Arabic).</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
                                     <property name="font">Sans 12</property>
+                                    <property name="level">GTK_FONT_CHOOSER_LEVEL_STYLE | GTK_FONT_CHOOSER_LEVEL_FAMILY</property>
                                     <property name="preview_text"/>
+                                    <property name="show_preview_entry">False</property>
                                     <property name="show_size">False</property>
                                   </object>
                                   <packing>
@@ -1617,7 +1622,9 @@ script (such as Arabic).</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
                                     <property name="font">Sans 12</property>
+                                    <property name="level">GTK_FONT_CHOOSER_LEVEL_STYLE | GTK_FONT_CHOOSER_LEVEL_FAMILY</property>
                                     <property name="preview_text"/>
+                                    <property name="show_preview_entry">False</property>
                                     <property name="show_size">False</property>
                                   </object>
                                   <packing>
@@ -1631,7 +1638,9 @@ script (such as Arabic).</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
                                     <property name="font">Sans 12</property>
+                                    <property name="level">GTK_FONT_CHOOSER_LEVEL_STYLE | GTK_FONT_CHOOSER_LEVEL_FAMILY</property>
                                     <property name="preview_text"/>
+                                    <property name="show_preview_entry">False</property>
                                     <property name="show_size">False</property>
                                   </object>
                                   <packing>
@@ -1858,7 +1867,9 @@ script (such as Arabic).</property>
                                     <property name="receives_default">True</property>
                                     <property name="valign">center</property>
                                     <property name="font">Sans 12</property>
+                                    <property name="level">GTK_FONT_CHOOSER_LEVEL_STYLE | GTK_FONT_CHOOSER_LEVEL_FAMILY</property>
                                     <property name="preview_text"/>
+                                    <property name="show_preview_entry">False</property>
                                     <property name="show_size">False</property>
                                     <signal name="font-set" handler="onFontChange" swapped="no"/>
                                   </object>
@@ -4504,7 +4515,7 @@ file is selected, then these will appear in alphabetical order.</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">start</property>
                                 <property name="row_spacing">6</property>
-                                <property name="column_spacing">8</property>
+                                <property name="column_spacing">13</property>
                                 <child>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
@@ -4681,154 +4692,214 @@ settings.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkFrame">
+                      <object class="GtkBox">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="margin_left">6</property>
-                        <property name="margin_right">6</property>
-                        <property name="margin_top">6</property>
-                        <property name="margin_bottom">6</property>
-                        <property name="label_xalign">0.0099999997764825821</property>
                         <child>
-                          <object class="GtkGrid">
+                          <object class="GtkFrame">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="margin_left">6</property>
                             <property name="margin_right">6</property>
-                            <property name="margin_bottom">4</property>
-                            <property name="row_spacing">6</property>
-                            <property name="column_spacing">6</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
+                            <property name="label_xalign">0.0099999997764825821</property>
                             <child>
-                              <object class="GtkLabel">
+                              <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">None (default): Most projects will use this setting.
-
-Some: Spaces between words are adjusted, but the rendering of individual words is *NOT* affected by the spaces.
-
-Full: Spaces between words are adjusted, and the rendering of individual words *IS* affected by the spaces.</property>
-                                <property name="halign">end</property>
-                                <property name="label" translatable="yes">Cross-space 
-Contextualization:</property>
-                                <property name="justify">right</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkComboBoxText" id="cb_spaceCntxtlztn">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">None (default): Most projects will use this setting.
-
-Some: Spaces between words are adjusted, but the rendering of individual words is *NOT* affected by the spaces.
-
-Full: Spaces between words are adjusted, and the rendering of individual words *IS* affected by the spaces.</property>
-                                <property name="halign">start</property>
+                                <property name="margin_left">6</property>
+                                <property name="margin_right">6</property>
                                 <property name="margin_bottom">4</property>
-                                <property name="active">0</property>
-                                <property name="has_entry">True</property>
-                                <property name="active_id">0</property>
-                                <items>
-                                  <item id="0" translatable="yes">None</item>
-                                  <item id="1" translatable="yes">Some</item>
-                                  <item id="2" translatable="yes">Full</item>
-                                </items>
-                                <child internal-child="entry">
-                                  <object class="GtkEntry">
+                                <property name="row_spacing">6</property>
+                                <property name="column_spacing">6</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">None (default): Most projects will use this setting.
+
+Some: Spaces between words are adjusted, but the rendering of individual words is *NOT* affected by the spaces.
+
+Full: Spaces between words are adjusted, and the rendering of individual words *IS* affected by the spaces.</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Cross-space 
+Contextualization:</property>
+                                    <property name="justify">right</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkComboBoxText" id="cb_spaceCntxtlztn">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">None (default): Most projects will use this setting.
+
+Some: Spaces between words are adjusted, but the rendering of individual words is *NOT* affected by the spaces.
+
+Full: Spaces between words are adjusted, and the rendering of individual words *IS* affected by the spaces.</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_bottom">4</property>
+                                    <property name="active">0</property>
+                                    <property name="has_entry">True</property>
+                                    <property name="active_id">0</property>
+                                    <items>
+                                      <item id="0" translatable="yes">None</item>
+                                      <item id="1" translatable="yes">Some</item>
+                                      <item id="2" translatable="yes">Full</item>
+                                    </items>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="width_chars">6</property>
+                                        <property name="progress_pulse_step">0</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="t_linebreaklocale">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="halign">start</property>
-                                    <property name="width_chars">6</property>
-                                    <property name="progress_pulse_step">0</property>
+                                    <property name="margin_bottom">4</property>
+                                    <property name="width_chars">12</property>
+                                    <property name="max_width_chars">4</property>
                                   </object>
+                                  <packing>
+                                    <property name="left_attach">4</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
                                 </child>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkEntry" id="t_linebreaklocale">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="halign">start</property>
-                                <property name="margin_bottom">4</property>
-                                <property name="width_chars">12</property>
-                                <property name="max_width_chars">4</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">4</property>
-                                <property name="top_attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkCheckButton" id="c_linebreakon">
-                                <property name="label" translatable="yes">Specify Line 
+                                <child>
+                                  <object class="GtkCheckButton" id="c_linebreakon">
+                                    <property name="label" translatable="yes">Specify Line 
 Break Locale:</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="halign">end</property>
-                                <property name="draw_indicator">True</property>
-                                <signal name="clicked" handler="onLineBreakChanged" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">3</property>
-                                <property name="top_attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="halign">center</property>
-                                <property name="valign">center</property>
-                                <property name="label" translatable="yes">Script for text:</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkComboBox" id="cb_script">
-                                <property name="width_request">100</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">In most cases XeTeX can auto-detect
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="halign">end</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onLineBreakChanged" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">center</property>
+                                    <property name="valign">center</property>
+                                    <property name="label" translatable="yes">Script for text:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkComboBox" id="cb_script">
+                                    <property name="width_request">100</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">In most cases XeTeX can auto-detect
 the appropriate script, so leave this
 set as "Default" unless there are
 script-specific rendering issues.</property>
-                                <property name="halign">start</property>
-                                <property name="model">ls_scripts</property>
-                                <property name="active">0</property>
-                                <property name="id_column">1</property>
-                                <property name="active_id">0</property>
-                                <signal name="changed" handler="onScriptChanged" swapped="no"/>
+                                    <property name="halign">start</property>
+                                    <property name="model">ls_scripts</property>
+                                    <property name="active">0</property>
+                                    <property name="id_column">1</property>
+                                    <property name="active_id">0</property>
+                                    <signal name="changed" handler="onScriptChanged" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">0</property>
+                                    <property name="width">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
                               </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">0</property>
-                                <property name="width">4</property>
-                              </packing>
                             </child>
-                            <child>
-                              <placeholder/>
+                            <child type="label">
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="margin_top">6</property>
+                                <property name="margin_bottom">6</property>
+                                <property name="label" translatable="yes">Writing System</property>
+                              </object>
                             </child>
                           </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
                         </child>
-                        <child type="label">
-                          <object class="GtkLabel">
+                        <child>
+                          <object class="GtkFrame">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="margin_left">6</property>
+                            <property name="margin_right">6</property>
                             <property name="margin_top">6</property>
                             <property name="margin_bottom">6</property>
-                            <property name="label" translatable="yes">Writing System</property>
+                            <property name="hexpand">False</property>
+                            <property name="label_xalign">0.0099999997764825821</property>
+                            <child>
+                              <object class="GtkGrid">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="margin_bottom">4</property>
+                                <property name="row_spacing">6</property>
+                                <property name="column_spacing">6</property>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_showHboxErrorBars">
+                                    <property name="label" translatable="yes">Show error bars for overfull hboxes</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">If you don't know what this means, or want to get rid of black boxes in the PDF then uncheck it. Enable this option to have TeX make overfull lines stand out.</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                              </object>
+                            </child>
+                            <child type="label">
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="margin_top">6</property>
+                                <property name="margin_bottom">6</property>
+                                <property name="label" translatable="yes">Other</property>
+                              </object>
+                            </child>
                           </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
                         </child>
                       </object>
                       <packing>
