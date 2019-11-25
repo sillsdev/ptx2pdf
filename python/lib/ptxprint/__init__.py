@@ -975,7 +975,7 @@ class PtxPrinterDialog:
         self.onDiglotDimensionsChanged(None)
 
     def onDiglotDimensionsChanged(self, btn):
-        PageWidth = 210 
+        PageWidth = 210  # need to make this dynamic
         Margins = self.get("s_margins")
         MiddleGutter = self.get("s_diglotMiddleGutter")
         BindingGutter = self.get("s_pagegutter")
@@ -1005,11 +1005,16 @@ class PtxPrinterDialog:
                            "\n\BodyColumns=1"
 
         else:
+            priprjid = self.get("cb_diglotPriProject")
+            pritmpdir = os.path.join(self.settings_dir, priprjid, 'PrintDraft') # if self.get("c_useprintdraftfolder") else args.directory
+            bkid = self.get("cb_book")
+            prifname = os.path.join(pritmpdir, "ptxprint-{}{}.pdf".format(bkid, priprjid))
+
             DiglotString = "\BindingGuttertrue"+ \
                            "\n\BindingGutter={}mm".format(PriBindingGutter)+ \
                            "\n\def\SideMarginFactor{{{:.2f}}}".format(PriSideMarginFactor)+ \
-                           "\n\BodyColumns=1"
-            # DiglotString = "\BindingGutter={}mm".format(PriBindingGutter)+"\n\def\SideMarginFactor{{{:.2f}}}".format(PriSideMarginFactor)+"\n\BodyColumns=1"
+                           "\n\BodyColumns=1" + \
+                           "\def\MergePDF{{" + prifname + "}}"
         self.builder.get_object("l_diglotString").set_text(DiglotString)
 
     def onBlendPDFsClicked(self, btn):
