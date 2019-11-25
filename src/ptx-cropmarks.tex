@@ -194,7 +194,7 @@
 
 \def\MergePDF{}
 \def\m@rgepdf{\ifx\MergePDF\empty\else
-  \vbox to 0pt{\XeTeXpdffile \MergePDF page \pageno}
+  \vbox to 0pt{\XeTeXpdffile "\MergePDF" page \pageno media\relax}
 \fi}
 
 % redefine plain TeX's output routine to add the cropmarks

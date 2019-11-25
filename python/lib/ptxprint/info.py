@@ -1,4 +1,4 @@
-import configparser, re, os
+import configparser, re, os, datetime
 import regex
 from ptxprint.font import TTFont
 from ptxprint.ptsettings import chaps, books, oneChbooks
@@ -183,7 +183,12 @@ class Info:
         self.printer = printer
         self.changes = None
         self.localChanges = None
-        self.dict = {"/ptxpath": path}
+        t = datetime.now()
+        tz = t.utcoffset()
+        tzstr = "{0:02}'{1:02}'".format(int(tz.seconds / 3600), int((tz.seconds % 3600) / 60))
+        self.dict = {"/ptxpath": path,
+                     "/ptxprintlibpath": os.path.abspath(os.path.dirname(__file__)),
+                     "document/date": datetime.now.strftime("%Y%m%d%H%M%S")+tzstr }
         self.prjid = prjid
         print([self.prjid])
         self.update()
