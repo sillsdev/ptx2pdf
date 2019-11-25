@@ -112,6 +112,7 @@
         \hbox to 0pt{\kern.5\pdfpagewidth \special{x:gsave}\special{x:rotate -90}\hss}
         \vss}
     \fi
+    \m@rgepdf
     \pl@ceborder % add PageBorder (or watermark) graphic, if defined
     \offinterlineskip
     \vbox to \ifrotate\pdfpagewidth\else\pdfpageheight\fi{\vss
@@ -189,6 +190,11 @@
       \if\g@tterside R\kern\BindingGutter\fi
     }\hss}
   \vss}% output a copy of \box\b@rder
+\fi}
+
+\def\MergePDF{}
+\def\m@rgepdf{\ifx\MergePDF\empty\else
+  \vbox to 0pt{\XeTeXpdffile \MergePDF page \pageno}
 \fi}
 
 % redefine plain TeX's output routine to add the cropmarks

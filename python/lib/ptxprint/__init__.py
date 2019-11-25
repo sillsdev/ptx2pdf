@@ -616,6 +616,8 @@ class PtxPrinterDialog:
             config = configparser.ConfigParser()
             config.read(configfile, encoding="utf-8")
             self.info.loadConfig(self, config)
+        else:
+            self.info.update()
         status = self.get("c_multiplebooks")
         for c in ("c_combine", "t_booklist"):
             self.builder.get_object(c).set_sensitive(status)

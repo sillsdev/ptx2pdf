@@ -418,7 +418,7 @@ class Info:
 
         if printer.get("c_preventorphans"): 
             # Keep final two words of \q lines together [but this doesn't work if there is an \f or \x at the end of the line] 
-            self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)\S+)) (\S+\s*\n)", flags=regex.M), r"\1\u00A0\5"))   
+            self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)[^\\\s]+)) (\S+\s*\n)", flags=regex.M), r"\1\u00A0\5"))   
 
         if printer.get("c_preventwidows"):
             # Push the verse number onto the next line (using NBSP) if there is a short widow word (3 characters or less) at the end of the line
