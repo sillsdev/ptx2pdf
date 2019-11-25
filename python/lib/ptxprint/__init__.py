@@ -2,7 +2,7 @@
 
 import sys, os, re, regex, gi, random, subprocess
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
+from gi.repository import Gtk, Pango
 import xml.etree.ElementTree as et
 from ptxprint.font import TTFont
 from ptxprint.runner import StreamTextBuffer
@@ -255,6 +255,10 @@ class PtxPrinterDialog:
                 self.set("s_{}embolden".format(sid), 2)
             if 'italic' in f.style.lower():
                 self.set("s_{}slant".format(sid), 0.15)
+        # Set the font of any GtkEntry boxes to the primary body text font for this project
+        p = Pango.font_description_from_string(self.get("f_body"))
+        for w in ("t_tocTitle", "t_runningFooter"): 
+            self.builder.get_object(w).modify_font(p)
 
     def updateFakeLabels(self):
         status = self.get("c_fakebold") or self.get("c_fakeitalic") or self.get("c_fakebolditalic")
@@ -1005,16 +1009,16 @@ class PtxPrinterDialog:
                            "\n\BodyColumns=1"
 
         else:
-            priprjid = self.get("cb_diglotPriProject")
-            pritmpdir = os.path.join(self.settings_dir, priprjid, 'PrintDraft') # if self.get("c_useprintdraftfolder") else args.directory
+            secprjid = self.get("cb_diglotSecProject")
+            sectmpdir = os.path.join(self.settings_dir, secprjid, 'PrintDraft') # if self.get("c_useprintdraftfolder") else args.directory
             bkid = self.get("cb_book")
-            prifname = os.path.join(pritmpdir, "ptxprint-{}{}.pdf".format(bkid, priprjid))
+            secfname = os.path.join(sectmpdir, "ptxprint-{}{}.pdf".format(bkid, secprjid))
 
             DiglotString = "\BindingGuttertrue"+ \
                            "\n\BindingGutter={}mm".format(PriBindingGutter)+ \
                            "\n\def\SideMarginFactor{{{:.2f}}}".format(PriSideMarginFactor)+ \
                            "\n\BodyColumns=1" + \
-                           "\def\MergePDF{{" + prifname + "}}"
+                           "\n\def\MergePDF{" + secfname + "}"
         self.builder.get_object("l_diglotString").set_text(DiglotString)
 
     def onBlendPDFsClicked(self, btn):

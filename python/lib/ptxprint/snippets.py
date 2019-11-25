@@ -157,11 +157,8 @@ class FancyBorders(): # Not sure how much of this is needed (perhaps it can be c
   \vadjust{\copy\sectionheadbox}% insert the graphic below the current line
   \vrule width 0pt height 0pt depth 0.5em
 }
-
 \sethook{start}{s}{\placesectionheadbox}
 
-
-%
 % The following code puts the verse number inside a star
 %
 \newbox\versestarbox
@@ -201,7 +198,9 @@ class FancyBorders(): # Not sure how much of this is needed (perhaps it can be c
     \kern-0.08em \digitthree
   \fi
   \endL}
+"""
 
+    unusedStuff = r"""
 % Some code to allow us to kern chapter numbers
 \def\PrepChapterNumber{\expandafter\getchapdigits\printchapter!!\end \def\printchapter{\printchapdigits}}
 
