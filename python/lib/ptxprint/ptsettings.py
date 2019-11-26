@@ -33,7 +33,6 @@ class ParatextSettings:
         for c in doc.getroot():
             self.dict[c.tag] = c.text
         langid = regex.sub('-(?=-|$)', '', self.dict['LanguageIsoCode'].replace(":", "-"))
-        # print(langid)
         fname = os.path.join(self.basedir, prjid, langid+".ldml")
         silns = "{urn://www.sil.org/ldml/0.1}"
         if os.path.exists(fname):

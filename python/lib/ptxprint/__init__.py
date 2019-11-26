@@ -54,7 +54,6 @@ _alldigits = [ "Default", "Adlam", "Ahom", "Arabic-Farsi", "Arabic-Hindi", "Bali
     "Osmanya", "Pahawh-Hmong", "Persian", "Saurashtra", "Sharada", "Sinhala-Lith", "Sora-Sompeng", "Sundanese", "Tai-Tham-Hora", 
     "Tai-Tham-Tham", "Takri", "Tamil", "Telugu", "Thai", "Tibetan", "Tirhuta", "Urdu", "Vai", "Wancho", "Warang-Citi" ]
 
-
 class PtxPrinterDialog:
     def __init__(self, allprojects, settings_dir):
         # print(" init: __init__",self, allprojects, settings_dir)
@@ -67,8 +66,8 @@ class PtxPrinterDialog:
         self.addCR("cb_chapto", 0)
         self.addCR("cb_blendedXrefCaller", 0)
         self.addCR("cb_glossaryMarkupStyle", 0)
-        # self.addCR("cb_diglotPriProject", 0)
-        # self.addCR("cb_diglotSecProject", 0)
+        self.addCR("cb_diglotPriProject", 0)
+        self.addCR("cb_diglotSecProject", 0)
 
         scripts = self.builder.get_object("ls_scripts")
         scripts.clear()
@@ -117,7 +116,7 @@ class PtxPrinterDialog:
         # print(" init: run",callback)
         self.callback = callback
         self.mw.show_all()
-        self.onHideAdvancedSettingsClicked(None)
+        # self.onHideAdvancedSettingsClicked(None)
         # self.ExperimentalFeatures(False)
         Gtk.main()
 
@@ -447,17 +446,18 @@ class PtxPrinterDialog:
 
     def onUsePTmacrosClicked(self, c_usePTmacros):
         status = self.get("c_usePTmacros")
-        for c in ("c_variableLineSpacing", "s_linespacingmin", "s_linespacingmax", "l_min", "l_max"):
+        for c in ("c_variableLineSpacing", "s_linespacingmin", "s_linespacingmax", "l_min", "l_max",
+                  "s_colgutteroffset", "l_colgutteroffset", "c_marginalverses", "s_columnShift"):
             self.builder.get_object(c).set_sensitive(not status)
-        # These are (temporarily) disabled until we get them working properly and predictably
-        for c in ("c_startOnHalfPage", "c_marginalverses"):
-            self.builder.get_object(c).set_sensitive(False)
+        # Temporarily keep these off (unless testing)
+        for c in ("c_startOnHalfPage"):
+            self.builder.get_object(c).set_sensitive(not status)
 
     def onHideAdvancedSettingsClicked(self, c_hideAdvancedSettings):
         # Turn Dangerous Settings OFF
-        for c in ("c_startOnHalfPage", "c_marginalverses", "c_prettyIntroOutline", "c_blendfnxr", "c_autoToC", "c_figplaceholders",
-                  "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", "c_preventwidows", "c_PDFx1aOutput",
-                  "c_diglot"):
+        for c in ("c_startOnHalfPage", "c_marginalverses", "c_prettyIntroOutline", "c_blendfnxr", "c_autoToC",
+                  "c_figplaceholders", "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", 
+                  "c_preventwidows", "c_PDFx1aOutput", "c_diglot", "c_hyphenate"):
             self.builder.get_object(c).set_active(False)
 
         # Turn Essential Settings ON
@@ -469,8 +469,8 @@ class PtxPrinterDialog:
         for c in ("tb_Markers", "tb_Diglot", "tb_Advanced","tb_Logging", "tb_ViewerEditor", "tb_DiglotTesting",
                   "bx_BottomMarginSettings", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "box_AdvFootnoteConfig", 
                   "c_usePicList", "c_skipmissingimages", "c_convertTIFtoPNG", "c_useCustomFolder", "btn_selectFigureFolder", 
-                  "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "c_figplaceholders",  "fr_FontConfig", 
-                  "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "row_ToC",
+                  "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",  "fr_FontConfig", 
+                  "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "row_ToC", "c_hyphenate",
                   "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", "c_preventwidows"):
             self.builder.get_object(c).set_visible(not self.get("c_hideAdvancedSettings"))
         # self.ExperimentalFeatures(False) # Until we can get the args toggle working properly

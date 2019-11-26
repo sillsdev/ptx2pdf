@@ -26,13 +26,17 @@
 \IntroColumns=1
 \BodyColumns={paper/columns}
 \ColumnGutterRule{paper/ifverticalrule}
-\ColumnGutterRuleSkip={paper/colgutteroffset}pt
 \def\ColumnGutterFactor{{{document/colgutterfactor}}} % Q: can this be explicitly set as Xmm?
+% This next set of options can only be active if NOT using PT macros (as they use the new ptxplus macros)
+{project/ifnotptmacros}\ColumnGutterRuleSkip={paper/colgutteroffset}pt
+{project/ifnotptmacros}{document/marginalverses}\input ptxplus-marginalverses.tex
+{project/ifnotptmacros}{document/marginalverses}\columnshift={document/columnshift}pt
+{project/ifnotptmacros}\endbooknoeject{project/ifstarthalfpage}
 
 %%%%% Text Spacing %%%%%
 \def\LineSpacingFactor{{1.0}}
 \def\VerticalSpaceFactor{{1.0}}
-\baselineskip={paragraph/linespacing}pt {paragraph/varlinespacing} {paragraph/linemax} {paragraph/linemin}
+\baselineskip={paragraph/linespacing}pt {project/ifnotptmacros}{paragraph/varlinespacing} {paragraph/linemax} {paragraph/linemin}
 
 %% Cross-space contextualization
 \XeTeXinterwordspaceshaping = {document/spacecntxtlztn}
@@ -52,10 +56,6 @@
 % Specify ISO 639-1 language code.
 % XeTeX will use ICU line break info (useful for scripts which do not use word spaces).
 % {document/script}
-
-% This next set of options can only be active if "Use PT macros" is False = "" (as they use the new ptxplus macros)
-{project/ifuseptmacros}{document/marginalverses}\input ptxplus-marginalverses.tex
-{project/ifuseptmacros}\endbooknoeject{project/ifstarthalfpage}
 
 {document/iflinebreakon}\XeTeXlinebreaklocale "{document/linebreaklocale}"
 % Introduce some stretchability (glue) at each potential line break
@@ -154,6 +154,7 @@
 
 
 %\snippets
+
 
 %%%%% Load Paratext USFM %%%%%
 \XeTeXdefaultencoding "utf-8"

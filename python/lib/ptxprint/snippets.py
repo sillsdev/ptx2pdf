@@ -31,6 +31,30 @@ class PDFx1aOutput():
 >> ] >>}} 
     """
     
+class VerticalVerseBridges(): # Still to be checked!
+    regexes = []
+    styleInfo = ""
+    processTex = False
+    texCode = r"""
+% MH's Code Snippet to hang verse numbers in poetry, including putting verse-ranges in a vertical box.
+\catcode`\@=11
+% 0.25 = 1 - \SuperScriptFactor
+% 1.3333 = 1 / \SuperScriptFactor
+\def\myprintvrange{\ifx\v@rsefrom\v@rseto\relax\AdornVerseNumber{\v@rsefrom}%
+    \else\setbox1=\hbox{\endash\AdornVerseNumber{\v@rseto}}
+         \setbox0=\vbox{\hbox to \wd1{\hfil\AdornVerseNumber{\v@rsefrom}}
+                        \kern-0.25\baselineskip\box1}
+         \ht0=1.3333ex\hbox{\box0}\fi}
+\let\myprintv@rse\printv@rse
+\def\switchv{\let\printv@rse\myprintvrange}
+\def\unswitchv{\let\printv@rse\myprintv@rse}
+
+\sethook{start}{q}{\switchv\hangversenumber}
+\sethook{start}{q1}{\switchv\hangversenumber}
+\sethook{end}{q}{\unswitchv}
+\sethook{end}{q1}{\unswitchv}
+\catcode`\@=12 """
+
 class FancyIntro():
     _regexbits = [(r'\\io2 ', r'\\io1 \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0'), # Temporary fix for \io2 and \io3 so table doesn't break!
                (r'\\io3 ', r'\\io1 \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0'),
@@ -127,7 +151,7 @@ class FancyBorders(): # Not sure how much of this is needed (perhaps it can be c
 # decoration.pdf
 # A5 section head border.pdf
 # Verse number star.pdf
-
+    processTex = False # until we can insert the above filenames programatically
     texCode = r"""
 \TitleColumns=1
 \IntroColumns=1

@@ -3,15 +3,16 @@ from datetime import datetime
 import regex
 from ptxprint.font import TTFont
 from ptxprint.ptsettings import chaps, books, oneChbooks
-from ptxprint.snippets import FancyIntro, PDFx1aOutput
+from ptxprint.snippets import FancyIntro, PDFx1aOutput, VerticalVerseBridges
 
 class Info:
     _mappings = {
         "project/id":               (None, lambda w,v: w.get("cb_project")),
         "project/hideadvsettings":  ("c_hideAdvancedSettings", lambda w,v: "true" if v else "false"),
         "project/keeptempfiles":    ("c_keepTemporaryFiles", lambda w,v: "true" if v else "false"),
+        "project/pdfx1acompliant":  ("c_PDFx1aOutput", lambda w,v: "true" if v else "false"),
         "project/useptmacros":      ("c_usePTmacros", lambda w,v: "true" if v else "false"),
-        "project/ifuseptmacros":    ("c_usePTmacros", lambda w,v: "%" if v else ""),
+        "project/ifnotptmacros":    ("c_usePTmacros", lambda w,v: "%" if v else ""),
         "project/multiplebooks":    ("c_multiplebooks", lambda w,v: "true" if v else "false"),
         "project/combinebooks":     ("c_combine", lambda w,v: "true" if v else "false"),
         "project/book":             ("cb_book", None),
@@ -60,10 +61,10 @@ class Info:
         "paragraph/ifjustify":      ("c_justify", lambda w,v: "true" if v else "false"),
         "paragraph/ifhyphenate":    ("c_hyphenate", lambda w,v: "true" if v else "false"),
 
-        "document/title":           (None, lambda w,v: "Experimental Feature for PDF/X-1a Compliance Testing"),
+        "document/title":           (None, lambda w,v: w.ptsettings['FullName']),
         "document/subject":         ("t_booklist", lambda w,v: v or ""),
-        "document/author":          (None, lambda w,v: "This is where the author goes (=God?)"),
-        "document/creator":         (None, lambda w,v: "And I wonder who created this."),
+        "document/author":          (None, lambda w,v: regex.sub("</?p>","",w.ptsettings['Copyright'])),
+        "document/creator":         (None, lambda w,v: "Unknown"),
 
         "document/toc":             ("c_autoToC", lambda w,v: "" if v else "%"),
         "document/toctitle":        ("t_tocTitle", lambda w,v: v or ""),
@@ -81,6 +82,7 @@ class Info:
         "document/digitmapping":    ("cb_digits", lambda w,v: ";mapping="+v.lower()+"digits" if v != "Default" else ""),
         "document/ch1pagebreak":    ("c_ch1pagebreak", lambda w,v: "true" if v else "false"),
         "document/marginalverses":  ("c_marginalverses", lambda w,v: "" if v else "%"),
+        "document/columnshift":     ("s_columnShift", lambda w,v: v or "16"),
         "document/ifomitchapternum":   ("c_omitchapternumber", lambda w,v: "true" if v else "false"),
         "document/ifomitallchapters":  ("c_omitchapternumber", lambda w,v: "" if v else "%"),
         "document/ifomitsinglechnum":  ("c_omitChap1ChBooks", lambda w,v: "true" if v else "false"),
@@ -190,8 +192,9 @@ class Info:
         "circumflex after^ word":  r"\1^"
     }
     _snippets = {
-        "snippets/fancyintro":     ("c_prettyIntroOutline", FancyIntro),
-        "snippets/pdfx1aoutput":   ("c_PDFx1aOutput", PDFx1aOutput)
+        "snippets/fancyintro":            ("c_prettyIntroOutline", FancyIntro),
+        "snippets/pdfx1aoutput":          ("c_PDFx1aOutput", PDFx1aOutput),
+        "snippets/verticalversebridges":  ("c_verticalVerseBridges", VerticalVerseBridges)
     }
     
     def __init__(self, printer, path, prjid = None):
@@ -587,7 +590,8 @@ class Info:
         printer.FrontPDFs = self.dict['project/frontincludes']
         printer.watermarks = self.dict['paper/watermarkpdf']
         printer.BackPDFs = self.dict['project/backincludes']
-        # update UI to reflect the world it is in
+        # update UI to reflect the world it is in 
+        # [Comment: this is turning things off even though the file exists. Probably running before the prj has been set?]
         prjdir = os.path.join(printer.settings_dir, printer.prjid)
         for (f, c) in (("PrintDraft-mods.sty", "c_useModsSty"),
                        ("PrintDraft-mods.tex", "c_useModsTex")):
