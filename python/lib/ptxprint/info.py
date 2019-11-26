@@ -17,9 +17,11 @@ class Info:
         "project/book":             ("cb_book", None),
         "project/booklist":         ("t_booklist", lambda w,v: v or ""),
         "project/ifinclfrontpdf":   ("c_inclFrontMatter", lambda w,v: "true" if v else "false"),
-        "project/frontincludes":    ("btn_selectFrontPDFs", lambda w,v: "\n".join('\\includepdf{{"{}"}}'.format(re.sub(r"\\","/", s)) for s in w.FrontPDFs) if (w.FrontPDFs is not None and w.FrontPDFs != 'None') else ""),
+        "project/frontincludes":    ("btn_selectFrontPDFs", lambda w,v: "\n".join('\\includepdf{{"{}"}}'.format(re.sub(r"\\","/", s)) \
+                                                            for s in w.FrontPDFs) if (w.FrontPDFs is not None and w.FrontPDFs != 'None') else ""),
         "project/ifinclbackpdf":    ("c_inclBackMatter", lambda w,v: "true" if v else "false"),
-        "project/backincludes":     ("btn_selectBackPDFs", lambda w,v: "\n".join('\\includepdf{{"{}"}}'.format(re.sub(r"\\","/", s)) for s in w.BackPDFs) if (w.BackPDFs is not None and w.BackPDFs != 'None') else ""),
+        "project/backincludes":     ("btn_selectBackPDFs", lambda w,v: "\n".join('\\includepdf{{"{}"}}'.format(re.sub(r"\\","/", s)) \
+                                                           for s in w.BackPDFs) if (w.BackPDFs is not None and w.BackPDFs != 'None') else ""),
         "project/useprintdraftfolder": ("c_useprintdraftfolder", lambda w,v :"true" if v else "false"),
         "project/processscript":    ("c_processScript", lambda w,v :"true" if v else "false"),
         "project/runscriptafter":   ("c_processScriptAfter", lambda w,v :"true" if v else "false"),
@@ -35,7 +37,8 @@ class Info:
         "paper/width":              (None, lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", w.get("cb_pagesize")) or "148mm"),
         "paper/pagesize":           ("cb_pagesize", None),
         "paper/ifwatermark":        ("c_applyWatermark", lambda w,v: "" if v else "%"),
-        "paper/watermarkpdf":       ("btn_selectWatermarkPDF", lambda w,v: re.sub(r"\\","/", w.watermarks) if (w.watermarks is not None and w.watermarks != 'None') else "ptxprint/A5-Draft.pdf"),
+        "paper/watermarkpdf":       ("btn_selectWatermarkPDF", lambda w,v: re.sub(r"\\","/", w.watermarks) \
+                                                if (w.watermarks is not None and w.watermarks != 'None') else "ptxprint/A5-Draft.pdf"),
         "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),  
         "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v else "false"),
         "paper/margins":            ("s_margins", lambda w,v: round(v) or "14"),
@@ -49,8 +52,10 @@ class Info:
 
         "paragraph/varlinespacing": ("c_variableLineSpacing", lambda w,v: "" if v else "%"),
         "paragraph/linespacing":    ("s_linespacing", lambda w,v: "{:.3f}".format(v) or "15.000"),
-        "paragraph/linemin":        ("s_linespacingmin", lambda w,v: "minus {:.3f}pt".format(w.get("s_linespacing") - v) if v < w.get("s_linespacing") else ""),
-        "paragraph/linemax":        ("s_linespacingmax", lambda w,v: "plus {:.3f}pt".format(v - w.get("s_linespacing")) if v > w.get("s_linespacing") else ""),
+        "paragraph/linemin":        ("s_linespacingmin", lambda w,v: "minus {:.3f}pt".format(w.get("s_linespacing") - v) \
+                                                         if v < w.get("s_linespacing") else ""),
+        "paragraph/linemax":        ("s_linespacingmax", lambda w,v: "plus {:.3f}pt".format(v - w.get("s_linespacing")) \
+                                                         if v > w.get("s_linespacing") else ""),
         "paragraph/ifjustify":      ("c_justify", lambda w,v: "true" if v else "false"),
         "paragraph/ifhyphenate":    ("c_hyphenate", lambda w,v: "true" if v else "false"),
 
@@ -70,7 +75,8 @@ class Info:
         "document/ifrtl":           ("c_rtl", lambda w,v :"true" if v else "false"),
         "document/iflinebreakon":   ("c_linebreakon", lambda w,v: "" if v else "%"),
         "document/linebreaklocale": ("t_linebreaklocale", lambda w,v: v or ""),
-        "document/script":          ("cb_script", lambda w,v: ";script="+w.builder.get_object('cb_script').get_active_id().lower() if w.builder.get_object('cb_script').get_active_id() != "Zyyy" else ""),
+        "document/script":          ("cb_script", lambda w,v: ";script="+w.builder.get_object('cb_script').get_active_id().lower() \
+                                                  if w.builder.get_object('cb_script').get_active_id() != "Zyyy" else ""),
         "document/digitmapping":    ("cb_digits", lambda w,v: ";mapping="+v.lower()+"digits" if v != "Default" else ""),
         "document/ch1pagebreak":    ("c_ch1pagebreak", lambda w,v: "true" if v else "false"),
         "document/marginalverses":  ("c_marginalverses", lambda w,v: "" if v else "%"),
@@ -90,7 +96,8 @@ class Info:
         "document/usefigsfolder":   ("c_useFiguresFolder", lambda w,v :"" if v else "%"),
         "document/uselocalfigs":    ("c_useLocalFiguresFolder", lambda w,v :"" if v else "%"),
         "document/customfiglocn":   ("c_useCustomFolder", lambda w,v :"" if v else "%"),
-        "document/customfigfolder": ("btn_selectFigureFolder", lambda w,v: re.sub(r"\\","/", w.customFigFolder) if w.customFigFolder is not None else ""),
+        "document/customfigfolder": ("btn_selectFigureFolder", lambda w,v: re.sub(r"\\","/", w.customFigFolder) \
+                                                               if w.customFigFolder is not None else ""),
         "document/ifusepiclist":    ("c_usePicList", lambda w,v :"" if v else "%"),
         "document/spacecntxtlztn":  ("cb_spaceCntxtlztn", lambda w,v: "0" if v == "None" else "1" if v == "Some" else "2"),
         "document/glossarymarkupstyle":  ("cb_glossaryMarkupStyle", lambda w,v: w.builder.get_object("cb_glossaryMarkupStyle").get_active_id()),
@@ -211,7 +218,6 @@ class Info:
             self.dict['project/id'] = self.prjid
         self.processFonts(printer)
         self.processHdrFtr(printer)
-        self.makelocalChanges(printer)
 
     def updatefields(self, a):
         for k in a:
@@ -305,7 +311,9 @@ class Info:
                 if l.startswith(r"\ptxfile"):
                     res.append("\\PtxFilePath={"+filedir.replace("\\","/")+"/}\n")
                     for i, f in enumerate(self.dict['project/books']):
-                        if self.dict['document/ifomitsinglechnum'] == 'true' and self.dict['document/ifomitchapternum'] == "false" and f[2:5] in oneChbooks:
+                        if self.dict['document/ifomitsinglechnum'] == 'true' and \
+                           self.dict['document/ifomitchapternum'] == "false" and \
+                           f[2:5] in oneChbooks:
                             res.append("\\OmitChapterNumbertrue\n")
                             res.append("\\ptxfile{{{}}}\n".format(f))
                             res.append("\\OmitChapterNumberfalse\n")
@@ -330,6 +338,8 @@ class Info:
             self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'))
         else:
             self.changes = []
+        printer = self.printer
+        self.makelocalChanges(printer, bk)
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
             open(customsty, "w").close()
@@ -378,12 +388,13 @@ class Info:
                     continue
                 m = re.match(r"^in\s+"+qreg+r"\s*:\s*"+qreg+r"\s*>\s*"+qreg, l)
                 if m:
-                    changes.append((regex.compile("("+(m.group(1) or m.group(2))+")", flags=regex.M), regex.compile((m.group(3) or m.group(4)), flags=regex.M), (m.group(5) or m.group(6))))
+                    changes.append((regex.compile("("+(m.group(1) or m.group(2))+")", flags=regex.M), \
+                    regex.compile((m.group(3) or m.group(4)), flags=regex.M), (m.group(5) or m.group(6))))
         if not len(changes):
             return None
         return changes
 
-    def makelocalChanges(self, printer):
+    def makelocalChanges(self, printer, bk):
         # print("  info: makelocalChanges",self, printer)
         self.localChanges = []
         first = int(printer.get("cb_chapfrom"))
@@ -391,7 +402,6 @@ class Info:
         
         # This section handles PARTIAL books (from chapter X to chapter Y)
         if not printer.get("c_multiplebooks"):
-            bk = printer.get("cb_book")
             if first > 1:
                 self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+(?=\\c {} ?\r?\n)".format(first), flags=regex.S), ""))
             if last < int(chaps.get(bk)):
@@ -403,70 +413,73 @@ class Info:
         self.localChanges.append((None, regex.compile(r"\\w (.+?)(\|.+?)?\\w\*", flags=regex.M), gloStyle))
 
         if printer.get("c_includeillustrations") and printer.get("c_includefigsfromtext"):
-            self.localChanges.append((None, regex.compile(r"\.[Tt][Ii][Ff]\|", flags=regex.M), r".jpg|"))           # Rename all TIF extensions to JPGs
+            # Rename all TIF extensions to JPGs
+            self.localChanges.append((None, regex.compile(r"\.[Tt][Ii][Ff]\|", flags=regex.M), r".jpg|"))
             if printer.get("c_skipmissingimages"):
-                msngfigs = self.ListMissingPics(printer)
+                msngfigs = self.ListMissingPics(printer, bk)
                 if len(msngfigs):
-                    for f in msngfigs:
-                        # print("Skipping over missing illustration: ",f)
+                    for f in msngfigs: # Remove references to missing illustration
                         self.localChanges.append((None, regex.compile(r"\\fig .*\|{}\|.+?\\fig\*".format(f), flags=regex.M), ""))
-            if printer.get("c_fighiderefs"):
-                self.localChanges.append((None, regex.compile(r"(\\fig .*?)(\d+\:\d+([-,]\d+)?)(.*?\\fig\*)", flags=regex.M), r"\1\4")) # del ch:vs from caption
-        else:
-            self.localChanges.append((None, regex.compile(r"\\fig .*?\\fig\*", flags=regex.M), ""))             # Drop ALL Figures
+            if printer.get("c_fighiderefs"): # del ch:vs from caption
+                self.localChanges.append((None, regex.compile(r"(\\fig .*?)(\d+\:\d+([-,]\d+)?)(.*?\\fig\*)", flags=regex.M), r"\1\4"))
+        else: # Drop ALL Figures
+            self.localChanges.append((None, regex.compile(r"\\fig .*?\\fig\*", flags=regex.M), ""))
         
-        if printer.get("c_omitBookIntro"):
-            self.localChanges.append((None, regex.compile(r"\\i(s|m|mi|p|pi|li\d?|pq|mq|pr|b|q\d?) .+?\r?\n", flags=regex.M), "")) # Drop Introductory matter
+        if printer.get("c_omitBookIntro"): # Drop Introductory matter
+            self.localChanges.append((None, regex.compile(r"\\i(s|m|mi|p|pi|li\d?|pq|mq|pr|b|q\d?) .+?\r?\n", flags=regex.M), "")) 
 
-        if printer.get("c_omitIntroOutline"):
-            self.localChanges.append((None, regex.compile(r"\\(iot|io\d) [^\\]+", flags=regex.M), ""))          # Drop ALL Intro Outline matter
-            self.localChanges.append((None, regex.compile(r"\\ior .+?\\ior\*\s?\r?\n", flags=regex.M), ""))     # and remove Intro Outline References
+        if printer.get("c_omitIntroOutline"): # Drop ALL Intro Outline matter & Intro Outline References
+            self.localChanges.append((None, regex.compile(r"\\(iot|io\d) [^\\]+", flags=regex.M), ""))
+            self.localChanges.append((None, regex.compile(r"\\ior .+?\\ior\*\s?\r?\n", flags=regex.M), ""))
 
-        if printer.get("c_omitSectHeads"):
-            self.localChanges.append((None, regex.compile(r"\\s .+", flags=regex.M), ""))                       # Drop ALL Section Headings
+        if printer.get("c_omitSectHeads"): # Drop ALL Section Headings
+            self.localChanges.append((None, regex.compile(r"\\s .+", flags=regex.M), ""))
 
-        if printer.get("c_omitParallelRefs"):
-            self.localChanges.append((None, regex.compile(r"\\r .+", flags=regex.M), ""))                       # Drop ALL Parallel Passage References
+        if printer.get("c_omitParallelRefs"):# Drop ALL Parallel Passage References
+            self.localChanges.append((None, regex.compile(r"\\r .+", flags=regex.M), ""))
 
         if printer.get("c_blendfnxr"): 
             XrefCaller = printer.get("cb_blendedXrefCaller")
-            # To merge/blend \f and \x together, simply change all (\x to \f) (\xo to \fr) (\xq to \fq) (\xt to \ft) and (\f* to \x*)
+            # To merge/blend \f and \x together, simply change all (\x to \f) (\xo to \fr) and so on...
             self.localChanges.append((None, regex.compile(r"\\x . ", flags=regex.M), r"\\f {} ".format(XrefCaller)))
             self.localChanges.append((None, regex.compile(r"\\x\* ", flags=regex.M), r"\\f* "))
             self.localChanges.append((None, regex.compile(r"\\xq ", flags=regex.M), r"\\fq "))
             self.localChanges.append((None, regex.compile(r"\\xt ", flags=regex.M), r"\\ft "))
 
         if printer.get("c_preventorphans"): 
-            # Keep final two words of \q lines together [but this doesn't work if there is an \f or \x at the end of the line] 
-            self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)[^\\\s]+)) (\S+\s*\n)", flags=regex.M), r"\1\u00A0\5"))   
+            # Keep final two words of \q lines together [but doesn't work if there is an \f or \x at the end of the line] 
+            self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)[^\\\s]+)) (\S+\s*\n)", \
+                                            flags=regex.M), r"\1\u00A0\5"))   
 
         if printer.get("c_preventwidows"):
-            # Push the verse number onto the next line (using NBSP) if there is a short widow word (3 characters or less) at the end of the line
+            # Push the verse number onto the next line (using NBSP) if there is
+            # a short widow word (3 characters or less) at the end of the line
             self.localChanges.append((None, regex.compile(r"(\\v \d+ [\w][\w]?[\w]?) ", flags=regex.M), r"\1\u00A0")) 
 
         if printer.get("c_ch1pagebreak"):
             self.localChanges.append((None, regex.compile(r"(\\c 1 ?\r?\n)", flags=regex.M), r"\pagebreak\r\n\1"))
 
-        if printer.get("c_glueredupwords"):
-            self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w\w\w+) \1(?=[\s,.!?])", flags=regex.M), r"\1\u00A0\1")) # keep reduplicated words together
+        if printer.get("c_glueredupwords"): # keep reduplicated words together
+            self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w\w\w+) \1(?=[\s,.!?])", flags=regex.M), r"\1\u00A0\1")) 
         
-        self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) # Paratext marks no-break space as a tilde ~
-        self.localChanges.append((None, regex.compile(r"\\\+", flags=regex.M), r"\\"))  # Remove the + of embedded markup (xetex handles it)
+        # Paratext marks no-break space as a tilde ~
+        self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
+        # Remove the + of embedded markup (xetex handles it)
+        self.localChanges.append((None, regex.compile(r"\\\+", flags=regex.M), r"\\"))  
             
         for c in range(1,4):
             if not printer.get("c_usetoc{}".format(c)):
                 self.localChanges.append((None, regex.compile(r"(\\toc{} .+)".format(c), flags=regex.M), ""))
-            
-        # self.localChanges.append((None, regex.compile(r"(\\c\s1\s?\r?\n)", flags=regex.S), r"\skipline\n\hrule\r\n\1")) # this didn't work.
+        
+        # Insert a rule between end of Introduction and start of body text (didn't work earlier, but might work now)
+        # self.localChanges.append((None, regex.compile(r"(\\c\s1\s?\r?\n)", flags=regex.S), r"\skipline\n\hrule\r\n\1"))
 
         if not printer.get("c_mainBodyText"):
             self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+".format(first), flags=regex.S), ""))
 
         # Apply any changes specified in snippets
         for w, c in self._snippets.items():
-            # print("In snippets Changes................................")
             if self.printer.get(c[0]): # if the c_checkbox is true then extend the list with those changes
-                # print("Snippet {} is ON.".format(w))
                 self.localChanges.extend(c[1].regexes)
 
         if printer.get("c_tracing"):
@@ -477,15 +490,14 @@ class Info:
                 print(report)
         return self.localChanges
 
-    def ListMissingPics(self, printer):
-        # print("  info: ListMissingPics",self, printer)
-        # When should this function be called? At present it is happening at startup, and I think it should happen later.
+    def ListMissingPics(self, printer, bk):
+        print("  info: ListMissingPics",self, printer)
         msngpiclist = []
         prjid = self.dict['project/id']
         # print([prjid, self.printer.settings_dir, printer.get("cb_project")])
         prjdir = os.path.join(self.printer.settings_dir, prjid)
         # prjdir = os.path.join(self.printer.settings_dir, prjid)
-        if printer.get("c_useFiguresFolder"): # Therefore this is always true!
+        if printer.get("c_useFiguresFolder"):
             picdir = os.path.join(prjdir, "Figures")
         elif printer.get("c_useLocalFiguresFolder"):
             picdir = os.path.join(prjdir, "local", "Figures")
@@ -495,23 +507,22 @@ class Info:
             print("No folder of illustrtations has been specified")
             return(msngpiclist)  # send back an empty list
         print("Picture Path:",picdir)
-        for bk in printer.getBooks():
-            fname = printer.getBookFilename(bk, prjdir)
-            infname = os.path.join(prjdir, fname)
-            with open(infname, "r", encoding="utf-8") as inf:
-                dat = inf.read()
-                # Finds USFM2-styled markup in text:
-                m = re.findall(r"\\fig .*\|(.+?\....)\|.+?\\fig\*", dat)          # Finds USFM2-styled markup in text:
-                if m is None:
-                    m = re.findall(r'\\fig .*+src="(.+?\....)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text:
-                if m is not None:
-                    for f in m:
-                        f = re.sub(r"\.[Tt][Ii][Ff]", r".jpg",f)
-                        fname = os.path.join(picdir,f)
-                        if not os.path.exists(fname):
-                            msngpiclist.append(f)
-                # if len(msngpiclist):
-                    # print("In {} these pics are missing:\n".format(bk),"\n".join(msngpiclist))
+        fname = printer.getBookFilename(bk, prjdir)
+        infname = os.path.join(prjdir, fname)
+        with open(infname, "r", encoding="utf-8") as inf:
+            dat = inf.read()
+            # Finds USFM2-styled markup in text:
+            m = re.findall(r"\\fig .*\|(.+?\....)\|.+?\\fig\*", dat)          # Finds USFM2-styled markup in text:
+            if m is None:
+                m = re.findall(r'\\fig .*+src="(.+?\....)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text:
+            if m is not None:
+                for f in m:
+                    f = re.sub(r"\.[Tt][Ii][Ff]", r".jpg",f)
+                    fname = os.path.join(picdir,f)
+                    if not os.path.exists(fname):
+                        msngpiclist.append(f)
+            if len(msngpiclist):
+                print("In {} these pics are missing:\n".format(bk),"\n".join(msngpiclist))
         return(msngpiclist)
 
     def _configset(self, config, key, value):

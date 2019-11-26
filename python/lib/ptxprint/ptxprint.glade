@@ -2699,6 +2699,8 @@ attribute.  Note: w= web, a=app, p=print.
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">The Advanced tab has a button to Generate a Pic List
+which enables more precisecontrol over the sizing and positioning of illustrations.</property>
                                         <property name="halign">start</property>
                                         <property name="margin_left">20</property>
                                         <property name="margin_bottom">6</property>
