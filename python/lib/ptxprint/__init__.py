@@ -118,13 +118,14 @@ class PtxPrinterDialog:
         self.callback = callback
         self.mw.show_all()
         self.onHideAdvancedSettingsClicked(None)
-        self.ExperimentalFeatures(False)
+        # self.ExperimentalFeatures(False)
         Gtk.main()
 
     def ExperimentalFeatures(self,set=False):
         for w in ("tb_", "lb_"):
             for exp in ("Diglot", "Markers", "ViewerEditor", "DiglotTesting"):
                 self.builder.get_object(w+exp).set_visible(set)
+        # self.builder.get_object("c_diglot").set_active(False)
         
     def addCR(self, name, index):
         # print(" init: addCR",self, name, index)
@@ -472,7 +473,7 @@ class PtxPrinterDialog:
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "row_ToC",
                   "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", "c_preventwidows"):
             self.builder.get_object(c).set_visible(not self.get("c_hideAdvancedSettings"))
-        self.ExperimentalFeatures(False) # Until we can get the args toggle working properly
+        # self.ExperimentalFeatures(False) # Until we can get the args toggle working properly
 
     def onKeepTemporaryFilesClicked(self, c_keepTemporaryFiles):
         self.builder.get_object("gr_debugTools").set_sensitive(self.get("c_keepTemporaryFiles"))
@@ -643,6 +644,7 @@ class PtxPrinterDialog:
         for c in ("l_singlebook", "cb_book", "l_chapfrom", "cb_chapfrom", "l_chapto", "cb_chapto"):
             self.builder.get_object(c).set_sensitive(not status)
         self.setEntryBoxFont()
+        self.onDiglotDimensionsChanged(None)
 
     def onEditChangesFile(self, cb_prj):
         self.prjid = self.get("cb_project")
@@ -983,71 +985,76 @@ class PtxPrinterDialog:
                     # im.save(outputfile, "PNG")
                 # except Exception, e:
                     # print(e)
+
     def onDiglotClicked(self, c_diglot):
         self.builder.get_object("gr_diglot").set_sensitive(self.get("c_diglot"))
         self.onDiglotDimensionsChanged(None)
 
     def onDiglotDimensionsChanged(self, btn):
-        PageWidth = 210  # need to make this dynamic
-        Margins = self.get("s_margins")
-        MiddleGutter = self.get("s_diglotMiddleGutter")
-        BindingGutter = self.get("s_pagegutter")
-        PriColWid = self.get("s_PriColWidth")
-        SecColWid = PageWidth - PriColWid - MiddleGutter - BindingGutter - (2*Margins)
-        self.builder.get_object("s_SecColWidth").set_value(SecColWid)
-        
-        # Calc Pri Settings (righ   t side of page; or outer if mirrored)
-        PriColWid = self.get("s_PriColWidth") # this is the only parameter we want them to tweak with a slider (<--40%--|---60%--->)
-        PriSideMarginFactor = 1
-        PriBindingGutter = PageWidth - PriColWid - (2*Margins)
-        
-        # Calc Sec Settings (left side of page; or inner if mirrored)
-        SecColWid = PageWidth - PriColWid - MiddleGutter - BindingGutter - (2*Margins)
-        SecSideMarginFactor = (PriColWid + Margins + MiddleGutter) / Margins
-        SecBindingGutter = PageWidth - SecColWid - (2*Margins*SecSideMarginFactor)
-        
-        PriPercent = round((PriColWid / (PriColWid + SecColWid) * 100),1)
-        SecPercent = 100 - PriPercent
-        self.builder.get_object("t_PriPercent").set_text(str(PriPercent)+"%")
-        self.builder.get_object("t_SecPercent").set_text(str(SecPercent)+"%")
-        
-        if self.get("c_outputSecText"):
-            DiglotString = "\BindingGuttertrue"+ \
-                           "\n\BindingGutter={}mm".format(SecBindingGutter)+ \
-                           "\n\def\SideMarginFactor{{{:.2f}}}".format(SecSideMarginFactor)+ \
-                           "\n\BodyColumns=1"
-
+        if not self.get("c_diglot"):
+            DiglotString = ""
         else:
             secprjid = self.get("cb_diglotSecProject")
-            sectmpdir = os.path.join(self.settings_dir, secprjid, 'PrintDraft') # if self.get("c_useprintdraftfolder") else args.directory
-            bkid = self.get("cb_book")
-            secfname = os.path.join(sectmpdir, "ptxprint-{}{}.pdf".format(bkid, secprjid))
+            sectmpdir = os.path.join(self.settings_dir, secprjid, 'PrintDraft') if self.get("c_useprintdraftfolder") else "." # args.directory
+            jobs = self.getBooks()
+            if len(jobs) > 1:
+                secfname = os.path.join(sectmpdir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], secprjid))
+            else:
+                secfname = os.path.join(sectmpdir, "ptxprint-{}{}.pdf".format(jobs[0], secprjid))
+            # TO DO: We need to be able to GET the page layout values from the PRIMARY project
+            # (even when creating the Secondary PDF so that the dimensions match).
+            # TO DO: Suppress illustrations when Diglot is on (until we can figure out HOW to do that).
+            PageWidth = 210  # need to make this dynamic USE: paper/width
+            
+            Margins = self.get("s_margins")
+            MiddleGutter = self.get("s_diglotMiddleGutter")
+            BindingGutter = self.get("s_pagegutter")
+            PriColWid = self.get("s_PriColWidth")
+            SecColWid = PageWidth - PriColWid - MiddleGutter - BindingGutter - (2*Margins)
+            self.builder.get_object("s_SecColWidth").set_value(SecColWid)
 
-            DiglotString = "\BindingGuttertrue"+ \
-                           "\n\BindingGutter={}mm".format(PriBindingGutter)+ \
-                           "\n\def\SideMarginFactor{{{:.2f}}}".format(PriSideMarginFactor)+ \
-                           "\n\BodyColumns=1" + \
-                           "\n\def\MergePDF{" + secfname + "}"
-        self.builder.get_object("l_diglotString").set_text(DiglotString)
+            # Calc Pri Settings (right side of page; or outer if mirrored)
+            PriColWid = self.get("s_PriColWidth")
+            PriSideMarginFactor = 1
+            PriBindingGutter = PageWidth - PriColWid - (2*Margins)
 
-    def onBlendPDFsClicked(self, btn):
+            # Calc Sec Settings (left side of page; or inner if mirrored)
+            SecColWid = PageWidth - PriColWid - MiddleGutter - BindingGutter - (2*Margins)
+            SecSideMarginFactor = (PriColWid + Margins + MiddleGutter) / Margins
+            SecBindingGutter = PageWidth - SecColWid - (2*Margins*SecSideMarginFactor)
+
+            PriPercent = round((PriColWid / (PriColWid + SecColWid) * 100),1)
+            self.builder.get_object("t_PriPercent").set_text(str(PriPercent)+"%")
+            self.builder.get_object("t_SecPercent").set_text(str(100 - PriPercent)+"%")
+            hdr = ""
+            if self.get("c_outputSecText"):
+                if self.get("c_diglotHeaders"):
+                    hdr = r"""
+\def\RHoddleft{\rangeref}
+\def\RHoddcenter{\empty}
+\def\RHoddright{\empty}
+\def\RHevenleft{\empty}
+\def\RHevencenter{\empty}
+\def\RHevenright{\rangeref}"""
+                DiglotString = "\BindingGuttertrue"+ \
+                               "\n\BindingGutter={}mm".format(SecBindingGutter)+ \
+                               "\n\def\SideMarginFactor{{{:.2f}}}".format(SecSideMarginFactor)+ \
+                               "\n\BodyColumns=1" + hdr
+            else:
+                if self.get("c_diglotHeaders"):
+                    hdr = r"""
+\def\RHoddleft{\pagenumber}
+\def\RHoddcenter{\empty}
+\def\RHoddright{\rangeref}
+\def\RHevenleft{\rangeref}
+\def\RHevencenter{\empty}
+\def\RHevenright{\pagenumber}"""
+                DiglotString = "\BindingGuttertrue"+ \
+                               "\n\BindingGutter={}mm".format(PriBindingGutter)+ \
+                               "\n\def\SideMarginFactor{{{:.2f}}}".format(PriSideMarginFactor)+ \
+                               "\n\BodyColumns=1" + hdr + \
+                               "\n\def\MergePDF{" + secfname + "}"
+            self.builder.get_object("l_diglotString").set_text(DiglotString) # We probably need a better way to do this
+
+    def onGenerateHyphenationListClicked(self, btn_generateHyphenationList):
         pass
-        # if sys.platform == "win32":
-            # priprjid = self.get("cb_diglotPriProject")
-            # secprjid = self.get("cb_diglotSecProject")
-            # pritmpdir = os.path.join(self.settings_dir, priprjid, 'PrintDraft') # if self.get("c_useprintdraftfolder") else args.directory
-            # sectmpdir = os.path.join(self.settings_dir, secprjid, 'PrintDraft') # if self.get("c_useprintdraftfolder") else args.directory
-            # bkid = self.get("cb_book")
-            # prifname = os.path.join(pritmpdir, "ptxprint-{}{}.pdf".format(bkid, priprjid))
-            # secfname = os.path.join(sectmpdir, "ptxprint-{}{}.pdf".format(bkid, secprjid))
-            # pdffname = os.path.join(pritmpdir, "ptxprint-diglot-{}-{}-{}.pdf".format(bkid, secprjid, priprjid))
-            # PDFtkEXE = r"C:\Program Files (x86)\PDFtk Server\bin\pdftk.exe"
-            # params = '"'+PDFtkEXE+'" "'+prifname+'" '+"multibackground"+' "'+secfname+'" '+"output"+' "'+pdffname+'"'
-            # params = re.sub(r"/",r"\\", params)
-            # pdftk A.pdf multibackground B.pdf output A_B_Diglot.pdf
-            # print(params)
-            # subprocess.run([PDFtkEXE, params])
-            # subprocess.run([params])
-        # if os.path.exists(pdffname):
-            # if sys.platform == "win32":
-                # os.startfile(pdffname)

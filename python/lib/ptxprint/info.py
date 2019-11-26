@@ -47,6 +47,7 @@ class Info:
         "paper/sidemarginfactor":   ("s_sidemarginfactor", lambda w,v: round(v, 2) or "1.00"),
         "paper/ifaddgutter":        ("c_pagegutter", lambda w,v :"true" if v else "false"),
         "paper/gutter":             ("s_pagegutter", lambda w,v: round(v) or "12"),
+        "paper/colgutteroffset":    ("s_colgutteroffset", lambda w,v: "{:.1f}".format(v) or "0.0"),
         "paper/columns":            ("c_doublecolumn", lambda w,v: "2" if v else "1"),
         "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
 
@@ -71,7 +72,7 @@ class Info:
         "document/usetoc3":         ("c_usetoc3", lambda w,v :"true" if v else "false"),
         "document/chapfrom":        ("cb_chapfrom", lambda w,v: w.builder.get_object("cb_chapfrom").get_active_id()),
         "document/chapto":          ("cb_chapto", lambda w,v: w.builder.get_object("cb_chapto").get_active_id()),
-        "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: round(v) or "12"),
+        "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: round(v*3) or "12"), # Hack to be fixed
         "document/ifrtl":           ("c_rtl", lambda w,v :"true" if v else "false"),
         "document/iflinebreakon":   ("c_linebreakon", lambda w,v: "" if v else "%"),
         "document/linebreaklocale": ("t_linebreaklocale", lambda w,v: v or ""),
@@ -115,6 +116,7 @@ class Info:
         "document/diglotsettings":  ("l_diglotString", lambda w,v: w.builder.get_object("l_diglotString").get_text() if w.get("c_diglot") else ""),
         "document/diglotpriprj":    ("cb_diglotPriProject", lambda w,v: w.builder.get_object("cb_diglotPriProject").get_active_id()),
         "document/diglotsecprj":    ("cb_diglotSecProject", lambda w,v: w.builder.get_object("cb_diglotSecProject").get_active_id()),
+        "document/diglotnormalhdrs": ("c_diglotHeaders", lambda w,v :"" if v else "%"),
 
         "header/headerposition":    ("s_headerposition", lambda w,v: round(v, 2) or "0.80"),
         "header/footerposition":    ("s_footerposition", lambda w,v: round(v, 2) or "0.70"),
