@@ -133,10 +133,9 @@
 {project/ifusemodstex}\input "{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.tex"% adjust/override setup parameters here
 
 %%%%% Hyphenation %%%%%
-%% Allocating and using a new language without any hyphenation rules defined effectively disables hyphenation.
-%% Hyphenation support is provided through hyphenatedWords.txt.
-%\input hyphen-{project/id}.tex
-\hyphenpenalty=10000
+{paragraph/ifhyphenate}\input "{/ptxpath}/{project/id}/PrintDraft/hyphen-{project/id}.tex"
+\hyphenpenalty=100
+\exhyphenpenalty=1000
 
 %%%%% Watermark PDF file %%%%%
 {paper/ifwatermark}\def\PageBorder{{"{paper/watermarkpdf}"}}  % and also pretty border PDFs etc.

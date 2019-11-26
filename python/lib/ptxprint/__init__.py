@@ -66,8 +66,8 @@ class PtxPrinterDialog:
         self.addCR("cb_chapto", 0)
         self.addCR("cb_blendedXrefCaller", 0)
         self.addCR("cb_glossaryMarkupStyle", 0)
-        self.addCR("cb_diglotPriProject", 0)
-        self.addCR("cb_diglotSecProject", 0)
+        # self.addCR("cb_diglotPriProject", 0)
+        # self.addCR("cb_diglotSecProject", 0)
 
         scripts = self.builder.get_object("ls_scripts")
         scripts.clear()
@@ -303,6 +303,12 @@ class PtxPrinterDialog:
             min.set_value(lnspVal-1) 
             max.set_value(lnspVal+2) 
 
+    def onVerticalRuleClicked(self, c_verticalrule):
+        self.builder.get_object("s_colgutteroffset").set_sensitive(self.get("c_verticalrule"))
+
+    def onMarginalVersesClicked(self, c_marginalverses):
+        self.builder.get_object("s_columnShift").set_sensitive(self.get("c_marginalverses"))
+
     def onUseIllustrationsClicked(self, c_includeillustrations):
         status = self.get("c_includeillustrations")
         for c in ("c_includefigsfromtext", "c_usePicList", "l_useFolder", "c_useFiguresFolder", "c_useLocalFiguresFolder", "c_useCustomFolder",
@@ -327,13 +333,11 @@ class PtxPrinterDialog:
         status = self.get("c_includeFootnotes")
         for c in ("c_fnautocallers", "t_fncallers", "c_fnomitcaller", "c_fnpageresetcallers", "c_fnparagraphednotes"):
             self.builder.get_object(c).set_sensitive(status)
-        # self.GenerateNestedStyles(None)
         
     def onClickedIncludeXrefs(self, c_includeXrefs):
         status = self.get("c_includeXrefs")
         for c in ("c_xrautocallers", "t_xrcallers", "c_xromitcaller", "c_xrpageresetcallers", "c_paragraphedxrefs"):
             self.builder.get_object(c).set_sensitive(status)
-        # self.GenerateNestedStyles(None)
 
     def onPageGutterChanged(self, c_pagegutter):
         status = self.get("c_pagegutter")
@@ -442,7 +446,6 @@ class PtxPrinterDialog:
     def onSuppressOutlineClicked(self, c_omitIntroOutline):
         self.builder.get_object("c_prettyIntroOutline").set_sensitive(not self.get("c_omitIntroOutline"))
         self.builder.get_object("c_prettyIntroOutline").set_active(False)
-        # self.GenerateNestedStyles(None)
 
     def onUsePTmacrosClicked(self, c_usePTmacros):
         status = self.get("c_usePTmacros")
@@ -450,8 +453,7 @@ class PtxPrinterDialog:
                   "s_colgutteroffset", "l_colgutteroffset", "c_marginalverses", "s_columnShift"):
             self.builder.get_object(c).set_sensitive(not status)
         # Temporarily keep these off (unless testing)
-        for c in ("c_startOnHalfPage"):
-            self.builder.get_object(c).set_sensitive(not status)
+        self.builder.get_object("c_startOnHalfPage").set_sensitive(not status)
 
     def onHideAdvancedSettingsClicked(self, c_hideAdvancedSettings):
         # Turn Dangerous Settings OFF
@@ -1057,4 +1059,4 @@ class PtxPrinterDialog:
             self.builder.get_object("l_diglotString").set_text(DiglotString) # We probably need a better way to do this
 
     def onGenerateHyphenationListClicked(self, btn_generateHyphenationList):
-        pass
+        self.info.createHyphenationFile()

@@ -59,7 +59,7 @@ class Info:
         "paragraph/linemax":        ("s_linespacingmax", lambda w,v: "plus {:.3f}pt".format(v - w.get("s_linespacing")) \
                                                          if v > w.get("s_linespacing") else ""),
         "paragraph/ifjustify":      ("c_justify", lambda w,v: "true" if v else "false"),
-        "paragraph/ifhyphenate":    ("c_hyphenate", lambda w,v: "true" if v else "false"),
+        "paragraph/ifhyphenate":    ("c_hyphenate", lambda w,v: "" if v else "%"),
 
         "document/title":           (None, lambda w,v: w.ptsettings['FullName']),
         "document/subject":         ("t_booklist", lambda w,v: v or ""),
@@ -397,6 +397,13 @@ class Info:
                     regex.compile((m.group(3) or m.group(4)), flags=regex.M), (m.group(5) or m.group(6))))
         if not len(changes):
             return None
+        if self.printer.get("c_tracing"):
+            print("List of PrintDraftChanges:-------------------------------------------------------------")
+            report = "\n".join("{} -> {}".format(p[1].pattern, p[2]) for p in changes)
+            if getattr(self.printer, "logger", None) is not None:
+                self.printer.logger.insert_at_cursor(v)
+            else:
+                print(report)
         return changes
 
     def makelocalChanges(self, printer, bk):
@@ -488,6 +495,7 @@ class Info:
                 self.localChanges.extend(c[1].regexes)
 
         if printer.get("c_tracing"):
+            print("List of Local Changes:----------------------------------------------------------")
             report = "\n".join("{} -> {}".format(p[1].pattern, p[2]) for p in self.localChanges)
             if getattr(printer, "logger", None) is not None:
                 printer.logger.insert_at_cursor(v)
@@ -596,7 +604,7 @@ class Info:
         for (f, c) in (("PrintDraft-mods.sty", "c_useModsSty"),
                        ("PrintDraft-mods.tex", "c_useModsTex")):
             if printer.get(c):
-                if not os.path.exists(os.path.join(prjdir, f)):
+                if not os.path.exists(os.path.join(prjdir, "PrintDraft", f)):
                     printer.set(c, False)
         self.update()
 
@@ -604,7 +612,7 @@ class Info:
         # print("  info: GenerateNestedStyles",self)
         prjid = self.dict['project/id']
         prjdir = os.path.join(self.printer.settings_dir, prjid)
-        nstyfname = os.path.join(prjdir, "PrintDraft/NestedStyles.sty")
+        nstyfname = os.path.join(prjdir, "PrintDraft", "NestedStyles.sty")
         nstylist = []
         if self.printer.get("c_omitallverses"):
             nstylist.append("##### Remove all verse numbers\n\\Marker v\n\\TextProperties nonpublishable\n\n")
@@ -623,3 +631,26 @@ class Info:
         else:
             with open(nstyfname, "w", encoding="utf-8") as outf:
                 outf.write("".join(nstylist))
+
+    def createHyphenationFile(self):
+        prjid = self.dict['project/id']
+        prjdir = os.path.join(self.printer.settings_dir, prjid)
+        infname = os.path.join(prjdir, 'hyphenatedWords.txt')
+        outfname = os.path.join(prjdir, "PrintDraft", 'hyphen-{}.tex'.format(prjid))
+        print(infname)
+        print(outfname)
+        hyphenatedWords = []
+        if not os.path.exists(infname):
+            print("Paratext Hyphenation file not found: ",infname)
+            return
+        with open(infname, "r", encoding="utf-8") as inf:
+            for l in inf.readlines()[8:]:
+                l = l.strip().replace(u"\uFEFF", "")
+                l = re.sub(r"\*", "", l)
+                l = re.sub(r"=", "-", l)
+                if "-" in l:
+                    hyphenatedWords.append(l)
+        outlist = "\n".join(hyphenatedWords)
+        print("{} words were included in the Hyphenation list.".format(len(hyphenatedWords)))
+        with open(outfname, "w", encoding="utf-8") as outf:
+            outf.write(outlist)
