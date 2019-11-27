@@ -32,7 +32,8 @@ class Info:
         "project/ifusemodstex":     ("c_useModsTex", lambda w,v: "" if v else "%"),
         "project/ifusecustomsty":   ("c_useCustomSty", lambda w,v: "" if v else "%"),
         "project/ifusemodssty":     ("c_useModsSty", lambda w,v: "" if v else "%"),
-        "project/ifusenested":      (None, lambda w,v: "" if (w.get("c_omitallverses") or not w.get("c_includeFootnotes") or not w.get("c_includeXrefs")) or w.get("c_prettyIntroOutline") else "%"),
+        "project/ifusenested":      (None, lambda w,v: "" if (w.get("c_omitallverses") or not w.get("c_includeFootnotes") \
+                                                       or not w.get("c_includeXrefs")) or w.get("c_prettyIntroOutline") else "%"),
         "project/ifstarthalfpage":  ("c_startOnHalfPage", lambda w,v :"true" if v else "false"),
         "project/randompicposn":    ("c_randomPicPosn", lambda w,v :"true" if v else "false"),
 
@@ -673,6 +674,8 @@ class Info:
                     if "-" in l:
                         if "\u200C" in l or "\u200D" in l: # Temporary workaround until we can figure out how
                             z += 1                         # to allow ZWNJ and ZWJ to be included as letters.
+                        elif re.search('\d', l):
+                            pass
                         else:
                             if l[0] != "-":
                                 hyphenatedWords.append(l)
