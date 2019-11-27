@@ -63,6 +63,7 @@ class Info:
                                                          if v > w.get("s_linespacing") else ""),
         "paragraph/ifjustify":      ("c_justify", lambda w,v: "true" if v else "false"),
         "paragraph/ifhyphenate":    ("c_hyphenate", lambda w,v: "" if v else "%"),
+        "paragraph/ifnothyphenate": ("c_hyphenate", lambda w,v: "%" if v else ""),
 
         "document/title":           (None, lambda w,v: w.ptsettings['FullName'] or ""),
         "document/subject":         ("t_booklist", lambda w,v: v if w.get("c_multiplebooks") else w.get("cb_book")),

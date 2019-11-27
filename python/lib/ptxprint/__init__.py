@@ -309,6 +309,14 @@ class PtxPrinterDialog:
     def onMarginalVersesClicked(self, c_marginalverses):
         self.builder.get_object("s_columnShift").set_sensitive(self.get("c_marginalverses"))
 
+    def onHyphenateClicked(self, c_hyphenate):
+        prjid = self.get("cb_project")
+        prjdir = os.path.join(self.settings_dir, self.prjid)
+        fname = os.path.join(prjdir, "PrintDraft", 'hyphen-{}.tex'.format(prjid))
+        if not os.path.exists(fname):
+            print('\a')
+            self.builder.get_object("c_hyphenate").set_active(False)
+        
     def onUseIllustrationsClicked(self, c_includeillustrations):
         status = self.get("c_includeillustrations")
         for c in ("c_includefigsfromtext", "c_usePicList", "l_useFolder", "c_useFiguresFolder", "c_useLocalFiguresFolder", "c_useCustomFolder",

@@ -2588,6 +2588,7 @@ to have clicked the "Create XeTeX Hyphenated Word List"
 button on the Advanced tab.</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onHyphenateClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
