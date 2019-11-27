@@ -256,7 +256,6 @@
                       <object class="GtkButton">
                         <property name="label" translatable="yes">Deuterocanon</property>
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="margin_left">6</property>
@@ -575,6 +574,14 @@
   <object class="GtkListStore" id="ls_projects">
     <columns>
       <!-- column-name projid -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkListStore" id="ls_scripts">
+    <columns>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name id -->
       <column type="gchararray"/>
     </columns>
   </object>
@@ -3257,8 +3264,9 @@ layout</property>
                                       <object class="GtkSpinButton" id="s_rhruleposition">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
-                                        <property name="margin_top">10</property>
-                                        <property name="margin_bottom">10</property>
+                                        <property name="halign">end</property>
+                                        <property name="margin_top">6</property>
+                                        <property name="margin_bottom">6</property>
                                         <property name="width_chars">4</property>
                                         <property name="text" translatable="yes">15</property>
                                         <property name="caps_lock_warning">False</property>
@@ -3274,16 +3282,16 @@ layout</property>
                                       <packing>
                                         <property name="left_attach">2</property>
                                         <property name="top_attach">0</property>
-                                        <property name="height">2</property>
                                       </packing>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_rhrule">
-                                        <property name="label" translatable="yes">Horizontal Rule Under Header &amp; Offset (pt):</property>
+                                        <property name="label" translatable="yes">Horizontal Rule Under 
+Header &amp; Offset (pts):</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="halign">start</property>
+                                        <property name="halign">end</property>
                                         <property name="margin_left">5</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
@@ -3292,7 +3300,6 @@ layout</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">0</property>
-                                        <property name="height">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -3325,6 +3332,46 @@ layout</property>
                                       <packing>
                                         <property name="left_attach">0</property>
                                         <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_colgutteroffset">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">This setting can raise (if -ve) or lower (if +ve) the starting point of the vertical rule between columns. (Value is pts).
+The rule can be enabled on the Basic tab under the section
+Double Column Layout.</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Adjust Start Position of
+ Vertical Rule by (pts):</property>
+                                        <property name="justify">right</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSpinButton" id="s_colgutteroffset">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">This setting can raise (if -ve) or lower (if +ve) the starting point of the vertical rule between columns. (Value is pts).
+The rule can be enabled on the Basic tab under the section
+Double Column Layout.</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="width_chars">6</property>
+                                        <property name="text" translatable="yes">0.0</property>
+                                        <property name="caps_lock_warning">False</property>
+                                        <property name="input_purpose">number</property>
+                                        <property name="adjustment">a_columngutteroffset</property>
+                                        <property name="climb_rate">1</property>
+                                        <property name="digits">1</property>
+                                        <property name="numeric">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">2</property>
+                                        <property name="top_attach">1</property>
                                       </packing>
                                     </child>
                                   </object>
@@ -4755,46 +4802,6 @@ settings.</property>
                             <property name="margin_bottom">6</property>
                             <property name="column_spacing">5</property>
                             <child>
-                              <object class="GtkSpinButton" id="s_colgutteroffset">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="tooltip_text" translatable="yes">This setting can raise (if -ve) or lower (if +ve) the starting point of the vertical rule between columns. (Value is pts).
-The rule can be enabled on the Basic tab under the section
-Double Column Layout.</property>
-                                <property name="halign">start</property>
-                                <property name="valign">center</property>
-                                <property name="width_chars">6</property>
-                                <property name="text" translatable="yes">12</property>
-                                <property name="caps_lock_warning">False</property>
-                                <property name="input_purpose">number</property>
-                                <property name="adjustment">a_columngutteroffset</property>
-                                <property name="climb_rate">1</property>
-                                <property name="digits">1</property>
-                                <property name="numeric">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="l_colgutteroffset">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">This setting can raise (if -ve) or lower (if +ve) the starting point of the vertical rule between columns. (Value is pts).
-The rule can be enabled on the Basic tab under the section
-Double Column Layout.</property>
-                                <property name="halign">end</property>
-                                <property name="label" translatable="yes">Adjust Start Position of
- the Vertical Rule (pts):</property>
-                                <property name="justify">right</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkButton" id="btn_generateHyphenationList">
                                 <property name="label" translatable="yes">Create XeTeX Hyphenated Word List</property>
                                 <property name="visible">True</property>
@@ -4825,6 +4832,12 @@ tab needs to be checked to make us of this.</property>
                                 <property name="left_attach">2</property>
                                 <property name="top_attach">0</property>
                               </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
                             </child>
                           </object>
                         </child>
@@ -6014,13 +6027,5 @@ column width of the Primary Text. (mm)</property>
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkListStore" id="ls_scripts">
-    <columns>
-      <!-- column-name name -->
-      <column type="gchararray"/>
-      <!-- column-name id -->
-      <column type="gchararray"/>
-    </columns>
   </object>
 </interface>

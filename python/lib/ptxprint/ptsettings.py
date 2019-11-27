@@ -3,10 +3,10 @@ import xml.etree.ElementTree as et
 import regex
 
 # For future Reference on how Paratext treats this list:
-# G                                     MM                         RT                P        X      FBO    ICGTND          L  OT NT DC  -  X Y  -  Z  --  L
-# E                                     AA                         EO                S        X      RAT    NNLDDA          A  
-# N                                     LT                         VB                2        ABCDEFGTKH    TCOXXG          O  39+27+18+(8)+7+3+(4)+6+(10)+1 = 123
-# 111111111111111111111111111111111111111111111111111111111111111111111111111111111111000000001111111111000011111100000000001  CompleteCanon (all books possible)
+# G                                     M M                         RT                P        X      FBO    ICGTND          L  OT X NT DC  -  X Y  -  Z  --  L
+# E                                     A A                         EO                S        X      RAT    NNLDDA          A  
+# N                                     L T                         VB                2        ABCDEFGTKH    TCOXXG          O  39+1+27+18+(8)+7+3+(4)+6+(10)+1 = 124
+# 1111111111111111111111111111111111111110111111111111111111111111111111111111111111111000000001111111111000011111100000000001  CompleteCanon (all books possible)
 
 _bookslist = """GEN|50 EXO|40 LEV|27 NUM|36 DEU|34 JOS|24 JDG|21 RUT|4 1SA|31 2SA|24 1KI|22 2KI|25 1CH|29 2CH|36 EZR|10 NEH|13
         EST|10 JOB|42 PSA|150 PRO|31 ECC|12 SNG|8 ISA|66 JER|52 LAM|5 EZK|48 DAN|12 HOS|14 JOL|3 AMO|9 OBA|1 JON|4 MIC|7 NAM|3

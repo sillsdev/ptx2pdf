@@ -61,10 +61,11 @@ class Info:
         "paragraph/ifjustify":      ("c_justify", lambda w,v: "true" if v else "false"),
         "paragraph/ifhyphenate":    ("c_hyphenate", lambda w,v: "" if v else "%"),
 
-        "document/title":           (None, lambda w,v: w.ptsettings['FullName']),
-        "document/subject":         ("t_booklist", lambda w,v: v or ""),
-        "document/author":          (None, lambda w,v: regex.sub("</?p>","",w.ptsettings['Copyright'])),
-        "document/creator":         (None, lambda w,v: "Unknown"),
+        "document/title":           (None, lambda w,v: w.ptsettings['FullName'] or ""),
+        "document/subject":         ("t_booklist", lambda w,v: v if w.get("c_multiplebooks") \
+                                                  else w.builder.get_object("cb_book").get_active_id()),
+        "document/author":          (None, lambda w,v: regex.sub("</?p>","",w.ptsettings['Copyright'] or "")),
+        "document/creator":         (None, lambda w,v: os.getlogin()),
 
         "document/toc":             ("c_autoToC", lambda w,v: "" if v else "%"),
         "document/toctitle":        ("t_tocTitle", lambda w,v: v or ""),
@@ -338,9 +339,9 @@ class Info:
         return "".join(res).replace("\OmitChapterNumberfalse\n\OmitChapterNumbertrue\n","")
 
     def convertBook(self, bk, outdir, prjdir):
-        # print("  info: convertBook",self, bk, outdir, prjdir)
-        if self.changes is None and self.dict['project/usechangesfile'] == "true":
-            self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'))
+        if self.dict['project/usechangesfile'] == "true":
+            if self.changes is None:
+                self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'))
         else:
             self.changes = []
         printer = self.printer
@@ -569,17 +570,20 @@ class Info:
                 val = config.get(sect, opt)
                 if key in self._mappings:
                     v = self._mappings[key]
-                    if v[0].startswith("cb_") or v[0].startswith("t_") or v[0].startswith("f_") or v[0].startswith("btn_"):
-                        pass
-                    elif v[0].startswith("s_"):
-                        val = float(val)
-                    elif v[0].startswith("c_"):
-                        val = config.getboolean(sect, opt)
-                    else:
-                        val = None
-                    if val is not None:
-                        self.dict[key] = val
-                        printer.set(v[0], val)
+                    try: # Q: MH - is this OK? (safeguarding ourselves from changing/missing keys in .cfg)
+                        if v[0].startswith("cb_") or v[0].startswith("t_") or v[0].startswith("f_") or v[0].startswith("btn_"):
+                            pass
+                        elif v[0].startswith("s_"):
+                            val = float(val)
+                        elif v[0].startswith("c_"):
+                            val = config.getboolean(sect, opt)
+                        else:
+                            val = None
+                        if val is not None:
+                            self.dict[key] = val
+                            printer.set(v[0], val)
+                    except AttributeError:
+                        pass # ignore missing keys 
                 elif key in self._fonts:
                     v = self._fonts[key]
                     printer.set(v[0], val)
@@ -612,7 +616,10 @@ class Info:
         # print("  info: GenerateNestedStyles",self)
         prjid = self.dict['project/id']
         prjdir = os.path.join(self.printer.settings_dir, prjid)
-        nstyfname = os.path.join(prjdir, "PrintDraft", "NestedStyles.sty")
+        tmpdir = os.path.join(prjdir, 'PrintDraft') if self.printer.get("c_useprintdraftfolder") else "."
+        if not os.path.exists(tmpdir):
+            os.makedirs(tmpdir)
+        nstyfname = os.path.join(tmpdir, "NestedStyles.sty")
         nstylist = []
         if self.printer.get("c_omitallverses"):
             nstylist.append("##### Remove all verse numbers\n\\Marker v\n\\TextProperties nonpublishable\n\n")
@@ -633,6 +640,7 @@ class Info:
                 outf.write("".join(nstylist))
 
     def createHyphenationFile(self):
+        listlimit = 32749  # use 500 or so when testing 
         prjid = self.dict['project/id']
         prjdir = os.path.join(self.printer.settings_dir, prjid)
         infname = os.path.join(prjdir, 'hyphenatedWords.txt')
@@ -644,13 +652,26 @@ class Info:
             print("Paratext Hyphenation file not found: ",infname)
             return
         with open(infname, "r", encoding="utf-8") as inf:
-            for l in inf.readlines()[8:]:
+            for l in inf.readlines()[8:]: # Skip over the Paratext header lines
                 l = l.strip().replace(u"\uFEFF", "")
                 l = re.sub(r"\*", "", l)
                 l = re.sub(r"=", "-", l)
+                # Paratext doesn't seem to allow segments of 1 character to be hyphenated  (for example: a-shame-d) 
+                # (so there's nothing to filter them out, because they don't seem to exist!)
                 if "-" in l:
-                    hyphenatedWords.append(l)
-        outlist = "\n".join(hyphenatedWords)
-        print("{} words were included in the Hyphenation list.".format(len(hyphenatedWords)))
+                    if "\u200C" in l or "\u200D" in l: # Temporary workaround until we can figure out
+                        pass                           # how to allow ZWNJ and ZWJ to be included as letters.
+                    else:
+                        if l[0] != "-":
+                            hyphenatedWords.append(l)
+        c = len(hyphenatedWords)
+        print("{} hyphenated words were gathered from Paratext's Hyphenation Word List.".format(c))
+        if c >= listlimit:
+            print("That is too many for XeTeX! List truncated to longest {} words.".format(listlimit))
+            hyphenatedWords.sort(key=len,reverse=True)
+            shortlist = hyphenatedWords[:listlimit]
+            hyphenatedWords = shortlist
+        hyphenatedWords.sort(key = lambda s: s.casefold())
+        outlist = '\catcode"200C=11\n\catcode"200D=11\n\hyphenation{' + "\n".join(hyphenatedWords) + "}"
         with open(outfname, "w", encoding="utf-8") as outf:
             outf.write(outlist)
