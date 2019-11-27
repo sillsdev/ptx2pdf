@@ -17,7 +17,7 @@ class PDFx1aOutput():
 /GTS_PDFXVersion(PDF/X-1:2003)% 
 /GTS_PDFXConformance(PDF/X-1a:2003)% 
 >> }} 
-\special{{pdf:fstream @OBJCVR ({/ptxprintlibpath}/ps_cmyk.icc)}} 
+\special{{pdf:fstream @OBJCVR ({/iccfpath})}} 
 \special{{pdf:put @OBJCVR <</N 4>>}} 
 %\special{{pdf:close @OBJCVR}} 
 \special{{pdf:docview << 

@@ -459,16 +459,17 @@ class PtxPrinterDialog:
         self.builder.get_object("c_startOnHalfPage").set_sensitive(not status)
 
     def onHideAdvancedSettingsClicked(self, c_hideAdvancedSettings):
-        # Turn Dangerous Settings OFF
-        for c in ("c_startOnHalfPage", "c_marginalverses", "c_prettyIntroOutline", "c_blendfnxr", "c_autoToC",
-                  "c_figplaceholders", "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", 
-                  "c_preventwidows", "c_PDFx1aOutput", "c_diglot", "c_hyphenate"):
-            self.builder.get_object(c).set_active(False)
+        if c_hideAdvancedSettings:
+            # Turn Dangerous Settings OFF
+            for c in ("c_startOnHalfPage", "c_marginalverses", "c_prettyIntroOutline", "c_blendfnxr", "c_autoToC",
+                      "c_figplaceholders", "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", 
+                      "c_preventwidows", "c_PDFx1aOutput", "c_diglot", "c_hyphenate"):
+                self.builder.get_object(c).set_active(False)
 
-        # Turn Essential Settings ON
-        for c in ("c_mainBodyText", "c_footnoterule",
-                  "c_includefigsfromtext", "c_skipmissingimages", "c_convertTIFtoPNG", "c_useFiguresFolder"):
-            self.builder.get_object(c).set_active(True)
+            # Turn Essential Settings ON
+            for c in ("c_mainBodyText", "c_footnoterule",
+                      "c_includefigsfromtext", "c_skipmissingimages", "c_convertTIFtoPNG", "c_useFiguresFolder"):
+                self.builder.get_object(c).set_active(True)
 
         # Hide a whole bunch of stuff that they don't need to see
         for c in ("tb_Markers", "tb_Diglot", "tb_Advanced","tb_Logging", "tb_ViewerEditor", "tb_DiglotTesting",

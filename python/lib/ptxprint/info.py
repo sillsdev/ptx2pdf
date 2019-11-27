@@ -1,6 +1,7 @@
 import configparser, re, os
 from datetime import datetime
 import regex
+from gi.repository import Gtk
 from ptxprint.font import TTFont
 from ptxprint.ptsettings import chaps, books, oneChbooks
 from ptxprint.snippets import FancyIntro, PDFx1aOutput, VerticalVerseBridges
@@ -209,8 +210,10 @@ class Info:
             tzstr = "Z"
         else:
             tzstr = "{0:+03}'{1:02}'".format(int(tz.seconds / 3600), int((tz.seconds % 3600) / 60))
+        libpath = os.path.abspath(os.path.dirname(__file__))
         self.dict = {"/ptxpath": path,
-                     "/ptxprintlibpath": os.path.abspath(os.path.dirname(__file__)),
+                     "/ptxprintlibpath": libpath,
+                     "/iccfpath": os.path.join(libpath, "ps_cmyk.icc").replace("\\","/"),
                      "document/date": t.strftime("%Y%m%d%H%M%S")+tzstr }
         self.prjid = prjid
         print([self.prjid])
@@ -606,13 +609,15 @@ class Info:
         # [Comment: this is turning things off even though the file exists. Probably running before the prj has been set?]
         prjdir = os.path.join(printer.settings_dir, printer.prjid)
         if printer.get("c_useCustomSty"):
-                if not os.path.exists(os.path.join(prjdir, "custom.sty")):
-                    printer.set("c_useCustomSty", False)
+            if not os.path.exists(os.path.join(prjdir, "custom.sty")):
+                printer.set("c_useCustomSty", False)
+                # printer.get_object("c_useCustomSty").set_sensitive(False)
         for (f, c) in (("PrintDraft-mods.sty", "c_useModsSty"),
                        ("PrintDraft-mods.tex", "c_useModsTex")):
             if printer.get(c):
                 if not os.path.exists(os.path.join(prjdir, "PrintDraft", f)):
                     printer.set(c, False)
+                    # printer.get_object(c).set_sensitive(False)
         self.update()
 
     def GenerateNestedStyles(self):
@@ -652,29 +657,47 @@ class Info:
         print(outfname)
         hyphenatedWords = []
         if not os.path.exists(infname):
-            print("Paratext Hyphenation file not found: ",infname)
-            return
-        with open(infname, "r", encoding="utf-8") as inf:
-            for l in inf.readlines()[8:]: # Skip over the Paratext header lines
-                l = l.strip().replace(u"\uFEFF", "")
-                l = re.sub(r"\*", "", l)
-                l = re.sub(r"=", "-", l)
-                # Paratext doesn't seem to allow segments of 1 character to be hyphenated  (for example: a-shame-d) 
-                # (so there's nothing to filter them out, because they don't seem to exist!)
-                if "-" in l:
-                    if "\u200C" in l or "\u200D" in l: # Temporary workaround until we can figure out
-                        pass                           # how to allow ZWNJ and ZWJ to be included as letters.
-                    else:
-                        if l[0] != "-":
-                            hyphenatedWords.append(l)
-        c = len(hyphenatedWords)
-        print("{} hyphenated words were gathered from Paratext's Hyphenation Word List.".format(c))
-        if c >= listlimit:
-            print("That is too many for XeTeX! List truncated to longest {} words.".format(listlimit))
-            hyphenatedWords.sort(key=len,reverse=True)
-            shortlist = hyphenatedWords[:listlimit]
-            hyphenatedWords = shortlist
-        hyphenatedWords.sort(key = lambda s: s.casefold())
-        outlist = '\catcode"200C=11\n\catcode"200D=11\n\hyphenation{' + "\n".join(hyphenatedWords) + "}"
-        with open(outfname, "w", encoding="utf-8") as outf:
-            outf.write(outlist)
+            m1 = "Sorry! - Failed to Generate Hyphenation List"
+            m2 = "{} Paratext Project's Hyphenation file not found:\n{}".format(prjid, infname)
+        else:
+            m2b = ""
+            m2c = ""
+            z = 0
+            with open(infname, "r", encoding="utf-8") as inf:
+                for l in inf.readlines()[8:]: # Skip over the Paratext header lines
+                    l = l.strip().replace(u"\uFEFF", "")
+                    l = re.sub(r"\*", "", l)
+                    l = re.sub(r"=", "-", l)
+                    # Paratext doesn't seem to allow segments of 1 character to be hyphenated  (for example: a-shame-d) 
+                    # (so there's nothing to filter them out, because they don't seem to exist!)
+                    if "-" in l:
+                        if "\u200C" in l or "\u200D" in l: # Temporary workaround until we can figure out how
+                            z += 1                         # to allow ZWNJ and ZWJ to be included as letters.
+                        else:
+                            if l[0] != "-":
+                                hyphenatedWords.append(l)
+            c = len(hyphenatedWords)
+            # print("{} hyphenated words were gathered from Paratext's Hyphenation Word List.".format(c))
+            if c >= listlimit:
+                m2b = "\n\nThat is too many for XeTeX! List truncated to longest {} words.".format(listlimit)
+                hyphenatedWords.sort(key=len,reverse=True)
+                shortlist = hyphenatedWords[:listlimit]
+                hyphenatedWords = shortlist
+            hyphenatedWords.sort(key = lambda s: s.casefold())
+            outlist = '\catcode"200C=11\n\catcode"200D=11\n\hyphenation{' + "\n".join(hyphenatedWords) + "}"
+            with open(outfname, "w", encoding="utf-8") as outf:
+                outf.write(outlist)
+            if len(hyphenatedWords) > 1:
+                m1 = "Hyphenation List Generated"
+                m2a = "{} hyphenated words were gathered\nfrom Paratext's Hyphenation Word List.".format(c)
+                if z > 0:
+                    m2c = "\n\nNote that {} words containing ZWJ and ZWNJ".format(z) + \
+                            "\ncharacters have been left off the hyphenation list." 
+                m2 = m2a + m2b + m2c
+            else:
+                m1 = "Sorry - Hyphenation List was NOT Generated"
+                m2 = "No valid words were found in Paratext's Hyphenation List"
+        dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, m1)
+        dialog.format_secondary_text(m2)
+        dialog.run()
+        dialog.destroy()

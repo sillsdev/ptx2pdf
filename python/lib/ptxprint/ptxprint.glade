@@ -1337,10 +1337,10 @@ space between lines of text.</property>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_variableLineSpacing">
-                                        <property name="label" translatable="yes">Let Line
-Spacing
-Adjust
-by Itself</property>
+                                        <property name="label" translatable="yes">Use Variable
+Line Spacing
+to Balance
+Columns</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
