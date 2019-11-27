@@ -3,7 +3,7 @@
 
 %%%%% Stylesheets %%%%%
 \stylesheet{{{/ptxpath}/usfm.sty}}
-\stylesheet{{{/ptxpath}/{project/id}/custom.sty}}
+{project/ifusecustomsty}\stylesheet{{{/ptxpath}/{project/id}/custom.sty}}
 {project/ifusemodssty}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.sty}} % User can override project stylesheet settings here
 {project/ifusenested}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/NestedStyles.sty}}    % PTXprint overrides all others (for versenums, ftnts, xref)
 
@@ -144,16 +144,14 @@
 {project/frontincludes}
 
 {document/toc}\GenerateTOC[{document/toctitle}]{{combined.toc}}
-{document/toc}\BodyColumns=1                   % Temporarily set this to Single Column for the ToC page(s)
+{document/toc}\BodyColumns=1     % Temporarily set this to Single Column for the ToC page(s)
 {document/toc}\ptxfile{{combined.toc}}
 {document/toc}\BodyColumns={paper/columns}     % But ensure it goes back to the chosen Single/Double setting for the main body text
 
 %%%%% Diglot settings (if applicable)
 {document/diglotsettings}
 
-
 %\snippets
-
 
 %%%%% Load Paratext USFM %%%%%
 \XeTeXdefaultencoding "utf-8"

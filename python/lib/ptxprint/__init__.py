@@ -440,6 +440,9 @@ class PtxPrinterDialog:
     def onUseModsTexClicked(self, c_useModsTex):
         self.builder.get_object("btn_editModsTeX").set_sensitive(self.get("c_useModsTex"))
         
+    def onUseCustomStyClicked(self, c_useCustomSty):
+        self.builder.get_object("btn_editCustomSty").set_sensitive(self.get("c_useCustomSty"))
+        
     def onUseModsStyClicked(self, c_useModsSty):
         self.builder.get_object("btn_editModsSty").set_sensitive(self.get("c_useModsSty"))
         
@@ -648,32 +651,26 @@ class PtxPrinterDialog:
         self.setEntryBoxFont()
         self.onDiglotDimensionsChanged(None)
 
-    def onEditChangesFile(self, cb_prj):
+    def editFile(self, file2edit):
         self.prjid = self.get("cb_project")
-        changesfile = os.path.join(self.settings_dir, self.prjid, "PrintDraftChanges.txt")
-        if os.path.exists(changesfile):
+        filepath = os.path.join(self.settings_dir, self.prjid, file2edit)
+        if os.path.exists(filepath):
             if sys.platform == "win32":
-                os.startfile(changesfile)
+                os.startfile(filepath)
             elif sys.platform == "linux":
-                subprocess.call(('xdg-open', changesfile))
+                subprocess.call(('xdg-open', filepath))
 
-    def onEditModsTeX(self, cb_prj):
-        self.prjid = self.get("cb_project")
-        modstexfile = os.path.join(self.settings_dir, self.prjid, "PrintDraft", "PrintDraft-mods.tex")
-        if os.path.exists(modstexfile):
-            if sys.platform == "win32":
-                os.startfile(modstexfile)
-            elif sys.platform == "linux":
-                subprocess.call(('xdg-open', modstexfile))
+    def onEditChangesFile(self, btn):
+        self.editFile("PrintDraftChanges.txt")
 
-    def onEditModsSty(self, cb_prj):
-        self.prjid = self.get("cb_project")
-        modsstyfile = os.path.join(self.settings_dir, self.prjid, "PrintDraft", "PrintDraft-mods.sty")
-        if os.path.exists(modsstyfile):
-            if sys.platform == "win32":
-                os.startfile(modsstyfile)
-            elif sys.platform == "linux":
-                subprocess.call(('xdg-open', modsstyfile))
+    def onEditModsTeX(self, btn):
+        self.editFile("PrintDraft/PrintDraft-mods.tex")
+
+    def onEditCustomSty(self, btn):
+        self.editFile("custom.sty")
+
+    def onEditModsSty(self, btn):
+        self.editFile("PrintDraft/PrintDraft-mods.sty")
 
     def onMainBodyTextChanged(self, c_mainBodyText):
         self.builder.get_object("gr_mainBodyText").set_sensitive(self.get("c_mainBodyText"))

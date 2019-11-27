@@ -577,14 +577,6 @@
       <column type="gchararray"/>
     </columns>
   </object>
-  <object class="GtkListStore" id="ls_scripts">
-    <columns>
-      <!-- column-name name -->
-      <column type="gchararray"/>
-      <!-- column-name id -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
   <object class="GtkDialog" id="ptxprint">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">PTXprint App</property>
@@ -4126,26 +4118,6 @@ here are not working at all.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="c_useModsSty">
-                                        <property name="label" translatable="yes">Apply Stylesheet Overrides (in PrintDraft-mods.sty)</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">It is recommended to leave 
-this option checked (on).</property>
-                                        <property name="halign">start</property>
-                                        <property name="margin_top">6</property>
-                                        <property name="active">True</property>
-                                        <property name="draw_indicator">True</property>
-                                        <signal name="clicked" handler="onUseModsStyClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">3</property>
-                                        <property name="width">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
                                       <object class="GtkBox">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
@@ -4239,6 +4211,7 @@ are processed</property>
                                         <property name="receives_default">False</property>
                                         <property name="halign">start</property>
                                         <property name="margin_top">6</property>
+                                        <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                         <signal name="clicked" handler="onUsePrintDraftChangesClicked" swapped="no"/>
                                       </object>
@@ -4306,6 +4279,61 @@ are processed</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">2</property>
+                                        <property name="top_attach">4</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_useModsSty">
+                                        <property name="label" translatable="yes">Apply Stylesheet Overrides (in PrintDraft-mods.sty)</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">It is recommended to leave 
+this option checked (on).</property>
+                                        <property name="halign">start</property>
+                                        <property name="margin_top">6</property>
+                                        <property name="active">True</property>
+                                        <property name="draw_indicator">True</property>
+                                        <signal name="clicked" handler="onUseModsStyClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">4</property>
+                                        <property name="width">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_useCustomSty">
+                                        <property name="label" translatable="yes">Apply Customized Styles (in custom.sty)</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">It is recommended to leave 
+this option checked (on).</property>
+                                        <property name="halign">start</property>
+                                        <property name="margin_top">6</property>
+                                        <property name="active">True</property>
+                                        <property name="draw_indicator">True</property>
+                                        <signal name="clicked" handler="onUseCustomStyClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">3</property>
+                                        <property name="width">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_editCustomSty">
+                                        <property name="label" translatable="yes">Edit...</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="margin_top">4</property>
+                                        <property name="margin_bottom">4</property>
+                                        <signal name="clicked" handler="onEditCustomSty" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">2</property>
                                         <property name="top_attach">3</property>
                                       </packing>
                                     </child>
@@ -4317,7 +4345,7 @@ are processed</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Text Processing</property>
+                                <property name="label" translatable="yes">Text Processing &amp; Stylesheets</property>
                               </object>
                             </child>
                           </object>
@@ -4384,6 +4412,29 @@ to store generated PDF file(s).</property>
                                   <packing>
                                     <property name="left_attach">1</property>
                                     <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_generateHyphenationList">
+                                    <property name="label" translatable="yes">Create XeTeX Hyphenated Word List</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="tooltip_text" translatable="yes">Click this button to generate a hyphenation 
+list that can be used by XeTeX to optimize
+hyphenation. This will read Paratext's
+HyphenatedWords.txt list and optimize it.
+Note that the Hypenate option on the Body
+tab needs to be checked to make us of this.</property>
+                                    <property name="halign">end</property>
+                                    <property name="margin_top">8</property>
+                                    <property name="hexpand">True</property>
+                                    <signal name="clicked" handler="onGenerateHyphenationListClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">1</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                               </object>
@@ -4787,74 +4838,6 @@ settings.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkFrame">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="margin_left">6</property>
-                        <property name="margin_right">5</property>
-                        <property name="label_xalign">0</property>
-                        <child>
-                          <object class="GtkGrid">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="margin_left">6</property>
-                            <property name="margin_right">6</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="column_spacing">5</property>
-                            <child>
-                              <object class="GtkButton" id="btn_generateHyphenationList">
-                                <property name="label" translatable="yes">Create XeTeX Hyphenated Word List</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">Click this button to generate a hyphenation 
-list that can be used by XeTeX to optimize
-hyphenation. This will read Paratext's
-HyphenatedWords.txt list and optimize it.
-Note that the Hypenate option on the Body
-tab needs to be checked to make us of this.</property>
-                                <property name="halign">end</property>
-                                <property name="hexpand">True</property>
-                                <signal name="clicked" handler="onGenerateHyphenationListClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">3</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">       </property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">2</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                          </object>
-                        </child>
-                        <child type="label">
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">2</property>
-                      </packing>
-                    </child>
-                    <child>
                       <object class="GtkBox">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -5102,7 +5085,7 @@ and so on...</property>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">3</property>
+                        <property name="position">2</property>
                       </packing>
                     </child>
                   </object>
@@ -6027,5 +6010,13 @@ column width of the Primary Text. (mm)</property>
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkListStore" id="ls_scripts">
+    <columns>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name id -->
+      <column type="gchararray"/>
+    </columns>
   </object>
 </interface>

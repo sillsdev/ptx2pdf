@@ -29,6 +29,7 @@ class Info:
         "project/selectscript":     ("btn_selectScript", lambda w,v: re.sub(r"\\","/", w.CustomScript) if w.CustomScript is not None else ""),
         "project/usechangesfile":   ("c_usePrintDraftChanges", lambda w,v :"true" if v else "false"),
         "project/ifusemodstex":     ("c_useModsTex", lambda w,v: "" if v else "%"),
+        "project/ifusecustomsty":   ("c_useCustomSty", lambda w,v: "" if v else "%"),
         "project/ifusemodssty":     ("c_useModsSty", lambda w,v: "" if v else "%"),
         "project/ifusenested":      (None, lambda w,v: "" if (w.get("c_omitallverses") or not w.get("c_includeFootnotes") or not w.get("c_includeXrefs")) or w.get("c_prettyIntroOutline") else "%"),
         "project/ifstarthalfpage":  ("c_startOnHalfPage", lambda w,v :"true" if v else "false"),
@@ -62,10 +63,9 @@ class Info:
         "paragraph/ifhyphenate":    ("c_hyphenate", lambda w,v: "" if v else "%"),
 
         "document/title":           (None, lambda w,v: w.ptsettings['FullName'] or ""),
-        "document/subject":         ("t_booklist", lambda w,v: v if w.get("c_multiplebooks") \
-                                                  else w.builder.get_object("cb_book").get_active_id()),
+        "document/subject":         ("t_booklist", lambda w,v: v if w.get("c_multiplebooks") else w.get("cb_book")),
         "document/author":          (None, lambda w,v: regex.sub("</?p>","",w.ptsettings['Copyright'] or "")),
-        "document/creator":         (None, lambda w,v: os.getlogin()),
+        # "document/creator":         (None, lambda w,v: os.getlogin()),
 
         "document/toc":             ("c_autoToC", lambda w,v: "" if v else "%"),
         "document/toctitle":        ("t_tocTitle", lambda w,v: v or ""),
@@ -605,6 +605,9 @@ class Info:
         # update UI to reflect the world it is in 
         # [Comment: this is turning things off even though the file exists. Probably running before the prj has been set?]
         prjdir = os.path.join(printer.settings_dir, printer.prjid)
+        if printer.get("c_useCustomSty"):
+                if not os.path.exists(os.path.join(prjdir, "custom.sty")):
+                    printer.set("c_useCustomSty", False)
         for (f, c) in (("PrintDraft-mods.sty", "c_useModsSty"),
                        ("PrintDraft-mods.tex", "c_useModsTex")):
             if printer.get(c):

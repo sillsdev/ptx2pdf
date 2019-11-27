@@ -9,10 +9,10 @@ class PDFx1aOutput():
 /Title({document/title})% 
 /Subject({document/subject})% 
 /Author({document/author})% 
-/Creator({document/creator})% 
+/Creator(PTXprint)% 
 /CreationDate(D:{document/date})% 
 /ModDate(D:{document/date})% 
-/Producer(XeTeX with PTXprint)% 
+/Producer(XeTeX)% 
 /Trapped /False 
 /GTS_PDFXVersion(PDF/X-1:2003)% 
 /GTS_PDFXConformance(PDF/X-1a:2003)% 
