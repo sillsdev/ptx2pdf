@@ -577,6 +577,14 @@
       <column type="gchararray"/>
     </columns>
   </object>
+  <object class="GtkListStore" id="ls_scripts">
+    <columns>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name id -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkDialog" id="ptxprint">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">PTXprint App</property>
@@ -2973,7 +2981,7 @@ and Illustrations.</property>
                               <object class="GtkBox">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="margin_top">6</property>
+                                <property name="margin_top">3</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="orientation">vertical</property>
                                 <property name="spacing">4</property>
@@ -2982,7 +2990,6 @@ and Illustrations.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>
-                                    <property name="margin_bottom">5</property>
                                     <property name="homogeneous">True</property>
                                     <child>
                                       <object class="GtkLabel">
@@ -3396,8 +3403,7 @@ Double Column Layout.</property>
                         <property name="can_focus">False</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
-                        <property name="margin_top">4</property>
-                        <property name="margin_bottom">6</property>
+                        <property name="margin_bottom">3</property>
                         <property name="label_xalign">0.0099999997764825821</property>
                         <child>
                           <object class="GtkAlignment">
@@ -3409,7 +3415,7 @@ Double Column Layout.</property>
                               <object class="GtkBox">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="margin_top">6</property>
+                                <property name="margin_top">3</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="orientation">vertical</property>
                                 <property name="spacing">5</property>
@@ -3822,8 +3828,6 @@ single running paragraph. Use this Xref caller:</property>
                         <property name="can_focus">False</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
-                        <property name="margin_top">4</property>
-                        <property name="margin_bottom">6</property>
                         <property name="label_xalign">0.0099999997764825821</property>
                         <child>
                           <object class="GtkAlignment">
@@ -5053,6 +5057,7 @@ and so on...</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -5188,7 +5193,7 @@ styles in the StyleSheet.)</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">XeTeX Program Location:</property>
+                                    <property name="label" translatable="yes">XeTeX Macros Location:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -5208,12 +5213,11 @@ styles in the StyleSheet.)</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkEntry" id="t_PTsettingsFolder">
+                                  <object class="GtkLabel">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
+                                    <property name="can_focus">False</property>
                                     <property name="halign">start</property>
-                                    <property name="margin_right">6</property>
-                                    <property name="hexpand">True</property>
+                                    <property name="label" translatable="yes">/ptxpath</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -5221,12 +5225,11 @@ styles in the StyleSheet.)</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkEntry" id="t_PTprogramFolder">
+                                  <object class="GtkLabel" id="l_macropath">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
+                                    <property name="can_focus">False</property>
                                     <property name="halign">start</property>
-                                    <property name="margin_right">6</property>
-                                    <property name="hexpand">True</property>
+                                    <property name="label" translatable="yes">ptxmacrospath</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -5234,11 +5237,11 @@ styles in the StyleSheet.)</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkEntry">
+                                  <object class="GtkLabel" id="l_tmpdir">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
+                                    <property name="can_focus">False</property>
                                     <property name="halign">start</property>
-                                    <property name="margin_right">6</property>
+                                    <property name="label" translatable="yes">{/ptxpath}/{project/id}/PrintDraft</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -5690,10 +5693,21 @@ Use trouble-shooting tools.</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">EXPERIMENTAL FEATURE:
+It is possible to create two PDFs which
+get automatically "stitched together"
+as a Diglot. The trick is to ensure that
+each side of the Diglot (Secondary on
+left, and Primary on right) use exactly
+the same number of pages. Trial and
+error, whilst adjusting the width of the
+primary text column can get some
+reasonable results for producing a
+test/trial diglot.</property>
                                 <property name="label" translatable="yes">First select the Secondary Project
 on the Basic tab, and then select
 this option to create the secondary 
-text before trying to create a Diglot.</property>
+text (click OK) before creating Diglot.</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -5704,10 +5718,21 @@ text before trying to create a Diglot.</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Then (after the secondary text
-has been created), selecting
-this option will add the Primary
-Project text to create a Diglot.</property>
+                                <property name="tooltip_text" translatable="yes">EXPERIMENTAL FEATURE:
+It is possible to create two PDFs which
+get automatically "stitched together"
+as a Diglot. The trick is to ensure that
+each side of the Diglot (Secondary on
+left, and Primary on right) use exactly
+the same number of pages. Trial and
+error, whilst adjusting the width of the
+primary text column can get some
+reasonable results for producing a
+test/trial diglot.</property>
+                                <property name="label" translatable="yes">After the Secondary text PDF has
+been created (on left), select this
+option to create the Primary text
+with the Secondary PDF alongside.</property>
                               </object>
                               <packing>
                                 <property name="left_attach">2</property>
@@ -5839,7 +5864,7 @@ page for binding.
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Column Width (mm)</property>
+                                <property name="label" translatable="yes">Column Width</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -5933,7 +5958,18 @@ column width of the Primary Text. (mm)</property>
                               </packing>
                             </child>
                             <child>
-                              <placeholder/>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="valign">end</property>
+                                <property name="label" translatable="yes">Settings are in
+millimeters (mm).</property>
+                                <property name="justify">center</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">1</property>
+                              </packing>
                             </child>
                             <child>
                               <placeholder/>
@@ -5946,6 +5982,19 @@ column width of the Primary Text. (mm)</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
+                            <property name="tooltip_text" translatable="yes">A more sophisticated approach to Diglots is in the
+pipeline, but in the meantime, this experimental
+feature allows you to blend two independently
+created PDFs to make a Diglot. Note that you will
+need to ensure that the page layout dimensions
+and other settings for each project (on the Basic, 
+and Head &amp; Foot tabs) are the same. Then adjust
+the settings (column width, line spacing, or font size)
+so that both projects create PDFs of the same number
+of pages - so that when they are merged together
+the text more-or-less lines up. Not ideal, but usable!
+
+Now you can see why it is called "Fuzzy DiYglot" :-)</property>
                             <property name="draw_indicator">True</property>
                             <signal name="clicked" handler="onDiglotClicked" swapped="no"/>
                           </object>
@@ -6007,13 +6056,5 @@ column width of the Primary Text. (mm)</property>
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkListStore" id="ls_scripts">
-    <columns>
-      <!-- column-name name -->
-      <column type="gchararray"/>
-      <!-- column-name id -->
-      <column type="gchararray"/>
-    </columns>
   </object>
 </interface>

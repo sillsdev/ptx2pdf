@@ -1013,7 +1013,7 @@ class PtxPrinterDialog:
             # TO DO: We need to be able to GET the page layout values from the PRIMARY project
             # (even when creating the Secondary PDF so that the dimensions match).
             # TO DO: Suppress illustrations when Diglot is on (until we can figure out HOW to do that).
-            PageWidth = 210  # need to make this dynamic USE: paper/width
+            PageWidth = 148  # need to make this dynamic USE: paper/width
             
             Margins = self.get("s_margins")
             MiddleGutter = self.get("s_diglotMiddleGutter")
