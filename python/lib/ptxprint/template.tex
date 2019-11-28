@@ -96,6 +96,8 @@
 \def\HeaderPosition{{{header/headerposition}}}
 \def\FooterPosition{{{header/footerposition}}}
 {header/ifrhrule}\RHruleposition={header/ruleposition}pt
+\def\RangeSeparator{{\kern.1em\char"2013\kern.1em}} % what to put between first - last of a reference range
+\def\ChapterVerseSeparator{{\kern.02em:\kern.02em}} % what to put between chapter:verse
 
 %% Odd Header
 \def\RHoddleft{{{header/oddleft}}}
@@ -114,6 +116,8 @@
 \def\RFoddcenter{{{footer/ftrcenter}}}
 \def\RFevencenter{{{footer/ftrcenter}}}
 \def\RFtitlecenter{{{footer/ftrcenter}}}
+{footer/ifftrtitlepagenum}\def\RFtitlecenter{{\pagenumber}}
+
 
 %%%%% Illustrations %%%%%
 \IncludeFigures{document/ifinclfigs}

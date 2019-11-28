@@ -6,7 +6,7 @@ from gi.repository import Gtk, Pango
 import xml.etree.ElementTree as et
 from ptxprint.font import TTFont
 from ptxprint.runner import StreamTextBuffer
-from ptxprint.ptsettings import ParatextSettings, allbooks, books, chaps
+from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from ptxprint.info import Info
 # from PIL import Image
 import configparser
@@ -209,9 +209,9 @@ class PtxPrinterDialog:
         if self.ptsettings is None:
             self.ptsettings = ParatextSettings(prjdir)
         fbkfm = self.ptsettings['FileNameBookNameForm']
-        bknamefmt = fbkfm.replace("MAT","{bkid}").replace("41","{bknum:02d}") + \
+        bknamefmt = fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + \
                     self.ptsettings['FileNamePostPart']
-        fname = bknamefmt.format(bkid=bk, bknum=books.get(bk, 0))
+        fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
         return fname
         
     def onDestroy(self, btn):
@@ -901,13 +901,13 @@ class PtxPrinterDialog:
         else:
             adjfname = self.fileChooser("Select an Adjust file to edit", 
                     filters = {"Adjust files": {"pattern": "*.adj", "mime": "none"}},
-                    multiple = True)
+                    multiple = False)
             if adjfname is not None:
-                if os.path.exists(adjfname):
+                if os.path.exists(adjfname[0]):
                     if sys.platform == "win32":
-                        os.startfile(adjfname)
+                        os.startfile(adjfname[0])
                     elif sys.platform == "linux":
-                        subprocess.call(('xdg-open', adjfname))
+                        subprocess.call(('xdg-open', adjfname[0]))
 
     def onEditPicListClicked(self, btn_editPicList):
         if not self.get("c_multiplebooks"):
@@ -934,13 +934,13 @@ class PtxPrinterDialog:
             # Is there a way to force the file chooser to look in the PicList folder?
             picfname = self.fileChooser("Select a PicList file to edit", 
                     filters = {"PicList files": {"pattern": "*.piclist", "mime": "none"}},
-                    multiple = True)
+                    multiple = False)
             if picfname is not None:
-                if os.path.exists(picfname):
+                if os.path.exists(picfname[0]):
                     if sys.platform == "win32":
-                        os.startfile(picfname)
+                        os.startfile(picfname[0])
                     elif sys.platform == "linux":
-                        subprocess.call(('xdg-open', picfname))
+                        subprocess.call(('xdg-open', picfname[0]))
     
     def ontv_sizeallocate(self, atv, dummy):
         b = atv.get_buffer()

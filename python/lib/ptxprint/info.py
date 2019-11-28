@@ -3,7 +3,7 @@ from datetime import datetime
 import regex
 from gi.repository import Gtk
 from ptxprint.font import TTFont
-from ptxprint.ptsettings import chaps, books, oneChbooks
+from ptxprint.ptsettings import chaps, books, bookcodes, oneChbooks
 from ptxprint.snippets import FancyIntro, PDFx1aOutput, VerticalVerseBridges
 
 class Info:
@@ -19,10 +19,10 @@ class Info:
         "project/book":             ("cb_book", None),
         "project/booklist":         ("t_booklist", lambda w,v: v or ""),
         "project/ifinclfrontpdf":   ("c_inclFrontMatter", lambda w,v: "true" if v else "false"),
-        "project/frontincludes":    ("btn_selectFrontPDFs", lambda w,v: "\n".join('\\includepdf{{"{}"}}'.format(re.sub(r"\\","/", s)) \
+        "project/frontincludes":    ("btn_selectFrontPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(re.sub(r"\\","/", s)) \
                                                             for s in w.FrontPDFs) if (w.FrontPDFs is not None and w.FrontPDFs != 'None') else ""),
         "project/ifinclbackpdf":    ("c_inclBackMatter", lambda w,v: "true" if v else "false"),
-        "project/backincludes":     ("btn_selectBackPDFs", lambda w,v: "\n".join('\\includepdf{{"{}"}}'.format(re.sub(r"\\","/", s)) \
+        "project/backincludes":     ("btn_selectBackPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(re.sub(r"\\","/", s)) \
                                                            for s in w.BackPDFs) if (w.BackPDFs is not None and w.BackPDFs != 'None') else ""),
         "project/useprintdraftfolder": ("c_useprintdraftfolder", lambda w,v :"true" if v else "false"),
         "project/processscript":    ("c_processScript", lambda w,v :"true" if v else "false"),
@@ -84,7 +84,8 @@ class Info:
         "document/linebreaklocale": ("t_linebreaklocale", lambda w,v: v or ""),
         "document/script":          ("cb_script", lambda w,v: ";script="+w.builder.get_object('cb_script').get_active_id().lower() \
                                                   if w.builder.get_object('cb_script').get_active_id() != "Zyyy" else ""),
-        "document/digitmapping":    ("cb_digits", lambda w,v: ";mapping="+v.lower()+"digits" if v != "Default" else ""),
+        "document/digitmapping":    ("cb_digits", lambda w,v: ';mapping='+v.lower()+'digits' if v != "Default" else ""),
+        # "document/digitmapping":    ("cb_digits", lambda w,v: "mapping=devanagaridigits"),
         "document/ch1pagebreak":    ("c_ch1pagebreak", lambda w,v: "true" if v else "false"),
         "document/marginalverses":  ("c_marginalverses", lambda w,v: "" if v else "%"),
         "document/columnshift":     ("s_columnShift", lambda w,v: v or "16"),
@@ -125,8 +126,8 @@ class Info:
         "document/diglotsecprj":    ("cb_diglotSecProject", lambda w,v: w.builder.get_object("cb_diglotSecProject").get_active_id()),
         "document/diglotnormalhdrs": ("c_diglotHeaders", lambda w,v :"" if v else "%"),
 
-        "header/headerposition":    ("s_headerposition", lambda w,v: round(v, 2) or "0.80"),
-        "header/footerposition":    ("s_footerposition", lambda w,v: round(v, 2) or "0.70"),
+        "header/headerposition":    ("s_headerposition", lambda w,v: round(v, 2) or "1.00"),
+        "header/footerposition":    ("s_footerposition", lambda w,v: round(v, 2) or "1.00"),
         "header/ifomitrhchapnum":   ("c_omitrhchapnum", lambda w,v :"true" if v else "false"),
         "header/ifverses":          ("c_hdrverses", lambda w,v :"true" if v else "false"),
         "header/ifrhrule":          ("c_rhrule", lambda w,v: "" if v else "%"),
@@ -136,8 +137,9 @@ class Info:
         "header/hdrrightouter":     ("cb_hdrright", lambda w,v: v or "-empty-"),
         "header/mirrorlayout":      ("c_mirrorpages", lambda w,v: "true" if v else "false"),
         
-        "footer/includefooter":     ("c_runningFooter", lambda w,v :"true" if v else "false"),
+        "footer/includefooter":     ("c_runningFooter", lambda w,v: "true" if v else "false"),
         "footer/ftrcenter":         ("t_runningFooter", lambda w,v: v if w.get("c_runningFooter") else ""),
+        "footer/ifftrtitlepagenum": ("c_pageNumTitlePage", lambda w,v: "" if v else "%"),
 
         "notes/iffootnoterule":     ("c_footnoterule", lambda w,v: "%" if v else ""),
         "notes/ifblendfnxr":        ("c_blendfnxr", lambda w,v :"true" if v else "false"),
@@ -357,9 +359,9 @@ class Info:
         if not os.path.exists(customsty):
             open(customsty, "w").close()
         fbkfm = self.printer.ptsettings['FileNameBookNameForm']
-        bknamefmt = fbkfm.replace("MAT","{bkid}").replace("41","{bknum:02d}") + \
+        bknamefmt = fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + \
                     self.printer.ptsettings['FileNamePostPart']
-        fname = bknamefmt.format(bkid=bk, bknum=books.get(bk, 0))
+        fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
         infname = os.path.join(prjdir, fname)
         if self.changes is not None or self.localChanges is not None:
             outfname = fname
@@ -606,9 +608,9 @@ class Info:
         # Handle specials here:
         printer.CustomScript = self.dict['project/selectscript']
         printer.customFigFolder = self.dict['document/customfigfolder']
-        printer.FrontPDFs = self.dict['project/frontincludes']
+        printer.FrontPDFs = self.dict['project/frontincludes'].split("\n")
         printer.watermarks = self.dict['paper/watermarkpdf']
-        printer.BackPDFs = self.dict['project/backincludes']
+        printer.BackPDFs = self.dict['project/backincludes'].split("\n")
         # update UI to reflect the world it is in 
         # [Comment: this is turning things off even though the file exists. Probably running before the prj has been set?]
         prjdir = os.path.join(printer.settings_dir, printer.prjid)
