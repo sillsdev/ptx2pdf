@@ -28,9 +28,6 @@ bookcodes = dict((b.split("|")[0], "{:02d}".format(i+1)) for i, b in enumerate(_
 bookcodes.update(_endBkCodes)
 chaps = dict(b.split("|") for b in _bookslist.split())
 oneChbooks = [b.split("|")[0] for b in _bookslist.split() if b[-2:] == "|1"]
-print(books)
-print(bookcodes)
-
 
 class ParatextSettings:
     def __init__(self, basedir, prjid):
