@@ -109,6 +109,7 @@ class PtxPrinterDialog:
         self.watermarks = None
         self.customFigFolder = None
         self.prjid = None
+        self.experimental = False
         for p in sorted(allprojects, key = lambda s: s.casefold()):
             self.projects.append([p])
 
@@ -120,11 +121,11 @@ class PtxPrinterDialog:
         # self.ExperimentalFeatures(False)
         Gtk.main()
 
-    def ExperimentalFeatures(self,set=False):
+    def ExperimentalFeatures(self, value=True):
+        self.experimental = value
         for w in ("tb_", "lb_"):
             for exp in ("Diglot", "Markers", "ViewerEditor", "DiglotTesting"):
-                self.builder.get_object(w+exp).set_visible(set)
-        # self.builder.get_object("c_diglot").set_active(False)
+                self.builder.get_object(w+exp).set_visible(value)
         
     def addCR(self, name, index):
         # print(" init: addCR",self, name, index)
