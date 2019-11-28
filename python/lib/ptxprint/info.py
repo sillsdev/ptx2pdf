@@ -233,6 +233,7 @@ class Info:
     def updatefields(self, a):
         for k in a:
             v = self._mappings[k]
+            # print(k, v[0])
             val = self.printer.get(v[0]) if v[0] is not None else None
             if v[1] is not None:
                 self.dict[k] = v[1](self.printer, val)
