@@ -5590,7 +5590,7 @@ also contain several other related files.</property>
                         <property name="can_focus">False</property>
                         <property name="column_homogeneous">True</property>
                         <child>
-                          <object class="GtkButton">
+                          <object class="GtkButton" id="btn_saveEdits">
                             <property name="label">gtk-save</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -5604,14 +5604,12 @@ will have any effect on the output.
                             <property name="margin_bottom">4</property>
                             <property name="use_stock">True</property>
                             <property name="always_show_image">True</property>
+                            <signal name="clicked" handler="onSaveEdits" swapped="no"/>
                           </object>
                           <packing>
                             <property name="left_attach">1</property>
                             <property name="top_attach">0</property>
                           </packing>
-                        </child>
-                        <child>
-                          <placeholder/>
                         </child>
                         <child>
                           <placeholder/>

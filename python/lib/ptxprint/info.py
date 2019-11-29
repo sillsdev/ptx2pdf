@@ -20,10 +20,12 @@ class Info:
         "project/booklist":         ("t_booklist", lambda w,v: v or ""),
         "project/ifinclfrontpdf":   ("c_inclFrontMatter", lambda w,v: "true" if v else "false"),
         "project/frontincludes":    ("btn_selectFrontPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(re.sub(r"\\","/", s)) \
-                                                            for s in w.FrontPDFs) if (w.FrontPDFs is not None and w.FrontPDFs != 'None') else ""),
+                                                            for s in w.FrontPDFs) if (w.FrontPDFs is not None and len(w.FrontPDFs)) else ""),
+                                                            # for s in w.FrontPDFs) if len(w.FrontPDFs) else ""),
         "project/ifinclbackpdf":    ("c_inclBackMatter", lambda w,v: "true" if v else "false"),
         "project/backincludes":     ("btn_selectBackPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(re.sub(r"\\","/", s)) \
-                                                           for s in w.BackPDFs) if (w.BackPDFs is not None and w.BackPDFs != 'None') else ""),
+                                                           for s in w.BackPDFs) if (w.BackPDFs is not None and len(w.BackPDFs)) else ""),
+                                                           # for s in w.BackPDFs) if len(w.BackPDFs) else ""),
         "project/useprintdraftfolder": ("c_useprintdraftfolder", lambda w,v :"true" if v else "false"),
         "project/processscript":    ("c_processScript", lambda w,v :"true" if v else "false"),
         "project/runscriptafter":   ("c_processScriptAfter", lambda w,v :"true" if v else "false"),
@@ -85,7 +87,6 @@ class Info:
         "document/script":          ("cb_script", lambda w,v: ":script="+w.builder.get_object('cb_script').get_active_id().lower() \
                                                   if w.builder.get_object('cb_script').get_active_id() != "Zyyy" else ""),
         "document/digitmapping":    ("cb_digits", lambda w,v: ':mapping=mappings/'+v.lower()+'digits' if v != "Default" else ""),
-        # "document/digitmapping":    ("cb_digits", lambda w,v: "mapping=devanagaridigits"),
         "document/ch1pagebreak":    ("c_ch1pagebreak", lambda w,v: "true" if v else "false"),
         "document/marginalverses":  ("c_marginalverses", lambda w,v: "" if v else "%"),
         "document/columnshift":     ("s_columnShift", lambda w,v: v or "16"),

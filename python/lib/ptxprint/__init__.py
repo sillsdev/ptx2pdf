@@ -243,7 +243,7 @@ class PtxPrinterDialog:
         self.onViewerChangePage(None,None,0)
 
     def onViewerChangePage(self, nbk_Viewer, scrollObject, pgnum):
-        # print("\nViewer changed page:", pgnum, scrollObject)
+        self.builder.get_object("btn_saveEdits").set_sensitive(False)
         prjid = self.get("cb_project")
         prjdir = os.path.join(self.settings_dir, self.prjid)
         bks = self.getBooks()
@@ -251,41 +251,22 @@ class PtxPrinterDialog:
         if bk == None or bk == "":
             bk = bks[0]
             self.builder.get_object("cb_examineBook").set_active_id(bk)
-        if pgnum == 0:
-            # print("Page 0 - View SFM file ({})".format(bk))
+        fndict = {0 : ("", ""),     1 : ("PicLists", ".piclist"), 2 : ("AdjLists", ".adj"), \
+                  3 : ("", ".tex"), 4 : ("", ".log")}
+        if 0 <= pgnum <= 2:  # (SFM,PicList,AdjList)
             fname = self.getBookFilename(bk, prjdir)
-            fpath = os.path.join(prjdir, "PrintDraft", fname)
+            fpath = os.path.join(prjdir, "PrintDraft", fndict[pgnum][0], fname)
             doti = fpath.rfind(".")
             if doti > 0:
-                fpath = fpath[:doti] + "-draft" + fpath[doti:]
-        elif pgnum == 1:
-            # print("Page 1 - View Pic List file ({})".format(bk))
-            fname = self.getBookFilename(bk, prjdir)
-            fpath = os.path.join(prjdir, "PrintDraft/PicLists", fname)
-            doti = fpath.rfind(".")
-            if doti > 0:
-                fpath = fpath[:doti] + "-draft" + fpath[doti:] + ".piclist"
-        elif pgnum == 2:
-            # print("Page 2 - View Adj List file ({})".format(bk))
-            fname = self.getBookFilename(bk, prjdir)
-            fpath = os.path.join(prjdir, "PrintDraft/AdjLists", fname)
-            doti = fpath.rfind(".")
-            if doti > 0:
-                fpath = fpath[:doti] + "-draft" + fpath[doti:] + ".adj"
-        elif pgnum == 3:
-            # print("Page 3 - View TeX file")
+                fpath = fpath[:doti] + "-draft" + fpath[doti:] + fndict[pgnum][1]
+
+        elif 3 <= pgnum <= 4:  # (TeX,Log)
             if len(bks) > 1:
-                fname = "ptxprint-{}_{}{}.tex".format(bks[0], bks[-1], prjid)
+                fname = "ptxprint-{}_{}{}{}".format(bks[0], bks[-1], prjid, fndict[pgnum][1])
             else:
-                fname = "ptxprint-{}{}.tex".format(bks[0], prjid)
+                fname = "ptxprint-{}{}{}".format(bks[0], prjid, fndict[pgnum][1])
             fpath = os.path.join(prjdir, "PrintDraft", fname)
-        elif pgnum == 4:
-            # print("Page 4 - View Log file")
-            if len(bks) > 1:
-                fname = "ptxprint-{}_{}{}.log".format(bks[0], bks[-1], prjid)
-            else:
-                fname = "ptxprint-{}{}.log".format(bks[0], prjid)
-            fpath = os.path.join(prjdir, "PrintDraft", fname)
+
         elif pgnum == 5: # Just show the folders in use
             self.builder.get_object("l_filepaths").set_text("Folders")
             return
@@ -293,6 +274,8 @@ class PtxPrinterDialog:
             print("Error: Unhandled page in Viewer!")
             return
         if os.path.exists(fpath):
+            if 1 <= pgnum <= 2:
+                self.builder.get_object("btn_saveEdits").set_sensitive(True)
             self.builder.get_object("l_filepaths").set_text("File: "+str(fpath.split("/")[-1]))
             with open(fpath, "r", encoding="utf-8") as inf:
                 txt = inf.read()
@@ -303,6 +286,14 @@ class PtxPrinterDialog:
             self.fileViews[pgnum][0].set_text("\nThis file doesn't exist yet!\n\nHave you... \
                                                \n   * Checked the option (above) to 'Preserve Intermediate Files and Logs'? \
                                                \n   * Clicked OK to create the PDF?")
+
+    def onSaveEdits(self, btn):
+        print("Clicked on Save") # But we need the pgnum to generate the right filename etc.
+        # self.fileViews[pgnum][0].set_text(txt)
+        # text = wbuffer.get_text(wbuffer.get_start_iter(), wbuffer.get_end_iter())
+        # openfile = open(filename,"w")
+        # openfile.write(text)
+        # openfile.close()
 
     def onScriptChanged(self, cb_script):
         # print(" init: onScriptChanged",self, cb_script)
@@ -337,7 +328,7 @@ class PtxPrinterDialog:
     def setEntryBoxFont(self):
         # Set the font of any GtkEntry boxes to the primary body text font for this project
         p = Pango.font_description_from_string(self.get("f_body"))
-        for w in ("t_tocTitle", "t_runningFooter", "scroll_FinalSFM"): 
+        for w in ("t_tocTitle", "t_runningFooter", "scroll_FinalSFM", "scroll_PicList"): 
             self.builder.get_object(w).modify_font(p)
 
     def updateFakeLabels(self):
@@ -949,6 +940,11 @@ class PtxPrinterDialog:
 
     def onEditPicListClicked(self, btn_editPicList):
         if not self.get("c_multiplebooks"):
+            # I need help to work out how to open the Viewer tab, and the appropriate Pg (1) to view/edit the PicList
+            # Then we can throw away the rest of the code
+            # self.builder.gtk_widget_grab_focus("scroll_PicList")
+            # self.builder.get_object("scroll_PicList").set_focus("scroll_PicList")
+            # self.builder.get_object("scroll_PicList").set_focus()
             bk = self.get("cb_book")
             prjid = self.get("cb_project")
             prjdir = os.path.join(self.settings_dir, self.prjid)
@@ -1051,8 +1047,8 @@ class PtxPrinterDialog:
             # TO DO: We need to be able to GET the page layout values from the PRIMARY project
             # (even when creating the Secondary PDF so that the dimensions match).
             # TO DO: Suppress illustrations when Diglot is on (until we can figure out HOW to do that).
-            PageWidth = 148  # need to make this dynamic USE: paper/width
-            
+            PageWidth = int(re.split("[^0-9]",re.sub(r"^(.*?)\s*,.*$", r"\1", self.get("cb_pagesize")))[0]) or 148
+                
             Margins = self.get("s_margins")
             MiddleGutter = self.get("s_diglotMiddleGutter")
             BindingGutter = self.get("s_pagegutter")
@@ -1083,7 +1079,8 @@ class PtxPrinterDialog:
 \def\RHevenleft{\empty}
 \def\RHevencenter{\empty}
 \def\RHevenright{\rangeref}"""
-                DiglotString = "\BindingGuttertrue"+ \
+                DiglotString = "%% SECONDARY PDF settings"+ \
+                               "\BindingGuttertrue"+ \
                                "\n\BindingGutter={}mm".format(SecBindingGutter)+ \
                                "\n\def\SideMarginFactor{{{:.2f}}}".format(SecSideMarginFactor)+ \
                                "\n\BodyColumns=1" + hdr
@@ -1096,7 +1093,8 @@ class PtxPrinterDialog:
 \def\RHevenleft{\rangeref}
 \def\RHevencenter{\empty}
 \def\RHevenright{\pagenumber}"""
-                DiglotString = "\BindingGuttertrue"+ \
+                DiglotString = "%% PRIMARY (+ SECONDARY) PDF settings"+ \
+                               "\BindingGuttertrue"+ \
                                "\n\BindingGutter={}mm".format(PriBindingGutter)+ \
                                "\n\def\SideMarginFactor{{{:.2f}}}".format(PriSideMarginFactor)+ \
                                "\n\BodyColumns=1" + hdr + \

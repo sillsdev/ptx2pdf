@@ -118,7 +118,6 @@
 \def\RFtitlecenter{{{footer/ftrcenter}}}
 {footer/ifftrtitlepagenum}\def\RFtitlecenter{{\pagenumber}}
 
-
 %%%%% Illustrations %%%%%
 \IncludeFigures{document/ifinclfigs}
 \FigurePlaceholders{document/iffigplaceholders}
@@ -145,7 +144,7 @@
 {paper/ifwatermark}\def\PageBorder{{"{paper/watermarkpdf}"}}  % and also pretty border PDFs etc.
 
 %%%%% Front Matter PDF file(s) get included here %%%%%
-{project/frontincludes}
+%{project/frontincludes}
 
 {document/toc}\GenerateTOC[{document/toctitle}]{{combined.toc}}
 {document/toc}\BodyColumns=1     % Temporarily set this to Single Column for the ToC page(s)
@@ -161,12 +160,12 @@
 \XeTeXdefaultencoding "utf-8"
 \def\closeadjlist{{\relax}}
 \def\closepiclist{{\relax}}
-% job files. The next \ptxfile line is replaced, content is not used
+% job files:
 \catcode`\%=12
 \ptxfile{{PrintDraft/41MATprojid-draft.SFM}}
 \catcode`\%=14
 
 %%%%% Back Matter PDF file(s) get included here %%%%%
-{project/backincludes}
+%{project/backincludes}
 
 \end
