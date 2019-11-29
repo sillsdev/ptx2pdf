@@ -3,6 +3,7 @@
 import sys, os, re, regex, gi, random, subprocess
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Pango
+from gi.repository import GtkSource
 import xml.etree.ElementTree as et
 from ptxprint.font import TTFont
 from ptxprint.runner import StreamTextBuffer
@@ -94,6 +95,14 @@ class PtxPrinterDialog:
         dia.add_buttons(
             Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
             Gtk.STOCK_OPEN, Gtk.ResponseType.OK)
+
+        self.fileViews = []
+        for i,k in enumerate(["XeTeXlog", "FinalSFM", "TeXfile"]):
+            buf = GtkSource.Buffer()
+            view = GtkSource.View.new_with_buffer(buf)
+            scroll = self.builder.get_object("scroll_" + k)
+            scroll.add_with_viewport(view)
+            self.fileViews.append((buf, view))
 
         self.logbuffer = StreamTextBuffer()
         self.builder.get_object("tv_logging").set_buffer(self.logbuffer)
@@ -230,6 +239,56 @@ class PtxPrinterDialog:
 
     def onCancel(self, btn):
         self.onDestroy(btn)
+
+    def onViewerChangePage(self, nbk_Viewer, pgnum):
+        print("Viewer changed page")
+        prjid = self.get("cb_project")
+        prjdir = os.path.join(self.settings_dir, self.prjid)
+        bks = self.getBooks()
+        bk = self.get("cb_examineBook")
+        if bk == None:
+            bk = bks[0]
+            self.cb_examineBook.set_active_id(bk)
+        if pgnum == 0:
+            print("Page 1 - View SFM file (MRK)")
+            fname = self.getBookFilename(bk, prjdir)
+            fpath = os.path.join(prjdir, "PrintDraft", fname)
+            doti = fpath.rfind(".")
+            if doti > 0:
+                fpath = fpath[:doti] + "-draft" + fpath[doti:]
+        elif pgnum == 1:
+            fname = self.getBookFilename(bk, prjdir)
+            fpath = os.path.join(prjdir, "PrintDraft\PicLists", fname)
+            doti = fpath.rfind(".")
+            if doti > 0:
+                fpath = fpath[:doti] + "-draft" + fpath[doti:] + ".piclist"
+        elif pgnum == 2:
+            fname = self.getBookFilename(bk, prjdir)
+            fpath = os.path.join(prjdir, "PrintDraft\AdjLists", fname)
+            doti = fpath.rfind(".")
+            if doti > 0:
+                fpath = fpath[:doti] + "-draft" + fpath[doti:] + ".adj"
+        elif pgnum == 3:
+            print("Page 3 - View TeX file")
+            if len(bks) > 1:
+                fname = "ptxprint-{}_{}{}.tex".format(bks[0], bks[-1], prjid)
+            else:
+                fname = "ptxprint-{}{}.tex".format(bks[0], prjid)
+            fpath = os.path.join(prjdir, "PrintDraft", fname)
+        if pgnum == 4:
+            print("Page 4 - View Log file")
+            if len(bks) > 1:
+                fname = "ptxprint-{}_{}{}.log".format(bks[0], bks[-1], prjid)
+            else:
+                fname = "ptxprint-{}{}.log".format(bks[0], prjid)
+            fpath = os.path.join(prjdir, "PrintDraft", fname)
+        else:
+            print("Too many unhandled pages!")
+            return
+        if os.path.exists(fpath):
+            with open(fpath, "r", encoding="utf-8") as inf:
+                txt = inf.read()
+            self.fileViews[pgnum][0].set_text(txt)  # this is the buffer
 
     def onScriptChanged(self, cb_script):
         # print(" init: onScriptChanged",self, cb_script)
