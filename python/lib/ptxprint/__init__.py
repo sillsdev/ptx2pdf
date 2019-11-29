@@ -2,8 +2,7 @@
 
 import sys, os, re, regex, gi, random, subprocess
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Pango
-from gi.repository import GtkSource
+from gi.repository import Gtk, GtkSource, Pango
 import xml.etree.ElementTree as et
 from ptxprint.font import TTFont
 from ptxprint.runner import StreamTextBuffer
@@ -97,7 +96,7 @@ class PtxPrinterDialog:
             Gtk.STOCK_OPEN, Gtk.ResponseType.OK)
 
         self.fileViews = []
-        for i,k in enumerate(["XeTeXlog", "FinalSFM", "TeXfile"]):
+        for i,k in enumerate(["FinalSFM", "PicList", "AdjList", "TeXfile", "XeTeXlog"]):
             buf = GtkSource.Buffer()
             view = GtkSource.View.new_with_buffer(buf)
             scroll = self.builder.get_object("scroll_" + k)
@@ -240,55 +239,70 @@ class PtxPrinterDialog:
     def onCancel(self, btn):
         self.onDestroy(btn)
 
-    def onViewerChangePage(self, nbk_Viewer, pgnum):
-        print("Viewer changed page")
+    def onExamineBookChanged(self, cb_examineBook):
+        self.onViewerChangePage(None,None,0)
+
+    def onViewerChangePage(self, nbk_Viewer, scrollObject, pgnum):
+        # print("\nViewer changed page:", pgnum, scrollObject)
         prjid = self.get("cb_project")
         prjdir = os.path.join(self.settings_dir, self.prjid)
         bks = self.getBooks()
         bk = self.get("cb_examineBook")
-        if bk == None:
+        if bk == None or bk == "":
             bk = bks[0]
-            self.cb_examineBook.set_active_id(bk)
+            self.builder.get_object("cb_examineBook").set_active_id(bk)
         if pgnum == 0:
-            print("Page 1 - View SFM file (MRK)")
+            # print("Page 0 - View SFM file ({})".format(bk))
             fname = self.getBookFilename(bk, prjdir)
             fpath = os.path.join(prjdir, "PrintDraft", fname)
             doti = fpath.rfind(".")
             if doti > 0:
                 fpath = fpath[:doti] + "-draft" + fpath[doti:]
         elif pgnum == 1:
+            # print("Page 1 - View Pic List file ({})".format(bk))
             fname = self.getBookFilename(bk, prjdir)
-            fpath = os.path.join(prjdir, "PrintDraft\PicLists", fname)
+            fpath = os.path.join(prjdir, "PrintDraft/PicLists", fname)
             doti = fpath.rfind(".")
             if doti > 0:
                 fpath = fpath[:doti] + "-draft" + fpath[doti:] + ".piclist"
         elif pgnum == 2:
+            # print("Page 2 - View Adj List file ({})".format(bk))
             fname = self.getBookFilename(bk, prjdir)
-            fpath = os.path.join(prjdir, "PrintDraft\AdjLists", fname)
+            fpath = os.path.join(prjdir, "PrintDraft/AdjLists", fname)
             doti = fpath.rfind(".")
             if doti > 0:
                 fpath = fpath[:doti] + "-draft" + fpath[doti:] + ".adj"
         elif pgnum == 3:
-            print("Page 3 - View TeX file")
+            # print("Page 3 - View TeX file")
             if len(bks) > 1:
                 fname = "ptxprint-{}_{}{}.tex".format(bks[0], bks[-1], prjid)
             else:
                 fname = "ptxprint-{}{}.tex".format(bks[0], prjid)
             fpath = os.path.join(prjdir, "PrintDraft", fname)
-        if pgnum == 4:
-            print("Page 4 - View Log file")
+        elif pgnum == 4:
+            # print("Page 4 - View Log file")
             if len(bks) > 1:
                 fname = "ptxprint-{}_{}{}.log".format(bks[0], bks[-1], prjid)
             else:
                 fname = "ptxprint-{}{}.log".format(bks[0], prjid)
             fpath = os.path.join(prjdir, "PrintDraft", fname)
+        elif pgnum == 5: # Just show the folders in use
+            self.builder.get_object("l_filepaths").set_text("Folders")
+            return
         else:
-            print("Too many unhandled pages!")
+            print("Error: Unhandled page in Viewer!")
             return
         if os.path.exists(fpath):
+            self.builder.get_object("l_filepaths").set_text("File: "+str(fpath.split("/")[-1]))
             with open(fpath, "r", encoding="utf-8") as inf:
                 txt = inf.read()
+                if len(txt) > 32000:
+                    txt = txt[:32000]+"\n\n etc...\n\n"
             self.fileViews[pgnum][0].set_text(txt)  # this is the buffer
+        else:
+            self.fileViews[pgnum][0].set_text("\nThis file doesn't exist yet!\n\nHave you... \
+                                               \n   * Checked the option (above) to 'Preserve Intermediate Files and Logs'? \
+                                               \n   * Clicked OK to create the PDF?")
 
     def onScriptChanged(self, cb_script):
         # print(" init: onScriptChanged",self, cb_script)
@@ -323,7 +337,7 @@ class PtxPrinterDialog:
     def setEntryBoxFont(self):
         # Set the font of any GtkEntry boxes to the primary body text font for this project
         p = Pango.font_description_from_string(self.get("f_body"))
-        for w in ("t_tocTitle", "t_runningFooter"): 
+        for w in ("t_tocTitle", "t_runningFooter", "scroll_FinalSFM"): 
             self.builder.get_object(w).modify_font(p)
 
     def updateFakeLabels(self):
@@ -552,43 +566,7 @@ class PtxPrinterDialog:
 
     def onKeepTemporaryFilesClicked(self, c_keepTemporaryFiles):
         self.builder.get_object("gr_debugTools").set_sensitive(self.get("c_keepTemporaryFiles"))
-        
-    def onViewSFMfileClicked(self, btn_viewSFMfile):
-        bk = self.get("cb_examineBook")
-        prjid = self.get("cb_project")
-        prjdir = os.path.join(self.settings_dir, self.prjid)
-        fname = self.getBookFilename(bk, prjdir)
-        viewfile = os.path.join(prjdir, "PrintDraft", fname)
-        doti = viewfile.rfind(".")
-        if doti > 0:
-            viewfile = viewfile[:doti] + "-draft" + viewfile[doti:]
-        if os.path.exists(viewfile):
-            if sys.platform == "win32":
-                os.startfile(viewfile)
-            elif sys.platform == "linux":
-                subprocess.call(('xdg-open', viewfile))
-            
-    def ViewOutputFile(self, extn):
-        prjid = self.get("cb_project")
-        bks = self.getBooks()
-        prjdir = os.path.join(self.settings_dir, self.prjid)
-        if len(bks) > 1:
-            fname = "ptxprint-{}_{}{}.{}".format(bks[0], bks[-1], prjid, extn)
-        else:
-            fname = "ptxprint-{}{}.{}".format(bks[0], prjid, extn)
-        viewfile = os.path.join(prjdir, "PrintDraft", fname)
-        if os.path.exists(viewfile):
-            if sys.platform == "win32":
-                os.startfile(viewfile)
-            elif sys.platform == "linux":
-                subprocess.call(('xdg-open', viewfile))
-        
-    def onViewTeXfileClicked(self, btn_viewTeXfile):
-        self.ViewOutputFile("tex")
-        
-    def onViewLogFileClicked(self, btn_viewLogFile):
-        self.ViewOutputFile("log")
-        
+
     def onChooseBooksClicked(self, btn):
         dia = self.builder.get_object("dlg_multiBookSelector")
         mbs_grid = self.builder.get_object("mbs_grid")
@@ -827,7 +805,7 @@ class PtxPrinterDialog:
             tmpdir = os.path.join(prjdir, 'PrintDraft') if self.get("c_useprintdraftfolder") else r"C:\temp"  # args.directory ???
             fname = self.getBookFilename(bk, prjdir)
             infname = os.path.join(prjdir, fname)
-            outfname = os.path.join(prjdir, "PrintDraft\PicLists", fname)
+            outfname = os.path.join(prjdir, "PrintDraft/PicLists", fname)
             doti = outfname.rfind(".")
             if doti > 0:
                 outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".piclist"
@@ -869,7 +847,7 @@ class PtxPrinterDialog:
                                 pageposn = (_picposn.get(f[2], f[2]))[0]               # use the t or tl (first in list)
                             piclist.append(bk+" "+re.sub(r":",".", f[3])+" |"+picfname+"|"+f[2]+"|"+pageposn+"||"+f[0]+"|"+f[3]+"\n")
                 if len(m):
-                    plpath = os.path.join(prjdir, "PrintDraft\PicLists")
+                    plpath = os.path.join(prjdir, "PrintDraft/PicLists")
                     if not os.path.exists(plpath):
                         os.mkdir(plpath)
                     if not os.path.exists(outfname):
@@ -916,7 +894,7 @@ class PtxPrinterDialog:
                             ch = ch + 1
                         adjlist.append(bk+" "+str(ch)+"."+v+" +0\n")
                         prv = v
-                    adjpath = os.path.join(prjdir, "PrintDraft\AdjLists")
+                    adjpath = os.path.join(prjdir, "PrintDraft/AdjLists")
                     if not os.path.exists(adjpath):
                         os.mkdir(adjpath)
                     if not os.path.exists(outfname):
@@ -943,7 +921,7 @@ class PtxPrinterDialog:
             prjid = self.get("cb_project")
             prjdir = os.path.join(self.settings_dir, self.prjid)
             fname = self.getBookFilename(bk, prjdir)
-            adjfname = os.path.join(prjdir, "PrintDraft\AdjLists", fname)
+            adjfname = os.path.join(prjdir, "PrintDraft/AdjLists", fname)
             doti = adjfname.rfind(".")
             if doti > 0:
                 adjfname = adjfname[:doti] + "-draft" + adjfname[doti:] + ".adj"
@@ -975,7 +953,7 @@ class PtxPrinterDialog:
             prjid = self.get("cb_project")
             prjdir = os.path.join(self.settings_dir, self.prjid)
             fname = self.getBookFilename(bk, prjdir)
-            picfname = os.path.join(prjdir, "PrintDraft\PicLists", fname)
+            picfname = os.path.join(prjdir, "PrintDraft/PicLists", fname)
             doti = picfname.rfind(".")
             if doti > 0:
                 picfname = picfname[:doti] + "-draft" + picfname[doti:] + ".piclist"
