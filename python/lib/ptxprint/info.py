@@ -82,9 +82,9 @@ class Info:
         "document/ifrtl":           ("c_rtl", lambda w,v :"true" if v else "false"),
         "document/iflinebreakon":   ("c_linebreakon", lambda w,v: "" if v else "%"),
         "document/linebreaklocale": ("t_linebreaklocale", lambda w,v: v or ""),
-        "document/script":          ("cb_script", lambda w,v: ";script="+w.builder.get_object('cb_script').get_active_id().lower() \
+        "document/script":          ("cb_script", lambda w,v: ":script="+w.builder.get_object('cb_script').get_active_id().lower() \
                                                   if w.builder.get_object('cb_script').get_active_id() != "Zyyy" else ""),
-        "document/digitmapping":    ("cb_digits", lambda w,v: ';mapping='+v.lower()+'digits' if v != "Default" else ""),
+        "document/digitmapping":    ("cb_digits", lambda w,v: ':mapping=mappings/'+v.lower()+'digits.tec' if v != "Default" else ""),
         # "document/digitmapping":    ("cb_digits", lambda w,v: "mapping=devanagaridigits"),
         "document/ch1pagebreak":    ("c_ch1pagebreak", lambda w,v: "true" if v else "false"),
         "document/marginalverses":  ("c_marginalverses", lambda w,v: "" if v else "%"),
@@ -162,12 +162,12 @@ class Info:
         "fontbold/fakeit":          ("c_fakebold", lambda w,v :"true" if v else "false"),
         "fontitalic/fakeit":        ("c_fakeitalic", lambda w,v :"true" if v else "false"),
         "fontbolditalic/fakeit":    ("c_fakebolditalic", lambda w,v :"true" if v else "false"),
-        "fontbold/embolden":        ("s_boldembolden", lambda w,v: ";embolden={:.2f}".format(v) if v != 0.00 and w.get("c_fakebold") else ""),
-        "fontitalic/embolden":      ("s_italicembolden", lambda w,v: ";embolden={:.2f}".format(v) if v != 0.00 and w.get("c_fakeitalic") else ""),
-        "fontbolditalic/embolden":  ("s_bolditalicembolden", lambda w,v: ";embolden={:.2f}".format(v) if v != 0.00 and w.get("c_fakebolditalic") else ""),
-        "fontbold/slant":           ("s_boldslant", lambda w,v: ";slant={:.4f}".format(v) if v != 0.0000 and w.get("c_fakebold") else ""),
-        "fontitalic/slant":         ("s_italicslant", lambda w,v: ";slant={:.4f}".format(v) if v != 0.0000 and w.get("c_fakeitalic") else ""),
-        "fontbolditalic/slant":     ("s_bolditalicslant", lambda w,v: ";slant={:.4f}".format(v) if v != 0.0000 and w.get("c_fakebolditalic") else ""),
+        "fontbold/embolden":        ("s_boldembolden", lambda w,v: ":embolden={:.2f}".format(v) if v != 0.00 and w.get("c_fakebold") else ""),
+        "fontitalic/embolden":      ("s_italicembolden", lambda w,v: ":embolden={:.2f}".format(v) if v != 0.00 and w.get("c_fakeitalic") else ""),
+        "fontbolditalic/embolden":  ("s_bolditalicembolden", lambda w,v: ":embolden={:.2f}".format(v) if v != 0.00 and w.get("c_fakebolditalic") else ""),
+        "fontbold/slant":           ("s_boldslant", lambda w,v: ":slant={:.4f}".format(v) if v != 0.0000 and w.get("c_fakebold") else ""),
+        "fontitalic/slant":         ("s_italicslant", lambda w,v: ":slant={:.4f}".format(v) if v != 0.0000 and w.get("c_fakeitalic") else ""),
+        "fontbolditalic/slant":     ("s_bolditalicslant", lambda w,v: ":slant={:.4f}".format(v) if v != 0.0000 and w.get("c_fakebolditalic") else ""),
     }
     _fonts = {
         "fontregular/name": ("f_body", None, None, None),
@@ -276,9 +276,11 @@ class Info:
                     if '=' in l:
                         k, v = l.split('=')
                         f.features[k.strip()] = v.strip()
-                self.dict['font/features'] = ";".join("{0}={1}".format(f.feats.get(fid, fid),
-                                                    f.featvals.get(fid, {}).get(int(v), v)) for fid, v in f.features.items()) + \
-                                             (";" if len(f.features) else "")
+                if len(f.features):
+                    self.dict['font/features'] = ":"+ ":".join("{0}={1}".format(f.feats.get(fid, fid),
+                                                    f.featvals.get(fid, {}).get(int(v), v)) for fid, v in f.features.items())
+                else:
+                    self.dict['font/features'] = ""
             else:
                 self.dict['font/features'] = ""
             if 'Silf' in f:
@@ -375,10 +377,9 @@ class Info:
                     if c[0] is None:
                         dat = c[1].sub(c[2], dat)
                     else:
-                        newdat = [c[0].split(dat)]
+                        newdat = c[0].split(dat)
                         for i in range(1, len(newdat), 2):
                             newdat[i] = c[1].sub(c[2], newdat[i])
-                        dat = "".join(newdat)
             with open(outfpath, "w", encoding="utf-8") as outf:
                 outf.write(dat)
             return outfname

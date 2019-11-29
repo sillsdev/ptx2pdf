@@ -61,22 +61,23 @@ def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
     with open(os.path.join(tmpdir, outfname), "w", encoding="utf-8") as texf:
         texf.write(info.asTex(filedir=tmpdir))
     os.putenv("hyph_size", "32749")     # always run with maximum hyphenated words size (xetex is still tiny ~200MB resident)
+    ptxmacrospath = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../src"))
+    if not os.path.exists(ptxmacrospath):
+        for b in (getattr(sys, 'USER_BASE', '.'), sys.prefix):
+            if b is None:
+                continue
+            ptxmacrospath = os.path.abspath(os.path.join(b, 'ptx2pdf'))
+            if os.path.exists(ptxmacrospath):
+                break
     if info['project/useptmacros'] == "false":
         if not os.getenv('TEXINPUTS'):
-            ptxmacrospath = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../src"))
-            if not os.path.exists(ptxmacrospath):
-                for b in (getattr(sys, 'USER_BASE', '.'), sys.prefix):
-                    if b is None:
-                        continue
-                    ptxmacrospath = os.path.abspath(os.path.join(b, 'ptx2pdf'))
-                    if os.path.exists(ptxmacrospath):
-                        break
             texinputs = [os.path.abspath(tmpdir), ptxmacrospath]
             os.putenv('TEXINPUTS', (";" if sys.platform=="win32" else ":").join(texinputs))
     elif sys.platform == "linux":
         if not os.getenv('TEXINPUTS'):
             mdirs = args.macros or "/usr/lib/Paratext8/xetex/share/texmf-dist/tex/ptx2pdf:/usr/lib/Paratext9/xetex/share/texmf-dist/tex/ptx2pdf"
             os.putenv('TEXINPUTS', ".:" + mdirs)
+    os.putenv("MISCFONTS", ptxmacrospath)
     runner = ptxprint.runner.call(["xetex", "--halt-on-error", outfname], cwd=tmpdir, logbuffer=(logbuffer if not args.logging else None))
     delayed = outfname.replace(".tex", ".delayed")
     if os.path.exists(delayed):
