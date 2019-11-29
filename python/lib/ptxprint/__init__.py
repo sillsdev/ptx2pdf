@@ -276,7 +276,7 @@ class PtxPrinterDialog:
         if os.path.exists(fpath):
             if 1 <= pgnum <= 2:
                 self.builder.get_object("btn_saveEdits").set_sensitive(True)
-            self.builder.get_object("l_filepaths").set_text("File: "+str(fpath.split("/")[-1]))
+            self.builder.get_object("l_filepaths").set_text("File: .."+str(fpath.split(prjdir)[-1]))
             with open(fpath, "r", encoding="utf-8") as inf:
                 txt = inf.read()
                 if len(txt) > 32000:
@@ -288,11 +288,16 @@ class PtxPrinterDialog:
                                                \n   * Clicked OK to create the PDF?")
 
     def onSaveEdits(self, btn):
-        print("Clicked on Save") # But we need the pgnum to generate the right filename etc.
+        prjid = self.get("cb_project")
+        prjdir = os.path.join(self.settings_dir, self.prjid)
+        fpath = os.path.join(prjdir, self.builder.get_object("l_filepaths").get_text()[9:])
+        print(fpath)
+        # how to get the pgnum? - can we query the Notebook object?
         # self.fileViews[pgnum][0].set_text(txt)
-        # text = wbuffer.get_text(wbuffer.get_start_iter(), wbuffer.get_end_iter())
-        # openfile = open(filename,"w")
-        # openfile.write(text)
+        # text2save = self.fileViews[pgnum][0].get_text()  # Is this enough to get it all? (if not, then try the next line)
+        # text2save = self.fileViews[pgnum][0].get_text(self.fileViews[pgnum][0].get_start_iter(), self.fileViews[pgnum][0].get_end_iter())
+        # openfile = open(fpath,"w", encoding="utf-8")
+        # openfile.write(text2save)
         # openfile.close()
 
     def onScriptChanged(self, cb_script):
