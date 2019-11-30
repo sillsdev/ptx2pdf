@@ -1053,23 +1053,26 @@ class PtxPrinterDialog:
             # (even when creating the Secondary PDF so that the dimensions match).
             # TO DO: Suppress illustrations when Diglot is on (until we can figure out HOW to do that).
             PageWidth = int(re.split("[^0-9]",re.sub(r"^(.*?)\s*,.*$", r"\1", self.get("cb_pagesize")))[0]) or 148
-                
-            Margins = self.get("s_margins")
+            
+            Margins = self.get("s_diglotMargins")
             MiddleGutter = self.get("s_diglotMiddleGutter")
-            BindingGutter = self.get("s_pagegutter")
+            BindingGutter = self.get("s_diglotpagegutter")
             PriColWid = self.get("s_PriColWidth")
-            SecColWid = PageWidth - PriColWid - MiddleGutter - BindingGutter - (2*Margins)
+
+            SecColWid = PageWidth - PriColWid - MiddleGutter - BindingGutter - (2 * Margins)
             self.builder.get_object("s_SecColWidth").set_value(SecColWid)
 
             # Calc Pri Settings (right side of page; or outer if mirrored)
-            PriColWid = self.get("s_PriColWidth")
+            # PriColWid = self.get("s_PriColWidth")
             PriSideMarginFactor = 1
-            PriBindingGutter = PageWidth - PriColWid - (2*Margins)
+            PriBindingGutter = PageWidth - Margins - PriColWid - Margins
 
             # Calc Sec Settings (left side of page; or inner if mirrored)
-            SecColWid = PageWidth - PriColWid - MiddleGutter - BindingGutter - (2*Margins)
+            # SecColWid = PageWidth - PriColWid - MiddleGutter - BindingGutter - (2 * Margins)
             SecSideMarginFactor = (PriColWid + Margins + MiddleGutter) / Margins
-            SecBindingGutter = PageWidth - SecColWid - (2*Margins*SecSideMarginFactor)
+            SecRightMargin = PriColWid + Margins + MiddleGutter
+            
+            SecBindingGutter = PageWidth - (2 * SecRightMargin) - SecColWid 
 
             PriPercent = round((PriColWid / (PriColWid + SecColWid) * 100),1)
             self.builder.get_object("t_PriPercent").set_text(str(PriPercent)+"%")
@@ -1083,9 +1086,11 @@ class PtxPrinterDialog:
 \def\RHoddright{\empty}
 \def\RHevenleft{\empty}
 \def\RHevencenter{\empty}
-\def\RHevenright{\rangeref}"""
+\def\RHevenright{\rangeref}
+"""
                 DiglotString = "%% SECONDARY PDF settings"+ \
-                               "\BindingGuttertrue"+ \
+                               "\n\MarginUnit={}mm".format(Margins)+ \
+                               "\n\BindingGuttertrue"+ \
                                "\n\BindingGutter={}mm".format(SecBindingGutter)+ \
                                "\n\def\SideMarginFactor{{{:.2f}}}".format(SecSideMarginFactor)+ \
                                "\n\BodyColumns=1" + hdr
@@ -1099,11 +1104,12 @@ class PtxPrinterDialog:
 \def\RHevencenter{\empty}
 \def\RHevenright{\pagenumber}"""
                 DiglotString = "%% PRIMARY (+ SECONDARY) PDF settings"+ \
-                               "\BindingGuttertrue"+ \
+                               "\n\MarginUnit={}mm".format(Margins)+ \
+                               "\n\BindingGuttertrue"+ \
                                "\n\BindingGutter={}mm".format(PriBindingGutter)+ \
                                "\n\def\SideMarginFactor{{{:.2f}}}".format(PriSideMarginFactor)+ \
-                               "\n\BodyColumns=1" + hdr + \
-                               "\n\def\MergePDF{" + secfname + "}"
+                               "\n\BodyColumns=1"+ \
+                               "\n\def\MergePDF{" + secfname + "}" + hdr
             self.builder.get_object("l_diglotString").set_text(DiglotString) # We probably need a better way to do this
 
     def onGenerateHyphenationListClicked(self, btn_generateHyphenationList):

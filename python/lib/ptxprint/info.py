@@ -20,11 +20,13 @@ class Info:
         "project/booklist":         ("t_booklist", lambda w,v: v or ""),
         "project/ifinclfrontpdf":   ("c_inclFrontMatter", lambda w,v: "true" if v else "false"),
         "project/frontincludes":    ("btn_selectFrontPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(re.sub(r"\\","/", s)) \
-                                                            for s in w.FrontPDFs) if (w.FrontPDFs is not None and len(w.FrontPDFs)) else ""),
+                                                            for s in w.FrontPDFs) if w.FrontPDFs is not None else ""),
+                                                            # for s in w.FrontPDFs) if (w.FrontPDFs is not None or len(w.FrontPDFs)) else ""),
                                                             # for s in w.FrontPDFs) if len(w.FrontPDFs) else ""),
         "project/ifinclbackpdf":    ("c_inclBackMatter", lambda w,v: "true" if v else "false"),
         "project/backincludes":     ("btn_selectBackPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(re.sub(r"\\","/", s)) \
-                                                           for s in w.BackPDFs) if (w.BackPDFs is not None and len(w.BackPDFs)) else ""),
+                                                           for s in w.BackPDFs) if w.BackPDFs is not None else ""),
+                                                           # for s in w.BackPDFs) if (w.BackPDFs is not None or len(w.BackPDFs)) else ""),
                                                            # for s in w.BackPDFs) if len(w.BackPDFs) else ""),
         "project/useprintdraftfolder": ("c_useprintdraftfolder", lambda w,v :"true" if v else "false"),
         "project/processscript":    ("c_processScript", lambda w,v :"true" if v else "false"),
