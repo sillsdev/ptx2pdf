@@ -40,7 +40,7 @@ for d in os.listdir(args.paratext):
         allprojects.append(d)
 allprojects.sort()
 
-mainw = ptxprint.PtxPrinterDialog(allprojects, args.paratext)
+mainw = ptxprint.PtxPrinterDialog(allprojects, args.paratext, working_dir=args.directory)
 mainw.ExperimentalFeatures(args.experimental)
 
 if args.pid:

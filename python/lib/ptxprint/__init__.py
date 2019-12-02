@@ -55,7 +55,7 @@ _alldigits = [ "Default", "Adlam", "Ahom", "Arabic-Farsi", "Arabic-Hindi", "Bali
     "Tai-Tham-Tham", "Takri", "Tamil", "Telugu", "Thai", "Tibetan", "Tirhuta", "Urdu", "Vai", "Wancho", "Warang-Citi" ]
 
 class PtxPrinterDialog:
-    def __init__(self, allprojects, settings_dir):
+    def __init__(self, allprojects, settings_dir, working_dir=None):
         # print(" init: __init__",self, allprojects, settings_dir)
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(os.path.dirname(__file__), "ptxprint.glade"))
@@ -109,6 +109,7 @@ class PtxPrinterDialog:
         self.projects = self.builder.get_object("ls_projects")
         self.info = None
         self.settings_dir = settings_dir
+        self.working_dir = working_dir
         self.ptsettings = None
         self.booklist = []
         self.CustomScript = None
@@ -202,6 +203,12 @@ class PtxPrinterDialog:
             w.set_value(value)
         elif wid.startswith("btn_"):
             w.set_tooltip_text(value)
+
+    def filesDir(self):
+        if self.get("c_useprintdraftfolder"):
+            return os.path.join(self.settings_dir, self.prjid, "PrintDraft")
+        else:
+            return self.working_dir
 
     def getBooks(self):
         # print(" init: getBooks",self)
