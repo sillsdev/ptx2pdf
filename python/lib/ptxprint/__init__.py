@@ -295,6 +295,7 @@ class PtxPrinterDialog:
                                                \n   * Clicked OK to create the PDF?")
 
     def onSaveEdits(self, btn):
+        print(self.fileViews.active_page())
         prjid = self.get("cb_project")
         prjdir = os.path.join(self.settings_dir, self.prjid)
         fpath = os.path.join(prjdir, self.builder.get_object("l_filepaths").get_text()[9:])
