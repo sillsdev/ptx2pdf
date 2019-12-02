@@ -2,7 +2,9 @@
 
 import sys, os, re, regex, gi, random, subprocess
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GtkSource, Pango
+from gi.repository import Gtk, Pango
+gi.require_version('GtkSource', '4') 
+from gi.repository import GtkSource
 import xml.etree.ElementTree as et
 from ptxprint.font import TTFont
 from ptxprint.runner import StreamTextBuffer
@@ -96,7 +98,7 @@ class PtxPrinterDialog:
             Gtk.STOCK_OPEN, Gtk.ResponseType.OK)
 
         self.fileViews = []
-        for i,k in enumerate(["FinalSFM", "PicList", "AdjList", "TeXfile", "XeTeXlog"]):
+        for i,k in enumerate(["FinalSFM", "PicList", "AdjList", "TeXfile", "XeTeXlog", "Settings"]):
             buf = GtkSource.Buffer()
             view = GtkSource.View.new_with_buffer(buf)
             scroll = self.builder.get_object("scroll_" + k)
@@ -247,7 +249,8 @@ class PtxPrinterDialog:
         self.onDestroy(btn)
 
     def onExamineBookChanged(self, cb_examineBook):
-        self.onViewerChangePage(None,None,0)
+        pg = self.builder.get_object("nbk_Viewer").get_current_page()
+        self.onViewerChangePage(None,None,pg)
 
     def onViewerChangePage(self, nbk_Viewer, scrollObject, pgnum):
         self.builder.get_object("btn_saveEdits").set_sensitive(False)
@@ -275,6 +278,11 @@ class PtxPrinterDialog:
             fpath = os.path.join(prjdir, "PrintDraft", fname)
 
         elif pgnum == 5: # Just show the folders in use
+            self.fileViews[pgnum][0].set_text("\n Use the 'Advanced' tab to select which settings you want to view or edit.")
+            self.builder.get_object("l_filepaths").set_text("Folders")
+            return
+
+        elif pgnum == 6: # Just show the folders in use
             self.builder.get_object("l_filepaths").set_text("Folders")
             return
         else:
@@ -291,22 +299,20 @@ class PtxPrinterDialog:
             self.fileViews[pgnum][0].set_text(txt)  # this is the buffer
         else:
             self.fileViews[pgnum][0].set_text("\nThis file doesn't exist yet!\n\nHave you... \
+                                               \n   * Generated the PiCList or AdjList? \
                                                \n   * Checked the option (above) to 'Preserve Intermediate Files and Logs'? \
                                                \n   * Clicked OK to create the PDF?")
 
     def onSaveEdits(self, btn):
-        print(self.fileViews.active_page())
+        pg = self.builder.get_object("nbk_Viewer").get_current_page()
+        buf = self.fileViews[pg][0]
         prjid = self.get("cb_project")
         prjdir = os.path.join(self.settings_dir, self.prjid)
         fpath = os.path.join(prjdir, self.builder.get_object("l_filepaths").get_text()[9:])
-        print(fpath)
-        # how to get the pgnum? - can we query the Notebook object?
-        # self.fileViews[pgnum][0].set_text(txt)
-        # text2save = self.fileViews[pgnum][0].get_text()  # Is this enough to get it all? (if not, then try the next line)
-        # text2save = self.fileViews[pgnum][0].get_text(self.fileViews[pgnum][0].get_start_iter(), self.fileViews[pgnum][0].get_end_iter())
-        # openfile = open(fpath,"w", encoding="utf-8")
-        # openfile.write(text2save)
-        # openfile.close()
+        text2save = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
+        openfile = open(fpath,"w", encoding="utf-8")
+        openfile.write(text2save)
+        openfile.close()
 
     def onScriptChanged(self, cb_script):
         # print(" init: onScriptChanged",self, cb_script)
@@ -704,13 +710,27 @@ class PtxPrinterDialog:
         self.onDiglotDimensionsChanged(None)
 
     def editFile(self, file2edit):
+        pgnum = 5
+        self.builder.get_object("nbk_Main").set_current_page(7)
+        self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
         self.prjid = self.get("cb_project")
-        filepath = os.path.join(self.settings_dir, self.prjid, file2edit)
-        if os.path.exists(filepath):
-            if sys.platform == "win32":
-                os.startfile(filepath)
-            elif sys.platform == "linux":
-                subprocess.call(('xdg-open', filepath))
+        self.prjdir = os.path.join(self.settings_dir, self.prjid)
+        fpath = os.path.join(self.settings_dir, self.prjid, file2edit)
+        if os.path.exists(fpath):
+            self.builder.get_object("btn_saveEdits").set_sensitive(True)
+            self.builder.get_object("l_filepaths").set_text("File: .."+str(fpath.split(self.prjdir)[-1]))
+            with open(fpath, "r", encoding="utf-8") as inf:
+                txt = inf.read()
+                if len(txt) > 32000:
+                    txt = txt[:32000]+"\n\n etc...\n\n"
+            self.fileViews[pgnum][0].set_text(txt)  # this is the buffer
+        else:
+            self.fileViews[pgnum][0].set_text("\nThis file doesn't exist yet!")
+        # if os.path.exists(filepath):
+            # if sys.platform == "win32":
+                # os.startfile(filepath)
+            # elif sys.platform == "linux":
+                # subprocess.call(('xdg-open', filepath))
 
     def onEditChangesFile(self, btn):
         self.editFile("PrintDraftChanges.txt")
@@ -920,74 +940,29 @@ class PtxPrinterDialog:
             dialog.destroy()
 
     def onEditAdjListClicked(self, btn_editParaAdjList):
-        if not self.get("c_multiplebooks"):
-            bk = self.get("cb_book")
-            prjid = self.get("cb_project")
-            prjdir = os.path.join(self.settings_dir, self.prjid)
-            fname = self.getBookFilename(bk, prjdir)
-            adjfname = os.path.join(prjdir, "PrintDraft/AdjLists", fname)
-            doti = adjfname.rfind(".")
-            if doti > 0:
-                adjfname = adjfname[:doti] + "-draft" + adjfname[doti:] + ".adj"
-            if os.path.exists(adjfname):
-                if sys.platform == "win32":
-                    os.startfile(adjfname)
-                elif sys.platform == "linux":
-                    subprocess.call(('xdg-open', adjfname))
-            else:
-                dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK,
-                    "Unable to edit Adj List file!")
-                dialog.format_secondary_text("Please click the Generate button first\nto create the file(s). Then try again.")
-                dialog.run()
-                dialog.destroy()
-        else:
-            adjfname = self.fileChooser("Select an Adjust file to edit", 
-                    filters = {"Adjust files": {"pattern": "*.adj", "mime": "none"}},
-                    multiple = False)
-            if adjfname is not None:
-                if os.path.exists(adjfname[0]):
-                    if sys.platform == "win32":
-                        os.startfile(adjfname[0])
-                    elif sys.platform == "linux":
-                        subprocess.call(('xdg-open', adjfname[0]))
+        pgnum = 2
+        self.builder.get_object("nbk_Main").set_current_page(7)
+        # self.builder.get_object("cb_examineBook").set_active(self.get("cb_book"))
+        self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
+        self.onViewerChangePage(None,None,pgnum)
+        # dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK,
+            # "Unable to edit Adj List file!")
+        # dialog.format_secondary_text("Please click the Generate button first\nto create the file(s). Then try again.")
+        # dialog.run()
+        # dialog.destroy()
 
     def onEditPicListClicked(self, btn_editPicList):
-        if not self.get("c_multiplebooks"):
-            # I need help to work out how to open the Viewer tab, and the appropriate Pg (1) to view/edit the PicList
-            # Then we can throw away the rest of the code
-            # self.builder.gtk_widget_grab_focus("scroll_PicList")
-            # self.builder.get_object("scroll_PicList").set_focus("scroll_PicList")
-            # self.builder.get_object("scroll_PicList").set_focus()
-            bk = self.get("cb_book")
-            prjid = self.get("cb_project")
-            prjdir = os.path.join(self.settings_dir, self.prjid)
-            fname = self.getBookFilename(bk, prjdir)
-            picfname = os.path.join(prjdir, "PrintDraft/PicLists", fname)
-            doti = picfname.rfind(".")
-            if doti > 0:
-                picfname = picfname[:doti] + "-draft" + picfname[doti:] + ".piclist"
-            if os.path.exists(picfname):
-                if sys.platform == "win32":
-                    os.startfile(picfname)
-                elif sys.platform == "linux":
-                    subprocess.call(('xdg-open', picfname))
-            else:
-                dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK,
-                    "Unable to edit Pic List file!")
-                dialog.format_secondary_text("Please click the Generate button first\nto create the file(s). Then try again.")
-                dialog.run()
-                dialog.destroy()
-        else:
-            # Is there a way to force the file chooser to look in the PicList folder?
-            picfname = self.fileChooser("Select a PicList file to edit", 
-                    filters = {"PicList files": {"pattern": "*.piclist", "mime": "none"}},
-                    multiple = False)
-            if picfname is not None:
-                if os.path.exists(picfname[0]):
-                    if sys.platform == "win32":
-                        os.startfile(picfname[0])
-                    elif sys.platform == "linux":
-                        subprocess.call(('xdg-open', picfname[0]))
+        pgnum = 1
+        self.builder.get_object("nbk_Main").set_current_page(7)
+        # self.builder.get_object("cb_examineBook").set_active(self.get("cb_book"))
+        self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
+        self.onViewerChangePage(None,None,pgnum)
+        # dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK,
+            # "Unable to edit Pic List file!")
+        # dialog.format_secondary_text("Please click the Generate button first\nto create the file(s). Then try again.")
+        # dialog.run()
+        # dialog.destroy()
+        # self.builder.get_object("nbk_Main").set_current_page(4)
     
     def ontv_sizeallocate(self, atv, dummy):
         b = atv.get_buffer()

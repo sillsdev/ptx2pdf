@@ -718,7 +718,7 @@ away most of the time.</property>
             <property name="halign">start</property>
             <property name="orientation">vertical</property>
             <child>
-              <object class="GtkNotebook">
+              <object class="GtkNotebook" id="nbk_Main">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="halign">start</property>
@@ -5467,6 +5467,30 @@ also contain several other related files.</property>
                           </packing>
                         </child>
                         <child>
+                          <object class="GtkScrolledWindow" id="scroll_Settings">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="shadow_type">in</property>
+                            <child>
+                              <placeholder/>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="position">5</property>
+                          </packing>
+                        </child>
+                        <child type="tab">
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Settings</property>
+                          </object>
+                          <packing>
+                            <property name="position">5</property>
+                            <property name="tab_fill">False</property>
+                          </packing>
+                        </child>
+                        <child>
                           <object class="GtkFrame">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
@@ -5570,7 +5594,7 @@ also contain several other related files.</property>
                             </child>
                           </object>
                           <packing>
-                            <property name="position">5</property>
+                            <property name="position">6</property>
                           </packing>
                         </child>
                         <child type="tab">
@@ -5580,7 +5604,7 @@ also contain several other related files.</property>
                             <property name="label" translatable="yes">Folders</property>
                           </object>
                           <packing>
-                            <property name="position">5</property>
+                            <property name="position">6</property>
                             <property name="tab_fill">False</property>
                           </packing>
                         </child>
