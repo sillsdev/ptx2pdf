@@ -126,8 +126,6 @@ def doit(printer):
         pdfname = os.path.join(tmpdir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], prjid))
     else:
         pdfname = os.path.join(tmpdir, "ptxprint-{}{}.pdf".format(jobs[0], prjid))
-    if not printer.get("c_keepTemporaryFiles"):
-        removeTempFiles(texfiles,tmpdir,info)
         
     # Need to check the return code to see if generating the PDF was successful. And if not, then issue some 
     # warning or error message rather than leave the PREVIOUS PDF open and pretend that everything worked fine! :-(
@@ -136,6 +134,9 @@ def doit(printer):
             os.startfile(pdfname)
         elif sys.platform == "linux":
             subprocess.call(('xdg-open', pdfname))
+        # Only delete the temp files if the PDF was creates AND the user did NOT select to keep them
+        if not printer.get("c_keepTemporaryFiles"):
+            removeTempFiles(texfiles,tmpdir,info)
 
 def removeTempFiles(texfiles,tmpdir,info):
     for extn in ('delayed','parlocs','notepages', 'tex','log'):

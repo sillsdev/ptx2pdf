@@ -208,7 +208,6 @@ class Info:
     }
     
     def __init__(self, printer, path, prjid = None):
-        # print("  info: __init__",self, printer, path)
         self.printer = printer
         self.changes = None
         self.localChanges = None
@@ -228,7 +227,6 @@ class Info:
         self.update()
 
     def update(self):
-        # print("  info: update",self)
         printer = self.printer
         self.updatefields(self._mappings.keys())
         if self.prjid is not None:
@@ -245,16 +243,12 @@ class Info:
                 self.dict[k] = v[1](self.printer, val)
 
     def __getitem__(self, key):
-        # print("  info: __getitem__",self, key)
         return self.dict[key]
 
     def __setitem__(self, key, value):
-        # print("  info: __setitem__",self, key, value)
         self.dict[key] = value
 
     def processFonts(self, printer):
-        # print("  info: processFonts",self, printer)
-        # \def\regular{"Gentium Plus/GR:litr=1;ital=1"}   ???
         silns = "{urn://www.sil.org/ldml/0.1}"
         for p in self._fonts.keys():
             if p in self.dict:
@@ -296,7 +290,6 @@ class Info:
             self.dict[p] = fname + engine
 
     def processHdrFtr(self, printer):
-        # print("  info: processHdrFtr",self, printer)
         mirror = printer.get('c_mirrorpages')
         for side in ('left', 'center', 'right'):
             v = printer.get("cb_hdr" + side)
@@ -320,8 +313,6 @@ class Info:
         return path.replace(" ", r"\ ")
 
     def asTex(self, template="template.tex", filedir="."):
-        # print("  info: asTex",self, "template.tex", "filedir=.")
- #       import pdb;pdb.set_trace()
         for k, v in self._settingmappings.items():
             if self.dict[k] == "":
                 self.dict[k] = self.printer.ptsettings.dict.get(v, "a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z")
@@ -390,7 +381,6 @@ class Info:
             return fname
 
     def readChanges(self, fname):
-        # print("  info: readChanges",self, fname)
         changes = []
         if not os.path.exists(fname):
             return []
@@ -421,7 +411,6 @@ class Info:
         return changes
 
     def makelocalChanges(self, printer, bk):
-        # print("  info: makelocalChanges",self, printer)
         self.localChanges = []
         first = int(printer.get("cb_chapfrom"))
         last = int(printer.get("cb_chapto"))
@@ -559,7 +548,6 @@ class Info:
         config.set(sect, k, value)
 
     def createConfig(self, printer):
-        # print("  info: createConfig",self, printer)
         config = configparser.ConfigParser()
         for k, v in self._mappings.items():
             if v[0] is None:
@@ -576,7 +564,6 @@ class Info:
         return config
 
     def loadConfig(self, printer, config):
-        # print("  info: loadConfig",self, printer, config)
         for sect in config.sections():
             for opt in config.options(sect):
                 key = "{}/{}".format(sect, opt)
@@ -631,7 +618,6 @@ class Info:
         self.update()
 
     def GenerateNestedStyles(self):
-        # print("  info: GenerateNestedStyles",self)
         prjid = self.dict['project/id']
         prjdir = os.path.join(self.printer.settings_dir, prjid)
         tmpdir = os.path.join(prjdir, 'PrintDraft') if self.printer.get("c_useprintdraftfolder") else "."
@@ -658,7 +644,7 @@ class Info:
                 outf.write("".join(nstylist))
 
     def createHyphenationFile(self):
-        listlimit = 32749  # use 500 or so when testing 
+        listlimit = 32749
         prjid = self.dict['project/id']
         prjdir = os.path.join(self.printer.settings_dir, prjid)
         infname = os.path.join(prjdir, 'hyphenatedWords.txt')
@@ -689,7 +675,6 @@ class Info:
                             if l[0] != "-":
                                 hyphenatedWords.append(l)
             c = len(hyphenatedWords)
-            # print("{} hyphenated words were gathered from Paratext's Hyphenation Word List.".format(c))
             if c >= listlimit:
                 m2b = "\n\nThat is too many for XeTeX! List truncated to longest {} words.".format(listlimit)
                 hyphenatedWords.sort(key=len,reverse=True)

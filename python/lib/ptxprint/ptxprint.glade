@@ -4671,61 +4671,20 @@ file is selected, then these will appear in alphabetical order.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">start</property>
+                                <property name="margin_left">6</property>
                                 <property name="row_spacing">6</property>
                                 <property name="column_spacing">13</property>
                                 <child>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">When the PicList is generated, it will 
-randomly assign a position on the page.
-By editing the PicList, you can specify
-any one of the following:
-for "span": t=top, b=bottom  of page
-for "col": tl=top left, tr=top right,
-        bl=bottom left,  br=bottom right</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="label" translatable="yes">Illustrations may be positioned more intentionally
-using a PicList which specifies the location on the page:</property>
+                                    <property name="label" translatable="yes">Illustrations may be positioned at 
+specific locations on the page:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="btn_generatePicList">
-                                    <property name="label" translatable="yes">Generate PicList(s) from \fig in text</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="tooltip_text" translatable="yes">Click this button to generate the PicList
-in the correct format using the markup
-(\fig ... \fig*) within the text. If a .piclist
-file already exists, you will be asked if
-you really want to overwrite it.</property>
-                                    <property name="valign">center</property>
-                                    <signal name="clicked" handler="onGeneratePicList" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="btn_editPicList">
-                                    <property name="label" translatable="yes">Edit PicList...</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="tooltip_text" translatable="yes">Click to Edit PicList(s) in your
-system's default text editor.</property>
-                                    <property name="valign">center</property>
-                                    <signal name="clicked" handler="onEditPicListClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
                                     <property name="top_attach">0</property>
                                   </packing>
                                 </child>
@@ -4743,69 +4702,12 @@ Note that adjusting paragraphs needs to be done right at the
 end when all other settings have been finalized. Otherwise you
 are likely to have to re-do it all again.</property>
                                     <property name="halign">start</property>
-                                    <property name="label" translatable="yes">To balance columns of text on a page it is possible
-to specify paragraphs adjustments (shrink or expand):</property>
+                                    <property name="label" translatable="yes">Columns of text may be balanced by
+specifying adjustments (shrink or expand):</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="btn_generateParaAdjList">
-                                    <property name="label" translatable="yes">Generate the Paragraph Adjust List(s)</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="tooltip_text" translatable="yes">Click this button to generate a list 
-of paragraphs that may be adjusted 
-(using shrink or expand). If an .adj file
-already exists, you will be asked if you
-really want to overwrite it.</property>
-                                    <signal name="clicked" handler="onGenerateParaAdjList" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="btn_editParaAdjList">
-                                    <property name="label" translatable="yes">Edit Adjust List...</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="tooltip_text" translatable="yes">Click to Edit Paragraph Adjust List(s)
-in your system's default text editor.</property>
-                                    <signal name="clicked" handler="onEditAdjListClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
-                                    <property name="top_attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_randomPicPosn">
-                                    <property name="label" translatable="yes">Randomize position of illustrations (top, bottom, left &amp; right)</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">By default all illustrations are place in the top-left
-corner (when double columns are used) and at the
-top in single column mode. 
-Selecting this option will randomly position the
-illustrations on the page (using top-left, top-right
-bottom-left and bottom-right). 
-By editing the PicList file, you can intentionally
-place illustrations in one of these 4 locations.</property>
-                                    <property name="halign">start</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">1</property>
-                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -4828,6 +4730,38 @@ settings.</property>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">1</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_editPicList">
+                                    <property name="label" translatable="yes">Edit PicList...</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="tooltip_text" translatable="yes">Click to Edit PicList(s) in your
+system's default text editor.</property>
+                                    <property name="valign">center</property>
+                                    <signal name="clicked" handler="onEditPicListClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_editParaAdjList">
+                                    <property name="label" translatable="yes">Edit Adjust List...</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="tooltip_text" translatable="yes">Click to Edit Paragraph Adjust List(s)
+in your system's default text editor.</property>
+                                    <signal name="clicked" handler="onEditAdjListClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">2</property>
                                   </packing>
                                 </child>
                               </object>
@@ -5230,10 +5164,24 @@ Use trouble-shooting tools.</property>
                           <object class="GtkGrid" id="gr_debugTools">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="halign">center</property>
+                            <property name="halign">start</property>
+                            <property name="margin_left">12</property>
                             <property name="margin_top">3</property>
                             <property name="margin_bottom">6</property>
                             <property name="column_spacing">18</property>
+                            <child>
+                              <object class="GtkLabel" id="l_examineBook">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">end</property>
+                                <property name="label" translatable="yes">Book in
+focus:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
                             <child>
                               <object class="GtkComboBox" id="cb_examineBook">
                                 <property name="visible">True</property>
@@ -5255,31 +5203,54 @@ Use trouble-shooting tools.</property>
                                 </child>
                               </object>
                               <packing>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_PrevBook">
+                                <property name="label" translatable="yes">&lt;&lt; Prev
+     Book</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="halign">end</property>
+                                <property name="image_position">right</property>
+                                <property name="always_show_image">True</property>
+                                <signal name="clicked" handler="onPrevBookClicked" swapped="no"/>
+                              </object>
+                              <packing>
                                 <property name="left_attach">1</property>
                                 <property name="top_attach">0</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel">
+                              <object class="GtkButton" id="btn_NextBook">
+                                <property name="label" translatable="yes">Next &gt;&gt;
+Book</property>
+                                <property name="width_request">-1</property>
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="halign">end</property>
-                                <property name="label" translatable="yes">Book to
-examine:</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="halign">start</property>
+                                <property name="image_position">top</property>
+                                <property name="always_show_image">True</property>
+                                <signal name="clicked" handler="onNextBookClicked" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left_attach">0</property>
+                                <property name="left_attach">3</property>
                                 <property name="top_attach">0</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="c_tracing">
-                                <property name="label" translatable="yes">Enable Debug Tracing</property>
+                              <object class="GtkButton" id="btn_Generate">
+                                <property name="label" translatable="yes">Generate</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="halign">end</property>
-                                <property name="draw_indicator">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="halign">start</property>
+                                <property name="margin_right">20</property>
+                                <signal name="clicked" handler="onGenerateClicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">5</property>
@@ -5287,10 +5258,44 @@ examine:</property>
                               </packing>
                             </child>
                             <child>
-                              <placeholder/>
+                              <object class="GtkCheckButton" id="c_randomPicPosn">
+                                <property name="label" translatable="yes">Randomize picture
+position on page</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">By default all illustrations are place in the top-left
+corner (when double columns are used) and at the
+top in single column mode. 
+Selecting this option will randomly position the
+illustrations on the page (using top-left, top-right
+bottom-left and bottom-right). 
+By editing the PicList file, you can intentionally
+place illustrations in one of these 4 locations.</property>
+                                <property name="halign">end</property>
+                                <property name="margin_left">5</property>
+                                <property name="active">True</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">4</property>
+                                <property name="top_attach">0</property>
+                              </packing>
                             </child>
                             <child>
-                              <placeholder/>
+                              <object class="GtkCheckButton" id="c_tracing">
+                                <property name="label" translatable="yes">Debug 
+Tracing</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="halign">end</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">6</property>
+                                <property name="top_attach">0</property>
+                              </packing>
                             </child>
                             <child>
                               <placeholder/>
@@ -5375,6 +5380,12 @@ also contain several other related files.</property>
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="tooltip_text" translatable="yes">A PicList is used to specify the 
+position of illustrations on the page. 
+Any one of the following are possible:
+for "span": t=top, b=bottom  of page
+for "col": tl=top left, tr=top right,
+        bl=bottom left,  br=bottom right</property>
                             <property name="label" translatable="yes">Pic List</property>
                           </object>
                           <packing>
@@ -5403,6 +5414,18 @@ also contain several other related files.</property>
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="tooltip_text" translatable="yes">To balance columns of text on a page it is possible
+to specify paragraphs adjustments (shrink or expand):
+
+A Paragraph Adjust List needs to be in this format:
+MRK 2.7 +1    (i.e. expand the para at Mark 2.7 by one line) 
+MRK 3.20 -1   (i.e. shrink the para at Mark 3:20 by one line)
+%MARK 4.14 +1   (ignore this line - treat it as a comment)   
+MRK 5.8 +2    (i.e. expand the para at Mark 2.7 by two lines)
+etc.
+Note that adjusting paragraphs needs to be done right at the
+end when all other settings have been finalized. Otherwise you
+are likely to have to re-do it all again.</property>
                             <property name="label" translatable="yes">Adj List</property>
                           </object>
                           <packing>
@@ -5622,7 +5645,7 @@ also contain several other related files.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkGrid">
+                      <object class="GtkGrid" id="gr_editableButtons">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="column_homogeneous">True</property>
@@ -5644,9 +5667,57 @@ will have any effect on the output.
                             <signal name="clicked" handler="onSaveEdits" swapped="no"/>
                           </object>
                           <packing>
+                            <property name="left_attach">4</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton">
+                            <property name="label">gtk-undo</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="halign">end</property>
+                            <property name="use_stock">True</property>
+                            <property name="always_show_image">True</property>
+                          </object>
+                          <packing>
                             <property name="left_attach">1</property>
                             <property name="top_attach">0</property>
                           </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton">
+                            <property name="label">gtk-redo</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="halign">start</property>
+                            <property name="use_stock">True</property>
+                            <property name="always_show_image">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">2</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton">
+                            <property name="label">gtk-refresh</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="halign">center</property>
+                            <property name="use_stock">True</property>
+                            <property name="always_show_image">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">5</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
                         </child>
                         <child>
                           <placeholder/>
