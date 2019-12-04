@@ -620,7 +620,6 @@
             <property name="can_focus">False</property>
             <property name="margin_left">6</property>
             <property name="margin_right">6</property>
-            <property name="hexpand">False</property>
             <property name="layout_style">start</property>
             <child>
               <object class="GtkButton" id="btn_revertSettings">
@@ -665,7 +664,7 @@ away most of the time.</property>
             </child>
             <child>
               <object class="GtkButton">
-                <property name="label">gtk-cancel</property>
+                <property name="label">gtk-close</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -706,7 +705,7 @@ away most of the time.</property>
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="fill">True</property>
+            <property name="fill">False</property>
             <property name="position">0</property>
           </packing>
         </child>
@@ -4811,7 +4810,6 @@ in your system's default text editor.</property>
                             <property name="margin_right">6</property>
                             <property name="margin_top">6</property>
                             <property name="margin_bottom">6</property>
-                            <property name="hexpand">True</property>
                             <property name="label_xalign">0.019999999552965164</property>
                             <child>
                               <object class="GtkAlignment">
@@ -4850,8 +4848,8 @@ in your system's default text editor.</property>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="label" translatable="yes">Font to use for any characters
-missing in the primary font(s):</property>
+                                        <property name="label" translatable="yes">Font for any characters
+missing in primary font:</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
@@ -4875,6 +4873,7 @@ missing in the primary font(s):</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="halign">start</property>
+                                        <property name="margin_right">6</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
@@ -4888,6 +4887,7 @@ missing in the primary font(s):</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
                                         <property name="halign">end</property>
+                                        <property name="margin_right">6</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
@@ -5204,6 +5204,7 @@ and Edit PicLists and Adj Lists.</property>
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
                     <property name="can_focus">False</property>
+                    <property name="no_show_all">True</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <placeholder/>
@@ -5224,6 +5225,7 @@ and Edit PicLists and Adj Lists.</property>
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
                     <property name="can_focus">False</property>
+                    <property name="no_show_all">True</property>
                     <property name="tooltip_text" translatable="yes">(Coming soon: A Graphical
 method to edit the various
 styles in the StyleSheet.)</property>
@@ -5239,6 +5241,7 @@ styles in the StyleSheet.)</property>
                   <object class="GtkBox" id="tb_Logging">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="no_show_all">True</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkScrolledWindow">
@@ -5278,6 +5281,7 @@ styles in the StyleSheet.)</property>
                   <object class="GtkLabel" id="lb_Logging">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="no_show_all">True</property>
                     <property name="tooltip_text" translatable="yes">Display the output log 
 from XeTeX processing. 
 Set folder locations. 

@@ -42,7 +42,6 @@ allprojects.sort()
 
 mainw = ptxprint.PtxPrinterDialog(allprojects, args.paratext, working_dir=args.directory)
 mainw.ExperimentalFeatures(args.experimental)
-print("ExperimentalFeatures: ", args.experimental)
 
 if args.pid:
     mainw.set("cb_project", args.pid)

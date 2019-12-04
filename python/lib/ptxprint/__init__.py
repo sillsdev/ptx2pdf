@@ -126,26 +126,21 @@ class PtxPrinterDialog:
     def run(self, callback):
         self.callback = callback
         self.mw.show_all()
-        # self.onHideAdvancedSettingsClicked(None)
-        # self.ExperimentalFeatures(False)
         Gtk.main()
 
-    def ExperimentalFeatures(self, value=True):
-        print("ExperimentalFeatures: ", value)
+    def ExperimentalFeatures(self, value):
         self.experimental = value
         if value:
-                print("setting it on")
                 self.builder.get_object("c_experimental").set_visible(True)
                 self.builder.get_object("c_experimental").set_active(True)
                 self.builder.get_object("c_experimental").set_sensitive(False)
         else:
-            print("setting it off")
-            for c in ("c_startOnHalfPage", "c_experimental"):
+            for c in ("c_startOnHalfPage", "c_experimental", "c_verticalVerseBridges", "c_prettyIntroOutline"):
                 self.builder.get_object(c).set_active(False)
                 self.builder.get_object(c).set_visible(False)
                 self.builder.get_object(c).set_sensitive(False)
         for w in ("tb_", "lb_"):
-            for exp in ("Diglot", "Markers", "Logging"):
+            for exp in ("Markers", "Logging"):
                 self.builder.get_object("{}{}".format(w, exp)).set_visible(value)
 
     def onRevertSettingsClicked(self, btn):
@@ -504,8 +499,9 @@ class PtxPrinterDialog:
 
     def onBookSelectorChange(self, c_multiplebooks):
         status = self.get("c_multiplebooks")
-        if status and self.get("t_booklist") == "":
-            self.onChooseBooksClicked(None)
+        if status and self.get("t_booklist") == "" and self.prjid is not None:
+            pass
+            # self.onChooseBooksClicked(None)
         else:
             for c in ("c_combine", "t_booklist"):
                 self.builder.get_object(c).set_sensitive(status)
