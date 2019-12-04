@@ -355,8 +355,11 @@ class Info:
         if not os.path.exists(customsty):
             open(customsty, "w").close()
         fbkfm = self.printer.ptsettings['FileNameBookNameForm']
-        bknamefmt = fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + \
-                    self.printer.ptsettings['FileNamePostPart']
+        fprfx = self.printer.ptsettings['FileNamePrePart']
+        fpost = self.printer.ptsettings['FileNamePostPart']
+        if fprfx == None:
+            fprfx = ""
+        bknamefmt = fprfx + fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + fpost
         fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
         infname = os.path.join(prjdir, fname)
         if self.changes is not None or self.localChanges is not None:
