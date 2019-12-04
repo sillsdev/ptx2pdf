@@ -26,12 +26,12 @@
 \IntroColumns=1
 \BodyColumns={paper/columns}
 \ColumnGutterRule{paper/ifverticalrule}
-\def\ColumnGutterFactor{{{document/colgutterfactor}}} % Q: can this be explicitly set as Xmm?
+\def\ColumnGutterFactor{{{document/colgutterfactor}}}
 % This next set of options can only be active if NOT using PT macros (as they use the new ptxplus macros)
 {project/ifnotptmacros}\ColumnGutterRuleSkip={paper/colgutteroffset}pt
 {project/ifnotptmacros}{document/marginalverses}\input ptxplus-marginalverses.tex
 {project/ifnotptmacros}{document/marginalverses}\columnshift={document/columnshift}pt
-{project/ifnotptmacros}\endbooknoeject{project/ifstarthalfpage}
+{project/ifnotptmacros}{project/blockexperimental}\endbooknoeject{project/ifstarthalfpage}
 
 %%%%% Text Spacing %%%%%
 \def\LineSpacingFactor{{{paragraph/linespacingfactor}}}
@@ -43,7 +43,6 @@
 
 %%%%% Fonts %%%%%
 \FontSizeUnit={paper/fontfactor}pt
-
 %% Faces
 \def\regular{{"{fontregular/name}"{font/features}{document/script}{document/digitmapping}}}
 \def\bold{{"{fontbold/name}"{font/features}{document/script}{document/digitmapping}{fontbold/embolden}{fontbold/slant}}}
@@ -145,8 +144,8 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% all settings need to come before this line %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%% Watermark PDF file %%%%%
-{paper/ifwatermark}\def\PageBorder{{"{paper/watermarkpdf}"}}  % and also pretty border PDFs etc.
+%%%%% Watermark PDF file or Pretty Border, or Grid PDFs etc. %%%%%
+{paper/ifwatermark}\def\PageBorder{{"{paper/watermarkpdf}"}}  
 
 %%%%% Front Matter PDF file(s) get included here %%%%%
 {project/frontincludes}
@@ -168,6 +167,6 @@
 \catcode`\%=14
 
 %%%%% Back Matter PDF file(s) get included here %%%%%
-%{project/backincludes}
+{project/backincludes}
 
 \end

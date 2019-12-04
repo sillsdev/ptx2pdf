@@ -119,7 +119,7 @@ class PtxPrinterDialog:
         self.watermarks = None
         self.customFigFolder = None
         self.prjid = None
-        self.experimental = False
+        self.experimental = None
         for p in sorted(allprojects, key = lambda s: s.casefold()):
             self.projects.append([p])
 
@@ -131,10 +131,25 @@ class PtxPrinterDialog:
         Gtk.main()
 
     def ExperimentalFeatures(self, value=True):
+        print("ExperimentalFeatures: ", value)
         self.experimental = value
+        if value:
+                print("setting it on")
+                self.builder.get_object("c_experimental").set_visible(True)
+                self.builder.get_object("c_experimental").set_active(True)
+                self.builder.get_object("c_experimental").set_sensitive(False)
+        else:
+            print("setting it off")
+            for c in ("c_startOnHalfPage", "c_experimental"):
+                self.builder.get_object(c).set_active(False)
+                self.builder.get_object(c).set_visible(False)
+                self.builder.get_object(c).set_sensitive(False)
         for w in ("tb_", "lb_"):
-            for exp in ("Diglot", "Markers", "ViewerEditor", "DiglotTesting"):
-                self.builder.get_object(w+exp).set_visible(value)
+            for exp in ("Diglot", "Markers", "Logging"):
+                self.builder.get_object("{}{}".format(w, exp)).set_visible(value)
+
+    def onRevertSettingsClicked(self, btn):
+        self.onProjectChange(None)
         
     def addCR(self, name, index):
         v = self.builder.get_object(name)
@@ -200,12 +215,6 @@ class PtxPrinterDialog:
         elif wid.startswith("btn_"):
             w.set_tooltip_text(value)
 
-    def filesDir(self):
-        if self.get("c_useprintdraftfolder"):
-            return os.path.join(self.settings_dir, self.prjid, "PrintDraft")
-        else:
-            return self.working_dir
-
     def getBooks(self):
         if not self.get('c_multiplebooks'):
             return [self.get('cb_book')]
@@ -214,9 +223,9 @@ class PtxPrinterDialog:
         else:
             return self.booklist
 
-    def getBookFilename(self, bk, prjdir):
+    def getBookFilename(self, bk, prjid):
         if self.ptsettings is None:
-            self.ptsettings = ParatextSettings(prjdir)
+            self.ptsettings = ParatextSettings(self.settings_dir, self.prjid)
         fbkfm = self.ptsettings['FileNameBookNameForm']
         bknamefmt = fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + \
                     self.ptsettings['FileNamePostPart']
@@ -273,13 +282,17 @@ class PtxPrinterDialog:
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
         self.onViewerChangePage(None,None,pg)
 
-    def onGenerateClicked(self,btn):
+    def onGenerateClicked(self, btn):
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
         if pg == 1: # PicList
             self.GeneratePicList()
         elif pg == 2: # AdjList
             self.GenerateAdjList()
         self.onViewerChangePage(None,None,pg)
+
+    def onRefreshViewerTextClicked(self, btn):
+        pg = self.builder.get_object("nbk_Viewer").get_current_page()
+        self.onViewerChangePage(None, None, pg)
 
     def onViewerChangePage(self, nbk_Viewer, scrollObject, pgnum):
         self.builder.get_object("gr_editableButtons").set_visible(False)
@@ -301,8 +314,8 @@ class PtxPrinterDialog:
         fndict = {0 : ("", ""),     1 : ("PicLists", ".piclist"), 2 : ("AdjLists", ".adj"), \
                   3 : ("", ".tex"), 4 : ("", ".log")}
         if 0 <= pgnum <= 2:  # (SFM,PicList,AdjList)
-            fname = self.getBookFilename(bk, prjdir)
-            fpath = os.path.join(prjdir, "PrintDraft", fndict[pgnum][0], fname)
+            fname = self.getBookFilename(bk, prjid)
+            fpath = os.path.join(self.working_dir, fndict[pgnum][0], fname)
             doti = fpath.rfind(".")
             if doti > 0:
                 fpath = fpath[:doti] + "-draft" + fpath[doti:] + fndict[pgnum][1]
@@ -323,30 +336,32 @@ class PtxPrinterDialog:
                 fname = "ptxprint-{}_{}{}{}".format(bks[0], bks[-1], prjid, fndict[pgnum][1])
             else:
                 fname = "ptxprint-{}{}{}".format(bks[0], prjid, fndict[pgnum][1])
-            fpath = os.path.join(prjdir, "PrintDraft", fname)
+            fpath = os.path.join(self.working_dir, fname)
 
-        elif pgnum == 5: # Just show the folders in use
-            self.fileViews[pgnum][0].set_text("\n Use the 'Advanced' tab to select which settings you want to view or edit.")
-            self.builder.get_object("l_filepaths").set_text("Folders")
-            return
+        elif pgnum == 5: # View/Edit one of the 4 Settings files
+            fpath = self.builder.get_object("l_{}".format(pgnum)).get_tooltip_text()
+            if fpath == None:
+                self.fileViews[pgnum][0].set_text("\n Use the 'Advanced' tab to select which settings you want to view or edit.")
+                self.builder.get_object("l_{}".format(pgnum)).set_text("Settings")
+                return
 
         elif pgnum == 6: # Just show the folders in use
-            self.builder.get_object("l_filepaths").set_text("Folders")
+            self.builder.get_object("l_{}".format(pgnum)).set_text("Folders")
             return
         else:
             print("Error: Unhandled page in Viewer!")
             return
         if os.path.exists(fpath):
-            if 1 <= pgnum <= 2:
+            if 1 <= pgnum <= 2 or pgnum == 5:
                 self.builder.get_object("gr_editableButtons").set_visible(True)
-                # self.builder.get_object("btn_saveEdits").set_sensitive(True)
-            self.builder.get_object("l_filepaths").set_text("File: .."+str(fpath.split(prjdir)[-1]))
+            self.builder.get_object("l_{}".format(pgnum)).set_tooltip_text(fpath)
             with open(fpath, "r", encoding="utf-8") as inf:
                 txt = inf.read()
                 if len(txt) > 32000:
                     txt = txt[:32000]+"\n\n etc...\n\n"
-            self.fileViews[pgnum][0].set_text(txt)  # this is the buffer
+            self.fileViews[pgnum][0].set_text(txt)
         else:
+            self.builder.get_object("l_{}".format(pgnum)).set_tooltip_text(None)
             self.fileViews[pgnum][0].set_text("\nThis file doesn't exist yet!\n\nHave you... \
                                                \n   * Generated the PiCList or AdjList? \
                                                \n   * Checked the option (above) to 'Preserve Intermediate Files and Logs'? \
@@ -355,9 +370,7 @@ class PtxPrinterDialog:
     def onSaveEdits(self, btn):
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
         buf = self.fileViews[pg][0]
-        prjid = self.get("cb_project")
-        prjdir = os.path.join(self.settings_dir, prjid)
-        fpath = os.path.join(prjdir, self.builder.get_object("l_filepaths").get_text()[9:])
+        fpath = self.builder.get_object("l_{}".format(pg)).get_tooltip_text()
         text2save = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
         openfile = open(fpath,"w", encoding="utf-8")
         openfile.write(text2save)
@@ -442,8 +455,7 @@ class PtxPrinterDialog:
 
     def onHyphenateClicked(self, c_hyphenate):
         prjid = self.get("cb_project")
-        prjdir = os.path.join(self.settings_dir, self.prjid)
-        fname = os.path.join(prjdir, "PrintDraft", 'hyphen-{}.tex'.format(prjid))
+        fname = os.path.join(self.working_dir, 'hyphen-{}.tex'.format(prjid))
         if not os.path.exists(fname):
             print('\a')
             self.builder.get_object("c_hyphenate").set_active(False)
@@ -492,15 +504,18 @@ class PtxPrinterDialog:
 
     def onBookSelectorChange(self, c_multiplebooks):
         status = self.get("c_multiplebooks")
-        for c in ("c_combine", "t_booklist"):
-            self.builder.get_object(c).set_sensitive(status)
-        toc = self.builder.get_object("c_autoToC") # Ensure that we're not trying to build a ToC for a single book!
-        toc.set_sensitive(status)
-        if not status:
-            toc.set_active(False)
-        for c in ("l_singlebook", "cb_book", "l_chapfrom", "cb_chapfrom", "l_chapto", "cb_chapto"):
-            self.builder.get_object(c).set_sensitive(not status)
-        self.updateDialogTitle()
+        if status and self.get("t_booklist") == "":
+            self.onChooseBooksClicked(None)
+        else:
+            for c in ("c_combine", "t_booklist"):
+                self.builder.get_object(c).set_sensitive(status)
+            toc = self.builder.get_object("c_autoToC") # Ensure that we're not trying to build a ToC for a single book!
+            toc.set_sensitive(status)
+            if not status:
+                toc.set_active(False)
+            for c in ("l_singlebook", "cb_book", "l_chapfrom", "cb_chapfrom", "l_chapto", "cb_chapto"):
+                self.builder.get_object(c).set_sensitive(not status)
+            self.updateDialogTitle()
             
     def onFigsChanged(self, c_includefigsfromtext):
         status = self.get("c_includefigsfromtext")
@@ -591,6 +606,7 @@ class PtxPrinterDialog:
         self.builder.get_object("c_prettyIntroOutline").set_active(False)
 
     def onUsePTmacrosClicked(self, c_usePTmacros):
+        self.onProjectChange(None)
         status = self.get("c_usePTmacros")
         for c in ("c_variableLineSpacing", "s_linespacingmin", "s_linespacingmax", "l_min", "l_max",
                   "s_colgutteroffset", "l_colgutteroffset", "c_marginalverses", "s_columnShift"):
@@ -613,7 +629,7 @@ class PtxPrinterDialog:
 
         # Hide a whole bunch of stuff that they don't need to see
         for c in ("tb_Markers", "tb_Diglot", "tb_Advanced","tb_Logging", "tb_ViewerEditor", "tb_DiglotTesting",
-                  "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "box_AdvFootnoteConfig", 
+                  "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "box_AdvFootnoteConfig", "l_colgutteroffset",
                   "c_usePicList", "c_skipmissingimages", "c_convertTIFtoPNG", "c_useCustomFolder", "btn_selectFigureFolder", 
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",  "fr_FontConfig", 
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "row_ToC", "c_hyphenate",
@@ -643,7 +659,7 @@ class PtxPrinterDialog:
         if response == Gtk.ResponseType.OK:
             self.booklist = [b.get_label() for b in self.alltoggles if b.get_active()]
             bl.set_text(" ".join(b for b in self.booklist))
-            self.builder.get_object("c_multiplebooks").set_active(not self.booklist == [])
+        self.builder.get_object("c_multiplebooks").set_active(not self.booklist == [])
         self.updateDialogTitle()
         dia.hide()
 
@@ -727,6 +743,11 @@ class PtxPrinterDialog:
             cbbook.set_model(lsbooks)
         if not self.prjid:
             return
+        if self.get("c_useprintdraftfolder"):
+            self.working_dir = os.path.join(self.settings_dir, self.prjid, 'PrintDraft')
+        else:
+            self.working_dir = '.'
+
         self.ptsettings = ParatextSettings(self.settings_dir, self.prjid)
         bp = self.ptsettings['BooksPresent']
         for b in allbooks:
@@ -739,7 +760,7 @@ class PtxPrinterDialog:
         self.set('f_body', font_name)
         configfile = os.path.join(self.settings_dir, self.prjid, "ptxprint.cfg")
         if os.path.exists(configfile):
-            print("Reading configfile {}".format(configfile))
+            # print("Reading configfile {}".format(configfile))
             self.info = Info(self, self.settings_dir, self.prjid)
             config = configparser.ConfigParser()
             config.read(configfile, encoding="utf-8")
@@ -755,6 +776,12 @@ class PtxPrinterDialog:
             toc.set_active(False)
         for c in ("l_singlebook", "cb_book", "l_chapfrom", "cb_chapfrom", "l_chapto", "cb_chapto"):
             self.builder.get_object(c).set_sensitive(not status)
+        for i in range(0,6):
+            self.builder.get_object("l_{}".format(i)).set_tooltip_text(None)
+        self.builder.get_object("l_settings_dir").set_label(self.settings_dir)
+        self.builder.get_object("l_prjdir").set_label(os.path.join(self.settings_dir, self.prjid))
+        self.builder.get_object("l_macropath").set_label("Unknown at present!")
+        self.builder.get_object("l_working_dir").set_label(self.working_dir)
         self.setEntryBoxFont()
         self.onDiglotDimensionsChanged(None)
         self.updateDialogTitle()
@@ -768,40 +795,43 @@ class PtxPrinterDialog:
             try:
                 bks = bks[0]
             except IndexError:
-                bks = " - "
+                bks = "No book selected!"
         titleStr = "PTXprint App" + prjid + " (" + bks + ")"
         self.builder.get_object("ptxprint").set_title(titleStr)
 
-    def editFile(self, file2edit):
+    def editFile(self, file2edit, wkdir=False):
         pgnum = 5
         self.builder.get_object("nbk_Main").set_current_page(7)
         self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
         self.prjid = self.get("cb_project")
         self.prjdir = os.path.join(self.settings_dir, self.prjid)
-        fpath = os.path.join(self.settings_dir, self.prjid, file2edit)
+        if wkdir:
+            fpath = os.path.join(self.working_dir, file2edit)
+        else:
+            fpath = os.path.join(self.settings_dir, self.prjid, file2edit)
         if os.path.exists(fpath):
             self.builder.get_object("gr_editableButtons").set_visible(True)
-            # self.builder.get_object("btn_saveEdits").set_sensitive(True)
-            self.builder.get_object("l_filepaths").set_text("File: .."+str(fpath.split(self.prjdir)[-1]))
+            self.builder.get_object("l_{}".format(pgnum)).set_text(file2edit)
+            self.builder.get_object("l_{}".format(pgnum)).set_tooltip_text(fpath)
             with open(fpath, "r", encoding="utf-8") as inf:
                 txt = inf.read()
-                if len(txt) > 32000:
-                    txt = txt[:32000]+"\n\n etc...\n\n"
-            self.fileViews[pgnum][0].set_text(txt)  # this is the buffer
+                # if len(txt) > 32000:
+                    # txt = txt[:32000]+"\n\n etc...\n\n"
+            self.fileViews[pgnum][0].set_text(txt)
         else:
             self.fileViews[pgnum][0].set_text("\nThis file doesn't exist yet!")
 
     def onEditChangesFile(self, btn):
-        self.editFile("PrintDraftChanges.txt")
+        self.editFile("PrintDraftChanges.txt", False)
 
     def onEditModsTeX(self, btn):
-        self.editFile("PrintDraft/PrintDraft-mods.tex")
+        self.editFile("PrintDraft-mods.tex", True)
 
     def onEditCustomSty(self, btn):
-        self.editFile("custom.sty")
+        self.editFile("custom.sty", False)
 
     def onEditModsSty(self, btn):
-        self.editFile("PrintDraft/PrintDraft-mods.sty")
+        self.editFile("PrintDraft-mods.sty", True)
 
     def onMainBodyTextChanged(self, c_mainBodyText):
         self.builder.get_object("gr_mainBodyText").set_sensitive(self.get("c_mainBodyText"))
@@ -885,10 +915,9 @@ class PtxPrinterDialog:
         for bk in self.getBooks():
             prjid = self.get("cb_project")
             prjdir = os.path.join(self.settings_dir, self.prjid)
-            tmpdir = os.path.join(prjdir, 'PrintDraft') if self.get("c_useprintdraftfolder") else r"C:\temp"  # args.directory ???
-            fname = self.getBookFilename(bk, prjdir)
+            fname = self.getBookFilename(bk, prjid)
             infname = os.path.join(prjdir, fname)
-            outfname = os.path.join(prjdir, "PrintDraft/PicLists", fname)
+            outfname = os.path.join(self.working_dir, "PicLists", fname)
             doti = outfname.rfind(".")
             if doti > 0:
                 outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".piclist"
@@ -930,7 +959,7 @@ class PtxPrinterDialog:
                                 pageposn = (_picposn.get(f[2], f[2]))[0]               # use the t or tl (first in list)
                             piclist.append(bk+" "+re.sub(r":",".", f[3])+" |"+picfname+"|"+f[2]+"|"+pageposn+"||"+f[0]+"|"+f[3]+"\n")
                 if len(m):
-                    plpath = os.path.join(prjdir, "PrintDraft/PicLists")
+                    plpath = os.path.join(self.working_dir, "PicLists")
                     if not os.path.exists(plpath):
                         os.mkdir(plpath)
                     if not os.path.exists(outfname) or os.path.getsize(outfname) == 0:
@@ -943,14 +972,14 @@ class PtxPrinterDialog:
         if len(existingFilelist):
             if len(existingFilelist) > 1:
                 m1 = "Several PicList files already exist:"
-                m2 = "\n".join(existingFilelist)+"\n\nThese have NOT been overwritten. \
-                                                    \nIf you really want these PicList files to be regenerated \
-                                                    \nthen delete the contents and save the empty files. Then try again."
+                m2 = "\n".join(existingFilelist)+"\n\nThese have NOT been overwritten. If you really" + \
+                                                   "\nneed these PicList files to be regenerated then" + \
+                                                   "\ndelete the contents, save the empty files and try again."
             else: # if only 1 file found
                 m1 = "This PicList file already exists:"
-                m2 = "\n".join(existingFilelist)+"\n\nIt has NOT been overwritten. \
-                                                    \nIf you really want this PicList file to be regenerated \
-                                                    \nthen delete the contents and save the empty file. Then try again."
+                m2 = "\n".join(existingFilelist)+"\n\nIt has NOT been overwritten. If you really" + \
+                                                   "\nneed this PicList file to be regenerated then" + \
+                                                   "\ndelete the contents, save the empty file and try again."
             dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, m1)
             dialog.format_secondary_text(m2)
             dialog.format_secondary_text(m2)
@@ -962,10 +991,9 @@ class PtxPrinterDialog:
         for bk in self.getBooks():
             prjid = self.get("cb_project")
             prjdir = os.path.join(self.settings_dir, self.prjid)
-            tmpdir = os.path.join(prjdir, 'PrintDraft') if self.get("c_useprintdraftfolder") else r"C:\temp"
-            fname = self.getBookFilename(bk, prjdir)
+            fname = self.getBookFilename(bk, prjid)
             infname = os.path.join(prjdir, fname)
-            outfname = os.path.join(prjdir, "PrintDraft/AdjLists", fname)
+            outfname = os.path.join(self.working_dir, "AdjLists", fname)
             doti = outfname.rfind(".")
             if doti > 0:
                 outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".adj"
@@ -981,7 +1009,7 @@ class PtxPrinterDialog:
                             ch = ch + 1
                         adjlist.append(bk+" "+str(ch)+"."+v+" +0\n")
                         prv = v
-                    adjpath = os.path.join(prjdir, "PrintDraft/AdjLists")
+                    adjpath = os.path.join(self.working_dir, "AdjLists")
                     if not os.path.exists(adjpath):
                         os.mkdir(adjpath)
                     if not os.path.exists(outfname) or os.path.getsize(outfname) == 0:
@@ -992,14 +1020,14 @@ class PtxPrinterDialog:
         if len(existingFilelist):
             if len(existingFilelist) > 1:
                 m1 = "Several Paragraph Adjust files already exist:"
-                m2 = "\n".join(existingFilelist)+"\n\nThese have NOT been overwritten. \
-                                                    \nIf you want these Paragraph Adjust Lists to be regenerated \
-                                                    \nthen delete all the contents and save the empty files. Then try again."
+                m2 = "\n".join(existingFilelist)+"\n\nThese have NOT been overwritten. If you really" + \
+                                                   "\nneed these Paragraph Adjust Lists to be regenerated" + \
+                                                   "\nthen delete the contents, save the empty files and try again."
             else: # if only 1 file found
                 m1 = "This Paragraph Adjust List already exists:"
-                m2 = "\n".join(existingFilelist)+"\n\nIt has NOT been overwritten. \
-                                                    \nIf you want this Paragraph Adjust List to be regenerated \
-                                                    \nthen delete all the contents and save the empty file. Then try again."
+                m2 = "\n".join(existingFilelist)+"\n\nIt has NOT been overwritten. If you really" + \
+                                                   "\nneed this Paragraph Adjust List to be regenerated" + \
+                                                   "\nthen delete the contents, save the empty file and try again."
             dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, m1)
             dialog.format_secondary_text(m2)
             dialog.format_secondary_text(m2)
@@ -1072,7 +1100,12 @@ class PtxPrinterDialog:
                     # print(e)
 
     def onDiglotClicked(self, c_diglot):
-        self.builder.get_object("gr_diglot").set_sensitive(self.get("c_diglot"))
+        status = self.get("c_diglot")
+        self.builder.get_object("gr_diglot").set_sensitive(status)
+        self.builder.get_object("l_diglotString").set_visible(status)
+        if status:
+            self.builder.get_object("c_includeillustrations").set_active(False)
+        
         self.onDiglotDimensionsChanged(None)
 
     def onDiglotDimensionsChanged(self, btn):
@@ -1080,7 +1113,8 @@ class PtxPrinterDialog:
             DiglotString = ""
         else:
             secprjid = self.get("cb_diglotSecProject")
-            sectmpdir = os.path.join(self.settings_dir, secprjid, 'PrintDraft') if self.get("c_useprintdraftfolder") else "." # args.directory
+            # I'm not sure if there's a better way to handle this - looking for the already-created Secondary diglot file
+            sectmpdir = os.path.join(self.settings_dir, secprjid, 'PrintDraft') if self.get("c_useprintdraftfolder") else self.working_dir
             jobs = self.getBooks()
             if len(jobs) > 1:
                 secfname = os.path.join(sectmpdir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], secprjid))
@@ -1088,7 +1122,6 @@ class PtxPrinterDialog:
                 secfname = os.path.join(sectmpdir, "ptxprint-{}{}.pdf".format(jobs[0], secprjid))
             # TO DO: We need to be able to GET the page layout values from the PRIMARY project
             # (even when creating the Secondary PDF so that the dimensions match).
-            # TO DO: Suppress illustrations when Diglot is on (until we can figure out HOW to do that).
             PageWidth = int(re.split("[^0-9]",re.sub(r"^(.*?)\s*,.*$", r"\1", self.get("cb_pagesize")))[0]) or 148
             
             Margins = self.get("s_diglotMargins")

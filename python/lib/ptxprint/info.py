@@ -12,6 +12,7 @@ class Info:
         "project/hideadvsettings":  ("c_hideAdvancedSettings", lambda w,v: "true" if v else "false"),
         "project/keeptempfiles":    ("c_keepTemporaryFiles", lambda w,v: "true" if v else "false"),
         "project/pdfx1acompliant":  ("c_PDFx1aOutput", lambda w,v: "true" if v else "false"),
+        "project/blockexperimental": (None, lambda w,v: "" if w.get("c_experimental") else "%"),
         "project/useptmacros":      ("c_usePTmacros", lambda w,v: "true" if v else "false"),
         "project/ifnotptmacros":    ("c_usePTmacros", lambda w,v: "%" if v else ""),
         "project/multiplebooks":    ("c_multiplebooks", lambda w,v: "true" if v else "false"),
@@ -70,10 +71,10 @@ class Info:
         "paragraph/ifhyphenate":    ("c_hyphenate", lambda w,v: "" if v else "%"),
         "paragraph/ifnothyphenate": ("c_hyphenate", lambda w,v: "%" if v else ""),
 
-        "document/title":           (None, lambda w,v: w.ptsettings['FullName'] or ""),
+        "document/title":           (None, lambda w,v: w.ptsettings.get('FullName', "")),
         "document/subject":         ("t_booklist", lambda w,v: v if w.get("c_multiplebooks") else w.get("cb_book")),
-        "document/author":          (None, lambda w,v: regex.sub("</?p>","",w.ptsettings['Copyright'] or "")),
-        # "document/creator":         (None, lambda w,v: os.getlogin()),
+        "document/author":          (None, lambda w,v: regex.sub("</?p>","",w.ptsettings.get('Copyright', ""))),
+        # "document/creator":         (None, lambda w,v: os.getlogin()),  # This is not set to 'PTXprint'
 
         "document/toc":             ("c_autoToC", lambda w,v: "" if v else "%"),
         "document/toctitle":        ("t_tocTitle", lambda w,v: v or ""),
@@ -223,7 +224,6 @@ class Info:
                      "/iccfpath": os.path.join(libpath, "ps_cmyk.icc").replace("\\","/"),
                      "document/date": t.strftime("%Y%m%d%H%M%S")+tzstr }
         self.prjid = prjid
-        print([self.prjid])
         self.update()
 
     def update(self):
@@ -355,8 +355,8 @@ class Info:
         if not os.path.exists(customsty):
             open(customsty, "w").close()
         fbkfm = self.printer.ptsettings['FileNameBookNameForm']
-        fprfx = self.printer.ptsettings['FileNamePrePart']
-        fpost = self.printer.ptsettings['FileNamePostPart']
+        fprfx = self.printer.ptsettings['FileNamePrePart'] or ""
+        fpost = self.printer.ptsettings['FileNamePostPart'] or ""
         if fprfx == None:
             fprfx = ""
         bknamefmt = fprfx + fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + fpost
@@ -465,9 +465,13 @@ class Info:
             self.localChanges.append((None, regex.compile(r"\\xt ", flags=regex.M), r"\\ft "))
 
         if printer.get("c_preventorphans"): 
-            # Keep final two words of \q lines together [but doesn't work if there is an \f or \x at the end of the line] 
-            self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)[^\\\s]+)) (\S+\s*\n)", \
-                                            flags=regex.M), r"\1\u00A0\5"))   
+            if printer.experimental: # Prevent orphans at end of *any* paragraph [anything that isn't followed by a \v]
+                self.localChanges.append((None, regex.compile(r" ([^\\ ]+?) ([^\\ ]+?\r\n)(?!\\v)", \
+                                                flags=regex.M), r" \1\u00A0\2"))
+            else:
+                # Keep final two words of \q lines together [but doesn't work if there is an \f or \x at the end of the line] 
+                self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)[^\\\s]+)) (\S+\s*\n)", \
+                                                flags=regex.M), r"\1\u00A0\5"))
 
         if printer.get("c_preventwidows"):
             # Push the verse number onto the next line (using NBSP) if there is
@@ -485,7 +489,7 @@ class Info:
         # Remove the + of embedded markup (xetex handles it)
         self.localChanges.append((None, regex.compile(r"\\\+", flags=regex.M), r"\\"))  
             
-        for c in range(1,4):
+        for c in range(1,4): # Remove any \toc lines that we don't want appearing in the Table of Contents
             if not printer.get("c_usetoc{}".format(c)):
                 self.localChanges.append((None, regex.compile(r"(\\toc{} .+)".format(c), flags=regex.M), ""))
         
@@ -510,12 +514,11 @@ class Info:
         return self.localChanges
 
     def ListMissingPics(self, printer, bk):
-        print("  info: ListMissingPics",self, printer)
         msngpiclist = []
         prjid = self.dict['project/id']
-        # print([prjid, self.printer.settings_dir, printer.get("cb_project")])
-        prjdir = os.path.join(self.printer.settings_dir, prjid)
-        # prjdir = os.path.join(self.printer.settings_dir, prjid)
+        # print([prjid, printer.settings_dir, printer.get("cb_project")])
+        prjdir = os.path.join(printer.settings_dir, prjid)
+        # prjdir = os.path.join(printer.settings_dir, prjid)
         if printer.get("c_useFiguresFolder"):
             picdir = os.path.join(prjdir, "Figures")
         elif printer.get("c_useLocalFiguresFolder"):
@@ -611,22 +614,17 @@ class Info:
         if printer.get("c_useCustomSty"):
             if not os.path.exists(os.path.join(prjdir, "custom.sty")):
                 printer.set("c_useCustomSty", False)
-                # printer.get_object("c_useCustomSty").set_sensitive(False)
         for (f, c) in (("PrintDraft-mods.sty", "c_useModsSty"),
                        ("PrintDraft-mods.tex", "c_useModsTex")):
             if printer.get(c):
-                if not os.path.exists(os.path.join(prjdir, "PrintDraft", f)):
+                if not os.path.exists(os.path.join(printer.working_dir, f)):
                     printer.set(c, False)
-                    # printer.get_object(c).set_sensitive(False)
         self.update()
 
     def GenerateNestedStyles(self):
         prjid = self.dict['project/id']
         prjdir = os.path.join(self.printer.settings_dir, prjid)
-        tmpdir = os.path.join(prjdir, 'PrintDraft') if self.printer.get("c_useprintdraftfolder") else "."
-        if not os.path.exists(tmpdir):
-            os.makedirs(tmpdir)
-        nstyfname = os.path.join(tmpdir, "NestedStyles.sty")
+        nstyfname = os.path.join(self.printer.working_dir, "NestedStyles.sty")
         nstylist = []
         if self.printer.get("c_omitallverses"):
             nstylist.append("##### Remove all verse numbers\n\\Marker v\n\\TextProperties nonpublishable\n\n")
@@ -649,11 +647,8 @@ class Info:
     def createHyphenationFile(self):
         listlimit = 32749
         prjid = self.dict['project/id']
-        prjdir = os.path.join(self.printer.settings_dir, prjid)
-        infname = os.path.join(prjdir, 'hyphenatedWords.txt')
-        outfname = os.path.join(prjdir, "PrintDraft", 'hyphen-{}.tex'.format(prjid))
-        print(infname)
-        print(outfname)
+        infname = os.path.join(self.printer.settings_dir, prjid, 'hyphenatedWords.txt')
+        outfname = os.path.join(self.printer.working_dir, 'hyphen-{}.tex'.format(prjid))
         hyphenatedWords = []
         if not os.path.exists(infname):
             m1 = "Sorry! - Failed to Generate Hyphenation List"
