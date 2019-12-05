@@ -1,6 +1,7 @@
-import configparser, re, os
+import configparser, re, os, gi
 from datetime import datetime
 import regex
+gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from ptxprint.font import TTFont
 from ptxprint.ptsettings import chaps, books, bookcodes, oneChbooks
@@ -73,7 +74,8 @@ class Info:
 
         "document/title":           (None, lambda w,v: w.ptsettings.get('FullName', "")),
         "document/subject":         ("t_booklist", lambda w,v: v if w.get("c_multiplebooks") else w.get("cb_book")),
-        "document/author":          (None, lambda w,v: regex.sub("</?p>","",w.ptsettings.get('Copyright', ""))),
+        # "document/author":          (None, lambda w,v: regex.sub("</?p>","",w.ptsettings.get('Copyright', ""))),
+        "document/author":          (None, lambda w,v: w.ptsettings.get('Copyright', "")),
         # "document/creator":         (None, lambda w,v: os.getlogin()),  # This is not set to 'PTXprint'
 
         "document/toc":             ("c_autoToC", lambda w,v: "" if v else "%"),

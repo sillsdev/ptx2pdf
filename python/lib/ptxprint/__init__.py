@@ -2,9 +2,8 @@
 
 import sys, os, re, regex, gi, random, subprocess
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Pango
 gi.require_version('GtkSource', '4') 
-from gi.repository import GtkSource
+from gi.repository import Gtk, GtkSource, Pango
 import xml.etree.ElementTree as et
 from ptxprint.font import TTFont
 from ptxprint.runner import StreamTextBuffer
@@ -499,6 +498,7 @@ class PtxPrinterDialog:
 
     def onBookSelectorChange(self, c_multiplebooks):
         status = self.get("c_multiplebooks")
+        self.set("c_prettyIntroOutline", False)
         if status and self.get("t_booklist") == "" and self.prjid is not None:
             pass
             # self.onChooseBooksClicked(None)
@@ -656,6 +656,7 @@ class PtxPrinterDialog:
             self.booklist = [b.get_label() for b in self.alltoggles if b.get_active()]
             bl.set_text(" ".join(b for b in self.booklist))
         self.builder.get_object("c_multiplebooks").set_active(not self.booklist == [])
+        self.set("c_prettyIntroOutline", False)
         self.updateDialogTitle()
         dia.hide()
 
@@ -700,6 +701,7 @@ class PtxPrinterDialog:
 
     def onBookChange(self, cb_book):
         self.bk = self.get("cb_book")
+        self.set("c_prettyIntroOutline", False)
         if self.bk != "":
             self.chs = int(chaps.get(str(self.bk)))
             self.chapfrom = self.builder.get_object("ls_chapfrom")
@@ -778,6 +780,7 @@ class PtxPrinterDialog:
         self.builder.get_object("l_prjdir").set_label(os.path.join(self.settings_dir, self.prjid))
         self.builder.get_object("l_macropath").set_label("Unknown at present!")
         self.builder.get_object("l_working_dir").set_label(self.working_dir)
+        self.set("c_prettyIntroOutline", False)
         self.setEntryBoxFont()
         self.onDiglotDimensionsChanged(None)
         self.updateDialogTitle()
@@ -1180,3 +1183,38 @@ class PtxPrinterDialog:
 
     def onGenerateHyphenationListClicked(self, btn_generateHyphenationList):
         self.info.createHyphenationFile()
+
+    def onPrettyIntroOutlineClicked(self, btn):
+        if self.get("c_prettyIntroOutline"): # if turned on...
+            badbks = self.checkSFMforFancyIntroMarkers()
+            if len(badbks):
+                # print("Sorry - but you can't enable this option as the selected files have not got the required markup")
+                self.set("c_prettyIntroOutline", False)
+                m1 = "Invalid Option for Selected Books"
+                m2 = "The book(s) listed below do not have the" + \
+                   "\nrequired markup for this feature to be enabled." + \
+                   "\n(Refer to Tooltip for further details.)" + \
+                   "\n\n{}".format(", ".join(badbks))
+                dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, m1)
+                dialog.format_secondary_text(m2)
+                dialog.format_secondary_text(m2)
+                dialog.run()
+                dialog.destroy()
+
+    def checkSFMforFancyIntroMarkers(self):
+        unfitBooks = []
+        prjid = self.get("cb_project")
+        prjdir = os.path.join(self.settings_dir, prjid)
+        bks = self.getBooks()
+        for bk in bks:
+            fname = self.getBookFilename(bk, prjid)
+            fpath = os.path.join(self.settings_dir, prjid, fname)
+            if os.path.exists(fpath):
+                with open(fpath, "r", encoding="utf-8") as inf:
+                    sfmtxt = inf.read()
+                if regex.search(r"\\iot .+\r?\n(\\io\d .+\\ior .+\\ior\* ?\r?\n)+\\c 1", sfmtxt, flags=regex.MULTILINE) \
+                   and len(regex.findall(r"\\iot",sfmtxt)) == 1: # Must have exactly 1 \iot per book 
+                    pass
+                else:
+                    unfitBooks.append(bk)
+        return unfitBooks

@@ -2264,6 +2264,7 @@ etc.
 \c 1</property>
                                         <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
+                                        <signal name="clicked" handler="onPrettyIntroOutlineClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
