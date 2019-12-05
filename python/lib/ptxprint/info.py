@@ -136,6 +136,7 @@ class Info:
         "header/footerposition":    ("s_footerposition", lambda w,v: round(v, 2) or "1.00"),
         "header/ifomitrhchapnum":   ("c_omitrhchapnum", lambda w,v :"true" if v else "false"),
         "header/ifverses":          ("c_hdrverses", lambda w,v :"true" if v else "false"),
+        "header/chvseparator":      ("c_sepColon", lambda w,v : ":" if v else "."),
         "header/ifrhrule":          ("c_rhrule", lambda w,v: "" if v else "%"),
         "header/ruleposition":      ("s_rhruleposition", lambda w,v: v or "10"),
         "header/hdrleftinner":      ("cb_hdrleft", lambda w,v: v or "-empty-"),
@@ -441,7 +442,7 @@ class Info:
                     for f in msngfigs: # Remove references to missing illustration
                         self.localChanges.append((None, regex.compile(r"\\fig .*\|{}\|.+?\\fig\*".format(f), flags=regex.M), ""))
             if printer.get("c_fighiderefs"): # del ch:vs from caption
-                self.localChanges.append((None, regex.compile(r"(\\fig .*?)(\d+\:\d+([-,]\d+)?)(.*?\\fig\*)", flags=regex.M), r"\1\4"))
+                self.localChanges.append((None, regex.compile(r"(\\fig .*?)(\d+[:.]\d+([-,]\d+)?)(.*?\\fig\*)", flags=regex.M), r"\1\4"))
         else: # Drop ALL Figures
             self.localChanges.append((None, regex.compile(r"\\fig .*?\\fig\*", flags=regex.M), ""))
         

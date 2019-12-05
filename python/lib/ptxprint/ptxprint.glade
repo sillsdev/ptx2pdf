@@ -3283,48 +3283,6 @@ layout</property>
                                     <property name="can_focus">False</property>
                                     <property name="column_spacing">6</property>
                                     <child>
-                                      <object class="GtkSpinButton" id="s_rhruleposition">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="halign">end</property>
-                                        <property name="margin_top">6</property>
-                                        <property name="margin_bottom">6</property>
-                                        <property name="width_chars">4</property>
-                                        <property name="text" translatable="yes">15</property>
-                                        <property name="caps_lock_warning">False</property>
-                                        <property name="progress_pulse_step">0</property>
-                                        <property name="placeholder_text" translatable="yes">0.0</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_ruleposition</property>
-                                        <property name="climb_rate">1</property>
-                                        <property name="numeric">True</property>
-                                        <property name="update_policy">if-valid</property>
-                                        <property name="value">12</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">2</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_rhrule">
-                                        <property name="label" translatable="yes">Horizontal Rule Under 
-Header &amp; Offset (pts):</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="halign">end</property>
-                                        <property name="margin_left">5</property>
-                                        <property name="active">True</property>
-                                        <property name="draw_indicator">True</property>
-                                        <signal name="clicked" handler="onRHruleChanged" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
                                       <object class="GtkCheckButton" id="c_hdrverses">
                                         <property name="label" translatable="yes">Include Verse numbers in header references</property>
                                         <property name="visible">True</property>
@@ -3334,6 +3292,7 @@ Header &amp; Offset (pts):</property>
                                         <property name="margin_top">4</property>
                                         <property name="margin_bottom">4</property>
                                         <property name="draw_indicator">True</property>
+                                        <signal name="clicked" handler="onHdrVersesClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
@@ -3354,23 +3313,31 @@ Header &amp; Offset (pts):</property>
                                       <packing>
                                         <property name="left_attach">0</property>
                                         <property name="top_attach">0</property>
+                                        <property name="width">2</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel" id="l_colgutteroffset">
+                                      <object class="GtkSpinButton" id="s_rhruleposition">
                                         <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">This setting can raise (if -ve) or lower (if +ve) the starting point of the vertical rule between columns. (Value is pts).
-The rule can be enabled on the Basic tab under the section
-Double Column Layout.</property>
+                                        <property name="can_focus">True</property>
                                         <property name="halign">end</property>
-                                        <property name="label" translatable="yes">Adjust Start Position of
- Vertical Rule by (pts):</property>
-                                        <property name="justify">right</property>
+                                        <property name="margin_top">6</property>
+                                        <property name="margin_bottom">6</property>
+                                        <property name="width_chars">4</property>
+                                        <property name="text" translatable="yes">15</property>
+                                        <property name="caps_lock_warning">False</property>
+                                        <property name="progress_pulse_step">0</property>
+                                        <property name="placeholder_text" translatable="yes">0.0</property>
+                                        <property name="input_purpose">number</property>
+                                        <property name="adjustment">a_ruleposition</property>
+                                        <property name="climb_rate">1</property>
+                                        <property name="numeric">True</property>
+                                        <property name="update_policy">if-valid</property>
+                                        <property name="value">12</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">1</property>
+                                        <property name="left_attach">3</property>
+                                        <property name="top_attach">0</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -3393,7 +3360,91 @@ Double Column Layout.</property>
                                         <property name="value">-2</property>
                                       </object>
                                       <packing>
+                                        <property name="left_attach">3</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_colgutteroffset">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">This setting can raise (if -ve) or lower (if +ve) the starting point of the vertical rule between columns. (Value is pts).
+The rule can be enabled on the Basic tab under the section
+Double Column Layout.</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Adjust Start Position of
+ Vertical Rule by (pts):</property>
+                                        <property name="justify">right</property>
+                                      </object>
+                                      <packing>
                                         <property name="left_attach">2</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_rhrule">
+                                        <property name="label" translatable="yes">Horizontal Rule Under 
+Header &amp; Offset (pts):</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="margin_left">5</property>
+                                        <property name="active">True</property>
+                                        <property name="draw_indicator">True</property>
+                                        <signal name="clicked" handler="onRHruleChanged" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">2</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="orientation">vertical</property>
+                                        <property name="homogeneous">True</property>
+                                        <child>
+                                          <object class="GtkRadioButton" id="c_sepColon">
+                                            <property name="label" translatable="yes">ch:vs</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">Use a colon (:) to separate
+chapter &amp; verse numbers
+in the header reference.</property>
+                                            <property name="active">True</property>
+                                            <property name="draw_indicator">True</property>
+                                            <property name="group">c_sepPeriod</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkRadioButton" id="c_sepPeriod">
+                                            <property name="label" translatable="yes">ch.vs</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">Use a period (.) to separate
+chapter &amp; verse numbers
+in the header reference.</property>
+                                            <property name="draw_indicator">True</property>
+                                            <property name="group">c_sepColon</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
                                         <property name="top_attach">1</property>
                                       </packing>
                                     </child>
@@ -4882,13 +4933,14 @@ missing in primary font:</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkButton">
+                                      <object class="GtkButton" id="btn_findMissingChars">
                                         <property name="label" translatable="yes">Auto-Identify Missing Characters</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
                                         <property name="halign">end</property>
                                         <property name="margin_right">6</property>
+                                        <signal name="clicked" handler="onFindMissingCharsClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
