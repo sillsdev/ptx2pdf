@@ -1,9 +1,10 @@
 #!/usr/bin/python3
 
-import sys, os, re, regex, gi, random, subprocess, collections, pprint
+import sys, os, re, regex, gi, random, subprocess #, collections, pprint
 gi.require_version('Gtk', '3.0')
-gi.require_version('GtkSource', '4') 
-from gi.repository import Gtk, GtkSource, Pango
+from gi.repository import Gtk, Pango
+# gi.require_version('GtkSource', '4') 
+from gi.repository import GtkSource
 import xml.etree.ElementTree as et
 from ptxprint.font import TTFont
 from ptxprint.runner import StreamTextBuffer
@@ -1226,35 +1227,33 @@ class PtxPrinterDialog:
 
     # Very much experimental (and currently broken)
     def onFindMissingCharsClicked(self, btn_findMissingChars):
-        count = collections.Counter()
-        # _regexbits = [(r'\\[a-z]+\d? ', r''), # remove all \sfm codes
-                   # (r'(\\id .+?)\r?\n', r''),
-                   # (r'(\\rem .+?)\r?\n', r'')]
-        # regexes = [(None, regex.compile(r[0], flags=regex.S), r[1]) for r in _regexbits]
-        prjid = self.get("cb_project")
-        prjdir = os.path.join(self.settings_dir, prjid)
-        bks = self.getBooks()
-        for bk in bks:
-            fname = self.getBookFilename(bk, prjid)
-            fpath = os.path.join(self.settings_dir, prjid, fname)
-            if os.path.exists(fpath):
-                with open(fpath, "r", encoding="utf-8") as inf:
+        pass
+        # count = collections.Counter()
+        # prjid = self.get("cb_project")
+        # prjdir = os.path.join(self.settings_dir, prjid)
+        # bks = self.getBooks()
+        # for bk in bks:
+            # fname = self.getBookFilename(bk, prjid)
+            # fpath = os.path.join(self.settings_dir, prjid, fname)
+            # if os.path.exists(fpath):
+                # with open(fpath, "r", encoding="utf-8") as inf:
                     # now need to strip out all markers themselves, and Eng content fields like: 
                     # \id \rem etc. description and copyright from figs |co00604b.tif|span|||
-                    sfmtxt = inf.read()
-                    sfmtxt = regex.sub(r'\\id .+?\r?\n', '', sfmtxt)
-                    sfmtxt = regex.sub(r'\\rem .+?\r?\n', '', sfmtxt)
-                    sfmtxt = regex.sub(r'\\fig .*?\\fig\*', '', sfmtxt) # throw illustrations out too
-                    sfmtxt = regex.sub(r'\\[a-z]+\d?\*? ', '', sfmtxt) # remove all \sfm codes
-                    sfmtxt = regex.sub(r'[0-9]', '', sfmtxt) # remove all digits
-                    print("     ", bk, len(sfmtxt))
-                    bkcntr = collections.Counter(sfmtxt)
-                    count += bkcntr
-        slist = sorted(count.items(), key=lambda pair: pair[1], reverse=True)
+                    # This would be more efficient as a compiled regexpression
+                    # sfmtxt = inf.read()
+                    # sfmtxt = regex.sub(r'\\id .+?\r?\n', '', sfmtxt)
+                    # sfmtxt = regex.sub(r'\\rem .+?\r?\n', '', sfmtxt)
+                    # sfmtxt = regex.sub(r'\\fig .*?\\fig\*', '', sfmtxt) # throw illustrations out too
+                    # sfmtxt = regex.sub(r'\\[a-z]+\d?\*? ', '', sfmtxt) # remove all \sfm codes
+                    # sfmtxt = regex.sub(r'[0-9]', '', sfmtxt) # remove all digits
+                    # print("     ", bk, len(sfmtxt))
+                    # bkcntr = collections.Counter(sfmtxt)
+                    # count += bkcntr
+        # slist = sorted(count.items(), key=lambda pair: pair[1], reverse=True)
         # for x, y in slist.items():
             # print(x.encode("utf-8"), y.encode("utf-8"))
         # print(", ".join(slist).encode("utf-8"))
-        for ch, cnt in count.items():
-            print(ch.encode("utf-8"), cnt)
+        # for ch, cnt in count.items():
+            # print(ch.encode("utf-8"), cnt)
         # value = pprint.pformat(count)
         # print(count.encode("utf-8"))

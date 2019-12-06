@@ -7,6 +7,10 @@
 #  'C:/msys64/mingw64/lib/python3.7/site-packages/setuptools-33.1.1-py3.7.egg',
 #  'C:/msys64/mingw64/lib/python3.7/site-packages/pyinstaller-4.0.dev0+g4065d2c2-py3.7.egg'
 
+#					   ('C:\\msys64\\mingw64\\bin\\libgtksourceview-4-0.dll',
+#					    'libgtksourceview-4-0.dll')],
+#							'C:\\msys64\\mingw64\\bin',
+
 block_cipher = None
 
 a = Analysis(['python/scripts/ptxprint'],
@@ -19,7 +23,7 @@ a = Analysis(['python/scripts/ptxprint'],
              binaries = [('C:\\msys64\\mingw64\\lib\\girepository-1.0\\'+x+'.typelib',
                                                     'girepository-1.0/'+x+'.typelib') for x in 
                             ('Gtk-3.0', 'GIRepository-2.0', 'Pango-1.0',
-                             'GObject-2.0', 'fontconfig-2.0', 'win32-1.0', 'GtkSource-3.0', 'GtkSource-4')]
+                             'GObject-2.0', 'fontconfig-2.0', 'win32-1.0', 'GtkSource-3.0')]
 					  + [('C:\\msys64\\mingw64\\lib\\python3.7\\site-packages\\cairo\\_cairo-cpython-37m.dll',
                         'cairo/_cairo-cpython-37m.dll')],
              datas =    [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
