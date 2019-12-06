@@ -2579,10 +2579,13 @@ a line.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_preventorphans">
-                                    <property name="label" translatable="yes">Prevent Orphan Words in Poetry (\q#)</property>
+                                    <property name="label" translatable="yes">Prevent Orphan Words</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">This option prevents single words
+from occurring on the last line of
+any paragraph (including poetry).</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
