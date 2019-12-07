@@ -3511,13 +3511,15 @@ in the header reference.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">start</property>
-                                        <property name="spacing">26</property>
+                                        <property name="spacing">21</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_footnoterule">
-                                            <property name="label" translatable="yes">Footnote rule (separating body text from notes)</property>
+                                            <property name="label" translatable="yes">Show Footnote rule</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">This is the horizontal rule separating
+the body text from the footnote area.</property>
                                             <property name="halign">start</property>
                                             <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
@@ -3560,6 +3562,30 @@ single running paragraph. Use this Xref caller:</property>
                                             <property name="expand">False</property>
                                             <property name="fill">True</property>
                                             <property name="position">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_glossaryFootnotes">
+                                            <property name="label" translatable="yes">Also Show Glossary 
+Entries as Footnotes</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">Glossary entries for any marked-up
+Biblical Terms on the page can
+appear as footnotes.
+
+This feature is extremely useful when
+producing printouts for comprehension
+testing (where  Key Biblical Terms in the
+passage which have Glossary Entries also
+need to be checked for understanding).</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">3</property>
                                           </packing>
                                         </child>
                                       </object>

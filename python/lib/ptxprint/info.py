@@ -158,6 +158,7 @@ class Info:
         "notes/fnresetcallers":     ("c_fnpageresetcallers", lambda w,v: "" if v else "%"),
         "notes/fnomitcaller":       ("c_fnomitcaller", lambda w,v: "%" if v else ""),
         "notes/fnparagraphednotes": ("c_fnparagraphednotes", lambda w,v: "" if v else "%"),
+        "notes/glossaryfootnotes":  ("c_glossaryFootnotes", lambda w,v :"true" if v else "false"),
 
         "notes/includexrefs":       ("c_includeXrefs", lambda w,v: "%" if v else ""),
         "notes/ifxrautocallers":    ("c_xrautocallers", lambda w,v :"true" if v else "false"),
@@ -427,7 +428,11 @@ class Info:
                 self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+(?=\\c {} ?\r?\n)".format(first), flags=regex.S), ""))
             if last < int(chaps.get(bk)):
                 self.localChanges.append((None, regex.compile(r"\\c {} ?\r?\n.+".format(last+1), flags=regex.S), ""))
-            
+
+        # Probably need to make this more efficient for multi-book and lengthy glossaries (cache the GLO & changes reqd etc.)
+        if printer.get("c_glossaryFootnotes"):
+            self.makeGlossaryFootnotes(printer, bk)
+
         # Glossary Word markup: Remove the second half of the \w word|glossary-form\w* and apply chosen glossary markup
         v = printer.get("cb_glossaryMarkupStyle")
         gloStyle = self._glossarymarkup.get(v, v)
@@ -516,9 +521,7 @@ class Info:
     def ListMissingPics(self, printer, bk):
         msngpiclist = []
         prjid = self.dict['project/id']
-        # print([prjid, printer.settings_dir, printer.get("cb_project")])
         prjdir = os.path.join(printer.settings_dir, prjid)
-        # prjdir = os.path.join(printer.settings_dir, prjid)
         if printer.get("c_useFiguresFolder"):
             picdir = os.path.join(prjdir, "Figures")
         elif printer.get("c_useLocalFiguresFolder"):
@@ -696,3 +699,19 @@ class Info:
         dialog.format_secondary_text(m2)
         dialog.run()
         dialog.destroy()
+
+    def makeGlossaryFootnotes(self, printer, bk):
+        # Glossary entries for the key terms appearing like footnotes
+        prjid = self.dict['project/id']
+        prjdir = os.path.join(printer.settings_dir, prjid)
+        fname = printer.getBookFilename("GLO", prjdir)
+        infname = os.path.join(prjdir, fname)
+        with open(infname, "r", encoding="utf-8") as inf:
+            dat = inf.read()
+            ge = re.findall(r"\\p \\k (.+)\\k\* (.+)\r?\n", dat) # Finds all glossary entries in GLO book
+            if ge is not None:
+                for g in ge:
+                    gdefn = regex.sub(r"\\xt (.+)\\xt\*", r"\1", g[1])
+                    # print(r"(\\w (.+\|)?{} ?\\w\*)".format(f[0]), " --> ", r"\1\f * \fr GLO \fq {} \ft {}...\f* ".format(g[0],g[1][:20]))
+                    self.localChanges.append((None, regex.compile(r"(\\w (.+\|)?{} ?\\w\*)".format(g[0]), flags=regex.M), \
+                                                                 r"\1\\f - \\fr + \\fq {}: \\ft {}\\f* ".format(g[0],gdefn)))
