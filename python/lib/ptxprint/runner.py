@@ -95,6 +95,7 @@ elif sys.platform == "win32":
     from ctypes.wintypes import HANDLE, DWORD, BOOL
 
     LPDWORD = POINTER(DWORD)
+    CREATE_NO_WINDOW = 0x08000000
 
     SetNamedPipeHandleState = windll.kernel32.SetNamedPipeHandleState
     SetNamedPipeHandleState.argtypes = [HANDLE, LPDWORD, LPDWORD, LPDWORD]
@@ -118,7 +119,7 @@ elif sys.platform == "win32":
     def fclist(family, pattern):
         a = [os.path.join(pt_bindir, "xetex", "bin", "fc-list.exe").replace("\\", "/"),
                 '"'+family+'"', '":style='+pattern+'"', 'file']
-        return subprocess.check_output(a).decode("utf-8")
+        return subprocess.check_output(a, creationflags=CREATE_NO_WINDOW).decode("utf-8")
 
     def checkoutput(*a, **kw):
         if 'shell' in kw:
@@ -126,7 +127,7 @@ elif sys.platform == "win32":
         path = os.path.join(pt_bindir, "xetex", "bin", a[0][0]+".exe").replace("\\", "/")
         newa = [[path] + list(a[0])[1:]] + [x.replace('"', '') for x in a[1:]]
         # print(newa)
-        res = subprocess.check_output(*newa, **kw).decode("utf-8")
+        res = subprocess.check_output(*newa, creationflags=CREATE_NO_WINDOW, **kw).decode("utf-8")
         return res
 
     def call(*a, **kw):
@@ -138,11 +139,12 @@ elif sys.platform == "win32":
             del kw['logbuffer']
             b.add_heading("Execute: " + " ".join(a[0]))
             p = subprocess.Popen(*newa, stdout = subprocess.PIPE, stderr = subprocess.PIPE,
-                                 universal_newlines = True, encoding="utf-8", errors="backslashreplace", **kw)
+                                 universal_newlines = True, encoding="utf-8",
+                                 errors="backslashreplace", creationflags=CREATE_NO_WINDOW, **kw)
             b.bind_subprocess(p)
             return p
         else:
-            res = subprocess.call(*newa, **kw)
+            res = subprocess.call(*newa, creationflags=CREATE_NO_WINDOW, **kw)
             return res
 
 # print("before ptob")
