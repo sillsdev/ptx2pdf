@@ -706,12 +706,13 @@ class Info:
         prjdir = os.path.join(printer.settings_dir, prjid)
         fname = printer.getBookFilename("GLO", prjdir)
         infname = os.path.join(prjdir, fname)
-        with open(infname, "r", encoding="utf-8") as inf:
-            dat = inf.read()
-            ge = re.findall(r"\\p \\k (.+)\\k\* (.+)\r?\n", dat) # Finds all glossary entries in GLO book
-            if ge is not None:
-                for g in ge:
-                    gdefn = regex.sub(r"\\xt (.+)\\xt\*", r"\1", g[1])
-                    # print(r"(\\w (.+\|)?{} ?\\w\*)".format(f[0]), " --> ", r"\1\f * \fr GLO \fq {} \ft {}...\f* ".format(g[0],g[1][:20]))
-                    self.localChanges.append((None, regex.compile(r"(\\w (.+\|)?{} ?\\w\*)".format(g[0]), flags=regex.M), \
-                                                                 r"\1\\f - \\fr + \\fq {}: \\ft {}\\f* ".format(g[0],gdefn)))
+        if os.path.exists(infname):
+            with open(infname, "r", encoding="utf-8") as inf:
+                dat = inf.read()
+                ge = re.findall(r"\\p \\k (.+)\\k\* (.+)\r?\n", dat) # Finds all glossary entries in GLO book
+                if ge is not None:
+                    for g in ge:
+                        gdefn = regex.sub(r"\\xt (.+)\\xt\*", r"\1", g[1])
+                        # print(r"(\\w (.+\|)?{} ?\\w\*)".format(f[0]), " --> ", r"\1\f + \fq {} \ft {}...\f* ".format(g[0],g[1][:20]))
+                        self.localChanges.append((None, regex.compile(r"(\\w (.+\|)?{} ?\\w\*)".format(g[0]), flags=regex.M), \
+                                                                     r"\1\\f + \\fq {}: \\ft {}\\f* ".format(g[0],gdefn)))
