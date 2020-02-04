@@ -100,6 +100,7 @@ class PtxPrinterDialog:
         for i,k in enumerate(["FinalSFM", "PicList", "AdjList", "TeXfile", "XeTeXlog", "Settings"]):
             buf = GtkSource.Buffer()
             view = GtkSource.View.new_with_buffer(buf)
+            view.set_show_line_numbers(True)
             scroll = self.builder.get_object("scroll_" + k)
             scroll.add_with_viewport(view)
             self.fileViews.append((buf, view))
@@ -345,7 +346,7 @@ class PtxPrinterDialog:
             self.builder.get_object("l_{}".format(pgnum)).set_text("Folders")
             return
         else:
-            print("Error: Unhandled page in Viewer!")
+            # print("Error: Unhandled page in Viewer!")
             return
         if os.path.exists(fpath):
             if 1 <= pgnum <= 2 or pgnum == 5:

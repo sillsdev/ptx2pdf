@@ -20,16 +20,12 @@ class Info:
         "project/combinebooks":     ("c_combine", lambda w,v: "true" if v else "false"),
         "project/book":             ("cb_book", None),
         "project/booklist":         ("t_booklist", lambda w,v: v or ""),
-        "project/ifinclfrontpdf":   ("c_inclFrontMatter", lambda w,v: "true" if v else "false"),
+        "project/ifinclfrontpdf":   ("c_inclFrontMatter", lambda w,v: "" if v else "%"),
         "project/frontincludes":    ("btn_selectFrontPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(re.sub(r"\\","/", s)) \
-                                                            for s in w.FrontPDFs) if w.FrontPDFs is not None else ""),
-                                                            # for s in w.FrontPDFs) if (w.FrontPDFs is not None or len(w.FrontPDFs)) else ""),
-                                                            # for s in w.FrontPDFs) if len(w.FrontPDFs) else ""),
-        "project/ifinclbackpdf":    ("c_inclBackMatter", lambda w,v: "true" if v else "false"),
+                                                            for s in w.FrontPDFs) if (w.FrontPDFs is not None and w.FrontPDFs != 'None') else ""),
+        "project/ifinclbackpdf":    ("c_inclBackMatter", lambda w,v: "" if v else "%"),
         "project/backincludes":     ("btn_selectBackPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(re.sub(r"\\","/", s)) \
-                                                           for s in w.BackPDFs) if w.BackPDFs is not None else ""),
-                                                           # for s in w.BackPDFs) if (w.BackPDFs is not None or len(w.BackPDFs)) else ""),
-                                                           # for s in w.BackPDFs) if len(w.BackPDFs) else ""),
+                                                           for s in w.BackPDFs) if (w.BackPDFs is not None and w.BackPDFs != 'None') else ""),
         "project/useprintdraftfolder": ("c_useprintdraftfolder", lambda w,v :"true" if v else "false"),
         "project/processscript":    ("c_processScript", lambda w,v :"true" if v else "false"),
         "project/runscriptafter":   ("c_processScriptAfter", lambda w,v :"true" if v else "false"),
@@ -531,7 +527,7 @@ class Info:
         if picdir is None or picdir == "": # shouldn't happen, but just in case!
             print("No folder of illustrtations has been specified")
             return(msngpiclist)  # send back an empty list
-        print("Picture Path:",picdir)
+        # print("Picture Path:",picdir)
         fname = printer.getBookFilename(bk, prjdir)
         infname = os.path.join(prjdir, fname)
         with open(infname, "r", encoding="utf-8") as inf:
@@ -668,7 +664,7 @@ class Info:
                     # Paratext doesn't seem to allow segments of 1 character to be hyphenated  (for example: a-shame-d) 
                     # (so there's nothing to filter them out, because they don't seem to exist!)
                     if "-" in l:
-                        if "\u200C" in l or "\u200D" in l: # Temporary workaround until we can figure out how
+                        if "\u200C" in l or "\u200D" in l or "'" in l: # Temporary workaround until we can figure out how
                             z += 1                         # to allow ZWNJ and ZWJ to be included as letters.
                         elif re.search('\d', l):
                             pass

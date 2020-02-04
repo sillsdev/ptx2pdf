@@ -2335,6 +2335,7 @@ start on the same page.
                                 <property name="margin_bottom">6</property>
                                 <property name="row_spacing">8</property>
                                 <property name="column_spacing">6</property>
+                                <property name="column_homogeneous">True</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_omitchapternumber">
                                     <property name="label" translatable="yes">Omit Chapter number(s)</property>
@@ -2471,7 +2472,7 @@ in the printed output.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_marginalverses">
-                                    <property name="label" translatable="yes">Marginal Verses ... with Column Shift  (pts):</property>
+                                    <property name="label" translatable="yes">Marginal Verses ... with col width (pts):</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
