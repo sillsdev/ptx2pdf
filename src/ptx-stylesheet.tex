@@ -161,9 +161,17 @@
   \def\@v@ ##1 {\gdef\v@rse{##1}%
    \x@\spl@tverses\v@rse--\relax % split verse in a verse bridge (e.g. 3-4) into \v@rsefrom, \v@rseto
    % if not cancelling first verse, output verse number
-   \ifc@ncelfirstverse\else
+   \ifc@ncelfirstverse\else%
+    \ifrotate%
+     \setbox0=\hbox{\@V~\printv@rse\@V*}\dimen0=\wd0%
+     \dimen1=\ht0\dimen2=0.5\dimen0%
+     \setbox0=\hbox{~\hbox to \dimen1{\kern\ht0\special{x:gsave}\special{x:rotate 90}%
+      \box0\special{x:grestore}\hss}}\ht0=0pt\dp0=0pt\@V\box0\@V*%
+    \else%
      \@V~\printv@rse\@V*% (A) output verse number using saved style. ~ will lowercase to a space
-     \kern\AfterVerseSpaceFactor\FontSizeUnit \fi
+    \fi%
+    \kern\AfterVerseSpaceFactor\FontSizeUnit%
+   \fi%
    \egroup
    \m@rkverse % generate a milestone for running headers
    % run the hooks for picture insertion, paragraph adjustments, etc.

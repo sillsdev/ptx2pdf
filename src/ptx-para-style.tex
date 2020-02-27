@@ -408,19 +408,29 @@
 \newif\ifsk@pping \newbox\j@nkbox
 
 % Create the drop-cap in \ch@pterbox
-\def\m@kechapterbox{%
- \edef\printchapter{\ch@pter}%
- \csname PrepChapterNumber\endcsname
- \setbox\ch@pterbox=\hbox{\s@tfont{c}\printchapter}%
- \setbox\ch@pterbox=\hbox{\lower\baselineskip\box\ch@pterbox
-   \box\ch@pternote\kern\AfterChapterSpaceFactor\FontSizeUnit}%
- \ch@pterwd=\wd\ch@pterbox
- \dp\ch@pterbox=0pt
-}
 \newdimen\ch@pterwd
 \newbox\ch@pterbox
 \newbox\ch@pternote
 \def\AfterChapterSpaceFactor{3}
+\def\m@kechapterbox{%
+ \edef\printchapter{\ch@pter}%
+ \csname PrepChapterNumber\endcsname
+ \setbox\ch@pterbox=\hbox{\s@tfont{c}\printchapter}%
+ \ifrotate
+  \dimen0=1.0\ht\ch@pterbox
+  \dimen1=\ht\ch@pterbox \advance\dimen1 by \dp\ch@pterbox\advance\dimen1 by \AfterChapterSpaceFactor\FontSizeUnit
+  \dimen2=0.5\wd\ch@pterbox \advance\dimen2 by -0.5\ht\ch@pterbox
+  \setbox\ch@pterbox=\hbox{\lower\dimen2\hbox to \dimen0{%
+    \hskip\ht\ch@pterbox \special{x:gsave}\special{x:rotate 90}%
+    \box\ch@pterbox\special{x:grestore}\hss}}%
+  \ht\ch@pterbox=\wd\ch@pterbox\wd\ch@pterbox=\dimen1
+ \else
+  \setbox\ch@pterbox=\hbox{\lower\baselineskip\box\ch@pterbox
+    \box\ch@pternote\kern\AfterChapterSpaceFactor\FontSizeUnit}%
+ \fi
+ \ch@pterwd=\wd\ch@pterbox
+ \dp\ch@pterbox=0pt
+}
 
 % Used to delay a cutout until later in the paragraph, for no-break chapter numbers
 \def\DelayedChapter#1#2#3{\uppercase{\def\ucb@@k{#1}}%
