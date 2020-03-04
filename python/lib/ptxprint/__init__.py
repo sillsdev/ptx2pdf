@@ -65,8 +65,10 @@ class PtxPrinterDialog:
         self.addCR("cb_script", 0)
         self.addCR("cb_chapfrom", 0)
         self.addCR("cb_chapto", 0)
+        self.addCR("cb_textDirection", 0)
         self.addCR("cb_blendedXrefCaller", 0)
         self.addCR("cb_glossaryMarkupStyle", 0)
+        self.addCR("cb_savedConfiguration", 0)
         # self.addCR("cb_diglotPriProject", 0)
         # self.addCR("cb_diglotSecProject", 0)
 
@@ -141,7 +143,7 @@ class PtxPrinterDialog:
                 self.builder.get_object(c).set_visible(False)
                 self.builder.get_object(c).set_sensitive(False)
         for w in ("tb_", "lb_"):
-            for exp in ("Markers", "Logging"):
+            for exp in ("Illustrations", "Logging"):
                 self.builder.get_object("{}{}".format(w, exp)).set_visible(value)
         self.builder.get_object("fr_fallbackFont").set_sensitive(value)
 
@@ -623,7 +625,7 @@ class PtxPrinterDialog:
             # Turn Dangerous Settings OFF
             for c in ("c_startOnHalfPage", "c_marginalverses", "c_prettyIntroOutline", "c_blendfnxr", "c_autoToC",
                       "c_figplaceholders", "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", 
-                      "c_preventwidows", "c_PDFx1aOutput", "c_diglot", "c_hyphenate"):
+                      "c_preventwidows", "c_PDFx1aOutput", "c_diglot", "c_hyphenate", "c_variableLineSpacing"):
                 self.builder.get_object(c).set_active(False)
 
             # Turn Essential Settings ON
@@ -632,12 +634,15 @@ class PtxPrinterDialog:
                 self.builder.get_object(c).set_active(True)
 
         # Hide a whole bunch of stuff that they don't need to see
-        for c in ("tb_Markers", "tb_Diglot", "tb_Advanced","tb_Logging", "tb_ViewerEditor", "tb_DiglotTesting",
+        for c in ("tb_Diglot", "tb_Advanced","tb_Logging", "tb_ViewerEditor", "tb_DiglotTesting", "btn_editPicList",
                   "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "box_AdvFootnoteConfig", "l_colgutteroffset",
                   "c_usePicList", "c_skipmissingimages", "c_convertTIFtoPNG", "c_useCustomFolder", "btn_selectFigureFolder", 
-                  "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",  "fr_FontConfig", 
+                  "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
+                  "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection",
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "row_ToC", "c_hyphenate",
-                  "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", "c_preventwidows"):
+                  "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", "c_preventwidows",
+                  "l_sidemarginfactor", "s_sidemarginfactor", "l_min", "s_linespacingmin", "l_max", "s_linespacingmax",
+                  "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "cb_textDirection", "l_digits", "cb_digits"):
             # print(c)
             self.builder.get_object(c).set_visible(not self.get("c_hideAdvancedSettings"))
 

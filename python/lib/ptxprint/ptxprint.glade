@@ -218,6 +218,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <property name="tooltip_text" translatable="yes">Click to toggle ALL books on/off.</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">3</property>
@@ -236,6 +237,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <property name="tooltip_text" translatable="yes">Click to toggle OT books on/off.</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">3</property>
@@ -254,6 +256,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <property name="tooltip_text" translatable="yes">Click to toggle NT books on/off.</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">3</property>
@@ -272,6 +275,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <property name="tooltip_text" translatable="yes">Click to toggle DC books on/off.</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">3</property>
@@ -290,6 +294,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <property name="tooltip_text" translatable="yes">Click to toggle Extra books on/off.</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">3</property>
@@ -646,8 +651,8 @@ saved settings for this project.</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
                 <property name="tooltip_text" translatable="yes">Many of the settings in this tool only need to be
-used one rare occasions. These can be hidden
-away most of the time.</property>
+set up once, or used on rare occasions. These can
+be hidden away for most of the time if that helps.</property>
                 <property name="halign">start</property>
                 <property name="draw_indicator">True</property>
                 <signal name="clicked" handler="onHideAdvancedSettingsClicked" swapped="no"/>
@@ -668,6 +673,7 @@ away most of the time.</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="tooltip_text" translatable="yes">Close the PTXprint tool without re-creating the PDF.</property>
                 <property name="halign">end</property>
                 <property name="margin_top">3</property>
                 <property name="margin_bottom">3</property>
@@ -684,10 +690,12 @@ away most of the time.</property>
             </child>
             <child>
               <object class="GtkButton">
-                <property name="label">gtk-apply</property>
+                <property name="label">gtk-print-preview</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="tooltip_text" translatable="yes">Apply any changes specified above, save configuration
+and produce a PDF with the settings specified.</property>
                 <property name="halign">start</property>
                 <property name="margin_top">3</property>
                 <property name="margin_bottom">3</property>
@@ -727,6 +735,89 @@ away most of the time.</property>
                     <property name="can_focus">False</property>
                     <property name="orientation">vertical</property>
                     <child>
+                      <object class="GtkGrid">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
+                        <property name="margin_top">6</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="column_spacing">6</property>
+                        <child>
+                          <object class="GtkComboBox" id="cb_savedConfiguration">
+                            <property name="width_request">300</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="hexpand">False</property>
+                            <property name="resize_mode">immediate</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="halign">end</property>
+                            <property name="label" translatable="yes">Saved Configuration: </property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton">
+                            <property name="label">gtk-save</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Save the current settings with the name
+given in the drop-down box on the left.</property>
+                            <property name="halign">start</property>
+                            <property name="use_stock">True</property>
+                            <property name="image_position">top</property>
+                            <property name="always_show_image">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">2</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton">
+                            <property name="label">gtk-delete</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Delete the currently selected
+Saved Configuration immediately.</property>
+                            <property name="halign">start</property>
+                            <property name="use_stock">True</property>
+                            <property name="image_position">top</property>
+                            <property name="always_show_image">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">3</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
                       <object class="GtkFrame">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -745,8 +836,6 @@ away most of the time.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">start</property>
-                                <property name="margin_left">6</property>
-                                <property name="margin_right">6</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="orientation">vertical</property>
@@ -801,7 +890,6 @@ away most of the time.</property>
                                       <object class="GtkLabel" id="l_singlebook">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="margin_left">30</property>
                                         <property name="label" translatable="yes">Single Book:</property>
                                       </object>
                                       <packing>
@@ -822,7 +910,6 @@ away most of the time.</property>
                                         <signal name="changed" handler="onBookChange" swapped="no"/>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
-                                            <property name="width_request">-1</property>
                                             <property name="can_focus">True</property>
                                             <property name="halign">start</property>
                                             <property name="max_length">3</property>
@@ -841,7 +928,6 @@ away most of the time.</property>
                                         <property name="visible">True</property>
                                         <property name="sensitive">False</property>
                                         <property name="can_focus">False</property>
-                                        <property name="margin_left">20</property>
                                         <property name="label" translatable="yes">Chapters:</property>
                                         <property name="track_visited_links">False</property>
                                       </object>
@@ -874,7 +960,6 @@ away most of the time.</property>
                                         <property name="visible">True</property>
                                         <property name="sensitive">False</property>
                                         <property name="can_focus">False</property>
-                                        <property name="margin_left">15</property>
                                         <property name="label" translatable="yes">To:</property>
                                         <property name="track_visited_links">False</property>
                                       </object>
@@ -961,7 +1046,7 @@ away most of the time.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_combine">
                                         <property name="label" translatable="yes">Combine All Books
-into single PDF</property>
+Into a Single PDF</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -997,9 +1082,32 @@ into single PDF</property>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">False</property>
-                        <property name="position">0</property>
+                        <property name="position">1</property>
                       </packing>
                     </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                  </object>
+                </child>
+                <child type="tab">
+                  <object class="GtkLabel" id="lb_Basic">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Use Saved Configuration(s)
+or Select the Project and Book(s),
+to be used to create the PDF file.</property>
+                    <property name="label" translatable="yes">Basic</property>
+                  </object>
+                  <packing>
+                    <property name="tab_fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox" id="tb_Layout">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkBox">
                         <property name="visible">True</property>
@@ -1027,7 +1135,8 @@ into single PDF</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>
                                     <property name="margin_right">6</property>
-                                    <property name="row_spacing">6</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="row_spacing">12</property>
                                     <property name="column_spacing">3</property>
                                     <child>
                                       <object class="GtkLabel">
@@ -1044,7 +1153,7 @@ according to the factors set.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="l_sidemarginfactor">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">Basic unit for margins; changing this will alter them all.</property>
@@ -1512,18 +1621,44 @@ Width:</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="c_rtl">
-                                <property name="label" translatable="yes">Right-to-Left Script</property>
+                              <object class="GtkBox">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">Check this option if
-using a Right-to-Left
-script (such as Arabic).</property>
-                                <property name="halign">start</property>
-                                <property name="margin_top">4</property>
-                                <property name="margin_bottom">7</property>
-                                <property name="draw_indicator">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="margin_right">6</property>
+                                <property name="margin_top">6</property>
+                                <property name="margin_bottom">6</property>
+                                <property name="spacing">6</property>
+                                <child>
+                                  <object class="GtkLabel" id="l_textDirection">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Text Flow
+Direction:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkComboBox" id="cb_textDirection">
+                                    <property name="width_request">140</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="model">ls_textDirection</property>
+                                    <property name="active">0</property>
+                                    <property name="id_column">0</property>
+                                    <property name="active_id">1</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -1532,7 +1667,7 @@ script (such as Arabic).</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel">
+                              <object class="GtkLabel" id="l_digits">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">start</property>
@@ -1548,6 +1683,7 @@ script (such as Arabic).</property>
                             </child>
                             <child>
                               <object class="GtkComboBox" id="cb_digits">
+                                <property name="width_request">200</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">start</property>
@@ -1926,20 +2062,7 @@ script (such as Arabic).</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_experimental">
-                                    <property name="label" translatable="yes">Experimental Features
-have been turned ON!</property>
-                                    <property name="sensitive">False</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="no_show_all">True</property>
-                                    <property name="halign">start</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
+                                  <placeholder/>
                                 </child>
                               </object>
                             </child>
@@ -1959,19 +2082,93 @@ have been turned ON!</property>
                         <property name="position">2</property>
                       </packing>
                     </child>
+                    <child type="center">
+                      <object class="GtkGrid">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <child>
+                          <object class="GtkCheckButton">
+                            <property name="label" translatable="yes">Lock all settings that affect dimensions and layout</property>
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="tooltip_text" translatable="yes">Once you start adjusting the stretch and shrink on
+individual paragraphs, you really don't want to let
+the settings change (page size, margins, font size,
+line spacing, and so on).
+Select this option to disable changes to all of these
+settings.</property>
+                            <property name="halign">start</property>
+                            <property name="margin_bottom">4</property>
+                            <property name="draw_indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="c_rtl">
+                            <property name="label" translatable="yes">Right-to-Left Script</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="tooltip_text" translatable="yes">Check this option if
+using a Right-to-Left
+script (such as Arabic).</property>
+                            <property name="halign">start</property>
+                            <property name="margin_top">4</property>
+                            <property name="margin_bottom">7</property>
+                            <property name="draw_indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">2</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="c_experimental">
+                            <property name="label" translatable="yes">Experimental Features
+have been turned ON!</property>
+                            <property name="sensitive">False</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="no_show_all">True</property>
+                            <property name="tooltip_text" translatable="yes">Experimental features can be enabled by
+using the -e flag on the command line.</property>
+                            <property name="halign">start</property>
+                            <property name="draw_indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
                   </object>
+                  <packing>
+                    <property name="position">1</property>
+                  </packing>
                 </child>
                 <child type="tab">
-                  <object class="GtkLabel" id="lb_Basic">
+                  <object class="GtkLabel" id="lb_Layout">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Set the Project, Book(s),
 Page Setup, Columns,
 and Font options.</property>
-                    <property name="label" translatable="yes">Basic</property>
+                    <property name="label" translatable="yes">Layout</property>
                     <property name="justify">center</property>
                   </object>
                   <packing>
+                    <property name="position">1</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
@@ -2187,7 +2384,9 @@ of Contents</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">(Coming soon)</property>
+                                        <property name="tooltip_text" translatable="yes">Select this option to supress the 1 at the begining
+of books that only have a single chapter (OBA, PHM,
+2JN, 3JN, JUD, etc.)</property>
                                         <property name="halign">start</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
@@ -2280,7 +2479,7 @@ etc.
                                         <property name="tooltip_text" translatable="yes">If the last page of a book uses less than
 half the page, then the next book will
 start on the same page.
-(This feature has not been implemented yet)</property>
+(This is currently an experimental feature)</property>
                                         <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
@@ -2665,109 +2864,45 @@ be turned OFF (to suppress the main text).</property>
                         <property name="can_focus">False</property>
                         <property name="spacing">5</property>
                         <child>
-                          <object class="GtkFrame">
+                          <object class="GtkFrame" id="fr_paragraphAdjust">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="margin_left">6</property>
-                            <property name="margin_right">6</property>
+                            <property name="halign">start</property>
                             <property name="margin_top">6</property>
                             <property name="margin_bottom">6</property>
-                            <property name="label_xalign">0.019999999552965164</property>
+                            <property name="label_xalign">0.039999999105930328</property>
                             <child>
                               <object class="GtkAlignment">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="margin_left">10</property>
-                                <property name="left_padding">10</property>
-                                <property name="right_padding">10</property>
+                                <property name="halign">start</property>
+                                <property name="margin_top">6</property>
+                                <property name="margin_bottom">6</property>
+                                <property name="left_padding">12</property>
                                 <child>
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>
-                                    <property name="row_spacing">8</property>
+                                    <property name="margin_right">6</property>
+                                    <property name="row_spacing">6</property>
+                                    <property name="column_spacing">13</property>
                                     <child>
-                                      <object class="GtkAlignment">
+                                      <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="left_padding">40</property>
-                                        <child>
-                                          <object class="GtkCheckButton" id="c_figexclwebapp">
-                                            <property name="label" translatable="yes">Exclude figures only meant for Web or App</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">If the illustrations have been marked up with
-the w/a/p notation, then it is easy to exclude
-any illustrations that do not have the 'p'
-attribute.  Note: w= web, a=app, p=print.
-(Yet to be implemented. Coming soon.)</property>
-                                            <property name="halign">start</property>
-                                            <property name="draw_indicator">True</property>
-                                          </object>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkAlignment">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="left_padding">40</property>
-                                        <child>
-                                          <object class="GtkCheckButton" id="c_fighiderefs">
-                                            <property name="label" translatable="yes">Hide (ch:vs) references at end of caption </property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="halign">start</property>
-                                            <property name="draw_indicator">True</property>
-                                          </object>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkAlignment">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="left_padding">40</property>
-                                        <child>
-                                          <object class="GtkCheckButton" id="c_figplaceholders">
-                                            <property name="label" translatable="yes">Only show empty place-holders</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">Useful for creating smaller files to check text layout without illustrations shown.</property>
-                                            <property name="halign">start</property>
-                                            <property name="draw_indicator">True</property>
-                                          </object>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">3</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkRadioButton" id="c_includefigsfromtext">
-                                        <property name="label" translatable="yes">Use the illustrations marked in the text (\fig ... \fig*)</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">A Paragraph Adjust List needs to be in this format:
+MRK 2.7 +1    (i.e. expand the para at Mark 2.7 by one line) 
+MRK 3.20 -1   (i.e. shrink the para at Mark 3:20 by one line)
+%MARK 4.14 +1   (ignore this line - treat it as a comment)   
+MRK 5.8 +2    (i.e. expand the para at Mark 2.7 by two lines)
+etc.
+Note that adjusting paragraphs needs to be done right at the
+end when all other settings have been finalized. Otherwise you
+are likely to have to re-do it all again.</property>
                                         <property name="halign">start</property>
-                                        <property name="margin_left">20</property>
-                                        <property name="margin_top">3</property>
-                                        <property name="active">True</property>
-                                        <property name="draw_indicator">True</property>
-                                        <property name="group">c_usePicList</property>
-                                        <signal name="clicked" handler="onFigsChanged" swapped="no"/>
+                                        <property name="label" translatable="yes">Columns of text may be balanced by
+specifying adjustments (shrink or expand):</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
@@ -2775,98 +2910,14 @@ attribute.  Note: w= web, a=app, p=print.
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkRadioButton" id="c_usePicList">
-                                        <property name="label" translatable="yes">Use a PicList file to control Size and Position</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">The Advanced tab has a button to Generate a Pic List
-which enables more precisecontrol over the sizing and positioning of illustrations.</property>
-                                        <property name="halign">start</property>
-                                        <property name="margin_left">20</property>
-                                        <property name="margin_bottom">6</property>
-                                        <property name="draw_indicator">True</property>
-                                        <property name="group">c_includefigsfromtext</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">4</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkButton" id="btn_selectFigureFolder">
-                                        <property name="label" translatable="yes">Select folder...</property>
+                                      <object class="GtkButton" id="btn_editParaAdjList">
+                                        <property name="label" translatable="yes">Edit Adjust List...</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
-                                        <property name="halign">start</property>
-                                        <signal name="clicked" handler="onSelectFigureFolderClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">2</property>
-                                        <property name="top_attach">3</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkRadioButton" id="c_useFiguresFolder">
-                                        <property name="label" translatable="yes">Project's "Figures" Folder:</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="halign">end</property>
-                                        <property name="margin_left">40</property>
-                                        <property name="active">True</property>
-                                        <property name="draw_indicator">True</property>
-                                        <property name="group">c_useLocalFiguresFolder</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkRadioButton" id="c_useLocalFiguresFolder">
-                                        <property name="label" translatable="yes">Use "local\figures" Folder:</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="halign">end</property>
-                                        <property name="margin_left">40</property>
-                                        <property name="active">True</property>
-                                        <property name="draw_indicator">True</property>
-                                        <property name="group">c_useFiguresFolder</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkRadioButton" id="c_useCustomFolder">
-                                        <property name="label" translatable="yes">Specify a Custom Folder:  </property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="halign">end</property>
-                                        <property name="margin_left">40</property>
-                                        <property name="active">True</property>
-                                        <property name="draw_indicator">True</property>
-                                        <property name="group">c_useLocalFiguresFolder</property>
-                                        <signal name="clicked" handler="onUseCustomFolderclicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">3</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel" id="l_useFolder">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">end</property>
-                                        <property name="margin_left">30</property>
-                                        <property name="label" translatable="yes">Location of image files:</property>
+                                        <property name="tooltip_text" translatable="yes">Click to view or edit the Para Adj List
+file(s) in the Viewer tab.</property>
+                                        <signal name="clicked" handler="onEditAdjListClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
@@ -2874,66 +2925,25 @@ which enables more precisecontrol over the sizing and positioning of illustratio
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="c_convertTIFtoPNG">
-                                        <property name="label" translatable="yes">Convert all TIFs to PNGs</property>
+                                      <object class="GtkButton" id="btn_generateHyphenationList">
+                                        <property name="label" translatable="yes">Create XeTeX Hyphenated Word List</property>
                                         <property name="visible">True</property>
-                                        <property name="sensitive">False</property>
                                         <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">XeTeX is unable to use .TIF formatted illustrations
-but it can convert the .TIF files to .PNG. These will
-be generated in the same folder as the TIF files.
-(Not yet implemented. Coming soon!)</property>
-                                        <property name="halign">start</property>
-                                        <property name="margin_bottom">6</property>
-                                        <property name="draw_indicator">True</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="tooltip_text" translatable="yes">Click this button to generate a hyphenation 
+list that can be used by XeTeX to optimize
+hyphenation. This will read Paratext's
+HyphenatedWords.txt list and optimize it.
+Note that the Hypenate option on the Body
+tab needs to be checked to make us of this.</property>
+                                        <property name="halign">end</property>
+                                        <property name="margin_top">8</property>
+                                        <property name="hexpand">True</property>
+                                        <signal name="clicked" handler="onGenerateHyphenationListClicked" swapped="no"/>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">2</property>
-                                        <property name="top_attach">4</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel" id="l_useFiguresFolder">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="halign">start</property>
-                                        <property name="label" translatable="yes">(contains lo-res JPG files)</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">2</property>
+                                        <property name="left_attach">0</property>
                                         <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel" id="l_useLocalFiguresFolder">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="halign">start</property>
-                                        <property name="label" translatable="yes">(contains original TIF files)</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">2</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_skipmissingimages">
-                                        <property name="label" translatable="yes">Skip/Ignore any missing images</property>
-                                        <property name="name">c_skipmissingimages</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Rather than aborting the PDF export process, pre-process
-the list of illustrations and skip/ignore/remove any which
-are not found in the specified location of image files.</property>
-                                        <property name="margin_bottom">6</property>
-                                        <property name="active">True</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">4</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -2944,21 +2954,130 @@ are not found in the specified location of image files.</property>
                               </object>
                             </child>
                             <child type="label">
-                              <object class="GtkCheckButton" id="c_includeillustrations">
-                                <property name="label" translatable="yes">Include illustrations</property>
+                              <object class="GtkLabel">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="active">True</property>
-                                <property name="draw_indicator">True</property>
-                                <signal name="clicked" handler="onUseIllustrationsClicked" swapped="no"/>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Paragraph Adjustments</property>
                               </object>
                             </child>
                           </object>
                           <packing>
-                            <property name="expand">True</property>
+                            <property name="expand">False</property>
                             <property name="fill">True</property>
                             <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkFrame" id="fr_fallbackFont">
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
+                            <property name="hexpand">False</property>
+                            <property name="label_xalign">0.019999999552965164</property>
+                            <child>
+                              <object class="GtkAlignment">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="margin_top">6</property>
+                                <property name="margin_bottom">6</property>
+                                <property name="left_padding">12</property>
+                                <child>
+                                  <object class="GtkGrid">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_right">6</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="row_spacing">6</property>
+                                    <property name="column_spacing">6</property>
+                                    <child>
+                                      <object class="GtkFontButton" id="f_fallbackFont">
+                                        <property name="width_request">-1</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="font">Sans 12</property>
+                                        <property name="preview_text"/>
+                                        <property name="show_preview_entry">False</property>
+                                        <property name="show_size">False</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="label" translatable="yes">Font for any characters
+missing in primary font:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_findMissingChars">
+                                        <property name="label" translatable="yes">Auto-Identify Missing Characters</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="halign">end</property>
+                                        <signal name="clicked" handler="onFindMissingCharsClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">2</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEntry">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">1</property>
+                                        <property name="width">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Missing Characters:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child type="label">
+                              <object class="GtkCheckButton">
+                                <property name="label" translatable="yes">Use Fallback Font</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
                           </packing>
                         </child>
                       </object>
@@ -2970,7 +3089,7 @@ are not found in the specified location of image files.</property>
                     </child>
                   </object>
                   <packing>
-                    <property name="position">1</property>
+                    <property name="position">2</property>
                   </packing>
                 </child>
                 <child type="tab">
@@ -2984,7 +3103,7 @@ and Illustrations.</property>
                     <property name="justify">center</property>
                   </object>
                   <packing>
-                    <property name="position">1</property>
+                    <property name="position">2</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
@@ -4086,7 +4205,7 @@ the page (only on Title Pages).</property>
                     </child>
                   </object>
                   <packing>
-                    <property name="position">2</property>
+                    <property name="position">3</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
@@ -4099,30 +4218,337 @@ Footnotes and Cross-references.</property>
                     <property name="label" translatable="yes">Head &amp; Foot</property>
                   </object>
                   <packing>
-                    <property name="position">2</property>
+                    <property name="position">3</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox" id="tb_Diglot">
+                  <object class="GtkBox" id="tb_Illustrations">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="orientation">vertical</property>
                     <child>
-                      <object class="GtkLabel">
+                      <object class="GtkFrame">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="tooltip_text" translatable="yes">This is a placeholder for a new feature. [In the meantime
-you may want to try using the "Fuzzy D.I.Y.-glot" on the
-final tab.
-
-Later we may also have Di-script publications
-through an automated script conversion process.</property>
-                        <property name="opacity">0.59999999999999998</property>
+                        <property name="halign">start</property>
+                        <property name="valign">start</property>
                         <property name="margin_top">6</property>
                         <property name="margin_bottom">6</property>
-                        <property name="label" translatable="yes">Watch this space... Aligned Diglots are coming soon!</property>
-                        <property name="justify">center</property>
+                        <property name="label_xalign">0.019999999552965164</property>
+                        <child>
+                          <object class="GtkAlignment">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="valign">start</property>
+                            <property name="left_padding">10</property>
+                            <property name="right_padding">10</property>
+                            <child>
+                              <object class="GtkGrid">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="valign">start</property>
+                                <property name="row_spacing">8</property>
+                                <child>
+                                  <object class="GtkAlignment">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="left_padding">40</property>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_figexclwebapp">
+                                        <property name="label" translatable="yes">Skip figures only meant for Web or App</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">Only allow illustrations with the 'P'rint attribute.
+
+If the illustrations have been marked up with
+the w/a/p notation, then it is easy to exclude
+any illustrations that do not have the 'p'
+attribute.  Note: w= web, a=app, p=print.
+(Yet to be implemented. Coming soon.)</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="left_padding">40</property>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_fighiderefs">
+                                        <property name="label" translatable="yes">Hide (ch:vs) references at end of caption </property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="left_padding">40</property>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_figplaceholders">
+                                        <property name="label" translatable="yes">Only show empty place-holders</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">Useful for creating smaller files to check text layout without illustrations shown.</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkRadioButton" id="c_includefigsfromtext">
+                                    <property name="label" translatable="yes">Use the illustrations marked in the text (\fig...\fig*)</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_top">3</property>
+                                    <property name="draw_indicator">True</property>
+                                    <property name="group">c_usePicList</property>
+                                    <signal name="clicked" handler="onFigsChanged" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkRadioButton" id="c_usePicList">
+                                    <property name="label" translatable="yes">Make use of a PicList file to control Size and Position</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">The Advanced tab has a button to Generate a PicList file
+which enables more precise control over the sizing and
+positioning of illustrations. Click Edit PicList... to start.</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="draw_indicator">True</property>
+                                    <property name="group">c_includefigsfromtext</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_convertTIFtoPNG">
+                                    <property name="label" translatable="yes">Convert TIFs to PNGs</property>
+                                    <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">XeTeX is unable to use .TIF formatted illustrations
+but it can convert the .TIF files to .PNG. These will
+be generated in the same folder as the TIF files.
+(Not yet implemented. Coming soon!)</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="top_attach">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_selectFigureFolder">
+                                    <property name="label" translatable="yes">Select folder...</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="halign">start</property>
+                                    <signal name="clicked" handler="onSelectFigureFolderClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="top_attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_useLocalFiguresFolder">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="label" translatable="yes">(original TIF files)</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_useFiguresFolder">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="label" translatable="yes">(low-res JPG files)</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_useFolder">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">end</property>
+                                    <property name="margin_top">8</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="label" translatable="yes">Location of image files:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkRadioButton" id="c_useFiguresFolder">
+                                    <property name="label" translatable="yes">Project's "Figures" Folder:</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="halign">end</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="draw_indicator">True</property>
+                                    <property name="group">c_useLocalFiguresFolder</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkRadioButton" id="c_useLocalFiguresFolder">
+                                    <property name="label" translatable="yes">Use "local\figures" Folder:</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="halign">end</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                    <property name="group">c_useCustomFolder</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkRadioButton" id="c_useCustomFolder">
+                                    <property name="label" translatable="yes">Specify a Custom Folder:  </property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="halign">end</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                    <property name="group">c_useLocalFiguresFolder</property>
+                                    <signal name="clicked" handler="onUseCustomFolderclicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_skipmissingimages">
+                                    <property name="label" translatable="yes">Skip/Ignore missing images</property>
+                                    <property name="name">c_skipmissingimages</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Rather than aborting the PDF export process, pre-process
+the list of illustrations and skip/ignore/remove any which
+are not found in the specified location of image files.</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_editPicList">
+                                    <property name="label" translatable="yes">Edit...</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="tooltip_text" translatable="yes">Click to view or edit the PicList
+file(s) in the Viewer tab.</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin_right">20</property>
+                                    <property name="margin_bottom">6</property>
+                                    <signal name="clicked" handler="onEditPicListClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child type="label">
+                          <object class="GtkCheckButton" id="c_includeillustrations">
+                            <property name="label" translatable="yes">Include illustrations</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="active">True</property>
+                            <property name="draw_indicator">True</property>
+                            <signal name="clicked" handler="onUseIllustrationsClicked" swapped="no"/>
+                          </object>
+                        </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -4130,41 +4556,23 @@ through an automated script conversion process.</property>
                         <property name="position">0</property>
                       </packing>
                     </child>
-                    <child>
-                      <object class="GtkImage">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="tooltip_text" translatable="yes">This is a placeholder for a new feature. In the meantime
-you may want to try using the "Fuzzy D.I.Y.-glot" on the
-final tab.
-
-Later we may also have Di-script publications
-through an automated script conversion process.</property>
-                        <property name="margin_bottom">6</property>
-                        <property name="pixbuf">DiglotSample700px.png</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">False</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
                   </object>
                   <packing>
-                    <property name="position">3</property>
+                    <property name="position">4</property>
                   </packing>
                 </child>
                 <child type="tab">
-                  <object class="GtkLabel" id="lb_Diglot">
+                  <object class="GtkLabel" id="lb_Illustrations">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Create a Diglot or
-Multi-script publication.</property>
-                    <property name="opacity">0.69999999999999996</property>
-                    <property name="label" translatable="yes">Diglot</property>
+                    <property name="tooltip_text" translatable="yes">Control whether Illustrations (pictures)
+are to be used in the publication. And
+if necessary, control the position of
+illustrations within the text.</property>
+                    <property name="label" translatable="yes">Illustrations</property>
                   </object>
                   <packing>
-                    <property name="position">3</property>
+                    <property name="position">4</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
@@ -4183,7 +4591,7 @@ Multi-script publication.</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="margin_left">6</property>
-                            <property name="margin_right">6</property>
+                            <property name="margin_right">10</property>
                             <property name="margin_top">6</property>
                             <property name="margin_bottom">6</property>
                             <property name="label_xalign">0.039999999105930328</property>
@@ -4469,7 +4877,7 @@ this option checked (on).</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="margin_left">16</property>
-                                <property name="margin_top">9</property>
+                                <property name="margin_top">25</property>
                                 <property name="margin_bottom">3</property>
                                 <property name="column_homogeneous">True</property>
                                 <child>
@@ -4519,29 +4927,6 @@ to store generated PDF file(s).</property>
                                     <property name="top_attach">0</property>
                                   </packing>
                                 </child>
-                                <child>
-                                  <object class="GtkButton" id="btn_generateHyphenationList">
-                                    <property name="label" translatable="yes">Create XeTeX Hyphenated Word List</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="tooltip_text" translatable="yes">Click this button to generate a hyphenation 
-list that can be used by XeTeX to optimize
-hyphenation. This will read Paratext's
-HyphenatedWords.txt list and optimize it.
-Note that the Hypenate option on the Body
-tab needs to be checked to make us of this.</property>
-                                    <property name="halign">end</property>
-                                    <property name="margin_top">8</property>
-                                    <property name="hexpand">True</property>
-                                    <signal name="clicked" handler="onGenerateHyphenationListClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">1</property>
-                                    <property name="width">2</property>
-                                  </packing>
-                                </child>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -4555,7 +4940,7 @@ tab needs to be checked to make us of this.</property>
                                 <property name="can_focus">False</property>
                                 <property name="valign">end</property>
                                 <property name="margin_left">6</property>
-                                <property name="margin_top">6</property>
+                                <property name="margin_top">10</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="hexpand">True</property>
                                 <property name="label_xalign">0.039999999105930328</property>
@@ -4569,52 +4954,8 @@ tab needs to be checked to make us of this.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="margin_right">6</property>
+                                        <property name="margin_bottom">6</property>
                                         <property name="column_spacing">10</property>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="margin_top">6</property>
-                                            <property name="margin_bottom">6</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">1</property>
-                                            <property name="top_attach">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="margin_top">6</property>
-                                            <property name="margin_bottom">6</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">1</property>
-                                            <property name="top_attach">1</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkCheckButton" id="c_applyWatermark">
-                                            <property name="label" translatable="yes">Apply Watermark PDF</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">A watermark can be applied to all pages of 
-the publication. The file must be a PDF.
-
-Also note that you can use a Grid-PDF
-to show gridlines for finetuning settings.</property>
-                                            <property name="halign">start</property>
-                                            <property name="margin_left">30</property>
-                                            <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onApplyWatermarkChanged" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">1</property>
-                                          </packing>
-                                        </child>
                                         <child>
                                           <object class="GtkCheckButton" id="c_inclFrontMatter">
                                             <property name="label" translatable="yes">Include Front Matter PDF(s)</property>
@@ -4624,59 +4965,13 @@ to show gridlines for finetuning settings.</property>
                                             <property name="tooltip_text" translatable="yes">One or more previously created PDF file(s) can be included BEFORE the scripture material being typeset. If more than one
 file is selected, then these will appear in alphabetical order.</property>
                                             <property name="halign">start</property>
+                                            <property name="margin_top">4</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="clicked" handler="onInclFrontMatterChanged" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>
                                             <property name="top_attach">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkCheckButton" id="c_inclBackMatter">
-                                            <property name="label" translatable="yes">Include Back Matter PDF(s)</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">One or more previously created PDF file(s) can be included
-AFTER the scripture material being typeset. If more than one
-file is selected, then these will appear in alphabetical order.</property>
-                                            <property name="halign">start</property>
-                                            <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onInclBackMatterChanged" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="margin_top">6</property>
-                                            <property name="margin_bottom">6</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">1</property>
-                                            <property name="top_attach">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkButton" id="btn_selectBackPDFs">
-                                            <property name="label" translatable="yes">Select...</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">True</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">center</property>
-                                            <property name="margin_top">4</property>
-                                            <property name="margin_bottom">4</property>
-                                            <signal name="clicked" handler="onBackPDFsClicked" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">2</property>
-                                            <property name="top_attach">2</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -4693,6 +4988,44 @@ file is selected, then these will appear in alphabetical order.</property>
                                           <packing>
                                             <property name="left_attach">2</property>
                                             <property name="top_attach">0</property>
+                                            <property name="height">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="btn_selectBackPDFs">
+                                            <property name="label" translatable="yes">Select...</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">True</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="margin_top">4</property>
+                                            <property name="margin_bottom">4</property>
+                                            <signal name="clicked" handler="onBackPDFsClicked" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">2</property>
+                                            <property name="top_attach">4</property>
+                                            <property name="height">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_inclBackMatter">
+                                            <property name="label" translatable="yes">Include Back Matter PDF(s)</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">One or more previously created PDF file(s) can be included
+AFTER the scripture material being typeset. If more than one
+file is selected, then these will appear in alphabetical order.</property>
+                                            <property name="halign">start</property>
+                                            <property name="margin_top">4</property>
+                                            <property name="draw_indicator">True</property>
+                                            <signal name="clicked" handler="onInclBackMatterChanged" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">4</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -4709,8 +5042,85 @@ file is selected, then these will appear in alphabetical order.</property>
                                           </object>
                                           <packing>
                                             <property name="left_attach">2</property>
-                                            <property name="top_attach">1</property>
+                                            <property name="top_attach">2</property>
+                                            <property name="height">2</property>
                                           </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_applyWatermark">
+                                            <property name="label" translatable="yes">Apply Watermark PDF</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">A watermark can be applied to all pages of 
+the publication. The file must be a PDF.
+
+Also note that you can use a Grid-PDF
+to show gridlines for finetuning settings.</property>
+                                            <property name="halign">start</property>
+                                            <property name="margin_left">16</property>
+                                            <property name="margin_top">4</property>
+                                            <property name="draw_indicator">True</property>
+                                            <signal name="clicked" handler="onApplyWatermarkChanged" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="lb_inclFrontMatter">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="opacity">0.80000000022351747</property>
+                                            <property name="halign">end</property>
+                                            <property name="margin_bottom">6</property>
+                                            <property name="label" translatable="yes">Cover.pdf,MyFrontPages.pdf</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">1</property>
+                                            <property name="width">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="lb_applyWatermark">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="opacity">0.80000000022351747</property>
+                                            <property name="halign">end</property>
+                                            <property name="margin_bottom">6</property>
+                                            <property name="label" translatable="yes">Draft.pdf</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">3</property>
+                                            <property name="width">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="lb_inclBackMatter">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="opacity">0.80000000000000004</property>
+                                            <property name="halign">end</property>
+                                            <property name="margin_bottom">6</property>
+                                            <property name="label" translatable="yes">Glossary.pdf</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">5</property>
+                                            <property name="width">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
                                         </child>
                                       </object>
                                     </child>
@@ -4727,6 +5137,7 @@ file is selected, then these will appear in alphabetical order.</property>
                               <packing>
                                 <property name="expand">True</property>
                                 <property name="fill">False</property>
+                                <property name="pack_type">end</property>
                                 <property name="position">1</property>
                               </packing>
                             </child>
@@ -4749,254 +5160,10 @@ file is selected, then these will appear in alphabetical order.</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <child>
-                          <object class="GtkFrame">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="margin_left">6</property>
-                            <property name="margin_right">6</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="label_xalign">0.039999999105930328</property>
-                            <child>
-                              <object class="GtkAlignment">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="halign">start</property>
-                                <property name="margin_left">6</property>
-                                <property name="margin_right">6</property>
-                                <property name="margin_top">6</property>
-                                <property name="margin_bottom">6</property>
-                                <property name="left_padding">12</property>
-                                <child>
-                                  <object class="GtkGrid">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin_left">6</property>
-                                    <property name="row_spacing">6</property>
-                                    <property name="column_spacing">13</property>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="label" translatable="yes">Illustrations may be positioned at 
-specific locations on the page:</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">A Paragraph Adjust List needs to be in this format:
-MRK 2.7 +1    (i.e. expand the para at Mark 2.7 by one line) 
-MRK 3.20 -1   (i.e. shrink the para at Mark 3:20 by one line)
-%MARK 4.14 +1   (ignore this line - treat it as a comment)   
-MRK 5.8 +2    (i.e. expand the para at Mark 2.7 by two lines)
-etc.
-Note that adjusting paragraphs needs to be done right at the
-end when all other settings have been finalized. Otherwise you
-are likely to have to re-do it all again.</property>
-                                        <property name="halign">start</property>
-                                        <property name="label" translatable="yes">Columns of text may be balanced by
-specifying adjustments (shrink or expand):</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton">
-                                        <property name="label" translatable="yes">Lock all settings that affect dimensions and layout</property>
-                                        <property name="visible">True</property>
-                                        <property name="sensitive">False</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Once you start adjusting the stretch and shrink on
-individual paragraphs, you really don't want to let
-the settings change (page size, margins, font size,
-line spacing, and so on).
-Select this option to disable changes to all of these
-settings.</property>
-                                        <property name="halign">start</property>
-                                        <property name="margin_bottom">4</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">1</property>
-                                        <property name="width">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkButton" id="btn_editPicList">
-                                        <property name="label" translatable="yes">Edit PicList...</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
-                                        <property name="tooltip_text" translatable="yes">Click to Edit PicList(s) in your
-system's default text editor.</property>
-                                        <property name="valign">center</property>
-                                        <signal name="clicked" handler="onEditPicListClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkButton" id="btn_editParaAdjList">
-                                        <property name="label" translatable="yes">Edit Adjust List...</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
-                                        <property name="tooltip_text" translatable="yes">Click to Edit Paragraph Adjust List(s)
-in your system's default text editor.</property>
-                                        <signal name="clicked" handler="onEditAdjListClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                            <child type="label">
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Picture Positioning  &amp;  Paragraph Adjustment</property>
-                              </object>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
+                          <placeholder/>
                         </child>
                         <child>
-                          <object class="GtkFrame" id="fr_fallbackFont">
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can_focus">False</property>
-                            <property name="margin_left">6</property>
-                            <property name="margin_right">6</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="label_xalign">0.019999999552965164</property>
-                            <child>
-                              <object class="GtkAlignment">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="halign">start</property>
-                                <property name="margin_top">6</property>
-                                <property name="margin_bottom">6</property>
-                                <property name="left_padding">12</property>
-                                <child>
-                                  <object class="GtkGrid">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="row_spacing">6</property>
-                                    <property name="column_spacing">6</property>
-                                    <child>
-                                      <object class="GtkFontButton" id="f_fallbackFont">
-                                        <property name="width_request">-1</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="font">Sans 12</property>
-                                        <property name="preview_text"/>
-                                        <property name="show_preview_entry">False</property>
-                                        <property name="show_size">False</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="label" translatable="yes">Font for any characters
-missing in primary font:</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="halign">end</property>
-                                        <property name="label" translatable="yes">Missing Characters:</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEntry">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="margin_right">6</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkButton" id="btn_findMissingChars">
-                                        <property name="label" translatable="yes">Auto-Identify Missing Characters</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
-                                        <property name="halign">end</property>
-                                        <property name="margin_right">6</property>
-                                        <signal name="clicked" handler="onFindMissingCharsClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">1</property>
-                                        <property name="width">2</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                            <child type="label">
-                              <object class="GtkCheckButton">
-                                <property name="label" translatable="yes">Use Fallback Font</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="draw_indicator">True</property>
-                              </object>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
+                          <placeholder/>
                         </child>
                       </object>
                       <packing>
@@ -5014,7 +5181,7 @@ missing in primary font:</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="margin_left">6</property>
-                            <property name="margin_right">6</property>
+                            <property name="margin_right">10</property>
                             <property name="margin_top">2</property>
                             <property name="margin_bottom">6</property>
                             <property name="label_xalign">0.039999999105930328</property>
@@ -5022,7 +5189,9 @@ missing in primary font:</property>
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="margin_bottom">4</property>
+                                <property name="margin_left">6</property>
+                                <property name="margin_right">6</property>
+                                <property name="margin_bottom">6</property>
                                 <property name="row_spacing">6</property>
                                 <property name="column_spacing">6</property>
                                 <child>
@@ -5179,6 +5348,8 @@ script-specific rendering issues.</property>
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="margin_left">6</property>
+                                <property name="margin_right">6</property>
                                 <property name="margin_bottom">4</property>
                                 <property name="row_spacing">6</property>
                                 <property name="column_spacing">6</property>
@@ -5260,7 +5431,7 @@ and so on...</property>
                     </child>
                   </object>
                   <packing>
-                    <property name="position">4</property>
+                    <property name="position">5</property>
                     <property name="tab_fill">False</property>
                     <property name="reorderable">True</property>
                   </packing>
@@ -5276,44 +5447,6 @@ and Edit PicLists and Adj Lists.</property>
                     <property name="margin_bottom">2</property>
                     <property name="label" translatable="yes">Advanced</property>
                     <property name="justify">center</property>
-                  </object>
-                  <packing>
-                    <property name="position">4</property>
-                    <property name="tab_fill">False</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkBox" id="tb_Markers">
-                    <property name="visible">True</property>
-                    <property name="sensitive">False</property>
-                    <property name="can_focus">False</property>
-                    <property name="no_show_all">True</property>
-                    <property name="orientation">vertical</property>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="position">5</property>
-                  </packing>
-                </child>
-                <child type="tab">
-                  <object class="GtkLabel" id="lb_Markers">
-                    <property name="visible">True</property>
-                    <property name="sensitive">False</property>
-                    <property name="can_focus">False</property>
-                    <property name="no_show_all">True</property>
-                    <property name="tooltip_text" translatable="yes">(Coming soon: A Graphical
-method to edit the various
-styles in the StyleSheet.)</property>
-                    <property name="opacity">0.69999999999999996</property>
-                    <property name="label" translatable="yes">Markers</property>
                   </object>
                   <packing>
                     <property name="position">5</property>
@@ -5982,7 +6115,18 @@ of this file as it was when last saved.</property>
                           </packing>
                         </child>
                         <child>
-                          <placeholder/>
+                          <object class="GtkButton">
+                            <property name="label" translatable="yes">Edit in system's 
+default text editor...</property>
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">3</property>
+                            <property name="top_attach">0</property>
+                          </packing>
                         </child>
                         <child>
                           <placeholder/>
@@ -6007,6 +6151,71 @@ of this file as it was when last saved.</property>
                   </object>
                   <packing>
                     <property name="position">7</property>
+                    <property name="tab_fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox" id="tb_Diglot">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="tooltip_text" translatable="yes">This is a placeholder for a new feature. [In the meantime
+you may want to try using the "Fuzzy D.I.Y.-glot" on the
+final tab.
+
+Later we may also have Di-script publications
+through an automated script conversion process.</property>
+                        <property name="opacity">0.59999999999999998</property>
+                        <property name="margin_top">6</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="label" translatable="yes">Watch this space... Aligned Diglots are coming soon!</property>
+                        <property name="justify">center</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkImage">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="tooltip_text" translatable="yes">This is a placeholder for a new feature. In the meantime
+you may want to try using the "Fuzzy D.I.Y.-glot" on the
+final tab.
+
+Later we may also have Di-script publications
+through an automated script conversion process.</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="pixbuf">DiglotSample700px.png</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="position">8</property>
+                  </packing>
+                </child>
+                <child type="tab">
+                  <object class="GtkLabel" id="lb_Diglot">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Create a Diglot or
+Multi-script publication.</property>
+                    <property name="opacity">0.69999999999999996</property>
+                    <property name="label" translatable="yes">Diglot</property>
+                  </object>
+                  <packing>
+                    <property name="position">8</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
@@ -6465,7 +6674,7 @@ Now you can see why it is called "Fuzzy DiYglot" :-)</property>
                     </child>
                   </object>
                   <packing>
-                    <property name="position">8</property>
+                    <property name="position">9</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
@@ -6476,9 +6685,15 @@ Now you can see why it is called "Fuzzy DiYglot" :-)</property>
                     <property name="label" translatable="yes">Fuzzy DiYglot</property>
                   </object>
                   <packing>
-                    <property name="position">8</property>
+                    <property name="position">9</property>
                     <property name="tab_fill">False</property>
                   </packing>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child type="tab">
+                  <placeholder/>
                 </child>
               </object>
               <packing>
@@ -6496,5 +6711,22 @@ Now you can see why it is called "Fuzzy DiYglot" :-)</property>
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkListStore" id="ls_textDirection">
+    <columns>
+      <!-- column-name Direction -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Left-to-Right</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Right-to-Left</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Top-to-Bottom</col>
+      </row>
+    </data>
   </object>
 </interface>
