@@ -164,8 +164,8 @@
    \ifc@ncelfirstverse\else%
     \ifrotate%
      \setbox0=\hbox{\@V~\printv@rse\@V*}\dimen0=\wd0%
-     \dimen1=\ht0\dimen2=0.5\dimen0%
-     \setbox0=\hbox{~\hbox to \dimen1{\kern\ht0\special{x:gsave}\special{x:rotate 90}%
+     \dimen1=\ht0\dimen2=0.5\dimen0\advance\dimen2 -0.5\ht0%
+     \setbox0=\hbox{~\lower\dimen2\hbox to \dimen1{\kern\ht0\special{x:gsave}\special{x:rotate 90}%
       \box0\special{x:grestore}\hss}}\ht0=0pt\dp0=0pt\@V\box0\@V*%
     \else%
      \@V~\printv@rse\@V*% (A) output verse number using saved style. ~ will lowercase to a space
