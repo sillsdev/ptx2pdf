@@ -64,6 +64,7 @@
 %
 \edef\emptym@rk{::}
 \def\r@ngerefs#1#2{%
+ \TRACEOUT{#1 , #2}
  \edef\t@st{#1}\ifx\t@st\empty\x@\extr@ctfirst\emptym@rk\relax\else\x@\extr@ctfirst\t@st\relax\fi
  \edef\t@st{#2}\ifx\t@st\empty\x@\extr@ctlast\emptym@rk\relax\else\x@\extr@ctlast\t@st\relax\fi
  \ifx\@book\empty\else

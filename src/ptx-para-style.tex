@@ -156,7 +156,7 @@
   % \tr is treated as an intro marker if we're already in intro mode
   \if@tablerow\if@ntro\@ntromarkertrue\fi\fi
   \global\he@dingstylefalse
-  \getp@ram{type}{\m@rker}\ifx\p@ram\t@tle \mark{\t@tle}\fi
+  \getp@ram{type}{\m@rker}\ifx\p@ram\t@tle \mark{\b@ok::}\fi %\mark{\t@tle}\fi
   \ifx\p@ram\t@tle
     \ift@tle\else\ifhe@dings\endhe@dings\fi\fi
     \st@rttitle

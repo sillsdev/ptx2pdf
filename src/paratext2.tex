@@ -37,7 +37,7 @@
 
 \def\MSG{\immediate\write16 } % shorthand to write a message to the terminal
 \def\TRACE#1{} % default - consume messages
-%\let\TRACE=\MSG % use this to echo them
+\let\TRACEOUT=\MSG % use this to echo them
 \def\wlog{\immediate\write-1 } % write message to log file only
 
 % \addtoendhooks collects macros to be executed at the end of the job
@@ -389,6 +389,7 @@
 	\global\advance\vsize by -2\ht\partial % subtract height of 1 column material
 	\global\advance\vsize by 2\baselineskip % don't get caught short by 1/2 line or so
 	% make a macro reset vsize for remaining pages which do not have 1 column material
+    \TRACEOUT{Going to 2 col, textheight \the\textheight}
     \gdef\resetvsize{\global\vsize=2\textheight \global\advance\vsize by \baselineskip} 
     \global\output={\twocols}
     \global\c@rrentcols=2
@@ -531,43 +532,85 @@
 \newdimen\shortavail % shortened version of \availht for re-balancing loop
 \newdimen\colhtA \newdimen\colhtB % dimen registers for calculating available ht for each col
 \newbox\colA \newbox\colB % box registers to hold contents of the columns
+\newcount\loopcount
+\newif\ifrem@inder \rem@indertrue
+\newif\ifunbalanced \unbalancedfalse% \unbalancedtrue
 
 \def\balanced{
-    \shortavail=\availht
-    \setbox\colA=\vbox{\unvbox\colA}
-    \setbox\colB=\vbox{\unvbox\colB}
+  \setbox0=\copy\s@vedpage
+  \colhtA=\availht \decr{\colhtA}{\topleftins} \decr{\colhtA}{\bottomleftins}
+  \colhtB=\availht \decr{\colhtB}{\toprightins} \decr{\colhtB}{\bottomrightins}
+  \setbox\colA=\vsplit0 to \colhtA % set \box\colA to amount which fits in first column
+  \setbox\colB=\vsplit0 to \colhtB % and \colB to second
+  %\setbox\colA=\vbox{\unvbox\colA} % reset columns to natural height
+  %\setbox\colB=\vbox{\unvbox\colB}
+  % and check if it all fit; if not, we'll have to back up and try again
+  \ifvoid0 \fitonpagetrue \else \fitonpagefalse \fi
+  \rebalancefalse
+  \setbox\colA=\vbox{\unvbox\colA}
+  \setbox\colB=\vbox{\unvbox\colB}
+  \TRACEOUT{first \the\availht . col=\the\ht\colA, \the\colhtA . second col=\the\ht\colB, \the\colhtB . rem=\the\ht0}
+  \iffitonpage
+    \shortavail=\colhtB \advance\shortavail by -\ht\colB
+    \advance\shortavail by -\colhtA \advance\shortavail by \ht\colA
+    \ifdim\shortavail>5\baselineskip
+      \shortavail=0.5\ht\colA \advance\shortavail by 0.5\ht\colB
+      \TRACEOUT{Rebalance trying from average of \the\shortavail}
+      \loopcount=0
+      \loop\setbox0=\copy\s@vedpage
+        \advance\shortavail by \baselineskip
+        \setbox\colA = \vsplit0 to \shortavail
+        \setbox\colB = \vsplit0 to \shortavail
+        \setbox\colA=\vbox{\unvbox\colA}
+        \setbox\colB=\vbox{\unvbox\colB}
+        \ifvoid0\loopcount=10\fi  
+        \ifnum\loopcount=10\repeat % so ugly you can't \else\repeat
+      \TRACEOUT{Rebalance starting with \the\shortavail}
+    \fi
     \colhtA=\ht\colA \incr{\colhtA}{\topleftins} \incr{\colhtA}{\bottomleftins}
     \colhtB=\ht\colB \incr{\colhtB}{\toprightins} \incr{\colhtB}{\bottomrightins}
-    \ifdim\colhtB<\colhtA
-      \rebalancetrue
-      \shortavail=\availht
+    \ifunbalanced\shortavail=\availht\else\ifdim\colhtB<\colhtA \rebalancetrue \shortavail=\colhtA\fi\fi
+    \advance\colhtA -\baselineskip\ifdim\colhtA<\colhtB \rebalancetrue \shortavail=\colhtB\fi
+    \loopcount=0
+    \ifrebalance
+      %\shortavail=\availht
 	  % loop making column height smaller.
 	  % as long as everything still fits a shorter page is better balanaced
-      \loop%\msg{re-balancing}
+      \loop
         \vfuzz=\maxdimen
+        \advance\loopcount by 1
         \advance\shortavail by -\baselineskip
         \setbox0=\copy\s@vedpage
         \colhtA=\shortavail \decr{\colhtA}{\topleftins} \decr{\colhtA}{\bottomleftins}
-        \colhtB=\shortavail \decr{\colhtB}{\toprightins} \decr{\colhtB}{\bottomrightins}
+        \colhtB=\shortavail \decr{\colhtB}{\toprightins} \decr{\colhtB}{\bottomrightins}% \advance\colhtB by .5\baselineskip
         \setbox\colA=\vsplit0 to \colhtA \setbox\colA=\vbox{\unvbox\colA}
         \setbox\colB=\vsplit0 to \colhtB \setbox\colB=\vbox{\unvbox\colB}
 		% if something left in box0, it didn't fit, quit loop
-        \ifvoid0\else\rebalancefalse\fi
+        \ifrem@inder\else\ifvoid0\else\advance\shortavail by \baselineskip \rebalancefalse\fi\fi
+        \TRACEOUT{re-balancing \the\ht\colA, \the\ht\colB, from \the\shortavail, rem \the\ht0}
 		% if second column longer than first column by more than .3*line height, quit loop
-        \dimen0=\ht\colB \incr{\dimen0}{\topleftins} \incr{\dimen0}{\bottomleftins}
-        \advance\dimen0 by -\ht\colA \decr{\dimen0}{\toprightins} \decr{\dimen0}{\bottomrightins}
-        \ifdim\dimen0>.3\baselineskip \rebalancefalse\fi
+        \colhtA=\ht\colA \colhtB=\ht\colB
+        \dimen0=\colhtB \incr{\dimen0}{\toprightins} \incr{\dimen0}{\bottomrightins}
+        \advance\dimen0 by -\colhtA \decr{\dimen0}{\topleftins} \decr{\dimen0}{\bottomleftins}
+        \ifdim\dimen0<.5\baselineskip\ifdim\dimen0>-.5\baselineskip
+          \shortavail=\colhtB\incr{\shortavail}{\toprightins}\incr{\shortavail}{\bottomrightins}
+          \ifdim\dimen0<0pt\else\advance\shortavail by -\dimen0\fi
+          \TRACEOUT{Best height \the\shortavail}\rebalancefalse
+        \fi\fi
 		% give up if target size less than 2 lines (should not happen)
-        \ifdim\shortavail<2\baselineskip \rebalancefalse\fi
+        \ifdim\shortavail<\baselineskip \MSG{Rebalancing bailed for short block}
+          \shortavail=\availht \rebalancefalse\fi
+        \ifnum\loopcount>10 
+            \advance\shortavail by \baselineskip
+            \rebalancefalse\MSG{Rebalancing loop count bail}\fi
         \ifrebalance\repeat
-	  % last try failed, so back up to previous length
-      \advance\shortavail by \baselineskip
     \fi
-      \colhtA=\shortavail \decr{\colhtA}{\topleftins} \decr{\colhtA}{\bottomleftins}
-      \colhtB=\shortavail \decr{\colhtB}{\toprightins} \decr{\colhtB}{\bottomrightins}
-      \setbox\colA=\vsplit\s@vedpage to \colhtA% \setbox\colA=\vbox{\unvbox\colA}
-      \setbox\colB=\vsplit\s@vedpage to \colhtB% \setbox\colB=\vbox{\unvbox\colB}
-      %\MSG{A = \the\colhtA , B = \the\colhtB}
+    \colhtA=\shortavail \decr{\colhtA}{\topleftins} \decr{\colhtA}{\bottomleftins}
+    \colhtB=\shortavail \decr{\colhtB}{\toprightins} \decr{\colhtB}{\bottomrightins}
+    \setbox\colA=\vsplit\s@vedpage to \colhtA
+    \setbox\colB=\vsplit\s@vedpage to \colhtB
+    \TRACEOUT{A = \the\colhtA , B = \the\colhtB}
+  \fi
 }
 
 \newif\ifrerunsavepartialpaged
@@ -575,6 +618,8 @@
 %%%  \msg{entering savepartialpaged}%
   \edef\t@st{\p@gefirstmark}%
   \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi % remember first, if not already set
+  \edef\t@st{\p@gebotmark}%
+  \ifx\t@st\empty\xdef\p@gebotmark{\botmark}\fi%
   \global\trialheight=\textheight
   \availht=\trialheight % amount of space we think is available
   \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
@@ -585,18 +630,9 @@
 %%%
   \splittopskip=\topskip
   \setbox\s@vedpage=\copy255
-  % figure out height available for each column, after subtracting
-  % pictures placed at top or bottom of left or right column
-  \colhtA=\availht \decr{\colhtA}{\topleftins} \decr{\colhtA}{\bottomleftins}
-  \colhtB=\availht \decr{\colhtB}{\toprightins} \decr{\colhtB}{\bottomrightins}
-  % split the galley into the two columns we need
-  \setbox\colA=\vsplit255 to \colhtA % set \box\colA to amount which fits in first column
-  \setbox\colB=\vsplit255 to \colhtB % and \colB to second
-  %\setbox\colA=\vbox{\unvbox\colA} % reset columns to natural height
-  %\setbox\colB=\vbox{\unvbox\colB}
-  % and check if it all fit; if not, we'll have to back up and try again
-  \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
 %%%  \msg{first col = \the\ht\colA, second col = \the\ht\colB, rem = \the\ht255}
+  \TRACEOUT{balancing from savepartialpaged}
+  \rem@inderfalse\balanced
   \iffitonpage
     %\msg{sppd SUCCEEDED, shipping page hIns=\the\holdinginserts}
     % re-split to better balance columns, if possible
@@ -606,13 +642,13 @@
     %   \s@vedpage is a copy of the original page contents that was split into columns A and B
     %   try re-splitting with smaller ht while \ht\colB<\ht\colA
     %   (including allowance for column inserts)
-    \balanced
 	% assemble final content of columns
-    \dimen0=\dp\colA \setbox\colA=\vbox to \shortavail{\unvbox\topleftins\box\colA\vfil\unvbox\bottomleftins}\dp\colA=\dimen0
-    \dimen0=\dp\colB \setbox\colB=\vbox to \shortavail{\unvbox\toprightins\box\colB\vfil\unvbox\bottomrightins}\dp\colB=\dimen0
+    \dimen0=\dp\colA \setbox\colA=\vbox to \availht{\unvbox\topleftins\unvbox\colA\vfil\unvbox\bottomleftins}\dp\colA=\dimen0
+    \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\else
+      \dimen0=\dp\colB \setbox\colB=\vbox to \availht{\unvbox\toprightins\unvbox\colB\vfil\unvbox\bottomrightins}\dp\colB=\dimen0
+    \fi
     \ifdim\ht\colA>\ht\colB \dimen3=\ht\colA\dimen0=\dp\colA\dp\colB=\dimen0\else
       \dimen3=\ht\colB\dimen0=\dp\colB\dp\colA=\dimen0\fi
-    \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\fi
     \ht\colA=\the\dimen3 \ht\colB=\the\dimen3
     \dimen4=\ht\partial
     \global\setbox\partial=\vbox{\unvbox\partial
@@ -628,6 +664,7 @@
 %%%%% End Testing %%%%% (Remove comments when this has been determined to work)
     \advance\dimen3 by \dimen4 \ht\partial=\dimen3
     \global\holdinginserts=1
+    \global\setbox255=\box\voidb@x
   \else
 %%%    \msg{SAVEPARTIALPAGED Backingup remainder=\the\ht255, total=\the\ht\s@vedpage, vsize=\the\vsize, baselineskip=\the\baselineskip, hIns=\the\holdinginserts}%
     \global\advance\vsize by -\baselineskip
@@ -661,18 +698,9 @@
 %%%
   \splittopskip=\topskip
   \setbox\s@vedpage=\copy255
-  % figure out height available for each column, after subtracting
-  % pictures placed at top or bottom of left or right column
-  \colhtA=\availht \decr{\colhtA}{\topleftins} \decr{\colhtA}{\bottomleftins}
-  \colhtB=\availht \decr{\colhtB}{\toprightins} \decr{\colhtB}{\bottomrightins}
-  % split the galley into the two columns we need
-  \setbox\colA=\vsplit255 to \colhtA % set \box\colA to amount which fits in first column
-  \setbox\colB=\vsplit255 to \colhtB % and \colB to second
-  %\setbox\colA=\vbox{\unvbox\colA} % reset columns to natural height
-  %\setbox\colB=\vbox{\unvbox\colB}
-  % and check if it all fit; if not, we'll have to back up and try again
-  \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
 %%%  \msg{first col = \the\ht\colA, second col = \the\ht\colB, rem = \the\ht255, hIns=\the\holdinginserts}
+  \TRACEOUT{balance from twocoltrial}
+  \rem@indertrue\balanced
   \iffitonpage
     %\msg{2 SUCCEEDED, shipping page}
     % re-split to better balance columns, if possible
@@ -682,10 +710,9 @@
     %   \s@vedpage is a copy of the original page contents that was split into columns A and B
     %   try re-splitting with smaller ht while \ht\colB<\ht\colA
     %   (including allowance for column inserts)
-    \balanced
 	% assemble final content of columns
-    \dimen0=\dp\colA \setbox\colA=\vbox to \shortavail{\unvbox\topleftins\box\colA\unvbox\bottomleftins\vfil}\dp\colA=\dimen0
-    \dimen0=\dp\colB \setbox\colB=\vbox to \shortavail{\unvbox\toprightins\box\colB\unvbox\bottomrightins\vfil}\dp\colB=\dimen0
+    \dimen0=\dp\colA \setbox\colA=\vbox to \availht{\unvbox\topleftins\box\colA\unvbox\bottomleftins\vfil}\dp\colA=\dimen0
+    \dimen0=\dp\colB \setbox\colB=\vbox to \availht{\unvbox\toprightins\box\colB\unvbox\bottomrightins\vfil}\dp\colB=\dimen0
     \ifdim\ht\colA>\ht\colB \dimen3=\ht\colA\dimen0=\dp\colA\dp\colB=\dimen0\else
       \dimen3=\ht\colB\dimen0=\dp\colB\dp\colA=\dimen0\fi
     \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\fi
@@ -716,6 +743,7 @@
         \setbox0=\lastbox \dimen0=\dp0 \box0 \kern-\dimen0
       \fi
     }
+    \global\setbox255=\box\voidb@x
     \resetvsize % reset size of next page since it will not have any 1 column material
     \plainoutput
     \xdef\p@gefirstmark{}
@@ -723,6 +751,7 @@
     \global\holdinginserts=1
     \ifrerunsavepartialpaged\global\output={\savepartialpaged}\global\rerunsavepartialpagedfalse
     \else\global\output={\twocols}\fi
+    \unvbox\s@vedpage
   \else % the contents of the "galley" didn't fit into the columns,
         % so reduce \vsize and try again with an earlier break
 %%%    \msg{2c REDUCING VSIZE hIns=\the\holdinginserts}
@@ -795,14 +824,14 @@
         \vbox{\dimen1=\textwidth \advance\dimen1 \ExtraRMargin
         \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\box\partial}} \fi
         %\unvbox\bottomins
-	\dimen0=\dp\partial
+	    \dimen0=\dp\partial
         \ifvoid\bottomins\else \kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \unvbox\bottomins \fi % ouput bottom spanning pictures
-	 \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % output all note classes
-         \iff@rstnote % no notes actually occurred!
-           \kern-\dimen0 \vfil
-         \else
-           \setbox0=\lastbox \dimen0=\dp0 \box0 \kern-\dimen0
-         \fi
+	    \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % output all note classes
+        \iff@rstnote % no notes actually occurred!
+          \kern-\dimen0 \vfil
+        \else
+          \setbox0=\lastbox \dimen0=\dp0 \box0 \kern-\dimen0
+        \fi
       }}\plainoutput
       %\vbox to \textheight{\unvbox\partial\vfil\bottomins}\eject
     %\else
