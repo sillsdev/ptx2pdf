@@ -389,8 +389,10 @@
  \catcode`\/=12
  \catcode`\#=6 \catcode`\%=14 % restore TeX meanings for those we might use
  \catcode`\{=1 \catcode`\}=2
- \singlecolumn
- \pagebreak}
+ \singlecolumn\pagebreak
+ \global\output={\global\setbox255=\box\voidb@x}\eject
+ \global\output={\onecol}
+ }
 \newread\t@stread
 \newtoks\AdjListPath % path to look for adjustment files
 \newtoks\PicListPath % path to look for picture list files

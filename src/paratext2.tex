@@ -37,7 +37,7 @@
 
 \def\MSG{\immediate\write16 } % shorthand to write a message to the terminal
 \def\TRACE#1{} % default - consume messages
-\let\TRACEOUT=\MSG % use this to echo them
+\def\TRACEOUT#1{}%\let\TRACEOUT=\MSG % use this to echo them
 \def\wlog{\immediate\write-1 } % write message to log file only
 
 % \addtoendhooks collects macros to be executed at the end of the job
@@ -384,13 +384,13 @@
       %\setbox\partial=\vbox{\hskip\columnshift\box\partial}
     \fi
     % reset parameters for 2-column formatting
-    \global\hsize=\colwidth
+    \global\hsize=\colwidth\TRACEOUT{doublecolumn vsize doubles}
     \global\vsize=2\textheight % in 2 col mode you can put twice the height of text
 	\global\advance\vsize by -2\ht\partial % subtract height of 1 column material
 	\global\advance\vsize by 2\baselineskip % don't get caught short by 1/2 line or so
 	% make a macro reset vsize for remaining pages which do not have 1 column material
     \TRACEOUT{Going to 2 col, textheight \the\textheight}
-    \gdef\resetvsize{\global\vsize=2\textheight \global\advance\vsize by \baselineskip} 
+    \gdef\resetvsize{\TRACEOUT{resetvsize2}\global\vsize=2\textheight \global\advance\vsize by \baselineskip} 
     \global\output={\twocols}
     \global\c@rrentcols=2
     % top and bottom inserts effectively use twice their height
@@ -412,7 +412,7 @@
   \global\count\th@cl@ss=\ifp@ranotes 0 \else \count255 \fi
   \global\skip\th@cl@ss=\AboveNoteSpace }
 
-\def\resetvsize{\global\vsize=\textheight} 
+\def\resetvsize{\TRACEOUT{resetvsize}\global\vsize=\textheight} 
 
 \def\msg#1{\immediate\write16{#1}}
 
@@ -432,6 +432,7 @@
   \setbox\colA=\vbox{\unvbox\colA}
   % and check if it all fit; if not, we'll have to back up and try again
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
+  \TRACEOUT{savepartialpage \the\ht\colA rem=\the\ht255}
   \iffitonpage
 %%%    %FIXME? savepartialpage gets called with holdinginserts=1, but this bit seems written assuming holdinginserts=0.
     %%%\msg{spp SUCCEEDED, 'shipping' page to partial. hIns=\the\holdinginserts}
@@ -554,23 +555,26 @@
     \shortavail=\colhtB \advance\shortavail by -\ht\colB
     \advance\shortavail by -\colhtA \advance\shortavail by \ht\colA
     \ifdim\shortavail>5\baselineskip
-      \shortavail=0.5\ht\colA \advance\shortavail by 0.5\ht\colB
-      \TRACEOUT{Rebalance trying from average of \the\shortavail}
+      \TRACEOUT{Rebalance trying from average \the\shortavail of \the\colhtA =\the\ht\colA, \the\colhtB =\the\ht\colB}
+      \divide\shortavail 2% \advance\shortavail by -0.5\ht\colA \advance\shortavail by -0.5\ht\colB
+      \advance\colhtA by -\shortavail \advance\colhtB by -\shortavail
       \loopcount=0
       \loop\setbox0=\copy\s@vedpage
-        \advance\shortavail by \baselineskip
-        \setbox\colA = \vsplit0 to \shortavail
-        \setbox\colB = \vsplit0 to \shortavail
-        \setbox\colA=\vbox{\unvbox\colA}
-        \setbox\colB=\vbox{\unvbox\colB}
+        \advance\colhtA by \baselineskip
+        \advance\colhtB by \baselineskip
+        \setbox\colA = \vsplit0 to \colhtA
+        \setbox\colB = \vsplit0 to \colhtB
         \ifvoid0\loopcount=10\fi  
         \ifnum\loopcount=10\repeat % so ugly you can't \else\repeat
-      \TRACEOUT{Rebalance starting with \the\shortavail}
+      \setbox\colA=\vbox{\unvbox\colA}
+      \setbox\colB=\vbox{\unvbox\colB}
+      \TRACEOUT{Rebalance starting with \the\colhtA, \the\colhtB}
     \fi
     \colhtA=\ht\colA \incr{\colhtA}{\topleftins} \incr{\colhtA}{\bottomleftins}
     \colhtB=\ht\colB \incr{\colhtB}{\toprightins} \incr{\colhtB}{\bottomrightins}
     \ifunbalanced\shortavail=\availht\else\ifdim\colhtB<\colhtA \rebalancetrue \shortavail=\colhtA\fi\fi
     \advance\colhtA -\baselineskip\ifdim\colhtA<\colhtB \rebalancetrue \shortavail=\colhtB\fi
+    \advance\shortavail \baselineskip
     \loopcount=0
     \ifrebalance
       %\shortavail=\availht
@@ -586,8 +590,15 @@
         \setbox\colA=\vsplit0 to \colhtA \setbox\colA=\vbox{\unvbox\colA}
         \setbox\colB=\vsplit0 to \colhtB \setbox\colB=\vbox{\unvbox\colB}
 		% if something left in box0, it didn't fit, quit loop
-        \ifrem@inder\else\ifvoid0\else\advance\shortavail by \baselineskip \rebalancefalse\fi\fi
         \TRACEOUT{re-balancing \the\ht\colA, \the\ht\colB, from \the\shortavail, rem \the\ht0}
+        \ifrem@inder\else\ifvoid0\else\advance\shortavail by \baselineskip
+            \TRACEOUT{rebalance found extra back to \the\shortavail}\rebalancefalse
+            \setbox0=\copy\s@vedpage
+            \colhtA=\shortavail \decr{\colhtA}{\topleftins} \decr{\colhtA}{\bottomleftins}
+            \colhtB=\shortavail \decr{\colhtB}{\toprightins} \decr{\colhtB}{\bottomrightins}% \advance\colhtB by .5\baselineskip
+            \setbox\colA=\vsplit0 to \colhtA \setbox\colA=\vbox{\unvbox\colA}
+            \setbox\colB=\vsplit0 to \colhtB \setbox\colB=\vbox{\unvbox\colB}
+        \fi\fi
 		% if second column longer than first column by more than .3*line height, quit loop
         \colhtA=\ht\colA \colhtB=\ht\colB
         \dimen0=\colhtB \incr{\dimen0}{\toprightins} \incr{\dimen0}{\bottomrightins}
@@ -600,7 +611,7 @@
 		% give up if target size less than 2 lines (should not happen)
         \ifdim\shortavail<\baselineskip \MSG{Rebalancing bailed for short block}
           \shortavail=\availht \rebalancefalse\fi
-        \ifnum\loopcount>10 
+        \ifnum\loopcount>20 
             \advance\shortavail by \baselineskip
             \rebalancefalse\MSG{Rebalancing loop count bail}\fi
         \ifrebalance\repeat
@@ -643,13 +654,17 @@
     %   try re-splitting with smaller ht while \ht\colB<\ht\colA
     %   (including allowance for column inserts)
 	% assemble final content of columns
-    \dimen0=\dp\colA \setbox\colA=\vbox to \availht{\unvbox\topleftins\unvbox\colA\vfil\unvbox\bottomleftins}\dp\colA=\dimen0
+    \setbox\colA=\vbox{\unvbox\colA} \setbox\colB=\vbox{\unvbox\colB}
+    \colhtA=\ht\colA \incr{\colhtA}{\topleftins} \incr{\colhtA}{\bottomleftins}
+    \colhtB=\ht\colB \incr{\colhtB}{\toprightins} \incr{\colhtB}{\bottomrightins}
+    \dimen0=\dp\colA \setbox\colA=\vbox to \availht{\unvbox\topleftins\box\colA\vfil\unvbox\bottomleftins}\dp\colA=\dimen0
     \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\else
-      \dimen0=\dp\colB \setbox\colB=\vbox to \availht{\unvbox\toprightins\unvbox\colB\vfil\unvbox\bottomrightins}\dp\colB=\dimen0
+      \ifdim\dimen0<\dp\colB\dimen0=\dp\colB\fi \setbox\colB=\vbox to \availht{\unvbox\toprightins\box\colB\vfil\unvbox\bottomrightins}\dp\colB=\dimen0
     \fi
-    \ifdim\ht\colA>\ht\colB \dimen3=\ht\colA\dimen0=\dp\colA\dp\colB=\dimen0\else
-      \dimen3=\ht\colB\dimen0=\dp\colB\dp\colA=\dimen0\fi
-    \ht\colA=\the\dimen3 \ht\colB=\the\dimen3
+    \ifdim\colhtA>\colhtB \dimen3=\colhtA\dimen0=\dp\colA\dp\colB=\dimen0\else
+      \dimen3=\colhtB\dimen0=\dp\colB\dp\colA=\dimen0\fi
+    \advance\dimen3 by \dimen0
+    \ht\colA=\dimen3 \ht\colB=\dimen3
     \dimen4=\ht\partial
     \global\setbox\partial=\vbox{\unvbox\partial
       \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
@@ -711,10 +726,16 @@
     %   try re-splitting with smaller ht while \ht\colB<\ht\colA
     %   (including allowance for column inserts)
 	% assemble final content of columns
-    \dimen0=\dp\colA \setbox\colA=\vbox to \availht{\unvbox\topleftins\box\colA\unvbox\bottomleftins\vfil}\dp\colA=\dimen0
-    \dimen0=\dp\colB \setbox\colB=\vbox to \availht{\unvbox\toprightins\box\colB\unvbox\bottomrightins\vfil}\dp\colB=\dimen0
-    \ifdim\ht\colA>\ht\colB \dimen3=\ht\colA\dimen0=\dp\colA\dp\colB=\dimen0\else
-      \dimen3=\ht\colB\dimen0=\dp\colB\dp\colA=\dimen0\fi
+    \setbox\colA=\vbox{\unvbox\colA} \setbox\colB=\vbox{\unvbox\colB}
+    \colhtA=\ht\colA \incr{\colhtA}{\topleftins} \incr{\colhtA}{\bottomleftins}
+    \colhtB=\ht\colB \incr{\colhtB}{\toprightins} \incr{\colhtB}{\bottomrightins}
+    \dimen0=\dp\colA \setbox\colA=\vbox to \availht{\unvbox\topleftins\box\colA\vfil\unvbox\bottomleftins}\dp\colA=\dimen0
+    \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\else
+      \ifdim\dimen0<\dp\colB\dimen0=\dp\colB\fi \setbox\colB=\vbox to \availht{\unvbox\toprightins\box\colB\vfil\unvbox\bottomrightins}\dp\colB=\dimen0
+    \fi
+    \ifdim\colhtA>\colhtB \dimen3=\colhtA\dimen0=\dp\colA\dp\colB=\dimen0\else
+      \dimen3=\colhtB\dimen0=\dp\colB\dp\colA=\dimen0\fi
+    \advance\dimen3 by \dimen0
     \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\fi
     \ht\colA=\the\availht \ht\colB=\the\availht
 	% define pagecontents for use by \plainoutput below
@@ -749,9 +770,8 @@
     \xdef\p@gefirstmark{}
     \xdef\p@gebotmark{}
     \global\holdinginserts=1
-    \ifrerunsavepartialpaged\global\output={\savepartialpaged}\global\rerunsavepartialpagedfalse
-    \else\global\output={\twocols}\fi
-    \unvbox\s@vedpage
+    \ifrerunsavepartialpaged\global\output={\savepartialpaged}\unvbox\s@vedpage\eject\TRACEOUT{rerunsavepartialpaged}\global\rerunsavepartialpagedfalse
+    \else\global\output={\twocols}\unvbox\s@vedpage\fi
   \else % the contents of the "galley" didn't fit into the columns,
         % so reduce \vsize and try again with an earlier break
 %%%    \msg{2c REDUCING VSIZE hIns=\the\holdinginserts}
@@ -776,6 +796,7 @@
 \newdimen\columnshift
 \newdimen\ColumnGutterRuleSkip \ColumnGutterRuleSkip=0pt
 
+%makecolumngutter{rule height}{vbox height}{depth}
 \def\makecolumngutter#1#2#3{\hfil
     \dimen4=#1\advance\dimen4-\ColumnGutterRuleSkip%\advance\dimen4 by #3
     \ifColumnGutterRule
@@ -805,7 +826,7 @@
 
 \def\savepartialpagedbounce{
   %This output routine gets the partial galley (input text) before a 2->1 column transition so that it can be re-run with holdinginserts=0, so footnotes etc can be seen.
-  \msg{sppb hIns=\the\holdinginserts, \the\ht\partial, \the\ht255, }
+  \TRACEOUT{sppb hIns=\the\holdinginserts, \the\ht\partial, \the\ht255, }
   \global\holdinginserts=0
   \global\output={\savepartialpaged}
   \global\setbox\galley=\copy255
@@ -813,6 +834,7 @@
 }
 % to switch back to single column, we reset the page size parameters
 \def\singlecolumn{%
+  \TRACEOUT{singlecolumn}%\tracingmacros=1
   \ifnum\c@rrentcols>1
     \ifhe@dings\endhe@dings\fi
     \global\output={\savepartialpagedbounce}\eject % save any partially-full page into a box
@@ -838,6 +860,7 @@
       %\penalty-100\vskip\baselineskip % ensure blank line between single and double column material
     \fi
     \global\c@rrentcols=1
+    \TRACEOUT{resetting resetvsize}\def\resetvsize{\TRACEOUT{resetvsize}\global\vsize=\textheight} 
     \global\output={\onecol}
     \global\holdinginserts=1
     \count255=1000
@@ -849,7 +872,7 @@
     %\hskip\columnshift\box\partial
     \ifendbooknoeject\ifx\p@gefirstmark\t@tle \else\vskip\baselineskip\hskip-\columnshift\hrule\vskip2\baselineskip\fi\fi%
     %\msg{Starting 1col partial: \the\ht\partial, pagetotal: \the\pagetotal, textheight: \the\textheight}
-  \fi}%
+  \fi\tracingmacros=0}%
 
 \count\topins=1000 \dimen\topins=\maxdimen \skip\topins=0pt
 \newinsert\bottomins \count\bottomins=1000 \dimen\bottomins=\maxdimen
