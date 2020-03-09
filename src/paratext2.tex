@@ -724,7 +724,7 @@
   \TRACEOUT{balance from twocoltrial}
   \rem@indertrue\balanced
   \dimen5=\baselineskip
-  \iffitonpage\ifvoid\s@vedpage\else\dimen5=\ht\s@vedpage\fitonpagefalse\fi\fi
+  \iffitonpage\ifvoid\s@vedpage\else\fitonpagefalse\fi\fi% \dimen5=\ht\s@vedpage\fi\fi
   \iffitonpage
     %\msg{2 SUCCEEDED, shipping page}
     % re-split to better balance columns, if possible

@@ -253,8 +253,17 @@
 \def\AfterVerseSpaceFactor{2}
 \newif\ifOmitChapterNumber
 \newif\ifc@ncelfirstverse
- \def\printv@rse{\AdornVerseNumber{\v@rsefrom}\ifx\v@rsefrom\v@rseto
+\def\simpleprintv@rse{\AdornVerseNumber{\v@rsefrom}\ifx\v@rsefrom\v@rseto
                  \else\endash\AdornVerseNumber{\v@rseto}\fi}
+\def\hangprintv@rse{\ifx\v@rsefrom\v@rseto\relax\AdornVerseNumber{\v@rsefrom}%
+    \else\dimen0=\SuperscriptFactor\baselineskip \advance\dimen0 by -\baselineskip
+         \dimen1=\SuperscriptFactor\baselineskip \multiply\dimen1 by 2
+         \setbox1=\hbox{\endash\AdornVerseNumber{\v@rseto}}
+         \setbox0=\vtop{\hbox to \wd1{\hfil\AdornVerseNumber{\v@rsefrom}}
+                        \kern\dimen0\box1}
+         %\ht0=\dimen1\dp0=0pt
+         \hbox{\box0}\fi}
+\let\printv@rse=\simpleprintv@rse
 \def\@ne{1}
 \def\AdornVerseNumber#1{#1}
 

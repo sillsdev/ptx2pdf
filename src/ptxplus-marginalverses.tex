@@ -25,7 +25,7 @@
           \kern\AfterVerseSpaceFactor\FontSizeUnit}}%
         \ht1=\dimen0\dp1=0pt\tracingparagraphs=0
         \trace{v}{\reference - tolerance=\the\tolerance}\box1}\nobreak
-    \hskip 1sp%
+    \hskip 1sp% *%
     \everypar=\myeverypar}}}
 \gdef\marginremovehboxes{%
   \setbox0=\lastbox 
@@ -40,11 +40,5 @@
 \def\initmyverse{\let\myoldv=\@V\let\v=\myv}
 %\def\initmyverse{\let\v=\myv}
 \addtoinithooks{\initmyverse}%
-\def\printv@rse{\AdornVerseNumber{\v@rsefrom}\ifx\v@rsefrom\v@rseto
-%                \else\setbox0\hbox{-} -\kern-\wd0\kern\wd0\penalty\hyphenpenalty \AdornVerseNumber{\v@rseto}\fi}
-                % The following seems to look better than the previous. Is there a way to
-                % do some math on \wd0 to make it act more proportionally? Hard coding to
-                % -1.5pt doesn't seem like a good way to do it.
-                \else\setbox0\hbox{-}-\kern-1.5pt\kern\wd0\penalty\hyphenpenalty \AdornVerseNumber{\v@rseto}\fi}
-
+\let\printv@rse=\hangprintv@rse
 \endinput
