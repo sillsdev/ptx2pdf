@@ -37,7 +37,7 @@
 
 \def\MSG{\immediate\write16 } % shorthand to write a message to the terminal
 \def\TRACE#1{} % default - consume messages
-\def\TRACEOUT#1{}%\let\TRACEOUT=\MSG % use this to echo them
+\def\TRACEOUT#1{}\let\TRACEOUT=\MSG % use this to echo them
 \def\wlog{\immediate\write-1 } % write message to log file only
 
 % \addtoendhooks collects macros to be executed at the end of the job
@@ -197,6 +197,7 @@
   \edef\t@st{\p@gefirstmark}%
   \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi % remember first, if not already set
   \availht=\trialheight % amount of space we think is available
+  \f@rstnotetrue
   \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
   \decr{\availht}{\topins}% and by the space needed for spanning pictures
   \decr{\availht}{\bottomins}
@@ -288,7 +289,7 @@
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\else
     \iff@rstnote\kern-\dimen0\vfil % ignore depth of body text; fill space
-    \vskip\AboveNoteSpace\else\vskip\InterNoteSpace\fi
+      \vskip\AboveNoteSpace\else\vskip\InterNoteSpace\fi
     \iff@rstnote{\footnoterule}\f@rstnotefalse\fi % output rule before first note
     {\maken@tepara{\th@cl@ss}{#1}}%
   \fi}
@@ -423,6 +424,7 @@
   \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi % remember first, if not already set
   \global\trialheight=\textheight
   \availht=\trialheight % amount of space we think is available
+  \f@rstnotetrue
   \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
   \decr{\availht}{\topins}% and by the space needed for spanning pictures
   \decr{\availht}{\bottomins}
@@ -509,12 +511,14 @@
     \setbox0=\vbox{\maken@tepara{0}{#1}}
     \advance\availht by -\ht0
     \advance\availht by -\dp0
-    \advance\availht by -0.5\AboveNoteSpace
-    \getp@ram{baseline}{#1}\ifx\p@ram\relax\else\advance\availht-\p@ram\fi
+    \iff@rstnote\advance\availht by -\AboveNoteSpace \f@rstnotefalse
+    \else \advance\availht by -\InterNoteSpace\fi
+    %\getp@ram{baseline}{#1}\ifx\p@ram\relax\else\advance\availht-\p@ram\fi
   \fi}
 \def\reduceavailht@sep#1{
   \x@\let\x@\th@cl@ss\csname note-#1\endcsname
   \ifvoid\th@cl@ss\else
+    \f@rstnotefalse
     \advance\availht by -\ht\th@cl@ss
     \advance\availht by -\dp\th@cl@ss
     \advance\availht by -\AboveNoteSpace
@@ -633,8 +637,9 @@
   \ifx\t@st\empty\xdef\p@gebotmark{\botmark}\fi%
   \global\trialheight=\textheight
   \availht=\trialheight % amount of space we think is available
+  \f@rstnotetrue
   \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
-  \divide\availht by\baselineskip \multiply\availht by\baselineskip
+  \multiply\availht by 10 \divide\availht by\dimen0 \multiply\availht by\dimen0 \divide\availht by 10
 %%%
   \decr{\availht}{\topins}% and by the space needed for spanning pictures
   \decr{\availht}{\bottomins}
@@ -705,8 +710,10 @@
   \edef\t@st{\p@gefirstmark}%
   \ifx\t@st\empty\edef\p@gefirstmark{\firstmark}\fi % remember first, if not already set
   \availht=\trialheight % amount of space we think is available
+  \f@rstnotetrue
   \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
-  \divide\availht by\baselineskip \multiply\availht by\baselineskip
+  \dimen0=\baselineskip \multiply\dimen0 by 10
+  \multiply\availht by 10 \divide\availht by\dimen0 \multiply\availht by\dimen0 \divide\availht by 10
 %%%
   \decr{\availht}{\topins}% and by the space needed for spanning pictures
   \decr{\availht}{\bottomins}
@@ -716,6 +723,8 @@
 %%%  \msg{first col = \the\ht\colA, second col = \the\ht\colB, rem = \the\ht255, hIns=\the\holdinginserts}
   \TRACEOUT{balance from twocoltrial}
   \rem@indertrue\balanced
+  \dimen5=\baselineskip
+  \iffitonpage\ifvoid\s@vedpage\else\dimen5=\ht\s@vedpage\fitonpagefalse\fi\fi
   \iffitonpage
     %\msg{2 SUCCEEDED, shipping page}
     % re-split to better balance columns, if possible
@@ -775,7 +784,8 @@
   \else % the contents of the "galley" didn't fit into the columns,
         % so reduce \vsize and try again with an earlier break
 %%%    \msg{2c REDUCING VSIZE hIns=\the\holdinginserts}
-    \global\advance\vsize by -\baselineskip
+    \TRACEOUT{Reducing vsize \the\vsize, by \the\dimen5}
+    \global\advance\vsize by -\dimen5
 	% clear insertions
     \global\setbox\topins=\box\voidb@x
     \global\setbox\bottomins=\box\voidb@x
