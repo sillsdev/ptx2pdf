@@ -552,6 +552,32 @@
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="ls_fonts">
+    <columns>
+      <!-- column-name gchararray1 -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Sans Normal</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Annapurna SIL</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Suranna UI</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Ponnala</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Times New Roman</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Annapurna SIL Bold</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="ls_glossaryMarkupStyle">
     <columns>
       <!-- column-name glossaryMarkupStyle -->
@@ -761,19 +787,6 @@ and produce a PDF with the settings specified.</property>
                         <property name="margin_bottom">6</property>
                         <property name="column_spacing">6</property>
                         <child>
-                          <object class="GtkComboBox" id="cb_savedConfiguration">
-                            <property name="width_request">300</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="hexpand">False</property>
-                            <property name="resize_mode">immediate</property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">1</property>
-                            <property name="top_attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
@@ -794,8 +807,9 @@ and produce a PDF with the settings specified.</property>
                             <property name="tooltip_text" translatable="yes">Save the current settings with the name
 given in the drop-down box on the left.</property>
                             <property name="halign">start</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
                             <property name="use_stock">True</property>
-                            <property name="image_position">top</property>
                             <property name="always_show_image">True</property>
                           </object>
                           <packing>
@@ -812,12 +826,43 @@ given in the drop-down box on the left.</property>
                             <property name="tooltip_text" translatable="yes">Delete the currently selected
 Saved Configuration immediately.</property>
                             <property name="halign">start</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
                             <property name="use_stock">True</property>
-                            <property name="image_position">top</property>
                             <property name="always_show_image">True</property>
                           </object>
                           <packing>
                             <property name="left_attach">3</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkComboBoxText" id="cb_savedConfig">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
+                            <property name="active">1</property>
+                            <property name="has_entry">True</property>
+                            <items>
+                              <item translatable="yes">Regular Layout</item>
+                              <item translatable="yes">Double-spaced Checking</item>
+                              <item translatable="yes">Pictures and Footnotes</item>
+                              <item translatable="yes">Without Ch &amp; Vs Numbers</item>
+                            </items>
+                            <child internal-child="entry">
+                              <object class="GtkEntry">
+                                <property name="width_request">240</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="halign">start</property>
+                                <property name="width_chars">21</property>
+                                <property name="xalign">0.5</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
                             <property name="top_attach">0</property>
                           </packing>
                         </child>
@@ -2070,6 +2115,70 @@ Direction:</property>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkComboBox" id="cb_fontR">
+                                    <property name="width_request">140</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="model">ls_fonts</property>
+                                    <property name="active">0</property>
+                                    <property name="id_column">0</property>
+                                    <property name="active_id">1</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">5</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkComboBox" id="cb_fontB">
+                                    <property name="width_request">140</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="model">ls_fonts</property>
+                                    <property name="active">0</property>
+                                    <property name="id_column">0</property>
+                                    <property name="active_id">1</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">5</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkComboBox" id="cb_fontI">
+                                    <property name="width_request">140</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="model">ls_fonts</property>
+                                    <property name="active">0</property>
+                                    <property name="id_column">0</property>
+                                    <property name="active_id">1</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">5</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkComboBox" id="cb_fontBI">
+                                    <property name="width_request">140</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="model">ls_fonts</property>
+                                    <property name="active">0</property>
+                                    <property name="id_column">0</property>
+                                    <property name="active_id">1</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">5</property>
+                                    <property name="top_attach">3</property>
                                   </packing>
                                 </child>
                                 <child>
