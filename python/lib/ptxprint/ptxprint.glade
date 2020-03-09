@@ -643,7 +643,7 @@
         <col id="0" translatable="yes">Right-to-Left</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Top-to-Bottom</col>
+        <col id="0" translatable="yes">Top-to-Bottom (LTR)</col>
       </row>
     </data>
   </object>
@@ -778,107 +778,9 @@ and produce a PDF with the settings specified.</property>
                     <property name="can_focus">False</property>
                     <property name="orientation">vertical</property>
                     <child>
-                      <object class="GtkGrid">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="margin_left">6</property>
-                        <property name="margin_right">6</property>
-                        <property name="margin_top">6</property>
-                        <property name="margin_bottom">6</property>
-                        <property name="column_spacing">6</property>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="halign">end</property>
-                            <property name="label" translatable="yes">Saved Configuration: </property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">0</property>
-                            <property name="top_attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkButton">
-                            <property name="label">gtk-save</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">True</property>
-                            <property name="tooltip_text" translatable="yes">Save the current settings with the name
-given in the drop-down box on the left.</property>
-                            <property name="halign">start</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="use_stock">True</property>
-                            <property name="always_show_image">True</property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">2</property>
-                            <property name="top_attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkButton">
-                            <property name="label">gtk-delete</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">True</property>
-                            <property name="tooltip_text" translatable="yes">Delete the currently selected
-Saved Configuration immediately.</property>
-                            <property name="halign">start</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="use_stock">True</property>
-                            <property name="always_show_image">True</property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">3</property>
-                            <property name="top_attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkComboBoxText" id="cb_savedConfig">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="active">1</property>
-                            <property name="has_entry">True</property>
-                            <items>
-                              <item translatable="yes">Regular Layout</item>
-                              <item translatable="yes">Double-spaced Checking</item>
-                              <item translatable="yes">Pictures and Footnotes</item>
-                              <item translatable="yes">Without Ch &amp; Vs Numbers</item>
-                            </items>
-                            <child internal-child="entry">
-                              <object class="GtkEntry">
-                                <property name="width_request">240</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="halign">start</property>
-                                <property name="width_chars">21</property>
-                                <property name="xalign">0.5</property>
-                              </object>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="left_attach">1</property>
-                            <property name="top_attach">0</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
                       <object class="GtkFrame">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="margin_left">6</property>
-                        <property name="margin_right">6</property>
                         <property name="margin_top">6</property>
                         <property name="margin_bottom">6</property>
                         <property name="label_xalign">0.019999999552965164</property>
@@ -1138,6 +1040,107 @@ Into a Single PDF</property>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">False</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkGrid">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="margin_left">12</property>
+                        <property name="margin_right">12</property>
+                        <property name="margin_top">6</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="column_spacing">6</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="halign">end</property>
+                            <property name="label" translatable="yes">Saved Configuration: </property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton">
+                            <property name="label">gtk-save</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Save the current settings with the name
+given in the drop-down box on the left.</property>
+                            <property name="halign">start</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
+                            <property name="use_stock">True</property>
+                            <property name="always_show_image">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">2</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton">
+                            <property name="label">gtk-delete</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Delete the currently selected
+Saved Configuration immediately.</property>
+                            <property name="halign">start</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
+                            <property name="use_stock">True</property>
+                            <property name="always_show_image">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">3</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkComboBoxText" id="cb_savedConfig">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="tooltip_text" translatable="yes">Type a name for the current configuration
+and then click the Save button to keep it.
+
+Alternatively, select a previously-saved
+configuration to bring up all those settings.</property>
+                            <property name="halign">start</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
+                            <property name="active">0</property>
+                            <property name="has_entry">True</property>
+                            <property name="active_id">0</property>
+                            <items>
+                              <item id="0" translatable="yes">Regular Layout</item>
+                              <item id="1" translatable="yes">Double-spaced Checking</item>
+                              <item id="2" translatable="yes">Pictures and Footnotes</item>
+                              <item id="3" translatable="yes">Without Ch &amp; Vs Numbers</item>
+                            </items>
+                            <child internal-child="entry">
+                              <object class="GtkEntry">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="halign">start</property>
+                                <property name="width_chars">38</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
                         <property name="position">1</property>
                       </packing>
                     </child>
@@ -2115,70 +2118,6 @@ Direction:</property>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkComboBox" id="cb_fontR">
-                                    <property name="width_request">140</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="model">ls_fonts</property>
-                                    <property name="active">0</property>
-                                    <property name="id_column">0</property>
-                                    <property name="active_id">1</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">5</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkComboBox" id="cb_fontB">
-                                    <property name="width_request">140</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="model">ls_fonts</property>
-                                    <property name="active">0</property>
-                                    <property name="id_column">0</property>
-                                    <property name="active_id">1</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">5</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkComboBox" id="cb_fontI">
-                                    <property name="width_request">140</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="model">ls_fonts</property>
-                                    <property name="active">0</property>
-                                    <property name="id_column">0</property>
-                                    <property name="active_id">1</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">5</property>
-                                    <property name="top_attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkComboBox" id="cb_fontBI">
-                                    <property name="width_request">140</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="model">ls_fonts</property>
-                                    <property name="active">0</property>
-                                    <property name="id_column">0</property>
-                                    <property name="active_id">1</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">5</property>
-                                    <property name="top_attach">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -5195,7 +5134,9 @@ to show gridlines for finetuning settings.</property>
                                             <property name="opacity">0.80000000022351747</property>
                                             <property name="halign">end</property>
                                             <property name="margin_bottom">6</property>
-                                            <property name="label" translatable="yes">Cover.pdf,MyFrontPages.pdf</property>
+                                            <property name="justify">right</property>
+                                            <property name="ellipsize">middle</property>
+                                            <property name="max_width_chars">26</property>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>
@@ -5210,7 +5151,9 @@ to show gridlines for finetuning settings.</property>
                                             <property name="opacity">0.80000000022351747</property>
                                             <property name="halign">end</property>
                                             <property name="margin_bottom">6</property>
-                                            <property name="label" translatable="yes">Draft.pdf</property>
+                                            <property name="justify">right</property>
+                                            <property name="ellipsize">middle</property>
+                                            <property name="max_width_chars">26</property>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>
@@ -5225,7 +5168,9 @@ to show gridlines for finetuning settings.</property>
                                             <property name="opacity">0.80000000000000004</property>
                                             <property name="halign">end</property>
                                             <property name="margin_bottom">6</property>
-                                            <property name="label" translatable="yes">Glossary.pdf</property>
+                                            <property name="justify">right</property>
+                                            <property name="ellipsize">middle</property>
+                                            <property name="max_width_chars">26</property>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>

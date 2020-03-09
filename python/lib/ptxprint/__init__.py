@@ -61,10 +61,6 @@ class PtxPrinterDialog:
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(os.path.dirname(__file__), "ptxprint.glade"))
         self.builder.connect_signals(self)
-        self.addCR("cb_fontR", 0)
-        self.addCR("cb_fontB", 0)
-        self.addCR("cb_fontI", 0)
-        self.addCR("cb_fontBI", 0)
         self.addCR("cb_digits", 0)
         self.addCR("cb_script", 0)
         self.addCR("cb_chapfrom", 0)
@@ -874,9 +870,11 @@ class PtxPrinterDialog:
         if FrontPDFs is not None and FrontPDFs != 'None':
             self.FrontPDFs = FrontPDFs
             btn_selectFrontPDFs.set_tooltip_text("\n".join('{}'.format(s) for s in FrontPDFs))
+            self.builder.get_object("lb_inclFrontMatter").set_text(",".join(re.sub(r".+\\(.+)\.pdf",r"\1",s) for s in FrontPDFs))
         else:
             self.FrontPDFs = None
             btn_selectFrontPDFs.set_tooltip_text("")
+            self.builder.get_object("lb_inclFrontMatter").set_text("")
             self.builder.get_object("btn_selectFrontPDFs").set_sensitive(False)
             self.builder.get_object("c_inclFrontMatter").set_active(False)
 
@@ -887,9 +885,11 @@ class PtxPrinterDialog:
         if BackPDFs is not None and BackPDFs != 'None':
             self.BackPDFs = BackPDFs
             btn_selectBackPDFs.set_tooltip_text("\n".join('{}'.format(s) for s in BackPDFs))
+            self.builder.get_object("lb_inclBackMatter").set_text(",".join(re.sub(r".+\\(.+)\.pdf",r"\1",s) for s in BackPDFs))
         else:
             self.BackPDFs = None
             btn_selectBackPDFs.set_tooltip_text("")
+            self.builder.get_object("lb_inclBackMatter").set_text("")
             self.builder.get_object("btn_selectBackPDFs").set_sensitive(False)
             self.builder.get_object("c_inclBackMatter").set_active(False)
 
@@ -900,9 +900,11 @@ class PtxPrinterDialog:
         if watermarks is not None and watermarks != 'None':
             self.watermarks = watermarks[0]
             btn_selectWatermarkPDF.set_tooltip_text(watermarks[0])
+            self.builder.get_object("lb_applyWatermark").set_text(re.sub(r".+\\(.+)\.pdf",r"\1",watermarks[0]))
         else:
             self.watermarks = None
             btn_selectWatermarkPDF.set_tooltip_text("")
+            self.builder.get_object("lb_applyWatermark").set_text("")
             self.builder.get_object("btn_selectWatermarkPDF").set_sensitive(False)
             self.builder.get_object("c_applyWatermark").set_active(False)
 
