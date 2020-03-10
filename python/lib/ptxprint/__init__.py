@@ -533,9 +533,20 @@ class PtxPrinterDialog:
 
     def onInclBackMatterChanged(self, c_inclBackMatter):
         self.builder.get_object("btn_selectBackPDFs").set_sensitive(self.get("c_inclBackMatter"))
-            
+
     def onApplyWatermarkChanged(self, c_applyWatermark):
         self.builder.get_object("btn_selectWatermarkPDF").set_sensitive(self.get("c_applyWatermark"))
+    
+    def onInclPageBorderChanged(self, c_inclPageBorder):
+        self.builder.get_object("btn_selectPageBorderPDF").set_sensitive(self.get("c_inclPageBorder"))
+
+    def onInclSectionHeaderChanged(self, c_inclSectionHeader):
+        self.builder.get_object("btn_selectSectionHeaderPDF").set_sensitive(self.get("c_inclSectionHeader"))
+
+    def onInclVerseDecoratorChanged(self, c_inclVerseDecorator):
+        status = self.get("c_inclVerseDecorator")
+        for c in ("l_verseFont", "f_verseNums", "l_verseSize", "s_verseFontsize", "btn_selectVerseDecoratorPDF"):
+            self.builder.get_object(c).set_sensitive(status)
     
     def onAutoTocChanged(self, c_autoToC):
         atoc = self.builder.get_object("t_tocTitle")
@@ -625,26 +636,40 @@ class PtxPrinterDialog:
             # Turn Dangerous Settings OFF
             for c in ("c_startOnHalfPage", "c_marginalverses", "c_prettyIntroOutline", "c_blendfnxr", "c_autoToC",
                       "c_figplaceholders", "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", 
-                      "c_preventwidows", "c_PDFx1aOutput", "c_diglot", "c_hyphenate", "c_variableLineSpacing"):
+                      "c_preventwidows", "c_PDFx1aOutput", "c_diglot", "c_hyphenate", "c_variableLineSpacing",
+                      "c_verticalVerseBridges"):
                 self.builder.get_object(c).set_active(False)
 
             # Turn Essential Settings ON
             for c in ("c_mainBodyText", "c_footnoterule",
                       "c_includefigsfromtext", "c_skipmissingimages", "c_convertTIFtoPNG", "c_useFiguresFolder"):
                 self.builder.get_object(c).set_active(True)
+            self.builder.get_object("c_hideAdvancedSettings").set_opacity(0.1)
+        else:
+            self.builder.get_object("c_hideAdvancedSettings").set_opacity(0.95)
+#            self.builder.get_object("c_hideAdvancedSettings").set_visible(True)
 
         # Hide a whole bunch of stuff that they don't need to see
-        for c in ("tb_Diglot", "tb_Advanced","tb_Logging", "tb_ViewerEditor", "tb_DiglotTesting", "btn_editPicList",
+        for c in ("tb_Advanced","tb_Logging", "tb_ViewerEditor", "tb_DiglotTesting", "btn_editPicList",
                   "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "box_AdvFootnoteConfig", "l_colgutteroffset",
                   "c_usePicList", "c_skipmissingimages", "c_convertTIFtoPNG", "c_useCustomFolder", "btn_selectFigureFolder", 
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
-                  "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection",
+                  "c_verticalVerseBridges", "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection",
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "row_ToC", "c_hyphenate",
                   "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", "c_preventwidows",
                   "l_sidemarginfactor", "s_sidemarginfactor", "l_min", "s_linespacingmin", "l_max", "s_linespacingmax",
                   "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "cb_textDirection", "l_digits", "cb_digits"):
             # print(c)
             self.builder.get_object(c).set_visible(not self.get("c_hideAdvancedSettings"))
+
+    def onShowBordersTabClicked(self, c_showBordersTab):
+        if self.get("c_showBordersTab"):
+            self.builder.get_object("tb_FancyBorders").set_visible(True)
+            self.builder.get_object("nbk_Main").set_current_page(10)
+            self.builder.get_object("c_enableDecorativeElements").set_active(True)
+        else:
+            self.builder.get_object("c_enableDecorativeElements").set_active(False)
+            self.builder.get_object("tb_FancyBorders").set_visible(False)
 
     def onKeepTemporaryFilesClicked(self, c_keepTemporaryFiles):
         self.builder.get_object("gr_debugTools").set_sensitive(self.get("c_keepTemporaryFiles"))
@@ -869,6 +894,7 @@ class PtxPrinterDialog:
                 multiple = True)
         if FrontPDFs is not None and FrontPDFs != 'None':
             self.FrontPDFs = FrontPDFs
+            self.builder.get_object("c_inclFrontMatter").set_active(True)
             btn_selectFrontPDFs.set_tooltip_text("\n".join('{}'.format(s) for s in FrontPDFs))
             self.builder.get_object("lb_inclFrontMatter").set_text(",".join(re.sub(r".+\\(.+)\.pdf",r"\1",s) for s in FrontPDFs))
         else:
@@ -884,6 +910,7 @@ class PtxPrinterDialog:
                 multiple = True)
         if BackPDFs is not None and BackPDFs != 'None':
             self.BackPDFs = BackPDFs
+            self.builder.get_object("c_inclBackMatter").set_active(True)
             btn_selectBackPDFs.set_tooltip_text("\n".join('{}'.format(s) for s in BackPDFs))
             self.builder.get_object("lb_inclBackMatter").set_text(",".join(re.sub(r".+\\(.+)\.pdf",r"\1",s) for s in BackPDFs))
         else:
@@ -899,6 +926,7 @@ class PtxPrinterDialog:
                 multiple = False)
         if watermarks is not None and watermarks != 'None':
             self.watermarks = watermarks[0]
+            self.builder.get_object("c_applyWatermark").set_active(True)
             btn_selectWatermarkPDF.set_tooltip_text(watermarks[0])
             self.builder.get_object("lb_applyWatermark").set_text(re.sub(r".+\\(.+)\.pdf",r"\1",watermarks[0]))
         else:
@@ -920,6 +948,69 @@ class PtxPrinterDialog:
             btn_selectFigureFolder.set_tooltip_text("")
             self.builder.get_object("btn_selectFigureFolder").set_sensitive(False)
             self.builder.get_object("c_useFiguresFolder").set_active(True)
+
+    def onPageBorderPDFclicked(self, btn_selectPageBorderPDF):
+        pageborder = self.fileChooser("Select Page Border PDF file", 
+                filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
+                multiple = False)
+        if pageborder is not None and pageborder != 'None':
+            self.pageborder = pageborder[0]
+            self.builder.get_object("c_inclPageBorder").set_active(True)
+            btn_selectPageBorderPDF.set_tooltip_text(pageborder[0])
+            self.builder.get_object("lb_inclPageBorder").set_text(re.sub(r".+\\(.+)\.pdf",r"\1",pageborder[0]))
+        else:
+            self.pageborder = None
+            btn_selectPageBorderPDF.set_tooltip_text("")
+            self.builder.get_object("lb_inclPageBorder").set_text("")
+            self.builder.get_object("btn_selectPageBorderPDF").set_sensitive(False)
+            self.builder.get_object("c_inclPageBorder").set_active(False)
+
+    def onSectionHeaderPDFclicked(self, btn_selectSectionHeaderPDF):
+        sectionheader = self.fileChooser("Select Section Header PDF file", 
+                filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
+                multiple = False)
+        if sectionheader is not None and sectionheader != 'None':
+            self.sectionheader = sectionheader[0]
+            self.builder.get_object("c_inclSectionHeader").set_active(True)
+            btn_selectSectionHeaderPDF.set_tooltip_text(sectionheader[0])
+            self.builder.get_object("lb_inclSectionHeader").set_text(re.sub(r".+\\(.+)\.pdf",r"\1",sectionheader[0]))
+        else:
+            self.sectionheader = None
+            btn_selectSectionHeaderPDF.set_tooltip_text("")
+            self.builder.get_object("lb_inclSectionHeader").set_text("")
+            self.builder.get_object("btn_selectSectionHeaderPDF").set_sensitive(False)
+            self.builder.get_object("c_inclSectionHeader").set_active(False)
+
+    def onVerseDecoratorPDFclicked(self, btn_selectVerseDecoratorPDF):
+        versedecorator = self.fileChooser("Select Verse Decorator PDF file", 
+                filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
+                multiple = False)
+        if versedecorator is not None and versedecorator != 'None':
+            self.versedecorator = versedecorator[0]
+            self.builder.get_object("c_inclVerseDecorator").set_active(True)
+            btn_selectVerseDecoratorPDF.set_tooltip_text(versedecorator[0])
+            self.builder.get_object("lb_inclVerseDecorator").set_text(re.sub(r".+\\(.+)\.pdf",r"\1",versedecorator[0]))
+        else:
+            self.versedecorator = None
+            btn_selectVerseDecoratorPDF.set_tooltip_text("")
+            self.builder.get_object("lb_inclVerseDecorator").set_text("")
+            self.builder.get_object("btn_selectVerseDecoratorPDF").set_sensitive(False)
+            self.builder.get_object("c_inclVerseDecorator").set_active(False)
+
+    # def onXyzPDFclicked(self, btn_selectXyzPDF):
+        # xyz = self.fileChooser("Select Xyz PDF file", 
+                # filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
+                # multiple = False)
+        # if xyz is not None and xyz != 'None':
+            # self.xyz = xyz[0]
+            # btn_selectXyzPDF.set_tooltip_text(xyz[0])
+            # self.builder.get_object("lb_inclXyz").set_text(re.sub(r".+\\(.+)\.pdf",r"\1",xyz[0]))
+        # else:
+            # self.xyz = None
+            # btn_selectXyzPDF.set_tooltip_text("")
+            # self.builder.get_object("lb_inclXyz").set_text("")
+            # self.builder.get_object("btn_selectXyzPDF").set_sensitive(False)
+            # self.builder.get_object("c_inclXyz").set_active(False)
 
     def GeneratePicList(self):
         # Format of lines in pic-list file: BBB C.V desc|file|size|loc|copyright|caption|ref

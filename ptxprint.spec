@@ -26,7 +26,7 @@ a = Analysis(['python/scripts/ptxprint'],
                              'GObject-2.0', 'fontconfig-2.0', 'win32-1.0', 'GtkSource-3.0')]
                       + [('C:\\msys64\\mingw64\\lib\\python3.7\\site-packages\\cairo\\_cairo-cpython-37m.dll',
                         'cairo/_cairo-cpython-37m.dll')],
-             datas =    [('python/lib/ptxprintui/'+x, 'ptxprintui') for x in 
+             datas =    [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
                             ('ptxprint.glade', 'template.tex', 'A4-Grid.pdf', 'A4-Draft.pdf', 
                              'A5-Grid.pdf', 'A5-Draft.pdf', 'DiglotSample700px.png', 'ps_cmyk.icc')]
                       + [('src/*.tex', 'ptx2pdf'),
