@@ -11,4 +11,4 @@ REM Then call InnoSetup to build the final SetupPTXprint.exe file which is distr
 "C:\Program Files (x86)\Inno Setup 6\Compil32.exe" /cc InnoSetupPTXprint.iss
 
 REM And finally call the Setup file to install it
-call "Output\SetupPTXprint(0.4.0-beta).exe"
+REM call "Output\SetupPTXprint(0.4.0-beta).exe"

@@ -24,9 +24,9 @@ a = Analysis(['python/scripts/ptxprint'],
                                                     'girepository-1.0/'+x+'.typelib') for x in 
                             ('Gtk-3.0', 'GIRepository-2.0', 'Pango-1.0',
                              'GObject-2.0', 'fontconfig-2.0', 'win32-1.0', 'GtkSource-3.0')]
-					  + [('C:\\msys64\\mingw64\\lib\\python3.7\\site-packages\\cairo\\_cairo-cpython-37m.dll',
+                      + [('C:\\msys64\\mingw64\\lib\\python3.7\\site-packages\\cairo\\_cairo-cpython-37m.dll',
                         'cairo/_cairo-cpython-37m.dll')],
-             datas =    [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
+             datas =    [('python/lib/ptxprintui/'+x, 'ptxprintui') for x in 
                             ('ptxprint.glade', 'template.tex', 'A4-Grid.pdf', 'A4-Draft.pdf', 
                              'A5-Grid.pdf', 'A5-Draft.pdf', 'DiglotSample700px.png', 'ps_cmyk.icc')]
                       + [('src/*.tex', 'ptx2pdf'),
@@ -43,7 +43,8 @@ pyz = PYZ(a.pure, a.zipped_data,
              cipher = block_cipher)
 exe = EXE(pyz,
           a.scripts,
-          [('v', None, 'OPTION')],
+#          [('v', None, 'OPTION')],
+          [],
           exclude_binaries=True,
           name='PTXprint-0.4.x',
           debug = False,
@@ -54,7 +55,7 @@ exe = EXE(pyz,
           upx_exclude = [],
           runtime_tmpdir = None,
           windowed=True,
-          console = True )
+          console = False)
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
@@ -63,4 +64,3 @@ coll = COLLECT(exe,
                upx=True,
                upx_exclude=[],
                name='ptxprint')
-
