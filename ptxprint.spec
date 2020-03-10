@@ -30,7 +30,7 @@ a = Analysis(['python/scripts/ptxprint'],
                             ('ptxprint.glade', 'template.tex', 'A4-Grid.pdf', 'A4-Draft.pdf', 
                              'A5-Grid.pdf', 'A5-Draft.pdf', 'DiglotSample700px.png', 'ps_cmyk.icc')]
                       + [('src/*.tex', 'ptx2pdf'),
-                         ('src/mappings/*.tec', 'ptx2pdf')],
+                         ('src/mappings/*.tec', 'ptx2pdf/mappings')],
              hiddenimports = ['_winreg'],
              hookspath = [],
              runtime_hooks = [],
