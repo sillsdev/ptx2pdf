@@ -399,7 +399,7 @@
  \catcode`\#=6 \catcode`\%=14 % restore TeX meanings for those we might use
  \catcode`\{=1 \catcode`\}=2
  \singlecolumn\pagebreak
- \ifnoendbookeject\else\global\output={\global\setbox255=\box\voidb@x}\eject\fi
+ \ifendbooknoeject\else\global\output={\global\setbox255=\box\voidb@x}\eject\fi
  \global\output={\onecol}
  }
 \newread\t@stread

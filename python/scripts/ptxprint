@@ -5,15 +5,17 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
+if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
+    sys.stdout = open(os.devnull, "w")
+    sys.stderr = sys.stdout
+else:
+    gi.require_version('GtkSource', '4')
+
 try:
     import ptxprint
 except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
     import ptxprint
-
-if getattr(sys, "frozen") and hasattr(sys, "_MEIPASS"):
-    sys.stdout = open(os.devnull, "w")
-    sys.stderr = sys.stdout
 
 parser = argparse.ArgumentParser()
 parser.add_argument('pid',nargs="?",help="Project id")
