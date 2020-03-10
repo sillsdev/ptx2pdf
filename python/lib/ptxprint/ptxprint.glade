@@ -5509,6 +5509,7 @@ and so on...</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="onShowBordersTabClicked" swapped="no"/>
                                   </object>
@@ -6103,6 +6104,84 @@ are likely to have to re-do it all again.</property>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">1</property>
                                       </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLinkButton">
+                                        <property name="label" translatable="yes">Click to report an issue with PTXprint</property>
+                                        <property name="name">Report an Issue with PTXprint</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="focus_on_click">False</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">end</property>
+                                        <property name="relief">none</property>
+                                        <property name="uri">https://github.com/sillsdev/ptx2pdf/issues/new</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">5</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLinkButton">
+                                        <property name="label" translatable="yes">Click to visit SumatraPDF download page</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">end</property>
+                                        <property name="relief">none</property>
+                                        <property name="uri">https://www.sumatrapdfreader.org/download-free-pdf-viewer.html</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">4</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">In order for you to use PTXprint effectively
+it is essential to use a good PDF viewer which
+allows the PDF file to be refreshed/reloaded
+without closing it each time a new PDF is made.
+On Linux the built-in Evince PDF viewer words great.
+On Windows, the SumatraPDF software is highly
+recommended and is a small and free download.</property>
+                                        <property name="justify">right</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">4</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">PTXprint is built with GTK and Python, using Glade
+for the User-Interface. The PDFs are produced by XeTeX
+macros with a long and reliable history. However, we're
+all human and prone to making mistakes. If you find any
+bugs, annoyances or can't make it work right, feel free to
+file an issue here. The devlopers of PTXprint do this in
+their spare time, so please be patient for a response.</property>
+                                        <property name="justify">right</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">5</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
                                     </child>
                                   </object>
                                 </child>
@@ -7013,7 +7092,7 @@ then select the font here.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkSpinButton" id="s_verseFontsize">
+                              <object class="GtkSpinButton" id="s_verseNumSize">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="tooltip_text" translatable="yes">If the font needs to appear as

@@ -120,6 +120,9 @@ class PtxPrinterDialog:
         self.FrontPDFs = None
         self.BackPDFs = None
         self.watermarks = None
+        self.pageborder = None
+        self.sectionheader = None
+        self.versedecorator = None
         self.customFigFolder = None
         self.prjid = None
         self.experimental = None
@@ -356,8 +359,9 @@ class PtxPrinterDialog:
             self.builder.get_object("l_{}".format(pgnum)).set_tooltip_text(fpath)
             with open(fpath, "r", encoding="utf-8") as inf:
                 txt = inf.read()
-                if len(txt) > 32000:
-                    txt = txt[:32000]+"\n\n etc...\n\n"
+# Comment this out temporarily to find out WHEN it breaks. How big is too big?
+                # if len(txt) > 32000:
+                    # txt = txt[:32000]+"\n\n etc...\n\n"
             self.fileViews[pgnum][0].set_text(txt)
         else:
             self.builder.get_object("l_{}".format(pgnum)).set_tooltip_text(None)
@@ -545,7 +549,7 @@ class PtxPrinterDialog:
 
     def onInclVerseDecoratorChanged(self, c_inclVerseDecorator):
         status = self.get("c_inclVerseDecorator")
-        for c in ("l_verseFont", "f_verseNums", "l_verseSize", "s_verseFontsize", "btn_selectVerseDecoratorPDF"):
+        for c in ("l_verseFont", "f_verseNumFont", "l_verseSize", "s_verseNumSize", "btn_selectVerseDecoratorPDF"):
             self.builder.get_object(c).set_sensitive(status)
     
     def onAutoTocChanged(self, c_autoToC):
@@ -1328,7 +1332,7 @@ class PtxPrinterDialog:
                     unfitBooks.append(bk)
         return unfitBooks
 
-    # Very much experimental (and currently broken)
+    # Very much experimental (and currently broken)  MH: Need your thoughts on how to do this better.
     def onFindMissingCharsClicked(self, btn_findMissingChars):
         pass
         # count = collections.Counter()

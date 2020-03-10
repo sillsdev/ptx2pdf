@@ -9,7 +9,7 @@ if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
     sys.stdout = open(os.devnull, "w")
     sys.stderr = sys.stdout
 else:
-    gi.require_version('GtkSource', '4')
+    gi.require_version('GtkSource', '3.0')
 
 try:
     import ptxprint

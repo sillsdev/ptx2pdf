@@ -57,6 +57,24 @@ class Info:
         "paper/columns":            ("c_doublecolumn", lambda w,v: "2" if v else "1"),
         "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
 
+        "decorative/showborderstab":    ("c_showBordersTab", None),
+        "decorative/enableborders":     ("c_enableDecorativeElements", lambda w,v: "" if v else "%"),
+        "decorative/pageborder":        ("c_inclPageBorder", lambda w,v: "" if v else "%"),
+        "decorative/pageborderpdf":     ("btn_selectPageBorderPDF", lambda w,v: re.sub(r"\\","/", w.pageborder) \
+                                                if (w.pageborder is not None and w.pageborder != 'None') \
+                                                else "ptxprint/A5 page border.pdf"),
+        "decorative/sectionheader":     ("c_inclSectionHeader", lambda w,v: "" if v else "%"),
+        "decorative/sectionheaderpdf":  ("btn_selectSectionHeaderPDF", lambda w,v: re.sub(r"\\","/", w.sectionheader) \
+                                                if (w.sectionheader is not None and w.sectionheader != 'None') \
+                                                else "ptxprint/A5 section head border.pdf"),
+        "decorative/versedecorator":    ("c_inclVerseDecorator", lambda w,v: "" if v else "%"),
+        "decorative/versedecoratorpdf": ("btn_selectVerseDecorator", lambda w,v: re.sub(r"\\","/", w.versedecorator) \
+                                                if (w.versedecorator is not None and w.versedecorator != 'None') \
+                                                else "ptxprint/Verse number star.pdf"),
+# Ask MH if the f_verseNumFont needs to go in the [Fonts] section below with the other fonts.
+        "decorative/versenumfont":      ("f_verseNumFont", None),
+        "decorative/versenumsize":      ("s_verseNumSize", lambda w,v: round((v / 12), 3) or "1.000"),
+
         "paragraph/varlinespacing": ("c_variableLineSpacing", lambda w,v: "" if v else "%"),
         "paragraph/linespacing":    ("s_linespacing", lambda w,v: "{:.3f}".format(v) or "15.000"),
         "paragraph/linespacingfactor": ("s_linespacing", lambda w,v: "{:.3f}".format(float(v or "15") / 14)),
@@ -72,17 +90,20 @@ class Info:
         "document/subject":         ("t_booklist", lambda w,v: v if w.get("c_multiplebooks") else w.get("cb_book")),
         # "document/author":          (None, lambda w,v: regex.sub("</?p>","",w.ptsettings.get('Copyright', ""))),
         "document/author":          (None, lambda w,v: w.ptsettings.get('Copyright', "")),
-        # "document/creator":         (None, lambda w,v: os.getlogin()),  # This is not set to 'PTXprint'
+        # "document/creator":         (None, lambda w,v: os.getlogin()),  # This is now set to 'PTXprint'
 
         "document/toc":             ("c_autoToC", lambda w,v: "" if v else "%"),
         "document/toctitle":        ("t_tocTitle", lambda w,v: v or ""),
-        "document/usetoc1":         ("c_usetoc1", lambda w,v :"true" if v else "false"),
-        "document/usetoc2":         ("c_usetoc2", lambda w,v :"true" if v else "false"),
-        "document/usetoc3":         ("c_usetoc3", lambda w,v :"true" if v else "false"),
+        "document/usetoc1":         ("c_usetoc1", lambda w,v:"true" if v else "false"),
+        "document/usetoc2":         ("c_usetoc2", lambda w,v:"true" if v else "false"),
+        "document/usetoc3":         ("c_usetoc3", lambda w,v:"true" if v else "false"),
         "document/chapfrom":        ("cb_chapfrom", lambda w,v: w.builder.get_object("cb_chapfrom").get_active_id()),
         "document/chapto":          ("cb_chapto", lambda w,v: w.builder.get_object("cb_chapto").get_active_id()),
         "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: round(v*3) or "12"), # Hack to be fixed
-        "document/ifrtl":           ("c_rtl", lambda w,v :"true" if v else "false"),
+        "document/ifrtl":           ("cb_textDirection", lambda w,v:"true" if w.builder.get_object("cb_textDirection").get_active_id() \
+                                                                              == "Right-to-Left" else "false"),
+        "document/toptobottom":     (None, lambda w,v: "" if w.builder.get_object("cb_textDirection").get_active_id() \
+                                                                              == "Top-to-Bottom (LTR)" else "%"),
         "document/iflinebreakon":   ("c_linebreakon", lambda w,v: "" if v else "%"),
         "document/linebreaklocale": ("t_linebreaklocale", lambda w,v: v or ""),
         "document/script":          ("cb_script", lambda w,v: ":script="+w.builder.get_object('cb_script').get_active_id().lower() \
@@ -605,8 +626,14 @@ class Info:
         printer.CustomScript = self.dict['project/selectscript']
         printer.customFigFolder = self.dict['document/customfigfolder']
         printer.FrontPDFs = self.dict['project/frontincludes'].split("\n")
-        printer.watermarks = self.dict['paper/watermarkpdf']
         printer.BackPDFs = self.dict['project/backincludes'].split("\n")
+
+        printer.watermarks = self.dict['paper/watermarkpdf']
+
+        printer.pageborder = self.dict['decorative/pageborderpdf']
+        printer.sectionheader = self.dict['decorative/sectionheaderpdf']
+        printer.versedecorator = self.dict['decorative/versedecoratorpdf']
+
         # update UI to reflect the world it is in 
         # [Comment: this is turning things off even though the file exists. Probably running before the prj has been set?]
         prjdir = os.path.join(printer.settings_dir, printer.prjid)
