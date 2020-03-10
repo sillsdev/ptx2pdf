@@ -11,6 +11,10 @@ except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
     import ptxprint
 
+if getattr(sys, "frozen") and hasattr(sys, "_MEIPASS"):
+    sys.stdout = open(os.devnull, "w")
+    sys.stderr = sys.stdout
+
 parser = argparse.ArgumentParser()
 parser.add_argument('pid',nargs="?",help="Project id")
 parser.add_argument('-p','--paratext',help="Path to Paratext Projects directory")

@@ -37,7 +37,7 @@
 
 \def\MSG{\immediate\write16 } % shorthand to write a message to the terminal
 \def\TRACE#1{} % default - consume messages
-\def\TRACEOUT#1{}%\let\TRACEOUT=\MSG % use this to echo them
+\def\TRACEOUT#1{\trace{o}{#1}}%\let\TRACEOUT=\MSG % use this to echo them
 \def\wlog{\immediate\write-1 } % write message to log file only
 
 % \addtoendhooks collects macros to be executed at the end of the job
