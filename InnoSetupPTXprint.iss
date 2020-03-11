@@ -37,8 +37,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "dist\ptxprint\PTXprint-0.4.0.exe"; DestDir: "{app}"; Flags: ignoreversion
-; libcrypto-1_1-x64.dll,libepoxy-0.dll,libiconv-2.dll,librsvg-2-2.dll
-Source: "dist\ptxprint\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "icons,locale,libepoxy-0.dll,libiconv-2.dll,librsvg-2-2.dll"
+; definitely needed: libepoxy-0.dll, libiconv-2.dll
+Source: "dist\ptxprint\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "icons,locale,libcrypto-1_1-x64.dll,librsvg-2-2.dll"
 Source: "dist\ptxprint\share\locale\es\*"; DestDir: "{app}\share\locale\es\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\fr\*"; DestDir: "{app}\share\locale\fr\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\zh_CN\*"; DestDir: "{app}\share\locale\zh_CN\"; Flags: ignoreversion recursesubdirs createallsubdirs
