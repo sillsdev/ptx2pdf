@@ -678,7 +678,7 @@
             <property name="layout_style">start</property>
             <child>
               <object class="GtkButton" id="btn_revertSettings">
-                <property name="label" translatable="yes">Revert to Previous Settings</property>
+                <property name="label" translatable="yes">Revert Settings</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -702,7 +702,11 @@ saved settings for this project.</property>
                 <property name="receives_default">False</property>
                 <property name="tooltip_text" translatable="yes">Many of the settings in this tool only need to be
 set up once, or used on rare occasions. These can
-be hidden away for most of the time if that helps.</property>
+be hidden away for most of the time if that helps.
+
+This setting can be toggled off again later, but
+is intentionally almost invisible (though located
+in the same place).</property>
                 <property name="halign">start</property>
                 <property name="draw_indicator">True</property>
                 <signal name="clicked" handler="onHideAdvancedSettingsClicked" swapped="no"/>
@@ -715,7 +719,23 @@ be hidden away for most of the time if that helps.</property>
               </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkCheckButton" id="c_experimental">
+                <property name="label" translatable="yes">Experimental 
+Features ON!</property>
+                <property name="sensitive">False</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="no_show_all">True</property>
+                <property name="tooltip_text" translatable="yes">Experimental features are enabled by
+using the -e flag on the command line.</property>
+                <property name="halign">start</property>
+                <property name="draw_indicator">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
             </child>
             <child>
               <object class="GtkButton">
@@ -1057,6 +1077,7 @@ Into a Single PDF</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
                         <property name="margin_left">12</property>
                         <property name="margin_right">12</property>
                         <property name="margin_top">6</property>
@@ -1152,29 +1173,35 @@ configuration to bring up all those settings.</property>
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="halign">end</property>
+                            <property name="margin_right">6</property>
                             <property name="label" translatable="yes">Notes:</property>
                           </object>
                           <packing>
-                            <property name="left_attach">4</property>
-                            <property name="top_attach">0</property>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">1</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkEntry">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="margin_right">6</property>
                             <property name="hexpand">True</property>
                           </object>
                           <packing>
-                            <property name="left_attach">5</property>
-                            <property name="top_attach">0</property>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">1</property>
+                            <property name="width">3</property>
+                            <property name="height">2</property>
                           </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
                         </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">True</property>
+                        <property name="fill">False</property>
                         <property name="position">1</property>
                       </packing>
                     </child>
@@ -1505,6 +1532,8 @@ space between lines of text.</property>
                                           <item translatable="yes">148mm, 210mm (A5)</item>
                                           <item translatable="yes">8.5in, 11in (Letter)</item>
                                           <item translatable="yes">5.5in, 8.5in (1/2 Letter)</item>
+                                          <item translatable="yes">5.25in, 8.25in (133.4x209.6mm)</item>
+                                          <item translatable="yes">5.8in, 8.7in (147.3x221mm)</item>
                                         </items>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
@@ -2176,74 +2205,7 @@ Direction:</property>
                       </packing>
                     </child>
                     <child type="center">
-                      <object class="GtkGrid">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <child>
-                          <object class="GtkCheckButton">
-                            <property name="label" translatable="yes">Lock all settings that affect dimensions and layout</property>
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">False</property>
-                            <property name="tooltip_text" translatable="yes">Once you start adjusting the stretch and shrink on
-individual paragraphs, you really don't want to let
-the settings change (page size, margins, font size,
-line spacing, and so on).
-Select this option to disable changes to all of these
-settings.</property>
-                            <property name="halign">start</property>
-                            <property name="margin_bottom">4</property>
-                            <property name="draw_indicator">True</property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">0</property>
-                            <property name="top_attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkCheckButton" id="c_rtl">
-                            <property name="label" translatable="yes">Right-to-Left Script</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">False</property>
-                            <property name="tooltip_text" translatable="yes">Check this option if
-using a Right-to-Left
-script (such as Arabic).</property>
-                            <property name="halign">start</property>
-                            <property name="margin_top">4</property>
-                            <property name="margin_bottom">7</property>
-                            <property name="draw_indicator">True</property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">2</property>
-                            <property name="top_attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkCheckButton" id="c_experimental">
-                            <property name="label" translatable="yes">Experimental Features
-have been turned ON!</property>
-                            <property name="sensitive">False</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">False</property>
-                            <property name="no_show_all">True</property>
-                            <property name="tooltip_text" translatable="yes">Experimental features can be enabled by
-using the -e flag on the command line.</property>
-                            <property name="halign">start</property>
-                            <property name="draw_indicator">True</property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">1</property>
-                            <property name="top_attach">0</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">2</property>
-                      </packing>
+                      <placeholder/>
                     </child>
                   </object>
                   <packing>

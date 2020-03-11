@@ -102,7 +102,7 @@ class PtxPrinterDialog:
         for i,k in enumerate(["FinalSFM", "PicList", "AdjList", "TeXfile", "XeTeXlog", "Settings"]):
             buf = GtkSource.Buffer()
             view = GtkSource.View.new_with_buffer(buf)
-            view.set_show_line_numbers(True)
+            view.set_show_line_numbers(False)  # Turn these OFF until we can make them pretty with some CSS
             scroll = self.builder.get_object("scroll_" + k)
             scroll.add_with_viewport(view)
             self.fileViews.append((buf, view))
@@ -650,9 +650,17 @@ class PtxPrinterDialog:
             for c in ("c_mainBodyText", "c_footnoterule",
                       "c_includefigsfromtext", "c_skipmissingimages", "c_convertTIFtoPNG", "c_useFiguresFolder"):
                 self.builder.get_object(c).set_active(True)
-            self.builder.get_object("c_hideAdvancedSettings").set_opacity(0.1)
+            self.builder.get_object("c_hideAdvancedSettings").set_opacity(0.05)
+            self.builder.get_object("c_hideAdvancedSettings").set_tooltip_text("")
+            
         else:
-            self.builder.get_object("c_hideAdvancedSettings").set_opacity(0.95)
+            self.builder.get_object("c_hideAdvancedSettings").set_opacity(1.0)
+            self.builder.get_object("c_hideAdvancedSettings").set_tooltip_text("Many of the settings in this tool only need to be\n" + \
+                                                                               "set up once, or used on rare occasions. These can\n" + \
+                                                                               "be hidden away for most of the time if that helps.\n\n" + \
+                                                                               "This setting can be toggled off again later, but\n" + \
+                                                                               "is intentionally almost invisible (though located\n" + \
+                                                                               "in the same place).")
 
         # Hide a whole bunch of stuff that they don't need to see
         for c in ("tb_Advanced","tb_Logging", "tb_ViewerEditor", "tb_DiglotTesting", "btn_editPicList",
@@ -670,7 +678,8 @@ class PtxPrinterDialog:
     def onShowBordersTabClicked(self, c_showBordersTab):
         if self.get("c_showBordersTab"):
             self.builder.get_object("tb_FancyBorders").set_visible(True)
-            self.builder.get_object("nbk_Main").set_current_page(10)
+            # turned this off because it was making PTXprint jump to that page every time a project was started!
+            # self.builder.get_object("nbk_Main").set_current_page(10)
             self.builder.get_object("c_enableDecorativeElements").set_active(True)
         else:
             self.builder.get_object("c_enableDecorativeElements").set_active(False)
