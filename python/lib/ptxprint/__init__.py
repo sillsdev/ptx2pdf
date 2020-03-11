@@ -169,6 +169,8 @@ class PtxPrinterDialog:
 
     def get(self, wid, sub=0, asstr=False):
         w = self.builder.get_object(wid)
+        if w is None:
+            raise KeyError(wid)
         v = ""
         if wid.startswith("cb_"):
             model = w.get_model()
@@ -636,7 +638,7 @@ class PtxPrinterDialog:
         self.builder.get_object("c_startOnHalfPage").set_sensitive(not status)
 
     def onHideAdvancedSettingsClicked(self, c_hideAdvancedSettings):
-        if c_hideAdvancedSettings:
+        if self.get("c_hideAdvancedSettings"):
             # Turn Dangerous Settings OFF
             for c in ("c_startOnHalfPage", "c_marginalverses", "c_prettyIntroOutline", "c_blendfnxr", "c_autoToC",
                       "c_figplaceholders", "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", 

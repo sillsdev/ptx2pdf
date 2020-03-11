@@ -71,8 +71,6 @@ class Info:
         "decorative/versedecoratorpdf": ("btn_selectVerseDecorator", lambda w,v: re.sub(r"\\","/", w.versedecorator) \
                                                 if (w.versedecorator is not None and w.versedecorator != 'None') \
                                                 else "ptxprint/Verse number star.pdf"),
-# Ask MH if the f_verseNumFont needs to go in the [Fonts] section below with the other fonts.
-        "decorative/versenumfont":      ("f_verseNumFont", None),
         "decorative/versenumsize":      ("s_verseNumSize", lambda w,v: round((v / 12), 3) or "1.000"),
 
         "paragraph/varlinespacing": ("c_variableLineSpacing", lambda w,v: "" if v else "%"),
@@ -198,7 +196,8 @@ class Info:
         "fontregular/name": ("f_body", None, None, None),
         "fontbold/name": ("f_bold", "c_fakebold", "fontbold/embolden", "fontbold/slant"),
         "fontitalic/name": ("f_italic", "c_fakeitalic", "fontitalic/embolden", "fontitalic/slant"),
-        "fontbolditalic/name": ("f_bolditalic", "c_fakebolditalic", "fontbolditalic/embolden", "fontbolditalic/slant")
+        "fontbolditalic/name": ("f_bolditalic", "c_fakebolditalic", "fontbolditalic/embolden", "fontbolditalic/slant"),
+        "fontdecorative/versenumfont": ("f_verseNumFont", None, None, None)
     }
     _hdrmappings = {
         "First Reference":  r"\firstref",

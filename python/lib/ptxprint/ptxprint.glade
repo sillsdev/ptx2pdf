@@ -6177,12 +6177,6 @@ their spare time, so please be patient for a response.</property>
                                         <property name="top_attach">5</property>
                                       </packing>
                                     </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -6942,7 +6936,7 @@ file is selected, then these will appear in alphabetical order.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="btn_selectVerseDecoratorPDF">
+                              <object class="GtkButton" id="btn_selectVerseDecorator">
                                 <property name="label" translatable="yes">Select...</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -7069,7 +7063,7 @@ to show gridlines for finetuning settings.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkFontButton" id="f_verseNums">
+                              <object class="GtkFontButton" id="f_verseNumFont">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
