@@ -639,6 +639,8 @@
   \availht=\trialheight % amount of space we think is available
   \f@rstnotetrue
   \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
+  \TRACEOUT{availht = \the\availht, depth = \the\dp255}
+  \advance\availht -\dp255
   \multiply\availht by 10 \divide\availht by\dimen0 \multiply\availht by\dimen0 \divide\availht by 10
 %%%
   \decr{\availht}{\topins}% and by the space needed for spanning pictures
@@ -712,6 +714,8 @@
   \availht=\trialheight % amount of space we think is available
   \f@rstnotetrue
   \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
+  \TRACEOUT{availht = \the\availht, depth = \the\dp255}
+  \advance\availht -\dp255
   \dimen0=\baselineskip \multiply\dimen0 by 10
   \multiply\availht by 10 \divide\availht by\dimen0 \multiply\availht by\dimen0 \divide\availht by 10
 %%%

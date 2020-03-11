@@ -279,7 +279,7 @@ class Info:
             wid = self._fonts[p][0]
             f = TTFont(printer.get(wid))
             # print(p, wid, f.filename, f.family, f.style)
-            if f.filename is None and p != "fontregular/name":
+            if f.filename is None and p != "fontregular/name" and self._fonts[p][1] is not None:
                 reg = printer.get(self._fonts['fontregular/name'][0])
                 f = TTFont(reg)
                 printer.set(self._fonts[p][1], True)
