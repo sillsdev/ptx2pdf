@@ -230,7 +230,7 @@
       \fi
     }
     \resetvsize
-    \ifdim\ht\colA>\baselineskip\plainoutput\else\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
+    \ifdim\ht\colA>\baselineskip\plainoutput \else\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
     \xdef\p@gefirstmark{}
     \xdef\p@gebotmark{}
     \global\holdinginserts=1
@@ -779,7 +779,7 @@
     }
     \global\setbox255=\box\voidb@x
     \resetvsize % reset size of next page since it will not have any 1 column material
-    \plainoutput
+    \plainoutput 
     \xdef\p@gefirstmark{}
     \xdef\p@gebotmark{}
     \global\holdinginserts=1
@@ -868,7 +868,7 @@
         \else
           \setbox0=\lastbox \dimen0=\dp0 \box0 \kern-\dimen0
         \fi
-      }}\plainoutput
+      }}\plainoutput 
       %\vbox to \textheight{\unvbox\partial\vfil\bottomins}\eject
     %\else
       %\penalty-100\vskip\baselineskip % ensure blank line between single and double column material

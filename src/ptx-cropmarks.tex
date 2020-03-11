@@ -143,10 +143,13 @@
     %%%%% Note the \special line here seems to work but there may be a better location for it
     %%%%% Also, the numbers used are hard coded now but need to be calculated
     \ifCropMarks
-    \pdfcropwidth=\pdfpagewidth\advance\pdfcropwidth by -\dimen0
-    \pdfcropheight=\pdfpageheight\advance\pdfcropheight by -\dimen0
-    \special {pdf: put @thispage <</MediaBox [0 0 \the\pdfpagewidth\ \the\pdfpageheight] /TrimBox [\the\dimen0\ \the\dimen0\ \the\pdfcropwidth\ \the\pdfcropheight] /ArtBox [\the\dimen0\ \the\dimen0\ \the\pdfcropwidth\ \the\pdfcropheight]>>}
-    \else\special {pdf: put @thispage <</MediaBox [0 0 \the\pdfpagewidth\ \the\pdfpageheight] /TrimBox [0 0 \the\pdfpagewidth\ \the\pdfpageheight] /ArtBox [0 0 \the\pdfpagewidth\ \the\pdfpageheight]>>}\fi
+      \pdfcropwidth=\pdfpagewidth\advance\pdfcropwidth by -\dimen0
+      \pdfcropheight=\pdfpageheight\advance\pdfcropheight by -\dimen0
+      \special {pdf: put @thispage <</MediaBox [0 0 \the\pdfpagewidth\ \the\pdfpageheight] /TrimBox [\the\dimen0\ \the\dimen0\ \the\pdfcropwidth\ \the\pdfcropheight] /ArtBox [\the\dimen0\ \the\dimen0\ \the\pdfcropwidth\ \the\pdfcropheight]>>}
+    \else
+      \special {pdf: put @thispage <</MediaBox [0 0 \the\pdfpagewidth\ \the\pdfpageheight] /TrimBox [0 0 \the\pdfpagewidth\ \the\pdfpageheight] /ArtBox [0 0 \the\pdfpagewidth\ \the\pdfpageheight]>>}
+    \fi
+    \trace{p}{Pagesize \the\pdfpagewidth, \the\pdfpageheight}
     % End inserted \special line
     \offinterlineskip
     \vbox to \pdfpageheight{\vss
@@ -198,7 +201,10 @@
 \fi}
 
 % redefine plain TeX's output routine to add the cropmarks
-\def\plainoutput{\shipwithcr@pmarks{\vbox{\makeheadline\pagebody\makefootline}}%
+\def\plainoutput{%
+  \dimen9=\pdfpagewidth \dimen8=\pdfpageheight
+  \shipwithcr@pmarks{\vbox{\makeheadline\pagebody\makefootline}}%
+  \pdfpagewidth=\dimen9 \pdfpageheight=\dimen8
   \advancepageno
   \ifnum\outputpenalty>-\@MM \else\dosupereject\fi}
 
