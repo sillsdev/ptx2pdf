@@ -65,8 +65,8 @@
 \edef\emptym@rk{::}
 \def\r@ngerefs#1#2{%
  \TRACEOUT{#1 , #2}
- \edef\t@st{#1}\ifx\t@st\empty\x@\extr@ctfirst\emptym@rk\relax\else\x@\extr@ctfirst\t@st\relax\fi
- \edef\t@st{#2}\ifx\t@st\empty\x@\extr@ctlast\emptym@rk\relax\else\x@\extr@ctlast\t@st\relax\fi
+ \edef\t@st{#1}\ifx\t@st\t@tle\x@\extr@ctfirst\emptym@rk\relax\else\x@\extr@ctfirst\t@st\relax\fi
+ \edef\t@st{#2}\ifx\t@st\t@tle\x@\extr@ctlast\emptym@rk\relax\else\x@\extr@ctlast\t@st\relax\fi
  \ifx\@book\empty\else
   \@book\ 
   \ifVerseRefs
@@ -147,7 +147,7 @@
  \s@tfont{h}%
  \edef\t@st{\p@gefirstmark}% check first mark on page to see if this is a "title" page
  \global\rhr@letrue
- \ifx\t@st\empty
+ \ifx\t@st\t@tle
   \hfil \global\rhr@lefalse
  \else
   \ifendbooknoeject
@@ -157,6 +157,7 @@
       \ifDoubleSided \the\evenhead \else \the\oddhead \fi
     \fi
   \else
+    \trace{h}{Testing for \t@st}
     \ifx\t@st\t@tle
       \the\titlehead \global\rhr@lefalse
     \else
