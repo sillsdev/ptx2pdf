@@ -656,8 +656,9 @@
   </object>
   <object class="GtkDialog" id="ptxprint">
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">PTXprint App</property>
+    <property name="title" translatable="yes">PTXprint [0.4.0 Beta] App</property>
     <property name="resizable">False</property>
+    <property name="icon_name">view-dual-symbolic</property>
     <property name="type_hint">dialog</property>
     <property name="urgency_hint">True</property>
     <signal name="destroy" handler="onDestroy" swapped="no"/>
@@ -673,8 +674,10 @@
           <object class="GtkButtonBox">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="halign">start</property>
             <property name="margin_left">6</property>
             <property name="margin_right">6</property>
+            <property name="resize_mode">immediate</property>
             <property name="layout_style">start</property>
             <child>
               <object class="GtkButton" id="btn_revertSettings">
@@ -684,8 +687,10 @@
                 <property name="receives_default">True</property>
                 <property name="tooltip_text" translatable="yes">This will revert to the previously
 saved settings for this project.</property>
+                <property name="halign">start</property>
                 <property name="margin_top">3</property>
                 <property name="margin_bottom">3</property>
+                <property name="resize_mode">immediate</property>
                 <signal name="clicked" handler="onRevertSettingsClicked" swapped="no"/>
               </object>
               <packing>
@@ -708,6 +713,7 @@ This setting can be toggled off again later, but
 is intentionally almost invisible (though located
 in the same place).</property>
                 <property name="halign">start</property>
+                <property name="resize_mode">immediate</property>
                 <property name="draw_indicator">True</property>
                 <signal name="clicked" handler="onHideAdvancedSettingsClicked" swapped="no"/>
                 <signal name="toggled" handler="onHideAdvancedSettingsClicked" swapped="no"/>
@@ -729,6 +735,7 @@ Features ON!</property>
                 <property name="tooltip_text" translatable="yes">Experimental features are enabled by
 using the -e flag on the command line.</property>
                 <property name="halign">start</property>
+                <property name="resize_mode">immediate</property>
                 <property name="draw_indicator">True</property>
               </object>
               <packing>
@@ -747,6 +754,7 @@ using the -e flag on the command line.</property>
                 <property name="halign">end</property>
                 <property name="margin_top">3</property>
                 <property name="margin_bottom">3</property>
+                <property name="resize_mode">immediate</property>
                 <property name="use_stock">True</property>
                 <property name="always_show_image">True</property>
                 <signal name="clicked" handler="onCancel" swapped="no"/>
@@ -769,6 +777,7 @@ and produce a PDF with the settings specified.</property>
                 <property name="halign">start</property>
                 <property name="margin_top">3</property>
                 <property name="margin_bottom">3</property>
+                <property name="resize_mode">immediate</property>
                 <property name="use_stock">True</property>
                 <property name="always_show_image">True</property>
                 <signal name="clicked" handler="onOK" swapped="no"/>
@@ -1032,11 +1041,16 @@ and produce a PDF with the settings specified.</property>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_combine">
-                                        <property name="label" translatable="yes">Combine All Books
-Into a Single PDF</property>
+                                        <property name="label" translatable="yes">Combine as
+a Single PDF</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">Select this option if you
+want all the different
+Biblical books to be
+combined as a single
+PDF file (recommended).</property>
                                         <property name="halign">start</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
@@ -4135,23 +4149,6 @@ need to be checked for understanding).</property>
                             <property name="row_spacing">7</property>
                             <property name="column_spacing">6</property>
                             <child>
-                              <object class="GtkCheckButton" id="c_runningFooter">
-                                <property name="label" translatable="yes">Include running footer text on each page:</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="halign">end</property>
-                                <property name="margin_left">6</property>
-                                <property name="draw_indicator">True</property>
-                                <signal name="clicked" handler="onrunningFooterChanged" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">1</property>
-                                <property name="width">2</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkSpinButton" id="s_footerposition">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -4223,22 +4220,9 @@ need to be checked for understanding).</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry" id="t_runningFooter">
-                                <property name="width_request">270</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="placeholder_text" translatable="yes">DRAFT</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">2</property>
-                                <property name="top_attach">1</property>
-                                <property name="width">3</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkCheckButton" id="c_pageNumTitlePage">
                                 <property name="label" translatable="yes">Place Page Number at
-the Bottom of Title Page</property>
+the Bottom of Title Page(s)</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
@@ -4246,13 +4230,57 @@ the Bottom of Title Page</property>
 Title Page of each book. Check this option
 to place the page number at the bottom of
 the page (only on Title Pages).</property>
+                                <property name="halign">start</property>
                                 <property name="margin_left">12</property>
+                                <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">4</property>
                                 <property name="top_attach">0</property>
                               </packing>
+                            </child>
+                            <child>
+                              <object class="GtkComboBoxText" id="cb_ftrcenter">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="active">0</property>
+                                <property name="has_entry">True</property>
+                                <items>
+                                  <item translatable="yes">-empty-</item>
+                                  <item translatable="yes">Page Number</item>
+                                  <item translatable="yes">Reference Range</item>
+                                  <item translatable="yes">DRAFT</item>
+                                </items>
+                                <child internal-child="entry">
+                                  <object class="GtkEntry">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="width_chars">28</property>
+                                    <property name="xalign">0.5</property>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">1</property>
+                                <property name="width">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">end</property>
+                                <property name="label" translatable="yes">Center Footer:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
                             </child>
                           </object>
                         </child>
@@ -6183,6 +6211,7 @@ their spare time, so please be patient for a response.</property>
                       <object class="GtkGrid" id="gr_editableButtons">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="margin_bottom">2</property>
                         <property name="column_homogeneous">True</property>
                         <child>
                           <object class="GtkButton" id="btn_saveEdits">
@@ -6194,8 +6223,8 @@ their spare time, so please be patient for a response.</property>
 save them before moving to a different
 tab (otherwise your changes will be lost.)</property>
                             <property name="halign">center</property>
-                            <property name="margin_top">4</property>
-                            <property name="margin_bottom">4</property>
+                            <property name="margin_top">5</property>
+                            <property name="margin_bottom">5</property>
                             <property name="use_stock">True</property>
                             <property name="always_show_image">True</property>
                             <signal name="clicked" handler="onSaveEdits" swapped="no"/>
@@ -6213,8 +6242,8 @@ tab (otherwise your changes will be lost.)</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
                             <property name="halign">end</property>
-                            <property name="margin_top">4</property>
-                            <property name="margin_bottom">4</property>
+                            <property name="margin_top">5</property>
+                            <property name="margin_bottom">5</property>
                             <property name="use_stock">True</property>
                             <property name="always_show_image">True</property>
                           </object>
@@ -6231,8 +6260,8 @@ tab (otherwise your changes will be lost.)</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
                             <property name="halign">start</property>
-                            <property name="margin_top">4</property>
-                            <property name="margin_bottom">4</property>
+                            <property name="margin_top">5</property>
+                            <property name="margin_bottom">5</property>
                             <property name="use_stock">True</property>
                             <property name="always_show_image">True</property>
                           </object>
@@ -6251,8 +6280,8 @@ tab (otherwise your changes will be lost.)</property>
 been made and restore the contents
 of this file as it was when last saved.</property>
                             <property name="halign">center</property>
-                            <property name="margin_top">4</property>
-                            <property name="margin_bottom">4</property>
+                            <property name="margin_top">5</property>
+                            <property name="margin_bottom">5</property>
                             <property name="use_stock">True</property>
                             <property name="always_show_image">True</property>
                             <signal name="clicked" handler="onRefreshViewerTextClicked" swapped="no"/>
@@ -6267,9 +6296,13 @@ of this file as it was when last saved.</property>
                             <property name="label" translatable="yes">Edit in system's 
 default text editor...</property>
                             <property name="visible">True</property>
-                            <property name="sensitive">False</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">If you would prefer to view or edit this file in
+your favourite text editor, click here to open.</property>
+                            <property name="margin_top">4</property>
+                            <property name="margin_bottom">4</property>
+                            <signal name="clicked" handler="onOpenInSystemEditor" swapped="no"/>
                           </object>
                           <packing>
                             <property name="left_attach">3</property>

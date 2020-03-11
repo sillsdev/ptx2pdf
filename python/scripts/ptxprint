@@ -138,7 +138,7 @@ def doit(printer):
             os.startfile(pdfname)
         elif sys.platform == "linux":
             subprocess.call(('xdg-open', pdfname))
-        # Only delete the temp files if the PDF was creates AND the user did NOT select to keep them
+        # Only delete the temp files if the PDF was created AND the user did NOT select to keep them
         if not printer.get("c_keepTemporaryFiles"):
             removeTempFiles(texfiles,tmpdir,info)
 

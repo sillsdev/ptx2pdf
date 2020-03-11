@@ -24,6 +24,7 @@ DisableProgramGroupPage=yes
 ;PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
 OutputBaseFilename=SetupPTXprint(0.4.0-beta)
+SetupIconFile=icon\Google-Noto-Emoji-Objects-62859-open-book.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -35,14 +36,15 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\ptx2pdf\dist\ptxprint\PTXprint-0.4.x.exe"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "dist\ptxprint\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "icons,locale,libcrypto-1_1-x64.dll,libepoxy-0.dll,libiconv-2.dll,librsvg-2-2.dll"
-Source: "dist\ptxprint\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "icons,locale"
+Source: "dist\ptxprint\PTXprint-0.4.x.exe"; DestDir: "{app}"; Flags: ignoreversion
+; libcrypto-1_1-x64.dll,libepoxy-0.dll,libiconv-2.dll,librsvg-2-2.dll
+Source: "dist\ptxprint\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "icons,locale,libcrypto-1_1-x64.dll,libepoxy-0.dll,libiconv-2.dll,librsvg-2-2.dll"
 Source: "dist\ptxprint\share\locale\es\*"; DestDir: "{app}\share\locale\es\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\fr\*"; DestDir: "{app}\share\locale\fr\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\zh_CN\*"; DestDir: "{app}\share\locale\zh_CN\"; Flags: ignoreversion recursesubdirs createallsubdirs
 #include "AdwaitaIcons.txt"
 Source: "dist\ptxprint\share\icons\Adwaita\index.theme"; DestDir: "{app}\share\icons\Adwaita"
+Source: "icon\Google-Noto-Emoji-Objects-62859-open-book.ico"; DestDir: "{app}"
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"

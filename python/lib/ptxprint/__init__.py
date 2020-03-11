@@ -141,7 +141,7 @@ class PtxPrinterDialog:
                 self.builder.get_object("c_experimental").set_active(True)
                 self.builder.get_object("c_experimental").set_sensitive(False)
         else:
-            for c in ("c_startOnHalfPage", "c_experimental", "c_verticalVerseBridges"):
+            for c in ("c_startOnHalfPage", "c_experimental"):
                 self.builder.get_object(c).set_active(False)
                 self.builder.get_object(c).set_visible(False)
                 self.builder.get_object(c).set_sensitive(False)
@@ -361,9 +361,10 @@ class PtxPrinterDialog:
             self.builder.get_object("l_{}".format(pgnum)).set_tooltip_text(fpath)
             with open(fpath, "r", encoding="utf-8") as inf:
                 txt = inf.read()
-# Comment this out temporarily to find out WHEN it breaks. How big is too big?
-                # if len(txt) > 32000:
-                    # txt = txt[:32000]+"\n\n etc...\n\n"
+                if len(txt) > 80000:
+                    txt = txt[:80000]+"\n\n------------------------------------- \
+                                          \n[Display of file has been truncated] \
+                                          \nTotal length of file: {} characters.".format(len(txt))
             self.fileViews[pgnum][0].set_text(txt)
         else:
             self.builder.get_object("l_{}".format(pgnum)).set_tooltip_text(None)
@@ -380,6 +381,15 @@ class PtxPrinterDialog:
         openfile = open(fpath,"w", encoding="utf-8")
         openfile.write(text2save)
         openfile.close()
+
+    def onOpenInSystemEditor(self, btn):
+        pg = self.builder.get_object("nbk_Viewer").get_current_page()
+        fpath = self.builder.get_object("l_{}".format(pg)).get_tooltip_text()
+        if os.path.exists(fpath):
+            if sys.platform == "win32":
+                os.startfile(fpath)
+            elif sys.platform == "linux":
+                subprocess.call(('xdg-open', fpath))
 
     def onScriptChanged(self, cb_script):
         # If there is a matching digit style for the script that has just been set, 
@@ -412,7 +422,7 @@ class PtxPrinterDialog:
     def setEntryBoxFont(self):
         # Set the font of any GtkEntry boxes to the primary body text font for this project
         p = Pango.font_description_from_string(self.get("f_body"))
-        for w in ("t_tocTitle", "t_runningFooter", "scroll_FinalSFM", "scroll_PicList"): 
+        for w in ("t_tocTitle", "cb_ftrcenter", "scroll_FinalSFM", "scroll_PicList"):   # "t_runningFooter",
             self.builder.get_object(w).modify_font(p)
 
     def updateFakeLabels(self):
@@ -528,6 +538,9 @@ class PtxPrinterDialog:
             for c in ("l_singlebook", "cb_book", "l_chapfrom", "cb_chapfrom", "l_chapto", "cb_chapto"):
                 self.builder.get_object(c).set_sensitive(not status)
             self.updateDialogTitle()
+            bks = self.getBooks()
+            if len(bks) > 1:
+                self.builder.get_object("cb_examineBook").set_active_id(bks[0])
             
     def onFigsChanged(self, c_includefigsfromtext):
         status = self.get("c_includefigsfromtext")
@@ -585,15 +598,7 @@ class PtxPrinterDialog:
             xrc.grab_focus() 
         else:   
             xrc.set_sensitive(False)
-            
-    def onrunningFooterChanged(self, c_runningFooter):
-        rnf = self.builder.get_object("t_runningFooter")
-        if self.get("c_runningFooter"):
-            rnf.set_sensitive(True)
-            rnf.grab_focus() 
-        else:   
-            rnf.set_sensitive(False)
-            
+
     def onRHruleChanged(self, c_rhrule):
         rhr = self.builder.get_object("s_rhruleposition")
         if self.get("c_rhrule"):
@@ -662,8 +667,8 @@ class PtxPrinterDialog:
                                                                                "is intentionally almost invisible (though located\n" + \
                                                                                "in the same place).")
 
-        # Hide a whole bunch of stuff that they don't need to see
-        for c in ("tb_Advanced","tb_Logging", "tb_ViewerEditor", "tb_DiglotTesting", "btn_editPicList",
+        # Hide a whole bunch of stuff that they don't need to see   (removed: "tb_Logging")
+        for c in ("tb_Advanced", "tb_ViewerEditor", "tb_DiglotTesting", "btn_editPicList",
                   "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "box_AdvFootnoteConfig", "l_colgutteroffset",
                   "c_usePicList", "c_skipmissingimages", "c_convertTIFtoPNG", "c_useCustomFolder", "btn_selectFigureFolder", 
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
@@ -672,7 +677,6 @@ class PtxPrinterDialog:
                   "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", "c_preventwidows",
                   "l_sidemarginfactor", "s_sidemarginfactor", "l_min", "s_linespacingmin", "l_max", "s_linespacingmax",
                   "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "cb_textDirection", "l_digits", "cb_digits"):
-            # print(c)
             self.builder.get_object(c).set_visible(not self.get("c_hideAdvancedSettings"))
 
     def onShowBordersTabClicked(self, c_showBordersTab):
@@ -709,6 +713,9 @@ class PtxPrinterDialog:
         self.builder.get_object("c_multiplebooks").set_active(not self.booklist == [])
         self.set("c_prettyIntroOutline", False)
         self.updateDialogTitle()
+        bks = self.getBooks()
+        if len(bks) > 1:
+            self.builder.get_object("cb_examineBook").set_active_id(bks[0])
         dia.hide()
 
     def toggleBooks(self,start,end):
@@ -837,7 +844,7 @@ class PtxPrinterDialog:
         self.updateDialogTitle()
         
     def updateDialogTitle(self):
-        prjid = " : " + self.get("cb_project")
+        prjid = "  -  " + self.get("cb_project")
         bks = self.getBooks()
         if len(bks) > 1:
             bks = bks[0] + "..." + bks[-1]
@@ -846,7 +853,7 @@ class PtxPrinterDialog:
                 bks = bks[0]
             except IndexError:
                 bks = "No book selected!"
-        titleStr = "PTXprint App" + prjid + " (" + bks + ")"
+        titleStr = "PTXprint [0.4 Beta]" + prjid + " (" + bks + ")"
         self.builder.get_object("ptxprint").set_title(titleStr)
 
     def editFile(self, file2edit, wkdir=False):

@@ -164,8 +164,7 @@ class Info:
         "header/hdrrightouter":     ("cb_hdrright", lambda w,v: v or "-empty-"),
         "header/mirrorlayout":      ("c_mirrorpages", lambda w,v: "true" if v else "false"),
         
-        "footer/includefooter":     ("c_runningFooter", lambda w,v: "true" if v else "false"),
-        "footer/ftrcenter":         ("t_runningFooter", lambda w,v: v if w.get("c_runningFooter") else ""),
+        "footer/ftrcenter":         ("cb_ftrcenter", lambda w,v: v or "-empty-"),
         "footer/ifftrtitlepagenum": ("c_pageNumTitlePage", lambda w,v: "" if v else "%"),
 
         "notes/iffootnoterule":     ("c_footnoterule", lambda w,v: "%" if v else ""),
@@ -316,6 +315,8 @@ class Info:
             self.dict[p] = fname + engine
 
     def processHdrFtr(self, printer):
+        v = printer.get("cb_ftrcenter")
+        self.dict['footer/oddcenter'] = self._hdrmappings.get(v,v)
         mirror = printer.get('c_mirrorpages')
         for side in ('left', 'center', 'right'):
             v = printer.get("cb_hdr" + side)
