@@ -5,7 +5,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from ptxprint.font import TTFont
 from ptxprint.ptsettings import chaps, books, bookcodes, oneChbooks
-from ptxprint.snippets import FancyIntro, PDFx1aOutput, VerticalVerseBridges
+from ptxprint.snippets import FancyIntro, PDFx1aOutput, VerticalVerseBridges, FancyBorders
 
 class Info:
     _mappings = {
@@ -67,6 +67,11 @@ class Info:
         "decorative/sectionheaderpdf":  ("btn_selectSectionHeaderPDF", lambda w,v: re.sub(r"\\","/", w.sectionheader) \
                                                 if (w.sectionheader is not None and w.sectionheader != 'None') \
                                                 else "ptxprint/A5 section head border.pdf"),
+        # "decorative/sectionheader":     ("c_inclSectionHeader", lambda w,v: "" if v else "%"),
+        # "decorative/sectionheaderpdf":  ("btn_selectSectionHeaderPDF", lambda w,v: re.sub(r"\\","/", w.sectionheader) \
+                                                # if (w.sectionheader is not None and w.sectionheader != 'None') \
+                                                # else "ptxprint/A5 section head border.pdf"),
+        "decorative/decorationpdf":     (None, lambda w,v: "C:/My Paratext 9 Projects/WSGlatin/PrintDraft(FancyBorders)/decoration.pdf"),
         "decorative/versedecorator":    ("c_inclVerseDecorator", lambda w,v: "" if v else "%"),
         "decorative/versedecoratorpdf": ("btn_selectVerseDecorator", lambda w,v: re.sub(r"\\","/", w.versedecorator) \
                                                 if (w.versedecorator is not None and w.versedecorator != 'None') \
@@ -225,7 +230,8 @@ class Info:
     _snippets = {
         "snippets/fancyintro":            ("c_prettyIntroOutline", FancyIntro),
         "snippets/pdfx1aoutput":          ("c_PDFx1aOutput", PDFx1aOutput),
-        "snippets/verticalversebridges":  ("c_verticalVerseBridges", VerticalVerseBridges)
+        "snippets/verticalversebridges":  ("c_verticalVerseBridges", VerticalVerseBridges),
+        "snippets/fancyborders":          ("c_enableDecorativeElements", FancyBorders)
     }
     
     def __init__(self, printer, path, prjid = None):

@@ -551,7 +551,7 @@ class PtxPrinterDialog:
 
     def onInclVerseDecoratorChanged(self, c_inclVerseDecorator):
         status = self.get("c_inclVerseDecorator")
-        for c in ("l_verseFont", "f_verseNumFont", "l_verseSize", "s_verseNumSize", "btn_selectVerseDecoratorPDF"):
+        for c in ("l_verseFont", "f_verseNumFont", "l_verseSize", "s_verseNumSize", "btn_selectVerseDecorator"):
             self.builder.get_object(c).set_sensitive(status)
     
     def onAutoTocChanged(self, c_autoToC):
@@ -653,7 +653,6 @@ class PtxPrinterDialog:
             self.builder.get_object("c_hideAdvancedSettings").set_opacity(0.1)
         else:
             self.builder.get_object("c_hideAdvancedSettings").set_opacity(0.95)
-#            self.builder.get_object("c_hideAdvancedSettings").set_visible(True)
 
         # Hide a whole bunch of stuff that they don't need to see
         for c in ("tb_Advanced","tb_Logging", "tb_ViewerEditor", "tb_DiglotTesting", "btn_editPicList",

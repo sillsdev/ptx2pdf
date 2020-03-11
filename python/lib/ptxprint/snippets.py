@@ -82,7 +82,7 @@ class FancyIntro():
 \def\iotableleader#1#2{#1\leaders\hbox to 0.8em{\hss.\hss}\hfill#2\par}%
 """
 
-class FancyBorders(): # Not sure how much of this is needed (perhaps it can be cut down to the basics)
+class FancyBorders():
     regexes = []
     styleInfo = r"""
 # need a smaller verse number to fit in the stars
@@ -137,12 +137,7 @@ class FancyBorders(): # Not sure how much of this is needed (perhaps it can be c
 \FontSize 9
 """
 
-# For this to work at all, we need a way to dynamically insert (user-customizable) PDF files 
-# into the code below or at least point to these ones with a relative path that is reliable.
-# decoration.pdf
-# A5 section head border.pdf
-# Verse number star.pdf
-    processTex = False # until we can insert the above filenames programatically
+    processTex = True
     texCode = r"""
 \TitleColumns=1
 \IntroColumns=1
@@ -152,52 +147,52 @@ class FancyBorders(): # Not sure how much of this is needed (perhaps it can be c
 %   "scaled <factor>" adjusts the size (1000 would keep the border at its original size)
 % Can also use "xscaled 850 yscaled 950" to scale separately in each direction,
 %   or "width 5.5in height 8in" to scale to a known size
-\def\PageBorder{"A5 page border.pdf" width 148.5mm height 210mm}
-%\def\PageBorder{}
+\def\PageBorder{{"{decorative/pageborderpdf}" width 148.5mm height 210mm}}
+%\def\PageBorder{{}}
 
 \newbox\decorationbox
-\setbox\decorationbox=\hbox{\XeTeXpdffile "decoration.pdf"\relax}
-\def\z{\par\nobreak\vskip 16pt\centerline{\copy\decorationbox}}
+\setbox\decorationbox=\hbox{{\XeTeXpdffile "{decorative/decorationpdf}"\relax}}
+\def\z{{\par\nobreak\vskip 16pt\centerline{{\copy\decorationbox}}}}
 
 \newbox\sectionheadbox
-\def\placesectionheadbox{%
+\def\placesectionheadbox{{%
   \ifvoid\sectionheadbox % set up the \sectionheadbox box the first time it's needed
-    \global\setbox\sectionheadbox=\hbox{\XeTeXpdffile "A5 section head border.pdf" \relax}%
+    \global\setbox\sectionheadbox=\hbox{{\XeTeXpdffile "{decorative/sectionheaderpdf}" \relax}}%
     \global\setbox\sectionheadbox=\hbox to \hsize% \hsize is the line width
-        {\hss \box\sectionheadbox \hss}% so now the graphic will be centered
+        {{\hss \box\sectionheadbox \hss}}% so now the graphic will be centered
     \global\setbox\sectionheadbox=\vbox to 0pt
-        {\kern-21pt % adjust value of \kern here to shift graphic up or down
-         \box\sectionheadbox \vss}% now we have a box with zero height
+        {{\kern-21pt % adjust value of \kern here to shift graphic up or down
+         \box\sectionheadbox \vss}}% now we have a box with zero height
   \fi
-  \vadjust{\copy\sectionheadbox}% insert the graphic below the current line
+  \vadjust{{\copy\sectionheadbox}}% insert the graphic below the current line
   \vrule width 0pt height 0pt depth 0.5em
-}
-\sethook{start}{s}{\placesectionheadbox}
+}}
+\sethook{{start}}{{s}}{{\placesectionheadbox}}
 
 % The following code puts the verse number inside a star
 %
 \newbox\versestarbox
-\setbox\versestarbox=\hbox{\XeTeXpdffile "Verse number star.pdf"\relax}
+\setbox\versestarbox=\hbox{{\XeTeXpdffile "{decorative/versedecoratorpdf}"\relax}}
 
 % capture the verse number in a box (surrounded by \hfil) which we overlap with star
 \newbox\versenumberbox
-\sethook{start}{v}{\setbox\versenumberbox=\hbox to \wd\versestarbox\bgroup\hfil}
-\sethook{end}{v}{\hfil\egroup
+\sethook{{start}}{{v}}{{\setbox\versenumberbox=\hbox to \wd\versestarbox\bgroup\hfil}}
+\sethook{{end}}{{v}}{{\hfil\egroup
  \beginL % ensure TeX is "thinking" left-to-right for the \rlap etc
-   \rlap{\raise1pt\box\versenumberbox}\lower4pt\copy\versestarbox
- \endL}
+   \rlap{{\raise1pt\box\versenumberbox}}\lower4pt\copy\versestarbox
+ \endL}}
 
 % Replace the ptx2pdf macro which prints out the verse number, so that we can
 % kern between numbers or change the font size, if necessary
 \catcode`\@=11   % allow @ to be used in the name of ptx2pdf macro we have to override
-\def\printv@rse{\expandafter\getversedigits\v@rsefrom!!\end\printversedigits}
+\def\printv@rse{{\expandafter\getversedigits\v@rsefrom!!\end\printversedigits}}
 \catcode`\@=12   % return to normal function
 
-\def\getversedigits#1#2#3#4\end{\def\digitone{#1}\def\digittwo{#2}\def\digitthree{#3}}
+\def\getversedigits#1#2#3#4\end{{\def\digitone{{#1}}\def\digittwo{{#2}}\def\digitthree{{#3}}}}
 
-\font\smallversenums="Charis SIL" at 7pt
-\def\exclam{!}
-\def\printversedigits{%
+\font\smallversenums="{fontdecorative/versenumfont}" at {decorative/versenumsize}pt
+\def\exclam{{!}}
+\def\printversedigits{{%
   \beginL
   \ifx\digitthree\exclam
     \digitone
@@ -212,7 +207,7 @@ class FancyBorders(): # Not sure how much of this is needed (perhaps it can be c
     \kern-0.12em \digittwo
     \kern-0.08em \digitthree
   \fi
-  \endL}
+  \endL}}
 """
 
     unusedStuff = r"""
@@ -232,7 +227,7 @@ class FancyBorders(): # Not sure how much of this is needed (perhaps it can be c
     \fi
   \else
     \digitone
-    \kern-0.1em \digittwo	% digit one will always be '1' in 3-digit chap nums
+    \kern-0.1em \digittwo      % digit one will always be '1' in 3-digit chap nums
     \kern-0.05em \digitthree
   \fi
   \endL}
