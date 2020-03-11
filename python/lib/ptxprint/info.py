@@ -631,14 +631,42 @@ class Info:
         # Handle specials here:
         printer.CustomScript = self.dict['project/selectscript']
         printer.customFigFolder = self.dict['document/customfigfolder']
+
         printer.FrontPDFs = self.dict['project/frontincludes'].split("\n")
+        if printer.FrontPDFs != None:
+            printer.builder.get_object("lb_inclFrontMatter").set_text(",".join(re.sub(r".+\\(.+)\.pdf",r"\1",s) for s in printer.FrontPDFs))
+        else:
+            printer.builder.get_object("lb_inclFrontMatter").set_text("")
+
         printer.BackPDFs = self.dict['project/backincludes'].split("\n")
+        if printer.BackPDFs != None:
+            printer.builder.get_object("lb_inclBackMatter").set_text(",".join(re.sub(r".+\\(.+)\.pdf",r"\1",s) for s in printer.BackPDFs))
+        else:
+            printer.builder.get_object("lb_inclBackMatter").set_text("")
 
         printer.watermarks = self.dict['paper/watermarkpdf']
+        if printer.watermarks != None:
+            printer.builder.get_object("lb_applyWatermark").set_text(re.sub(r".+\\(.+)\.pdf",r"\1",printer.watermarks))
+        else:
+            printer.builder.get_object("lb_applyWatermark").set_text("")
 
         printer.pageborder = self.dict['decorative/pageborderpdf']
+        if printer.pageborder != None:
+            printer.builder.get_object("lb_inclPageBorder").set_text(re.sub(r".+\\(.+)\.pdf",r"\1",printer.pageborder))
+        else:
+            printer.builder.get_object("lb_inclPageBorder").set_text("")
+
         printer.sectionheader = self.dict['decorative/sectionheaderpdf']
+        if printer.sectionheader != None:
+            printer.builder.get_object("lb_inclSectionHeader").set_text(re.sub(r".+\\(.+)\.pdf",r"\1",printer.sectionheader))
+        else:
+            printer.builder.get_object("lb_inclSectionHeader").set_text("")
+
         printer.versedecorator = self.dict['decorative/versedecoratorpdf']
+        if printer.versedecorator != None:
+            printer.builder.get_object("lb_inclVerseDecorator").set_text(re.sub(r".+\\(.+)\.pdf",r"\1",printer.versedecorator))
+        else:
+            printer.builder.get_object("lb_inclVerseDecorator").set_text("")
 
         # update UI to reflect the world it is in 
         # [Comment: this is turning things off even though the file exists. Probably running before the prj has been set?]
