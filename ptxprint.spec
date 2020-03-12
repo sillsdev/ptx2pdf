@@ -7,19 +7,15 @@
 #  'C:/msys64/mingw64/lib/python3.7/site-packages/setuptools-33.1.1-py3.7.egg',
 #  'C:/msys64/mingw64/lib/python3.7/site-packages/pyinstaller-4.0.dev0+g4065d2c2-py3.7.egg'
 
-#					   ('C:\\msys64\\mingw64\\bin\\libgtksourceview-4-0.dll',
-#					    'libgtksourceview-4-0.dll')],
-#							'C:\\msys64\\mingw64\\bin',
-
 block_cipher = None
 
 a = Analysis(['python/scripts/ptxprint'],
              pathex =   ['python/lib', 'C:\\ptx2pdf',
-					        'C:\\msys64\\mingw64\\lib',
-					        'C:\\msys64\\usr\\lib\\python3.7\\site-packages',
-					        'C:\\msys64\\mingw64\\lib\\python3.7\\lib-dynload',
-					        'C:\\msys64\\mingw64\\lib\\python3.7',
-					        'C:\\pyinstaller'],
+                            'C:\\msys64\\mingw64\\lib',
+                            'C:\\msys64\\usr\\lib\\python3.7\\site-packages',
+                            'C:\\msys64\\mingw64\\lib\\python3.7\\lib-dynload',
+                            'C:\\msys64\\mingw64\\lib\\python3.7',
+                            'C:\\pyinstaller'],
              binaries = [('C:\\msys64\\mingw64\\lib\\girepository-1.0\\'+x+'.typelib',
                                                     'girepository-1.0/'+x+'.typelib') for x in 
                             ('Gtk-3.0', 'GIRepository-2.0', 'Pango-1.0',
@@ -28,7 +24,10 @@ a = Analysis(['python/scripts/ptxprint'],
                         'cairo/_cairo-cpython-37m.dll')],
              datas =    [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
                             ('ptxprint.glade', 'template.tex', 'A4-Grid.pdf', 'A4-Draft.pdf', 
-                             'A5-Grid.pdf', 'A5-Draft.pdf', 'DiglotSample700px.png', 'ps_cmyk.icc')]
+                             'A5-Grid.pdf', 'A5-Draft.pdf', 'ps_cmyk.icc',
+                             'Google-Noto-Emoji-Objects-62859-open-book.ico',
+                             'A5 section head border.pdf', 'A5 section head border(RTL).pdf',
+                             'A5 page border.pdf', 'Verse number star.pdf', 'decoration.pdf')]
                       + [('src/*.tex', 'ptx2pdf'),
                          ('src/mappings/*.tec', 'ptx2pdf/mappings')],
              hiddenimports = ['_winreg'],
@@ -37,13 +36,10 @@ a = Analysis(['python/scripts/ptxprint'],
              excludes = [],
              win_no_prefer_redirects = False,
              win_private_assemblies = False,
-#             cipher = block_cipher,
              noarchive = False)
 pyz = PYZ(a.pure, a.zipped_data)
-#             cipher = block_cipher)
 exe = EXE(pyz,
           a.scripts,
-#          [('v', None, 'OPTION')],
           [],
           exclude_binaries=True,
           name='PTXprint-0.4.0',

@@ -656,6 +656,7 @@ class Info:
         else:
             printer.builder.get_object("lb_inclBackMatter").set_text("")
 
+# Q.for MH: I'm wondering about how to make this repetitve block of code into a callable funtion with parameters (or looping through a list)
         printer.watermarks = self.dict['paper/watermarkpdf']
         if printer.watermarks != None:
             printer.builder.get_object("lb_applyWatermark").set_text(re.sub(r".+\\(.+)\.pdf",r"\1",printer.watermarks))

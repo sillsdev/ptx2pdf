@@ -316,16 +316,34 @@
                       </packing>
                     </child>
                     <child>
-                      <placeholder/>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">5</property>
+                      </packing>
                     </child>
                     <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
+                      <object class="GtkButton">
+                        <property name="label" translatable="yes">Reset All</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="tooltip_text" translatable="yes">Click to turn OFF all books.</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
+                        <property name="margin_top">3</property>
+                        <property name="margin_bottom">3</property>
+                        <signal name="clicked" handler="onClickmbs_none" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">8</property>
+                      </packing>
                     </child>
                   </object>
                   <packing>
@@ -1917,7 +1935,7 @@ Direction:</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
-                                    <property name="font">Sans 12</property>
+                                    <property name="font">Charis SIL Bold 12</property>
                                     <property name="preview_text"/>
                                     <property name="show_preview_entry">False</property>
                                     <property name="show_size">False</property>
@@ -1932,7 +1950,7 @@ Direction:</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
-                                    <property name="font">Sans 12</property>
+                                    <property name="font">Charis SIL Oblique 12</property>
                                     <property name="preview_text"/>
                                     <property name="show_preview_entry">False</property>
                                     <property name="show_size">False</property>
@@ -1947,7 +1965,7 @@ Direction:</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
-                                    <property name="font">Sans 12</property>
+                                    <property name="font">Charis SIL Bold Oblique 12</property>
                                     <property name="preview_text"/>
                                     <property name="show_preview_entry">False</property>
                                     <property name="show_size">False</property>
@@ -2175,7 +2193,7 @@ Direction:</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
                                     <property name="valign">center</property>
-                                    <property name="font">Sans 12</property>
+                                    <property name="font">Charis SIL 12</property>
                                     <property name="preview_text"/>
                                     <property name="show_preview_entry">False</property>
                                     <property name="show_size">False</property>
@@ -2484,11 +2502,11 @@ of books that only have a single chapter (OBA, PHM,
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_omitBookIntro">
-                                        <property name="label" translatable="yes">Suppress Book Introductions (\i..)</property>
+                                        <property name="label" translatable="yes">Omit Book Introductions (\i..)</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Remove the entire Book Introduction.</property>
+                                        <property name="tooltip_text" translatable="yes">Do not print the Book Introductions.</property>
                                         <property name="halign">start</property>
                                         <property name="resize_mode">immediate</property>
                                         <property name="draw_indicator">True</property>
@@ -2500,14 +2518,14 @@ of books that only have a single chapter (OBA, PHM,
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_omitIntroOutline">
-                                        <property name="label" translatable="yes">Suppress Introductory Outlines (\io..)</property>
+                                        <property name="label" translatable="yes">Omit Introductory Outlines (\io..)</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Remove the Introductory Outline.</property>
+                                        <property name="tooltip_text" translatable="yes">Do not print the Introductory Outlines.</property>
                                         <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
-                                        <signal name="clicked" handler="onSuppressOutlineClicked" swapped="no"/>
+                                        <signal name="clicked" handler="onOmitOutlineClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
@@ -2677,11 +2695,11 @@ typesetting issues. Use with care!</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_omitSectHeads">
-                                    <property name="label" translatable="yes">Suppress Section Headings (\s)</property>
+                                    <property name="label" translatable="yes">Omit Section Headings (\s)</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Remove all section headings.</property>
+                                    <property name="tooltip_text" translatable="yes">Do not print any Section Headings.</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -2692,11 +2710,12 @@ typesetting issues. Use with care!</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_omitParallelRefs">
-                                    <property name="label" translatable="yes">Suppress Parallel Passage Refs (\r)   </property>
+                                    <property name="label" translatable="yes">Omit Parallel Passage Refs (\r)   </property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Remove all section headings.</property>
+                                    <property name="tooltip_text" translatable="yes">Do not print any Parallel Pasage References
+(these normally appear below Section Headings).</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -2707,11 +2726,12 @@ typesetting issues. Use with care!</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_omit1paraIndent">
-                                    <property name="label" translatable="yes">Suppress First Paragraph Indent</property>
+                                    <property name="label" translatable="yes">Don't Indent First Paragraph</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Don't indent the first paragraph after a section heading. It will appear as an \m(argin) paragraph instead of a normal \p.</property>
+                                    <property name="tooltip_text" translatable="yes">Do NOT indent the first paragraph after a Section
+Heading. It will appear as an \m(argin) paragraph instead of a normal \p.</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -2912,7 +2932,7 @@ But if you require a printout of just the
 book introductions (usually for the
 purpose of final checking, or looking
 for consistency) then this option can
-be turned OFF (to suppress the main text).</property>
+be turned OFF (to omit the main text).</property>
                             <property name="halign">start</property>
                             <property name="active">True</property>
                             <property name="draw_indicator">True</property>
@@ -6364,23 +6384,7 @@ through an automated script conversion process.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkImage">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="tooltip_text" translatable="yes">This is a placeholder for a new feature. In the meantime
-you may want to try using the "Fuzzy D.I.Y.-glot" on the
-final tab.
-
-Later we may also have Di-script publications
-through an automated script conversion process.</property>
-                        <property name="margin_bottom">6</property>
-                        <property name="pixbuf">DiglotSample700px.png</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">False</property>
-                        <property name="position">1</property>
-                      </packing>
+                      <placeholder/>
                     </child>
                   </object>
                   <packing>
@@ -6864,6 +6868,13 @@ Now you can see why it is called "Fuzzy DiYglot" :-)</property>
                   <object class="GtkLabel" id="lb_DiglotTesting">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">EXPERIMENTAL FEATURE:
+This tab is intentionally spelled as
+DIY-glot (instead of diglot) because
+it is a work in progress and will require
+considerable trial-and-error to get a
+satisfactory result (just like any good
+DIY project!)  Have fun...</property>
                     <property name="label" translatable="yes">Fuzzy DiYglot</property>
                   </object>
                   <packing>
@@ -7070,7 +7081,7 @@ then select the font here.</property>
                                 <property name="valign">center</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
-                                <property name="font">Sans 12</property>
+                                <property name="font">Charis SIL 10</property>
                                 <property name="preview_text"/>
                                 <property name="show_preview_entry">False</property>
                                 <property name="show_size">False</property>
@@ -7100,7 +7111,7 @@ decorator set that here.</property>
                                 <property name="climb_rate">0.10000000000000001</property>
                                 <property name="digits">1</property>
                                 <property name="numeric">True</property>
-                                <property name="value">12</property>
+                                <property name="value">11</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>

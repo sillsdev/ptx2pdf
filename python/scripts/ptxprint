@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import argparse, sys, os, subprocess
+import argparse, sys, os, re, subprocess
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
@@ -26,6 +26,7 @@ parser.add_argument('-l','--logging',action="store_true",help="Output logging to
 parser.add_argument('-e','--experimental',action="store_true",help="Enable experimental features")
 # parser.add_argument('-t','--test', action='store_true',help="Quick start for a lazy typist")
 args = parser.parse_args()
+ptxprint.res = 0
 
 if args.paratext is None:
     args.paratext = ptxprint.runner.pt_settings
@@ -88,21 +89,19 @@ def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
     if os.path.exists(delayed):
         if isinstance(runner, subprocess.Popen) and runner is not None:
             runner.wait(200)
-            res = runner.returncode
+            ptxprint.res = runner.returncode
         else:
-            res = runner
-        if res == 0:
+            ptxprint.res = runner
+        if ptxprint.res == 0:
             runner = ptxprint.runner.call(["xetex", "--halt-on-error", outfname], cwd=tmpdir, logbuffer=(logbuffer if not args.logging else None))
     if logbuffer is not None:
         if isinstance(runner, subprocess.Popen) and runner is not None:
             runner.wait(200)
-            res = runner.returncode
+            ptxprint.res = runner.returncode
         else:
-            res = runner
+            ptxprint.res = runner
         # logbuffer.bind_subprocess(None)
-    print("cd {}; xetex {} -> {}".format(tmpdir, outfname, res))
-    if res != 0:
-        print('\a') # play a sound to say that it did NOT finish successfully.
+    print("cd {}; xetex {} -> {}".format(tmpdir, outfname, ptxprint.res))
     return outfname
 
 def doit(printer):
@@ -125,22 +124,46 @@ def doit(printer):
         texfiles = [dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=printer.logbuffer)]
     else:
         texfiles = [dojob([j], info, prjid, prjdir, tmpdir, logbuffer=printer.logbuffer) for j in jobs]
-    # Open the resulting PDF if it exists
-    if len(jobs) > 1:
+    # Work out what the resulting PDF was called
+    if len(jobs) > 1 and printer.get("c_combine"):
         pdfname = os.path.join(tmpdir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], prjid))
     else:
         pdfname = os.path.join(tmpdir, "ptxprint-{}{}.pdf".format(jobs[0], prjid))
-        
-    # Need to check the return code to see if generating the PDF was successful. And if not, then issue some 
-    # warning or error message rather than leave the PREVIOUS PDF open and pretend that everything worked fine! :-(
-    if os.path.exists(pdfname):
-        if sys.platform == "win32":
-            os.startfile(pdfname)
-        elif sys.platform == "linux":
-            subprocess.call(('xdg-open', pdfname))
-        # Only delete the temp files if the PDF was created AND the user did NOT select to keep them
-        if not printer.get("c_keepTemporaryFiles"):
-            removeTempFiles(texfiles,tmpdir,info)
+    # Check the return code to see if generating the PDF was successful before opening the PDF
+    if ptxprint.res == 0:
+        if os.path.exists(pdfname):
+            if sys.platform == "win32":
+                os.startfile(pdfname)
+            elif sys.platform == "linux":
+                subprocess.call(('xdg-open', pdfname))
+            # Only delete the temp files if the PDF was created AND the user did NOT select to keep them
+            if not printer.get("c_keepTemporaryFiles"):
+                removeTempFiles(texfiles,tmpdir,info)
+    else: # if ptxprint.res != 0:
+        # it did NOT finish successfully, so help them troubleshoot what went wrong.
+        # getting the last few lines of the .log file:
+        n = 16
+        loglines = []
+        logfilepath = os.path.join(tmpdir, pdfname.replace(".pdf", ".log"))
+        with open(logfilepath, "r", encoding="utf-8") as logfile:
+            try:
+                for i, l in enumerate(logfile.readlines()):
+                    loglines.append(l)
+                    if i > n:
+                        loglines.pop(0)
+                log="".join(loglines)
+            except:
+                log="Logfile missing: "+logfilepath
+        # modal=True and/or destroy_with_parent=True
+        # shortPDFname = re.sub(r".+/(.+\.pdf)",r"\1",pdfname)
+        dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, 
+            "Error: Unable to create: "+re.sub(r".+/(.+\.pdf)",r"\1",pdfname))
+        dialog.format_secondary_text("Possible Causes inlcude: \
+                                    \n  * The font file was not installed for ALL users \
+                                    \n  * The USFM text has an error \
+                                    \n  * Selected option is incompatible with project data\n\n" +log)
+        dialog.run()
+        dialog.destroy()
 
 def removeTempFiles(texfiles,tmpdir,info):
     for extn in ('delayed','parlocs','notepages', 'tex','log'):

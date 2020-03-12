@@ -96,7 +96,7 @@ class PtxPrinterDialog:
         dia = self.builder.get_object("dlg_multiBookSelector")
         dia.add_buttons(
             Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-            Gtk.STOCK_OPEN, Gtk.ResponseType.OK)
+            Gtk.STOCK_OK, Gtk.ResponseType.OK)
 
         self.fileViews = []
         for i,k in enumerate(["FinalSFM", "PicList", "AdjList", "TeXfile", "XeTeXlog", "Settings"]):
@@ -629,7 +629,7 @@ class PtxPrinterDialog:
     def onUseModsStyClicked(self, c_useModsSty):
         self.builder.get_object("btn_editModsSty").set_sensitive(self.get("c_useModsSty"))
         
-    def onSuppressOutlineClicked(self, c_omitIntroOutline):
+    def onOmitOutlineClicked(self, c_omitIntroOutline):
         self.builder.get_object("c_prettyIntroOutline").set_sensitive(not self.get("c_omitIntroOutline"))
         self.builder.get_object("c_prettyIntroOutline").set_active(False)
 
@@ -655,7 +655,7 @@ class PtxPrinterDialog:
             for c in ("c_mainBodyText", "c_footnoterule",
                       "c_includefigsfromtext", "c_skipmissingimages", "c_convertTIFtoPNG", "c_useFiguresFolder"):
                 self.builder.get_object(c).set_active(True)
-            self.builder.get_object("c_hideAdvancedSettings").set_opacity(0.05)
+            self.builder.get_object("c_hideAdvancedSettings").set_opacity(0.1)
             self.builder.get_object("c_hideAdvancedSettings").set_tooltip_text("")
             
         else:
@@ -746,6 +746,11 @@ class PtxPrinterDialog:
 
     def onClickmbs_xtra(self, btn):
         self.toggleBooks(85,124)
+
+    def onClickmbs_none(self, btn):
+        for b in self.alltoggles:
+            if b.get_label() in allbooks[0:124]:
+                b.set_active(False)
 
     def onTocClicked(self, c_toc):
         if not self.get("c_usetoc1") and not self.get("c_usetoc2") and not self.get("c_usetoc3"):
