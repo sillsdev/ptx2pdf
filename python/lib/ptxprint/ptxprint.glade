@@ -724,6 +724,7 @@ saved settings for this project.</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
+                <property name="no_show_all">True</property>
                 <property name="tooltip_text" translatable="yes">Many of the settings in this tool only need to be
 set up once, or used on rare occasions. These can
 be hidden away for most of the time if that helps.
@@ -758,8 +759,8 @@ using the -e flag on the command line.</property>
                 <property name="draw_indicator">True</property>
               </object>
               <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
                 <property name="position">2</property>
               </packing>
             </child>
@@ -1935,7 +1936,7 @@ Direction:</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
-                                    <property name="font">Charis SIL Bold 12</property>
+                                    <property name="font">Sans 12</property>
                                     <property name="preview_text"/>
                                     <property name="show_preview_entry">False</property>
                                     <property name="show_size">False</property>
@@ -1950,7 +1951,7 @@ Direction:</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
-                                    <property name="font">Charis SIL Oblique 12</property>
+                                    <property name="font">Sans 12</property>
                                     <property name="preview_text"/>
                                     <property name="show_preview_entry">False</property>
                                     <property name="show_size">False</property>
@@ -1965,7 +1966,7 @@ Direction:</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
-                                    <property name="font">Charis SIL Bold Oblique 12</property>
+                                    <property name="font">Sans 12</property>
                                     <property name="preview_text"/>
                                     <property name="show_preview_entry">False</property>
                                     <property name="show_size">False</property>
@@ -2193,7 +2194,7 @@ Direction:</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
                                     <property name="valign">center</property>
-                                    <property name="font">Charis SIL 12</property>
+                                    <property name="font">Sans 12</property>
                                     <property name="preview_text"/>
                                     <property name="show_preview_entry">False</property>
                                     <property name="show_size">False</property>
@@ -4727,7 +4728,7 @@ illustrations within the text.</property>
                                     <property name="column_spacing">7</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_useModsTex">
-                                        <property name="label" translatable="yes">Apply Customized Settings (in PrintDraft-mods.tex)</property>
+                                        <property name="label" translatable="yes">Apply Customized Settings (in ptxprint-mods.tex)</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -5652,9 +5653,7 @@ Use trouble-shooting tools.</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
                             <property name="margin_left">12</property>
-                            <property name="margin_top">3</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="column_spacing">18</property>
+                            <property name="column_spacing">6</property>
                             <child>
                               <object class="GtkLabel" id="l_examineBook">
                                 <property name="visible">True</property>
@@ -5672,7 +5671,12 @@ focus:</property>
                               <object class="GtkComboBox" id="cb_examineBook">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">Choose any book (including
+those which are not currently
+in the list to be printed.)</property>
                                 <property name="halign">end</property>
+                                <property name="margin_top">6</property>
+                                <property name="margin_bottom">6</property>
                                 <property name="model">ls_books</property>
                                 <property name="active">0</property>
                                 <property name="has_entry">True</property>
@@ -5695,12 +5699,15 @@ focus:</property>
                             </child>
                             <child>
                               <object class="GtkButton" id="btn_PrevBook">
-                                <property name="label" translatable="yes">&lt;&lt; Prev
-     Book</property>
+                                <property name="label" translatable="yes">&lt;&lt; Prev</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Show previous book in
+list of books to be printed.</property>
                                 <property name="halign">end</property>
+                                <property name="margin_top">6</property>
+                                <property name="margin_bottom">6</property>
                                 <property name="image_position">right</property>
                                 <property name="always_show_image">True</property>
                                 <signal name="clicked" handler="onPrevBookClicked" swapped="no"/>
@@ -5712,13 +5719,16 @@ focus:</property>
                             </child>
                             <child>
                               <object class="GtkButton" id="btn_NextBook">
-                                <property name="label" translatable="yes">Next &gt;&gt;
-Book</property>
+                                <property name="label" translatable="yes">Next &gt;&gt;</property>
                                 <property name="width_request">-1</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Show next book in list
+of books to be printed.</property>
                                 <property name="halign">start</property>
+                                <property name="margin_top">6</property>
+                                <property name="margin_bottom">6</property>
                                 <property name="image_position">top</property>
                                 <property name="always_show_image">True</property>
                                 <signal name="clicked" handler="onNextBookClicked" swapped="no"/>
@@ -5736,6 +5746,8 @@ Book</property>
                                 <property name="receives_default">True</property>
                                 <property name="halign">start</property>
                                 <property name="margin_right">20</property>
+                                <property name="margin_top">6</property>
+                                <property name="margin_bottom">6</property>
                                 <signal name="clicked" handler="onGenerateClicked" swapped="no"/>
                               </object>
                               <packing>
@@ -5753,7 +5765,7 @@ position on page</property>
                                 <property name="tooltip_text" translatable="yes">By default all illustrations are place in the top-left
 corner (when double columns are used) and at the
 top in single column mode. 
-Selecting this option will randomly position the
+Checking this option will randomly position the
 illustrations on the page (using top-left, top-right
 bottom-left and bottom-right). 
 By editing the PicList file, you can intentionally
@@ -5780,6 +5792,26 @@ Tracing</property>
                               </object>
                               <packing>
                                 <property name="left_attach">6</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton">
+                                <property name="label" translatable="yes">View/Edit...</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">If you would prefer to view or edit this file in
+the Editor Application designated by your 
+system then click here.</property>
+                                <property name="margin_left">20</property>
+                                <property name="margin_right">12</property>
+                                <property name="margin_top">6</property>
+                                <property name="margin_bottom">6</property>
+                                <signal name="clicked" handler="onOpenInSystemEditor" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">7</property>
                                 <property name="top_attach">0</property>
                               </packing>
                             </child>
@@ -6313,22 +6345,7 @@ of this file as it was when last saved.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton">
-                            <property name="label" translatable="yes">Edit in system's 
-default text editor...</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">True</property>
-                            <property name="tooltip_text" translatable="yes">If you would prefer to view or edit this file in
-your favourite text editor, click here to open.</property>
-                            <property name="margin_top">4</property>
-                            <property name="margin_bottom">4</property>
-                            <signal name="clicked" handler="onOpenInSystemEditor" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="left_attach">3</property>
-                            <property name="top_attach">0</property>
-                          </packing>
+                          <placeholder/>
                         </child>
                         <child>
                           <placeholder/>
@@ -7081,7 +7098,7 @@ then select the font here.</property>
                                 <property name="valign">center</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
-                                <property name="font">Charis SIL 10</property>
+                                <property name="font">Sans 12</property>
                                 <property name="preview_text"/>
                                 <property name="show_preview_entry">False</property>
                                 <property name="show_size">False</property>

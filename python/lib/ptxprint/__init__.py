@@ -887,7 +887,19 @@ class PtxPrinterDialog:
         self.editFile("PrintDraftChanges.txt", False)
 
     def onEditModsTeX(self, btn):
-        self.editFile("PrintDraft-mods.tex", True)
+        self.prjid = self.get("cb_project")
+        self.prjdir = os.path.join(self.settings_dir, self.prjid)
+        modfname = "ptxprint-mods.tex"
+        # MH: how to get hold of the current working dir if we're not working in the PrintDraft folder? see ln864 as well
+        # if wkdir:
+            # fpath = os.path.join(self.working_dir, modfname)
+        # else:
+        fpath = os.path.join(self.settings_dir, self.prjid, "PrintDraft", modfname)
+        if not os.path.exists(fpath):
+            openfile = open(fpath,"w", encoding="utf-8")
+            openfile.write("% This is the .tex file specific for the {} project used by PTXprint.\n".format(self.prjid))
+            openfile.close()
+        self.editFile(modfname, True)
 
     def onEditCustomSty(self, btn):
         self.editFile("custom.sty", False)

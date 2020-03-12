@@ -688,7 +688,7 @@ class Info:
             if not os.path.exists(os.path.join(prjdir, "custom.sty")):
                 printer.set("c_useCustomSty", False)
         for (f, c) in (("PrintDraft-mods.sty", "c_useModsSty"),
-                       ("PrintDraft-mods.tex", "c_useModsTex")):
+                       ("ptxprint-mods.tex", "c_useModsTex")):
             if printer.get(c):
                 if not os.path.exists(os.path.join(printer.working_dir, f)):
                     printer.set(c, False)
