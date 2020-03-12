@@ -142,26 +142,28 @@ def doit(printer):
     else: # if ptxprint.res != 0:
         # it did NOT finish successfully, so help them troubleshoot what went wrong.
         # getting the last few lines of the .log file:
-        n = 16
+        n = 20
         loglines = []
         logfilepath = os.path.join(tmpdir, pdfname.replace(".pdf", ".log"))
         with open(logfilepath, "r", encoding="utf-8") as logfile:
             try:
                 for i, l in enumerate(logfile.readlines()):
-                    loglines.append(l)
-                    if i > n:
-                        loglines.pop(0)
+                    if l[0] != "\\":
+                        loglines.append(l)
+                        if len(loglines) > n:
+                            loglines.pop(0)
                 log="".join(loglines)
             except:
                 log="Logfile missing: "+logfilepath
         # modal=True and/or destroy_with_parent=True
-        # shortPDFname = re.sub(r".+/(.+\.pdf)",r"\1",pdfname)
-        dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, 
-            "Error: Unable to create: "+re.sub(r".+/(.+\.pdf)",r"\1",pdfname))
-        dialog.format_secondary_text("Possible Causes inlcude: \
+        dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, # We need a NotOK button :-)
+            "Error: Unable to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname))
+        dialog.format_secondary_text(log+"----------------------------------------------- \
+                                    \n Possible Causes inlcude: \
                                     \n  * The font file was not installed for ALL users \
                                     \n  * The USFM text has an error \
-                                    \n  * Selected option is incompatible with project data\n\n" +log)
+                                    \n  * Selected option is incompatible with data \
+                                  \n\n Try hiding all advanced options and try again!")
         dialog.run()
         dialog.destroy()
 
