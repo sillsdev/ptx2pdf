@@ -39,6 +39,7 @@
 \def\TRACE#1{} % default - consume messages
 \def\TRACEOUT#1{\trace{o}{#1}}%\let\TRACEOUT=\MSG % use this to echo them
 \def\wlog{\immediate\write-1 } % write message to log file only
+\newif\iftemp \tempfalse
 
 % \addtoendhooks collects macros to be executed at the end of the job
 \def\addtoendhooks#1{\x@\global\x@\@ndhooks\x@{\the\@ndhooks #1}}
@@ -361,6 +362,7 @@
 % don't allow stretching between notes.
 \newskip\intern@teskip \intern@teskip=15pt% plus 5pt minus 5pt
 
+%%%%%%%%%%%%%% OUTPUT ROUTINES %%%%%%%%%%%%%% 
 % switch to double-column mode if currently single.
 % this is called from \parstyle when the new style wants to be double-columned
 \def\doublecolumns{%
@@ -418,16 +420,8 @@
 \def\msg#1{\immediate\write16{#1}}
 
 \def\savepartialpage{% save a partially-full page when switching to 2-column format,
-%%%  \msg{SAVEPARTIAL} % and remember the first \mark on the page
-  \edef\p@gebotmark{\botmark}% remember last \mark for running header
-  \edef\t@st{\p@gefirstmark}%
-  \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi % remember first, if not already set
-  \global\trialheight=\textheight
-  \availht=\trialheight % amount of space we think is available
-  \f@rstnotetrue
-  \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
-  \decr{\availht}{\topins}% and by the space needed for spanning pictures
-  \decr{\availht}{\bottomins}
+  \xdef\p@gebotmark{\botmark}
+  \c@lcavailht
   \setbox\s@vedpage=\copy255
   % split the galley to the actual size available
   \setbox\colA=\vsplit255 to \availht
@@ -436,13 +430,7 @@
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
   \TRACEOUT{savepartialpage \the\ht\colA rem=\the\ht255}
   \iffitonpage
-%%%    %FIXME? savepartialpage gets called with holdinginserts=1, but this bit seems written assuming holdinginserts=0.
-    %%%\msg{spp SUCCEEDED, 'shipping' page to partial. hIns=\the\holdinginserts}
-% at this point:
-%   \box\colA is the page content
-%   \availht is ht that definitely works
-    \global\setbox\partial=\vbox{%\ifdim\ht\colA>\baselineskip
-%      \msg{upwards mode = \the\XeTeXupwardsmode}
+    \global\setbox\partial=\vbox{
       \ifvoid\partial\else \unvbox\partial \fi
       \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi
       \dimen0=\dp\colA
@@ -466,12 +454,9 @@
   \else % the contents of the "galley" didn't fit into the actual page,
         % so reduce \vsize and try again with an earlier break
 %%%    \msg{2c REDUCING VSIZE hIns=\the\holdinginserts}
+    \@mptyinserts
     \global\advance\vsize by -\baselineskip
-    \global\setbox\topins=\box\voidb@x
-    \global\setbox\bottomins=\box\voidb@x
     \let\\=\cle@rn@tecl@ss \the\n@tecl@sses
-    \global\setbox255=\box\voidb@x
-    \global\holdinginserts=1
     \global\let\whichtrial=\onecoltrial
     \global\output={\backingup}
     \global\rerunsavepartialpagedtrue
@@ -479,7 +464,6 @@
   \fi}
   % save 1 column material since we are switching to 2 columns
 \newbox\partial
-
 
 \def\twocols{% primary output routine in 2-col mode
 %%%  \msg{TWOCOLS @ \ch@pter:\v@rse, txtht=\the\textheight, partial=\the\ht\partial, hIns=\the\holdinginserts}
@@ -552,25 +536,18 @@
 }
 
 \def\spl@tcols#1{
-    %\showboxbreadth=10\showboxdepth=5\scrollmode\showbox#1
+    % even if \vsplit to 0pt, TeX will always pull one line from the input box over
     \TRACEOUT{split params maxdepth=\the\splitmaxdepth, topskip=\the\splittopskip, colhtA=\the\colhtA, colhtB=\the\colhtB}
     \ifdim\colhtA>0pt\setbox\colA=\vsplit#1 to \colhtA \setbox\colA=\vbox{\unvbox\colA}\else\setbox\colA\box\voidb@x\fi
     \ifdim\colhtB>0pt\setbox\colB=\vsplit#1 to \colhtB \setbox\colB=\vbox{\unvbox\colB}\else\setbox\colB\box\voidb@x\fi
-    %\showbox\colA
 }
 
 \def\balanced{
   \setbox0=\copy\s@vedpage
-  \s@tcolhts{\availht}
-  \setbox\colA=\vsplit0 to \colhtA % set \box\colA to amount which fits in first column
-  \setbox\colB=\vsplit0 to \colhtB % and \colB to second
-  %\setbox\colA=\vbox{\unvbox\colA} % reset columns to natural height
-  %\setbox\colB=\vbox{\unvbox\colB}
+  \s@tcolhts{\availht}\spl@tcols0
   % and check if it all fit; if not, we'll have to back up and try again
   \ifvoid0 \fitonpagetrue \else \fitonpagefalse \fi
   \rebalancefalse
-  \setbox\colA=\vbox{\unvbox\colA}
-  \setbox\colB=\vbox{\unvbox\colB}
   \TRACEOUT{first \the\availht . col=\the\ht\colA, \the\colhtA . second col=\the\ht\colB, \the\colhtB . rem=\the\ht0}
   \iffitonpage
     \shortavail=\colhtB \advance\shortavail by -\ht\colB
@@ -583,12 +560,9 @@
       \loop\setbox0=\copy\s@vedpage
         \advance\colhtA by \baselineskip
         \advance\colhtB by \baselineskip
-        \setbox\colA = \vsplit0 to \colhtA
-        \setbox\colB = \vsplit0 to \colhtB
+        \spl@tcols0
         \ifvoid0\loopcount=10\fi  
         \ifnum\loopcount=10\repeat % so ugly you can't \else\repeat
-      \setbox\colA=\vbox{\unvbox\colA}
-      \setbox\colB=\vbox{\unvbox\colB}
       \TRACEOUT{Rebalance starting with \the\colhtA, \the\colhtB}
     \fi
     \g@tcolhts
@@ -597,9 +571,6 @@
     \advance\shortavail \baselineskip
     \loopcount=0
     \ifrebalance
-      %\shortavail=\availht
-	  % loop making column height smaller.
-	  % as long as everything still fits a shorter page is better balanaced
       \loop
         \vfuzz=\maxdimen
         \advance\loopcount by 1
@@ -614,12 +585,13 @@
             \setbox0=\copy\s@vedpage
             \s@tcolhts{\shortavail}\spl@tcols0
         \fi\fi
-        \ifnum\ifdim\colhtA<0pt 1\else\ifdim\colhtB<0pt 1\else 0\fi\fi =1
+        % if either column height ends up negative, rollback and bail
+        \ifrebalance\ifnum\ifdim\colhtA<0pt 1\else\ifdim\colhtB<0pt 1\else 0\fi\fi =1
             \advance\shortavail by \baselineskip
             \TRACEOUT{rebalance found column height < 0, back to \the\shortavail}\rebalancefalse
             \setbox0=\copy\s@vedpage
             \s@tcolhts{\shortavail}\spl@tcols0
-        \fi
+        \fi\fi
 		% if second column longer than first column by more than .3*line height, quit loop
         \colhtA=\ht\colA \colhtB=\ht\colB
         \dimen0=\colhtB \incr{\dimen0}{\toprightins} \incr{\dimen0}{\bottomrightins}
@@ -642,9 +614,29 @@
   \fi
 }
 
-\newif\ifrerunsavepartialpaged
-\def\savepartialpaged{%
-%%%  \msg{entering savepartialpaged}%
+\def\c@lcboxheights{
+    \g@tcolhts
+    \dimen0=\dp\colA \setbox\colA=\vbox to \availht{\unvbox\topleftins\box\colA\vfil\unvbox\bottomleftins}\dp\colA=\dimen0
+    \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\else
+      \ifdim\dimen0<\dp\colB\dimen0=\dp\colB\fi \setbox\colB=\vbox to \availht{\unvbox\toprightins\box\colB\vfil\unvbox\bottomrightins}\dp\colB=\dimen0
+    \fi
+    \ifdim\colhtA>\colhtB \dimen3=\colhtA\dimen0=\dp\colA\dp\colB=\dimen0\else
+      \dimen3=\colhtB\dimen0=\dp\colB\dp\colA=\dimen0\fi
+    \advance\dimen3 by \dimen0
+}
+
+\def\@mptyinserts{
+    \global\setbox\topins=\box\voidb@x
+    \global\setbox\bottomins=\box\voidb@x
+    \global\setbox\topleftins=\box\voidb@x
+    \global\setbox\toprightins=\box\voidb@x
+    \global\setbox\bottomleftins=\box\voidb@x
+    \global\setbox\bottomrightins=\box\voidb@x
+    \global\setbox255=\box\voidb@x
+    \global\holdinginserts=1
+}
+
+\def\c@lcavailht{
   \edef\t@st{\p@gefirstmark}%
   \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi % remember first, if not already set
   \edef\t@st{\p@gebotmark}%
@@ -661,29 +653,16 @@
   \decr{\availht}{\bottomins}
 %%%
   \splittopskip=\topskip
+}
+
+\newif\ifrerunsavepartialpaged
+\def\savepartialpaged{%
+  \c@lcavailht
   \setbox\s@vedpage=\copy255
-%%%  \msg{first col = \the\ht\colA, second col = \the\ht\colB, rem = \the\ht255}
   \TRACEOUT{balancing from savepartialpaged}
   \rem@inderfalse\balanced
   \iffitonpage
-    %\msg{sppd SUCCEEDED, shipping page hIns=\the\holdinginserts}
-    % re-split to better balance columns, if possible
-    % at this point:
-    %   \box\colA + \box\colB is the page content
-    %   \availht is ht that definitely works
-    %   \s@vedpage is a copy of the original page contents that was split into columns A and B
-    %   try re-splitting with smaller ht while \ht\colB<\ht\colA
-    %   (including allowance for column inserts)
-	% assemble final content of columns
-    \setbox\colA=\vbox{\unvbox\colA} \setbox\colB=\vbox{\unvbox\colB}
-    \g@tcolhts
-    \dimen0=\dp\colA \setbox\colA=\vbox to \availht{\unvbox\topleftins\box\colA\vfil\unvbox\bottomleftins}\dp\colA=\dimen0
-    \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\else
-      \ifdim\dimen0<\dp\colB\dimen0=\dp\colB\fi \setbox\colB=\vbox to \availht{\unvbox\toprightins\box\colB\vfil\unvbox\bottomrightins}\dp\colB=\dimen0
-    \fi
-    \ifdim\colhtA>\colhtB \dimen3=\colhtA\dimen0=\dp\colA\dp\colB=\dimen0\else
-      \dimen3=\colhtB\dimen0=\dp\colB\dp\colA=\dimen0\fi
-    \advance\dimen3 by \dimen0
+    \c@lcboxheights
     \ht\colA=\dimen3 \ht\colB=\dimen3
     \dimen4=\ht\partial
     \global\setbox\partial=\vbox{\unvbox\partial
@@ -691,26 +670,13 @@
       \dimen5=\textwidth\advance\dimen5 by \ExtraRMargin\advance\dimen5 by -\columnshift %
       \vbox{\hbox to \dimen5{%\hbox to \columnshift{}
         \ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\dimen0}\box\colA %
-%%%%% Testing %%%%% (djd - 20130918)
-% Removing \hfil at the end to prevent right column from wanting to center
-% rather than moving all the way to the right.
-%        \else \box\colA\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\dimen0}\box\colB\hbox to \ExtraRMargin{}\fi\hfil}}}
         \else \box\colA\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\dimen0}\box\colB\hbox to \ExtraRMargin{}\fi}}}
-%%%%% End Testing %%%%% (Remove comments when this has been determined to work)
     \advance\dimen3 by \dimen4 \ht\partial=\dimen3
     \global\holdinginserts=1
     \global\setbox255=\box\voidb@x
   \else
-%%%    \msg{SAVEPARTIALPAGED Backingup remainder=\the\ht255, total=\the\ht\s@vedpage, vsize=\the\vsize, baselineskip=\the\baselineskip, hIns=\the\holdinginserts}%
+    \@mptyinserts
     \global\advance\vsize by -\baselineskip
-    \global\setbox\topins=\box\voidb@x
-    \global\setbox\bottomins=\box\voidb@x
-    \global\setbox\topleftins=\box\voidb@x
-    \global\setbox\toprightins=\box\voidb@x
-    \global\setbox\bottomleftins=\box\voidb@x
-    \global\setbox\bottomrightins=\box\voidb@x
-    \global\setbox255=\box\voidb@x
-    \global\holdinginserts=1
     \global\let\whichtrial=\twocoltrial
     \global\rerunsavepartialpagedtrue
     \global\output={\backingup}\unvbox\s@vedpage
@@ -720,64 +686,26 @@
 }
 
 \def\twocoltrial{% trial formatting to see if current contents will fit on the page
-%%%\msg{2c TRIAL with ht=\the\trialheight, vsize=\the\vsize, hIns=\the\holdinginserts}
-  \xdef\p@gebotmark{\botmark}% remember last \mark for running header
-  \edef\t@st{\p@gefirstmark}%
-  \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi % remember first, if not already set
-  \availht=\trialheight % amount of space we think is available
-  \f@rstnotetrue
-  \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
-  \TRACEOUT{availht = \the\availht, depth = \the\dp255}
-  \advance\availht -\dp255
-  \dimen0=\baselineskip \multiply\dimen0 by 10
-  \multiply\availht by 10 \divide\availht by\dimen0 \multiply\availht by\dimen0 \divide\availht by 10
-%%%
-  \decr{\availht}{\topins}% and by the space needed for spanning pictures
-  \decr{\availht}{\bottomins}
-%%%
-  \splittopskip=\topskip
+  \c@lcavailht
   \setbox\s@vedpage=\copy255
-%%%  \msg{first col = \the\ht\colA, second col = \the\ht\colB, rem = \the\ht255, hIns=\the\holdinginserts}
   \TRACEOUT{balance from twocoltrial}
   \rem@indertrue\balanced
   \dimen5=\baselineskip
   \iffitonpage\ifvoid\s@vedpage\else\fitonpagefalse\fi\fi% \dimen5=\ht\s@vedpage\fi\fi
   \iffitonpage
-    %\msg{2 SUCCEEDED, shipping page}
-    % re-split to better balance columns, if possible
-    % at this point:
-    %   \box\colA + \box\colB is the page content
-    %   \availht is ht that definitely works
-    %   \s@vedpage is a copy of the original page contents that was split into columns A and B
-    %   try re-splitting with smaller ht while \ht\colB<\ht\colA
-    %   (including allowance for column inserts)
-	% assemble final content of columns
-    \setbox\colA=\vbox{\unvbox\colA} \setbox\colB=\vbox{\unvbox\colB}
-    \g@tcolhts
-    \dimen0=\dp\colA \setbox\colA=\vbox to \availht{\unvbox\topleftins\box\colA\vfil\unvbox\bottomleftins}\dp\colA=\dimen0
-    \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\else
-      \ifdim\dimen0<\dp\colB\dimen0=\dp\colB\fi \setbox\colB=\vbox to \availht{\unvbox\toprightins\box\colB\vfil\unvbox\bottomrightins}\dp\colB=\dimen0
-    \fi
-    \ifdim\colhtA>\colhtB \dimen3=\colhtA\dimen0=\dp\colA\dp\colB=\dimen0\else
-      \dimen3=\colhtB\dimen0=\dp\colB\dp\colA=\dimen0\fi
-    \advance\dimen3 by \dimen0
+    \c@lcboxheights
     \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\fi
     \ht\colA=\the\availht \ht\colB=\the\availht
-	% define pagecontents for use by \plainoutput below
     \def\pagecontents{%
       \trace{o}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins}%
       \dimen1=\textwidth\advance\dimen1 by \ExtraRMargin
       \ifvoid\partial\else %\msg{2colout partial: \the\ht\partial}\hskip\columnshift
         \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}}\fi % output partial page
       \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
-      %\ifdim\dp\colB>\dp\colA \dimen0=\dp\colB\dp\colA=\dimen0 \else \dimen0=\dp\colA\dp\colB=\dimen0 \fi % calc depth of deepest column
-      %\ifdim\colhtA>\colhtB \dimen3=\colhtA \else \dimen3=\colhtB\fi
       \trace{p}{Text depth = \the\dimen3}%\showthe\dimen0
-	  % determine order of columns based on text direction
       \hbox to \dimen1{\hbox to \columnshift{}%
         \ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\availht}{\the\dimen0}\box\colA
         \else \box\colA\makecolumngutter{\the\dimen3}{\the\availht}{\the\dimen0}\box\colB\hbox to \ExtraRMargin{}\fi}
-%%%%% End Testing %%%%% (Remove comments when this has been determined to work)
       \ifvoid\bottomins\else \kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \unvbox\bottomins \fi % ouput bottom spanning pictures
       \f@rstnotetrue
       \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % output all note classes
@@ -797,19 +725,11 @@
     \else\global\output={\twocols}\unvbox\s@vedpage\fi
   \else % the contents of the "galley" didn't fit into the columns,
         % so reduce \vsize and try again with an earlier break
-%%%    \msg{2c REDUCING VSIZE hIns=\the\holdinginserts}
     \TRACEOUT{Reducing vsize \the\vsize, by \the\dimen5}
     \global\advance\vsize by -\dimen5
 	% clear insertions
-    \global\setbox\topins=\box\voidb@x
-    \global\setbox\bottomins=\box\voidb@x
-    \global\setbox\topleftins=\box\voidb@x
-    \global\setbox\toprightins=\box\voidb@x
-    \global\setbox\bottomleftins=\box\voidb@x
-    \global\setbox\bottomrightins=\box\voidb@x
+    \@mptyinserts
     \let\\=\cle@rn@tecl@ss \the\n@tecl@sses
-    \global\setbox255=\box\voidb@x
-    \global\holdinginserts=1
     \global\let\whichtrial=\twocoltrial
     \global\output={\backingup}
     \unvbox\galley \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
@@ -836,7 +756,6 @@
 
 \def\backingup{% this output routine is used when we reduce \vsize;
                % it will cause a new page break to be found, and then the \trial routine is called again
-%%%  \msg{BACKING-UP hIns=\the\holdinginserts(==1)}
   \global\deadcycles=0
   \global\setbox\galley=\copy255
   \global\galleypenalty=\outputpenalty
@@ -849,13 +768,15 @@
 \xdef\p@gefirstmark{}
 
 \def\savepartialpagedbounce{
-  %This output routine gets the partial galley (input text) before a 2->1 column transition so that it can be re-run with holdinginserts=0, so footnotes etc can be seen.
+  % This output routine gets the partial galley (input text) before a 2->1 column transition
+  % so that it can be re-run with holdinginserts=0, so footnotes etc can be seen.
   \TRACEOUT{sppb hIns=\the\holdinginserts, \the\ht\partial, \the\ht255, }
   \global\holdinginserts=0
   \global\output={\savepartialpaged}
   \global\setbox\galley=\copy255
   \unvbox255\eject
 }
+
 % to switch back to single column, we reset the page size parameters
 \def\singlecolumn{%
   \TRACEOUT{singlecolumn}%\tracingmacros=1
@@ -865,23 +786,18 @@
     \global\hsize=\textwidth \advance\hsize by -\columnshift
     \global\vsize=\textheight
     \ifdim\ht\partial>0.9\textheight
-%%%      \MSG{\the\ht\partial is > 0.9 times \the\textheight}
-      \def\pagecontents{%really ship out the page, there's no more space
+      \def\pagecontents{
         \vbox{\dimen1=\textwidth \advance\dimen1 \ExtraRMargin
         \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\box\partial}} \fi
-        %\unvbox\bottomins
 	    \dimen0=\dp\partial
-        \ifvoid\bottomins\else \kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \unvbox\bottomins \fi % ouput bottom spanning pictures
-	    \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % output all note classes
-        \iff@rstnote % no notes actually occurred!
+        \ifvoid\bottomins\else \kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \unvbox\bottomins \fi
+	    \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses
+        \iff@rstnote
           \kern-\dimen0 \vfil
         \else
           \setbox0=\lastbox \dimen0=\dp0 \box0 \kern-\dimen0
         \fi
       }}\plainoutput 
-      %\vbox to \textheight{\unvbox\partial\vfil\bottomins}\eject
-    %\else
-      %\penalty-100\vskip\baselineskip % ensure blank line between single and double column material
     \fi
     \global\c@rrentcols=1
     \TRACEOUT{resetting resetvsize}\def\resetvsize{\TRACEOUT{resetvsize}\global\vsize=\textheight} 
@@ -891,11 +807,8 @@
     \global\count\topins=\count255
     \global\count\bottomins=\count255
     \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
-    %\vbox{\hskip -\columnshift \box\partial}%
     \ifdim\ht\partial>\baselineskip \vbox{\unvbox\partial} \fi
-    %\hskip\columnshift\box\partial
     \ifendbooknoeject\ifx\p@gefirstmark\t@tle \else\vskip\baselineskip\hskip-\columnshift\hrule\vskip2\baselineskip\fi\fi%
-    %\msg{Starting 1col partial: \the\ht\partial, pagetotal: \the\pagetotal, textheight: \the\textheight}
   \fi\tracingmacros=0}%
 
 \count\topins=1000 \dimen\topins=\maxdimen \skip\topins=0pt
@@ -910,6 +823,7 @@
   \def\sizem@ltiple{#2}% empty if not provided
 }
 
+%%%%%%%%%%%%%% FIGURES %%%%%%%%%%%%%% 
 % called from \fig or from figure list
 \def\d@figure#1{%
  \ifIncludeFigures
@@ -1070,16 +984,12 @@
 \newcount\whichp@ge
 
 \newif\ifendbooknoeject \endbooknoejectfalse
-\def\pagebreak{%
+\def\pagebreak{
   \ifsk@pping \egroup \fi%
   \ifhe@dings\endhe@dings\fi%
-  \ifendbooknoeject\else%\ifdim\ht\partial>\baselineskip
-    %\msg{Ejecting \the\pagetotal vs \the\baselineskip}
-  \vfill\eject\fi%\fi %% FIX
-%  \ifnum\c@rrentcols=2
-%    \iffirstcol\else\line{}\vfill\eject\fi
-%  \fi
-}%
+  \ifendbooknoeject\else%
+  \vfill\eject\fi%
+}
 \let\pb=\pagebreak
 
 \def\columnbreak{\vfill\eject}
