@@ -2784,6 +2784,9 @@ in the printed output.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Verse numbers for Poetry elements all
+line up vertically on the margin, and
+Verse Bridges (3-4) also stack vertically.</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
@@ -2904,18 +2907,7 @@ any paragraph (including poetry).</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_verticalVerseBridges">
-                                    <property name="label" translatable="yes">Vertical Verse Bridges</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
-                                    <property name="top_attach">3</property>
-                                  </packing>
+                                  <placeholder/>
                                 </child>
                               </object>
                             </child>
@@ -4243,15 +4235,16 @@ need to be checked for understanding).</property>
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="c_pageNumTitlePage">
-                                <property name="label" translatable="yes">Place Page Number at
-the Bottom of Title Page(s)</property>
+                                <property name="label" translatable="yes">Print Page Number at
+Bottom of Intro Page(s)</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
                                 <property name="tooltip_text" translatable="yes">By default there is no page number on the
 Title Page of each book. Check this option
 to place the page number at the bottom of
-the page (only on Title Pages).</property>
+the page (only on Intoductory Pages before 
+the scripture text begins).</property>
                                 <property name="halign">start</property>
                                 <property name="margin_left">12</property>
                                 <property name="active">True</property>

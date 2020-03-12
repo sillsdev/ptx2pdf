@@ -5,7 +5,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from ptxprint.font import TTFont
 from ptxprint.ptsettings import chaps, books, bookcodes, oneChbooks
-from ptxprint.snippets import FancyIntro, PDFx1aOutput, VerticalVerseBridges, FancyBorders
+from ptxprint.snippets import FancyIntro, PDFx1aOutput, FancyBorders
 
 class Info:
     _mappings = {
@@ -225,7 +225,6 @@ class Info:
     _snippets = {
         "snippets/fancyintro":            ("c_prettyIntroOutline", FancyIntro),
         "snippets/pdfx1aoutput":          ("c_PDFx1aOutput", PDFx1aOutput),
-        "snippets/verticalversebridges":  ("c_verticalVerseBridges", VerticalVerseBridges),
         "snippets/fancyborders":          ("c_enableDecorativeElements", FancyBorders)
     }
     
@@ -761,7 +760,8 @@ class Info:
             else:
                 m1 = "Sorry - Hyphenation List was NOT Generated"
                 m2 = "No valid words were found in Paratext's Hyphenation List"
-        dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, m1)
+        dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
+                                    buttons=Gtk.ButtonsType.OK, message_format=m1)
         dialog.format_secondary_text(m2)
         dialog.run()
         dialog.destroy()

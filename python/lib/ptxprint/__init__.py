@@ -243,8 +243,8 @@ class PtxPrinterDialog:
         if self.prjid is not None:
             self.callback(self)
         else:
-            dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK,
-                "Cannot create a PDF without a Project selected")
+            dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
+                     buttons=Gtk.ButtonsType.OK, message_format="Cannot create a PDF without a Project selected")
             dialog.format_secondary_text("Please select a Paratext Project and try again.")
             dialog.run()
             dialog.destroy()
@@ -647,8 +647,7 @@ class PtxPrinterDialog:
             # Turn Dangerous Settings OFF
             for c in ("c_startOnHalfPage", "c_marginalverses", "c_prettyIntroOutline", "c_blendfnxr", "c_autoToC",
                       "c_figplaceholders", "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", 
-                      "c_preventwidows", "c_PDFx1aOutput", "c_diglot", "c_hyphenate", "c_variableLineSpacing",
-                      "c_verticalVerseBridges"):
+                      "c_preventwidows", "c_PDFx1aOutput", "c_diglot", "c_hyphenate", "c_variableLineSpacing"):
                 self.builder.get_object(c).set_active(False)
 
             # Turn Essential Settings ON
@@ -672,7 +671,7 @@ class PtxPrinterDialog:
                   "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "box_AdvFootnoteConfig", "l_colgutteroffset",
                   "c_usePicList", "c_skipmissingimages", "c_convertTIFtoPNG", "c_useCustomFolder", "btn_selectFigureFolder", 
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
-                  "c_verticalVerseBridges", "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection",
+                  "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection",
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "row_ToC", "c_hyphenate",
                   "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", "c_preventwidows",
                   "l_sidemarginfactor", "s_sidemarginfactor", "l_min", "s_linespacingmin", "l_max", "s_linespacingmax",
@@ -1126,7 +1125,8 @@ class PtxPrinterDialog:
                 m2 = "\n".join(existingFilelist)+"\n\nIt has NOT been overwritten. If you really" + \
                                                    "\nneed this PicList file to be regenerated then" + \
                                                    "\ndelete the contents, save the empty file and try again."
-            dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, m1)
+            dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
+                                        buttons=Gtk.ButtonsType.OK, message_format=m1)
             dialog.format_secondary_text(m2)
             dialog.format_secondary_text(m2)
             dialog.run()
@@ -1174,7 +1174,8 @@ class PtxPrinterDialog:
                 m2 = "\n".join(existingFilelist)+"\n\nIt has NOT been overwritten. If you really" + \
                                                    "\nneed this Paragraph Adjust List to be regenerated" + \
                                                    "\nthen delete the contents, save the empty file and try again."
-            dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, m1)
+            dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
+                                        buttons=Gtk.ButtonsType.OK, message_format=m1)
             dialog.format_secondary_text(m2)
             dialog.format_secondary_text(m2)
             dialog.run()
@@ -1342,7 +1343,8 @@ class PtxPrinterDialog:
                    "\nrequired markup for this feature to be enabled." + \
                    "\n(Refer to Tooltip for further details.)" + \
                    "\n\n{}".format(", ".join(badbks))
-                dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, m1)
+                dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
+                                            buttons=Gtk.ButtonsType.OK, message_format=m1)
                 dialog.format_secondary_text(m2)
                 dialog.format_secondary_text(m2)
                 dialog.run()

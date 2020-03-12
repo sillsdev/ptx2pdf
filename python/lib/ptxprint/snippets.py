@@ -31,21 +31,6 @@ class PDFx1aOutput():
 >> ] >>}} 
     """
     
-class VerticalVerseBridges(): # Still to be checked!
-    regexes = []
-    styleInfo = ""
-    processTex = False
-    texCode = r"""
-\catcode`\@=11
-\def\switchv{\let\printv@rse\hangprintv@rse}
-\def\unswitchv{\let\printv@rse\simpleprintv@rse}
-
-\sethook{start}{q}{\switchv\hangversenumber}
-\sethook{start}{q1}{\switchv\hangversenumber}
-\sethook{end}{q}{\unswitchv}
-\sethook{end}{q1}{\unswitchv}
-\catcode`\@=12 """
-
 class FancyIntro():
     _regexbits = [(r'\\io2 ', r'\\io1 \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0'), # Temporary fix for \io2 and \io3 so table doesn't break!
                (r'\\io3 ', r'\\io1 \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0'),
