@@ -538,7 +538,8 @@
 \def\spl@tcols#1{
     % even if \vsplit to 0pt, TeX will always pull one line from the input box over
     \TRACEOUT{split params maxdepth=\the\splitmaxdepth, topskip=\the\splittopskip, colhtA=\the\colhtA, colhtB=\the\colhtB}
-    \ifdim\colhtA>0pt\setbox\colA=\vsplit#1 to \colhtA \setbox\colA=\vbox{\unvbox\colA}\else\setbox\colA\box\voidb@x\fi
+    \setbox9=\copy#1
+    \setbox\colA=\vsplit#1 to \colhtA \ifnum\badness>999999\setbox#1=\box9\setbox\colA\box\voidb@x\else\setbox\colA=\vbox{\unvbox\colA}\fi
     \ifdim\colhtB>0pt\setbox\colB=\vsplit#1 to \colhtB \setbox\colB=\vbox{\unvbox\colB}\else\setbox\colB\box\voidb@x\fi
 }
 
