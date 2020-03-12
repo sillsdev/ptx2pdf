@@ -67,7 +67,7 @@ class Info:
         "fancy/sectionheaderpdf":   ("btn_selectSectionHeaderPDF", lambda w,v: re.sub(r"\\","/", w.sectionheader) \
                                                 if (w.sectionheader is not None and w.sectionheader != 'None') \
                                                 else "ptxprint/A5 section head border.pdf"),
-        "fancy/decorationpdf":      (None, lambda w,v: "ptxprint/decoration.pdf"),
+        "fancy/decorationpdf":      (None, lambda w,v: "C:/ptx2pdf/python/lib/ptxprint/decoration.pdf"),
         "fancy/versedecorator":     ("c_inclVerseDecorator", lambda w,v: "" if v else "%"),
         "fancy/versedecoratorpdf":  ("btn_selectVerseDecorator", lambda w,v: re.sub(r"\\","/", w.versedecorator) \
                                                 if (w.versedecorator is not None and w.versedecorator != 'None') \
