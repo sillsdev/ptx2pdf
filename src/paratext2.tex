@@ -179,96 +179,6 @@
     \setp@ram{baseline}{#1}{\the\dimen0}\baselineskip=\dimen0\else
   \baselineskip=\p@ram\fi}
 
-% default output routine is single-column, somewhat based on Plain TeX output routine (see TeXbook)
-\global\output={\onecol}
-\global\holdinginserts=1
-\def\onecol{%
-  \global\setbox\galley=\copy255
-  \global\galleypenalty=\outputpenalty
-  \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
-  \global\output={\onecoltrial}
-  \global\holdinginserts=0
-  \unvbox255
-  \penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
-}
-\def\onecoltrial{% single-column version of \twocoltrial (see below)
-  %\tracingall=1\tracingoutput=0\tracingpages=0\tracingparagraphs=0\tracingassigns=0\tracingscantokens=0
-%%%  \msg{1c TRIAL with ht=\the\trialheight, vsize=\the\vsize, hIns=\the\holdinginserts}
-  \edef\p@gebotmark{\botmark}% remember last \mark for running header
-  \edef\t@st{\p@gefirstmark}%
-  \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi % remember first, if not already set
-  \availht=\trialheight % amount of space we think is available
-  \f@rstnotetrue
-  \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
-  \decr{\availht}{\topins}% and by the space needed for spanning pictures
-  \decr{\availht}{\bottomins}
-  \setbox\s@vedpage=\copy255
-  % split the galley to the actual size available
-  \setbox\colA=\vsplit255 to \availht
-  %\setbox\colA=\vbox{\unvbox\colA}
-  % and check if it all fit; if not, we'll have to back up and try again
-  \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
-  \iffitonpage
-%%%    \msg{1 SUCCEEDED, shipping page hIns=\the\holdinginserts}
-% at this point:
-%   \box\colA is the page content
-%   \availht is ht that definitely works
-    \def\pagecontents{%
-%      \msg{upwards mode = \the\XeTeXupwardsmode}
-      \dimen1=\textwidth \advance\dimen1 \ExtraRMargin
-      \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\partial}} \fi
-      \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
-      \dimen0=\dp\colA
-      \hbox to \dimen1{\hbox to \columnshift{}%
-        \box\colA\hbox to \ExtraRMargin{}\hfil}
-      \ifvoid\bottomins\else \vfil\kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\box\bottomins} \fi % ouput bottom spanning pictures
-      \f@rstnotetrue
-      \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses
-      \iff@rstnote % no notes actually occurred!
-        \kern-\dimen0 \vfil
-      \else
-        \setbox0=\lastbox \dimen0=\dp0 \box0 \kern-\dimen0
-      \fi
-    }
-    \resetvsize
-    \ifdim\ht\colA>\baselineskip\plainoutput \else\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
-    \xdef\p@gefirstmark{}
-    \xdef\p@gebotmark{}
-    \global\holdinginserts=1
-    \ifrerunsavepartialpaged\global\output={\savepartialpage}\global\rerunsavepartialpagedfalse
-    \else\global\output={\onecol}\fi
-  \else % the contents of the "galley" didn't fit into the actual page,
-        % so reduce \vsize and try again with an earlier break
-%%%    \msg{1c REDUCING VSIZE hIns=\the\holdinginserts}
-    \global\advance\vsize by -\baselineskip
-    \global\setbox\topins=\box\voidb@x
-    \global\setbox\bottomins=\box\voidb@x
-    \let\\=\cle@rn@tecl@ss \the\n@tecl@sses
-    \global\setbox255=\box\voidb@x
-    \global\holdinginserts=1
-    \global\let\whichtrial=\onecoltrial
-    \global\output={\backingup}
-    \unvbox\galley \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
-  \fi
-}
-
-\def\pagebody{\vbox to\textheight{\boxmaxdepth\maxdepth \pagecontents}}
-\def\makeheadline{%
-  \vbox to 0pt{\kern-\topm@rgin
-   \vbox{\kern\HeaderPosition\MarginUnit
-    \setbox0=\vbox{\hbox to \textwidth{\the\headline}}
-    \ht0=0.7\fontdimen6\csname font<h>\endcsname \dp0=0pt \box0
-    \ifrhr@le\ifdim\RHruleposition=\maxdimen\else
-      \kern\RHruleposition \hrule
-    \fi\fi}\vss}\nointerlineskip}
-\newif\ifrhr@le
-\def\makefootline{%
-  \vbox to 0pt{\dimen0=\textwidth\advance\dimen0 by -\columnshift
-    \kern\bottomm@rgin
-    \kern-\FooterPosition\MarginUnit
-     \hbox to \textwidth{\the\footline}\vss}}
-\newdimen\RHruleposition \RHruleposition=\maxdimen
-
 \def\ins@rtn@tecl@ss#1{% insert the given note class, either paragraphed or separately
   \checkp@ranotes{#1}\ifp@ranotes\let\n@xt=\parains@rtn@tecl@ss
     \else\let\n@xt=\separateins@rtn@tecl@ss\fi
@@ -363,6 +273,96 @@
 \newskip\intern@teskip \intern@teskip=15pt% plus 5pt minus 5pt
 
 %%%%%%%%%%%%%% OUTPUT ROUTINES %%%%%%%%%%%%%% 
+% default output routine is single-column, somewhat based on Plain TeX output routine (see TeXbook)
+\global\output={\onecol}
+\global\holdinginserts=1
+\def\onecol{%
+  \global\setbox\galley=\copy255
+  \global\galleypenalty=\outputpenalty
+  \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
+  \global\output={\onecoltrial}
+  \global\holdinginserts=0
+  \unvbox255
+  \penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
+}
+\def\onecoltrial{% single-column version of \twocoltrial (see below)
+  %\tracingall=1\tracingoutput=0\tracingpages=0\tracingparagraphs=0\tracingassigns=0\tracingscantokens=0
+%%%  \msg{1c TRIAL with ht=\the\trialheight, vsize=\the\vsize, hIns=\the\holdinginserts}
+  \edef\p@gebotmark{\botmark}% remember last \mark for running header
+  \edef\t@st{\p@gefirstmark}%
+  \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi % remember first, if not already set
+  \availht=\trialheight % amount of space we think is available
+  \f@rstnotetrue
+  \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
+  \decr{\availht}{\topins}% and by the space needed for spanning pictures
+  \decr{\availht}{\bottomins}
+  \setbox\s@vedpage=\copy255
+  % split the galley to the actual size available
+  \setbox\colA=\vsplit255 to \availht
+  %\setbox\colA=\vbox{\unvbox\colA}
+  % and check if it all fit; if not, we'll have to back up and try again
+  \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
+  \iffitonpage
+%%%    \msg{1 SUCCEEDED, shipping page hIns=\the\holdinginserts}
+% at this point:
+%   \box\colA is the page content
+%   \availht is ht that definitely works
+    \def\pagecontents{%
+%      \msg{upwards mode = \the\XeTeXupwardsmode}
+      \dimen1=\textwidth \advance\dimen1 \ExtraRMargin
+      \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\partial}} \fi
+      \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
+      \dimen0=\dp\colA
+      \hbox to \dimen1{\hbox to \columnshift{}%
+        \box\colA\hbox to \ExtraRMargin{}\hfil}
+      \ifvoid\bottomins\else \vfil\kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\box\bottomins} \fi % ouput bottom spanning pictures
+      \f@rstnotetrue
+      \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses
+      \iff@rstnote % no notes actually occurred!
+        \kern-\dimen0 \vfil
+      \else
+        \setbox0=\lastbox \dimen0=\dp0 \box0 \kern-\dimen0
+      \fi
+    }
+    \resetvsize
+    \ifdim\ht\colA>\baselineskip\plainoutput \else\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
+    \xdef\p@gefirstmark{}
+    \xdef\p@gebotmark{}
+    \global\holdinginserts=1
+    \ifrerunsavepartialpaged\global\output={\savepartialpage}\global\rerunsavepartialpagedfalse
+    \else\global\output={\onecol}\fi
+  \else % the contents of the "galley" didn't fit into the actual page,
+        % so reduce \vsize and try again with an earlier break
+%%%    \msg{1c REDUCING VSIZE hIns=\the\holdinginserts}
+    \global\advance\vsize by -\baselineskip
+    \global\setbox\topins=\box\voidb@x
+    \global\setbox\bottomins=\box\voidb@x
+    \let\\=\cle@rn@tecl@ss \the\n@tecl@sses
+    \global\setbox255=\box\voidb@x
+    \global\holdinginserts=1
+    \global\let\whichtrial=\onecoltrial
+    \global\output={\backingup}
+    \unvbox\galley \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
+  \fi
+}
+
+\def\pagebody{\vbox to\textheight{\boxmaxdepth\maxdepth \pagecontents}}
+\def\makeheadline{%
+  \vbox to 0pt{\kern-\topm@rgin
+   \vbox{\kern\HeaderPosition\MarginUnit
+    \setbox0=\vbox{\hbox to \textwidth{\the\headline}}
+    \ht0=0.7\fontdimen6\csname font<h>\endcsname \dp0=0pt \box0
+    \ifrhr@le\ifdim\RHruleposition=\maxdimen\else
+      \kern\RHruleposition \hrule
+    \fi\fi}\vss}\nointerlineskip}
+\newif\ifrhr@le
+\def\makefootline{%
+  \vbox to 0pt{\dimen0=\textwidth\advance\dimen0 by -\columnshift
+    \kern\bottomm@rgin
+    \kern-\FooterPosition\MarginUnit
+     \hbox to \textwidth{\the\footline}\vss}}
+\newdimen\RHruleposition \RHruleposition=\maxdimen
+
 % switch to double-column mode if currently single.
 % this is called from \parstyle when the new style wants to be double-columned
 \def\doublecolumns{%
@@ -527,7 +527,7 @@
 
 \def\s@tcolhts#1{
     \colhtA=#1 \decr{\colhtA}{\topleftins} \decr{\colhtA}{\bottomleftins}
-    \colhtB=#1 \decr{\colhtA}{\toprightins} \decr{\colhtB}{\bottomrightins}
+    \colhtB=#1 \decr{\colhtB}{\toprightins} \decr{\colhtB}{\bottomrightins}
 }
 
 \def\g@tcolhts{
@@ -825,6 +825,8 @@
 
 %%%%%%%%%%%%%% FIGURES %%%%%%%%%%%%%% 
 % called from \fig or from figure list
+
+\newif\iffiglocleft \figloclefttrue
 \def\d@figure#1{%
  \ifIncludeFigures
   \gdef\p@rams{#1|}% ensure there is a trailing | separator
@@ -875,7 +877,9 @@
     \ifx\size@ption\size@SPAN
       \let\p@cins=\topins
 	\else
-      \let\p@cins=\topleftins
+      \iffiglocleft
+        \let\p@cins=\topleftins \figlocleftfalse
+      \else\let\p@cins=\toprightins \figloclefttrue\fi
     \fi
   \fi
   % create box to contain picture

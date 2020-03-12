@@ -63,10 +63,10 @@
 % Print the range of references from a pair of marks
 %
 \edef\emptym@rk{::}
+\edef\n@thing{}
 \def\r@ngerefs#1#2{%
- \TRACEOUT{#1 , #2}
- \edef\t@st{#1}\ifx\t@st\t@tle\x@\extr@ctfirst\emptym@rk\relax\else\x@\extr@ctfirst\t@st\relax\fi
- \edef\t@st{#2}\ifx\t@st\t@tle\x@\extr@ctlast\emptym@rk\relax\else\x@\extr@ctlast\t@st\relax\fi
+ \edef\t@st{#1}\ifx\t@st\t@tle\x@\extr@ctfirst\emptym@rk\relax\else\ifx\t@st\n@thing\x@\extr@ctfirst\emptym@rk\relax\else\x@\extr@ctfirst\t@st\relax\fi\fi
+ \edef\t@st{#2}\ifx\t@st\t@tle\x@\extr@ctlast\emptym@rk\relax\else\ifx\t@st\n@thing\x@\extr@ctlast\emptym@rk\relax\else\x@\extr@ctlast\t@st\relax\fi\fi
  \ifx\@book\empty\else
   \@book\ 
   \ifVerseRefs
@@ -160,11 +160,14 @@
     \trace{h}{Testing for \t@st}%
     \ifx\t@st\t@tle
       \the\titlehead \global\rhr@lefalse
-    \else
-      \ifodd\pageno
-        \the\oddhead
+    \else\ifx\t@st\n@thing
+      \the\titlehead \global\rhr@lefalse
       \else
-        \ifDoubleSided \the\evenhead \else \the\oddhead\fi
+        \ifodd\pageno
+          \the\oddhead
+        \else
+          \ifDoubleSided \the\evenhead \else \the\oddhead\fi
+        \fi
       \fi
     \fi
   \fi
