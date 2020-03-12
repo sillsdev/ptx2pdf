@@ -258,6 +258,14 @@ class Info:
             self.dict['project/id'] = self.prjid
         self.processFonts(printer)
         self.processHdrFtr(printer)
+        # sort out caseless figures folder. This is a hack
+        base = os.path.join(self.dict["/ptxpath"], self.dict["project/id"])
+        for p in ("Figures", "figures"):
+            picdir = os.path.join(base, p)
+            if os.path.exists(picdir):
+                break
+        self.dict["project/picdir"] = picdir
+            
 
     def updatefields(self, a):
         for k in a:
@@ -423,7 +431,8 @@ class Info:
                     continue
                 m = re.match(r"^"+qreg+r"\s*>\s*"+qreg, l)
                 if m:
-                    changes.append((None, regex.compile(m.group(1) or m.group(2), flags=regex.M), m.group(3) or m.group(4)))
+                    changes.append((None, regex.compile(m.group(1) or m.group(2), flags=regex.M),
+                                    m.group(3) or m.group(4) or ""))
                     continue
                 m = re.match(r"^in\s+"+qreg+r"\s*:\s*"+qreg+r"\s*>\s*"+qreg, l)
                 if m:
@@ -546,7 +555,10 @@ class Info:
         prjid = self.dict['project/id']
         prjdir = os.path.join(printer.settings_dir, prjid)
         if printer.get("c_useFiguresFolder"):
-            picdir = os.path.join(prjdir, "Figures")
+            for p in ("Figures", "figures"):
+                picdir = os.path.join(prjdir, p)
+                if os.path.exists(picdir):
+                    break
         elif printer.get("c_useLocalFiguresFolder"):
             picdir = os.path.join(prjdir, "local", "Figures")
         elif printer.get("c_useCustomFolder"):

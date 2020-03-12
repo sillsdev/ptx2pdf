@@ -541,6 +541,21 @@
 \newif\ifrem@inder \rem@indertrue
 \newif\ifunbalanced \unbalancedfalse% \unbalancedtrue
 
+\def\s@tcolhts#1{
+    \colhtA=#1 \decr{\colhtA}{\topleftins} \decr{\colhtA}{\bottomleftins}
+    \colhtB=#1 \decr{\colhtA}{\toprightins} \decr{\colhtB}{\bottomrightins}
+}
+
+\def\g@tcolhts{
+    \colhtA=\ht\colA \incr{\colhtA}{\topleftins} \incr{\colhtA}{\bottomleftins}
+    \colhtB=\ht\colB \incr{\colhtB}{\toprightins} \incr{\colhtB}{\bottomrightins}
+}
+
+\def\spl@tcols#1{
+    \setbox\colA=\vsplit#1 to \colhtA \setbox\colA=\vbox{\unvbox\colA}
+    \setbox\colB=\vsplit#1 to \colhtB \setbox\colB=\vbox{\unvbox\colB}
+}
+
 \def\balanced{
   \setbox0=\copy\s@vedpage
   \colhtA=\availht \decr{\colhtA}{\topleftins} \decr{\colhtA}{\bottomleftins}
@@ -574,8 +589,7 @@
       \setbox\colB=\vbox{\unvbox\colB}
       \TRACEOUT{Rebalance starting with \the\colhtA, \the\colhtB}
     \fi
-    \colhtA=\ht\colA \incr{\colhtA}{\topleftins} \incr{\colhtA}{\bottomleftins}
-    \colhtB=\ht\colB \incr{\colhtB}{\toprightins} \incr{\colhtB}{\bottomrightins}
+    \g@tcolhts
     \ifunbalanced\shortavail=\availht\else\ifdim\colhtB<\colhtA \rebalancetrue \shortavail=\colhtA\fi\fi
     \advance\colhtA -\baselineskip\ifdim\colhtA<\colhtB \rebalancetrue \shortavail=\colhtB\fi
     \advance\shortavail \baselineskip
@@ -589,19 +603,13 @@
         \advance\loopcount by 1
         \advance\shortavail by -\baselineskip
         \setbox0=\copy\s@vedpage
-        \colhtA=\shortavail \decr{\colhtA}{\topleftins} \decr{\colhtA}{\bottomleftins}
-        \colhtB=\shortavail \decr{\colhtB}{\toprightins} \decr{\colhtB}{\bottomrightins}% \advance\colhtB by .5\baselineskip
-        \setbox\colA=\vsplit0 to \colhtA \setbox\colA=\vbox{\unvbox\colA}
-        \setbox\colB=\vsplit0 to \colhtB \setbox\colB=\vbox{\unvbox\colB}
+        \s@tcolhts{\shortavail}\spl@tcols0
 		% if something left in box0, it didn't fit, quit loop
         \TRACEOUT{re-balancing \the\ht\colA, \the\ht\colB, from \the\shortavail, rem \the\ht0}
         \ifrem@inder\else\ifvoid0\else\advance\shortavail by \baselineskip
             \TRACEOUT{rebalance found extra back to \the\shortavail}\rebalancefalse
             \setbox0=\copy\s@vedpage
-            \colhtA=\shortavail \decr{\colhtA}{\topleftins} \decr{\colhtA}{\bottomleftins}
-            \colhtB=\shortavail \decr{\colhtB}{\toprightins} \decr{\colhtB}{\bottomrightins}% \advance\colhtB by .5\baselineskip
-            \setbox\colA=\vsplit0 to \colhtA \setbox\colA=\vbox{\unvbox\colA}
-            \setbox\colB=\vsplit0 to \colhtB \setbox\colB=\vbox{\unvbox\colB}
+            \s@tcolhts{\shortavail}\spl@tcols0
         \fi\fi
 		% if second column longer than first column by more than .3*line height, quit loop
         \colhtA=\ht\colA \colhtB=\ht\colB
@@ -620,10 +628,7 @@
             \rebalancefalse\MSG{Rebalancing loop count bail}\fi
         \ifrebalance\repeat
     \fi
-    \colhtA=\shortavail \decr{\colhtA}{\topleftins} \decr{\colhtA}{\bottomleftins}
-    \colhtB=\shortavail \decr{\colhtB}{\toprightins} \decr{\colhtB}{\bottomrightins}
-    \setbox\colA=\vsplit\s@vedpage to \colhtA
-    \setbox\colB=\vsplit\s@vedpage to \colhtB
+    \s@tcolhts{\shortavail}\spl@tcols\s@vedpage
     \TRACEOUT{A = \the\colhtA , B = \the\colhtB}
   \fi
 }
@@ -708,9 +713,9 @@
 
 \def\twocoltrial{% trial formatting to see if current contents will fit on the page
 %%%\msg{2c TRIAL with ht=\the\trialheight, vsize=\the\vsize, hIns=\the\holdinginserts}
-  \edef\p@gebotmark{\botmark}% remember last \mark for running header
+  \xdef\p@gebotmark{\botmark}% remember last \mark for running header
   \edef\t@st{\p@gefirstmark}%
-  \ifx\t@st\empty\edef\p@gefirstmark{\firstmark}\fi % remember first, if not already set
+  \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi % remember first, if not already set
   \availht=\trialheight % amount of space we think is available
   \f@rstnotetrue
   \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
@@ -753,6 +758,7 @@
     \ht\colA=\the\availht \ht\colB=\the\availht
 	% define pagecontents for use by \plainoutput below
     \def\pagecontents{%
+      \trace{o}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins}%
       \dimen1=\textwidth\advance\dimen1 by \ExtraRMargin
       \ifvoid\partial\else %\msg{2colout partial: \the\ht\partial}\hskip\columnshift
         \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}}\fi % output partial page
@@ -761,12 +767,14 @@
       %\ifdim\colhtA>\colhtB \dimen3=\colhtA \else \dimen3=\colhtB\fi
       \trace{p}{Text depth = \the\dimen3}%\showthe\dimen0
 	  % determine order of columns based on text direction
-      \hbox to \dimen1{\hbox to \columnshift{}\ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\availht}{\the\dimen0}\box\colA
-%%%%% Testing %%%%% (djd - 20130918)
-% Removing \hfil at the end to prevent right column from wanting to center
-% rather than moving all the way to the right.
-%        \else \box\colA\makecolumngutter{\the\dimen3}{\the\availht}{\the\dimen0}\box\colB\hbox to \ExtraRMargin{}\fi\hfil}
-        \else \box\colA\makecolumngutter{\the\dimen3}{\the\availht}{\the\dimen0}\box\colB\hbox to \ExtraRMargin{}\fi}
+      \hbox to \dimen1{\hbox to \columnshift{}%
+        \ifRTL \hbox to \ExtraRMargin{}\vbox{\unvbox\toprightins\box\colB\unvbox\bottomrightins}%
+          \makecolumngutter{\the\dimen3}{\the\availht}{\the\dimen0}%
+          \vbox{\unvbox\topleftins\box\colA\unvbox\boxbottomleftins}%
+        \else \vbox{\unvbox\topleftins\box\colA\unvbox\bottomleftins}%
+          \makecolumngutter{\the\dimen3}{\the\availht}{\the\dimen0}%
+          \vbox{\unvbox\toprightins\box\colB\unvbox\bottomrightins}\hbox to \ExtraRMargin{}%
+        \fi}
 %%%%% End Testing %%%%% (Remove comments when this has been determined to work)
       \ifvoid\bottomins\else \kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \unvbox\bottomins \fi % ouput bottom spanning pictures
       \f@rstnotetrue
@@ -951,6 +959,7 @@
     \let\p@cins=\topins
   \fi
   % create box to contain picture
+  \trace{f}{Figure size=\size@ption, loc=\loc@ption, picins=\the\p@cins}
   \setbox0=\vbox{
     \hsize=\p@cwidth
 	% insert picture based on PicPath and file name, scaled to \p@cwidth
