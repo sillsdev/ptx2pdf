@@ -552,14 +552,16 @@
 }
 
 \def\spl@tcols#1{
-    \setbox\colA=\vsplit#1 to \colhtA \setbox\colA=\vbox{\unvbox\colA}
-    \setbox\colB=\vsplit#1 to \colhtB \setbox\colB=\vbox{\unvbox\colB}
+    %\showboxbreadth=10\showboxdepth=5\scrollmode\showbox#1
+    \TRACEOUT{split params maxdepth=\the\splitmaxdepth, topskip=\the\splittopskip, colhtA=\the\colhtA, colhtB=\the\colhtB}
+    \ifdim\colhtA>0pt\setbox\colA=\vsplit#1 to \colhtA \setbox\colA=\vbox{\unvbox\colA}\else\setbox\colA\box\voidb@x\fi
+    \ifdim\colhtB>0pt\setbox\colB=\vsplit#1 to \colhtB \setbox\colB=\vbox{\unvbox\colB}\else\setbox\colB\box\voidb@x\fi
+    %\showbox\colA
 }
 
 \def\balanced{
   \setbox0=\copy\s@vedpage
-  \colhtA=\availht \decr{\colhtA}{\topleftins} \decr{\colhtA}{\bottomleftins}
-  \colhtB=\availht \decr{\colhtB}{\toprightins} \decr{\colhtB}{\bottomrightins}
+  \s@tcolhts{\availht}
   \setbox\colA=\vsplit0 to \colhtA % set \box\colA to amount which fits in first column
   \setbox\colB=\vsplit0 to \colhtB % and \colB to second
   %\setbox\colA=\vbox{\unvbox\colA} % reset columns to natural height
@@ -605,12 +607,19 @@
         \setbox0=\copy\s@vedpage
         \s@tcolhts{\shortavail}\spl@tcols0
 		% if something left in box0, it didn't fit, quit loop
-        \TRACEOUT{re-balancing \the\ht\colA, \the\ht\colB, from \the\shortavail, rem \the\ht0}
-        \ifrem@inder\else\ifvoid0\else\advance\shortavail by \baselineskip
+        \TRACEOUT{re-balancing \the\ht\colA =\the\colhtA, \the\ht\colB =\the\colhtB, from \the\shortavail, rem \the\ht0}
+        \ifrem@inder\else\ifvoid0\else
+            \advance\shortavail by \baselineskip
             \TRACEOUT{rebalance found extra back to \the\shortavail}\rebalancefalse
             \setbox0=\copy\s@vedpage
             \s@tcolhts{\shortavail}\spl@tcols0
         \fi\fi
+        \ifnum\ifdim\colhtA<0pt 1\else\ifdim\colhtB<0pt 1\else 0\fi\fi =1
+            \advance\shortavail by \baselineskip
+            \TRACEOUT{rebalance found column height < 0, back to \the\shortavail}\rebalancefalse
+            \setbox0=\copy\s@vedpage
+            \s@tcolhts{\shortavail}\spl@tcols0
+        \fi
 		% if second column longer than first column by more than .3*line height, quit loop
         \colhtA=\ht\colA \colhtB=\ht\colB
         \dimen0=\colhtB \incr{\dimen0}{\toprightins} \incr{\dimen0}{\bottomrightins}
@@ -667,8 +676,7 @@
     %   (including allowance for column inserts)
 	% assemble final content of columns
     \setbox\colA=\vbox{\unvbox\colA} \setbox\colB=\vbox{\unvbox\colB}
-    \colhtA=\ht\colA \incr{\colhtA}{\topleftins} \incr{\colhtA}{\bottomleftins}
-    \colhtB=\ht\colB \incr{\colhtB}{\toprightins} \incr{\colhtB}{\bottomrightins}
+    \g@tcolhts
     \dimen0=\dp\colA \setbox\colA=\vbox to \availht{\unvbox\topleftins\box\colA\vfil\unvbox\bottomleftins}\dp\colA=\dimen0
     \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\else
       \ifdim\dimen0<\dp\colB\dimen0=\dp\colB\fi \setbox\colB=\vbox to \availht{\unvbox\toprightins\box\colB\vfil\unvbox\bottomrightins}\dp\colB=\dimen0
@@ -745,8 +753,7 @@
     %   (including allowance for column inserts)
 	% assemble final content of columns
     \setbox\colA=\vbox{\unvbox\colA} \setbox\colB=\vbox{\unvbox\colB}
-    \colhtA=\ht\colA \incr{\colhtA}{\topleftins} \incr{\colhtA}{\bottomleftins}
-    \colhtB=\ht\colB \incr{\colhtB}{\toprightins} \incr{\colhtB}{\bottomrightins}
+    \g@tcolhts
     \dimen0=\dp\colA \setbox\colA=\vbox to \availht{\unvbox\topleftins\box\colA\vfil\unvbox\bottomleftins}\dp\colA=\dimen0
     \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\else
       \ifdim\dimen0<\dp\colB\dimen0=\dp\colB\fi \setbox\colB=\vbox to \availht{\unvbox\toprightins\box\colB\vfil\unvbox\bottomrightins}\dp\colB=\dimen0
@@ -768,13 +775,8 @@
       \trace{p}{Text depth = \the\dimen3}%\showthe\dimen0
 	  % determine order of columns based on text direction
       \hbox to \dimen1{\hbox to \columnshift{}%
-        \ifRTL \hbox to \ExtraRMargin{}\vbox{\unvbox\toprightins\box\colB\unvbox\bottomrightins}%
-          \makecolumngutter{\the\dimen3}{\the\availht}{\the\dimen0}%
-          \vbox{\unvbox\topleftins\box\colA\unvbox\boxbottomleftins}%
-        \else \vbox{\unvbox\topleftins\box\colA\unvbox\bottomleftins}%
-          \makecolumngutter{\the\dimen3}{\the\availht}{\the\dimen0}%
-          \vbox{\unvbox\toprightins\box\colB\unvbox\bottomrightins}\hbox to \ExtraRMargin{}%
-        \fi}
+        \ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\availht}{\the\dimen0}\box\colA
+        \else \box\colA\makecolumngutter{\the\dimen3}{\the\availht}{\the\dimen0}\box\colB\hbox to \ExtraRMargin{}\fi}
 %%%%% End Testing %%%%% (Remove comments when this has been determined to work)
       \ifvoid\bottomins\else \kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \unvbox\bottomins \fi % ouput bottom spanning pictures
       \f@rstnotetrue
@@ -956,7 +958,11 @@
   \ifx\p@cins\relax
     %\errmessage{Unknown picture location "\loc@ption",
     %  expected one of t,b,tl,tr,bl,br}
-    \let\p@cins=\topins
+    \ifx\size@ption\size@SPAN
+      \let\p@cins=\topins
+	\else
+      \let\p@cins=\topleftins
+    \fi
   \fi
   % create box to contain picture
   \trace{f}{Figure size=\size@ption, loc=\loc@ption, picins=\the\p@cins}
