@@ -71,8 +71,10 @@
 {document/ifomitallverses}\def\AfterVerseSpaceFactor{{0}}
 
 %%% Poetry - Hang Verse Numbers
-{document/hangpoetry}\sethook{{start}}{{q1}}{{\hangversenumber}}
-{document/hangpoetry}\sethook{{start}}{{q2}}{{\hangversenumber}}
+{document/hangpoetry}\sethook{{start}}{{q1}}{{let\printv@rse\hangprintv@rse\hangversenumber}}
+{document/hangpoetry}\sethook{{start}}{{q2}}{{let\printv@rse\hangprintv@rse\hangversenumber}}
+{document/hangpoetry}\sethook{{end}}{{q1}}{{let\printv@rse\simpleprintv@rse}}
+{document/hangpoetry}\sethook{{end}}{{q2}}{{let\printv@rse\simpleprintv@rse}}
 
 %%%%% Notes %%%%%
 
