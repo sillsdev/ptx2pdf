@@ -147,67 +147,68 @@ class FancyBorders():
 %   "scaled <factor>" adjusts the size (1000 would keep the border at its original size)
 % Can also use "xscaled 850 yscaled 950" to scale separately in each direction,
 %   or "width 5.5in height 8in" to scale to a known size
-\def\PageBorder{{"{decorative/pageborderpdf}" width 148.5mm height 210mm}}
-%\def\PageBorder{{}}
+{fancy/pageborder}\def\PageBorder{{"{fancy/pageborderpdf}" width {paper/width} height {paper/height}}}
 
-\newbox\decorationbox
-\setbox\decorationbox=\hbox{{\XeTeXpdffile "{decorative/decorationpdf}"\relax}}
-\def\z{{\par\nobreak\vskip 16pt\centerline{{\copy\decorationbox}}}}
+% NOT YET SURE WHAT THIS IS USED FOR. Commented out until we have clarity on whether it is needed
+% and what the UI should call this "decoration"
+%\newbox\decorationbox
+%\setbox\decorationbox=\hbox{{\XeTeXpdffile "{fancy/decorationpdf}"\relax}}
+%\def\z{{\par\nobreak\vskip 16pt\centerline{{\copy\decorationbox}}}}
 
-\newbox\sectionheadbox
-\def\placesectionheadbox{{%
-  \ifvoid\sectionheadbox % set up the \sectionheadbox box the first time it's needed
-    \global\setbox\sectionheadbox=\hbox{{\XeTeXpdffile "{decorative/sectionheaderpdf}" \relax}}%
-    \global\setbox\sectionheadbox=\hbox to \hsize% \hsize is the line width
-        {{\hss \box\sectionheadbox \hss}}% so now the graphic will be centered
-    \global\setbox\sectionheadbox=\vbox to 0pt
-        {{\kern-21pt % adjust value of \kern here to shift graphic up or down
-         \box\sectionheadbox \vss}}% now we have a box with zero height
-  \fi
-  \vadjust{{\copy\sectionheadbox}}% insert the graphic below the current line
-  \vrule width 0pt height 0pt depth 0.5em
-}}
-\sethook{{start}}{{s}}{{\placesectionheadbox}}
+{fancy/sectionheader}\newbox\sectionheadbox
+{fancy/sectionheader}\def\placesectionheadbox{{%
+{fancy/sectionheader}  \ifvoid\sectionheadbox % set up the \sectionheadbox box the first time it's needed
+{fancy/sectionheader}    \global\setbox\sectionheadbox=\hbox{{\XeTeXpdffile "{fancy/sectionheaderpdf}" \relax}}%
+{fancy/sectionheader}    \global\setbox\sectionheadbox=\hbox to \hsize% \hsize is the line width
+{fancy/sectionheader}        {{\hss \box\sectionheadbox \hss}}% so now the graphic will be centered
+{fancy/sectionheader}    \global\setbox\sectionheadbox=\vbox to 0pt
+{fancy/sectionheader}        {{\kern-21pt % adjust value of \kern here to shift graphic up or down
+{fancy/sectionheader}         \box\sectionheadbox \vss}}% now we have a box with zero height
+{fancy/sectionheader}  \fi
+{fancy/sectionheader}  \vadjust{{\copy\sectionheadbox}}% insert the graphic below the current line
+{fancy/sectionheader}  \vrule width 0pt height 0pt depth 0.5em
+{fancy/sectionheader}}}
+{fancy/sectionheader}\sethook{{start}}{{s}}{{\placesectionheadbox}}
 
 % The following code puts the verse number inside a star
 %
-\newbox\versestarbox
-\setbox\versestarbox=\hbox{{\XeTeXpdffile "{decorative/versedecoratorpdf}"\relax}}
+{fancy/versedecorator}\newbox\versestarbox
+{fancy/versedecorator}\setbox\versestarbox=\hbox{{\XeTeXpdffile "{fancy/versedecoratorpdf}"\relax}}
 
 % capture the verse number in a box (surrounded by \hfil) which we overlap with star
-\newbox\versenumberbox
-\sethook{{start}}{{v}}{{\setbox\versenumberbox=\hbox to \wd\versestarbox\bgroup\hfil}}
-\sethook{{end}}{{v}}{{\hfil\egroup
- \beginL % ensure TeX is "thinking" left-to-right for the \rlap etc
-   \rlap{{\raise1pt\box\versenumberbox}}\lower4pt\copy\versestarbox
- \endL}}
+{fancy/versedecorator}\newbox\versenumberbox
+{fancy/versedecorator}\sethook{{start}}{{v}}{{\setbox\versenumberbox=\hbox to \wd\versestarbox\bgroup\hfil}}
+{fancy/versedecorator}\sethook{{end}}{{v}}{{\hfil\egroup
+{fancy/versedecorator} \beginL % ensure TeX is "thinking" left-to-right for the \rlap etc
+{fancy/versedecorator}   \rlap{{\raise1pt\box\versenumberbox}}\lower4pt\copy\versestarbox
+{fancy/versedecorator} \endL}}
 
 % Replace the ptx2pdf macro which prints out the verse number, so that we can
 % kern between numbers or change the font size, if necessary
-\catcode`\@=11   % allow @ to be used in the name of ptx2pdf macro we have to override
-\def\printv@rse{{\expandafter\getversedigits\v@rsefrom!!\end\printversedigits}}
-\catcode`\@=12   % return to normal function
+{fancy/versedecorator}\catcode`\@=11   % allow @ to be used in the name of ptx2pdf macro we have to override
+{fancy/versedecorator}\def\printv@rse{{\expandafter\getversedigits\v@rsefrom!!\end\printversedigits}}
+{fancy/versedecorator}\catcode`\@=12   % return to normal function
 
-\def\getversedigits#1#2#3#4\end{{\def\digitone{{#1}}\def\digittwo{{#2}}\def\digitthree{{#3}}}}
+{fancy/versedecorator}\def\getversedigits#1#2#3#4\end{{\def\digitone{{#1}}\def\digittwo{{#2}}\def\digitthree{{#3}}}}
 
-\font\smallversenums="{fontdecorative/versenumfont}" at {decorative/versenumsize}pt
-\def\exclam{{!}}
-\def\printversedigits{{%
-  \beginL
-  \ifx\digitthree\exclam
-    \digitone
-    \ifx\digittwo\exclam\else
-      \ifnum\digitone=1\kern-0.1em
-      \else\kern-0.05em\fi
-      \digittwo
-    \fi
-  \else
-    \smallversenums
-    \digitone
-    \kern-0.12em \digittwo
-    \kern-0.08em \digitthree
-  \fi
-  \endL}}
+{fancy/versedecorator}\font\smallversenums="{fontfancy/versenumfont}" at {fancy/versenumsize}pt
+{fancy/versedecorator}\def\exclam{{!}}
+{fancy/versedecorator}\def\printversedigits{{%
+{fancy/versedecorator}  \beginL
+{fancy/versedecorator}  \ifx\digitthree\exclam
+{fancy/versedecorator}    \digitone
+{fancy/versedecorator}    \ifx\digittwo\exclam\else
+{fancy/versedecorator}      \ifnum\digitone=1\kern-0.1em
+{fancy/versedecorator}      \else\kern-0.05em\fi
+{fancy/versedecorator}      \digittwo
+{fancy/versedecorator}    \fi
+{fancy/versedecorator}  \else
+{fancy/versedecorator}    \smallversenums
+{fancy/versedecorator}    \digitone
+{fancy/versedecorator}    \kern-0.12em \digittwo
+{fancy/versedecorator}    \kern-0.08em \digitthree
+{fancy/versedecorator}  \fi
+{fancy/versedecorator}  \endL}}
 """
 
     unusedStuff = r"""

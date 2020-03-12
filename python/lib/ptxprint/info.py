@@ -57,26 +57,22 @@ class Info:
         "paper/columns":            ("c_doublecolumn", lambda w,v: "2" if v else "1"),
         "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
 
-        "decorative/showborderstab":    ("c_showBordersTab", None),
-        "decorative/enableborders":     ("c_enableDecorativeElements", lambda w,v: "" if v else "%"),
-        "decorative/pageborder":        ("c_inclPageBorder", lambda w,v: "" if v else "%"),
-        "decorative/pageborderpdf":     ("btn_selectPageBorderPDF", lambda w,v: re.sub(r"\\","/", w.pageborder) \
+        "fancy/showborderstab":     ("c_showBordersTab", None),
+        "fancy/enableborders":      ("c_enableDecorativeElements", lambda w,v: "" if v else "%"),
+        "fancy/pageborder":         ("c_inclPageBorder", lambda w,v: "" if v else "%"),
+        "fancy/pageborderpdf":      ("btn_selectPageBorderPDF", lambda w,v: re.sub(r"\\","/", w.pageborder) \
                                                 if (w.pageborder is not None and w.pageborder != 'None') \
                                                 else "ptxprint/A5 page border.pdf"),
-        "decorative/sectionheader":     ("c_inclSectionHeader", lambda w,v: "" if v else "%"),
-        "decorative/sectionheaderpdf":  ("btn_selectSectionHeaderPDF", lambda w,v: re.sub(r"\\","/", w.sectionheader) \
+        "fancy/sectionheader":      ("c_inclSectionHeader", lambda w,v: "" if v else "%"),
+        "fancy/sectionheaderpdf":   ("btn_selectSectionHeaderPDF", lambda w,v: re.sub(r"\\","/", w.sectionheader) \
                                                 if (w.sectionheader is not None and w.sectionheader != 'None') \
                                                 else "ptxprint/A5 section head border.pdf"),
-        # "decorative/sectionheader":     ("c_inclSectionHeader", lambda w,v: "" if v else "%"),
-        # "decorative/sectionheaderpdf":  ("btn_selectSectionHeaderPDF", lambda w,v: re.sub(r"\\","/", w.sectionheader) \
-                                                # if (w.sectionheader is not None and w.sectionheader != 'None') \
-                                                # else "ptxprint/A5 section head border.pdf"),
-        "decorative/decorationpdf":     (None, lambda w,v: "C:/My Paratext 9 Projects/WSGlatin/PrintDraft(FancyBorders)/decoration.pdf"),
-        "decorative/versedecorator":    ("c_inclVerseDecorator", lambda w,v: "" if v else "%"),
-        "decorative/versedecoratorpdf": ("btn_selectVerseDecorator", lambda w,v: re.sub(r"\\","/", w.versedecorator) \
+        "fancy/decorationpdf":      (None, lambda w,v: "ptxprint/decoration.pdf"),
+        "fancy/versedecorator":     ("c_inclVerseDecorator", lambda w,v: "" if v else "%"),
+        "fancy/versedecoratorpdf":  ("btn_selectVerseDecorator", lambda w,v: re.sub(r"\\","/", w.versedecorator) \
                                                 if (w.versedecorator is not None and w.versedecorator != 'None') \
                                                 else "ptxprint/Verse number star.pdf"),
-        "decorative/versenumsize":      ("s_verseNumSize", lambda w,v: round((v / 12), 3) or "1.000"),
+        "fancy/versenumsize":       ("s_verseNumSize", lambda w,v: v or "11.00"),
 
         "paragraph/varlinespacing": ("c_variableLineSpacing", lambda w,v: "" if v else "%"),
         "paragraph/linespacing":    ("s_linespacing", lambda w,v: "{:.3f}".format(v) or "15.000"),
@@ -197,11 +193,11 @@ class Info:
         "fontbolditalic/slant":     ("s_bolditalicslant", lambda w,v: ":slant={:.4f}".format(v) if v != 0.0000 and w.get("c_fakebolditalic") else ""),
     }
     _fonts = {
-        "fontregular/name": ("f_body", None, None, None),
-        "fontbold/name": ("f_bold", "c_fakebold", "fontbold/embolden", "fontbold/slant"),
-        "fontitalic/name": ("f_italic", "c_fakeitalic", "fontitalic/embolden", "fontitalic/slant"),
-        "fontbolditalic/name": ("f_bolditalic", "c_fakebolditalic", "fontbolditalic/embolden", "fontbolditalic/slant"),
-        "fontdecorative/versenumfont": ("f_verseNumFont", None, None, None)
+        "fontregular/name":         ("f_body", None, None, None),
+        "fontbold/name":            ("f_bold", "c_fakebold", "fontbold/embolden", "fontbold/slant"),
+        "fontitalic/name":          ("f_italic", "c_fakeitalic", "fontitalic/embolden", "fontitalic/slant"),
+        "fontbolditalic/name":      ("f_bolditalic", "c_fakebolditalic", "fontbolditalic/embolden", "fontbolditalic/slant"),
+        "fontfancy/versenumfont":   ("f_verseNumFont", None, None, None)
     }
     _hdrmappings = {
         "First Reference":  r"\firstref",
@@ -646,38 +642,38 @@ class Info:
 
         printer.FrontPDFs = self.dict['project/frontincludes'].split("\n")
         if printer.FrontPDFs != None:
-            printer.builder.get_object("lb_inclFrontMatter").set_text(",".join(re.sub(r".+\\(.+)\.pdf",r"\1",s) for s in printer.FrontPDFs))
+            printer.builder.get_object("lb_inclFrontMatter").set_text(",".join(re.sub(r".+[\\/](.+)\.pdf",r"\1",s) for s in printer.FrontPDFs))
         else:
             printer.builder.get_object("lb_inclFrontMatter").set_text("")
 
         printer.BackPDFs = self.dict['project/backincludes'].split("\n")
         if printer.BackPDFs != None:
-            printer.builder.get_object("lb_inclBackMatter").set_text(",".join(re.sub(r".+\\(.+)\.pdf",r"\1",s) for s in printer.BackPDFs))
+            printer.builder.get_object("lb_inclBackMatter").set_text(",".join(re.sub(r".+[\\/](.+)\.pdf",r"\1",s) for s in printer.BackPDFs))
         else:
             printer.builder.get_object("lb_inclBackMatter").set_text("")
 
 # Q.for MH: I'm wondering about how to make this repetitve block of code into a callable funtion with parameters (or looping through a list)
         printer.watermarks = self.dict['paper/watermarkpdf']
         if printer.watermarks != None:
-            printer.builder.get_object("lb_applyWatermark").set_text(re.sub(r".+\\(.+)\.pdf",r"\1",printer.watermarks))
+            printer.builder.get_object("lb_applyWatermark").set_text(re.sub(r".+[\\/](.+)\.pdf",r"\1",printer.watermarks))
         else:
             printer.builder.get_object("lb_applyWatermark").set_text("")
 
-        printer.pageborder = self.dict['decorative/pageborderpdf']
+        printer.pageborder = self.dict['fancy/pageborderpdf']
         if printer.pageborder != None:
-            printer.builder.get_object("lb_inclPageBorder").set_text(re.sub(r".+\\(.+)\.pdf",r"\1",printer.pageborder))
+            printer.builder.get_object("lb_inclPageBorder").set_text(re.sub(r".+[\\/](.+)\.pdf",r"\1",printer.pageborder))
         else:
             printer.builder.get_object("lb_inclPageBorder").set_text("")
 
-        printer.sectionheader = self.dict['decorative/sectionheaderpdf']
+        printer.sectionheader = self.dict['fancy/sectionheaderpdf']
         if printer.sectionheader != None:
-            printer.builder.get_object("lb_inclSectionHeader").set_text(re.sub(r".+\\(.+)\.pdf",r"\1",printer.sectionheader))
+            printer.builder.get_object("lb_inclSectionHeader").set_text(re.sub(r".+[\\/](.+)\.pdf",r"\1",printer.sectionheader))
         else:
             printer.builder.get_object("lb_inclSectionHeader").set_text("")
 
-        printer.versedecorator = self.dict['decorative/versedecoratorpdf']
+        printer.versedecorator = self.dict['fancy/versedecoratorpdf']
         if printer.versedecorator != None:
-            printer.builder.get_object("lb_inclVerseDecorator").set_text(re.sub(r".+\\(.+)\.pdf",r"\1",printer.versedecorator))
+            printer.builder.get_object("lb_inclVerseDecorator").set_text(re.sub(r".+[\\/](.+)\.pdf",r"\1",printer.versedecorator))
         else:
             printer.builder.get_object("lb_inclVerseDecorator").set_text("")
 

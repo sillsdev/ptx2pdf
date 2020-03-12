@@ -934,7 +934,7 @@ class PtxPrinterDialog:
             self.FrontPDFs = FrontPDFs
             self.builder.get_object("c_inclFrontMatter").set_active(True)
             btn_selectFrontPDFs.set_tooltip_text("\n".join('{}'.format(s) for s in FrontPDFs))
-            self.builder.get_object("lb_inclFrontMatter").set_text(",".join(re.sub(r".+\\(.+)\.pdf",r"\1",s) for s in FrontPDFs))
+            self.builder.get_object("lb_inclFrontMatter").set_text(",".join(re.sub(r".+[\\/](.+)\.pdf",r"\1",s) for s in FrontPDFs))
         else:
             self.FrontPDFs = None
             btn_selectFrontPDFs.set_tooltip_text("")
@@ -950,7 +950,7 @@ class PtxPrinterDialog:
             self.BackPDFs = BackPDFs
             self.builder.get_object("c_inclBackMatter").set_active(True)
             btn_selectBackPDFs.set_tooltip_text("\n".join('{}'.format(s) for s in BackPDFs))
-            self.builder.get_object("lb_inclBackMatter").set_text(",".join(re.sub(r".+\\(.+)\.pdf",r"\1",s) for s in BackPDFs))
+            self.builder.get_object("lb_inclBackMatter").set_text(",".join(re.sub(r".+[\\/](.+)\.pdf",r"\1",s) for s in BackPDFs))
         else:
             self.BackPDFs = None
             btn_selectBackPDFs.set_tooltip_text("")
@@ -966,7 +966,7 @@ class PtxPrinterDialog:
             self.watermarks = watermarks[0]
             self.builder.get_object("c_applyWatermark").set_active(True)
             btn_selectWatermarkPDF.set_tooltip_text(watermarks[0])
-            self.builder.get_object("lb_applyWatermark").set_text(re.sub(r".+\\(.+)\.pdf",r"\1",watermarks[0]))
+            self.builder.get_object("lb_applyWatermark").set_text(re.sub(r".+[\\/](.+)\.pdf",r"\1",watermarks[0]))
         else:
             self.watermarks = None
             btn_selectWatermarkPDF.set_tooltip_text("")
@@ -995,7 +995,7 @@ class PtxPrinterDialog:
             self.pageborder = pageborder[0]
             self.builder.get_object("c_inclPageBorder").set_active(True)
             btn_selectPageBorderPDF.set_tooltip_text(pageborder[0])
-            self.builder.get_object("lb_inclPageBorder").set_text(re.sub(r".+\\(.+)\.pdf",r"\1",pageborder[0]))
+            self.builder.get_object("lb_inclPageBorder").set_text(re.sub(r".+[\\/](.+)\.pdf",r"\1",pageborder[0]))
         else:
             self.pageborder = None
             btn_selectPageBorderPDF.set_tooltip_text("")
@@ -1011,7 +1011,7 @@ class PtxPrinterDialog:
             self.sectionheader = sectionheader[0]
             self.builder.get_object("c_inclSectionHeader").set_active(True)
             btn_selectSectionHeaderPDF.set_tooltip_text(sectionheader[0])
-            self.builder.get_object("lb_inclSectionHeader").set_text(re.sub(r".+\\(.+)\.pdf",r"\1",sectionheader[0]))
+            self.builder.get_object("lb_inclSectionHeader").set_text(re.sub(r".+[\\/](.+)\.pdf",r"\1",sectionheader[0]))
         else:
             self.sectionheader = None
             btn_selectSectionHeaderPDF.set_tooltip_text("")
@@ -1027,7 +1027,7 @@ class PtxPrinterDialog:
             self.versedecorator = versedecorator[0]
             self.builder.get_object("c_inclVerseDecorator").set_active(True)
             btn_selectVerseDecoratorPDF.set_tooltip_text(versedecorator[0])
-            self.builder.get_object("lb_inclVerseDecorator").set_text(re.sub(r".+\\(.+)\.pdf",r"\1",versedecorator[0]))
+            self.builder.get_object("lb_inclVerseDecorator").set_text(re.sub(r".+[\\/](.+)\.pdf",r"\1",versedecorator[0]))
         else:
             self.versedecorator = None
             btn_selectVerseDecoratorPDF.set_tooltip_text("")
@@ -1042,7 +1042,7 @@ class PtxPrinterDialog:
         # if xyz is not None and xyz != 'None':
             # self.xyz = xyz[0]
             # btn_selectXyzPDF.set_tooltip_text(xyz[0])
-            # self.builder.get_object("lb_inclXyz").set_text(re.sub(r".+\\(.+)\.pdf",r"\1",xyz[0]))
+            # self.builder.get_object("lb_inclXyz").set_text(re.sub(r".+[\\/](.+)\.pdf",r"\1",xyz[0]))
         # else:
             # self.xyz = None
             # btn_selectXyzPDF.set_tooltip_text("")
