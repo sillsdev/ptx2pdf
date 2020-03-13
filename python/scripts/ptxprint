@@ -182,7 +182,7 @@ def doit(printer):
                                     \n  * The font file was not installed for ALL users \
                                     \n  * The USFM text has an error \
                                     \n  * Selected option is incompatible with data \
-                                  \n\n Try hiding all advanced options and try again!")
+                                  \n\n Try option 'Hide Advanced Settings' and run again!")
         dialog.run()
         dialog.destroy()
 
