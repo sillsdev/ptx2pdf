@@ -181,7 +181,7 @@
     <property name="window_position">center-on-parent</property>
     <property name="default_width">600</property>
     <property name="default_height">300</property>
-    <property name="icon">../../../icon/Google-Noto-Emoji-Objects-62859-open-book.ico</property>
+    <property name="icon">..\..\..\icon\Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type_hint">dialog</property>
     <child>
       <placeholder/>
@@ -677,7 +677,7 @@
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">PTXprint [0.4.0 Beta] App</property>
     <property name="resizable">False</property>
-    <property name="icon">../../../icon/Google-Noto-Emoji-Objects-62859-open-book.ico</property>
+    <property name="icon">..\..\..\icon\Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type_hint">dialog</property>
     <property name="urgency_hint">True</property>
     <signal name="destroy" handler="onDestroy" swapped="no"/>
@@ -4380,6 +4380,7 @@ the w/a/p notation, then it is easy to exclude
 any illustrations that do not have the 'p'
 attribute.  Note: w= web, a=app, p=print.</property>
                                         <property name="halign">start</property>
+                                        <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                     </child>
@@ -4505,6 +4506,7 @@ be generated in the same folder as the TIF files.
                                 <child>
                                   <object class="GtkLabel" id="l_useLocalFiguresFolder">
                                     <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>
                                     <property name="label" translatable="yes">(original TIF files)</property>
@@ -4550,6 +4552,7 @@ be generated in the same folder as the TIF files.
                                     <property name="halign">end</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
+                                    <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                     <property name="group">c_useLocalFiguresFolder</property>
                                   </object>
@@ -4562,12 +4565,12 @@ be generated in the same folder as the TIF files.
                                   <object class="GtkRadioButton" id="c_useLocalFiguresFolder">
                                     <property name="label" translatable="yes">Use "local\figures" Folder:</property>
                                     <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="halign">end</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
-                                    <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                     <property name="group">c_useCustomFolder</property>
                                   </object>
@@ -5643,7 +5646,6 @@ Use trouble-shooting tools.</property>
                           <object class="GtkGrid" id="gr_debugTools">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="halign">start</property>
                             <property name="margin_left">12</property>
                             <property name="column_spacing">6</property>
                             <child>
@@ -5796,8 +5798,9 @@ Tracing</property>
                                 <property name="tooltip_text" translatable="yes">If you would prefer to view or edit this file in
 the Editor Application designated by your 
 system then click here.</property>
-                                <property name="margin_left">20</property>
-                                <property name="margin_right">12</property>
+                                <property name="halign">end</property>
+                                <property name="margin_left">30</property>
+                                <property name="margin_right">6</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
                                 <signal name="clicked" handler="onOpenInSystemEditor" swapped="no"/>

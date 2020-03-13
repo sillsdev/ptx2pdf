@@ -505,10 +505,10 @@ class Info:
             self.localChanges.append((None, regex.compile(r"\\xt ", flags=regex.M), r"\\ft "))
 
         if printer.get("c_preventorphans"): # Prevent orphans at end of *any* paragraph [anything that isn't followed by a \v]
-            self.localChanges.append((None, regex.compile(r" ([^\\ ]+?) ([^\\ ]+?\r?\n)(?!\\v)", flags=regex.S), r" \1\u00A0\2"))
+            # self.localChanges.append((None, regex.compile(r" ([^\\ ]+?) ([^\\ ]+?\r?\n)(?!\\v)", flags=regex.S), r" \1\u00A0\2"))
             # OLD RegEx: Keep final two words of \q lines together [but doesn't work if there is an \f or \x at the end of the line] 
-            # self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)[^\\\s]+)) (\S+\s*\n)", \
-            #                                 flags=regex.M), r"\1\u00A0\5"))
+            self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)[^\\\s]+)) (\S+\s*\n)", \
+                                            flags=regex.M), r"\1\u00A0\5"))
 
         if printer.get("c_preventwidows"):
             # Push the verse number onto the next line (using NBSP) if there is

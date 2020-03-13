@@ -25,11 +25,11 @@ a = Analysis(['python/scripts/ptxprint'],
              datas =    [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
                             ('ptxprint.glade', 'template.tex', 'A4-Grid.pdf', 'A4-Draft.pdf', 
                              'A5-Grid.pdf', 'A5-Draft.pdf', 'ps_cmyk.icc',
-                             'Google-Noto-Emoji-Objects-62859-open-book.ico',
                              'A5 section head border.pdf', 'A5 section head border(RTL).pdf',
                              'A5 page border.pdf', 'Verse number star.pdf', 'decoration.pdf')]
                       + [('src/*.tex', 'ptx2pdf'),
-                         ('src/mappings/*.tec', 'ptx2pdf/mappings')],
+                         ('src/mappings/*.tec', 'ptx2pdf/mappings')]
+                      + [('Google-Noto-Emoji-Objects-62859-open-book.ico', '.')],
              hiddenimports = ['_winreg'],
              hookspath = [],
              runtime_hooks = [],
@@ -51,7 +51,8 @@ exe = EXE(pyz,
           upx_exclude = [],
           runtime_tmpdir = None,
           windowed=True,
-          console = False)
+          console = False,
+          icon="icon/Google-Noto-Emoji-Objects-62859-open-book.ico")
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,

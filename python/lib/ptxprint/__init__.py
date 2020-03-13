@@ -241,6 +241,7 @@ class PtxPrinterDialog:
 
     def onOK(self, btn):
         if self.prjid is not None:
+            self.onSaveEdits(btn)
             self.callback(self)
         else:
             dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
@@ -378,9 +379,10 @@ class PtxPrinterDialog:
         buf = self.fileViews[pg][0]
         fpath = self.builder.get_object("l_{}".format(pg)).get_tooltip_text()
         text2save = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
-        openfile = open(fpath,"w", encoding="utf-8")
-        openfile.write(text2save)
-        openfile.close()
+        if fpath != None:
+            openfile = open(fpath,"w", encoding="utf-8")
+            openfile.write(text2save)
+            openfile.close()
 
     def onOpenInSystemEditor(self, btn):
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
