@@ -389,17 +389,17 @@
   \else \pr@vdelay=\csname delay-#1.#2\endcsname\fi
   \th@sdelay=#3\relax
   \ifnum\pr@vdelay=\th@sdelay % if the delay value is unchanged, all is good
-    \MSG{* OK}%
+    \MSG{PARLOC: OK}%
   \else
     \advance\pr@vdelay by 1
     \ifnum\pr@vdelay=\th@sdelay % if new delay is 1 greater than old, we can use \RaiseChapter
       \advance\th@sdelay by -1
       \x@\let\x@\t@st\csname raise-#1.#2\endcsname
-      \ifx\t@st\relax \MSG{*** RaiseChapter needed at #1 #2, re-run to update}%
-      \else \MSG{* OK using RaiseChapter at #1 #2}\fi
+      \ifx\t@st\relax \MSG{PARLOC: Rerun. RaiseChapter needed at #1 #2}%
+      \else \MSG{PARLOC: OK using RaiseChapter at #1 #2}\fi
       \immediate\write\delayf@le{\string\RaiseChapter{#1}{#2}}%
     \else
-      \MSG{*** DelayedChapter setting changed at #1 #2, re-run to update}%
+      \MSG{PARLOC: Rerun. DelayedChapter setting changed at #1 #2}%
     \fi
   \fi
   \immediate\write\delayf@le{\string\DelayedChapter{#1}{#2}{\number\th@sdelay}}%

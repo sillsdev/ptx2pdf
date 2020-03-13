@@ -156,9 +156,9 @@
 %%%%% Front Matter PDF file(s) get included here %%%%%
 {project/ifinclfrontpdf}{project/frontincludes}
 
-{document/toc}\GenerateTOC[{document/toctitle}]{{combined.toc}}
+{document/toc}\GenerateTOC[{document/toctitle}]{{{jobname}.toc}}
 {document/toc}\BodyColumns=1     % Temporarily set this to Single Column for the ToC page(s)
-{document/toc}\ptxfile{{combined.toc}}
+{document/toc}\ptxfile{{{jobname}.toc}}
 {document/toc}\BodyColumns={paper/columns}     % But ensure it goes back to the chosen Single/Double setting for the main body text
 
 %\snippets
