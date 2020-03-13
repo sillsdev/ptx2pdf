@@ -118,14 +118,18 @@ def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
             info.res = runner
         print("cd {}; xetex {} -> {}".format(tmpdir, outfname, info.res))
         (info.loglines, rerun) = parselog(os.path.join(tmpdir, outfname.replace(".tex", ".log")), rerunp=True, lines=300)
-        if info["document/toc"] != "%" and not rerun:
+        if info.res:
+            break
+        elif info["document/toc"] != "%" and not rerun:
             tocndata = readfile(os.path.join(tmpdir, outfname.replace(".tex", ".toc")))
             rerun = tocdata != tocndata
             if rerun:
                 print("Rerunning because the Table of Contents was updated")
+            else:
+                break
         elif rerun:
             print("Rerunning because inline chapter numbers moved")
-        if info.res or not rerun:        # run failed
+        else:
             break
         numruns -= 1
     print("Done")
@@ -172,7 +176,7 @@ def doit(printer):
         # modal=True and/or destroy_with_parent=True
         dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK, # We need a NotOK button :-)
             message_format="Error: Unable to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname))
-        dialog.format_secondary_text("".join(ptxprint.loglines[-20:])+
+        dialog.format_secondary_text("".join(info.loglines[-20:])+
                                     "----------------------------------------------- \
                                     \n Possible Causes inlcude: \
                                     \n  * The font file was not installed for ALL users \

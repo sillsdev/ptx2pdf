@@ -329,7 +329,7 @@
     \xdef\p@gefirstmark{}
     \xdef\p@gebotmark{}
     \global\holdinginserts=1
-    \ifrerunsavepartialpaged\global\output={\savepartialpage}\global\rerunsavepartialpagedfalse
+    \ifrerunsavepartialpaged\TRACEOUT{onecoltrial: rerunsavepartialpage}\global\output={\savepartialpage}\global\rerunsavepartialpagedfalse
     \else\global\output={\onecol}\fi
   \else % the contents of the "galley" didn't fit into the actual page,
         % so reduce \vsize and try again with an earlier break
@@ -540,7 +540,8 @@
     %\TRACEOUT{split params maxdepth=\the\splitmaxdepth, topskip=\the\splittopskip, colhtA=\the\colhtA, colhtB=\the\colhtB}
     \setbox9=\copy#1
     \setbox\colA=\vsplit#1 to \colhtA \ifnum\badness>999999\setbox#1=\box9\setbox\colA\box\voidb@x\else\setbox\colA=\vbox{\unvbox\colA}\fi
-    \ifdim\colhtB>0pt\setbox\colB=\vsplit#1 to \colhtB \setbox\colB=\vbox{\unvbox\colB}\else\setbox\colB\box\voidb@x\fi
+    \setbox9=\copy#1
+    \setbox\colB=\vsplit#1 to \colhtB \ifnum\badness>999999\setbox#1=\box9\setbox\colB\box\voidb@x\else\setbox\colB=\vbox{\unvbox\colB}\fi
 }
 
 \def\balanced{
@@ -659,20 +660,24 @@
 \newif\ifrerunsavepartialpaged
 \def\savepartialpaged{%
   \c@lcavailht
-  \setbox\s@vedpage=\copy255
-  \TRACEOUT{balancing from savepartialpaged}
+  \setbox\s@vedpage=\vbox{\unvbox255}
+  \TRACEOUT{balancing from savepartialpaged, height=\the\ht\s@vedpage}
   \rem@inderfalse\balanced
   \iffitonpage
     \c@lcboxheights
     \ht\colA=\dimen3 \ht\colB=\dimen3
-    \dimen4=\ht\partial
-    \global\setbox\partial=\vbox{\unvbox\partial
+    \dimen4=\ht\partial \dimen5=\dp\partial
+    \global\setbox\partial=\vbox{
+      % bodge the partial box which should really have been properly textually merged
+      % the problem is that savepartialpaged can get called twice in succession because
+      % not all the output text (after a \singlecolumn) was passed the first time
+      \ifvoid\partial\else\TRACEOUT{nested partial}\unvbox\partial\vskip -2\dimen5\fi
       \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
-      \dimen5=\textwidth\advance\dimen5 by \ExtraRMargin\advance\dimen5 by -\columnshift %
+      \dimen5=\textwidth\advance\dimen5 by -\ExtraRMargin\advance\dimen5 by -\columnshift %
       \vbox{\hbox to \dimen5{%\hbox to \columnshift{}
         \ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\dimen0}\box\colA %
         \else \box\colA\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\dimen0}\box\colB\hbox to \ExtraRMargin{}\fi}}}
-    \advance\dimen3 by \dimen4 \ht\partial=\dimen3
+    %\advance\dimen3 by \dimen4 \ht\partial=\dimen3
     \global\holdinginserts=1
     \global\setbox255=\box\voidb@x
   \else
@@ -689,7 +694,7 @@
 \def\twocoltrial{% trial formatting to see if current contents will fit on the page
   \c@lcavailht
   \setbox\s@vedpage=\copy255
-  \TRACEOUT{balance from twocoltrial}
+  \TRACEOUT{balance from twocoltrial height \the\ht\s@vedpage}
   \rem@indertrue\balanced
   \dimen5=\baselineskip
   \iffitonpage\ifvoid\s@vedpage\else\fitonpagefalse\fi\fi% \dimen5=\ht\s@vedpage\fi\fi
@@ -722,7 +727,8 @@
     \xdef\p@gefirstmark{}
     \xdef\p@gebotmark{}
     \global\holdinginserts=1
-    \ifrerunsavepartialpaged\global\output={\savepartialpaged}\unvbox\s@vedpage\eject\TRACEOUT{rerunsavepartialpaged}\global\rerunsavepartialpagedfalse
+    \ifrerunsavepartialpaged
+      \global\output={\savepartialpaged}\unvbox\s@vedpage\global\rerunsavepartialpagedfalse
     \else\global\output={\twocols}\unvbox\s@vedpage\fi
   \else % the contents of the "galley" didn't fit into the columns,
         % so reduce \vsize and try again with an earlier break
@@ -762,7 +768,7 @@
   \global\galleypenalty=\outputpenalty
   \global\output={\whichtrial}
   \global\holdinginserts=0
-  \unvbox255 %\eject
+  \unvbox255% eject
   \penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
 }
 
@@ -771,10 +777,10 @@
 \def\savepartialpagedbounce{
   % This output routine gets the partial galley (input text) before a 2->1 column transition
   % so that it can be re-run with holdinginserts=0, so footnotes etc can be seen.
-  \TRACEOUT{sppb hIns=\the\holdinginserts, \the\ht\partial, \the\ht255, }
   \global\holdinginserts=0
   \global\output={\savepartialpaged}
-  \global\setbox\galley=\copy255
+  \global\setbox\galley=\copy255 \global\setbox\galley=\vbox{\unvbox\galley}
+  \TRACEOUT{sppb hIns=\the\holdinginserts, \the\ht\partial, \the\ht255, \the\ht\galley}
   \unvbox255\eject
 }
 
@@ -783,9 +789,11 @@
   \TRACEOUT{singlecolumn}%\tracingmacros=1
   \ifnum\c@rrentcols>1
     \ifhe@dings\endhe@dings\fi
+    \temptrue
     \global\output={\savepartialpagedbounce}\eject % save any partially-full page into a box
     \global\hsize=\textwidth \advance\hsize by -\columnshift
     \global\vsize=\textheight
+    \tempfalse
     \ifdim\ht\partial>0.9\textheight
       \def\pagecontents{
         \vbox{\dimen1=\textwidth \advance\dimen1 \ExtraRMargin
@@ -801,7 +809,7 @@
       }}\plainoutput 
     \fi
     \global\c@rrentcols=1
-    \TRACEOUT{resetting resetvsize}\def\resetvsize{\TRACEOUT{resetvsize}\global\vsize=\textheight} 
+    \TRACEOUT{resetting resetvsize for singlecolumn}\def\resetvsize{\TRACEOUT{resetvsize}\global\vsize=\textheight} 
     \global\output={\onecol}
     \global\holdinginserts=1
     \count255=1000
