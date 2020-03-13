@@ -226,7 +226,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="tooltip_text" translatable="yes">Click to toggle ALL books on/off.</property>
+                        <property name="tooltip_text" translatable="yes">Click to turn ALL books on/off.</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">3</property>
@@ -245,7 +245,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="tooltip_text" translatable="yes">Click to toggle OT books on/off.</property>
+                        <property name="tooltip_text" translatable="yes">Click to turn OT books on/off.</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">3</property>
@@ -264,7 +264,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="tooltip_text" translatable="yes">Click to toggle NT books on/off.</property>
+                        <property name="tooltip_text" translatable="yes">Click to turn NT books on/off.</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">3</property>
@@ -283,7 +283,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="tooltip_text" translatable="yes">Click to toggle DC books on/off.</property>
+                        <property name="tooltip_text" translatable="yes">Click to turn DC books on/off.</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">3</property>
@@ -302,7 +302,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="tooltip_text" translatable="yes">Click to toggle Extra books on/off.</property>
+                        <property name="tooltip_text" translatable="yes">Click to turn Extra books on/off.</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">3</property>
@@ -729,7 +729,7 @@ saved settings for this project.</property>
 set up once, or used on rare occasions. These can
 be hidden away for most of the time if that helps.
 
-This setting can be toggled off again later, but
+This setting can be turned off again later, but
 is intentionally almost invisible (though located
 in the same place).</property>
                 <property name="halign">start</property>
@@ -4378,8 +4378,7 @@ Footnotes and Cross-references.</property>
 If the illustrations have been marked up with
 the w/a/p notation, then it is easy to exclude
 any illustrations that do not have the 'p'
-attribute.  Note: w= web, a=app, p=print.
-(Yet to be implemented. Coming soon.)</property>
+attribute.  Note: w= web, a=app, p=print.</property>
                                         <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
                                       </object>

@@ -467,6 +467,10 @@ class Info:
         self.localChanges.append((None, regex.compile(r"\\w (.+?)(\|.+?)?\\w\*", flags=regex.M), gloStyle))
 
         if printer.get("c_includeillustrations") and printer.get("c_includefigsfromtext"):
+            # Remove any illustrations which don't have a |p| 'loc' field IF this setting is on
+            if printer.get("c_figexclwebapp"):
+                self.localChanges.append((None, regex.compile(r'(?i)\\fig ([^|]*\|){3}([aw]+)\|[^\\]*\\fig\*', flags=regex.M), ''))  # USFM2
+                self.localChanges.append((None, regex.compile(r'(?i)\\fig [^\\]*\bloc="[aw]+"[^\\]*\\fig\*', flags=regex.M), ''))    # USFM3
             # Rename all TIF extensions to JPGs
             self.localChanges.append((None, regex.compile(r"\.[Tt][Ii][Ff]\|", flags=regex.M), r".jpg|"))
             if printer.get("c_skipmissingimages"):
