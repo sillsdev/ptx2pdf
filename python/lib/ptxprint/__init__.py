@@ -241,7 +241,7 @@ class PtxPrinterDialog:
 
     def onOK(self, btn):
         if self.prjid is not None:
-            self.onSaveEdits(btn)
+            # self.onSaveEdits(btn)  # this was causing NOTHING to happen if the Viewer tab wasn't on a saveable item.
             self.callback(self)
         else:
             dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
@@ -379,10 +379,9 @@ class PtxPrinterDialog:
         buf = self.fileViews[pg][0]
         fpath = self.builder.get_object("l_{}".format(pg)).get_tooltip_text()
         text2save = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
-        if fpath != None:
-            openfile = open(fpath,"w", encoding="utf-8")
-            openfile.write(text2save)
-            openfile.close()
+        openfile = open(fpath,"w", encoding="utf-8")
+        openfile.write(text2save)
+        openfile.close()
 
     def onOpenInSystemEditor(self, btn):
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
@@ -646,6 +645,9 @@ class PtxPrinterDialog:
 
     def onHideAdvancedSettingsClicked(self, c_hideAdvancedSettings):
         if self.get("c_hideAdvancedSettings"):
+            # NOTE: When we eventually get Saved Configurations working, we will need to revisit this and NOT turn things
+            #       on and off in the background. (An experienced user may set these up, save the settings and then HIDE
+            #       those settings - but if they do, we need the settings to stick (rather than disappear as they do now).
             # Turn Dangerous Settings OFF
             for c in ("c_startOnHalfPage", "c_marginalverses", "c_prettyIntroOutline", "c_blendfnxr", "c_autoToC",
                       "c_figplaceholders", "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", 
@@ -669,7 +671,7 @@ class PtxPrinterDialog:
                                                                                "in the same place).")
 
         # Hide a whole bunch of stuff that they don't need to see   (removed: "tb_Logging")
-        for c in ("tb_Advanced", "tb_ViewerEditor", "tb_DiglotTesting", "btn_editPicList",
+        for c in ("tb_Body", "tb_Advanced", "tb_ViewerEditor", "tb_DiglotTesting", "btn_editPicList",
                   "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "box_AdvFootnoteConfig", "l_colgutteroffset",
                   "c_usePicList", "c_skipmissingimages", "c_convertTIFtoPNG", "c_useCustomFolder", "btn_selectFigureFolder", 
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
