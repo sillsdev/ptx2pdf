@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "PTXprint"
-#define MyAppVersion "0.4 Beta"
+#define MyAppVersion "0.4.0 Beta"
 #define MyAppPublisher "SIL International"
 #define MyAppURL "http://software.sil.org/"
 #define MyAppExeName "PTXprint-0.4.0.exe"
@@ -22,7 +22,7 @@ DefaultDirName={autopf}\{#MyAppName}
 DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
-PrivilegesRequiredOverridesAllowed=dialog
+;PrivilegesRequiredOverridesAllowed=dialog
 OutputBaseFilename=SetupPTXprint(0.4.0-beta)
 SetupIconFile=icon\Google-Noto-Emoji-Objects-62859-open-book.ico
 Compression=lzma
@@ -44,7 +44,6 @@ Source: "dist\ptxprint\share\locale\fr\*"; DestDir: "{app}\share\locale\fr\"; Fl
 Source: "dist\ptxprint\share\locale\zh_CN\*"; DestDir: "{app}\share\locale\zh_CN\"; Flags: ignoreversion recursesubdirs createallsubdirs
 #include "AdwaitaIcons.txt"
 Source: "dist\ptxprint\share\icons\Adwaita\index.theme"; DestDir: "{app}\share\icons\Adwaita"
-Source: "icon\Google-Noto-Emoji-Objects-62859-open-book.ico"; DestDir: "{app}"
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"

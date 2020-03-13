@@ -658,7 +658,7 @@ class PtxPrinterDialog:
             for c in ("c_mainBodyText", "c_footnoterule",
                       "c_includefigsfromtext", "c_skipmissingimages", "c_convertTIFtoPNG", "c_useFiguresFolder"):
                 self.builder.get_object(c).set_active(True)
-            self.builder.get_object("c_hideAdvancedSettings").set_opacity(0.1)
+            self.builder.get_object("c_hideAdvancedSettings").set_opacity(0.2)
             self.builder.get_object("c_hideAdvancedSettings").set_tooltip_text("")
             
         else:

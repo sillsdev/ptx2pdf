@@ -29,7 +29,7 @@ a = Analysis(['python/scripts/ptxprint'],
                              'A5 page border.pdf', 'Verse number star.pdf', 'decoration.pdf')]
                       + [('src/*.tex', 'ptx2pdf'),
                          ('src/mappings/*.tec', 'ptx2pdf/mappings')]
-                      + [('Google-Noto-Emoji-Objects-62859-open-book.ico', '.')],
+                      + [('python/lib/ptxprint/Google-Noto-Emoji-Objects-62859-open-book.ico', '.')],
              hiddenimports = ['_winreg'],
              hookspath = [],
              runtime_hooks = [],
