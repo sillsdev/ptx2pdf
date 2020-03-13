@@ -174,15 +174,17 @@ def doit(printer):
         # it did NOT finish successfully, so help them troubleshoot what went wrong.
         # getting the last few lines of the .log file:
         # modal=True and/or destroy_with_parent=True
-        dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
+        dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK, \
             message_format="Error: Unable to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname))
         dialog.format_secondary_text("".join(info.loglines[-20:])+
                                     "----------------------------------------------- \
                                     \n Possible Causes inlcude: \
                                     \n  * The font file was not installed for ALL users \
-                                    \n  * The USFM text has an error \
+                                    \n  * The USFM text has a syntax error \
                                     \n  * Selected option is incompatible with data \
-                                  \n\n Try option 'Hide Advanced Settings' and run again!")
+                                    \n  * Pictures could be causing it to fail \
+                                  \n\n Try using option 'Hide Advanced Settings' \
+                                    \n or turning off Illustrations, and run again...")
         dialog.run()
         dialog.destroy()
 

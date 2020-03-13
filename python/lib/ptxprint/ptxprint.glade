@@ -693,7 +693,6 @@
           <object class="GtkButtonBox">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="halign">start</property>
             <property name="margin_left">6</property>
             <property name="margin_right">6</property>
             <property name="resize_mode">immediate</property>
@@ -1239,10 +1238,10 @@ configuration to bring up all those settings.</property>
                         <property name="position">1</property>
                       </packing>
                     </child>
-                    <child>
-                      <placeholder/>
-                    </child>
                   </object>
+                  <packing>
+                    <property name="tab_fill">False</property>
+                  </packing>
                 </child>
                 <child type="tab">
                   <object class="GtkLabel" id="lb_Basic">
@@ -1261,6 +1260,7 @@ to be used to create the PDF file.</property>
                   <object class="GtkBox" id="tb_Layout">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="halign">start</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkBox">
@@ -1271,6 +1271,7 @@ to be used to create the PDF file.</property>
                           <object class="GtkFrame">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="halign">start</property>
                             <property name="margin_left">6</property>
                             <property name="margin_right">6</property>
                             <property name="margin_top">4</property>
@@ -1432,7 +1433,6 @@ Change to increase or decrease
 space between lines of text.</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
-                                        <property name="hexpand">True</property>
                                         <property name="width_chars">4</property>
                                         <property name="text" translatable="yes">14.0</property>
                                         <property name="caps_lock_warning">False</property>
@@ -1461,7 +1461,6 @@ Change to increase or decrease
 space between lines of text.</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
-                                        <property name="hexpand">True</property>
                                         <property name="width_chars">4</property>
                                         <property name="text" translatable="yes">16.0</property>
                                         <property name="caps_lock_warning">False</property>
@@ -1490,7 +1489,6 @@ Change to increase or decrease
 space between lines of text.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
-                                        <property name="hexpand">True</property>
                                         <property name="width_chars">8</property>
                                         <property name="text" translatable="yes">15.0</property>
                                         <property name="caps_lock_warning">False</property>
@@ -1558,6 +1556,7 @@ space between lines of text.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">If the required size is not displayed, then just type the required page width and height separated by a comma. For example: 140mm,210mm</property>
+                                        <property name="halign">start</property>
                                         <property name="active">0</property>
                                         <property name="has_entry">True</property>
                                         <property name="active_id">0</property>
@@ -1572,7 +1571,7 @@ space between lines of text.</property>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
                                             <property name="can_focus">True</property>
-                                            <property name="width_chars">20</property>
+                                            <property name="width_chars">16</property>
                                             <property name="overwrite_mode">True</property>
                                           </object>
                                         </child>
@@ -1604,7 +1603,6 @@ space between lines of text.</property>
                                         <property name="tooltip_text" translatable="yes">Set the size of the main body text.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
-                                        <property name="hexpand">True</property>
                                         <property name="width_chars">8</property>
                                         <property name="text" translatable="yes">12.0</property>
                                         <property name="caps_lock_warning">False</property>
@@ -2245,6 +2243,7 @@ Direction:</property>
                   </object>
                   <packing>
                     <property name="position">1</property>
+                    <property name="tab_fill">False</property>
                   </packing>
                 </child>
                 <child type="tab">
@@ -2266,6 +2265,7 @@ and Font options.</property>
                   <object class="GtkBox" id="tb_Body">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="halign">start</property>
                     <property name="valign">start</property>
                     <property name="margin_left">6</property>
                     <property name="margin_right">6</property>
@@ -2938,7 +2938,6 @@ be turned OFF (to omit the main text).</property>
                       <object class="GtkBox">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="halign">start</property>
                         <property name="spacing">5</property>
                         <child>
                           <object class="GtkFrame" id="fr_paragraphAdjust">
@@ -3181,6 +3180,7 @@ missing in primary font:</property>
                   </object>
                   <packing>
                     <property name="position">2</property>
+                    <property name="tab_fill">False</property>
                   </packing>
                 </child>
                 <child type="tab">
@@ -3202,6 +3202,7 @@ and Illustrations.</property>
                   <object class="GtkBox" id="tb_HeadFoot">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="halign">start</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame">
@@ -3824,6 +3825,7 @@ need to be checked for understanding).</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>
+                                    <property name="margin_right">6</property>
                                     <property name="column_spacing">6</property>
                                     <child>
                                       <object class="GtkFrame">
@@ -3979,7 +3981,8 @@ need to be checked for understanding).</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">start</property>
-                                        <property name="margin_left">6</property>
+                                        <property name="margin_left">8</property>
+                                        <property name="margin_right">6</property>
                                         <property name="label_xalign">0.019999999552965164</property>
                                         <property name="shadow_type">in</property>
                                         <child>
@@ -4375,7 +4378,7 @@ Footnotes and Cross-references.</property>
                                     <property name="left_padding">40</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_figexclwebapp">
-                                        <property name="label" translatable="yes">Skip figures only meant for Web or App</property>
+                                        <property name="label" translatable="yes">Omit Pictures Only Meant for Web or App</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -4403,7 +4406,7 @@ attribute.  Note: w= web, a=app, p=print.</property>
                                     <property name="left_padding">40</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_fighiderefs">
-                                        <property name="label" translatable="yes">Hide (ch:vs) references at end of caption </property>
+                                        <property name="label" translatable="yes">Omit References (ch:vs) From Caption </property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -4424,7 +4427,7 @@ attribute.  Note: w= web, a=app, p=print.</property>
                                     <property name="left_padding">40</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_figplaceholders">
-                                        <property name="label" translatable="yes">Only show empty place-holders</property>
+                                        <property name="label" translatable="yes">Just Show Empty Place-holders</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -4441,7 +4444,7 @@ attribute.  Note: w= web, a=app, p=print.</property>
                                 </child>
                                 <child>
                                   <object class="GtkRadioButton" id="c_includefigsfromtext">
-                                    <property name="label" translatable="yes">Use the illustrations marked in the text (\fig...\fig*)</property>
+                                    <property name="label" translatable="yes">Use Pictures Marked in the Text (\fig...\fig*)</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -4458,7 +4461,7 @@ attribute.  Note: w= web, a=app, p=print.</property>
                                 </child>
                                 <child>
                                   <object class="GtkRadioButton" id="c_usePicList">
-                                    <property name="label" translatable="yes">Make use of a PicList file to control Size and Position</property>
+                                    <property name="label" translatable="yes">Use a PicList to Control Size and Position</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -4541,9 +4544,10 @@ be generated in the same folder as the TIF files.
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>
                                     <property name="valign">end</property>
+                                    <property name="margin_left">11</property>
                                     <property name="margin_top">8</property>
                                     <property name="margin_bottom">6</property>
-                                    <property name="label" translatable="yes">Location of image files:</property>
+                                    <property name="label" translatable="yes">Location of Image Files:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
@@ -4606,7 +4610,7 @@ be generated in the same folder as the TIF files.
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_skipmissingimages">
-                                    <property name="label" translatable="yes">Skip/Ignore missing images</property>
+                                    <property name="label" translatable="yes">Omit Any Missing Images</property>
                                     <property name="name">c_skipmissingimages</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -4662,7 +4666,7 @@ file(s) in the Viewer tab.</property>
                         </child>
                         <child type="label">
                           <object class="GtkCheckButton" id="c_includeillustrations">
-                            <property name="label" translatable="yes">Include illustrations</property>
+                            <property name="label" translatable="yes">Include Pictures (illustrations)</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
@@ -4681,6 +4685,7 @@ file(s) in the Viewer tab.</property>
                   </object>
                   <packing>
                     <property name="position">4</property>
+                    <property name="tab_fill">False</property>
                   </packing>
                 </child>
                 <child type="tab">
@@ -4691,7 +4696,7 @@ file(s) in the Viewer tab.</property>
 are to be used in the publication. And
 if necessary, control the position of
 illustrations within the text.</property>
-                    <property name="label" translatable="yes">Illustrations</property>
+                    <property name="label" translatable="yes">Pictures</property>
                   </object>
                   <packing>
                     <property name="position">4</property>
@@ -4702,29 +4707,31 @@ illustrations within the text.</property>
                   <object class="GtkBox" id="tb_Advanced">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="valign">start</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkGrid">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
                         <property name="row_spacing">4</property>
                         <property name="column_spacing">12</property>
-                        <property name="column_homogeneous">True</property>
                         <child>
                           <object class="GtkFrame">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="margin_top">2</property>
                             <property name="margin_bottom">6</property>
-                            <property name="hexpand">True</property>
                             <property name="label_xalign">0.039999999105930328</property>
                             <child>
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="margin_left">12</property>
+                                <property name="margin_right">30</property>
                                 <property name="margin_bottom">4</property>
                                 <property name="row_spacing">6</property>
                                 <property name="column_spacing">6</property>
@@ -4735,6 +4742,7 @@ illustrations within the text.</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">If you don't know what this means, or want to get rid of black boxes in the PDF then uncheck it. Enable this option to have TeX make overfull lines stand out.</property>
+                                    <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -4767,7 +4775,7 @@ and so on...</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_showBordersTab">
-                                    <property name="label" translatable="yes">Show Fancy Borders Settings</property>
+                                    <property name="label" translatable="yes">Show Settings for (Decorative) Borders</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -4801,6 +4809,7 @@ and so on...</property>
                           <object class="GtkFrame">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="halign">start</property>
                             <property name="margin_top">2</property>
                             <property name="margin_bottom">6</property>
                             <property name="label_xalign">0.039999999105930328</property>
@@ -4808,6 +4817,8 @@ and so on...</property>
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="margin_right">10</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="row_spacing">6</property>
                                 <property name="column_spacing">6</property>
@@ -4870,7 +4881,6 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="halign">start</property>
-                                    <property name="margin_right">12</property>
                                     <property name="margin_bottom">4</property>
                                     <property name="width_chars">12</property>
                                     <property name="max_width_chars">4</property>
@@ -4911,7 +4921,7 @@ Break Locale:</property>
                                 </child>
                                 <child>
                                   <object class="GtkComboBox" id="cb_script">
-                                    <property name="width_request">100</property>
+                                    <property name="width_request">190</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">In most cases XeTeX can auto-detect
@@ -4955,6 +4965,7 @@ script-specific rendering issues.</property>
                           <object class="GtkGrid">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="halign">start</property>
                             <property name="margin_bottom">6</property>
                             <child>
                               <object class="GtkGrid">
@@ -5018,22 +5029,20 @@ to store generated PDF file(s).</property>
                               <object class="GtkFrame">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="valign">end</property>
                                 <property name="margin_top">10</property>
-                                <property name="margin_bottom">6</property>
-                                <property name="hexpand">True</property>
                                 <property name="label_xalign">0.039999999105930328</property>
                                 <child>
                                   <object class="GtkAlignment">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="margin_right">12</property>
                                     <property name="left_padding">12</property>
                                     <child>
                                       <object class="GtkGrid">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="margin_right">12</property>
-                                        <property name="margin_bottom">6</property>
+                                        <property name="margin_bottom">9</property>
                                         <property name="column_spacing">10</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_inclFrontMatter">
@@ -5233,18 +5242,22 @@ to show gridlines for finetuning settings.</property>
                           <object class="GtkFrame">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="halign">start</property>
+                            <property name="valign">start</property>
                             <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
                             <property name="label_xalign">0.039999999105930328</property>
                             <child>
                               <object class="GtkAlignment">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="margin_right">12</property>
                                 <property name="left_padding">12</property>
                                 <child>
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_right">12</property>
                                     <property name="column_spacing">7</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_useModsTex">
@@ -5516,7 +5529,6 @@ this option checked (on).</property>
                   <packing>
                     <property name="position">5</property>
                     <property name="tab_fill">False</property>
-                    <property name="reorderable">True</property>
                   </packing>
                 </child>
                 <child type="tab">
@@ -5541,6 +5553,7 @@ and Edit PicLists and Adj Lists.</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="no_show_all">True</property>
+                    <property name="halign">start</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkScrolledWindow">
@@ -5555,6 +5568,7 @@ and Edit PicLists and Adj Lists.</property>
                           <object class="GtkTextView" id="tv_logging">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="halign">start</property>
                             <property name="margin_left">3</property>
                             <property name="margin_right">3</property>
                             <property name="margin_top">3</property>
@@ -5596,11 +5610,13 @@ Use trouble-shooting tools.</property>
                   <object class="GtkBox" id="tb_ViewerEditor">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="halign">start</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame" id="fr_Debugging">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
                         <property name="margin_top">4</property>
                         <property name="margin_bottom">4</property>
                         <property name="label_xalign">0.019999999552965164</property>
@@ -5609,7 +5625,7 @@ Use trouble-shooting tools.</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="margin_left">12</property>
-                            <property name="column_spacing">6</property>
+                            <property name="column_spacing">4</property>
                             <child>
                               <object class="GtkLabel" id="l_examineBook">
                                 <property name="visible">True</property>
@@ -5701,7 +5717,7 @@ of books to be printed.</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="halign">start</property>
-                                <property name="margin_right">20</property>
+                                <property name="margin_right">10</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
                                 <signal name="clicked" handler="onGenerateClicked" swapped="no"/>
@@ -5761,7 +5777,7 @@ Tracing</property>
 the Editor Application designated by your 
 system then click here.</property>
                                 <property name="halign">end</property>
-                                <property name="margin_left">30</property>
+                                <property name="margin_left">20</property>
                                 <property name="margin_right">6</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
@@ -6222,6 +6238,7 @@ their spare time, so please be patient for a response.</property>
                       <object class="GtkGrid" id="gr_editableButtons">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
                         <property name="margin_bottom">2</property>
                         <property name="column_homogeneous">True</property>
                         <child>
@@ -6332,63 +6349,16 @@ of this file as it was when last saved.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox" id="tb_Diglot">
-                    <property name="can_focus">False</property>
-                    <property name="no_show_all">True</property>
-                    <property name="orientation">vertical</property>
-                    <child>
-                      <object class="GtkLabel">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="tooltip_text" translatable="yes">This is a placeholder for a new feature. [In the meantime
-you may want to try using the "Fuzzy D.I.Y.-glot" on the
-final tab.
-
-Later we may also have Di-script publications
-through an automated script conversion process.</property>
-                        <property name="opacity">0.59999999999999998</property>
-                        <property name="margin_top">6</property>
-                        <property name="margin_bottom">6</property>
-                        <property name="label" translatable="yes">Watch this space... Aligned Diglots are coming soon!</property>
-                        <property name="justify">center</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="position">8</property>
-                  </packing>
-                </child>
-                <child type="tab">
-                  <object class="GtkLabel" id="lb_Diglot">
-                    <property name="can_focus">False</property>
-                    <property name="no_show_all">True</property>
-                    <property name="tooltip_text" translatable="yes">Create a Diglot or
-Multi-script publication.</property>
-                    <property name="opacity">0.69999999999999996</property>
-                    <property name="label" translatable="yes">Diglot</property>
-                  </object>
-                  <packing>
-                    <property name="position">8</property>
-                    <property name="tab_fill">False</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkBox" id="tb_DiglotTesting">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="halign">center</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">6</property>
@@ -6850,10 +6820,10 @@ it is a work in progress and will require
 considerable trial-and-error to get a
 satisfactory result (just like any good
 DIY project!)  Have fun...</property>
-                    <property name="label" translatable="yes">Fuzzy DiYglot</property>
+                    <property name="label" translatable="yes">DiYglot</property>
                   </object>
                   <packing>
-                    <property name="position">9</property>
+                    <property name="position">8</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
@@ -6861,6 +6831,8 @@ DIY project!)  Have fun...</property>
                   <object class="GtkBox" id="tb_FancyBorders">
                     <property name="can_focus">False</property>
                     <property name="no_show_all">True</property>
+                    <property name="halign">center</property>
+                    <property name="valign">start</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame">
@@ -7150,19 +7122,25 @@ Verse Numbers:</property>
                     </child>
                   </object>
                   <packing>
-                    <property name="position">10</property>
+                    <property name="position">9</property>
                   </packing>
                 </child>
                 <child type="tab">
                   <object class="GtkLabel" id="lb_FancyBorders">
                     <property name="can_focus">False</property>
                     <property name="no_show_all">True</property>
-                    <property name="label" translatable="yes">Fancy Borders</property>
+                    <property name="label" translatable="yes">Borders</property>
                   </object>
                   <packing>
-                    <property name="position">10</property>
+                    <property name="position">9</property>
                     <property name="tab_fill">False</property>
                   </packing>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child type="tab">
+                  <placeholder/>
                 </child>
               </object>
               <packing>

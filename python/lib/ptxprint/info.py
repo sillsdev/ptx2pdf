@@ -44,7 +44,8 @@ class Info:
         "paper/pagesize":           ("cb_pagesize", None),
         "paper/ifwatermark":        ("c_applyWatermark", lambda w,v: "" if v else "%"),
         "paper/watermarkpdf":       ("btn_selectWatermarkPDF", lambda w,v: re.sub(r"\\","/", w.watermarks) \
-                                                if (w.watermarks is not None and w.watermarks != 'None') else "ptxprint/A5-Draft.pdf"),
+                                                if (w.watermarks is not None and w.watermarks != 'None') \
+                                                else get("/ptxprintlibpath")+"/A5-Draft.pdf"),
         "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),  
         "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v else "false"),
         "paper/margins":            ("s_margins", lambda w,v: round(v) or "14"),

@@ -141,7 +141,7 @@ class PtxPrinterDialog:
                 self.builder.get_object("c_experimental").set_active(True)
                 self.builder.get_object("c_experimental").set_sensitive(False)
         else:
-            for c in ("c_startOnHalfPage", "c_experimental"):
+            for c in ("c_experimental", "c_experimental"):  # "c_startOnHalfPage"
                 self.builder.get_object(c).set_active(False)
                 self.builder.get_object(c).set_visible(False)
                 self.builder.get_object(c).set_sensitive(False)
