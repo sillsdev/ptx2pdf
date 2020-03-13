@@ -136,9 +136,9 @@ class FancyBorders():
 
 % NOT YET SURE WHAT THIS IS USED FOR. Commented out until we have clarity on whether it is needed
 % and what the UI should call this "decoration"
-\newbox\decorationbox
-\setbox\decorationbox=\hbox{{\XeTeXpdffile "{fancy/decorationpdf}"\relax}}
-\def\z{{\par\nobreak\vskip 16pt\centerline{{\copy\decorationbox}}}}
+%\newbox\decorationbox
+%\setbox\decorationbox=\hbox{{\XeTeXpdffile "{fancy/decorationpdf}"\relax}}
+%\def\z{{\par\nobreak\vskip 16pt\centerline{{\copy\decorationbox}}}}
 
 {fancy/sectionheader}\newbox\sectionheadbox
 {fancy/sectionheader}\def\placesectionheadbox{{%

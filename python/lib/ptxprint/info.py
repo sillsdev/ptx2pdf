@@ -62,16 +62,16 @@ class Info:
         "fancy/pageborder":         ("c_inclPageBorder", lambda w,v: "" if v else "%"),
         "fancy/pageborderpdf":      ("btn_selectPageBorderPDF", lambda w,v: re.sub(r"\\","/", w.pageborder) \
                                                 if (w.pageborder is not None and w.pageborder != 'None') \
-                                                else "ptxprint/A5 page border.pdf"),
+                                                else get("/ptxprintlibpath")+"/A5 page border.pdf"),
         "fancy/sectionheader":      ("c_inclSectionHeader", lambda w,v: "" if v else "%"),
         "fancy/sectionheaderpdf":   ("btn_selectSectionHeaderPDF", lambda w,v: re.sub(r"\\","/", w.sectionheader) \
                                                 if (w.sectionheader is not None and w.sectionheader != 'None') \
-                                                else "ptxprint/A5 section head border.pdf"),
-        "fancy/decorationpdf":      (None, lambda w,v: "C:/ptx2pdf/python/lib/ptxprint/decoration.pdf"),
+                                                else get("/ptxprintlibpath")+"/A5 section head border.pdf"),
+        "fancy/decorationpdf":      (None, lambda w,v: get("/ptxprintlibpath")+"/decoration.pdf"),
         "fancy/versedecorator":     ("c_inclVerseDecorator", lambda w,v: "" if v else "%"),
         "fancy/versedecoratorpdf":  ("btn_selectVerseDecorator", lambda w,v: re.sub(r"\\","/", w.versedecorator) \
                                                 if (w.versedecorator is not None and w.versedecorator != 'None') \
-                                                else "ptxprint/Verse number star.pdf"),
+                                                else get("/ptxprintlibpath")+"/Verse number star.pdf"),
         "fancy/versenumsize":       ("s_verseNumSize", lambda w,v: v or "11.00"),
 
         "paragraph/varlinespacing": ("c_variableLineSpacing", lambda w,v: "" if v else "%"),
@@ -263,6 +263,8 @@ class Info:
             
 
     def updatefields(self, a):
+        global get
+        def get(k): return self[k]
         for k in a:
             v = self._mappings[k]
             # print(k, v[0])
