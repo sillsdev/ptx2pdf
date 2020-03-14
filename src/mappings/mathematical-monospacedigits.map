@@ -1,0 +1,16 @@
+; FC ... 
+LHSName	"Digits"
+RHSName	"MathematicalMonospaceDigits"
+
+pass(Unicode)
+U+0030 <> U+1D7F6 ;
+U+0031 <> U+1D7F7 ;
+U+0032 <> U+1D7F8 ;
+U+0033 <> U+1D7F9 ;
+U+0034 <> U+1D7FA ;
+U+0035 <> U+1D7FB ;
+U+0036 <> U+1D7FC ;
+U+0037 <> U+1D7FD ;
+U+0038 <> U+1D7FE ;
+U+0039 <> U+1D7FF ;
+

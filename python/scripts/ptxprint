@@ -1,0 +1,213 @@
+#!/usr/bin/python3
+
+import argparse, sys, os, re, subprocess
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
+
+if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
+    sys.stdout = open(os.devnull, "w")
+    sys.stderr = sys.stdout
+else:
+    gi.require_version('GtkSource', '3.0')
+
+try:
+    import ptxprint
+except ImportError:
+    sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
+    import ptxprint
+
+parser = argparse.ArgumentParser()
+parser.add_argument('pid',nargs="?",help="Project id")
+parser.add_argument('-p','--paratext',help="Path to Paratext Projects directory")
+parser.add_argument('-d','--directory',default=".",help="Directory to store temporary files in")
+parser.add_argument('-m','--macros',help="Directory containing TeX macros (paratext2.tex)")
+parser.add_argument('-l','--logging',action="store_true",help="Output logging to terminal instead of logging window")
+parser.add_argument('-e','--experimental',action="store_true",help="Enable experimental features")
+# parser.add_argument('-t','--test', action='store_true',help="Quick start for a lazy typist")
+args = parser.parse_args()
+
+if args.paratext is None:
+    args.paratext = ptxprint.runner.pt_settings
+
+if not args.paratext:
+    print("No Paratext Settings directory found")
+    sys.exit(1)
+else:
+    args.paratext = args.paratext.replace("\\", "/")
+    if args.paratext.endswith("/"):
+        args.paratext = args.paratext[:-1]
+
+# Where to find the default for -p
+# HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Paratext\8:Settings_Directory
+allprojects = []
+for d in os.listdir(args.paratext):
+    if os.path.exists(os.path.join(args.paratext, d, 'Settings.xml')):
+        allprojects.append(d)
+allprojects.sort()
+
+mainw = ptxprint.PtxPrinterDialog(allprojects, args.paratext, working_dir=args.directory)
+mainw.ExperimentalFeatures(args.experimental)
+
+if args.pid:
+    mainw.set("cb_project", args.pid)
+
+def parselog(fname, rerunp=False, lines=20):
+    loglines = []
+    rerunres = False
+    with open(fname, "r", encoding="utf-8") as logfile:
+        try:
+            for i, l in enumerate(logfile.readlines()):
+                if rerunp and l.startswith("PARLOC: Rerun."):
+                    rerunres = True
+                loglines.append(l)
+                if len(loglines) > lines:
+                    loglines.pop(0)
+        except:
+            loglines.append("Logfile missing: "+logfilepath)
+    return (loglines, rerunres)
+
+def readfile(fname):
+    try:
+        with open(fname, "r", encoding="utf-8") as inf:
+            res = "".join(inf.readlines())
+        return res
+    except FileNotFoundError:
+        return ""
+
+def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
+    donebooks = []
+    for b in jobs:
+        out = info.convertBook(b, tmpdir, prjdir)
+        donebooks.append(out)
+    info["project/books"] = donebooks
+    if len(jobs) > 1:
+        outfname = "ptxprint-{}_{}{}.tex".format(jobs[0], jobs[-1], prjid)
+    else:
+        outfname = "ptxprint-{}{}.tex".format(jobs[0], prjid)
+    info.update()
+    with open(os.path.join(tmpdir, outfname), "w", encoding="utf-8") as texf:
+        texf.write(info.asTex(filedir=tmpdir, jobname=outfname.replace(".tex", "")))
+    os.putenv("hyph_size", "32749")     # always run with maximum hyphenated words size (xetex is still tiny ~200MB resident)
+    ptxmacrospath = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../src"))
+    if not os.path.exists(ptxmacrospath):
+        for b in (getattr(sys, 'USER_BASE', '.'), sys.prefix):
+            if b is None:
+                continue
+            ptxmacrospath = os.path.abspath(os.path.join(b, 'ptx2pdf'))
+            if os.path.exists(ptxmacrospath):
+                break
+    if info['project/useptmacros'] == "false":
+        if not os.getenv('TEXINPUTS'):
+            texinputs = [os.path.abspath(tmpdir), ptxmacrospath]
+            os.putenv('TEXINPUTS', (";" if sys.platform=="win32" else ":").join(texinputs))
+    elif sys.platform == "linux":
+        if not os.getenv('TEXINPUTS'):
+            mdirs = args.macros or "/usr/lib/Paratext8/xetex/share/texmf-dist/tex/ptx2pdf:/usr/lib/Paratext9/xetex/share/texmf-dist/tex/ptx2pdf"
+            os.putenv('TEXINPUTS', ".:" + mdirs)
+    os.putenv("MISCFONTS", ptxmacrospath)
+    numruns = 5
+    while numruns > 0:
+        if info["document/toc"] != "%":
+            tocdata = readfile(os.path.join(tmpdir, outfname.replace(".tex", ".toc")))
+        runner = ptxprint.runner.call(["xetex", "--halt-on-error", outfname], cwd=tmpdir, logbuffer=(logbuffer if not args.logging else None))
+        if isinstance(runner, subprocess.Popen) and runner is not None:
+            runner.wait(200)
+            info.res = runner.returncode
+        else:
+            info.res = runner
+        print("cd {}; xetex {} -> {}".format(tmpdir, outfname, info.res))
+        (info.loglines, rerun) = parselog(os.path.join(tmpdir, outfname.replace(".tex", ".log")), rerunp=True, lines=300)
+        if info.res:
+            break
+        elif info["document/toc"] != "%" and not rerun:
+            tocndata = readfile(os.path.join(tmpdir, outfname.replace(".tex", ".toc")))
+            rerun = tocdata != tocndata
+            if rerun:
+                print("Rerunning because the Table of Contents was updated")
+            else:
+                break
+        elif rerun:
+            print("Rerunning because inline chapter numbers moved")
+        else:
+            break
+        numruns -= 1
+    print("Done")
+    return outfname
+
+def doit(printer):
+    info = printer.info or ptxprint.Info(printer, args.paratext, printer.prjid)
+    prjid = printer.get("cb_project")
+    prjdir = os.path.join(args.paratext, prjid)
+    if prjid is None or not len(prjid):     # can't print no project
+        return
+    # save config
+    info.update()
+    info.GenerateNestedStyles()
+    config = info.createConfig(printer)
+    with open(os.path.join(prjdir, "ptxprint.cfg"), "w", encoding="utf-8") as outf:
+        config.write(outf)
+    tmpdir = os.path.join(prjdir, 'PrintDraft') if printer.get("c_useprintdraftfolder") else args.directory
+    if not os.path.exists(tmpdir):
+        os.makedirs(tmpdir)
+    jobs = printer.getBooks()
+    if printer.get("c_combine"):
+        texfiles = [dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=printer.logbuffer)]
+    else:
+        texfiles = [dojob([j], info, prjid, prjdir, tmpdir, logbuffer=printer.logbuffer) for j in jobs]
+    # Work out what the resulting PDF was called
+    if len(jobs) > 1 and printer.get("c_combine"):
+        pdfname = os.path.join(tmpdir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], prjid))
+    else:
+        pdfname = os.path.join(tmpdir, "ptxprint-{}{}.pdf".format(jobs[0], prjid))
+    # Check the return code to see if generating the PDF was successful before opening the PDF
+    if info.res == 0:
+        if os.path.exists(pdfname):
+            if sys.platform == "win32":
+                os.startfile(pdfname)
+            elif sys.platform == "linux":
+                subprocess.call(('xdg-open', pdfname))
+            # Only delete the temp files if the PDF was created AND the user did NOT select to keep them
+            if not printer.get("c_keepTemporaryFiles"):
+                removeTempFiles(texfiles,tmpdir,info)
+    else: # if info.res != 0:
+        # it did NOT finish successfully, so help them troubleshoot what went wrong.
+        # getting the last few lines of the .log file:
+        # modal=True and/or destroy_with_parent=True
+        dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK, \
+            message_format="Error: Unable to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname))
+        dialog.format_secondary_text("".join(info.loglines[-20:])+
+                                    "----------------------------------------------- \
+                                    \n Possible Causes inlcude: \
+                                    \n  * The font file was not installed for ALL users \
+                                    \n  * The USFM text has a syntax error \
+                                    \n  * Selected option is incompatible with data \
+                                    \n  * Pictures could be causing it to fail \
+                                  \n\n Try using option 'Hide Advanced Settings' \
+                                    \n or turning off Illustrations, and run again...")
+        dialog.run()
+        dialog.destroy()
+
+def removeTempFiles(texfiles,tmpdir,info):
+    for extn in ('delayed','parlocs','notepages', 'tex','log'):
+        for t in texfiles:
+            delfname = os.path.join(tmpdir, t.replace(".tex", "."+extn))
+            try:
+                os.remove(delfname)
+            except OSError:
+                dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
+                    message_format="Warning: Could not delete temporary file.")
+                dialog.format_secondary_text("File: " + delfname)
+                dialog.run()
+                dialog.destroy()
+    for delfname in info['project/books']:
+        try:
+            os.remove(os.path.join(tmpdir, delfname))
+        except OSError:
+            dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
+                message_format="Warning: Could not delete temporary file.")
+            dialog.format_secondary_text("File: " + delfname)
+            dialog.run()
+            dialog.destroy()
+        
+mainw.run(doit)

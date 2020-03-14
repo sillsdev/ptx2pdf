@@ -33,6 +33,7 @@
 % some flags used to communicate between the macros
 \newif\if@ntromarker
 \newif\if@ntro \newif\ift@tle \newif\ifb@dy
+\newif\ifstartpara
 
 \def\initp@rastyles{\@ntrofalse \t@tlefalse \b@dyfalse \def\m@rker{}}
 
@@ -52,10 +53,8 @@
   \fi
   \global\t@tletrue\global\@ntrofalse\global\b@dyfalse\fi}
 
-\def\st@rtbody{%
+\def\st@rtbody{%\endhe@dings
   \ifb@dy\else\TRACE{st@rtbody}%
-  \endhe@dings
-  \if@ntro \csname IntroBodySwitch\endcsname \fi
   \ifnum\BodyColumns=\c@rrentcols
     \penalty-200\vskip\baselineskip
   \else
@@ -74,7 +73,7 @@
   \makecutouts \endgraf
   \egroup \cutoutcarryover
 %{\showboxbreadth=200 \showbox\he@dingbox}
-  \gridb@x\he@dingbox
+  \gridb@x\he@dingbox\unvbox\he@dingnotes
   \global\he@dingsfalse
   \global\first@fterheadingtrue
  \fi
@@ -120,6 +119,7 @@
 % Handle a paragraph style marker (parameter is the marker name)
 %
 \newif\ifhe@dingstyle
+\newif\ifnsp@cebefore
 \newif\ifJustifyPars \JustifyParstrue
 \def\p@rstyle#1{\TRACE{p@rstyle:#1}%
  \ifsk@pping \egroup \fi % if we were skipping nonpublishable text, end that mode
@@ -156,7 +156,7 @@
   % \tr is treated as an intro marker if we're already in intro mode
   \if@tablerow\if@ntro\@ntromarkertrue\fi\fi
   \global\he@dingstylefalse
-  \getp@ram{type}{\m@rker}\ifx\p@ram\t@tle \mark{\t@tle}\fi
+  \getp@ram{type}{\m@rker}\ifx\p@ram\t@tle \mark{\t@tle}\fi%\mark{::}\fi
   \ifx\p@ram\t@tle
     \ift@tle\else\ifhe@dings\endhe@dings\fi\fi
     \st@rttitle
@@ -173,7 +173,7 @@
     \if@ntromarker\st@rtintro\else\st@rtbody\fi
   \fi\fi\fi
   \ifhe@dingstyle\TRACE{headingstyle true}%
-    \ifhe@dings\else
+    \ifhe@dings\nsp@cebeforetrue\else
       \setbox\he@dingbox=\vbox\bgroup\global\he@dingstrue
         \linepenalty=1000 % minimize line count
         \interlinepenalty=10000 % never break column/page between lines
@@ -186,8 +186,9 @@
   \fi
   \getp@ram{spacebefore}{\m@rker}% output <spacebefore> for this style
   \ifx\p@ram\relax \else
-    \ifhe@dings\nobreak\fi \vskip\p@ram\verticalsp@ceunit
+    \ifhe@dings\nobreak\fi \ifnsp@cebefore\nsp@cebeforefalse\else\vskip\p@ram\verticalsp@ceunit\fi
   \fi
+  \global\startparatrue
   \everypar={%
    %
    % \everypar will be triggered when the paragraph actually starts (normally at the first character of text,
@@ -229,8 +230,6 @@
       \getp@ram{leftmargin}{\m@rker}%
       \ifx\p@ram\relax % simple case - no left indent
         \x@\c@tcmd\x@{\the\ch@pterwd}{0}{2}%
-      \else\ifx\p@ram\zer@
-        \x@\c@tcmd\x@{\the\ch@pterwd}{0}{2}%
       \else % probably \q or something like that;
             % need to compare cutout width with leftindent
         \dimen0=\p@ram\IndentUnit \dimen2=\dimen0
@@ -244,7 +243,7 @@
         \else % the indent is already big enough, so just use it as is
           \setbox\ch@pterbox=\hbox to \dimen0{\box\ch@pterbox\hfil}%
         \fi
-      \fi\fi
+      \fi
       \global\ch@pterfalse
       \ifIndentAtChapter\else \allowp@rindentfalse \fi
       \dr@ppednumbertrue
@@ -271,14 +270,14 @@
        \fi
      \fi
      \dr@ppednumberfalse
-     \spacefactor=\dr@pcapsf % prevent hanging verse number here
+     \spacefactor=\n@wchaptersf % prevent hanging verse number here
     \fi
    \fi
    \ifx\f@rstindent\relax \else
     \x@\ifdim\f@rstindent pt<0pt
-      \allowp@rindenttrue
+     \allowp@rindenttrue
     \else
-      \iffirst@fterheading \ifIndentAfterHeading\else \allowp@rindentfalse \fi\fi
+     \iffirst@fterheading \ifIndentAfterHeading\else \allowp@rindentfalse \fi\fi
     \fi
     \ifallowp@rindent % create first-line indent, unless suppressed at dropped chapter number
                       % (note that we don't suppress negative indents, as in \q1 etc)
@@ -286,10 +285,10 @@
     \fi
    \fi
    \ifvoid\ch@pterbox\else \kern-\wd\ch@pterbox \box\ch@pterbox \fi
-   \global\first@fterheadingfalse
    \global\p@ranesting=1
    \csname start-\m@rker\endcsname % handle <start> hook
-   \ifdr@ppednumber \spacefactor=\n@wchaptersf \fi
+   \ifdr@ppednumber \spacefactor=0\n@wchaptersf \fi
+   \startparafalse
    % set special \spacefactor if we're at a chapter number, so \v 1 can omit the verse number here
   }%
  \fi}
@@ -300,13 +299,12 @@
 \newif\ifIndentAfterHeading \IndentAfterHeadingtrue
 \newif\ifOmitVerseNumberOne \OmitVerseNumberOnefalse
 \def\n@wchaptersf{998}
-\def\dr@pcapsf{997}
 \let\b@ok\relax
 \let\prevb@ok\relax
-\def\zer@{0}
 
 \def\pdfb@@kmark{\ifx\b@ok\prevb@ok
  \else
+  \global\dr@ppednumberfalse
   \bgroup\liter@lspecials
    \special{pdf:dest (\id@@@.) [@thispage /Fit]}%
    \ifx\b@ok\relax \let\t@mp=\id@@@ \else \let\t@mp=\b@ok \fi
@@ -391,17 +389,17 @@
   \else \pr@vdelay=\csname delay-#1.#2\endcsname\fi
   \th@sdelay=#3\relax
   \ifnum\pr@vdelay=\th@sdelay % if the delay value is unchanged, all is good
-    \MSG{* OK}%
+    \MSG{PARLOC: OK}%
   \else
     \advance\pr@vdelay by 1
     \ifnum\pr@vdelay=\th@sdelay % if new delay is 1 greater than old, we can use \RaiseChapter
       \advance\th@sdelay by -1
       \x@\let\x@\t@st\csname raise-#1.#2\endcsname
-      \ifx\t@st\relax \MSG{*** RaiseChapter needed at #1 #2, re-run to update}%
-      \else \MSG{* OK using RaiseChapter at #1 #2}\fi
+      \ifx\t@st\relax \MSG{PARLOC: Rerun. RaiseChapter needed at #1 #2}%
+      \else \MSG{PARLOC: OK using RaiseChapter at #1 #2}\fi
       \immediate\write\delayf@le{\string\RaiseChapter{#1}{#2}}%
     \else
-      \MSG{*** DelayedChapter setting changed at #1 #2, re-run to update}%
+      \MSG{PARLOC: Rerun. DelayedChapter setting changed at #1 #2}%
     \fi
   \fi
   \immediate\write\delayf@le{\string\DelayedChapter{#1}{#2}{\number\th@sdelay}}%
@@ -410,19 +408,29 @@
 \newif\ifsk@pping \newbox\j@nkbox
 
 % Create the drop-cap in \ch@pterbox
-\def\m@kechapterbox{%
- \edef\printchapter{\ch@pter}%
- \csname PrepChapterNumber\endcsname
- \setbox\ch@pterbox=\hbox{\s@tfont{c}\printchapter}%
- \setbox\ch@pterbox=\hbox{\lower\baselineskip\box\ch@pterbox
-   \box\ch@pternote\kern\AfterChapterSpaceFactor\FontSizeUnit}%
- \ch@pterwd=\wd\ch@pterbox
- \dp\ch@pterbox=0pt
-}
 \newdimen\ch@pterwd
 \newbox\ch@pterbox
 \newbox\ch@pternote
 \def\AfterChapterSpaceFactor{3}
+\def\m@kechapterbox{%
+ \edef\printchapter{\ch@pter}%
+ \csname PrepChapterNumber\endcsname
+ \setbox\ch@pterbox=\hbox{\s@tfont{c}\printchapter}%
+ \ifrotate
+  \dimen0=1.0\ht\ch@pterbox
+  \dimen1=\ht\ch@pterbox \advance\dimen1 by \dp\ch@pterbox\advance\dimen1 by \AfterChapterSpaceFactor\FontSizeUnit
+  \dimen2=0.5\wd\ch@pterbox \advance\dimen2 by -0.5\ht\ch@pterbox
+  \setbox\ch@pterbox=\hbox{\lower\dimen2\hbox to \dimen0{%
+    \hskip\ht\ch@pterbox \special{x:gsave}\special{x:rotate 90}%
+    \box\ch@pterbox\special{x:grestore}\hss}}%
+  \ht\ch@pterbox=\wd\ch@pterbox\wd\ch@pterbox=\dimen1
+ \else
+  \setbox\ch@pterbox=\hbox{\lower\baselineskip\box\ch@pterbox
+    \box\ch@pternote\kern\AfterChapterSpaceFactor\FontSizeUnit}%
+ \fi
+ \ch@pterwd=\wd\ch@pterbox
+ \dp\ch@pterbox=0pt
+}
 
 % Used to delay a cutout until later in the paragraph, for no-break chapter numbers
 \def\DelayedChapter#1#2#3{\uppercase{\def\ucb@@k{#1}}%

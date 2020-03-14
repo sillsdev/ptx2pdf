@@ -61,6 +61,7 @@
       \read\p@clist to \p@cline
       \ifx\p@cline\P@R\readnextp@c\else
         \ifx\p@cline\empty\readnextp@c\else
+          \immediate\write16{{Read piclist line: \p@cline}}
           \expandafter\parsep@cline\p@cline\end
         \fi
       \fi
@@ -72,6 +73,7 @@
 \newread\p@clist
 \def\openpiclist "#1" {%
   \closein\p@clist
+%  \immediate\write-1{(opening piclist "#1")}%
   \openin\p@clist="#1"
   \ifeof\p@clist \immediate\write-1{(no picture list "#1" found)}%
   \else \immediate\write16{(\ifIncludeFigures using\else skipping\fi

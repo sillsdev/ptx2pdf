@@ -1,0 +1,16 @@
+; FC ... 
+LHSName	"Digits"
+RHSName	"WanchoDigits"
+
+pass(Unicode)
+U+0030 <> U+1E2F0 ;
+U+0031 <> U+1E2F1 ;
+U+0032 <> U+1E2F2 ;
+U+0033 <> U+1E2F3 ;
+U+0034 <> U+1E2F4 ;
+U+0035 <> U+1E2F5 ;
+U+0036 <> U+1E2F6 ;
+U+0037 <> U+1E2F7 ;
+U+0038 <> U+1E2F8 ;
+U+0039 <> U+1E2F9 ;
+

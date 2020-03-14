@@ -1,0 +1,16 @@
+; FC ... 
+LHSName	"Digits"
+RHSName	"ChamDigits"
+
+pass(Unicode)
+U+0030 <> U+AA50 ;
+U+0031 <> U+AA51 ;
+U+0032 <> U+AA52 ;
+U+0033 <> U+AA53 ;
+U+0034 <> U+AA54 ;
+U+0035 <> U+AA55 ;
+U+0036 <> U+AA56 ;
+U+0037 <> U+AA57 ;
+U+0038 <> U+AA58 ;
+U+0039 <> U+AA59 ;
+

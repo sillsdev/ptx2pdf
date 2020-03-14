@@ -1,0 +1,16 @@
+; FC ... 
+LHSName	"Digits"
+RHSName	"AdlamDigits"
+
+pass(Unicode)
+U+0030 <> U+1E950 ;
+U+0031 <> U+1E951 ;
+U+0032 <> U+1E952 ;
+U+0033 <> U+1E953 ;
+U+0034 <> U+1E954 ;
+U+0035 <> U+1E955 ;
+U+0036 <> U+1E956 ;
+U+0037 <> U+1E957 ;
+U+0038 <> U+1E958 ;
+U+0039 <> U+1E959 ;
+

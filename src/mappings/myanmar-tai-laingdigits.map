@@ -1,0 +1,16 @@
+; FC ... 
+LHSName	"Digits"
+RHSName	"MyanmarTaiLaingDigits"
+
+pass(Unicode)
+U+0030 <> U+A9F0 ;
+U+0031 <> U+A9F1 ;
+U+0032 <> U+A9F2 ;
+U+0033 <> U+A9F3 ;
+U+0034 <> U+A9F4 ;
+U+0035 <> U+A9F5 ;
+U+0036 <> U+A9F6 ;
+U+0037 <> U+A9F7 ;
+U+0038 <> U+A9F8 ;
+U+0039 <> U+A9F9 ;
+

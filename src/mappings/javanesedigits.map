@@ -1,0 +1,16 @@
+; FC ... 
+LHSName	"Digits"
+RHSName	"JavaneseDigits"
+
+pass(Unicode)
+U+0030 <> U+A9D0 ;
+U+0031 <> U+A9D1 ;
+U+0032 <> U+A9D2 ;
+U+0033 <> U+A9D3 ;
+U+0034 <> U+A9D4 ;
+U+0035 <> U+A9D5 ;
+U+0036 <> U+A9D6 ;
+U+0037 <> U+A9D7 ;
+U+0038 <> U+A9D8 ;
+U+0039 <> U+A9D9 ;
+

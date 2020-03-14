@@ -1,0 +1,16 @@
+; FC ... 
+LHSName	"Digits"
+RHSName	"TirhutaDigits"
+
+pass(Unicode)
+U+0030 <> U+114D0 ;
+U+0031 <> U+114D1 ;
+U+0032 <> U+114D2 ;
+U+0033 <> U+114D3 ;
+U+0034 <> U+114D4 ;
+U+0035 <> U+114D5 ;
+U+0036 <> U+114D6 ;
+U+0037 <> U+114D7 ;
+U+0038 <> U+114D8 ;
+U+0039 <> U+114D9 ;
+

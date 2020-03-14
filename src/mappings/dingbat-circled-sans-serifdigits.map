@@ -1,0 +1,15 @@
+; FC ... 
+LHSName	"Digits"
+RHSName	"DingbatCircledSansSerifDigits"
+
+pass(Unicode)
+U+0031 <> U+2780 ;
+U+0032 <> U+2781 ;
+U+0033 <> U+2782 ;
+U+0034 <> U+2783 ;
+U+0035 <> U+2784 ;
+U+0036 <> U+2785 ;
+U+0037 <> U+2786 ;
+U+0038 <> U+2787 ;
+U+0039 <> U+2788 ;
+

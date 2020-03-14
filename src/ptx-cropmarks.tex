@@ -46,7 +46,7 @@
       \raise20pt\vtop{\hsize\PaperWidth \everypar={}
         \lineskiplimit=0pt \baselineskip=10pt
         \leftskip=0pt plus 1fil \rightskip=\leftskip \parfillskip=0pt
-        \noindent \beginL\idf@nt \jobname\ -- \timestamp\endL}%
+        \noindent \beginL\idf@nt \jobname\ :: \timestamp\endL}%
       \hss
       \vrule height 30pt depth -5pt width .4pt
       \kern 4.8pt
@@ -70,6 +70,10 @@
   }% end \vbox for \bottomcr@p
 }
 
+\newif\ifrotate\rotatefalse
+\newdimen\pdfcropwidth
+\newdimen\pdfcropheight
+
 \def\shipwithcr@pmarks#1{% \shipout box #1, adding cropmarks if required
   \dimen0=0\ifCropMarks .5\fi in
   \advance\pdfpagewidth by 2\dimen0 % increase PDF media size
@@ -77,34 +81,53 @@
   \hoffset=-1in \voffset=-1in % shift the origin to (0,0)
   \let\pr@tect=\noexpand
   \shipout\vbox to 0pt{% ship the actual page content, with \BindingGutter added if wanted
+    %%%%% The following was added to help produce proper x1a PDF output (djd - 20150504)
+    %%%%% Note the \special line here seems to work but there may be a better location for it
+    %%%%% Also, the numbers used are hard coded now but need to be calculated
+    \ifCropMarks
+    \pdfcropwidth=\pdfpagewidth\advance\pdfcropwidth by -\dimen0
+    \pdfcropheight=\pdfpageheight\advance\pdfcropheight by -\dimen0
+    \special {pdf: put @thispage <</MediaBox [0 0 \the\pdfpagewidth\ \the\pdfpageheight] /TrimBox [\the\dimen0\ \the\dimen0\ \the\pdfcropwidth\ \the\pdfcropheight] /ArtBox [\the\dimen0\ \the\dimen0\ \the\pdfcropwidth\ \the\pdfcropheight]>>}
+    \else\special {pdf: put @thispage <</MediaBox [0 0 \the\pdfpagewidth\ \the\pdfpageheight] /TrimBox [0 0 \the\pdfpagewidth\ \the\pdfpageheight] /ArtBox [0 0 \the\pdfpagewidth\ \the\pdfpageheight]>>}\fi
+    % End inserted \special line
     \let\g@tterside=0 % figure out if we're adding a binding gutter, and which side
     \ifBindingGutter
       \ifDoubleSided
         \ifodd\pageno
-          \ifRTL \let\g@tterside=R
+          \ifRTL \let\g@tterside=R %
           \else  \let\g@tterside=L \fi
         \else
-          \ifRTL \let\g@tterside=L
+          \ifRTL \let\g@tterside=L %
           \else  \let\g@tterside=R \fi
         \fi
       \else
-        \ifRTL \let\g@tterside=R
+        \ifRTL \let\g@tterside=R %
         \else  \let\g@tterside=L \fi
       \fi
     \fi
+    \edef\oldup{\the\XeTeXupwardsmode}
+    \XeTeXupwardsmode=0 %
+    \ifrotate
+      \vbox to 0pt{\kern.5\pdfpagewidth  %\PaperWidth % swapped because rotated
+        \hbox to 0pt{\kern.5\pdfpagewidth \special{x:gsave}\special{x:rotate -90}\hss}
+        \vss}
+    \fi
+    \m@rgepdf
     \pl@ceborder % add PageBorder (or watermark) graphic, if defined
     \offinterlineskip
-    \vbox to \pdfpageheight{\vss
+    \vbox to \ifrotate\pdfpagewidth\else\pdfpageheight\fi{\vss
       \kern\topm@rgin
-      \hbox to \pdfpagewidth{\hss\hbox{%
+      \vbox{\hbox to \ifrotate\pdfpageheight\else\pdfpagewidth\fi{\hss\hbox{%
         \if\g@tterside L\kern\BindingGutter\fi
+        \XeTeXupwardsmode=\oldup
         #1%
         \if\g@tterside R\kern\BindingGutter\fi
-      }\hss}
+      }\hss}}
       \kern\bottomm@rgin
       \vss}
     \vss
     \docr@pmarks
+    \ifrotate\special{x:grestore}\fi
   }%
 }
 
@@ -116,6 +139,18 @@
   \advance\pdfpageheight by 2\dimen0
   \hoffset=-1in \voffset=-1in % shift the origin to (0,0)
   \shipout\vbox to 0pt{% ship the actual page
+    %%%%% The following was added to help produce proper x1a PDF output (djd - 20150504)
+    %%%%% Note the \special line here seems to work but there may be a better location for it
+    %%%%% Also, the numbers used are hard coded now but need to be calculated
+    \ifCropMarks
+      \pdfcropwidth=\pdfpagewidth\advance\pdfcropwidth by -\dimen0
+      \pdfcropheight=\pdfpageheight\advance\pdfcropheight by -\dimen0
+      \special {pdf: put @thispage <</MediaBox [0 0 \the\pdfpagewidth\ \the\pdfpageheight] /TrimBox [\the\dimen0\ \the\dimen0\ \the\pdfcropwidth\ \the\pdfcropheight] /ArtBox [\the\dimen0\ \the\dimen0\ \the\pdfcropwidth\ \the\pdfcropheight]>>}
+    \else
+      \special {pdf: put @thispage <</MediaBox [0 0 \the\pdfpagewidth\ \the\pdfpageheight] /TrimBox [0 0 \the\pdfpagewidth\ \the\pdfpageheight] /ArtBox [0 0 \the\pdfpagewidth\ \the\pdfpageheight]>>}
+    \fi
+    \trace{p}{Pagesize \the\pdfpagewidth, \the\pdfpageheight}
+    % End inserted \special line
     \offinterlineskip
     \vbox to \pdfpageheight{\vss
       \hbox to \pdfpagewidth{\hss#1\hss}
@@ -160,9 +195,16 @@
   \vss}% output a copy of \box\b@rder
 \fi}
 
+\def\MergePDF{}
+\def\m@rgepdf{\ifx\MergePDF\empty\else
+  \vbox to 0pt{\XeTeXpdffile "\MergePDF" page \pageno media\relax}
+\fi}
+
 % redefine plain TeX's output routine to add the cropmarks
-\def\plainoutput{\shipwithcr@pmarks
-    {\vbox{\makeheadline\pagebody\makefootline}}%
+\def\plainoutput{%
+  \dimen9=\pdfpagewidth \dimen8=\pdfpageheight
+  \shipwithcr@pmarks{\vbox{\makeheadline\pagebody\makefootline}}%
+  \pdfpagewidth=\dimen9 \pdfpageheight=\dimen8
   \advancepageno
   \ifnum\outputpenalty>-\@MM \else\dosupereject\fi}
 

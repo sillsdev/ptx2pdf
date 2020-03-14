@@ -1,0 +1,178 @@
+
+\input paratext2.tex
+
+%%%%% Stylesheets %%%%%
+\stylesheet{{{/ptxpath}/usfm.sty}}
+{project/ifusecustomsty}\stylesheet{{{/ptxpath}/{project/id}/custom.sty}}
+{project/ifusemodssty}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.sty}} % User can override project stylesheet settings here
+{project/ifusenested}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/NestedStyles.sty}}    % PTXprint overrides all others (for versenums, ftnts, xref)
+
+%%%%% Page Setup %%%%%
+% Dimensions
+\PaperWidth={paper/width}
+\PaperHeight={paper/height}
+\CropMarks{paper/ifcropmarks}
+
+%% Margins
+\MarginUnit={paper/margins}mm
+\def\TopMarginFactor{{{paper/topmarginfactor}}}
+\def\BottomMarginFactor{{{paper/bottommarginfactor}}}
+\def\SideMarginFactor{{{paper/sidemarginfactor}}}
+\BindingGutter{paper/ifaddgutter}
+\BindingGutter={paper/gutter}mm
+
+%% Columns
+\TitleColumns=1
+\IntroColumns=1
+\BodyColumns={paper/columns}
+\ColumnGutterRule{paper/ifverticalrule}
+\def\ColumnGutterFactor{{{document/colgutterfactor}}}
+% This next set of options can only be active if NOT using PT macros (as they use the new ptxplus macros)
+{project/ifnotptmacros}\ColumnGutterRuleSkip={paper/colgutteroffset}pt
+{project/ifnotptmacros}{document/marginalverses}\input ptxplus-marginalverses.tex
+{project/ifnotptmacros}{document/marginalverses}\columnshift={document/columnshift}pt
+{project/ifnotptmacros}\endbooknoeject{project/ifstarthalfpage}
+
+%%%%% Text Spacing %%%%%
+\def\LineSpacingFactor{{{paragraph/linespacingfactor}}}
+\def\VerticalSpaceFactor{{1.0}}
+\baselineskip={paragraph/linespacing}pt {project/ifnotptmacros}{paragraph/varlinespacing} {paragraph/linemax} {paragraph/linemin}
+
+%% Cross-space contextualization
+\XeTeXinterwordspaceshaping = {document/spacecntxtlztn}
+
+%%%%% Fonts %%%%%
+\FontSizeUnit={paper/fontfactor}pt
+%% Faces
+\def\regular{{"{fontregular/name}"{font/features}{document/script}{document/digitmapping}}}
+\def\bold{{"{fontbold/name}"{font/features}{document/script}{document/digitmapping}{fontbold/embolden}{fontbold/slant}}}
+\def\italic{{"{fontitalic/name}"{font/features}{document/script}{document/digitmapping}{fontitalic/embolden}{fontitalic/slant}}}
+\def\bolditalic{{"{fontbolditalic/name}"{font/features}{document/script}{document/digitmapping}{fontbolditalic/embolden}{fontbolditalic/slant}}}
+
+%%%%% Layout %%%%%
+{document/ifhidehboxerrors}\overfullrule=0pt
+\RTL{document/ifrtl}   % Use right-to-left layout mode?
+{document/toptobottom}\XeTeXupwardsmode=1     % Top-to-Bottom and Left-to-Right layout
+{document/toptobottom}\rotatetrue
+% Specify ISO 639-1 language code.
+% XeTeX will use ICU line break info (useful for scripts which do not use word spaces).
+% {document/script}
+
+{document/iflinebreakon}\XeTeXlinebreaklocale "{document/linebreaklocale}"
+% Introduce some stretchability (glue) at each potential line break
+%\XeTeXlinebreakskip=0em plus 0.1em minus 0.01em
+\JustifyPars{paragraph/ifjustify}
+\IndentAfterHeading{document/supressindent}
+
+%%% Chapters & Verses %%%
+\OmitVerseNumberOne{document/ifomitverseone}
+\OmitChapterNumber{document/ifomitchapternum}
+{document/ifomitallchapters}\def\AfterChapterSpaceFactor{{10}}
+{document/ifomitallverses}\def\AfterVerseSpaceFactor{{0}}
+
+%%% Poetry - Hang Verse Numbers
+{document/hangpoetry}\catcode`\@=11
+{document/hangpoetry}\sethook{{start}}{{q1}}{{\let\printv@rse=\hangprintv@rse\hangversenumber}}
+{document/hangpoetry}\sethook{{start}}{{q2}}{{\let\printv@rse=\hangprintv@rse\hangversenumber}}
+{document/hangpoetry}\sethook{{end}}{{q1}}{{\let\printv@rse=\simpleprintv@rse}}
+{document/hangpoetry}\sethook{{end}}{{q2}}{{\let\printv@rse=\simpleprintv@rse}}
+{document/hangpoetry}\catcode`\@=12
+
+%%%%% Notes %%%%%
+
+%% Disable footnote rule (when line is commented out, the footnote rule will show)
+{notes/iffootnoterule}\def\footnoterule{{}} 
+
+%\AutoCallerStartChar=97
+%\AutoCallerNumChars=26
+\AutoCallers{{f}}{{{notes/fncallers}}} % to hide callers in body text this needs to be empty
+{notes/fnresetcallers}\PageResetCallers{{f}}
+{notes/fnomitcaller}\OmitCallerInNote{{f}}
+{notes/fnparagraphednotes}\ParagraphedNotes{{f}}
+%\NumericCallers{{f}}
+
+\AutoCallers{{x}}{{{notes/xrcallers}}} % to hide callers in body text this needs to be empty
+{notes/xrresetcallers}\PageResetCallers{{x}}
+{notes/xromitcaller}\OmitCallerInNote{{x}}
+{notes/xrparagraphednotes}\ParagraphedNotes{{x}}
+%\NumericCallers{{x}}
+
+%%%%% Running Header/Footer %%%%%
+\def\HeaderPosition{{{header/headerposition}}}
+\def\FooterPosition{{{header/footerposition}}}
+{header/ifrhrule}\RHruleposition={header/ruleposition}pt
+\def\RangeSeparator{{\kern.1em\char"2013\kern.1em}} % what to put between first - last of a reference range
+\def\ChapterVerseSeparator{{\kern.02em{header/chvseparator}\kern.02em}} % what to put between chapter:verse
+
+%% Odd Header
+\def\RHoddleft{{{header/oddleft}}}
+\def\RHoddcenter{{{header/oddcenter}}}
+\def\RHoddright{{{header/oddright}}}
+
+%% Even Header
+\def\RHevenleft{{{header/evenleft}}}
+\def\RHevencenter{{{header/evencenter}}}
+\def\RHevenright{{{header/evenright}}}
+
+\VerseRefs{header/ifverses}                  % Include verses in reference text?
+\OmitChapterNumberRH{header/ifomitrhchapnum} % Omit the chapter numbers in the running header (RH)
+
+%% Footer
+\def\RFoddcenter{{{footer/oddcenter}}}
+\def\RFevencenter{{{footer/oddcenter}}}
+\def\RFtitlecenter{{{footer/oddcenter}}}
+{footer/ifftrtitlepagenum}\def\RFtitlecenter{{\pagenumber}}
+
+%%%%% Illustrations %%%%%
+\IncludeFigures{document/ifinclfigs}
+\FigurePlaceholders{document/iffigplaceholders}
+{document/usefigsfolder}\PicPath={{{project/picdir}/}}
+{document/uselocalfigs}\PicPath={{{/ptxpath}/{project/id}/local/Figures/}}
+{document/customfiglocn}\PicPath={{{document/customfigfolder}}}
+{document/ifusepiclist}\PicListPath={{{/ptxpath}/{project/id}/PrintDraft/PicLists/}}
+
+\AdjListPath={{{/ptxpath}/{project/id}/PrintDraft/AdjLists/}}
+
+% tweak to enable blank lines
+\def\b{{\par\vskip\baselineskip}}
+% restore page break definition (if present in USFM stylesheet, it has been re-defined and will not work)
+\let\pb=\pagebreak
+
+{project/ifusemodstex}\input "{/ptxpath}/{project/id}/PrintDraft/ptxprint-mods.tex"% adjust/override setup parameters here
+
+%%%%% Diglot settings (if applicable)
+%{document/diglotsettings}
+
+%%%%% Hyphenation %%%%%
+{paragraph/ifhyphenate}\input "{/ptxpath}/{project/id}/PrintDraft/hyphen-{project/id}.tex"
+{paragraph/ifnothyphenate}\hyphenpenalty=10000
+\exhyphenpenalty=2000
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% all settings need to come before this line %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%% Watermark PDF file or Grid PDFs etc. %%%%%
+{paper/ifwatermark}\def\PageBorder{{"{paper/watermarkpdf}"}}
+
+%%%%% Front Matter PDF file(s) get included here %%%%%
+{project/ifinclfrontpdf}{project/frontincludes}
+
+{document/toc}\GenerateTOC[{document/toctitle}]{{{jobname}.toc}}
+{document/toc}\BodyColumns=1     % Temporarily set this to Single Column for the ToC page(s)
+{document/toc}\ptxfile{{{jobname}.toc}}
+{document/toc}\BodyColumns={paper/columns}     % But ensure it goes back to the chosen Single/Double setting for the main body text
+
+%\snippets
+
+%%%%% Load Paratext USFM %%%%%
+\XeTeXdefaultencoding "utf-8"
+\def\closeadjlist{{\relax}}
+\def\closepiclist{{\relax}}
+% job files:
+\catcode`\%=12
+\ptxfile{{PrintDraft/41MATprojid-draft.SFM}}
+\catcode`\%=14
+
+%%%%% Back Matter PDF file(s) get included here %%%%%
+{project/ifinclbackpdf}{project/backincludes}
+
+\end

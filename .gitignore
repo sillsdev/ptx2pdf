@@ -1,0 +1,10 @@
+ptxprint-*
+*~
+*.bak
+*.log
+*.txt
+*.parlocs
+*.delayed
+*-draft.SFM
+__pycache__/
+temp/

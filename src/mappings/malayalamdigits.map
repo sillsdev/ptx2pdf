@@ -1,0 +1,16 @@
+; FC ... 
+LHSName	"Digits"
+RHSName	"MalayalamDigits"
+
+pass(Unicode)
+U+0030 <> U+0D66 ;
+U+0031 <> U+0D67 ;
+U+0032 <> U+0D68 ;
+U+0033 <> U+0D69 ;
+U+0034 <> U+0D6A ;
+U+0035 <> U+0D6B ;
+U+0036 <> U+0D6C ;
+U+0037 <> U+0D6D ;
+U+0038 <> U+0D6E ;
+U+0039 <> U+0D6F ;
+

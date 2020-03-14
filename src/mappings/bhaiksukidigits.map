@@ -1,0 +1,16 @@
+; FC ... 
+LHSName	"Digits"
+RHSName	"BhaiksukiDigits"
+
+pass(Unicode)
+U+0030 <> U+11C50 ;
+U+0031 <> U+11C51 ;
+U+0032 <> U+11C52 ;
+U+0033 <> U+11C53 ;
+U+0034 <> U+11C54 ;
+U+0035 <> U+11C55 ;
+U+0036 <> U+11C56 ;
+U+0037 <> U+11C57 ;
+U+0038 <> U+11C58 ;
+U+0039 <> U+11C59 ;
+

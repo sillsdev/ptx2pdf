@@ -1,0 +1,16 @@
+; FC ... 
+LHSName	"Digits"
+RHSName	"PahawhHmongDigits"
+
+pass(Unicode)
+U+0030 <> U+16B50 ;
+U+0031 <> U+16B51 ;
+U+0032 <> U+16B52 ;
+U+0033 <> U+16B53 ;
+U+0034 <> U+16B54 ;
+U+0035 <> U+16B55 ;
+U+0036 <> U+16B56 ;
+U+0037 <> U+16B57 ;
+U+0038 <> U+16B58 ;
+U+0039 <> U+16B59 ;
+

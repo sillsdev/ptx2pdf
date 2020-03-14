@@ -1,0 +1,16 @@
+; FC ... 
+LHSName	"Digits"
+RHSName	"VaiDigits"
+
+pass(Unicode)
+U+0030 <> U+A620 ;
+U+0031 <> U+A621 ;
+U+0032 <> U+A622 ;
+U+0033 <> U+A623 ;
+U+0034 <> U+A624 ;
+U+0035 <> U+A625 ;
+U+0036 <> U+A626 ;
+U+0037 <> U+A627 ;
+U+0038 <> U+A628 ;
+U+0039 <> U+A629 ;
+

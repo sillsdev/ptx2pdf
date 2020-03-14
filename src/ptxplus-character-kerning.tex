@@ -1,0 +1,44 @@
+% This TeX code provides varoious kinds of character controls
+% Caution, it is still under heave development
+
+
+% Quote Kerning
+% This is not complete. What we want is for this to be called from
+% the setup file with a command that brings in the kerning amount.
+% This will be easier to use and will allow for more automated control.
+% It would be nice if we could have a command like: \kernquotes{0.1em}
+% which would turn it on and set the amount. (more research needed)
+
+% Define default kern amount
+\newdimen\quotekernamount
+\quotekernamount = 0pt
+
+% Define quotes
+\def\soq{^^^^2018}
+\def\doq{^^^^201c}
+\def\scq{^^^^2019}
+\def\dcq{^^^^201d}
+% Define kern values
+\def\soqkern{\soq\kern\quotekernamount}
+\def\doqkern{\doq\kern\quotekernamount}
+\def\scqkern{\scq\kern\quotekernamount}
+\def\dcqkern{\dcq\kern\quotekernamount}
+% Combine values with characters
+\def\soqnokern{\soq}
+\def\doqnokern{\doq}
+\def\scqnokern{\scq}
+\def\dcqnokern{\dcq}
+% Activate the search characters
+\catcode"2018=\active
+\def^^^^2018{\futurelet\next\soqtest}
+\catcode"201C=\active
+\def^^^^201c{\futurelet\next\doqtest}
+\catcode"2019=\active
+\def^^^^2019{\futurelet\next\scqtest}
+\catcode"201D=\active
+\def^^^^201d{\futurelet\next\dcqtest}
+% Insert the kerned version
+\def\soqtest{\ifx\next^^^^201c\let\next=\soqkern\else\let\next=\soqnokern\fi\next}
+\def\doqtest{\ifx\next^^^^2018\let\next=\doqkern\else\let\next=\doqnokern\fi\next}
+\def\scqtest{\ifx\next^^^^201d\let\next=\scqkern\else\let\next=\scqnokern\fi\next}
+\def\dcqtest{\ifx\next^^^^2019\let\next=\dcqkern\else\let\next=\dcqnokern\fi\next}

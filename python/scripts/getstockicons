@@ -1,0 +1,130 @@
+#!/usr/bin/python3
+
+import xml.etree.ElementTree as et
+import argparse, os
+
+icon_mappings = {
+"gtk-dialog-authentication": "dialog-password",
+"gtk-dialog-error": "dialog-error",
+"gtk-dialog-info": "dialog-information",
+"gtk-dialog-question": "dialog-question",
+"gtk-dialog-warning": "dialog-warning",
+"gtk-close": "window-close",
+"gtk-add": "list-add",
+"gtk-justify-center": "format-justify-center",
+"gtk-justify-fill": "format-justify-fill",
+"gtk-justify-left": "format-justify-left",
+"gtk-justify-right": "format-justify-right",
+"gtk-goto-bottom": "go-bottom",
+"gtk-cdrom": "media-optical",
+"gtk-copy": "edit-copy",
+"gtk-cut": "edit-cut",
+"gtk-go-down": "go-down",
+"gtk-execute": "system-run",
+"gtk-quit": "application-exit",
+"gtk-goto-first": "go-first",
+"gtk-fullscreen": "view-fullscreen",
+"gtk-leave-fullscreen": "view-restore",
+"gtk-harddisk": "drive-harddisk",
+"gtk-help": "help-contents",
+"gtk-home": "go-home",
+"gtk-info": "dialog-information",
+"gtk-jump-to": "go-jump",
+"gtk-goto-last": "go-last",
+"gtk-go-back": "go-previous",
+"gtk-missing-image": "image-missing",
+"gtk-network": "network-idle",
+"gtk-new": "document-new",
+"gtk-open": "document-open",
+"gtk-print": "document-print",
+"gtk-print-error": "printer-error",
+"gtk-print-paused": "printer-paused",
+"gtk-print-preview": "document-print-preview",
+"gtk-print-report": "printer-info",
+"gtk-print-warning": "printer-warning",
+"gtk-properties": "document-properties",
+"gtk-redo": "edit-redo",
+"gtk-remove": "list-remove",
+"gtk-refresh": "view-refresh",
+"gtk-revert-to-saved": "document-revert",
+"gtk-go-forward": "go-next",
+"gtk-save": "document-save",
+"gtk-floppy": "media-floppy",
+"gtk-save-as": "document-save-as",
+"gtk-find": "edit-find",
+"gtk-find-and-replace": "edit-find-replace",
+"gtk-sort-descending": "view-sort-descending",
+"gtk-sort-ascending": "view-sort-ascending",
+"gtk-spell-check": "tools-check-spelling",
+"gtk-stop": "process-stop",
+"gtk-bold": "format-text-bold",
+"gtk-italic": "format-text-italic",
+"gtk-strikethrough": "format-text-strikethrough",
+"gtk-underline": "format-text-underline",
+"gtk-indent": "format-indent-more",
+"gtk-unindent": "format-indent-less",
+"gtk-goto-top": "go-top",
+"gtk-delete": "edit-delete",
+"gtk-undo": "edit-undo",
+"gtk-go-up": "go-up",
+"gtk-file": "text-x-generic",
+"gtk-directory": "folder",
+"gtk-about": "help-about",
+"gtk-media-forward": "media-seek-forward",
+"gtk-media-next": "media-skip-forward",
+"gtk-media-pause": "media-playback-pause",
+"gtk-media-play": "media-playback-start",
+"gtk-media-previous": "media-skip-backward",
+"gtk-media-record": "media-record",
+"gtk-media-rewind": "media-seek-backward",
+"gtk-media-stop": "media-playback-stop",
+"gtk-zoom-100": "zoom-original",
+"gtk-zoom-in": "zoom-in",
+"gtk-zoom-out": "zoom-out",
+"gtk-zoom-fit": "zoom-fit-best",
+"gtk-select-all": "edit-select-all",
+"gtk-clear": "edit-clear",
+}
+
+def findall(root, fname):
+    for dp, dn, fn in os.walk(root or "."):
+        if fname in fn:
+            yield dp
+
+parser = argparse.ArgumentParser()
+parser.add_argument("infile",help="Glade/UI file to process")
+parser.add_argument("outfile",help="File to output results to")
+parser.add_argument("-f","--format",default="txt",help="Output file format [txt,inno]")
+parser.add_argument("-s","--source",default=".",help="[inno] Source directory for icon files")
+parser.add_argument("-d","--destination",help="[inno] Destination directory for files")
+parser.add_argument("-i","--icon",action="append",help="Icon files to include")
+args = parser.parse_args()
+
+icons = set()
+for i in args.icon:
+    icons.add(i+".png")
+doc = et.parse(args.infile)
+for e in doc.findall('.//object'):
+    isstock = False
+    for c in e:
+        if c.tag == "property":
+            n = c.get("name")
+            if n == "label":
+                l = c.text
+            elif n == "use_stock":
+                isstock = True if c.text == "True" else False
+    if isstock and l in icon_mappings:
+        icons.add(icon_mappings[l]+".png")
+
+with open(args.outfile, "w") as outf:
+    if args.format == "txt":
+        outf.write("\n".join(sorted(icons)))
+    elif args.format == "inno":
+        outf.write("[Files]\n")
+        for i in sorted(icons):
+            for p in findall(args.source, i):
+                p = p[p.find(args.source)+len(args.source)+1:].replace("/","\\")
+                d = args.destination + "\\" + p if args.destination else p
+                s = args.source.replace("/", "\\") + "\\" + p + "\\" + i if args.source != "." else p + "\\" + i
+                outf.write('Source: "{}"; DestDir: "{}"\n'.format(s, d))
+

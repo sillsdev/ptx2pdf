@@ -1,0 +1,16 @@
+; FC ... 
+LHSName	"Digits"
+RHSName	"MasaramGondiDigits"
+
+pass(Unicode)
+U+0030 <> U+11D50 ;
+U+0031 <> U+11D51 ;
+U+0032 <> U+11D52 ;
+U+0033 <> U+11D53 ;
+U+0034 <> U+11D54 ;
+U+0035 <> U+11D55 ;
+U+0036 <> U+11D56 ;
+U+0037 <> U+11D57 ;
+U+0038 <> U+11D58 ;
+U+0039 <> U+11D59 ;
+

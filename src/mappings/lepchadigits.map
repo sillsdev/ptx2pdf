@@ -1,0 +1,16 @@
+; FC ... 
+LHSName	"Digits"
+RHSName	"LepchaDigits"
+
+pass(Unicode)
+U+0030 <> U+1C40 ;
+U+0031 <> U+1C41 ;
+U+0032 <> U+1C42 ;
+U+0033 <> U+1C43 ;
+U+0034 <> U+1C44 ;
+U+0035 <> U+1C45 ;
+U+0036 <> U+1C46 ;
+U+0037 <> U+1C47 ;
+U+0038 <> U+1C48 ;
+U+0039 <> U+1C49 ;
+
