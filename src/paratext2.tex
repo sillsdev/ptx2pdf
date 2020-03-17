@@ -649,7 +649,9 @@
   \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
   \TRACEOUT{availht = \the\availht, depth = \the\dp255}
   \advance\availht -\dp255
-  \multiply\availht by 10 \divide\availht by\dimen0 \multiply\availht by\dimen0 \divide\availht by 10
+  % Round to lines accurate to 1/8pt in lineskip. 1/10pt causes overflow on longer pages. Support two column legal.
+  \dimen0=8\baselineskip
+  \multiply\availht by 8 \divide\availht by\dimen0 \multiply\availht by\dimen0 \divide\availht by 8
 %%%
   \decr{\availht}{\topins}% and by the space needed for spanning pictures
   \decr{\availht}{\bottomins}
