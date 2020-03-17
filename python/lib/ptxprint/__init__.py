@@ -231,9 +231,9 @@ class PtxPrinterDialog:
         if self.ptsettings is None:
             self.ptsettings = ParatextSettings(self.settings_dir, self.prjid)
         fbkfm = self.ptsettings['FileNameBookNameForm']
-        bknamefmt = self.ptsettings['FileNamePrePart'] + \
+        bknamefmt = (self.ptsettings['FileNamePrePart'] or "") + \
                     fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + \
-                    self.ptsettings['FileNamePostPart']
+                    (self.ptsettings['FileNamePostPart'] or "")
         # print(bknamefmt)
         fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
         return fname

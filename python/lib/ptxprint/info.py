@@ -391,8 +391,6 @@ class Info:
         fbkfm = self.printer.ptsettings['FileNameBookNameForm']
         fprfx = self.printer.ptsettings['FileNamePrePart'] or ""
         fpost = self.printer.ptsettings['FileNamePostPart'] or ""
-        if fprfx == None:
-            fprfx = ""
         bknamefmt = fprfx + fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + fpost
         fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
         infname = os.path.join(prjdir, fname)
