@@ -863,7 +863,7 @@ class PtxPrinterDialog:
                 bks = bks[0]
             except IndexError:
                 bks = "No book selected!"
-        titleStr = "PTXprint [0.4.1 Beta]" + prjid + " (" + bks + ")"
+        titleStr = "PTXprint [0.4.3 Beta]" + prjid + " (" + bks + ")"
         self.builder.get_object("ptxprint").set_title(titleStr)
 
     def editFile(self, file2edit, wkdir=False):

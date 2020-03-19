@@ -7,6 +7,7 @@ from gi.repository import Gtk
 
 if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
     sys.stdout = open(os.devnull, "w")
+    # sys.stdout = open("D:\Temp\ptxprint-sysout.tmp", "w")
     sys.stderr = sys.stdout
 else:
     gi.require_version('GtkSource', '3.0')

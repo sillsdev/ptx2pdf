@@ -260,7 +260,7 @@ class Info:
             picdir = os.path.join(base, p)
             if os.path.exists(picdir):
                 break
-        self.dict["project/picdir"] = picdir
+        self.dict["project/picdir"] = picdir.replace("\\","/")
             
 
     def updatefields(self, a):
