@@ -108,7 +108,7 @@ class Info:
         "document/linebreaklocale": ("t_linebreaklocale", lambda w,v: v or ""),
         "document/script":          ("cb_script", lambda w,v: ":script="+w.builder.get_object('cb_script').get_active_id().lower() \
                                                   if w.builder.get_object('cb_script').get_active_id() != "Zyyy" else ""),
-        "document/digitmapping":    ("cb_digits", lambda w,v: ':mapping=mappings/'+v.lower()+'digits' if v != "Default" else ""),
+        "document/digitmapping":    ("cb_digits", lambda w,v: ':mapping=mappings/'+w.get('cb_digits', 1)+'digits' if v != "Default" else ""),
         "document/ch1pagebreak":    ("c_ch1pagebreak", lambda w,v: "true" if v else "false"),
         "document/marginalverses":  ("c_marginalverses", lambda w,v: "" if v else "%"),
         "document/columnshift":     ("s_columnShift", lambda w,v: v or "16"),

@@ -79,9 +79,11 @@ class PtxPrinterDialog:
         self.cb_script.set_active_id('Zyyy')
 
         digits = self.builder.get_object("ls_digits")
+        currdigits = {r[0]: r[1] for r in digits}
         digits.clear()
         for d in _alldigits: # .items():
-            digits.append([d])
+            v = currdigits.get(d, d.lower())
+            digits.append([d, v])
         self.cb_digits.set_active_id(_alldigits[0])
 
         # glostyle = self.builder.get_object("ls_glossaryMarkupStyle")

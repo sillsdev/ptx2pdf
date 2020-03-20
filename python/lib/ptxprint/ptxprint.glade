@@ -523,58 +523,85 @@
     <columns>
       <!-- column-name digitscript -->
       <column type="gchararray"/>
+      <!-- column-name mapname -->
+      <column type="gchararray"/>
     </columns>
     <data>
       <row>
         <col id="0" translatable="yes">Default</col>
+        <col id="1" translatable="yes"/>
       </row>
       <row>
         <col id="0" translatable="yes">Arabic-Hindi</col>
+        <col id="1" translatable="yes">arabic-indic</col>
       </row>
       <row>
         <col id="0" translatable="yes">Arabic-Farsi</col>
+        <col id="1" translatable="yes">etended-arabic-indic</col>
       </row>
       <row>
         <col id="0" translatable="yes">Bengali</col>
+        <col id="1" translatable="yes">bengali</col>
       </row>
       <row>
         <col id="0" translatable="yes">Burmese</col>
+        <col id="1" translatable="yes">myanmar</col>
       </row>
       <row>
         <col id="0" translatable="yes">Devanagari</col>
+        <col id="1" translatable="yes">devanagari</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Ethiopic</col>
+        <col id="1" translatable="yes">ethiopic</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Gondi (Gunjala)</col>
+        <col id="1" translatable="yes">gunjala-gondi</col>
       </row>
       <row>
         <col id="0" translatable="yes">Gujarati</col>
+        <col id="1" translatable="yes">gujarati</col>
       </row>
       <row>
         <col id="0" translatable="yes">Gurmukhi</col>
+        <col id="1" translatable="yes">gurmukhi</col>
       </row>
       <row>
         <col id="0" translatable="yes">Kannada</col>
+        <col id="1" translatable="yes">kannada</col>
       </row>
       <row>
         <col id="0" translatable="yes">Khmer</col>
+        <col id="1" translatable="yes">khmer</col>
       </row>
       <row>
         <col id="0" translatable="yes">Lao</col>
+        <col id="1" translatable="yes">lao</col>
       </row>
       <row>
         <col id="0" translatable="yes">Malayalam</col>
+        <col id="1" translatable="yes">malayalam</col>
       </row>
       <row>
         <col id="0" translatable="yes">Oriya</col>
+        <col id="1" translatable="yes">oriya</col>
       </row>
       <row>
         <col id="0" translatable="yes">Tamil</col>
+        <col id="1" translatable="yes">tmail</col>
       </row>
       <row>
         <col id="0" translatable="yes">Telugu</col>
+        <col id="1" translatable="yes">telugu</col>
       </row>
       <row>
         <col id="0" translatable="yes">Thai</col>
+        <col id="1" translatable="yes">thai</col>
       </row>
       <row>
         <col id="0" translatable="yes">Tibetan</col>
+        <col id="1" translatable="yes">tibetan</col>
       </row>
     </data>
   </object>
