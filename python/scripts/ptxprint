@@ -175,8 +175,8 @@ def doit(printer):
         # it did NOT finish successfully, so help them troubleshoot what went wrong.
         # getting the last few lines of the .log file:
         # modal=True and/or destroy_with_parent=True
-        dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK, \
-            message_format="Error: Unable to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname))
+        dialog = Gtk.MessageDialog(parent=None, modal=True, message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK, \
+            text="Error: Unable to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname))
         dialog.format_secondary_text("".join(info.loglines[-20:])+
                                     "----------------------------------------------- \
                                     \n Possible Causes inlcude: \
@@ -196,8 +196,8 @@ def removeTempFiles(texfiles,tmpdir,info):
             try:
                 os.remove(delfname)
             except OSError:
-                dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
-                    message_format="Warning: Could not delete temporary file.")
+                dialog = Gtk.MessageDialog(parent=None, modal=True, message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
+                    text="Warning: Could not delete temporary file.")
                 dialog.format_secondary_text("File: " + delfname)
                 dialog.run()
                 dialog.destroy()
@@ -205,8 +205,8 @@ def removeTempFiles(texfiles,tmpdir,info):
         try:
             os.remove(os.path.join(tmpdir, delfname))
         except OSError:
-            dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
-                message_format="Warning: Could not delete temporary file.")
+            dialog = Gtk.MessageDialog(parent=None, modal=True, message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
+                text="Warning: Could not delete temporary file.")
             dialog.format_secondary_text("File: " + delfname)
             dialog.run()
             dialog.destroy()

@@ -1,5 +1,6 @@
-import configparser, re, os, gi
+import configparser, re, os, gi, time
 from datetime import datetime
+from shutil import copyfile
 import regex
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
@@ -472,13 +473,17 @@ class Info:
             if printer.get("c_figexclwebapp"):
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig ([^|]*\|){3}([aw]+)\|[^\\]*\\fig\*', flags=regex.M), ''))  # USFM2
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig [^\\]*\bloc="[aw]+"[^\\]*\\fig\*', flags=regex.M), ''))    # USFM3
-            # Rename all TIF extensions to JPGs
-            self.localChanges.append((None, regex.compile(r"\.[Tt][Ii][Ff]\|", flags=regex.M), r".jpg|"))
+            # XeTeX doesn't handle TIFs, so rename all TIF extensions to JPGs/PNGs
+            if True:  # Ask MH: Maybe we need to give a choice to the user (either TIF>JPG, or TIF>PNG)
+                self.localChanges.append((None, regex.compile(r"(?i)\.tif\|", flags=regex.M), r".jpg|"))
+            else:
+                self.localChanges.append((None, regex.compile(r"(?i)\.tif\|", flags=regex.M), r".png|"))
             if printer.get("c_skipmissingimages"):
+                print("Skipping missing images is ON")
                 msngfigs = self.ListMissingPics(printer, bk)
                 if len(msngfigs):
-                    for f in msngfigs: # Remove references to missing illustration
-                        self.localChanges.append((None, regex.compile(r"\\fig .*\|{}\|.+?\\fig\*".format(f), flags=regex.M), ""))
+                    for f in msngfigs: # Remove references to missing illustrations (.tif, .jpg or .png)
+                        self.localChanges.append((None, regex.compile(r"(?i)\\fig .*\|{}\.(tif|jpg|png)\|.+?\\fig\*".format(f), flags=regex.M), ""))
             if printer.get("c_fighiderefs"): # del ch:vs from caption
                 self.localChanges.append((None, regex.compile(r"(\\fig .*?)(\d+[:.]\d+([-,]\d+)?)(.*?\\fig\*)", flags=regex.M), r"\1\4"))
         else: # Drop ALL Figures
@@ -514,7 +519,7 @@ class Info:
         if printer.get("c_preventwidows"):
             # Push the verse number onto the next line (using NBSP) if there is
             # a short widow word (3 characters or less) at the end of the line
-            self.localChanges.append((None, regex.compile(r"(\\v \d+ [\w][\w]?[\w]?) ", flags=regex.M), r"\1\u00A0")) 
+            self.localChanges.append((None, regex.compile(r"(\\v \d+(-\d+)? [\w][\w]?[\w]?) ", flags=regex.M), r"\1\u00A0")) 
 
         if printer.get("c_ch1pagebreak"):
             self.localChanges.append((None, regex.compile(r"(\\c 1 ?\r?\n)", flags=regex.M), r"\pagebreak\r\n\1"))
@@ -565,7 +570,7 @@ class Info:
         elif printer.get("c_useCustomFolder"):
             picdir = self.dict['document/customfigfolder']
         if picdir is None or picdir == "": # shouldn't happen, but just in case!
-            print("No folder of illustrtations has been specified")
+            print("No folder of illustrations has been specified")
             return(msngpiclist)  # send back an empty list
         # print("Picture Path:",picdir)
         fname = printer.getBookFilename(bk, prjdir)
@@ -577,14 +582,43 @@ class Info:
             if m is None:
                 m = re.findall(r'\\fig .*+src="(.+?\....)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text:
             if m is not None:
-                for f in m:
-                    f = re.sub(r"\.[Tt][Ii][Ff]", r".jpg",f)
+                for f in m: # Here we are changing all TIFs and PNGs to JPGs (but perhaps this should 
+                            # only happen if the user has requested to use the low-resolution images.
+                            # Otherwise .png files need to stay as PNGs - with higher quality.
+                    f = re.sub(r"(?i)\.(tif|png)", r".jpg",f)
                     fname = os.path.join(picdir,f)
                     if not os.path.exists(fname):
-                        msngpiclist.append(f)
+                        msngpiclist.append(f[:-4].rstrip("AaBbCc").lower()) # this drops the quality letter A/B/C and extension
+                                                                            # so that "CN001234B.tif" just becomes "cn001234"
             if len(msngpiclist):
                 print("In {} these pics are missing:\n".format(bk),"\n".join(msngpiclist))
+                print(picdir)
+                if printer.get("c_searchSubFolders"):
+                    self.GatherPicsFromSubfolders(printer,msngpiclist)
+                
         return(msngpiclist)
+
+    def GatherPicsFromSubfolders(self, printer, basePiclist):
+        a = time.time_ns()
+        print("Now looking to gather missing files from subfolders...")
+        tmpPicpath = os.path.join(printer.working_dir, "tmpPics")
+        if not os.path.exists(tmpPicpath):
+            os.mkdir(tmpPicpath)
+        if True: # printer.get("c_preferJPGs"): # Need a checkbox to prefer .JPGs or .PNGs
+            extn2find = ".jpg"
+        else:
+            extn2find = ".png"
+        masterpiclist = []
+        picdir = self.dict['document/customfigfolder']
+        for subdir, dirs, files in os.walk(picdir):
+            for file in files:
+                filepath = subdir + os.sep + file
+                if filepath.lower().endswith(extn2find):
+                    shortname = os.path.basename(filepath)
+                    if shortname[:-4].rstrip("AaBbCc") in basePiclist:
+                        print("{}|{}|{}".format(shortname,os.path.getsize(filepath),filepath))
+                        copyfile(filepath, os.path.join(tmpPicpath, shortname))
+        print(f"Finding images took {(time.time_ns() - a) / 1000 / 1000 :.0f} ms.")
 
     def _configset(self, config, key, value):
         (sect, k) = key.split("/")
@@ -760,8 +794,8 @@ class Info:
                 m1 = "Hyphenation List Generated"
                 m2a = "{} hyphenated words were gathered\nfrom Paratext's Hyphenation Word List.".format(c)
                 if z > 0:
-                    m2c = "\n\nNote that {} words containing ZWJ and ZWNJ".format(z) + \
-                            "\ncharacters have been left off the hyphenation list." 
+                    m2c = "\n\nNote for Indic languages that {} words containing ZWJ".format(z) + \
+                            "\nand ZWNJ characters have been left off the hyphenation list." 
                 m2 = m2a + m2b + m2c
             else:
                 m1 = "Sorry - Hyphenation List was NOT Generated"

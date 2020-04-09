@@ -4389,120 +4389,107 @@ Footnotes and Cross-references.</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="valign">start</property>
+                            <property name="margin_bottom">6</property>
                             <property name="left_padding">10</property>
                             <property name="right_padding">10</property>
                             <child>
-                              <object class="GtkGrid">
+                              <object class="GtkGrid" id="gr_IllustrationOptions">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">start</property>
                                 <property name="valign">start</property>
                                 <property name="row_spacing">8</property>
                                 <child>
-                                  <object class="GtkAlignment">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="left_padding">40</property>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_figexclwebapp">
-                                        <property name="label" translatable="yes">Omit Pictures Only Meant for Web or App</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Only allow illustrations with the 'P'rint attribute.
-
-If the illustrations have been marked up with
-the w/a/p notation, then it is easy to exclude
-any illustrations that do not have the 'p'
-attribute.  Note: w= web, a=app, p=print.</property>
-                                        <property name="halign">start</property>
-                                        <property name="active">True</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkAlignment">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="left_padding">40</property>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_fighiderefs">
-                                        <property name="label" translatable="yes">Omit References (ch:vs) From Caption </property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="halign">start</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkAlignment">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="left_padding">40</property>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_figplaceholders">
-                                        <property name="label" translatable="yes">Just Show Empty Place-holders</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Useful for creating smaller files to check text layout without illustrations shown.</property>
-                                        <property name="halign">start</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkRadioButton" id="c_includefigsfromtext">
-                                    <property name="label" translatable="yes">Use Pictures Marked in the Text (\fig...\fig*)</property>
+                                  <object class="GtkRadioButton" id="c_useFiguresFolder">
+                                    <property name="label" translatable="yes">Use Low-Resolution Pictures (JPG files)</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Paratext stores low resolution .JPG versions of
+illustrations in the project's "Figures" folder. If
+these are used, the file size of the resulting PDF
+will be relatively small, and therefore easy to
+share, but the image quality will be low.</property>
                                     <property name="halign">start</property>
-                                    <property name="margin_top">3</property>
-                                    <property name="draw_indicator">True</property>
-                                    <property name="group">c_usePicList</property>
-                                    <signal name="clicked" handler="onFigsChanged" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkRadioButton" id="c_usePicList">
-                                    <property name="label" translatable="yes">Use a PicList to Control Size and Position</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">The Advanced tab has a button to Generate a PicList file
-which enables more precise control over the sizing and
-positioning of illustrations. Click Edit PicList... to start.</property>
-                                    <property name="halign">start</property>
+                                    <property name="margin_left">10</property>
+                                    <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
+                                    <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
-                                    <property name="group">c_includefigsfromtext</property>
+                                    <property name="group">c_useLocalFiguresFolder</property>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">4</property>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">1</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_figplaceholders">
+                                    <property name="label" translatable="yes">Only Use Empty Place-holders (for smallest PDF file)</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Use this option to include an empty box wherever
+illustrations would be placed in the final PDF. 
+
+WHY would someone want to do this?
+It is sometimes necessary to generate the smallest
+possible PDF file (usually in order to send by
+e-mail) or to produce a PDF to be printed
+without illustrations.</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_left">10</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">0</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkRadioButton" id="c_useLocalFiguresFolder">
+                                    <property name="label" translatable="yes">Use High-Resolution Pictures (PNG files)</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">The original higher-quality illustrations are
+usually larger .TIF or .PNG files and are stored
+in the local\Figures folder so that they are not
+shared via Send/Recv. If these are used, the file
+size of the resulting PDF could be large, and
+therefore difficult to share electronically, but
+the image quality will be as good as possible.
+
+(Note that at this time, TIF files cannot be used
+and must be converted to PNG or JPG first.)</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_left">10</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                    <property name="group">c_useFiguresFolder</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">2</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_selectFigureFolder">
+                                    <property name="label" translatable="yes">Select folder...</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="halign">start</property>
+                                    <signal name="clicked" handler="onSelectFigureFolderClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="top_attach">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -4526,118 +4513,58 @@ be generated in the same folder as the TIF files.
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="btn_selectFigureFolder">
-                                    <property name="label" translatable="yes">Select folder...</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="halign">start</property>
-                                    <signal name="clicked" handler="onSelectFigureFolderClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">3</property>
-                                    <property name="top_attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_useLocalFiguresFolder">
-                                    <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="no_show_all">True</property>
-                                    <property name="halign">start</property>
-                                    <property name="label" translatable="yes">(original TIF files)</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">3</property>
-                                    <property name="top_attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_useFiguresFolder">
+                                  <object class="GtkLabel" id="l_useFiguresFolder1">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>
-                                    <property name="label" translatable="yes">(low-res JPG files)</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">3</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_useFolder">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">end</property>
-                                    <property name="margin_left">11</property>
-                                    <property name="margin_top">8</property>
-                                    <property name="margin_bottom">6</property>
-                                    <property name="label" translatable="yes">Location of Image Files:</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
                                     <property name="top_attach">0</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkRadioButton" id="c_useFiguresFolder">
-                                    <property name="label" translatable="yes">Project's "Figures" Folder:</property>
+                                  <object class="GtkCheckButton" id="c_figexclwebapp">
+                                    <property name="label" translatable="yes">Omit Pictures Only Meant for Web or App</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="halign">end</property>
-                                    <property name="margin_top">6</property>
-                                    <property name="margin_bottom">6</property>
+                                    <property name="tooltip_text" translatable="yes">Only allow illustrations with the 'P'rint attribute.
+
+If the illustrations have been marked up with
+the w/a/p notation, then it is easy to exclude
+any illustrations that do not have the 'p'
+attribute.  Note: w= web, a=app, p=print.</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_left">20</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
-                                    <property name="group">c_useLocalFiguresFolder</property>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">2</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkRadioButton" id="c_useLocalFiguresFolder">
-                                    <property name="label" translatable="yes">Use "local\figures" Folder:</property>
-                                    <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="no_show_all">True</property>
-                                    <property name="halign">end</property>
-                                    <property name="margin_top">6</property>
-                                    <property name="margin_bottom">6</property>
-                                    <property name="draw_indicator">True</property>
-                                    <property name="group">c_useCustomFolder</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
-                                    <property name="top_attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkRadioButton" id="c_useCustomFolder">
-                                    <property name="label" translatable="yes">Specify a Custom Folder:  </property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="halign">end</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                    <property name="group">c_useLocalFiguresFolder</property>
-                                    <signal name="clicked" handler="onUseCustomFolderclicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
+                                    <property name="left_attach">0</property>
                                     <property name="top_attach">3</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_fighiderefs">
+                                    <property name="label" translatable="yes">Omit References (ch:vs) From Caption </property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_left">20</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">2</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_skipmissingimages">
-                                    <property name="label" translatable="yes">Omit Any Missing Images</property>
+                                    <property name="label" translatable="yes">Omit Any Missing Images Automatically</property>
                                     <property name="name">c_skipmissingimages</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -4645,13 +4572,15 @@ be generated in the same folder as the TIF files.
                                     <property name="tooltip_text" translatable="yes">Rather than aborting the PDF export process, pre-process
 the list of illustrations and skip/ignore/remove any which
 are not found in the specified location of image files.</property>
+                                    <property name="margin_left">20</property>
                                     <property name="margin_bottom">6</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">2</property>
+                                    <property name="left_attach">0</property>
                                     <property name="top_attach">4</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -4663,26 +4592,69 @@ are not found in the specified location of image files.</property>
                                     <property name="tooltip_text" translatable="yes">Click to view or edit the PicList
 file(s) in the Viewer tab.</property>
                                     <property name="valign">center</property>
-                                    <property name="margin_right">20</property>
-                                    <property name="margin_bottom">6</property>
                                     <signal name="clicked" handler="onEditPicListClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
-                                    <property name="top_attach">4</property>
+                                    <property name="top_attach">0</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkRadioButton" id="c_usePicList">
+                                    <property name="label" translatable="yes">Use a PicList to Control Size and Position</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">The Viewer tab has a button to Generate a PicList file
+which enables more precise control over the sizing and
+positioning of illustrations.</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_left">20</property>
+                                    <property name="draw_indicator">True</property>
+                                    <property name="group">c_includefigsfromtext</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkRadioButton" id="c_includefigsfromtext">
+                                    <property name="label" translatable="yes">Use Pictures Marked in the Text (\fig...\fig*)</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_left">20</property>
+                                    <property name="margin_top">3</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onFigsChanged" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">1</property>
+                                    <property name="width">2</property>
+                                  </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
+                                  <object class="GtkCheckButton" id="c_useCustomFolder">
+                                    <property name="label" translatable="yes">Use Pictures from
+a Specific Folder:</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">If this option is selected, PTXprint will scan 
+the selected folder (and all its sub-folders)
+for the required illustrations.</property>
+                                    <property name="margin_left">10</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onUseCustomFolderclicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">3</property>
+                                  </packing>
                                 </child>
                                 <child>
                                   <placeholder/>

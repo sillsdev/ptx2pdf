@@ -482,14 +482,16 @@ class PtxPrinterDialog:
         
     def onUseIllustrationsClicked(self, c_includeillustrations):
         status = self.get("c_includeillustrations")
-        for c in ("c_includefigsfromtext", "c_usePicList", "l_useFolder", "c_useFiguresFolder", "c_useLocalFiguresFolder", "c_useCustomFolder",
-                  "btn_selectFigureFolder", "l_useFiguresFolder", "l_useLocalFiguresFolder",
-                  "c_figexclwebapp", "c_figplaceholders", "c_fighiderefs", "c_skipmissingimages"):  # add this later: "c_convertTIFtoPNG", 
-            self.builder.get_object(c).set_sensitive(status)
-        if status:
-            status = self.get("c_includefigsfromtext")
-            for c in ("c_figexclwebapp", "c_figplaceholders", "c_fighiderefs"):
-                self.builder.get_object(c).set_sensitive(status)
+        self.builder.get_object("gr_IllustrationOptions").set_sensitive(status)
+        # Old code can be removed later:
+        # for c in ("c_includefigsfromtext", "c_usePicList", "l_useFolder", "c_useFiguresFolder", "c_useLocalFiguresFolder", "c_useCustomFolder",
+                  # "btn_selectFigureFolder", "l_useFiguresFolder", "l_useLocalFiguresFolder", "c_searchSubFolders",
+                  # "c_figexclwebapp", "c_figplaceholders", "c_fighiderefs", "c_skipmissingimages", "c_convertTIFtoPNG"): 
+            # self.builder.get_object(c).set_sensitive(status)
+        # if status:
+            # status = self.get("c_includefigsfromtext")
+            # for c in ("c_figexclwebapp", "c_figplaceholders", "c_fighiderefs"):
+                # self.builder.get_object(c).set_sensitive(status)
 
     def onUseCustomFolderclicked(self, c_useCustomFolder):
         self.builder.get_object("btn_selectFigureFolder").set_sensitive(self.get("c_useCustomFolder"))
@@ -549,7 +551,7 @@ class PtxPrinterDialog:
             
     def onFigsChanged(self, c_includefigsfromtext):
         status = self.get("c_includefigsfromtext")
-        for c in ("c_figexclwebapp", "c_figplaceholders", "c_fighiderefs"):
+        for c in ("c_figexclwebapp", "c_fighiderefs"):
             self.builder.get_object(c).set_sensitive(status)
 
     def onInclFrontMatterChanged(self, c_inclFrontMatter):
@@ -991,8 +993,9 @@ class PtxPrinterDialog:
         else:
             self.watermarks = None
             btn_selectFigureFolder.set_tooltip_text("")
+            self.builder.get_object("c_useCustomFolder").set_active(False)
             self.builder.get_object("btn_selectFigureFolder").set_sensitive(False)
-            self.builder.get_object("c_useFiguresFolder").set_active(True)
+            # self.builder.get_object("c_useFiguresFolder").set_active(True)
 
     def onPageBorderPDFclicked(self, btn_selectPageBorderPDF):
         pageborder = self.fileChooser("Select Page Border PDF file", 
@@ -1087,7 +1090,7 @@ class PtxPrinterDialog:
                 m = re.findall(r"\\fig .*\|(.+?\....)\|(....?)\|(.+)?\|(.+)?\|(.+)?\|(\d+[\:\.]\d+([\-,]\d+)?)\\fig\*", dat)
                 if m is not None:
                     for f in m:
-                        picfname = re.sub(r"\.[Tt][Ii][Ff]",".jpg",f[0])           # Change all TIFs to JPGs
+                        picfname = re.sub(r"(?i)\.tif",".jpg",f[0])           # Change all TIFs to JPGs
                         if self.get("c_randomPicPosn"):
                             pageposn = random.choice(_picposn.get(f[1], f[1]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
                         else:
@@ -1105,7 +1108,7 @@ class PtxPrinterDialog:
                     m = re.findall(r'\\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,]\d+)?)".*\\fig\*', dat)
                     if m is not None:
                         for f in m:
-                            picfname = re.sub(r"\.[Tt][Ii][Ff]",".jpg",f[1])           # Change all TIFs to JPGs
+                            picfname = re.sub(r"(?i)\.tif",".jpg",f[1])           # Change all TIFs to JPGs
                             if self.get("c_randomPicPosn"):
                                 pageposn = random.choice(_picposn.get(f[2], f[2]))     # Randomize location of illustrations on the page (tl,tr,bl,br)
                             else:
