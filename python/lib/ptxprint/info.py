@@ -1,4 +1,4 @@
-import configparser, re, os, gi, time
+import configparser, re, os, gi #, time
 from datetime import datetime
 from shutil import copyfile
 import regex
@@ -126,8 +126,8 @@ class Info:
         "document/iffigskipmissing": ("c_skipmissingimages", lambda w,v: "true" if v else "false"),
         "document/iffigplaceholders": ("c_figplaceholders", lambda w,v :"true" if v else "false"),
         "document/iffighiderefs":   ("c_fighiderefs", lambda w,v :"true" if v else "false"),
-        "document/usefigsfolder":   ("c_useFiguresFolder", lambda w,v :"" if v else "%"),
-        "document/uselocalfigs":    ("c_useLocalFiguresFolder", lambda w,v :"" if v else "%"),
+        "document/usefigsfolder":   ("c_useLowResPics", lambda w,v :"" if v else "%"),
+        "document/uselocalfigs":    ("c_useHighResPics", lambda w,v :"" if v else "%"),
         "document/customfiglocn":   ("c_useCustomFolder", lambda w,v :"" if v else "%"),
         "document/customfigfolder": ("btn_selectFigureFolder", lambda w,v: re.sub(r"\\","/", w.customFigFolder) \
                                                                if w.customFigFolder is not None else ""),
@@ -473,13 +473,17 @@ class Info:
             if printer.get("c_figexclwebapp"):
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig ([^|]*\|){3}([aw]+)\|[^\\]*\\fig\*', flags=regex.M), ''))  # USFM2
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig [^\\]*\bloc="[aw]+"[^\\]*\\fig\*', flags=regex.M), ''))    # USFM3
-            # XeTeX doesn't handle TIFs, so rename all TIF extensions to JPGs/PNGs
-            if True:  # Ask MH: Maybe we need to give a choice to the user (either TIF>JPG, or TIF>PNG)
-                self.localChanges.append((None, regex.compile(r"(?i)\.tif\|", flags=regex.M), r".jpg|"))
+
+            # XeTeX doesn't handle TIFs, so rename all TIF extensions to JPGs
+            if printer.get("c_useLowResPics"):  # (TIF>JPG, or PNG>JPG)
+                self.localChanges.append((None, regex.compile(r"(?i)([a-z][a-z]\d{5})[abc]?\.(jpg|tif|png)", flags=regex.M), r"\1.jpg"))
+                self.localChanges.append((None, regex.compile(r"(?i)(.+)\.(jpg|tif|png)", flags=regex.M), r"\1.jpg"))
             else:
-                self.localChanges.append((None, regex.compile(r"(?i)\.tif\|", flags=regex.M), r".png|"))
+                self.localChanges.append((None, regex.compile(r"(?i)([a-z][a-z]\d{5})[abc]?\.(tif|jpg)", flags=regex.M), r"\1.jpg"))
+                self.localChanges.append((None, regex.compile(r"(?i)([a-z][a-z]\d{5})[abc]?\.png", flags=regex.M), r"\1.png"))
+                self.localChanges.append((None, regex.compile(r'(?i)\.tif("|\|)', flags=regex.M), r".jpg\1"))
+
             if printer.get("c_skipmissingimages"):
-                print("Skipping missing images is ON")
                 msngfigs = self.ListMissingPics(printer, bk)
                 if len(msngfigs):
                     for f in msngfigs: # Remove references to missing illustrations (.tif, .jpg or .png)
@@ -557,68 +561,31 @@ class Info:
         return self.localChanges
 
     def ListMissingPics(self, printer, bk):
+        piclist = []
         msngpiclist = []
         prjid = self.dict['project/id']
         prjdir = os.path.join(printer.settings_dir, prjid)
-        if printer.get("c_useFiguresFolder"):
-            for p in ("Figures", "figures"):
-                picdir = os.path.join(prjdir, p)
-                if os.path.exists(picdir):
-                    break
-        elif printer.get("c_useLocalFiguresFolder"):
-            picdir = os.path.join(prjdir, "local", "Figures")
-        elif printer.get("c_useCustomFolder"):
-            picdir = self.dict['document/customfigfolder']
-        if picdir is None or picdir == "": # shouldn't happen, but just in case!
-            print("No folder of illustrations has been specified")
-            return(msngpiclist)  # send back an empty list
-        # print("Picture Path:",picdir)
+        picdir = os.path.join(prjdir, "PrintDraft", "tmpPics")
         fname = printer.getBookFilename(bk, prjdir)
         infname = os.path.join(prjdir, fname)
         with open(infname, "r", encoding="utf-8") as inf:
             dat = inf.read()
-            # Finds USFM2-styled markup in text:
-            m = re.findall(r"\\fig .*\|(.+?\....)\|.+?\\fig\*", dat)          # Finds USFM2-styled markup in text:
-            if m is None:
-                m = re.findall(r'\\fig .*+src="(.+?\....)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text:
-            if m is not None:
-                for f in m: # Here we are changing all TIFs and PNGs to JPGs (but perhaps this should 
-                            # only happen if the user has requested to use the low-resolution images.
-                            # Otherwise .png files need to stay as PNGs - with higher quality.
-                    f = re.sub(r"(?i)\.(tif|png)", r".jpg",f)
-                    fname = os.path.join(picdir,f)
-                    if not os.path.exists(fname):
-                        msngpiclist.append(f[:-4].rstrip("AaBbCc").lower()) # this drops the quality letter A/B/C and extension
-                                                                            # so that "CN001234B.tif" just becomes "cn001234"
+            inf.close()
+            piclist += re.findall(r"(?i)\\fig .*\|(.+?\.[jtp][pin][gf])\|.+?\\fig\*", dat)     # Finds USFM2-styled markup in text:
+            piclist += re.findall(r'(?i)\\fig .+src="(.+?\.[jtp][pin][gf])" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text: 
+            piclist = [item.lower() for item in piclist]
+            print(piclist)
+            for f in piclist:
+                f = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?\.(jpg|tif|png)", r"\1.jpg",f)
+                f = re.sub(r"(?i)\.tif", r".jpg",f)   # This will pick up any non-standard filenames
+                fname = os.path.join(picdir,f)
+                if not os.path.exists(fname):
+                    msngpiclist.append(f) 
+                    # msngpiclist.append(f[:-4].lower()) # .rstrip("AaBbCc") this drops the quality letter A/B/C 
+                                                       # so that "CN001234B.tif" would just becomes "cn001234"
             if len(msngpiclist):
                 print("In {} these pics are missing:\n".format(bk),"\n".join(msngpiclist))
-                print(picdir)
-                if printer.get("c_searchSubFolders"):
-                    self.GatherPicsFromSubfolders(printer,msngpiclist)
-                
         return(msngpiclist)
-
-    def GatherPicsFromSubfolders(self, printer, basePiclist):
-        a = time.time_ns()
-        print("Now looking to gather missing files from subfolders...")
-        tmpPicpath = os.path.join(printer.working_dir, "tmpPics")
-        if not os.path.exists(tmpPicpath):
-            os.mkdir(tmpPicpath)
-        if True: # printer.get("c_preferJPGs"): # Need a checkbox to prefer .JPGs or .PNGs
-            extn2find = ".jpg"
-        else:
-            extn2find = ".png"
-        masterpiclist = []
-        picdir = self.dict['document/customfigfolder']
-        for subdir, dirs, files in os.walk(picdir):
-            for file in files:
-                filepath = subdir + os.sep + file
-                if filepath.lower().endswith(extn2find):
-                    shortname = os.path.basename(filepath)
-                    if shortname[:-4].rstrip("AaBbCc") in basePiclist:
-                        print("{}|{}|{}".format(shortname,os.path.getsize(filepath),filepath))
-                        copyfile(filepath, os.path.join(tmpPicpath, shortname))
-        print(f"Finding images took {(time.time_ns() - a) / 1000 / 1000 :.0f} ms.")
 
     def _configset(self, config, key, value):
         (sect, k) = key.split("/")

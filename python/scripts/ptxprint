@@ -4,6 +4,7 @@ import argparse, sys, os, re, subprocess
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
+from shutil import copyfile, rmtree
 
 if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
     sys.stdout = open(os.devnull, "w")
@@ -152,6 +153,10 @@ def doit(printer):
     if not os.path.exists(tmpdir):
         os.makedirs(tmpdir)
     jobs = printer.getBooks()
+
+    if printer.get("c_includeillustrations"):
+        gatherIllustrations(jobs, prjid, prjdir, printer)
+
     if printer.get("c_combine"):
         texfiles = [dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=printer.logbuffer)]
     else:
@@ -172,9 +177,7 @@ def doit(printer):
             if not printer.get("c_keepTemporaryFiles"):
                 removeTempFiles(texfiles,tmpdir,info)
     else: # if info.res != 0:
-        # it did NOT finish successfully, so help them troubleshoot what went wrong.
-        # getting the last few lines of the .log file:
-        # modal=True and/or destroy_with_parent=True
+        # it did NOT finish successfully, so help them troubleshoot what went wrong:
         dialog = Gtk.MessageDialog(parent=None, modal=True, message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK, \
             text="Error: Unable to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname))
         dialog.format_secondary_text("".join(info.loglines[-20:])+
@@ -188,6 +191,48 @@ def doit(printer):
                                     \n or turning off Illustrations, and run again...")
         dialog.run()
         dialog.destroy()
+
+def gatherIllustrations(jobs, prjid, prjdir, printer):
+    tmpPicpath = os.path.join(printer.working_dir, "tmpPics")
+    if not os.path.exists(tmpPicpath):
+        os.mkdir(tmpPicpath)
+    piclist = []
+    for bk in jobs:
+        fname = printer.getBookFilename(bk, prjdir)
+        infname = os.path.join(prjdir, fname)
+        with open(infname, "r", encoding="utf-8") as inf:
+            dat = inf.read()
+            inf.close()
+            # Ask MH: Why doesn't Atomic Grouping (?>jpg|tif|png) = non-matching group syntax work in Python's RE?
+            # Ask #2: Is there are way to to find any pictures that didn't match the standard pattern (my hack isn't 100% foolproof yet)
+            piclist += re.findall(r"(?i)\\fig .*\|([a-z][a-z]\d{5})[abc]?\.[jtp][pin][gf]\|.+?\\fig\*", dat)     # USFM2 AB01234b.ext fig files
+            piclist += re.findall(r"(?i)\\fig .*\|(.+[a-z]{2})\.[jtp][pin][gf]\|.+?\\fig\*", dat)                # USFM2 non-standard fig files
+            piclist += re.findall(r'(?i)\\fig .+src="([a-z][a-z]\d{5})[abc]?\.[jtp][pin][gf]" .+?\\fig\*', dat)  # USFM3 AB01234b.ext fig files 
+            piclist += re.findall(r'(?i)\\fig .+src="(.+[a-z]{2})\.[jtp][pin][gf]" .+?\\fig\*', dat)             # USFM3 non-standard fig files 
+    piclist = [item.lower() for item in piclist]
+    picdir = printer.customFigFolder
+    for srchdir in [picdir, os.path.join(prjdir, "local"), os.path.join(prjdir, "figures")]:
+        for subdir, dirs, files in os.walk(srchdir):
+            for file in files:
+                filepath = subdir + os.sep + file
+                if filepath.lower().endswith(".jpg") or filepath.lower().endswith(".png"):
+                    shortname = os.path.basename(filepath)
+                    origextn = shortname[-4:]
+                    basefname = shortname.lower()
+                    basefname = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?\.(jpg|png)", r"\1",basefname)
+                    basefname = re.sub(r"(?i)(.+)\.(jpg|png)", r"\1",basefname)  # This should pick up any non-standard filenames
+                    if basefname in piclist:
+                        # print("{}|{}|{} > {}".format(shortname,os.path.getsize(filepath),filepath,basefname+origextn))
+                        tmpfname = os.path.join(tmpPicpath, basefname+origextn)
+                        if not os.path.exists(tmpfname):
+                            copyfile(filepath, tmpfname)
+                        else:
+                            if printer.get("c_useLowResPics"): # we want to use the smallest available file
+                                if os.path.getsize(filepath) < os.path.getsize(tmpfname):
+                                    copyfile(filepath, tmpfname)
+                            else:                                 # we want to use the largest file available
+                                if os.path.getsize(filepath) > os.path.getsize(tmpfname):
+                                    copyfile(filepath, tmpfname)
 
 def removeTempFiles(texfiles,tmpdir,info):
     for extn in ('delayed','parlocs','notepages', 'tex','log'):
@@ -210,5 +255,12 @@ def removeTempFiles(texfiles,tmpdir,info):
             dialog.format_secondary_text("File: " + delfname)
             dialog.run()
             dialog.destroy()
-        
+    # Don't leave the Temporary illustrations around - delete the entire folder
+    tmpPicpath = os.path.join(tmpdir, "tmpPics")
+    if len(tmpPicpath) > 30: # Just to make sure we're not deleting something closer to Root!
+        try:
+            rmtree(tmpPicpath)
+        except OSError as e:
+            print("Error: %s : %s" % (dir_path, e.strerror))
+
 mainw.run(doit)

@@ -484,8 +484,8 @@ class PtxPrinterDialog:
         status = self.get("c_includeillustrations")
         self.builder.get_object("gr_IllustrationOptions").set_sensitive(status)
         # Old code can be removed later:
-        # for c in ("c_includefigsfromtext", "c_usePicList", "l_useFolder", "c_useFiguresFolder", "c_useLocalFiguresFolder", "c_useCustomFolder",
-                  # "btn_selectFigureFolder", "l_useFiguresFolder", "l_useLocalFiguresFolder", "c_searchSubFolders",
+        # for c in ("c_includefigsfromtext", "c_usePicList", "l_useFolder", "c_useLowResPics", "c_useHighResPics", "c_useCustomFolder",
+                  # "btn_selectFigureFolder", "l_useLowResPics", "l_useHighResPics", "c_searchSubFolders",
                   # "c_figexclwebapp", "c_figplaceholders", "c_fighiderefs", "c_skipmissingimages", "c_convertTIFtoPNG"): 
             # self.builder.get_object(c).set_sensitive(status)
         # if status:
@@ -662,7 +662,7 @@ class PtxPrinterDialog:
 
             # Turn Essential Settings ON
             for c in ("c_mainBodyText", "c_footnoterule",
-                      "c_includefigsfromtext", "c_skipmissingimages", "c_convertTIFtoPNG", "c_useFiguresFolder"):
+                      "c_includefigsfromtext", "c_skipmissingimages", "c_convertTIFtoPNG", "c_useLowResPics"):
                 self.builder.get_object(c).set_active(True)
             self.builder.get_object("c_hideAdvancedSettings").set_opacity(0.2)
             self.builder.get_object("c_hideAdvancedSettings").set_tooltip_text("")
@@ -991,11 +991,11 @@ class PtxPrinterDialog:
             btn_selectFigureFolder.set_tooltip_text(customFigFolder[0])
             self.builder.get_object("c_useCustomFolder").set_active(True)
         else:
-            self.watermarks = None
+            self.customFigFolder = None
             btn_selectFigureFolder.set_tooltip_text("")
             self.builder.get_object("c_useCustomFolder").set_active(False)
             self.builder.get_object("btn_selectFigureFolder").set_sensitive(False)
-            # self.builder.get_object("c_useFiguresFolder").set_active(True)
+            # self.builder.get_object("c_useLowResPics").set_active(True)
 
     def onPageBorderPDFclicked(self, btn_selectPageBorderPDF):
         pageborder = self.fileChooser("Select Page Border PDF file", 

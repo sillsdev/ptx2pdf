@@ -4400,7 +4400,7 @@ Footnotes and Cross-references.</property>
                                 <property name="valign">start</property>
                                 <property name="row_spacing">8</property>
                                 <child>
-                                  <object class="GtkRadioButton" id="c_useFiguresFolder">
+                                  <object class="GtkRadioButton" id="c_useLowResPics">
                                     <property name="label" translatable="yes">Use Low-Resolution Pictures (JPG files)</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -4416,7 +4416,7 @@ share, but the image quality will be low.</property>
                                     <property name="margin_bottom">6</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
-                                    <property name="group">c_useLocalFiguresFolder</property>
+                                    <property name="group">c_useHighResPics</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
@@ -4449,7 +4449,7 @@ without illustrations.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkRadioButton" id="c_useLocalFiguresFolder">
+                                  <object class="GtkRadioButton" id="c_useHighResPics">
                                     <property name="label" translatable="yes">Use High-Resolution Pictures (PNG files)</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -4470,7 +4470,7 @@ and must be converted to PNG or JPG first.)</property>
                                     <property name="margin_bottom">6</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
-                                    <property name="group">c_useFiguresFolder</property>
+                                    <property name="group">c_useLowResPics</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
@@ -4495,10 +4495,10 @@ and must be converted to PNG or JPG first.)</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_convertTIFtoPNG">
                                     <property name="label" translatable="yes">Convert TIFs to PNGs</property>
-                                    <property name="visible">True</property>
                                     <property name="sensitive">False</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="no_show_all">True</property>
                                     <property name="tooltip_text" translatable="yes">XeTeX is unable to use .TIF formatted illustrations
 but it can convert the .TIF files to .PNG. These will
 be generated in the same folder as the TIF files.
@@ -4640,13 +4640,14 @@ positioning of illustrations.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_useCustomFolder">
                                     <property name="label" translatable="yes">Use Pictures from
-a Specific Folder:</property>
+a Specific Folder: </property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">If this option is selected, PTXprint will scan 
 the selected folder (and all its sub-folders)
 for the required illustrations.</property>
+                                    <property name="halign">start</property>
                                     <property name="margin_left">10</property>
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="onUseCustomFolderclicked" swapped="no"/>
