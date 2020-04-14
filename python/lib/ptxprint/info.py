@@ -10,6 +10,10 @@ from ptxprint.snippets import FancyIntro, PDFx1aOutput, FancyBorders
 
 class Info:
     _mappings = {
+        "config/name":              ("cb_savedConfig", lambda w,v: w.builder.get_object("cb_savedConfig").get_active_id()),
+        "config/notes":             ("t_configNotes", lambda w,v: v or ""),
+        "config/pwd":               ("t_invisiblePassword", lambda w,v: v or ""),
+
         "project/id":               (None, lambda w,v: w.get("cb_project")),
         "project/hideadvsettings":  ("c_hideAdvancedSettings", lambda w,v: "true" if v else "false"),
         "project/keeptempfiles":    ("c_keepTemporaryFiles", lambda w,v: "true" if v else "false"),

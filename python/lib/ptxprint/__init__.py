@@ -263,9 +263,15 @@ class PtxPrinterDialog:
         self.onDestroy(btn)
 
     def onSaveConfig(self, btn):
+        self.info.update()
+        config = self.info.createConfig(self)
+        prjid = self.get("cb_project")
+        prjdir = os.path.join(self.settings_dir, prjid)
+        with open(os.path.join(prjdir, "ptxprint.cfg"), "w", encoding="utf-8") as outf:
+            config.write(outf)
         self.handleConfigFile("save")
-        
-    def onLoadConfig(self, btn):
+
+    def onSavedConfigChanged(self, cb_savedConfig):
         self.handleConfigFile("load")
         
     def onDeleteConfig(self, btn):
@@ -278,11 +284,20 @@ class PtxPrinterDialog:
         if not os.path.exists(shpath):
             os.makedirs(shpath, exist_ok = True)
         currCfgFname = os.path.join(prjdir, "ptxprint.cfg")
-        savedCfgFname = os.path.join(shpath, re.sub('[^-a-zA-Z0-9_.()]+', '', self.get("cb_savedConfig"))+".cfg")
+        savedCfgFname = os.path.join(shpath, re.sub('[^-a-zA-Z0-9_.() ]+', '', self.get("cb_savedConfig"))+".cfg")
         if action == "save":
             copyfile(currCfgFname, savedCfgFname)
         elif action == "load":
-            copyfile(savedCfgFname, currCfgFname)
+            if os.path.exists(savedCfgFname):
+                copyfile(savedCfgFname, currCfgFname)
+                self.onProjectChange(None)
+            else:
+                lockBtn = self.builder.get_object("btn_lockunlock")
+                lockBtn.set_label("Lock Config")
+                self.builder.get_object("t_invisiblePassword").set_text("")
+                self.builder.get_object("btn_saveConfig").set_sensitive(True)
+                self.builder.get_object("btn_deleteConfig").set_sensitive(True)
+                
         elif action == "del":
             try:
                 os.remove(savedCfgFname)
@@ -295,7 +310,6 @@ class PtxPrinterDialog:
 
     def onLockUnlockSavedConfig(self, btn):
         lockBtn = self.builder.get_object("btn_lockunlock")
-        # lockBtn.set_sensitive(False)
 
         dia = self.builder.get_object("dlg_password")
         response = dia.run()
@@ -305,27 +319,31 @@ class PtxPrinterDialog:
         elif response == Gtk.ResponseType.CANCEL:
             pass # Don't do anything
         else:
-            print("Other response")
+            print("Unexpected response from PW dialog")
         invPW = self.get("t_invisiblePassword")
         # print("invPW", invPW)
-        if invPW == None or invPW == "": # No existing PW, so set a new one (always successful)
+        if invPW == None or invPW == "": # No existing PW, so set a new one
             self.builder.get_object("t_invisiblePassword").set_text(pw)
-            lockBtn.set_label("Unlock Config")
-            self.builder.get_object("btn_saveConfig").set_sensitive(False)
-            self.builder.get_object("btn_deleteConfig").set_sensitive(False)
-        else: # trying to unlock the settings
+            self.onSaveConfig(None)
+        else: # try to unlock the settings by removing the settings
             if pw == invPW:
                 self.builder.get_object("t_invisiblePassword").set_text("")
-                # print("Matching password - Settings unlocked")
-                lockBtn.set_label("Lock Config")
-                self.builder.get_object("btn_saveConfig").set_sensitive(True)
-                self.builder.get_object("btn_deleteConfig").set_sensitive(True)
-            else:
-                # print("Mismatching password - cannot unlock")
-                pass # Don't do anything
+            else: # Mismatching password - Don't do anything
+                pass
         self.builder.get_object("t_password").set_text("")
         dia.hide()
 
+    def onPasswordChanged(self, t_invisiblePassword):
+        lockBtn = self.builder.get_object("btn_lockunlock")
+        if self.get("t_invisiblePassword") == "":
+            lockBtn.set_label("Lock Config")
+            self.builder.get_object("btn_saveConfig").set_sensitive(True)
+            self.builder.get_object("btn_deleteConfig").set_sensitive(True)
+        else:
+            lockBtn.set_label("Unlock Config")
+            self.builder.get_object("btn_saveConfig").set_sensitive(False)
+            self.builder.get_object("btn_deleteConfig").set_sensitive(False)
+        
     def onPrevBookClicked(self, btn_NextBook):
         bks = self.getBooks()
         ndx = 0
@@ -863,15 +881,18 @@ class PtxPrinterDialog:
             self.chapto = self.builder.get_object("ls_chapto")
             self._setchap(self.chapto, (int(self.strt) if self.strt is not None else 0), self.chs)
             self.cb_chapto.set_active_id(str(self.chs))
-        
+
     def onProjectChange(self, cb_prj):
         currprj = self.prjid
         if currprj is not None:
             if self.info is None:
                 self.info = Info(self, self.settings_dir, prjid = currprj)
             config = self.info.createConfig(self)
-            with open(os.path.join(self.settings_dir, currprj, "ptxprint.cfg"), "w", encoding="utf-8") as outf:
-                config.write(outf)
+            # MH: Why are we SAVING the [existing] config when the project changes?
+            # I'm temporarily taking this out to see what effect it has
+            # with open(os.path.join(self.settings_dir, currprj, "ptxprint.cfg"), "w", encoding="utf-8") as outf:
+                # config.write(outf)
+            # Put back in later (if needed)
         self.prjid = self.get("cb_project")
         self.ptsettings = None
         lsbooks = self.builder.get_object("ls_books")
