@@ -183,6 +183,8 @@
     <property name="default_height">300</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type_hint">dialog</property>
+    <property name="skip_taskbar_hint">True</property>
+    <property name="gravity">center</property>
     <child>
       <placeholder/>
     </child>
@@ -415,6 +417,103 @@
                     <property name="position">2</property>
                   </packing>
                 </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkDialog" id="dlg_password">
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Saved Configuration</property>
+    <property name="modal">True</property>
+    <property name="window_position">center-on-parent</property>
+    <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
+    <property name="type_hint">dialog</property>
+    <property name="skip_taskbar_hint">True</property>
+    <property name="gravity">center</property>
+    <child>
+      <placeholder/>
+    </child>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can_focus">False</property>
+            <property name="margin_left">6</property>
+            <property name="margin_right">6</property>
+            <property name="margin_top">6</property>
+            <property name="margin_bottom">6</property>
+            <property name="layout_style">end</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_left">6</property>
+            <property name="margin_right">6</property>
+            <property name="margin_top">10</property>
+            <property name="margin_bottom">10</property>
+            <property name="spacing">6</property>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Enter a password of 
+upto 16 characters to
+lock/unlock this
+saved configuration.</property>
+                <property name="label" translatable="yes">Enter Password:</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkEntry" id="t_password">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="has_focus">True</property>
+                <property name="is_focus">True</property>
+                <property name="can_default">True</property>
+                <property name="has_default">True</property>
+                <property name="tooltip_text" translatable="yes">Enter a password of 
+upto 16 characters to
+lock/unlock this
+saved configuration.</property>
+                <property name="max_length">16</property>
+                <property name="visibility">False</property>
+                <property name="invisible_char">●</property>
+                <property name="width_chars">22</property>
+                <property name="input_purpose">password</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1135,7 +1234,6 @@ PDF file (recommended).</property>
                     <child>
                       <object class="GtkGrid">
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
                         <property name="margin_left">12</property>
@@ -1157,7 +1255,7 @@ PDF file (recommended).</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton">
+                          <object class="GtkButton" id="btn_saveConfig">
                             <property name="label">gtk-save</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -1169,6 +1267,7 @@ given in the drop-down box on the left.</property>
                             <property name="margin_bottom">6</property>
                             <property name="use_stock">True</property>
                             <property name="always_show_image">True</property>
+                            <signal name="clicked" handler="onSaveConfig" swapped="no"/>
                           </object>
                           <packing>
                             <property name="left_attach">2</property>
@@ -1176,7 +1275,7 @@ given in the drop-down box on the left.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton">
+                          <object class="GtkButton" id="btn_deleteConfig">
                             <property name="label">gtk-delete</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -1188,6 +1287,7 @@ Saved Configuration immediately.</property>
                             <property name="margin_bottom">6</property>
                             <property name="use_stock">True</property>
                             <property name="always_show_image">True</property>
+                            <signal name="clicked" handler="onDeleteConfig" swapped="no"/>
                           </object>
                           <packing>
                             <property name="left_attach">3</property>
@@ -1243,9 +1343,11 @@ configuration to bring up all those settings.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkEntry">
+                          <object class="GtkEntry" id="t_configNotes">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="tooltip_text" translatable="yes">(Optional) Use this area to enter longer
+notes about the saved configuration.</property>
                             <property name="hexpand">True</property>
                           </object>
                           <packing>
@@ -1253,6 +1355,67 @@ configuration to bring up all those settings.</property>
                             <property name="top_attach">1</property>
                             <property name="width">3</property>
                             <property name="height">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="t_invisiblePassword">
+                            <property name="sensitive">False</property>
+                            <property name="can_focus">False</property>
+                            <property name="tooltip_text" translatable="yes">Dots show that a password
+has been set for the saved
+configuration.</property>
+                            <property name="halign">center</property>
+                            <property name="editable">False</property>
+                            <property name="max_length">16</property>
+                            <property name="visibility">False</property>
+                            <property name="has_frame">False</property>
+                            <property name="invisible_char">●</property>
+                            <property name="width_chars">16</property>
+                            <property name="caps_lock_warning">False</property>
+                            <property name="placeholder_text" translatable="yes">No Password Set</property>
+                            <property name="input_purpose">password</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">4</property>
+                            <property name="top_attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="c_lockUnlockSavedConfig">
+                            <property name="label" translatable="yes">Un/Lock this
+Saved Config</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="draw_indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="btn_lockunlock">
+                            <property name="label" translatable="yes">Lock Config</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">When Config is unlocked:
+Click to set a password to
+prevent changes being saved
+or deleted.
+
+When Config is locked:
+Click to enter a password to
+allow changes to be saved
+or configuration to be deleted.</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
+                            <signal name="clicked" handler="onLockUnlockSavedConfig" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left_attach">4</property>
+                            <property name="top_attach">0</property>
                           </packing>
                         </child>
                         <child>
@@ -3155,7 +3318,7 @@ missing in primary font:</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkEntry">
+                                      <object class="GtkEntry" id="t_missingChars">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                       </object>

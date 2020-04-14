@@ -100,6 +100,11 @@ class PtxPrinterDialog:
             Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
             Gtk.STOCK_OK, Gtk.ResponseType.OK)
 
+        dia = self.builder.get_object("dlg_password")
+        dia.add_buttons(
+            Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+            Gtk.STOCK_APPLY, Gtk.ResponseType.APPLY)
+
         self.fileViews = []
         for i,k in enumerate(["FinalSFM", "PicList", "AdjList", "TeXfile", "XeTeXlog", "Settings"]):
             buf = GtkSource.Buffer()
@@ -256,6 +261,51 @@ class PtxPrinterDialog:
 
     def onCancel(self, btn):
         self.onDestroy(btn)
+
+    def onSaveConfig(self, btn):
+        pass
+
+    def onDeleteConfig(self, btn):
+        pass
+
+    def onApplyPassword(self, btn):
+        pass
+
+    def onCancelPassword(self, btn):
+        pass
+
+    def onLockUnlockSavedConfig(self, btn):
+        lockBtn = self.builder.get_object("btn_lockunlock")
+        # lockBtn.set_sensitive(False)
+
+        dia = self.builder.get_object("dlg_password")
+        response = dia.run()
+        if response == Gtk.ResponseType.APPLY:
+            pw = self.get("t_password")
+            print("Apply", pw)
+        elif response == Gtk.ResponseType.CANCEL:
+            print("Cancelled")
+        else:
+            print("Other response")
+        invPW = self.get("t_invisiblePassword")
+        print("invPW", invPW)
+        if invPW == None or invPW == "": # No existing PW, so set a new one (always successful)
+            self.builder.get_object("t_invisiblePassword").set_text(pw)
+            lockBtn.set_label("Unlock Config")
+            self.builder.get_object("btn_saveConfig").set_sensitive(False)
+            self.builder.get_object("btn_deleteConfig").set_sensitive(False)
+        else: # trying to unlock the settings
+            if pw == invPW:
+                self.builder.get_object("t_invisiblePassword").set_text("")
+                print("Matching password - Settings unlocked")
+                lockBtn.set_label("Lock Config")
+                self.builder.get_object("btn_saveConfig").set_sensitive(True)
+                self.builder.get_object("btn_deleteConfig").set_sensitive(True)
+            else:
+                print("Mismatching password - cannot unlock")
+        self.builder.get_object("t_password").set_text("")
+        dia.hide()
+        
 
     def onPrevBookClicked(self, btn_NextBook):
         bks = self.getBooks()
