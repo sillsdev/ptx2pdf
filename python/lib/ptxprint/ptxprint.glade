@@ -476,6 +476,7 @@
           <object class="GtkBox">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="halign">center</property>
             <property name="margin_left">6</property>
             <property name="margin_right">6</property>
             <property name="margin_top">10</property>
@@ -505,6 +506,7 @@ saved configuration.</property>
                 <property name="is_focus">True</property>
                 <property name="can_default">True</property>
                 <property name="has_default">True</property>
+                <property name="receives_default">True</property>
                 <property name="tooltip_text" translatable="yes">Enter a password of 
 upto 16 characters to
 lock/unlock this
@@ -1320,7 +1322,7 @@ configuration to bring up all those settings.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="halign">start</property>
-                                <property name="width_chars">38</property>
+                                <property name="width_chars">35</property>
                               </object>
                             </child>
                           </object>
@@ -1381,20 +1383,6 @@ configuration.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkCheckButton" id="c_lockUnlockSavedConfig">
-                            <property name="label" translatable="yes">Un/Lock this
-Saved Config</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">False</property>
-                            <property name="draw_indicator">True</property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">0</property>
-                            <property name="top_attach">2</property>
-                          </packing>
-                        </child>
-                        <child>
                           <object class="GtkButton" id="btn_lockunlock">
                             <property name="label" translatable="yes">Lock Config</property>
                             <property name="visible">True</property>
@@ -1417,6 +1405,9 @@ or configuration to be deleted.</property>
                             <property name="left_attach">4</property>
                             <property name="top_attach">0</property>
                           </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
                         </child>
                         <child>
                           <placeholder/>

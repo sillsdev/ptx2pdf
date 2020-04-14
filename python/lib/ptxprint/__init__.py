@@ -2,6 +2,7 @@
 
 import sys, os, re, regex, gi, random, subprocess #, collections, pprint
 gi.require_version('Gtk', '3.0')
+from shutil import copyfile
 from gi.repository import Gtk, Pango
 # gi.require_version('GtkSource', '4') 
 from gi.repository import GtkSource
@@ -250,7 +251,6 @@ class PtxPrinterDialog:
 
     def onOK(self, btn):
         if self.prjid is not None:
-            # self.onSaveEdits(btn)  # this was causing NOTHING to happen if the Viewer tab wasn't on a saveable item.
             self.callback(self)
         else:
             dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
@@ -263,16 +263,35 @@ class PtxPrinterDialog:
         self.onDestroy(btn)
 
     def onSaveConfig(self, btn):
-        pass
-
+        self.handleConfigFile("save")
+        
+    def onLoadConfig(self, btn):
+        self.handleConfigFile("load")
+        
     def onDeleteConfig(self, btn):
-        pass
+        self.handleConfigFile("del")
 
-    def onApplyPassword(self, btn):
-        pass
-
-    def onCancelPassword(self, btn):
-        pass
+    def handleConfigFile(self, action):
+        prjid = self.get("cb_project")
+        prjdir = os.path.join(self.settings_dir, prjid)
+        shpath = os.path.join(prjdir, "shared", "PTXprint")
+        if not os.path.exists(shpath):
+            os.makedirs(shpath, exist_ok = True)
+        currCfgFname = os.path.join(prjdir, "ptxprint.cfg")
+        savedCfgFname = os.path.join(shpath, re.sub('[^-a-zA-Z0-9_.()]+', '', self.get("cb_savedConfig"))+".cfg")
+        if action == "save":
+            copyfile(currCfgFname, savedCfgFname)
+        elif action == "load":
+            copyfile(savedCfgFname, currCfgFname)
+        elif action == "del":
+            try:
+                os.remove(savedCfgFname)
+            except OSError:
+                dialog = Gtk.MessageDialog(parent=None, modal=True, message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
+                    text="Could not find Saved Configuration file.")
+                dialog.format_secondary_text("File: " + savedCfgFname)
+                dialog.run()
+                dialog.destroy()
 
     def onLockUnlockSavedConfig(self, btn):
         lockBtn = self.builder.get_object("btn_lockunlock")
@@ -282,13 +301,13 @@ class PtxPrinterDialog:
         response = dia.run()
         if response == Gtk.ResponseType.APPLY:
             pw = self.get("t_password")
-            print("Apply", pw)
+            # print("Apply", pw)
         elif response == Gtk.ResponseType.CANCEL:
-            print("Cancelled")
+            pass # Don't do anything
         else:
             print("Other response")
         invPW = self.get("t_invisiblePassword")
-        print("invPW", invPW)
+        # print("invPW", invPW)
         if invPW == None or invPW == "": # No existing PW, so set a new one (always successful)
             self.builder.get_object("t_invisiblePassword").set_text(pw)
             lockBtn.set_label("Unlock Config")
@@ -297,15 +316,15 @@ class PtxPrinterDialog:
         else: # trying to unlock the settings
             if pw == invPW:
                 self.builder.get_object("t_invisiblePassword").set_text("")
-                print("Matching password - Settings unlocked")
+                # print("Matching password - Settings unlocked")
                 lockBtn.set_label("Lock Config")
                 self.builder.get_object("btn_saveConfig").set_sensitive(True)
                 self.builder.get_object("btn_deleteConfig").set_sensitive(True)
             else:
-                print("Mismatching password - cannot unlock")
+                # print("Mismatching password - cannot unlock")
+                pass # Don't do anything
         self.builder.get_object("t_password").set_text("")
         dia.hide()
-        
 
     def onPrevBookClicked(self, btn_NextBook):
         bks = self.getBooks()
