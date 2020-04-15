@@ -70,6 +70,7 @@ class PtxPrinterDialog:
         self.addCR("cb_blendedXrefCaller", 0)
         self.addCR("cb_glossaryMarkupStyle", 0)
         self.addCR("cb_savedConfig", 0)
+        self.addCR("cb_configs", 0)
         # self.addCR("cb_diglotPriProject", 0)
         # self.addCR("cb_diglotSecProject", 0)
 
@@ -262,6 +263,18 @@ class PtxPrinterDialog:
     def onCancel(self, btn):
         self.onDestroy(btn)
 
+    def onSavedConfigChanged(self, cb_savedConfig):
+        self.handleConfigFile("load")
+        # tree_iter = cb_savedConfig.get_active_iter()
+        # if tree_iter is not None:
+            # model = cb_savedConfig.get_model()
+            # row_id, name = model[tree_iter][:2]
+            # print("Selected: ID={}, name={}".format(row_id, name))
+            # self.handleConfigFile("load")
+        # else:
+            # entry = cb_savedConfig.get_child()
+            # print("Entered: {}".format(entry.get_text()))
+            
     def onSaveConfig(self, btn):
         self.info.update()
         config = self.info.createConfig(self)
@@ -271,9 +284,6 @@ class PtxPrinterDialog:
             config.write(outf)
         self.handleConfigFile("save")
 
-    def onSavedConfigChanged(self, cb_savedConfig):
-        self.handleConfigFile("load")
-        
     def onDeleteConfig(self, btn):
         self.handleConfigFile("del")
 
@@ -284,9 +294,11 @@ class PtxPrinterDialog:
         if not os.path.exists(shpath):
             os.makedirs(shpath, exist_ok = True)
         currCfgFname = os.path.join(prjdir, "ptxprint.cfg")
-        savedCfgFname = os.path.join(shpath, re.sub('[^-a-zA-Z0-9_.() ]+', '', self.get("cb_savedConfig"))+".cfg")
+        cfgName = re.sub('[^-a-zA-Z0-9_() ]+', '', self.get("cb_savedConfig"))
+        savedCfgFname = os.path.join(shpath, cfgName + ".cfg")
         if action == "save":
             copyfile(currCfgFname, savedCfgFname)
+            self.builder.get_object("cb_savedConfig").prepend_text(cfgName)
         elif action == "load":
             if os.path.exists(savedCfgFname):
                 copyfile(savedCfgFname, currCfgFname)
@@ -301,6 +313,8 @@ class PtxPrinterDialog:
         elif action == "del":
             try:
                 os.remove(savedCfgFname)
+                # self.builder.get_object("cb_savedConfig").remove(curr_index_item) # but how to get this?
+                self.updateSavedConfigList()
             except OSError:
                 dialog = Gtk.MessageDialog(parent=None, modal=True, message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
                     text="Could not find Saved Configuration file.")
@@ -946,7 +960,20 @@ class PtxPrinterDialog:
         self.setEntryBoxFont()
         self.onDiglotDimensionsChanged(None)
         self.updateDialogTitle()
+        self.updateSavedConfigList()
         
+    def updateSavedConfigList(self):
+        self.cb_savedConfig.remove_all()
+        savedConfig_list = []
+        prjdir = os.path.join(self.settings_dir, self.prjid)
+        shpath = os.path.join(prjdir, "shared", "PTXprint")
+        if os.path.exists(shpath):
+            savedConfig_list = [f[:-4] for f in os.listdir(shpath) if os.path.isfile(os.path.join(shpath, f)) and f.endswith('.cfg')]
+        # print("Saved Configurations:", savedConfig_list)
+        for cfgName in savedConfig_list:
+            self.cb_savedConfig.append_text(cfgName)
+        self.cb_savedConfig.set_active(0)
+
     def updateDialogTitle(self):
         prjid = "  -  " + self.get("cb_project")
         bks = self.getBooks()

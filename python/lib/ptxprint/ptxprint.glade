@@ -620,6 +620,23 @@ saved configuration.</property>
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="ls_configs">
+    <columns>
+      <!-- column-name Saved Config -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Default</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Regular</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Double-Spaced A4 large print</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="ls_digits">
     <columns>
       <!-- column-name digitscript -->
@@ -1247,6 +1264,15 @@ PDF file (recommended).</property>
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="tooltip_text" translatable="yes">Type a name to save the current configuration
+and then click the Save button to re-use it later.
+When the Paratext project is shared through
+Send/Recv, these saved configurations will be
+also made available to other PTXprint users of
+the same Paratext project.
+
+Alternatively, select a previously-saved
+configuration to retrieve those settings.</property>
                             <property name="halign">end</property>
                             <property name="margin_left">6</property>
                             <property name="label" translatable="yes">Saved Configuration: </property>
@@ -1300,28 +1326,31 @@ Saved Configuration immediately.</property>
                           <object class="GtkComboBoxText" id="cb_savedConfig">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">Type a name for the current configuration
-and then click the Save button to keep it.
+                            <property name="tooltip_text" translatable="yes">Type a name to save the current configuration
+and then click the Save button to re-use it later.
+When the Paratext project is shared through
+Send/Recv, these saved configurations will be
+also made available to other PTXprint users of
+the same Paratext project.
 
 Alternatively, select a previously-saved
-configuration to bring up all those settings.</property>
+configuration to retrieve those settings.</property>
                             <property name="halign">start</property>
                             <property name="margin_top">6</property>
                             <property name="margin_bottom">6</property>
                             <property name="active">0</property>
                             <property name="has_entry">True</property>
                             <property name="active_id">0</property>
-                            <items>
-                              <item id="0" translatable="yes">Regular Layout</item>
-                              <item id="1" translatable="yes">Double-spaced Checking</item>
-                              <item id="2" translatable="yes">Pictures and Footnotes</item>
-                              <item id="3" translatable="yes">Without Ch &amp; Vs Numbers</item>
-                            </items>
                             <signal name="changed" handler="onSavedConfigChanged" swapped="no"/>
                             <child internal-child="entry">
                               <object class="GtkEntry">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="tooltip_text" translatable="yes">Enter a name for the configuration to be saved as.
+
+Note that at present, only Roman/Latin names
+are supported using: a-z A-Z 0-9 and spaces,
+parentheses, underscores and hyphens.</property>
                                 <property name="halign">start</property>
                                 <property name="width_chars">35</property>
                               </object>
