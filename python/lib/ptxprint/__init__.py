@@ -70,7 +70,6 @@ class PtxPrinterDialog:
         self.addCR("cb_blendedXrefCaller", 0)
         self.addCR("cb_glossaryMarkupStyle", 0)
         self.addCR("cb_savedConfig", 0)
-        self.addCR("cb_configs", 0)
         # self.addCR("cb_diglotPriProject", 0)
         # self.addCR("cb_diglotSecProject", 0)
 
@@ -160,7 +159,7 @@ class PtxPrinterDialog:
         self.builder.get_object("fr_fallbackFont").set_sensitive(value)
 
     def onRevertSettingsClicked(self, btn):
-        self.onProjectChange(None)
+        self.updateProjectSettings(False)
         
     def addCR(self, name, index):
         v = self.builder.get_object(name)
@@ -265,15 +264,6 @@ class PtxPrinterDialog:
 
     def onSavedConfigChanged(self, cb_savedConfig):
         self.handleConfigFile("load")
-        # tree_iter = cb_savedConfig.get_active_iter()
-        # if tree_iter is not None:
-            # model = cb_savedConfig.get_model()
-            # row_id, name = model[tree_iter][:2]
-            # print("Selected: ID={}, name={}".format(row_id, name))
-            # self.handleConfigFile("load")
-        # else:
-            # entry = cb_savedConfig.get_child()
-            # print("Entered: {}".format(entry.get_text()))
             
     def onSaveConfig(self, btn):
         self.info.update()
@@ -294,48 +284,61 @@ class PtxPrinterDialog:
         if not os.path.exists(shpath):
             os.makedirs(shpath, exist_ok = True)
         currCfgFname = os.path.join(prjdir, "ptxprint.cfg")
-        cfgName = re.sub('[^-a-zA-Z0-9_() ]+', '', self.get("cb_savedConfig"))
-        savedCfgFname = os.path.join(shpath, cfgName + ".cfg")
-        if action == "save":
-            copyfile(currCfgFname, savedCfgFname)
-            self.builder.get_object("cb_savedConfig").prepend_text(cfgName)
-        elif action == "load":
-            if os.path.exists(savedCfgFname):
-                copyfile(savedCfgFname, currCfgFname)
-                self.onProjectChange(None)
-            else:
-                lockBtn = self.builder.get_object("btn_lockunlock")
-                lockBtn.set_label("Lock Config")
-                self.builder.get_object("t_invisiblePassword").set_text("")
-                self.builder.get_object("btn_saveConfig").set_sensitive(True)
-                self.builder.get_object("btn_deleteConfig").set_sensitive(True)
-                
-        elif action == "del":
-            try:
-                os.remove(savedCfgFname)
-                # self.builder.get_object("cb_savedConfig").remove(curr_index_item) # but how to get this?
-                self.updateSavedConfigList()
-            except OSError:
-                dialog = Gtk.MessageDialog(parent=None, modal=True, message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
-                    text="Could not find Saved Configuration file.")
-                dialog.format_secondary_text("File: " + savedCfgFname)
-                dialog.run()
-                dialog.destroy()
+        cfgName = re.sub('[^-a-zA-Z0-9_() ]+', '', self.get("cb_savedConfig")).strip(" ")
+        if len(cfgName) > 0: # no point dealing with just a file called ".cfg"
+            savedCfgFname = os.path.join(shpath, cfgName + ".cfg")
+            if action == "save":
+                if not os.path.exists(savedCfgFname):
+                    self.builder.get_object("cb_savedConfig").prepend_text(cfgName)
+                copyfile(currCfgFname, savedCfgFname)
+            elif action == "load":
+                if os.path.exists(savedCfgFname):
+                    copyfile(savedCfgFname, currCfgFname)
+                    self.updateProjectSettings(True)
+                else:
+                    lockBtn = self.builder.get_object("btn_lockunlock")
+                    lockBtn.set_label("Lock Config")
+                    self.builder.get_object("t_invisiblePassword").set_text("")
+                    self.builder.get_object("btn_saveConfig").set_sensitive(True)
+                    self.builder.get_object("btn_deleteConfig").set_sensitive(True)
+            elif action == "del":
+                try:
+                    os.remove(savedCfgFname)
+                    self.updateSavedConfigList()
+                except OSError:
+                    dialog = Gtk.MessageDialog(parent=None, modal=True, message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
+                        text="Could not find Saved Configuration file.")
+                    dialog.format_secondary_text("File: " + savedCfgFname)
+                    dialog.run()
+                    dialog.destroy()
+
+    def updateSavedConfigList(self):
+        self.cb_savedConfig.remove_all()
+        savedConfigs = []
+        prjdir = os.path.join(self.settings_dir, self.prjid)
+        shpath = os.path.join(prjdir, "shared", "PTXprint")
+        if os.path.exists(shpath): # Get the list of Saved Config files (without the .cfg)
+            savedConfigs = [f[:-4] for f in os.listdir(shpath) if os.path.isfile(os.path.join(shpath, f)) and f.endswith('.cfg')]
+        if len(savedConfigs):
+            # print("Saved Configurations:", savedConfigs)
+            for cfgName in sorted(savedConfigs):
+                self.cb_savedConfig.append_text(cfgName)
+            self.cb_savedConfig.set_active(0)
+        else:
+            self.builder.get_object("t_savedConfig").set_text("")
+            self.builder.get_object("t_configNotes").set_text("")
 
     def onLockUnlockSavedConfig(self, btn):
         lockBtn = self.builder.get_object("btn_lockunlock")
-
         dia = self.builder.get_object("dlg_password")
         response = dia.run()
         if response == Gtk.ResponseType.APPLY:
             pw = self.get("t_password")
-            # print("Apply", pw)
         elif response == Gtk.ResponseType.CANCEL:
             pass # Don't do anything
         else:
             print("Unexpected response from PW dialog")
         invPW = self.get("t_invisiblePassword")
-        # print("invPW", invPW)
         if invPW == None or invPW == "": # No existing PW, so set a new one
             self.builder.get_object("t_invisiblePassword").set_text(pw)
             self.onSaveConfig(None)
@@ -350,13 +353,13 @@ class PtxPrinterDialog:
     def onPasswordChanged(self, t_invisiblePassword):
         lockBtn = self.builder.get_object("btn_lockunlock")
         if self.get("t_invisiblePassword") == "":
+            status = True
             lockBtn.set_label("Lock Config")
-            self.builder.get_object("btn_saveConfig").set_sensitive(True)
-            self.builder.get_object("btn_deleteConfig").set_sensitive(True)
         else:
+            status = False
             lockBtn.set_label("Unlock Config")
-            self.builder.get_object("btn_saveConfig").set_sensitive(False)
-            self.builder.get_object("btn_deleteConfig").set_sensitive(False)
+        for c in ["btn_saveConfig", "btn_deleteConfig", "t_configNotes"]:
+            self.builder.get_object(c).set_sensitive(status)
         
     def onPrevBookClicked(self, btn_NextBook):
         bks = self.getBooks()
@@ -395,7 +398,11 @@ class PtxPrinterDialog:
     def onGenerateClicked(self, btn):
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
         if pg == 1: # PicList
-            self.GeneratePicList()
+            bks2gen = self.getBooks()
+            if not self.get('c_multiplebooks') and self.get("cb_examineBook") != bks2gen[0]: 
+                self.GeneratePicList([self.get("cb_examineBook")])
+            else:
+                self.GeneratePicList(bks2gen)
         elif pg == 2: # AdjList
             self.GenerateAdjList()
         self.onViewerChangePage(None,None,pg)
@@ -419,7 +426,7 @@ class PtxPrinterDialog:
             bk = bks[0]
             self.builder.get_object("cb_examineBook").set_active_id(bk)
         for o in ("l_examineBook", "btn_PrevBook", "cb_examineBook", "btn_NextBook", "btn_Generate"):
-            self.builder.get_object(o).set_sensitive(pgnum <= 2)
+            self.builder.get_object(o).set_sensitive( 0 < pgnum <= 2)
 
         fndict = {0 : ("", ""),     1 : ("PicLists", ".piclist"), 2 : ("AdjLists", ".adj"), \
                   3 : ("", ".tex"), 4 : ("", ".log")}
@@ -584,15 +591,6 @@ class PtxPrinterDialog:
     def onUseIllustrationsClicked(self, c_includeillustrations):
         status = self.get("c_includeillustrations")
         self.builder.get_object("gr_IllustrationOptions").set_sensitive(status)
-        # Old code can be removed later:
-        # for c in ("c_includefigsfromtext", "c_usePicList", "l_useFolder", "c_useLowResPics", "c_useHighResPics", "c_useCustomFolder",
-                  # "btn_selectFigureFolder", "l_useLowResPics", "l_useHighResPics", "c_searchSubFolders",
-                  # "c_figexclwebapp", "c_figplaceholders", "c_fighiderefs", "c_skipmissingimages", "c_convertTIFtoPNG"): 
-            # self.builder.get_object(c).set_sensitive(status)
-        # if status:
-            # status = self.get("c_includefigsfromtext")
-            # for c in ("c_figexclwebapp", "c_figplaceholders", "c_fighiderefs"):
-                # self.builder.get_object(c).set_sensitive(status)
 
     def onUseCustomFolderclicked(self, c_useCustomFolder):
         self.builder.get_object("btn_selectFigureFolder").set_sensitive(self.get("c_useCustomFolder"))
@@ -652,7 +650,7 @@ class PtxPrinterDialog:
             
     def onFigsChanged(self, c_includefigsfromtext):
         status = self.get("c_includefigsfromtext")
-        for c in ("c_figexclwebapp", "c_fighiderefs"):
+        for c in ("c_figexclwebapp", "c_fighiderefs", "c_skipmissingimages"):
             self.builder.get_object(c).set_sensitive(status)
 
     def onInclFrontMatterChanged(self, c_inclFrontMatter):
@@ -742,7 +740,7 @@ class PtxPrinterDialog:
         self.builder.get_object("c_prettyIntroOutline").set_active(False)
 
     def onUsePTmacrosClicked(self, c_usePTmacros):
-        self.onProjectChange(None)
+        self.updateProjectSettings(False)
         status = self.get("c_usePTmacros")
         for c in ("c_variableLineSpacing", "s_linespacingmin", "s_linespacingmax", "l_min", "l_max",
                   "s_colgutteroffset", "l_colgutteroffset", "c_marginalverses", "s_columnShift"):
@@ -897,6 +895,9 @@ class PtxPrinterDialog:
             self.cb_chapto.set_active_id(str(self.chs))
 
     def onProjectChange(self, cb_prj):
+        self.updateProjectSettings(False)
+        
+    def updateProjectSettings(self, LoadSavedConfig = False):
         currprj = self.prjid
         if currprj is not None:
             if self.info is None:
@@ -960,19 +961,8 @@ class PtxPrinterDialog:
         self.setEntryBoxFont()
         self.onDiglotDimensionsChanged(None)
         self.updateDialogTitle()
-        self.updateSavedConfigList()
-        
-    def updateSavedConfigList(self):
-        self.cb_savedConfig.remove_all()
-        savedConfig_list = []
-        prjdir = os.path.join(self.settings_dir, self.prjid)
-        shpath = os.path.join(prjdir, "shared", "PTXprint")
-        if os.path.exists(shpath):
-            savedConfig_list = [f[:-4] for f in os.listdir(shpath) if os.path.isfile(os.path.join(shpath, f)) and f.endswith('.cfg')]
-        # print("Saved Configurations:", savedConfig_list)
-        for cfgName in savedConfig_list:
-            self.cb_savedConfig.append_text(cfgName)
-        self.cb_savedConfig.set_active(0)
+        if not LoadSavedConfig:
+            self.updateSavedConfigList()
 
     def updateDialogTitle(self):
         prjid = "  -  " + self.get("cb_project")
@@ -1177,15 +1167,15 @@ class PtxPrinterDialog:
             # self.builder.get_object("btn_selectXyzPDF").set_sensitive(False)
             # self.builder.get_object("c_inclXyz").set_active(False)
 
-    def GeneratePicList(self):
+    def GeneratePicList(self, booklist):
         # Format of lines in pic-list file: BBB C.V desc|file|size|loc|copyright|caption|ref
-        # MRK 1.16 fishermen...catching fish with a net.|hk00207b.png|span|b||Jesus calling the disciples to follow him.|1.16
+        # MRK 1.16 fishermen...catching fish with a net.|hk00207.png|span|b||Jesus calling the disciples to follow him.|1.16
         _picposn = {
             "col":      ("tl", "tr", "bl", "br"),
             "span":     ("t", "b")
         }
         existingFilelist = []
-        for bk in self.getBooks():
+        for bk in booklist:
             prjid = self.get("cb_project")
             prjdir = os.path.join(self.settings_dir, self.prjid)
             fname = self.getBookFilename(bk, prjid)
@@ -1200,14 +1190,23 @@ class PtxPrinterDialog:
                 # Finds USFM2-styled markup in text:
                 #                0         1       2     3     4              5       
                 # \\fig .*\|(.+?\....)\|(....?)\|(.*)\|(.*)\|(.+?)\|(\d+[:.]\d+([-,]\d+)?)\\fig\*
-                # \fig |CN01684C.jpg|col|||key-kālk arsi manvan yēsunaga tarval|9:2\fig*
+                # \fig |CN01684.jpg|col|||key-kālk arsi manvan yēsunaga tarval|9:2\fig*
                 #           0         1  2 3          4                          5  
                 # BKN \5 \|\0\|\1\|tr\|\|\4\|\5
-                # MAT 9.2 bringing the paralyzed man to Jesus|CN01684C.jpg|col|tr||key-kālk arsi manvan yēsunaga tarval|9:2
+                # MAT 9.2 bringing the paralyzed man to Jesus|CN01684.jpg|col|tr||key-kālk arsi manvan yēsunaga tarval|9:2
                 m = re.findall(r"\\fig .*\|(.+?\....)\|(....?)\|(.+)?\|(.+)?\|(.+)?\|(\d+[\:\.]\d+([\-,]\d+)?)\\fig\*", dat)
                 if m is not None:
                     for f in m:
-                        picfname = re.sub(r"(?i)\.tif",".jpg",f[0])           # Change all TIFs to JPGs
+                        # XeTeX doesn't handle TIFs, so rename all TIF extensions to JPGs
+                        picfname = f[0]
+                        if self.get("c_useLowResPics"):  # (TIF>JPG, or PNG>JPG)
+                            # Change all TIFs to JPGs
+                            picfname = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?\.(jpg|tif|png)", r"\1.jpg",picfname)
+                            picfname = re.sub(r"(?i)(.+)\.(jpg|tif|png)", r"\1.jpg",picfname)
+                        else:
+                            picfname = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?\.(tif|jpg)", r"\1.jpg",picfname)
+                            picfname = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?\.png", r"\1.png",picfname)
+                            picfname = re.sub(r'(?i)\.tif("|\|)', r".jpg\1",picfname)
                         if self.get("c_randomPicPosn"):
                             pageposn = random.choice(_picposn.get(f[1], f[1]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
                         else:
@@ -1218,14 +1217,23 @@ class PtxPrinterDialog:
                     # (Q: How to handle any additional/non-standard xyz="data" ? Will the .* before \\fig\* take care of it adequately?)
                     #         0              1               2                  3      [4]
                     # \\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,]\d+)?)".*\\fig\*
-                    # \fig hāgartun saṅga dūtal vaḍkval|src="CO00659B.TIF" size="span" ref="21:16"\fig*
+                    # \fig hāgartun saṅga dūtal vaḍkval|src="CO00659.TIF" size="span" ref="21:16"\fig*
                     #                   0                         1                2          3  [4]
                     # BKN \3 \|\1\|\2\|tr\|\|\0\|\3
-                    # GEN 21.16 an angel speaking to Hagar|CO00659B.TIF|span|t||hāgartun saṅga dūtal vaḍkval|21:16
+                    # GEN 21.16 an angel speaking to Hagar|CO00659.TIF|span|t||hāgartun saṅga dūtal vaḍkval|21:16
                     m = re.findall(r'\\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,]\d+)?)".*\\fig\*', dat)
                     if m is not None:
                         for f in m:
-                            picfname = re.sub(r"(?i)\.tif",".jpg",f[1])           # Change all TIFs to JPGs
+                            # XeTeX doesn't handle TIFs, so rename all TIF extensions to JPGs
+                            picfname = f[1]
+                            if self.get("c_useLowResPics"):  # (TIF>JPG, or PNG>JPG)
+                                # Change all TIFs to JPGs
+                                picfname = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?\.(jpg|tif|png)", r"\1.jpg",picfname)
+                                picfname = re.sub(r"(?i)(.+)\.(jpg|tif|png)", r"\1.jpg",picfname)
+                            else:
+                                picfname = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?\.(tif|jpg)", r"\1.jpg",picfname)
+                                picfname = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?\.png", r"\1.png",picfname)
+                                picfname = re.sub(r'(?i)\.tif("|\|)', r".jpg\1",picfname)
                             if self.get("c_randomPicPosn"):
                                 pageposn = random.choice(_picposn.get(f[2], f[2]))     # Randomize location of illustrations on the page (tl,tr,bl,br)
                             else:

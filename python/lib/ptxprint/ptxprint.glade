@@ -620,23 +620,6 @@ saved configuration.</property>
       </row>
     </data>
   </object>
-  <object class="GtkListStore" id="ls_configs">
-    <columns>
-      <!-- column-name Saved Config -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Default</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Regular</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Double-Spaced A4 large print</col>
-      </row>
-    </data>
-  </object>
   <object class="GtkListStore" id="ls_digits">
     <columns>
       <!-- column-name digitscript -->
@@ -990,6 +973,8 @@ and produce a PDF with the settings specified.</property>
                           <object class="GtkAlignment">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="margin_top">4</property>
+                            <property name="margin_bottom">10</property>
                             <property name="left_padding">12</property>
                             <child>
                               <object class="GtkBox">
@@ -1251,197 +1236,222 @@ PDF file (recommended).</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkGrid">
+                      <object class="GtkFrame">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="halign">start</property>
-                        <property name="margin_left">12</property>
-                        <property name="margin_right">12</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
                         <property name="margin_top">6</property>
                         <property name="margin_bottom">6</property>
-                        <property name="column_spacing">6</property>
+                        <property name="label_xalign">0.019999999552965164</property>
                         <child>
-                          <object class="GtkLabel">
+                          <object class="GtkAlignment">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">Type a name to save the current configuration
-and then click the Save button to re-use it later.
-When the Paratext project is shared through
-Send/Recv, these saved configurations will be
-also made available to other PTXprint users of
-the same Paratext project.
-
-Alternatively, select a previously-saved
-configuration to retrieve those settings.</property>
-                            <property name="halign">end</property>
-                            <property name="margin_left">6</property>
-                            <property name="label" translatable="yes">Saved Configuration: </property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">0</property>
-                            <property name="top_attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkButton" id="btn_saveConfig">
-                            <property name="label">gtk-save</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">True</property>
-                            <property name="tooltip_text" translatable="yes">Save the current settings with the name
-given in the drop-down box on the left.</property>
-                            <property name="halign">start</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="use_stock">True</property>
-                            <property name="always_show_image">True</property>
-                            <signal name="clicked" handler="onSaveConfig" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="left_attach">2</property>
-                            <property name="top_attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkButton" id="btn_deleteConfig">
-                            <property name="label">gtk-delete</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">True</property>
-                            <property name="tooltip_text" translatable="yes">Delete the currently selected
-Saved Configuration immediately.</property>
-                            <property name="halign">start</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="use_stock">True</property>
-                            <property name="always_show_image">True</property>
-                            <signal name="clicked" handler="onDeleteConfig" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="left_attach">3</property>
-                            <property name="top_attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkComboBoxText" id="cb_savedConfig">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">Type a name to save the current configuration
-and then click the Save button to re-use it later.
-When the Paratext project is shared through
-Send/Recv, these saved configurations will be
-also made available to other PTXprint users of
-the same Paratext project.
-
-Alternatively, select a previously-saved
-configuration to retrieve those settings.</property>
-                            <property name="halign">start</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="active">0</property>
-                            <property name="has_entry">True</property>
-                            <property name="active_id">0</property>
-                            <signal name="changed" handler="onSavedConfigChanged" swapped="no"/>
-                            <child internal-child="entry">
-                              <object class="GtkEntry">
+                            <property name="left_padding">12</property>
+                            <child>
+                              <object class="GtkGrid">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="tooltip_text" translatable="yes">Enter a name for the configuration to be saved as.
+                                <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="margin_top">10</property>
+                                <property name="margin_bottom">12</property>
+                                <property name="column_spacing">6</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">Type a name for the current configuration
+to be saved as and click the Save button.
+When the Paratext project is shared through
+Send/Recv, all saved configurations will be
+also made available to other PTXprint users 
+of the same Paratext project.
+
+Alternatively, select a previously-saved
+configuration to retrieve those settings.</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Configuration Name: </property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_saveConfig">
+                                    <property name="label">gtk-save</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="tooltip_text" translatable="yes">Save the current settings with the name
+given in the drop-down box on the left.
+
+If the configuration was saved earlier, then
+clicking Save will update the existing settings.</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="use_stock">True</property>
+                                    <property name="always_show_image">True</property>
+                                    <signal name="clicked" handler="onSaveConfig" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_deleteConfig">
+                                    <property name="label">gtk-delete</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="tooltip_text" translatable="yes">Delete the currently selected
+Saved Configuration immediately.</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="use_stock">True</property>
+                                    <property name="always_show_image">True</property>
+                                    <signal name="clicked" handler="onDeleteConfig" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkComboBoxText" id="cb_savedConfig">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">Select a previously-saved
+configuration to retrieve those settings.
+
+Or type a name for the current configuration
+to be saved as and click the Save button.
+When the Paratext project is shared through
+Send/Recv, all saved configurations will be
+also made available to other PTXprint users 
+of the same Paratext project.</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="active">1</property>
+                                    <property name="has_entry">True</property>
+                                    <property name="active_id">0</property>
+                                    <signal name="changed" handler="onSavedConfigChanged" swapped="no"/>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">Enter a name for the configuration to be saved as.
 
 Note that at present, only Roman/Latin names
 are supported using: a-z A-Z 0-9 and spaces,
 parentheses, underscores and hyphens.</property>
-                                <property name="halign">start</property>
-                                <property name="width_chars">35</property>
+                                        <property name="halign">start</property>
+                                        <property name="width_chars">35</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">Optional: Provide a description about the
+saved/shared configuration named above.</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Notes:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="t_configNotes">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="tooltip_text" translatable="yes">Optional: Provide a description about the
+saved/shared configuration named above.</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="hexpand">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">1</property>
+                                    <property name="width">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="t_invisiblePassword">
+                                    <property name="sensitive">False</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="tooltip_text" translatable="yes">Dots show that a password
+has been set for the saved
+configuration, and allows
+you to see the length of
+the password that was set.</property>
+                                    <property name="halign">center</property>
+                                    <property name="editable">False</property>
+                                    <property name="max_length">16</property>
+                                    <property name="visibility">False</property>
+                                    <property name="has_frame">False</property>
+                                    <property name="invisible_char">●</property>
+                                    <property name="width_chars">16</property>
+                                    <property name="caps_lock_warning">False</property>
+                                    <property name="placeholder_text" translatable="yes">No Password Set</property>
+                                    <property name="input_purpose">password</property>
+                                    <signal name="changed" handler="onPasswordChanged" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">4</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_lockunlock">
+                                    <property name="label" translatable="yes">Lock Config</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="tooltip_text" translatable="yes">When Config is UNLOCKED:
+Click to set a password to prevent
+anyone from deleting the saved
+settings. It also prevents changes
+being made to this configuration
+and then being re-saved with the
+same name.
+
+When Config is LOCKED:
+Click to enter a password to unlock this
+configuration and allow changes to be 
+saved or the configuration to be deleted.</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="margin_bottom">6</property>
+                                    <signal name="clicked" handler="onLockUnlockSavedConfig" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">4</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
                               </object>
                             </child>
                           </object>
-                          <packing>
-                            <property name="left_attach">1</property>
-                            <property name="top_attach">0</property>
-                          </packing>
                         </child>
-                        <child>
+                        <child type="label">
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="halign">end</property>
-                            <property name="margin_right">6</property>
-                            <property name="label" translatable="yes">Notes:</property>
+                            <property name="label" translatable="yes">Saved/Shared Configuration</property>
                           </object>
-                          <packing>
-                            <property name="left_attach">0</property>
-                            <property name="top_attach">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkEntry" id="t_configNotes">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="tooltip_text" translatable="yes">(Optional) Use this area to enter longer
-notes about the saved configuration.</property>
-                            <property name="hexpand">True</property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">1</property>
-                            <property name="top_attach">1</property>
-                            <property name="width">3</property>
-                            <property name="height">2</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkEntry" id="t_invisiblePassword">
-                            <property name="sensitive">False</property>
-                            <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">Dots show that a password
-has been set for the saved
-configuration.</property>
-                            <property name="halign">center</property>
-                            <property name="editable">False</property>
-                            <property name="max_length">16</property>
-                            <property name="visibility">False</property>
-                            <property name="has_frame">False</property>
-                            <property name="invisible_char">●</property>
-                            <property name="width_chars">16</property>
-                            <property name="caps_lock_warning">False</property>
-                            <property name="placeholder_text" translatable="yes">No Password Set</property>
-                            <property name="input_purpose">password</property>
-                            <signal name="changed" handler="onPasswordChanged" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="left_attach">4</property>
-                            <property name="top_attach">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkButton" id="btn_lockunlock">
-                            <property name="label" translatable="yes">Lock Config</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">True</property>
-                            <property name="tooltip_text" translatable="yes">When Config is unlocked:
-Click to set a password to
-prevent changes being saved
-or deleted.
-
-When Config is locked:
-Click to enter a password to
-allow changes to be saved
-or configuration to be deleted.</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
-                            <signal name="clicked" handler="onLockUnlockSavedConfig" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="left_attach">4</property>
-                            <property name="top_attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
                         </child>
                       </object>
                       <packing>
@@ -4750,13 +4760,13 @@ attribute.  Note: w= web, a=app, p=print.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_skipmissingimages">
                                     <property name="label" translatable="yes">Omit Any Missing Images Automatically</property>
-                                    <property name="name">c_skipmissingimages</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">Rather than aborting the PDF export process, pre-process
 the list of illustrations and skip/ignore/remove any which
 are not found in the specified location of image files.</property>
+                                    <property name="halign">start</property>
                                     <property name="margin_left">20</property>
                                     <property name="margin_bottom">6</property>
                                     <property name="active">True</property>

@@ -212,27 +212,30 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
     piclist = [item.lower() for item in piclist]
     picdir = printer.customFigFolder
     for srchdir in [picdir, os.path.join(prjdir, "local"), os.path.join(prjdir, "figures")]:
-        for subdir, dirs, files in os.walk(srchdir):
-            for file in files:
-                filepath = subdir + os.sep + file
-                if filepath.lower().endswith(".jpg") or filepath.lower().endswith(".png"):
-                    shortname = os.path.basename(filepath)
-                    origextn = shortname[-4:]
-                    basefname = shortname.lower()
-                    basefname = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?\.(jpg|png)", r"\1",basefname)
-                    basefname = re.sub(r"(?i)(.+)\.(jpg|png)", r"\1",basefname)  # This should pick up any non-standard filenames
-                    if basefname in piclist:
-                        # print("{}|{}|{} > {}".format(shortname,os.path.getsize(filepath),filepath,basefname+origextn))
-                        tmpfname = os.path.join(tmpPicpath, basefname+origextn)
-                        if not os.path.exists(tmpfname):
-                            copyfile(filepath, tmpfname)
-                        else:
-                            if printer.get("c_useLowResPics"): # we want to use the smallest available file
-                                if os.path.getsize(filepath) < os.path.getsize(tmpfname):
-                                    copyfile(filepath, tmpfname)
-                            else:                                 # we want to use the largest file available
-                                if os.path.getsize(filepath) > os.path.getsize(tmpfname):
-                                    copyfile(filepath, tmpfname)
+        print(srchdir)
+        if srchdir != None and os.path.exists(srchdir):
+            print("Inside the loop")
+            for subdir, dirs, files in os.walk(srchdir):
+                for file in files:
+                    filepath = subdir + os.sep + file
+                    if filepath.lower().endswith(".jpg") or filepath.lower().endswith(".png"):
+                        shortname = os.path.basename(filepath)
+                        origextn = shortname[-4:]
+                        basefname = shortname.lower()
+                        basefname = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?\.(jpg|png)", r"\1",basefname)
+                        basefname = re.sub(r"(?i)(.+)\.(jpg|png)", r"\1",basefname)  # This should pick up any non-standard filenames
+                        if basefname in piclist:
+                            print("{}|{}|{} > {}".format(shortname,os.path.getsize(filepath),filepath,basefname+origextn))
+                            tmpfname = os.path.join(tmpPicpath, basefname+origextn)
+                            if not os.path.exists(tmpfname):
+                                copyfile(filepath, tmpfname)
+                            else:
+                                if printer.get("c_useLowResPics"): # we want to use the smallest available file
+                                    if os.path.getsize(filepath) < os.path.getsize(tmpfname):
+                                        copyfile(filepath, tmpfname)
+                                else:                                 # we want to use the largest file available
+                                    if os.path.getsize(filepath) > os.path.getsize(tmpfname):
+                                        copyfile(filepath, tmpfname)
 
 def removeTempFiles(texfiles,tmpdir,info):
     for extn in ('delayed','parlocs','notepages', 'tex','log'):

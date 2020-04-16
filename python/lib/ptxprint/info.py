@@ -10,7 +10,7 @@ from ptxprint.snippets import FancyIntro, PDFx1aOutput, FancyBorders
 
 class Info:
     _mappings = {
-        "config/name":              ("cb_savedConfig", lambda w,v: w.builder.get_object("cb_savedConfig").get_active_id()),
+        # "config/name":              ("cb_savedConfig", lambda w,v: w.builder.get_object("cb_savedConfig").get_active_id()),
         "config/notes":             ("t_configNotes", lambda w,v: v or ""),
         "config/pwd":               ("t_invisiblePassword", lambda w,v: v or ""),
 
@@ -491,7 +491,7 @@ class Info:
                 msngfigs = self.ListMissingPics(printer, bk)
                 if len(msngfigs):
                     for f in msngfigs: # Remove references to missing illustrations (.tif, .jpg or .png)
-                        self.localChanges.append((None, regex.compile(r"(?i)\\fig .*\|{}\.(tif|jpg|png)\|.+?\\fig\*".format(f), flags=regex.M), ""))
+                        self.localChanges.append((None, regex.compile(r"(?i)\\fig .*\|{}\|.+?\\fig\*".format(f), flags=regex.M), ""))
             if printer.get("c_fighiderefs"): # del ch:vs from caption
                 self.localChanges.append((None, regex.compile(r"(\\fig .*?)(\d+[:.]\d+([-,]\d+)?)(.*?\\fig\*)", flags=regex.M), r"\1\4"))
         else: # Drop ALL Figures
@@ -620,7 +620,7 @@ class Info:
                 val = config.get(sect, opt)
                 if key in self._mappings:
                     v = self._mappings[key]
-                    try: # Q: MH - is this OK? (safeguarding ourselves from changing/missing keys in .cfg)
+                    try: # Safeguarding from changed/missing keys in .cfg
                         if v[0].startswith("cb_") or v[0].startswith("t_") or v[0].startswith("f_") or v[0].startswith("btn_"):
                             pass
                         elif v[0].startswith("s_"):
@@ -745,7 +745,7 @@ class Info:
                     # (so there's nothing to filter them out, because they don't seem to exist!)
                     if "-" in l:
                         if "\u200C" in l or "\u200D" in l or "'" in l: # Temporary workaround until we can figure out how
-                            z += 1                         # to allow ZWNJ and ZWJ to be included as letters.
+                            z += 1                                     # to allow ZWNJ and ZWJ to be included as letters.
                         elif re.search('\d', l):
                             pass
                         else:
