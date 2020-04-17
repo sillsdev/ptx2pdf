@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import sys, os, re, regex, gi, random, subprocess #, collections, pprint
+import sys, os, re, regex, gi, random, subprocess, collections
 gi.require_version('Gtk', '3.0')
 from shutil import copyfile
 from gi.repository import Gtk, Pango
@@ -158,9 +158,6 @@ class PtxPrinterDialog:
                 self.builder.get_object("{}{}".format(w, exp)).set_visible(value)
         self.builder.get_object("fr_fallbackFont").set_sensitive(value)
 
-    def onRevertSettingsClicked(self, btn):
-        self.updateProjectSettings(False)
-        
     def addCR(self, name, index):
         v = self.builder.get_object(name)
         setattr(self, name, v)
@@ -462,8 +459,8 @@ class PtxPrinterDialog:
                 self.builder.get_object("l_{}".format(pgnum)).set_text("Settings")
                 return
 
-        elif pgnum == 6: # Just show the folders in use
-            self.builder.get_object("l_{}".format(pgnum)).set_text("Folders")
+        elif pgnum == 6: # Just show the About page with folders in use and other links.
+            self.builder.get_object("l_{}".format(pgnum)).set_text("About")
             return
         else:
             # print("Error: Unhandled page in Viewer!")
@@ -477,14 +474,14 @@ class PtxPrinterDialog:
                 if len(txt) > 80000:
                     txt = txt[:80000]+"\n\n------------------------------------- \
                                           \n[Display of file has been truncated] \
-                                          \nTotal length of file: {} characters.".format(len(txt))
+                                          \nClick on View/Edit button to see more."
             self.fileViews[pgnum][0].set_text(txt)
         else:
             self.builder.get_object("l_{}".format(pgnum)).set_tooltip_text(None)
             self.fileViews[pgnum][0].set_text("\nThis file doesn't exist yet!\n\nHave you... \
                                                \n   * Generated the PiCList or AdjList? \
                                                \n   * Checked the option (above) to 'Preserve Intermediate Files and Logs'? \
-                                               \n   * Clicked OK to create the PDF?")
+                                               \n   * Clicked 'Print Preview' to create the PDF?")
 
     def onSaveEdits(self, btn):
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
@@ -506,7 +503,7 @@ class PtxPrinterDialog:
 
     def onScriptChanged(self, cb_script):
         # If there is a matching digit style for the script that has just been set, 
-        # then turn that on (but it can be overridden later).
+        # then also turn that on (but it can be overridden by the user if needed).
         try:
             self.cb_digits.set_active_id(self.get('cb_script'))
         except:
@@ -784,7 +781,8 @@ class PtxPrinterDialog:
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "row_ToC", "c_hyphenate",
                   "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", "c_preventwidows",
                   "l_sidemarginfactor", "s_sidemarginfactor", "l_min", "s_linespacingmin", "l_max", "s_linespacingmax",
-                  "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "cb_textDirection", "l_digits", "cb_digits"):
+                  "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "cb_textDirection", "l_digits", "cb_digits",
+                  "btn_saveConfig", "btn_deleteConfig", "btn_lockunlock", "t_invisiblePassword", "t_configNotes", "l_notes"):
             self.builder.get_object(c).set_visible(not self.get("c_hideAdvancedSettings"))
 
     def onShowBordersTabClicked(self, c_showBordersTab):
@@ -955,7 +953,7 @@ class PtxPrinterDialog:
             self.builder.get_object("l_{}".format(i)).set_tooltip_text(None)
         self.builder.get_object("l_settings_dir").set_label(self.settings_dir)
         self.builder.get_object("l_prjdir").set_label(os.path.join(self.settings_dir, self.prjid))
-        self.builder.get_object("l_macropath").set_label("Unknown at present!")
+        # self.builder.get_object("l_macropath").set_label("Unknown at present!")
         self.builder.get_object("l_working_dir").set_label(self.working_dir)
         self.set("c_prettyIntroOutline", False)
         self.setEntryBoxFont()
@@ -1506,33 +1504,49 @@ class PtxPrinterDialog:
 
     # Very much experimental (and currently broken)  MH: Need your thoughts on how to do this better.
     def onFindMissingCharsClicked(self, btn_findMissingChars):
-        pass
-        # count = collections.Counter()
-        # prjid = self.get("cb_project")
-        # prjdir = os.path.join(self.settings_dir, prjid)
-        # bks = self.getBooks()
-        # for bk in bks:
-            # fname = self.getBookFilename(bk, prjid)
-            # fpath = os.path.join(self.settings_dir, prjid, fname)
-            # if os.path.exists(fpath):
-                # with open(fpath, "r", encoding="utf-8") as inf:
+        # pass
+        count = collections.Counter()
+        prjid = self.get("cb_project")
+        prjdir = os.path.join(self.settings_dir, prjid)
+        bks = self.getBooks()
+        for bk in bks:
+            fname = self.getBookFilename(bk, prjid)
+            fpath = os.path.join(self.settings_dir, prjid, fname)
+            if os.path.exists(fpath):
+                with open(fpath, "r", encoding="utf-8") as inf:
                     # now need to strip out all markers themselves, and Eng content fields like: 
                     # \id \rem etc. description and copyright from figs |co00604b.tif|span|||
                     # This would be more efficient as a compiled regexpression
-                    # sfmtxt = inf.read()
-                    # sfmtxt = regex.sub(r'\\id .+?\r?\n', '', sfmtxt)
-                    # sfmtxt = regex.sub(r'\\rem .+?\r?\n', '', sfmtxt)
-                    # sfmtxt = regex.sub(r'\\fig .*?\\fig\*', '', sfmtxt) # throw illustrations out too
-                    # sfmtxt = regex.sub(r'\\[a-z]+\d?\*? ', '', sfmtxt) # remove all \sfm codes
-                    # sfmtxt = regex.sub(r'[0-9]', '', sfmtxt) # remove all digits
-                    # print("     ", bk, len(sfmtxt))
-                    # bkcntr = collections.Counter(sfmtxt)
-                    # count += bkcntr
+                    sfmtxt = inf.read()
+                    sfmtxt = regex.sub(r'\\id .+?\r?\n', '', sfmtxt)
+                    sfmtxt = regex.sub(r'\\rem .+?\r?\n', '', sfmtxt)
+                    # throw illustrations out too, BUT make sure we keep the caption (USFM2 only!)
+                    sfmtxt = regex.sub(r'\\fig (.*\|){5}([^\\]+)?\|[^\\]+\\fig\*', '\2', sfmtxt) 
+                    sfmtxt = regex.sub(r'\\[a-z]+\d?\*? ?', '', sfmtxt) # remove all \sfm codes
+                    sfmtxt = regex.sub(r'[0-9]', '', sfmtxt) # remove all digits
+                    print(bk, len(sfmtxt))
+                    bkcntr = collections.Counter(sfmtxt)
+                    count += bkcntr
+        slist = sorted(count.items(), key=lambda pair: pair[0])
+        for char, cnt in slist:
+            print("{}\t{}".format(repr(char.encode('raw_unicode_escape'))[2:-1],cnt))
+        print("Highly suspicious list:")
         # slist = sorted(count.items(), key=lambda pair: pair[1], reverse=True)
-        # for x, y in slist.items():
-            # print(x.encode("utf-8"), y.encode("utf-8"))
-        # print(", ".join(slist).encode("utf-8"))
-        # for ch, cnt in count.items():
-            # print(ch.encode("utf-8"), cnt)
-        # value = pprint.pformat(count)
-        # print(count.encode("utf-8"))
+        suspects = ""
+        suspectcodes = ""
+        for char, cnt in slist:
+            if cnt < 10:
+                suspects += char
+                suspectcodes += repr(char.encode('raw_unicode_escape'))[2:-1].replace("\\\\","\\")
+                print("\t{}\t{}".format(repr(char.encode('raw_unicode_escape'))[2:-1],cnt))
+        self.builder.get_object("t_missingChars").set_text(suspects)
+        self.builder.get_object("t_missingChars").set_tooltip_text(suspectcodes)
+
+# Handy code for finding/counting captions in figures
+    # figlist = regex.findall(r'\\fig (.*\|){5}([^\\]+)\|[^\\]+\\fig\*', sfmtxt)
+    # sfmtxt = ""
+    # if len(figlist):
+        # print(bk, len(figlist),"figures found")
+    # for f in figlist:
+        # sfmtxt += f[1]
+    # sfmtxt = " ".join(figlist))

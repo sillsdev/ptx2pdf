@@ -80,10 +80,11 @@ class Info:
                                                 else get("/ptxprintlibpath")+"/Verse number star.pdf"),
         "fancy/versenumsize":       ("s_verseNumSize", lambda w,v: v or "11.00"),
 
-        "paragraph/varlinespacing": ("c_variableLineSpacing", lambda w,v: "" if v else "%"),
-        "paragraph/linespacing":    ("s_linespacing", lambda w,v: "{:.3f}".format(v) or "15.000"),
+        "paragraph/varlinespacing":    ("c_variableLineSpacing", lambda w,v: "" if v else "%"),
+        # "paragraph/useglyphmetrics":   ("c_variableLineSpacing", lambda w,v: "" if v else "%"),
+        "paragraph/linespacing":       ("s_linespacing", lambda w,v: "{:.3f}".format(v) or "15.000"),
         "paragraph/linespacingfactor": ("s_linespacing", lambda w,v: "{:.3f}".format(float(v or "15") / 14)),
-        "paragraph/linemin":        ("s_linespacingmin", lambda w,v: "minus {:.3f}pt".format(w.get("s_linespacing") - v) \
+        "paragraph/linemin":           ("s_linespacingmin", lambda w,v: "minus {:.3f}pt".format(w.get("s_linespacing") - v) \
                                                          if v < w.get("s_linespacing") else ""),
         "paragraph/linemax":        ("s_linespacingmax", lambda w,v: "plus {:.3f}pt".format(v - w.get("s_linespacing")) \
                                                          if v > w.get("s_linespacing") else ""),
@@ -483,8 +484,8 @@ class Info:
                 self.localChanges.append((None, regex.compile(r"(?i)([a-z][a-z]\d{5})[abc]?\.(jpg|tif|png)", flags=regex.M), r"\1.jpg"))
                 self.localChanges.append((None, regex.compile(r"(?i)(.+)\.(jpg|tif|png)", flags=regex.M), r"\1.jpg"))
             else:
-                self.localChanges.append((None, regex.compile(r"(?i)([a-z][a-z]\d{5})[abc]?\.(tif|jpg)", flags=regex.M), r"\1.jpg"))
                 self.localChanges.append((None, regex.compile(r"(?i)([a-z][a-z]\d{5})[abc]?\.png", flags=regex.M), r"\1.png"))
+                self.localChanges.append((None, regex.compile(r"(?i)([a-z][a-z]\d{5})[abc]?\.(tif|jpg)", flags=regex.M), r"\1.jpg"))
                 self.localChanges.append((None, regex.compile(r'(?i)\.tif("|\|)', flags=regex.M), r".jpg\1"))
 
             if printer.get("c_skipmissingimages"):
@@ -492,6 +493,7 @@ class Info:
                 if len(msngfigs):
                     for f in msngfigs: # Remove references to missing illustrations (.tif, .jpg or .png)
                         self.localChanges.append((None, regex.compile(r"(?i)\\fig .*\|{}\|.+?\\fig\*".format(f), flags=regex.M), ""))
+
             if printer.get("c_fighiderefs"): # del ch:vs from caption
                 self.localChanges.append((None, regex.compile(r"(\\fig .*?)(\d+[:.]\d+([-,]\d+)?)(.*?\\fig\*)", flags=regex.M), r"\1\4"))
         else: # Drop ALL Figures
