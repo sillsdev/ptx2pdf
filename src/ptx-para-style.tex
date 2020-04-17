@@ -394,7 +394,6 @@
     \advance\pr@vdelay by 1
     \ifnum\pr@vdelay=\th@sdelay % if new delay is 1 greater than old, we can use \RaiseChapter
       \advance\th@sdelay by -1
-      \x@\let\x@\t@st\csname raise-#1.#2\endcsname
       \ifx\t@st\relax \MSG{PARLOC: Rerun. RaiseChapter needed at #1 #2}%
       \else \MSG{PARLOC: OK using RaiseChapter at #1 #2}\fi
       \immediate\write\delayf@le{\string\RaiseChapter{#1}{#2}}%
@@ -413,6 +412,7 @@
 \newbox\ch@pternote
 \def\AfterChapterSpaceFactor{3}
 \def\m@kechapterbox{%
+ \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}\XeTeXuseglyphmetrics=3%
  \edef\printchapter{\ch@pter}%
  \csname PrepChapterNumber\endcsname
  \setbox\ch@pterbox=\hbox{\s@tfont{c}\printchapter}%
@@ -428,6 +428,7 @@
   \setbox\ch@pterbox=\hbox{\lower\baselineskip\box\ch@pterbox
     \box\ch@pternote\kern\AfterChapterSpaceFactor\FontSizeUnit}%
  \fi
+ \XeTeXuseglyphmetrics=\@seglyphmetrics
  \ch@pterwd=\wd\ch@pterbox
  \dp\ch@pterbox=0pt
 }

@@ -224,8 +224,10 @@
     \getp@ram{fontsize}{c}\dropnumbersize=0\p@ram\FontSizeUnit \relax
 	% if font size specified for chapter number stylesheet is less than 2*paragraph font size ...
     \ifdim\dropnumbersize<\dimen255
+      \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}\XeTeXuseglyphmetrics=3%
       \s@tfont{p}%workaround for Lotus Elam Bold issue - ensure the \p font is loaded first
       \s@tfont{c}\setbox0=\hbox{0123456789}%set a box at the size specified by the \c marker
+      \XeTeXuseglyphmetrics=\@seglyphmetrics% \tracingcommands=0\MSG{useglyphmetrics=\the\XeTeXuseglyphmetrics}
 	  %clear font<c> so that it will get rebuilt on next setfont for \c (after we have figured out real size)
       \x@\let\csname font<c>\endcsname=\relax 
 	  % Calculate drop cap height = base line height + (lower case) x height
