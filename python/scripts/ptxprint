@@ -203,30 +203,33 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
         with open(infname, "r", encoding="utf-8") as inf:
             dat = inf.read()
             inf.close()
-            # Ask MH: Why doesn't Atomic Grouping (?>jpg|tif|png) = non-matching group syntax work in Python's RE?
+            # Ask MH: Why doesn't Atomic Grouping (?>jpg|tif|png|pdf) = non-matching group syntax work in Python's RE?
             # Ask #2: Is there are way to to find any pictures that didn't match the standard pattern (my hack isn't 100% foolproof yet)
-            piclist += re.findall(r"(?i)\\fig .*\|([a-z][a-z]\d{5})[abc]?\.[jtp][pin][gf]\|.+?\\fig\*", dat)     # USFM2 AB01234b.ext fig files
-            piclist += re.findall(r"(?i)\\fig .*\|(.+[a-z]{2})\.[jtp][pin][gf]\|.+?\\fig\*", dat)                # USFM2 non-standard fig files
-            piclist += re.findall(r'(?i)\\fig .+src="([a-z][a-z]\d{5})[abc]?\.[jtp][pin][gf]" .+?\\fig\*', dat)  # USFM3 AB01234b.ext fig files 
-            piclist += re.findall(r'(?i)\\fig .+src="(.+[a-z]{2})\.[jtp][pin][gf]" .+?\\fig\*', dat)             # USFM3 non-standard fig files 
+            piclist += re.findall(r"(?i)\\fig .*\|([a-z][a-z]\d{5})[abc]?\.[jtp][pdin][gf]\|.+?\\fig\*", dat)     # USFM2 AB01234b.ext fig files
+            piclist += re.findall(r"(?i)\\fig .*\|(.+[a-z]{2})\.[jtp][pdin][gf]\|.+?\\fig\*", dat)                # USFM2 non-standard fig files
+            piclist += re.findall(r'(?i)\\fig .+src="([a-z][a-z]\d{5})[abc]?\.[jtp][pdin][gf]" .+?\\fig\*', dat)  # USFM3 AB01234b.ext fig files 
+            piclist += re.findall(r'(?i)\\fig .+src="(.+[a-z]{2})\.[jtp][pdin][gf]" .+?\\fig\*', dat)             # USFM3 non-standard fig files 
     piclist = [item.lower() for item in piclist]
-    picdir = printer.customFigFolder
+    if printer.get("c_useCustomFolder"):
+        picdir = printer.customFigFolder
+    else:
+        picdir = None
     for srchdir in [picdir, os.path.join(prjdir, "local"), os.path.join(prjdir, "figures")]:
-        print(srchdir)
+        # print(srchdir)
         if srchdir != None and os.path.exists(srchdir):
-            print("Inside the loop")
+            # print("Inside the loop")
             for subdir, dirs, files in os.walk(srchdir):
                 for file in files:
                     filepath = subdir + os.sep + file
                     if not "tmpPics" in filepath: # Avoid recursively scanning the folder we are copying to!
-                        if filepath.lower().endswith(".jpg") or filepath.lower().endswith(".png"):
+                        if filepath.lower()[-4:] in [".jpg", ".png", ".pdf"]:
                             shortname = os.path.basename(filepath)
                             origextn = shortname[-4:]
                             basefname = shortname.lower()
-                            basefname = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?\.(jpg|png)", r"\1",basefname)
-                            basefname = re.sub(r"(?i)(.+)\.(jpg|png)", r"\1",basefname)  # This should pick up any non-standard filenames
+                            basefname = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?\.(jpg|png|pdf)", r"\1",basefname)
+                            basefname = re.sub(r"(?i)(.+)\.(jpg|png|pdf)", r"\1",basefname)  # This should pick up any non-standard filenames
                             if basefname in piclist:
-                                print("{}|{}|{} > {}".format(shortname,os.path.getsize(filepath),filepath,basefname+origextn))
+                                # print("{}|{}|{} > {}".format(shortname,os.path.getsize(filepath),filepath,basefname+origextn))
                                 tmpfname = os.path.join(tmpPicpath, basefname+origextn)
                                 if not os.path.exists(tmpfname):
                                     copyfile(filepath, tmpfname)

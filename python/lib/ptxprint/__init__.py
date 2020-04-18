@@ -902,6 +902,10 @@ class PtxPrinterDialog:
                 self.info = Info(self, self.settings_dir, prjid = currprj)
             config = self.info.createConfig(self)
             # MH: Why are we SAVING the [existing] config when the project changes?
+            # If the SAVE is here, then the Saved Configs DOESN'T work.
+            # But if we skip this, then the settings aren't saved when we use PrintPreview/OK.
+            # Looks like we need a "SaveProjectSettings" and a "ReadProjectSettings" rather than Update (where both are mixed).
+            # Or am I missing something....
             # I'm temporarily taking this out to see what effect it has
             # with open(os.path.join(self.settings_dir, currprj, "ptxprint.cfg"), "w", encoding="utf-8") as outf:
                 # config.write(outf)
@@ -972,7 +976,7 @@ class PtxPrinterDialog:
                 bks = bks[0]
             except IndexError:
                 bks = "No book selected!"
-        titleStr = "PTXprint [0.4.5 Beta]" + prjid + " (" + bks + ")"
+        titleStr = "PTXprint [0.4.6 Beta]" + prjid + " (" + bks + ")"
         self.builder.get_object("ptxprint").set_title(titleStr)
 
     def editFile(self, file2edit, wkdir=False):
@@ -1514,14 +1518,13 @@ class PtxPrinterDialog:
             fpath = os.path.join(self.settings_dir, prjid, fname)
             if os.path.exists(fpath):
                 with open(fpath, "r", encoding="utf-8") as inf:
-                    # now need to strip out all markers themselves, and Eng content fields like: 
-                    # \id \rem etc. description and copyright from figs |co00604b.tif|span|||
-                    # This would be more efficient as a compiled regexpression
+                    # Strip out all markers themselves, and Eng content fields
                     sfmtxt = inf.read()
                     sfmtxt = regex.sub(r'\\id .+?\r?\n', '', sfmtxt)
                     sfmtxt = regex.sub(r'\\rem .+?\r?\n', '', sfmtxt)
-                    # throw illustrations out too, BUT make sure we keep the caption (USFM2 only!)
+                    # throw out illustration markup, BUT keep the caption text (USFM2 + USFM3)
                     sfmtxt = regex.sub(r'\\fig (.*\|){5}([^\\]+)?\|[^\\]+\\fig\*', '\2', sfmtxt) 
+                    sfmtxt = regex.sub(r'\\fig ([^\\]+)?\|.*src=[^\\]+\\fig\*', '\1', sfmtxt) 
                     sfmtxt = regex.sub(r'\\[a-z]+\d?\*? ?', '', sfmtxt) # remove all \sfm codes
                     sfmtxt = regex.sub(r'[0-9]', '', sfmtxt) # remove all digits
                     print(bk, len(sfmtxt))

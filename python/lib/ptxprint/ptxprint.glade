@@ -4656,16 +4656,19 @@ without illustrations.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">The original higher-quality illustrations are
-usually larger .TIF or .PNG files and are stored
-in the local\Figures folder so that they are not
-shared via Send/Recv. If these are used, the file
-size of the resulting PDF could be large, and
+                                    <property name="tooltip_text" translatable="yes">If this option is selected, it will first search 
+for PDFs, then PNGs, and finally JPGs.
+
+The original higher-quality illustrations are
+usually larger (.TIF .PNG or .PDF files) and 
+are stored in the local\Figures folder so that
+they are not shared via Send/Recv. If these are
+used, the resulting PDF could be very large, and
 therefore difficult to share electronically, but
 the image quality will be as good as possible.
 
-(Note that at this time, TIF files cannot be used
-and must be converted to PNG or JPG first.)</property>
+(Note that TIF files cannot be processed and
+must be manually converted to PNG or JPG first.)</property>
                                     <property name="halign">start</property>
                                     <property name="margin_left">10</property>
                                     <property name="margin_top">6</property>

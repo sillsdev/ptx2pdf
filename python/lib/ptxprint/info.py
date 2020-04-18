@@ -483,20 +483,15 @@ class Info:
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig ([^|]*\|){3}([aw]+)\|[^\\]*\\fig\*', flags=regex.M), ''))  # USFM2
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig [^\\]*\bloc="[aw]+"[^\\]*\\fig\*', flags=regex.M), ''))    # USFM3
 
-            # XeTeX doesn't handle TIFs, so rename all TIF extensions to JPGs
-            if printer.get("c_useLowResPics"):  # (TIF>JPG, or PNG>JPG)
-                self.localChanges.append((None, regex.compile(r"(?i)([a-z][a-z]\d{5})[abc]?\.(jpg|tif|png)", flags=regex.M), r"\1.jpg"))
-                self.localChanges.append((None, regex.compile(r"(?i)(.+)\.(jpg|tif|png)", flags=regex.M), r"\1.jpg"))
-            else:
-                self.localChanges.append((None, regex.compile(r"(?i)([a-z][a-z]\d{5})[abc]?\.png", flags=regex.M), r"\1.png"))
-                self.localChanges.append((None, regex.compile(r"(?i)([a-z][a-z]\d{5})[abc]?\.(tif|jpg)", flags=regex.M), r"\1.jpg"))
-                self.localChanges.append((None, regex.compile(r'(?i)\.tif("|\|)', flags=regex.M), r".jpg\1"))
-
-            if printer.get("c_skipmissingimages"):
-                msngfigs = self.ListMissingPics(printer, bk)
-                if len(msngfigs):
-                    for f in msngfigs: # Remove references to missing illustrations (.tif, .jpg or .png)
-                        self.localChanges.append((None, regex.compile(r"(?i)\\fig .*\|{}\|.+?\\fig\*".format(f), flags=regex.M), ""))
+            picChangeList = self.PicNameChanges(printer, bk)
+            if len(picChangeList):
+                for origfn,tempfn in picChangeList:
+                    if tempfn != "":
+                        self.localChanges.append((None, regex.compile(r"(?i)(\\fig .*\|){}(\|.+?\\fig\*)".format(origfn), \
+                                                     flags=regex.M), r"\1{}\2".format(tempfn)))
+                    else:
+                        if printer.get("c_skipmissingimages"):
+                            self.localChanges.append((None, regex.compile(r"(?i)\\fig .*\|{}\|.+?\\fig\*".format(origfn), flags=regex.M), ""))
 
             if printer.get("c_fighiderefs"): # del ch:vs from caption
                 self.localChanges.append((None, regex.compile(r"(\\fig .*?)(\d+[:.]\d+([-,]\d+)?)(.*?\\fig\*)", flags=regex.M), r"\1\4"))
@@ -570,32 +565,44 @@ class Info:
                 print(report)
         return self.localChanges
 
-    def ListMissingPics(self, printer, bk):
+    def PicNameChanges(self, printer, bk):
         piclist = []
-        msngpiclist = []
+        pichngs = []
         prjid = self.dict['project/id']
         prjdir = os.path.join(printer.settings_dir, prjid)
         picdir = os.path.join(prjdir, "PrintDraft", "tmpPics")
         fname = printer.getBookFilename(bk, prjdir)
         infname = os.path.join(prjdir, fname)
+        # We could make this user-configurable, so that they specify the order they want
+        if printer.get("c_useLowResPics"): 
+            extOrder = ["jpg", "png", "pdf"] # we want to use the smallest available file
+        else:
+            extOrder = ["pdf", "png", "jpg"] # we want to use the best quality available file
         with open(infname, "r", encoding="utf-8") as inf:
             dat = inf.read()
             inf.close()
-            piclist += re.findall(r"(?i)\\fig .*\|(.+?\.[jtp][pin][gf])\|.+?\\fig\*", dat)     # Finds USFM2-styled markup in text:
-            piclist += re.findall(r'(?i)\\fig .+src="(.+?\.[jtp][pin][gf])" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text: 
-            piclist = [item.lower() for item in piclist]
-            print(piclist)
+            # jpg, tif, png, pdf => [jtp][pdin][gf]
+            piclist += re.findall(r"(?i)\\fig .*\|(.+?\.[jtp][pdin][gf])\|.+?\\fig\*", dat)     # Finds USFM2-styled markup in text:
+            piclist += re.findall(r'(?i)\\fig .+src="(.+?\.[jtp][pdin][gf])" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text: 
+            # piclist = [item.lower() for item in piclist]
+            # print(piclist)
             for f in piclist:
-                f = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?\.(jpg|tif|png)", r"\1.jpg",f)
-                f = re.sub(r"(?i)\.tif", r".jpg",f)   # This will pick up any non-standard filenames
-                fname = os.path.join(picdir,f)
-                if not os.path.exists(fname):
-                    msngpiclist.append(f) 
-                    # msngpiclist.append(f[:-4].lower()) # .rstrip("AaBbCc") this drops the quality letter A/B/C 
-                                                       # so that "CN001234B.tif" would just becomes "cn001234"
-            if len(msngpiclist):
-                print("In {} these pics are missing:\n".format(bk),"\n".join(msngpiclist))
-        return(msngpiclist)
+                found = False
+                basef = f
+                basef = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?\.(jpg|tif|png|pdf)", r"\1",basef)
+                basef = re.sub(r"(?i)\.(jpg|tif|png|pdf)", r"",basef)   # This will pick up any non-standard filenames
+                for ext in extOrder:
+                    tmpf = (basef+"."+ext).lower()
+                    fname = os.path.join(picdir,tmpf)
+                    if os.path.exists(fname):
+                        # print("Found:", f, ">", tmpf)
+                        pichngs.append((f,tmpf))
+                        found = True
+                        break
+                if not found:
+                    pichngs.append((f,"")) 
+        print(pichngs)
+        return(pichngs)
 
     def _configset(self, config, key, value):
         (sect, k) = key.split("/")
