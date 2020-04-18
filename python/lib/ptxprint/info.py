@@ -189,6 +189,7 @@ class Info:
         "notes/xromitcaller":       ("c_xromitcaller", lambda w,v: "%" if v else ""),
         "notes/xrparagraphednotes": ("c_paragraphedxrefs", lambda w,v: "" if v else "%"),
 
+        "font/features":            ("t_fontfeatures", lambda w,v: v),
         "fontbold/fakeit":          ("c_fakebold", lambda w,v :"true" if v else "false"),
         "fontitalic/fakeit":        ("c_fakeitalic", lambda w,v :"true" if v else "false"),
         "fontbolditalic/fakeit":    ("c_fakebolditalic", lambda w,v :"true" if v else "false"),
@@ -304,19 +305,22 @@ class Info:
                 self.updatefields([self._fonts[p][2]])
                 # print("Setting {} to {}".format(p, reg))
             d = self.printer.ptsettings.find_ldml('.//special/{1}external-resources/{1}font[@name="{0}"]'.format(f.family, silns))
+            featstring = ""
             if d is not None:
+                featstring = d.get('features', '')
+            if featstring == "":
+                featstring = printer.get(self._mappings["font/features"][0])
+            if featstring is not None and len(featstring):
+                printer.set(self._mappings["font/features"][0], featstring)
                 f.features = {}
-                for l in d.get('features', '').split(','):
+                for l in featstring.split(','):
                     if '=' in l:
                         k, v = l.split('=')
                         f.features[k.strip()] = v.strip()
                 if len(f.features):
-                    self.dict['font/features'] = ":"+ ":".join("{0}={1}".format(f.feats.get(fid, fid),
+                    if p == "fontregular/name":
+                        self.dict['font/features'] = ":"+ ":".join("{0}={1}".format(f.feats.get(fid, fid),
                                                     f.featvals.get(fid, {}).get(int(v), v)) for fid, v in f.features.items())
-                else:
-                    self.dict['font/features'] = ""
-            else:
-                self.dict['font/features'] = ""
             if 'Silf' in f:
                 engine = "/GR"
             else:
