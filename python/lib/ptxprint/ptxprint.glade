@@ -4941,18 +4941,25 @@ illustrations within the text.</property>
                                 <property name="row_spacing">6</property>
                                 <property name="column_spacing">6</property>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_showHboxErrorBars">
-                                    <property name="label" translatable="yes">Show error bars for overfull hboxes</property>
+                                  <object class="GtkCheckButton" id="c_showBordersTab">
+                                    <property name="label" translatable="yes">Show Settings for (Decorative) Borders</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">If you don't know what this means, or want to get rid of black boxes in the PDF then uncheck it. Enable this option to have TeX make overfull lines stand out.</property>
+                                    <property name="tooltip_text" translatable="yes">Experimental Feature:
+This enables additional PDF files to be specified
+for fancy/decorative borders to be applied to
+the output. Other textual decorations - for 
+section headings and verse numbers can also
+be specified.
+</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onShowBordersTabClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">0</property>
+                                    <property name="top_attach">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -4975,22 +4982,59 @@ and so on...</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">2</property>
+                                    <property name="top_attach">4</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_showBordersTab">
-                                    <property name="label" translatable="yes">Show Settings for (Decorative) Borders</property>
+                                  <object class="GtkCheckButton" id="c_showHboxErrorBars">
+                                    <property name="label" translatable="yes">Show error bars for overfull hboxes</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">If you don't know what this means, or want to get rid of black boxes in the PDF then uncheck it. Enable this option to have TeX make overfull lines stand out.</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onShowBordersTabClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">1</property>
+                                    <property name="top_attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_showDiglotTab">
+                                    <property name="label" translatable="yes">Show Settings for (Experimental) Diglot</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Experimental Feature:
+This is really a DIY-glot because
+it is work in progress and will require
+considerable trial-and-error to get a
+satisfactory result.</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onShowDiglotTabClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_keepBookWithRefs">
+                                    <property name="label" translatable="yes">Prevent References splitting from Book names</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Experimental Feature:
+This option inserts a No-Break Space (\u00A0)
+between the book name and the Ch:Vs refs
+so that they don't get split across lines.</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">2</property>
                                   </packing>
                                 </child>
                               </object>
@@ -5115,7 +5159,7 @@ Break Locale:</property>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="halign">center</property>
+                                    <property name="halign">end</property>
                                     <property name="valign">center</property>
                                     <property name="label" translatable="yes">Script for text:</property>
                                   </object>
@@ -5150,6 +5194,11 @@ script-specific rendering issues.</property>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">Font features that have been set up in the
+Paratext project's language settings should
+automatically show up here. These may be
+modified here if necessary. </property>
+                                    <property name="halign">end</property>
                                     <property name="label" translatable="yes">Font Features:</property>
                                   </object>
                                   <packing>
@@ -5161,6 +5210,14 @@ script-specific rendering issues.</property>
                                   <object class="GtkEntry" id="t_fontfeatures">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
+                                    <property name="tooltip_text" translatable="yes">Font features that have been set up in the
+Paratext project's language settings should
+automatically show up here. These may be
+modified here if necessary. 
+
+For example, Graphite font features may
+be specified something like this:
+      litr=1,dig0=1,dig4=1,dg69=0,dig7=1</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -6586,8 +6643,8 @@ of this file as it was when last saved.</property>
                 </child>
                 <child>
                   <object class="GtkBox" id="tb_DiglotTesting">
-                    <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="no_show_all">True</property>
                     <property name="halign">center</property>
                     <property name="orientation">vertical</property>
                     <child>
@@ -7049,9 +7106,9 @@ Now you can see why it is called "Fuzzy DiYglot" :-)</property>
                 </child>
                 <child type="tab">
                   <object class="GtkLabel" id="lb_DiglotTesting">
-                    <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">EXPERIMENTAL FEATURE:
+                    <property name="no_show_all">True</property>
+                    <property name="tooltip_text" translatable="yes">Experimental Feature:
 This is really a DIY-glot because
 it is work in progress and will require
 considerable trial-and-error to get a
@@ -7365,6 +7422,12 @@ Verse Numbers:</property>
                   <object class="GtkLabel" id="lb_FancyBorders">
                     <property name="can_focus">False</property>
                     <property name="no_show_all">True</property>
+                    <property name="tooltip_text" translatable="yes">Experimental Feature:
+This enables additional PDF files to be specified
+for fancy/decorative borders to be applied to
+the output. Other textual decorations - for 
+section headings and verse numbers can also
+be specified.</property>
                     <property name="label" translatable="yes">Borders</property>
                   </object>
                   <packing>

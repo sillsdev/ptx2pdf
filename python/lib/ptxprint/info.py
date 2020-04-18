@@ -536,6 +536,9 @@ class Info:
         if printer.get("c_glueredupwords"): # keep reduplicated words together
             self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w\w\w+) \1(?=[\s,.!?])", flags=regex.M), r"\1\u00A0\1")) 
         
+        if printer.get("c_keepBookWithRefs"): # keep Booknames and ch:vs nums together
+            self.localChanges.append((None, regex.compile(r" (\d+:\d+(-\d+)?\))", flags=regex.M), r"\u00A0\1")) 
+        
         # Paratext marks no-break space as a tilde ~
         self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
         # Remove the + of embedded markup (xetex handles it)
@@ -601,7 +604,7 @@ class Info:
                         break
                 if not found:
                     pichngs.append((f,"")) 
-        print(pichngs)
+        # print(pichngs)
         return(pichngs)
 
     def _configset(self, config, key, value):

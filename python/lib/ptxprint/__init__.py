@@ -781,19 +781,19 @@ class PtxPrinterDialog:
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "row_ToC", "c_hyphenate",
                   "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", "c_preventwidows",
                   "l_sidemarginfactor", "s_sidemarginfactor", "l_min", "s_linespacingmin", "l_max", "s_linespacingmax",
-                  "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "cb_textDirection", "l_digits", "cb_digits",
-                  "btn_saveConfig", "btn_deleteConfig", "btn_lockunlock", "t_invisiblePassword", "t_configNotes", "l_notes"):
+                  "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "cb_textDirection", "l_digits", "cb_digits"):
+                  # "btn_saveConfig", "btn_deleteConfig", "btn_lockunlock", "t_invisiblePassword", "t_configNotes", "l_notes"):
             self.builder.get_object(c).set_visible(not self.get("c_hideAdvancedSettings"))
 
     def onShowBordersTabClicked(self, c_showBordersTab):
-        if self.get("c_showBordersTab"):
-            self.builder.get_object("tb_FancyBorders").set_visible(True)
-            # turned this off because it was making PTXprint jump to that page every time a project was started!
-            # self.builder.get_object("nbk_Main").set_current_page(10)
-            self.builder.get_object("c_enableDecorativeElements").set_active(True)
-        else:
-            self.builder.get_object("c_enableDecorativeElements").set_active(False)
-            self.builder.get_object("tb_FancyBorders").set_visible(False)
+        status = self.get("c_showBordersTab")
+        self.builder.get_object("tb_FancyBorders").set_visible(status)
+        self.builder.get_object("c_enableDecorativeElements").set_active(status)
+
+    def onShowDiglotTabClicked(self, c_showDiglotTab):
+        status = self.get("c_showDiglotTab")
+        self.builder.get_object("tb_DiglotTesting").set_visible(status)
+        self.builder.get_object("c_diglot").set_active(status)
 
     def onKeepTemporaryFilesClicked(self, c_keepTemporaryFiles):
         self.builder.get_object("gr_debugTools").set_sensitive(self.get("c_keepTemporaryFiles"))
@@ -901,15 +901,9 @@ class PtxPrinterDialog:
             if self.info is None:
                 self.info = Info(self, self.settings_dir, prjid = currprj)
             config = self.info.createConfig(self)
-            # MH: Why are we SAVING the [existing] config when the project changes?
-            # If the SAVE is here, then the Saved Configs DOESN'T work.
-            # But if we skip this, then the settings aren't saved when we use PrintPreview/OK.
-            # Looks like we need a "SaveProjectSettings" and a "ReadProjectSettings" rather than Update (where both are mixed).
-            # Or am I missing something....
-            # I'm temporarily taking this out to see what effect it has
-            # with open(os.path.join(self.settings_dir, currprj, "ptxprint.cfg"), "w", encoding="utf-8") as outf:
-                # config.write(outf)
-            # Put back in later (if needed)
+            if LoadSavedConfig:
+                with open(os.path.join(self.settings_dir, currprj, "ptxprint.cfg"), "w", encoding="utf-8") as outf:
+                    config.write(outf)
         self.prjid = self.get("cb_project")
         self.ptsettings = None
         lsbooks = self.builder.get_object("ls_books")
@@ -976,7 +970,7 @@ class PtxPrinterDialog:
                 bks = bks[0]
             except IndexError:
                 bks = "No book selected!"
-        titleStr = "PTXprint [0.4.6 Beta]" + prjid + " (" + bks + ")"
+        titleStr = "PTXprint [0.4.7 Beta]" + prjid + " (" + bks + ")"
         self.builder.get_object("ptxprint").set_title(titleStr)
 
     def editFile(self, file2edit, wkdir=False):
@@ -1171,7 +1165,7 @@ class PtxPrinterDialog:
 
     def GeneratePicList(self, booklist):
         # Format of lines in pic-list file: BBB C.V desc|file|size|loc|copyright|caption|ref
-        # MRK 1.16 fishermen...catching fish with a net.|hk00207.png|span|b||Jesus calling the disciples to follow him.|1.16
+        # MRK 1.16 fishermen...catching fish with a net.|hk00207b.png|span|b||Jesus calling the disciples to follow him.|1.16
         _picposn = {
             "col":      ("tl", "tr", "bl", "br"),
             "span":     ("t", "b")
@@ -1192,23 +1186,16 @@ class PtxPrinterDialog:
                 # Finds USFM2-styled markup in text:
                 #                0         1       2     3     4              5       
                 # \\fig .*\|(.+?\....)\|(....?)\|(.*)\|(.*)\|(.+?)\|(\d+[:.]\d+([-,]\d+)?)\\fig\*
-                # \fig |CN01684.jpg|col|||key-kālk arsi manvan yēsunaga tarval|9:2\fig*
+                # \fig |CN01684b.jpg|col|||key-kālk arsi manvan yēsunaga tarval|9:2\fig*
                 #           0         1  2 3          4                          5  
                 # BKN \5 \|\0\|\1\|tr\|\|\4\|\5
-                # MAT 9.2 bringing the paralyzed man to Jesus|CN01684.jpg|col|tr||key-kālk arsi manvan yēsunaga tarval|9:2
+                # MAT 9.2 bringing the paralyzed man to Jesus|CN01684b.jpg|col|tr||key-kālk arsi manvan yēsunaga tarval|9:2
                 m = re.findall(r"\\fig .*\|(.+?\....)\|(....?)\|(.+)?\|(.+)?\|(.+)?\|(\d+[\:\.]\d+([\-,]\d+)?)\\fig\*", dat)
+                # print("m:", m)
                 if m is not None:
                     for f in m:
                         # XeTeX doesn't handle TIFs, so rename all TIF extensions to JPGs
-                        picfname = f[0]
-                        if self.get("c_useLowResPics"):  # (TIF>JPG, or PNG>JPG)
-                            # Change all TIFs to JPGs
-                            picfname = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?\.(jpg|tif|png)", r"\1.jpg",picfname)
-                            picfname = re.sub(r"(?i)(.+)\.(jpg|tif|png)", r"\1.jpg",picfname)
-                        else:
-                            picfname = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?\.(tif|jpg)", r"\1.jpg",picfname)
-                            picfname = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?\.png", r"\1.png",picfname)
-                            picfname = re.sub(r'(?i)\.tif("|\|)', r".jpg\1",picfname)
+                        picfname = re.sub(r"(?i)(.+)\.tif", r"\1.jpg",f[0])
                         if self.get("c_randomPicPosn"):
                             pageposn = random.choice(_picposn.get(f[1], f[1]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
                         else:
@@ -1219,23 +1206,15 @@ class PtxPrinterDialog:
                     # (Q: How to handle any additional/non-standard xyz="data" ? Will the .* before \\fig\* take care of it adequately?)
                     #         0              1               2                  3      [4]
                     # \\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,]\d+)?)".*\\fig\*
-                    # \fig hāgartun saṅga dūtal vaḍkval|src="CO00659.TIF" size="span" ref="21:16"\fig*
+                    # \fig hāgartun saṅga dūtal vaḍkval|src="CO00659B.TIF" size="span" ref="21:16"\fig*
                     #                   0                         1                2          3  [4]
                     # BKN \3 \|\1\|\2\|tr\|\|\0\|\3
-                    # GEN 21.16 an angel speaking to Hagar|CO00659.TIF|span|t||hāgartun saṅga dūtal vaḍkval|21:16
+                    # GEN 21.16 an angel speaking to Hagar|CO00659B.TIF|span|t||hāgartun saṅga dūtal vaḍkval|21:16
                     m = re.findall(r'\\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,]\d+)?)".*\\fig\*', dat)
                     if m is not None:
                         for f in m:
                             # XeTeX doesn't handle TIFs, so rename all TIF extensions to JPGs
-                            picfname = f[1]
-                            if self.get("c_useLowResPics"):  # (TIF>JPG, or PNG>JPG)
-                                # Change all TIFs to JPGs
-                                picfname = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?\.(jpg|tif|png)", r"\1.jpg",picfname)
-                                picfname = re.sub(r"(?i)(.+)\.(jpg|tif|png)", r"\1.jpg",picfname)
-                            else:
-                                picfname = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?\.(tif|jpg)", r"\1.jpg",picfname)
-                                picfname = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?\.png", r"\1.png",picfname)
-                                picfname = re.sub(r'(?i)\.tif("|\|)', r".jpg\1",picfname)
+                            picfname = re.sub(r"(?i)(.+)\.tif", r"\1.jpg",f[1])
                             if self.get("c_randomPicPosn"):
                                 pageposn = random.choice(_picposn.get(f[2], f[2]))     # Randomize location of illustrations on the page (tl,tr,bl,br)
                             else:
@@ -1250,8 +1229,6 @@ class PtxPrinterDialog:
                             outf.write("".join(piclist))
                     else:
                         existingFilelist.append(outfname.split("/")[-1])
-                # else:
-                    # print(r"No illustrations \fig ...\fig* found in {}".format(bk))
         if len(existingFilelist):
             if len(existingFilelist) > 1:
                 m1 = "Several PicList files already exist:"
