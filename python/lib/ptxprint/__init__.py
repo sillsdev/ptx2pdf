@@ -158,7 +158,7 @@ class PtxPrinterDialog:
         for w in ("tb_", "lb_"):
             for exp in ("Illustrations", "Logging"):
                 self.builder.get_object("{}{}".format(w, exp)).set_visible(value)
-        self.builder.get_object("fr_fallbackFont").set_sensitive(value)
+        # self.builder.get_object("fr_fallbackFont").set_sensitive(value)
 
     def addCR(self, name, index):
         v = self.builder.get_object(name)

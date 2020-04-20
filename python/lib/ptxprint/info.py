@@ -91,6 +91,8 @@ class Info:
         "paragraph/ifjustify":      ("c_justify", lambda w,v: "true" if v else "false"),
         "paragraph/ifhyphenate":    ("c_hyphenate", lambda w,v: "" if v else "%"),
         "paragraph/ifnothyphenate": ("c_hyphenate", lambda w,v: "%" if v else ""),
+        "paragraph/ifusefallback":  ("c_useFallbackFont", lambda w,v:"true" if v else "false"),
+        "paragraph/missingchars":   ("t_missingChars", lambda w,v: v or ""),
 
         "document/title":           (None, lambda w,v: w.ptsettings.get('FullName', "")),
         "document/subject":         ("t_booklist", lambda w,v: v if w.get("c_multiplebooks") else w.get("cb_book")),
@@ -206,6 +208,7 @@ class Info:
         "fontbold/name":            ("f_bold", "c_fakebold", "fontbold/embolden", "fontbold/slant"),
         "fontitalic/name":          ("f_italic", "c_fakeitalic", "fontitalic/embolden", "fontitalic/slant"),
         "fontbolditalic/name":      ("f_bolditalic", "c_fakebolditalic", "fontbolditalic/embolden", "fontbolditalic/slant"),
+        "fontextraregular/name":    ("f_extraRegular", None, None, None),
         "fontfancy/versenumfont":   ("f_verseNumFont", None, None, None)
     }
     _hdrmappings = {
@@ -376,6 +379,20 @@ class Info:
                         else:
                             # print("Else for book: ",f[2:5])
                             res.append("\\ptxfile{{{}}}\n".format(f))
+                elif l.startswith(r"%\extrafont"):
+                    spclChars = "\u00ab \u00bb".split(' ') # self.dict["paragraph/missingchars"]
+                    if self.dict["paragraph/ifusefallback"] == "true" and len(spclChars):
+                        res.append("% for defname @active+ @+digit => 0->@, 1->a ... 9->i A->j B->k .. F->o\n")
+                        res.append("% 12 (size) comes from \\p size\n")
+                        res.append('\\def\\extraregular{{"{}"}}\n'.format(self.dict["fontextraregular/name"]))
+                        res.append("\\catcode`\\@=11\n")
+                        res.append("\\def\\do@xtrafont{\\x@\\s@textrafont\\ifx\\thisch@rstyle\\undefined\\m@rker\\else\\thisch@rstyle\\fi}\n")
+                        for s in spclChars:
+                            res.append("\\def\\@ctive@@jk{{{{\\do@xtrafont ^^^^{}}}}}\n".format('%04x' % ord(s)))
+                        for s in spclChars:
+                            res.append("\\DefineActiveChar{{^^^^{}}}{{\\@ctive@@jk}}\n".format('%04x' % ord(s)))
+                        res.append("\\@ctivate\n")
+                        res.append("\\catcode`\\@=12\n\n")
                 elif l.startswith(r"%\snippets"):
                     for k, c in self._snippets.items():
                         v = self.printer.get(c[0])
