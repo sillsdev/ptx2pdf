@@ -838,6 +838,26 @@ saved configuration.</property>
             <property name="resize_mode">immediate</property>
             <property name="layout_style">start</property>
             <child>
+              <object class="GtkCheckButton" id="c_experimental">
+                <property name="label" translatable="yes">Experimental 
+Features ON!</property>
+                <property name="sensitive">False</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="no_show_all">True</property>
+                <property name="tooltip_text" translatable="yes">Experimental features are enabled by
+using the -e flag on the command line.</property>
+                <property name="halign">start</property>
+                <property name="resize_mode">immediate</property>
+                <property name="draw_indicator">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkCheckButton" id="c_hideAdvancedSettings">
                 <property name="label" translatable="yes">Hide Advanced Settings</property>
                 <property name="visible">True</property>
@@ -864,26 +884,6 @@ in the same place).</property>
               </packing>
             </child>
             <child>
-              <object class="GtkCheckButton" id="c_experimental">
-                <property name="label" translatable="yes">Experimental 
-Features ON!</property>
-                <property name="sensitive">False</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
-                <property name="no_show_all">True</property>
-                <property name="tooltip_text" translatable="yes">Experimental features are enabled by
-using the -e flag on the command line.</property>
-                <property name="halign">start</property>
-                <property name="resize_mode">immediate</property>
-                <property name="draw_indicator">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">2</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkButton">
                 <property name="label">gtk-close</property>
                 <property name="visible">True</property>
@@ -902,7 +902,7 @@ using the -e flag on the command line.</property>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
                 <property name="pack_type">end</property>
-                <property name="position">3</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child>
@@ -925,7 +925,55 @@ and produce a PDF with the settings specified.</property>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
                 <property name="pack_type">end</property>
+                <property name="position">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btn_GREEN">
+                <property name="label">gtk-yes</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="focus_on_click">False</property>
+                <property name="receives_default">False</property>
+                <property name="no_show_all">True</property>
+                <property name="relief">none</property>
+                <property name="use_stock">True</property>
+                <property name="always_show_image">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
                 <property name="position">4</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btn_RED">
+                <property name="label">gtk-no</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="focus_on_click">False</property>
+                <property name="receives_default">False</property>
+                <property name="no_show_all">True</property>
+                <property name="relief">none</property>
+                <property name="use_stock">True</property>
+                <property name="always_show_image">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">5</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSpinner" id="appSpinner">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="active">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">6</property>
               </packing>
             </child>
           </object>
@@ -4603,7 +4651,7 @@ Footnotes and Cross-references.</property>
                                 <property name="row_spacing">8</property>
                                 <child>
                                   <object class="GtkRadioButton" id="c_useLowResPics">
-                                    <property name="label" translatable="yes">Use Low-Resolution Pictures (JPG files)</property>
+                                    <property name="label" translatable="yes">Use Low-Resolution Pictures (smallest file size)</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -4652,7 +4700,7 @@ without illustrations.</property>
                                 </child>
                                 <child>
                                   <object class="GtkRadioButton" id="c_useHighResPics">
-                                    <property name="label" translatable="yes">Use High-Resolution Pictures (PNG files)</property>
+                                    <property name="label" translatable="yes">Use High-Resolution Pictures (largest file size)</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -4695,26 +4743,6 @@ must be manually converted to PNG or JPG first.)</property>
                                   <packing>
                                     <property name="left_attach">3</property>
                                     <property name="top_attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_convertTIFtoPNG">
-                                    <property name="label" translatable="yes">Convert TIFs to PNGs</property>
-                                    <property name="sensitive">False</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="no_show_all">True</property>
-                                    <property name="tooltip_text" translatable="yes">XeTeX is unable to use .TIF formatted illustrations
-but it can convert the .TIF files to .PNG. These will
-be generated in the same folder as the TIF files.
-(Not yet implemented. Coming soon!)</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin_bottom">6</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">3</property>
-                                    <property name="top_attach">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -4863,7 +4891,39 @@ for the required illustrations.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkLabel" id="l_imageTypeOrder">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">If more than one image type is located
+for an image (ab12345.jpg, ab12345.png)
+which type should be used preferably.</property>
+                                    <property name="margin_right">6</property>
+                                    <property name="label" translatable="yes">Order of Prefered Image Types:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="t_imageTypeOrder">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="tooltip_text" translatable="yes">If more than one image type is located
+for an image (ab12345.jpg, ab12345.png)
+which type should be used preferably.
+
+JPG &gt; PNG &gt; PDF  (looks for JPGs first)
+or
+PNG &gt; PDF &gt; JPG  (looks for PNGs first)
+
+Note that TIFs are unspoorted at present.</property>
+                                    <property name="text" translatable="yes">JPG &gt; PNG &gt; PDF</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="top_attach">4</property>
+                                  </packing>
                                 </child>
                               </object>
                             </child>

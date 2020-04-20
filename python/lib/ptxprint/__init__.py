@@ -137,6 +137,9 @@ class PtxPrinterDialog:
         self.experimental = None
         for p in sorted(allprojects, key = lambda s: s.casefold()):
             self.projects.append([p])
+        self.builder.get_object("btn_GREEN").set_visible(True)
+        self.builder.get_object("btn_RED").set_visible(True)
+        self.builder.get_object("appSpinner").start()
 
     def run(self, callback):
         self.callback = callback
@@ -759,7 +762,7 @@ class PtxPrinterDialog:
 
             # Turn Essential Settings ON
             for c in ("c_mainBodyText", "c_footnoterule",
-                      "c_includefigsfromtext", "c_skipmissingimages", "c_convertTIFtoPNG", "c_useLowResPics"):
+                      "c_includefigsfromtext", "c_skipmissingimages", "c_useLowResPics"):
                 self.builder.get_object(c).set_active(True)
             self.builder.get_object("c_hideAdvancedSettings").set_opacity(0.2)
             self.builder.get_object("c_hideAdvancedSettings").set_tooltip_text("")
@@ -776,7 +779,7 @@ class PtxPrinterDialog:
         # Hide a whole bunch of stuff that they don't need to see   (removed: "tb_Logging")
         for c in ("tb_Body", "tb_Advanced", "tb_ViewerEditor", "tb_DiglotTesting", "btn_editPicList",
                   "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "box_AdvFootnoteConfig", "l_colgutteroffset",
-                  "c_usePicList", "c_skipmissingimages", "c_convertTIFtoPNG", "c_useCustomFolder", "btn_selectFigureFolder", 
+                  "c_usePicList", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", 
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
                   "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection",
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "row_ToC", "c_hyphenate",

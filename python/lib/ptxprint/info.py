@@ -487,6 +487,7 @@ class Info:
             if len(picChangeList):
                 for origfn,tempfn in picChangeList:
                     if tempfn != "":
+                        # Add USFM3 regexes here
                         self.localChanges.append((None, regex.compile(r"(?i)(\\fig .*\|){}(\|.+?\\fig\*)".format(origfn), \
                                                      flags=regex.M), r"\1{}\2".format(tempfn)))
                     else:
