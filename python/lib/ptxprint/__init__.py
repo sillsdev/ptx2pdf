@@ -137,9 +137,7 @@ class PtxPrinterDialog:
         self.experimental = None
         for p in sorted(allprojects, key = lambda s: s.casefold()):
             self.projects.append([p])
-        self.builder.get_object("btn_GREEN").set_visible(True)
-        self.builder.get_object("btn_RED").set_visible(True)
-        self.builder.get_object("appSpinner").start()
+        self.builder.get_object("l_processing").set_opacity(0)
 
     def run(self, callback):
         self.callback = callback
@@ -252,6 +250,7 @@ class PtxPrinterDialog:
 
     def onOK(self, btn):
         if self.prjid is not None:
+            self.builder.get_object("l_processing").set_opacity(1.0)
             self.callback(self)
         else:
             dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
@@ -896,6 +895,10 @@ class PtxPrinterDialog:
             self._setchap(self.chapto, (int(self.strt) if self.strt is not None else 0), self.chs)
             self.cb_chapto.set_active_id(str(self.chs))
 
+    def onSpinITclicked(self, btn_spinIT):
+        self.builder.get_object("appSpinner").start()
+        
+        
     def onProjectChange(self, cb_prj):
         self.updateProjectSettings(False)
         
@@ -974,7 +977,7 @@ class PtxPrinterDialog:
                 bks = bks[0]
             except IndexError:
                 bks = "No book selected!"
-        titleStr = "PTXprint [0.4.7 Beta]" + prjid + " (" + bks + ")"
+        titleStr = "PTXprint [0.4.8 Beta]" + prjid + " (" + bks + ")"
         self.builder.get_object("ptxprint").set_title(titleStr)
 
     def editFile(self, file2edit, wkdir=False):

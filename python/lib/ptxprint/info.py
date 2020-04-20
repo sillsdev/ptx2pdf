@@ -136,6 +136,7 @@ class Info:
         "document/customfiglocn":   ("c_useCustomFolder", lambda w,v :"" if v else "%"),
         "document/customfigfolder": ("btn_selectFigureFolder", lambda w,v: re.sub(r"\\","/", w.customFigFolder) \
                                                                if w.customFigFolder is not None else ""),
+        "document/imagetypepref":   ("t_imageTypeOrder", lambda w,v: v),
         "document/ifusepiclist":    ("c_usePicList", lambda w,v :"" if v else "%"),
         "document/spacecntxtlztn":  ("cb_spaceCntxtlztn", lambda w,v: "0" if v == "None" else "1" if v == "Some" else "2"),
         "document/glossarymarkupstyle":  ("cb_glossaryMarkupStyle", lambda w,v: w.builder.get_object("cb_glossaryMarkupStyle").get_active_id()),
@@ -487,12 +488,14 @@ class Info:
             if len(picChangeList):
                 for origfn,tempfn in picChangeList:
                     if tempfn != "":
-                        # Add USFM3 regexes here
                         self.localChanges.append((None, regex.compile(r"(?i)(\\fig .*\|){}(\|.+?\\fig\*)".format(origfn), \
-                                                     flags=regex.M), r"\1{}\2".format(tempfn)))
+                                                     flags=regex.M), r"\1{}\2".format(tempfn)))                               #USFM2
+                        self.localChanges.append((None, regex.compile(r'(?i)(\\fig .+?src="{}" .+?\\fig\*)'.format(origfn), \
+                                                     flags=regex.M), r"\1{}\2".format(tempfn)))                               #USFM3
                     else:
                         if printer.get("c_skipmissingimages"):
-                            self.localChanges.append((None, regex.compile(r"(?i)\\fig .*\|{}\|.+?\\fig\*".format(origfn), flags=regex.M), ""))
+                            self.localChanges.append((None, regex.compile(r"(?i)\\fig .*\|{}\|.+?\\fig\*".format(origfn), flags=regex.M), ""))     #USFM2
+                            self.localChanges.append((None, regex.compile(r'(?i)\\fig .+?src="{}" .+?\\fig\*'.format(origfn), flags=regex.M), "")) #USFM3
 
             if printer.get("c_fighiderefs"): # del ch:vs from caption
                 self.localChanges.append((None, regex.compile(r"(\\fig .*?)(\d+[:.]\d+([-,]\d+)?)(.*?\\fig\*)", flags=regex.M), r"\1\4"))
@@ -577,17 +580,25 @@ class Info:
         picdir = os.path.join(prjdir, "PrintDraft", "tmpPics")
         fname = printer.getBookFilename(bk, prjdir)
         infname = os.path.join(prjdir, fname)
-        # We could make this user-configurable, so that they specify the order they want
-        if printer.get("c_useLowResPics"): 
-            extOrder = ["jpg", "png", "pdf"] # we want to use the smallest available file
-        else:
-            extOrder = ["pdf", "png", "jpg"] # we want to use the best quality available file
+        # If the preferred image type has been specified, parse that
+        imgord = printer.get("t_imageTypeOrder")
+        extOrder = []
+        if  len(imgord):
+            exts = re.findall("([a-z]{3})",imgord.lower())
+            for e in exts:
+                if e in ["jpg", "png", "pdf"] and e not in extOrder:
+                    extOrder += [e]
+        if not len(extOrder): # If the user hasn't defined a specifi order then we can assign this
+            if printer.get("c_useLowResPics"): # based on whether they want small/compressed image formats
+                extOrder = ["jpg", "png", "pdf"] 
+            else:                              # or larger high quality uncompresses image formats
+                extOrder = ["pdf", "png", "jpg"]
         with open(infname, "r", encoding="utf-8") as inf:
             dat = inf.read()
             inf.close()
             # jpg, tif, png, pdf => [jtp][pdin][gf]
-            piclist += re.findall(r"(?i)\\fig .*\|(.+?\.[jtp][pdin][gf])\|.+?\\fig\*", dat)     # Finds USFM2-styled markup in text:
-            piclist += re.findall(r'(?i)\\fig .+src="(.+?\.[jtp][pdin][gf])" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text: 
+            piclist += re.findall(r"(?i)\\fig .*\|(.+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)     # Finds USFM2-styled markup in text:
+            piclist += re.findall(r'(?i)\\fig .+src="(.+?\.(?=jpg|tif|png|pdf)...)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text: 
             # piclist = [item.lower() for item in piclist]
             # print(piclist)
             for f in piclist:

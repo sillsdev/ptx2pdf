@@ -929,51 +929,20 @@ and produce a PDF with the settings specified.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="btn_GREEN">
-                <property name="label">gtk-yes</property>
+              <object class="GtkLabel" id="l_processing">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="focus_on_click">False</property>
-                <property name="receives_default">False</property>
-                <property name="no_show_all">True</property>
-                <property name="relief">none</property>
-                <property name="use_stock">True</property>
-                <property name="always_show_image">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">start</property>
+                <property name="label" translatable="yes">  Processing...  </property>
+                <attributes>
+                  <attribute name="foreground" value="#cccc00000000"/>
+                  <attribute name="background" value="#fcfce9e94f4f"/>
+                </attributes>
               </object>
               <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
                 <property name="position">4</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="btn_RED">
-                <property name="label">gtk-no</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="focus_on_click">False</property>
-                <property name="receives_default">False</property>
-                <property name="no_show_all">True</property>
-                <property name="relief">none</property>
-                <property name="use_stock">True</property>
-                <property name="always_show_image">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">5</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkSpinner" id="appSpinner">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="active">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">6</property>
               </packing>
             </child>
           </object>

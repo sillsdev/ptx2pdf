@@ -138,7 +138,6 @@ def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
     return outfname
 
 def doit(printer):
-    printer.builder.get_object("appSpinner").start()
     info = printer.info or ptxprint.Info(printer, args.paratext, printer.prjid)
     prjid = printer.get("cb_project")
     prjdir = os.path.join(args.paratext, prjid)
@@ -168,7 +167,7 @@ def doit(printer):
     else:
         pdfname = os.path.join(tmpdir, "ptxprint-{}{}.pdf".format(jobs[0], prjid))
     # Check the return code to see if generating the PDF was successful before opening the PDF
-    printer.builder.get_object("appSpinner").stop()
+    printer.builder.get_object("l_processing").set_opacity(0)
     if info.res == 0:
         if os.path.exists(pdfname):
             if sys.platform == "win32":
@@ -178,10 +177,10 @@ def doit(printer):
             # Only delete the temp files if the PDF was created AND the user did NOT select to keep them
             if not printer.get("c_keepTemporaryFiles"):
                 removeTempFiles(texfiles,tmpdir,info)
-        printer.builder.get_object("btn_GREEN").set_visible(True)
+        # printer.builder.get_object("btn_GREEN").set_opacity(1.0)
     else: # if info.res != 0:
         # it did NOT finish successfully, so help them troubleshoot what went wrong:
-        printer.builder.get_object("btn_RED").set_visible(True)
+        # printer.builder.get_object("btn_RED").set_opacity(1.0)
         dialog = Gtk.MessageDialog(parent=None, modal=True, message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK, \
             text="Error: Unable to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname))
         dialog.format_secondary_text("".join(info.loglines[-20:])+
@@ -219,18 +218,16 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
                 with open(piclstfname, "r", encoding="utf-8") as inf:
                     dat = inf.read()
                     # MAT 19.13 |CN01771C.jpg|col|tr||Bringing the children to Jesus|19:13
-                    fullnamelist += re.findall(r"(?i)\|(.+?\.[jtp][pdin][gf])\|", dat)
+                    fullnamelist += re.findall(r"(?i)\|(.+?\.(?=jpg|tif|png|pdf)...)\|", dat)
         else:
             infname = os.path.join(prjdir, fname)
             with open(infname, "r", encoding="utf-8") as inf:
                 dat = inf.read()
                 inf.close()
-                # Ask MH: Why doesn't Atomic Grouping (?>jpg|tif|png|pdf) = non-matching group syntax work in Python's RE?
-                # Ask #2: Is there are way to to find any pictures that didn't match the standard pattern (my hack isn't 100% foolproof yet)
-                basenamelist += re.findall(r"(?i)\\fig .*\|([a-z]{2}\d{5})[a-c]?\.[jtp][pdin][gf]\|.+?\\fig\*", dat)     # USFM2 AB01234b.ext fig files
-                basenamelist += re.findall(r"(?i)\\fig .*\|(.+[a-z]{2}(?!\d{5}[a-c]?))\.[jtp][pdin][gf]\|.+?\\fig\*", dat)                # USFM2 non-standard fig files
-                basenamelist += re.findall(r'(?i)\\fig .+src="([a-z][a-z]\d{5})[abc]?\.[jtp][pdin][gf]" .+?\\fig\*', dat)  # USFM3 AB01234b.ext fig files 
-                basenamelist += re.findall(r'(?i)\\fig .+src="(.+[a-z]{2})\.[jtp][pdin][gf]" .+?\\fig\*', dat)             # USFM3 non-standard fig files 
+                basenamelist += re.findall(r"(?i)\\fig .*\|([a-z]{2}\d{5})[a-c]?\.(?=jpg|tif|png|pdf)...\|.+?\\fig\*", dat)      # USFM2 AB01234b.ext fig files
+                basenamelist += re.findall(r"(?i)\\fig .*\|(.+?(?!\d{5}[a-c]?).+?)\.(?=jpg|tif|png|pdf)...\|.+?\\fig\*", dat)    # USFM2 non-standard fig files
+                basenamelist += re.findall(r'(?i)\\fig .+src="([a-z]{2}\d{5})[a-c]?\.(?=jpg|tif|png|pdf)..." .+?\\fig\*', dat)   # USFM3 AB01234b.ext fig files 
+                basenamelist += re.findall(r'(?i)\\fig .+src="(.+?(?!\d{5}[a-c]?).+?)\.(?=jpg|tif|png|pdf)..." .+?\\fig\*', dat) # USFM3 non-standard fig files 
 
     # print("basenamelist:", len(basenamelist), basenamelist)
     # print("fullnamelist:", len(fullnamelist), fullnamelist)
@@ -252,7 +249,7 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
                                 origextn = shortname[-4:]
                                 basefname = shortname.lower()
                                 basefname = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?\.(jpg|png|pdf)", r"\1",basefname)
-                                basefname = re.sub(r"(?i)(.+)\.(jpg|png|pdf)", r"\1",basefname)  # This should pick up any non-standard filenames
+                                basefname = re.sub(r"(?i)(.+?)\.(jpg|png|pdf)", r"\1",basefname)  # This should pick up any non-standard filenames
                                 if basefname in basenamelist:
                                     # print("{}|{}|{} > {}".format(shortname,os.path.getsize(filepath),filepath,basefname+origextn))
                                     tmpfname = os.path.join(tmpPicpath, basefname+origextn)
