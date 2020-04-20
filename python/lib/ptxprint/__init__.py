@@ -69,7 +69,8 @@ class PtxPrinterDialog:
         self.addCR("cb_textDirection", 0)
         self.addCR("cb_blendedXrefCaller", 0)
         self.addCR("cb_glossaryMarkupStyle", 0)
-        self.addCR("cb_savedConfig", 0)
+        self.cb_savedConfig = self.builder.get_object("cb_savedConfig")
+        # self.addCR("cb_savedConfig", 0)
         # self.addCR("cb_diglotPriProject", 0)
         # self.addCR("cb_diglotSecProject", 0)
 

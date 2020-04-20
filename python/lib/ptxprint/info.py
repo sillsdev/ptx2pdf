@@ -313,7 +313,7 @@ class Info:
             if featstring is not None and len(featstring):
                 printer.set(self._mappings["font/features"][0], featstring)
                 f.features = {}
-                for l in featstring.split(','):
+                for l in re.split(r'\s*[,;:]\s*|\s+', featstring):
                     if '=' in l:
                         k, v = l.split('=')
                         f.features[k.strip()] = v.strip()
