@@ -97,10 +97,12 @@ parser.add_argument("outfile",help="File to output results to")
 parser.add_argument("-f","--format",default="txt",help="Output file format [txt,inno]")
 parser.add_argument("-s","--source",default=".",help="[inno] Source directory for icon files")
 parser.add_argument("-d","--destination",help="[inno] Destination directory for files")
-parser.add_argument("-i","--icon",action="append",help="Icon files to include")
+parser.add_argument("-i","--icon",default=[],action="append",help="Icon files to include")
 args = parser.parse_args()
 
 icons = set()
+icons.update([icon_mappings["gtk-"+i]+".png" for i in \
+        ("cdrom", "harddisk", "network", "directory", "floppy", "file", "home")])
 for i in args.icon:
     icons.add(i+".png")
 doc = et.parse(args.infile)

@@ -117,8 +117,6 @@
 \def\s@tfont#1{%
  \x@\ifx\csname font<#1>\endcsname \relax % check if font identifier for this style has been created
   \let\typef@ce=\regular
-  \getp@ram{superscript}{#1}% scale down by \SuperscriptFactor if superscripted style
-  \dimen0=\ifx\p@ram\tru@ \SuperscriptFactor\fi\FontSizeUnit
   \getp@ram{fontname}{#1}% see if \FontName was specified in the stylesheet
   \ifx\p@ram\relax % if not, check the \Bold and \Italic properties
 	  \getp@ram{bold}{#1}%
@@ -137,6 +135,8 @@
   \ifx\p@ram\tru@
     \edef\typef@ce{\typef@ce\SmallCapsSuffix}%
   \fi
+  \getp@ram{superscript}{#1}% scale down by \SuperscriptFactor if superscripted style
+  \dimen0=\ifx\p@ram\tru@ \SuperscriptFactor\fi\FontSizeUnit
   \getp@ram{fontsize}{#1}%
   \ifx\p@ram\relax
     \MSG{*** FontSize missing for marker '#1', defaulting to 12}%
@@ -147,6 +147,19 @@
  \fi
  % switch to the appropriate font
  \csname font<#1>\endcsname
+}
+\def\s@textrafont#1{%
+  \x@\ifx\csname extrafont<#1>\endcsname \relax%
+    \let\typef@ce=\extraregular
+    \getp@ram{superscript}{#1}%
+    \dimen0=\ifx\p@ram\tru@ \SuperscriptFactor\fi\FontSizeUnit
+    \getp@ram{fontsize}{#1}%
+    \ifx\p@ram\relax
+      \def\p@ram{12}
+    \fi
+    \x@\global\x@\font\csname extrafont<#1>\endcsname=\typef@ce\space at \p@ram \dimen0
+  \fi
+  \csname extrafont<#1>\endcsname
 }
 \def\tru@{true}
 \def\SuperscriptFactor{0.75}
