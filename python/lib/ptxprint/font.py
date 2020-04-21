@@ -171,6 +171,8 @@ class TTFont:
             self.ttfont = ttLib.TTFont(self.filename)
 
     def testcmap(self, chars):
-        cmap = self.ttfont['cmap'].getBestCmap().cmap
-        return [c for c in chars if c not in cmap]
+        self.loadttfont()
+        cmap = self.ttfont['cmap']
+        b=cmap.getBestCmap()
+        return [c for c in chars if ord(c) not in b and ord(c) > 32]
         

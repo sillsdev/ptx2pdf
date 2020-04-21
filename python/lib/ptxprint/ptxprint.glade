@@ -907,7 +907,7 @@ in the same place).</property>
             </child>
             <child>
               <object class="GtkButton">
-                <property name="label">gtk-print-preview</property>
+                <property name="label">Print</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -917,7 +917,6 @@ and produce a PDF with the settings specified.</property>
                 <property name="margin_top">3</property>
                 <property name="margin_bottom">3</property>
                 <property name="resize_mode">immediate</property>
-                <property name="use_stock">True</property>
                 <property name="always_show_image">True</property>
                 <signal name="clicked" handler="onOK" swapped="no"/>
               </object>
@@ -926,23 +925,6 @@ and produce a PDF with the settings specified.</property>
                 <property name="fill">False</property>
                 <property name="pack_type">end</property>
                 <property name="position">3</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="l_processing">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="halign">start</property>
-                <property name="label" translatable="yes">  Processing...  </property>
-                <attributes>
-                  <attribute name="foreground" value="#cccc00000000"/>
-                  <attribute name="background" value="#fcfce9e94f4f"/>
-                </attributes>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">4</property>
               </packing>
             </child>
           </object>
@@ -3340,7 +3322,11 @@ button on the Advanced tab.</property>
                                         <property name="tooltip_text" translatable="yes">If the primary font is missing any characters
 (usually special punctuation, or quotes), then
 these can be listed here, and handled using
-the Font specified below.</property>
+the Font specified below.
+
+Note that the following characters are reserved
+and are ignored by the Fallback font functionality:
+           \u2018 \u2019 \u201c \u201d * # %</property>
                                         <property name="halign">end</property>
                                         <signal name="clicked" handler="onFindMissingCharsClicked" swapped="no"/>
                                       </object>
@@ -3389,6 +3375,7 @@ missing in main font:</property>
                                         <property name="valign">center</property>
                                         <property name="margin_right">6</property>
                                         <property name="font">Times New Roman 12</property>
+                                        <property name="level">GTK_FONT_CHOOSER_LEVEL_FAMILY</property>
                                         <property name="preview_text"/>
                                         <property name="show_preview_entry">False</property>
                                         <property name="show_style">False</property>

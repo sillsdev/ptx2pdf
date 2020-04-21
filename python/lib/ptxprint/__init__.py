@@ -137,7 +137,6 @@ class PtxPrinterDialog:
         self.experimental = None
         for p in sorted(allprojects, key = lambda s: s.casefold()):
             self.projects.append([p])
-        self.builder.get_object("l_processing").set_opacity(0)
 
     def run(self, callback):
         self.callback = callback
@@ -158,7 +157,6 @@ class PtxPrinterDialog:
         for w in ("tb_", "lb_"):
             for exp in ("Illustrations", "Logging"):
                 self.builder.get_object("{}{}".format(w, exp)).set_visible(value)
-        # self.builder.get_object("fr_fallbackFont").set_sensitive(value)
 
     def addCR(self, name, index):
         v = self.builder.get_object(name)
@@ -250,7 +248,6 @@ class PtxPrinterDialog:
 
     def onOK(self, btn):
         if self.prjid is not None:
-            self.builder.get_object("l_processing").set_opacity(1.0)
             self.callback(self)
         else:
             dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
@@ -1490,7 +1487,6 @@ class PtxPrinterDialog:
                     unfitBooks.append(bk)
         return unfitBooks
 
-    # Very much experimental (and currently broken)  MH: Need your thoughts on how to do this better.
     def onFindMissingCharsClicked(self, btn_findMissingChars):
         # pass
         count = collections.Counter()
@@ -1515,25 +1511,13 @@ class PtxPrinterDialog:
                     bkcntr = collections.Counter(sfmtxt)
                     count += bkcntr
         slist = sorted(count.items(), key=lambda pair: pair[0])
-        for char, cnt in slist:
-            print("{}\t{}".format(repr(char.encode('raw_unicode_escape'))[2:-1],cnt))
-        print("Highly suspicious list:")
-        # slist = sorted(count.items(), key=lambda pair: pair[1], reverse=True)
-        suspects = ""
-        suspectcodes = ""
-        for char, cnt in slist:
-            if cnt < 10:
-                suspects += char
-                suspectcodes += repr(char.encode('raw_unicode_escape'))[2:-1].replace("\\\\","\\")
-                print("\t{}\t{}".format(repr(char.encode('raw_unicode_escape'))[2:-1],cnt))
-        self.builder.get_object("t_missingChars").set_text(suspects)
-        self.builder.get_object("t_missingChars").set_tooltip_text(suspectcodes)
-
-# Handy code for finding/counting captions in figures
-    # figlist = regex.findall(r'\\fig (.*\|){5}([^\\]+)\|[^\\]+\\fig\*', sfmtxt)
-    # sfmtxt = ""
-    # if len(figlist):
-        # print(bk, len(figlist),"figures found")
-    # for f in figlist:
-        # sfmtxt += f[1]
-    # sfmtxt = " ".join(figlist))
+        reg = self.get("f_body")
+        f = TTFont(reg)
+        allchars = ''.join([i[0] for i in count.items()])
+        print(allchars.encode("raw_unicode_escape"))
+        missing = f.testcmap(allchars)
+        self.builder.get_object("t_missingChars").set_text(' '.join(missing))
+        missingcodes = ""
+        for char in missing:
+            missingcodes += repr(char.encode('raw_unicode_escape'))[2:-1].replace("\\\\","\\") + " "
+        self.builder.get_object("t_missingChars").set_tooltip_text(missingcodes)

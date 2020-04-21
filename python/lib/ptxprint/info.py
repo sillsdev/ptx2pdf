@@ -380,11 +380,15 @@ class Info:
                             # print("Else for book: ",f[2:5])
                             res.append("\\ptxfile{{{}}}\n".format(f))
                 elif l.startswith(r"%\extrafont"):
-                    spclChars = self.dict["paragraph/missingchars"].encode("utf-8").decode("raw_unicode_escape")
+                    spclChars = re.sub(r"\\[uU]([0-9a-fA-F]{4,6})", lambda m:chr(int(m.group(1), 16)), self.dict["paragraph/missingchars"])
+                    print(spclChars.split(' '), [len(x) for x in spclChars.split(' ')])
                     if self.dict["paragraph/ifusefallback"] == "true" and len(spclChars):
+                        badlist = "\u2018\u2019\u201c\u201d*#%"
                         a = ["".join(chr(ord(c) + 16 if ord(c) < 58 else ord(c) - 23) for c in str(hex(ord(x)))[2:]).lower() for x in spclChars.split(" ")]
                         b = ["".join((c) for c in str(hex(ord(x)))[2:]).lower() for x in spclChars.split(" ")]
-                        c = tuple(zip(a,b))
+                        c = [x for x in zip(a,b) if chr(int(x[1],16)) not in badlist]
+                        if not len(c):
+                            continue
                         res.append("% for defname @active+ @+digit => 0->@, 1->a ... 9->i A->j B->k .. F->o\n")
                         res.append("% 12 (size) comes from \\p size\n")
                         res.append('\\def\\extraregular{{"{}"}}\n'.format(self.dict["fontextraregular/name"]))
@@ -392,10 +396,9 @@ class Info:
                         res.append("\\def\\do@xtrafont{\\x@\\s@textrafont\\ifx\\thisch@rstyle\\undefined\\m@rker\\else\\thisch@rstyle\\fi}\n")
                         for a,b in c:
                             res.append("\\def\\@ctive{}{{{{\\do@xtrafont {}{}}}}}\n".format(a, '^'*len(b), b))
-                        for a,b in c:
                             res.append("\\DefineActiveChar{{{}{}}}{{\\@ctive{}}}\n".format( '^'*len(b), b, a))
                         res.append("\\@ctivate\n")
-                        res.append("\\catcode`\\@=12\n\n")
+                        res.append("\\catcode`\\@=12\n")
                 elif l.startswith(r"%\snippets"):
                     for k, c in self._snippets.items():
                         v = self.printer.get(c[0])
