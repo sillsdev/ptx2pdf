@@ -94,6 +94,7 @@ class TTFont:
         self.feats = {}
         self.featvals = {}
         self.names = {}
+        self.ttfont = None
         if self.filename is not None:
             self.readfont()
         else:
@@ -163,3 +164,13 @@ class TTFont:
             return res + " " + " ".join(self.extrastyles)
         else:
             return res
+
+    def loadttfont(self):
+        from fontTools import ttLib
+        if self.ttfont is None:
+            self.ttfont = ttLib.TTFont(self.filename)
+
+    def testcmap(self, chars):
+        cmap = self.ttfont['cmap'].getBestCmap().cmap
+        return [c for c in chars if c not in cmap]
+        

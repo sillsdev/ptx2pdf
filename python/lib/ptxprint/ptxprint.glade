@@ -3389,7 +3389,6 @@ missing in main font:</property>
                                         <property name="valign">center</property>
                                         <property name="margin_right">6</property>
                                         <property name="font">Times New Roman 12</property>
-                                        <property name="level">GTK_FONT_CHOOSER_LEVEL_SIZE | GTK_FONT_CHOOSER_LEVEL_FAMILY</property>
                                         <property name="preview_text"/>
                                         <property name="show_preview_entry">False</property>
                                         <property name="show_style">False</property>

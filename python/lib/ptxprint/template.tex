@@ -88,13 +88,18 @@
 
 %\AutoCallerStartChar=97
 %\AutoCallerNumChars=26
-\AutoCallers{{f}}{{{notes/fncallers}}} % to hide callers in body text this needs to be empty
 {notes/fnresetcallers}\PageResetCallers{{f}}
 {notes/fnomitcaller}\OmitCallerInNote{{f}}
 {notes/fnparagraphednotes}\ParagraphedNotes{{f}}
 %\NumericCallers{{f}}
 
-\AutoCallers{{x}}{{{notes/xrcallers}}} % to hide callers in body text this needs to be empty
+% no comments inside this catcode area. Who knows what others people will want.
+\catcode`\#=12 \catcode`\%=12 \catcode`\&=12 \catcode`\^=12
+\AutoCallers{{f}}{{{notes/fncallers}}}
+\AutoCallers{{x}}{{{notes/xrcallers}}}
+\catcode`\#=6 \catcode`\%=14 \catcode`\&=4 \catcode`\^=7
+%
+
 {notes/xrresetcallers}\PageResetCallers{{x}}
 {notes/xromitcaller}\OmitCallerInNote{{x}}
 {notes/xrparagraphednotes}\ParagraphedNotes{{x}}

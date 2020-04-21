@@ -136,7 +136,7 @@
     \edef\typef@ce{\typef@ce\SmallCapsSuffix}%
   \fi
   \getp@ram{superscript}{#1}% scale down by \SuperscriptFactor if superscripted style
-  \dimen0=\ifx\p@ram\tru@ \SuperscriptFactor\fi\FontSizeUnit
+  \dimen0=\ifx\p@ram\tru@ \SuperscriptFactor\fi\FontSizeUnit%
   \getp@ram{fontsize}{#1}%
   \ifx\p@ram\relax
     \MSG{*** FontSize missing for marker '#1', defaulting to 12}%
@@ -148,6 +148,7 @@
  % switch to the appropriate font
  \csname font<#1>\endcsname
 }
+\def\extraregular{"Times New Roman"}
 \def\s@textrafont#1{%
   \x@\ifx\csname extrafont<#1>\endcsname \relax%
     \let\typef@ce=\extraregular
@@ -155,6 +156,7 @@
     \dimen0=\ifx\p@ram\tru@ \SuperscriptFactor\fi\FontSizeUnit
     \getp@ram{fontsize}{#1}%
     \ifx\p@ram\relax
+      \MSG{*** FontSize missing for marker '#1', defaulting to 12}%
       \def\p@ram{12}
     \fi
     \x@\global\x@\font\csname extrafont<#1>\endcsname=\typef@ce\space at \p@ram \dimen0
