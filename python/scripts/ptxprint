@@ -232,11 +232,13 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
                 basenamelist += re.findall(r'(?i)\\fig .+src="([a-z]{2}\d{5})[a-c]?\.(?=jpg|tif|png|pdf)..." .+?\\fig\*', dat)   # USFM3 AB01234b.ext fig files 
                 basenamelist += re.findall(r'(?i)\\fig .+src="(.+?(?!\d{5}[a-c]?).+?)\.(?=jpg|tif|png|pdf)..." .+?\\fig\*', dat) # USFM3 non-standard fig files 
 
-    # print("basenamelist:", len(basenamelist), basenamelist)
-    # print("fullnamelist:", len(fullnamelist), fullnamelist)
+    print("basenamelist:", len(basenamelist), basenamelist)
+    print("fullnamelist:", len(fullnamelist), fullnamelist)
     basenamelist = [item.lower() for item in basenamelist]
     for srchdir in [picdir, os.path.join(prjdir, "local"), os.path.join(prjdir, "figures")]:
+        print(srchdir)
         if srchdir != None and os.path.exists(srchdir):
+            print("Inside:", srchdir)
             for subdir, dirs, files in os.walk(srchdir):
                 for file in files:
                     filepath = subdir + os.sep + file
@@ -244,8 +246,8 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
                         if filepath.lower()[-4:] in [".jpg", ".png", ".pdf"]:
                             shortname = os.path.basename(filepath)
                             if printer.get("c_usePicList"):
-                                if shortname in fullnamelist:
-                                    # print("Found:", filepath)
+                                if shortname.lower() in fullnamelist:
+                                    print("Found:", filepath)
                                     tmpfname = os.path.join(tmpPicpath, shortname)
                                     carefulCopy(printer, filepath, tmpfname)
                             else:
@@ -259,6 +261,7 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
                                     carefulCopy(printer, filepath, tmpfname)
 
 def carefulCopy(printer, srcfile, tgtfile):
+    print("Careful copy:", srcfile, "\n", tgtfile)
     if not os.path.exists(tgtfile):
         copyfile(srcfile, tgtfile)
     else:
