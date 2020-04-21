@@ -3,7 +3,7 @@
 import argparse, sys, os, re, subprocess
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
 from shutil import copyfile, rmtree
 
 if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
@@ -47,6 +47,11 @@ for d in os.listdir(args.paratext):
     if os.path.exists(os.path.join(args.paratext, d, 'Settings.xml')):
         allprojects.append(d)
 allprojects.sort()
+
+css = ".printbutton:active { background-color: red; background-image: None }"
+provider = Gtk.CssProvider()
+provider.load_from_data(css.encode("utf-8"))
+Gtk.StyleContext().add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
 mainw = ptxprint.PtxPrinterDialog(allprojects, args.paratext, working_dir=args.directory)
 mainw.ExperimentalFeatures(args.experimental)

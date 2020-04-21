@@ -73,6 +73,9 @@ class PtxPrinterDialog:
         # self.addCR("cb_savedConfig", 0)
         # self.addCR("cb_diglotPriProject", 0)
         # self.addCR("cb_diglotSecProject", 0)
+        pb = self.builder.get_object("b_print")
+        pbc = pb.get_style_context()
+        pbc.add_class("printbutton")
 
         scripts = self.builder.get_object("ls_scripts")
         scripts.clear()
