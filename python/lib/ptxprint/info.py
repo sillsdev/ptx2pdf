@@ -380,17 +380,20 @@ class Info:
                             # print("Else for book: ",f[2:5])
                             res.append("\\ptxfile{{{}}}\n".format(f))
                 elif l.startswith(r"%\extrafont"):
-                    spclChars = "\u00ab \u00bb".split(' ') # self.dict["paragraph/missingchars"]
+                    spclChars = self.dict["paragraph/missingchars"].encode("utf-8").decode("raw_unicode_escape")
                     if self.dict["paragraph/ifusefallback"] == "true" and len(spclChars):
+                        a = ["".join(chr(ord(c) + 16 if ord(c) < 58 else ord(c) - 23) for c in str(hex(ord(x)))[2:]).lower() for x in spclChars.split(" ")]
+                        b = ["".join((c) for c in str(hex(ord(x)))[2:]).lower() for x in spclChars.split(" ")]
+                        c = tuple(zip(a,b))
                         res.append("% for defname @active+ @+digit => 0->@, 1->a ... 9->i A->j B->k .. F->o\n")
                         res.append("% 12 (size) comes from \\p size\n")
                         res.append('\\def\\extraregular{{"{}"}}\n'.format(self.dict["fontextraregular/name"]))
                         res.append("\\catcode`\\@=11\n")
                         res.append("\\def\\do@xtrafont{\\x@\\s@textrafont\\ifx\\thisch@rstyle\\undefined\\m@rker\\else\\thisch@rstyle\\fi}\n")
-                        for s in spclChars:
-                            res.append("\\def\\@ctive@@jk{{{{\\do@xtrafont ^^^^{}}}}}\n".format('%04x' % ord(s)))
-                        for s in spclChars:
-                            res.append("\\DefineActiveChar{{^^^^{}}}{{\\@ctive@@jk}}\n".format('%04x' % ord(s)))
+                        for a,b in c:
+                            res.append("\\def\\@ctive{}{{{{\\do@xtrafont {}{}}}}}\n".format(a, '^'*len(b), b))
+                        for a,b in c:
+                            res.append("\\DefineActiveChar{{{}{}}}{{\\@ctive{}}}\n".format( '^'*len(b), b, a))
                         res.append("\\@ctivate\n")
                         res.append("\\catcode`\\@=12\n\n")
                 elif l.startswith(r"%\snippets"):
