@@ -168,7 +168,6 @@ def doit(printer):
     else:
         pdfname = os.path.join(tmpdir, "ptxprint-{}{}.pdf".format(jobs[0], prjid))
     # Check the return code to see if generating the PDF was successful before opening the PDF
-    printer.builder.get_object("l_processing").set_opacity(0)
     if info.res == 0:
         if os.path.exists(pdfname):
             if sys.platform == "win32":
@@ -178,10 +177,8 @@ def doit(printer):
             # Only delete the temp files if the PDF was created AND the user did NOT select to keep them
             if not printer.get("c_keepTemporaryFiles"):
                 removeTempFiles(texfiles,tmpdir,info)
-        # printer.builder.get_object("btn_GREEN").set_opacity(1.0)
     else: # if info.res != 0:
         # it did NOT finish successfully, so help them troubleshoot what went wrong:
-        # printer.builder.get_object("btn_RED").set_opacity(1.0)
         dialog = Gtk.MessageDialog(parent=None, modal=True, message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK, \
             text="Error: Unable to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname))
         dialog.format_secondary_text("".join(info.loglines[-20:])+

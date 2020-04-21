@@ -381,7 +381,7 @@ class Info:
                             res.append("\\ptxfile{{{}}}\n".format(f))
                 elif l.startswith(r"%\extrafont"):
                     spclChars = re.sub(r"\\[uU]([0-9a-fA-F]{4,6})", lambda m:chr(int(m.group(1), 16)), self.dict["paragraph/missingchars"])
-                    print(spclChars.split(' '), [len(x) for x in spclChars.split(' ')])
+                    # print(spclChars.split(' '), [len(x) for x in spclChars.split(' ')])
                     if self.dict["paragraph/ifusefallback"] == "true" and len(spclChars):
                         badlist = "\u2018\u2019\u201c\u201d*#%"
                         a = ["".join(chr(ord(c) + 16 if ord(c) < 58 else ord(c) - 23) for c in str(hex(ord(x)))[2:]).lower() for x in spclChars.split(" ")]
@@ -413,8 +413,8 @@ class Info:
 
     def convertBook(self, bk, outdir, prjdir):
         if self.dict['project/usechangesfile'] == "true":
-            if self.changes is None:
-                self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'))
+            # if self.changes is None: # Not sure why we aren't doing this every time.
+            self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'))
         else:
             self.changes = []
         printer = self.printer
@@ -458,6 +458,10 @@ class Info:
             for l in inf.readlines():
                 l = l.strip().replace(u"\uFEFF", "")
                 l = re.sub(r"\s*#.*$", "", l)
+                try:
+                    print("After re.sub:", l)
+                except:
+                    pass
                 if not len(l):
                     continue
                 m = re.match(r"^"+qreg+r"\s*>\s*"+qreg, l)
