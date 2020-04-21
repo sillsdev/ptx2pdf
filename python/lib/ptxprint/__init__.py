@@ -114,10 +114,13 @@ class PtxPrinterDialog:
         for i,k in enumerate(["FinalSFM", "PicList", "AdjList", "TeXfile", "XeTeXlog", "Settings"]):
             buf = GtkSource.Buffer()
             view = GtkSource.View.new_with_buffer(buf)
-            view.set_show_line_numbers(False)  # Turn these OFF until we can make them pretty with some CSS
             scroll = self.builder.get_object("scroll_" + k)
             scroll.add_with_viewport(view)
             self.fileViews.append((buf, view))
+            if i > 2:
+                view.set_show_line_numbers(True)  # Turn these ON
+            else:
+                view.set_show_line_numbers(False)  # Turn these OFF
 
         self.logbuffer = StreamTextBuffer()
         self.builder.get_object("tv_logging").set_buffer(self.logbuffer)
@@ -648,6 +651,10 @@ class PtxPrinterDialog:
             if len(bks) > 1:
                 self.builder.get_object("cb_examineBook").set_active_id(bks[0])
             
+    def onUseFallbackFontchanged(self, c_useFallbackFont):
+        status = self.get("c_useFallbackFont")
+        self.builder.get_object("gr_fallbackFont").set_sensitive(status)
+
     def onFigsChanged(self, c_includefigsfromtext):
         status = self.get("c_includefigsfromtext")
         for c in ("c_figexclwebapp", "c_fighiderefs", "c_skipmissingimages"):
@@ -1491,7 +1498,6 @@ class PtxPrinterDialog:
         return unfitBooks
 
     def onFindMissingCharsClicked(self, btn_findMissingChars):
-        # pass
         count = collections.Counter()
         prjid = self.get("cb_project")
         prjdir = os.path.join(self.settings_dir, prjid)
@@ -1501,7 +1507,7 @@ class PtxPrinterDialog:
             fpath = os.path.join(self.settings_dir, prjid, fname)
             if os.path.exists(fpath):
                 with open(fpath, "r", encoding="utf-8") as inf:
-                    # Strip out all markers themselves, and Eng content fields
+                    # Strip out all markers themselves, and English content fields
                     sfmtxt = inf.read()
                     sfmtxt = regex.sub(r'\\id .+?\r?\n', '', sfmtxt)
                     sfmtxt = regex.sub(r'\\rem .+?\r?\n', '', sfmtxt)
@@ -1513,14 +1519,36 @@ class PtxPrinterDialog:
                     print(bk, len(sfmtxt))
                     bkcntr = collections.Counter(sfmtxt)
                     count += bkcntr
-        slist = sorted(count.items(), key=lambda pair: pair[0])
+        # slist = sorted(count.items(), key=lambda pair: pair[0])
         reg = self.get("f_body")
         f = TTFont(reg)
         allchars = ''.join([i[0] for i in count.items()])
-        print(allchars.encode("raw_unicode_escape"))
+        # print(allchars.encode("raw_unicode_escape"))
         missing = f.testcmap(allchars)
         self.builder.get_object("t_missingChars").set_text(' '.join(missing))
         missingcodes = ""
         for char in missing:
             missingcodes += repr(char.encode('raw_unicode_escape'))[2:-1].replace("\\\\","\\") + " "
         self.builder.get_object("t_missingChars").set_tooltip_text(missingcodes)
+
+    def onExtraRegularChanged(self, f_extraRegular):
+        reg = self.get("f_body")
+        xtraReg = self.get("f_extraRegular")
+        if reg[:-3] == xtraReg[:-3]:
+            dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
+                     buttons=Gtk.ButtonsType.OK, message_format="The Fallback Font should to be DIFFERENT from the Regular Font.")
+            dialog.format_secondary_text("Please select a different Font.") 
+            dialog.run()
+            dialog.destroy()
+        else:
+            f = TTFont(xtraReg)
+            print(f.filename)
+            msngchars = self.builder.get_object("t_missingChars").get_text() # .split(" ")
+            msngchars = spclChars = re.sub(r"\\[uU]([0-9a-fA-F]{4,6})", lambda m:chr(int(m.group(1), 16)), msngchars)
+            stillmissing = f.testcmap(msngchars)
+            if len(stillmissing):
+                dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
+                         buttons=Gtk.ButtonsType.OK, message_format="The Fallback Font just selected does NOT support all the missing characters listed.")
+                dialog.format_secondary_text("Please select a different Font.")
+                dialog.run()
+                dialog.destroy()

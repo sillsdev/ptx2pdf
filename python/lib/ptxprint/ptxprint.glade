@@ -3305,7 +3305,7 @@ button on the Advanced tab.</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="left_padding">12</property>
                                 <child>
-                                  <object class="GtkGrid">
+                                  <object class="GtkGrid" id="gr_fallbackFont">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>
@@ -3353,9 +3353,17 @@ to enter hard-to-type characters.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="l_fallbackFont">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">Select a font to be used as a substitute or
+"fallback" for the characters listed above
+which are not in the Regular font.
+
+Note that if the label text is RED, it means 
+that the font currently selected doesn't 
+have/support all the missing characters
+either - so it is wise to choose another font.</property>
                                         <property name="halign">end</property>
                                         <property name="label" translatable="yes">Font for characters
 missing in main font:</property>
@@ -3378,6 +3386,8 @@ missing in main font:</property>
                                         <property name="preview_text"/>
                                         <property name="show_preview_entry">False</property>
                                         <property name="show_style">False</property>
+                                        <property name="show_size">False</property>
+                                        <signal name="font-set" handler="onExtraRegularChanged" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
@@ -3400,6 +3410,7 @@ special characters (for example curly quotes),
 then an alternative "fallback" font can be used
 to ensure that they are displayed properly.</property>
                                 <property name="draw_indicator">True</property>
+                                <signal name="toggled" handler="onUseFallbackFontchanged" swapped="no"/>
                               </object>
                             </child>
                           </object>
@@ -6636,7 +6647,18 @@ of this file as it was when last saved.</property>
                           </packing>
                         </child>
                         <child>
-                          <placeholder/>
+                          <object class="GtkCheckButton" id="c_showLineNumbers">
+                            <property name="label" translatable="yes">Show Line 
+Numbers</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="no_show_all">True</property>
+                            <property name="draw_indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">0</property>
+                          </packing>
                         </child>
                         <child>
                           <placeholder/>

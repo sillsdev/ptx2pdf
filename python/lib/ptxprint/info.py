@@ -43,6 +43,7 @@ class Info:
                                                        or not w.get("c_includeXrefs")) or w.get("c_prettyIntroOutline") else "%"),
         "project/ifstarthalfpage":  ("c_startOnHalfPage", lambda w,v :"true" if v else "false"),
         "project/randompicposn":    ("c_randomPicPosn", lambda w,v :"true" if v else "false"),
+        "project/showlinenumbers":  ("c_showLineNumbers", lambda w,v :"true" if v else "false"),
 
         "paper/height":             (None, lambda w,v: re.sub(r"^.*?,\s*(.+?)\s*(?:\(.*|$)", r"\1", w.get("cb_pagesize")) or "210mm"),
         "paper/width":              (None, lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", w.get("cb_pagesize")) or "148mm"),
@@ -458,10 +459,6 @@ class Info:
             for l in inf.readlines():
                 l = l.strip().replace(u"\uFEFF", "")
                 l = re.sub(r"\s*#.*$", "", l)
-                try:
-                    print("After re.sub:", l)
-                except:
-                    pass
                 if not len(l):
                     continue
                 m = re.match(r"^"+qreg+r"\s*>\s*"+qreg, l)
