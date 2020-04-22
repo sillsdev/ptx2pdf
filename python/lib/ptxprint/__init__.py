@@ -3,7 +3,7 @@
 import sys, os, re, regex, gi, random, subprocess, collections
 gi.require_version('Gtk', '3.0')
 from shutil import copyfile
-from gi.repository import Gtk, Pango
+from gi.repository import Gtk, Pango, GObject
 # gi.require_version('GtkSource', '4') 
 from gi.repository import GtkSource
 import xml.etree.ElementTree as et
@@ -68,6 +68,7 @@ class Splash(Thread):
         self.window.connect('destroy', Gtk.main_quit)
 
     def run(self):
+        GObject.threads_init()
         self.window.set_auto_startup_notification(False)
         self.window.show_all()
         self.window.set_auto_startup_notification(True)
@@ -175,11 +176,11 @@ class PtxPrinterDialog:
 
         # do slow stuff here
         initFontCache()
-        sleep(5)
+        sleep(5)  # Until we want people to see the splash screen
 
         self.initialised = True
         if self.pendingPid is not None:
-            self.set("cb_project", self.pendingPid)
+            self.onProjectChange(None)
             self.pendingPid = None
         splash.destroy()
         self.mw.show_all()

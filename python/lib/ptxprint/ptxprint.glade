@@ -937,12 +937,16 @@ and produce a PDF with the settings specified.</property>
         </child>
         <child>
           <object class="GtkBox">
+            <property name="width_request">850</property>
+            <property name="height_request">580</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="halign">start</property>
             <property name="orientation">vertical</property>
             <child>
               <object class="GtkNotebook" id="nbk_Main">
+                <property name="width_request">850</property>
+                <property name="height_request">580</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="halign">start</property>
@@ -7595,6 +7599,9 @@ be specified.</property>
     <property name="decorated">False</property>
     <property name="gravity">center</property>
     <child>
+      <placeholder/>
+    </child>
+    <child>
       <object class="GtkBox">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
@@ -7612,7 +7619,11 @@ be specified.</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
-                <property name="pixbuf">62859-open-book-icon (128).png</property>
+                <property name="margin_left">10</property>
+                <property name="margin_right">10</property>
+                <property name="margin_top">4</property>
+                <property name="margin_bottom">4</property>
+                <property name="pixbuf">splash_small.png</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
