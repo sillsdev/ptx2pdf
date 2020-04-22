@@ -1409,7 +1409,7 @@ the password that was set.</property>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="btn_lockunlock">
-                                    <property name="label" translatable="yes">Lock Config</property>
+                                    <property name="label" translatable="yes">Lock-Down ;-)</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
@@ -3324,6 +3324,10 @@ button on the Advanced tab.</property>
 these can be listed here, and handled using
 the Font specified below.
 
+It is recommended that you select as many
+scripture books as available before using
+this tool to find missing characters.
+
 Note that the following characters are reserved
 and are ignored by the Fallback font functionality:
            \u2018 \u2019 \u201c \u201d * # %</property>
@@ -4111,6 +4115,14 @@ need to be checked for understanding).</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
+                                                        <property name="tooltip_text" translatable="yes">A "Caller" is a symbol in the text which
+alerts the reader that there is further
+information (in this case a footnote
+at the bottom of the page). Ideally, 
+the caller should be distinct from the
+rest of the text, so a symbol works
+well if supported by the font. Otherwise
+the letters of the alphabet can be used.</property>
                                                         <property name="halign">start</property>
                                                         <property name="active">True</property>
                                                         <property name="draw_indicator">True</property>
@@ -4126,6 +4138,14 @@ need to be checked for understanding).</property>
                                                       <object class="GtkEntry" id="t_fncallers">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
+                                                        <property name="tooltip_text" translatable="yes">These callers should automatically be loaded from
+the settings in the Paratext project, but can be
+modified here if needed.
+(Use to button on the right to Reload if needed.)
+
+Separate callers with a comma (no spaces).
+For example: a,b,c,d,e,f,g,h, etc.
+or:  †,‡,§,∥,#    or: ✶,☆,✦,✪</property>
                                                       </object>
                                                       <packing>
                                                         <property name="expand">False</property>
@@ -4133,10 +4153,33 @@ need to be checked for understanding).</property>
                                                         <property name="position">1</property>
                                                       </packing>
                                                     </child>
+                                                    <child>
+                                                      <object class="GtkButton" id="btn_resetFNcallers">
+                                                        <property name="label" translatable="yes">↺</property>
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">True</property>
+                                                        <property name="receives_default">True</property>
+                                                        <property name="tooltip_text" translatable="yes">Clicking this button will reload
+the footnote callers from the
+Paratext project settings.
+
+Shift+Clicking this button
+will send these settings to
+Paratext :-)   [Yeah, right!]</property>
+                                                        <property name="margin_left">4</property>
+                                                        <property name="margin_right">4</property>
+                                                        <signal name="clicked" handler="onResetFNcallersClicked" swapped="no"/>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="expand">False</property>
+                                                        <property name="fill">False</property>
+                                                        <property name="position">2</property>
+                                                      </packing>
+                                                    </child>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
-                                                    <property name="fill">True</property>
+                                                    <property name="fill">False</property>
                                                     <property name="position">1</property>
                                                   </packing>
                                                 </child>
@@ -4263,6 +4306,13 @@ need to be checked for understanding).</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
+                                                        <property name="tooltip_text" translatable="yes">A "Caller" is a symbol in the text which
+alerts the reader that there is further
+information (in this case a cross-reference
+at the bottom of the page). Some people
+prefer not to indicate cross-references in
+the text itself, but just to include them at
+the bottom of the page.</property>
                                                         <property name="halign">start</property>
                                                         <property name="active">True</property>
                                                         <property name="draw_indicator">True</property>
@@ -4278,6 +4328,14 @@ need to be checked for understanding).</property>
                                                       <object class="GtkEntry" id="t_xrcallers">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
+                                                        <property name="tooltip_text" translatable="yes">These callers should automatically be loaded from
+the settings in the Paratext project, but can be
+modified here if needed.
+(Use to button on the right to Reload if needed.)
+
+Separate callers with a comma (no spaces).
+For example: a,b,c,d,e,f,g,h, etc.
+or:  †,‡,§,∥,#    or: ✶,☆,✦,✪</property>
                                                       </object>
                                                       <packing>
                                                         <property name="expand">False</property>
@@ -4285,10 +4343,33 @@ need to be checked for understanding).</property>
                                                         <property name="position">1</property>
                                                       </packing>
                                                     </child>
+                                                    <child>
+                                                      <object class="GtkButton" id="btn_resetXRcallers">
+                                                        <property name="label" translatable="yes">↺</property>
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">True</property>
+                                                        <property name="receives_default">True</property>
+                                                        <property name="tooltip_text" translatable="yes">Clicking this button will reload
+the cross-ref callers from the
+Paratext project settings.
+
+Shift+Clicking this button
+will send these settings to
+Paratext :-)   [Yeah, right!]</property>
+                                                        <property name="margin_left">4</property>
+                                                        <property name="margin_right">4</property>
+                                                        <signal name="clicked" handler="onResetXRcallersClicked" swapped="no"/>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="expand">False</property>
+                                                        <property name="fill">False</property>
+                                                        <property name="position">2</property>
+                                                      </packing>
+                                                    </child>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
-                                                    <property name="fill">True</property>
+                                                    <property name="fill">False</property>
                                                     <property name="position">1</property>
                                                   </packing>
                                                 </child>

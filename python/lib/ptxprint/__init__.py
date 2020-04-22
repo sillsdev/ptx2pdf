@@ -756,6 +756,10 @@ class PtxPrinterDialog:
         else:   
             fnc.set_sensitive(False)
             
+    def onResetFNcallersClicked(self, btn_resetFNcallers):
+    
+    def onResetXRcallersClicked(self, btn_resetXRcallers):
+    
     def onXrCallersChanged(self, c_xrautocallers):
         xrc = self.builder.get_object("t_xrcallers")
         if self.get("c_xrautocallers"):
@@ -1591,6 +1595,16 @@ class PtxPrinterDialog:
         for char in missing:
             missingcodes += repr(char.encode('raw_unicode_escape'))[2:-1].replace("\\\\","\\") + " "
         self.builder.get_object("t_missingChars").set_tooltip_text(missingcodes)
+        if len(missing):
+            self.builder.get_object("c_useFallbackFont").set_active(True)
+        else:
+            self.builder.get_object("c_useFallbackFont").set_active(False)
+            self.builder.get_object("gr_fallbackFont").set_sensitive(False)
+            dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
+                     buttons=Gtk.ButtonsType.OK, message_format="FYI: The Regular font already supports all the characters in the text.")
+            dialog.format_secondary_text("A fallback font is not required.\nThis 'Use Fallback Font' option has been disabled.")
+            dialog.run()
+            dialog.destroy()
 
     def onExtraRegularChanged(self, f_extraRegular):
         reg = self.get("f_body")
