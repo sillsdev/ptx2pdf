@@ -1582,7 +1582,11 @@ class PtxPrinterDialog:
         f = TTFont(reg)
         allchars = ''.join([i[0] for i in count.items()])
         if self.get("cb_glossaryMarkupStyle") == "with ⸤floor⸥ brackets":
-            allchars += "\u2E24\u2E25"
+            allchars += "\u2e24\u2e25"
+        if self.get("cb_glossaryMarkupStyle") == "with ⌊floor⌋ characters":
+            allchars += "\u230a\u230b"
+        if self.get("cb_glossaryMarkupStyle") == "with ⌞corner⌟ characters":
+            allchars += "\u231e\u231f"
         print(allchars.encode("raw_unicode_escape"))
         missing = f.testcmap(allchars)
         self.builder.get_object("t_missingChars").set_text(' '.join(missing))

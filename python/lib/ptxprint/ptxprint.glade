@@ -769,6 +769,12 @@ saved configuration.</property>
         <col id="0" translatable="yes">with ⸤floor⸥ brackets</col>
       </row>
       <row>
+        <col id="0" translatable="yes">with ⌊floor⌋ characters</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">with ⌞corner⌟ characters</col>
+      </row>
+      <row>
         <col id="0" translatable="yes">star *before word</col>
       </row>
       <row>

@@ -230,6 +230,8 @@ class Info:
         "format as bold italics":  r"\\bdit \1\\bdit*",
         "format with emphasis":    r"\\em \1\\em*",
         "with ⸤floor⸥ brackets":   r"\u2E24\1\u2E25",
+        "with ⌊floor⌋ characters": r"\u230a\1\u230b",
+        "with ⌞corner⌟ characters":r"\u231e\1\u231f",
         "star *before word":       r"*\1",
         "star after* word":        r"\1*",
         "circumflex ^before word": r"^\1",
