@@ -175,7 +175,7 @@ class PtxPrinterDialog:
 
         # do slow stuff here
         initFontCache()
-        #sleep(5)
+        sleep(2)
 
         self.initialised = True
         if self.pendingPid is not None:
@@ -763,9 +763,11 @@ class PtxPrinterDialog:
             fnc.set_sensitive(False)
             
     def onResetFNcallersClicked(self, btn_resetFNcallers):
-    
+        self.builder.get_object("t_fncallers").set_text(re.sub(" ", ",", self.ptsettings['footnotes']))
+        
     def onResetXRcallersClicked(self, btn_resetXRcallers):
-    
+        self.builder.get_object("t_xrcallers").set_text(re.sub(" ", ",", self.ptsettings['crossrefs']))
+        
     def onXrCallersChanged(self, c_xrautocallers):
         xrc = self.builder.get_object("t_xrcallers")
         if self.get("c_xrautocallers"):
