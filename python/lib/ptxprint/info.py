@@ -567,7 +567,7 @@ class Info:
         if printer.get("c_glueredupwords"): # keep reduplicated words together
             self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w\w\w+) \1(?=[\s,.!?])", flags=regex.M), r"\1\u00A0\1")) 
         
-        if printer.get("c_keepBookWithRefs"): # keep Booknames and ch:vs nums together
+        if printer.get("c_keepBookWithRefs"): # keep Booknames and ch:vs nums together MH: need help for restricting to \xt and \xo 
             self.localChanges.append((None, regex.compile(r" (\d+:\d+(-\d+)?\))", flags=regex.M), r"\u00A0\1")) 
         
         # Paratext marks no-break space as a tilde ~

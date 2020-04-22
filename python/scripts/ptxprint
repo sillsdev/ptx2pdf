@@ -235,8 +235,8 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
                 basenamelist += re.findall(r'(?i)\\fig .+src="(.+?(?!\d{5}[a-c]?).+?)\.(?=jpg|tif|png|pdf)..." .+?\\fig\*', dat) # USFM3 non-standard fig files 
 
     # print("basenamelist:", len(basenamelist), basenamelist)
-    print("fullnamelist:", len(fullnamelist), fullnamelist)
-    print("fullnamelower:", len(fullnamelower), fullnamelower)
+    # print("fullnamelist:", len(fullnamelist), fullnamelist)
+    # print("fullnamelower:", len(fullnamelower), fullnamelower)
     basenamelist = [item.lower() for item in basenamelist]
     for srchdir in [picdir, os.path.join(prjdir, "local"), os.path.join(prjdir, "figures")]:
         if srchdir != None and os.path.exists(srchdir):
@@ -259,10 +259,13 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
                                     tmpfname = os.path.join(tmpPicpath, basefname+origextn)
                                     carefulCopy(printer, filepath, tmpfname)
                         elif filepath.lower()[-4:] in [".tif"]:
+                            # if the [x] Convert TIFs to PDFs box is checked...
                             # print(filepath)
                             if shortname.lower() in fullnamelower:
+                                # It would be better to create a temp.pdf file and then use careful copy to 
+                                # make the best choice of size (smallest or largest filesize as needed).
                                 tmpfname = os.path.join(tmpPicpath, shortname)[:-4]+".pdf"
-                                print("Got one!!!", filepath,"\n--->",tmpfname)
+                                # print("Got one!!!", filepath,"\n--->",tmpfname)
                                 with open(tmpfname,"wb") as f:
                                     f.write(img2pdf.convert(filepath))
 

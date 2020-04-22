@@ -437,6 +437,7 @@
   <object class="GtkDialog" id="dlg_password">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Saved Configuration</property>
+    <property name="resizable">False</property>
     <property name="modal">True</property>
     <property name="window_position">center-on-parent</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
@@ -4953,8 +4954,9 @@ for the required illustrations.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">If more than one image type is located
-for an image (ab12345.jpg, ab12345.png)
-which type should be used preferably.</property>
+for an image (ab12345.jpg, ab12345.png,
+ab12345.tif or ab12345.pdf) then which
+file type should preferably be used?</property>
                                     <property name="margin_right">6</property>
                                     <property name="label" translatable="yes">Order of Prefered Image Types:</property>
                                   </object>
@@ -4968,15 +4970,17 @@ which type should be used preferably.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">If more than one image type is located
-for an image (ab12345.jpg, ab12345.png)
-which type should be used preferably.
+for an image (ab12345.jpg, ab12345.png,
+ab12345.tif or ab12345.pdf) then which
+file type should preferably be used?
 
-JPG &gt; PNG &gt; PDF  (looks for JPGs first)
+JPG &gt; PNG &gt; PDF/TIF  (looks for JPGs first)
 or
-PNG &gt; PDF &gt; JPG  (looks for PNGs first)
+PNG &gt; PDF/TIF &gt; JPG  (looks for PNGs first)
 
-Note that TIFs are unspoorted at present.</property>
-                                    <property name="text" translatable="yes">JPG &gt; PNG &gt; PDF</property>
+TIFs will automatically get 
+converted into PDF images.</property>
+                                    <property name="text" translatable="yes">JPG &gt; PNG &gt; PDF/TIF</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">3</property>
