@@ -7503,4 +7503,22 @@ be specified.</property>
       </object>
     </child>
   </object>
+  <object class="GtkWindow" id="w_splash">
+    <property name="can_focus">False</property>
+    <property name="window_position">center</property>
+    <property name="default_width">440</property>
+    <property name="default_height">250</property>
+    <property name="gravity">center</property>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="label" translatable="yes">ptxprint splash screen
+If you are seeing this, you have way too many fonts installed!</property>
+      </object>
+    </child>
+  </object>
 </interface>

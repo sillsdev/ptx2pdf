@@ -7,13 +7,15 @@ from gi.repository import Gtk, Pango
 # gi.require_version('GtkSource', '4') 
 from gi.repository import GtkSource
 import xml.etree.ElementTree as et
-from ptxprint.font import TTFont
+from ptxprint.font import TTFont, initFontCache
 from ptxprint.runner import StreamTextBuffer
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from ptxprint.info import Info
 # from PIL import Image
 import configparser
 import traceback
+from time import sleep
+from threading import Thread
 
 # xmlstarlet sel -t -m '//iso_15924_entry' -o '"' -v '@alpha_4_code' -o '" : "' -v '@name' -o '",' -n /usr/share/xml/iso-codes/iso_15924.xml
 _allscripts = { "Zyyy" : "Default", "Adlm" : "Adlam", "Afak" : "Afaka", "Aghb" : "Caucasian Albanian", "Ahom" : "Ahom, Tai Ahom", 
@@ -56,6 +58,25 @@ _alldigits = [ "Default", "Adlam", "Ahom", "Arabic-Farsi", "Arabic-Hindi", "Bali
     "Mro", "Myanmar", "Myanmar-Shan", "Myanmar-Tai-Laing", "New-Tai-Lue", "Newa", "Nko", "Nyiakeng-Puachue-Hmong", "Ol-Chiki", "Oriya", 
     "Osmanya", "Pahawh-Hmong", "Persian", "Saurashtra", "Sharada", "Sinhala-Lith", "Sora-Sompeng", "Sundanese", "Tai-Tham-Hora", 
     "Tai-Tham-Tham", "Takri", "Tamil", "Telugu", "Thai", "Tibetan", "Tirhuta", "Urdu", "Vai", "Wancho", "Warang-Citi" ]
+
+class Splash(Thread):
+    def __init__(self, window):
+        super(Splash, self).__init__()
+        self.window = window
+        self.window.set_position(Gtk.WindowPosition.CENTER)
+        #self.window.set_default_size(400, 250)
+        self.window.connect('destroy', Gtk.main_quit)
+
+    def run(self):
+        self.window.set_auto_startup_notification(False)
+        self.window.show_all()
+        self.window.set_auto_startup_notification(True)
+        Gtk.main()
+
+    def destroy(self):
+        self.window.destroy()
+        # poor man's queue clearing
+        sleep(0.1)
 
 class PtxPrinterDialog:
     def __init__(self, allprojects, settings_dir, working_dir=None):
@@ -146,6 +167,15 @@ class PtxPrinterDialog:
 
     def run(self, callback):
         self.callback = callback
+        splashw = self.builder.get_object("w_splash")
+        splash = Splash(splashw)
+        splash.start()
+
+        # do slow stuff here
+        initFontCache()
+        #sleep(5)
+
+        splash.destroy()
         self.mw.show_all()
         Gtk.main()
 
