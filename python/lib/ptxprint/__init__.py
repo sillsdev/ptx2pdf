@@ -286,12 +286,11 @@ class PtxPrinterDialog:
             prjdir = os.path.join(prjdir, cfgname)
         if not os.path.exists(prjdir):
             os.makedirs(prjdir)
-        fpath = os.path.join(prjdir, "ptxprint.cfg")
-        return fpath
+        return prjdir
 
     def saveConfig(self, config):
         fpath = self.configPath()
-        with open(fpath, "w", encoding="utf-8") as outf:
+        with open(os.path.join(fpath, "ptxprint.cfg"), "w", encoding="utf-8") as outf:
             config.write(outf)
 
     def onDeleteConfig(self, btn):
@@ -922,16 +921,24 @@ class PtxPrinterDialog:
     def onSpinITclicked(self, btn_spinIT):
         self.builder.get_object("appSpinner").start()
 
+    def onUsePrintDraftChanged(self, cb_upd):
+        upd = self.get("c_useprintdraftfolder")
+        if upd and self.prjid is not None:
+            self.working_dir = os.path.join(self.settings_dir, self.prjid, 'PrintDraft')
+        else:
+            self.working_dir = "."
+        self.builder.get_object("l_working_dir").set_label(self.working_dir)
+
     def onProjectChange(self, cb_prj):
         self.updateProjectSettings(False)
         
-    def updateProjectSettings(self, LoadSavedConfig = False):
+    def updateProjectSettings(self, loadSavedConfig = False):
         currprj = self.prjid
         if currprj is not None:
             if self.info is None:
                 self.info = Info(self, self.settings_dir, prjid = currprj)
             config = self.info.createConfig(self)
-            if LoadSavedConfig:
+            if loadSavedConfig:
                 self.saveConfig(config)
         self.prjid = self.get("cb_project")
         self.ptsettings = None
@@ -958,7 +965,7 @@ class PtxPrinterDialog:
         cb_bk.set_active(0)
         font_name = self.ptsettings.get('DefaultFont', 'Arial') + ", " + self.ptsettings.get('DefaultFontSize', '12')
         self.set('f_body', font_name)
-        configfile = self.configPath()
+        configfile = os.path.join(self.configPath(), "ptxprint.cfg")
         if not os.path.exists(configfile):
             configfile = os.path.join(self.settings_dir, self.prjid, "ptxprint.cfg")
         if os.path.exists(configfile):
@@ -987,7 +994,7 @@ class PtxPrinterDialog:
         self.setEntryBoxFont()
         self.onDiglotDimensionsChanged(None)
         self.updateDialogTitle()
-        if not LoadSavedConfig:
+        if not loadSavedConfig:
             self.updateSavedConfigList()
 
     def updateDialogTitle(self):
@@ -1206,7 +1213,7 @@ class PtxPrinterDialog:
             prjdir = os.path.join(self.settings_dir, self.prjid)
             fname = self.getBookFilename(bk, prjid)
             infname = os.path.join(prjdir, fname)
-            outfname = os.path.join(self.working_dir, "PicLists", fname)
+            outfname = os.path.join(self.configPath(), "PicLists", fname)
             doti = outfname.rfind(".")
             if doti > 0:
                 outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".piclist"
@@ -1251,7 +1258,7 @@ class PtxPrinterDialog:
                                 pageposn = (_picposn.get(f[2], f[2]))[0]               # use the t or tl (first in list)
                             piclist.append(bk+" "+re.sub(r":",".", f[3])+" |"+picfname+"|"+f[2]+"|"+pageposn+"||"+f[0]+"|"+f[3]+"\n")
                 if len(m):
-                    plpath = os.path.join(self.working_dir, "PicLists")
+                    plpath = os.path.join(self.configPath(), "PicLists")
                     if not os.path.exists(plpath):
                         os.mkdir(plpath)
                     if not os.path.exists(outfname) or os.path.getsize(outfname) == 0:
@@ -1284,7 +1291,7 @@ class PtxPrinterDialog:
             prjdir = os.path.join(self.settings_dir, self.prjid)
             fname = self.getBookFilename(bk, prjid)
             infname = os.path.join(prjdir, fname)
-            outfname = os.path.join(self.working_dir, "AdjLists", fname)
+            outfname = os.path.join(self.configPath(), "AdjLists", fname)
             doti = outfname.rfind(".")
             if doti > 0:
                 outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".adj"
@@ -1300,7 +1307,7 @@ class PtxPrinterDialog:
                             ch = ch + 1
                         adjlist.append(bk+" "+str(ch)+"."+v+" +0\n")
                         prv = v
-                    adjpath = os.path.join(self.working_dir, "AdjLists")
+                    adjpath = os.path.join(self.configPath(), "AdjLists")
                     if not os.path.exists(adjpath):
                         os.mkdir(adjpath)
                     if not os.path.exists(outfname) or os.path.getsize(outfname) == 0:

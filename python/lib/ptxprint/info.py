@@ -264,6 +264,8 @@ class Info:
         self.updatefields(self._mappings.keys())
         if self.prjid is not None:
             self.dict['project/id'] = self.prjid
+        self.dict['project/adjlists'] = os.path.join(printer.configPath(), "AdjLists")
+        self.dict['project/piclists'] = os.path.join(printer.configPath(), "PicLists")
         self.processFonts(printer)
         self.processHdrFtr(printer)
         # sort out caseless figures folder. This is a hack
@@ -413,11 +415,12 @@ class Info:
         return "".join(res).replace("\OmitChapterNumberfalse\n\OmitChapterNumbertrue\n","")
 
     def convertBook(self, bk, outdir, prjdir):
-        if self.dict['project/usechangesfile'] == "true":
-            # if self.changes is None: # Not sure why we aren't doing this every time.
-            self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'))
-        else:
-            self.changes = []
+        if self.changes is None:
+            if self.dict['project/usechangesfile'] == "true":
+                # if self.changes is None: # Not sure why we aren't doing this every time.
+                self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'))
+            else:
+                self.changes = []
         printer = self.printer
         self.makelocalChanges(printer, bk)
         customsty = os.path.join(prjdir, 'custom.sty')

@@ -162,6 +162,7 @@ def doit(printer):
     if printer.get("c_includeillustrations"):
         gatherIllustrations(jobs, prjid, prjdir, printer)
 
+    info.changes = None
     if printer.get("c_combine"):
         texfiles = [dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=printer.logbuffer)]
     else:
