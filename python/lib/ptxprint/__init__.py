@@ -176,7 +176,7 @@ class PtxPrinterDialog:
 
         # do slow stuff here
         initFontCache()
-        sleep(5)  # Until we want people to see the splash screen
+        sleep(2)  # Until we want people to see the splash screen
 
         self.initialised = True
         if self.pendingPid is not None:
@@ -335,22 +335,21 @@ class PtxPrinterDialog:
 
     def handleConfigFile(self, action):
         prjid = self.get("cb_project")
-        prjdir = os.path.join(self.settings_dir, prjid)
-        shpath = os.path.join(prjdir, "shared", "PTXprint")
+        shpath = os.path.join(self.settings_dir, prjid, "shared", "ptxprint")
         if not os.path.exists(shpath):
             os.makedirs(shpath, exist_ok = True)
-        currCfgFname = os.path.join(prjdir, "ptxprint.cfg")
+        # currCfgFname = os.path.join(prjdir, "ptxprint.cfg")
         cfgName = re.sub('[^-a-zA-Z0-9_() ]+', '', self.get("cb_savedConfig")).strip(" ")
-        if len(cfgName) > 0: # no point dealing with just a file called ".cfg"
-            savedCfgFname = os.path.join(shpath, cfgName + ".cfg")
+        if len(cfgName) > 0: # no point dealing with something that doesn't have a name!
+            savedCfgFname = os.path.join(shpath, cfgName)
             if action == "save":
                 if not os.path.exists(savedCfgFname):
                     self.builder.get_object("cb_savedConfig").prepend_text(cfgName)
-                copyfile(currCfgFname, savedCfgFname)
+                # copyfile(currCfgFname, savedCfgFname)
             elif action == "load":
                 if os.path.exists(savedCfgFname):
-                    copyfile(savedCfgFname, currCfgFname)
-                    self.updateProjectSettings(True)
+                    # copyfile(savedCfgFname, currCfgFname)
+                    self.updateProjectSettings(True) # I think we only need to load the settings from the new config file
                 else:
                     lockBtn = self.builder.get_object("btn_lockunlock")
                     lockBtn.set_label("Lock Config")
@@ -358,25 +357,29 @@ class PtxPrinterDialog:
                     self.builder.get_object("btn_saveConfig").set_sensitive(True)
                     self.builder.get_object("btn_deleteConfig").set_sensitive(True)
             elif action == "del":
-                try:
-                    os.remove(savedCfgFname)
-                    self.updateSavedConfigList()
-                except OSError:
-                    dialog = Gtk.MessageDialog(parent=None, modal=True, message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
-                        text="Could not find Saved Configuration file.")
-                    dialog.format_secondary_text("File: " + savedCfgFname)
-                    dialog.run()
-                    dialog.destroy()
+                # Delete the entire folder
+                if len(savedCfgFname) > 30: # Just to make sure we're not deleting something closer to Root!
+                    try:
+                        rmtree(savedCfgFname)
+                        self.updateSavedConfigList()
+                    except OSError:
+                        dialog = Gtk.MessageDialog(parent=None, modal=True, message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
+                            text="Could not find Saved Configuration")
+                        dialog.format_secondary_text("Folder: " + savedCfgFname)
+                        dialog.run()
+                        dialog.destroy()
 
     def updateSavedConfigList(self):
+        print("Within updateSavedConfigList")
         self.cb_savedConfig.remove_all()
         savedConfigs = []
-        prjdir = os.path.join(self.settings_dir, self.prjid)
-        shpath = os.path.join(prjdir, "shared", "PTXprint")
-        if os.path.exists(shpath): # Get the list of Saved Config files (without the .cfg)
-            savedConfigs = [f[:-4] for f in os.listdir(shpath) if os.path.isfile(os.path.join(shpath, f)) and f.endswith('.cfg')]
+        shpath = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint")
+        if os.path.exists(shpath): # Get the list of Saved Configs (folders)
+            for f in next(os.walk('shpath'))[1]:
+                if not f in ["PicLists", "AdjLists"]:
+                    savedConfigs.append(f)
         if len(savedConfigs):
-            # print("Saved Configurations:", savedConfigs)
+            print("Saved Configurations:", '\n'.join(savedConfigs))
             for cfgName in sorted(savedConfigs):
                 self.cb_savedConfig.append_text(cfgName)
             self.cb_savedConfig.set_active(0)

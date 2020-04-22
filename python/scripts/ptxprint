@@ -293,7 +293,7 @@ def removeTempFiles(texfiles,tmpdir,info):
     if len(tmpPicpath) > 30: # Just to make sure we're not deleting something closer to Root!
         try:
             rmtree(tmpPicpath)
-        except OSError as e:
-            print("Error: %s : %s" % (dir_path, e.strerror))
+        except OSError:
+            print("Error Deleting temporary illustrations folder: %s" % (tmpPicpath))
 
 mainw.run(doit)
