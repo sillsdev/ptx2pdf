@@ -80,6 +80,8 @@ class Splash(Thread):
 
 class PtxPrinterDialog:
     def __init__(self, allprojects, settings_dir, working_dir=None):
+        self.initialised = False
+        self.pendingPid = None
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(os.path.dirname(__file__), "ptxprint.glade"))
         self.builder.connect_signals(self)
@@ -175,6 +177,10 @@ class PtxPrinterDialog:
         initFontCache()
         #sleep(5)
 
+        self.initialised = True
+        if self.pendingPid is not None:
+            self.set("cb_project", self.pendingPid)
+            self.pendingPid = None
         splash.destroy()
         self.mw.show_all()
         Gtk.main()
@@ -970,7 +976,10 @@ class PtxPrinterDialog:
         self.builder.get_object("l_working_dir").set_label(self.working_dir)
 
     def onProjectChange(self, cb_prj):
-        self.updateProjectSettings(False)
+        if not self.initialised:
+            self.pendingPid = self.get("cb_project")
+        else:
+            self.updateProjectSettings(False)
         
     def updateProjectSettings(self, loadSavedConfig = False):
         currprj = self.prjid
