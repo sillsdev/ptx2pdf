@@ -635,9 +635,13 @@ class PtxPrinterDialog:
     def onHyphenateClicked(self, c_hyphenate):
         prjid = self.get("cb_project")
         fname = os.path.join(self.working_dir, 'hyphen-{}.tex'.format(prjid))
-        if not os.path.exists(fname):
-            print('\a')
-            self.builder.get_object("c_hyphenate").set_active(False)
+        if not os.path.exists(fname) and self.get("c_hyphenate"):
+            dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
+                     buttons=Gtk.ButtonsType.OK, message_format="Warning: Standard (English) Hyphenation rules will be used.")
+            dialog.format_secondary_text("For optimum hyphenation for this project\nclick 'Create Hyphenation List'.")
+            dialog.run()
+            dialog.destroy()
+            # self.builder.get_object("c_hyphenate").set_active(False)
         
     def onUseIllustrationsClicked(self, c_includeillustrations):
         status = self.get("c_includeillustrations")
@@ -1578,7 +1582,9 @@ class PtxPrinterDialog:
         reg = self.get("f_body")
         f = TTFont(reg)
         allchars = ''.join([i[0] for i in count.items()])
-        # print(allchars.encode("raw_unicode_escape"))
+        if self.get("cb_glossaryMarkupStyle") == "with ⸤floor⸥ brackets":
+            allchars += "\u2E24\u2E25"
+        print(allchars.encode("raw_unicode_escape"))
         missing = f.testcmap(allchars)
         self.builder.get_object("t_missingChars").set_text(' '.join(missing))
         missingcodes = ""
