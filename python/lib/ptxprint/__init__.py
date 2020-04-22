@@ -451,11 +451,13 @@ class PtxPrinterDialog:
                   3 : ("", ".tex"), 4 : ("", ".log")}
         if 0 <= pgnum <= 2:  # (SFM,PicList,AdjList)
             fname = self.getBookFilename(bk, prjid)
-            fpath = os.path.join(self.working_dir, fndict[pgnum][0], fname)
+            fpath = os.path.join(self.configPath(), fndict[pgnum][0], fname)
             doti = fpath.rfind(".")
+            if pgnum == 0:
+                fpath = os.path.join(self.working_dir, fndict[pgnum][0], fname)
             if doti > 0:
                 fpath = fpath[:doti] + "-draft" + fpath[doti:] + fndict[pgnum][1]
-            if pgnum == 1: # PicList
+            elif pgnum == 1: # PicList
                 self.builder.get_object("c_randomPicPosn").set_sensitive(True)
                 genTip = "Generate the PicList in the\ncorrect format using the markup\n(\\fig ... \\fig*) within the text."
                 genBtn.set_sensitive(True)
