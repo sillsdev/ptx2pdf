@@ -153,8 +153,7 @@ def doit(printer):
     info.update()
     info.GenerateNestedStyles()
     config = info.createConfig(printer)
-    with open(os.path.join(prjdir, "ptxprint.cfg"), "w", encoding="utf-8") as outf:
-        config.write(outf)
+    printer.saveConfig(config)
     tmpdir = os.path.join(prjdir, 'PrintDraft') if printer.get("c_useprintdraftfolder") else args.directory
     if not os.path.exists(tmpdir):
         os.makedirs(tmpdir)

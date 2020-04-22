@@ -271,11 +271,28 @@ class PtxPrinterDialog:
     def onSaveConfig(self, btn):
         self.info.update()
         config = self.info.createConfig(self)
-        prjid = self.get("cb_project")
-        prjdir = os.path.join(self.settings_dir, prjid)
-        with open(os.path.join(prjdir, "ptxprint.cfg"), "w", encoding="utf-8") as outf:
-            config.write(outf)
+        self.saveConfig(config)
         self.handleConfigFile("save")
+
+    def configName(self):
+        cfgName = re.sub('[^-a-zA-Z0-9_() ]+', '', self.get("cb_savedConfig")).strip(" ")
+        return cfgName
+
+    def configPath(self):
+        prjid = self.get("cb_project")
+        prjdir = os.path.join(self.settings_dir, prjid, "shared", "ptxprint")
+        cfgname = self.configName()
+        if len(cfgname):
+            prjdir = os.path.join(prjdir, cfgname)
+        if not os.path.exists(prjdir):
+            os.makedirs(prjdir)
+        fpath = os.path.join(prjdir, "ptxprint.cfg")
+        return fpath
+
+    def saveConfig(self, config):
+        fpath = self.configPath()
+        with open(fpath, "w", encoding="utf-8") as outf:
+            config.write(outf)
 
     def onDeleteConfig(self, btn):
         self.handleConfigFile("del")
@@ -904,8 +921,7 @@ class PtxPrinterDialog:
 
     def onSpinITclicked(self, btn_spinIT):
         self.builder.get_object("appSpinner").start()
-        
-        
+
     def onProjectChange(self, cb_prj):
         self.updateProjectSettings(False)
         
@@ -916,8 +932,7 @@ class PtxPrinterDialog:
                 self.info = Info(self, self.settings_dir, prjid = currprj)
             config = self.info.createConfig(self)
             if LoadSavedConfig:
-                with open(os.path.join(self.settings_dir, currprj, "ptxprint.cfg"), "w", encoding="utf-8") as outf:
-                    config.write(outf)
+                self.saveConfig(config)
         self.prjid = self.get("cb_project")
         self.ptsettings = None
         lsbooks = self.builder.get_object("ls_books")
@@ -943,9 +958,10 @@ class PtxPrinterDialog:
         cb_bk.set_active(0)
         font_name = self.ptsettings.get('DefaultFont', 'Arial') + ", " + self.ptsettings.get('DefaultFontSize', '12')
         self.set('f_body', font_name)
-        configfile = os.path.join(self.settings_dir, self.prjid, "ptxprint.cfg")
+        configfile = self.configPath()
+        if not os.path.exists(configfile):
+            configfile = os.path.join(self.settings_dir, self.prjid, "ptxprint.cfg")
         if os.path.exists(configfile):
-            # print("Reading configfile {}".format(configfile))
             self.info = Info(self, self.settings_dir, self.prjid)
             config = configparser.ConfigParser()
             config.read(configfile, encoding="utf-8")
