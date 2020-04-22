@@ -1336,7 +1336,7 @@ of the same Paratext project.</property>
                                     <property name="active">0</property>
                                     <property name="has_entry">True</property>
                                     <property name="active_id">0</property>
-                                    <signal name="changed" handler="onSavedConfigChanged" swapped="no"/>
+                                    <signal name="changed" handler="onConfigNameChanged" swapped="no"/>
                                     <child internal-child="entry">
                                       <object class="GtkEntry" id="t_savedConfig">
                                         <property name="visible">True</property>
@@ -7612,7 +7612,7 @@ be specified.</property>
             <property name="can_focus">False</property>
             <property name="margin_left">15</property>
             <property name="margin_right">15</property>
-            <property name="margin_top">5</property>
+            <property name="margin_top">15</property>
             <property name="column_spacing">20</property>
             <child>
               <object class="GtkImage">
@@ -7621,8 +7621,6 @@ be specified.</property>
                 <property name="halign">start</property>
                 <property name="margin_left">10</property>
                 <property name="margin_right">10</property>
-                <property name="margin_top">4</property>
-                <property name="margin_bottom">4</property>
                 <property name="pixbuf">splash_small.png</property>
               </object>
               <packing>

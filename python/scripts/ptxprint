@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import argparse, sys, os, re, subprocess
+import argparse, sys, os, re, subprocess, img2pdf
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
@@ -208,6 +208,7 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
         os.mkdir(tmpPicpath)
     basenamelist = []
     fullnamelist = []
+    fullnamelower = []
     for bk in jobs:
         fname = printer.getBookFilename(bk, prjdir)
         if printer.get("c_usePicList"): # Need to read the PicList to get a list of needed illustrations
@@ -222,6 +223,7 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
                     dat = inf.read()
                     # MAT 19.13 |CN01771C.jpg|col|tr||Bringing the children to Jesus|19:13
                     fullnamelist += re.findall(r"(?i)\|(.+?\.(?=jpg|tif|png|pdf)...)\|", dat)
+            fullnamelower = [f.lower() for f in fullnamelist]
         else:
             infname = os.path.join(prjdir, fname)
             with open(infname, "r", encoding="utf-8") as inf:
@@ -233,7 +235,8 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
                 basenamelist += re.findall(r'(?i)\\fig .+src="(.+?(?!\d{5}[a-c]?).+?)\.(?=jpg|tif|png|pdf)..." .+?\\fig\*', dat) # USFM3 non-standard fig files 
 
     # print("basenamelist:", len(basenamelist), basenamelist)
-    # print("fullnamelist:", len(fullnamelist), fullnamelist)
+    print("fullnamelist:", len(fullnamelist), fullnamelist)
+    print("fullnamelower:", len(fullnamelower), fullnamelower)
     basenamelist = [item.lower() for item in basenamelist]
     for srchdir in [picdir, os.path.join(prjdir, "local"), os.path.join(prjdir, "figures")]:
         if srchdir != None and os.path.exists(srchdir):
@@ -241,10 +244,10 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
                 for file in files:
                     filepath = subdir + os.sep + file
                     if not "tmpPics" in filepath: # Avoid recursively scanning the folder we are copying to!
+                        shortname = os.path.basename(filepath)
                         if filepath.lower()[-4:] in [".jpg", ".png", ".pdf"]:
-                            shortname = os.path.basename(filepath)
                             if printer.get("c_usePicList"):
-                                if shortname.lower() in fullnamelist:
+                                if shortname.lower() in fullnamelist: # ? fullnamelower
                                     tmpfname = os.path.join(tmpPicpath, shortname)
                                     carefulCopy(printer, filepath, tmpfname)
                             else:
@@ -255,6 +258,13 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
                                 if basefname in basenamelist:
                                     tmpfname = os.path.join(tmpPicpath, basefname+origextn)
                                     carefulCopy(printer, filepath, tmpfname)
+                        elif filepath.lower()[-4:] in [".tif"]:
+                            # print(filepath)
+                            if shortname.lower() in fullnamelower:
+                                tmpfname = os.path.join(tmpPicpath, shortname)[:-4]+".pdf"
+                                print("Got one!!!", filepath,"\n--->",tmpfname)
+                                with open(tmpfname,"wb") as f:
+                                    f.write(img2pdf.convert(filepath))
 
 def carefulCopy(printer, srcfile, tgtfile):
     if not os.path.exists(tgtfile):

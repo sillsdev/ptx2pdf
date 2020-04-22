@@ -302,84 +302,64 @@ class PtxPrinterDialog:
     def onCancel(self, btn):
         self.onDestroy(btn)
 
-    def onSavedConfigChanged(self, cb_savedConfig):
-        self.handleConfigFile("load")
+    def onConfigNameChanged(self, cb_savedConfig):
+        if os.path.exists(self.configPath()):
+            self.updateProjectSettings(True) # I think we only need to load the settings from the new config file
+        else:
+            lockBtn = self.builder.get_object("btn_lockunlock")
+            lockBtn.set_label("Lock Config")
+            self.builder.get_object("t_invisiblePassword").set_text("")
+            self.builder.get_object("btn_saveConfig").set_sensitive(True)
+            self.builder.get_object("btn_deleteConfig").set_sensitive(True)
             
     def onSaveConfig(self, btn):
         self.info.update()
         config = self.info.createConfig(self)
         self.saveConfig(config)
-        self.handleConfigFile("save")
+        self.updateSavedConfigList()
 
     def configName(self):
         cfgName = re.sub('[^-a-zA-Z0-9_() ]+', '', self.get("cb_savedConfig")).strip(" ")
         return cfgName
 
-    def configPath(self):
+    def configPath(self, makePath=0):
         prjid = self.get("cb_project")
         prjdir = os.path.join(self.settings_dir, prjid, "shared", "ptxprint")
         cfgname = self.configName()
         if len(cfgname):
             prjdir = os.path.join(prjdir, cfgname)
-        if not os.path.exists(prjdir):
-            os.makedirs(prjdir)
+        if makePath == 1:
+            if not os.path.exists(prjdir):
+                os.makedirs(prjdir)
         return prjdir
 
     def saveConfig(self, config):
-        fpath = self.configPath()
+        fpath = self.configPath(1)
         with open(os.path.join(fpath, "ptxprint.cfg"), "w", encoding="utf-8") as outf:
             config.write(outf)
 
     def onDeleteConfig(self, btn):
-        self.handleConfigFile("del")
-
-    def handleConfigFile(self, action):
-        prjid = self.get("cb_project")
-        shpath = os.path.join(self.settings_dir, prjid, "shared", "ptxprint")
-        if not os.path.exists(shpath):
-            os.makedirs(shpath, exist_ok = True)
-        # currCfgFname = os.path.join(prjdir, "ptxprint.cfg")
-        cfgName = re.sub('[^-a-zA-Z0-9_() ]+', '', self.get("cb_savedConfig")).strip(" ")
-        if len(cfgName) > 0: # no point dealing with something that doesn't have a name!
-            savedCfgFname = os.path.join(shpath, cfgName)
-            if action == "save":
-                if not os.path.exists(savedCfgFname):
-                    self.builder.get_object("cb_savedConfig").prepend_text(cfgName)
-                # copyfile(currCfgFname, savedCfgFname)
-            elif action == "load":
-                if os.path.exists(savedCfgFname):
-                    # copyfile(savedCfgFname, currCfgFname)
-                    self.updateProjectSettings(True) # I think we only need to load the settings from the new config file
-                else:
-                    lockBtn = self.builder.get_object("btn_lockunlock")
-                    lockBtn.set_label("Lock Config")
-                    self.builder.get_object("t_invisiblePassword").set_text("")
-                    self.builder.get_object("btn_saveConfig").set_sensitive(True)
-                    self.builder.get_object("btn_deleteConfig").set_sensitive(True)
-            elif action == "del":
-                # Delete the entire folder
-                if len(savedCfgFname) > 30: # Just to make sure we're not deleting something closer to Root!
-                    try:
-                        rmtree(savedCfgFname)
-                        self.updateSavedConfigList()
-                    except OSError:
-                        dialog = Gtk.MessageDialog(parent=None, modal=True, message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
-                            text="Could not find Saved Configuration")
-                        dialog.format_secondary_text("Folder: " + savedCfgFname)
-                        dialog.run()
-                        dialog.destroy()
+        delCfgPath = self.configPath()
+        if len(delCfgPath) > 30: # Just to make sure we're not deleting something closer to Root!
+            try: # Delete the entire folder
+                rmtree(delCfgPath)
+                self.updateSavedConfigList()
+            except OSError:
+                dialog = Gtk.MessageDialog(parent=None, modal=True, message_type=Gtk.MessageType.ERROR,
+                         buttons=Gtk.ButtonsType.OK, text="Could not find Saved Configuration")
+                dialog.format_secondary_text("Folder: " + delCfgPath)
+                dialog.run()
+                dialog.destroy()
 
     def updateSavedConfigList(self):
-        print("Within updateSavedConfigList")
         self.cb_savedConfig.remove_all()
         savedConfigs = []
         shpath = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint")
         if os.path.exists(shpath): # Get the list of Saved Configs (folders)
-            for f in next(os.walk('shpath'))[1]:
+            for f in next(os.walk(shpath))[1]:
                 if not f in ["PicLists", "AdjLists"]:
                     savedConfigs.append(f)
         if len(savedConfigs):
-            print("Saved Configurations:", '\n'.join(savedConfigs))
             for cfgName in sorted(savedConfigs):
                 self.cb_savedConfig.append_text(cfgName)
             self.cb_savedConfig.set_active(0)
