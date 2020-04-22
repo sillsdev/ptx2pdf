@@ -175,7 +175,7 @@ class PtxPrinterDialog:
 
         # do slow stuff here
         initFontCache()
-        sleep(2)
+        sleep(5)
 
         self.initialised = True
         if self.pendingPid is not None:
