@@ -7670,7 +7670,7 @@ Consider uninstalling those that are never used.</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
-                <property name="label" translatable="yes">PTXprint (Beta 0.4.8)</property>
+                <property name="label" translatable="yes">PTXprint (0.4.8 Beta)</property>
                 <attributes>
                   <attribute name="style" value="normal"/>
                   <attribute name="weight" value="bold"/>
