@@ -447,6 +447,7 @@ class Info:
                         newdat = c[0].split(dat)
                         for i in range(1, len(newdat), 2):
                             newdat[i] = c[1].sub(c[2], newdat[i])
+                        dat = "".join(newdat)
             with open(outfpath, "w", encoding="utf-8") as outf:
                 outf.write(dat)
             return outfname
