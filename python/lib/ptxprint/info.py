@@ -10,7 +10,6 @@ from ptxprint.snippets import FancyIntro, PDFx1aOutput, FancyBorders
 
 class Info:
     _mappings = {
-        # "config/name":              ("cb_savedConfig", lambda w,v: w.builder.get_object("cb_savedConfig").get_active_id()),
         "config/notes":             ("t_configNotes", lambda w,v: v or ""),
         "config/pwd":               ("t_invisiblePassword", lambda w,v: v or ""),
 
@@ -475,7 +474,7 @@ class Info:
                 m = re.match(r"^in\s+"+qreg+r"\s*:\s*"+qreg+r"\s*>\s*"+qreg, l)
                 if m:
                     changes.append((regex.compile("("+(m.group(1) or m.group(2))+")", flags=regex.M), \
-                    regex.compile((m.group(3) or m.group(4)), flags=regex.M), (m.group(5) or m.group(6))))
+                    regex.compile((m.group(3) or m.group(4)), flags=regex.M), (m.group(5) or m.group(6) or "")))
         if not len(changes):
             return None
         if self.printer.get("c_tracing"):
@@ -601,6 +600,10 @@ class Info:
             else:
                 print(report)
         return self.localChanges
+
+    # newtext = re.sub(r"\\xt [^\\]+",replaceRefSpacesWithNBSP,origtext)
+    # def replaceRefSpacesWithNBSP(m):
+        # return re.sub(r" (\d+:\d+([-,]\d+)?)", r"~\1", m.group(0))
 
     def PicNameChanges(self, printer, bk):
         piclist = []

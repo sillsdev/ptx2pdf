@@ -2,7 +2,7 @@
 
 import sys, os, re, regex, gi, random, subprocess, collections
 gi.require_version('Gtk', '3.0')
-from shutil import copyfile
+from shutil import copyfile, copytree, rmtree
 from gi.repository import Gtk, Pango, GObject
 # gi.require_version('GtkSource', '4') 
 from gi.repository import GtkSource
@@ -153,6 +153,7 @@ class PtxPrinterDialog:
         self.info = None
         self.settings_dir = settings_dir
         self.working_dir = working_dir
+        self.config_dir = None
         self.ptsettings = None
         self.booklist = []
         self.CustomScript = None
@@ -176,7 +177,7 @@ class PtxPrinterDialog:
 
         # do slow stuff here
         initFontCache()
-        sleep(2)  # Until we want people to see the splash screen
+        sleep(1)  # Until we want people to see the splash screen
 
         self.initialised = True
         if self.pendingPid is not None:
@@ -303,55 +304,85 @@ class PtxPrinterDialog:
         self.onDestroy(btn)
 
     def onConfigNameChanged(self, cb_savedConfig):
-        if os.path.exists(self.configPath()):
-            self.updateProjectSettings(True) # I think we only need to load the settings from the new config file
-        else:
+        if len(self.get("cb_savedConfig")):
             lockBtn = self.builder.get_object("btn_lockunlock")
-            lockBtn.set_label("Lock Config")
+            lockBtn.set_label("Lock Down ;-)")
+            lockBtn.set_sensitive(True)
             self.builder.get_object("t_invisiblePassword").set_text("")
             self.builder.get_object("btn_saveConfig").set_sensitive(True)
             self.builder.get_object("btn_deleteConfig").set_sensitive(True)
-            
+            if os.path.exists(self.configPath()):
+                self.updateProjectSettings(False) # False means DON'T Save!
+        else:
+            self.config_dir = self.configPath(False)
+            lockBtn = self.builder.get_object("btn_lockunlock")
+            # lockBtn.set_label("Lock Config")
+            lockBtn.set_label("Lock Down ;-)")
+            lockBtn.set_sensitive(False)
+            self.builder.get_object("t_invisiblePassword").set_text("")
+            self.builder.get_object("btn_saveConfig").set_sensitive(False)
+            self.builder.get_object("btn_deleteConfig").set_sensitive(False)
+
     def onSaveConfig(self, btn):
-        self.info.update()
-        config = self.info.createConfig(self)
-        self.saveConfig(config)
-        self.updateSavedConfigList()
+        # Determine whether to save a NEW config or just UPDATE an existing one
+        if self.config_dir != self.configPath(False): # then it must be new
+            self.info.update()
+            config = self.info.createConfig(self)
+            self.saveConfig(config)
+            self.cb_savedConfig.append_text(self.configName())
+            # This is the first time to save, so copy other files/folders too
+            tgtpath = self.configPath(False)
+            for listname in ["PicLists", "AdjLists"]:
+                srcpath = self.config_dir
+                if srcpath != None and os.path.exists(os.path.join(srcpath, listname)):
+                    if srcpath != tgtpath:
+                        copytree(os.path.join(srcpath, listname), os.path.join(tgtpath, listname))
+                        # print("Copied from: {}\n         to: {}".format(os.path.join(srcpath, listname), os.path.join(tgtpath, listname)))
+            self.config_dir = tgtpath # Update the current config folder location (in prep for next change)
+        else:
+            # Just update the existing config file
+            self.info.update()
+            config = self.info.createConfig(self)
+            self.saveConfig(config)
 
     def configName(self):
         cfgName = re.sub('[^-a-zA-Z0-9_() ]+', '', self.get("cb_savedConfig")).strip(" ")
         return cfgName
 
-    def configPath(self, makePath=0):
+    def configPath(self, makePath=False):
         prjid = self.get("cb_project")
         prjdir = os.path.join(self.settings_dir, prjid, "shared", "ptxprint")
         cfgname = self.configName()
         if len(cfgname):
             prjdir = os.path.join(prjdir, cfgname)
-        if makePath == 1:
+        if makePath:
             if not os.path.exists(prjdir):
                 os.makedirs(prjdir)
         return prjdir
 
     def saveConfig(self, config):
-        fpath = self.configPath(1)
-        with open(os.path.join(fpath, "ptxprint.cfg"), "w", encoding="utf-8") as outf:
-            config.write(outf)
+        fpath = self.configPath(True)
+        if os.path.exists(fpath):
+            with open(os.path.join(fpath, "ptxprint.cfg"), "w", encoding="utf-8") as outf:
+                config.write(outf)
 
     def onDeleteConfig(self, btn):
         delCfgPath = self.configPath()
         if len(delCfgPath) > 30: # Just to make sure we're not deleting something closer to Root!
             try: # Delete the entire folder
                 rmtree(delCfgPath)
-                self.updateSavedConfigList()
             except OSError:
                 dialog = Gtk.MessageDialog(parent=None, modal=True, message_type=Gtk.MessageType.ERROR,
                          buttons=Gtk.ButtonsType.OK, text="Could not find Saved Configuration")
                 dialog.format_secondary_text("Folder: " + delCfgPath)
                 dialog.run()
                 dialog.destroy()
+            self.updateSavedConfigList()
+            self.builder.get_object("t_savedConfig").set_text("")
+            self.builder.get_object("t_configNotes").set_text("")
 
     def updateSavedConfigList(self):
+        currConf = self.builder.get_object("t_savedConfig").get_text()
         self.cb_savedConfig.remove_all()
         savedConfigs = []
         shpath = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint")
@@ -362,7 +393,10 @@ class PtxPrinterDialog:
         if len(savedConfigs):
             for cfgName in sorted(savedConfigs):
                 self.cb_savedConfig.append_text(cfgName)
-            self.cb_savedConfig.set_active(0)
+            try:
+                self.builder.get_object("t_savedConfig").set_text(currConf)
+            except:
+                self.cb_savedConfig.set_active(0)
         else:
             self.builder.get_object("t_savedConfig").set_text("")
             self.builder.get_object("t_configNotes").set_text("")
@@ -376,7 +410,7 @@ class PtxPrinterDialog:
         elif response == Gtk.ResponseType.CANCEL:
             pass # Don't do anything
         else:
-            print("Unexpected response from PW dialog")
+            return
         invPW = self.get("t_invisiblePassword")
         if invPW == None or invPW == "": # No existing PW, so set a new one
             self.builder.get_object("t_invisiblePassword").set_text(pw)
@@ -393,7 +427,8 @@ class PtxPrinterDialog:
         lockBtn = self.builder.get_object("btn_lockunlock")
         if self.get("t_invisiblePassword") == "":
             status = True
-            lockBtn.set_label("Lock Config")
+            # lockBtn.set_label("Lock Config")
+            lockBtn.set_label("Lock Down ;-)")
         else:
             status = False
             lockBtn.set_label("Unlock Config")
@@ -965,16 +1000,24 @@ class PtxPrinterDialog:
         if not self.initialised:
             self.pendingPid = self.get("cb_project")
         else:
-            self.updateProjectSettings(False)
-        
-    def updateProjectSettings(self, loadSavedConfig = False):
+            self.updateProjectSettings(True)
+            self.updateSavedConfigList()
+
+    def updateProjectSettings(self, saveCurrConfig=False):
         currprj = self.prjid
         if currprj is not None:
             if self.info is None:
                 self.info = Info(self, self.settings_dir, prjid = currprj)
             config = self.info.createConfig(self)
-            if loadSavedConfig:
-                self.saveConfig(config)
+            self.config_dir = self.configPath(False)
+            fpath = os.path.join(self.settings_dir, currprj, "shared", "ptxprint", "ptxprint.cfg")
+            if saveCurrConfig and os.path.exists(fpath):
+                with open(fpath, "w", encoding="utf-8") as outf:
+                    config.write(outf)
+                self.updateSavedConfigList()
+                self.builder.get_object("t_savedConfig").set_text("")
+                self.builder.get_object("t_configNotes").set_text("")
+
         self.prjid = self.get("cb_project")
         self.ptsettings = None
         lsbooks = self.builder.get_object("ls_books")
@@ -1001,7 +1044,7 @@ class PtxPrinterDialog:
         font_name = self.ptsettings.get('DefaultFont', 'Arial') + ", " + self.ptsettings.get('DefaultFontSize', '12')
         self.set('f_body', font_name)
         configfile = os.path.join(self.configPath(), "ptxprint.cfg")
-        if not os.path.exists(configfile):
+        if not os.path.exists(configfile): # If they are an pre 0.4.8 user, pick up .cfg from Project folder location
             configfile = os.path.join(self.settings_dir, self.prjid, "ptxprint.cfg")
         if os.path.exists(configfile):
             self.info = Info(self, self.settings_dir, self.prjid)
@@ -1009,7 +1052,11 @@ class PtxPrinterDialog:
             config.read(configfile, encoding="utf-8")
             self.info.loadConfig(self, config)
         else:
-            self.info.update()
+            try:
+                self.info.update()
+            except AttributeError:
+                self.info = Info(self, self.settings_dir, self.prjid)
+                self.info.update()
         status = self.get("c_multiplebooks")
         for c in ("c_combine", "t_booklist"):
             self.builder.get_object(c).set_sensitive(status)
@@ -1029,8 +1076,6 @@ class PtxPrinterDialog:
         self.setEntryBoxFont()
         self.onDiglotDimensionsChanged(None)
         self.updateDialogTitle()
-        if not loadSavedConfig:
-            self.updateSavedConfigList()
 
     def updateDialogTitle(self):
         prjid = "  -  " + self.get("cb_project")
@@ -1266,13 +1311,11 @@ class PtxPrinterDialog:
                 # print("m:", m)
                 if m is not None:
                     for f in m:
-                        # XeTeX doesn't handle TIFs, so rename all TIF extensions to JPGs
-                        picfname = re.sub(r"(?i)(.+)\.tif", r"\1.jpg",f[0])
                         if self.get("c_randomPicPosn"):
                             pageposn = random.choice(_picposn.get(f[1], f[1]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
                         else:
                             pageposn = (_picposn.get(f[1], f[1]))[0]              # use the t or tl (first in list)
-                        piclist.append(bk+" "+re.sub(r":",".", f[5])+" |"+picfname+"|"+f[1]+"|"+pageposn+"||"+f[4]+"|"+f[5]+"\n")
+                        piclist.append(bk+" "+re.sub(r":",".", f[5])+" |"+f[0]+"|"+f[1]+"|"+pageposn+"||"+f[4]+"|"+f[5]+"\n")
                 else:
                     # If none of the USFM2-styled illustrations were found then look for USFM3-styled markup in text 
                     # (Q: How to handle any additional/non-standard xyz="data" ? Will the .* before \\fig\* take care of it adequately?)
@@ -1285,13 +1328,11 @@ class PtxPrinterDialog:
                     m = re.findall(r'\\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,]\d+)?)".*\\fig\*', dat)
                     if m is not None:
                         for f in m:
-                            # XeTeX doesn't handle TIFs, so rename all TIF extensions to JPGs
-                            picfname = re.sub(r"(?i)(.+)\.tif", r"\1.jpg",f[1])
                             if self.get("c_randomPicPosn"):
                                 pageposn = random.choice(_picposn.get(f[2], f[2]))     # Randomize location of illustrations on the page (tl,tr,bl,br)
                             else:
                                 pageposn = (_picposn.get(f[2], f[2]))[0]               # use the t or tl (first in list)
-                            piclist.append(bk+" "+re.sub(r":",".", f[3])+" |"+picfname+"|"+f[2]+"|"+pageposn+"||"+f[0]+"|"+f[3]+"\n")
+                            piclist.append(bk+" "+re.sub(r":",".", f[3])+" |"+f[1]+"|"+f[2]+"|"+pageposn+"||"+f[0]+"|"+f[3]+"\n")
                 if len(m):
                     plpath = os.path.join(self.configPath(), "PicLists")
                     if not os.path.exists(plpath):
@@ -1580,6 +1621,9 @@ class PtxPrinterDialog:
         # slist = sorted(count.items(), key=lambda pair: pair[0])
         reg = self.get("f_body")
         f = TTFont(reg)
+        if f.filename == None:
+            self.msgUnsupportedFont(reg)
+            return 
         allchars = ''.join([i[0] for i in count.items()])
         if self.get("cb_glossaryMarkupStyle") == "with ⸤floor⸥ brackets":
             allchars += "\u2e24\u2e25"
@@ -1616,7 +1660,9 @@ class PtxPrinterDialog:
             dialog.destroy()
         else:
             f = TTFont(xtraReg)
-            print(f.filename)
+            if f.filename == None:
+                self.msgUnsupportedFont(xtraReg)
+                return 
             msngchars = self.builder.get_object("t_missingChars").get_text() # .split(" ")
             msngchars = spclChars = re.sub(r"\\[uU]([0-9a-fA-F]{4,6})", lambda m:chr(int(m.group(1), 16)), msngchars)
             stillmissing = f.testcmap(msngchars)
@@ -1626,3 +1672,10 @@ class PtxPrinterDialog:
                 dialog.format_secondary_text("Please select a different Font.")
                 dialog.run()
                 dialog.destroy()
+
+    def msgUnsupportedFont(self, fontname):
+        dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
+                 buttons=Gtk.ButtonsType.OK, message_format="The Font: '{}'\ncannot be used as it has\nnot been installed properly.".format(fontname[:-3]))
+        dialog.format_secondary_text("Please select a different Font\n  or\nInstall the font for ALL users.")
+        dialog.run()
+        dialog.destroy()
