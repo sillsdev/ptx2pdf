@@ -1068,9 +1068,8 @@ class PtxPrinterDialog:
             self.builder.get_object(c).set_sensitive(not status)
         for i in range(0,6):
             self.builder.get_object("l_{}".format(i)).set_tooltip_text(None)
-        self.builder.get_object("l_settings_dir").set_label(self.settings_dir)
         self.builder.get_object("l_prjdir").set_label(os.path.join(self.settings_dir, self.prjid))
-        # self.builder.get_object("l_macropath").set_label("Unknown at present!")
+        self.builder.get_object("l_settings_dir").set_label(self.config_dir or "")
         self.builder.get_object("l_working_dir").set_label(self.working_dir)
         self.set("c_prettyIntroOutline", False)
         self.setEntryBoxFont()
