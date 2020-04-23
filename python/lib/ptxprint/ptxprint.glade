@@ -855,6 +855,8 @@ Features ON!</property>
                 <property name="tooltip_text" translatable="yes">Experimental features are enabled by
 using the -e flag on the command line.</property>
                 <property name="halign">start</property>
+                <property name="margin_top">3</property>
+                <property name="margin_bottom">3</property>
                 <property name="resize_mode">immediate</property>
                 <property name="draw_indicator">True</property>
               </object>
@@ -879,6 +881,8 @@ This setting can be turned off again later, but
 is intentionally almost invisible (though located
 in the same place).</property>
                 <property name="halign">start</property>
+                <property name="margin_top">3</property>
+                <property name="margin_bottom">3</property>
                 <property name="resize_mode">immediate</property>
                 <property name="draw_indicator">True</property>
                 <signal name="clicked" handler="onHideAdvancedSettingsClicked" swapped="no"/>
@@ -944,8 +948,6 @@ and produce a PDF with the settings specified.</property>
         </child>
         <child>
           <object class="GtkBox">
-            <property name="width_request">850</property>
-            <property name="height_request">580</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="halign">start</property>
@@ -7622,22 +7624,8 @@ be specified.</property>
             <property name="can_focus">False</property>
             <property name="margin_left">15</property>
             <property name="margin_right">15</property>
-            <property name="margin_top">15</property>
+            <property name="margin_top">4</property>
             <property name="column_spacing">20</property>
-            <child>
-              <object class="GtkImage">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="halign">start</property>
-                <property name="margin_left">10</property>
-                <property name="margin_right">10</property>
-                <property name="pixbuf">splash_small.png</property>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">0</property>
-              </packing>
-            </child>
             <child>
               <object class="GtkLabel">
                 <property name="visible">True</property>
@@ -7672,7 +7660,26 @@ Consider uninstalling those that are never used.</property>
               </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="pixbuf">62859-open-book-icon(128).png</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSpinner">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="active">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">1</property>
+              </packing>
             </child>
           </object>
           <packing>
