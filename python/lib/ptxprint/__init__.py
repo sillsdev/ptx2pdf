@@ -171,8 +171,8 @@ class PtxPrinterDialog:
     def run(self, callback):
         self.callback = callback
         splashw = self.builder.get_object("w_splash")
-        splash = Splash(splashw)
-        splash.start()
+        self.splash = Splash(splashw)   # threads don't like being gced?
+        self.splash.start()
 
         # do slow stuff here
         initFontCache()
@@ -182,7 +182,7 @@ class PtxPrinterDialog:
         if self.pendingPid is not None:
             self.onProjectChange(None)
             self.pendingPid = None
-        splash.destroy()
+        self.splash.destroy()
         self.mw.show_all()
         Gtk.main()
 

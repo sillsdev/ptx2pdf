@@ -11,5 +11,11 @@ setup(name="PtxPrint",
         scripts = ['scripts/ptxprint'],
         package_data = {'ptxprint': ['*.pdf', 'ptxprint.glade', 'template.tex',
                             'mappings/*.tec', 'mappings/*.map']},
-        data_files = [('ptx2pdf', glob('../src/*.tex'))]
+        data_files = [('ptx2pdf', glob('../src/*.tex'))],
+        install_requires = [
+            'fonttools',
+            # 'gi',         # not a pypi python style package
+            'img2pdf',
+            'regex'
+        ]
     )
