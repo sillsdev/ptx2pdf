@@ -621,7 +621,7 @@ class Info:
             for e in exts:
                 if e in ["jpg", "png", "pdf"] and e not in extOrder:
                     extOrder += [e]
-        if not len(extOrder): # If the user hasn't defined a specifi order then we can assign this
+        if not len(extOrder): # If the user hasn't defined a specific order then we can assign this
             if printer.get("c_useLowResPics"): # based on whether they want small/compressed image formats
                 extOrder = ["jpg", "png", "pdf"] 
             else:                              # or larger high quality uncompresses image formats
@@ -629,7 +629,6 @@ class Info:
         with open(infname, "r", encoding="utf-8") as inf:
             dat = inf.read()
             inf.close()
-            # jpg, tif, png, pdf => [jtp][pdin][gf]
             piclist += re.findall(r"(?i)\\fig .*\|(.+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)     # Finds USFM2-styled markup in text:
             piclist += re.findall(r'(?i)\\fig .+src="(.+?\.(?=jpg|tif|png|pdf)...)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text: 
             # piclist = [item.lower() for item in piclist]

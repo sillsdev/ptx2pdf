@@ -200,6 +200,7 @@ def doit(printer):
 
 def gatherIllustrations(jobs, prjid, prjdir, printer):
     tmpPicpath = os.path.join(printer.working_dir, "tmpPics")
+    lowRes = printer.get("c_useLowResPics")
     if printer.get("c_useCustomFolder"):
         picdir = printer.customFigFolder
     else:
@@ -212,7 +213,7 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
     for bk in jobs:
         fname = printer.getBookFilename(bk, prjdir)
         if printer.get("c_usePicList"): # Need to read the PicList to get a list of needed illustrations
-            piclstfname = os.path.join(printer.working_dir, "PicLists", fname)
+            piclstfname = os.path.join(printer.configPath(False), "PicLists", fname)
             doti = piclstfname.rfind(".")
             if doti > 0:
                 piclstfname = piclstfname[:doti] + "-draft" + piclstfname[doti:] + ".piclist"
@@ -249,7 +250,7 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
                             if printer.get("c_usePicList"):
                                 if shortname.lower() in fullnamelist: # ? fullnamelower
                                     tmpfname = os.path.join(tmpPicpath, shortname)
-                                    carefulCopy(printer, filepath, tmpfname)
+                                    carefulCopy(lowRes, filepath, tmpfname)
                             else:
                                 origextn = shortname[-4:]
                                 basefname = shortname.lower()
@@ -257,23 +258,48 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
                                 basefname = re.sub(r"(?i)(.+?)\.(jpg|png|pdf)", r"\1",basefname)  # This should pick up any non-standard filenames
                                 if basefname in basenamelist:
                                     tmpfname = os.path.join(tmpPicpath, basefname+origextn)
-                                    carefulCopy(printer, filepath, tmpfname)
+                                    carefulCopy(lowRes, filepath, tmpfname)
                         elif filepath.lower()[-4:] in [".tif"]:
-                            # if the [x] Convert TIFs to PDFs box is checked...
-                            # print(filepath)
-                            if shortname.lower() in fullnamelower:
-                                # It would be better to create a temp.pdf file and then use careful copy to 
-                                # make the best choice of size (smallest or largest filesize as needed).
-                                tmpfname = os.path.join(tmpPicpath, shortname)[:-4]+".pdf"
-                                # print("Got one!!!", filepath,"\n--->",tmpfname)
-                                with open(tmpfname,"wb") as f:
-                                    f.write(img2pdf.convert(filepath))
+                            if printer.get("c_usePicList"):
+                                # if the [x] Convert TIFs to PDFs box is checked...
+                                # print(filepath)
+                                if shortname.lower() in fullnamelower:
+                                    # It would be better to create a temp.pdf file and then use careful copy to 
+                                    # make the best choice of size (smallest or largest filesize as needed).
+                                    tempPDFname = os.path.join(tmpPicpath, "tempPDF.pdf")
+                                    # print("Got one!!!", filepath,"\n--->",tmpfname)
+                                    with open(tempPDFname,"wb") as f:
+                                        try:
+                                            f.write(img2pdf.convert(filepath))
+                                        except:
+                                            break
+                                    if os.path.exists(tempPDFname):
+                                        tmpfname = os.path.join(tmpPicpath, shortname)[:-4]+".pdf"
+                                        carefulCopy(lowRes, tempPDFname, tmpfname)
+                                        os.remove(tempPDFname)
+                            # else:
+                                # origextn = shortname[-4:]
+                                # basefname = shortname.lower()
+                                # basefname = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?\.(jpg|png|pdf)", r"\1",basefname)
+                                # basefname = re.sub(r"(?i)(.+?)\.(jpg|png|pdf)", r"\1",basefname)  # This should pick up any non-standard filenames
+                                # if basefname in basenamelist:
+                                    # tempPDFname = os.path.join(tmpPicpath, "tempPDF.pdf")
+                                    # print("Got one!!!", filepath,"\n--->",tmpfname)
+                                    # with open(tempPDFname,"wb") as f:
+                                        # try:
+                                            # f.write(img2pdf.convert(filepath))
+                                        # except:
+                                            # break
+                                    # if os.path.exists(tempPDFname):
+                                        # tmpfname = os.path.join(tmpPicpath, shortname)[:-4]+".pdf"
+                                        # carefulCopy(lowRes, tempPDFname, tmpfname)
+                                        # os.remove(tempPDFname)
 
-def carefulCopy(printer, srcfile, tgtfile):
+def carefulCopy(lowRes, srcfile, tgtfile):
     if not os.path.exists(tgtfile):
         copyfile(srcfile, tgtfile)
     else:
-        if printer.get("c_useLowResPics"): # we want to use the smallest available file
+        if lowRes: # we want to use the smallest available file
             if os.path.getsize(srcfile) < os.path.getsize(tgtfile):
                 copyfile(srcfile, tgtfile)
         else:                                 # we want to use the largest file available

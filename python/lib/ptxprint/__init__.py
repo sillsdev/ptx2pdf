@@ -588,26 +588,31 @@ class PtxPrinterDialog:
         except:
             pass
 
-    def onFontChange(self, fbtn):
+    def onFontChanged(self, fbtn):
         # traceback.print_stack(limit=3)
-        font = fbtn.get_font_name()
-        (name, size) = self.parse_fontname(font)
-        label = self.builder.get_object("l_font")
-        for s in ('bold', 'italic', 'bold italic'):
-            sid = s.replace(" ", "")
-            w = self.builder.get_object("f_"+sid)
-            f = TTFont(name, style = " ".join(s.split()))
-            fname = f.family + ", " + f.style + " " + str(size)
-            w.set_font_name(fname)
-            # Still need to do something here to put these defaults in if there aren't any other settings.
-            # print(fname, f.family, f.style, f.filename)
-            # print(s, fname, f.extrastyles)
-            # if 'bold' in f.style.lower():
-                # self.set("s_{}embolden".format(sid), 2)
-            # if 'italic' in f.style.lower():
-                # self.set("s_{}slant".format(sid), 0.15)
-        self.setEntryBoxFont()
-        
+        fnm = self.get("f_body")
+        f = TTFont(fnm)
+        if f.filename == None:
+            self.msgUnsupportedFont(fnm)
+        else:
+            font = fbtn.get_font_name()
+            (name, size) = self.parse_fontname(font)
+            label = self.builder.get_object("l_font")
+            for s in ('bold', 'italic', 'bold italic'):
+                sid = s.replace(" ", "")
+                w = self.builder.get_object("f_"+sid)
+                f = TTFont(name, style = " ".join(s.split()))
+                fname = f.family + ", " + f.style + " " + str(size)
+                w.set_font_name(fname)
+                # Still need to do something here to put these defaults in if there aren't any other settings.
+                # print(fname, f.family, f.style, f.filename)
+                # print(s, fname, f.extrastyles)
+                # if 'bold' in f.style.lower():
+                    # self.set("s_{}embolden".format(sid), 2)
+                # if 'italic' in f.style.lower():
+                    # self.set("s_{}slant".format(sid), 0.15)
+            self.setEntryBoxFont()
+
     def setEntryBoxFont(self):
         # Set the font of any GtkEntry boxes to the primary body text font for this project
         p = Pango.font_description_from_string(self.get("f_body"))
@@ -865,8 +870,8 @@ class PtxPrinterDialog:
                                                                                "is intentionally almost invisible (though located\n" + \
                                                                                "in the same place).")
 
-        # Hide a whole bunch of stuff that they don't need to see   (removed: "tb_Logging")
-        for c in ("tb_Body", "tb_Advanced", "tb_ViewerEditor", "tb_DiglotTesting", "btn_editPicList",
+        # Hide a whole bunch of stuff that they don't need to see   (removed: "tb_Logging", "tb_DiglotTesting", )
+        for c in ("tb_Body", "tb_Advanced", "tb_ViewerEditor", "btn_editPicList",
                   "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "box_AdvFootnoteConfig", "l_colgutteroffset",
                   "c_usePicList", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", 
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
@@ -1647,6 +1652,24 @@ class PtxPrinterDialog:
             dialog.format_secondary_text("A fallback font is not required.\nThis 'Use Fallback Font' option has been disabled.")
             dialog.run()
             dialog.destroy()
+
+    def onFontBoldChanged(self, f_bold):
+        fnm = self.get("f_bold")
+        f = TTFont(fnm)
+        if f.filename == None:
+            self.msgUnsupportedFont(fnm)
+
+    def onFontItalicChanged(self, f_italic):
+        fnm = self.get("f_italic")
+        f = TTFont(fnm)
+        if f.filename == None:
+            self.msgUnsupportedFont(fnm)
+
+    def onFontBoldItalicChanged(self, f_bolditalic):
+        fnm = self.get("f_bolditalic")
+        f = TTFont(fnm)
+        if f.filename == None:
+            self.msgUnsupportedFont(fnm)
 
     def onExtraRegularChanged(self, f_extraRegular):
         reg = self.get("f_body")

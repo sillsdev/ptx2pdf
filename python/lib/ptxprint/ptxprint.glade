@@ -2178,6 +2178,7 @@ Direction:</property>
                                     <property name="preview_text"/>
                                     <property name="show_preview_entry">False</property>
                                     <property name="show_size">False</property>
+                                    <signal name="font-set" handler="onFontBoldChanged" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -2193,6 +2194,7 @@ Direction:</property>
                                     <property name="preview_text"/>
                                     <property name="show_preview_entry">False</property>
                                     <property name="show_size">False</property>
+                                    <signal name="font-set" handler="onFontItalicChanged" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -2208,6 +2210,7 @@ Direction:</property>
                                     <property name="preview_text"/>
                                     <property name="show_preview_entry">False</property>
                                     <property name="show_size">False</property>
+                                    <signal name="font-set" handler="onFontBoldItalicChanged" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -2431,12 +2434,25 @@ Direction:</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
+                                    <property name="tooltip_text" translatable="yes">One of the most common mistakes (at least on
+Windows systems) is that a font is not installed
+properly for ALL users. If you choose a font like
+that, you will get a warning message and the 
+print process will fail.
+
+To install the font for ALL users, you will require
+admin privileges. Then follow these steps:
+a) Delete the current font from Windows\Fonts
+(you may need to restart windows after that)
+b) Locate the font to be installed
+c) Right-click and select option "Install for all users"
+d) Restart PTXprint and try again</property>
                                     <property name="valign">center</property>
                                     <property name="font">Sans 12</property>
                                     <property name="preview_text"/>
                                     <property name="show_preview_entry">False</property>
                                     <property name="show_size">False</property>
-                                    <signal name="font-set" handler="onFontChange" swapped="no"/>
+                                    <signal name="font-set" handler="onFontChanged" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
