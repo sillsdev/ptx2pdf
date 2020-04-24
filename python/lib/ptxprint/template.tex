@@ -144,8 +144,6 @@
 % restore page break definition (if present in USFM stylesheet, it has been re-defined and will not work)
 \let\pb=\pagebreak
 
-{project/ifusemodstex}\input "{/ptxpath}/{project/id}/PrintDraft/ptxprint-mods.tex"% adjust/override setup parameters here
-
 %%%%% Diglot settings (if applicable)
 %{document/diglotsettings}
 
@@ -153,6 +151,12 @@
 {paragraph/ifhyphenate}\input "{/ptxpath}/{project/id}/PrintDraft/hyphen-{project/id}.tex"
 {paragraph/ifnothyphenate}\hyphenpenalty=10000
 \exhyphenpenalty=2000
+
+%%%%% all normal settings, etc. before this line %%%%%
+
+%\snippets
+
+{project/ifusemodstex}\input "{/ptxpath}/{project/id}/PrintDraft/ptxprint-mods.tex"% adjust/override setup parameters here
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% all settings need to come before this line %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -166,8 +170,6 @@
 {document/toc}\BodyColumns=1     % Temporarily set this to Single Column for the ToC page(s)
 {document/toc}\ptxfile{{{jobname}.toc}}
 {document/toc}\BodyColumns={paper/columns}     % But ensure it goes back to the chosen Single/Double setting for the main body text
-
-%\snippets
 
 %%%%% Load Paratext USFM %%%%%
 \XeTeXdefaultencoding "utf-8"
