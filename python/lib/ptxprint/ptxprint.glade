@@ -1354,6 +1354,7 @@ Note that at present, only Roman/Latin names
 are supported using: a-z A-Z 0-9 and spaces,
 parentheses, underscores and hyphens.</property>
                                         <property name="halign">start</property>
+                                        <property name="max_length">32</property>
                                         <property name="width_chars">35</property>
                                       </object>
                                     </child>
@@ -1914,7 +1915,7 @@ when thin paper is being used.</property>
                           <object class="GtkBox">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="margin_left">6</property>
+                            <property name="margin_left">10</property>
                             <property name="margin_right">6</property>
                             <property name="margin_top">4</property>
                             <property name="margin_bottom">4</property>
@@ -2579,15 +2580,15 @@ been selected on the Basic tab.]</property>
                                     </child>
                                     <child>
                                       <object class="GtkEntry" id="t_tocTitle">
+                                        <property name="width_request">210</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">A file called "combined.toc" will be created with the outline of the Table
-of Contents. It can be manually modified or enhanced before the 
-next run.</property>
+                                        <property name="tooltip_text" translatable="yes">A file called "combined.toc" will be created 
+with the outline of the Table of Contents and
+automatically prepended to the output PDF.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="margin_right">10</property>
-                                        <property name="width_chars">22</property>
                                         <property name="placeholder_text" translatable="yes">Enter Title For Table of Contents</property>
                                       </object>
                                       <packing>
@@ -2877,6 +2878,7 @@ start on the same page.
                               <object class="GtkGrid" id="gr_mainBodyText">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="margin_right">6</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="row_spacing">8</property>
@@ -3381,7 +3383,7 @@ Note that you can also use \u0ABC codes
 to enter hard-to-type characters.</property>
                                         <property name="halign">start</property>
                                         <property name="margin_right">6</property>
-                                        <property name="width_chars">23</property>
+                                        <property name="width_chars">24</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
@@ -3411,14 +3413,14 @@ missing in main font:</property>
                                     </child>
                                     <child>
                                       <object class="GtkFontButton" id="f_extraRegular">
-                                        <property name="width_request">154</property>
+                                        <property name="width_request">162</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="margin_right">6</property>
-                                        <property name="font">Sans 12</property>
+                                        <property name="font">Times New Roman 12</property>
                                         <property name="preview_text"/>
                                         <property name="show_preview_entry">False</property>
                                         <property name="show_style">False</property>
@@ -5433,14 +5435,16 @@ be specified something like this:
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="margin_left">14</property>
                                 <property name="margin_top">25</property>
                                 <property name="margin_bottom">3</property>
-                                <property name="column_spacing">24</property>
+                                <property name="column_spacing">30</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_usePTmacros">
                                     <property name="label" translatable="yes">Use Paratext's
 XeTeX Macros</property>
                                     <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">By default, PTXprint uses the latest
@@ -6469,217 +6473,226 @@ are likely to have to re-do it all again.</property>
                             <property name="margin_bottom">4</property>
                             <property name="label_xalign">0.0099999997764825821</property>
                             <child>
-                              <object class="GtkAlignment">
+                              <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="left_padding">12</property>
+                                <property name="halign">center</property>
+                                <property name="margin_left">6</property>
+                                <property name="margin_right">6</property>
+                                <property name="margin_top">6</property>
+                                <property name="margin_bottom">6</property>
+                                <property name="row_spacing">12</property>
+                                <property name="column_spacing">6</property>
                                 <child>
-                                  <object class="GtkGrid">
+                                  <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="margin_top">6</property>
-                                    <property name="margin_bottom">6</property>
-                                    <property name="row_spacing">8</property>
-                                    <property name="column_spacing">6</property>
-                                    <child>
-                                      <object class="GtkLinkButton">
-                                        <property name="label" translatable="yes">Click to report an issue with PTXprint</property>
-                                        <property name="name">Report an Issue with PTXprint</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="focus_on_click">False</property>
-                                        <property name="receives_default">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">end</property>
-                                        <property name="relief">none</property>
-                                        <property name="uri">https://github.com/sillsdev/ptx2pdf/issues/new</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">5</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLinkButton">
-                                        <property name="label" translatable="yes">Click to visit SumatraPDF download page</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">end</property>
-                                        <property name="relief">none</property>
-                                        <property name="uri">https://www.sumatrapdfreader.org/download-free-pdf-viewer.html</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">4</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="halign">end</property>
-                                        <property name="hexpand">True</property>
-                                        <property name="label" translatable="yes">In order for you to use PTXprint effectively it is essential to use a 
-good PDF viewer which allows the PDF file to be refreshed
-(or reloaded) without closing it each time a new PDF is made. 
-On Linux the built-in Evince PDF viewer works great. 
-On Windows, the freely available SumatraPDF software 
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Current Project Path:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_prjdir">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="label" translatable="yes">prjdir</property>
+                                    <property name="selectable">True</property>
+                                    <property name="ellipsize">start</property>
+                                    <property name="width_chars">20</property>
+                                    <property name="single_line_mode">True</property>
+                                    <property name="max_width_chars">75</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">0</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Configuration Settings:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_settings_dir">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="label" translatable="yes">settings_dir</property>
+                                    <property name="selectable">True</property>
+                                    <property name="ellipsize">start</property>
+                                    <property name="width_chars">20</property>
+                                    <property name="single_line_mode">True</property>
+                                    <property name="max_width_chars">75</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">1</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Output PDF Location:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_working_dir">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="label" translatable="yes">working_dir</property>
+                                    <property name="selectable">True</property>
+                                    <property name="ellipsize">start</property>
+                                    <property name="width_chars">20</property>
+                                    <property name="single_line_mode">True</property>
+                                    <property name="max_width_chars">75</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">2</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">end</property>
+                                    <property name="hexpand">True</property>
+                                    <property name="label" translatable="yes">To use PTXprint effectively you need a good PDF viewer
+which allows the PDF file to be refreshed (reloaded)
+without closing it each time the PDF is re-created.
+On Linux the built-in Evince PDF viewer works great.
+On Windows, the freely available SumatraPDF software
 is highly recommended and is a small download.</property>
-                                        <property name="justify">right</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">4</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="halign">end</property>
-                                        <property name="hexpand">True</property>
-                                        <property name="label" translatable="yes">PTXprint is built with PyGTK3 and Python, using Glade for 
-the User-Interface. The PDFs are produced by XeTeX macros 
-with a long and reliable history. However, we're all human 
-and prone to making mistakes. So when you come across
+                                    <property name="justify">right</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">5</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLinkButton">
+                                    <property name="label" translatable="yes">Click to visit SumatraPDF download page</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">end</property>
+                                    <property name="relief">none</property>
+                                    <property name="uri">https://www.sumatrapdfreader.org/download-free-pdf-viewer.html</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">5</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">end</property>
+                                    <property name="hexpand">True</property>
+                                    <property name="label" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
+the User-Interface. The PDFs are produced by recently
+enhanced XeTeX macros with a long and reliable history.
+This is still a work in progress, so when you come across
 bugs, annoyances or can't make it work right, please file
-an issue using this link. The devlopers of PTXprint do this 
+an issue using this link here. The developers work on this
 in their spare time, so please be patient for a response.</property>
-                                        <property name="justify">right</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">5</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="halign">end</property>
-                                        <property name="label" translatable="yes">Output PDF Location:</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel" id="l_working_dir">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="halign">start</property>
-                                        <property name="label" translatable="yes">working_dir</property>
-                                        <property name="ellipsize">middle</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">While PTXprint is still being developed,
+                                    <property name="justify">right</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">6</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLinkButton">
+                                    <property name="label" translatable="yes">Click to report an issue with PTXprint</property>
+                                    <property name="name">Report an Issue with PTXprint</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="focus_on_click">False</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">end</property>
+                                    <property name="relief">none</property>
+                                    <property name="uri">https://github.com/sillsdev/ptx2pdf/issues/new</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">6</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLinkButton">
+                                    <property name="label" translatable="yes">Click to download latest version</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">end</property>
+                                    <property name="relief">none</property>
+                                    <property name="uri">http://tiny.cc/ptxprint</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">While PTXprint is still being developed,
 you can check for the latest version by
 visiting this link (tiny.cc/ptxprint).
 Note that you will have to install it yourself
 as there is no auto-update feature yet!</property>
-                                        <property name="halign">end</property>
-                                        <property name="label" translatable="yes">PTXprint (Beta) Updates:</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">3</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLinkButton">
-                                        <property name="label" translatable="yes">Click to download latest version</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">end</property>
-                                        <property name="relief">none</property>
-                                        <property name="uri">http://tiny.cc/ptxprint</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">3</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="halign">end</property>
-                                        <property name="label" translatable="yes">Configuration Settings:</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel" id="l_settings_dir">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="halign">start</property>
-                                        <property name="label" translatable="yes">settings_dir</property>
-                                        <property name="ellipsize">middle</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkBox">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="halign">end</property>
-                                            <property name="label" translatable="yes">Current Project Path:</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">2</property>
-                                          </packing>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel" id="l_prjdir">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="halign">start</property>
-                                        <property name="label" translatable="yes">prjdir</property>
-                                        <property name="ellipsize">middle</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Stay up-to-date with PTXprint Updates:</property>
                                   </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">4</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSeparator">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="opacity">0.80000000000000004</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">3</property>
+                                    <property name="width">3</property>
+                                  </packing>
                                 </child>
                               </object>
                             </child>
@@ -6687,12 +6700,13 @@ as there is no auto-update feature yet!</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Folder Paths</property>
+                                <property name="label" translatable="yes">Folder Paths &amp; More Info</property>
                               </object>
                             </child>
                           </object>
                           <packing>
                             <property name="position">6</property>
+                            <property name="tab_fill">False</property>
                           </packing>
                         </child>
                         <child type="tab">

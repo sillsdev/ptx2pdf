@@ -321,6 +321,7 @@ class PtxPrinterDialog:
             lockBtn.set_label("Lock Down ;-)")
             lockBtn.set_sensitive(False)
             self.builder.get_object("t_invisiblePassword").set_text("")
+            self.builder.get_object("l_settings_dir").set_label(self.config_dir or "")
             self.builder.get_object("btn_saveConfig").set_sensitive(False)
             self.builder.get_object("btn_deleteConfig").set_sensitive(False)
 
@@ -340,6 +341,7 @@ class PtxPrinterDialog:
                         copytree(os.path.join(srcpath, listname), os.path.join(tgtpath, listname))
                         # print("Copied from: {}\n         to: {}".format(os.path.join(srcpath, listname), os.path.join(tgtpath, listname)))
             self.config_dir = tgtpath # Update the current config folder location (in prep for next change)
+            self.builder.get_object("l_settings_dir").set_label(self.config_dir or "")
         else:
             # Just update the existing config file
             self.info.update()

@@ -24,7 +24,7 @@ a = Analysis(['python/scripts/ptxprint'],
                         'cairo/_cairo-cpython-37m.dll')],
              datas =    [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
                             ('ptxprint.glade', 'template.tex', 'A4-Grid.pdf', 'A4-Draft.pdf', 
-                             'A5-Grid.pdf', 'A5-Draft.pdf', 'ps_cmyk.icc',
+                             'A5-Grid.pdf', 'A5-Draft.pdf', 'ps_cmyk.icc', '62859-open-book-icon(128).png',
                              'A5 section head border.pdf', 'A5 section head border(RTL).pdf',
                              'A5 page border.pdf', 'Verse number star.pdf', 'decoration.pdf')]
                       + [('src/*.tex', 'ptx2pdf'),
