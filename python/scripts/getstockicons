@@ -86,6 +86,8 @@ icon_mappings = {
 "gtk-clear": "edit-clear",
 }
 
+#drive-optical-symbolic, drive-removable-media-symbolic, drive-harddisk-symbolic, computer-symbolic, folder-symbolic
+
 def findall(root, fname):
     for dp, dn, fn in os.walk(root or "."):
         if fname in fn:

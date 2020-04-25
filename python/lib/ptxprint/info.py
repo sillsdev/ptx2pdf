@@ -265,8 +265,8 @@ class Info:
         self.updatefields(self._mappings.keys())
         if self.prjid is not None:
             self.dict['project/id'] = self.prjid
-        self.dict['project/adjlists'] = os.path.join(printer.configPath(), "AdjLists/")
-        self.dict['project/piclists'] = os.path.join(printer.configPath(), "PicLists/")
+        self.dict['project/adjlists'] = os.path.join(printer.configPath(), "AdjLists/").replace("\\","/")
+        self.dict['project/piclists'] = os.path.join(printer.configPath(), "PicLists/").replace("\\","/")
         self.processFonts(printer)
         self.processHdrFtr(printer)
         # sort out caseless figures folder. This is a hack
