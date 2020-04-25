@@ -314,7 +314,8 @@ class PtxPrinterDialog:
             if os.path.exists(self.configPath()):
                 self.updateProjectSettings(False) # False means DON'T Save!
         else:
-            self.config_dir = self.configPath(False)
+            self.config_dir = self.configPath()
+            self.builder.get_object("t_configNotes").set_text("")
             lockBtn = self.builder.get_object("btn_lockunlock")
             # lockBtn.set_label("Lock Config")
             lockBtn.set_label("Lock Down ;-)")
@@ -325,16 +326,16 @@ class PtxPrinterDialog:
 
     def onSaveConfig(self, btn):
         # Determine whether to save a NEW config or just UPDATE an existing one
-        if self.config_dir != self.configPath(False): # then it must be new
+        if self.config_dir != self.configPath(): # then it must be new
             self.info.update()
             config = self.info.createConfig(self)
             self.saveConfig(config)
             self.cb_savedConfig.append_text(self.configName())
             # This is the first time to save, so copy other files/folders too
-            tgtpath = self.configPath(False)
+            tgtpath = self.configPath()
             for listname in ["PicLists", "AdjLists"]:
-                srcpath = self.config_dir
-                if srcpath != None and os.path.exists(os.path.join(srcpath, listname)):
+                srcpath = self.config_dir or os.path.join(self.settings_dir, self.get("cb_project"), "shared", "ptxprint")
+                if os.path.exists(os.path.join(srcpath, listname)):
                     if srcpath != tgtpath:
                         copytree(os.path.join(srcpath, listname), os.path.join(tgtpath, listname))
                         # print("Copied from: {}\n         to: {}".format(os.path.join(srcpath, listname), os.path.join(tgtpath, listname)))
@@ -739,7 +740,7 @@ class PtxPrinterDialog:
 
     def onFigsChanged(self, c_includefigsfromtext):
         status = self.get("c_includefigsfromtext")
-        for c in ("c_figexclwebapp", "c_fighiderefs", "c_skipmissingimages"):
+        for c in ("c_figexclwebapp", "c_fighiderefs", "c_skipmissingimages", "l_imageTypeOrder", "t_imageTypeOrder"):
             self.builder.get_object(c).set_sensitive(status)
 
     def onInclFrontMatterChanged(self, c_inclFrontMatter):
@@ -871,7 +872,7 @@ class PtxPrinterDialog:
                                                                                "in the same place).")
 
         # Hide a whole bunch of stuff that they don't need to see   (removed: "tb_Logging", "tb_DiglotTesting", )
-        for c in ("tb_Body", "tb_Advanced", "tb_ViewerEditor", "btn_editPicList",
+        for c in ("tb_Body", "tb_Advanced", "tb_ViewerEditor", "btn_editPicList", "l_imageTypeOrder", "t_imageTypeOrder",
                   "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "box_AdvFootnoteConfig", "l_colgutteroffset",
                   "c_usePicList", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", 
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
@@ -879,7 +880,8 @@ class PtxPrinterDialog:
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "row_ToC", "c_hyphenate",
                   "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", "c_preventwidows",
                   "l_sidemarginfactor", "s_sidemarginfactor", "l_min", "s_linespacingmin", "l_max", "s_linespacingmax",
-                  "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "cb_textDirection", "l_digits", "cb_digits"):
+                  "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "cb_textDirection", "l_digits", "cb_digits",
+                  "t_invisiblePassword", "t_configNotes", "l_notes"):
                   # "btn_saveConfig", "btn_deleteConfig", "btn_lockunlock", "t_invisiblePassword", "t_configNotes", "l_notes"):
             self.builder.get_object(c).set_visible(not self.get("c_hideAdvancedSettings"))
 
@@ -1014,7 +1016,7 @@ class PtxPrinterDialog:
             if self.info is None:
                 self.info = Info(self, self.settings_dir, prjid = currprj)
             config = self.info.createConfig(self)
-            self.config_dir = self.configPath(False)
+            self.config_dir = self.configPath()
             fpath = os.path.join(self.settings_dir, currprj, "shared", "ptxprint", "ptxprint.cfg")
             if saveCurrConfig and os.path.exists(fpath):
                 with open(fpath, "w", encoding="utf-8") as outf:
@@ -1123,11 +1125,7 @@ class PtxPrinterDialog:
         self.prjid = self.get("cb_project")
         self.prjdir = os.path.join(self.settings_dir, self.prjid)
         modfname = "ptxprint-mods.tex"
-        # MH: how to get hold of the current working dir if we're not working in the PrintDraft folder? see ln864 as well
-        # if wkdir:
-            # fpath = os.path.join(self.working_dir, modfname)
-        # else:
-        fpath = os.path.join(self.settings_dir, self.prjid, "PrintDraft", modfname)
+        fpath = os.path.join(self.configPath(), modfname)
         if not os.path.exists(fpath):
             openfile = open(fpath,"w", encoding="utf-8")
             openfile.write("% This is the .tex file specific for the {} project used by PTXprint.\n".format(self.prjid))
@@ -1302,6 +1300,10 @@ class PtxPrinterDialog:
             if doti > 0:
                 outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".piclist"
             piclist = []
+            piclist.append("% PicList Generated by PTXprint. Note that .TIFs have been changed to .PDF\n")
+            piclist.append("% Position   | Image Name |Img.Size|Position on Page||Illustration|Caption\n")
+            piclist.append("% book ch.vs |filename.ext|span/col|t/b/tl/tr/bl/br||Caption Text|ch:vs\n")
+            piclist.append("% \n")
             with open(infname, "r", encoding="utf-8") as inf:
                 dat = inf.read()
                 # Finds USFM2-styled markup in text:
@@ -1315,11 +1317,13 @@ class PtxPrinterDialog:
                 # print("m:", m)
                 if m is not None:
                     for f in m:
+                        # XeTeX doesn't handle TIFs, so rename all TIF extensions to PDFs
+                        picfname = re.sub(r"(?i)(.+)\.tif", r"\1.pdf",f[0])
                         if self.get("c_randomPicPosn"):
                             pageposn = random.choice(_picposn.get(f[1], f[1]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
                         else:
                             pageposn = (_picposn.get(f[1], f[1]))[0]              # use the t or tl (first in list)
-                        piclist.append(bk+" "+re.sub(r":",".", f[5])+" |"+f[0]+"|"+f[1]+"|"+pageposn+"||"+f[4]+"|"+f[5]+"\n")
+                        piclist.append(bk+" "+re.sub(r":",".", f[5])+" |"+picfname+"|"+f[1]+"|"+pageposn+"||"+f[4]+"|"+f[5]+"\n")
                 else:
                     # If none of the USFM2-styled illustrations were found then look for USFM3-styled markup in text 
                     # (Q: How to handle any additional/non-standard xyz="data" ? Will the .* before \\fig\* take care of it adequately?)
@@ -1332,11 +1336,13 @@ class PtxPrinterDialog:
                     m = re.findall(r'\\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,]\d+)?)".*\\fig\*', dat)
                     if m is not None:
                         for f in m:
+                            # XeTeX doesn't handle TIFs, so rename all TIF extensions to PDFs
+                            picfname = re.sub(r"(?i)(.+)\.tif", r"\1.pdf",f[1])
                             if self.get("c_randomPicPosn"):
                                 pageposn = random.choice(_picposn.get(f[2], f[2]))     # Randomize location of illustrations on the page (tl,tr,bl,br)
                             else:
                                 pageposn = (_picposn.get(f[2], f[2]))[0]               # use the t or tl (first in list)
-                            piclist.append(bk+" "+re.sub(r":",".", f[3])+" |"+f[1]+"|"+f[2]+"|"+pageposn+"||"+f[0]+"|"+f[3]+"\n")
+                            piclist.append(bk+" "+re.sub(r":",".", f[3])+" |"+picfname+"|"+f[2]+"|"+pageposn+"||"+f[0]+"|"+f[3]+"\n")
                 if len(m):
                     plpath = os.path.join(self.configPath(), "PicLists")
                     if not os.path.exists(plpath):
@@ -1461,22 +1467,6 @@ class PtxPrinterDialog:
                 fcFilepath = dialog.get_filenames()
         dialog.destroy()
         return fcFilepath
-
-    # Awaiting installation of the PIL/Pillow library to do TIF to PNG conversions
-    # def convertTIFtoPNG(self, picfname):
-        # if os.path.splitext(os.path.join(root, picfname))[1].lower() == ".tif":
-            # if os.path.isfile(os.path.splitext(os.path.join(root, picfname))[0] + ".png"):
-                # print("A PNG file already exists for {}".format(picfname))
-            # else:
-                # outputfile = os.path.splitext(os.path.join(root, picfname))[0] + ".png"
-                # try:
-                    # im = Image.open(os.path.join(root, picfname))
-                    # print("Converting TIF for {}".format(picfname))
-                    # if im.mode == "CMYK":
-                        # im = im.convert("Gray")
-                    # im.save(outputfile, "PNG")
-                # except Exception, e:
-                    # print(e)
 
     def onDiglotClicked(self, c_diglot):
         status = self.get("c_diglot")

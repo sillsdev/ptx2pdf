@@ -265,8 +265,8 @@ class Info:
         self.updatefields(self._mappings.keys())
         if self.prjid is not None:
             self.dict['project/id'] = self.prjid
-        self.dict['project/adjlists'] = os.path.join(printer.configPath(), "AdjLists")
-        self.dict['project/piclists'] = os.path.join(printer.configPath(), "PicLists")
+        self.dict['project/adjlists'] = os.path.join(printer.configPath(), "AdjLists/")
+        self.dict['project/piclists'] = os.path.join(printer.configPath(), "PicLists/")
         self.processFonts(printer)
         self.processHdrFtr(printer)
         # sort out caseless figures folder. This is a hack
@@ -615,6 +615,7 @@ class Info:
         infname = os.path.join(prjdir, fname)
         # If the preferred image type has been specified, parse that
         imgord = printer.get("t_imageTypeOrder")
+        imgord = re.sub(r"(?i)(tif)", r"pdf",imgord)
         extOrder = []
         if  len(imgord):
             exts = re.findall("([a-z]{3})",imgord.lower())
@@ -626,13 +627,14 @@ class Info:
                 extOrder = ["jpg", "png", "pdf"] 
             else:                              # or larger high quality uncompresses image formats
                 extOrder = ["pdf", "png", "jpg"]
+        # print("extOrder:", extOrder)
         with open(infname, "r", encoding="utf-8") as inf:
             dat = inf.read()
             inf.close()
             piclist += re.findall(r"(?i)\\fig .*\|(.+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)     # Finds USFM2-styled markup in text:
             piclist += re.findall(r'(?i)\\fig .+src="(.+?\.(?=jpg|tif|png|pdf)...)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text: 
             # piclist = [item.lower() for item in piclist]
-            # print(piclist)
+            # print("piclist:", piclist)
             for f in piclist:
                 found = False
                 basef = f
@@ -648,7 +650,7 @@ class Info:
                         break
                 if not found:
                     pichngs.append((f,"")) 
-        # print(pichngs)
+        print(pichngs)
         return(pichngs)
 
     def _configset(self, config, key, value):
@@ -753,11 +755,12 @@ class Info:
         if printer.get("c_useCustomSty"):
             if not os.path.exists(os.path.join(prjdir, "custom.sty")):
                 printer.set("c_useCustomSty", False)
-        for (f, c) in (("PrintDraft-mods.sty", "c_useModsSty"),
-                       ("ptxprint-mods.tex", "c_useModsTex")):
-            if printer.get(c):
-                if not os.path.exists(os.path.join(printer.working_dir, f)):
-                    printer.set(c, False)
+        if printer.get("c_useModsSty"):
+            if not os.path.exists(os.path.join(printer.working_dir, "PrintDraft-mods.sty")):
+                printer.set("c_useModsSty", False)
+        if printer.get("c_useModsTex"):
+            if not os.path.exists(os.path.join(prjdir, "shared", "ptxprint", "ptxprint-mods.tex")):
+                printer.set("c_useModsTex", False)
         self.update()
 
     def GenerateNestedStyles(self):
@@ -787,10 +790,10 @@ class Info:
         listlimit = 32749
         prjid = self.dict['project/id']
         infname = os.path.join(self.printer.settings_dir, prjid, 'hyphenatedWords.txt')
-        outfname = os.path.join(self.printer.working_dir, 'hyphen-{}.tex'.format(prjid))
+        outfname = os.path.join(self.printer.settings_dir, prjid, "shared", "ptxprint", 'hyphen-{}.tex'.format(prjid))
         hyphenatedWords = []
         if not os.path.exists(infname):
-            m1 = "Sorry! - Failed to Generate Hyphenation List"
+            m1 = "Failed to Generate Hyphenation List"
             m2 = "{} Paratext Project's Hyphenation file not found:\n{}".format(prjid, infname)
         else:
             m2b = ""
@@ -829,7 +832,7 @@ class Info:
                             "\nand ZWNJ characters have been left off the hyphenation list." 
                 m2 = m2a + m2b + m2c
             else:
-                m1 = "Sorry - Hyphenation List was NOT Generated"
+                m1 = "Hyphenation List was NOT Generated"
                 m2 = "No valid words were found in Paratext's Hyphenation List"
         dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
                                     buttons=Gtk.ButtonsType.OK, message_format=m1)

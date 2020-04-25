@@ -5,6 +5,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
 from shutil import copyfile, rmtree
+from time import sleep
 
 if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
     sys.stdout = open(os.devnull, "w")
@@ -199,14 +200,14 @@ def doit(printer):
         dialog.destroy()
 
 def gatherIllustrations(jobs, prjid, prjdir, printer):
-    tmpPicpath = os.path.join(printer.working_dir, "tmpPics")
     lowRes = printer.get("c_useLowResPics")
     if printer.get("c_useCustomFolder"):
         picdir = printer.customFigFolder
     else:
         picdir = None
-    if not os.path.exists(tmpPicpath):
-        os.mkdir(tmpPicpath)
+    tmpPicpath = os.path.join(printer.working_dir, "tmpPics")
+    removeTmpPics(tmpPicpath)
+    os.mkdir(tmpPicpath)
     basenamelist = []
     fullnamelist = []
     fullnamelower = []
@@ -218,7 +219,6 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
             if doti > 0:
                 piclstfname = piclstfname[:doti] + "-draft" + piclstfname[doti:] + ".piclist"
             piclist = []
-            print("piclstfname:", piclstfname)
             if os.path.exists(piclstfname):
                 with open(piclstfname, "r", encoding="utf-8") as inf:
                     dat = inf.read()
@@ -242,60 +242,52 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
     for srchdir in [picdir, os.path.join(prjdir, "local"), os.path.join(prjdir, "figures")]:
         if srchdir != None and os.path.exists(srchdir):
             for subdir, dirs, files in os.walk(srchdir):
-                for file in files:
-                    filepath = subdir + os.sep + file
-                    if not "tmpPics" in filepath: # Avoid recursively scanning the folder we are copying to!
+                if subdir != "tmpPics": # Avoid recursively scanning the folder we are copying to!
+                    for file in files:
+                        filepath = subdir + os.sep + file
                         shortname = os.path.basename(filepath)
-                        if filepath.lower()[-4:] in [".jpg", ".png", ".pdf"]:
+                        shortname = re.sub(r"(?i)\.tif", r".pdf",shortname)
+                        if filepath.lower()[-4:] in [".jpg", ".png", ".pdf", ".tif"]:
                             if printer.get("c_usePicList"):
-                                if shortname.lower() in fullnamelist: # ? fullnamelower
-                                    tmpfname = os.path.join(tmpPicpath, shortname)
-                                    carefulCopy(lowRes, filepath, tmpfname)
-                            else:
+                                if shortname.lower() in fullnamelist or shortname.lower() in fullnamelower:
+                                    if filepath.lower()[-4:] in [".tif"]:
+                                        tempPDFname = os.path.join(tmpPicpath, "tempPDF.pdf")
+                                        with open(tempPDFname,"wb") as f:
+                                            try:
+                                                f.write(img2pdf.convert(filepath))
+                                            except:
+                                                break
+                                        if os.path.exists(tempPDFname):
+                                            tmpfname = os.path.join(tmpPicpath, shortname)[:-4]+".pdf"
+                                            carefulCopy(lowRes, tempPDFname, tmpfname)
+                                            os.remove(tempPDFname)
+                                    else:
+                                        tmpfname = os.path.join(tmpPicpath, shortname)
+                                        carefulCopy(lowRes, filepath, tmpfname)
+
+                            else: # processes images found in in-line \fig ... \fig* 
                                 origextn = shortname[-4:]
                                 basefname = shortname.lower()
-                                basefname = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?\.(jpg|png|pdf)", r"\1",basefname)
-                                basefname = re.sub(r"(?i)(.+?)\.(jpg|png|pdf)", r"\1",basefname)  # This should pick up any non-standard filenames
+                                basefname = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?\.(jpg|tif|png|pdf)", r"\1",basefname)
+                                basefname = re.sub(r"(?i)(.+?)\.(jpg|tif|png|pdf)", r"\1",basefname)  # This should pick up any non-standard filenames
                                 if basefname in basenamelist:
-                                    tmpfname = os.path.join(tmpPicpath, basefname+origextn)
-                                    carefulCopy(lowRes, filepath, tmpfname)
-                        elif filepath.lower()[-4:] in [".tif"]:
-                            if printer.get("c_usePicList"):
-                                # if the [x] Convert TIFs to PDFs box is checked...
-                                # print(filepath)
-                                if shortname.lower() in fullnamelower:
-                                    # It would be better to create a temp.pdf file and then use careful copy to 
-                                    # make the best choice of size (smallest or largest filesize as needed).
-                                    tempPDFname = os.path.join(tmpPicpath, "tempPDF.pdf")
-                                    # print("Got one!!!", filepath,"\n--->",tmpfname)
-                                    with open(tempPDFname,"wb") as f:
-                                        try:
-                                            f.write(img2pdf.convert(filepath))
-                                        except:
-                                            break
-                                    if os.path.exists(tempPDFname):
-                                        tmpfname = os.path.join(tmpPicpath, shortname)[:-4]+".pdf"
-                                        carefulCopy(lowRes, tempPDFname, tmpfname)
-                                        os.remove(tempPDFname)
-                            # else:
-                                # origextn = shortname[-4:]
-                                # basefname = shortname.lower()
-                                # basefname = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?\.(jpg|png|pdf)", r"\1",basefname)
-                                # basefname = re.sub(r"(?i)(.+?)\.(jpg|png|pdf)", r"\1",basefname)  # This should pick up any non-standard filenames
-                                # if basefname in basenamelist:
-                                    # tempPDFname = os.path.join(tmpPicpath, "tempPDF.pdf")
-                                    # print("Got one!!!", filepath,"\n--->",tmpfname)
-                                    # with open(tempPDFname,"wb") as f:
-                                        # try:
-                                            # f.write(img2pdf.convert(filepath))
-                                        # except:
-                                            # break
-                                    # if os.path.exists(tempPDFname):
-                                        # tmpfname = os.path.join(tmpPicpath, shortname)[:-4]+".pdf"
-                                        # carefulCopy(lowRes, tempPDFname, tmpfname)
-                                        # os.remove(tempPDFname)
+                                    if filepath.lower()[-4:] in [".tif"]:
+                                        tempPDFname = os.path.join(tmpPicpath, "tempPDF.pdf")
+                                        with open(tempPDFname,"wb") as f:
+                                            try:
+                                                f.write(img2pdf.convert(filepath))
+                                            except:
+                                                break
+                                        if os.path.exists(tempPDFname):
+                                            tmpfname = os.path.join(tmpPicpath, basefname)+".pdf"
+                                            carefulCopy(lowRes, tempPDFname, tmpfname)
+                                            os.remove(tempPDFname)
+                                    else: # for .jpg, .png, .pdf
+                                        tmpfname = os.path.join(tmpPicpath, basefname+origextn)
+                                        carefulCopy(lowRes, filepath, tmpfname)
 
 def carefulCopy(lowRes, srcfile, tgtfile):
+    # print("    Src: ", srcfile, "\n    Tgt: ", tgtfile)
     if not os.path.exists(tgtfile):
         copyfile(srcfile, tgtfile)
     else:
@@ -327,12 +319,16 @@ def removeTempFiles(texfiles,tmpdir,info):
             dialog.format_secondary_text("File: " + delfname)
             dialog.run()
             dialog.destroy()
-    # Don't leave the Temporary illustrations around - delete the entire folder
     tmpPicpath = os.path.join(tmpdir, "tmpPics")
-    if len(tmpPicpath) > 30: # Just to make sure we're not deleting something closer to Root!
+    removeTmpPics(tmpPicpath)
+
+def removeTmpPics(path2del):
+    # Make sure we're not deleting something closer to Root!
+    if len(path2del) > 30 and os.path.exists(path2del):
         try:
-            rmtree(tmpPicpath)
+            rmtree(path2del) # Preferably remove the previous run's illustrations
         except OSError:
-            print("Error Deleting temporary illustrations folder: %s" % (tmpPicpath))
+            print("Error Deleting temporary illustrations folder: %s" % (path2del))
+        sleep(1)  # wait a second for it to finish deleting
 
 mainw.run(doit)

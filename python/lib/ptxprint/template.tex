@@ -131,12 +131,11 @@
 \def\RFtitlecenter{{{footer/oddcenter}}}
 {footer/ifftrtitlepagenum}\def\RFtitlecenter{{\pagenumber}}
 
-%%%%% Illustrations %%%%%
+%%%%% Illustration and Adjustment Locations and Lists %%%%%
 \IncludeFigures{document/ifinclfigs}
 \FigurePlaceholders{document/iffigplaceholders}
 \PicPath={{{/ptxpath}/{project/id}/PrintDraft/tmpPics/}}
 {document/ifusepiclist}\PicListPath={{{project/piclists}}}
-
 \AdjListPath={{{project/adjlists}}}
 
 % tweak to enable blank lines
@@ -148,7 +147,7 @@
 %{document/diglotsettings}
 
 %%%%% Hyphenation %%%%%
-{paragraph/ifhyphenate}\input "{/ptxpath}/{project/id}/PrintDraft/hyphen-{project/id}.tex"
+{paragraph/ifhyphenate}\input "{/ptxpath}/{project/id}/shared/ptxprint/hyphen-{project/id}.tex"
 {paragraph/ifnothyphenate}\hyphenpenalty=10000
 \exhyphenpenalty=2000
 
@@ -156,7 +155,7 @@
 
 %\snippets
 
-{project/ifusemodstex}\input "{/ptxpath}/{project/id}/PrintDraft/ptxprint-mods.tex"% adjust/override setup parameters here
+{project/ifusemodstex}\input "{/ptxpath}/{project/id}/shared/ptxprint/ptxprint-mods.tex"% adjust/override setup parameters here
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% all settings need to come before this line %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
