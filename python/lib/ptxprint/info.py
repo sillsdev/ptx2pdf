@@ -185,6 +185,7 @@ class Info:
         "notes/fnresetcallers":     ("c_fnpageresetcallers", lambda w,v: "" if v else "%"),
         "notes/fnomitcaller":       ("c_fnomitcaller", lambda w,v: "%" if v else ""),
         "notes/fnparagraphednotes": ("c_fnparagraphednotes", lambda w,v: "" if v else "%"),
+        "notes/addColon":           ("c_addColon", lambda w,v :"true" if v else "false"),
         "notes/glossaryfootnotes":  ("c_glossaryFootnotes", lambda w,v :"true" if v else "false"),
 
         "notes/includexrefs":       ("c_includeXrefs", lambda w,v: "%" if v else ""),
@@ -571,9 +572,15 @@ class Info:
         if printer.get("c_glueredupwords"): # keep reduplicated words together
             self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w\w\w+) \1(?=[\s,.!?])", flags=regex.M), r"\1\u00A0\1")) 
         
+        if printer.get("c_addColon"): # Insert a colon between \fq (or \xq) and following \ft (or \xt)
+            self.localChanges.append((None, regex.compile(r"(\\[fx]q .+?):* (\\[fx]t)", flags=regex.M), r"\1: \2")) 
+        
         if printer.get("c_keepBookWithRefs"): # keep Booknames and ch:vs nums together MH: need help for restricting to \xt and \xo 
             self.localChanges.append((None, regex.compile(r" (\d+:\d+(-\d+)?\))", flags=regex.M), r"\u00A0\1")) 
-        
+    # newtext = re.sub(r"\\xt [^\\]+",replaceRefSpacesWithNBSP,origtext)
+    # def replaceRefSpacesWithNBSP(m):
+        # return re.sub(r" (\d+:\d+([-,]\d+)?)", r"~\1", m.group(0))
+
         # Paratext marks no-break space as a tilde ~
         self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
         # Remove the + of embedded markup (xetex handles it)
@@ -603,10 +610,6 @@ class Info:
                 print(report)
         return self.localChanges
 
-    # newtext = re.sub(r"\\xt [^\\]+",replaceRefSpacesWithNBSP,origtext)
-    # def replaceRefSpacesWithNBSP(m):
-        # return re.sub(r" (\d+:\d+([-,]\d+)?)", r"~\1", m.group(0))
-
     def PicNameChanges(self, printer, bk):
         piclist = []
         pichngs = []
@@ -615,7 +618,7 @@ class Info:
         picdir = os.path.join(prjdir, "PrintDraft", "tmpPics")
         fname = printer.getBookFilename(bk, prjdir)
         infname = os.path.join(prjdir, fname)
-        # If the preferred image type has been specified, parse that
+        # If the preferred image type(s) has(have) been specified, parse that string
         imgord = printer.get("t_imageTypeOrder")
         imgord = re.sub(r"(?i)(tif)", r"pdf",imgord)
         extOrder = []
@@ -629,14 +632,11 @@ class Info:
                 extOrder = ["jpg", "png", "pdf"] 
             else:                              # or larger high quality uncompresses image formats
                 extOrder = ["pdf", "png", "jpg"]
-        # print("extOrder:", extOrder)
         with open(infname, "r", encoding="utf-8") as inf:
             dat = inf.read()
             inf.close()
             piclist += re.findall(r"(?i)\\fig .*\|(.+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)     # Finds USFM2-styled markup in text:
             piclist += re.findall(r'(?i)\\fig .+src="(.+?\.(?=jpg|tif|png|pdf)...)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text: 
-            # piclist = [item.lower() for item in piclist]
-            # print("piclist:", piclist)
             for f in piclist:
                 found = False
                 basef = f
@@ -646,13 +646,11 @@ class Info:
                     tmpf = (basef+"."+ext).lower()
                     fname = os.path.join(picdir,tmpf)
                     if os.path.exists(fname):
-                        # print("Found:", f, ">", tmpf)
                         pichngs.append((f,tmpf))
                         found = True
                         break
                 if not found:
                     pichngs.append((f,"")) 
-        print(pichngs)
         return(pichngs)
 
     def _configset(self, config, key, value):

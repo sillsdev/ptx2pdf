@@ -64,7 +64,7 @@ class Splash(Thread):
         super(Splash, self).__init__()
         self.window = window
         self.window.set_position(Gtk.WindowPosition.CENTER)
-        #self.window.set_default_size(400, 250)
+        self.window.set_default_size(400, 250)
         self.window.connect('destroy', Gtk.main_quit)
 
     def run(self):
@@ -184,6 +184,8 @@ class PtxPrinterDialog:
             self.onProjectChange(None)
             self.pendingPid = None
         self.splash.destroy()
+        self.mw.set_default_size(730, 565)
+        self.mw.set_resizable(True)
         self.mw.show_all()
         Gtk.main()
 
@@ -512,15 +514,16 @@ class PtxPrinterDialog:
 
         fndict = {0 : ("", ""),     1 : ("PicLists", ".piclist"), 2 : ("AdjLists", ".adj"), \
                   3 : ("", ".tex"), 4 : ("", ".log")}
-        if 0 <= pgnum <= 2:  # (SFM,PicList,AdjList)
+        if pgnum <= 2:  # (SFM,PicList,AdjList)
             fname = self.getBookFilename(bk, prjid)
-            fpath = os.path.join(self.configPath(), fndict[pgnum][0], fname)
-            doti = fpath.rfind(".")
             if pgnum == 0:
                 fpath = os.path.join(self.working_dir, fndict[pgnum][0], fname)
+            else:
+                fpath = os.path.join(self.configPath(), fndict[pgnum][0], fname)
+            doti = fpath.rfind(".")
             if doti > 0:
                 fpath = fpath[:doti] + "-draft" + fpath[doti:] + fndict[pgnum][1]
-            elif pgnum == 1: # PicList
+            if pgnum == 1: # PicList
                 self.builder.get_object("c_randomPicPosn").set_sensitive(True)
                 genTip = "Generate the PicList in the\ncorrect format using the markup\n(\\fig ... \\fig*) within the text."
                 genBtn.set_sensitive(True)
@@ -561,14 +564,14 @@ class PtxPrinterDialog:
                 if len(txt) > 80000:
                     txt = txt[:80000]+"\n\n------------------------------------- \
                                           \n[Display of file has been truncated] \
-                                          \nClick on View/Edit button to see more."
+                                          \nClick on View/Edit... button to see more."
             self.fileViews[pgnum][0].set_text(txt)
         else:
             self.builder.get_object("l_{}".format(pgnum)).set_tooltip_text(None)
-            self.fileViews[pgnum][0].set_text("\nThis file doesn't exist yet!\n\nHave you... \
-                                               \n   * Generated the PiCList or AdjList? \
-                                               \n   * Checked the option (above) to 'Preserve Intermediate Files and Logs'? \
-                                               \n   * Clicked 'Print Preview' to create the PDF?")
+            self.fileViews[pgnum][0].set_text("\nThis file doesn't exist yet.\n\nTry... \
+                                               \n   * Check option (above) to 'Preserve Intermediate Files and Logs' \
+                                               \n   * Generate the PiCList or AdjList \
+                                               \n   * Click 'Print' to create the PDF")
 
     def onSaveEdits(self, btn):
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
@@ -853,9 +856,6 @@ class PtxPrinterDialog:
 
     def onHideAdvancedSettingsClicked(self, c_hideAdvancedSettings):
         if self.get("c_hideAdvancedSettings"):
-            # NOTE: When we eventually get Saved Configurations working, we will need to revisit this and NOT turn things
-            #       on and off in the background. (An experienced user may set these up, save the settings and then HIDE
-            #       those settings - but if they do, we need the settings to stick (rather than disappear as they do now).
             # Turn Dangerous Settings OFF
             for c in ("c_startOnHalfPage", "c_marginalverses", "c_prettyIntroOutline", "c_blendfnxr", "c_autoToC",
                       "c_figplaceholders", "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", 
@@ -892,15 +892,21 @@ class PtxPrinterDialog:
                   # "btn_saveConfig", "btn_deleteConfig", "btn_lockunlock", "t_invisiblePassword", "t_configNotes", "l_notes"):
             self.builder.get_object(c).set_visible(not self.get("c_hideAdvancedSettings"))
 
+        # Resize Main UI Window appropriately
+        if self.get("c_hideAdvancedSettings"):
+            self.mw.resize(710, 316)
+        else:
+            self.mw.resize(730, 565)
+
     def onShowBordersTabClicked(self, c_showBordersTab):
         status = self.get("c_showBordersTab")
         self.builder.get_object("tb_FancyBorders").set_visible(status)
-        self.builder.get_object("c_enableDecorativeElements").set_active(status)
+        # self.builder.get_object("c_enableDecorativeElements").set_active(status)
 
     def onShowDiglotTabClicked(self, c_showDiglotTab):
         status = self.get("c_showDiglotTab")
         self.builder.get_object("tb_DiglotTesting").set_visible(status)
-        self.builder.get_object("c_diglot").set_active(status)
+        # self.builder.get_object("c_diglot").set_active(status)
 
     def onKeepTemporaryFilesClicked(self, c_keepTemporaryFiles):
         self.builder.get_object("gr_debugTools").set_sensitive(self.get("c_keepTemporaryFiles"))
@@ -1308,7 +1314,7 @@ class PtxPrinterDialog:
                 outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".piclist"
             piclist = []
             piclist.append("% PicList Generated by PTXprint. Note that .TIFs have been changed to .PDF\n")
-            piclist.append("% Position   | Image Name |Img.Size|Position on Page||Illustration|Caption\n")
+            piclist.append("% Location   |Image Name|Img.Size|Position on Page||Illustration|Caption\n")
             piclist.append("% book ch.vs |filename.ext|span/col|t/b/tl/tr/bl/br||Caption Text|ch:vs\n")
             piclist.append("% \n")
             with open(infname, "r", encoding="utf-8") as inf:

@@ -4113,8 +4113,8 @@ the body text from the footnote area.</property>
                                         </child>
                                         <child>
                                           <object class="GtkCheckButton" id="c_blendfnxr">
-                                            <property name="label" translatable="yes">Combine footnotes 
-and cross-references   &amp;  Use this Xref caller:</property>
+                                            <property name="label" translatable="yes">Blend cross-references
+with footnotes &amp; Use this caller:</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -4122,9 +4122,12 @@ and cross-references   &amp;  Use this Xref caller:</property>
 combine the  footnotes and cross-references
 as a single paragraph (rather than the cross-
 references appearing in a separate block
-underneath the footnotes).</property>
+underneath the footnotes). If this option is
+used, the Cross-References can only have
+one type of called (rather than a sequence)
+which must be specified here.</property>
                                             <property name="halign">start</property>
-                                            <property name="margin_left">31</property>
+                                            <property name="margin_left">20</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="clicked" handler="onBlendedXrsClicked" swapped="no"/>
                                           </object>
@@ -4152,6 +4155,26 @@ underneath the footnotes).</property>
                                           </packing>
                                         </child>
                                         <child>
+                                          <object class="GtkCheckButton" id="c_addColon">
+                                            <property name="label" translatable="yes">Add a colon ':'
+after \fq &amp; \xq</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">Some projects prefer to separate the
+Quoted text from the footnote text
+with a colon ':' which helps keep the
+elements visually distinct.</property>
+                                            <property name="margin_left">10</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
                                           <object class="GtkCheckButton" id="c_glossaryFootnotes">
                                             <property name="label" translatable="yes">Also Show Glossary 
 Entries as Footnotes</property>
@@ -4159,8 +4182,8 @@ Entries as Footnotes</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
                                             <property name="tooltip_text" translatable="yes">Glossary entries for any marked-up
-Biblical Terms on the page can
-appear as footnotes.
+Biblical Terms on the page can be
+made to appear as footnotes.
 
 Glossary \w markup|mark\w* looks like
 this in the USFM text file.
@@ -4171,13 +4194,14 @@ testing (where  Key Biblical Terms in the
 passage which have Glossary Entries also
 need to be checked for understanding).</property>
                                             <property name="halign">start</property>
-                                            <property name="margin_left">20</property>
+                                            <property name="margin_left">10</property>
+                                            <property name="margin_right">6</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">True</property>
-                                            <property name="position">3</property>
+                                            <property name="position">4</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -6372,6 +6396,8 @@ also contain several other related files.</property>
                       <object class="GtkNotebook" id="nbk_Viewer">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <signal name="change-current-page" handler="onViewerChangePage" swapped="no"/>
+                        <signal name="select-page" handler="onViewerChangePage" swapped="no"/>
                         <signal name="switch-page" handler="onViewerChangePage" swapped="no"/>
                         <child>
                           <object class="GtkScrolledWindow" id="scroll_FinalSFM">
@@ -6382,10 +6408,14 @@ also contain several other related files.</property>
                             <property name="margin_top">6</property>
                             <property name="margin_bottom">6</property>
                             <property name="shadow_type">in</property>
+                            <property name="kinetic_scrolling">False</property>
                             <child>
                               <placeholder/>
                             </child>
                           </object>
+                          <packing>
+                            <property name="tab_fill">False</property>
+                          </packing>
                         </child>
                         <child type="tab">
                           <object class="GtkLabel" id="l_0">
@@ -6801,7 +6831,7 @@ as there is no auto-update feature yet!</property>
                           <object class="GtkLabel" id="l_6">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Links</property>
+                            <property name="label" translatable="yes">Folders &amp; Links</property>
                           </object>
                           <packing>
                             <property name="position">6</property>
