@@ -184,8 +184,9 @@ class PtxPrinterDialog:
             self.onProjectChange(None)
             self.pendingPid = None
         self.splash.destroy()
-        self.mw.set_default_size(730, 565)
-        self.mw.set_resizable(True)
+        # self.mw.set_resizable(True)
+        # self.mw.set_default_size(730, 565)
+        self.mw.resize(730, 565)
         self.mw.show_all()
         Gtk.main()
 
@@ -584,7 +585,7 @@ class PtxPrinterDialog:
 
     def onOpenInSystemEditor(self, btn):
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
-        fpath = self.builder.get_object("l_{}".format(pg)).get_tooltip_text()
+        fpath = self.builder.get_object("l_{}".format(pg)).get_tooltip_text() or ""
         if os.path.exists(fpath):
             if sys.platform == "win32":
                 os.startfile(fpath)
@@ -706,6 +707,14 @@ class PtxPrinterDialog:
         status = self.get("c_includeXrefs")
         for c in ("c_xrautocallers", "t_xrcallers", "c_xromitcaller", "c_xrpageresetcallers", "c_paragraphedxrefs"):
             self.builder.get_object(c).set_sensitive(status)
+
+    def onPageNumTitlePageChanged(self, c_pageNumTitlePage):
+        if self.get("c_pageNumTitlePage"):
+            self.builder.get_object("c_printConfigName").set_active(False)
+
+    def onPrintConfigNameChanged(self, c_printConfigName):
+        if self.get("c_printConfigName"):
+            self.builder.get_object("c_pageNumTitlePage").set_active(False)
 
     def onPageGutterChanged(self, c_pagegutter):
         status = self.get("c_pagegutter")
@@ -1442,7 +1451,7 @@ class PtxPrinterDialog:
             (Gtk.FileChooserAction.SELECT_FOLDER if folder else Gtk.FileChooserAction.OPEN),
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
             ("Select" if folder else Gtk.STOCK_OPEN), Gtk.ResponseType.OK))
-        dialog.set_default_size(800, 600)
+        dialog.set_default_size(730, 565)
         dialog.set_select_multiple(multiple)
         if filters != None: # was len(filters):
             # filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}}

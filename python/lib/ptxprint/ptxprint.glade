@@ -4738,8 +4738,8 @@ the page (only on Intoductory Pages before
 the scripture text begins).</property>
                                 <property name="halign">start</property>
                                 <property name="margin_left">15</property>
-                                <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
+                                <signal name="clicked" handler="onPageNumTitlePageChanged" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">4</property>
@@ -4786,16 +4786,21 @@ the scripture text begins).</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="c_configNameAtEnd">
+                              <object class="GtkCheckButton" id="c_printConfigName">
                                 <property name="label" translatable="yes">Print Name of Saved
-Config on Last Page</property>
+Config on Intro Page(s)</property>
                                 <property name="visible">True</property>
-                                <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">It may be helpful to print the Name of
+the Saved Configuration on the first
+page (of every book) as a reminder for
+later - as to which settings were used
+to produce the PDF.</property>
                                 <property name="halign">start</property>
                                 <property name="margin_left">15</property>
                                 <property name="draw_indicator">True</property>
+                                <signal name="clicked" handler="onPrintConfigNameChanged" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">4</property>
@@ -6184,6 +6189,7 @@ from XeTeX processing.</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
+                    <property name="valign">start</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame" id="fr_Debugging">
@@ -6406,7 +6412,6 @@ also contain several other related files.</property>
                             <property name="margin_left">6</property>
                             <property name="margin_right">6</property>
                             <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
                             <property name="shadow_type">in</property>
                             <property name="kinetic_scrolling">False</property>
                             <child>
@@ -6846,7 +6851,7 @@ as there is no auto-update feature yet!</property>
                         </child>
                       </object>
                       <packing>
-                        <property name="expand">True</property>
+                        <property name="expand">False</property>
                         <property name="fill">True</property>
                         <property name="position">1</property>
                       </packing>
@@ -6963,6 +6968,7 @@ Numbers</property>
                   </object>
                   <packing>
                     <property name="position">7</property>
+                    <property name="tab_fill">False</property>
                   </packing>
                 </child>
                 <child type="tab">

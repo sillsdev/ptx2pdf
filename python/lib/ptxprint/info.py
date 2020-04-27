@@ -10,6 +10,7 @@ from ptxprint.snippets import FancyIntro, PDFx1aOutput, FancyBorders
 
 class Info:
     _mappings = {
+        "config/name":              ("cb_savedConfig", lambda w,v: v or "default"),
         "config/notes":             ("t_configNotes", lambda w,v: v or ""),
         "config/pwd":               ("t_invisiblePassword", lambda w,v: v or ""),
 
@@ -174,6 +175,7 @@ class Info:
         
         "footer/ftrcenter":         ("cb_ftrcenter", lambda w,v: v or "-empty-"),
         "footer/ifftrtitlepagenum": ("c_pageNumTitlePage", lambda w,v: "" if v else "%"),
+        "footer/ifprintConfigName": ("c_printConfigName", lambda w,v: "" if v else "%"),
 
         "notes/iffootnoterule":     ("c_footnoterule", lambda w,v: "%" if v else ""),
         "notes/ifblendfnxr":        ("c_blendfnxr", lambda w,v :"true" if v else "false"),
