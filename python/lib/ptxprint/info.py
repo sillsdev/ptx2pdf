@@ -15,6 +15,8 @@ class Info:
 
         "project/id":               (None, lambda w,v: w.get("cb_project")),
         "project/hideadvsettings":  ("c_hideAdvancedSettings", lambda w,v: "true" if v else "false"),
+        "project/showdiglottab":    ("c_showDiglotTab", lambda w,v: "true" if v else "false"),
+        "project/showborderstab":   ("c_showBordersTab", lambda w,v: "true" if v else "false"),
         "project/keeptempfiles":    ("c_keepTemporaryFiles", lambda w,v: "true" if v else "false"),
         "project/pdfx1acompliant":  ("c_PDFx1aOutput", lambda w,v: "true" if v else "false"),
         "project/blockexperimental": (None, lambda w,v: "" if w.get("c_experimental") else "%"),

@@ -303,10 +303,15 @@ class PtxPrinterDialog:
     def onCancel(self, btn):
         self.onDestroy(btn)
 
+    def onAboutClicked(self, btn_about):
+        dia = self.builder.get_object("dlg_about")
+        response = dia.run()
+        dia.hide()
+            
     def onConfigNameChanged(self, cb_savedConfig):
         if len(self.get("cb_savedConfig")):
             lockBtn = self.builder.get_object("btn_lockunlock")
-            lockBtn.set_label("Lock Down ;-)")
+            lockBtn.set_label("Lockdown  ;-)")
             lockBtn.set_sensitive(True)
             self.builder.get_object("t_invisiblePassword").set_text("")
             self.builder.get_object("btn_saveConfig").set_sensitive(True)
@@ -318,7 +323,7 @@ class PtxPrinterDialog:
             self.builder.get_object("t_configNotes").set_text("")
             lockBtn = self.builder.get_object("btn_lockunlock")
             # lockBtn.set_label("Lock Config")
-            lockBtn.set_label("Lock Down ;-)")
+            lockBtn.set_label("Lockdown  ;-)")
             lockBtn.set_sensitive(False)
             self.builder.get_object("t_invisiblePassword").set_text("")
             self.builder.get_object("l_settings_dir").set_label(self.config_dir or "")
@@ -431,7 +436,7 @@ class PtxPrinterDialog:
         if self.get("t_invisiblePassword") == "":
             status = True
             # lockBtn.set_label("Lock Config")
-            lockBtn.set_label("Lock Down ;-)")
+            lockBtn.set_label("Lockdown  ;-)")
         else:
             status = False
             lockBtn.set_label("Unlock Config")
