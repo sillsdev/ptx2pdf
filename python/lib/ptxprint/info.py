@@ -522,7 +522,7 @@ class Info:
                     if tempfn != "":
                         self.localChanges.append((None, regex.compile(r"(?i)(\\fig .*\|){}(\|.+?\\fig\*)".format(origfn), \
                                                      flags=regex.M), r"\1{}\2".format(tempfn)))                               #USFM2
-                        self.localChanges.append((None, regex.compile(r'(?i)(\\fig .+?src="{}" .+?\\fig\*)'.format(origfn), \
+                        self.localChanges.append((None, regex.compile(r'(?i)(\\fig .+?src="){}(" .+?\\fig\*)'.format(origfn), \
                                                      flags=regex.M), r"\1{}\2".format(tempfn)))                               #USFM3
                     else:
                         if printer.get("c_skipmissingimages"):

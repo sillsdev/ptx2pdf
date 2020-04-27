@@ -5017,7 +5017,7 @@ attribute.  Note: w= web, a=app, p=print.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_skipmissingimages">
-                                    <property name="label" translatable="yes">Omit Any Missing Images Automatically</property>
+                                    <property name="label" translatable="yes">Omit Missing Pictures</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>

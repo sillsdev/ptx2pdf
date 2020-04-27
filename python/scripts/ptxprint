@@ -193,14 +193,16 @@ def doit(printer):
         dialog = Gtk.MessageDialog(parent=None, modal=True, message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK, \
             text="Error: Unable to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname))
         dialog.format_secondary_text("".join(info.loglines[-20:])+
-                                    "----------------------------------------------- \
-                                    \n Possible Causes inlcude: \
-                                    \n  * The font file was not installed for ALL users \
+                                     "----------------------------------------------- \
+                                    \nPTXprint version: 0.4.8 (Beta)\
+                                    \n----------------------------------------------- \
+                                    \nPossible Causes: \
                                     \n  * The USFM text has a syntax error \
-                                    \n  * Selected option is incompatible with data \
+                                    \n  * The font file was not installed for ALL users \
                                     \n  * Pictures could be causing it to fail \
-                                  \n\n Try using option 'Hide Advanced Settings' \
-                                    \n or turning off Illustrations, and run again...")
+                                  \n\nTry using option to 'Hide Advanced Settings' \
+                                    \nor check option 'Omit Missing Pictures' \
+                                    \n         and then try again...")
         dialog.run()
         dialog.destroy()
 
