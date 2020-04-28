@@ -2554,7 +2554,27 @@ d) Restart PTXprint and try again</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkCheckButton" id="c_useGraphite">
+                                    <property name="label" translatable="yes">Use Graphite
+Rendering</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">By default, PTXprint will use Graphite
+Rendering technology for any fonts
+which have Graphite support.
+
+There may be rare occasions when this
+needs to be disabled (for example to
+compare the outputs of two different
+rendering technologies).</property>
+                                    <property name="halign">end</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
                                 </child>
                               </object>
                             </child>

@@ -198,8 +198,9 @@ class Info:
         "notes/xrparagraphednotes": ("c_paragraphedxrefs", lambda w,v: "" if v else "%"),
 
         "font/features":            ("t_fontfeatures", lambda w,v: v),
-        "fontbold/fakeit":          ("c_fakebold", lambda w,v :"true" if v else "false"),
-        "fontitalic/fakeit":        ("c_fakeitalic", lambda w,v :"true" if v else "false"),
+        "font/usegraphite":         ("c_useGraphite", lambda w,v: "true" if v else "false"),
+        "fontbold/fakeit":          ("c_fakebold", lambda w,v: "true" if v else "false"),
+        "fontitalic/fakeit":        ("c_fakeitalic", lambda w,v: "true" if v else "false"),
         "fontbolditalic/fakeit":    ("c_fakebolditalic", lambda w,v :"true" if v else "false"),
         "fontbold/embolden":        ("s_boldembolden", lambda w,v: ":embolden={:.2f}".format(v) if v != 0.00 and w.get("c_fakebold") else ""),
         "fontitalic/embolden":      ("s_italicembolden", lambda w,v: ":embolden={:.2f}".format(v) if v != 0.00 and w.get("c_fakeitalic") else ""),
@@ -340,7 +341,7 @@ class Info:
                     if p == "fontregular/name":
                         self.dict['font/features'] = ":"+ ":".join("{0}={1}".format(f.feats.get(fid, fid),
                                                     f.featvals.get(fid, {}).get(int(v), v)) for fid, v in f.features.items())
-            if 'Silf' in f:
+            if 'Silf' in f and printer.get("c_useGraphite"):
                 engine = "/GR"
             else:
                 engine = ""
