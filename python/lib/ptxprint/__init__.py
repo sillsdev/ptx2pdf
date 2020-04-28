@@ -612,6 +612,12 @@ class PtxPrinterDialog:
         if f.filename == None:
             self.msgUnsupportedFont(fnm)
         else:
+            if "Silf" in f:
+                self.builder.get_object("c_useGraphite").set_sensitive(True)
+                self.builder.get_object("c_useGraphite").set_active(True)
+            else:
+                self.builder.get_object("c_useGraphite").set_sensitive(False)
+                self.builder.get_object("c_useGraphite").set_active(False)
             font = fbtn.get_font_name()
             (name, size) = self.parse_fontname(font)
             label = self.builder.get_object("l_font")
