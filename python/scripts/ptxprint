@@ -195,7 +195,7 @@ def doit(printer):
             text="Error: Unable to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname))
         dialog.format_secondary_text("".join(info.loglines[-20:])+
                                      "----------------------------------------------- \
-                                    \nPTXprint version: 0.4.9 (Beta)\
+                                    \nPTXprint version: 0.5.0 (Beta)\
                                     \n----------------------------------------------- \
                                     \nPossible Causes: \
                                     \n  * The USFM text has a syntax error \
