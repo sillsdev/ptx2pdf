@@ -347,7 +347,8 @@ class Info:
             fname = f.family
             if len(f.style):
                 fname = f.family + " " + f.style.title()
-            self.dict[p] = fname + engine
+            self.dict[p] = fname
+            self.dict[p.replace("/name", "/engine") if p.endswith("/name") else p+"/name"] = engine
 
     def processHdrFtr(self, printer):
         v = printer.get("cb_ftrcenter")
