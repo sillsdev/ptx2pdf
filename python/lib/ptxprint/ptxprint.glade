@@ -181,7 +181,7 @@
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 0.4.8 (Beta)</property>
+    <property name="version">Version 0.4.9 (Beta)</property>
     <property name="copyright" translatable="yes">© 2020, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -697,7 +697,7 @@ saved configuration.</property>
       </row>
       <row>
         <col id="0" translatable="yes">Arabic-Farsi</col>
-        <col id="1" translatable="yes">etended-arabic-indic</col>
+        <col id="1" translatable="yes">extended-arabic-indic</col>
       </row>
       <row>
         <col id="0" translatable="yes">Bengali</col>
@@ -749,7 +749,7 @@ saved configuration.</property>
       </row>
       <row>
         <col id="0" translatable="yes">Tamil</col>
-        <col id="1" translatable="yes">tmail</col>
+        <col id="1" translatable="yes">tamil</col>
       </row>
       <row>
         <col id="0" translatable="yes">Telugu</col>
@@ -7846,7 +7846,7 @@ Consider uninstalling those that are never used.</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
-                <property name="label" translatable="yes">PTXprint (0.4.8 Beta)</property>
+                <property name="label" translatable="yes">PTXprint (0.4.9 Beta)</property>
                 <attributes>
                   <attribute name="style" value="normal"/>
                   <attribute name="weight" value="bold"/>

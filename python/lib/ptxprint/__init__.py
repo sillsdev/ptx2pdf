@@ -112,6 +112,7 @@ class PtxPrinterDialog:
         digits.clear()
         for d in _alldigits: # .items():
             v = currdigits.get(d, d.lower())
+            # print("d,v: ",d, v)
             digits.append([d, v])
         self.cb_digits.set_active_id(_alldigits[0])
 
@@ -186,7 +187,7 @@ class PtxPrinterDialog:
         self.splash.destroy()
         # self.mw.set_resizable(True)
         # self.mw.set_default_size(730, 565)
-        self.mw.resize(730, 565)
+        self.mw.resize(730, 580)
         self.mw.show_all()
         Gtk.main()
 
@@ -905,7 +906,7 @@ class PtxPrinterDialog:
         if self.get("c_hideAdvancedSettings"):
             self.mw.resize(710, 316)
         else:
-            self.mw.resize(730, 565)
+            self.mw.resize(730, 580)
 
     def onShowBordersTabClicked(self, c_showBordersTab):
         status = self.get("c_showBordersTab")
@@ -1073,7 +1074,7 @@ class PtxPrinterDialog:
         font_name = self.ptsettings.get('DefaultFont', 'Arial') + ", " + self.ptsettings.get('DefaultFontSize', '12')
         self.set('f_body', font_name)
         configfile = os.path.join(self.configPath(), "ptxprint.cfg")
-        if not os.path.exists(configfile): # If they are an pre 0.4.8 user, pick up .cfg from Project folder location
+        if not os.path.exists(configfile): # If they are an pre 0:4:8 user, pick up .cfg from Project folder location
             configfile = os.path.join(self.settings_dir, self.prjid, "ptxprint.cfg")
         if os.path.exists(configfile):
             self.info = Info(self, self.settings_dir, self.prjid)
@@ -1115,7 +1116,7 @@ class PtxPrinterDialog:
                 bks = bks[0]
             except IndexError:
                 bks = "No book selected!"
-        titleStr = "PTXprint [0.4.8 Beta]" + prjid + " (" + bks + ")"
+        titleStr = "PTXprint [0.4.9 Beta]" + prjid + " (" + bks + ")"
         self.builder.get_object("ptxprint").set_title(titleStr)
 
     def editFile(self, file2edit, wkdir=False):
