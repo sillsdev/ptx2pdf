@@ -867,7 +867,7 @@ class PtxPrinterDialog:
         self.builder.get_object("c_prettyIntroOutline").set_active(False)
 
     def onUsePTmacrosClicked(self, c_usePTmacros):
-        self.updateProjectSettings(False)
+        self.updateProjectSettings(True)
         status = self.get("c_usePTmacros")
         for c in ("c_variableLineSpacing", "s_linespacingmin", "s_linespacingmax", "l_min", "l_max",
                   "s_colgutteroffset", "l_colgutteroffset", "c_marginalverses", "s_columnShift"):
@@ -1157,10 +1157,9 @@ class PtxPrinterDialog:
         self.editFile("PrintDraftChanges.txt", False)
 
     def onEditModsTeX(self, btn):
-        self.prjid = self.get("cb_project")
-        self.prjdir = os.path.join(self.settings_dir, self.prjid)
         modfname = "ptxprint-mods.tex"
-        fpath = os.path.join(self.configPath(), modfname)
+        self.prjid = self.get("cb_project")
+        fpath = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint", modfname)
         if not os.path.exists(fpath):
             openfile = open(fpath,"w", encoding="utf-8")
             openfile.write("% This is the .tex file specific for the {} project used by PTXprint.\n".format(self.prjid))
@@ -1608,7 +1607,8 @@ class PtxPrinterDialog:
             if os.path.exists(fpath):
                 with open(fpath, "r", encoding="utf-8") as inf:
                     sfmtxt = inf.read()
-                if regex.search(r"\\iot .+\r?\n(\\io\d .+\\ior .+\\ior\* ?\r?\n)+\\c 1", sfmtxt, flags=regex.MULTILINE) \
+                # Put strict conditions on the format (including only valid \ior using 0-9, not \d digits from any script)
+                if regex.search(r"\\iot .+\r?\n(\\io\d .+\\ior ([0-9]+(:[0-9]+)?[-\u2013][0-9]+(:[0-9]+)?) ?\\ior\* ?\r?\n)+\\c 1", sfmtxt, flags=regex.MULTILINE) \
                    and len(regex.findall(r"\\iot",sfmtxt)) == 1: # Must have exactly 1 \iot per book 
                     pass
                 else:

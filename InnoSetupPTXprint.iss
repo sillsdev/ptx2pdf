@@ -23,6 +23,9 @@ DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 ;PrivilegesRequiredOverridesAllowed=dialog
+LicenseFile=C:\ptx2pdf\MIT License.txt
+InfoBeforeFile=C:\ptx2pdf\AboutPTXprint.txt
+InfoAfterFile=C:\ptx2pdf\ReleaseNotes.txt
 OutputBaseFilename=SetupPTXprint(0.5.0-beta)
 SetupIconFile=icon\Google-Noto-Emoji-Objects-62859-open-book.ico
 Compression=lzma

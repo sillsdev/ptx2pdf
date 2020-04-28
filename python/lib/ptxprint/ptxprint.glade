@@ -181,7 +181,7 @@
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 0.4.9 (Beta)</property>
+    <property name="version">Version 0.5.0 (Beta)</property>
     <property name="copyright" translatable="yes">© 2020, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -193,7 +193,7 @@ please file an issue in Github.</property>
     <property name="website_label" translatable="yes">Download the latest version</property>
     <property name="authors">Martin Hosken (Architect + TeX Guru)
 Mark Penny (UI Design + Coding)
-David Gardner (XeTex Macro Bugfixing)</property>
+David Gardner (XeTex macro hacks, tweaks + Bugfixing)</property>
     <property name="logo">62859-open-book-icon(128).png</property>
     <property name="license_type">mit-x11</property>
     <child>
@@ -5579,7 +5579,6 @@ be specified something like this:
                                     <property name="label" translatable="yes">Use Paratext's
 XeTeX Macros</property>
                                     <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">By default, PTXprint uses the latest
@@ -7866,7 +7865,7 @@ Consider uninstalling those that are never used.</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
-                <property name="label" translatable="yes">PTXprint (0.4.9 Beta)</property>
+                <property name="label" translatable="yes">PTXprint (0.5.0 Beta)</property>
                 <attributes>
                   <attribute name="style" value="normal"/>
                   <attribute name="weight" value="bold"/>
