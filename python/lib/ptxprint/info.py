@@ -268,14 +268,20 @@ class Info:
     def update(self):
         printer = self.printer
         self.updatefields(self._mappings.keys())
+        if printer.get("c_useprintdraftfolder"):
+            base = os.path.join(self.dict["/ptxpath"], self.dict["project/id"])
+            docdir = os.path.join(base, 'PrintDraft')
+        else:
+            base = printer.working_dir
+            docdir = base
         if self.prjid is not None:
             self.dict['project/id'] = self.prjid
+        self.dict["document/directory"] = os.path.abspath(docdir)
         self.dict['project/adjlists'] = os.path.join(printer.configPath(), "AdjLists/").replace("\\","/")
         self.dict['project/piclists'] = os.path.join(printer.configPath(), "PicLists/").replace("\\","/")
         self.processFonts(printer)
         self.processHdrFtr(printer)
         # sort out caseless figures folder. This is a hack
-        base = os.path.join(self.dict["/ptxpath"], self.dict["project/id"])
         for p in ("Figures", "figures"):
             picdir = os.path.join(base, p)
             if os.path.exists(picdir):
@@ -617,7 +623,8 @@ class Info:
         pichngs = []
         prjid = self.dict['project/id']
         prjdir = os.path.join(printer.settings_dir, prjid)
-        picdir = os.path.join(prjdir, "PrintDraft", "tmpPics")
+        picdir = os.path.join(self['document/directory'], 'tmpPics')
+        # picdir = os.path.join(prjdir, "PrintDraft", "tmpPics")
         fname = printer.getBookFilename(bk, prjdir)
         infname = os.path.join(prjdir, fname)
         # If the preferred image type(s) has(have) been specified, parse that string
@@ -638,12 +645,12 @@ class Info:
             dat = inf.read()
             inf.close()
             piclist += re.findall(r"(?i)\\fig .*\|(.+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)     # Finds USFM2-styled markup in text:
-            piclist += re.findall(r'(?i)\\fig .+src="(.+?\.(?=jpg|tif|png|pdf)...)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text: 
+            piclist += re.findall(r'(?i)\\fig .+src="(.+?\.(?=jpg|tif|png|pdf)...)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text:
             for f in piclist:
                 found = False
                 basef = f
-                basef = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?\.(jpg|tif|png|pdf)", r"\1",basef)
-                basef = re.sub(r"(?i)\.(jpg|tif|png|pdf)", r"",basef)   # This will pick up any non-standard filenames
+                basef = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?(\.(jpg|tif|png|pdf))?", r"\1", basef)
+                basef = re.sub(r"(?i)\.(jpg|tif|png|pdf)", r"", basef)   # This will pick up any non-standard filenames
                 for ext in extOrder:
                     tmpf = (basef+"."+ext).lower()
                     fname = os.path.join(picdir,tmpf)

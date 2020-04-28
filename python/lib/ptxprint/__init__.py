@@ -561,7 +561,7 @@ class PtxPrinterDialog:
             if 1 <= pgnum <= 2 or pgnum == 5:
                 self.builder.get_object("gr_editableButtons").set_visible(True)
             self.builder.get_object("l_{}".format(pgnum)).set_tooltip_text(fpath)
-            with open(fpath, "r", encoding="utf-8") as inf:
+            with open(fpath, "r", encoding="utf-8", errors="ignore") as inf:
                 txt = inf.read()
                 if len(txt) > 80000:
                     txt = txt[:80000]+"\n\n------------------------------------- \

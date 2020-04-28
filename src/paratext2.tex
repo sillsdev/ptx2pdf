@@ -746,7 +746,7 @@
 \newif\iffitonpage
 \newif\ifrebalance
 
-\newdimen\columnshift
+\newdimen\columnshift \columnshift=0pt
 \newdimen\ColumnGutterRuleSkip \ColumnGutterRuleSkip=0pt
 
 %makecolumngutter{rule height}{vbox height}{depth}
@@ -839,26 +839,55 @@
 
 % Place everything up to first | into \param-N.
 % Redefine \p@rams to be rest of list
+\def\stripspace#1 \end/#2\relax#3{\if\relax#2\relax\gdef\p@ram{#3}\else\gdef\p@ram{#1}\fi}
+\def\FigP@ramAlt{alt} \def\FigP@ramSrc{src} \def\FigP@ramSize{size} \def\FigP@ramLoc{loc}
+\def\FigP@ramCopy{copy} \def\FigP@ramRef{ref}  
+\def\getonepairp@ram#1="#2" {\stripspace#1\end/ \end/\relax{#1}%
+  \trace{g}{[\p@ram]}
+  \edef\p@ramid{\p@ram}
+  \trace{g}{getonepairparam: [\p@ramid] = [#2]}
+  \setbox0=\hbox{\ignorespaces#1}
+  \setbox1=\hbox{\ignorespaces#2}
+  \ifdim\wd0=0pt\let\next=\relax\else
+    \ifx\p@ramid\FigP@ramAlt\global\p@ramnumber=1\else
+    \ifx\p@ramid\FigP@ramSrc\global\p@ramnumber=2\else
+    \ifx\p@ramid\FigP@ramSize\global\p@ramnumber=3 \trace{g}{Got Size}\else
+    \ifx\p@ramid\FigP@ramLoc\global\p@ramnumber=4\else
+    \ifx\p@ramid\FigP@ramCopy\global\p@ramnumber=5\else
+    \ifx\p@ramid\FigP@ramRef\global\p@ramnumber=6\else
+    \fi\fi\fi\fi\fi\fi
+    \ifdim\wd1=0pt
+      \trace{g}{param-\the\p@ramnumber = "\p@ramid" but not "#2"}
+      \x@\global\x@\edef\csname param-\the\p@ramnumber\endcsname{\p@ramid}%
+      \let\next=\relax
+    \else
+      \trace{g}{param-\the\p@ramnumber [\p@ramid]  = "#2" from "#1"}
+      \x@\gdef\csname param-\the\p@ramnumber\endcsname{#2}%
+      \let\next=\getonepairp@ram
+    \fi
+  \fi\next}
+ 
 \def\getonep@ram#1|#2\end{\gdef\p@rams{#2}%
-  \x@\gdef\csname param-\the\p@ramnumber\endcsname{#1}%
+  \trace{g}{getoneparam: #1 | #2}
+  \getonepairp@ram#1 ="" \relax
   \global\advance\p@ramnumber by 1 }
 
 \newif\iffiglocleft \figloclefttrue
 \def\d@figure#1{%
  \ifIncludeFigures
+  \trace{g}{In d@figure #1}
   \gdef\p@rams{#1|}% ensure there is a trailing | separator
   % place parts of text into \param-1, \param-2, ...
+  \global\p@ramnumber=1
+  \loop
+    \x@\gdef\csname param-\the\p@ramnumber\endcsname{}
+    \global\advance\p@ramnumber by 1
+    \ifnum\p@ramnumber<5\repeat
   \global\p@ramnumber=1
   \loop
     \x@\getonep@ram\p@rams\end
     \ifx\p@rams\empty \morep@ramsfalse \else \morep@ramstrue \fi
     \ifmorep@rams\repeat
-  \ifnum\p@ramnumber<5
-    \loop
-      \x@\gdef\csname param-\the\p@ramnumber\endcsname{}
-      \global\advance\p@ramnumber by 1
-      \ifnum\p@ramnumber<5\repeat
-  \fi
   % get size
   \lowercase{\edef\size@ption{\csname param-3\endcsname}}%
   \expandafter\p@rsesize\size@ption**\end % extract possible multiplier
@@ -873,7 +902,7 @@
   % set width to column width or span width
   \p@cwidth=\ifx\size@ption\size@COL \hsize
   \else\ifx\size@ption\size@SPAN \textwidth \advance\p@cwidth by -\columnshift
-  \else \p@cwidth=\textwidth
+  \else \textwidth
     \errmessage{Unknown picture size "\size@ption", expected "col" or "span"}\fi\fi
   \let\p@cins=\relax
   % make \p@cins point to insertion class for this location

@@ -63,7 +63,7 @@ if args.pid:
 def parselog(fname, rerunp=False, lines=20):
     loglines = []
     rerunres = False
-    with open(fname, "r", encoding="utf-8") as logfile:
+    with open(fname, "r", encoding="utf-8", errors="ignore") as logfile:
         try:
             for i, l in enumerate(logfile.readlines()):
                 if rerunp and l.startswith("PARLOC: Rerun."):
@@ -72,7 +72,7 @@ def parselog(fname, rerunp=False, lines=20):
                 if len(loglines) > lines:
                     loglines.pop(0)
         except:
-            loglines.append("Logfile missing: "+logfilepath)
+            loglines.append("Logfile missing: "+fname)
     return (loglines, rerunres)
 
 def readfile(fname):
@@ -214,7 +214,8 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
         picdir = None
     tmpPicpath = os.path.join(printer.working_dir, "tmpPics")
     removeTmpPics(tmpPicpath)
-    os.mkdir(tmpPicpath)
+    if not os.path.exists(tmpPicpath):
+        os.mkdir(tmpPicpath)
     basenamelist = []
     fullnamelist = []
     fullnamelower = []
@@ -246,7 +247,11 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
     # print("fullnamelist:", len(fullnamelist), fullnamelist)
     # print("fullnamelower:", len(fullnamelower), fullnamelower)
     basenamelist = [item.lower() for item in basenamelist]
-    for srchdir in [picdir, os.path.join(prjdir, "local"), os.path.join(prjdir, "figures")]:
+    srchlist = [picdir]
+    for d in ("local", "figures"):
+        srchlist += [os.path.join(prjdir, x) for x in (d, d.title())]
+    for srchdir in srchlist:
+        # print(srchdir)
         if srchdir != None and os.path.exists(srchdir):
             for subdir, dirs, files in os.walk(srchdir):
                 if subdir != "tmpPics": # Avoid recursively scanning the folder we are copying to!
@@ -255,6 +260,7 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
                         shortname = os.path.basename(filepath)
                         shortname = re.sub(r"(?i)\.tif", r".pdf",shortname)
                         if filepath.lower()[-4:] in [".jpg", ".png", ".pdf", ".tif"]:
+                            # print(filepath)
                             if printer.get("c_usePicList"):
                                 if shortname.lower() in fullnamelist or shortname.lower() in fullnamelower:
                                     if filepath.lower()[-4:] in [".tif"]:
