@@ -847,6 +847,7 @@ class Info:
         dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
                                     buttons=Gtk.ButtonsType.OK, message_format=m1)
         dialog.format_secondary_text(m2)
+        dialog.set_keep_above(True)
         dialog.run()
         dialog.destroy()
 

@@ -190,7 +190,8 @@ def doit(printer):
                 removeTempFiles(texfiles,tmpdir,info)
     else: # if info.res != 0:
         # it did NOT finish successfully, so help them troubleshoot what went wrong:
-        dialog = Gtk.MessageDialog(parent=None, modal=True, message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK, \
+        par = par = printer.builder.get_object('ptxprint')
+        dialog = Gtk.MessageDialog(parent=par, modal=True, message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK, \
             text="Error: Unable to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname))
         dialog.format_secondary_text("".join(info.loglines[-20:])+
                                      "----------------------------------------------- \
@@ -203,6 +204,7 @@ def doit(printer):
                                   \n\nTry using option to 'Hide Advanced Settings' \
                                     \nor check option 'Omit Missing Pictures' \
                                     \n         and then try again...")
+        dialog.set_keep_above(True)
         dialog.run()
         dialog.destroy()
 
@@ -321,6 +323,7 @@ def removeTempFiles(texfiles,tmpdir,info):
                 dialog = Gtk.MessageDialog(parent=None, modal=True, message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
                     text="Warning: Could not delete temporary file.")
                 dialog.format_secondary_text("File: " + delfname)
+                dialog.set_keep_above(True)
                 dialog.run()
                 dialog.destroy()
     for delfname in info['project/books']:
@@ -330,6 +333,7 @@ def removeTempFiles(texfiles,tmpdir,info):
             dialog = Gtk.MessageDialog(parent=None, modal=True, message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
                 text="Warning: Could not delete temporary file.")
             dialog.format_secondary_text("File: " + delfname)
+            dialog.set_keep_above(True)
             dialog.run()
             dialog.destroy()
     tmpPicpath = os.path.join(tmpdir, "tmpPics")

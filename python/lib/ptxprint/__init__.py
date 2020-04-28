@@ -301,6 +301,7 @@ class PtxPrinterDialog:
             dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
                      buttons=Gtk.ButtonsType.OK, message_format="Cannot create a PDF without a Project selected")
             dialog.format_secondary_text("Please select a Paratext Project and try again.")
+            dialog.set_keep_above(True)
             dialog.run()
             dialog.destroy()
 
@@ -309,6 +310,7 @@ class PtxPrinterDialog:
 
     def onAboutClicked(self, btn_about):
         dia = self.builder.get_object("dlg_about")
+        dia.set_keep_above(True)
         response = dia.run()
         dia.hide()
             
@@ -387,6 +389,7 @@ class PtxPrinterDialog:
                 dialog = Gtk.MessageDialog(parent=None, modal=True, message_type=Gtk.MessageType.ERROR,
                          buttons=Gtk.ButtonsType.OK, text="Could not find Saved Configuration")
                 dialog.format_secondary_text("Folder: " + delCfgPath)
+                dialog.set_keep_above(True)
                 dialog.run()
                 dialog.destroy()
             self.updateSavedConfigList()
@@ -416,6 +419,7 @@ class PtxPrinterDialog:
     def onLockUnlockSavedConfig(self, btn):
         lockBtn = self.builder.get_object("btn_lockunlock")
         dia = self.builder.get_object("dlg_password")
+        dia.set_keep_above(True)
         response = dia.run()
         if response == Gtk.ResponseType.APPLY:
             pw = self.get("t_password")
@@ -682,6 +686,7 @@ class PtxPrinterDialog:
             dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
                      buttons=Gtk.ButtonsType.OK, message_format="Warning: Standard (English) Hyphenation rules will be used.")
             dialog.format_secondary_text("For optimum hyphenation for this project\nclick 'Create Hyphenation List'.")
+            dialog.set_keep_above(True)
             dialog.run()
             dialog.destroy()
             # self.builder.get_object("c_hyphenate").set_active(False)
@@ -923,6 +928,7 @@ class PtxPrinterDialog:
 
     def onChooseBooksClicked(self, btn):
         dia = self.builder.get_object("dlg_multiBookSelector")
+        dia.set_keep_above(True)
         mbs_grid = self.builder.get_object("mbs_grid")
         mbs_grid.forall(mbs_grid.remove)
         lsbooks = self.builder.get_object("ls_books")
@@ -1469,6 +1475,7 @@ class PtxPrinterDialog:
                         filter_in.add_mime_type(v)
             dialog.add_filter(filter_in)
 
+        dialog.set_keep_above(True)
         response = dialog.run()
         fcFilepath = None
         if response == Gtk.ResponseType.OK:
@@ -1580,6 +1587,7 @@ class PtxPrinterDialog:
                                             buttons=Gtk.ButtonsType.OK, message_format=m1)
                 dialog.format_secondary_text(m2)
                 dialog.format_secondary_text(m2)
+                dialog.set_keep_above(True)
                 dialog.run()
                 dialog.destroy()
 
@@ -1650,6 +1658,7 @@ class PtxPrinterDialog:
             dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
                      buttons=Gtk.ButtonsType.OK, message_format="FYI: The Regular font already supports all the characters in the text.")
             dialog.format_secondary_text("A fallback font is not required.\nThis 'Use Fallback Font' option has been disabled.")
+            dialog.set_keep_above(True)
             dialog.run()
             dialog.destroy()
 
@@ -1677,7 +1686,8 @@ class PtxPrinterDialog:
         if reg[:-3] == xtraReg[:-3]:
             dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
                      buttons=Gtk.ButtonsType.OK, message_format="The Fallback Font should to be DIFFERENT from the Regular Font.")
-            dialog.format_secondary_text("Please select a different Font.") 
+            dialog.format_secondary_text("Please select a different Font.")
+            dialog.set_keep_above(True)
             dialog.run()
             dialog.destroy()
         else:
@@ -1692,19 +1702,25 @@ class PtxPrinterDialog:
                 dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.WARNING, \
                          buttons=Gtk.ButtonsType.OK, message_format="The Fallback Font just selected does NOT support all the missing characters listed.")
                 dialog.format_secondary_text("Please select a different Font.")
+                dialog.set_keep_above(True)
                 dialog.run()
                 dialog.destroy()
 
     def msgUnsupportedFont(self, fontname):
-        dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.WARNING, \
+        par = self.builder.get_object('ptxprint')  #  flags=Gtk.DialogFlags.MODAL,
+        dialog = Gtk.MessageDialog(parent=par, type=Gtk.MessageType.WARNING, \
                  buttons=Gtk.ButtonsType.OK, message_format="The Font: '{}'\ncannot be used as it has\nnot been installed properly.".format(fontname[:-3]))
+        # dialog.set_type_hint(GTK_WINDOW(popwindow), GTK_WINDOW_TYPE_HINT_DIALOG)
         dialog.format_secondary_text("Please select a different Font\n  or\nInstall the font for ALL users.")
+        dialog.set_keep_above(True)
         dialog.run()
         dialog.destroy()
 
     def msgQuestion(self, title, question):
-        dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO, title)
+        # par = par = self.builder.get_object('ptxprint')
+        dialog = Gtk.MessageDialog(parent=self, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.YES_NO, message_format=title)
         dialog.format_secondary_text(question)
+        dialog.set_keep_above(True)
         response = dialog.run()
         dialog.destroy()
         if response == Gtk.ResponseType.YES:
