@@ -234,18 +234,18 @@
 	  % Calculate drop cap height = base line height + (lower case) x height
       \s@tfont{p}\dimen0=\fontdimen5\font % get x height (appendix F) 5 is x-height of font
       \advance\dimen0 by \baselineskip
-	  % The following calculations are scaled by 64 in order to get better accuracy
+	  % The following calculations are scaled by 128 in order to get better accuracy
 	  % even though calculations are integer values.
 	  % divide desired height by current height
-      \multiply\dimen0 by 64
+      \multiply\dimen0 by 128
       \divide\dimen0 by \ht0
 	  % multiply by original size from \c marker in stylesheet
-      \trace{h}{font height \x@\the\fontdimen5\font\ ht of digits is \the\ht0\ baselineskip \the\baselineskip\ for dropcaps \the\dimen0\ multiply by \the\dropnumbersize}%
+      \trace{h}{font x-height \x@\the\fontdimen5\font\ ht of digits is \the\ht0\ baselineskip \the\baselineskip\ for dropcaps \the\dimen0\ multiply by \the\dropnumbersize}%
       \multiply\dimen0 by \dropnumbersize
       \dropnumbersize=\dimen0
-      % divide by the \FontSizeUnit to get value for fontsize param of marker \c (max dimen is ~16K pt)
-      \dimen0=\FontSizeUnit \divide\dimen0 by 1024
-      \divide\dropnumbersize by \dimen0
+      % divide by the \FontSizeUnit to get value for fontsize param of marker \c
+      \divide\dropnumbersize by \FontSizeUnit
+      \multiply\dropnumbersize by 512 % (2^16 / 128)
       \trace{h}{dropnumbersize = \the\dropnumbersize}%
     \fi
   \fi
