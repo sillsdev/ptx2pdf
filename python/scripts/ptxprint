@@ -346,6 +346,6 @@ def removeTmpPics(path2del):
             rmtree(path2del) # Preferably remove the previous run's illustrations
         except OSError:
             print("Error Deleting temporary illustrations folder: %s" % (path2del))
-        sleep(1)  # wait a second for it to finish deleting
+        # sleep(1)  # wait a second for it to finish deleting
 
 mainw.run(doit)

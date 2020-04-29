@@ -77,7 +77,7 @@ class Splash(Thread):
     def destroy(self):
         self.window.destroy()
         # poor man's queue clearing
-        sleep(0.1)
+        # sleep(0.1)
 
 class PtxPrinterDialog:
     def __init__(self, allprojects, settings_dir, working_dir=None):
@@ -178,7 +178,7 @@ class PtxPrinterDialog:
 
         # do slow stuff here
         initFontCache()
-        sleep(1)  # Until we want people to see the splash screen
+        # sleep(1)  # Until we want people to see the splash screen
 
         self.initialised = True
         if self.pendingPid is not None:
