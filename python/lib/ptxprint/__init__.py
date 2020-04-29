@@ -13,7 +13,7 @@ from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, ch
 from ptxprint.info import Info
 import configparser
 import traceback
-from time import sleep
+# from time import sleep
 from threading import Thread
 
 # xmlstarlet sel -t -m '//iso_15924_entry' -o '"' -v '@alpha_4_code' -o '" : "' -v '@name' -o '",' -n /usr/share/xml/iso-codes/iso_15924.xml
@@ -125,13 +125,13 @@ class PtxPrinterDialog:
                 # pass
             # glostyle.append([g])
 
-        dia = self.builder.get_object("dlg_multiBookSelector")
-        dia.add_buttons(
+        dialog = self.builder.get_object("dlg_multiBookSelector")
+        dialog.add_buttons(
             Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
             Gtk.STOCK_OK, Gtk.ResponseType.OK)
 
-        dia = self.builder.get_object("dlg_password")
-        dia.add_buttons(
+        dialog = self.builder.get_object("dlg_password")
+        dialog.add_buttons(
             Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
             Gtk.STOCK_APPLY, Gtk.ResponseType.APPLY)
 
@@ -303,16 +303,18 @@ class PtxPrinterDialog:
             dialog.format_secondary_text("Please select a Paratext Project and try again.")
             dialog.set_keep_above(True)
             dialog.run()
+            dialog.set_keep_above(False)
             dialog.destroy()
 
     def onCancel(self, btn):
         self.onDestroy(btn)
 
     def onAboutClicked(self, btn_about):
-        dia = self.builder.get_object("dlg_about")
-        dia.set_keep_above(True)
-        response = dia.run()
-        dia.hide()
+        dialog = self.builder.get_object("dlg_about")
+        dialog.set_keep_above(True)
+        response = dialog.run()
+        dialog.set_keep_above(False)
+        dialog.hide()
             
     def onConfigNameChanged(self, cb_savedConfig):
         if len(self.get("cb_savedConfig")):
@@ -391,6 +393,7 @@ class PtxPrinterDialog:
                 dialog.format_secondary_text("Folder: " + delCfgPath)
                 dialog.set_keep_above(True)
                 dialog.run()
+                dialog.set_keep_above(False)
                 dialog.destroy()
             self.updateSavedConfigList()
             self.builder.get_object("t_savedConfig").set_text("")
@@ -418,9 +421,9 @@ class PtxPrinterDialog:
 
     def onLockUnlockSavedConfig(self, btn):
         lockBtn = self.builder.get_object("btn_lockunlock")
-        dia = self.builder.get_object("dlg_password")
-        dia.set_keep_above(True)
-        response = dia.run()
+        dialog = self.builder.get_object("dlg_password")
+        dialog.set_keep_above(True)
+        response = dialog.run()
         if response == Gtk.ResponseType.APPLY:
             pw = self.get("t_password")
         elif response == Gtk.ResponseType.CANCEL:
@@ -437,7 +440,8 @@ class PtxPrinterDialog:
             else: # Mismatching password - Don't do anything
                 pass
         self.builder.get_object("t_password").set_text("")
-        dia.hide()
+        dialog.set_keep_above(False)
+        dialog.hide()
 
     def onPasswordChanged(self, t_invisiblePassword):
         lockBtn = self.builder.get_object("btn_lockunlock")
@@ -694,6 +698,7 @@ class PtxPrinterDialog:
             dialog.format_secondary_text("For optimum hyphenation for this project\nclick 'Create Hyphenation List'.")
             dialog.set_keep_above(True)
             dialog.run()
+            dialog.set_keep_above(False)
             dialog.destroy()
             # self.builder.get_object("c_hyphenate").set_active(False)
         
@@ -933,8 +938,8 @@ class PtxPrinterDialog:
         self.builder.get_object("gr_debugTools").set_sensitive(self.get("c_keepTemporaryFiles"))
 
     def onChooseBooksClicked(self, btn):
-        dia = self.builder.get_object("dlg_multiBookSelector")
-        dia.set_keep_above(True)
+        dialog = self.builder.get_object("dlg_multiBookSelector")
+        dialog.set_keep_above(True)
         mbs_grid = self.builder.get_object("mbs_grid")
         mbs_grid.forall(mbs_grid.remove)
         lsbooks = self.builder.get_object("ls_books")
@@ -947,7 +952,7 @@ class PtxPrinterDialog:
                 tbox.set_active(True)
             self.alltoggles.append(tbox)
             mbs_grid.attach(tbox, i // 13, i % 13, 1, 1)
-        response = dia.run()
+        response = dialog.run()
         if response == Gtk.ResponseType.OK:
             self.booklist = [b.get_label() for b in self.alltoggles if b.get_active()]
             bl.set_text(" ".join(b for b in self.booklist))
@@ -957,7 +962,8 @@ class PtxPrinterDialog:
         bks = self.getBooks()
         if len(bks) > 1:
             self.builder.get_object("cb_examineBook").set_active_id(bks[0])
-        dia.hide()
+        dialog.set_keep_above(False)
+        dialog.hide()
 
     def toggleBooks(self,start,end):
         bp = self.ptsettings['BooksPresent']
@@ -1488,6 +1494,7 @@ class PtxPrinterDialog:
                 fcFilepath = [dialog.get_filename()+"/"]
             else:
                 fcFilepath = dialog.get_filenames()
+        dialog.set_keep_above(False)
         dialog.destroy()
         return fcFilepath
 
@@ -1594,6 +1601,7 @@ class PtxPrinterDialog:
                 dialog.format_secondary_text(m2)
                 dialog.set_keep_above(True)
                 dialog.run()
+                dialog.set_keep_above(False)
                 dialog.destroy()
 
     def checkSFMforFancyIntroMarkers(self):
@@ -1608,7 +1616,8 @@ class PtxPrinterDialog:
                 with open(fpath, "r", encoding="utf-8") as inf:
                     sfmtxt = inf.read()
                 # Put strict conditions on the format (including only valid \ior using 0-9, not \d digits from any script)
-                if regex.search(r"\\iot .+\r?\n(\\io\d .+\\ior ([0-9]+(:[0-9]+)?[-\u2013][0-9]+(:[0-9]+)?) ?\\ior\* ?\r?\n)+\\c 1", sfmtxt, flags=regex.MULTILINE) \
+                # This was probably too restrictive, but is a great RegEx: \\ior ([0-9]+(:[0-9]+)?[-\u2013][0-9]+(:[0-9]+)?) ?\\ior\*
+                if regex.search(r"\\iot .+\r?\n(\\io\d .+\\ior [0-9\-:.,\u2013 ]+\\ior\* ?\r?\n)+\\c 1", sfmtxt, flags=regex.MULTILINE) \
                    and len(regex.findall(r"\\iot",sfmtxt)) == 1: # Must have exactly 1 \iot per book 
                     pass
                 else:
@@ -1666,6 +1675,7 @@ class PtxPrinterDialog:
             dialog.format_secondary_text("A fallback font is not required.\nThis 'Use Fallback Font' option has been disabled.")
             dialog.set_keep_above(True)
             dialog.run()
+            dialog.set_keep_above(False)
             dialog.destroy()
 
     def onFontBoldChanged(self, f_bold):
@@ -1695,6 +1705,7 @@ class PtxPrinterDialog:
             dialog.format_secondary_text("Please select a different Font.")
             dialog.set_keep_above(True)
             dialog.run()
+            dialog.set_keep_above(False)
             dialog.destroy()
         else:
             f = TTFont(xtraReg)
@@ -1710,6 +1721,7 @@ class PtxPrinterDialog:
                 dialog.format_secondary_text("Please select a different Font.")
                 dialog.set_keep_above(True)
                 dialog.run()
+                dialog.set_keep_above(False)
                 dialog.destroy()
 
     def msgUnsupportedFont(self, fontname):
@@ -1720,6 +1732,7 @@ class PtxPrinterDialog:
         dialog.format_secondary_text("Please select a different Font\n  or\nInstall the font for ALL users.")
         dialog.set_keep_above(True)
         dialog.run()
+        dialog.set_keep_above(False)
         dialog.destroy()
 
     def msgQuestion(self, title, question):
@@ -1728,6 +1741,7 @@ class PtxPrinterDialog:
         dialog.format_secondary_text(question)
         dialog.set_keep_above(True)
         response = dialog.run()
+        dialog.set_keep_above(False)
         dialog.destroy()
         if response == Gtk.ResponseType.YES:
             return(True)

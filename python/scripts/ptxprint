@@ -5,7 +5,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
 from shutil import copyfile, rmtree
-from time import sleep
+# from time import sleep
 
 if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
     sys.stdout = open(os.devnull, "w")
@@ -206,6 +206,7 @@ def doit(printer):
                                     \n         and then try again...")
         dialog.set_keep_above(True)
         dialog.run()
+        dialog.set_keep_above(False)
         dialog.destroy()
 
 def gatherIllustrations(jobs, prjid, prjdir, printer):
@@ -240,8 +241,8 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
             with open(infname, "r", encoding="utf-8") as inf:
                 dat = inf.read()
                 inf.close()
-                basenamelist += re.findall(r"(?i)\\fig .*\|([a-z]{2}\d{5})[a-c]?\.(?=jpg|tif|png|pdf)...\|.+?\\fig\*", dat)      # USFM2 AB01234b.ext fig files
-                basenamelist += re.findall(r"(?i)\\fig .*\|(.+?(?!\d{5}[a-c]?).+?)\.(?=jpg|tif|png|pdf)...\|.+?\\fig\*", dat)    # USFM2 non-standard fig files
+                basenamelist += re.findall(r"(?i)\\fig .+?\|([a-z]{2}\d{5})[a-c]?\.(?=jpg|tif|png|pdf)...\|.+?\\fig\*", dat)      # USFM2 AB01234b.ext fig files
+                basenamelist += re.findall(r"(?i)\\fig .+?\|(.+?(?!\d{5}[a-c]?).+?)\.(?=jpg|tif|png|pdf)...\|.+?\\fig\*", dat)    # USFM2 non-standard fig files
                 basenamelist += re.findall(r'(?i)\\fig .+src="([a-z]{2}\d{5})[a-c]?\.(?=jpg|tif|png|pdf)..." .+?\\fig\*', dat)   # USFM3 AB01234b.ext fig files 
                 basenamelist += re.findall(r'(?i)\\fig .+src="(.+?(?!\d{5}[a-c]?).+?)\.(?=jpg|tif|png|pdf)..." .+?\\fig\*', dat) # USFM3 non-standard fig files 
 
@@ -325,6 +326,7 @@ def removeTempFiles(texfiles,tmpdir,info):
                 dialog.format_secondary_text("File: " + delfname)
                 dialog.set_keep_above(True)
                 dialog.run()
+                dialog.set_keep_above(False)
                 dialog.destroy()
     for delfname in info['project/books']:
         try:
@@ -335,6 +337,7 @@ def removeTempFiles(texfiles,tmpdir,info):
             dialog.format_secondary_text("File: " + delfname)
             dialog.set_keep_above(True)
             dialog.run()
+            dialog.set_keep_above(False)
             dialog.destroy()
     tmpPicpath = os.path.join(tmpdir, "tmpPics")
     removeTmpPics(tmpPicpath)
@@ -346,6 +349,5 @@ def removeTmpPics(path2del):
             rmtree(path2del) # Preferably remove the previous run's illustrations
         except OSError:
             print("Error Deleting temporary illustrations folder: %s" % (path2del))
-        # sleep(1)  # wait a second for it to finish deleting
 
 mainw.run(doit)

@@ -850,6 +850,7 @@ class Info:
         dialog.format_secondary_text(m2)
         dialog.set_keep_above(True)
         dialog.run()
+        dialog.set_keep_above(False)
         dialog.destroy()
 
     def makeGlossaryFootnotes(self, printer, bk):
