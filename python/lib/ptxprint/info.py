@@ -530,14 +530,14 @@ class Info:
             if len(picChangeList):
                 for origfn,tempfn in picChangeList:
                     if tempfn != "":
-                        self.localChanges.append((None, regex.compile(r"(?i)(\\fig .*\|){}(\|.+?\\fig\*)".format(origfn), \
+                        self.localChanges.append((None, regex.compile(r"(?i)(\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), \
                                                      flags=regex.M), r"\1{}\2".format(tempfn)))                               #USFM2
-                        self.localChanges.append((None, regex.compile(r'(?i)(\\fig .+?src="){}(" .+?\\fig\*)'.format(origfn), \
+                        self.localChanges.append((None, regex.compile(r'(?i)(\\fig .*?src="){}(" .+?\\fig\*)'.format(origfn), \
                                                      flags=regex.M), r"\1{}\2".format(tempfn)))                               #USFM3
                     else:
                         if printer.get("c_skipmissingimages"):
-                            self.localChanges.append((None, regex.compile(r"(?i)\\fig .*\|{}\|.+?\\fig\*".format(origfn), flags=regex.M), ""))     #USFM2
-                            self.localChanges.append((None, regex.compile(r'(?i)\\fig .+?src="{}" .+?\\fig\*'.format(origfn), flags=regex.M), "")) #USFM3
+                            self.localChanges.append((None, regex.compile(r"(?i)\\fig .*?\|{}\|.+?\\fig\*".format(origfn), flags=regex.M), ""))     #USFM2
+                            self.localChanges.append((None, regex.compile(r'(?i)\\fig .*?src="{}" .+?\\fig\*'.format(origfn), flags=regex.M), "")) #USFM3
 
             if printer.get("c_fighiderefs"): # del ch:vs from caption
                 self.localChanges.append((None, regex.compile(r"(\\fig .*?)(\d+[:.]\d+([-,]\d+)?)(.*?\\fig\*)", flags=regex.M), r"\1\4"))
@@ -646,7 +646,7 @@ class Info:
         with open(infname, "r", encoding="utf-8", errors="ignore") as inf:
             dat = inf.read()
             inf.close()
-            piclist += re.findall(r"(?i)\\fig .+?\|(.+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)     # Finds USFM2-styled markup in text:
+            piclist += re.findall(r"(?i)\\fig .*?\|(.+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)     # Finds USFM2-styled markup in text:
             piclist += re.findall(r'(?i)\\fig .+src="(.+?\.(?=jpg|tif|png|pdf)...)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text:
             for f in piclist:
                 found = False

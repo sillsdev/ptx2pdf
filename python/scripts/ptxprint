@@ -245,10 +245,10 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
             with open(infname, "r", encoding="utf-8", errors="ignore") as inf:
                 dat = inf.read()
                 inf.close()
-                basenamelist += re.findall(r"(?i)\\fig .+?\|([a-z]{2}\d{5})[a-c]?\.(?=jpg|tif|png|pdf)...\|.+?\\fig\*", dat)      # USFM2 AB01234b.ext fig files
-                basenamelist += re.findall(r"(?i)\\fig .+?\|(.+?(?!\d{5}[a-c]?).+?)\.(?=jpg|tif|png|pdf)...\|.+?\\fig\*", dat)    # USFM2 non-standard fig files
-                basenamelist += re.findall(r'(?i)\\fig .+src="([a-z]{2}\d{5})[a-c]?\.(?=jpg|tif|png|pdf)..." .+?\\fig\*', dat)   # USFM3 AB01234b.ext fig files 
-                basenamelist += re.findall(r'(?i)\\fig .+src="(.+?(?!\d{5}[a-c]?).+?)\.(?=jpg|tif|png|pdf)..." .+?\\fig\*', dat) # USFM3 non-standard fig files 
+                basenamelist += re.findall(r"(?i)\\fig .*?\|([a-z]{2}\d{5})[a-c]?\.(?=jpg|tif|png|pdf)...\|.+?\\fig\*", dat)      # USFM2 AB01234b.ext fig files
+                basenamelist += re.findall(r"(?i)\\fig .*?\|(.+?(?!\d{5}[a-c]?).+?)\.(?=jpg|tif|png|pdf)...\|.+?\\fig\*", dat)    # USFM2 non-standard fig files
+                basenamelist += re.findall(r'(?i)\\fig .*?src="([a-z]{2}\d{5})[a-c]?\.(?=jpg|tif|png|pdf)..." .+?\\fig\*', dat)   # USFM3 AB01234b.ext fig files 
+                basenamelist += re.findall(r'(?i)\\fig .*?src="(.+?(?!\d{5}[a-c]?).+?)\.(?=jpg|tif|png|pdf)..." .+?\\fig\*', dat) # USFM3 non-standard fig files 
 
     # print("basenamelist:", len(basenamelist), basenamelist)
     # print("fullnamelist:", len(fullnamelist), fullnamelist)

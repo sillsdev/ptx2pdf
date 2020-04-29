@@ -334,6 +334,7 @@ class PtxPrinterDialog:
             lockBtn.set_label("Lockdown  ;-)")
             lockBtn.set_sensitive(False)
             self.builder.get_object("t_invisiblePassword").set_text("")
+            # print("\nconfig_dir: ", self.config_dir)
             self.builder.get_object("l_settings_dir").set_label(self.config_dir or "")
             self.builder.get_object("btn_saveConfig").set_sensitive(False)
             self.builder.get_object("btn_deleteConfig").set_sensitive(False)
@@ -1082,6 +1083,7 @@ class PtxPrinterDialog:
             self.working_dir = '.'
 
         self.ptsettings = ParatextSettings(self.settings_dir, self.prjid)
+        self.config_dir = self.configPath()
         bp = self.ptsettings['BooksPresent']
         for b in allbooks:
             ind = books.get(b, 0)-1
@@ -1119,6 +1121,9 @@ class PtxPrinterDialog:
         self.builder.get_object("l_prjdir").set_label(os.path.join(self.settings_dir, self.prjid))
         self.builder.get_object("l_settings_dir").set_label(self.config_dir or "")
         self.builder.get_object("l_working_dir").set_label(self.working_dir)
+        # print("\nsettings_dir:", self.settings_dir)
+        # print("config_dir:", self.config_dir)
+        # print("working_dir:", self.working_dir)
         self.set("c_prettyIntroOutline", False)
         self.setEntryBoxFont()
         self.onDiglotDimensionsChanged(None)
@@ -1137,46 +1142,56 @@ class PtxPrinterDialog:
         titleStr = "PTXprint [0.5.0 Beta]" + prjid + " (" + bks + ")"
         self.builder.get_object("ptxprint").set_title(titleStr)
 
-    def editFile(self, file2edit, wkdir=False):
+    def editFile(self, file2edit, loc="wrk"):
         pgnum = 5
         self.builder.get_object("nbk_Main").set_current_page(7)
         self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
         self.prjid = self.get("cb_project")
         self.prjdir = os.path.join(self.settings_dir, self.prjid)
-        if wkdir:
+        if loc == "wrk":
             fpath = os.path.join(self.working_dir, file2edit)
-        else:
+        elif loc == "prj":
             fpath = os.path.join(self.settings_dir, self.prjid, file2edit)
+        elif loc == "cfg":
+            fpath = os.path.join(self.configPath(), file2edit)
+            print("Looking in config path first: ", fpath)
+            if not os.path.exists(fpath):
+                fpath = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint", file2edit)
+        else:
+            print("Folder location for {} unspecified".format(fpath))
+            return
+        print("About to edit: ", fpath)
+        self.builder.get_object("gr_editableButtons").set_visible(True)
+        self.builder.get_object("l_{}".format(pgnum)).set_text(file2edit)
+        self.builder.get_object("l_{}".format(pgnum)).set_tooltip_text(fpath)
         if os.path.exists(fpath):
-            self.builder.get_object("gr_editableButtons").set_visible(True)
-            self.builder.get_object("l_{}".format(pgnum)).set_text(file2edit)
-            self.builder.get_object("l_{}".format(pgnum)).set_tooltip_text(fpath)
             with open(fpath, "r", encoding="utf-8") as inf:
                 txt = inf.read()
                 # if len(txt) > 32000:
                     # txt = txt[:32000]+"\n\n etc...\n\n"
             self.fileViews[pgnum][0].set_text(txt)
         else:
-            self.fileViews[pgnum][0].set_text("\nThis file doesn't exist yet!")
+            self.fileViews[pgnum][0].set_text("\nThis file doesn't exist yet!\n\nEdit here and Click 'Save' to create it.")
 
     def onEditChangesFile(self, btn):
-        self.editFile("PrintDraftChanges.txt", False)
+        self.editFile("PrintDraftChanges.txt", "prj")
 
     def onEditModsTeX(self, btn):
         modfname = "ptxprint-mods.tex"
         self.prjid = self.get("cb_project")
         fpath = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint", modfname)
+        print("Mods file: ", fpath)
         if not os.path.exists(fpath):
             openfile = open(fpath,"w", encoding="utf-8")
             openfile.write("% This is the .tex file specific for the {} project used by PTXprint.\n".format(self.prjid))
             openfile.close()
-        self.editFile(modfname, True)
+        self.editFile(modfname, "cfg")
 
     def onEditCustomSty(self, btn):
-        self.editFile("custom.sty", False)
+        self.editFile("custom.sty", "wrk")
 
     def onEditModsSty(self, btn):
-        self.editFile("PrintDraft-mods.sty", True)
+        self.editFile("PrintDraft-mods.sty", "wrk")
 
     def onMainBodyTextChanged(self, c_mainBodyText):
         self.builder.get_object("gr_mainBodyText").set_sensitive(self.get("c_mainBodyText"))
