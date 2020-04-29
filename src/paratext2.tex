@@ -841,46 +841,44 @@
 % Redefine \p@rams to be rest of list
 \def\stripspace#1 \end/#2\relax#3{\if\relax#2\relax\gdef\p@ram{#3}\else\gdef\p@ram{#1}\fi}
 \def\FigP@ramAlt{alt} \def\FigP@ramSrc{src} \def\FigP@ramSize{size} \def\FigP@ramLoc{loc}
-\def\FigP@ramCopy{copy} \def\FigP@ramRef{ref}  
-\def\getonepairp@ram#1="#2" {\stripspace#1\end/ \end/\relax{#1}%
-  \trace{g}{[\p@ram]}
-  \edef\p@ramid{\p@ram}
-  \trace{g}{getonepairparam: [\p@ramid] = [#2]}
-  \setbox0=\hbox{\ignorespaces#1}
-  \setbox1=\hbox{\ignorespaces#2}
-  \ifdim\wd0=0pt\let\next=\relax\else
-    \ifx\p@ramid\FigP@ramAlt\global\p@ramnumber=1\else
+\def\FigP@ramCopy{copy} \def\FigP@ramRef{ref}
+\newif\ifusfmthree \usfmthreefalse
+\def\getonepairp@ram#1="#2" {\stripspace#1\end/ \end/\relax{#1}\edef\p@ramid{\p@ram}%
+  \stripspace#2\end/ \end/\relax{#2}\edef\p@ramval{\p@ram}%
+  \trace{g}{getonepairparam: [\p@ramid] = [\p@ramval]}%
+  \ifx\p@ramid\empty\let\next=\relax\else
+    \ifx\p@ramid\FigP@ramAlt\global\p@ramnumber=6\else
     \ifx\p@ramid\FigP@ramSrc\global\p@ramnumber=2\else
     \ifx\p@ramid\FigP@ramSize\global\p@ramnumber=3 \trace{g}{Got Size}\else
     \ifx\p@ramid\FigP@ramLoc\global\p@ramnumber=4\else
     \ifx\p@ramid\FigP@ramCopy\global\p@ramnumber=5\else
     \ifx\p@ramid\FigP@ramRef\global\p@ramnumber=7\else
     \fi\fi\fi\fi\fi\fi
-    \ifdim\wd1=0pt
-      \trace{g}{param-\the\p@ramnumber = "\p@ramid" but not "#2"}
+    \ifx\p@ramval\empty
+      \trace{g}{param-\the\p@ramnumber = "\p@ramid" but not "\p@ramval"}%
       \x@\global\x@\edef\csname param-\the\p@ramnumber\endcsname{\p@ramid}%
       \let\next=\relax
     \else
-      \trace{g}{param-\the\p@ramnumber [\p@ramid]  = "#2" from "#1"}
+      \trace{g}{param-\the\p@ramnumber [\p@ramid]  = "\@paramval" from "\p@ramval"}%
       \x@\gdef\csname param-\the\p@ramnumber\endcsname{#2}%
-      \let\next=\getonepairp@ram
+      \let\next=\getonepairp@ram \usfmthreetrue
     \fi
   \fi\next}
  
 \def\getonep@ram#1|#2\end{\gdef\p@rams{#2}%
-  \trace{g}{getoneparam: #1 | #2}
-  \getonepairp@ram#1 ="" \relax
+  \trace{g}{getoneparam: #1 | #2}%
+  \getonepairp@ram#1 ="" \relax%
   \global\advance\p@ramnumber by 1 }
 
 \newif\iffiglocleft \figloclefttrue
 \def\d@figure#1{%
  \ifIncludeFigures
-  \trace{g}{In d@figure #1}
+  \trace{g}{In d@figure #1}\usfmthreefalse
   \gdef\p@rams{#1|}% ensure there is a trailing | separator
   % place parts of text into \param-1, \param-2, ...
   \global\p@ramnumber=1
   \loop
-    \x@\gdef\csname param-\the\p@ramnumber\endcsname{}
+    \x@\gdef\csname param-\the\p@ramnumber\endcsname{}%
     \global\advance\p@ramnumber by 1
     \ifnum\p@ramnumber<5\repeat
   \global\p@ramnumber=1
@@ -935,7 +933,7 @@
     \fi
   \fi
   % create box to contain picture
-  \trace{f}{Figure size=\size@ption, loc=\loc@ption, picins=\the\p@cins}
+  \trace{g}{Figure size=\size@ption, loc=\loc@ption, picins=\the\p@cins}%
   \setbox0=\vbox{
     \hsize=\p@cwidth
 	% insert picture based on PicPath and file name, scaled to \p@cwidth
@@ -955,7 +953,7 @@
     \fi
     \line{\hfil\box0\hfil}
     \edef\r@f{\csname param-7\endcsname} % get reference
-    \edef\c@ption{\csname param-6\endcsname} % get caption
+    \edef\c@ption{\ifusfmthree\csname param-1\endcsname\else\csname param-6\endcsname\fi} % get caption
     \ifx\c@ption\empty\else
       \everypar={}\let\par\endgraf
       \leftskip=0pt plus 1fil \rightskip=\leftskip \parfillskip=0pt
