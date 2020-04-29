@@ -237,13 +237,14 @@
 	  % The following calculations are scaled by 256 in order to get better accuracy
 	  % even though calculations are integer values.
 	  % divide desired height by current height
-      \multiply\dimen0 by 256
+      \multiply\dimen0 by 64
       \divide\dimen0 by \ht0
 	  % multiply by original size from \c marker in stylesheet
+      \trace{h}{font height \x@\the\fontdimen5\font\ ht of digits is \the\ht0\ baselineskip \the\baselineskip\ for dropcaps \the\dimen0\ multiply by \the\dropnumbersize}
       \multiply\dimen0 by \dropnumbersize
       \dropnumbersize=\dimen0
       % divide by the \FontSizeUnit to get value for fontsize param of marker \c
-      \dimen0=\FontSizeUnit \divide\dimen0 by 256
+      \dimen0=\FontSizeUnit \divide\dimen0 by 64
       \divide\dropnumbersize by \dimen0
     \fi
   \fi
