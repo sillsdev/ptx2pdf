@@ -242,7 +242,7 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
             fullnamelower = [f.lower() for f in fullnamelist]
         else:
             infname = os.path.join(prjdir, fname)
-            with open(infname, "r", encoding="utf-8") as inf:
+            with open(infname, "r", encoding="utf-8", errors="ignore") as inf:
                 dat = inf.read()
                 inf.close()
                 basenamelist += re.findall(r"(?i)\\fig .+?\|([a-z]{2}\d{5})[a-c]?\.(?=jpg|tif|png|pdf)...\|.+?\\fig\*", dat)      # USFM2 AB01234b.ext fig files

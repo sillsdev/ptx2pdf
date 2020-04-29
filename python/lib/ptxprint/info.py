@@ -643,7 +643,7 @@ class Info:
                 extOrder = ["jpg", "png", "pdf"] 
             else:                              # or larger high quality uncompresses image formats
                 extOrder = ["pdf", "png", "jpg"]
-        with open(infname, "r", encoding="utf-8") as inf:
+        with open(infname, "r", encoding="utf-8", errors="ignore") as inf:
             dat = inf.read()
             inf.close()
             piclist += re.findall(r"(?i)\\fig .+?\|(.+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)     # Finds USFM2-styled markup in text:
