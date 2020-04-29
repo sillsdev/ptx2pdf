@@ -27,6 +27,7 @@ parser.add_argument('-d','--directory',default=".",help="Directory to store temp
 parser.add_argument('-m','--macros',help="Directory containing TeX macros (paratext2.tex)")
 parser.add_argument('-l','--logging',action="store_true",help="Output logging to terminal instead of logging window")
 parser.add_argument('-e','--experimental',action="store_true",help="Enable experimental features")
+parser.add_argument('-T','--timeout',default=200,type=int,help='xetex runtime timeout')
 # parser.add_argument('-t','--test', action='store_true',help="Quick start for a lazy typist")
 args = parser.parse_args()
 
@@ -121,7 +122,10 @@ def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
             tocdata = readfile(os.path.join(tmpdir, outfname.replace(".tex", ".toc")))
         runner = ptxprint.runner.call(["xetex", "--halt-on-error", outfname], cwd=tmpdir, logbuffer=(logbuffer if not args.logging else None))
         if isinstance(runner, subprocess.Popen) and runner is not None:
-            runner.wait(200)
+            try:
+                runner.wait(args.timeout)
+            except subprocess.TimeoutExpired:
+                print("Timed out!")
             info.res = runner.returncode
         else:
             info.res = runner
