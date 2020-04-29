@@ -192,8 +192,11 @@ please file an issue in Github.</property>
     <property name="website">http://tiny.cc/ptxprint</property>
     <property name="website_label" translatable="yes">Download the latest version</property>
     <property name="authors">Mark Penny (Project Lead + UI Developer)
-Martin Hosken (Architect + TeX Guru)
-David Gardner (XeTex macro hacks, tweaks + Bugfixing)</property>
+Martin Hosken (Architect + TeX macros)
+David Gardner (Tex macro hacks, tweaks + Bugfixing)
+
+Built on the foundation laid by:
+Jonathan Kew (Author of XeTeX + sfm2pdf)</property>
     <property name="logo">62859-open-book-icon(128).png</property>
     <property name="license_type">mit-x11</property>
     <child>
@@ -5548,21 +5551,6 @@ rendering technologies).</property>
                                     <property name="left_attach">4</property>
                                     <property name="top_attach">2</property>
                                   </packing>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
                                 </child>
                               </object>
                             </child>

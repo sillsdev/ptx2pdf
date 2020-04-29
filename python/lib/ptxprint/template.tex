@@ -156,7 +156,8 @@
 
 %\snippets
 
-{project/ifusemodstex}\input "{/ptxpath}/{project/id}/shared/ptxprint/ptxprint-mods.tex"% adjust/override setup parameters here
+% Looks in local Config folder for ptxprint-mods.tex, and drops back to shared/ptxprint .tex if not found 
+{project/ifusemodstex}\input "{/modspath}"% adjust/override setup parameters here
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% all settings need to come before this line %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

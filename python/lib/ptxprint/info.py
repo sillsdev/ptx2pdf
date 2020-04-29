@@ -288,7 +288,11 @@ class Info:
             if os.path.exists(picdir):
                 break
         self.dict["project/picdir"] = picdir.replace("\\","/")
-            
+        # Look in local Config folder for ptxprint-mods.tex, and drop back to shared/ptxprint if not found 
+        fpath = os.path.join(printer.configPath(), "ptxprint-mods.tex")
+        if not os.path.exists(fpath):
+            fpath = os.path.join(self.dict["/ptxpath"], self.dict["project/id"], "shared", "ptxprint", "ptxprint-mods.tex")
+        self.dict['/modspath'] = fpath.replace("\\","/")
 
     def updatefields(self, a):
         global get
@@ -496,7 +500,10 @@ class Info:
             if getattr(self.printer, "logger", None) is not None:
                 self.printer.logger.insert_at_cursor(v)
             else:
-                print(report)
+                try:
+                    print(report)
+                except UnicodeEncodeError:
+                    print("Unable to print details of PrintDraftChanges.txt")
         return changes
 
     def makelocalChanges(self, printer, bk):
