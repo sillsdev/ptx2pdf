@@ -191,8 +191,8 @@ If you come across any bugs,
 please file an issue in Github.</property>
     <property name="website">http://tiny.cc/ptxprint</property>
     <property name="website_label" translatable="yes">Download the latest version</property>
-    <property name="authors">Martin Hosken (Architect + TeX Guru)
-Mark Penny (UI Design + Coding)
+    <property name="authors">Mark Penny (Project Lead + UI Developer)
+Martin Hosken (Architect + TeX Guru)
 David Gardner (XeTex macro hacks, tweaks + Bugfixing)</property>
     <property name="logo">62859-open-book-icon(128).png</property>
     <property name="license_type">mit-x11</property>
@@ -1092,6 +1092,7 @@ produce a PDF with the settings specified.</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">start</property>
                                         <property name="model">ls_projects</property>
+                                        <property name="wrap_width">4</property>
                                         <property name="has_entry">True</property>
                                         <property name="entry_text_column">0</property>
                                         <property name="id_column">0</property>
@@ -1129,6 +1130,7 @@ produce a PDF with the settings specified.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="model">ls_books</property>
+                                        <property name="wrap_width">7</property>
                                         <property name="active">0</property>
                                         <property name="has_entry">True</property>
                                         <property name="entry_text_column">0</property>
@@ -2164,6 +2166,7 @@ Direction:</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">start</property>
                                 <property name="model">ls_digits</property>
+                                <property name="wrap_width">3</property>
                                 <property name="active">0</property>
                                 <property name="popup_fixed_width">False</property>
                                 <property name="id_column">0</property>
@@ -2554,27 +2557,7 @@ d) Restart PTXprint and try again</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_useGraphite">
-                                    <property name="label" translatable="yes">Use Graphite
-Rendering</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">By default, PTXprint will use Graphite
-Rendering technology for any fonts
-which have Graphite support.
-
-There may be rare occasions when this
-needs to be disabled (for example to
-compare the outputs of two different
-rendering technologies).</property>
-                                    <property name="halign">end</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
+                                  <placeholder/>
                                 </child>
                               </object>
                             </child>
@@ -5375,13 +5358,11 @@ so that they don't get split across lines.</property>
                             <property name="can_focus">False</property>
                             <property name="margin_top">2</property>
                             <property name="margin_bottom">6</property>
-                            <property name="hexpand">False</property>
                             <property name="label_xalign">0.039999999105930328</property>
                             <child>
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="halign">start</property>
                                 <property name="margin_right">10</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="row_spacing">6</property>
@@ -5446,27 +5427,11 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                                     <property name="can_focus">True</property>
                                     <property name="halign">start</property>
                                     <property name="margin_bottom">4</property>
-                                    <property name="width_chars">8</property>
+                                    <property name="width_chars">9</property>
                                     <property name="max_width_chars">4</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">4</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_linebreakon">
-                                    <property name="label" translatable="yes">Specify Line 
-Break Locale:</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="halign">end</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onLineBreakChanged" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">3</property>
                                     <property name="top_attach">1</property>
                                   </packing>
                                 </child>
@@ -5485,7 +5450,7 @@ Break Locale:</property>
                                 </child>
                                 <child>
                                   <object class="GtkComboBox" id="cb_script">
-                                    <property name="width_request">190</property>
+                                    <property name="width_request">240</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">In most cases XeTeX can auto-detect
@@ -5493,8 +5458,11 @@ the appropriate script, so leave this
 set as "Default" unless there are
 script-specific rendering issues.</property>
                                     <property name="halign">start</property>
+                                    <property name="resize_mode">queue</property>
                                     <property name="model">ls_scripts</property>
+                                    <property name="wrap_width">6</property>
                                     <property name="active">0</property>
+                                    <property name="popup_fixed_width">False</property>
                                     <property name="id_column">1</property>
                                     <property name="active_id">0</property>
                                     <signal name="changed" handler="onScriptChanged" swapped="no"/>
@@ -5537,8 +5505,61 @@ be specified something like this:
                                   <packing>
                                     <property name="left_attach">1</property>
                                     <property name="top_attach">2</property>
-                                    <property name="width">4</property>
+                                    <property name="width">3</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_linebreakon">
+                                    <property name="label" translatable="yes">Specify Line 
+Break Locale:</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onLineBreakChanged" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">1</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_useGraphite">
+                                    <property name="label" translatable="yes">Graphite
+Rendering</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">By default, PTXprint will use Graphite
+Rendering technology for any fonts
+which have Graphite support.
+
+There may be rare occasions when this
+needs to be disabled (for example to
+compare the outputs of two different
+rendering technologies).</property>
+                                    <property name="halign">end</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">4</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                                 <child>
                                   <placeholder/>
