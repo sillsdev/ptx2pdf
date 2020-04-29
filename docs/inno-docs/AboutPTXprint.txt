@@ -1,0 +1,9 @@
+PTXprint 0.5.0 Beta - AboutPTXprint.txt
+
+"A tool to rapidly and easily create scripture PDFs of adequate quality for trial publications"
+
+PTXprint is a GUI for the extended macros from PTX2PDF which is a XeTeX based macro package for typesetting USFM formatted (Paratext output) scripture files.
+
+Please use "New Issue" button in the GitHub Issue Tracking System (https://github.com/sillsdev/ptx2pdf/issues) to report any bugs, or suggestions for improvement.
+
+http://tiny.cc/ptxprint has the latest Windows release.

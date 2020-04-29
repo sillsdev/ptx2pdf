@@ -1,0 +1,79 @@
+PTXprint 0.5.0 Beta Release Notes
+
+List of improvements:
+
+  * Saved Configurations are now possible, and these are shared via S/R with other Paratext users of the same project
+
+  * Handling of illustrations has been completely revamped and hopefully greatly improved with increased flexibility
+
+  * Conversion of TIF images to the PDF image format happens automagically when required
+
+  * Illustrations in USFM3 markup are now handled natively by XeTeX (but has only been minimally tested)
+
+  * Top-to-Bottom (Left-to-Right) text flow direction is now supported (i.e. vertical text layout)
+
+  * The Tooltip messages have been enhanced significantly
+
+  * Font-based Glyph Metrics can now override the line spacing options (dynamic vertical line spacing for Arabic script)
+
+  * A warning is issued if an improperly installed font is chosen from the Font chooser dialog
+
+  * Graphite rendering has always been enabled by default (if the font supports it), but can now be disabled if needed
+
+  * An extra/fallback font can be defined to handle (punctuation) characters that are not found in the Regular font
+
+  * A button that helps you locate/list any characters that are missing from the Regular font has been added
+
+  * Minor improvements in the Footnotes area - buttons to re-load the Callers from PT's settings, and the ':' addition:
+
+  * Clicking "Print" now changes it to RED to let you know that it is working, and returns to gray when the PDF has been created
+
+  * When you Regenerate PicLists or AdjLists, it checks if you want to overwrite any existing files
+
+  * There's an option to print the name of the Saved Configuration as footer of the first page of each book
+
+  * All dialog boxes and error messages now stay on top
+  
+  * A splash-screen pops up when PTXprint starts, letting you know that something's actually happening
+
+  * An About dialog has been added
+
+
+Bug fixes:
+
+  * Setting the Script for Digits now works as advertised
+
+  * Changes to PrintDraftChanges.txt were not being picked up until PTXprint was re-started
+
+  * Specific rules specified in PrintDraftChanges.txt were being ignored
+
+  * Footnotes disappeared off the end of the page under certain conditions
+
+  * USFM filenames using a Prefix as well as a Suffix weren't being found
+
+  * Font features were not being activated
+
+
+Rough edges:
+
+  * Decorative borders, section headings and verse numbers is still a work in progress
+
+  * Fuzzy/DIY-diglot still works if you know how to configure it but it is still too difficult for most
+
+  * Helping users understand how to use PicLists and ParaAdjustLists is another area that could do with some help
+
+  * The file/log viewer is still very fragile and needs some attention
+
+  * It would also be helpful to have a Linux package built for easy installation
+
+
+Known shortcomings - don't report them again:
+
+  * In Windows some fonts are being listed a "Oblique" instead of "Italic" so you would have to manually select them for each face
+
+  * Some font names don't display properly in the Font Chooser dialog
+
+  * There are still a couple of known XeTeX issues which occur under rare circumstances
+
+
+29th April 2020
