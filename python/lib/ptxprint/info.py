@@ -646,7 +646,7 @@ class Info:
         with open(infname, "r", encoding="utf-8") as inf:
             dat = inf.read()
             inf.close()
-            piclist += re.findall(r"(?i)\\fig .*\|(.+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)     # Finds USFM2-styled markup in text:
+            piclist += re.findall(r"(?i)\\fig .+?\|(.+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)     # Finds USFM2-styled markup in text:
             piclist += re.findall(r'(?i)\\fig .+src="(.+?\.(?=jpg|tif|png|pdf)...)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text:
             for f in piclist:
                 found = False
