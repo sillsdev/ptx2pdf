@@ -214,15 +214,13 @@ def doit(printer):
         dialog.destroy()
 
 def gatherIllustrations(jobs, prjid, prjdir, printer):
+    tmpPicpath = os.path.join(printer.working_dir, "tmpPics")
+    removeTmpPics(tmpPicpath) # This gets re-created later on when we start looking for illustrations
     lowRes = printer.get("c_useLowResPics")
     if printer.get("c_useCustomFolder"):
         picdir = printer.customFigFolder
     else:
         picdir = None
-    tmpPicpath = os.path.join(printer.working_dir, "tmpPics")
-    removeTmpPics(tmpPicpath)
-    if not os.path.exists(tmpPicpath):
-        os.mkdir(tmpPicpath)
     basenamelist = []
     fullnamelist = []
     fullnamelower = []
@@ -255,10 +253,19 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
     # print("fullnamelower:", len(fullnamelower), fullnamelower)
     basenamelist = [item.lower() for item in basenamelist]
     srchlist = [picdir]
-    for d in ("local", "figures"):
-        srchlist += [os.path.join(prjdir, x) for x in (d, d.title())]
+    if sys.platform == "win32":
+        srchlist += [os.path.join(prjdir, "figures")]
+        srchlist += [os.path.join(prjdir, "local", "figures")]
+    elif sys.platform == "linux":
+        chkpaths = []
+        for d in ("local", "figures"):
+            chkpaths += [os.path.join(prjdir, x) for x in (d, d.title())]
+        for p in chkpaths:
+            if os.path.exists(p):
+                srchlist += [p]
+    if not os.path.exists(tmpPicpath):
+        os.mkdir(tmpPicpath)
     for srchdir in srchlist:
-        # print(srchdir)
         if srchdir != None and os.path.exists(srchdir):
             for subdir, dirs, files in os.walk(srchdir):
                 if subdir != "tmpPics": # Avoid recursively scanning the folder we are copying to!
@@ -267,7 +274,6 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
                         shortname = os.path.basename(filepath)
                         shortname = re.sub(r"(?i)\.tif", r".pdf",shortname)
                         if filepath.lower()[-4:] in [".jpg", ".png", ".pdf", ".tif"]:
-                            # print(filepath)
                             if printer.get("c_usePicList"):
                                 if shortname.lower() in fullnamelist or shortname.lower() in fullnamelower:
                                     if filepath.lower()[-4:] in [".tif"]:
@@ -307,14 +313,13 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
                                         carefulCopy(lowRes, filepath, tmpfname)
 
 def carefulCopy(lowRes, srcfile, tgtfile):
-    # print("    Src: ", srcfile, "\n    Tgt: ", tgtfile)
     if not os.path.exists(tgtfile):
         copyfile(srcfile, tgtfile)
     else:
         if lowRes: # we want to use the smallest available file
             if os.path.getsize(srcfile) < os.path.getsize(tgtfile):
                 copyfile(srcfile, tgtfile)
-        else:                                 # we want to use the largest file available
+        else:      # we want to use the largest file available
             if os.path.getsize(srcfile) > os.path.getsize(tgtfile):
                 copyfile(srcfile, tgtfile)
 

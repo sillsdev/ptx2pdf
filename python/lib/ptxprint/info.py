@@ -16,6 +16,12 @@ class Info:
 
         "project/id":               (None, lambda w,v: w.get("cb_project")),
         "project/hideadvsettings":  ("c_hideAdvancedSettings", lambda w,v: "true" if v else "false"),
+        "project/showlayouttab":    ("c_showLayoutTab", lambda w,v: "true" if v else "false"),
+        "project/showbodytab":      ("c_showBodyTab", lambda w,v: "true" if v else "false"),
+        "project/showheadfoottab":  ("c_showHeadFootTab", lambda w,v: "true" if v else "false"),
+        "project/showpicturestab":  ("c_showPicturesTab", lambda w,v: "true" if v else "false"),
+        "project/showadvancedtab":  ("c_showAdvancedTab", lambda w,v: "true" if v else "false"),
+        "project/showviewertab":    ("c_showViewerTab", lambda w,v: "true" if v else "false"),
         "project/showdiglottab":    ("c_showDiglotTab", lambda w,v: "true" if v else "false"),
         "project/showborderstab":   ("c_showBordersTab", lambda w,v: "true" if v else "false"),
         "project/keeptempfiles":    ("c_keepTemporaryFiles", lambda w,v: "true" if v else "false"),
@@ -154,6 +160,7 @@ class Info:
         "document/supressintrooutline": ("c_omitIntroOutline", lambda w,v: "true" if v else "false"),
         "document/supressindent":   ("c_omit1paraIndent", lambda w,v: "false" if v else "true"),
         "document/ifhidehboxerrors": ("c_showHboxErrorBars", lambda w,v :"%" if v else ""),
+        "document/elipsizemptyvs":  ("c_elipsizeMissingVerses", lambda w,v: "false" if v else "true"),
 
         "document/ifdiglot":        ("c_diglot", lambda w,v :"" if v else "%"),
         "document/diglotsettings":  ("l_diglotString", lambda w,v: w.builder.get_object("l_diglotString").get_text() if w.get("c_diglot") else ""),
@@ -518,6 +525,18 @@ class Info:
             if last < int(chaps.get(bk)):
                 self.localChanges.append((None, regex.compile(r"\\c {} ?\r?\n.+".format(last+1), flags=regex.S), ""))
 
+        # If a printout of JUST the book introductions is needed (i.e. no scripture text) then this option is very handy
+        if not printer.get("c_mainBodyText"):
+            self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+".format(first), flags=regex.S), ""))
+
+        # Elipsize ranges of MISSING/Empty verses in the text (if 3 or more verses in a row are empty...) 
+        if printer.get("c_elipsizeMissingVerses"):
+            self.localChanges.append((None, regex.compile(r"\\v (\d+)([-,]\d+)? ?\r?\n(\\v (\d+)([-,]\d+)? ?\r?\n){1,}", flags=regex.M), r"\\v \1-\4 {...} "))
+            # self.localChanges.append((None, regex.compile(r"(\r?\n\\c \d+ ?)(\r?\n\\v 1)", flags=regex.M), r"\1\r\n\\p \2"))
+            self.localChanges.append((None, regex.compile(r" (\\c \d+ ?)(\r?\n\\v 1)", flags=regex.M), r" \r\n\1\r\n\\p \2"))
+            # self.localChanges.append((None, regex.compile(r"(\{\.\.\.\}) (\\c \d+ ?)\r?\n\\v", flags=regex.M), r"\1\r\n\2\r\n\\p \\v"))
+            self.localChanges.append((None, regex.compile(r"(\\c \d+ ?(\r?\n)+\\p (\r?\n)?\\v [\d-]+ \{\.\.\.\} ?(\r?\n)+)(?=\\c)", flags=regex.M), r"\1\\m {...}\r\n"))
+
         # Probably need to make this more efficient for multi-book and lengthy glossaries (cache the GLO & changes reqd etc.)
         if printer.get("c_glossaryFootnotes"):
             self.makeGlossaryFootnotes(printer, bk)
@@ -610,9 +629,6 @@ class Info:
         # Insert a rule between end of Introduction and start of body text (didn't work earlier, but might work now)
         # self.localChanges.append((None, regex.compile(r"(\\c\s1\s?\r?\n)", flags=regex.S), r"\\par\\vskip\\baselineskip\\hskip-\\columnshift\\hrule\\vskip 2\\baselineskip\n\1"))
 
-        if not printer.get("c_mainBodyText"):
-            self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+".format(first), flags=regex.S), ""))
-
         # Apply any changes specified in snippets
         for w, c in self._snippets.items():
             if self.printer.get(c[0]): # if the c_checkbox is true then extend the list with those changes
@@ -669,6 +685,7 @@ class Info:
                         break
                 if not found:
                     pichngs.append((f,"")) 
+        # print(pichngs)
         return(pichngs)
 
     def _configset(self, config, key, value):

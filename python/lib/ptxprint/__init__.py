@@ -205,7 +205,7 @@ class PtxPrinterDialog:
                 self.builder.get_object(c).set_visible(False)
                 self.builder.get_object(c).set_sensitive(False)
         for w in ("tb_", "lb_"):
-            for exp in ("Illustrations", "Logging"):
+            for exp in ("Pictures", "Logging"):
                 self.builder.get_object("{}{}".format(w, exp)).set_visible(value)
 
     def addCR(self, name, index):
@@ -319,6 +319,7 @@ class PtxPrinterDialog:
         dialog.hide()
             
     def onConfigNameChanged(self, cb_savedConfig):
+        self.builder.get_object("c_hideAdvancedSettings").set_sensitive(True)
         if len(self.get("cb_savedConfig")):
             lockBtn = self.builder.get_object("btn_lockunlock")
             lockBtn.set_label("Lockdown  ;-)")
@@ -439,10 +440,12 @@ class PtxPrinterDialog:
         invPW = self.get("t_invisiblePassword")
         if invPW == None or invPW == "": # No existing PW, so set a new one
             self.builder.get_object("t_invisiblePassword").set_text(pw)
+            self.builder.get_object("c_hideAdvancedSettings").set_sensitive(False)
             self.onSaveConfig(None)
         else: # try to unlock the settings by removing the settings
             if pw == invPW:
                 self.builder.get_object("t_invisiblePassword").set_text("")
+                self.builder.get_object("c_hideAdvancedSettings").set_sensitive(True)
             else: # Mismatching password - Don't do anything
                 pass
         self.builder.get_object("t_password").set_text("")
@@ -458,7 +461,7 @@ class PtxPrinterDialog:
         else:
             status = False
             lockBtn.set_label("Unlock Config")
-        for c in ["btn_saveConfig", "btn_deleteConfig", "t_configNotes"]:
+        for c in ["btn_saveConfig", "btn_deleteConfig", "t_configNotes", "c_hideAdvancedSettings"]:
             self.builder.get_object(c).set_sensitive(status)
         
     def onPrevBookClicked(self, btn_NextBook):
@@ -577,8 +580,8 @@ class PtxPrinterDialog:
             self.builder.get_object("l_{}".format(pgnum)).set_tooltip_text(fpath)
             with open(fpath, "r", encoding="utf-8", errors="ignore") as inf:
                 txt = inf.read()
-                if len(txt) > 80000:
-                    txt = txt[:80000]+"\n\n------------------------------------- \
+                if len(txt) > 60000:
+                    txt = txt[:60000]+"\n\n------------------------------------- \
                                           \n[Display of file has been truncated] \
                                           \nClick on View/Edit... button to see more."
             self.fileViews[pgnum][0].set_text(txt)
@@ -891,7 +894,8 @@ class PtxPrinterDialog:
             # Turn Dangerous Settings OFF
             for c in ("c_startOnHalfPage", "c_marginalverses", "c_prettyIntroOutline", "c_blendfnxr", "c_autoToC",
                       "c_figplaceholders", "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", 
-                      "c_preventwidows", "c_PDFx1aOutput", "c_diglot", "c_hyphenate", "c_variableLineSpacing"):
+                      "c_preventwidows", "c_PDFx1aOutput", "c_diglot", "c_hyphenate", "c_variableLineSpacing",
+                      "c_showAdvancedTab", "c_showViewerTab", "c_elipsizeMissingVerses"):  # "c_showBodyTab", 
                 self.builder.get_object(c).set_active(False)
 
             # Turn Essential Settings ON
@@ -909,10 +913,15 @@ class PtxPrinterDialog:
                                                                                "This setting can be toggled off again later, but\n" + \
                                                                                "is intentionally almost invisible (though located\n" + \
                                                                                "in the same place).")
+                      
+            for c in ("c_showAdvancedTab", "c_showViewerTab"):   # "c_showBodyTab", 
+                self.builder.get_object(c).set_active(True)
 
-        # Hide a whole bunch of stuff that they don't need to see   (removed: "tb_Logging", "tb_DiglotTesting", )
-        for c in ("tb_Body", "tb_Advanced", "tb_ViewerEditor", "btn_editPicList", "l_imageTypeOrder", "t_imageTypeOrder",
-                  "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "box_AdvFootnoteConfig", "l_colgutteroffset",
+        # (removed: "tb_Logging", "tb_DiglotTesting", "tb_Body", )
+        # Hide a whole bunch of stuff that they don't need to see   
+        for c in ("tb_Advanced", "tb_ViewerEditor", 
+                  "btn_editPicList", "l_imageTypeOrder", "t_imageTypeOrder",
+                  "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "bx_AdvFootnoteConfig", "l_colgutteroffset",
                   "c_usePicList", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", 
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
                   "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection",
@@ -920,7 +929,7 @@ class PtxPrinterDialog:
                   "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", "c_preventwidows",
                   "l_sidemarginfactor", "s_sidemarginfactor", "l_min", "s_linespacingmin", "l_max", "s_linespacingmax",
                   "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "cb_textDirection", "l_digits", "cb_digits",
-                  "t_invisiblePassword", "t_configNotes", "l_notes"):
+                  "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "bx_ShowTabs"):
                   # "btn_saveConfig", "btn_deleteConfig", "btn_lockunlock", "t_invisiblePassword", "t_configNotes", "l_notes"):
             self.builder.get_object(c).set_visible(not self.get("c_hideAdvancedSettings"))
 
@@ -930,15 +939,37 @@ class PtxPrinterDialog:
         else:
             self.mw.resize(730, 580)
 
-    def onShowBordersTabClicked(self, c_showBordersTab):
-        status = self.get("c_showBordersTab")
-        self.builder.get_object("tb_FancyBorders").set_visible(status)
-        # self.builder.get_object("c_enableDecorativeElements").set_active(status)
+    def onShowLayoutTabClicked(self, c_showLayoutTab):
+        status = self.get("c_showLayoutTab")
+        self.builder.get_object("tb_Layout").set_visible(status)
+
+    def onShowBodyTabClicked(self, c_showBodyTab):
+        status = self.get("c_showBodyTab")
+        self.builder.get_object("tb_Body").set_visible(status)
+
+    def onShowHeadFootTabClicked(self, c_showHeadFootTab):
+        status = self.get("c_showHeadFootTab")
+        self.builder.get_object("tb_HeadFoot").set_visible(status)
+
+    def onShowPicturesTabClicked(self, c_showPicturesTab):
+        status = self.get("c_showPicturesTab")
+        self.builder.get_object("tb_Pictures").set_visible(status)
+
+    def onShowAdvancedTabClicked(self, c_showAdvancedTab):
+        status = self.get("c_showAdvancedTab")
+        self.builder.get_object("tb_Advanced").set_visible(status)
+
+    def onShowViewerTabClicked(self, c_showViewerTab):
+        status = self.get("c_showViewerTab")
+        self.builder.get_object("tb_ViewerEditor").set_visible(status)
 
     def onShowDiglotTabClicked(self, c_showDiglotTab):
         status = self.get("c_showDiglotTab")
         self.builder.get_object("tb_DiglotTesting").set_visible(status)
-        # self.builder.get_object("c_diglot").set_active(status)
+
+    def onShowBordersTabClicked(self, c_showBordersTab):
+        status = self.get("c_showBordersTab")
+        self.builder.get_object("tb_FancyBorders").set_visible(status)
 
     def onKeepTemporaryFilesClicked(self, c_keepTemporaryFiles):
         self.builder.get_object("gr_debugTools").set_sensitive(self.get("c_keepTemporaryFiles"))
@@ -1051,6 +1082,11 @@ class PtxPrinterDialog:
         self.builder.get_object("l_working_dir").set_label(self.working_dir)
 
     def onProjectChange(self, cb_prj):
+        # self.builder.get_object("t_savedConfig").set_text("x")
+        # self.builder.get_object("t_savedConfig").set_text("")
+        self.builder.get_object("l_settings_dir").set_label(self.config_dir or "")
+        self.builder.get_object("btn_saveConfig").set_sensitive(False)
+        self.builder.get_object("btn_deleteConfig").set_sensitive(False)
         if not self.initialised:
             self.pendingPid = self.get("cb_project")
         else:
@@ -1378,10 +1414,7 @@ class PtxPrinterDialog:
             piclist.append("% PicList Generated by PTXprint. Note that .TIFs have been changed to .PDF\n")
             piclist.append("% Location   |Image Name|Img.Size|Position on Page||Illustration|Ref.\n")
             piclist.append("% book ch.vs |filename.ext|span/col|t/b/tl/tr/bl/br||Caption Text|ch:vs\n")
-            piclist.append("% Hints:\n")
-            piclist.append("%   To (temporarily) remove an illustration prefix the line with %\n")
-            piclist.append("%   To scale an image use this notation: span*.7  or  col*1.3)\n")
-            piclist.append("% \n")
+            piclist.append("%   (See end of list for hints on trouble-shooting)\n\n")
             with open(infname, "r", encoding="utf-8") as inf:
                 dat = inf.read()
                 # Finds USFM2-styled markup in text:
@@ -1421,6 +1454,17 @@ class PtxPrinterDialog:
                                 pageposn = (_picposn.get(f[2], f[2]))[0]               # use the t or tl (first in list)
                             piclist.append(bk+" "+re.sub(r":",".", f[3])+" |"+picfname+"|"+f[2]+"|"+pageposn+"||"+f[0]+"|"+f[3]+"\n")
                 if len(m):
+                    piclist.append("\n% If illustrations are not appearing in the PDF, check:\n")
+                    piclist.append("%   a) The Location Reference on the left is very particular, so check\n")
+                    piclist.append("%      (i) Only use '.' as the ch.vs separator\n")
+                    piclist.append("%      (ii) Ensure there is a space after the verse and before the first |\n")
+                    piclist.append("%      (iii) Verse Refs must match the text itself? e.g. Change MRK 4.2-11 to be MRK 4.2\n")
+                    piclist.append("%   b) Does the illustration exist in 'Figures' or 'Local/Figures' or another specified folder?\n")
+                    piclist.append("%   c) Position on Page for a 'span' image only allows 't'=top or 'b'=bottom\n")
+                    piclist.append("% Other Notes:\n")
+                    piclist.append("%   d) If no .TIF file exists for an illustration, then change the .pdf to .jpg in this PicList\n")
+                    piclist.append("%   e) To (temporarily) remove an illustration prefix the line with % followed by a space\n")
+                    piclist.append("%   f) To scale an image use this notation: span*.7  or  col*1.3)\n")
                     plpath = os.path.join(self.configPath(), "PicLists")
                     if not os.path.exists(plpath):
                         os.mkdir(plpath)

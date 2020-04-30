@@ -1175,6 +1175,7 @@ produce a PDF with the settings specified.</property>
                                         <property name="sensitive">False</property>
                                         <property name="can_focus">False</property>
                                         <property name="model">ls_chapfrom</property>
+                                        <property name="wrap_width">5</property>
                                         <property name="active">0</property>
                                         <property name="id_column">0</property>
                                         <property name="active_id">0</property>
@@ -1207,6 +1208,7 @@ produce a PDF with the settings specified.</property>
                                         <property name="sensitive">False</property>
                                         <property name="can_focus">False</property>
                                         <property name="model">ls_chapto</property>
+                                        <property name="wrap_width">5</property>
                                         <property name="active">0</property>
                                         <property name="id_column">0</property>
                                         <property name="active_id">0</property>
@@ -1331,23 +1333,28 @@ PDF file (recommended).</property>
                         <property name="margin_bottom">6</property>
                         <property name="label_xalign">0.019999999552965164</property>
                         <child>
-                          <object class="GtkAlignment">
+                          <object class="GtkBox">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="left_padding">12</property>
+                            <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkGrid">
+                              <object class="GtkAlignment">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="halign">start</property>
-                                <property name="margin_top">10</property>
-                                <property name="margin_bottom">12</property>
-                                <property name="column_spacing">6</property>
+                                <property name="left_padding">12</property>
                                 <child>
-                                  <object class="GtkLabel">
+                                  <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">Type a name for the current configuration
+                                    <property name="halign">start</property>
+                                    <property name="margin_top">10</property>
+                                    <property name="margin_bottom">8</property>
+                                    <property name="column_spacing">6</property>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">Type a name for the current configuration
 to be saved as and click the Save button.
 When the Paratext project is shared through
 Send/Recv, all saved configurations will be
@@ -1356,62 +1363,62 @@ of the same Paratext project.
 
 Alternatively, select a previously-saved
 configuration to retrieve those settings.</property>
-                                    <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Configuration Name: </property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="btn_saveConfig">
-                                    <property name="label">gtk-save</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="tooltip_text" translatable="yes">Save the current settings with the name
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Configuration Name: </property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_saveConfig">
+                                        <property name="label">gtk-save</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="tooltip_text" translatable="yes">Save the current settings with the name
 given in the drop-down box on the left.
 
 If the configuration was saved earlier, then
 clicking Save will update the existing settings.</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin_top">6</property>
-                                    <property name="margin_bottom">6</property>
-                                    <property name="use_stock">True</property>
-                                    <property name="always_show_image">True</property>
-                                    <signal name="clicked" handler="onSaveConfig" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="btn_deleteConfig">
-                                    <property name="label">gtk-delete</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="tooltip_text" translatable="yes">Delete the currently selected
+                                        <property name="halign">start</property>
+                                        <property name="margin_top">6</property>
+                                        <property name="margin_bottom">6</property>
+                                        <property name="use_stock">True</property>
+                                        <property name="always_show_image">True</property>
+                                        <signal name="clicked" handler="onSaveConfig" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">2</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_deleteConfig">
+                                        <property name="label">gtk-delete</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="tooltip_text" translatable="yes">Delete the currently selected
 Saved Configuration immediately.</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin_top">6</property>
-                                    <property name="margin_bottom">6</property>
-                                    <property name="use_stock">True</property>
-                                    <property name="always_show_image">True</property>
-                                    <signal name="clicked" handler="onDeleteConfig" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">3</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkComboBoxText" id="cb_savedConfig">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">Select a previously-saved
+                                        <property name="halign">start</property>
+                                        <property name="margin_top">6</property>
+                                        <property name="margin_bottom">6</property>
+                                        <property name="use_stock">True</property>
+                                        <property name="always_show_image">True</property>
+                                        <signal name="clicked" handler="onDeleteConfig" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">3</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkComboBoxText" id="cb_savedConfig">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">Select a previously-saved
 configuration to retrieve those settings.
 
 Or type a name for the current configuration
@@ -1420,95 +1427,95 @@ When the Paratext project is shared through
 Send/Recv, all saved configurations will be
 also made available to other PTXprint users 
 of the same Paratext project.</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin_top">6</property>
-                                    <property name="margin_bottom">6</property>
-                                    <property name="active">0</property>
-                                    <property name="has_entry">True</property>
-                                    <property name="active_id">0</property>
-                                    <signal name="changed" handler="onConfigNameChanged" swapped="no"/>
-                                    <child internal-child="entry">
-                                      <object class="GtkEntry" id="t_savedConfig">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">Enter a name for the configuration to be saved as.
+                                        <property name="halign">start</property>
+                                        <property name="margin_top">6</property>
+                                        <property name="margin_bottom">6</property>
+                                        <property name="active">0</property>
+                                        <property name="has_entry">True</property>
+                                        <property name="active_id">0</property>
+                                        <signal name="changed" handler="onConfigNameChanged" swapped="no"/>
+                                        <child internal-child="entry">
+                                          <object class="GtkEntry" id="t_savedConfig">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="tooltip_text" translatable="yes">Enter a name for the configuration to be saved as.
 
 Note that at present, only Roman/Latin names
 are supported using: a-z A-Z 0-9 and spaces,
 parentheses, underscores and hyphens.</property>
-                                        <property name="halign">start</property>
-                                        <property name="max_length">32</property>
-                                        <property name="width_chars">35</property>
+                                            <property name="halign">start</property>
+                                            <property name="max_length">32</property>
+                                            <property name="width_chars">35</property>
+                                          </object>
+                                        </child>
                                       </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
                                     </child>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_notes">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">Optional: Provide a description about the
+                                    <child>
+                                      <object class="GtkLabel" id="l_notes">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">Optional: Provide a description about the
 saved/shared configuration named above.</property>
-                                    <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Notes:</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkEntry" id="t_configNotes">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">Optional: Provide a description about the
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Notes:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEntry" id="t_configNotes">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">Optional: Provide a description about the
 saved/shared configuration named above.</property>
-                                    <property name="margin_top">6</property>
-                                    <property name="hexpand">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">1</property>
-                                    <property name="width">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkEntry" id="t_invisiblePassword">
-                                    <property name="sensitive">False</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">Dots show that a password
+                                        <property name="margin_top">6</property>
+                                        <property name="hexpand">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">1</property>
+                                        <property name="width">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEntry" id="t_invisiblePassword">
+                                        <property name="sensitive">False</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">Dots show that a password
 has been set for the saved
 configuration, and allows
 you to see the length of
 the password that was set.</property>
-                                    <property name="halign">center</property>
-                                    <property name="editable">False</property>
-                                    <property name="max_length">16</property>
-                                    <property name="visibility">False</property>
-                                    <property name="has_frame">False</property>
-                                    <property name="invisible_char">●</property>
-                                    <property name="width_chars">16</property>
-                                    <property name="caps_lock_warning">False</property>
-                                    <property name="placeholder_text" translatable="yes">No Password Set</property>
-                                    <property name="input_purpose">password</property>
-                                    <signal name="changed" handler="onPasswordChanged" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">4</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="btn_lockunlock">
-                                    <property name="label" translatable="yes">Lockdown  ;-)</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="tooltip_text" translatable="yes">When Config is UNLOCKED:
+                                        <property name="halign">center</property>
+                                        <property name="editable">False</property>
+                                        <property name="max_length">16</property>
+                                        <property name="visibility">False</property>
+                                        <property name="has_frame">False</property>
+                                        <property name="invisible_char">●</property>
+                                        <property name="width_chars">16</property>
+                                        <property name="caps_lock_warning">False</property>
+                                        <property name="placeholder_text" translatable="yes">No Password Set</property>
+                                        <property name="input_purpose">password</property>
+                                        <signal name="changed" handler="onPasswordChanged" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">4</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_lockunlock">
+                                        <property name="label" translatable="yes">Lockdown  ;-)</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="tooltip_text" translatable="yes">When Config is UNLOCKED:
 Click to set a password to prevent
 anyone from deleting the saved
 settings. It also prevents changes
@@ -1520,16 +1527,234 @@ When Config is LOCKED:
 Click to enter a password to unlock this
 configuration and allow changes to be 
 saved or the configuration to be deleted.</property>
-                                    <property name="margin_top">6</property>
-                                    <property name="margin_bottom">6</property>
-                                    <signal name="clicked" handler="onLockUnlockSavedConfig" swapped="no"/>
+                                        <property name="margin_top">6</property>
+                                        <property name="margin_bottom">6</property>
+                                        <signal name="clicked" handler="onLockUnlockSavedConfig" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">4</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkBox" id="bx_ShowTabs">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="opacity">0.59999999999999998</property>
+                                <property name="margin_bottom">6</property>
+                                <property name="spacing">4</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="margin_left">6</property>
+                                    <property name="label" translatable="yes">Show Tabs:</property>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">4</property>
-                                    <property name="top_attach">0</property>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_showLayoutTab">
+                                    <property name="label" translatable="yes">Layout</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Experimental Feature:
+This is really a DIY-glot because
+it is work in progress and will require
+considerable trial-and-error to get a
+satisfactory result.</property>
+                                    <property name="halign">start</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onShowLayoutTabClicked" swapped="no"/>
+                                    <signal name="toggled" handler="onShowLayoutTabClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_showBodyTab">
+                                    <property name="label" translatable="yes">Body</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Experimental Feature:
+This is really a DIY-glot because
+it is work in progress and will require
+considerable trial-and-error to get a
+satisfactory result.</property>
+                                    <property name="halign">start</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onShowBodyTabClicked" swapped="no"/>
+                                    <signal name="toggled" handler="onShowBodyTabClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_showHeadFootTab">
+                                    <property name="label" translatable="yes">Head+Foot</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Experimental Feature:
+This is really a DIY-glot because
+it is work in progress and will require
+considerable trial-and-error to get a
+satisfactory result.</property>
+                                    <property name="halign">start</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onShowHeadFootTabClicked" swapped="no"/>
+                                    <signal name="toggled" handler="onShowHeadFootTabClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_showPicturesTab">
+                                    <property name="label" translatable="yes">Pictures</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Experimental Feature:
+This is really a DIY-glot because
+it is work in progress and will require
+considerable trial-and-error to get a
+satisfactory result.</property>
+                                    <property name="halign">start</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onShowPicturesTabClicked" swapped="no"/>
+                                    <signal name="toggled" handler="onShowPicturesTabClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_showAdvancedTab">
+                                    <property name="label" translatable="yes">Advanced</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Experimental Feature:
+This is really a DIY-glot because
+it is work in progress and will require
+considerable trial-and-error to get a
+satisfactory result.</property>
+                                    <property name="halign">start</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onShowAdvancedTabClicked" swapped="no"/>
+                                    <signal name="toggled" handler="onShowAdvancedTabClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">5</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_showViewerTab">
+                                    <property name="label" translatable="yes">Viewer</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Experimental Feature:
+This is really a DIY-glot because
+it is work in progress and will require
+considerable trial-and-error to get a
+satisfactory result.</property>
+                                    <property name="halign">start</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onShowViewerTabClicked" swapped="no"/>
+                                    <signal name="toggled" handler="onShowViewerTabClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">6</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_showDiglotTab">
+                                    <property name="label" translatable="yes">Diglot</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Experimental Feature:
+This is really a DIY-glot because
+it is work in progress and will require
+considerable trial-and-error to get a
+satisfactory result.</property>
+                                    <property name="halign">start</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onShowDiglotTabClicked" swapped="no"/>
+                                    <signal name="toggled" handler="onShowDiglotTabClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">7</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_showBordersTab">
+                                    <property name="label" translatable="yes">Borders</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Experimental Feature:
+This enables additional PDF files to be specified
+for fancy/decorative borders to be applied to
+the output. Other textual decorations - for 
+section headings and verse numbers can also
+be specified.
+</property>
+                                    <property name="halign">start</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onShowBordersTabClicked" swapped="no"/>
+                                    <signal name="toggled" handler="onShowBordersTabClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">8</property>
                                   </packing>
                                 </child>
                               </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
                             </child>
                           </object>
                         </child>
@@ -3244,7 +3469,25 @@ any paragraph (including poetry).</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkCheckButton" id="c_elipsizeMissingVerses">
+                                    <property name="label" translatable="yes">Elipsize empty verses with {...}</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">If groups of 2 or more verses are found to be empty,
+group these together as a bridged verse followed by {...}
+
+e.g.  \v 4 Verse text. \v 5-11 {...} \v 12 Verse text.
+
+Useful for when only part of the text has been drafted
+but you still need a printout of what has been done so far.</property>
+                                    <property name="halign">start</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">3</property>
+                                  </packing>
                                 </child>
                               </object>
                             </child>
@@ -3272,7 +3515,7 @@ be turned OFF (to omit the main text).</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">False</property>
+                        <property name="fill">True</property>
                         <property name="position">1</property>
                       </packing>
                     </child>
@@ -3545,7 +3788,7 @@ to ensure that they are displayed properly.</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">False</property>
+                        <property name="fill">True</property>
                         <property name="position">2</property>
                       </packing>
                     </child>
@@ -4094,7 +4337,7 @@ in the header reference.</property>
                                     <property name="xscale">0.94999998807907104</property>
                                     <property name="left_padding">1</property>
                                     <child>
-                                      <object class="GtkBox" id="box_AdvFootnoteConfig">
+                                      <object class="GtkBox" id="bx_AdvFootnoteConfig">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">start</property>
@@ -4843,7 +5086,7 @@ to produce the PDF.</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Headers and Footers.
 Footnotes and Cross-references.</property>
-                    <property name="label" translatable="yes">Header+Footer</property>
+                    <property name="label" translatable="yes">Head+Foot</property>
                   </object>
                   <packing>
                     <property name="position">3</property>
@@ -4851,7 +5094,7 @@ Footnotes and Cross-references.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox" id="tb_Illustrations">
+                  <object class="GtkBox" id="tb_Pictures">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="margin_left">6</property>
@@ -5195,7 +5438,7 @@ TIF  (only use TIFs [converted internally to PDFs])</property>
                   </packing>
                 </child>
                 <child type="tab">
-                  <object class="GtkLabel" id="lb_Illustrations">
+                  <object class="GtkLabel" id="lb_Pictures">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Control whether Illustrations (pictures)
@@ -5241,28 +5484,6 @@ illustrations within the text.</property>
                                 <property name="row_spacing">6</property>
                                 <property name="column_spacing">6</property>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_showBordersTab">
-                                    <property name="label" translatable="yes">Show (Decorative) Borders Settings</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Experimental Feature:
-This enables additional PDF files to be specified
-for fancy/decorative borders to be applied to
-the output. Other textual decorations - for 
-section headings and verse numbers can also
-be specified.
-</property>
-                                    <property name="halign">start</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onShowBordersTabClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkCheckButton" id="c_PDFx1aOutput">
                                     <property name="label" translatable="yes">Output in PDF/X-1a:2003 format</property>
                                     <property name="visible">True</property>
@@ -5301,26 +5522,6 @@ and so on...</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_showDiglotTab">
-                                    <property name="label" translatable="yes">Show (Experimental) Diglot Settings</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Experimental Feature:
-This is really a DIY-glot because
-it is work in progress and will require
-considerable trial-and-error to get a
-satisfactory result.</property>
-                                    <property name="halign">start</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onShowDiglotTabClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkCheckButton" id="c_keepBookWithRefs">
                                     <property name="label" translatable="yes">Keep Book names and References together</property>
                                     <property name="visible">True</property>
@@ -5330,6 +5531,7 @@ satisfactory result.</property>
 This option inserts a No-Break Space (\u00A0)
 between the book name and the Ch:Vs refs
 so that they don't get split across lines.</property>
+                                    <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -5337,6 +5539,12 @@ so that they don't get split across lines.</property>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">2</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                               </object>
                             </child>
