@@ -190,6 +190,8 @@ class PtxPrinterDialog:
         # self.mw.set_resizable(True)
         # self.mw.set_default_size(730, 565)
         self.mw.resize(730, 580)
+        self.builder.get_object("bx_SavedConfigSettings").set_sensitive(False)
+        self.builder.get_object("b_print").set_sensitive(False)
         self.mw.show_all()
         Gtk.main()
 
@@ -1087,11 +1089,16 @@ class PtxPrinterDialog:
         self.builder.get_object("l_settings_dir").set_label(self.config_dir or "")
         self.builder.get_object("btn_saveConfig").set_sensitive(False)
         self.builder.get_object("btn_deleteConfig").set_sensitive(False)
+        lockBtn = self.builder.get_object("btn_lockunlock")
+        lockBtn.set_label("Lockdown  ;-)")
+        lockBtn.set_sensitive(False)
         if not self.initialised:
             self.pendingPid = self.get("cb_project")
         else:
             self.updateProjectSettings(True)
             self.updateSavedConfigList()
+            self.builder.get_object("bx_SavedConfigSettings").set_sensitive(True)
+            self.builder.get_object("b_print").set_sensitive(True)
 
     def updateProjectSettings(self, saveCurrConfig=False):
         currprj = self.prjid
@@ -1197,13 +1204,12 @@ class PtxPrinterDialog:
             fpath = os.path.join(self.settings_dir, self.prjid, file2edit)
         elif loc == "cfg":
             fpath = os.path.join(self.configPath(), file2edit)
-            print("Looking in config path first: ", fpath)
+            # print("Looking in config path first: ", fpath)
             if not os.path.exists(fpath):
                 fpath = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint", file2edit)
         else:
-            print("Folder location for {} unspecified".format(fpath))
+            # print("Folder location for {} unspecified".format(fpath))
             return
-        print("About to edit: ", fpath)
         self.builder.get_object("gr_editableButtons").set_visible(True)
         self.builder.get_object("l_{}".format(pgnum)).set_text(file2edit)
         self.builder.get_object("l_{}".format(pgnum)).set_tooltip_text(fpath)
@@ -1223,7 +1229,6 @@ class PtxPrinterDialog:
         modfname = "ptxprint-mods.tex"
         self.prjid = self.get("cb_project")
         fpath = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint", modfname)
-        print("Mods file: ", fpath)
         if not os.path.exists(fpath):
             openfile = open(fpath,"w", encoding="utf-8")
             openfile.write("% This is the .tex file specific for the {} project used by PTXprint.\n".format(self.prjid))

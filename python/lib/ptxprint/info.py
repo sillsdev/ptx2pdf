@@ -284,7 +284,7 @@ class Info:
             docdir = base
         if self.prjid is not None:
             self.dict['project/id'] = self.prjid
-        self.dict["document/directory"] = os.path.abspath(docdir)
+        self.dict["document/directory"] = os.path.abspath(docdir).replace("\\","/")
         self.dict['project/adjlists'] = os.path.join(printer.configPath(), "AdjLists/").replace("\\","/")
         self.dict['project/piclists'] = os.path.join(printer.configPath(), "PicLists/").replace("\\","/")
         self.processFonts(printer)
@@ -648,7 +648,7 @@ class Info:
         pichngs = []
         prjid = self.dict['project/id']
         prjdir = os.path.join(printer.settings_dir, prjid)
-        picdir = os.path.join(self['document/directory'], 'tmpPics')
+        picdir = os.path.join(self['document/directory'], 'tmpPics').replace("\\","/")
         # picdir = os.path.join(prjdir, "PrintDraft", "tmpPics")
         fname = printer.getBookFilename(bk, prjdir)
         infname = os.path.join(prjdir, fname)

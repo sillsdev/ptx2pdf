@@ -1,8 +1,11 @@
 PTXprint 0.5.0 Beta Release Notes
+30th April 2020
 
 List of improvements:
 
   * Saved Configurations are now possible, and these are shared via S/R with other Paratext users of the same project
+
+  * All the Tabs can be Shown/Hidden as required - enabling a very simple view for users who don't need complexity
 
   * Handling of illustrations has been completely revamped and hopefully greatly improved with increased flexibility
 
@@ -26,18 +29,21 @@ List of improvements:
 
   * Minor improvements in the Footnotes area - buttons to re-load the Callers from PT's settings, and the ':' addition:
 
-  * Clicking "Print" now changes it to RED to let you know that it is working, and returns to gray when the PDF has been created
+  * Clicking the "Print" button makes it GREEN to let you know that it is working
 
   * When you Regenerate PicLists or AdjLists, it checks if you want to overwrite any existing files
 
   * There's an option to print the name of the Saved Configuration as footer of the first page of each book
 
+  * There's an option to bridge empty verses adding {...} in place of the missing text
+
   * All dialog boxes and error messages now stay on top
   
+  * Keyboard shortcuts for Print (Ctrl-P) and Save (Ctrl-S) have been added
+
   * A splash-screen pops up when PTXprint starts, letting you know that something's actually happening
 
-  * An About dialog has been added
-
+  * An About dialog has been added, with an MIT license and credits
 
 Bug fixes:
 
@@ -74,6 +80,3 @@ Known shortcomings - don't report them again:
   * Some font names don't display properly in the Font Chooser dialog
 
   * There are still a couple of known XeTeX issues which occur under rare circumstances
-
-
-29th April 2020

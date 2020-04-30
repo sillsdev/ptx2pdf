@@ -1006,13 +1006,16 @@ using the -e flag on the command line.</property>
                 <property name="receives_default">True</property>
                 <property name="tooltip_text" translatable="yes">Apply any changes specified, save the
 current configuration (if not locked) and
-produce a PDF with the settings specified.</property>
+produce a PDF with the settings specified.
+
+Shortcut key: &lt;Ctrl-P&gt;</property>
                 <property name="halign">start</property>
                 <property name="margin_top">3</property>
                 <property name="margin_bottom">3</property>
                 <property name="resize_mode">immediate</property>
                 <property name="always_show_image">True</property>
                 <signal name="clicked" handler="onOK" swapped="no"/>
+                <accelerator key="p" signal="activate" modifiers="GDK_CONTROL_MASK"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1093,9 +1096,10 @@ produce a PDF with the settings specified.</property>
                                       <object class="GtkComboBox" id="cb_project">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="can_default">True</property>
                                         <property name="halign">start</property>
                                         <property name="model">ls_projects</property>
-                                        <property name="wrap_width">4</property>
+                                        <property name="wrap_width">1</property>
                                         <property name="has_entry">True</property>
                                         <property name="entry_text_column">0</property>
                                         <property name="id_column">0</property>
@@ -1249,11 +1253,13 @@ produce a PDF with the settings specified.</property>
                                     </child>
                                     <child>
                                       <object class="GtkButton" id="btn_chooseBooks">
-                                        <property name="label" translatable="yes">Choose...</property>
+                                        <property name="label" translatable="yes">Ch_oose...</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <property name="use_underline">True</property>
                                         <signal name="clicked" handler="onChooseBooksClicked" swapped="no"/>
+                                        <accelerator key="o" signal="activate" modifiers="GDK_MOD1_MASK"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -1324,8 +1330,9 @@ PDF file (recommended).</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkFrame">
+                      <object class="GtkFrame" id="bx_SavedConfigSettings">
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
@@ -1381,13 +1388,16 @@ configuration to retrieve those settings.</property>
 given in the drop-down box on the left.
 
 If the configuration was saved earlier, then
-clicking Save will update the existing settings.</property>
+clicking Save will update the existing settings.
+
+Shortcut key: &lt;Ctrl-S&gt;</property>
                                         <property name="halign">start</property>
                                         <property name="margin_top">6</property>
                                         <property name="margin_bottom">6</property>
                                         <property name="use_stock">True</property>
                                         <property name="always_show_image">True</property>
                                         <signal name="clicked" handler="onSaveConfig" swapped="no"/>
+                                        <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">2</property>
@@ -3470,7 +3480,7 @@ any paragraph (including poetry).</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_elipsizeMissingVerses">
-                                    <property name="label" translatable="yes">Elipsize empty verses with {...}</property>
+                                    <property name="label" translatable="yes">Bridge empty verses &amp; add {...}</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -7107,13 +7117,16 @@ as there is no auto-update feature yet!</property>
                             <property name="receives_default">True</property>
                             <property name="tooltip_text" translatable="yes">If you edit any of these files, you should
 save them before moving to a different
-tab (otherwise your changes will be lost.)</property>
+tab (otherwise your changes will be lost.)
+
+Shortcut key: &lt;Ctrl-S&gt;</property>
                             <property name="halign">center</property>
                             <property name="margin_top">5</property>
                             <property name="margin_bottom">5</property>
                             <property name="use_stock">True</property>
                             <property name="always_show_image">True</property>
                             <signal name="clicked" handler="onSaveEdits" swapped="no"/>
+                            <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                           </object>
                           <packing>
                             <property name="left_attach">4</property>

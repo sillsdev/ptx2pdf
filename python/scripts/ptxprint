@@ -50,7 +50,7 @@ for d in os.listdir(args.paratext):
         allprojects.append(d)
 allprojects.sort()
 
-css = ".printbutton:active { background-color: red; background-image: None }"
+css = ".printbutton:active { background-color: chartreuse; background-image: None }"
 provider = Gtk.CssProvider()
 provider.load_from_data(css.encode("utf-8"))
 Gtk.StyleContext().add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
@@ -162,8 +162,8 @@ def doit(printer):
     if invPW == None or invPW == "": # This config is unlocked
         # So it it safe/allowed to save the current config
         printer.saveConfig(config)
-    else:
-        print("Current Config is Locked, so changes have NOT been saved")
+    # else:
+        # print("Current Config is Locked, so changes have NOT been saved")
     tmpdir = os.path.join(prjdir, 'PrintDraft') if printer.get("c_useprintdraftfolder") else args.directory
     if not os.path.exists(tmpdir):
         os.makedirs(tmpdir)
