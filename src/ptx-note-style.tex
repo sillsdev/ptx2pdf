@@ -108,6 +108,7 @@
         \setbox0=\hbox{\ch@rstyle{\c@llerstyle}~\them@rk\ch@rstyle{\c@llerstyle}*}%
         \ht0=0pt \getp@ram{notecallerraise}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi\fi}\bgroup
    \global\n@tenesting=1\relax
+   \trace{b}{BALANCE note: style=\newn@testyle}%
    \csname start-\newn@testyle\endcsname % execute the <start> hook, if defined
    \ignorespaces
   \fi

@@ -144,6 +144,14 @@
   % create the font identifier for this style
   \x@\global\x@\font
     \csname font<#1>\endcsname=\typef@ce\space at \p@ram \dimen0
+  \ifx\SpaceStretchFactor\undefined\else
+    \dimen0=\SpaceStretchFactor\x@\x@\fontdimen2\csname font<#1>\endcsname
+    \x@\x@\fontdimen3\csname font<#1>\endcsname=\dimen0
+  \fi
+  \ifx\SpaceShrinkFactor\undefined\else
+    \dimen0=\SpaceShrinkFactor\x@\x@\fontdimen2\csname font<#1>\endcsname
+    \x@\x@\fontdimen4\csname font<#1>\endcsname=\dimen0
+  \fi
  \fi
  % switch to the appropriate font
  \csname font<#1>\endcsname

@@ -277,6 +277,7 @@
 \global\output={\onecol}
 \global\holdinginserts=1
 \def\onecol{%
+  \trace{b}{BALANCE pageout: cols=1: textheight=\the\textheight}
   \global\setbox\galley=\copy255
   \global\galleypenalty=\outputpenalty
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
@@ -468,6 +469,7 @@
 \def\twocols{% primary output routine in 2-col mode
 %%%  \msg{TWOCOLS @ \ch@pter:\v@rse, txtht=\the\textheight, partial=\the\ht\partial, hIns=\the\holdinginserts}
   % save copy of current page so we can retry with different heights
+  \trace{b}{BALANCE pageout: cols=2: textheight=\the\textheight}
   \global\setbox\galley=\copy255
   \global\galleypenalty=\outputpenalty % save current penalty so we can restore it at (A)
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
@@ -972,6 +974,7 @@
     \fi
     \vskip.5\baselineskip
   }%
+  \trace{b}{BALANCE fig: height=\the\ht0: baselineskip=\the\baselineskip}
   % insert into proper insertion class for this position
   \insert\p@cins{\penalty10000 % make sure this picture does not float away to another page
     \splittopskip\z@skip
