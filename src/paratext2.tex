@@ -277,7 +277,7 @@
 \global\output={\onecol}
 \global\holdinginserts=1
 \def\onecol{%
-  \trace{b}{BALANCE pageout: cols=1: textheight=\the\textheight}
+  \trace{b}{BALANCE pagebuild: cols=1: textheight=\the\textheight}
   \global\setbox\galley=\copy255
   \global\galleypenalty=\outputpenalty
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
@@ -311,6 +311,7 @@
     \def\pagecontents{%
 %      \msg{upwards mode = \the\XeTeXupwardsmode}
       \dimen1=\textwidth \advance\dimen1 \ExtraRMargin
+      \trace{b}{BALANCE pangeoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins}
       \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\partial}} \fi
       \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
       \dimen0=\dp\colA
@@ -318,12 +319,15 @@
         \box\colA\hbox to \ExtraRMargin{}\hfil}
       \ifvoid\bottomins\else \vfil\kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\box\bottomins} \fi % ouput bottom spanning pictures
       \f@rstnotetrue
+      \setbox2=\vbox{
       \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses
       \iff@rstnote % no notes actually occurred!
         \kern-\dimen0 \vfil
       \else
         \setbox0=\lastbox \dimen0=\dp0 \box0 \kern-\dimen0
-      \fi
+      \fi}
+      \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}
+      \box2
     }
     \resetvsize
     \ifdim\ht\colA>\baselineskip\plainoutput \else\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
@@ -440,12 +444,15 @@
         \box\colA\hbox to \ExtraRMargin{}\hfil}
       \ifvoid\bottomins\else\kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \unvbox\bottomins \fi
       \f@rstnotetrue
+      \setbox2=\vbox{
       \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses
       \iff@rstnote % no notes actually occurred!
         \kern-\dimen0 \vfil
       \else
         \setbox0=\lastbox \dimen0=\dp0 \box0 \kern-\dimen0
-      \fi
+      \fi}
+      \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}
+      \box2
     }
     \resetvsize
     \ifdim\ht\colA>\baselineskip\plainoutput\else\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
@@ -469,7 +476,7 @@
 \def\twocols{% primary output routine in 2-col mode
 %%%  \msg{TWOCOLS @ \ch@pter:\v@rse, txtht=\the\textheight, partial=\the\ht\partial, hIns=\the\holdinginserts}
   % save copy of current page so we can retry with different heights
-  \trace{b}{BALANCE pageout: cols=2: textheight=\the\textheight}
+  \trace{b}{BALANCE pagebuild: cols=2: textheight=\the\textheight}
   \global\setbox\galley=\copy255
   \global\galleypenalty=\outputpenalty % save current penalty so we can restore it at (A)
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
@@ -709,6 +716,7 @@
     \def\pagecontents{%
       \trace{o}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins}%
       \dimen1=\textwidth\advance\dimen1 by \ExtraRMargin
+      \trace{b}{BALANCE pageout: cols=2: texta=\the\ht\colA , \the\dp\colA : textb=\the\ht\colB , \the\dp\colB : partial=\the\ht\partial, \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins}
       \ifvoid\partial\else %\msg{2colout partial: \the\ht\partial}\hskip\columnshift
         \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}}\fi % output partial page
       \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
@@ -718,12 +726,15 @@
         \else \box\colA\makecolumngutter{\the\dimen3}{\the\availht}{\the\dimen0}\box\colB\hbox to \ExtraRMargin{}\fi}
       \ifvoid\bottomins\else \kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \unvbox\bottomins \fi % ouput bottom spanning pictures
       \f@rstnotetrue
+      \setbox2=\vbox{
       \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % output all note classes
       \iff@rstnote % no notes actually occurred!
         \kern-\dimen0 \vfil
       \else
         \setbox0=\lastbox \dimen0=\dp0 \box0 \kern-\dimen0
-      \fi
+      \fi}
+      \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}
+      \box2
     }
     \global\setbox255=\box\voidb@x
     \resetvsize % reset size of next page since it will not have any 1 column material
@@ -800,6 +811,7 @@
     \tempfalse
     \ifdim\ht\partial>0.9\textheight
       \def\pagecontents{
+        \trace{b}{BALANCE pageout: cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins}
         \vbox{\dimen1=\textwidth \advance\dimen1 \ExtraRMargin
         \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\box\partial}} \fi
 	    \dimen0=\dp\partial
