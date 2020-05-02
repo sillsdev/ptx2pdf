@@ -1433,7 +1433,9 @@ class PtxPrinterDialog:
                 if len(m):
                     for f in m:
                         # XeTeX doesn't handle TIFs, so rename all TIF extensions to PDFs
-                        picfname = re.sub(r"(?i)(.+)\.tif", r"\1.pdf",f[0])
+                        # picfname = re.sub(r"(?i)(.+)\.tif", r"\1.pdf",f[0])
+                        extn = picfname[-4:]
+                        picfname = re.sub('[()&+,. ]', '_', picfname)[:-4]+extn
                         if self.get("c_randomPicPosn"):
                             pageposn = random.choice(_picposn.get(f[1], f[1]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
                         else:
@@ -1452,7 +1454,9 @@ class PtxPrinterDialog:
                     if len(m):
                         for f in m:
                             # XeTeX doesn't handle TIFs, so rename all TIF extensions to PDFs
-                            picfname = re.sub(r"(?i)(.+)\.tif", r"\1.pdf",f[1])
+                            # picfname = re.sub(r"(?i)(.+)\.tif", r"\1.pdf",f[1])
+                            extn = picfname[-4:]
+                            picfname = re.sub('[()&+,. ]', '_', picfname)[:-4]+extn
                             if self.get("c_randomPicPosn"):
                                 pageposn = random.choice(_picposn.get(f[2], f[2]))     # Randomize location of illustrations on the page (tl,tr,bl,br)
                             else:

@@ -213,46 +213,32 @@ def doit(printer):
         dialog.set_keep_above(False)
         dialog.destroy()
 
+def base(fpath):
+    return os.path.basename(fpath)[:-4]
+
+# https://sites.google.com/a/lci-india.org/typesetting/home/illustrations/where-to-find-illustrations
+# We could build the credit text too if we wanted to (and perhaps a list of pg numbers on which the pictures were found)
+def codeLower(fpath):
+    cl = re.findall(r"(?i)_?((?=cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?$", base(fpath))
+    if cl:
+        return cl[0].lower()
+    else:
+        return ""
+
+def newBase(fpath):
+    clwr = codeLower(fpath)
+    if len(clwr):
+        return clwr
+    else:
+        return re.sub('[()&+,. ]', '_', base(fpath).lower())
+
 def gatherIllustrations(jobs, prjid, prjdir, printer):
     tmpPicpath = os.path.join(printer.working_dir, "tmpPics")
     removeTmpPics(tmpPicpath) # This gets re-created later on when we start looking for illustrations
-    lowRes = printer.get("c_useLowResPics")
     if printer.get("c_useCustomFolder"):
-        picdir = printer.customFigFolder
+        srchlist = [printer.customFigFolder]
     else:
-        picdir = None
-    basenamelist = []
-    fullnamelist = []
-    fullnamelower = []
-    for bk in jobs:
-        fname = printer.getBookFilename(bk, prjdir)
-        if printer.get("c_usePicList"): # Need to read the PicList to get a list of needed illustrations
-            piclstfname = os.path.join(printer.configPath(False), "PicLists", fname)
-            doti = piclstfname.rfind(".")
-            if doti > 0:
-                piclstfname = piclstfname[:doti] + "-draft" + piclstfname[doti:] + ".piclist"
-            piclist = []
-            if os.path.exists(piclstfname):
-                with open(piclstfname, "r", encoding="utf-8") as inf:
-                    dat = inf.read()
-                    # MAT 19.13 |CN01771C.jpg|col|tr||Bringing the children to Jesus|19:13
-                    fullnamelist += re.findall(r"(?i)\|(.+?\.(?=jpg|tif|png|pdf)...)\|", dat)
-            fullnamelower = [f.lower() for f in fullnamelist]
-        else:
-            infname = os.path.join(prjdir, fname)
-            with open(infname, "r", encoding="utf-8", errors="ignore") as inf:
-                dat = inf.read()
-                inf.close()
-                basenamelist += re.findall(r"(?i)\\fig .*?\|([a-z]{2}\d{5})[a-c]?\.(?=jpg|tif|png|pdf)...\|.+?\\fig\*", dat)      # USFM2 AB01234b.ext fig files
-                basenamelist += re.findall(r"(?i)\\fig .*?\|(.+?(?!\d{5}[a-c]?).+?)\.(?=jpg|tif|png|pdf)...\|.+?\\fig\*", dat)    # USFM2 non-standard fig files
-                basenamelist += re.findall(r'(?i)\\fig .*?src="([a-z]{2}\d{5})[a-c]?\.(?=jpg|tif|png|pdf)..." .+?\\fig\*', dat)   # USFM3 AB01234b.ext fig files 
-                basenamelist += re.findall(r'(?i)\\fig .*?src="(.+?(?!\d{5}[a-c]?).+?)\.(?=jpg|tif|png|pdf)..." .+?\\fig\*', dat) # USFM3 non-standard fig files 
-
-    # print("basenamelist:", len(basenamelist), basenamelist)
-    # print("fullnamelist:", len(fullnamelist), fullnamelist)
-    # print("fullnamelower:", len(fullnamelower), fullnamelower)
-    basenamelist = [item.lower() for item in basenamelist]
-    srchlist = [picdir]
+        srchlist = []
     if sys.platform == "win32":
         srchlist += [os.path.join(prjdir, "figures")]
         srchlist += [os.path.join(prjdir, "local", "figures")]
@@ -263,6 +249,42 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
         for p in chkpaths:
             if os.path.exists(p):
                 srchlist += [p]
+    extensions = []
+    extdflt = ["jpg", "png", "pdf", "tif"]
+    extuser = re.sub("(pdf|tif)", "pdf tif",printer.get("t_imageTypeOrder").lower())
+    extuser = re.findall("([a-z]{3})",extuser)
+    extensions = [x for x in extdflt if x in extuser]
+    if not len(extensions):   # If the user hasn't defined any extensions 
+        extensions = extdflt  # then we can assign defaults
+    fullnamelist = []
+    for bk in jobs:
+        fname = printer.getBookFilename(bk, prjdir)
+        if printer.get("c_usePicList"): # Read the PicList to get a list of needed illustrations
+            piclstfname = os.path.join(printer.configPath(False), "PicLists", fname)
+            doti = piclstfname.rfind(".")
+            if doti > 0:
+                piclstfname = piclstfname[:doti] + "-draft" + piclstfname[doti:] + ".piclist"
+            piclist = []
+            if os.path.exists(piclstfname):
+                with open(piclstfname, "r", encoding="utf-8") as inf:
+                    dat = inf.read()
+                    # MAT 19.13 |CN01771C.jpg|col|tr||Bringing the children to Jesus|19:13
+                    fullnamelist += re.findall(r"(?i)\|(.+?\.(?=jpg|tif|png|pdf)...)\|", dat)
+        else:
+            infname = os.path.join(prjdir, fname)
+            with open(infname, "r", encoding="utf-8", errors="ignore") as inf:
+                dat = inf.read()
+                inf.close() # Look for USFM2 and USFM3 type inline \fig ... \fig* illustrations
+                fullnamelist += re.findall(r"(?i)\\fig .*?\|(.+?(?!\d{5}[a-c]?).+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)    
+                fullnamelist += re.findall(r'(?i)\\fig .*?src="(.+?\.(?=jpg|tif|png|pdf)...)" .+?\\fig\*', dat)                   # USFM3 non-standard fig files 
+        newBaseList = [newBase(f) for f in fullnamelist]
+
+    # This is a list of the kinds of filenames that we might encounter in an illustration
+    # fullnamelist = ["co00604b.tif", "CO00646B.TIF", "CO00647b.tif", "LB00296.tif", "lb00294b.jpg", "hk00208b.jpg", "cn01700b.jpg", "co00843b.tif", "Temple(Herod's)AerialView_LB00250.tif", "ShepherdsWatchingFlockAtNight_Luke2.8_LB00013.tif", "Jesus(12yrs)&MaryJosephInTemple_Luke2.46-50_CN01647.tif", "JesusDove&JohnTheBaptist_DN00410.tif", "ParalyzedManLoweredThroughRoof_DN00444.tif", "Coin(Denarius-Front&Back)_HK00166.tif", "TempleCurtainTorn+Man_LB00265.tif", "lb00329Cmod.jpg", "Peter&James(in the temple).jpg", "OT08.jpg", "Map of Galilee.pdf"]
+    # for f in fullnamelist:
+        # print(f, " "*(55-len(f)), " --> ", newBase(f)+newExt(f))
+
+    # print("newBaseList:", len(newBaseList), newBaseList)
     if not os.path.exists(tmpPicpath):
         os.mkdir(tmpPicpath)
     for srchdir in srchlist:
@@ -270,58 +292,38 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
             for subdir, dirs, files in os.walk(srchdir):
                 if subdir != "tmpPics": # Avoid recursively scanning the folder we are copying to!
                     for file in files:
-                        filepath = subdir + os.sep + file
-                        shortname = os.path.basename(filepath)
-                        shortname = re.sub(r"(?i)\.tif", r".pdf",shortname)
-                        if filepath.lower()[-4:] in [".jpg", ".png", ".pdf", ".tif"]:
-                            if printer.get("c_usePicList"):
-                                if shortname.lower() in fullnamelist or shortname.lower() in fullnamelower:
-                                    if filepath.lower()[-4:] in [".tif"]:
-                                        tempPDFname = os.path.join(tmpPicpath, "tempPDF.pdf")
-                                        with open(tempPDFname,"wb") as f:
-                                            try:
-                                                f.write(img2pdf.convert(filepath))
-                                            except:
-                                                break
-                                        if os.path.exists(tempPDFname):
-                                            tmpfname = os.path.join(tmpPicpath, shortname)[:-4]+".pdf"
-                                            carefulCopy(lowRes, tempPDFname, tmpfname)
-                                            os.remove(tempPDFname)
-                                    else:
-                                        tmpfname = os.path.join(tmpPicpath, shortname)
-                                        carefulCopy(lowRes, filepath, tmpfname)
+                        origExt = file[-4:].lower()
+                        if origExt[1:] in extensions:
+                            filepath = subdir + os.sep + file
+                            if newBase(filepath) in newBaseList:
+                                # print(filepath, "-->", newBase(filepath)+origExt.lower())
+                                carefulCopy(printer, filepath, newBase(filepath)+origExt.lower())
 
-                            else: # processes images found in in-line \fig ... \fig* 
-                                origextn = shortname[-4:]
-                                basefname = shortname.lower()
-                                basefname = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?\.(jpg|tif|png|pdf)", r"\1",basefname)
-                                basefname = re.sub(r"(?i)(.+?)\.(jpg|tif|png|pdf)", r"\1",basefname)  # This should pick up any non-standard filenames
-                                if basefname in basenamelist:
-                                    if filepath.lower()[-4:] in [".tif"]:
-                                        tempPDFname = os.path.join(tmpPicpath, "tempPDF.pdf")
-                                        with open(tempPDFname,"wb") as f:
-                                            try:
-                                                f.write(img2pdf.convert(filepath))
-                                            except:
-                                                break
-                                        if os.path.exists(tempPDFname):
-                                            tmpfname = os.path.join(tmpPicpath, basefname)+".pdf"
-                                            carefulCopy(lowRes, tempPDFname, tmpfname)
-                                            os.remove(tempPDFname)
-                                    else: # for .jpg, .png, .pdf
-                                        tmpfname = os.path.join(tmpPicpath, basefname+origextn)
-                                        carefulCopy(lowRes, filepath, tmpfname)
-
-def carefulCopy(lowRes, srcfile, tgtfile):
-    if not os.path.exists(tgtfile):
-        copyfile(srcfile, tgtfile)
+def carefulCopy(printer, srcpath, tgtfile):
+    tmpPicPath = os.path.join(printer.working_dir, "tmpPics")
+    tgtpath = os.path.join(tmpPicPath, tgtfile)
+    if srcpath[-4:].lower() == ".tif":
+        tempPDFname = os.path.join(tmpPicPath, "tempPDF.pdf")
+        tgtpath = tgtpath[:-4]+".pdf"
+        with open(tempPDFname,"wb") as f:
+            try:
+                f.write(img2pdf.convert(srcpath))
+                srcpath = tempPDFname
+            except:
+                return
+    if not os.path.exists(tgtpath):
+        copyfile(srcpath, tgtpath)
     else:
-        if lowRes: # we want to use the smallest available file
-            if os.path.getsize(srcfile) < os.path.getsize(tgtfile):
-                copyfile(srcfile, tgtfile)
-        else:      # we want to use the largest file available
-            if os.path.getsize(srcfile) > os.path.getsize(tgtfile):
-                copyfile(srcfile, tgtfile)
+        if printer.get("c_useLowResPics"): # we want to use the smallest available file
+            if os.path.getsize(srcpath) < os.path.getsize(tgtpath):
+                copyfile(srcpath, tgtpath)
+        else:                              # we want to use the largest file available
+            if os.path.getsize(srcpath) > os.path.getsize(tgtpath):
+                copyfile(srcpath, tgtpath)
+    try:
+        os.remove(tempPDFname)
+    except:
+        pass
 
 def removeTempFiles(texfiles,tmpdir,info):
     for extn in ('delayed','parlocs','notepages', 'tex','log'):

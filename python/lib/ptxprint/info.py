@@ -552,16 +552,19 @@ class Info:
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig ([^|]*\|){3}([aw]+)\|[^\\]*\\fig\*', flags=regex.M), ''))  # USFM2
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig [^\\]*\bloc="[aw]+"[^\\]*\\fig\*', flags=regex.M), ''))    # USFM3
 
-            picChangeList = self.PicNameChanges(printer, bk)
-            if len(picChangeList):
-                for origfn,tempfn in picChangeList:
+            figChangeList = self.figNameChanges(printer, bk)
+            if len(figChangeList):
+                for origfn,tempfn in figChangeList:
+                    origfn = re.escape(origfn)
                     if tempfn != "":
+                        # print("(?i)(\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), "-->", tempfn)
                         self.localChanges.append((None, regex.compile(r"(?i)(\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), \
                                                      flags=regex.M), r"\1{}\2".format(tempfn)))                               #USFM2
                         self.localChanges.append((None, regex.compile(r'(?i)(\\fig .*?src="){}(" .+?\\fig\*)'.format(origfn), \
                                                      flags=regex.M), r"\1{}\2".format(tempfn)))                               #USFM3
                     else:
                         if printer.get("c_skipmissingimages"):
+                            # print("(?i)(\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), "--> Skipped!!!!")
                             self.localChanges.append((None, regex.compile(r"(?i)\\fig .*?\|{}\|.+?\\fig\*".format(origfn), flags=regex.M), ""))     #USFM2
                             self.localChanges.append((None, regex.compile(r'(?i)\\fig .*?src="{}" .+?\\fig\*'.format(origfn), flags=regex.M), "")) #USFM3
 
@@ -643,13 +646,12 @@ class Info:
                 print(report)
         return self.localChanges
 
-    def PicNameChanges(self, printer, bk):
-        piclist = []
-        pichngs = []
+    def figNameChanges(self, printer, bk):
+        figlist = []
+        figchngs = []
         prjid = self.dict['project/id']
         prjdir = os.path.join(printer.settings_dir, prjid)
         picdir = os.path.join(self['document/directory'], 'tmpPics').replace("\\","/")
-        # picdir = os.path.join(prjdir, "PrintDraft", "tmpPics")
         fname = printer.getBookFilename(bk, prjdir)
         infname = os.path.join(prjdir, fname)
         # If the preferred image type(s) has(have) been specified, parse that string
@@ -669,24 +671,37 @@ class Info:
         with open(infname, "r", encoding="utf-8", errors="ignore") as inf:
             dat = inf.read()
             inf.close()
-            piclist += re.findall(r"(?i)\\fig .*?\|(.+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)     # Finds USFM2-styled markup in text:
-            piclist += re.findall(r'(?i)\\fig .+src="(.+?\.(?=jpg|tif|png|pdf)...)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text:
-            for f in piclist:
+            figlist += re.findall(r"(?i)\\fig .*?\|(.+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)    # Finds USFM2-styled markup in text:
+            figlist += re.findall(r'(?i)\\fig .+src="(.+?\.(?=jpg|tif|png|pdf)...)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text:
+            for f in figlist:
                 found = False
-                basef = f
-                basef = re.sub(r"(?i)([a-z][a-z]\d{5})[abc]?(\.(jpg|tif|png|pdf))?", r"\1", basef)
-                basef = re.sub(r"(?i)\.(jpg|tif|png|pdf)", r"", basef)   # This will pick up any non-standard filenames
                 for ext in extOrder:
-                    tmpf = (basef+"."+ext).lower()
-                    fname = os.path.join(picdir,tmpf)
+                    tmpf = self.newBase(f)+"."+ext
+                    fname = os.path.join(picdir, tmpf)
                     if os.path.exists(fname):
-                        pichngs.append((f,tmpf))
+                        figchngs.append((f,tmpf))
                         found = True
                         break
                 if not found:
-                    pichngs.append((f,"")) 
-        # print(pichngs)
-        return(pichngs)
+                    figchngs.append((f,"")) 
+        return(figchngs)
+
+    def base(self, fpath):
+        return os.path.basename(fpath)[:-4]
+
+    def codeLower(self, fpath):
+        cl = re.findall(r"(?i)_?((?=cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?$", self.base(fpath))
+        if cl:
+            return cl[0].lower()
+        else:
+            return ""
+
+    def newBase(self, fpath):
+        clwr = self.codeLower(fpath)
+        if len(clwr):
+            return clwr
+        else:
+            return re.sub('[()&+,. ]', '_', self.base(fpath).lower())
 
     def _configset(self, config, key, value):
         (sect, k) = key.split("/")
