@@ -1,7 +1,16 @@
-PTXprint 0.5.0 Beta Release Notes
-30th April 2020
+PTXprint 0.5.1 Beta Release Notes
+2nd May 2020
 
-List of improvements:
+List of improvements: 0.5.1
+
+  * Illustration Handling has been made more flexible and robust to handle special characters in image filenames
+  
+  * PicLists have the same options as inline \fig ... \fig* illustrations (hide caption, skip missing pics, etc.)
+  
+  * Fixed a few XeTeX bugs
+  
+
+List of improvements: 0.5.0
 
   * Saved Configurations are now possible, and these are shared via S/R with other Paratext users of the same project
 

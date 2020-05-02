@@ -199,7 +199,7 @@ def doit(printer):
             text="Error: Unable to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname))
         dialog.format_secondary_text("".join(info.loglines[-20:])+
                                      "----------------------------------------------- \
-                                    \nPTXprint version: 0.5.0 (Beta)\
+                                    \nPTXprint version: 0.5.1 (Beta)\
                                     \n----------------------------------------------- \
                                     \nPossible Causes: \
                                     \n  * The USFM text has a syntax error \
@@ -233,8 +233,10 @@ def newBase(fpath):
         return re.sub('[()&+,. ]', '_', base(fpath).lower())
 
 def gatherIllustrations(jobs, prjid, prjdir, printer):
+    info = printer.info or ptxprint.Info(printer, args.paratext, printer.prjid)
     tmpPicpath = os.path.join(printer.working_dir, "tmpPics")
-    removeTmpPics(tmpPicpath) # This gets re-created later on when we start looking for illustrations
+    folderList = ["tmpPics", "tmpPicLists"] 
+    removeTmpFolders(printer.working_dir, folderList)
     if printer.get("c_useCustomFolder"):
         srchlist = [printer.customFigFolder]
     else:
@@ -260,11 +262,10 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
     for bk in jobs:
         fname = printer.getBookFilename(bk, prjdir)
         if printer.get("c_usePicList"): # Read the PicList to get a list of needed illustrations
-            piclstfname = os.path.join(printer.configPath(False), "PicLists", fname)
-            doti = piclstfname.rfind(".")
+            doti = fname.rfind(".")
             if doti > 0:
-                piclstfname = piclstfname[:doti] + "-draft" + piclstfname[doti:] + ".piclist"
-            piclist = []
+                plfname = fname[:doti] + "-draft" + fname[doti:] + ".piclist"
+            piclstfname = os.path.join(printer.configPath(False), "PicLists", plfname)
             if os.path.exists(piclstfname):
                 with open(piclstfname, "r", encoding="utf-8") as inf:
                     dat = inf.read()
@@ -275,16 +276,10 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
             with open(infname, "r", encoding="utf-8", errors="ignore") as inf:
                 dat = inf.read()
                 inf.close() # Look for USFM2 and USFM3 type inline \fig ... \fig* illustrations
-                fullnamelist += re.findall(r"(?i)\\fig .*?\|(.+?(?!\d{5}[a-c]?).+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)    
-                fullnamelist += re.findall(r'(?i)\\fig .*?src="(.+?\.(?=jpg|tif|png|pdf)...)" .+?\\fig\*', dat)                   # USFM3 non-standard fig files 
+                fullnamelist += re.findall(r"(?i)\\fig .*?\|(.+?(?!\d{5}[a-c]?).+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)
+                fullnamelist += re.findall(r'(?i)\\fig .*?src="(.+?\.(?=jpg|tif|png|pdf)...)" .+?\\fig\*', dat) 
         newBaseList = [newBase(f) for f in fullnamelist]
 
-    # This is a list of the kinds of filenames that we might encounter in an illustration
-    # fullnamelist = ["co00604b.tif", "CO00646B.TIF", "CO00647b.tif", "LB00296.tif", "lb00294b.jpg", "hk00208b.jpg", "cn01700b.jpg", "co00843b.tif", "Temple(Herod's)AerialView_LB00250.tif", "ShepherdsWatchingFlockAtNight_Luke2.8_LB00013.tif", "Jesus(12yrs)&MaryJosephInTemple_Luke2.46-50_CN01647.tif", "JesusDove&JohnTheBaptist_DN00410.tif", "ParalyzedManLoweredThroughRoof_DN00444.tif", "Coin(Denarius-Front&Back)_HK00166.tif", "TempleCurtainTorn+Man_LB00265.tif", "lb00329Cmod.jpg", "Peter&James(in the temple).jpg", "OT08.jpg", "Map of Galilee.pdf"]
-    # for f in fullnamelist:
-        # print(f, " "*(55-len(f)), " --> ", newBase(f)+newExt(f))
-
-    # print("newBaseList:", len(newBaseList), newBaseList)
     if not os.path.exists(tmpPicpath):
         os.mkdir(tmpPicpath)
     for srchdir in srchlist:
@@ -298,6 +293,48 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
                             if newBase(filepath) in newBaseList:
                                 # print(filepath, "-->", newBase(filepath)+origExt.lower())
                                 carefulCopy(printer, filepath, newBase(filepath)+origExt.lower())
+
+    if printer.get("c_usePicList"): # Write out new tmpPicLists
+        extOrder = info.getExtOrder(printer)
+        for bk in jobs:
+            fname = printer.getBookFilename(bk, prjdir)
+            if printer.get("c_usePicList"): # Read the PicList to get a list of needed illustrations
+                doti = fname.rfind(".")
+                if doti > 0:
+                    plfname = fname[:doti] + "-draft" + fname[doti:] + ".piclist"
+                # Now write out the new PicList to a temp folder
+                for f in fullnamelist:
+                    ext = f[-4:].lower()
+                    if ext[1:] == "tif":
+                        ext = ".pdf"
+                    dat = re.sub(r"(?m)%.+?\r?\n", "", dat) # Throw out all comments
+                    tmpPicfname = newBase(f)+ext
+                    if os.path.exists(os.path.join(tmpPicpath, tmpPicfname)):
+                        dat = re.sub(re.escape(f), tmpPicfname, dat)  # might need to wrap the f in |filename.tif|
+                        # print(re.escape(f), "-->", tmpPicfname)
+                    else:
+                        found = False
+                        for ext in extOrder:
+                            tmpPicfname = newBase(f)+"."+ext
+                            if os.path.exists(os.path.join(tmpPicpath, tmpPicfname)):
+                                dat = re.sub(re.escape(f), tmpPicfname, dat)
+                                # print(re.escape(f), "-->", tmpPicfname)
+                                found = True
+                                break
+                        if not found: # Need help from MH - how to prefix the missing lines with a '% ' ?
+                            dat = re.sub(r"(.+?{}.+?\r?\n)".format(re.escape(f)), "", dat)
+                            # print(r"(.+?)({})(.+?\r?\n)".format(re.escape(f)), "-->", "Nothing - DELETED", newBase(f))
+
+                if printer.get("c_fighiderefs"): # del refs (ch:vs-vs) from figure caption
+                    dat = re.sub(r"\|(\d+[:.]\d+([-,]\d+)?)\r?\n".format(re.escape(f)), "|\n", dat)
+
+                tmpiclstpath = os.path.join(printer.working_dir, "tmpPicLists")
+                tmpiclstfname = os.path.join(tmpiclstpath, plfname)
+                if not os.path.exists(tmpiclstpath):
+                    os.mkdir(tmpiclstpath)
+                dat = "% Temporary PicList generated by PTXprint - DO NOT EDIT\n"+dat
+                with open(tmpiclstfname, "w", encoding="utf-8") as outf:
+                    outf.write(dat)
 
 def carefulCopy(printer, srcpath, tgtfile):
     tmpPicPath = os.path.join(printer.working_dir, "tmpPics")
@@ -350,15 +387,17 @@ def removeTempFiles(texfiles,tmpdir,info):
             dialog.run()
             dialog.set_keep_above(False)
             dialog.destroy()
-    tmpPicpath = os.path.join(tmpdir, "tmpPics")
-    removeTmpPics(tmpPicpath)
+    folderList = ["tmpPics", "tmpPicLists"] 
+    removeTmpFolders(tmpdir, folderList)
 
-def removeTmpPics(path2del):
-    # Make sure we're not deleting something closer to Root!
-    if len(path2del) > 30 and os.path.exists(path2del):
-        try:
-            rmtree(path2del) # Preferably remove the previous run's illustrations
-        except OSError:
-            print("Error Deleting temporary illustrations folder: %s" % (path2del))
+def removeTmpFolders(tempFolder, delFolders):
+    for p in delFolders:
+        path2del = os.path.join(tempFolder, p)
+        # Make sure we're not deleting something closer to Root!
+        if len(path2del) > 30 and os.path.exists(path2del):
+            try:
+                rmtree(path2del)
+            except OSError:
+                print("Error Deleting temporary folder: {}".format(path2del))
 
 mainw.run(doit)

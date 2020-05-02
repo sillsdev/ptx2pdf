@@ -1,4 +1,4 @@
-PTXprint 0.5.0 Beta - AboutPTXprint.txt
+PTXprint 0.5.1 Beta - AboutPTXprint.txt
 
 "A tool to rapidly and easily create scripture PDFs of adequate quality for trial publications"
 

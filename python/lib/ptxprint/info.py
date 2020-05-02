@@ -286,7 +286,7 @@ class Info:
             self.dict['project/id'] = self.prjid
         self.dict["document/directory"] = os.path.abspath(docdir).replace("\\","/")
         self.dict['project/adjlists'] = os.path.join(printer.configPath(), "AdjLists/").replace("\\","/")
-        self.dict['project/piclists'] = os.path.join(printer.configPath(), "PicLists/").replace("\\","/")
+        self.dict['project/piclists'] = os.path.join(printer.working_dir, "tmpPicLists/").replace("\\","/")
         self.processFonts(printer)
         self.processHdrFtr(printer)
         # sort out caseless figures folder. This is a hack
@@ -654,20 +654,7 @@ class Info:
         picdir = os.path.join(self['document/directory'], 'tmpPics').replace("\\","/")
         fname = printer.getBookFilename(bk, prjdir)
         infname = os.path.join(prjdir, fname)
-        # If the preferred image type(s) has(have) been specified, parse that string
-        imgord = printer.get("t_imageTypeOrder")
-        imgord = re.sub(r"(?i)(tif)", r"pdf",imgord)
-        extOrder = []
-        if  len(imgord):
-            exts = re.findall("([a-z]{3})",imgord.lower())
-            for e in exts:
-                if e in ["jpg", "png", "pdf"] and e not in extOrder:
-                    extOrder += [e]
-        if not len(extOrder): # If the user hasn't defined a specific order then we can assign this
-            if printer.get("c_useLowResPics"): # based on whether they want small/compressed image formats
-                extOrder = ["jpg", "png", "pdf"] 
-            else:                              # or larger high quality uncompresses image formats
-                extOrder = ["pdf", "png", "jpg"]
+        extOrder = self.getExtOrder(printer)
         with open(infname, "r", encoding="utf-8", errors="ignore") as inf:
             dat = inf.read()
             inf.close()
@@ -685,6 +672,23 @@ class Info:
                 if not found:
                     figchngs.append((f,"")) 
         return(figchngs)
+
+    def getExtOrder(self, printer):
+        # If the preferred image type(s) has(have) been specified, parse that string
+        imgord = printer.get("t_imageTypeOrder")
+        imgord = re.sub(r"(?i)(tif)", r"pdf",imgord)
+        extOrder = []
+        if  len(imgord):
+            exts = re.findall("([a-z]{3})",imgord.lower())
+            for e in exts:
+                if e in ["jpg", "png", "pdf"] and e not in extOrder:
+                    extOrder += [e]
+        if not len(extOrder): # If the user hasn't defined a specific order then we can assign this
+            if printer.get("c_useLowResPics"): # based on whether they want small/compressed image formats
+                extOrder = ["jpg", "png", "pdf"] 
+            else:                              # or larger high quality uncompresses image formats
+                extOrder = ["pdf", "png", "jpg"]
+        return extOrder
 
     def base(self, fpath):
         return os.path.basename(fpath)[:-4]
