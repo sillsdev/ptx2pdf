@@ -144,13 +144,13 @@
   <object class="GtkAdjustment" id="a_maxSpace">
     <property name="lower">50</property>
     <property name="upper">500</property>
-    <property name="value">120</property>
+    <property name="value">150</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="a_minSpace">
     <property name="upper">100</property>
-    <property name="value">40</property>
+    <property name="value">66</property>
     <property name="step_increment">1</property>
     <property name="page_increment">5</property>
   </object>
@@ -5526,7 +5526,7 @@ and so on...</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">4</property>
+                                    <property name="top_attach">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -5541,7 +5541,7 @@ and so on...</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">3</property>
+                                    <property name="top_attach">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -5560,142 +5560,7 @@ so that they don't get split across lines.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkBox">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="margin_left">6</property>
-                                    <property name="margin_right">6</property>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">When justifying paragraphs, and especially when
-trying to shrink or grow a paragraph to take fewer
-or more lines, the horizontal distance that a space
-uses can be adjusted - allowing the text to shrink
-or grow. Lower values will enable a 'tighter' text
-and make it more flexible, but keep the readers in
-mind - and their need to distinguish word-breaks
-with ease.</property>
-                                        <property name="margin_right">10</property>
-                                        <property name="label" translatable="yes">Minimum size of Space:</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkSpinButton" id="s_minSpace">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">When justifying paragraphs, and especially when
-trying to shrink or grow a paragraph to take fewer
-or more lines, the horizontal distance that a space
-uses can be adjusted - allowing the text to shrink
-or grow. Lower values will enable a 'tighter' text
-and make it more flexible, but keep the readers in
-mind - and their need to distinguish word-breaks
-with ease.</property>
-                                        <property name="opacity">0.80000000000000004</property>
-                                        <property name="width_chars">3</property>
-                                        <property name="text" translatable="yes">40</property>
-                                        <property name="caps_lock_warning">False</property>
-                                        <property name="primary_icon_tooltip_text" translatable="yes">When justifying paragraphs, and especially when
-trying to shrink or grow a paragraph to take fewer
-or more lines, the horizontal distance that a space
-uses can be adjusted - allowing the text to shrink
-or grow. Lower values will enable a 'tighter' text
-and make it more flexible, but keep the readers in
-mind - and their need to distinguish word-breaks
-with ease.</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_minSpace</property>
-                                        <property name="climb_rate">5</property>
-                                        <property name="numeric">True</property>
-                                        <property name="value">40</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">1</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
                                     <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkBox">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="margin_left">6</property>
-                                    <property name="margin_right">6</property>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">When justifying paragraphs, and especially when
-trying to shrink or grow a paragraph to take fewer
-or more lines, the horizontal distance that a space
-uses can be adjusted - allowing the text to shrink
-or grow. Larger values will enable a 'looser' text
-and make it more flexible to grow, but be careful
-to avoid 'rivers' or white space in paragraphs.</property>
-                                        <property name="margin_right">10</property>
-                                        <property name="label" translatable="yes">Maximum size of Space:</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkSpinButton" id="s_maxSpace">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">When justifying paragraphs, and especially when
-trying to shrink or grow a paragraph to take fewer
-or more lines, the horizontal distance that a space
-uses can be adjusted - allowing the text to shrink
-or grow. Larger values will enable a 'looser' text
-and make it more flexible to grow, but be careful
-to avoid 'rivers' or white space in paragraphs.</property>
-                                        <property name="opacity">0.80000000000000004</property>
-                                        <property name="width_chars">3</property>
-                                        <property name="text" translatable="yes">40</property>
-                                        <property name="caps_lock_warning">False</property>
-                                        <property name="primary_icon_tooltip_text" translatable="yes">When justifying paragraphs, and especially when
-trying to shrink or grow a paragraph to take fewer
-or more lines, the horizontal distance that a space
-uses can be adjusted - allowing the text to shrink
-or grow. Larger values will enable a 'looser' text
-and make it more flexible to grow, but be careful
-to avoid 'rivers' or white space in paragraphs.</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_maxSpace</property>
-                                        <property name="climb_rate">5</property>
-                                        <property name="numeric">True</property>
-                                        <property name="value">120</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">1</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">1</property>
                                   </packing>
                                 </child>
                               </object>
@@ -5782,19 +5647,19 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                                   <packing>
                                     <property name="left_attach">1</property>
                                     <property name="top_attach">1</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkEntry" id="t_linebreaklocale">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="halign">start</property>
                                     <property name="margin_bottom">4</property>
                                     <property name="width_chars">9</property>
                                     <property name="max_width_chars">4</property>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">4</property>
+                                    <property name="left_attach">5</property>
                                     <property name="top_attach">1</property>
                                   </packing>
                                 </child>
@@ -5833,7 +5698,7 @@ script-specific rendering issues.</property>
                                   <packing>
                                     <property name="left_attach">1</property>
                                     <property name="top_attach">0</property>
-                                    <property name="width">4</property>
+                                    <property name="width">5</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -5849,7 +5714,7 @@ modified here if necessary. </property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">2</property>
+                                    <property name="top_attach">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -5867,7 +5732,7 @@ be specified something like this:
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
-                                    <property name="top_attach">2</property>
+                                    <property name="top_attach">3</property>
                                     <property name="width">3</property>
                                   </packing>
                                 </child>
@@ -5883,7 +5748,7 @@ Break Locale:</property>
                                     <signal name="clicked" handler="onLineBreakChanged" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">2</property>
+                                    <property name="left_attach">3</property>
                                     <property name="top_attach">1</property>
                                     <property name="width">2</property>
                                   </packing>
@@ -5909,6 +5774,119 @@ rendering technologies).</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">4</property>
+                                    <property name="top_attach">3</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSpinButton" id="s_minSpace">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="tooltip_text" translatable="yes">When justifying paragraphs, and especially when
+trying to shrink or grow a paragraph to take fewer
+or more lines, the horizontal distance that a space
+uses can be adjusted - allowing the text to shrink
+or grow. Lower values will enable a 'tighter' text
+and make it more flexible, but keep the readers in
+mind - and their need to distinguish word-breaks
+with ease.</property>
+                                    <property name="opacity">0.80000000000000004</property>
+                                    <property name="max_length">4</property>
+                                    <property name="width_chars">3</property>
+                                    <property name="text" translatable="yes">65</property>
+                                    <property name="caps_lock_warning">False</property>
+                                    <property name="primary_icon_tooltip_text" translatable="yes">When justifying paragraphs, and especially when
+trying to shrink or grow a paragraph to take fewer
+or more lines, the horizontal distance that a space
+uses can be adjusted - allowing the text to shrink
+or grow. Lower values will enable a 'tighter' text
+and make it more flexible, but keep the readers in
+mind - and their need to distinguish word-breaks
+with ease.</property>
+                                    <property name="input_purpose">number</property>
+                                    <property name="adjustment">a_minSpace</property>
+                                    <property name="climb_rate">5</property>
+                                    <property name="numeric">True</property>
+                                    <property name="update_policy">if-valid</property>
+                                    <property name="value">66</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSpinButton" id="s_maxSpace">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="tooltip_text" translatable="yes">When justifying paragraphs, and especially when
+trying to shrink or grow a paragraph to take fewer
+or more lines, the horizontal distance that a space
+uses can be adjusted - allowing the text to shrink
+or grow. Larger values will enable a 'looser' text
+and make it more flexible to grow, but be careful
+to avoid 'rivers' or white space in paragraphs.</property>
+                                    <property name="opacity">0.80000000000000004</property>
+                                    <property name="max_length">4</property>
+                                    <property name="width_chars">3</property>
+                                    <property name="text" translatable="yes">150</property>
+                                    <property name="caps_lock_warning">False</property>
+                                    <property name="primary_icon_tooltip_text" translatable="yes">When justifying paragraphs, and especially when
+trying to shrink or grow a paragraph to take fewer
+or more lines, the horizontal distance that a space
+uses can be adjusted - allowing the text to shrink
+or grow. Larger values will enable a 'looser' text
+and make it more flexible to grow, but be careful
+to avoid 'rivers' or white space in paragraphs.</property>
+                                    <property name="input_purpose">number</property>
+                                    <property name="adjustment">a_maxSpace</property>
+                                    <property name="climb_rate">5</property>
+                                    <property name="numeric">True</property>
+                                    <property name="update_policy">if-valid</property>
+                                    <property name="value">150</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">4</property>
+                                    <property name="top_attach">2</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_spacing">
+                                    <property name="label" translatable="yes">Spacing stretch</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Min:</property>
+                                    <property name="justify">right</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Max:</property>
+                                    <property name="justify">right</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
                                     <property name="top_attach">2</property>
                                   </packing>
                                 </child>

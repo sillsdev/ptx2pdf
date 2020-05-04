@@ -327,7 +327,7 @@
         \setbox0=\lastbox \dimen0=\dp0 \box0 \kern-\dimen0
       \fi}
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}
-      \box2
+      \unvbox2
     }
     \resetvsize
     \ifdim\ht\colA>\baselineskip\plainoutput \else\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
@@ -452,7 +452,7 @@
         \setbox0=\lastbox \dimen0=\dp0 \box0 \kern-\dimen0
       \fi}
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}
-      \box2
+      \unvbox2
     }
     \resetvsize
     \ifdim\ht\colA>\baselineskip\plainoutput\else\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
@@ -734,7 +734,7 @@
         \setbox0=\lastbox \dimen0=\dp0 \box0 \kern-\dimen0
       \fi}
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}
-      \box2
+      \unvbox2
     }
     \global\setbox255=\box\voidb@x
     \resetvsize % reset size of next page since it will not have any 1 column material
@@ -816,12 +816,15 @@
         \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\box\partial}} \fi
 	    \dimen0=\dp\partial
         \ifvoid\bottomins\else \kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \unvbox\bottomins \fi
-	    \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses
-        \iff@rstnote
+        \setbox2=\vbox{
+        \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % output all note classes
+        \iff@rstnote % no notes actually occurred!
           \kern-\dimen0 \vfil
         \else
           \setbox0=\lastbox \dimen0=\dp0 \box0 \kern-\dimen0
-        \fi
+        \fi}
+        \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}
+        \unvbox2
       }}\plainoutput 
     \fi
     \global\c@rrentcols=1

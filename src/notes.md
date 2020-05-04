@@ -23,3 +23,4 @@
 - \ifOmitBookRef for headers
 - can override \defineheaders to define \oddhead, \evenhead, \titlehead (why?)
 - do we need to bring in \calch@ngverseoffset and \HangVerseAlignMarker from PT?
+- Add \SpaceStrechFactor and \SpaceShrinkFactor in .tex setting fontdimen for all used fonts

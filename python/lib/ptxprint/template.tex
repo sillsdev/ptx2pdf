@@ -49,6 +49,8 @@
 \def\bold{{"{fontbold/name}{fontbold/engine}{font/features}{document/script}{document/digitmapping}{fontbold/embolden}{fontbold/slant}"}}
 \def\italic{{"{fontitalic/name}{fontitalic/engine}{font/features}{document/script}{document/digitmapping}{fontitalic/embolden}{fontitalic/slant}"}}
 \def\bolditalic{{"{fontbolditalic/name}{fontbolditalic/engine}{font/features}{document/script}{document/digitmapping}{fontbolditalic/embolden}{fontbolditalic/slant}"}}
+{document/ifspacing}\def\SpaceStretchFactor{{{document/spacestretch}}}
+{document/ifspacing}\def\SpaceShrinkFactor{{{document/spaceshrink}}}
 
 %\extrafont  %% This will be replaced by code for the fallback fonts to be used for special/missing characters
 
@@ -105,6 +107,9 @@
 {notes/xrparagraphednotes}\ParagraphedNotes{{x}}
 %\NumericCallers{{x}}
 
+%\AboveNoteSpace=\medskipamount %6pt plus 2pt minus 2pt
+%\InterNoteSpace=3.5pt
+
 %%%%% Running Header/Footer %%%%%
 \def\HeaderPosition{{{header/headerposition}}}
 \def\FooterPosition{{{header/footerposition}}}
@@ -151,6 +156,14 @@
 {paragraph/ifhyphenate}\input "{/ptxpath}/{project/id}/shared/ptxprint/hyphen-{project/id}.tex"
 {paragraph/ifnothyphenate}\hyphenpenalty=10000
 \exhyphenpenalty=2000
+
+% Extras not yet templated (if ever)
+%\IndentUnit=1in
+%\MariginUnit=1in
+%\ExtarRMargin=0pt
+%\def\MergePDF{{}} % another page border e.g. for watermarks
+%\def\SuperscriptRaise{{0.85ex}}  % in terms of the scaled-down superscript font size
+%\def\SuperscriptFactor{{0.75}} % fontsize scale for a superscript char
 
 %%%%% all normal settings, etc. before this line %%%%%
 
