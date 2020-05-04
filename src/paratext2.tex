@@ -975,16 +975,16 @@
     \edef\r@f{\csname param-7\endcsname} % get reference
     \stripspace\r@f\end/ \end/\relax\r@f\edef\r@f{\p@ram} % strip space
     \edef\c@ption{\ifusfmthree\csname param-1\endcsname\else\csname param-6\endcsname\fi} % get caption
-    \trace{g}{Fig caption: [\c@ption]\if\r@f\relax\else(\the\r@f)\fi}
+    \trace{g}{Fig caption: [\c@ption]\ifx\r@f\relax\else(\r@f)\fi}
     \ifx\c@ption\empty\else
       \everypar={}\let\par\endgraf
       \leftskip=0pt plus 1fil \rightskip=\leftskip \parfillskip=0pt
       \linepenalty=1000
       \s@tbaseline{fig}
-	  % insert caption box
+      % insert caption box
       \noindent\leavevmode
         \s@tfont{fig}\c@ption\unskip
-        \if\r@f\empty\else\nobreak\ (\r@f\unskip)\fi
+        \ifx\r@f\empty\else\nobreak\ (\r@f\unskip)\fi
       \par
     \fi
     \vskip.5\baselineskip
