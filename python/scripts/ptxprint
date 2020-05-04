@@ -307,11 +307,11 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
                 if os.path.exists(piclstfname):
                     with open(piclstfname, "r", encoding="utf-8") as inf:
                         dat = inf.read()
+                        dat = re.sub(r"(?m)%.+?\r?\n", "", dat) # Throw out all comments
                         for f in fullnamelist:
                             ext = f[-4:].lower()
                             if ext[1:] == "tif":
                                 ext = ".pdf"
-                            dat = re.sub(r"(?m)%.+?\r?\n", "", dat) # Throw out all comments
                             tmpPicfname = newBase(f)+ext
                             if os.path.exists(os.path.join(tmpPicpath, tmpPicfname)):
                                 dat = re.sub(re.escape(f), tmpPicfname, dat)  # might need to wrap the f in |filename.tif|
@@ -325,8 +325,8 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
                                         # print(re.escape(f), "-->", tmpPicfname)
                                         found = True
                                         break
-                                if not found: # Need help from MH - how to prefix the missing lines with a '% ' ?
-                                    dat = re.sub(r"(.+?{}.+?\r?\n)".format(re.escape(f)), "", dat)
+                                if not found and printer.get("c_skipmissingimages"):
+                                    dat = re.sub(r"(?im)(^.*{})".format(re.escape(f)), r"% \1", dat)
                                     # print(r"(.+?)({})(.+?\r?\n)".format(re.escape(f)), "-->", "Nothing - DELETED", newBase(f))
 
                         if printer.get("c_fighiderefs"): # del refs (ch:vs-vs) from figure caption

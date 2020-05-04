@@ -169,7 +169,7 @@ class PtxPrinterDialog:
         self.experimental = None
         for p in sorted(allprojects, key = lambda s: s.casefold()):
             self.projects.append([p])
-        wide = int(len(allprojects)/16)
+        wide = int(len(allprojects)/16)+1
         self.builder.get_object("cb_project").set_wrap_width(wide)
 
     def run(self, callback):
@@ -1428,7 +1428,7 @@ class PtxPrinterDialog:
                 #           0         1  2 3          4                          5  
                 # BKN \5 \|\0\|\1\|tr\|\|\4\|\5
                 # MAT 9.2 bringing the paralyzed man to Jesus|CN01684b.jpg|col|tr||key-kālk arsi manvan yēsunaga tarval|9:2
-                m = re.findall(r"\\fig .*\|(.+?\....)\|(....?)\|(.+)?\|(.+)?\|(.+)?\|(\d+[\:\.]\d+([\-,]\d+)?)\\fig\*", dat)
+                m = re.findall(r"\\fig (.+?)\|(.+?\....)\|(....?)\|(.+)?\|(.+)?\|(.+)?\|(\d+[\:\.]\d+([\-,]\d+)?)\\fig\*", dat)
                 if len(m):
                     for f in m:
                         # XeTeX doesn't handle TIFs, so rename all TIF extensions to PDFs
