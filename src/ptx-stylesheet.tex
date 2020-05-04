@@ -35,7 +35,7 @@
 % Macros to process each marker used in a Paratext stylesheet,
 % either ignoring it or saving the parameter as appropriate
 %
-
+\def\h@phen{-}
 % Remember the name of the marker currently being defined
 \def \Marker         #1\relax{\def\m@rker{#1} % store name of marker currently being defined
                               \expandafter\let\csname font<#1>\endcsname\relax
@@ -75,9 +75,9 @@
 \let \Leftmargin\LeftMargin
 \def \RightMargin    #1\relax{\defp@ram{rightmargin}{#1}}
 \let \Rightmargin\RightMargin
-\def \Italic         {\defp@ram{italic}{true}}
-\def \Bold           {\defp@ram{bold}{true}}
-\def \Superscript    {\defp@ram{superscript}{true}}
+\def \Italic         #1\relax{\defbinp@ram{italic}{#1}}
+\def \Bold           #1\relax{\defbinp@ram{bold}{#1}}
+\def \Superscript    #1\relax{\defbinp@ram{superscript}{#1}}
 \def \Regular        {\defp@ram{italic}{false}\defp@ram{bold}{false}\defp@ram{superscript}{false}}
 \let \superscript\Superscript
 \def \SpaceBefore    #1\relax{\defp@ram{spacebefore}{#1}}
@@ -90,7 +90,7 @@
 \def \NoteCallerStyle    #1\relax{\defp@ram{notecallerstyle}{#1}} % ptx2pdf extension
 \def \NoteCallerRaise    #1\relax{\defp@ram{notecallerraise}{#1}}
 \def \TEStyleName    #1\relax{} % Translation Editor extension
-\def \SmallCaps      {\defp@ram{smallcaps}{true}}
+\def \SmallCaps      #1\relax{\defbinp@ram{smallcaps}{#1}}
 \let \Smallcaps\SmallCaps
 \def \BaseLine       #1\relax{\defp@ram{baseline}{#1}}
 % Make a TeX macro based on the StyleType
@@ -104,6 +104,7 @@
 % Constructs a macro name \<marker>:<parameter> to hold the value
 % csname is required here in order to build a macro name containing a colon and possibly a number.
 %
+\def\defbinp@ram#1#2{\edef\t@mp{#2}\defp@ram{#1}{\ifx\temp\h@phen false\else true\fi}}
 \def\defp@ram#1#2{\x@\def\csname\m@rker:#1\endcsname{#2}}
 \def\setp@ram#1#2#3{\x@\xdef\csname#2:#1\endcsname{#3}} % expand now, not later 
 %
