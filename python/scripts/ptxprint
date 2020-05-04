@@ -199,12 +199,12 @@ def doit(printer):
             text="Error: Unable to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname))
         dialog.format_secondary_text("".join(info.loglines[-20:])+
                                      "----------------------------------------------- \
-                                    \nPTXprint version: 0.5.1 (Beta)\
+                                    \nPTXprint version: 0.5.2 (Beta)\
                                     \n----------------------------------------------- \
                                     \nPossible Causes: \
                                     \n  * The USFM text has a syntax error \
                                     \n  * The font file was not installed for ALL users \
-                                    \n  * Pictures could be causing it to fail \
+                                    \n  * Missing pictures \
                                   \n\nTry using option to 'Hide Advanced Settings' \
                                     \nor check option 'Omit Missing Pictures' \
                                     \n         and then try again...")
@@ -315,19 +315,16 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
                             tmpPicfname = newBase(f)+ext
                             if os.path.exists(os.path.join(tmpPicpath, tmpPicfname)):
                                 dat = re.sub(re.escape(f), tmpPicfname, dat)  # might need to wrap the f in |filename.tif|
-                                # print(re.escape(f), "-->", tmpPicfname)
                             else:
                                 found = False
                                 for ext in extOrder:
                                     tmpPicfname = newBase(f)+"."+ext
                                     if os.path.exists(os.path.join(tmpPicpath, tmpPicfname)):
                                         dat = re.sub(re.escape(f), tmpPicfname, dat)
-                                        # print(re.escape(f), "-->", tmpPicfname)
                                         found = True
                                         break
                                 if not found and printer.get("c_skipmissingimages"):
                                     dat = re.sub(r"(?im)(^.*{})".format(re.escape(f)), r"% \1", dat)
-                                    # print(r"(.+?)({})(.+?\r?\n)".format(re.escape(f)), "-->", "Nothing - DELETED", newBase(f))
 
                         if printer.get("c_fighiderefs"): # del refs (ch:vs-vs) from figure caption
                             dat = re.sub(r"\|(\d+[:.]\d+([-,]\d+)?)\r?\n".format(re.escape(f)), "|\n", dat)

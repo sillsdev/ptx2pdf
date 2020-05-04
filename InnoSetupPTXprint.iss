@@ -2,10 +2,10 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "PTXprint"
-#define MyAppVersion "0.5.1 Beta"
+#define MyAppVersion "0.5.2 Beta"
 #define MyAppPublisher "SIL International"
 #define MyAppURL "http://software.sil.org/"
-#define MyAppExeName "PTXprint-0.5.1.exe"
+#define MyAppExeName "PTXprint-0.5.2.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -26,7 +26,7 @@ DisableProgramGroupPage=yes
 LicenseFile=C:\ptx2pdf\docs\inno-docs\MIT License.txt
 InfoBeforeFile=C:\ptx2pdf\docs\inno-docs\AboutPTXprint.txt
 InfoAfterFile=C:\ptx2pdf\docs\inno-docs\ReleaseNotes.txt
-OutputBaseFilename=SetupPTXprint(0.5.1-beta)
+OutputBaseFilename=SetupPTXprint(0.5.2-beta)
 SetupIconFile=icon\Google-Noto-Emoji-Objects-62859-open-book.ico
 Compression=lzma
 SolidCompression=yes
@@ -39,7 +39,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "dist\ptxprint\PTXprint-0.5.1.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "dist\ptxprint\PTXprint-0.5.2.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; definitely needed: libepoxy-0.dll, libiconv-2.dll
 Source: "dist\ptxprint\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "icons,locale,libcrypto-1_1-x64.dll,librsvg-2-2.dll"
 Source: "dist\ptxprint\share\locale\es\*"; DestDir: "{app}\share\locale\es\"; Flags: ignoreversion recursesubdirs createallsubdirs

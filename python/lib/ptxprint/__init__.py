@@ -702,7 +702,7 @@ class PtxPrinterDialog:
 
     def onHyphenateClicked(self, c_hyphenate):
         prjid = self.get("cb_project")
-        fname = os.path.join(self.working_dir, 'hyphen-{}.tex'.format(prjid))
+        fname = os.path.join(self.settings_dir, prjid, "shared", "ptxprint", 'hyphen-{}.tex'.format(prjid))
         if not os.path.exists(fname) and self.get("c_hyphenate"):
             dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
                      buttons=Gtk.ButtonsType.OK, message_format="Warning: Standard (English) Hyphenation rules will be used.")
@@ -1188,7 +1188,7 @@ class PtxPrinterDialog:
                 bks = bks[0]
             except IndexError:
                 bks = "No book selected!"
-        titleStr = "PTXprint [0.5.1 Beta]" + prjid + " (" + bks + ") " + (self.get("cb_savedConfig") or "")
+        titleStr = "PTXprint [0.5.2 Beta]" + prjid + " (" + bks + ") " + (self.get("cb_savedConfig") or "")
         self.builder.get_object("ptxprint").set_title(titleStr)
 
     def editFile(self, file2edit, loc="wrk"):
@@ -1209,6 +1209,7 @@ class PtxPrinterDialog:
         else:
             # print("Folder location for {} unspecified".format(fpath))
             return
+        print(fpath)
         self.builder.get_object("gr_editableButtons").set_visible(True)
         self.builder.get_object("l_{}".format(pgnum)).set_text(file2edit)
         self.builder.get_object("l_{}".format(pgnum)).set_tooltip_text(fpath)
@@ -1428,7 +1429,8 @@ class PtxPrinterDialog:
                 #           0         1  2 3          4                          5  
                 # BKN \5 \|\0\|\1\|tr\|\|\4\|\5
                 # MAT 9.2 bringing the paralyzed man to Jesus|CN01684b.jpg|col|tr||key-kālk arsi manvan yēsunaga tarval|9:2
-                m = re.findall(r"\\fig (.+?)\|(.+?\....)\|(....?)\|(.+)?\|(.+)?\|(.+)?\|(\d+[\:\.]\d+([\-,]\d+)?)\\fig\*", dat)
+                m = re.findall(r"\\fig .*?\|(.+?\....)\|(....?)\|(.+)?\|(.+)?\|(.+)?\|(\d+[\:\.]\d+([\-,]\d+)?)\\fig\*", dat)
+                print("Found {} illustrations".format(len(m)))
                 if len(m):
                     for f in m:
                         # XeTeX doesn't handle TIFs, so rename all TIF extensions to PDFs
@@ -1533,6 +1535,7 @@ class PtxPrinterDialog:
 
     def onEditPicListClicked(self, btn_editPicList):
         pgnum = 1
+        self.builder.get_object("c_usePicList").set_active(True)
         self.builder.get_object("nbk_Main").set_current_page(7)
         self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
         self.onViewerChangePage(None,None,pgnum)
