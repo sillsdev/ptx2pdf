@@ -164,6 +164,9 @@ class Info:
         "document/ifspacing":       ("c_spacing", lambda w,v :"" if v else "%"),
         "document/spacestretch":    ("s_maxSpace", lambda w,v : str((int(v) - 100) / 100.)),
         "document/spaceshrink":     ("s_minSpace", lambda w,v : str((100 - int(v)) / 100.)),
+        "document/abovenotespace":      ("s_abovenotespace", lambda w,v: v),
+        "document/abovenotestretch":    ("s_abovenotestretch", lambda w,v: v),
+        "document/abovenoteshrink":     ("s_abovenoteshrink", lambda w,v: v),
 
         "document/ifdiglot":        ("c_diglot", lambda w,v :"" if v else "%"),
         "document/diglotsettings":  ("l_diglotString", lambda w,v: w.builder.get_object("l_diglotString").get_text() if w.get("c_diglot") else ""),
