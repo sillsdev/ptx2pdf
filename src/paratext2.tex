@@ -37,7 +37,6 @@
 
 \def\MSG{\immediate\write16 } % shorthand to write a message to the terminal
 \def\TRACE#1{} % default - consume messages
-\def\TRACEOUT#1{\trace{o}{#1}}%\let\TRACEOUT=\MSG % use this to echo them
 \def\wlog{\immediate\write-1 } % write message to log file only
 \newif\iftemp \tempfalse
 
@@ -334,7 +333,7 @@
     \xdef\p@gefirstmark{}
     \xdef\p@gebotmark{}
     \global\holdinginserts=1
-    \ifrerunsavepartialpaged\TRACEOUT{onecoltrial: rerunsavepartialpage}\global\output={\savepartialpage}\global\rerunsavepartialpagedfalse
+    \ifrerunsavepartialpaged\trace{o}{onecoltrial: rerunsavepartialpage}\global\output={\savepartialpage}\global\rerunsavepartialpagedfalse
     \else\global\output={\onecol}\fi
   \else % the contents of the "galley" didn't fit into the actual page,
         % so reduce \vsize and try again with an earlier break
@@ -392,13 +391,13 @@
       %\setbox\partial=\vbox{\hskip\columnshift\box\partial}
     \fi
     % reset parameters for 2-column formatting
-    \global\hsize=\colwidth\TRACEOUT{doublecolumn vsize doubles}
+    \global\hsize=\colwidth\trace{o}{doublecolumn vsize doubles}
     \global\vsize=2\textheight % in 2 col mode you can put twice the height of text
 	\global\advance\vsize by -2\ht\partial % subtract height of 1 column material
 	\global\advance\vsize by 2\baselineskip % don't get caught short by 1/2 line or so
 	% make a macro reset vsize for remaining pages which do not have 1 column material
-    \TRACEOUT{Going to 2 col, textheight \the\textheight}
-    \gdef\resetvsize{\TRACEOUT{resetvsize2}\global\vsize=2\textheight \global\advance\vsize by \baselineskip} 
+    \trace{o}{Going to 2 col, textheight \the\textheight}
+    \gdef\resetvsize{\trace{o}{resetvsize2}\global\vsize=2\textheight \global\advance\vsize by \baselineskip} 
     \global\output={\twocols}
     \global\c@rrentcols=2
     % top and bottom inserts effectively use twice their height
@@ -420,7 +419,7 @@
   \global\count\th@cl@ss=\ifp@ranotes 0 \else \count255 \fi
   \global\skip\th@cl@ss=\AboveNoteSpace }
 
-\def\resetvsize{\TRACEOUT{resetvsize}\global\vsize=\textheight} 
+\def\resetvsize{\trace{o}{resetvsize}\global\vsize=\textheight} 
 
 \def\msg#1{\immediate\write16{#1}}
 
@@ -433,7 +432,7 @@
   \setbox\colA=\vbox{\unvbox\colA}
   % and check if it all fit; if not, we'll have to back up and try again
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
-  \TRACEOUT{savepartialpage \the\ht\colA rem=\the\ht255}
+  \trace{o}{savepartialpage \the\ht\colA rem=\the\ht255}
   \iffitonpage
     \global\setbox\partial=\vbox{
       \ifvoid\partial\else \unvbox\partial \fi
@@ -521,8 +520,9 @@
   \global\setbox\th@cl@ss=\box\voidb@x}
 
 % increment or decrement a given \dimen by the height of a given \box, unless void
+% round to baselineskip assuming 0.5\baselineskip already added
 \def\incr#1#2{\ifvoid#2\else\advance#1 by \skip#2\advance#1 by \ht#2\fi}
-\def\decr#1#2{\ifvoid#2\else\advance#1 by-\skip#2\advance#1 by-\ht#2\fi}
+\def\decr#1#2{\ifvoid#2\else\advance#1 by -\skip#2\advance#1 by -\ht#2\fi}
 
 % allocate some named registers for the \trial routine to use
 \newbox\s@vedpage % to save the page contents for re-splitting columns
@@ -546,7 +546,7 @@
 
 \def\spl@tcols#1{
     % even if \vsplit to 0pt, TeX will always pull one line from the input box over
-    %\TRACEOUT{split params maxdepth=\the\splitmaxdepth, topskip=\the\splittopskip, colhtA=\the\colhtA, colhtB=\the\colhtB}
+    %\trace{o}{split params maxdepth=\the\splitmaxdepth, topskip=\the\splittopskip, colhtA=\the\colhtA, colhtB=\the\colhtB}
     \setbox9=\copy#1
     \setbox\colA=\vsplit#1 to \colhtA \ifnum\badness>999999\setbox#1=\box9\setbox\colA\box\voidb@x\else\setbox\colA=\vbox{\unvbox\colA}\fi
     \setbox9=\copy#1
@@ -559,12 +559,12 @@
   % and check if it all fit; if not, we'll have to back up and try again
   \ifvoid0 \fitonpagetrue \else \fitonpagefalse \fi
   \rebalancefalse
-  \TRACEOUT{first \the\availht . col=\the\ht\colA, \the\colhtA . second col=\the\ht\colB, \the\colhtB . rem=\the\ht0}
+  \trace{o}{first \the\availht . col=\the\ht\colA, \the\colhtA . second col=\the\ht\colB, \the\colhtB . rem=\the\ht0}
   \iffitonpage
     \shortavail=\colhtB \advance\shortavail by -\ht\colB
     \advance\shortavail by -\colhtA \advance\shortavail by \ht\colA
     \ifdim\shortavail>5\baselineskip
-      \TRACEOUT{Rebalance trying from average \the\shortavail of \the\colhtA =\the\ht\colA, \the\colhtB =\the\ht\colB}
+      \trace{o}{Rebalance trying from average \the\shortavail of \the\colhtA =\the\ht\colA, \the\colhtB =\the\ht\colB}
       \divide\shortavail 2% \advance\shortavail by -0.5\ht\colA \advance\shortavail by -0.5\ht\colB
       \advance\colhtA by -\shortavail \advance\colhtB by -\shortavail
       \loopcount=0
@@ -574,7 +574,7 @@
         \spl@tcols0
         \ifvoid0\loopcount=10\fi  
         \ifnum\loopcount=10\repeat % so ugly you can't \else\repeat
-      \TRACEOUT{Rebalance starting with \the\colhtA, \the\colhtB}
+      \trace{o}{Rebalance starting with \the\colhtA, \the\colhtB}
     \fi
     \g@tcolhts
     \ifunbalanced\shortavail=\availht\else\ifdim\colhtB<\colhtA \rebalancetrue \shortavail=\colhtA\fi\fi
@@ -589,17 +589,17 @@
         \setbox0=\copy\s@vedpage
         \s@tcolhts{\shortavail}\spl@tcols0
 		% if something left in box0, it didn't fit, quit loop
-        \TRACEOUT{re-balancing \the\ht\colA =\the\colhtA, \the\ht\colB =\the\colhtB, from \the\shortavail, rem \the\ht0}
+        \trace{o}{re-balancing \the\ht\colA =\the\colhtA, \the\ht\colB =\the\colhtB, from \the\shortavail, rem \the\ht0}
         \ifrem@inder\else\ifvoid0\else
             \advance\shortavail by \baselineskip
-            \TRACEOUT{rebalance found extra back to \the\shortavail}\rebalancefalse
+            \trace{o}{rebalance found extra back to \the\shortavail}\rebalancefalse
             \setbox0=\copy\s@vedpage
             \s@tcolhts{\shortavail}\spl@tcols0
         \fi\fi
         % if either column height ends up negative, rollback and bail
         \ifrebalance\ifnum\ifdim\colhtA<0pt 1\else\ifdim\colhtB<0pt 1\else 0\fi\fi =1
             \advance\shortavail by \baselineskip
-            \TRACEOUT{rebalance found column height < 0, back to \the\shortavail}\rebalancefalse
+            \trace{o}{rebalance found column height < 0, back to \the\shortavail}\rebalancefalse
             \setbox0=\copy\s@vedpage
             \s@tcolhts{\shortavail}\spl@tcols0
         \fi\fi
@@ -610,7 +610,7 @@
         \ifdim\dimen0<.5\baselineskip\ifdim\dimen0>-.5\baselineskip
           \shortavail=\colhtB\incr{\shortavail}{\toprightins}\incr{\shortavail}{\bottomrightins}
           \ifdim\dimen0>0pt\else\advance\shortavail by -\dimen0\fi
-          \TRACEOUT{Best height \the\shortavail}\rebalancefalse
+          \trace{o}{Best height \the\shortavail}\rebalancefalse
         \fi\fi
 		% give up if target size less than 2 lines (should not happen)
         \ifdim\shortavail<\baselineskip \MSG{Rebalancing bailed for short block}
@@ -621,12 +621,13 @@
         \ifrebalance\repeat
     \fi
     \s@tcolhts{\shortavail}\spl@tcols\s@vedpage
-    \TRACEOUT{A = \the\colhtA , B = \the\colhtB , remaining = \the\ht\s@vedpage}
+    \trace{o}{A = \the\colhtA , B = \the\colhtB , remaining = \the\ht\s@vedpage}
   \fi
 }
 
 \def\c@lcboxheights{
     \g@tcolhts
+    \trace{b}{BALANCE pageout: cols=2: texta=\the\ht\colA , \the\dp\colA : textb=\the\ht\colB , \the\dp\colB : partial=\the\ht\partial, \the\dp\partial : topins=\the\ht\topins+\the\skip\topins, \the\ht\topleftins+\the\skip\topleftins, \the\ht\toprightins+\the\skip\toprightins : bottomins=\the\ht\bottomins+\the\skip\bottomins, \the\ht\bottomleftins+\the\skip\bottomleftins, \the\ht\bottomrightins+\the\skip\bottomrightins}
     \dimen0=\dp\colA \setbox\colA=\vbox to \availht{\unvbox\topleftins\box\colA\vfil\unvbox\bottomleftins}\dp\colA=\dimen0
     \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\else
       \ifdim\dimen0<\dp\colB\dimen0=\dp\colB\fi \setbox\colB=\vbox to \availht{\unvbox\toprightins\box\colB\vfil\unvbox\bottomrightins}\dp\colB=\dimen0
@@ -656,7 +657,7 @@
   \availht=\trialheight % amount of space we think is available
   \f@rstnotetrue
   \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
-  \TRACEOUT{availht = \the\availht, depth = \the\dp255}
+  \trace{o}{availht = \the\availht, depth = \the\dp255}
   \advance\availht -\dp255
   % Round to lines accurate to 1/8pt in lineskip. 1/10pt causes overflow on longer pages. Support two column legal.
   \dimen0=8\baselineskip
@@ -672,7 +673,7 @@
 \def\savepartialpaged{%
   \c@lcavailht
   \setbox\s@vedpage=\vbox{\unvbox255}
-  \TRACEOUT{balancing from savepartialpaged, height=\the\ht\s@vedpage}
+  \trace{o}{balancing from savepartialpaged, height=\the\ht\s@vedpage}
   \rem@inderfalse\balanced
   \iffitonpage
     \c@lcboxheights
@@ -682,7 +683,7 @@
       % bodge the partial box which should really have been properly textually merged
       % the problem is that savepartialpaged can get called twice in succession because
       % not all the output text (after a \singlecolumn) was passed the first time
-      \ifvoid\partial\else\TRACEOUT{nested partial}\unvbox\partial\vskip -2\dimen5\fi
+      \ifvoid\partial\else\trace{o}{nested partial}\unvbox\partial\vskip -2\dimen5\fi
       \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
       \dimen5=\textwidth\advance\dimen5 by -\ExtraRMargin\advance\dimen5 by -\columnshift %
       \vbox{\hbox to \dimen5{%\hbox to \columnshift{}
@@ -705,10 +706,12 @@
 \def\twocoltrial{% trial formatting to see if current contents will fit on the page
   \c@lcavailht
   \setbox\s@vedpage=\copy255
-  \TRACEOUT{balance from twocoltrial height \the\ht\s@vedpage}
+  \trace{o}{balance from twocoltrial height \the\ht\s@vedpage}
   \rem@indertrue\balanced
   \dimen5=\baselineskip
-  \iffitonpage\ifvoid\s@vedpage\else\fitonpagefalse\fi\fi% \dimen5=\ht\s@vedpage\fi\fi
+  \iffitonpage\ifvoid\s@vedpage\else\fitonpagefalse\fi
+  \else\ifnum\vsize<0 \fitonpagetrue\fi % no fit so dump the page we have now and try again with a new one.
+  \fi% \dimen5=\ht\s@vedpage\fi\fi
   \iffitonpage
     \c@lcboxheights
     \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\fi
@@ -716,7 +719,6 @@
     \def\pagecontents{%
       \trace{o}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins}%
       \dimen1=\textwidth\advance\dimen1 by \ExtraRMargin
-      \trace{b}{BALANCE pageout: cols=2: texta=\the\ht\colA , \the\dp\colA : textb=\the\ht\colB , \the\dp\colB : partial=\the\ht\partial, \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins}
       \ifvoid\partial\else %\msg{2colout partial: \the\ht\partial}\hskip\columnshift
         \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}}\fi % output partial page
       \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
@@ -747,7 +749,7 @@
     \else\global\output={\twocols}\unvbox\s@vedpage\fi
   \else % the contents of the "galley" didn't fit into the columns,
         % so reduce \vsize and try again with an earlier break
-    \TRACEOUT{Reducing vsize \the\vsize, by \the\dimen5}
+    \trace{o}{Reducing vsize \the\vsize, by \the\dimen5}
     \global\advance\vsize by -\dimen5
 	% clear insertions
     \@mptyinserts
@@ -795,13 +797,13 @@
   \global\holdinginserts=0
   \global\output={\savepartialpaged}
   \global\setbox\galley=\copy255 \global\setbox\galley=\vbox{\unvbox\galley}
-  \TRACEOUT{sppb hIns=\the\holdinginserts, \the\ht\partial, \the\ht255, \the\ht\galley}
+  \trace{o}{sppb hIns=\the\holdinginserts, \the\ht\partial, \the\ht255, \the\ht\galley}
   \unvbox255\eject
 }
 
 % to switch back to single column, we reset the page size parameters
 \def\singlecolumn{%
-  \TRACEOUT{singlecolumn}%\tracingmacros=1
+  \trace{o}{singlecolumn}%\tracingmacros=1
   \ifnum\c@rrentcols>1
     \ifhe@dings\endhe@dings\fi
     \temptrue
@@ -828,7 +830,7 @@
       }}\plainoutput 
     \fi
     \global\c@rrentcols=1
-    \TRACEOUT{resetting resetvsize for singlecolumn}\def\resetvsize{\TRACEOUT{resetvsize}\global\vsize=\textheight} 
+    \trace{o}{resetting resetvsize for singlecolumn}\def\resetvsize{\trace{o}{resetvsize}\global\vsize=\textheight} 
     \global\output={\onecol}
     \global\holdinginserts=1
     \count255=1000
