@@ -102,6 +102,12 @@
     <property name="step_increment">0.049999999776482583</property>
     <property name="page_increment">0.10000000000000001</property>
   </object>
+  <object class="GtkAdjustment" id="a_internote">
+    <property name="upper">100</property>
+    <property name="value">3.5</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">1</property>
+  </object>
   <object class="GtkAdjustment" id="a_italice">
     <property name="upper">10</property>
     <property name="step_increment">0.10000000000000001</property>
@@ -5832,10 +5838,44 @@ must exist between the main text body and the
 footnote and cross-reference area at the bottom
 of the page.</property>
                                     <property name="halign">end</property>
+                                    <property name="margin_left">6</property>
                                     <property name="label" translatable="yes">Space Above:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">end</property>
+                                    <property name="margin_left">6</property>
+                                    <property name="label" translatable="yes">Inter note space:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSpinButton" id="s_internote">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="margin_right">6</property>
+                                    <property name="text" translatable="yes">3.5</property>
+                                    <property name="secondary_icon_tooltip_text" translatable="yes">Amount of vertical space between note paragraphs.</property>
+                                    <property name="input_purpose">number</property>
+                                    <property name="adjustment">a_internote</property>
+                                    <property name="climb_rate">0.10000000000000001</property>
+                                    <property name="digits">1</property>
+                                    <property name="numeric">True</property>
+                                    <property name="update_policy">if-valid</property>
+                                    <property name="value">3.5</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
                                     <property name="top_attach">0</property>
                                   </packing>
                                 </child>
@@ -5902,6 +5942,7 @@ the appropriate script, so leave this
 set as "Default" unless there are
 script-specific rendering issues.</property>
                                         <property name="halign">start</property>
+                                        <property name="margin_right">6</property>
                                         <property name="resize_mode">queue</property>
                                         <property name="model">ls_scripts</property>
                                         <property name="wrap_width">6</property>
@@ -5957,6 +5998,7 @@ Some: Spaces between words are adjusted, but the rendering of individual words i
 
 Full: Spaces between words are adjusted, and the rendering of individual words *IS* affected by the spaces.</property>
                                         <property name="halign">end</property>
+                                        <property name="margin_left">6</property>
                                         <property name="margin_top">1</property>
                                         <property name="margin_bottom">1</property>
                                         <property name="label" translatable="yes">Cross-space 
@@ -5979,6 +6021,7 @@ Some: Spaces between words are adjusted, but the rendering of individual words i
 
 Full: Spaces between words are adjusted, and the rendering of individual words *IS* affected by the spaces.</property>
                                         <property name="halign">start</property>
+                                        <property name="margin_right">6</property>
                                         <property name="active">0</property>
                                         <property name="has_entry">True</property>
                                         <property name="active_id">0</property>
@@ -6011,6 +6054,7 @@ Break Locale:</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="halign">end</property>
+                                        <property name="margin_left">6</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -6058,6 +6102,7 @@ adjustable - and allows a greater degree
 of flexibility when trying to shrink or
 grow paragrahs when balancing pages.</property>
                                         <property name="halign">end</property>
+                                        <property name="margin_left">6</property>
                                         <property name="image_position">right</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
@@ -6097,6 +6142,7 @@ mind - and their need to distinguish word-breaks
 with ease.</property>
                                         <property name="opacity">0.80000000000000004</property>
                                         <property name="halign">start</property>
+                                        <property name="margin_right">6</property>
                                         <property name="max_length">3</property>
                                         <property name="width_chars">3</property>
                                         <property name="text" translatable="yes">66</property>
@@ -6121,6 +6167,7 @@ with ease.</property>
                                         <property name="tooltip_text" translatable="yes">Maximum size % that a space
 can grow to when necessary.</property>
                                         <property name="halign">end</property>
+                                        <property name="margin_left">6</property>
                                         <property name="label" translatable="yes">Max:</property>
                                         <property name="justify">right</property>
                                       </object>
@@ -6143,6 +6190,7 @@ and make it more flexible to grow, but be careful
 to avoid 'rivers' or white space in paragraphs.</property>
                                         <property name="opacity">0.80000000000000004</property>
                                         <property name="halign">start</property>
+                                        <property name="margin_right">6</property>
                                         <property name="max_length">4</property>
                                         <property name="width_chars">2</property>
                                         <property name="text" translatable="yes">150</property>
@@ -6181,6 +6229,7 @@ Paratext project's language settings should
 automatically show up here. These may be
 modified here if necessary. </property>
                                         <property name="halign">end</property>
+                                        <property name="margin_left">6</property>
                                         <property name="label" translatable="yes">Font Features:</property>
                                       </object>
                                       <packing>
@@ -6202,6 +6251,7 @@ For example, Graphite font features may
 be specified something like this:
       litr=1,dig0=1,dig4=1,dg69=0,dig7=1</property>
                                         <property name="halign">start</property>
+                                        <property name="margin_right">6</property>
                                         <property name="hexpand">False</property>
                                         <property name="width_chars">32</property>
                                       </object>
