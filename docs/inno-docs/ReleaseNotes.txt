@@ -1,5 +1,18 @@
-PTXprint 0.5.1 Beta Release Notes
-2nd May 2020
+PTXprint 0.5.3 Beta Release Notes
+5th May 2020
+
+List of improvements: 0.5.3
+
+  * Colour has been added - so that if \Color is defined in the .sty file(s) those colours can be applied in the text if the option is Enabled on the Advanced tab
+  
+  * Eliminate looping in the UI when changing projects and there are multiple Saved Configurations
+  
+  * Eliminate an endless loop when trying to balance a tight page (XeTeX)
+  
+  * Handle \Bold - in .sty and also for Italic, Underline, etc.
+  
+  * Fix Empty (ch:vs) refs in captions 
+
 
 List of improvements: 0.5.1
 
@@ -53,6 +66,7 @@ List of improvements: 0.5.0
   * A splash-screen pops up when PTXprint starts, letting you know that something's actually happening
 
   * An About dialog has been added, with an MIT license and credits
+
 
 Bug fixes:
 
