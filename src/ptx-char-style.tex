@@ -111,6 +111,7 @@
  \else \global\let\@NEXT\relax \fi \@NEXT}
 \let\@REPEAT\fi
 
+\newif\ifColorFonts \ColorFontstrue
 %
 % Set up the font attributes for a given marker (used by all style types, not only char styles)
 %
@@ -135,6 +136,10 @@
   \ifx\p@ram\tru@
     \edef\typef@ce{\typef@ce\SmallCapsSuffix}%
   \fi
+  \getp@ram{color}{#1}%
+  \ifColorFonts\ifx\p@ram\relax\else
+    \edef\typef@ce{\typef@ce :color=\p@ram}%
+  \fi\fi
   \getp@ram{superscript}{#1}% scale down by \SuperscriptFactor if superscripted style
   \dimen0=\ifx\p@ram\tru@ \SuperscriptFactor\fi\FontSizeUnit%
   \getp@ram{fontsize}{#1}%

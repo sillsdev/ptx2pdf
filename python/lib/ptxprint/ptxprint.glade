@@ -5839,15 +5839,6 @@ of the page.</property>
                                     <property name="top_attach">0</property>
                                   </packing>
                                 </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
                               </object>
                             </child>
                             <child type="label">
@@ -5926,7 +5917,23 @@ script-specific rendering issues.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <placeholder/>
+                                      <object class="GtkCheckButton" id="c_colorfonts">
+                                        <property name="label" translatable="yes">Color Fonts</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">Do we support or ignore \Color specifications in stylesheets?</property>
+                                        <property name="halign">end</property>
+                                        <property name="margin_left">6</property>
+                                        <property name="margin_right">6</property>
+                                        <property name="active">True</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">2</property>
+                                      </packing>
                                     </child>
                                   </object>
                                   <packing>
@@ -6220,6 +6227,8 @@ needs to be disabled (for example to
 compare the outputs of two different
 rendering technologies).</property>
                                         <property name="halign">end</property>
+                                        <property name="margin_left">6</property>
+                                        <property name="margin_right">6</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
