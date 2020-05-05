@@ -627,11 +627,11 @@ class Info:
             self.localChanges.append((None, regex.compile(r"(\\[fx]q .+?):* (\\[fx]t)", flags=regex.M), r"\1: \2")) 
         
         if printer.get("c_keepBookWithRefs"): # keep Booknames and ch:vs nums together within \xt and \xo 
-            # self.localChanges.append((None, regex.compile(r" (\d+:\d+(-\d+)?\))", flags=regex.M), r"\u00A0\1"))
-            self.localChanges.append((regex.compile(r"(\\x[to] [^\\]+)"), regex.compile(r" (\d+:\d+([-,]\d+)?)"), r"~\1"))
+            self.localChanges.append((regex.compile(r"(\\[xf]t [^\\]+)"), regex.compile(r" (\d+:\d+([-,]\d+)?)"), r"\u00A0\1"))
 
         # Paratext marks no-break space as a tilde ~
         self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
+
         # Remove the + of embedded markup (xetex handles it)
         self.localChanges.append((None, regex.compile(r"\\\+", flags=regex.M), r"\\"))  
             

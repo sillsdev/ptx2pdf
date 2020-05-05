@@ -320,7 +320,7 @@ class PtxPrinterDialog:
         self.builder.get_object("c_hideAdvancedSettings").set_sensitive(True)
         if len(self.get("cb_savedConfig")):
             lockBtn = self.builder.get_object("btn_lockunlock")
-            lockBtn.set_label("Lockdown  ;-)")
+            lockBtn.set_label("Lock Config")
             lockBtn.set_sensitive(True)
             self.builder.get_object("t_invisiblePassword").set_text("")
             self.builder.get_object("btn_saveConfig").set_sensitive(True)
@@ -331,8 +331,7 @@ class PtxPrinterDialog:
             self.config_dir = self.configPath()
             self.builder.get_object("t_configNotes").set_text("")
             lockBtn = self.builder.get_object("btn_lockunlock")
-            # lockBtn.set_label("Lock Config")
-            lockBtn.set_label("Lockdown  ;-)")
+            lockBtn.set_label("Lock Config")
             lockBtn.set_sensitive(False)
             self.builder.get_object("t_invisiblePassword").set_text("")
             # print("\nconfig_dir: ", self.config_dir)
@@ -460,7 +459,6 @@ class PtxPrinterDialog:
         if self.get("t_invisiblePassword") == "":
             status = True
             lockBtn.set_label("Lock Config")
-            # lockBtn.set_label("Lockdown  ;-)")
         else:
             status = False
             lockBtn.set_label("Unlock Config")
@@ -1099,7 +1097,7 @@ class PtxPrinterDialog:
         self.builder.get_object("btn_saveConfig").set_sensitive(False)
         self.builder.get_object("btn_deleteConfig").set_sensitive(False)
         lockBtn = self.builder.get_object("btn_lockunlock")
-        lockBtn.set_label("Lockdown  ;-)")
+        lockBtn.set_label("Lock Config")
         lockBtn.set_sensitive(False)
         if not self.initialised:
             self.pendingPid = self.get("cb_project")
@@ -1183,9 +1181,6 @@ class PtxPrinterDialog:
         self.builder.get_object("l_prjdir").set_label(os.path.join(self.settings_dir, self.prjid))
         self.builder.get_object("l_settings_dir").set_label(self.config_dir or "")
         self.builder.get_object("l_working_dir").set_label(self.working_dir)
-        # print("\nsettings_dir:", self.settings_dir)
-        # print("config_dir:", self.config_dir)
-        # print("working_dir:", self.working_dir)
         self.set("c_prettyIntroOutline", False)  # This is OFF by default, they need to turn it on specifically
         self.setEntryBoxFont()
         self.onDiglotDimensionsChanged(None)
@@ -1203,7 +1198,7 @@ class PtxPrinterDialog:
                 bks = bks[0]
             except IndexError:
                 bks = "No book selected!"
-        titleStr = "PTXprint [0.5.2 Beta]" + prjid + " (" + bks + ") " + (self.get("cb_savedConfig") or "")
+        titleStr = "PTXprint [0.5.3 Beta]" + prjid + " (" + bks + ") " + (self.get("cb_savedConfig") or "")
         self.builder.get_object("ptxprint").set_title(titleStr)
 
     def editFile(self, file2edit, loc="wrk"):
