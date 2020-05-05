@@ -186,7 +186,10 @@
   \fi
   \getp@ram{spacebefore}{\m@rker}% output <spacebefore> for this style
   \ifx\p@ram\relax \else
-    \ifhe@dings\nobreak\fi \ifnsp@cebefore\nsp@cebeforefalse\else\vskip\p@ram\verticalsp@ceunit\fi
+    \ifhe@dings\nobreak\fi
+    \ifnsp@cebefore\nsp@cebeforefalse
+      \ifnum\p@ram<0\vskip\p@ram\verticalsp@ceunit\fi
+    \else\vskip\p@ram\verticalsp@ceunit\fi
   \fi
   \global\startparatrue
   \everypar={%
