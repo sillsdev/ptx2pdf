@@ -30,6 +30,18 @@
 
 % Character style macros
 
+\def\hex#1{\count0=#1\relax
+  \edef\r@s{} \count1=0
+  \loop
+    \count2=\count0 \divide\count2 by 16 \multiply\count2 by 16
+    \advance\count0 by -\count2
+    \ifnum\count0=0\edef\r@s{0\r@s}\else\ifnum\count0<10 \edef\r@s{\number\count0 \r@s}
+    \else\advance\count0 by -10 \edef\r@s{\ifcase\count0 A\or B\or C\or D\or E\or F\fi\r@s}\fi\fi
+    \divide\count2 by 16 \count0=\count2 \advance\count1 by 1
+    \ifnum\count1<6\repeat
+  \count0=0 \count1=0 \count2=0
+}
+
 %
 % Each USFM character style marker is defined to call \ch@rstyle with the marker name as parameter
 %
@@ -138,7 +150,7 @@
   \fi
   \getp@ram{color}{#1}%
   \ifColorFonts\ifx\p@ram\relax\else
-    \edef\typef@ce{\typef@ce :color=\p@ram}%
+    \hex{\p@ram}\edef\typef@ce{\typef@ce :color=\r@s}%
   \fi\fi
   \getp@ram{superscript}{#1}% scale down by \SuperscriptFactor if superscripted style
   \dimen0=\ifx\p@ram\tru@ \SuperscriptFactor\fi\FontSizeUnit%
@@ -147,6 +159,7 @@
     \MSG{*** FontSize missing for marker '#1', defaulting to 12}%
     \def\p@ram{12}\fi
   % create the font identifier for this style
+  \trace{F}{font<#1>=\typef@ce\space at \p@ram\space \the\dimen0}
   \x@\global\x@\font
     \csname font<#1>\endcsname=\typef@ce\space at \p@ram \dimen0
   \ifx\SpaceStretchFactor\undefined\else
