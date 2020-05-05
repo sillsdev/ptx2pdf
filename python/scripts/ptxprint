@@ -19,11 +19,14 @@ try:
 except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
     import ptxprint
+from ptxprint.font import initFontCache
 
 parser = argparse.ArgumentParser()
 parser.add_argument('pid',nargs="?",help="Project id")
 parser.add_argument('-p','--paratext',help="Path to Paratext Projects directory")
 parser.add_argument('-d','--directory',default=".",help="Directory to store temporary files in")
+parser.add_argument('-P','--print',action='store_true',help="Hits print")
+parser.add_argument('-b','--books',help='Space separated bookid list to set')
 parser.add_argument('-m','--macros',help="Directory containing TeX macros (paratext2.tex)")
 parser.add_argument('-l','--logging',action="store_true",help="Output logging to terminal instead of logging window")
 parser.add_argument('-e','--experimental',action="store_true",help="Enable experimental features")
@@ -149,7 +152,7 @@ def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
     print("Done")
     return outfname
 
-def doit(printer):
+def doit(printer, display=True):
     info = printer.info or ptxprint.Info(printer, args.paratext, printer.prjid)
     prjid = printer.get("cb_project")
     prjdir = os.path.join(args.paratext, prjid)
@@ -185,7 +188,7 @@ def doit(printer):
         pdfname = os.path.join(tmpdir, "ptxprint-{}{}.pdf".format(jobs[0], prjid))
     # Check the return code to see if generating the PDF was successful before opening the PDF
     if info.res == 0:
-        if os.path.exists(pdfname):
+        if display and os.path.exists(pdfname):
             if sys.platform == "win32":
                 os.startfile(pdfname)
             elif sys.platform == "linux":
@@ -402,4 +405,11 @@ def removeTmpFolders(tempFolder, delFolders):
             except OSError:
                 print("Error Deleting temporary folder: {}".format(path2del))
 
-mainw.run(doit)
+if args.print:
+    initFontCache()
+    mainw.updateProjectSettings()
+    #if args.books is not None and len(args.books):
+    #    mainw.booklist = [s.upper() for s in args.books.split(" ")]
+    doit(mainw, display=False)
+else:
+    mainw.run(doit)
