@@ -263,6 +263,7 @@ class Info:
     }
     
     def __init__(self, printer, path, prjid = None):
+        print("  info:__init__")
         self.printer = printer
         self.changes = None
         self.localChanges = None
@@ -278,9 +279,11 @@ class Info:
                      "/iccfpath": os.path.join(libpath, "ps_cmyk.icc").replace("\\","/"),
                      "document/date": t.strftime("%Y%m%d%H%M%S")+tzstr }
         self.prjid = prjid
+        print(">>self.update() in info.__init__ (282)")
         self.update()
 
     def update(self):
+        print("  info:update")
         printer = self.printer
         self.updatefields(self._mappings.keys())
         if printer.get("c_useprintdraftfolder"):
@@ -325,6 +328,7 @@ class Info:
         self.dict[key] = value
 
     def processFonts(self, printer):
+        print("  info:processFonts")
         silns = "{urn://www.sil.org/ldml/0.1}"
         for p in self._fonts.keys():
             if p in self.dict:
@@ -395,6 +399,7 @@ class Info:
         return path.replace(" ", r"\ ")
 
     def asTex(self, template="template.tex", filedir=".", jobname="Unknown"):
+        print("  info:asTex")
         for k, v in self._settingmappings.items():
             if self.dict[k] == "":
                 self.dict[k] = self.printer.ptsettings.dict.get(v, "a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z")
@@ -621,11 +626,9 @@ class Info:
         if printer.get("c_addColon"): # Insert a colon between \fq (or \xq) and following \ft (or \xt)
             self.localChanges.append((None, regex.compile(r"(\\[fx]q .+?):* (\\[fx]t)", flags=regex.M), r"\1: \2")) 
         
-        if printer.get("c_keepBookWithRefs"): # keep Booknames and ch:vs nums together MH: need help for restricting to \xt and \xo 
-            self.localChanges.append((None, regex.compile(r" (\d+:\d+(-\d+)?\))", flags=regex.M), r"\u00A0\1")) 
-    # newtext = re.sub(r"\\xt [^\\]+",replaceRefSpacesWithNBSP,origtext)
-    # def replaceRefSpacesWithNBSP(m):
-        # return re.sub(r" (\d+:\d+([-,]\d+)?)", r"~\1", m.group(0))
+        if printer.get("c_keepBookWithRefs"): # keep Booknames and ch:vs nums together within \xt and \xo 
+            # self.localChanges.append((None, regex.compile(r" (\d+:\d+(-\d+)?\))", flags=regex.M), r"\u00A0\1"))
+            self.localChanges.append((regex.compile(r"(\\x[to] [^\\]+)"), regex.compile(r" (\d+:\d+([-,]\d+)?)"), r"~\1"))
 
         # Paratext marks no-break space as a tilde ~
         self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
@@ -635,7 +638,7 @@ class Info:
         for c in range(1,4): # Remove any \toc lines that we don't want appearing in the Table of Contents
             if not printer.get("c_usetoc{}".format(c)):
                 self.localChanges.append((None, regex.compile(r"(\\toc{} .+)".format(c), flags=regex.M), ""))
-        
+
         # Insert a rule between end of Introduction and start of body text (didn't work earlier, but might work now)
         # self.localChanges.append((None, regex.compile(r"(\\c\s1\s?\r?\n)", flags=regex.S), r"\\par\\vskip\\baselineskip\\hskip-\\columnshift\\hrule\\vskip 2\\baselineskip\n\1"))
 
@@ -691,10 +694,10 @@ class Info:
                 if e in ["jpg", "png", "pdf"] and e not in extOrder:
                     extOrder += [e]
         if not len(extOrder): # If the user hasn't defined a specific order then we can assign this
-            if printer.get("c_useLowResPics"): # based on whether they want small/compressed image formats
+            if printer.get("c_useLowResPics"): # based on whether they prefer small/compressed image formats
                 extOrder = ["jpg", "png", "pdf"] 
-            else:                              # or larger high quality uncompresses image formats
-                extOrder = ["pdf", "png", "jpg"]
+            else:                              # or prefer larger high quality uncompresses image formats
+                extOrder = extOrder[::-1]      # reverse the order
         return extOrder
 
     def base(self, fpath):
@@ -721,6 +724,7 @@ class Info:
         config.set(sect, k, value)
 
     def createConfig(self, printer):
+        print("  info:createConfig")
         config = configparser.ConfigParser()
         for k, v in self._mappings.items():
             if v[0] is None:
@@ -737,6 +741,7 @@ class Info:
         return config
 
     def loadConfig(self, printer, config):
+        print("  info:loadConfig")
         for sect in config.sections():
             for opt in config.options(sect):
                 key = "{}/{}".format(sect, opt)
@@ -822,6 +827,7 @@ class Info:
         if printer.get("c_useModsTex"):
             if not os.path.exists(os.path.join(prjdir, "shared", "ptxprint", "ptxprint-mods.tex")):
                 printer.set("c_useModsTex", False)
+        print(">>self.update() in info.loadConfig (830)")
         self.update()
 
     def GenerateNestedStyles(self):

@@ -1174,7 +1174,7 @@ Shortcut key: &lt;Ctrl-P&gt;</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="model">ls_books</property>
-                                        <property name="wrap_width">7</property>
+                                        <property name="wrap_width">5</property>
                                         <property name="active">0</property>
                                         <property name="has_entry">True</property>
                                         <property name="entry_text_column">0</property>
@@ -6839,6 +6839,7 @@ in the list to be printed.)</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="model">ls_books</property>
+                                <property name="wrap_width">5</property>
                                 <property name="active">0</property>
                                 <property name="has_entry">True</property>
                                 <property name="entry_text_column">0</property>

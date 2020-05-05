@@ -82,6 +82,9 @@ class Splash(Thread):
 class PtxPrinterDialog:
     def __init__(self, allprojects, settings_dir, working_dir=None):
         self.initialised = False
+        self.configNoUpdate = False
+        self.chapNoUpdate = False
+        self.bookNoUpdate = False
         self.pendingPid = None
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(os.path.dirname(__file__), "ptxprint.glade"))
@@ -112,18 +115,8 @@ class PtxPrinterDialog:
         digits.clear()
         for d in _alldigits: # .items():
             v = currdigits.get(d, d.lower())
-            # print("d,v: ",d, v)
             digits.append([d, v])
         self.cb_digits.set_active_id(_alldigits[0])
-
-        # glostyle = self.builder.get_object("ls_glossaryMarkupStyle")
-        # glostyle.clear()
-        # for g in Info._glossarymarkup.keys():
-            # try:
-                # print(g)
-            # except UnicodeEncodeError:
-                # pass
-            # glostyle.append([g])
 
         dialog = self.builder.get_object("dlg_multiBookSelector")
         dialog.add_buttons(
@@ -291,7 +284,6 @@ class PtxPrinterDialog:
         bknamefmt = (self.ptsettings['FileNamePrePart'] or "") + \
                     fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + \
                     (self.ptsettings['FileNamePostPart'] or "")
-        # print(bknamefmt)
         fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
         return fname
         
@@ -321,6 +313,10 @@ class PtxPrinterDialog:
         dialog.hide()
             
     def onConfigNameChanged(self, cb_savedConfig):
+        if self.configNoUpdate:
+            print("(cfgNoUpdt)", end = " ")
+            return
+        print("onConfigNameChanged", end = " ")
         self.builder.get_object("c_hideAdvancedSettings").set_sensitive(True)
         if len(self.get("cb_savedConfig")):
             lockBtn = self.builder.get_object("btn_lockunlock")
@@ -348,6 +344,7 @@ class PtxPrinterDialog:
     def onSaveConfig(self, btn):
         # Determine whether to save a NEW config or just UPDATE an existing one
         if self.config_dir != self.configPath(): # then it must be new
+            print(">>info.update() in onSaveConfig (line 375)")
             self.info.update()
             config = self.info.createConfig(self)
             self.saveConfig(config)
@@ -364,6 +361,7 @@ class PtxPrinterDialog:
             self.builder.get_object("l_settings_dir").set_label(self.config_dir or "")
             self.updateDialogTitle()
         else:
+            print(">>info.update() in onSaveConfig (line 392)")
             # Just update the existing config file
             self.info.update()
             config = self.info.createConfig(self)
@@ -409,6 +407,7 @@ class PtxPrinterDialog:
             self.updateDialogTitle()
 
     def updateSavedConfigList(self):
+        self.configNoUpdate = True
         currConf = self.builder.get_object("t_savedConfig").get_text()
         self.cb_savedConfig.remove_all()
         savedConfigs = []
@@ -425,8 +424,10 @@ class PtxPrinterDialog:
             except:
                 self.cb_savedConfig.set_active(0)
         else:
+            self.configNoUpdate = False
             self.builder.get_object("t_savedConfig").set_text("")
             self.builder.get_object("t_configNotes").set_text("")
+        self.configNoUpdate = False
 
     def onLockUnlockSavedConfig(self, btn):
         lockBtn = self.builder.get_object("btn_lockunlock")
@@ -458,8 +459,8 @@ class PtxPrinterDialog:
         lockBtn = self.builder.get_object("btn_lockunlock")
         if self.get("t_invisiblePassword") == "":
             status = True
-            # lockBtn.set_label("Lock Config")
-            lockBtn.set_label("Lockdown  ;-)")
+            lockBtn.set_label("Lock Config")
+            # lockBtn.set_label("Lockdown  ;-)")
         else:
             status = False
             lockBtn.set_label("Unlock Config")
@@ -497,6 +498,9 @@ class PtxPrinterDialog:
             self.builder.get_object("btn_NextBook").set_sensitive(False)
     
     def onExamineBookChanged(self, cb_examineBook):
+        if self.bookNoUpdate == True:
+            # print("(exBk)", end = " ")
+            return
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
         self.onViewerChangePage(None,None,pg)
 
@@ -517,6 +521,7 @@ class PtxPrinterDialog:
         self.onViewerChangePage(None, None, pg)
 
     def onViewerChangePage(self, nbk_Viewer, scrollObject, pgnum):
+        self.bookNoUpdate = True
         self.builder.get_object("gr_editableButtons").set_visible(False)
         # self.builder.get_object("btn_saveEdits").set_sensitive(False)
         prjid = self.get("cb_project")
@@ -593,6 +598,7 @@ class PtxPrinterDialog:
                                                \n   * Check option (above) to 'Preserve Intermediate Files and Logs' \
                                                \n   * Generate the PiCList or AdjList \
                                                \n   * Click 'Print' to create the PDF")
+        self.bookNoUpdate = False
 
     def onSaveEdits(self, btn):
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
@@ -909,11 +915,8 @@ class PtxPrinterDialog:
         else:
             self.builder.get_object("c_hideAdvancedSettings").set_opacity(1.0)
             self.builder.get_object("c_hideAdvancedSettings").set_tooltip_text("Many of the settings in this tool only need to be\n" + \
-                                                                               "set up once, or used on rare occasions. These can\n" + \
-                                                                               "be hidden away for most of the time if that helps.\n\n" + \
-                                                                               "This setting can be toggled off again later, but\n" + \
-                                                                               "is intentionally almost invisible (though located\n" + \
-                                                                               "in the same place).")
+                "set up once, or used on rare occasions. These can\nbe hidden away for most of the time if that helps.\n\n" + \
+                "This setting can be toggled off again later, but\nis intentionally almost invisible (though located\nin the same place).")
                       
             for c in ("c_showAdvancedTab", "c_showViewerTab"):   # "c_showBodyTab", 
                 self.builder.get_object(c).set_active(True)
@@ -1043,11 +1046,17 @@ class PtxPrinterDialog:
             toc.set_active(True)
             
     def _setchap(self, ls, start, end):
+        self.chapNoUpdate = True
         ls.clear()
         for c in range(start, end+1):
             ls.append([str(c)])
+        self.chapNoUpdate = False
 
     def onBookChange(self, cb_book):
+        if self.bookNoUpdate == True:
+            print("(bk)", end = " ")
+            return
+        print("onBookChange")
         self.bk = self.get("cb_book")
         self.set("c_prettyIntroOutline", False)
         if self.bk != "":
@@ -1063,6 +1072,10 @@ class PtxPrinterDialog:
         self.updateDialogTitle()
 
     def onChapFrmChg(self, cb_chapfrom):
+        if self.chapNoUpdate == True:
+            print("(ch)", end = " ")
+            return
+        print("onChapFrmChg")
         self.bk = self.get("cb_book")
         if self.bk != "":
             self.chs = int(chaps.get(str(self.bk)))
@@ -1070,9 +1083,6 @@ class PtxPrinterDialog:
             self.chapto = self.builder.get_object("ls_chapto")
             self._setchap(self.chapto, (int(self.strt) if self.strt is not None else 0), self.chs)
             self.cb_chapto.set_active_id(str(self.chs))
-
-    def onSpinITclicked(self, btn_spinIT):
-        self.builder.get_object("appSpinner").start()
 
     def onUsePrintDraftChanged(self, cb_upd):
         upd = self.get("c_useprintdraftfolder")
@@ -1118,10 +1128,12 @@ class PtxPrinterDialog:
         self.ptsettings = None
         lsbooks = self.builder.get_object("ls_books")
         if currprj is not None:
+            self.bookNoUpdate = True
             cbbook = self.builder.get_object("cb_book")
             cbbook.set_model(None)
             lsbooks.clear()
             cbbook.set_model(lsbooks)
+            self.bookNoUpdate = False
         if not self.prjid:
             return
         if self.get("c_useprintdraftfolder"):
@@ -1144,14 +1156,17 @@ class PtxPrinterDialog:
         if not os.path.exists(configfile): # If they are an pre 0:4:8 user, pick up .cfg from Project folder location
             configfile = os.path.join(self.settings_dir, self.prjid, "ptxprint.cfg")
         if os.path.exists(configfile):
+            print("= = = = = = = = = About to info.loadConfig = = = = = = = = ")
             self.info = Info(self, self.settings_dir, self.prjid)
             config = configparser.ConfigParser()
             config.read(configfile, encoding="utf-8")
             self.info.loadConfig(self, config)
         else:
             try:
+                print(">>info.update() in updateParatextSettings (1276)")
                 self.info.update()
             except AttributeError:
+                print(">>info.update() in updateParatextSettings (1279)")
                 self.info = Info(self, self.settings_dir, self.prjid)
                 self.info.update()
         status = self.get("c_multiplebooks")
@@ -1171,7 +1186,7 @@ class PtxPrinterDialog:
         # print("\nsettings_dir:", self.settings_dir)
         # print("config_dir:", self.config_dir)
         # print("working_dir:", self.working_dir)
-        self.set("c_prettyIntroOutline", False)
+        self.set("c_prettyIntroOutline", False)  # This is OFF by default, they need to turn it on specifically
         self.setEntryBoxFont()
         self.onDiglotDimensionsChanged(None)
         self.updateDialogTitle()
@@ -1371,6 +1386,7 @@ class PtxPrinterDialog:
             self.builder.get_object("c_inclVerseDecorator").set_active(False)
 
     # def onXyzPDFclicked(self, btn_selectXyzPDF):
+        # print("onXyzPDFclicked")
         # xyz = self.fileChooser("Select Xyz PDF file", 
                 # filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
                 # multiple = False)
