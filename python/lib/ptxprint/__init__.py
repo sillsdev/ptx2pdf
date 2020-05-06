@@ -314,9 +314,9 @@ class PtxPrinterDialog:
             
     def onConfigNameChanged(self, cb_savedConfig):
         if self.configNoUpdate:
-            print("(cfgNoUpdt)", end = " ")
+            # print("(cfgNoUpdt)", end = " ")
             return
-        print("onConfigNameChanged", end = " ")
+        # print("onConfigNameChanged", end = " ")
         self.builder.get_object("c_hideAdvancedSettings").set_sensitive(True)
         if len(self.get("cb_savedConfig")):
             lockBtn = self.builder.get_object("btn_lockunlock")
@@ -343,7 +343,7 @@ class PtxPrinterDialog:
     def onSaveConfig(self, btn):
         # Determine whether to save a NEW config or just UPDATE an existing one
         if self.config_dir != self.configPath(): # then it must be new
-            print(">>info.update() in onSaveConfig (line 375)")
+            # print(">>info.update() in onSaveConfig (line 375)")
             self.info.update()
             config = self.info.createConfig(self)
             self.saveConfig(config)
@@ -360,7 +360,7 @@ class PtxPrinterDialog:
             self.builder.get_object("l_settings_dir").set_label(self.config_dir or "")
             self.updateDialogTitle()
         else:
-            print(">>info.update() in onSaveConfig (line 392)")
+            # print(">>info.update() in onSaveConfig (line 392)")
             # Just update the existing config file
             self.info.update()
             config = self.info.createConfig(self)
@@ -1052,9 +1052,9 @@ class PtxPrinterDialog:
 
     def onBookChange(self, cb_book):
         if self.bookNoUpdate == True:
-            print("(bk)", end = " ")
+            # print("(bk)", end = " ")
             return
-        print("onBookChange")
+        # print("onBookChange")
         self.bk = self.get("cb_book")
         self.set("c_prettyIntroOutline", False)
         if self.bk != "":
@@ -1071,9 +1071,9 @@ class PtxPrinterDialog:
 
     def onChapFrmChg(self, cb_chapfrom):
         if self.chapNoUpdate == True:
-            print("(ch)", end = " ")
+            # print("(ch)", end = " ")
             return
-        print("onChapFrmChg")
+        # print("onChapFrmChg")
         self.bk = self.get("cb_book")
         if self.bk != "":
             self.chs = int(chaps.get(str(self.bk)))
@@ -1113,7 +1113,8 @@ class PtxPrinterDialog:
             if self.info is None:
                 self.info = Info(self, self.settings_dir, prjid = currprj)
             config = self.info.createConfig(self)
-            fpath = self.config_dir or os.path.join(self.settings_dir, currprj, "shared", "ptxprint", "ptxprint.cfg")
+            fpath = os.path.join(self.config_dir, "ptxprint.cfg") \
+                 or os.path.join(self.settings_dir, currprj, "shared", "ptxprint", "ptxprint.cfg")
             self.config_dir = self.configPath()
             if saveCurrConfig and os.path.exists(fpath):
                 with open(fpath, "w", encoding="utf-8") as outf:
@@ -1156,17 +1157,17 @@ class PtxPrinterDialog:
             if not os.path.exists(configfile): # If they are an pre 0:4:8 user, pick up .cfg from Project folder location
                 configfile = os.path.join(self.settings_dir, self.prjid, "ptxprint.cfg")
         if os.path.exists(configfile):
-            print("= = = = = = = = = About to info.loadConfig = = = = = = = = ")
+            # print("= = = = = = = = = About to info.loadConfig = = = = = = = = ")
             self.info = Info(self, self.settings_dir, self.prjid)
             config = configparser.ConfigParser()
             config.read(configfile, encoding="utf-8")
             self.info.loadConfig(self, config)
         else:
             try:
-                print(">>info.update() in updateParatextSettings (1276)")
+                # print(">>info.update() in updateParatextSettings (1276)")
                 self.info.update()
             except AttributeError:
-                print(">>info.update() in updateParatextSettings (1279)")
+                # print(">>info.update() in updateParatextSettings (1279)")
                 self.info = Info(self, self.settings_dir, self.prjid)
                 self.info.update()
         status = self.get("c_multiplebooks")
@@ -1443,7 +1444,7 @@ class PtxPrinterDialog:
                 # BKN \5 \|\0\|\1\|tr\|\|\4\|\5
                 # MAT 9.2 bringing the paralyzed man to Jesus|CN01684b.jpg|col|tr||key-kālk arsi manvan yēsunaga tarval|9:2
                 m = re.findall(r"\\fig .*?\|(.+?\....)\|(....?)\|(.+)?\|(.+)?\|(.+)?\|(\d+[\:\.]\d+([\-,]\d+)?)\\fig\*", dat)
-                print("Found {} illustrations".format(len(m)))
+                # print("Found {} illustrations".format(len(m)))
                 if len(m):
                     for f in m:
                         # XeTeX doesn't handle TIFs, so rename all TIF extensions to PDFs

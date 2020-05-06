@@ -22,6 +22,7 @@ except ImportError:
 from ptxprint.font import initFontCache
 
 parser = argparse.ArgumentParser()
+# parser.add_argument('-h','--help', help="show this help message and exit")
 parser.add_argument('pid',nargs="?",help="Project id")
 parser.add_argument('-c','--config',help='Configuration path to load')
 parser.add_argument('-p','--paratext',help="Path to Paratext Projects directory")
@@ -98,7 +99,7 @@ def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
         outfname = "ptxprint-{}_{}{}.tex".format(jobs[0], jobs[-1], prjid)
     else:
         outfname = "ptxprint-{}{}.tex".format(jobs[0], prjid)
-    print(">>info.update() in PTXprint.dojob (97)")
+    # print(">>info.update() in PTXprint.dojob (97)")
     info.update()
     with open(os.path.join(tmpdir, outfname), "w", encoding="utf-8") as texf:
         texf.write(info.asTex(filedir=tmpdir, jobname=outfname.replace(".tex", "")))
@@ -159,7 +160,7 @@ def doit(printer, display=True):
     prjdir = os.path.join(args.paratext, prjid)
     if prjid is None or not len(prjid):     # can't print no project
         return
-    print(">>info.update() in PTXprint.doit (159)")
+    # print(">>info.update() in PTXprint.doit (159)")
     info.update()  # save config
     info.GenerateNestedStyles()
     config = info.createConfig(printer)

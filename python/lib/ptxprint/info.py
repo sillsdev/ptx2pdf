@@ -263,7 +263,7 @@ class Info:
     }
     
     def __init__(self, printer, path, prjid = None):
-        print("  info:__init__")
+        # print("  info:__init__")
         self.printer = printer
         self.changes = None
         self.localChanges = None
@@ -279,11 +279,11 @@ class Info:
                      "/iccfpath": os.path.join(libpath, "ps_cmyk.icc").replace("\\","/"),
                      "document/date": t.strftime("%Y%m%d%H%M%S")+tzstr }
         self.prjid = prjid
-        print(">>self.update() in info.__init__ (282)")
+        # print(">>self.update() in info.__init__ (282)")
         self.update()
 
     def update(self):
-        print("  info:update")
+        # print("  info:update")
         printer = self.printer
         self.updatefields(self._mappings.keys())
         if printer.get("c_useprintdraftfolder"):
@@ -328,7 +328,7 @@ class Info:
         self.dict[key] = value
 
     def processFonts(self, printer):
-        print("  info:processFonts")
+        # print("  info:processFonts")
         silns = "{urn://www.sil.org/ldml/0.1}"
         for p in self._fonts.keys():
             if p in self.dict:
@@ -399,7 +399,7 @@ class Info:
         return path.replace(" ", r"\ ")
 
     def asTex(self, template="template.tex", filedir=".", jobname="Unknown"):
-        print("  info:asTex")
+        # print("  info:asTex")
         for k, v in self._settingmappings.items():
             if self.dict[k] == "":
                 self.dict[k] = self.printer.ptsettings.dict.get(v, "a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z")
@@ -724,7 +724,7 @@ class Info:
         config.set(sect, k, value)
 
     def createConfig(self, printer):
-        print("  info:createConfig")
+        # print("  info:createConfig")
         config = configparser.ConfigParser()
         for k, v in self._mappings.items():
             if v[0] is None:
@@ -741,7 +741,7 @@ class Info:
         return config
 
     def loadConfig(self, printer, config):
-        print("  info:loadConfig")
+        # print("  info:loadConfig")
         for sect in config.sections():
             for opt in config.options(sect):
                 key = "{}/{}".format(sect, opt)
@@ -827,7 +827,7 @@ class Info:
         if printer.get("c_useModsTex"):
             if not os.path.exists(os.path.join(prjdir, "shared", "ptxprint", "ptxprint-mods.tex")):
                 printer.set("c_useModsTex", False)
-        print(">>self.update() in info.loadConfig (830)")
+        # print(">>self.update() in info.loadConfig (830)")
         self.update()
 
     def GenerateNestedStyles(self):
