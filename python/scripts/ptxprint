@@ -408,8 +408,15 @@ def removeTmpFolders(tempFolder, delFolders):
 if args.print:
     initFontCache()
     mainw.updateProjectSettings()
-    #if args.books is not None and len(args.books):
-    #    mainw.booklist = [s.upper() for s in args.books.split(" ")]
+    if args.books is not None and len(args.books):
+        mainw.bookNoUpdate = True
+        bl = args.books.split(" ")
+        if len(bl) == 1:
+            mainw.set("cb_book", bl[0])
+            mainw.set("c_multiplebooks", False)
+        elif len(bl) > 1:
+            mainw.set("t_booklist", args.books)
+            mainw.set("c_multiplebooks", True)
     doit(mainw, display=False)
 else:
     mainw.run(doit)
