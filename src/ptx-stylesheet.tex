@@ -101,7 +101,7 @@
 % Constructs a macro name \<marker>:<parameter> to hold the value
 % csname is required here in order to build a macro name containing a colon and possibly a number.
 %
-\def\defbinp@ram#1#2{\edef\t@mp{#2}\defp@ram{#1}{\ifx\temp\h@phen false\else true\fi}}
+\def\defbinp@ram#1#2{\edef\t@mp{#2}\ifx\t@mp\h@phen\defp@ram{#1}{false}\else\defp@ram{#1}{true}\fi}
 \def\defp@ram#1#2{\x@\def\csname\m@rker:#1\endcsname{#2}}
 \def\setp@ram#1#2#3{\x@\xdef\csname#2:#1\endcsname{#3}} % expand now, not later 
 %
