@@ -627,7 +627,7 @@ class Info:
             self.localChanges.append((None, regex.compile(r"(\\[fx]q .+?):* (\\[fx]t)", flags=regex.M), r"\1: \2")) 
         
         if printer.get("c_keepBookWithRefs"): # keep Booknames and ch:vs nums together within \xt and \xo 
-            self.localChanges.append((regex.compile(r"(\\[xf]t [^\\]+)"), regex.compile(r" (\d+:\d+([-,]\d+)?)"), r"\u00A0\1"))
+            self.localChanges.append((regex.compile(r"(\\[xf]t [^\\]+)"), regex.compile(r"(?<!\\[fx][to]) (\d+:\d+([-,]\d+)?)"), r"\u00A0\1"))
 
         # Paratext marks no-break space as a tilde ~
         self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
@@ -850,6 +850,8 @@ class Info:
             if os.path.exists(nstyfname):
                 os.remove(nstyfname)
         else:
+            if not os.path.exists(os.path.join(self.printer.working_dir)):
+                os.mkdir(os.path.join(self.printer.working_dir))
             with open(nstyfname, "w", encoding="utf-8") as outf:
                 outf.write("".join(nstylist))
 

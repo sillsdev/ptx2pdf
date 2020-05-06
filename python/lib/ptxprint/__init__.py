@@ -1466,7 +1466,7 @@ class PtxPrinterDialog:
                     #                   0                         1                2          3  [4]
                     # BKN \3 \|\1\|\2\|tr\|\|\0\|\3
                     # GEN 21.16 an angel speaking to Hagar|CO00659B.TIF|span|t||hāgartun saṅga dūtal vaḍkval|21:16
-                    m = re.findall(r'\\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,]\d+)?)".*\\fig\*', dat)
+                    m = re.findall(r'\\fig (.*?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,]\d+)?)".*\\fig\*', dat)
                     if len(m):
                         for f in m:
                             # XeTeX doesn't handle TIFs, so rename all TIF extensions to PDFs

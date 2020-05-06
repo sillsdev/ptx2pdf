@@ -5,9 +5,8 @@ List of improvements: 0.5.4
 
   * Enable headless (no GUI) running of PTXprint so that PDFs are produced from the commandline (great for regression testing, and much more)
 
-usage: ptxprint [-h] [-c CONFIG] [-p PARATEXT] [-d DIRECTORY] [-P] [-b BOOKS]
-                [-m MACROS] [-l] [-e] [-T TIMEOUT]
-                [pid]
+usage: ptxprint [-h] [-c CONFIG] [-p PARATEXT] [-d DIRECTORY] [-P]
+                 [-b BOOKS] [-m MACROS] [-l] [-e] [-T TIMEOUT] [pid]
 positional arguments:
   pid                   Project id
 
