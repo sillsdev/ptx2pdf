@@ -1,5 +1,20 @@
-PTXprint 0.5.3 Beta Release Notes
-5th May 2020
+PTXprint 0.5.4 Beta Release Notes
+6th May 2020
+
+List of improvements: 0.5.4
+
+  * Enable headless (no GUI) running of PTXprint so that PDFs are produced from the commandline (great for regression testing, and much more)
+        Usage:
+         PTXprint pid [optional params]   where pid = Paratext Project id
+           -P   --print         Creates PDF without UI showing up
+           -b   --books         Space separated bookid list to set
+           -c   --config        Configuration path to load
+           -d   --directory     Directory to store temporary files in
+           -p   --paratext      Path to Paratext Projects directory
+           -m   --macros        Directory containing TeX macros (paratext2.tex)
+           -l   --logging       Output logging to terminal instead of logging window
+           -T   --timeout       xetex runtime timeout (default=200)
+           -e   --experimental  Enable experimental features
 
 List of improvements: 0.5.3
 
