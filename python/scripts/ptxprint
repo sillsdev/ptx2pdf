@@ -23,6 +23,7 @@ from ptxprint.font import initFontCache
 
 parser = argparse.ArgumentParser()
 parser.add_argument('pid',nargs="?",help="Project id")
+parser.add_argument('-c','--config',help='Configuration path to load')
 parser.add_argument('-p','--paratext',help="Path to Paratext Projects directory")
 parser.add_argument('-d','--directory',default=".",help="Directory to store temporary files in")
 parser.add_argument('-P','--print',action='store_true',help="Hits print")
@@ -405,6 +406,9 @@ def removeTmpFolders(tempFolder, delFolders):
             except OSError:
                 print("Error Deleting temporary folder: {}".format(path2del))
 
+if args.config is not None:
+    initFontCache()
+    mainw.set("cb_savedConfig", args.config)
 if args.print:
     initFontCache()
     mainw.updateProjectSettings()

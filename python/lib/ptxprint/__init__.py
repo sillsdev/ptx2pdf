@@ -1113,8 +1113,8 @@ class PtxPrinterDialog:
             if self.info is None:
                 self.info = Info(self, self.settings_dir, prjid = currprj)
             config = self.info.createConfig(self)
+            fpath = self.config_dir or os.path.join(self.settings_dir, currprj, "shared", "ptxprint", "ptxprint.cfg")
             self.config_dir = self.configPath()
-            fpath = os.path.join(self.settings_dir, currprj, "shared", "ptxprint", "ptxprint.cfg")
             if saveCurrConfig and os.path.exists(fpath):
                 with open(fpath, "w", encoding="utf-8") as outf:
                     config.write(outf)
@@ -1151,8 +1151,10 @@ class PtxPrinterDialog:
         font_name = self.ptsettings.get('DefaultFont', 'Arial') + ", " + self.ptsettings.get('DefaultFontSize', '12')
         self.set('f_body', font_name)
         configfile = os.path.join(self.configPath(), "ptxprint.cfg")
-        if not os.path.exists(configfile): # If they are an pre 0:4:8 user, pick up .cfg from Project folder location
-            configfile = os.path.join(self.settings_dir, self.prjid, "ptxprint.cfg")
+        if not os.path.exists(configfile):
+            configfile = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint", "ptxprint.cfg")
+            if not os.path.exists(configfile): # If they are an pre 0:4:8 user, pick up .cfg from Project folder location
+                configfile = os.path.join(self.settings_dir, self.prjid, "ptxprint.cfg")
         if os.path.exists(configfile):
             print("= = = = = = = = = About to info.loadConfig = = = = = = = = ")
             self.info = Info(self, self.settings_dir, self.prjid)

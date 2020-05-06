@@ -86,7 +86,8 @@ class TTFontCache:
 fontcache = None
 def initFontCache():
     global fontcache
-    fontcache = TTFontCache()
+    if fontcache is None:
+        fontcache = TTFontCache()
 
 class TTFont:
     def __init__(self, name, style=""):
