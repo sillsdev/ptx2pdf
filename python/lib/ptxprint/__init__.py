@@ -379,6 +379,10 @@ class PtxPrinterDialog:
         if makePath:
             if not os.path.exists(prjdir):
                 os.makedirs(prjdir)
+        #Update the cb_ with the sanitized (new) version of the name
+        self.configNoUpdate = True
+        self.builder.get_object("t_savedConfig").set_text(cfgname)
+        self.configNoUpdate = False
         return prjdir
 
     def saveConfig(self, config):
@@ -658,7 +662,7 @@ class PtxPrinterDialog:
     def setEntryBoxFont(self):
         # Set the font of any GtkEntry boxes to the primary body text font for this project
         p = Pango.font_description_from_string(self.get("f_body"))
-        for w in ("t_tocTitle", "cb_ftrcenter", "scroll_FinalSFM", "scroll_PicList"):   # "t_runningFooter",
+        for w in ("t_clHeading", "t_tocTitle", "cb_ftrcenter", "scroll_FinalSFM", "scroll_PicList"):   # "t_runningFooter",
             self.builder.get_object(w).modify_font(p)
 
     def updateFakeLabels(self):
@@ -707,15 +711,16 @@ class PtxPrinterDialog:
     def onHyphenateClicked(self, c_hyphenate):
         prjid = self.get("cb_project")
         fname = os.path.join(self.settings_dir, prjid, "shared", "ptxprint", 'hyphen-{}.tex'.format(prjid))
-        if not os.path.exists(fname) and self.get("c_hyphenate"):
-            dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
-                     buttons=Gtk.ButtonsType.OK, message_format="Warning: Standard (English) Hyphenation rules will be used.")
-            dialog.format_secondary_text("For optimum hyphenation for this project\nclick 'Create Hyphenation List'.")
-            dialog.set_keep_above(True)
-            dialog.run()
-            dialog.set_keep_above(False)
-            dialog.destroy()
-            # self.builder.get_object("c_hyphenate").set_active(False)
+        if not ptxprint.args.print: # We don't want pop-up messages if running in command-line mode
+            if not os.path.exists(fname) and self.get("c_hyphenate"):
+                dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
+                         buttons=Gtk.ButtonsType.OK, message_format="Warning: Standard (English) Hyphenation rules will be used.")
+                dialog.format_secondary_text("For optimum hyphenation for this project\nclick 'Create Hyphenation List'.")
+                dialog.set_keep_above(True)
+                dialog.run()
+                dialog.set_keep_above(False)
+                dialog.destroy()
+                # self.builder.get_object("c_hyphenate").set_active(False)
         
     def onUseIllustrationsClicked(self, c_includeillustrations):
         status = self.get("c_includeillustrations")
@@ -730,6 +735,11 @@ class PtxPrinterDialog:
             self.builder.get_object(c).set_sensitive(not status)
         self.builder.get_object("cb_blendedXrefCaller").set_sensitive(status)
     
+    def onUseChapterLabelclicked(self, c_useChapterLabel):
+        status = self.get("c_useChapterLabel")
+        for c in ("t_clBookList", "l_clHeading", "t_clHeading"):
+            self.builder.get_object(c).set_sensitive(status)
+        
     def onClickedIncludeFootnotes(self, c_includeFootnotes):
         status = self.get("c_includeFootnotes")
         for c in ("c_fnautocallers", "t_fncallers", "c_fnomitcaller", "c_fnpageresetcallers", "c_fnparagraphednotes"):
@@ -757,8 +767,7 @@ class PtxPrinterDialog:
 
     def onDoubleColumnChanged(self, c_doublecolumn):
         status = self.get("c_doublecolumn")
-        for c in ("c_verticalrule", "l_gutterWidth", "s_colgutterfactor"):
-            self.builder.get_object(c).set_sensitive(status)
+        self.builder.get_object("gr_doubleColumn").set_sensitive(status)
 
     def onHdrVersesClicked(self, c_hdrverses):
         status = self.get("c_hdrverses")
@@ -854,10 +863,10 @@ class PtxPrinterDialog:
     def onRHruleChanged(self, c_rhrule):
         rhr = self.builder.get_object("s_rhruleposition")
         if self.get("c_rhrule"):
-            rhr.set_sensitive(True)
+            self.builder.get_object("gr_horizRule").set_sensitive(True)
             rhr.grab_focus() 
         else:   
-            rhr.set_sensitive(False)
+            self.builder.get_object("gr_horizRule").set_sensitive(False)
 
     def onProcessScriptClicked(self, c_processScript):
         status = self.get("c_processScript")
@@ -1714,7 +1723,7 @@ class PtxPrinterDialog:
                     sfmtxt = inf.read()
                 # Put strict conditions on the format (including only valid \ior using 0-9, not \d digits from any script)
                 # This was probably too restrictive, but is a great RegEx: \\ior ([0-9]+(:[0-9]+)?[-\u2013][0-9]+(:[0-9]+)?) ?\\ior\*
-                if regex.search(r"\\iot .+\r?\n(\\io\d .+\\ior [0-9\-:.,\u2013 ]+\\ior\* ?\r?\n)+\\c 1", sfmtxt, flags=regex.MULTILINE) \
+                if regex.search(r"\\iot .+\r?\n(\\io\d .+\\ior [0-9\-:.,\u2013\u2014 ]+\\ior\* ?\r?\n)+\\c 1", sfmtxt, flags=regex.MULTILINE) \
                    and len(regex.findall(r"\\iot",sfmtxt)) == 1: # Must have exactly 1 \iot per book 
                     pass
                 else:

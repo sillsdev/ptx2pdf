@@ -51,6 +51,7 @@ class TTFontCache:
                     # if n == "Awami Nastaliq":
                         # print(n.encode("unicode_escape"),s.encode("unicode_escape"))
                     self.cache["{}|{}".format(n, s)] = path
+                    # print("{}|{}  -->  {}".format(n.encode("unicode_escape"),s.encode("unicode_escape"), path))
         # print("FontCache size:" + str(len(self.cache)))
 
     def find(self, name, style):
