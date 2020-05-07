@@ -4,6 +4,7 @@ from gi.repository import Pango
 
 pango_styles = {Pango.Style.ITALIC: "italic",
     Pango.Style.NORMAL: "",
+    Pango.Style.OBLIQUE: "oblique",
     Pango.Weight.ULTRALIGHT: "ultra light",
     Pango.Weight.LIGHT: "light",
     Pango.Weight.NORMAL: "",
@@ -100,15 +101,20 @@ class TTFont:
         self.style = " ".join([self.style2str(p.get_weight()), self.style2str(p.get_style())]).strip()
         self.family = p.get_family()
         self.filename = fontcache.get(self.family.replace("-", "\\-"), self.style.title())
-        # print([name, p, self.family, self.style, self.filename])
         self.feats = {}
         self.featvals = {}
         self.names = {}
         self.ttfont = None
         if self.filename is not None:
             self.readfont()
+            self.family = self.names.get(1, self.family)
+            self.style = self.names.get(2, self.style)
+            if self.style.lower() == "regular":
+                self.style = ""
         else:
             self.dict = {}
+        self.style = " ".join(x.title() for x in self.style.split())
+        # print([name, p, self.family, self.style, self.filename])
 
     def readfont(self):
         self.dict = {}

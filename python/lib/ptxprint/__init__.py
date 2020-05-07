@@ -179,12 +179,13 @@ class PtxPrinterDialog:
         if self.pendingPid is not None:
             self.onProjectChange(None)
             self.pendingPid = None
+        else:
+            self.builder.get_object("b_print").set_sensitive(False)
         self.splash.destroy()
         # self.mw.set_resizable(True)
         # self.mw.set_default_size(730, 565)
         self.mw.resize(730, 580)
         self.builder.get_object("bx_SavedConfigSettings").set_sensitive(False)
-        self.builder.get_object("b_print").set_sensitive(False)
         self.mw.show_all()
         Gtk.main()
 
