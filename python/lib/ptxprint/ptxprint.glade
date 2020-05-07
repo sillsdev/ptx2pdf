@@ -419,9 +419,6 @@ Jonathan Kew (Author of XeTeX + sfm2pdf)</property>
                       </packing>
                     </child>
                     <child>
-                      <placeholder/>
-                    </child>
-                    <child>
                       <object class="GtkButton">
                         <property name="label" translatable="yes">Reset All</property>
                         <property name="visible">True</property>
@@ -434,6 +431,18 @@ Jonathan Kew (Author of XeTeX + sfm2pdf)</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">6</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="vexpand">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
                         <property name="fill">True</property>
                         <property name="position">7</property>
                       </packing>

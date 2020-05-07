@@ -128,9 +128,7 @@ class Info:
 
         "document/title":           (None, lambda w,v: w.ptsettings.get('FullName', "")),
         "document/subject":         ("t_booklist", lambda w,v: v if w.get("c_multiplebooks") else w.get("cb_book")),
-        # "document/author":          (None, lambda w,v: regex.sub("</?p>","",w.ptsettings.get('Copyright', ""))),
-        "document/author":          (None, lambda w,v: w.ptsettings.get('Copyright', "")),
-        # "document/creator":         (None, lambda w,v: os.getlogin()),  # This is now set to 'PTXprint'
+        "document/author":          (None, lambda w,v: re.sub('"?</?p>"?','',w.ptsettings.get('Copyright', "")).strip('"')),
 
         "document/toc":             ("c_autoToC", lambda w,v: "" if v else "%"),
         "document/toctitle":        ("t_tocTitle", lambda w,v: v or ""),

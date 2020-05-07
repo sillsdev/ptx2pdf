@@ -314,7 +314,7 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
                 # Now write out the new PicList to a temp folder
                 piclstfname = os.path.join(printer.configPath(False), "PicLists", plfname)
                 if os.path.exists(piclstfname):
-                    with unviersalopen(piclstfname, "r") as inf:
+                    with universalopen(piclstfname) as inf:
                         dat = inf.read()
                         dat = re.sub(r"(?m)%.+?\r?\n", "", dat) # Throw out all comments
                         for f in fullnamelist:

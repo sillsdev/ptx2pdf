@@ -1335,7 +1335,7 @@ class PtxPrinterDialog:
     def onFrontPDFsClicked(self, btn_selectFrontPDFs):
         FrontPDFs = self.fileChooser("Select one or more PDF(s) for FRONT matter", 
                 filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
-                multiple = True)
+                multiple = True, basedir=self.working_dir)
         if FrontPDFs is not None and FrontPDFs != 'None':
             self.FrontPDFs = FrontPDFs
             self.builder.get_object("c_inclFrontMatter").set_active(True)
@@ -1351,7 +1351,7 @@ class PtxPrinterDialog:
     def onBackPDFsClicked(self, btn_selectBackPDFs):
         BackPDFs = self.fileChooser("Select one or more PDF(s) for BACK matter", 
                 filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
-                multiple = True)
+                multiple = True, basedir=self.working_dir)
         if BackPDFs is not None and BackPDFs != 'None':
             self.BackPDFs = BackPDFs
             self.builder.get_object("c_inclBackMatter").set_active(True)
@@ -1367,7 +1367,7 @@ class PtxPrinterDialog:
     def onWatermarkPDFclicked(self, btn_selectWatermarkPDF):
         watermarks = self.fileChooser("Select Watermark PDF file", 
                 filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
-                multiple = False, basedir=os.path.dirname(__file__))
+                multiple = False, basedir=os.path.join(os.path.dirname(__file__), "PDFassets", "watermarks"))
         if watermarks is not None and watermarks != 'None':
             self.watermarks = watermarks[0]
             self.builder.get_object("c_applyWatermark").set_active(True)
@@ -1397,7 +1397,7 @@ class PtxPrinterDialog:
     def onPageBorderPDFclicked(self, btn_selectPageBorderPDF):
         pageborder = self.fileChooser("Select Page Border PDF file", 
                 filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
-                multiple = False)
+                multiple = False, basedir=os.path.join(os.path.dirname(__file__), "PDFassets", "border-art"))
         if pageborder is not None and pageborder != 'None':
             self.pageborder = pageborder[0]
             self.builder.get_object("c_inclPageBorder").set_active(True)
@@ -1413,7 +1413,7 @@ class PtxPrinterDialog:
     def onSectionHeaderPDFclicked(self, btn_selectSectionHeaderPDF):
         sectionheader = self.fileChooser("Select Section Header PDF file", 
                 filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
-                multiple = False)
+                multiple = False, basedir=os.path.join(os.path.dirname(__file__), "PDFassets", "border-art"))
         if sectionheader is not None and sectionheader != 'None':
             self.sectionheader = sectionheader[0]
             self.builder.get_object("c_inclSectionHeader").set_active(True)
@@ -1429,7 +1429,7 @@ class PtxPrinterDialog:
     def onVerseDecoratorPDFclicked(self, btn_selectVerseDecoratorPDF):
         versedecorator = self.fileChooser("Select Verse Decorator PDF file", 
                 filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
-                multiple = False)
+                multiple = False, basedir=os.path.join(os.path.dirname(__file__), "PDFassets", "border-art"))
         if versedecorator is not None and versedecorator != 'None':
             self.versedecorator = versedecorator[0]
             self.builder.get_object("c_inclVerseDecorator").set_active(True)
