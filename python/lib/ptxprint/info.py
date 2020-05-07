@@ -8,6 +8,28 @@ from ptxprint.font import TTFont
 from ptxprint.ptsettings import chaps, books, bookcodes, oneChbooks
 from ptxprint.snippets import FancyIntro, PDFx1aOutput, FancyBorders
 
+def universalopen(fname, rewrite=False):
+    """ Opens a file with the right codec from a small list and perhaps rewrites as utf-8 """
+    fh = open(fname, "r", encoding="utf-8")
+    try:
+        fh.readline()
+        fh.seek(0)
+        return fh
+    except ValueError:
+        pass
+    fh = open(fname, "r", encoding="utf-16")
+    fh.readline()
+    fh.seek(0)
+    if rewrite:
+        dat = fh.readlines()
+        fh.close()
+        with open(fname, "w", encoding="utf-8") as fh:
+            for d in dat:
+                fh.write(d)
+        fh = open(fname, "r", encoding="utf-8", errors="ignore")
+    return fh
+
+
 class Info:
     _mappings = {
         "config/name":              ("cb_savedConfig", lambda w,v: v or "default"),
@@ -168,6 +190,10 @@ class Info:
         "document/abovenotespace":  ("s_abovenotespace", lambda w,v: "{:.3f}".format(float(v))),
         "document/internotespace":  ("s_internote", lambda w,v: "{:.3f}".format(float(v))),
         "document/ifcolorfonts":    ("c_colorfonts", lambda w,v: "%" if v else ""),
+
+        "document/ifchaplabels":    ("c_useChapterLabel", lambda w,v: "%" if v else ""),
+        "document/clabelbooks":     ("t_clBookList", lambda w,v: v.upper()),
+        "document/clabel":          ("t_clHeading", lambda w,v: v),
 
         "document/ifdiglot":        ("c_diglot", lambda w,v :"" if v else "%"),
         "document/diglotsettings":  ("l_diglotString", lambda w,v: w.builder.get_object("l_diglotString").get_text() if w.get("c_diglot") else ""),
@@ -405,20 +431,20 @@ class Info:
                 self.dict[k] = self.printer.ptsettings.dict.get(v, "a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z")
         res = []
         self.dict['jobname'] = jobname
-        with open(os.path.join(os.path.dirname(__file__), template), encoding="utf-8") as inf:
+        with universalopen(os.path.join(os.path.dirname(__file__), template)) as inf:
             for l in inf.readlines():
                 if l.startswith(r"\ptxfile"):
                     res.append("\\PtxFilePath={"+filedir.replace("\\","/")+"/}\n")
-                    for i, f in enumerate(self.dict['project/books']):
+                    for i, f in enumerate(self.dict['project/bookids']):
+                        fname = self.dict['project/books'][i]
                         if self.dict['document/ifomitsinglechnum'] == 'true' and \
                            self.dict['document/ifomitchapternum'] == "false" and \
-                           f[2:5] in oneChbooks:
+                           f in oneChbooks:
                             res.append("\\OmitChapterNumbertrue\n")
-                            res.append("\\ptxfile{{{}}}\n".format(f))
+                            res.append("\\ptxfile{{{}}}\n".format(fname))
                             res.append("\\OmitChapterNumberfalse\n")
                         else:
-                            # print("Else for book: ",f[2:5])
-                            res.append("\\ptxfile{{{}}}\n".format(f))
+                            res.append("\\ptxfile{{{}}}\n".format(fname))
                 elif l.startswith(r"%\extrafont"):
                     spclChars = re.sub(r"\\[uU]([0-9a-fA-F]{4,6})", lambda m:chr(int(m.group(1), 16)), self.dict["paragraph/missingchars"])
                     # print(spclChars.split(' '), [len(x) for x in spclChars.split(' ')])
@@ -475,7 +501,7 @@ class Info:
             if doti > 0:
                 outfname = outfname[:doti] + "-draft" + outfname[doti:]
             outfpath = os.path.join(outdir, outfname)
-            with open(infname, "r", encoding="utf-8") as inf:
+            with universalopen(infname) as inf:
                 dat = inf.read()
                 for c in (self.changes or []) + (self.localChanges or []):
                     if c[0] is None:
@@ -496,7 +522,7 @@ class Info:
         if not os.path.exists(fname):
             return []
         qreg = r'(?:"((?:[^"\\]|\\.)*?)"|' + r"'((?:[^'\\]|\\.)*?)')"
-        with open(fname, "r", encoding="utf-8") as inf:
+        with universalopen(fname) as inf:
             for l in inf.readlines():
                 l = l.strip().replace(u"\uFEFF", "")
                 l = re.sub(r"\s*#.*$", "", l)
@@ -531,6 +557,12 @@ class Info:
         last = int(printer.get("cb_chapto"))
         
         # This section handles PARTIAL books (from chapter X to chapter Y)
+        if printer.get("c_useChapterLabel"):
+            clabel = printer.get("t_clHeading")
+            clbooks = printer.get("t_clBookList").split(" ")
+            # print("Chapter label: '{}' for '{}' with {}".format(clabel, " ".join(clbooks), bk))
+            if len(clabel) and (not len(clbooks) or bk in clbooks):
+                self.localChanges.append((None, regex.compile(r"(\\c 1)(?=\s*\r?\n|\s)", flags=regex.S), r"\\cl {}\n\1".format(clabel)))
         if not printer.get("c_multiplebooks"):
             if first > 1:
                 self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+(?=\\c {} ?\r?\n)".format(first), flags=regex.S), ""))
@@ -665,7 +697,7 @@ class Info:
         fname = printer.getBookFilename(bk, prjdir)
         infname = os.path.join(prjdir, fname)
         extOrder = self.getExtOrder(printer)
-        with open(infname, "r", encoding="utf-8", errors="ignore") as inf:
+        with universalopen(infname) as inf:
             dat = inf.read()
             inf.close()
             figlist += re.findall(r"(?i)\\fig .*?\|(.+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)    # Finds USFM2-styled markup in text:
@@ -868,7 +900,7 @@ class Info:
             m2b = ""
             m2c = ""
             z = 0
-            with open(infname, "r", encoding="utf-8") as inf:
+            with universalopen(infname) as inf:
                 for l in inf.readlines()[8:]: # Skip over the Paratext header lines
                     l = l.strip().replace(u"\uFEFF", "")
                     l = re.sub(r"\*", "", l)
@@ -918,7 +950,7 @@ class Info:
         fname = printer.getBookFilename("GLO", prjdir)
         infname = os.path.join(prjdir, fname)
         if os.path.exists(infname):
-            with open(infname, "r", encoding="utf-8") as inf:
+            with universalopen(infname, rewrite=True) as inf:
                 dat = inf.read()
                 ge = re.findall(r"\\p \\k (.+)\\k\* (.+)\r?\n", dat) # Finds all glossary entries in GLO book
                 if ge is not None:

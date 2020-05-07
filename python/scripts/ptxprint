@@ -20,6 +20,7 @@ except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
     import ptxprint
 from ptxprint.font import initFontCache
+from ptxprint.info import universalopen
 
 parser = argparse.ArgumentParser()
 # parser.add_argument('-h','--help', help="show this help message and exit")
@@ -94,6 +95,7 @@ def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
     for b in jobs:
         out = info.convertBook(b, tmpdir, prjdir)
         donebooks.append(out)
+    info["project/bookids"] = jobs
     info["project/books"] = donebooks
     if len(jobs) > 1:
         outfname = "ptxprint-{}_{}{}.tex".format(jobs[0], jobs[-1], prjid)
@@ -274,13 +276,13 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
                 plfname = fname[:doti] + "-draft" + fname[doti:] + ".piclist"
             piclstfname = os.path.join(printer.configPath(False), "PicLists", plfname)
             if os.path.exists(piclstfname):
-                with open(piclstfname, "r", encoding="utf-8") as inf:
+                with universalopen(piclstfname, rewrite=True) as inf:
                     dat = inf.read()
                     # MAT 19.13 |CN01771C.jpg|col|tr||Bringing the children to Jesus|19:13
                     fullnamelist += re.findall(r"(?i)\|(.+?\.(?=jpg|tif|png|pdf)...)\|", dat)
         else:
             infname = os.path.join(prjdir, fname)
-            with open(infname, "r", encoding="utf-8", errors="ignore") as inf:
+            with universalopen(infname) as inf:
                 dat = inf.read()
                 inf.close() # Look for USFM2 and USFM3 type inline \fig ... \fig* illustrations
                 fullnamelist += re.findall(r"(?i)\\fig .*?\|(.+?(?!\d{5}[a-c]?).+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)
@@ -312,7 +314,7 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
                 # Now write out the new PicList to a temp folder
                 piclstfname = os.path.join(printer.configPath(False), "PicLists", plfname)
                 if os.path.exists(piclstfname):
-                    with open(piclstfname, "r", encoding="utf-8") as inf:
+                    with unviersalopen(piclstfname, "r") as inf:
                         dat = inf.read()
                         dat = re.sub(r"(?m)%.+?\r?\n", "", dat) # Throw out all comments
                         for f in fullnamelist:

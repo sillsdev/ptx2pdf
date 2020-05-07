@@ -96,13 +96,17 @@
 
 \newwrite\n@tepages
 \newread\n@tepagetest
-\def\PageResetCallers#1{% if we want per-page callers, we have to generate and read an auxiliary file
-  \ifpagec@llers \else
+\def\@nputn@tepages{
     \openin\n@tepagetest = "\jobname.notepages" % test if notepages file exists from prev run
     \ifeof\n@tepagetest \let\n@xt\relax
     \else \def\n@xt{\input "\jobname.notepages"}
     \fi \closein\n@tepagetest
     \n@xt
+}
+
+\def\PageResetCallers#1{% if we want per-page callers, we have to generate and read an auxiliary file
+  \ifpagec@llers \else
+    \@nputn@tepages
     \pagec@llerstrue
     \addtoendhooks{\finishc@llers}
     \openout\n@tepages="\jobname.notepages"
@@ -115,7 +119,7 @@
 \def\finishc@llers{\immediate\closeout\n@tepages % close the notepages file, then re-read it and check for changes
   \n@teschangedfalse
   \m@kedigitsother
-  \let\noteonpage=\checkn@tepage \input "\jobname.notepages"
+  \let\noteonpage=\checkn@tepage \@nputn@tepages
   \ifn@teschanged \msg{*** Notes may have changed; re-run to update callers}\fi % if so, notify the user
 }
 \def\checkn@tepage#1#2#3{\def\t@st{#3}% test whether note has moved since the previous run
