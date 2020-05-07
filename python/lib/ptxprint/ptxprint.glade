@@ -1106,6 +1106,7 @@ using the -e flag on the command line.</property>
               <object class="GtkButton" id="b_print">
                 <property name="label">Print</property>
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="tooltip_text" translatable="yes">Apply any changes specified, save the
@@ -5001,93 +5002,6 @@ Paratext :-)   [Yeah, right!]</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkGrid">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="valign">start</property>
-                                    <property name="margin_bottom">6</property>
-                                    <property name="row_spacing">6</property>
-                                    <property name="column_spacing">6</property>
-                                    <child>
-                                      <object class="GtkSpinButton" id="s_abovenotespace">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="text" translatable="yes">6.0</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_notespace</property>
-                                        <property name="climb_rate">0.10000000000000001</property>
-                                        <property name="digits">1</property>
-                                        <property name="numeric">True</property>
-                                        <property name="update_policy">if-valid</property>
-                                        <property name="value">6</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">Enter the minimum vertical space/gap (mm) that
-must exist between the main text body and the
-footnote and cross-reference area at the bottom
-of the page.</property>
-                                        <property name="halign">end</property>
-                                        <property name="label" translatable="yes">Space Above:</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">If Footnotes and Cross-references are set one below
-the other, then the vertical space between these two
-sections can be controlled using this setting.
-
-(This is NOT the line-spacing of the footnote area.
-In order to control that, you will have to modify
-the stylesheet for the \f and \x markers.)</property>
-                                        <property name="halign">end</property>
-                                        <property name="label" translatable="yes">Inter note space:</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">2</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkSpinButton" id="s_internote">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="text" translatable="yes">3.5</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_internote</property>
-                                        <property name="climb_rate">0.10000000000000001</property>
-                                        <property name="digits">1</property>
-                                        <property name="numeric">True</property>
-                                        <property name="update_policy">if-valid</property>
-                                        <property name="value">3.5</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">3</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkAlignment">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
@@ -5171,7 +5085,8 @@ after \fq &amp; \xq</property>
 Quoted text from the footnote text
 with a colon ':' which helps keep the
 elements visually distinct.</property>
-                                            <property name="margin_left">10</property>
+                                            <property name="halign">end</property>
+                                            <property name="margin_left">20</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
                                           <packing>
@@ -5180,14 +5095,104 @@ elements visually distinct.</property>
                                             <property name="position">3</property>
                                           </packing>
                                         </child>
-                                        <child>
-                                          <object class="GtkCheckButton" id="c_glossaryFootnotes">
-                                            <property name="label" translatable="yes">Also Show Glossary 
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkGrid">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="valign">start</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="row_spacing">6</property>
+                                    <property name="column_spacing">6</property>
+                                    <child>
+                                      <object class="GtkSpinButton" id="s_abovenotespace">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="text" translatable="yes">6.0</property>
+                                        <property name="input_purpose">number</property>
+                                        <property name="adjustment">a_notespace</property>
+                                        <property name="climb_rate">0.10000000000000001</property>
+                                        <property name="digits">1</property>
+                                        <property name="numeric">True</property>
+                                        <property name="update_policy">if-valid</property>
+                                        <property name="value">6</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">Enter the minimum vertical space/gap (mm) that
+must exist between the main text body and the
+footnote and cross-reference area at the bottom
+of the page.</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Space Above:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">If Footnotes and Cross-references are set one below
+the other, then the vertical space between these two
+sections can be controlled using this setting.
+
+(This is NOT the line-spacing of the footnote area.
+In order to control that, you will have to modify
+the stylesheet for the \f and \x markers.)</property>
+                                        <property name="halign">end</property>
+                                        <property name="margin_left">20</property>
+                                        <property name="label" translatable="yes">Inter note space:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">2</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSpinButton" id="s_internote">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="text" translatable="yes">3.5</property>
+                                        <property name="input_purpose">number</property>
+                                        <property name="adjustment">a_internote</property>
+                                        <property name="climb_rate">0.10000000000000001</property>
+                                        <property name="digits">1</property>
+                                        <property name="numeric">True</property>
+                                        <property name="update_policy">if-valid</property>
+                                        <property name="value">3.5</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">3</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_glossaryFootnotes">
+                                        <property name="label" translatable="yes">Also Show Glossary 
 Entries as Footnotes</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">Glossary entries for any marked-up
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">Glossary entries for any marked-up
 Biblical Terms on the page can be
 made to appear as footnotes.
 
@@ -5199,18 +5204,14 @@ producing printouts for comprehension
 testing (where  Key Biblical Terms in the
 passage which have Glossary Entries also
 need to be checked for understanding).</property>
-                                            <property name="halign">start</property>
-                                            <property name="margin_left">10</property>
-                                            <property name="margin_right">6</property>
-                                            <property name="draw_indicator">True</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">4</property>
-                                          </packing>
-                                        </child>
+                                        <property name="halign">end</property>
+                                        <property name="margin_left">20</property>
+                                        <property name="draw_indicator">True</property>
                                       </object>
+                                      <packing>
+                                        <property name="left_attach">4</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
                                     </child>
                                   </object>
                                   <packing>
