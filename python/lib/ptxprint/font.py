@@ -82,13 +82,17 @@ class TTFontCache:
             style = "Regular"
         k = "{}|{}".format(name, style)
         # print(k,self.cache.get(k, None))
-        return self.cache.get(k, None)
+        res = self.cache.get(k, None)
+        if res is None and "Oblique" in k:
+            res = self.cache.get(k.replace("Oblique", "Italic"), None)
+        return res
 
 fontcache = None
 def initFontCache():
     global fontcache
     if fontcache is None:
         fontcache = TTFontCache()
+    # print(sorted(fontcache.cache.items()))
 
 class TTFont:
     def __init__(self, name, style=""):
@@ -96,6 +100,7 @@ class TTFont:
         self.style = " ".join([self.style2str(p.get_weight()), self.style2str(p.get_style())]).strip()
         self.family = p.get_family()
         self.filename = fontcache.get(self.family.replace("-", "\\-"), self.style.title())
+        # print([name, p, self.family, self.style, self.filename])
         self.feats = {}
         self.featvals = {}
         self.names = {}
