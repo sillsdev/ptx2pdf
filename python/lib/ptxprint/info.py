@@ -250,11 +250,11 @@ class Info:
         "fontbolditalic/slant":     ("s_bolditalicslant", lambda w,v: ":slant={:.4f}".format(v) if v != 0.0000 and w.get("c_fakebolditalic") else ""),
     }
     _fonts = {
-        "fontregular/name":         ("f_body", None, None, None),
-        "fontbold/name":            ("f_bold", "c_fakebold", "fontbold/embolden", "fontbold/slant"),
-        "fontitalic/name":          ("f_italic", "c_fakeitalic", "fontitalic/embolden", "fontitalic/slant"),
-        "fontbolditalic/name":      ("f_bolditalic", "c_fakebolditalic", "fontbolditalic/embolden", "fontbolditalic/slant"),
-        "fontextraregular/name":    ("f_extraRegular", None, None, None),
+        "fontregular":              ("bl_fontR", None, None, None),
+        "fontbold":                 ("bl_fontB", "c_fakebold", "fontbold/embolden", "fontbold/slant"),
+        "fontitalic":               ("bl_fontI", "c_fakeitalic", "fontitalic/embolden", "fontitalic/slant"),
+        "fontbolditalic":           ("bl_fontBI", "c_fakebolditalic", "fontbolditalic/embolden", "fontbolditalic/slant"),
+        "fontextraregular":         ("f_extraRegular", None, None, None),
         "fontfancy/versenumfont":   ("f_verseNumFont", None, None, None)
     }
     _hdrmappings = {
@@ -359,17 +359,20 @@ class Info:
         for p in self._fonts.keys():
             if p in self.dict:
                 del self.dict[p]
-        for p in ['fontregular/name'] + list(self._fonts.keys()):
+        for p in ['fontregular'] + list(self._fonts.keys()):
             if p in self.dict:
                 continue
-            wid = self._fonts[p][0]
-            f = TTFont(printer.get(wid))
+            btn = printer.builder.get_object(self._fonts[p][0])
+            name, style = btn.font_info
+            f = TTFont(name, style)
+            self.dict[p+"/name"] = name
+            self.dict[p+"/style"] = style 
             # print(p, wid, f.filename, f.family, f.style)
-            if f.filename is None and p != "fontregular/name" and self._fonts[p][1] is not None:
-                reg = printer.get(self._fonts['fontregular/name'][0])
-                f = TTFont(reg)
+            if f.filename is None and p != "fontregular" and self._fonts[p][1] is not None:
+                reg = printer.builder.get_object(self._fonts['fontregular'][0])
+                f = TTFont(*reg.font_info)
                 printer.set(self._fonts[p][1], True)
-                printer.set(wid, reg)
+                btn.set_label(" ".join(reg.font_info))
                 self.updatefields([self._fonts[p][2]])
                 # print("Setting {} to {}".format(p, reg))
             d = self.printer.ptsettings.find_ldml('.//special/{1}external-resources/{1}font[@name="{0}"]'.format(f.family, silns))
@@ -386,7 +389,7 @@ class Info:
                         k, v = l.split('=')
                         f.features[k.strip()] = v.strip()
                 if len(f.features):
-                    if p == "fontregular/name":
+                    if p == "fontregular":
                         self.dict['font/features'] = ":"+ ":".join("{0}={1}".format(f.feats.get(fid, fid),
                                                     f.featvals.get(fid, {}).get(int(v), v)) for fid, v in f.features.items())
             if 'Silf' in f and printer.get("c_useGraphite"):

@@ -13,6 +13,13 @@ pango_styles = {Pango.Style.ITALIC: "italic",
     Pango.Weight.HEAVY: "heavy"
 }
 
+styles_order = {
+    "Regular": 1,
+    "Bold": 2,
+    "Italic": 3,
+    "Bold Italic": 4
+}
+
 def num2tag(n):
     if n < 0x200000:
         return str(n)
@@ -49,12 +56,23 @@ class TTFontCache:
                 raise SyntaxError("Can't parse: {}".format(f).encode("unicode_escape"))
             for n in names:
                 for s in styles:
-                    # if n == "Awami Nastaliq":
-                        # print(n.encode("unicode_escape"),s.encode("unicode_escape"))
-                    self.cache["{}|{}".format(n, s)] = path
-                    # print("{}|{}  -->  {}".format(n.encode("unicode_escape"),s.encode("unicode_escape"), path))
-        # print("FontCache size:" + str(len(self.cache)))
+                    self.cache.setdefault(n, {})[s] = path
 
+    def fill_liststore(self, ls):
+        ls.clear()
+        for k, v in sorted(self.cache.items()):
+            score = sum(1 for j in ("Regular", "Bold", "Italic", "Bold Italic") if j in v)
+            ls.append([k, score == 4])
+
+    def fill_cbstore(self, name, cbs):
+        cbs.clear()
+        v = self.cache.get(name, None)
+        if v is None:
+            return
+        for k in sorted(v.keys(), key=lambda k:(styles_order.get(k, len(styles_order), k))):
+            cbs.append([v])
+
+    # deprecated, nothing calls this
     def find(self, name, style):
         orgname = name
         orgstyle = style.title()
@@ -78,14 +96,15 @@ class TTFontCache:
                     break
         return (res, name, style)
 
-    def get(self, name, style):
+    def get(self, name, style=None):
+        f = self.cache.get(name, None)
+        if f is None or style is None:
+            return f
         if len(style) == 0:
             style = "Regular"
-        k = "{}|{}".format(name, style)
-        # print(k,self.cache.get(k, None))
-        res = self.cache.get(k, None)
-        if res is None and "Oblique" in k:
-            res = self.cache.get(k.replace("Oblique", "Italic"), None)
+        res = f.get(style, None)
+        if res is None and "Oblique" in style:
+            res = f.get(style.replace("Oblique", "Italic"), None)
         return res
 
 fontcache = None
@@ -93,14 +112,25 @@ def initFontCache():
     global fontcache
     if fontcache is None:
         fontcache = TTFontCache()
+    return fontcache
     # print(sorted(fontcache.cache.items()))
 
 class TTFont:
+    cache = {}
+
+    def __new__(cls, name, style=""):
+        k = "{}|{}".format(name, style)
+        res = TTFont.cache.get(k, None)
+        if res is not None:
+            return res
+        else:
+            return object.__new__(cls, name, style)
+
     def __init__(self, name, style=""):
-        p = Pango.font_description_from_string(name + (" " + style if style else ""))
-        self.style = " ".join([self.style2str(p.get_weight()), self.style2str(p.get_style())]).strip()
-        self.family = p.get_family()
-        self.filename = fontcache.get(self.family.replace("-", "\\-"), self.style.title())
+        self.extrastyles = ""
+        self.family = name
+        self.style = style
+        self.filename = fontcache.get(name, style)
         self.feats = {}
         self.featvals = {}
         self.names = {}
@@ -109,12 +139,12 @@ class TTFont:
             self.readfont()
             self.family = self.names.get(1, self.family)
             self.style = self.names.get(2, self.style)
+            self.style = " ".join(x.title() for x in self.style.split())
             if self.style.lower() == "regular":
                 self.style = ""
         else:
             self.dict = {}
-        self.style = " ".join(x.title() for x in self.style.split())
-        # print([name, p, self.family, self.style, self.filename])
+        # print([name, self.family, self.style, self.filename])
 
     def readfont(self):
         self.dict = {}

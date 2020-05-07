@@ -171,7 +171,8 @@ class PtxPrinterDialog:
         self.splash.start()
 
         # do slow stuff here
-        initFontCache()
+        fc = initFontCache()
+        lsfonts = self.builder.get_object("ls_font")
         # sleep(1)  # Until we want people to see the splash screen
 
         self.initialised = True
@@ -181,6 +182,11 @@ class PtxPrinterDialog:
         else:
             self.builder.get_object("b_print").set_sensitive(False)
         self.splash.destroy()
+        fc.fill_liststore(lsfonts)
+        tv = self.builder.get_object("tv_fontFamily")
+        cr = Gtk.CellRendererText()
+        col = Gtk.TreeViewColumn("Family", cr, text=0)
+        tv.append_column(col)
         # self.mw.set_resizable(True)
         # self.mw.set_default_size(730, 565)
         self.mw.resize(730, 580)
@@ -241,6 +247,8 @@ class PtxPrinterDialog:
             v = w.get_value()
         elif wid.startswith("btn_"):
             v = w.get_tooltip_text()
+        elif wid.startswith("bl_"):
+            v = w.get_label()
         return v
 
     def set(self, wid, value):
@@ -268,6 +276,8 @@ class PtxPrinterDialog:
             w.set_value(value)
         elif wid.startswith("btn_"):
             w.set_tooltip_text(value)
+        elif wid.startswith("bl_"):
+            w.set_label(value)
 
     def getBooks(self):
         if not self.get('c_multiplebooks'):
@@ -986,41 +996,44 @@ class PtxPrinterDialog:
         self.builder.get_object("gr_debugTools").set_sensitive(self.get("c_keepTemporaryFiles"))
 
     def onFontRclicked(self, btn):
-        fnt_R = self.getFontNameFace()
-        self.builder.get_object("btn_fontR").set_label("\n".join(fnt_R))
+        self.getFontNameFace("bl_fontR")
         
     def onFontBclicked(self, btn):
-        fnt_B = self.getFontNameFace()
-        self.builder.get_object("btn_fontB").set_label("\n".join(fnt_B))
+        self.getFontNameFace("bl_fontB")
         
     def onFontIclicked(self, btn):
-        fnt_I = self.getFontNameFace()
-        self.builder.get_object("btn_fontI").set_label("\n".join(fnt_I))
+        self.getFontNameFace("bl_fontI")
         
     def onFontBIclicked(self, btn):
-        fnt_BI = self.getFontNameFace()
-        self.builder.get_object("btn_fontBI").set_label("\n".join(fnt_BI))
+        self.getFontNameFace("bl_fontBI")
         
-    def getFontNameFace(self):
+    def onFontRowSelected(self, container, row):
+        lsfonts = self.builder.get_object("ls_fonts")
+        lsstyles = self.builder.get_object("ls_fontFaces")
+        dat = lsfonts[row.get_index()]
+        initFontCache().fill_cbstore(dat[0], lsstyles)
+
+    def getFontNameFace(self, btnid):
+        btn = self.builder.get_object(btnid)
         dialog = self.builder.get_object("dlg_fontChooser")
         dialog.set_keep_above(True)
-        lsfonts = self.builder.get_object("ls_fonts")
-        # fl = self.builder.get_object("t_fontlist")
-        self.alltoggles = []
-        for f in enumerate(lsfonts):
-            # do something
-            pass
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            # Do something
-            pass
+            lb = self.builder.get_object("tv_fontFamily")
+            sel = lb.get_selection()
+            ls, row = sel.get_selected()
+            print(row, type(row))
+            name = ls.get_value(row, 0)
+            cb = self.builder.get_object("cb_fontFaces")
+            style = cb.get_model()[cb.get_active()][0]
+            btn.font_info = [name, style]
+            btn.set_label(name + " " + style)
         elif response == Gtk.ResponseType.CANCEL:
-            # Do something else...
             pass
         dialog.set_keep_above(False)
         dialog.hide()
         # return (family,face)
-        return (["Times New Roman",self.get("cb_fontFaces")])
+        # return (["Times New Roman",self.get("cb_fontFaces")])
 
     def onChooseBooksClicked(self, btn):
         dialog = self.builder.get_object("dlg_multiBookSelector")
