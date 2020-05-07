@@ -6208,6 +6208,9 @@ to avoid 'rivers' or white space in paragraphs.</property>
                                         <property name="position">4</property>
                                       </packing>
                                     </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>

@@ -124,10 +124,6 @@ class FancyBorders():
 
     processTex = True
     texCode = r"""
-\TitleColumns=1
-\IntroColumns=1
-\BodyColumns=1
-
 % Define this to add a border to all pages, from a PDF file containing the graphic
 %   "scaled <factor>" adjusts the size (1000 would keep the border at its original size)
 % Can also use "xscaled 850 yscaled 950" to scale separately in each direction,

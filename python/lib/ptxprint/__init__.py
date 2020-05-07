@@ -1308,7 +1308,7 @@ class PtxPrinterDialog:
     def onWatermarkPDFclicked(self, btn_selectWatermarkPDF):
         watermarks = self.fileChooser("Select Watermark PDF file", 
                 filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
-                multiple = False)
+                multiple = False, basedir=os.path.dirname(__file__))
         if watermarks is not None and watermarks != 'None':
             self.watermarks = watermarks[0]
             self.builder.get_object("c_applyWatermark").set_active(True)
@@ -1559,13 +1559,15 @@ class PtxPrinterDialog:
         it = b.get_iter_at_offset(-1)
         atv.scroll_to_iter(it, 0, False, 0, 0)
 
-    def fileChooser(self, title, filters = None, multiple = True, folder = False):
+    def fileChooser(self, title, filters=None, multiple=True, folder=False, basedir=None):
         dialog = Gtk.FileChooserDialog(title, None,
             (Gtk.FileChooserAction.SELECT_FOLDER if folder else Gtk.FileChooserAction.OPEN),
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
             ("Select" if folder else Gtk.STOCK_OPEN), Gtk.ResponseType.OK))
         dialog.set_default_size(730, 565)
         dialog.set_select_multiple(multiple)
+        if basedir is not None:
+            dialog.set_current_folder(basedir)
         if filters != None: # was len(filters):
             # filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}}
             filter_in = Gtk.FileFilter()
