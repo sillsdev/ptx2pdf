@@ -96,6 +96,7 @@ class PtxPrinterDialog:
         self.addCR("cb_textDirection", 0)
         self.addCR("cb_blendedXrefCaller", 0)
         self.addCR("cb_glossaryMarkupStyle", 0)
+        self.addCR("cb_fontFaces", 0)
         self.cb_savedConfig = self.builder.get_object("cb_savedConfig")
         # self.addCR("cb_savedConfig", 0)
         # self.addCR("cb_diglotPriProject", 0)
@@ -103,6 +104,8 @@ class PtxPrinterDialog:
         pb = self.builder.get_object("b_print")
         pbc = pb.get_style_context()
         pbc.add_class("printbutton")
+        # Could we add some .css for the new FontChooser buttons to make
+        # the text smaller so that they are not so tall with 2 rows of text?
 
         scripts = self.builder.get_object("ls_scripts")
         scripts.clear()
@@ -118,15 +121,11 @@ class PtxPrinterDialog:
             digits.append([d, v])
         self.cb_digits.set_active_id(_alldigits[0])
 
-        dialog = self.builder.get_object("dlg_multiBookSelector")
-        dialog.add_buttons(
-            Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-            Gtk.STOCK_OK, Gtk.ResponseType.OK)
-
-        dialog = self.builder.get_object("dlg_password")
-        dialog.add_buttons(
-            Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-            Gtk.STOCK_APPLY, Gtk.ResponseType.APPLY)
+        for d in ["dlg_multiBookSelector", "dlg_fontChooser", "dlg_password"]:
+            dialog = self.builder.get_object(d)
+            dialog.add_buttons(
+                Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                Gtk.STOCK_OK, Gtk.ResponseType.OK)
 
         self.fileViews = []
         for i,k in enumerate(["FinalSFM", "PicList", "AdjList", "TeXfile", "XeTeXlog", "Settings"]):
@@ -932,7 +931,7 @@ class PtxPrinterDialog:
         # (removed: "tb_Logging", "tb_DiglotTesting", "tb_Body", )
         # Hide a whole bunch of stuff that they don't need to see   
         for c in ("tb_Advanced", "tb_ViewerEditor", 
-                  "btn_editPicList", "l_imageTypeOrder", "t_imageTypeOrder",
+                  "btn_editPicList", "l_imageTypeOrder", "t_imageTypeOrder", "fr_chapVerse",
                   "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "bx_AdvFootnoteConfig", "l_colgutteroffset",
                   "c_usePicList", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", 
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
@@ -985,6 +984,43 @@ class PtxPrinterDialog:
 
     def onKeepTemporaryFilesClicked(self, c_keepTemporaryFiles):
         self.builder.get_object("gr_debugTools").set_sensitive(self.get("c_keepTemporaryFiles"))
+
+    def onFontRclicked(self, btn):
+        fnt_R = self.getFontNameFace()
+        self.builder.get_object("btn_fontR").set_label("\n".join(fnt_R))
+        
+    def onFontBclicked(self, btn):
+        fnt_B = self.getFontNameFace()
+        self.builder.get_object("btn_fontB").set_label("\n".join(fnt_B))
+        
+    def onFontIclicked(self, btn):
+        fnt_I = self.getFontNameFace()
+        self.builder.get_object("btn_fontI").set_label("\n".join(fnt_I))
+        
+    def onFontBIclicked(self, btn):
+        fnt_BI = self.getFontNameFace()
+        self.builder.get_object("btn_fontBI").set_label("\n".join(fnt_BI))
+        
+    def getFontNameFace(self):
+        dialog = self.builder.get_object("dlg_fontChooser")
+        dialog.set_keep_above(True)
+        lsfonts = self.builder.get_object("ls_fonts")
+        # fl = self.builder.get_object("t_fontlist")
+        self.alltoggles = []
+        for f in enumerate(lsfonts):
+            # do something
+            pass
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            # Do something
+            pass
+        elif response == Gtk.ResponseType.CANCEL:
+            # Do something else...
+            pass
+        dialog.set_keep_above(False)
+        dialog.hide()
+        # return (family,face)
+        return (["Times New Roman",self.get("cb_fontFaces")])
 
     def onChooseBooksClicked(self, btn):
         dialog = self.builder.get_object("dlg_multiBookSelector")

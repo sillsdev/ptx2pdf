@@ -589,7 +589,10 @@ start of the publication in this oder:
     </child>
   </object>
   <object class="GtkDialog" id="dlg_password">
+    <property name="width_request">270</property>
+    <property name="height_request">100</property>
     <property name="can_focus">False</property>
+    <property name="valign">start</property>
     <property name="title" translatable="yes">Saved Configuration</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
@@ -871,6 +874,187 @@ saved configuration.</property>
         <col id="1" translatable="yes">tibetan</col>
       </row>
     </data>
+  </object>
+  <object class="GtkListStore" id="ls_font">
+    <columns>
+      <!-- column-name FontFamily -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Times New Roman</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Charis SIL</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Gentium Basic</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Gentium Book Basic</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Suranna</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Suranna UI</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Annapurna SIL</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="ls_fontFaces">
+    <columns>
+      <!-- column-name gchararray1 -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Regular</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Bold</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Italic</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Bold Italic</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkDialog" id="dlg_fontChooser">
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Pick a Font (and Typeface)</property>
+    <property name="window_position">center-on-parent</property>
+    <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
+    <property name="type_hint">dialog</property>
+    <property name="gravity">center</property>
+    <child>
+      <placeholder/>
+    </child>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="width_request">350</property>
+        <property name="height_request">475</property>
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can_focus">False</property>
+            <property name="margin_left">6</property>
+            <property name="margin_right">6</property>
+            <property name="margin_bottom">6</property>
+            <property name="layout_style">end</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">6</property>
+            <child>
+              <object class="GtkSearchEntry">
+                <property name="name">t_searchFonts</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="margin_left">6</property>
+                <property name="margin_right">6</property>
+                <property name="margin_top">6</property>
+                <property name="primary_icon_name">edit-find-symbolic</property>
+                <property name="primary_icon_activatable">False</property>
+                <property name="primary_icon_sensitive">False</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkListBox" id="lb_fontFamily">
+                <property name="height_request">350</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Select the Font Family Name</property>
+                <property name="margin_left">6</property>
+                <property name="margin_right">6</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">start</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="margin_right">4</property>
+                    <property name="margin_bottom">6</property>
+                    <property name="label" translatable="yes">Typeface:</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkComboBox" id="cb_fontFaces">
+                    <property name="width_request">130</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="margin_left">6</property>
+                    <property name="margin_right">6</property>
+                    <property name="margin_bottom">6</property>
+                    <property name="model">ls_fontFaces</property>
+                    <property name="active">0</property>
+                    <property name="id_column">0</property>
+                    <property name="active_id">1</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
   </object>
   <object class="GtkListStore" id="ls_fonts">
     <columns>
@@ -2714,7 +2898,7 @@ setting will be applied to ALL books</property>
 chapter divisions as headings (not drop-cap numerals).</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="placeholder_text" translatable="yes">Enter "Chapter" heading</property>
+                                    <property name="placeholder_text" translatable="yes">Type "Chapter" Target Language</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">3</property>
@@ -2809,54 +2993,6 @@ chapter divisions as headings (not drop-cap numerals).</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkFontButton" id="f_bold">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="font">Sans 12</property>
-                                    <property name="preview_text"/>
-                                    <property name="show_preview_entry">False</property>
-                                    <property name="show_size">False</property>
-                                    <signal name="font-set" handler="onFontBoldChanged" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkFontButton" id="f_italic">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="font">Sans 12</property>
-                                    <property name="preview_text"/>
-                                    <property name="show_preview_entry">False</property>
-                                    <property name="show_size">False</property>
-                                    <signal name="font-set" handler="onFontItalicChanged" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkFontButton" id="f_bolditalic">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="font">Sans 12</property>
-                                    <property name="preview_text"/>
-                                    <property name="show_preview_entry">False</property>
-                                    <property name="show_size">False</property>
-                                    <signal name="font-set" handler="onFontBoldItalicChanged" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
                                     <property name="top_attach">3</property>
                                   </packing>
                                 </child>
@@ -3073,36 +3209,6 @@ chapter divisions as headings (not drop-cap numerals).</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkFontButton" id="f_body">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="tooltip_text" translatable="yes">One of the most common mistakes (at least on
-Windows systems) is that a font is not installed
-properly for ALL users. If you choose a font like
-that, you will get a warning message and the 
-print process will fail.
-
-To install the font for ALL users, you will require
-admin privileges. Then follow these steps:
-a) Delete the current font from Windows\Fonts
-(you may need to restart windows after that)
-b) Locate the font to be installed
-c) Right-click and select option "Install for all users"
-d) Restart PTXprint and try again</property>
-                                    <property name="valign">center</property>
-                                    <property name="font">Sans 12</property>
-                                    <property name="preview_text"/>
-                                    <property name="show_preview_entry">False</property>
-                                    <property name="show_size">False</property>
-                                    <signal name="font-set" handler="onFontChanged" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
@@ -3137,7 +3243,7 @@ Direction:</property>
                                     </child>
                                     <child>
                                       <object class="GtkComboBox" id="cb_textDirection">
-                                        <property name="width_request">130</property>
+                                        <property name="width_request">120</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">start</property>
@@ -3156,6 +3262,156 @@ Direction:</property>
                                   <packing>
                                     <property name="left_attach">2</property>
                                     <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">Old font
+buttons:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkFontButton" id="f_bolditalic">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="font">Sans 12</property>
+                                    <property name="preview_text"/>
+                                    <property name="show_preview_entry">False</property>
+                                    <property name="show_size">False</property>
+                                    <signal name="font-set" handler="onFontBoldItalicChanged" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">4</property>
+                                    <property name="top_attach">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkFontButton" id="f_italic">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="font">Sans 12</property>
+                                    <property name="preview_text"/>
+                                    <property name="show_preview_entry">False</property>
+                                    <property name="show_size">False</property>
+                                    <signal name="font-set" handler="onFontItalicChanged" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="top_attach">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkFontButton" id="f_bold">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="font">Sans 12</property>
+                                    <property name="preview_text"/>
+                                    <property name="show_preview_entry">False</property>
+                                    <property name="show_size">False</property>
+                                    <signal name="font-set" handler="onFontBoldChanged" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_fontR">
+                                    <property name="label" translatable="yes">Select a font...
+and typeface</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <signal name="clicked" handler="onFontRclicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkFontButton" id="f_body">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="tooltip_text" translatable="yes">One of the most common mistakes (at least on
+Windows systems) is that a font is not installed
+properly for ALL users. If you choose a font like
+that, you will get a warning message and the 
+print process will fail.
+
+To install the font for ALL users, you will require
+admin privileges. Then follow these steps:
+a) Delete the current font from Windows\Fonts
+(you may need to restart windows after that)
+b) Locate the font to be installed
+c) Right-click and select option "Install for all users"
+d) Restart PTXprint and try again</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="font">Sans 12</property>
+                                    <property name="preview_text"/>
+                                    <property name="show_preview_entry">False</property>
+                                    <property name="show_size">False</property>
+                                    <signal name="font-set" handler="onFontChanged" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_fontB">
+                                    <property name="label" translatable="yes">Select a font...
+and typeface</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <signal name="clicked" handler="onFontBclicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_fontI">
+                                    <property name="label" translatable="yes">Select a font...
+and typeface</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <signal name="clicked" handler="onFontIclicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_fontBI">
+                                    <property name="label" translatable="yes">Select a font...
+and typeface</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <signal name="clicked" handler="onFontBIclicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">3</property>
                                   </packing>
                                 </child>
                               </object>
@@ -4597,7 +4853,7 @@ in the header reference.</property>
                                 <property name="margin_top">3</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="orientation">vertical</property>
-                                <property name="spacing">5</property>
+                                <property name="spacing">10</property>
                                 <child>
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
@@ -4725,6 +4981,9 @@ Paratext :-)   [Yeah, right!]</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
+                                                        <property name="tooltip_text" translatable="yes">A "Callee" is a symbol in the notes area
+which helps the reader quickly find the 
+footnote which was marked in the text.</property>
                                                         <property name="halign">start</property>
                                                         <property name="active">True</property>
                                                         <property name="draw_indicator">True</property>
@@ -4741,6 +5000,9 @@ Paratext :-)   [Yeah, right!]</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
+                                                        <property name="tooltip_text" translatable="yes">If this is checked, then the sequence of 
+callers starts again from the 1st item in
+the list of callers specified.</property>
                                                         <property name="halign">start</property>
                                                         <property name="active">True</property>
                                                         <property name="draw_indicator">True</property>
@@ -4760,10 +5022,13 @@ Paratext :-)   [Yeah, right!]</property>
                                                 </child>
                                                 <child>
                                                   <object class="GtkCheckButton" id="c_fnparagraphednotes">
-                                                    <property name="label" translatable="yes">Use running footnotes (instead of each on a new line)</property>
+                                                    <property name="label" translatable="yes">Use paragraphed footnotes (recommended)</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
+                                                    <property name="tooltip_text" translatable="yes">Rather than starting each footnote on a different line
+place footnotes one after the other (with space between)
+to form a paragraph.</property>
                                                     <property name="halign">start</property>
                                                     <property name="margin_right">6</property>
                                                     <property name="margin_top">2</property>
@@ -4921,6 +5186,9 @@ Paratext :-)   [Yeah, right!]</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
+                                                        <property name="tooltip_text" translatable="yes">A "Callee" is a symbol in the notes area
+which helps the reader quickly find the 
+cross-reference which was marked in the text.</property>
                                                         <property name="halign">start</property>
                                                         <property name="active">True</property>
                                                         <property name="draw_indicator">True</property>
@@ -4937,6 +5205,9 @@ Paratext :-)   [Yeah, right!]</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
+                                                        <property name="tooltip_text" translatable="yes">If this is checked, then the sequence of 
+callers starts again from the 1st item in
+the list of callers specified.</property>
                                                         <property name="halign">start</property>
                                                         <property name="active">True</property>
                                                         <property name="draw_indicator">True</property>
@@ -4956,10 +5227,13 @@ Paratext :-)   [Yeah, right!]</property>
                                                 </child>
                                                 <child>
                                                   <object class="GtkCheckButton" id="c_paragraphedxrefs">
-                                                    <property name="label" translatable="yes">Use running cross-references (recommended)</property>
+                                                    <property name="label" translatable="yes">Use paragraphed cross-references (recommended)</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
+                                                    <property name="tooltip_text" translatable="yes">Rather than starting each cross-reference on a 
+different line place cross-references one after
+the other (with space between) to form a paragraph.</property>
                                                     <property name="halign">start</property>
                                                     <property name="margin_right">6</property>
                                                     <property name="margin_bottom">6</property>
@@ -5109,7 +5383,6 @@ elements visually distinct.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="valign">start</property>
-                                    <property name="margin_bottom">6</property>
                                     <property name="row_spacing">6</property>
                                     <property name="column_spacing">6</property>
                                     <child>
@@ -6103,28 +6376,7 @@ this option checked (on).</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkFrame">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="label_xalign">0.039999999105930328</property>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child type="label">
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="margin_top">6</property>
-                                <property name="margin_bottom">6</property>
-                                <property name="label" translatable="yes">Notes</property>
-                              </object>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
+                          <placeholder/>
                         </child>
                         <child>
                           <object class="GtkFrame">
@@ -8643,6 +8895,8 @@ be specified.</property>
     </child>
   </object>
   <object class="GtkWindow" id="w_splash">
+    <property name="width_request">450</property>
+    <property name="height_request">270</property>
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Welcome to PTXprint!</property>
     <property name="resizable">False</property>
@@ -8672,6 +8926,7 @@ be specified.</property>
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="margin_right">21</property>
                 <property name="label" translatable="yes">Loading font list...
 
 If you have enough time to read this message, 
