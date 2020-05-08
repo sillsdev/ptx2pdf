@@ -62,7 +62,7 @@ class TTFontCache:
         ls.clear()
         for k, v in sorted(self.cache.items()):
             score = sum(1 for j in ("Regular", "Bold", "Italic", "Bold Italic") if j in v)
-            ls.append([k, score == 4])
+            ls.append([k, 700 if score == 4 else 400])
 
     def fill_cbstore(self, name, cbs):
         cbs.clear()

@@ -187,7 +187,7 @@ class PtxPrinterDialog:
         fc.fill_liststore(lsfonts)
         tv = self.builder.get_object("tv_fontFamily")
         cr = Gtk.CellRendererText()
-        col = Gtk.TreeViewColumn("Family", cr, text=0)
+        col = Gtk.TreeViewColumn("Family", cr, text=0, weight=1)
         tv.append_column(col)
         # self.mw.set_resizable(True)
         # self.mw.set_default_size(730, 565)
