@@ -402,7 +402,7 @@ class Info:
             if len(f.style):
                 fname = f.family + " " + f.style.title()
             self.dict[p] = fname
-            self.dict[p.replace("/name", "/engine") if p.endswith("/name") else p+"/name"] = engine
+            self.dict[p+"/engine"] = engine
 
     def processHdrFtr(self, printer):
         v = printer.get("cb_ftrcenter")
@@ -755,7 +755,10 @@ class Info:
             return re.sub('[()&+,. ]', '_', self.base(fpath).lower())
 
     def _configset(self, config, key, value):
-        (sect, k) = key.split("/")
+        if "/" in key:
+            (sect, k) = key.split("/", maxsplit=1)
+        else:
+            (sect, k) = (key, "")
         if not config.has_section(sect):
             config.add_section(sect)
         config.set(sect, k, value)

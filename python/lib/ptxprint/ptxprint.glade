@@ -210,7 +210,6 @@
     <property name="step_increment">1</property>
     <property name="page_increment">1</property>
   </object>
-  <object class="GtkListStore" id="diglot"/>
   <object class="GtkAboutDialog" id="dlg_about">
     <property name="can_focus">False</property>
     <property name="window_position">center</property>
@@ -728,6 +727,11 @@ saved configuration.</property>
       <!-- column-name book -->
       <column type="gchararray"/>
     </columns>
+    <data>
+      <row>
+        <col id="0">MAT</col>
+      </row>
+    </data>
   </object>
   <object class="GtkListStore" id="ls_chapfrom">
     <columns>
@@ -1166,6 +1170,11 @@ saved configuration.</property>
       <!-- column-name projid -->
       <column type="gchararray"/>
     </columns>
+    <data>
+      <row>
+        <col id="0">Unknown</col>
+      </row>
+    </data>
   </object>
   <object class="GtkListStore" id="ls_scripts">
     <columns>
@@ -1174,6 +1183,11 @@ saved configuration.</property>
       <!-- column-name id -->
       <column type="gchararray"/>
     </columns>
+    <data>
+      <row>
+        <col id="0">Latn</col>
+      </row>
+    </data>
   </object>
   <object class="GtkListStore" id="ls_textDirection">
     <columns>

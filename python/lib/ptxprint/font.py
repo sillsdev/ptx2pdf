@@ -60,11 +60,9 @@ class TTFontCache:
 
     def fill_liststore(self, ls):
         ls.clear()
-        print("+IAFFM")
         for k, v in sorted(self.cache.items()):
             score = sum(1 for j in ("Regular", "Bold", "Italic", "Bold Italic") if j in v)
             ls.append([k, score == 4])
-        print("-IAFFM")
 
     def fill_cbstore(self, name, cbs):
         cbs.clear()
@@ -129,7 +127,6 @@ class TTFont:
             return super(TTFont, cls).__new__(cls)
 
     def __init__(self, name, style=""):
-        print(name, style)
         self.extrastyles = ""
         self.family = name
         self.style = style
