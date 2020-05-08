@@ -7,14 +7,14 @@ from gi.repository import Gtk, Gdk
 from shutil import copyfile, rmtree
 
 _errmsghelp = {
-"! Unable to load picture.":              "Check if picture file is located in 'Figures', 'local\\figures' or a\nspecified folder. Also try the option 'Omit Missing Pictures'\n",
-"! Unable to load picture or PDF file.":  "Check if image/PDF file is available on the system\n",
-"! Missing control sequence inserted.":   "Fallback font being applied something in footnote\n",
+"! Unable to load picture.":             "Check if picture file is located in 'Figures', 'local\\figures' or a\nspecified folder. Also try the option 'Omit Missing Pictures'\n",
+"! Unable to load picture or PDF file.": "Check if image/PDF file is available on the system\n",
+"! Missing control sequence inserted.":  "Fallback font probably being applied to text in a footnote (not permitted!)\n",
 "! Missing number, treated as zero.":    "Related to USFM3 illustration markup\n",
-"! Undefined control sequence.":          "This is related to a USFM marker error (such as an unsupported marker)\nTry 'Run Basic Checks' in Paratext\n",
+"! Undefined control sequence.":         "This is related to a USFM marker error (such as an unsupported marker)\nTry 'Run Basic Checks' in Paratext\n",
 "! File ended while scanning use of":    "Try turning off PrintDraftChanges.txt and both Stylesheets on Advanced tab\n",
 "! Paratext stylesheet":                 "Try turning off the PrintDraft-mods stylesheet\n",
-"! Not a letter.":                        "Possible fault in the hyphenation file\nTry turning off Hyphenate option located on the Body tab\n",
+"! Not a letter.":                       "Possible fault in the hyphenation file\nTry turning off Hyphenate option located on the Body tab\n",
 "! Font":                                "Font related issue - details unknown\n(Report this rare error please)\n",
 "! Too many }'s":                        "Serious TeX macro issue - contact support, or post a bug report\n",
 "! This can't happen (page)":            "Serious TeX macro issue - contact support, or post a bug report\n",
