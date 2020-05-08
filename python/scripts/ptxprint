@@ -7,18 +7,19 @@ from gi.repository import Gtk, Gdk
 from shutil import copyfile, rmtree
 
 _errmsghelp = {
-"! Unable to load picture":              "Check if picture is available on the system\nor try option 'Omit Missing Pictures'",
-"! Unable to load picture or PDF file":  "Check if image/PDF file is available on the system",
-"! Missing control sequence inserted":   "Fallback font being applied something in footnote",
-"! Missing number, treated as zero.":    "Related to USFM3 illustration markup",
-"! Undefined control sequence":          "This is related to a USFM marker error\n(such as an unsupported marker)\nTry 'Run Basic Checks' in Paratext",
-"! File ended while scanning use of":    "Try turning off PrintDraftChanges.txt\nand both Stylesheets on Advanced tab",
-"! Paratext stylesheet":                 "Try turning off the PrintDraft-mods stylesheet",
-"! Not a letter":                        "Possible fault in the hyphenation file\nTry turning off Hyphenate option on Body tab",
-"! Font":                                "Font issue - details unknown\n(Report this rare error please)",
-"! Too many }'s":                        "Serious TeX macro issue - contact support, or post a bug report",
-"! This can't happen (page)":            "Serious TeX macro issue - contact support, or post a bug report",
-"Runaway argument?":                     "Unknown issue. Maybe related to Right-aligned tabbed leaders\nTry turning off PrintDraftChanges.txt and both Stylesheets",
+"! Unable to load picture.":              "Check if picture file is located in 'Figures', 'local\\figures' or a\nspecified folder. Also try the option 'Omit Missing Pictures'\n",
+"! Unable to load picture or PDF file.":  "Check if image/PDF file is available on the system\n",
+"! Missing control sequence inserted.":   "Fallback font being applied something in footnote\n",
+"! Missing number, treated as zero.":    "Related to USFM3 illustration markup\n",
+"! Undefined control sequence.":          "This is related to a USFM marker error (such as an unsupported marker)\nTry 'Run Basic Checks' in Paratext\n",
+"! File ended while scanning use of":    "Try turning off PrintDraftChanges.txt and both Stylesheets on Advanced tab\n",
+"! Paratext stylesheet":                 "Try turning off the PrintDraft-mods stylesheet\n",
+"! Not a letter.":                        "Possible fault in the hyphenation file\nTry turning off Hyphenate option located on the Body tab\n",
+"! Font":                                "Font related issue - details unknown\n(Report this rare error please)\n",
+"! Too many }'s":                        "Serious TeX macro issue - contact support, or post a bug report\n",
+"! This can't happen (page)":            "Serious TeX macro issue - contact support, or post a bug report\n",
+"Runaway argument?":                     "Unknown issue. Maybe related to Right-aligned tabbed leaders\nTry turning off PrintDraftChanges.txt and both Stylesheets\n",
+"Unknown":                               "Sorry! No diagnostic help is available for this error.\nTry turning off all Advanced settings & disable Changes and Stylesheets\n",
 }
 if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
     sys.stdout = open(os.devnull, "w")
@@ -218,22 +219,35 @@ def doit(printer, display=True):
         if not args.print: # We don't want pop-up messages if running in command-line mode
             # it did NOT finish successfully, so help them troubleshoot what went wrong:
             finalLogLines = info.loglines[-30:-10]
+            foundmsg = False
+            finalLogLines.append("-"*90+"\n")
             for l in finalLogLines:
-                if l[:1] == "!":
+                # print(l)
+                if l[:1] == "!" and not foundmsg:
                     for m in sorted(_errmsghelp.keys(),key=len, reverse=True):
                         if m in l:
-                            finalLogLines.append("{}\n\n>>>{}\n".format(l, _errmsghelp[m]))
+                            if l[:-1] != m:
+                                finalLogLines.append("{}\n".format(m))
+                            finalLogLines.append(_errmsghelp[m])
+                            foundmsg = True
+                            break
+            if not foundmsg:
+                finalLogLines.append(_errmsghelp["Unknown"])
+            book = re.findall(r"\d\d(...).+?-draft.SFM", "".join(finalLogLines))[0]
             refs = re.findall(r"([1-9]\d*[.:][1-9]\d*)", "".join(finalLogLines))
             if len(refs):
-                finalLogLines.append("\nCh:vs to check: {}\n".format(", ".join(refs)))
+                finalLogLines.append("\nReferences to check in {}: {}".format(book, ", ".join(refs)))
+            mrkrs = re.findall(r"(\\[a-z0-9]{0,5}[ *\r\n.])", "".join(finalLogLines[-10:]))
+            if len(mrkrs):
+                finalLogLines.append("\nMarkers to check: {}".format(", ".join(mrkrs)))
             files = re.findall(r'(?i)([^\\/\n."= ]*?\.(?=jpg|tif|png|pdf)...)', "".join(finalLogLines))
             if len(files):
-                finalLogLines.append("\nFile(s) to check: {}\n".format(", ".join(files)))
+                finalLogLines.append("\nFile(s) to check: {}".format(", ".join(files)))
             par = par = printer.builder.get_object('ptxprint')
             dialog = Gtk.MessageDialog(parent=par, modal=True, message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK, \
                 text="Failed to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname))
-            dialog.set_title ("PTXprint 0.5.4 (Beta) - Error!")
-            dialog.format_secondary_text("".join(finalLogLines))
+            dialog.set_title ("PTXprint [0.5.4 Beta] - Error!")
+            dialog.format_secondary_text("".join(finalLogLines[-20:]))
             dialog.set_keep_above(True)
             dialog.run()
             dialog.set_keep_above(False)
