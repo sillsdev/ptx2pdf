@@ -309,6 +309,10 @@ class Info:
     def update(self):
         # print("  info:update")
         printer = self.printer
+        for k, v in self._fonts.items():
+            btn = printer.builder.get_object(v[0])
+            if not hasattr(btn, 'font_info'):
+                btn.font_info=["Arial", ""]
         self.updatefields(self._mappings.keys())
         if printer.get("c_useprintdraftfolder"):
             base = os.path.join(self.dict["/ptxpath"], self.dict["project/id"])
@@ -768,7 +772,10 @@ class Info:
                     continue
             self._configset(config, k, str(val))
         for k, v in self._fonts.items():
-            self._configset(config, k, printer.get(v[0], asstr=True))
+            btn = printer.builder.get_object(v[0])
+            finfo = btn.font_info
+            self._configset(config, k+"/name", finfo[0])
+            self._configset(config, k+"/style", finfo[1])
         for k, v in self._snippets.items():
             self._configset(config, k, str(printer.get(v[0], asstr=True)))
         return config
@@ -795,11 +802,15 @@ class Info:
                             printer.set(v[0], val)
                     except AttributeError:
                         pass # ignore missing keys 
-                elif key in self._fonts:
-                    v = self._fonts[key]
-                    printer.set(v[0], val)
                 elif key in self._snippets:
                     printer.set(self._snippets[key][0], val.lower() == "true")
+        print("Loading fonts")
+        for k, v in self._fonts.items(): 
+            btn = printer.builder.get_object(v[0])
+            vals = [config.get(k, a) if config.has_option(k, a) else "" for a in ("name", "style")]
+            vals[0] = re.sub(r"\s*,?\s*\d+\s*$", "", vals[0])
+            btn.font_info = vals
+            btn.set_label(" ".join(vals))
         for k, v in self._settingmappings.items():
             (sect, name) = k.split("/")
             try:

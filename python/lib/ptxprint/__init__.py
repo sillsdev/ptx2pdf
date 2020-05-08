@@ -164,11 +164,12 @@ class PtxPrinterDialog:
         wide = int(len(allprojects)/16)+1
         self.builder.get_object("cb_project").set_wrap_width(wide)
 
-    def run(self, callback):
+    def run(self, callback, splash=True):
         self.callback = callback
-        splashw = self.builder.get_object("w_splash")
-        self.splash = Splash(splashw)   # threads don't like being gced?
-        self.splash.start()
+        if splash:
+            splashw = self.builder.get_object("w_splash")
+            self.splash = Splash(splashw)   # threads don't like being gced?
+            self.splash.start()
 
         # do slow stuff here
         fc = initFontCache()
@@ -181,7 +182,8 @@ class PtxPrinterDialog:
             self.pendingPid = None
         else:
             self.builder.get_object("b_print").set_sensitive(False)
-        self.splash.destroy()
+        if splash:
+            self.splash.destroy()
         fc.fill_liststore(lsfonts)
         tv = self.builder.get_object("tv_fontFamily")
         cr = Gtk.CellRendererText()
@@ -640,38 +642,49 @@ class PtxPrinterDialog:
 
     def onFontChanged(self, fbtn):
         # traceback.print_stack(limit=3)
-        fnm = self.get("f_body")
-        f = TTFont(fnm)
+        btn = self.builder.get_object("bl_fontR")
+        f = TTFont(*btn.font_info)
         if f.filename == None:
-            self.msgUnsupportedFont(fnm)
+            self.msgUnsupportedFont(" ".join(btn.font_info))
+            return
+        if "Silf" in f:
+            self.builder.get_object("c_useGraphite").set_sensitive(True)
+            self.builder.get_object("c_useGraphite").set_active(True)
         else:
-            if "Silf" in f:
-                self.builder.get_object("c_useGraphite").set_sensitive(True)
-                self.builder.get_object("c_useGraphite").set_active(True)
+            self.builder.get_object("c_useGraphite").set_sensitive(False)
+            self.builder.get_object("c_useGraphite").set_active(False)
+        for s in ('Bold', 'Italic', 'Bold Italic'):
+            sid = "".join(x[0] for x in s.split())
+            esid = s.lower().replace(" ", "")
+            w = self.builder.get_object("bl_font"+sid)
+            nf = TTFont(f.family, style = " ".join(s.split()))
+            if nf.filename is None:
+                styles = s.split()
+                if len(styles) > 1:
+                    bf = TTFont(f.family, style=styles[0])
+                    if bf.filename is not None:
+                        styles.pop(0)
+                    else:
+                        bf = f
+                else:
+                    bf = f
+                w.font_info = [bf.family, bf.style]
+                w.set_label(" ".join(w.font_info))
+                self.set("c_fake"+esid, True)
+                for t in styles:
+                    if t == 'Bold':
+                        self.set("s_{}embolden".format(esid), 2)
+                    elif t == 'Italic':
+                        self.set("s_{}slant".format(esid), 0.15)
             else:
-                self.builder.get_object("c_useGraphite").set_sensitive(False)
-                self.builder.get_object("c_useGraphite").set_active(False)
-            font = fbtn.get_font_name()
-            (name, size) = self.parse_fontname(font)
-            label = self.builder.get_object("l_font")
-            for s in ('bold', 'italic', 'bold italic'):
-                sid = s.replace(" ", "")
-                w = self.builder.get_object("f_"+sid)
-                f = TTFont(name, style = " ".join(s.split()))
-                fname = f.family + ", " + f.style + " " + str(size)
-                w.set_font_name(fname)
-                # Still need to do something here to put these defaults in if there aren't any other settings.
-                # print(fname, f.family, f.style, f.filename)
-                # print(s, fname, f.extrastyles)
-                # if 'bold' in f.style.lower():
-                    # self.set("s_{}embolden".format(sid), 2)
-                # if 'italic' in f.style.lower():
-                    # self.set("s_{}slant".format(sid), 0.15)
-            self.setEntryBoxFont()
+                w.font_info = (nf.family, nf.style)
+                w.set_label(" ".join(w.font_info))
+                self.set("c_fake"+esid, False)
+        self.setEntryBoxFont()
 
     def setEntryBoxFont(self):
         # Set the font of any GtkEntry boxes to the primary body text font for this project
-        p = Pango.font_description_from_string(self.get("f_body"))
+        p = Pango.font_description_from_string(self.get("bl_fontR"))
         for w in ("t_clHeading", "t_tocTitle", "cb_ftrcenter", "scroll_FinalSFM", "scroll_PicList"):   # "t_runningFooter",
             self.builder.get_object(w).modify_font(p)
 
@@ -997,6 +1010,7 @@ class PtxPrinterDialog:
 
     def onFontRclicked(self, btn):
         self.getFontNameFace("bl_fontR")
+        self.onFontChanged(btn)
         
     def onFontBclicked(self, btn):
         self.getFontNameFace("bl_fontB")
@@ -1007,11 +1021,14 @@ class PtxPrinterDialog:
     def onFontBIclicked(self, btn):
         self.getFontNameFace("bl_fontBI")
         
-    def onFontRowSelected(self, container, row):
-        lsfonts = self.builder.get_object("ls_fonts")
+    def onFontRowSelected(self, dat):
         lsstyles = self.builder.get_object("ls_fontFaces")
-        dat = lsfonts[row.get_index()]
-        initFontCache().fill_cbstore(dat[0], lsstyles)
+        lb = self.builder.get_object("tv_fontFamily")
+        sel = lb.get_selection()
+        ls, row = sel.get_selected()
+        name = ls.get_value(row, 0)
+        initFontCache().fill_cbstore(name, lsstyles)
+        self.builder.get_object("cb_fontFaces").set_active(0)
 
     def getFontNameFace(self, btnid):
         btn = self.builder.get_object(btnid)
@@ -1022,18 +1039,17 @@ class PtxPrinterDialog:
             lb = self.builder.get_object("tv_fontFamily")
             sel = lb.get_selection()
             ls, row = sel.get_selected()
-            print(row, type(row))
             name = ls.get_value(row, 0)
             cb = self.builder.get_object("cb_fontFaces")
             style = cb.get_model()[cb.get_active()][0]
+            if style == "Regular":
+                style = ""
             btn.font_info = [name, style]
             btn.set_label(name + " " + style)
         elif response == Gtk.ResponseType.CANCEL:
             pass
         dialog.set_keep_above(False)
         dialog.hide()
-        # return (family,face)
-        # return (["Times New Roman",self.get("cb_fontFaces")])
 
     def onChooseBooksClicked(self, btn):
         dialog = self.builder.get_object("dlg_multiBookSelector")
@@ -1208,15 +1224,13 @@ class PtxPrinterDialog:
                 lsbooks.append([b])
         cb_bk = self.builder.get_object("cb_book")
         cb_bk.set_active(0)
-        font_name = self.ptsettings.get('DefaultFont', 'Arial') + ", " + self.ptsettings.get('DefaultFontSize', '12')
-        self.set('f_body', font_name)
         configfile = os.path.join(self.configPath(), "ptxprint.cfg")
         if not os.path.exists(configfile):
             configfile = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint", "ptxprint.cfg")
             if not os.path.exists(configfile): # If they are an pre 0:4:8 user, pick up .cfg from Project folder location
                 configfile = os.path.join(self.settings_dir, self.prjid, "ptxprint.cfg")
         if os.path.exists(configfile):
-            # print("= = = = = = = = = About to info.loadConfig = = = = = = = = ")
+            print("= = = = = = = = = About to info.loadConfig = = = = = = = = ")
             self.info = Info(self, self.settings_dir, self.prjid)
             config = configparser.ConfigParser()
             config.read(configfile, encoding="utf-8")

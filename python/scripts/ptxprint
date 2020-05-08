@@ -34,6 +34,7 @@ parser.add_argument('-m','--macros',help="Directory containing TeX macros (parat
 parser.add_argument('-l','--logging',action="store_true",help="Output logging to terminal instead of logging window")
 parser.add_argument('-e','--experimental',action="store_true",help="Enable experimental features")
 parser.add_argument('-T','--timeout',default=200,type=int,help='xetex runtime timeout')
+parser.add_argument('-S','--splash',action="store_true",help="Force splash screen")
 # parser.add_argument('-t','--test', action='store_true',help="Quick start for a lazy typist")
 args = parser.parse_args()
 
@@ -427,4 +428,7 @@ if args.print:
             mainw.set("c_multiplebooks", True)
     doit(mainw, display=False)
 else:
-    mainw.run(doit)
+    splash = args.splash
+    if os.system != 'linux' and not splash:
+        splash = True
+    mainw.run(doit, splash=splash)

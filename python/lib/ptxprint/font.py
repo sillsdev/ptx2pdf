@@ -60,17 +60,19 @@ class TTFontCache:
 
     def fill_liststore(self, ls):
         ls.clear()
+        print("+IAFFM")
         for k, v in sorted(self.cache.items()):
             score = sum(1 for j in ("Regular", "Bold", "Italic", "Bold Italic") if j in v)
             ls.append([k, score == 4])
+        print("-IAFFM")
 
     def fill_cbstore(self, name, cbs):
         cbs.clear()
         v = self.cache.get(name, None)
         if v is None:
             return
-        for k in sorted(v.keys(), key=lambda k:(styles_order.get(k, len(styles_order), k))):
-            cbs.append([v])
+        for k in sorted(v.keys(), key=lambda k:(styles_order.get(k, len(styles_order)), k)):
+            cbs.append([k])
 
     # deprecated, nothing calls this
     def find(self, name, style):
@@ -124,9 +126,10 @@ class TTFont:
         if res is not None:
             return res
         else:
-            return object.__new__(cls, name, style)
+            return super(TTFont, cls).__new__(cls)
 
     def __init__(self, name, style=""):
+        print(name, style)
         self.extrastyles = ""
         self.family = name
         self.style = style
