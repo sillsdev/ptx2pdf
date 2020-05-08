@@ -1,5 +1,19 @@
-PTXprint 0.5.4 Beta Release Notes
-6th May 2020
+PTXprint 0.5.5 Beta Release Notes
+9th May 2020
+
+List of improvements: 0.5.5
+
+  * Added new custom-built Font Chooser dialog so that only valid and usable font files will be listed (and no more ToFu font names)
+  
+  * Added helpful diagnostic messages when creating PDF fails
+  
+  * Added default paths for folders, and assets for watermarks and fancy borders
+  
+  * Added support for Chapter Labels in specific user-defined books (Psalms, Proverbs, etc.)
+  
+  * Re-arranged various UI elements to make it more intuitive and less crowded
+  
+  * Allow out of canonical sequence for books (e.g. FRT INT MAT ... REV PSA PRO BAK TDX NDX GLO) - but not yet complete in Book Chooser 
 
 List of improvements: 0.5.4
 
