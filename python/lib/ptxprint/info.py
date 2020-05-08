@@ -252,8 +252,8 @@ class Info:
         "fontbold":                 ("bl_fontB", "c_fakebold", "fontbold/embolden", "fontbold/slant"),
         "fontitalic":               ("bl_fontI", "c_fakeitalic", "fontitalic/embolden", "fontitalic/slant"),
         "fontbolditalic":           ("bl_fontBI", "c_fakebolditalic", "fontbolditalic/embolden", "fontbolditalic/slant"),
-        "fontextraregular":         ("f_extraRegular", None, None, None),
-        "fontfancy/versenumfont":   ("f_verseNumFont", None, None, None)
+        "fontextraregular":         ("bl_fontExtraR", None, None, None),
+        "fontfancy/versenumfont":   ("bl_verseNumFont", None, None, None)
     }
     _hdrmappings = {
         "First Reference":  r"\firstref",
@@ -791,8 +791,8 @@ class Info:
                 val = config.get(sect, opt)
                 if key in self._mappings:
                     v = self._mappings[key]
-                    try: # Safeguarding from changed/missing keys in .cfg
-                        if v[0].startswith("cb_") or v[0].startswith("t_") or v[0].startswith("f_") or v[0].startswith("btn_"):
+                    try: # Safeguarding from changed/missing keys in .cfg  or v[0].startswith("f_") 
+                        if v[0].startswith("cb_") or v[0].startswith("t_") or v[0].startswith("btn_"):
                             pass
                         elif v[0].startswith("s_"):
                             val = float(val)
@@ -807,7 +807,7 @@ class Info:
                         pass # ignore missing keys 
                 elif key in self._snippets:
                     printer.set(self._snippets[key][0], val.lower() == "true")
-        print("Loading fonts")
+        # print("Loading fonts")
         for k, v in self._fonts.items(): 
             btn = printer.builder.get_object(v[0])
             vals = [config.get(k, a) if config.has_option(k, a) else "" for a in ("name", "style")]

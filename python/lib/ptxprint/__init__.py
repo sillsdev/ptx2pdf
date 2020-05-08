@@ -241,8 +241,8 @@ class PtxPrinterDialog:
                 v = model[i][sub]
         elif wid.startswith("t_"):
             v = w.get_text()
-        elif wid.startswith("f_"):
-            v = w.get_font_name()
+        # elif wid.startswith("f_"):
+            # v = w.get_font_name()
         elif wid.startswith("c_"):
             v = w.get_active()
         elif wid.startswith("s_"):
@@ -644,9 +644,6 @@ class PtxPrinterDialog:
         # traceback.print_stack(limit=3)
         btn = self.builder.get_object("bl_fontR")
         f = TTFont(*btn.font_info)
-        if f.filename == None:
-            self.msgUnsupportedFont(" ".join(btn.font_info))
-            return
         if "Silf" in f:
             self.builder.get_object("c_useGraphite").set_sensitive(True)
             self.builder.get_object("c_useGraphite").set_active(True)
@@ -842,7 +839,7 @@ class PtxPrinterDialog:
 
     def onInclVerseDecoratorChanged(self, c_inclVerseDecorator):
         status = self.get("c_inclVerseDecorator")
-        for c in ("l_verseFont", "f_verseNumFont", "l_verseSize", "s_verseNumSize", "btn_selectVerseDecorator"):
+        for c in ("l_verseFont", "bl_verseNumFont", "l_verseSize", "s_verseNumSize", "btn_selectVerseDecorator"):
             self.builder.get_object(c).set_sensitive(status)
     
     def onAutoTocChanged(self, c_autoToC):
@@ -1020,6 +1017,9 @@ class PtxPrinterDialog:
         
     def onFontBIclicked(self, btn):
         self.getFontNameFace("bl_fontBI")
+        
+    def onFontBIclicked(self, btn):
+        self.getFontNameFace("bl_fontExtraR")
         
     def onFontRowSelected(self, dat):
         lsstyles = self.builder.get_object("ls_fontFaces")
@@ -1230,7 +1230,7 @@ class PtxPrinterDialog:
             if not os.path.exists(configfile): # If they are an pre 0:4:8 user, pick up .cfg from Project folder location
                 configfile = os.path.join(self.settings_dir, self.prjid, "ptxprint.cfg")
         if os.path.exists(configfile):
-            print("= = = = = = = = = About to info.loadConfig = = = = = = = = ")
+            # print("= = = = = = = = = About to info.loadConfig = = = = = = = = ")
             self.info = Info(self, self.settings_dir, self.prjid)
             config = configparser.ConfigParser()
             config.read(configfile, encoding="utf-8")
@@ -1816,11 +1816,8 @@ class PtxPrinterDialog:
                     bkcntr = collections.Counter(sfmtxt)
                     count += bkcntr
         # slist = sorted(count.items(), key=lambda pair: pair[0])
-        reg = self.get("f_body")
+        reg = self.get("bl_fontR")
         f = TTFont(reg)
-        if f.filename == None:
-            self.msgUnsupportedFont(reg)
-            return 
         allchars = ''.join([i[0] for i in count.items()])
         if self.get("cb_glossaryMarkupStyle") == "with ⸤floor⸥ brackets":
             allchars += "\u2e24\u2e25"
@@ -1848,27 +1845,9 @@ class PtxPrinterDialog:
             dialog.set_keep_above(False)
             dialog.destroy()
 
-    def onFontBoldChanged(self, f_bold):
-        fnm = self.get("f_bold")
-        f = TTFont(fnm)
-        if f.filename == None:
-            self.msgUnsupportedFont(fnm)
-
-    def onFontItalicChanged(self, f_italic):
-        fnm = self.get("f_italic")
-        f = TTFont(fnm)
-        if f.filename == None:
-            self.msgUnsupportedFont(fnm)
-
-    def onFontBoldItalicChanged(self, f_bolditalic):
-        fnm = self.get("f_bolditalic")
-        f = TTFont(fnm)
-        if f.filename == None:
-            self.msgUnsupportedFont(fnm)
-
-    def onExtraRegularChanged(self, f_extraRegular):
-        reg = self.get("f_body")
-        xtraReg = self.get("f_extraRegular")
+    def onFontExtraRclicked(self, bl_fontExtraR):
+        reg = self.get("bl_fontR")
+        xtraReg = self.get("bl_fontExtraR")
         if reg[:-3] == xtraReg[:-3]:
             dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
                      buttons=Gtk.ButtonsType.OK, message_format="The Fallback Font should to be DIFFERENT from the Regular Font.")
@@ -1879,9 +1858,6 @@ class PtxPrinterDialog:
             dialog.destroy()
         else:
             f = TTFont(xtraReg)
-            if f.filename == None:
-                self.msgUnsupportedFont(xtraReg)
-                return 
             msngchars = self.builder.get_object("t_missingChars").get_text() # .split(" ")
             msngchars = spclChars = re.sub(r"\\[uU]([0-9a-fA-F]{4,6})", lambda m:chr(int(m.group(1), 16)), msngchars)
             stillmissing = f.testcmap(msngchars)
@@ -1894,16 +1870,16 @@ class PtxPrinterDialog:
                 dialog.set_keep_above(False)
                 dialog.destroy()
 
-    def msgUnsupportedFont(self, fontname):
-        par = self.builder.get_object('ptxprint')  #  flags=Gtk.DialogFlags.MODAL,
-        dialog = Gtk.MessageDialog(parent=par, type=Gtk.MessageType.WARNING, \
-                 buttons=Gtk.ButtonsType.OK, message_format="The Font: '{}'\ncannot be used as it has\nnot been installed properly.".format(fontname[:-3]))
+    # def msgUnsupportedFont(self, fontname):
+        # par = self.builder.get_object('ptxprint')  #  flags=Gtk.DialogFlags.MODAL,
+        # dialog = Gtk.MessageDialog(parent=par, type=Gtk.MessageType.WARNING, \
+                 # buttons=Gtk.ButtonsType.OK, message_format="The Font: '{}'\ncannot be used as it has\nnot been installed properly.".format(fontname[:-3]))
         # dialog.set_type_hint(GTK_WINDOW(popwindow), GTK_WINDOW_TYPE_HINT_DIALOG)
-        dialog.format_secondary_text("Please select a different Font\n  or\nInstall the font for ALL users.")
-        dialog.set_keep_above(True)
-        dialog.run()
-        dialog.set_keep_above(False)
-        dialog.destroy()
+        # dialog.format_secondary_text("Please select a different Font\n  or\nInstall the font for ALL users.")
+        # dialog.set_keep_above(True)
+        # dialog.run()
+        # dialog.set_keep_above(False)
+        # dialog.destroy()
 
     def msgQuestion(self, title, question):
         par = par = self.builder.get_object('ptxprint')

@@ -5,8 +5,21 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
 from shutil import copyfile, rmtree
-# from time import sleep
 
+_errmsghelp = {
+"! Unable to load picture":              "Check if picture is available on the system\nor try option 'Omit Missing Pictures'",
+"! Unable to load picture or PDF file":  "Check if image/PDF file is available on the system",
+"! Missing control sequence inserted":   "Fallback font being applied something in footnote",
+"! Missing number, treated as zero.":    "Related to USFM3 illustration markup",
+"! Undefined control sequence":          "This is related to a USFM marker error\n(such as an unsupported marker)\nTry 'Run Basic Checks' in Paratext",
+"! File ended while scanning use of":    "Try turning off PrintDraftChanges.txt\nand both Stylesheets on Advanced tab",
+"! Paratext stylesheet":                 "Try turning off the PrintDraft-mods stylesheet",
+"! Not a letter":                        "Possible fault in the hyphenation file\nTry turning off Hyphenate option on Body tab",
+"! Font":                                "Font issue - details unknown\n(Report this rare error please)",
+"! Too many }'s":                        "Serious TeX macro issue - contact support, or post a bug report",
+"! This can't happen (page)":            "Serious TeX macro issue - contact support, or post a bug report",
+"Runaway argument?":                     "Unknown issue. Maybe related to Right-aligned tabbed leaders\nTry turning off PrintDraftChanges.txt and both Stylesheets",
+}
 if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
     sys.stdout = open(os.devnull, "w")
     # sys.stdout = open("D:\Temp\ptxprint-sysout.tmp", "w")
@@ -204,20 +217,23 @@ def doit(printer, display=True):
     else: # if info.res != 0:
         if not args.print: # We don't want pop-up messages if running in command-line mode
             # it did NOT finish successfully, so help them troubleshoot what went wrong:
+            finalLogLines = info.loglines[-30:-10]
+            for l in finalLogLines:
+                if l[:1] == "!":
+                    for m in sorted(_errmsghelp.keys(),key=len, reverse=True):
+                        if m in l:
+                            finalLogLines.append("{}\n\n>>>{}\n".format(l, _errmsghelp[m]))
+            refs = re.findall(r"([1-9]\d*[.:][1-9]\d*)", "".join(finalLogLines))
+            if len(refs):
+                finalLogLines.append("\nCh:vs to check: {}\n".format(", ".join(refs)))
+            files = re.findall(r'(?i)([^\\/\n."= ]*?\.(?=jpg|tif|png|pdf)...)', "".join(finalLogLines))
+            if len(files):
+                finalLogLines.append("\nFile(s) to check: {}\n".format(", ".join(files)))
             par = par = printer.builder.get_object('ptxprint')
             dialog = Gtk.MessageDialog(parent=par, modal=True, message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK, \
-                text="Error: Unable to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname))
-            dialog.format_secondary_text("".join(info.loglines[-20:])+
-                                         "----------------------------------------------- \
-                                        \nPTXprint version: 0.5.4 (Beta)\
-                                        \n----------------------------------------------- \
-                                        \nPossible Causes: \
-                                        \n  * The USFM text has a syntax error \
-                                        \n  * The font file was not installed for ALL users \
-                                        \n  * Missing pictures \
-                                      \n\nTry using option to 'Hide Advanced Settings' \
-                                        \nor check option 'Omit Missing Pictures' \
-                                        \n         and then try again...")
+                text="Failed to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname))
+            dialog.set_title ("PTXprint 0.5.4 (Beta) - Error!")
+            dialog.format_secondary_text("".join(finalLogLines))
             dialog.set_keep_above(True)
             dialog.run()
             dialog.set_keep_above(False)
