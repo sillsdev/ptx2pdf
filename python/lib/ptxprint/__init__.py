@@ -194,9 +194,6 @@ class PtxPrinterDialog:
         self.mw.resize(730, 580)
         self.builder.get_object("bx_SavedConfigSettings").set_sensitive(False)
         self.mw.show_all()
-        if sys.platform == "linux":
-            import time
-            time.sleep(0.2)
         Gtk.main()
 
     def ExperimentalFeatures(self, value):
