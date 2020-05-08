@@ -30,11 +30,11 @@ a = Analysis(['python/scripts/ptxprint'],
              pathex =   ['python/lib'] + pathex,
              binaries = binaries,
              datas =    [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
-                            ('ptxprint.glade', 'template.tex', 'ps_cmyk.icc', '62859-open-book-icon(128).png'),
-                         ('python/lib/ptxprint/PDFassets/border-art'+y, 'ptxprint/PDFassets/border-art') for y in 
+                            ('ptxprint.glade', 'template.tex', 'ps_cmyk.icc', '62859-open-book-icon(128).png')]
+                      + [('python/lib/ptxprint/PDFassets/border-art/'+y, 'ptxprint/PDFassets/border-art') for y in 
                             ('A5 section head border.pdf', 'A5 section head border(RTL).pdf',
-                             'A5 page border.pdf', 'Verse number star.pdf', 'decoration.pdf'),
-                         ('python/lib/ptxprint/PDFassets/watermarks'+z, 'ptxprint/PDFassets/watermarks') for z in 
+                             'A5 page border.pdf', 'Verse number star.pdf', 'decoration.pdf')]
+                      + [('python/lib/ptxprint/PDFassets/watermarks/'+z, 'ptxprint/PDFassets/watermarks') for z in 
                             ('A4-Grid.pdf', 'A4-Draft.pdf', 'A5-Grid.pdf', 'A5-Draft.pdf',
                              '5.8x8.7-12mmBorderDraft.pdf', '5.8x8.7-Draft.pdf', 'BSI-12mmBorder.pdf',
                              'A4-12mmBorder.pdf', 'A5-10mmBorder.pdf', 'A4-CopyrightWatermark.pdf', 'A5-CopyrightWatermark.pdf')]
