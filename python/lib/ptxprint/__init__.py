@@ -196,6 +196,8 @@ class PtxPrinterDialog:
         cr = Gtk.CellRendererText()
         col = Gtk.TreeViewColumn("Family", cr, text=0, weight=1)
         tv.append_column(col)
+        ts = self.builder.get_object("t_fontSearch")
+        tv.set_search_entry(ts)
         # self.mw.set_resizable(True)
         # self.mw.set_default_size(730, 565)
         self.mw.resize(730, 580)

@@ -1061,10 +1061,8 @@ saved configuration.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSearchEntry">
-                    <property name="name">t_searchFonts</property>
+                  <object class="GtkSearchEntry" id="t_fontSearch">
                     <property name="visible">True</property>
-                    <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
                     <property name="margin_left">8</property>
                     <property name="margin_bottom">6</property>
