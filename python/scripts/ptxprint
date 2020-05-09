@@ -189,7 +189,7 @@ def doit(printer, display=True):
     tmpdir = os.path.join(prjdir, 'PrintDraft') if printer.get("c_useprintdraftfolder") else args.directory
     os.makedirs(tmpdir, exist_ok=True)
     jobs = printer.getBooks()
-    print(jobs)
+
     if printer.get("c_includeillustrations"):
         gatherIllustrations(jobs, prjid, prjdir, printer)
 

@@ -212,7 +212,7 @@ class PtxPrinterDialog:
         tv.set_search_entry(ts)
         # self.mw.set_resizable(True)
         # self.mw.set_default_size(730, 565)
-        self.mw.resize(730, 580)
+        self.mw.resize(730, 640)
         self.builder.get_object("bx_SavedConfigSettings").set_sensitive(False)
         self.mw.show_all()
         Gtk.main()
@@ -566,7 +566,7 @@ class PtxPrinterDialog:
 
     def onViewerChangePage(self, nbk_Viewer, scrollObject, pgnum):
         self.bookNoUpdate = True
-        self.builder.get_object("gr_editableButtons").set_visible(False)
+        self.builder.get_object("gr_editableButtons").set_sensitive(False)
         # self.builder.get_object("btn_saveEdits").set_sensitive(False)
         prjid = self.get("cb_project")
         prjdir = os.path.join(self.settings_dir, prjid)
@@ -626,7 +626,7 @@ class PtxPrinterDialog:
             return
         if os.path.exists(fpath):
             if 1 <= pgnum <= 2 or pgnum == 5:
-                self.builder.get_object("gr_editableButtons").set_visible(True)
+                self.builder.get_object("gr_editableButtons").set_sensitive(True)
             self.builder.get_object("l_{}".format(pgnum)).set_tooltip_text(fpath)
             with open(fpath, "r", encoding="utf-8", errors="ignore") as inf:
                 txt = inf.read()
@@ -999,7 +999,7 @@ class PtxPrinterDialog:
         if self.get("c_hideAdvancedSettings"):
             self.mw.resize(710, 316)
         else:
-            self.mw.resize(730, 580)
+            self.mw.resize(730, 640)
 
     def onShowLayoutTabClicked(self, c_showLayoutTab):
         status = self.get("c_showLayoutTab")
@@ -1331,8 +1331,7 @@ class PtxPrinterDialog:
                 fpath = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint", file2edit)
         else:
             return
-        print(fpath)
-        self.builder.get_object("gr_editableButtons").set_visible(True)
+        self.builder.get_object("gr_editableButtons").set_sensitive(True)
         self.builder.get_object("l_{}".format(pgnum)).set_text(file2edit)
         self.builder.get_object("l_{}".format(pgnum)).set_tooltip_text(fpath)
         if os.path.exists(fpath):
