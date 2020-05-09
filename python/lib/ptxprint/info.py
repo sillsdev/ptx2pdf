@@ -371,10 +371,11 @@ class Info:
             self.dict[p+"/style"] = style 
             # print(p, wid, f.filename, f.family, f.style)
             if f.filename is None and p != "fontregular" and self._fonts[p][1] is not None:
-                reg = printer.builder.get_object(self._fonts['fontregular'][0])
-                f = TTFont(*reg.font_info)
+                regbtn = printer.builder.get_object(self._fonts['fontregular'][0])
+                f = TTFont(*regbtn.font_info)
                 printer.set(self._fonts[p][1], True)
-                btn.set_label(" ".join(reg.font_info))
+                printer.setFontButton(btn, *regbtn.font_info)
+                btn.set_label(" ".join(regbtn.font_info))
                 self.updatefields([self._fonts[p][2]])
                 # print("Setting {} to {}".format(p, reg))
             d = self.printer.ptsettings.find_ldml('.//special/{1}external-resources/{1}font[@name="{0}"]'.format(f.family, silns))
@@ -812,8 +813,7 @@ class Info:
             btn = printer.builder.get_object(v[0])
             vals = [config.get(k, a) if config.has_option(k, a) else "" for a in ("name", "style")]
             vals[0] = re.sub(r"\s*,?\s*\d+\s*$", "", vals[0])
-            btn.font_info = vals
-            btn.set_label(" ".join(vals))
+            printer.setFontButton(btn, *vals)
         for k, v in self._settingmappings.items():
             (sect, name) = k.split("/")
             try:

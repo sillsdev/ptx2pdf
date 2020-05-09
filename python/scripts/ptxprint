@@ -71,7 +71,8 @@ for d in os.listdir(args.paratext):
         allprojects.append(d)
 allprojects.sort()
 
-css = ".printbutton:active { background-color: chartreuse; background-image: None }"
+css = """.printbutton:active { background-color: chartreuse; background-image: None }
+.fontbutton {font-size: smaller}"""
 provider = Gtk.CssProvider()
 provider.load_from_data(css.encode("utf-8"))
 Gtk.StyleContext().add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)

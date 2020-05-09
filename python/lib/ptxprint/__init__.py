@@ -76,8 +76,6 @@ class Splash(Thread):
 
     def destroy(self):
         self.window.destroy()
-        # poor man's queue clearing
-        # sleep(0.1)
 
 class PtxPrinterDialog:
     def __init__(self, allprojects, settings_dir, working_dir=None):
@@ -104,6 +102,11 @@ class PtxPrinterDialog:
         pb = self.builder.get_object("b_print")
         pbc = pb.get_style_context()
         pbc.add_class("printbutton")
+        for a in ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"):
+            b = self.builder.get_object(a)
+            # b.get_child().set_justify(Gtk.Justification.CENTER)
+            c = b.get_style_context()
+            c.add_class("fontbutton")
         # Could we add some .css for the new FontChooser buttons to make
         # the text smaller so that they are not so tall with 2 rows of text?
 
@@ -184,6 +187,10 @@ class PtxPrinterDialog:
             self.builder.get_object("b_print").set_sensitive(False)
         if splash:
             self.splash.destroy()
+            try:
+                self.splash.join()
+            except RuntimeError:
+                pass
         fc.fill_liststore(lsfonts)
         tv = self.builder.get_object("tv_fontFamily")
         cr = Gtk.CellRendererText()
@@ -640,6 +647,10 @@ class PtxPrinterDialog:
         except:
             pass
 
+    def setFontButton(self, btn, name, style):
+        btn.font_info = (name, style)
+        btn.set_label("{}\n{}".format(name, style))
+
     def onFontChanged(self, fbtn):
         # traceback.print_stack(limit=3)
         btn = self.builder.get_object("bl_fontR")
@@ -665,8 +676,7 @@ class PtxPrinterDialog:
                         bf = f
                 else:
                     bf = f
-                w.font_info = [bf.family, bf.style]
-                w.set_label(" ".join(w.font_info))
+                self.setFontButton(w, bf.family, bf.style)
                 self.set("c_fake"+esid, True)
                 for t in styles:
                     if t == 'Bold':
@@ -674,8 +684,7 @@ class PtxPrinterDialog:
                     elif t == 'Italic':
                         self.set("s_{}slant".format(esid), 0.15)
             else:
-                w.font_info = (nf.family, nf.style)
-                w.set_label(" ".join(w.font_info))
+                self.setFontButton(w, nf.family, nf.style)
                 self.set("c_fake"+esid, False)
         self.setEntryBoxFont()
 
@@ -1044,8 +1053,7 @@ class PtxPrinterDialog:
             style = cb.get_model()[cb.get_active()][0]
             if style == "Regular":
                 style = ""
-            btn.font_info = [name, style]
-            btn.set_label(name + " " + style)
+            self.setFontButton(btn, name, style)
         elif response == Gtk.ResponseType.CANCEL:
             pass
         dialog.set_keep_above(False)
