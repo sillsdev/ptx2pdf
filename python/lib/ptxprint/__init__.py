@@ -291,10 +291,15 @@ class PtxPrinterDialog:
             w.set_label(value)
 
     def getBooks(self):
+        bl = self.get('t_booklist').split()
         if not self.get('c_multiplebooks'):
             return [self.get('cb_book')]
-        elif self.get('t_booklist') != '':
-            return self.get('t_booklist').split()
+        elif len(bl):
+            blst = []
+            for b in bl:
+                if os.path.exists(os.path.join(self.settings_dir, self.prjid, (self.getBookFilename(b, self.prjid)))):
+                    blst.append(b)
+            return blst
         else:
             return self.booklist
 
@@ -335,9 +340,7 @@ class PtxPrinterDialog:
             
     def onConfigNameChanged(self, cb_savedConfig):
         if self.configNoUpdate:
-            # print("(cfgNoUpdt)", end = " ")
             return
-        # print("onConfigNameChanged", end = " ")
         self.builder.get_object("c_hideAdvancedSettings").set_sensitive(True)
         if len(self.get("cb_savedConfig")):
             lockBtn = self.builder.get_object("btn_lockunlock")
@@ -355,16 +358,25 @@ class PtxPrinterDialog:
             lockBtn.set_label("Lock Config")
             lockBtn.set_sensitive(False)
             self.builder.get_object("t_invisiblePassword").set_text("")
-            # print("\nconfig_dir: ", self.config_dir)
             self.builder.get_object("l_settings_dir").set_label(self.config_dir or "")
             self.builder.get_object("btn_saveConfig").set_sensitive(False)
             self.builder.get_object("btn_deleteConfig").set_sensitive(False)
             self.updateDialogTitle()
-        
+
+    def onBookListChanged(self, t_booklist, foo): # called on "focus-out-event"
+        bl = self.get('t_booklist').split(" ")
+        if len(bl):
+            tmpList = []
+            for b in bl:
+                if b in allbooks:  # This needs to be changed to books-present in project
+                    if os.path.exists(os.path.join(self.settings_dir, self.prjid, (self.getBookFilename(b, self.prjid)))):
+                        tmpList.append(b)
+            self.builder.get_object('t_booklist').set_text(" ".join(tmpList))
+        self.updateDialogTitle()
+
     def onSaveConfig(self, btn):
         # Determine whether to save a NEW config or just UPDATE an existing one
         if self.config_dir != self.configPath(): # then it must be new
-            # print(">>info.update() in onSaveConfig (line 375)")
             self.info.update()
             config = self.info.createConfig(self)
             self.saveConfig(config)
@@ -376,12 +388,10 @@ class PtxPrinterDialog:
                 if os.path.exists(os.path.join(srcpath, listname)):
                     if srcpath != tgtpath:
                         copytree(os.path.join(srcpath, listname), os.path.join(tgtpath, listname))
-                        # print("Copied from: {}\n         to: {}".format(os.path.join(srcpath, listname), os.path.join(tgtpath, listname)))
             self.config_dir = tgtpath # Update the current config folder location (in prep for next change)
             self.builder.get_object("l_settings_dir").set_label(self.config_dir or "")
             self.updateDialogTitle()
         else:
-            # print(">>info.update() in onSaveConfig (line 392)")
             # Just update the existing config file
             self.info.update()
             config = self.info.createConfig(self)
@@ -398,8 +408,7 @@ class PtxPrinterDialog:
         if len(cfgname):
             prjdir = os.path.join(prjdir, cfgname)
         if makePath:
-            if not os.path.exists(prjdir):
-                os.makedirs(prjdir)
+            os.makedirs(prjdir,exist_ok=True)
         #Update the cb_ with the sanitized (new) version of the name
         self.configNoUpdate = True
         self.builder.get_object("t_savedConfig").set_text(cfgname)
@@ -522,7 +531,6 @@ class PtxPrinterDialog:
     
     def onExamineBookChanged(self, cb_examineBook):
         if self.bookNoUpdate == True:
-            # print("(exBk)", end = " ")
             return
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
         self.onViewerChangePage(None,None,pg)
@@ -602,7 +610,6 @@ class PtxPrinterDialog:
             self.builder.get_object("l_{}".format(pgnum)).set_text("About")
             return
         else:
-            # print("Error: Unhandled page in Viewer!")
             return
         if os.path.exists(fpath):
             if 1 <= pgnum <= 2 or pgnum == 5:
@@ -742,15 +749,15 @@ class PtxPrinterDialog:
     def onHyphenateClicked(self, c_hyphenate):
         prjid = self.get("cb_project")
         fname = os.path.join(self.settings_dir, prjid, "shared", "ptxprint", 'hyphen-{}.tex'.format(prjid))
-        if not ptxprint.args.print: # We don't want pop-up messages if running in command-line mode
-            if not os.path.exists(fname) and self.get("c_hyphenate"):
-                dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
-                         buttons=Gtk.ButtonsType.OK, message_format="Warning: Standard (English) Hyphenation rules will be used.")
-                dialog.format_secondary_text("For optimum hyphenation for this project\nclick 'Create Hyphenation List'.")
-                dialog.set_keep_above(True)
-                dialog.run()
-                dialog.set_keep_above(False)
-                dialog.destroy()
+        # if not ????????.args.print: # We don't want pop-up messages if running in command-line mode
+            # if not os.path.exists(fname) and self.get("c_hyphenate"):
+                # dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
+                         # buttons=Gtk.ButtonsType.OK, message_format="Warning: Standard (English) Hyphenation rules will be used.")
+                # dialog.format_secondary_text("For optimum hyphenation for this project\nclick 'Create Hyphenation List'.")
+                # dialog.set_keep_above(True)
+                # dialog.run()
+                # dialog.set_keep_above(False)
+                # dialog.destroy()
                 # self.builder.get_object("c_hyphenate").set_active(False)
         
     def onUseIllustrationsClicked(self, c_includeillustrations):
@@ -1044,12 +1051,19 @@ class PtxPrinterDialog:
         initFontCache().fill_cbstore(name, lsstyles)
         self.builder.get_object("cb_fontFaces").set_active(0)
 
+    def responseToDialog(entry, dialog, response):
+        dialog.response(response)
+
     def getFontNameFace(self, btnid):
         btn = self.builder.get_object(btnid)
         lb = self.builder.get_object("tv_fontFamily")
         lb.set_cursor(0)
         dialog = self.builder.get_object("dlg_fontChooser")
+        self.builder.get_object("t_fontSearch").set_text("")
+        self.builder.get_object("t_fontSearch").has_focus()
+        # dialog.set_default_response(Gtk.ResponseType.OK)
         dialog.set_keep_above(True)
+        
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             sel = lb.get_selection()
@@ -1127,6 +1141,11 @@ class PtxPrinterDialog:
             if b.get_label() in allbooks[0:124]:
                 b.set_active(False)
 
+    def onCustomOrderClicked(self, btn):
+        if self.get("c_customOrder"):
+            # do something
+            return
+        
     def onTocClicked(self, c_toc):
         if not self.get("c_usetoc1") and not self.get("c_usetoc2") and not self.get("c_usetoc3"):
             toc = self.builder.get_object("c_usetoc1")
@@ -1141,9 +1160,7 @@ class PtxPrinterDialog:
 
     def onBookChange(self, cb_book):
         if self.bookNoUpdate == True:
-            # print("(bk)", end = " ")
             return
-        # print("onBookChange")
         self.bk = self.get("cb_book")
         self.set("c_prettyIntroOutline", False)
         if self.bk != "":
@@ -1160,9 +1177,7 @@ class PtxPrinterDialog:
 
     def onChapFrmChg(self, cb_chapfrom):
         if self.chapNoUpdate == True:
-            # print("(ch)", end = " ")
             return
-        # print("onChapFrmChg")
         self.bk = self.get("cb_book")
         if self.bk != "":
             self.chs = int(chaps.get(str(self.bk)))
@@ -1180,8 +1195,6 @@ class PtxPrinterDialog:
         self.builder.get_object("l_working_dir").set_label(self.working_dir)
 
     def onProjectChange(self, cb_prj):
-        # self.builder.get_object("t_savedConfig").set_text("x")
-        # self.builder.get_object("t_savedConfig").set_text("")
         self.builder.get_object("l_settings_dir").set_label(self.config_dir or "")
         self.builder.get_object("btn_saveConfig").set_sensitive(False)
         self.builder.get_object("btn_deleteConfig").set_sensitive(False)
@@ -1244,17 +1257,14 @@ class PtxPrinterDialog:
             if not os.path.exists(configfile): # If they are an pre 0:4:8 user, pick up .cfg from Project folder location
                 configfile = os.path.join(self.settings_dir, self.prjid, "ptxprint.cfg")
         if os.path.exists(configfile):
-            # print("= = = = = = = = = About to info.loadConfig = = = = = = = = ")
             self.info = Info(self, self.settings_dir, self.prjid)
             config = configparser.ConfigParser()
             config.read(configfile, encoding="utf-8")
             self.info.loadConfig(self, config)
         else:
             try:
-                # print(">>info.update() in updateParatextSettings (1276)")
                 self.info.update()
             except AttributeError:
-                # print(">>info.update() in updateParatextSettings (1279)")
                 self.info = Info(self, self.settings_dir, self.prjid)
                 self.info.update()
         status = self.get("c_multiplebooks")
@@ -1288,7 +1298,7 @@ class PtxPrinterDialog:
                 bks = bks[0]
             except IndexError:
                 bks = "No book selected!"
-        titleStr = "PTXprint [0.5.5 Beta]" + prjid + " (" + bks + ") " + (self.get("cb_savedConfig") or "")
+        titleStr = "PTXprint [0.6.0 Beta]" + prjid + " (" + bks + ") " + (self.get("cb_savedConfig") or "")
         self.builder.get_object("ptxprint").set_title(titleStr)
 
     def editFile(self, file2edit, loc="wrk"):
@@ -1303,11 +1313,9 @@ class PtxPrinterDialog:
             fpath = os.path.join(self.settings_dir, self.prjid, file2edit)
         elif loc == "cfg":
             fpath = os.path.join(self.configPath(), file2edit)
-            # print("Looking in config path first: ", fpath)
             if not os.path.exists(fpath):
                 fpath = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint", file2edit)
         else:
-            # print("Folder location for {} unspecified".format(fpath))
             return
         print(fpath)
         self.builder.get_object("gr_editableButtons").set_visible(True)
@@ -1531,11 +1539,8 @@ class PtxPrinterDialog:
                 # BKN \5 \|\0\|\1\|tr\|\|\4\|\5
                 # MAT 9.2 bringing the paralyzed man to Jesus|CN01684b.jpg|col|tr||key-kālk arsi manvan yēsunaga tarval|9:2
                 m = re.findall(r"\\fig .*?\|(.+?\....)\|(....?)\|(.+)?\|(.+)?\|(.+)?\|(\d+[\:\.]\d+([\-,]\d+)?)\\fig\*", dat)
-                # print("Found {} illustrations".format(len(m)))
                 if len(m):
                     for f in m:
-                        # XeTeX doesn't handle TIFs, so rename all TIF extensions to PDFs
-                        # picfname = re.sub(r"(?i)(.+)\.tif", r"\1.pdf",f[0])
                         picfname = f[0]
                         extn = picfname[-4:]
                         picfname = re.sub('[()&+,. ]', '_', picfname)[:-4]+extn
@@ -1556,8 +1561,6 @@ class PtxPrinterDialog:
                     m = re.findall(r'\\fig (.*?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,]\d+)?)".*\\fig\*', dat)
                     if len(m):
                         for f in m:
-                            # XeTeX doesn't handle TIFs, so rename all TIF extensions to PDFs
-                            # picfname = re.sub(r"(?i)(.+)\.tif", r"\1.pdf",f[1])
                             picfname = f[1]
                             extn = picfname[-4:]
                             picfname = re.sub('[()&+,. ]', '_', picfname)[:-4]+extn
@@ -1578,8 +1581,7 @@ class PtxPrinterDialog:
                     piclist.append("%   d) To (temporarily) remove an illustration prefix the line with % followed by a space\n")
                     piclist.append("%   e) To scale an image use this notation: span*.7  or  col*1.3)\n")
                     plpath = os.path.join(self.configPath(), "PicLists")
-                    if not os.path.exists(plpath):
-                        os.mkdir(plpath)
+                    os.makedirs(plpath, exist_ok=True)
                     with open(outfname, "w", encoding="utf-8") as outf:
                         outf.write("".join(piclist))
 
@@ -1612,7 +1614,7 @@ class PtxPrinterDialog:
             with open(infname, "r", encoding="utf-8") as inf:
                 dat = inf.read()
                 # It would be good to make this more inclusive (\p \m \q1 \q2 etc.) 
-                # and also include \s Section Heads as comments to help show whichs parapgraphs are within a single section
+                # and also include \s Section Heads as comments to help show whichs paragraphs are within a single section
                 m = re.findall(r"\\p ?\r?\n\\v (\d+)",dat)
                 if m is not None:
                     prv = 0
@@ -1623,8 +1625,7 @@ class PtxPrinterDialog:
                         adjlist.append(bk+" "+str(ch)+"."+v+" +0\n")
                         prv = v
                     adjpath = os.path.join(self.configPath(), "AdjLists")
-                    if not os.path.exists(adjpath):
-                        os.mkdir(adjpath)
+                    os.makedirs(adjpath, exist_ok=True)
                     with open(outfname, "w", encoding="utf-8") as outf:
                         outf.write("".join(adjlist))
 
@@ -1772,7 +1773,6 @@ class PtxPrinterDialog:
         if self.get("c_prettyIntroOutline"): # if turned on...
             badbks = self.checkSFMforFancyIntroMarkers()
             if len(badbks):
-                # print("Sorry - but you can't enable this option as the selected files have not got the required markup")
                 self.set("c_prettyIntroOutline", False)
                 m1 = "Invalid Option for Selected Books"
                 m2 = "The book(s) listed below do not have the" + \
@@ -1831,7 +1831,6 @@ class PtxPrinterDialog:
                     count += bkcntr
         # slist = sorted(count.items(), key=lambda pair: pair[0])
         f = TTFont(*self.builder.get_object("bl_fontR").font_info)
-        # print("f.filename:", f.filename)
         allchars = ''.join([i[0] for i in count.items()])
         if self.get("cb_glossaryMarkupStyle") == "with ⸤floor⸥ brackets":
             allchars += "\u2e24\u2e25"
@@ -1839,7 +1838,6 @@ class PtxPrinterDialog:
             allchars += "\u230a\u230b"
         if self.get("cb_glossaryMarkupStyle") == "with ⌞corner⌟ characters":
             allchars += "\u231e\u231f"
-        # print(allchars.encode("raw_unicode_escape"))
         missing = f.testcmap(allchars)
         self.builder.get_object("t_missingChars").set_text(' '.join(missing))
         missingcodes = ""
@@ -1884,17 +1882,6 @@ class PtxPrinterDialog:
                 dialog.run()
                 dialog.set_keep_above(False)
                 dialog.destroy()
-
-    # def msgUnsupportedFont(self, fontname):
-        # par = self.builder.get_object('ptxprint')  #  flags=Gtk.DialogFlags.MODAL,
-        # dialog = Gtk.MessageDialog(parent=par, type=Gtk.MessageType.WARNING, \
-                 # buttons=Gtk.ButtonsType.OK, message_format="The Font: '{}'\ncannot be used as it has\nnot been installed properly.".format(fontname[:-3]))
-        # dialog.set_type_hint(GTK_WINDOW(popwindow), GTK_WINDOW_TYPE_HINT_DIALOG)
-        # dialog.format_secondary_text("Please select a different Font\n  or\nInstall the font for ALL users.")
-        # dialog.set_keep_above(True)
-        # dialog.run()
-        # dialog.set_keep_above(False)
-        # dialog.destroy()
 
     def msgQuestion(self, title, question):
         par = par = self.builder.get_object('ptxprint')

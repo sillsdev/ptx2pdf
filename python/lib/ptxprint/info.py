@@ -128,7 +128,8 @@ class Info:
 
         "document/title":           (None, lambda w,v: w.ptsettings.get('FullName', "")),
         "document/subject":         ("t_booklist", lambda w,v: v if w.get("c_multiplebooks") else w.get("cb_book")),
-        "document/author":          (None, lambda w,v: re.sub('"?</?p>"?','',w.ptsettings.get('Copyright', "")).strip('"')),
+        "document/author":          (None, lambda w,v: w.ptsettings.get('Copyright', "")),
+        # "document/author":          (None, lambda w,v: re.sub('"?</?p>"?','',w.ptsettings.get('Copyright', "")).strip('"')),
 
         "document/toc":             ("c_autoToC", lambda w,v: "" if v else "%"),
         "document/toctitle":        ("t_tocTitle", lambda w,v: v or ""),
@@ -287,7 +288,6 @@ class Info:
     }
     
     def __init__(self, printer, path, prjid = None):
-        # print("  info:__init__")
         self.printer = printer
         self.changes = None
         self.localChanges = None
@@ -303,11 +303,9 @@ class Info:
                      "/iccfpath": os.path.join(libpath, "ps_cmyk.icc").replace("\\","/"),
                      "document/date": t.strftime("%Y%m%d%H%M%S")+tzstr }
         self.prjid = prjid
-        # print(">>self.update() in info.__init__ (282)")
         self.update()
 
     def update(self):
-        # print("  info:update")
         printer = self.printer
         for k, v in self._fonts.items():
             btn = printer.builder.get_object(v[0])
@@ -356,7 +354,6 @@ class Info:
         self.dict[key] = value
 
     def processFonts(self, printer):
-        # print("  info:processFonts")
         silns = "{urn://www.sil.org/ldml/0.1}"
         for p in self._fonts.keys():
             if p in self.dict:
@@ -430,7 +427,6 @@ class Info:
         return path.replace(" ", r"\ ")
 
     def asTex(self, template="template.tex", filedir=".", jobname="Unknown"):
-        # print("  info:asTex")
         for k, v in self._settingmappings.items():
             if self.dict[k] == "":
                 self.dict[k] = self.printer.ptsettings.dict.get(v, "a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z")
@@ -764,7 +760,6 @@ class Info:
         config.set(sect, k, value)
 
     def createConfig(self, printer):
-        # print("  info:createConfig")
         config = configparser.ConfigParser()
         for k, v in self._mappings.items():
             if v[0] is None:
@@ -784,7 +779,6 @@ class Info:
         return config
 
     def loadConfig(self, printer, config):
-        # print("  info:loadConfig")
         for sect in config.sections():
             for opt in config.options(sect):
                 key = "{}/{}".format(sect, opt)
@@ -807,7 +801,6 @@ class Info:
                         pass # ignore missing keys 
                 elif key in self._snippets:
                     printer.set(self._snippets[key][0], val.lower() == "true")
-        # print("Loading fonts")
         for k, v in self._fonts.items(): 
             btn = printer.builder.get_object(v[0])
             vals = [config.get(k, a) if config.has_option(k, a) else "" for a in ("name", "style")]
@@ -873,7 +866,6 @@ class Info:
         if printer.get("c_useModsTex"):
             if not os.path.exists(os.path.join(prjdir, "shared", "ptxprint", "ptxprint-mods.tex")):
                 printer.set("c_useModsTex", False)
-        # print(">>self.update() in info.loadConfig (830)")
         self.update()
 
     def GenerateNestedStyles(self):
@@ -896,8 +888,7 @@ class Info:
             if os.path.exists(nstyfname):
                 os.remove(nstyfname)
         else:
-            if not os.path.exists(os.path.join(self.printer.working_dir)):
-                os.mkdir(os.path.join(self.printer.working_dir))
+            os.makedirs(self.printer.working_dir, exist_ok=True)
             with open(nstyfname, "w", encoding="utf-8") as outf:
                 outf.write("".join(nstylist))
 
