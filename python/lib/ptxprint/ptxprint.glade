@@ -8688,30 +8688,6 @@ to show gridlines for finetuning settings.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkFontButton" id="bl_verseNumFont">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">If a specific font (other than the
-regular font) is required so that
-it fits within the verse decorator, 
-then select the font here.</property>
-                                <property name="halign">start</property>
-                                <property name="valign">center</property>
-                                <property name="margin_top">6</property>
-                                <property name="margin_bottom">6</property>
-                                <property name="font">Sans 12</property>
-                                <property name="preview_text"/>
-                                <property name="show_preview_entry">False</property>
-                                <property name="show_size">False</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">6</property>
-                                <property name="width">2</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkSpinButton" id="s_verseNumSize">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -8763,6 +8739,24 @@ Verse Numbers:</property>
                               <packing>
                                 <property name="left_attach">0</property>
                                 <property name="top_attach">6</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="bl_verseNumFont">
+                                <property name="label" translatable="yes">Select font...</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">If a specific font (other than the
+regular font) is required so that
+it fits within the verse decorator, 
+then select the font here.</property>
+                                <signal name="clicked" handler="onVerseNumFontClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">6</property>
+                                <property name="width">2</property>
                               </packing>
                             </child>
                             <child>

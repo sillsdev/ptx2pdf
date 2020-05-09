@@ -653,19 +653,19 @@ class Info:
         if printer.get("c_preventwidows"):
             # Push the verse number onto the next line (using NBSP) if there is
             # a short widow word (3 characters or less) at the end of the line
-            self.localChanges.append((None, regex.compile(r"(\\v \d+(-\d+)? [\w][\w]?[\w]?) ", flags=regex.M), r"\1\u00A0")) 
+            self.localChanges.append((None, regex.compile(r"(\\v \d+(-\d+)? [\w][\w]?[\w]?) ", flags=regex.M), r"\1~")) 
 
         if printer.get("c_ch1pagebreak"):
             self.localChanges.append((None, regex.compile(r"(\\c 1 ?\r?\n)", flags=regex.M), r"\pagebreak\r\n\1"))
 
         if printer.get("c_glueredupwords"): # keep reduplicated words together
-            self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w\w\w+) \1(?=[\s,.!?])", flags=regex.M), r"\1\u00A0\1")) 
+            self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w\w\w+) \1(?=[\s,.!?])", flags=regex.M), r"\1~\1")) 
         
         if printer.get("c_addColon"): # Insert a colon between \fq (or \xq) and following \ft (or \xt)
             self.localChanges.append((None, regex.compile(r"(\\[fx]q .+?):* (\\[fx]t)", flags=regex.M), r"\1: \2")) 
         
         if printer.get("c_keepBookWithRefs"): # keep Booknames and ch:vs nums together within \xt and \xo 
-            self.localChanges.append((regex.compile(r"(\\[xf]t [^\\]+)"), regex.compile(r"(?<!\\[fx][rto]) (\d+:\d+([-,]\d+)?)"), r"\u00A0\1"))
+            self.localChanges.append((regex.compile(r"(\\[xf]t [^\\]+)"), regex.compile(r"(?<!\\[fx][rto]) (\d+:\d+([-,]\d+)?)"), r"~\1"))
 
         # Paratext marks no-break space as a tilde ~
         self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 

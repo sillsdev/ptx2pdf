@@ -238,7 +238,8 @@ def doit(printer, display=True):
             refs = re.findall(r"([1-9]\d*[.:][1-9]\d*)", "".join(finalLogLines))
             if len(refs):
                 finalLogLines.append("\nReferences to check in {}: {}".format(book, ", ".join(refs)))
-            mrkrs = re.findall(r"(\\[a-z0-9]{0,5}[ *\r\n.])", "".join(finalLogLines[-10:]))
+            mrkrs = re.findall(r"(\\[a-z0-9]{0,5}[ *\r\n.])", "".join(finalLogLines[-8:]))
+
             if len(mrkrs):
                 finalLogLines.append("\nMarkers to check: {}".format(", ".join(mrkrs)))
             files = re.findall(r'(?i)([^\\/\n."= ]*?\.(?=jpg|tif|png|pdf)...)', "".join(finalLogLines))
