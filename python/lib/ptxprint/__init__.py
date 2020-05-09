@@ -59,6 +59,17 @@ _alldigits = [ "Default", "Adlam", "Ahom", "Arabic-Farsi", "Arabic-Hindi", "Bali
     "Osmanya", "Pahawh-Hmong", "Persian", "Saurashtra", "Sharada", "Sinhala-Lith", "Sora-Sompeng", "Sundanese", "Tai-Tham-Hora", 
     "Tai-Tham-Tham", "Takri", "Tamil", "Telugu", "Thai", "Tibetan", "Tirhuta", "Urdu", "Vai", "Wancho", "Warang-Citi" ]
 
+_allbooks = ["FRT", "INT", "CNC", 
+            "GEN", "EXO", "LEV", "NUM", "DEU", "JOS", "JDG", "RUT", "1SA", "2SA", "1KI", "2KI", "1CH", "2CH", "EZR", "NEH", "EST",
+            "JOB", "PSA", "PRO", "ECC", "SNG", "ISA", "JER", "LAM", "EZK", "DAN", "HOS", "JOL", "AMO", "OBA", "JON", "MIC", "NAM",
+            "HAB", "ZEP", "HAG", "ZEC", "MAL", 
+            "TOB", "JDT", "ESG", "WIS", "SIR", "BAR", "LJE", "S3Y", "SUS", "BEL", "1MA", "2MA", "3MA", "4MA", "1ES", "2ES", "MAN", "PS2",
+            "MAT", "MRK", "LUK", "JHN", "ACT", "ROM", "1CO", "2CO", "GAL", "EPH", "PHP", "COL", "1TH", "2TH", "1TI", "2TI", "TIT",
+            "PHM", "HEB", "JAS", "1PE", "2PE", "1JN", "2JN", "3JN", "JUD", "REV", 
+            "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG",
+            "GLO", "TDX", "NDX", "DAG", "LAO", "OTH", "BAK"]
+_allbkmap = {k: i for i, k in enumerate(_allbooks)} 
+
 class Splash(Thread):
     def __init__(self, window):
         super(Splash, self).__init__()
@@ -1096,7 +1107,8 @@ class PtxPrinterDialog:
             mbs_grid.attach(tbox, i // 13, i % 13, 1, 1)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            self.booklist = [b.get_label() for b in self.alltoggles if b.get_active()]
+            self.booklist = sorted((b.get_label() for b in self.alltoggles if b.get_active()), \
+                                    key=lambda x:_allbkmap.get(x, len(_allbkmap)))
             bl.set_text(" ".join(b for b in self.booklist))
         self.builder.get_object("c_multiplebooks").set_active(not self.booklist == [])
         self.set("c_prettyIntroOutline", False)
