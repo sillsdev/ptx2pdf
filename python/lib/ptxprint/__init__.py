@@ -1044,11 +1044,12 @@ class PtxPrinterDialog:
 
     def getFontNameFace(self, btnid):
         btn = self.builder.get_object(btnid)
+        lb = self.builder.get_object("tv_fontFamily")
+        lb.set_cursor(0)
         dialog = self.builder.get_object("dlg_fontChooser")
         dialog.set_keep_above(True)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            lb = self.builder.get_object("tv_fontFamily")
             sel = lb.get_selection()
             ls, row = sel.get_selected()
             name = ls.get_value(row, 0)
@@ -1827,8 +1828,7 @@ class PtxPrinterDialog:
                     bkcntr = collections.Counter(sfmtxt)
                     count += bkcntr
         # slist = sorted(count.items(), key=lambda pair: pair[0])
-        reg = self.get("bl_fontR")
-        f = TTFont(reg)
+        f = TTFont(*self.builder.get_object("bl_fontR").font_info)
         # print("f.filename:", f.filename)
         allchars = ''.join([i[0] for i in count.items()])
         if self.get("cb_glossaryMarkupStyle") == "with ⸤floor⸥ brackets":
@@ -1857,11 +1857,11 @@ class PtxPrinterDialog:
             dialog.set_keep_above(False)
             dialog.destroy()
 
-    def onFontExtraRclicked(self, btn):
+    def onFontExtraRclicked(self, bl_fontExtraR):
         self.getFontNameFace("bl_fontExtraR")
-        reg = self.get("bl_fontR")
-        xtraReg = self.get("bl_fontExtraR")
-        if reg[:-3] == xtraReg[:-3]:
+        btnr = self.builder.get_object("bl_fontR")
+        btne = self.builder.get_object("bl_fontExtraR")
+        if btnr.font_info[0] == btne.font_info[0]:
             dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
                      buttons=Gtk.ButtonsType.OK, message_format="The Fallback Font should to be DIFFERENT from the Regular Font.")
             dialog.format_secondary_text("Please select a different Font.")
@@ -1870,9 +1870,7 @@ class PtxPrinterDialog:
             dialog.set_keep_above(False)
             dialog.destroy()
         else:
-            f = TTFont(xtraReg)
-            print(xtraReg)
-            print(f.filename)
+            f = TTFont(*btne.font_info)
             msngchars = self.builder.get_object("t_missingChars").get_text() # .split(" ")
             msngchars = spclChars = re.sub(r"\\[uU]([0-9a-fA-F]{4,6})", lambda m:chr(int(m.group(1), 16)), msngchars)
             stillmissing = f.testcmap(msngchars)

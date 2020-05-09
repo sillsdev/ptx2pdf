@@ -375,7 +375,6 @@ class Info:
                 f = TTFont(*regbtn.font_info)
                 printer.set(self._fonts[p][1], True)
                 printer.setFontButton(btn, *regbtn.font_info)
-                btn.set_label(" ".join(regbtn.font_info))
                 self.updatefields([self._fonts[p][2]])
                 # print("Setting {} to {}".format(p, reg))
             d = self.printer.ptsettings.find_ldml('.//special/{1}external-resources/{1}font[@name="{0}"]'.format(f.family, silns))
