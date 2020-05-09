@@ -16,8 +16,11 @@ List of improvements: 0.6.0
   
   * Re-arranged some UI elements to make it more intuitive and less crowded
   
+  * By default, books are arranged into a logical order, but this can be
+    overwritten by editing/re-arranging the list of books
+
   * Allow out of canonical sequence for books 
-    (e.g. FRT INT MAT ... REV PSA PRO BAK TDX NDX GLO) - not yet complete
+    (e.g. INT MAT ... REV PSA PRO BAK TDX NDX GLO)
 
 
 List of improvements: 0.5.4

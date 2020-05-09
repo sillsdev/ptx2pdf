@@ -1610,6 +1610,7 @@ Shortcut key: &lt;Ctrl-P&gt;</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="caps_lock_warning">False</property>
+                                        <signal name="focus-out-event" handler="onBookListChanged" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>

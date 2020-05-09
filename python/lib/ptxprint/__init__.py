@@ -59,15 +59,16 @@ _alldigits = [ "Default", "Adlam", "Ahom", "Arabic-Farsi", "Arabic-Hindi", "Bali
     "Osmanya", "Pahawh-Hmong", "Persian", "Saurashtra", "Sharada", "Sinhala-Lith", "Sora-Sompeng", "Sundanese", "Tai-Tham-Hora", 
     "Tai-Tham-Tham", "Takri", "Tamil", "Telugu", "Thai", "Tibetan", "Tirhuta", "Urdu", "Vai", "Wancho", "Warang-Citi" ]
 
-_allbooks = ["FRT", "INT", "CNC", 
+_allbooks = ["FRT", "INT", 
             "GEN", "EXO", "LEV", "NUM", "DEU", "JOS", "JDG", "RUT", "1SA", "2SA", "1KI", "2KI", "1CH", "2CH", "EZR", "NEH", "EST",
             "JOB", "PSA", "PRO", "ECC", "SNG", "ISA", "JER", "LAM", "EZK", "DAN", "HOS", "JOL", "AMO", "OBA", "JON", "MIC", "NAM",
             "HAB", "ZEP", "HAG", "ZEC", "MAL", 
-            "TOB", "JDT", "ESG", "WIS", "SIR", "BAR", "LJE", "S3Y", "SUS", "BEL", "1MA", "2MA", "3MA", "4MA", "1ES", "2ES", "MAN", "PS2",
+            "TOB", "JDT", "ESG", "WIS", "SIR", "BAR", "LJE", "S3Y", "SUS", "BEL", 
+            "1MA", "2MA", "3MA", "4MA", "1ES", "2ES", "MAN", "PS2", "DAG", "LAO",
             "MAT", "MRK", "LUK", "JHN", "ACT", "ROM", "1CO", "2CO", "GAL", "EPH", "PHP", "COL", "1TH", "2TH", "1TI", "2TI", "TIT",
             "PHM", "HEB", "JAS", "1PE", "2PE", "1JN", "2JN", "3JN", "JUD", "REV", 
             "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG",
-            "GLO", "TDX", "NDX", "DAG", "LAO", "OTH", "BAK"]
+            "GLO", "TDX", "NDX", "CNC", "OTH", "BAK"]
 _allbkmap = {k: i for i, k in enumerate(_allbooks)} 
 
 class Splash(Thread):
@@ -313,6 +314,7 @@ class PtxPrinterDialog:
             return blst
         else:
             return self.booklist
+        # self.updateDialogTitle()
 
     def getBookFilename(self, bk, prjid):
         if self.ptsettings is None:
