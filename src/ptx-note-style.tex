@@ -49,7 +49,20 @@
 % new note class: append to the list in \n@tecl@sses, and allocate an \insert number
 \def\allocatecl@ss#1{
   \x@\n@tecl@sses\x@{\the\n@tecl@sses \\{#1}}%
-  \x@\n@winsert\csname note-#1\endcsname
+  \relax%
+  \ifdiglot%
+    \ifdiglotSepNotes%
+      \n@wnoteins@rt{#1}%
+      \n@wnoteins@rt{#1R}%
+     \else%
+      \n@wnoteins@rt{#1}%
+     \fi%
+  \else%
+    \n@wnoteins@rt{#1}%
+  \fi%
+}
+\def\n@wnoteins@rt#1{
+	\x@\n@winsert\csname note-#1\endcsname
 }
 \let\n@winsert=\newinsert % work around the \outer nature of \newinsert
 
@@ -57,7 +70,20 @@
 \def\initn@testyles{\let\\=\s@tn@tep@rams \the\n@tecl@sses}
 \def\s@tn@tep@rams#1{%
   \checkp@ranotes{#1}%
-  \x@\count\csname note-#1\endcsname=\ifp@ranotes 0 \else 1000 \fi %% !!!FIXME!!!
+  \ifdiglot%
+    \ifdiglotSepNotes%
+       \s@tn@tep@r@ms{#1}%
+       \s@tn@tep@r@ms{#1R}%
+    \else%
+       \s@tn@tep@r@ms{#1}%
+    \fi%
+  \else%
+    \s@tn@tep@r@ms{#1}%
+  \fi%
+}
+
+\def\s@tn@tep@r@ms#1{%
+  \x@\count\csname note-#1\endcsname=\ifp@ranotes 500 \else 1000 \fi %% !!!FIXME!!!
   \x@\skip\csname note-#1\endcsname=\AboveNoteSpace
   \x@\dimen\csname note-#1\endcsname=\maxdimen
 }
