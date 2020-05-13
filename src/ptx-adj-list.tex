@@ -95,7 +95,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \def\ch@ckadjustments{% check if the current reference is the place for the next adjustment
- \edef\c@rref{\id@@@\ch@pter.\v@rse}%
+ \edef\c@rref{\id@@@\ifdiglot\ifdiglotL L\else R\fi\fi\ch@pter.\v@rse}%
  \ifx\c@rref\pr@vref \if@dvance@dj \global\advance\curr@djpar by 1 \fi
  \else \global\curr@djpar=1 \fi
  \trace{b}{BALANCE paradj: ref=\c@rref: para=\the\curr@djpar: baselineskip=\the\baselineskip}%
