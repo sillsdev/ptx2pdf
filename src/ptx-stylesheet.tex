@@ -117,15 +117,15 @@
 %\TRACE{getp@ram #1 #2}%
 \ifdiglot%
   \ifdiglotL\getp@r@m{#1}{#2L}\else\getp@r@m{#1}{#2R}\fi%
-    \ifx\p@ram\relax%
-      \getp@r@m{#1}{#2}%
-      %\TRACE{...default}%
-    \else%
-      %\TRACE{...side-specfic}%
-    \fi%
+  \ifx\p@ram\relax%
+    \getp@r@m{#1}{#2}%
+    %\TRACE{...default}%
+  \else%
+    %\TRACE{...side-specfic}%
+  \fi%
 \else%
   \getp@r@m{#1}{#2}%
-\fi\x@%\TRACE{\p@ram}
+\fi%\x@\TRACE{\p@ram}
 }
 %
 \def\m@kestyle{{\uccode`\|=`\\\uppercase{\message{|\m@rker}}}
