@@ -128,7 +128,8 @@
 % Set up the font attributes for a given marker (used by all style types, not only char styles)
 %
 \def\s@tfont#1{%
- \x@\ifx\csname font<#1>\endcsname \relax % check if font identifier for this style has been created
+ \ifdiglot\ifdiglotL\def\f@ntstyle{#1L}\else\def\f@ntstyle{#1R}\fi\else\def\f@ntstyle{#1}\fi%
+ \x@\ifx\csname font<\f@ntstyle>\endcsname \relax % check if font identifier for this style has been created
   \let\typef@ce=\regular
   \getp@ram{fontname}{#1}% see if \FontName was specified in the stylesheet
   \ifx\p@ram\relax % if not, check the \Bold and \Italic properties
@@ -161,33 +162,10 @@
   % create the font identifier for this style
   \trace{F}{font<#1>=\typef@ce\space at \p@ram\space \the\dimen0}%
   \x@\global\x@\font
-    \csname font<#1>\endcsname=\typef@ce\space at \p@ram \dimen0
-  \ifx\SpaceStretchFactor\undefined\else
-    \dimen0=\SpaceStretchFactor\x@\x@\fontdimen2\csname font<#1>\endcsname
-    \x@\x@\fontdimen3\csname font<#1>\endcsname=\dimen0
-  \fi
-  \ifx\SpaceShrinkFactor\undefined\else
-    \dimen0=\SpaceShrinkFactor\x@\x@\fontdimen2\csname font<#1>\endcsname
-    \x@\x@\fontdimen4\csname font<#1>\endcsname=\dimen0
-  \fi
+    \csname font<\f@ntstyle>\endcsname=\typef@ce\space at \p@ram \dimen0
  \fi
  % switch to the appropriate font
- \csname font<#1>\endcsname
-}
-\def\extraregular{"Times New Roman"}
-\def\s@textrafont#1{%
-  \x@\ifx\csname extrafont<#1>\endcsname \relax%
-    \let\typef@ce=\extraregular
-    \getp@ram{superscript}{#1}%
-    \dimen0=\ifx\p@ram\tru@ \SuperscriptFactor\fi\FontSizeUnit
-    \getp@ram{fontsize}{#1}%
-    \ifx\p@ram\relax
-      \MSG{*** FontSize missing for marker '#1', defaulting to 12}%
-      \def\p@ram{12}
-    \fi
-    \x@\global\x@\font\csname extrafont<#1>\endcsname=\typef@ce\space at \p@ram \dimen0
-  \fi
-  \csname extrafont<#1>\endcsname
+ \csname font<\f@ntstyle>\endcsname
 }
 \def\tru@{true}
 \def\SuperscriptFactor{0.75}
