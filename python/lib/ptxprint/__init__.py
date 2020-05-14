@@ -1312,7 +1312,7 @@ class PtxPrinterDialog:
                 bks = bks[0]
             except IndexError:
                 bks = "No book selected!"
-        titleStr = "PTXprint [0.6.0 Beta]" + prjid + " (" + bks + ") " + (self.get("cb_savedConfig") or "")
+        titleStr = "PTXprint [0.6.1 Beta]" + prjid + " (" + bks + ") " + (self.get("cb_savedConfig") or "")
         self.builder.get_object("ptxprint").set_title(titleStr)
 
     def editFile(self, file2edit, loc="wrk"):
@@ -1714,9 +1714,9 @@ class PtxPrinterDialog:
             sectmpdir = os.path.join(self.settings_dir, secprjid, 'PrintDraft') if self.get("c_useprintdraftfolder") else self.working_dir
             jobs = self.getBooks()
             if len(jobs) > 1:
-                secfname = os.path.join(sectmpdir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], secprjid))
+                secfname = os.path.join(sectmpdir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], secprjid)).replace("\\","/")
             else:
-                secfname = os.path.join(sectmpdir, "ptxprint-{}{}.pdf".format(jobs[0], secprjid))
+                secfname = os.path.join(sectmpdir, "ptxprint-{}{}.pdf".format(jobs[0], secprjid)).replace("\\","/")
             # TO DO: We need to be able to GET the page layout values from the PRIMARY project
             # (even when creating the Secondary PDF so that the dimensions match).
             PageWidth = int(re.split("[^0-9]",re.sub(r"^(.*?)\s*,.*$", r"\1", self.get("cb_pagesize")))[0]) or 148
