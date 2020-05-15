@@ -1546,12 +1546,12 @@ class PtxPrinterDialog:
                 dat = inf.read()
                 # Finds USFM2-styled markup in text:
                 #                0         1       2     3     4              5       
-                # \\fig .*\|(.+?\....)\|(....?)\|(.*)\|(.*)\|(.+?)\|(\d+[:.]\d+([-,]\d+)?)\\fig\*
+                # \\fig .*?\|(.+?\....)\|(....?)\|(.+)?\|(.+)?\|(.+)?\|(\d+[\:\.]\d+([\-,\u2013\u2014]\d+)?)\\fig\*
                 # \fig |CN01684b.jpg|col|||key-kālk arsi manvan yēsunaga tarval|9:2\fig*
                 #           0         1  2 3          4                          5  
                 # BKN \5 \|\0\|\1\|tr\|\|\4\|\5
                 # MAT 9.2 bringing the paralyzed man to Jesus|CN01684b.jpg|col|tr||key-kālk arsi manvan yēsunaga tarval|9:2
-                m = re.findall(r"\\fig .*?\|(.+?\....)\|(....?)\|(.+)?\|(.+)?\|(.+)?\|(\d+[\:\.]\d+([\-,]\d+)?)\\fig\*", dat)
+                m = re.findall(r"\\fig .*?\|(.+?\....)\|(....?)\|(.+)?\|(.+)?\|(.+)?\|(\d+[\:\.]\d+([\-,\u2013\u2014]\d+)?)\\fig\*", dat)
                 if len(m):
                     for f in m:
                         picfname = f[0]
@@ -1566,12 +1566,12 @@ class PtxPrinterDialog:
                     # If none of the USFM2-styled illustrations were found then look for USFM3-styled markup in text 
                     # (Q: How to handle any additional/non-standard xyz="data" ? Will the .* before \\fig\* take care of it adequately?)
                     #         0              1               2                  3      [4]
-                    # \\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,]\d+)?)".*\\fig\*
+                    # \\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,\u2013\u2014]\d+)?)".*\\fig\*
                     # \fig hāgartun saṅga dūtal vaḍkval|src="CO00659B.TIF" size="span" ref="21:16"\fig*
                     #                   0                         1                2          3  [4]
                     # BKN \3 \|\1\|\2\|tr\|\|\0\|\3
                     # GEN 21.16 an angel speaking to Hagar|CO00659B.TIF|span|t||hāgartun saṅga dūtal vaḍkval|21:16
-                    m = re.findall(r'\\fig (.*?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,]\d+)?)".*\\fig\*', dat)
+                    m = re.findall(r'\\fig (.*?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,\u2013\u2014]\d+)?)".*\\fig\*', dat)
                     if len(m):
                         for f in m:
                             picfname = f[1]
