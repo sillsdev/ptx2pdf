@@ -1,0 +1,10 @@
+% localcmds.tex: Locally set commands
+
+\def\nopar{\penalty 10000}
+%\def\zobrk{\rightskip=0pt plus .5\hsize\hbox{}\penalty -50\hbox{}}
+\def\zobrk{\hfil \penalty -20 \hfilneg \linepenalty 3000 \ }
+\let\zob=\zobrk
+\def\tighter{\looseness=-1}
+\def\something{\hbox{}}
+%\expandafter\def\csname fadd*\endcsname{\endadd} %Don't do this, it breaks things!!
+%\expandafter\def\csname fadd\endcsname{\beginadd}

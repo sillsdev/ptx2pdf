@@ -1,0 +1,123 @@
+﻿
+%
+% Paratext-to-PDF converter setup for GLW example
+%
+% This file defines some basic parameters that control the format of the output
+
+% Dimensions of A7 paper
+%\PaperWidth=74.25mm
+%\PaperHeight=105mm
+% Dimensions of A6 paper
+%\PaperWidth=105mm
+%\PaperHeight=148.5mm
+% Dimensions of A5 paper
+\PaperWidth=148.5mm
+\PaperHeight=210mm
+% Dimensions of A4 paper
+%\PaperHeight=296.9mm
+%\PaperWidth=210mm
+
+\diglottrue %Diglot edition (2 languages/translations)
+\diglotSepNotesfalse % Keep footnotes separate between translations? (Probably best set to false if only one side has them)
+\diglotBalNotesfalse% Balance column lengths from footnotes?
+
+%\CropMarkstrue
+\CropMarksfalse
+
+% Basic unit for margins; changing this will alter them all
+\MarginUnit=.5in
+
+% Relative sizes of margins, based on the unit above
+\def\TopMarginFactor{1.0}
+\def\BottomMarginFactor{1.0}
+\def\SideMarginFactor{0.75}
+
+% Fonts to use for "plain", "bold", "italic", and "bold italic" from the Paratext stylesheet
+% (they need not really be italic, etc, of course)
+\def\regular{"Gentium Basic:+liga,+salt"}
+\def\bold{"TeX Gyre Termes/B"}
+\def\italic{"Gentium Basic/I"}
+\def\bolditalic{"TeX Gyre Schola/BI"}
+
+% Can override the defaults for Left or Right:  (It doesn't make sense to do both)
+\def\regularL{"Gentium Plus"}
+\def\boldR{"TeX Gyre Adventor/B"}
+
+% Use right-to-left layout mode
+%\RTLtrue
+
+% Unit for font sizes in the stylesheet; changing this will scale all text proportionately
+\FontSizeUnit=0.9pt
+
+% Scaling factor used to adjust line spacing, relative to font size
+\def\LineSpacingFactor{1.03}
+\def\VerticalSpaceFactor{1.0}
+
+% Information to include in the running header (at top of pages, except first)
+% We set the items to print at left/center/right of odd and even pages separately
+% Possible contents:
+%   \rangeref = Scripture reference of the range of text on the page;
+%   \firstref = reference of the first verse on the page)
+%   \lastref = reference of the last verse on the page)
+%   \pagenumber = the page number
+%   \empty = print nothing in this position
+\def\RHoddleft{\empty}
+\def\RHoddcenter{\empty}
+\def\RHoddright{\rangeref}
+
+\def\RHevenleft{\rangeref}
+\def\RHevencenter{\empty}
+\def\RHevenright{\empty}
+
+\def\RHtitleleft{\empty}
+\def\RHtitlecenter{\empty}
+\def\RHtitleright{\empty}
+
+\def\RFoddcenter{\pagenumber}
+\def\RFevencenter{\pagenumber}
+\def\RFtitlecenter{\pagenumber}
+\def\DiglotLeftFraction{0.38} % In case texts fit better with unequal columns
+\def\DiglotRightFraction{0.62} 
+
+\VerseRefstrue % whether to include verse number in running head, or only chapter
+
+\OmitVerseNumberOnetrue % whether to skip printing verse number 1 at start of chapter
+%\IndentAtChaptertrue % whether to use paragraph indent at drop-cap chapter numbers
+
+\AutoCallers{f}{*,†,‡,¶,§}
+\PageResetCallers{f}
+%\NumericCallers{f}
+%\OmitCallerInNote{f}
+
+\ParagraphedNotes{x} % reformat \x notes as a single paragraph
+\ParagraphedNotes{f} % reformat \f notes as a single paragraph
+
+\TitleColumns=1
+\IntroColumns=1
+\BodyColumns=1
+
+\def\ColumnGutterFactor{15} % gutter between double cols, relative to font size
+
+%\BindingGuttertrue % add extra margin of \BindingGutter on binding side
+%\BindingGutter=10pt
+%\DoubleSidedfalse
+
+\GenerateTOC[Table of Contents]{toc-auto.tex}
+
+
+\def\addmtlquteht{2pt}
+\def\addmtlqutewd{1.5pt}
+\def\addmtlqutelw{0.2pt}
+
+%Only Left column gets NIV-style corner-brackets for added material
+\sethook{before}{addL}{\lower 1pt \hbox{\vrule width \addmtlqutelw height \addmtlquteht\vrule width \addmtlqutewd height \addmtlqutelw}\kern -1pt\ignorespaces}
+\sethook{after}{addL}{\kern -1pt \lower 1pt \hbox{\vrule width \addmtlqutewd height \addmtlqutelw\vrule width \addmtlqutelw height \addmtlquteht}}
+
+%\sethook{before}{add}{\lower 1pt \hbox{\vrule width \addmtlqutelw height \addmtlquteht\vrule width \addmtlqutewd height \addmtlqutelw}\kern -1pt}
+%\sethook{after}{add}{\kern -1pt \lower 1pt \hbox{\vrule width \addmtlqutewd height \addmtlqutelw\vrule width \addmtlqutelw height \addmtlquteht}}
+
+% Define the Paratext stylesheet to be used as a basis for formatting
+\stylesheet{usfm.sty}
+\stylesheet{usfmTex.sty}
+\stylesheet{default-custom.sty}
+\stylesheet{Galatians.sty}

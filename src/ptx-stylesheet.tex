@@ -114,18 +114,19 @@
 % Diglot version = allow all parameters to have  Left/Right variant or use
 % default. (e.g when asked for paramter for v, check for vL|vR, default to v)
 \def\getp@ram#1#2{%
-%\TRACE{getp@ram #1 #2}%
+\TRACEdiglot{getp@ram #1:#2}%
 \ifdiglot%
   \ifdiglotL\getp@r@m{#1}{#2L}\else\getp@r@m{#1}{#2R}\fi%
   \ifx\p@ram\relax%
     \getp@r@m{#1}{#2}%
-    %\TRACE{...default}%
+    \TRACEdiglot{...default}%
   \else%
-    %\TRACE{...side-specfic}%
+    \TRACEdiglot{...side-specfic}%
   \fi%
 \else%
   \getp@r@m{#1}{#2}%
-\fi%\x@\TRACE{\p@ram}
+\fi%
+\x@\TRACEdiglot{\p@ram}%
 }
 %
 \def\m@kestyle{{\uccode`\|=`\\\uppercase{\message{|\m@rker}}}
@@ -221,9 +222,11 @@
    \ifOmitChapterNumber\else
     % if chapter label not present, set \ch@ptertrue to cause chapter number to be printed
     % at start of first text paragraph.
-    \ifx\ch@plabel\empty \global\ch@ptertrue 
+    \let\ch@pl@bel=\ch@plabel%
+    \ifdiglot\ifdiglotL\else\let\ch@pl@bel=\ch@plabelR\fi\fi
+    \ifx\ch@pl@bel\empty \global\ch@ptertrue 
     \else % if \cl present, output chapter label here
-      \p@rstyle{cl}\ch@plabel\ \ch@pter
+      \p@rstyle{cl}\ch@pl@bel\ \ch@pter
       \pdfb@@kmark \pdfch@ptermark
     \fi
    \fi}
@@ -336,7 +339,7 @@
  \def\do@CL{\global\ch@pterfalse\@CL}%
  \def\cl{\ifch@pter \let\n@xt=\do@CL \else \let\n@xt=\st@recl \fi \n@xt}%
  \def\st@recl{\bgroup\obeylines\@cl}% \cl gets stored as chapter label and changes \c format
- \def\@cl ##1^^M{\gdef\ch@plabel{##1}\egroup}%
+ \def\@cl ##1^^M{\ifdiglot\ifdiglotL\gdef\ch@plabel{##1}\else\gdef\ch@plabelR{##1}\fi\else\gdef\ch@plabel{##1}\fi\egroup}%
  %
  \let\@ID=\id%
  \def\id{\bgroup\obeylines\unc@tcodespecials \m@kedigitsother
@@ -396,6 +399,7 @@
 \def\ptxfile#1{
  \@netimesetup
  \gdef\ch@plabel{}
+ \gdef\ch@plabelR{}
  \initp@rastyles
  \initn@testyles
  \openadjlist "\the\AdjListPath#1.adj"
@@ -510,7 +514,7 @@
  \advance\dimen0 by -1\ExtraRMargin
  \textwidth=\dimen0
  \colwidth=0.5\textwidth \advance\colwidth by -0.5\gutter\advance\colwidth by -\columnshift
- % Diglot dimensions
+% Diglot dimensions
  \advance\dimen0 by -\gutter\advance\dimen0 by -\columnshift
  \columnLwidth=\DiglotLeftFraction\dimen0
  \columnRwidth=\DiglotRightFraction\dimen0

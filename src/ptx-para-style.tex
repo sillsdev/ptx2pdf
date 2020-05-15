@@ -113,7 +113,11 @@
 \def\par{\ifhmode \TRACE{par}%
  \makecutouts
  \csname end-\m@rker\endcsname
- \endgraf \cutoutcarryover \fi}
+ \ifdiglot\setsid@%\MSG{end-\m@rker\sid@}%
+   \csname end-\m@rker\sid@\endcsname % handle side-specific <end> hook
+ \fi
+ \endgraf 
+ \cutoutcarryover \fi}
 
 %
 % Handle a paragraph style marker (parameter is the marker name)
@@ -146,8 +150,14 @@
   \fi
   \resetp@rstyle
   \csname after-\m@rker\endcsname % handle <after> hook for the previous style
+  \ifdiglot\setsid@%\MSG{start-\thisch@rstyle\sid@}%
+    \csname after-\m@rker\sid@\endcsname\relax% handle side-specific <start> hook
+  \fi
   \gdef\m@rker{#1} % remember the new style name
   \csname before-\m@rker\endcsname % handle its <before> hook
+  \ifdiglot%
+    \csname before-\m@rker\sid@\endcsname\relax% handle side-specific <start> hook
+  \fi
   %
   % now we check what kind of marker this is: intro? title? section? other?
   % and switch to the appropriate mode
@@ -291,6 +301,9 @@
    \ifvoid\ch@pterbox\else \kern-\wd\ch@pterbox \box\ch@pterbox \fi
    \global\p@ranesting=1
    \csname start-\m@rker\endcsname % handle <start> hook
+   \ifdiglot\setsid@%\MSG{start-\m@rker\sid@}%
+     \csname start-\m@rker\sid@\endcsname % handle side-specific <start> hook
+   \fi
    \ifdr@ppednumber \spacefactor=0\n@wchaptersf \fi
    \startparafalse
    % set special \spacefactor if we're at a chapter number, so \v 1 can omit the verse number here
@@ -397,9 +410,9 @@
     \fi
   \fi}
 
-\def\@parlines#1{\ifx\pendingch@pter\empty\else
+\def\@parlines#1{\ifx\pendingch@pter\empty\else%
   \advance\this@y by #1 \advance\this@y by -1
-  \MSG{* calculated \string\DelayedChapter{\pendingb@@k}{\pendingch@pter}{\the\this@y}}%
+%  \MSG{* calculated \string\DelayedChapter{\pendingb@@k}{\pendingch@pter}{\the\this@y}}%
   \wr@teDelayedChapter{\pendingb@@k}{\pendingch@pter}{\the\this@y}%
   \let\pendingch@pter\empty\let\pendingb@@k\empty\fi}
 
@@ -420,7 +433,7 @@
   \else \pr@vdelay=\csname delay-#1.#2\endcsname\fi
   \th@sdelay=#3\relax
   \ifnum\pr@vdelay=\th@sdelay % if the delay value is unchanged, all is good
-    \MSG{PARLOC: OK}%
+    %\MSG{PARLOC: OK}%
   \else
     \advance\pr@vdelay by 1
     \ifnum\pr@vdelay=\th@sdelay % if new delay is 1 greater than old, we can use \RaiseChapter

@@ -36,9 +36,10 @@
 \TeXXeTstate=1 % enable the eTeX bidi extensions, in case we need RTL support
 
 \def\MSG{\immediate\write16 } % shorthand to write a message to the terminal
-\def\TRACE#1{} % default - consume messages
+\def\TRACE#1{}%\let\TRACE=\MSG % default - consume messages
 \def\wlog{\immediate\write-1 } % write message to log file only
 \newif\iftemp \tempfalse
+\newif\ifinn@te\inn@tefalse
 
 % \addtoendhooks collects macros to be executed at the end of the job
 \def\addtoendhooks#1{\x@\global\x@\@ndhooks\x@{\the\@ndhooks #1}}
@@ -70,6 +71,7 @@
 \edef\timestamp{\timestamp
   \ifnum\count255<10 0\fi \number\count255}%
 
+\input ptx-diglot.tex
 \input ptx-tracing.tex
 \input ptx-para-style.tex
 \input ptx-char-style.tex
@@ -85,7 +87,6 @@
 \input ptx-callers.tex % must come after ptx-note-style.tex
 % Additional modules that are not part of the normal ptx2pdf module
 \input ptxplus-character-kerning.tex
-\input ptx-diglot.tex
 %\input ptxplus-marginalverses.tex  % This is where we would like
                                     % load this module but has to
                                     % be loaded after the stylesheet
@@ -110,11 +111,12 @@
       \global\setbox\ch@pternote=\hbox{\box\ch@pternote #2}%
     \else #2\fi % output caller
   \fi%
-  % @sf preserves the space factor (e.g. extra space after a period), restore it now
+  % @sf preseirves the space factor (e.g. extra space after a period), restore it now
   \@sf \@wrap\vm@kenote{#1}{\getp@ram{notecallerstyle}{#1}\ifx\p@ram\relax #2\else #3\fi}}
 
 \def\vm@kenote#1#2{%
-  \let\next\relax
+  \inn@tetrue%
+  \let\next\relax%
   \def\n@tetype{#1}%
   \ifdiglot\ifdiglotSepNotes\ifdiglotL\def\n@tetype{#1}\else\def\n@tetype{#1R}\fi\fi\fi%
   \TRACE{vm@kenote \n@tetype}%
@@ -193,12 +195,13 @@
 \def\separateins@rtn@tecl@ss#1{%
   \def\cl@ss{#1}
   \ifdiglot\ifdiglotSepNotes\ifdiglotL\def\cl@ss{#1}\else\def\cl@ss{#1R}\fi\fi\fi%
+  \TRACE{seperateins@rtn@tecl@ss \cl@ss}%
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   % if the noteclass has content to output ...
-  \ifvoid\th@cl@ss\else
+  \ifvoid\th@cl@ss\TRACE{no note}\else%
     \iff@rstnote\kern-\dimen0\vfil\fi % ignore depth of body text; fill space
     \vskip\AboveNoteSpace % output above note class space
-    \iff@rstnote\footnoterule\f@rstnotefalse\fi % output rule before first note
+    \iff@rstnote\footnoterule\global\f@rstnotefalse\fi % output rule before first note
     \hbox{\hskip\columnshift \vbox{\unvbox\th@cl@ss}}\fi}% output notes
 
 % insert a note class in which each note is in the same paragraph
@@ -210,7 +213,7 @@
   \ifvoid\th@cl@ss\else
     \iff@rstnote\kern-\dimen0\vfil % ignore depth of body text; fill space
       \vskip\AboveNoteSpace\else\vskip\InterNoteSpace\fi
-    \iff@rstnote{\footnoterule}\f@rstnotefalse\fi % output rule before first note
+    \iff@rstnote{\footnoterule}\global\f@rstnotefalse\fi % output rule before first note
     {\maken@tepara{\th@cl@ss}{#1}}%
   \fi}
 
@@ -222,7 +225,7 @@
 %  \noindent\hbox{\noindent\kern\columnshift\vbox{\hrule width \dimen0}}\par
   \hbox{\kern\columnshift
     \vrule height 0.4pt width \dimen0}\kern0pt%
-    %\kern0.5\AboveNoteSpace
+    \kern0.5\AboveNoteSpace%This was commented out, without it the line was going through through some callers
 \everypar=\toks0}
 
 % determine if a given note class is to be paragraphed
@@ -382,10 +385,11 @@
 
 \def\pagebody{\vbox to\textheight{\boxmaxdepth\maxdepth \pagecontents}}
 \def\makeheadline{%
+  \def\f@ntstyle{h\ifdiglot\ifdiglotL L\else R\fi\fi}
   \vbox to 0pt{\kern-\topm@rgin
    \vbox{\kern\HeaderPosition\MarginUnit
     \setbox0=\vbox{\hbox to \textwidth{\the\headline}}
-    \ht0=0.7\fontdimen6\csname font<h>\endcsname \dp0=0pt \box0
+    \ht0=0.7\fontdimen6\csname font<\f@ntstyle>\endcsname \dp0=0pt \box0
     \ifrhr@le\ifdim\RHruleposition=\maxdimen\else
       \kern\RHruleposition \hrule
     \fi\fi}\vss}\nointerlineskip}
@@ -399,8 +403,14 @@
 
 % switch to double-column mode if currently single.
 % this is called from \parstyle when the new style wants to be double-columned
-\def\doublecolumns{%
-  \ifnum\c@rrentcols=1
+\def\doublecolumns{
+  \ifdiglot\enddigl@t\diglotfalse% Now force doublec@lumns to do stuff.
+  \c@rrentcols=1 
+  \fi%
+  \doublec@lumns%
+}
+\def\doublec@lumns{%
+  \ifnumc@rrentcols=1
     % make switch from single to double column
     \ifhe@dings\endhe@dings\fi % if headings in process, end headings
     \penalty-100\vskip\baselineskip % ensure blank line between single and double column material
@@ -914,35 +924,31 @@
   \unvbox255\eject
 }
 
-% to switch back to single column, we reset the page size parameters
-\def\singlecolumn{
-  \ifdiglot\singledigl@t\else\singlec@lumn\fi
+\def\enddigl@t{
+  \ifsk@pping \egroup \fi% if we were skipping nonpublishable text, end that mode
+  \sk@ppingfalse
+  \ifhe@dings\endhe@dings\fi%
+  \Lneedsemptyingtrue%
+%FIXME! If \ifendbooknoeject  happens to be true, then what? 
+%Set the 2 columns, put the footnotes up in the air and carry on??
+  \eject
 }
 
-\def\singledigl@t{
-  \trace{o}{singledigl@t}%\tracingmacros=1
-  \ifnum\c@rrentcols=1
-    % make switch from single column to diglot 2 columns
-    \ifhe@dings\endhe@dings\fi
-    \penalty-100\vskip\baselineskip % ensure blank line between single and double column material
-    \global\output={\savepartialpage}\eject % save any partially-full page
- 	% if single column material already fills 3/4 page, go to next page to start double columns
-    \dimen0=\ht\partial
-    \ifdim\dimen0>0.9\textheight
-%%%      \msg{Output full page from 1 to diglot columns}%
-      \global\output={\onecol} % but output it immediately if 75% full
-      \loop\ifdim\dimen0>\textheight\advance\dimen0-\textheight\repeat
-     %\vbox{\hskip-\columnshift\box\partial}
-      \unvbox\partial
-      \ifdim\dimen0>0.9\textheight\vfill\eject
-        \else\global\output={\savepartialpage}\eject
-      \fi
-    \else
-      %\hsize=\textwidth
-      %\setbox\partial=\vbox{\hskip\columnshift\box\partial}
-    \fi
-    \trace{o}{Going to diglot col, textheight \the\textheight}
-  \fi
+% to switch back to single column, we reset the page size parameters
+\def\singlecolumn{
+  \ifdiglot\enddigl@t\diglotfalse\fi%
+  \singlec@lumn
+}
+% to switch back to diglot columns, first set the page  so far 
+% and then change the rest.
+\def\diglotcolumns{
+  \ifdiglot\enddigl@t\else%
+    %\ifnum\c@rrentcols=2 \singlec@lumn\else\doublec@lumns\fi%
+  \fi%
+  \diglottrue\diglots@tup%
+}
+
+\def\diglots@tup{%
   % reset parameters for diglot-column formatting
   \global\hsize=\columnLwidth % always start with left column
   \global\vsize=\textheight % 
@@ -951,15 +957,14 @@
   % make a macro reset vsize for remaining pages which do not have 1 column material
   \gdef\resetvsize{\global\vsize=\textheight \global\advance\vsize by -\ht\partial \global\advance\vsize by 0.5\baselineskip} 
   \global\availht=\vsize
+  %\global\c@rrentcols=2
   %\global\output={\diglotLeft}
-  \global\c@rrentcols=2
-  % top and bottom inserts effectively use twice their height
   % (\count of an insertion class is a scaling factor)
   \count255=1000
   \global\count\topins=\count255
   \global\count\bottomins=\count255
   %\let\\=\s@tn@tec@unt \the\n@tecl@sses % NECESSARY? reset \count for each note class
-  %\global\holdinginserts=1 % don't pull out inserts yet, we are still adjusting page
+  \global\holdinginserts=1 % don't pull out inserts yet, we are still adjusting page
   %\msg{Starting diglot partial: \the\ht\partial, pagetotal: \the\pagetotal, vsize: \the\vsize}
 } 
 
