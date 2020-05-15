@@ -24,7 +24,7 @@ my %keep_with_chapter;
 my @ranges=();
 my @sides=('left','right');
 my @chunk=("","");
-my @position=('::000::000::000:::::','::000::000::000:::::');
+my @position=('000::000::000::000:::::','::000::000::000:::::');
 my @numeric=(0,1,1,1,0,0,0,0); # which positions have numbers
 my @inrange=(1,1);
 my @partype=('','');
@@ -612,6 +612,7 @@ while($#leftdata>=0 or $#rightdata>=0) {
 					# special case: don't want to split off the
 					# final \p from a section, or bad things
 					# happen.
+					
 						
 					if ($breakbefore{$newpos.$side}) {
 						logit($side,"breakbefore $newpos.$side was set");
@@ -735,12 +736,12 @@ if ($position[0] ne $position[1]) {
 	logit(undef,"Unexpected event: Starting references are not identical\n".$position[0]."!=".$position[1]);
 	warn("Unexpected event: Starting references are not identical\n".$position[0]."!=".$position[1]);
 }
-
+my $loopcount=0;
 # OUTER loop: position[1] == position[2]...  keep going while there's data left;
 @heading=('','');
-OUTER: while ($idx[0]<$maxidx[0] or $idx[1]<$maxidx[1]) {
+OUTER: while (($idx[0]<$maxidx[0] or $idx[1]<$maxidx[1]) and $loopcount++<10000) {
 	logit(undef,"Outer: L".$position[0],"R".$position[1],"Ln".$nextposition[0],"Rn".$nextposition[1]);
-	#print ("Idxes:",$idx[0]," ",$idx[1]);
+	logit(undef,sprintf("Idxes: %d/%d, %d/%d",$idx[0],$maxidx[0],$idx[1],$maxidx[1]));
 	my $washeading;
 	# check if the previous chunk was a section heading
 	$washeading=0;
@@ -769,6 +770,7 @@ OUTER: while ($idx[0]<$maxidx[0] or $idx[1]<$maxidx[1]) {
 	#
 	#If the loop below won't trigger for this chunk then output both chunks here
 	#
+	logit(undef,sprintf("%s <=> %s",@nextposition));
 	if ($nextposition[0] gt $nextposition[1]) {
 		$side=1;
 		$otherside=0;
@@ -814,8 +816,8 @@ OUTER: while ($idx[0]<$maxidx[0] or $idx[1]<$maxidx[1]) {
 			if (($idx[$side]+2)<=$maxidx[$side]) {
 				$nextposition[$side]=${$chunks[$side]}[$idx[$side]+2];
 				#printf STDERR "Read idx %d=%s\n", $idx[$side]+2,$nextposition[$side];
-			} else { 
-				$nextposition[$side]='999::999::';
+			} else {
+				$nextposition[$side]="999::999::999::";
 				#printf STDERR "EOD idx %d=%s\n", $idx[$side]+2,$nextposition[$side];
 			}
 		}
@@ -860,7 +862,7 @@ OUTER: while ($idx[0]<$maxidx[0] or $idx[1]<$maxidx[1]) {
 				#printf STDERR "%s: Read idx %d=%s\n", $sides[$side], $idx[$side]+2,$nextposition[$side];
 			} else {
 				logit($side,'Hit end-stop');
-				$nextposition[$side]='999::999::';
+				$nextposition[$side]="999::999::999::";
 			}
 		}
 		logit(undef,"Outputting chunk");
@@ -868,8 +870,8 @@ OUTER: while ($idx[0]<$maxidx[0] or $idx[1]<$maxidx[1]) {
 	}
 }
 
-do_output($nextposition[0],\@combined);
-do_output($nextposition[1],\@combined);
+#do_output($nextposition[0],\@combined);
+#do_output($nextposition[1],\@combined);
 
 foreach my $ref (keys %chunksc) {
 	logit(undef,'END',$ref,$chunksc{$ref});
