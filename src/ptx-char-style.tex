@@ -51,6 +51,7 @@
  \catcode13=12 % ditto for <return>
  \futurelet\n@xt\doch@rstyle % look at following character and call \doch@rstyle
 }
+\def\c@rrfontsize{12}
 
 \catcode`\~=12 \lccode`\~=32 % we'll use \lowercase{~} when we need a category-12 space
 \catcode`\_=12 \lccode`\_=13 % and \lowercase{_} for category-12 <return>
@@ -78,6 +79,9 @@
    \csname before-\newch@rstyle\endcsname % execute any <before> hook
    \bgroup % start a group to encapsulate the style's formatting changes
     \let\thisch@rstyle=\newch@rstyle % remember the current style
+    \getp@ram{fontsize}{\thisch@rstyle}%
+    \dimen1=\p@ram \FontSizeUnit
+    \ifdim\dimen1 > 2\FontSizeUnit \xdef\c@rrfontsize{\p@ram}\fi
     \s@tfont{\thisch@rstyle}% set up font attributes
     \ifnum\n@tenesting>0 \global\advance\n@tenesting by 1 % record nesting level in para or note
     \else \global\advance\p@ranesting by 1 \fi
@@ -94,6 +98,9 @@
    \else
     \ifskipch@rstyle\egroup\else
      \csname end-\thisch@rstyle\endcsname % execute any <end> hook
+     \getp@ram{fontsize}{\thisch@rstyle}%
+     \dimen1=\p@ram \FontSizeUnit
+     \ifdim\dimen1 > 2\FontSizeUnit \xdef\c@rrfontsize{\p@ram}\fi
      \getp@ram{superscript}{\thisch@rstyle}%
      \ifx\p@ram\tru@ \egroup \raise\SuperscriptRaise\box0 \fi
      \x@\global\x@\let\x@\n@xt % remember the <after> hook, if any, beyond the current group
@@ -155,13 +162,17 @@
   \getp@ram{superscript}{#1}% scale down by \SuperscriptFactor if superscripted style
   \dimen0=\ifx\p@ram\tru@ \SuperscriptFactor\fi\FontSizeUnit%
   \getp@ram{fontsize}{#1}%
-  \ifx\p@ram\relax
-    \MSG{*** FontSize missing for marker '#1', defaulting to 12}%
-    \def\p@ram{12}\fi
+  \trace{F}{#1: Font size "\p@ram"}%
+  \dimen1=\p@ram \dimen0
+  \ifdim\dimen1 > 2\dimen0 \else
+    \multiply\dimen1 by \c@rrfontsize
+    \edef\p@ram{\the\dimen1}%
+    \trace{F}{No font size specified. Using \the\dimen1}%
+  \fi
   % create the font identifier for this style
-  \trace{F}{font<#1>=\typef@ce\space at \p@ram\space \the\dimen0}%
+  \trace{F}{font<#1>=\typef@ce\space at \the\dimen1}%
   \x@\global\x@\font
-    \csname font<#1>\endcsname=\typef@ce\space at \p@ram \dimen0
+    \csname font<#1>\endcsname=\typef@ce\space at \the\dimen1
   \ifx\SpaceStretchFactor\undefined\else
     \dimen0=\SpaceStretchFactor\x@\x@\fontdimen2\csname font<#1>\endcsname
     \x@\x@\fontdimen3\csname font<#1>\endcsname=\dimen0
