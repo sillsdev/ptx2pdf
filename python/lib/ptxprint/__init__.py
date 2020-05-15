@@ -181,10 +181,13 @@ class PtxPrinterDialog:
 
     def run(self, callback, splash=True):
         self.callback = callback
-        if splash:
-            splashw = self.builder.get_object("w_splash")
-            self.splash = Splash(splashw)   # threads don't like being gced?
-            self.splash.start()
+        # if splash:
+            # print("C")
+            # splashw = self.builder.get_object("w_splash")
+            # print("D")
+            # self.splash = Splash(splashw)   # threads don't like being gced?
+            # print("E")
+            # self.splash.start()
 
         # do slow stuff here
         fc = initFontCache()
@@ -197,12 +200,12 @@ class PtxPrinterDialog:
             self.pendingPid = None
         else:
             self.builder.get_object("b_print").set_sensitive(False)
-        if splash:
-            self.splash.destroy()
-            try:
-                self.splash.join()
-            except RuntimeError:
-                pass
+        # if splash:
+            # self.splash.destroy()
+            # try:
+                # self.splash.join()  #<--- This line is killing it
+            # except RuntimeError:
+                # pass        
         fc.fill_liststore(lsfonts)
         tv = self.builder.get_object("tv_fontFamily")
         cr = Gtk.CellRendererText()
