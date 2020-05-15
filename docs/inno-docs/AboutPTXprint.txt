@@ -1,4 +1,4 @@
-PTXprint 0.6.0 Beta - AboutPTXprint.txt
+PTXprint 0.6.2 Beta - AboutPTXprint.txt
 
 "A tool to rapidly and easily create scripture PDFs of adequate quality for trial publications"
 
@@ -8,8 +8,7 @@ Please use "New Issue" button in the GitHub Issue Tracking System (https://githu
 
 http://tiny.cc/ptxprint has the latest Windows release.
 
-
-Commandline options also exist to run headless (without the UI):
+Commandline options are also available to run headless (without the UI):
 
 usage: ptxprint [-h] [-c CONFIG] [-p PARATEXT] [-d DIRECTORY] [-P]
                 [-b BOOKS] [-m MACROS] [-l] [-e] [-T TIMEOUT] [pid]

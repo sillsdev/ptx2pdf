@@ -40,7 +40,7 @@ a = Analysis(['python/scripts/ptxprint'],
                              'A4-12mmBorder.pdf', 'A5-10mmBorder.pdf', 'A4-CopyrightWatermark.pdf', 'A5-CopyrightWatermark.pdf')]
                       + [('src/*.tex', 'ptx2pdf'),
                          ('src/mappings/*.tec', 'ptx2pdf/mappings')]
-                      + [('python/lib/ptxprint/Google-Noto-Emoji-Objects-62859-open-book.ico', '.')],
+                      + [('python/lib/ptxprint/Google-Noto-Emoji-Objects-62859-open-book.ico', 'ptxprint')],
              hiddenimports = ['_winreg'],
              hookspath = [],
              runtime_hooks = [],

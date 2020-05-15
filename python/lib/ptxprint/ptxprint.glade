@@ -217,7 +217,7 @@
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 0.6.0 (Beta)</property>
+    <property name="version">Version 0.6.2 (Beta)</property>
     <property name="copyright" translatable="yes">© 2020, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -450,7 +450,6 @@ Jonathan Kew (Author of XeTeX + sfm2pdf)</property>
                       <object class="GtkCheckButton" id="c_customOrder">
                         <property name="label" translatable="yes">Build List of Books
 in Order of Selection</property>
-                        <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
                         <property name="tooltip_text" translatable="yes">These books will be placed at the
@@ -551,7 +550,6 @@ start of the publication in this oder:
                 <property name="can_focus">False</property>
                 <child>
                   <object class="GtkLabel">
-                    <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="margin_left">6</property>
                     <property name="label" translatable="yes">Books:</property>
@@ -564,7 +562,6 @@ start of the publication in this oder:
                 </child>
                 <child>
                   <object class="GtkEntry" id="t_mbsBookList">
-                    <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="margin_left">4</property>
                     <property name="margin_right">6</property>
@@ -727,11 +724,6 @@ saved configuration.</property>
       <!-- column-name book -->
       <column type="gchararray"/>
     </columns>
-    <data>
-      <row>
-        <col id="0">MAT</col>
-      </row>
-    </data>
   </object>
   <object class="GtkListStore" id="ls_chapfrom">
     <columns>
@@ -7221,7 +7213,6 @@ from XeTeX processing.</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
-                    <property name="valign">start</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame" id="fr_Debugging">
@@ -7451,9 +7442,6 @@ also contain several other related files.</property>
                               <placeholder/>
                             </child>
                           </object>
-                          <packing>
-                            <property name="tab_fill">False</property>
-                          </packing>
                         </child>
                         <child type="tab">
                           <object class="GtkLabel" id="l_0">
@@ -7862,7 +7850,6 @@ as there is no auto-update feature yet!</property>
                           </object>
                           <packing>
                             <property name="position">6</property>
-                            <property name="tab_fill">False</property>
                           </packing>
                         </child>
                         <child type="tab">
@@ -7885,7 +7872,7 @@ as there is no auto-update feature yet!</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">True</property>
+                        <property name="fill">False</property>
                         <property name="position">1</property>
                       </packing>
                     </child>
@@ -7997,7 +7984,7 @@ Numbers</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">True</property>
+                        <property name="fill">False</property>
                         <property name="position">2</property>
                       </packing>
                     </child>
@@ -8880,7 +8867,7 @@ Consider uninstalling those that are never used.</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
-                <property name="label" translatable="yes">PTXprint (0.6.0 Beta)</property>
+                <property name="label" translatable="yes">PTXprint (0.6.2 Beta)</property>
                 <attributes>
                   <attribute name="weight" value="ultrabold"/>
                 </attributes>

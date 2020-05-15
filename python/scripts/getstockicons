@@ -104,7 +104,7 @@ args = parser.parse_args()
 
 icons = set()
 icons.update([icon_mappings["gtk-"+i]+".png" for i in \
-        ("cdrom", "harddisk", "network", "directory", "floppy", "file", "home")])
+        ("cdrom", "harddisk", "network", "directory", "floppy", "file", "home", "find")])
 for i in args.icon:
     icons.add(i+".png")
 doc = et.parse(args.infile)

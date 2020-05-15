@@ -181,10 +181,13 @@ class PtxPrinterDialog:
 
     def run(self, callback, splash=True):
         self.callback = callback
-        if splash:
-            splashw = self.builder.get_object("w_splash")
-            self.splash = Splash(splashw)   # threads don't like being gced?
-            self.splash.start()
+        # if splash:
+            # print("C")
+            # splashw = self.builder.get_object("w_splash")
+            # print("D")
+            # self.splash = Splash(splashw)   # threads don't like being gced?
+            # print("E")
+            # self.splash.start()
 
         # do slow stuff here
         fc = initFontCache()
@@ -197,12 +200,12 @@ class PtxPrinterDialog:
             self.pendingPid = None
         else:
             self.builder.get_object("b_print").set_sensitive(False)
-        if splash:
-            self.splash.destroy()
-            try:
-                self.splash.join()
-            except RuntimeError:
-                pass
+        # if splash:
+            # self.splash.destroy()
+            # try:
+                # self.splash.join()  #<--- This line is killing it
+            # except RuntimeError:
+                # pass        
         fc.fill_liststore(lsfonts)
         tv = self.builder.get_object("tv_fontFamily")
         cr = Gtk.CellRendererText()
@@ -212,7 +215,7 @@ class PtxPrinterDialog:
         tv.set_search_entry(ts)
         # self.mw.set_resizable(True)
         # self.mw.set_default_size(730, 565)
-        self.mw.resize(730, 580)
+        self.mw.resize(730, 640)
         self.builder.get_object("bx_SavedConfigSettings").set_sensitive(False)
         self.mw.show_all()
         Gtk.main()
@@ -566,7 +569,7 @@ class PtxPrinterDialog:
 
     def onViewerChangePage(self, nbk_Viewer, scrollObject, pgnum):
         self.bookNoUpdate = True
-        self.builder.get_object("gr_editableButtons").set_visible(False)
+        self.builder.get_object("gr_editableButtons").set_sensitive(False)
         # self.builder.get_object("btn_saveEdits").set_sensitive(False)
         prjid = self.get("cb_project")
         prjdir = os.path.join(self.settings_dir, prjid)
@@ -626,7 +629,7 @@ class PtxPrinterDialog:
             return
         if os.path.exists(fpath):
             if 1 <= pgnum <= 2 or pgnum == 5:
-                self.builder.get_object("gr_editableButtons").set_visible(True)
+                self.builder.get_object("gr_editableButtons").set_sensitive(True)
             self.builder.get_object("l_{}".format(pgnum)).set_tooltip_text(fpath)
             with open(fpath, "r", encoding="utf-8", errors="ignore") as inf:
                 txt = inf.read()
@@ -999,7 +1002,7 @@ class PtxPrinterDialog:
         if self.get("c_hideAdvancedSettings"):
             self.mw.resize(710, 316)
         else:
-            self.mw.resize(730, 580)
+            self.mw.resize(730, 640)
 
     def onShowLayoutTabClicked(self, c_showLayoutTab):
         status = self.get("c_showLayoutTab")
@@ -1312,7 +1315,7 @@ class PtxPrinterDialog:
                 bks = bks[0]
             except IndexError:
                 bks = "No book selected!"
-        titleStr = "PTXprint [0.6.0 Beta]" + prjid + " (" + bks + ") " + (self.get("cb_savedConfig") or "")
+        titleStr = "PTXprint [0.6.2 Beta]" + prjid + " (" + bks + ") " + (self.get("cb_savedConfig") or "")
         self.builder.get_object("ptxprint").set_title(titleStr)
 
     def editFile(self, file2edit, loc="wrk"):
@@ -1331,8 +1334,7 @@ class PtxPrinterDialog:
                 fpath = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint", file2edit)
         else:
             return
-        print(fpath)
-        self.builder.get_object("gr_editableButtons").set_visible(True)
+        self.builder.get_object("gr_editableButtons").set_sensitive(True)
         self.builder.get_object("l_{}".format(pgnum)).set_text(file2edit)
         self.builder.get_object("l_{}".format(pgnum)).set_tooltip_text(fpath)
         if os.path.exists(fpath):
@@ -1547,12 +1549,12 @@ class PtxPrinterDialog:
                 dat = inf.read()
                 # Finds USFM2-styled markup in text:
                 #                0         1       2     3     4              5       
-                # \\fig .*\|(.+?\....)\|(....?)\|(.*)\|(.*)\|(.+?)\|(\d+[:.]\d+([-,]\d+)?)\\fig\*
+                # \\fig .*?\|(.+?\....)\|(....?)\|(.+)?\|(.+)?\|(.+)?\|(\d+[\:\.]\d+([\-,\u2013\u2014]\d+)?)\\fig\*
                 # \fig |CN01684b.jpg|col|||key-kālk arsi manvan yēsunaga tarval|9:2\fig*
                 #           0         1  2 3          4                          5  
                 # BKN \5 \|\0\|\1\|tr\|\|\4\|\5
                 # MAT 9.2 bringing the paralyzed man to Jesus|CN01684b.jpg|col|tr||key-kālk arsi manvan yēsunaga tarval|9:2
-                m = re.findall(r"\\fig .*?\|(.+?\....)\|(....?)\|(.+)?\|(.+)?\|(.+)?\|(\d+[\:\.]\d+([\-,]\d+)?)\\fig\*", dat)
+                m = re.findall(r"\\fig .*?\|(.+?\....)\|(....?)\|(.+)?\|(.+)?\|(.+)?\|(\d+[\:\.]\d+([\-,\u2013\u2014]\d+)?)\\fig\*", dat)
                 if len(m):
                     for f in m:
                         picfname = f[0]
@@ -1567,12 +1569,12 @@ class PtxPrinterDialog:
                     # If none of the USFM2-styled illustrations were found then look for USFM3-styled markup in text 
                     # (Q: How to handle any additional/non-standard xyz="data" ? Will the .* before \\fig\* take care of it adequately?)
                     #         0              1               2                  3      [4]
-                    # \\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,]\d+)?)".*\\fig\*
+                    # \\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,\u2013\u2014]\d+)?)".*\\fig\*
                     # \fig hāgartun saṅga dūtal vaḍkval|src="CO00659B.TIF" size="span" ref="21:16"\fig*
                     #                   0                         1                2          3  [4]
                     # BKN \3 \|\1\|\2\|tr\|\|\0\|\3
                     # GEN 21.16 an angel speaking to Hagar|CO00659B.TIF|span|t||hāgartun saṅga dūtal vaḍkval|21:16
-                    m = re.findall(r'\\fig (.*?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,]\d+)?)".*\\fig\*', dat)
+                    m = re.findall(r'\\fig (.*?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,\u2013\u2014]\d+)?)".*\\fig\*', dat)
                     if len(m):
                         for f in m:
                             picfname = f[1]
@@ -1715,9 +1717,9 @@ class PtxPrinterDialog:
             sectmpdir = os.path.join(self.settings_dir, secprjid, 'PrintDraft') if self.get("c_useprintdraftfolder") else self.working_dir
             jobs = self.getBooks()
             if len(jobs) > 1:
-                secfname = os.path.join(sectmpdir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], secprjid))
+                secfname = os.path.join(sectmpdir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], secprjid)).replace("\\","/")
             else:
-                secfname = os.path.join(sectmpdir, "ptxprint-{}{}.pdf".format(jobs[0], secprjid))
+                secfname = os.path.join(sectmpdir, "ptxprint-{}{}.pdf".format(jobs[0], secprjid)).replace("\\","/")
             # TO DO: We need to be able to GET the page layout values from the PRIMARY project
             # (even when creating the Secondary PDF so that the dimensions match).
             PageWidth = int(re.split("[^0-9]",re.sub(r"^(.*?)\s*,.*$", r"\1", self.get("cb_pagesize")))[0]) or 148

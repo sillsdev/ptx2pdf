@@ -24,7 +24,7 @@ my %keep_with_chapter;
 my @ranges=();
 my @sides=('left','right');
 my @chunk=("","");
-my @position=('000::000::000::000:::::','::000::000::000:::::');
+my @position=('000::000::000::000:::::','000::000::000::000:::::');
 my @numeric=(0,1,1,1,0,0,0,0); # which positions have numbers
 my @inrange=(1,1);
 my @partype=('','');

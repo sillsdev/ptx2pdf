@@ -1,5 +1,19 @@
-PTXprint 0.6.0 Beta Release Notes
-9th May 2020
+PTXprint 0.6.2 Beta Release Notes
+15th May 2020
+
+Bug fixes and improvements in: 0.6.2
+
+  * markup such as \nd ... \nd* can use \SmallCaps in the stylesheet, and \FontSize can be scaled
+
+  * Eliminate "nonpublishable" markers
+  
+  * Omit Ch:vs refs from captions now only affects the reference field
+
+Bug fixes in: 0.6.1
+
+  * Found the missing Application icon
+  
+  * Fixed the path to Secondary Merge PDF for Diglots
 
 List of improvements: 0.6.0
 

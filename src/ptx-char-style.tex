@@ -42,6 +42,16 @@
   \count3=0 \count1=0 \count2=0
 }
 
+\def\colorhex#1{\count1=#1\divide\count1 by 256\multiply\count1 by 256
+    \count2=#1\advance\count2 by -\count1 \multiply\count2 by 65536 % r
+    \count3=#1\divide\count3 by 65536 % b
+    \advance\count1 by -\count3 \multiply\count3 by 256 % g
+    \advance\count3 by \count2 \advance\count3 by \count1
+    \hex{\count3}
+}
+
+\def\ParseColor#1#2\end{\edef\t@mp{#1}\trace{F}{Color prefix is "#1"}\if x\t@mp \edef\r@s{#2}\else\colorhex{#1#2}\fi}
+
 %
 % Each USFM character style marker is defined to call \ch@rstyle with the marker name as parameter
 %
@@ -51,6 +61,7 @@
  \catcode13=12 % ditto for <return>
  \futurelet\n@xt\doch@rstyle % look at following character and call \doch@rstyle
 }
+\def\c@rrfontsize{12}
 
 \catcode`\~=12 \lccode`\~=32 % we'll use \lowercase{~} when we need a category-12 space
 \catcode`\_=12 \lccode`\_=13 % and \lowercase{_} for category-12 <return>
@@ -78,6 +89,9 @@
    \csname before-\newch@rstyle\endcsname % execute any <before> hook
    \bgroup % start a group to encapsulate the style's formatting changes
     \let\thisch@rstyle=\newch@rstyle % remember the current style
+    \getp@ram{fontsize}{\thisch@rstyle}%
+    \dimen1=\p@ram \FontSizeUnit
+    \ifdim\dimen1 > 2\FontSizeUnit \xdef\c@rrfontsize{\p@ram}\fi
     \s@tfont{\thisch@rstyle}% set up font attributes
     \ifnum\n@tenesting>0 \global\advance\n@tenesting by 1 % record nesting level in para or note
     \else \global\advance\p@ranesting by 1 \fi
@@ -101,6 +115,9 @@
      \ifdiglot\setsid@%\MSG{end-\thisch@rstyle\sid@}%
        \csname end-\thisch@rstyle\sid@\endcsname % handle side-specific <start> hook
      \fi
+     \getp@ram{fontsize}{\thisch@rstyle}%
+     \dimen1=\p@ram \FontSizeUnit
+     \ifdim\dimen1 > 2\FontSizeUnit \xdef\c@rrfontsize{\p@ram}\fi
      \getp@ram{superscript}{\thisch@rstyle}%
      \ifx\p@ram\tru@ \egroup \raise\SuperscriptRaise\box0 \fi
      \x@\global\x@\let\x@\n@xt % remember the <after> hook, if any, beyond the current group
@@ -195,21 +212,48 @@
   \fi
   \getp@ram{color}{#1}%
   \ifColorFonts\ifx\p@ram\relax\else
-    \hex{\p@ram}\edef\typef@ce{\typef@ce :color=\r@s}%
+    \ParseColor\p@ram\end\edef\typef@ce{\typef@ce :color=\r@s}%
   \fi\fi
   \getp@ram{superscript}{#1}% scale down by \SuperscriptFactor if superscripted style
   \dimen0=\ifx\p@ram\tru@ \SuperscriptFactor\fi\FontSizeUnit%
   \getp@ram{fontsize}{#1}%
-  \ifx\p@ram\relax
-    \MSG{*** FontSize missing for marker '#1', defaulting to 12}%
-    \def\p@ram{12}\fi
+  \trace{F}{#1: Font size "\p@ram"}%
+  \dimen1=\p@ram \dimen0
+  \ifdim\dimen1 > 2\dimen0 \else
+    \multiply\dimen1 by \c@rrfontsize
+    \edef\p@ram{\the\dimen1}%
+    \trace{F}{No font size specified. Using \the\dimen1}%
+  \fi
   % create the font identifier for this style
-  \trace{F}{font<\f@ntstyle>=\typef@ce\space at \p@ram\space \the\dimen0}%
+  \trace{F}{font<\f@ntstyle>=\typef@ce\space at \the\dimen1}%
   \x@\global\x@\font
     \csname font<\f@ntstyle>\endcsname=\typef@ce\space at \p@ram \dimen0
+  \ifx\SpaceStretchFactor\undefined\else
+    \dimen0=\SpaceStretchFactor\x@\x@\fontdimen2\csname font<#1>\endcsname
+    \x@\x@\fontdimen3\csname font<#1>\endcsname=\dimen0
+  \fi
+  \ifx\SpaceShrinkFactor\undefined\else
+    \dimen0=\SpaceShrinkFactor\x@\x@\fontdimen2\csname font<#1>\endcsname
+    \x@\x@\fontdimen4\csname font<#1>\endcsname=\dimen0
+  \fi
  \fi
  % switch to the appropriate font
  \csname font<\f@ntstyle>\endcsname
+}
+\def\extraregular{"Times New Roman"}
+\def\s@textrafont#1{%
+  \x@\ifx\csname extrafont<#1>\endcsname \relax%
+    \let\typef@ce=\extraregular
+    \getp@ram{superscript}{#1}%
+    \dimen0=\ifx\p@ram\tru@ \SuperscriptFactor\fi\FontSizeUnit
+    \getp@ram{fontsize}{#1}%
+    \ifx\p@ram\relax
+      \MSG{*** FontSize missing for marker '#1', defaulting to 12}%
+      \def\p@ram{12}
+    \fi
+    \x@\global\x@\font\csname extrafont<#1>\endcsname=\typef@ce\space at \p@ram \dimen0
+  \fi
+  \csname extrafont<#1>\endcsname
 }
 \def\tru@{true}
 \def\SuperscriptFactor{0.75}
