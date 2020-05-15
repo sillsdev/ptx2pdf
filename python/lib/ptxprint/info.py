@@ -618,8 +618,9 @@ class Info:
 
             if printer.get("c_fighiderefs"): # del ch:vs from caption 
    #  OLD CODE  # self.localChanges.append((None, regex.compile(r"(\\fig .*?)(\d+[:.]\d+([-,]\d+)?)(.*?\\fig\*)", flags=regex.M), r"\1\4"))
-                self.localChanges.append((regex.compile(r"\\fig .+?\|.+?\....\|....?\|.*\|.*\|.+?\|(\d+[:.]\d+([-,\u2013\u2014]\d+)?)\\fig\*"), \
-                                          regex.compile(r"(\d+[:.]\d+([-,\u2013\u2014]\d+)?)"), ""))  # USFM2
+                self.localChanges.append((None, regex.compile(r"(\\fig [^\\]+?\|)([0-9:.\-,\u2013\u2014]+?)(\\fig\*)", \
+                                          flags=regex.M), r"\1\3"))   # USFM2
+                                          # regex.compile(r"(\d+[:.]\d+([\-,\u2013\u2014]\d+)?)"), ""))  # USFM2
                 self.localChanges.append((None, regex.compile(r'(\\fig .+?)(ref="\d+[:.]\d+([-,\u2013\u2014]\d+)?")(.*?\\fig\*)', \
                                           flags=regex.M), r"\1\4"))   # USFM3
         else: # Drop ALL Figures
@@ -664,7 +665,7 @@ class Info:
             self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w\w\w+) \1(?=[\s,.!?])", flags=regex.M), r"\1~\1")) 
         
         if printer.get("c_addColon"): # Insert a colon between \fq (or \xq) and following \ft (or \xt)
-            self.localChanges.append((None, regex.compile(r"(\\[fx]q .+?):* (\\[fx]t)", flags=regex.M), r"\1: \2")) 
+            self.localChanges.append((None, regex.compile(r"(\\[fx]q .+?):* ?(\\[fx]t)", flags=regex.M), r"\1: \2")) 
         
         if printer.get("c_keepBookWithRefs"): # keep Booknames and ch:vs nums together within \xt and \xo 
             self.localChanges.append((regex.compile(r"(\\[xf]t [^\\]+)"), regex.compile(r"(?<!\\[fx][rto]) (\d+:\d+([-,]\d+)?)"), r"~\1"))

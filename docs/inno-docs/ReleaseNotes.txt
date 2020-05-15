@@ -1,7 +1,7 @@
-PTXprint 0.6.1 Beta Release Notes
+PTXprint 0.6.2 Beta Release Notes
 14th May 2020
 
-Bug fixes in: 0.6.1
+Bug fixes in: 0.6.2
 
   * Found the missing Application icon
   
