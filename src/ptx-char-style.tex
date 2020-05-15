@@ -42,6 +42,16 @@
   \count3=0 \count1=0 \count2=0
 }
 
+\def\colorhex#1{\count1=#1\divide\count1 by 256\multiply\count1 by 256
+    \count2=#1\advance\count2 by -\count1 \multiply\count2 by 65536 % r
+    \count3=#1\divide\count3 by 65536 % b
+    \advance\count1 by -\count3 \multiply\count3 by 256 % g
+    \advance\count3 by \count2 \advance\count3 by \count1
+    \hex{\count3}
+}
+
+\def\ParseColor#1#2\end{\edef\t@mp{#1}\trace{F}{Color prefix is "#1"}\if x\t@mp \edef\r@s{#2}\else\colorhex{#1#2}\fi}
+
 %
 % Each USFM character style marker is defined to call \ch@rstyle with the marker name as parameter
 %
@@ -157,7 +167,7 @@
   \fi
   \getp@ram{color}{#1}%
   \ifColorFonts\ifx\p@ram\relax\else
-    \hex{\p@ram}\edef\typef@ce{\typef@ce :color=\r@s}%
+    \ParseColor\p@ram\end\edef\typef@ce{\typef@ce :color=\r@s}%
   \fi\fi
   \getp@ram{superscript}{#1}% scale down by \SuperscriptFactor if superscripted style
   \dimen0=\ifx\p@ram\tru@ \SuperscriptFactor\fi\FontSizeUnit%
