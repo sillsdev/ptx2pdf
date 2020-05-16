@@ -8,3 +8,11 @@ ptxprint-*
 *-draft.SFM
 __pycache__/
 temp/
+python/dist/
+python/build/
+wine/
+dev/
+bugs/
+dist/
+build/
+

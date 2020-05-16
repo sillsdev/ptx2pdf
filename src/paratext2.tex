@@ -296,6 +296,9 @@
   \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
   \decr{\availht}{\topins}% and by the space needed for spanning pictures
   \decr{\availht}{\bottomins}
+  \ifdim\availht<0pt
+    \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}
+  \fi
   \setbox\s@vedpage=\copy255
   % split the galley to the actual size available
   \setbox\colA=\vsplit255 to \availht
@@ -705,6 +708,9 @@
 
 \def\twocoltrial{% trial formatting to see if current contents will fit on the page
   \c@lcavailht
+  \ifdim\availht<0pt
+    \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}
+  \fi
   \setbox\s@vedpage=\copy255
   \trace{o}{balance from twocoltrial height \the\ht\s@vedpage}
   \rem@indertrue\balanced
