@@ -7,6 +7,7 @@ from gi.repository import Gtk
 from ptxprint.font import TTFont
 from ptxprint.ptsettings import chaps, books, bookcodes, oneChbooks
 from ptxprint.snippets import FancyIntro, PDFx1aOutput, FancyBorders
+from ptxprint.runner import call
 
 def universalopen(fname, rewrite=False):
     """ Opens a file with the right codec from a small list and perhaps rewrites as utf-8 """
@@ -478,6 +479,17 @@ class Info:
                     res.append(l.format(**self.dict))
         return "".join(res).replace("\OmitChapterNumberfalse\n\OmitChapterNumbertrue\n","")
 
+    def runConversion(self, infname, after=False):
+        outfname = infname
+        if self.dict['project/processscript'] and self.dict['project/runscriptafter'] == after \
+                and self.dict['project/selectscript']:
+            doti = outfname.rfind(".")
+            if doti > 0:
+                outfname = outfname[:doti] + "-converted" + outfname[doti:]
+            cmd = [self.dict["project/selectscript"], infname, outfname]
+            call(cmd, shell=True)
+        return outfname
+
     def convertBook(self, bk, outdir, prjdir):
         if self.changes is None:
             if self.dict['project/usechangesfile'] == "true":
@@ -496,6 +508,8 @@ class Info:
         bknamefmt = fprfx + fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + fpost
         fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
         infname = os.path.join(prjdir, fname)
+        infname = self.runConversion(infname, after=False)
+        outfname = os.path.basename(infname)
         if self.changes is not None or self.localChanges is not None:
             outfname = fname
             doti = outfname.rfind(".")
@@ -514,9 +528,7 @@ class Info:
                         dat = "".join(newdat)
             with open(outfpath, "w", encoding="utf-8") as outf:
                 outf.write(dat)
-            return outfname
-        else:
-            return fname
+        return os.path.basename(self.runConversion(os.path.join(prjdir, outfname), after=True))
 
     def readChanges(self, fname):
         changes = []
