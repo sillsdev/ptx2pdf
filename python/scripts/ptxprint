@@ -250,7 +250,7 @@ def doit(printer, display=True):
             par = par = printer.builder.get_object('ptxprint')
             dialog = Gtk.MessageDialog(parent=par, modal=True, message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK, \
                 text="Failed to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname))
-            dialog.set_title ("PTXprint [0.6.2 Beta] - Error!")
+            dialog.set_title ("PTXprint [0.6.3 Beta] - Error!")
             dialog.format_secondary_text("".join(finalLogLines[-20:]))
             dialog.set_keep_above(True)
             dialog.run()

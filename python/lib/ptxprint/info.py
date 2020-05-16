@@ -635,7 +635,7 @@ class Info:
                                           flags=regex.M), r"\1\3"))   # USFM2
                 self.localChanges.append((None, regex.compile(r'(\\fig .+?)(ref="\d+[:.]\d+([-,\u2013\u2014]\d+)?")(.*?\\fig\*)', \
                                           flags=regex.M), r"\1\4"))   # USFM3
-        else: # Drop ALL Figures (for Scripture books)
+        else: # Drop ALL Figures
             self.localChanges.append((None, regex.compile(r"\\fig .*?\\fig\*", flags=regex.M), ""))
         
         if printer.get("c_omitBookIntro"): # Drop Introductory matter
