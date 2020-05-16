@@ -334,6 +334,29 @@ class PtxPrinterDialog:
         Gtk.main_quit()
 
     def onOK(self, btn):
+        fileLocked = True
+        jobs = self.getBooks()
+        # Work out what the resulting PDF is to be called
+        if len(jobs) > 1 and printer.get("c_combine"):
+            pdfname = os.path.join(self.working_dir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], self.prjid))
+        else:
+            pdfname = os.path.join(self.working_dir, "ptxprint-{}{}.pdf".format(jobs[0], self.prjid))
+        while fileLocked:
+            try:
+                with open(pdfname, "wb+") as outf:
+                    outf.close()
+            except PermissionError:
+                question = "{}\n\n The output PDF file seems to be open already \
+                                \n and cannot be over-written. Please close \
+                                \n the PDF or use a PDF viewer which allows \
+                                \n updates while it is open. \
+                              \n\n Do you want to try again?".format(pdfname)
+                if self.msgQuestion("PDF file locked!", question):
+                    continue
+                else:
+                    return
+            fileLocked = False
+
         if self.prjid is not None:
             self.callback(self)
         else:
