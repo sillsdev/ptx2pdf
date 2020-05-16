@@ -461,6 +461,4 @@ if args.print:
     doit(mainw, display=False)
 else:
     splash = args.splash
-    if sys.platform != 'linux' and not splash:
-        splash = True
     mainw.run(doit, splash=splash)

@@ -147,7 +147,8 @@ class PtxPrinterDialog:
             buf = GtkSource.Buffer()
             view = GtkSource.View.new_with_buffer(buf)
             scroll = self.builder.get_object("scroll_" + k)
-            scroll.add_with_viewport(view)
+            #scroll.add_with_viewport(view)
+            scroll.add(view)
             self.fileViews.append((buf, view))
             if i > 2:
                 view.set_show_line_numbers(True)  # Turn these ON
@@ -181,13 +182,13 @@ class PtxPrinterDialog:
 
     def run(self, callback, splash=True):
         self.callback = callback
-        # if splash:
+        if splash:
             # print("C")
-            # splashw = self.builder.get_object("w_splash")
+            splashw = self.builder.get_object("w_splash")
             # print("D")
-            # self.splash = Splash(splashw)   # threads don't like being gced?
+            self.splash = Splash(splashw)   # threads don't like being gced?
             # print("E")
-            # self.splash.start()
+            self.splash.start()
 
         # do slow stuff here
         fc = initFontCache()
@@ -200,12 +201,12 @@ class PtxPrinterDialog:
             self.pendingPid = None
         else:
             self.builder.get_object("b_print").set_sensitive(False)
-        # if splash:
-            # self.splash.destroy()
-            # try:
-                # self.splash.join()  #<--- This line is killing it
-            # except RuntimeError:
-                # pass        
+        if splash:
+            self.splash.destroy()
+            try:
+                self.splash.join()  #<--- This line is killing it
+            except RuntimeError:
+                pass        
         fc.fill_liststore(lsfonts)
         tv = self.builder.get_object("tv_fontFamily")
         cr = Gtk.CellRendererText()

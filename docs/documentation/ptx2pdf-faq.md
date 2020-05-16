@@ -104,3 +104,10 @@ in the same position on the page, anchored to the same line in the text. Thus
 for a very short verse that may not span a line boundary, or if you have two
 \\fig elements very close together in the text, one may be lost.
 
+### Could pictures float onto pages other than their anchor?
+
+It would be really hard for the ptx macros to work out when and how to float
+pictures onto other pages. It is hard to know when to move a picture to another
+page. When does it make the page better? How far should a picture float away 
+from its anchor?
+
