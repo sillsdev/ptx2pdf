@@ -5,6 +5,7 @@ REM Mark Penny and Martin Hosken, Last updated: 10-March-2020
 REM Get rid of the build and dist folders before starting the new build process
 rmdir /s /q build
 rmdir /s /q dist
+rmdir /s /q Output
 
 REM Call PyInstaller to create the "dist" folder
 pyinstaller ptxprint.spec
