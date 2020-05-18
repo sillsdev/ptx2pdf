@@ -29,7 +29,7 @@ def num2tag(n):
 class TTFontCache:
     def __init__(self):
         self.cache = {}
-        files = checkoutput(["fc-list", ":file"])
+        files = checkoutput(["fc-list", ":file"], path="xetex")
         for f in files.split("\n"):
             if ": " not in f:
                 continue

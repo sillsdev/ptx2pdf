@@ -119,8 +119,6 @@ class PtxPrinterDialog:
             # b.get_child().set_justify(Gtk.Justification.CENTER)
             c = b.get_style_context()
             c.add_class("fontbutton")
-        # Could we add some .css for the new FontChooser buttons to make
-        # the text smaller so that they are not so tall with 2 rows of text?
 
         scripts = self.builder.get_object("ls_scripts")
         scripts.clear()
@@ -197,11 +195,13 @@ class PtxPrinterDialog:
             self.onProjectChange(None)
             self.pendingPid = None
         else:
-            self.builder.get_object("b_print").set_sensitive(False)
+            for o in ["b_print", "bx_SavedConfigSettings", "tb_Layout", "tb_Body", "tb_HeadFoot", "tb_Pictures",
+                      "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_DiglotTesting", "tb_FancyBorders"]:
+                self.builder.get_object(o).set_sensitive(False)
         if splash:
             self.splash.destroy()
             try:
-                self.splash.join()  #<--- This line is killing it
+                self.splash.join()
             except RuntimeError:
                 pass        
         fc.fill_liststore(lsfonts)
@@ -211,13 +211,8 @@ class PtxPrinterDialog:
         tv.append_column(col)
         ts = self.builder.get_object("t_fontSearch")
         tv.set_search_entry(ts)
-        # self.mw.set_resizable(True)
-        # self.mw.set_default_size(730, 565)
         self.mw.resize(730, 640)
         self.mw.show_all()
-        for o in ["b_print", "bx_SavedConfigSettings", "tb_Layout", "tb_Body", "tb_HeadFoot", "tb_Pictures",
-                  "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_DiglotTesting", "tb_FancyBorders"]:
-            self.builder.get_object(o).set_sensitive(False)
         Gtk.main()
 
     def ExperimentalFeatures(self, value):
@@ -227,7 +222,7 @@ class PtxPrinterDialog:
                 self.builder.get_object("c_experimental").set_active(True)
                 self.builder.get_object("c_experimental").set_sensitive(False)
         else:
-            for c in ("c_experimental", "c_experimental"):  # "c_startOnHalfPage"
+            for c in ("c_experimental", "c_experimental"):
                 self.builder.get_object(c).set_active(False)
                 self.builder.get_object(c).set_visible(False)
                 self.builder.get_object(c).set_sensitive(False)
@@ -338,9 +333,8 @@ class PtxPrinterDialog:
         if len(jobs) > 1:
             if self.get("c_combine"):
                 pdfnames = [os.path.join(self.working_dir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], self.prjid))]
-            else:  # ["ptxprint-{}{}.pdf".format(j, "WSG") for j in jobs]
+            else:
                 pdfnames = [os.path.join(self.working_dir, "ptxprint-{}{}.pdf".format(j, self.prjid)) for j in jobs]
-                print("\n".join(pdfnames))
         else:
             pdfnames = [os.path.join(self.working_dir, "ptxprint-{}{}.pdf".format(jobs[0], self.prjid))]
         for pdfname in pdfnames:
@@ -411,7 +405,7 @@ class PtxPrinterDialog:
         if len(bl):
             tmpList = []
             for b in bl:
-                if b in allbooks:  # This needs to be changed to books-present in project
+                if b in allbooks:  # MH: This needs to be changed to books-present in project
                     if os.path.exists(os.path.join(self.settings_dir, self.prjid, (self.getBookFilename(b, self.prjid)))):
                         tmpList.append(b)
             self.builder.get_object('t_booklist').set_text(" ".join(tmpList))
@@ -1413,18 +1407,18 @@ class PtxPrinterDialog:
 
     def onSelectScriptClicked(self, btn_selectScript):
         CustomScript = self.fileChooser("Select a Custom Script file", 
-                filters = {"Executable Scripts": {"patterns": "*.bat", "mime": "application/bat"}},
-                # ),("*.sh", "mime": "application/x-sh")
-                multiple = False)
+                filters = {"Executable Scripts": {"patterns": ["*.bat", "*.exe", "*.py", "*.sh"] , "mime": "application/bat", "default": True},
+                           "All Files": {"pattern": "*"}},
+                multiple = False, basedir=self.working_dir)
         if CustomScript is not None:
-            self.CustomScript = CustomScript
-            btn_selectScript.set_tooltip_text("\n".join('{}'.format(s) for s in CustomScript))
+            self.CustomScript = CustomScript[0]
+            self.builder.get_object("c_processScript").set_active(True)
+            btn_selectScript.set_tooltip_text(CustomScript[0])
         else:
             self.CustomScript = None
             btn_selectScript.set_tooltip_text("")
-            self.builder.get_object("btn_selectScript").set_sensitive(False)
             self.builder.get_object("c_processScript").set_active(False)
-            for c in ("btn_selectScript", "c_processScriptBefore", "c_processScriptAfter", "l_script2process"):
+            for c in ("c_processScriptBefore", "c_processScriptAfter", "l_processScript"):
                 self.builder.get_object(c).set_sensitive(False)
 
     def onFrontPDFsClicked(self, btn_selectFrontPDFs):
@@ -1717,18 +1711,23 @@ class PtxPrinterDialog:
             dialog.set_current_folder(basedir)
         if filters != None: # was len(filters):
             # filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}}
-            filter_in = Gtk.FileFilter()
             for k, f in filters.items():
+                filter_in = Gtk.FileFilter()
                 filter_in.set_name(k)
+                deffilter = False
                 for t, v in f.items():
                     if t == "pattern":
                         filter_in.add_pattern(v)
                     elif t == "patterns":
                         for p in v:
                             filter_in.add_pattern(p)
-                    if t == "mime":
+                    elif t == "mime":
                         filter_in.add_mime_type(v)
-            dialog.add_filter(filter_in)
+                    elif t == "default":
+                        deffilter = True
+                dialog.add_filter(filter_in)
+                if deffilter:
+                    dialog.set_filter(filter_in)
 
         dialog.set_keep_above(True)
         response = dialog.run()

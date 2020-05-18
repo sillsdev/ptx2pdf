@@ -57,6 +57,8 @@ if sys.platform == "linux":
         return subprocess.check_output(" ".join(a), shell=1).decode("utf-8", errors="ignore")
 
     def checkoutput(*a, **kw):
+        if 'path' in kw:
+            del kw['path']
         res = subprocess.check_output(*a, **kw).decode("utf-8", errors="ignore")
         return res
 
@@ -124,10 +126,14 @@ elif sys.platform == "win32":
     def checkoutput(*a, **kw):
         if 'shell' in kw:
             del kw['shell']
-        path = os.path.join(pt_bindir, "xetex", "bin", a[0][0]+".exe").replace("\\", "/")
-        newa = [[path] + list(a[0])[1:]] + [x.replace('"', '') for x in a[1:]]
-        # print(newa)
-        res = subprocess.check_output(*newa, creationflags=CREATE_NO_WINDOW, **kw).decode("utf-8", errors="ignore")
+        if 'path' in kw:
+            if kw['path'] == 'xetex':
+                path = os.path.join(pt_bindir, "xetex", "bin", a[0][0]+".exe").replace("\\", "/")
+                a = [[path] + list(a[0])[1:]] + [x.replace('"', '') for x in a[1:]]
+            del kw['path']
+        else:
+            a = [x.replace("\\", "/") for x in a[0]] + [x.replace('"', '') for x in a[1:]]
+        res = subprocess.check_output(*a, creationflags=CREATE_NO_WINDOW, **kw).decode("utf-8", errors="ignore")
         return res
 
     def call(*a, **kw):
@@ -147,15 +153,11 @@ elif sys.platform == "win32":
             res = subprocess.call(*newa, creationflags=CREATE_NO_WINDOW, **kw)
             return res
 
-# print("before ptob")
 ptob = openkey("Paratext/8")
 pt_settings = "."
-# print("ptob {} before ptv".format(ptob))
 try:
     ptv = queryvalue(ptob, "ParatextVersion")
-    # print("after ptv")
 except FileNotFoundError:
-    # print("Within Except") 
     for v in ('9', '8'):
         path = "C:\\My Paratext {} Projects".format(v)
         if os.path.exists(path):
@@ -167,5 +169,3 @@ else:
         version = ptv[:ptv.find(".")]
         pt_bindir = queryvalue(ptob, 'Program_Files_Directory_Ptw'+version)
     pt_settings = queryvalue(ptob, 'Settings_Directory')
-# if ptv:
-    # print("Paratext Projects Folder: ",pt_settings,"\nParatext Program Folder:  ",pt_bindir)
