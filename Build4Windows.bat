@@ -1,4 +1,4 @@
-REM @echo off
+@echo on
 REM Use this Batch file to build PTXprint Installer for Windows
 REM Mark Penny and Martin Hosken, Last updated: 10-March-2020
 
