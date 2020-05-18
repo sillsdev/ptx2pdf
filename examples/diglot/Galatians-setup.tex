@@ -23,7 +23,7 @@
 
 %\CropMarkstrue
 \CropMarksfalse
-
+\ColorFontsfalse
 % Basic unit for margins; changing this will alter them all
 \MarginUnit=.5in
 
@@ -110,8 +110,8 @@
 \def\addmtlqutelw{0.2pt}
 
 %Only Left column gets NIV-style corner-brackets for added material
-\sethook{before}{addL}{\lower 1pt \hbox{\vrule width \addmtlqutelw height \addmtlquteht\vrule width \addmtlqutewd height \addmtlqutelw}\kern -1pt\ignorespaces}
-\sethook{after}{addL}{\kern -1pt \lower 1pt \hbox{\vrule width \addmtlqutewd height \addmtlqutelw\vrule width \addmtlqutelw height \addmtlquteht}}
+\sethook{before}{add}{\lower 1pt \hbox{\vrule width \addmtlqutelw height \addmtlquteht\vrule width \addmtlqutewd height \addmtlqutelw}\kern -1pt\ignorespaces}
+\sethook{after}{add}{\kern -1pt \lower 1pt \hbox{\vrule width \addmtlqutewd height \addmtlqutelw\vrule width \addmtlqutelw height \addmtlquteht}}
 
 %\sethook{before}{add}{\lower 1pt \hbox{\vrule width \addmtlqutelw height \addmtlquteht\vrule width \addmtlqutewd height \addmtlqutelw}\kern -1pt}
 %\sethook{after}{add}{\kern -1pt \lower 1pt \hbox{\vrule width \addmtlqutewd height \addmtlqutelw\vrule width \addmtlqutelw height \addmtlquteht}}
