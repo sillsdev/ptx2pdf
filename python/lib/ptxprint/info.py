@@ -7,7 +7,7 @@ from gi.repository import Gtk
 from ptxprint.font import TTFont
 from ptxprint.ptsettings import chaps, books, bookcodes, oneChbooks
 from ptxprint.snippets import FancyIntro, PDFx1aOutput, FancyBorders
-from ptxprint.runner import call2
+from ptxprint.runner import checkoutput
 
 def universalopen(fname, rewrite=False):
     """ Opens a file with the right codec from a small list and perhaps rewrites as utf-8 """
@@ -481,7 +481,6 @@ class Info:
         return "".join(res).replace("\OmitChapterNumberfalse\n\OmitChapterNumbertrue\n","")
 
     def runConversion(self, infname, after=False):
-        print("Infilename:", infname)
         outfname = infname
         if self.dict['project/processscript'] and self.dict['project/runscriptafter'] == after \
                 and self.dict['project/selectscript']:
@@ -490,10 +489,7 @@ class Info:
                 outfname = outfname[:doti] + "-converted" + outfname[doti:]
             print("Outfname:", outfname)  # This needs to be put in the working folder, surely!
             cmd = [self.dict["project/selectscript"], infname, outfname]
-            # cmd = '"{}" "{}" "{}"'.format(self.dict["project/selectscript"], infname, outfname)
-            print("Conversion Script:", cmd)
-            call(cmd, shell=True)
-            # call2(cmd, shell=True)
+            checkoutput(cmd, shell=True)
         return outfname
 
     def convertBook(self, bk, outdir, prjdir):

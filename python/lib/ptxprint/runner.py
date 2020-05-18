@@ -153,12 +153,6 @@ elif sys.platform == "win32":
             res = subprocess.call(*newa, creationflags=CREATE_NO_WINDOW, **kw)
             return res
 
-    def call2(*a, **kw):
-        print(*a)
-        res = subprocess.call(*a, creationflags=CREATE_NO_WINDOW, **kw)
-        print(res)
-        return res
-
 ptob = openkey("Paratext/8")
 pt_settings = "."
 try:
