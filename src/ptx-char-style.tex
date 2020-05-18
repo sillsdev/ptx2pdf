@@ -30,15 +30,15 @@
 
 % Character style macros
 
-\def\hex#1{\count3=#1\relax
-  \edef\r@s{} \count1=0
-  \loop
+\def\hex#1{\count3=#1\relax%
+  \edef\r@s{}\count1=0
+  \loop%
     \count2=\count3 \divide\count2 by 16 \multiply\count2 by 16
     \advance\count3 by -\count2
     \ifnum\count3=0\edef\r@s{0\r@s}\else\ifnum\count3<10 \edef\r@s{\number\count0 \r@s}%
-    \else\advance\count3 by -10 \edef\r@s{\ifcase\count3 A\or B\or C\or D\or E\or F\fi\r@s}\fi\fi
+    \else\advance\count3 by -10 \edef\r@s{\ifcase\count3 A\or B\or C\or D\or E\or F\fi\r@s}\fi\fi%
     \divide\count2 by 16 \count3=\count2 \advance\count1 by 1
-    \ifnum\count1<6\repeat
+    \ifnum\count1<6\repeat%
   \count3=0 \count1=0 \count2=0
 }
 
@@ -46,8 +46,8 @@
     \count2=#1\advance\count2 by -\count1 \multiply\count2 by 65536 % r
     \count3=#1\divide\count3 by 65536 % b
     \advance\count1 by -\count3 \multiply\count3 by 256 % g
-    \advance\count3 by \count2 \advance\count3 by \count1
-    \hex{\count3}
+    \advance\count3 by \count2 \advance\count3 by \count1%
+    \hex{\count3}%
 }
 
 \def\ParseColor#1#2\end{\edef\t@mp{#1}\trace{F}{Color prefix is "#1"}\if x\t@mp \edef\r@s{#2}\else\colorhex{#1#2}\fi}
@@ -213,18 +213,18 @@
     \edef\typef@ce{\typef@ce\SmallCapsSuffix}%
   \fi
   \getp@ram{color}{#1}%
-  \ifColorFonts\ifx\p@ram\relax\else
+  \ifColorFonts\ifx\p@ram\relax\else%
     \ParseColor\p@ram\end\edef\typef@ce{\typef@ce :color=\r@s}%
-  \fi\fi
+  \fi\fi%
   \getp@ram{superscript}{#1}% scale down by \SuperscriptFactor if superscripted style
   \dimen0=\ifx\p@ram\tru@ \SuperscriptFactor\fi\FontSizeUnit%
-  \getp@ram{fontsize}{#1}
+  \getp@ram{fontsize}{#1}%
   \ifx\p@ram\relax\dimen1=\c@rrfontsize\dimen0
      \MSG{*** FontSize missing for marker '#1', defaulting to \c@rrfontsize}%
-  \else
+  \else%
     \trace{F}{#1: Font size "\p@ram"}%
     \dimen1=\p@ram \dimen0
-    \ifdim\dimen1 > 2\dimen0 \else
+    \ifdim\dimen1 > 2\dimen0 \else%
       \multiply\dimen1 by \c@rrfontsize
       \edef\p@ram{\the\dimen1}%
     \trace{F}{Small font size specified. Treating as relative  \the\dimen1}%
