@@ -217,7 +217,7 @@
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 0.6.3 (Beta)</property>
+    <property name="version">Version 0.6.4 (Beta)</property>
     <property name="copyright" translatable="yes">© 2020, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -8891,7 +8891,7 @@ Consider uninstalling those that are never used.</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
-                <property name="label" translatable="yes">PTXprint (0.6.3 Beta)</property>
+                <property name="label" translatable="yes">PTXprint (0.6.4 Beta)</property>
                 <attributes>
                   <attribute name="weight" value="ultrabold"/>
                 </attributes>

@@ -1,5 +1,15 @@
-PTXprint 0.6.3 Beta Release Notes
-16th May 2020
+PTXprint 0.6.4 Beta Release Notes
+18th May 2020
+
+Bug fixes and improvements in: 0.6.4
+
+  * "Process text with custom script..." (e.g. call a .bat script, or .py program, etc.) is working, but minimally tested
+  
+  * Fixed various TeX issues (missing \Fontsize, spaces in colour code)
+  
+  * Fix file chooser filters
+
+  * PTXprint now has an automated CI build process to help feed into the software.sil.org/ptxprint page (coming soon...)
 
 Bug fixes and improvements in: 0.6.3
 

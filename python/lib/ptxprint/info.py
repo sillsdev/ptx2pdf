@@ -480,22 +480,21 @@ class Info:
                     res.append(l.format(**self.dict))
         return "".join(res).replace("\OmitChapterNumberfalse\n\OmitChapterNumbertrue\n","")
 
-    def runConversion(self, infname, after=False):
-        outfname = infname
-        if self.dict['project/processscript'] and self.dict['project/runscriptafter'] == after \
-                and self.dict['project/selectscript']:
-            doti = outfname.rfind(".")
+    def runConversion(self, infpath, outdir):
+        outfpath = infpath
+        if self.dict['project/processscript'] and self.dict['project/selectscript']:
+            outfpath = os.path.join(outdir, os.path.basename(infpath))
+            doti = outfpath.rfind(".")
             if doti > 0:
-                outfname = outfname[:doti] + "-converted" + outfname[doti:]
-            print("Outfname:", outfname)  # This needs to be put in the working folder, surely!
-            cmd = [self.dict["project/selectscript"], infname, outfname]
+                outfpath = outfpath[:doti] + "-conv" + outfpath[doti:]
+            print("outfpath:", outfpath)
+            cmd = [self.dict["project/selectscript"], infpath, outfpath]
             checkoutput(cmd, shell=True)
-        return outfname
+        return outfpath
 
     def convertBook(self, bk, outdir, prjdir):
         if self.changes is None:
             if self.dict['project/usechangesfile'] == "true":
-                # if self.changes is None: # Not sure why we aren't doing this every time.
                 self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'))
             else:
                 self.changes = []
@@ -509,17 +508,18 @@ class Info:
         fpost = self.printer.ptsettings['FileNamePostPart'] or ""
         bknamefmt = fprfx + fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + fpost
         fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
-        infname = os.path.join(prjdir, fname)
-        infname = self.runConversion(infname, after=False)
-        outfname = os.path.basename(infname)
-        if self.changes is not None or self.localChanges is not None:
-            outfname = fname
-            doti = outfname.rfind(".")
-            if doti > 0:
-                outfname = outfname[:doti] + "-draft" + outfname[doti:]
-            outfpath = os.path.join(outdir, outfname)
-            with universalopen(infname) as inf:
-                dat = inf.read()
+        infpath = os.path.join(prjdir, fname)
+        if not self.dict['project/runscriptafter']:
+            infpath = self.runConversion(infpath, outdir)
+        outfname = os.path.basename(infpath)
+        # outfname = fname
+        doti = outfname.rfind(".")
+        if doti > 0:
+            outfname = outfname[:doti] + "-draft" + outfname[doti:]
+        outfpath = os.path.join(outdir, outfname)
+        with universalopen(infpath) as inf:
+            dat = inf.read()
+            if self.changes is not None or self.localChanges is not None:
                 for c in (self.changes or []) + (self.localChanges or []):
                     if c[0] is None:
                         dat = c[1].sub(c[2], dat)
@@ -528,9 +528,12 @@ class Info:
                         for i in range(1, len(newdat), 2):
                             newdat[i] = c[1].sub(c[2], newdat[i])
                         dat = "".join(newdat)
-            with open(outfpath, "w", encoding="utf-8") as outf:
-                outf.write(dat)
-        return os.path.basename(self.runConversion(os.path.join(prjdir, outfname), after=True))
+        with open(outfpath, "w", encoding="utf-8") as outf:
+            outf.write(dat)
+        if self.dict['project/runscriptafter']:
+            return os.path.basename(self.runConversion(outfpath, outdir))
+        else:
+            return os.path.basename(outfpath)
 
     def readChanges(self, fname):
         changes = []
@@ -718,9 +721,9 @@ class Info:
         prjdir = os.path.join(printer.settings_dir, prjid)
         picdir = os.path.join(self['document/directory'], 'tmpPics').replace("\\","/")
         fname = printer.getBookFilename(bk, prjdir)
-        infname = os.path.join(prjdir, fname)
+        infpath = os.path.join(prjdir, fname)
         extOrder = self.getExtOrder(printer)
-        with universalopen(infname) as inf:
+        with universalopen(infpath) as inf:
             dat = inf.read()
             inf.close()
             figlist += re.findall(r"(?i)\\fig .*?\|(.+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)    # Finds USFM2-styled markup in text:

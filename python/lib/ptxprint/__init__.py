@@ -954,7 +954,7 @@ class PtxPrinterDialog:
 
     def onProcessScriptClicked(self, c_processScript):
         status = self.get("c_processScript")
-        for c in ("c_processScriptBefore", "c_processScriptAfter", "btn_selectScript"):
+        for c in ("c_processScriptBefore", "c_processScriptAfter", "btn_selectScript", "l_processScript"):
             self.builder.get_object(c).set_sensitive(status)
             
     def onUsePrintDraftChangesClicked(self, c_usePrintDraftChanges):
@@ -1352,7 +1352,7 @@ class PtxPrinterDialog:
                 bks = bks[0]
             except IndexError:
                 bks = "No book selected!"
-        titleStr = "PTXprint [0.6.3 Beta]" + prjid + " (" + bks + ") " + (self.get("cb_savedConfig") or "")
+        titleStr = "PTXprint [0.6.4 Beta]" + prjid + " (" + bks + ") " + (self.get("cb_savedConfig") or "")
         self.builder.get_object("ptxprint").set_title(titleStr)
 
     def editFile(self, file2edit, loc="wrk"):
@@ -1409,6 +1409,8 @@ class PtxPrinterDialog:
         CustomScript = self.fileChooser("Select a Custom Script file", 
                 filters = {"Executable Scripts": {"patterns": ["*.bat", "*.exe", "*.py", "*.sh"] , "mime": "application/bat", "default": True},
                            "All Files": {"pattern": "*"}},
+                           # "TECkit Mappings": {"pattern": ["*.map", "*.tec"]},
+                           # "CC Tables": {"pattern": "*.cct"},
                 multiple = False, basedir=self.working_dir)
         if CustomScript is not None:
             self.CustomScript = CustomScript[0]
