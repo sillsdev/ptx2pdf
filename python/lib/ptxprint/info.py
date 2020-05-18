@@ -7,6 +7,7 @@ from gi.repository import Gtk
 from ptxprint.font import TTFont
 from ptxprint.ptsettings import chaps, books, bookcodes, oneChbooks
 from ptxprint.snippets import FancyIntro, PDFx1aOutput, FancyBorders
+from ptxprint.runner import call
 
 def universalopen(fname, rewrite=False):
     """ Opens a file with the right codec from a small list and perhaps rewrites as utf-8 """
@@ -31,6 +32,7 @@ def universalopen(fname, rewrite=False):
 
 
 class Info:
+    _noPicListBooks = ["FRT", "INT", "GLO", "TDX", "NDX", "CNC", "OTH", "BAK", "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG"]
     _mappings = {
         "config/name":              ("cb_savedConfig", lambda w,v: v or "default"),
         "config/notes":             ("t_configNotes", lambda w,v: v or ""),
@@ -478,6 +480,17 @@ class Info:
                     res.append(l.format(**self.dict))
         return "".join(res).replace("\OmitChapterNumberfalse\n\OmitChapterNumbertrue\n","")
 
+    def runConversion(self, infname, after=False):
+        outfname = infname
+        if self.dict['project/processscript'] and self.dict['project/runscriptafter'] == after \
+                and self.dict['project/selectscript']:
+            doti = outfname.rfind(".")
+            if doti > 0:
+                outfname = outfname[:doti] + "-converted" + outfname[doti:]
+            cmd = [self.dict["project/selectscript"], infname, outfname]
+            call(cmd, shell=True)
+        return outfname
+
     def convertBook(self, bk, outdir, prjdir):
         if self.changes is None:
             if self.dict['project/usechangesfile'] == "true":
@@ -496,6 +509,8 @@ class Info:
         bknamefmt = fprfx + fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + fpost
         fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
         infname = os.path.join(prjdir, fname)
+        infname = self.runConversion(infname, after=False)
+        outfname = os.path.basename(infname)
         if self.changes is not None or self.localChanges is not None:
             outfname = fname
             doti = outfname.rfind(".")
@@ -514,9 +529,7 @@ class Info:
                         dat = "".join(newdat)
             with open(outfpath, "w", encoding="utf-8") as outf:
                 outf.write(dat)
-            return outfname
-        else:
-            return fname
+        return os.path.basename(self.runConversion(os.path.join(prjdir, outfname), after=True))
 
     def readChanges(self, fname):
         changes = []
@@ -593,8 +606,9 @@ class Info:
         v = printer.get("cb_glossaryMarkupStyle")
         gloStyle = self._glossarymarkup.get(v, v)
         self.localChanges.append((None, regex.compile(r"\\w (.+?)(\|.+?)?\\w\*", flags=regex.M), gloStyle))
-
-        if printer.get("c_includeillustrations") and printer.get("c_includefigsfromtext"):
+        
+        # Remember to preserve \figs ... \figs for books that can't have PicLists (due to no ch:vs refs in them)
+        if printer.get("c_includeillustrations") and (printer.get("c_includefigsfromtext") or bk in self._noPicListBooks):
             # Remove any illustrations which don't have a |p| 'loc' field IF this setting is on
             if printer.get("c_figexclwebapp"):
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig ([^|]*\|){3}([aw]+)\|[^\\]*\\fig\*', flags=regex.M), ''))  # USFM2
@@ -617,10 +631,8 @@ class Info:
                             self.localChanges.append((None, regex.compile(r'(?i)\\fig .*?src="{}" .+?\\fig\*'.format(origfn), flags=regex.M), "")) #USFM3
 
             if printer.get("c_fighiderefs"): # del ch:vs from caption 
-   #  OLD CODE  # self.localChanges.append((None, regex.compile(r"(\\fig .*?)(\d+[:.]\d+([-,]\d+)?)(.*?\\fig\*)", flags=regex.M), r"\1\4"))
                 self.localChanges.append((None, regex.compile(r"(\\fig [^\\]+?\|)([0-9:.\-,\u2013\u2014]+?)(\\fig\*)", \
                                           flags=regex.M), r"\1\3"))   # USFM2
-                                          # regex.compile(r"(\d+[:.]\d+([\-,\u2013\u2014]\d+)?)"), ""))  # USFM2
                 self.localChanges.append((None, regex.compile(r'(\\fig .+?)(ref="\d+[:.]\d+([-,\u2013\u2014]\d+)?")(.*?\\fig\*)', \
                                           flags=regex.M), r"\1\4"))   # USFM3
         else: # Drop ALL Figures
@@ -630,11 +642,12 @@ class Info:
             self.localChanges.append((None, regex.compile(r"\\i(s|m|mi|p|pi|li\d?|pq|mq|pr|b|q\d?) .+?\r?\n", flags=regex.M), "")) 
 
         if printer.get("c_omitIntroOutline"): # Drop ALL Intro Outline matter & Intro Outline References
+            # Wondering whether we should restrict this to just the GEN...REV books (as some xtra books only use \ixx markers for content)
             self.localChanges.append((None, regex.compile(r"\\(iot|io\d) [^\\]+", flags=regex.M), ""))
             self.localChanges.append((None, regex.compile(r"\\ior .+?\\ior\*\s?\r?\n", flags=regex.M), ""))
 
-        if printer.get("c_omitSectHeads"): # Drop ALL Section Headings
-            self.localChanges.append((None, regex.compile(r"\\s .+", flags=regex.M), ""))
+        if printer.get("c_omitSectHeads"): # Drop ALL Section Headings (which also drops the Parallel passage refs now)
+            self.localChanges.append((None, regex.compile(r"\\[sr] .+", flags=regex.M), ""))
 
         if printer.get("c_omitParallelRefs"):# Drop ALL Parallel Passage References
             self.localChanges.append((None, regex.compile(r"\\r .+", flags=regex.M), ""))
@@ -656,7 +669,7 @@ class Info:
         if printer.get("c_preventwidows"):
             # Push the verse number onto the next line (using NBSP) if there is
             # a short widow word (3 characters or less) at the end of the line
-            self.localChanges.append((None, regex.compile(r"(\\v \d+(-\d+)? [\w][\w]?[\w]?) ", flags=regex.M), r"\1~")) 
+            self.localChanges.append((None, regex.compile(r"(\\v \d+([-,]\d+)? [\w]{1,3}) ", flags=regex.M), r"\1~")) 
 
         if printer.get("c_ch1pagebreak"):
             self.localChanges.append((None, regex.compile(r"(\\c 1 ?\r?\n)", flags=regex.M), r"\pagebreak\r\n\1"))

@@ -147,7 +147,8 @@ class PtxPrinterDialog:
             buf = GtkSource.Buffer()
             view = GtkSource.View.new_with_buffer(buf)
             scroll = self.builder.get_object("scroll_" + k)
-            scroll.add_with_viewport(view)
+            #scroll.add_with_viewport(view)
+            scroll.add(view)
             self.fileViews.append((buf, view))
             if i > 2:
                 view.set_show_line_numbers(True)  # Turn these ON
@@ -181,13 +182,10 @@ class PtxPrinterDialog:
 
     def run(self, callback, splash=True):
         self.callback = callback
-        # if splash:
-            # print("C")
-            # splashw = self.builder.get_object("w_splash")
-            # print("D")
-            # self.splash = Splash(splashw)   # threads don't like being gced?
-            # print("E")
-            # self.splash.start()
+        if splash:
+            splashw = self.builder.get_object("w_splash")
+            self.splash = Splash(splashw)   # threads don't like being gced?
+            self.splash.start()
 
         # do slow stuff here
         fc = initFontCache()
@@ -200,12 +198,12 @@ class PtxPrinterDialog:
             self.pendingPid = None
         else:
             self.builder.get_object("b_print").set_sensitive(False)
-        # if splash:
-            # self.splash.destroy()
-            # try:
-                # self.splash.join()  #<--- This line is killing it
-            # except RuntimeError:
-                # pass        
+        if splash:
+            self.splash.destroy()
+            try:
+                self.splash.join()  #<--- This line is killing it
+            except RuntimeError:
+                pass        
         fc.fill_liststore(lsfonts)
         tv = self.builder.get_object("tv_fontFamily")
         cr = Gtk.CellRendererText()
@@ -216,8 +214,10 @@ class PtxPrinterDialog:
         # self.mw.set_resizable(True)
         # self.mw.set_default_size(730, 565)
         self.mw.resize(730, 640)
-        self.builder.get_object("bx_SavedConfigSettings").set_sensitive(False)
         self.mw.show_all()
+        for o in ["b_print", "bx_SavedConfigSettings", "tb_Layout", "tb_Body", "tb_HeadFoot", "tb_Pictures",
+                  "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_DiglotTesting", "tb_FancyBorders"]:
+            self.builder.get_object(o).set_sensitive(False)
         Gtk.main()
 
     def ExperimentalFeatures(self, value):
@@ -333,6 +333,33 @@ class PtxPrinterDialog:
         Gtk.main_quit()
 
     def onOK(self, btn):
+        jobs = self.getBooks()
+        # Work out what the resulting PDFs are to be called
+        if len(jobs) > 1:
+            if self.get("c_combine"):
+                pdfnames = [os.path.join(self.working_dir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], self.prjid))]
+            else:  # ["ptxprint-{}{}.pdf".format(j, "WSG") for j in jobs]
+                pdfnames = [os.path.join(self.working_dir, "ptxprint-{}{}.pdf".format(j, self.prjid)) for j in jobs]
+                print("\n".join(pdfnames))
+        else:
+            pdfnames = [os.path.join(self.working_dir, "ptxprint-{}{}.pdf".format(jobs[0], self.prjid))]
+        for pdfname in pdfnames:
+            fileLocked = True
+            while fileLocked:
+                try:
+                    with open(pdfname, "wb+") as outf:
+                        outf.close()
+                except PermissionError:
+                    question = "                   >>> PLEASE CLOSE the PDF <<<\
+                     \n\n{}\n\n Or use a different PDF viewer which will \
+                             \n allow updates even while the PDF is open. \
+                           \n\n                        Do you want to try again?".format(pdfname)
+                    if self.msgQuestion("The old PDF file is open!", question):
+                        continue
+                    else:
+                        return
+                fileLocked = False
+
         if self.prjid is not None:
             self.callback(self)
         else:
@@ -583,14 +610,19 @@ class PtxPrinterDialog:
             bk = bks[0]
             self.builder.get_object("cb_examineBook").set_active_id(bk)
         for o in ("l_examineBook", "btn_PrevBook", "cb_examineBook", "btn_NextBook", "btn_Generate"):
-            self.builder.get_object(o).set_sensitive( 0 < pgnum <= 2)
+            self.builder.get_object(o).set_sensitive( 0 <= pgnum <= 2)
 
+        if len(bks) == 1:
+            self.builder.get_object("btn_PrevBook").set_sensitive(False)
+            self.builder.get_object("btn_NextBook").set_sensitive(False)
+            
         fndict = {0 : ("", ""),     1 : ("PicLists", ".piclist"), 2 : ("AdjLists", ".adj"), \
                   3 : ("", ".tex"), 4 : ("", ".log")}
         if pgnum <= 2:  # (SFM,PicList,AdjList)
             fname = self.getBookFilename(bk, prjid)
             if pgnum == 0:
                 fpath = os.path.join(self.working_dir, fndict[pgnum][0], fname)
+                self.builder.get_object("btn_Generate").set_sensitive(False)
             else:
                 fpath = os.path.join(self.configPath(), fndict[pgnum][0], fname)
             doti = fpath.rfind(".")
@@ -761,6 +793,10 @@ class PtxPrinterDialog:
 
     def onMarginalVersesClicked(self, c_marginalverses):
         self.builder.get_object("s_columnShift").set_sensitive(self.get("c_marginalverses"))
+
+    def onOmitSectHeadsClicked(self, c_omitSectHeads):
+        self.builder.get_object("c_omitParallelRefs").set_sensitive(not self.get("c_omitSectHeads"))
+        self.builder.get_object("c_omitParallelRefs").set_active(self.get("c_omitSectHeads"))
 
     def onHyphenateClicked(self, c_hyphenate):
         prjid = self.get("cb_project")
@@ -1030,10 +1066,16 @@ class PtxPrinterDialog:
 
     def onShowDiglotTabClicked(self, c_showDiglotTab):
         status = self.get("c_showDiglotTab")
+        if not status:
+            self.builder.get_object("c_diglot").set_active(False)
+            self.builder.get_object("gr_diglot").set_sensitive(False)
         self.builder.get_object("tb_DiglotTesting").set_visible(status)
 
     def onShowBordersTabClicked(self, c_showBordersTab):
         status = self.get("c_showBordersTab")
+        if not status:
+            self.builder.get_object("c_enableDecorativeElements").set_active(False)
+            self.builder.get_object("gr_borders").set_sensitive(False)
         self.builder.get_object("tb_FancyBorders").set_visible(status)
 
     def onKeepTemporaryFilesClicked(self, c_keepTemporaryFiles):
@@ -1223,8 +1265,9 @@ class PtxPrinterDialog:
         else:
             self.updateProjectSettings(True)
             self.updateSavedConfigList()
-            self.builder.get_object("bx_SavedConfigSettings").set_sensitive(True)
-            self.builder.get_object("b_print").set_sensitive(True)
+            for o in ["b_print", "bx_SavedConfigSettings", "tb_Layout", "tb_Body", "tb_HeadFoot", "tb_Pictures",
+                      "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_DiglotTesting", "tb_FancyBorders"]:
+                self.builder.get_object(o).set_sensitive(True)
 
     def updateProjectSettings(self, saveCurrConfig=False):
         currprj = self.prjid
@@ -1315,7 +1358,7 @@ class PtxPrinterDialog:
                 bks = bks[0]
             except IndexError:
                 bks = "No book selected!"
-        titleStr = "PTXprint [0.6.2 Beta]" + prjid + " (" + bks + ") " + (self.get("cb_savedConfig") or "")
+        titleStr = "PTXprint [0.6.3 Beta]" + prjid + " (" + bks + ") " + (self.get("cb_savedConfig") or "")
         self.builder.get_object("ptxprint").set_title(titleStr)
 
     def editFile(self, file2edit, loc="wrk"):
@@ -1911,3 +1954,7 @@ class PtxPrinterDialog:
             return(True)
         elif response == Gtk.ResponseType.NO:
             return(False)
+
+    def onEnableDecorativeElementsClicked(self, c_enableDecorativeElements):
+        self.builder.get_object("gr_borders").set_sensitive(self.get("c_enableDecorativeElements"))
+        

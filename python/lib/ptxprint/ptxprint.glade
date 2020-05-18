@@ -217,7 +217,7 @@
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 0.6.2 (Beta)</property>
+    <property name="version">Version 0.6.3 (Beta)</property>
     <property name="copyright" translatable="yes">© 2020, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -2051,7 +2051,9 @@ satisfactory result.</property>
 This is really a DIY-glot because
 it is work in progress and will require
 considerable trial-and-error to get a
-satisfactory result.</property>
+satisfactory result.
+NOTE that turning off the view for
+this Tab will also disable the option.</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="onShowDiglotTabClicked" swapped="no"/>
@@ -2075,7 +2077,8 @@ for fancy/decorative borders to be applied to
 the output. Other textual decorations - for 
 section headings and verse numbers can also
 be specified.
-</property>
+NOTE that turning off the view for
+this Tab will also disable the option.</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="onShowBordersTabClicked" swapped="no"/>
@@ -2935,10 +2938,10 @@ setting will be applied to ALL books</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">The chapter “label” to be used when rendering
-chapter divisions as headings (not drop-cap numerals).</property>
+chapter divisions as headings (instead of drop-cap
+numerals). For example, "Psalm"</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="placeholder_text" translatable="yes">"Chapter" in Target Language</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">3</property>
@@ -3821,9 +3824,12 @@ typesetting issues. Use with care!</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Do not print any Section Headings.</property>
+                                    <property name="tooltip_text" translatable="yes">Do not print any Section Headings.
+This option will ALSO omit Parallel
+Passage Refs.</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onOmitSectHeadsClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
@@ -3980,9 +3986,9 @@ Markup Style:</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">This option prevents short words
-(of 3 characters or less) from occurring
-AFTER a verse begins at the end of 
+                                    <property name="tooltip_text" translatable="yes">This option prevents short words (of
+3 characters or less) from occurring
+AFTER a verse begins near the end of 
 a line.</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
@@ -3994,13 +4000,13 @@ a line.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_preventorphans">
-                                    <property name="label" translatable="yes">Prevent Orphan Words</property>
+                                    <property name="label" translatable="yes">Prevent Orphan Words in Poetry</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">This option prevents single words
 from occurring on the last line of
-any paragraph (including poetry).</property>
+any poetry lines. \q1 \q2 \q3 etc.</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -5998,6 +6004,22 @@ TIF  (only use TIFs [converted internally to PDFs])</property>
                         <property name="position">0</property>
                       </packing>
                     </child>
+                    <child>
+                      <object class="GtkLabel" id="l_missingPictureString">
+                        <property name="sensitive">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="margin_left">40</property>
+                        <property name="margin_top">7</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="label" translatable="yes">Missing Picture List</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
                   </object>
                   <packing>
                     <property name="position">4</property>
@@ -6006,7 +6028,6 @@ TIF  (only use TIFs [converted internally to PDFs])</property>
                 </child>
                 <child type="tab">
                   <object class="GtkLabel" id="lb_Pictures">
-                    <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Control whether Illustrations (pictures)
 are to be used in the publication. And
@@ -7136,7 +7157,7 @@ should be trimmed to after printing.</property>
                   </packing>
                 </child>
                 <child type="tab">
-                  <object class="GtkLabel" id="tb_AdvancedTitle">
+                  <object class="GtkLabel" id="lb_Advanced">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Pre-process the text prior
@@ -7648,6 +7669,7 @@ are likely to have to re-do it all again.</property>
                                     <property name="width_chars">20</property>
                                     <property name="single_line_mode">True</property>
                                     <property name="max_width_chars">75</property>
+                                    <property name="track_visited_links">False</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -7678,6 +7700,7 @@ are likely to have to re-do it all again.</property>
                                     <property name="width_chars">20</property>
                                     <property name="single_line_mode">True</property>
                                     <property name="max_width_chars">75</property>
+                                    <property name="track_visited_links">False</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -7708,6 +7731,7 @@ are likely to have to re-do it all again.</property>
                                     <property name="width_chars">20</property>
                                     <property name="single_line_mode">True</property>
                                     <property name="max_width_chars">75</property>
+                                    <property name="track_visited_links">False</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -8291,7 +8315,6 @@ page for binding.
                                 <property name="climb_rate">1</property>
                                 <property name="numeric">True</property>
                                 <property name="update_policy">if-valid</property>
-                                <property name="value">5</property>
                                 <signal name="value-changed" handler="onDiglotDimensionsChanged" swapped="no"/>
                               </object>
                               <packing>
@@ -8503,7 +8526,7 @@ satisfactory result.</property>
                         <property name="margin_bottom">6</property>
                         <property name="label_xalign">0.039999999105930328</property>
                         <child>
-                          <object class="GtkGrid">
+                          <object class="GtkGrid" id="gr_borders">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="margin_left">30</property>
@@ -8763,6 +8786,7 @@ then select the font here.</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
                             <property name="draw_indicator">True</property>
+                            <signal name="clicked" handler="onEnableDecorativeElementsClicked" swapped="no"/>
                           </object>
                         </child>
                       </object>
@@ -8867,7 +8891,7 @@ Consider uninstalling those that are never used.</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
-                <property name="label" translatable="yes">PTXprint (0.6.2 Beta)</property>
+                <property name="label" translatable="yes">PTXprint (0.6.3 Beta)</property>
                 <attributes>
                   <attribute name="weight" value="ultrabold"/>
                 </attributes>

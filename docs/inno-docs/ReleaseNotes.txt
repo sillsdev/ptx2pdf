@@ -1,5 +1,19 @@
-PTXprint 0.6.2 Beta Release Notes
-15th May 2020
+PTXprint 0.6.3 Beta Release Notes
+16th May 2020
+
+Bug fixes and improvements in: 0.6.3
+
+  * Improved scrolling in the Viewer/Editor tab(s)
+  
+  * Allow \fig ... \fig* to be used in non-scripture books even if PicLists are being used
+  
+  * Fixed Colors to handle Paratext's system
+  
+  * Warn if PDFs are still locked in uncooperative PDF viewer (before trying to create PDF)
+  
+  * Disabled Splash screen on startup - as it was causing problems
+  
+  * Add code to allow running conversion scripts (pre/post other processes) - untested and EXPERIMENTAL
 
 Bug fixes and improvements in: 0.6.2
 

@@ -90,10 +90,9 @@
    \bgroup % start a group to encapsulate the style's formatting changes
     \let\thisch@rstyle=\newch@rstyle % remember the current style
     \getp@ram{fontsize}{\thisch@rstyle}%
-    \ifx\p@ram\relax\else
+    \ifx\p@ram\relax\let\param=\c@rrfontsize\else
     \dimen1=\p@ram \FontSizeUnit
-    \ifdim\dimen1 > 2\FontSizeUnit \xdef\c@rrfontsize{\p@ram}\fi
-    \fi
+    \ifdim\dimen1 > 2\FontSizeUnit \xdef\c@rrfontsize{\p@ram}\fi\fi
     \s@tfont{\thisch@rstyle}% set up font attributes
     \ifnum\n@tenesting>0 \global\advance\n@tenesting by 1 % record nesting level in para or note
     \else \global\advance\p@ranesting by 1 \fi
@@ -118,8 +117,9 @@
        \csname end-\thisch@rstyle\sid@\endcsname % handle side-specific <start> hook
      \fi
      \getp@ram{fontsize}{\thisch@rstyle}%
+     \ifx\p@ram\relax\let\param=\c@rrfontsize\else
      \dimen1=\p@ram \FontSizeUnit
-     \ifdim\dimen1 > 2\FontSizeUnit \xdef\c@rrfontsize{\p@ram}\fi
+     \ifdim\dimen1 > 2\FontSizeUnit \xdef\c@rrfontsize{\p@ram}\fi\fi
      \getp@ram{superscript}{\thisch@rstyle}%
      \ifx\p@ram\tru@ \egroup \raise\SuperscriptRaise\box0 \fi
      \x@\global\x@\let\x@\n@xt % remember the <after> hook, if any, beyond the current group
@@ -218,18 +218,21 @@
   \fi\fi
   \getp@ram{superscript}{#1}% scale down by \SuperscriptFactor if superscripted style
   \dimen0=\ifx\p@ram\tru@ \SuperscriptFactor\fi\FontSizeUnit%
-  \getp@ram{fontsize}{#1}%
-  \trace{F}{#1: Font size "\p@ram"}%
-  \dimen1=\p@ram \dimen0
-  \ifdim\dimen1 > 2\dimen0 \else
-    \multiply\dimen1 by \c@rrfontsize
-    \edef\p@ram{\the\dimen1}%
-    \trace{F}{No font size specified. Using \the\dimen1}%
-  \fi
+  \getp@ram{fontsize}{#1}
+  \ifx\p@ram\relax\dimen1=\c@rrfontsize\dimen0
+     \MSG{*** FontSize missing for marker '#1', defaulting to \c@rrfontsize}%
+  \else
+    \trace{F}{#1: Font size "\p@ram"}%
+    \dimen1=\p@ram \dimen0
+    \ifdim\dimen1 > 2\dimen0 \else
+      \multiply\dimen1 by \c@rrfontsize
+      \edef\p@ram{\the\dimen1}%
+    \trace{F}{Small font size specified. Treating as relative  \the\dimen1}%
+    \fi\fi
   % create the font identifier for this style
   \trace{F}{font<\f@ntstyle>=\typef@ce\space at \the\dimen1}%
   \x@\global\x@\font
-    \csname font<\f@ntstyle>\endcsname=\typef@ce\space at \p@ram \dimen0
+    \csname font<\f@ntstyle>\endcsname=\typef@ce\space at \the \dimen1
   \ifx\SpaceStretchFactor\undefined\else
     \dimen0=\SpaceStretchFactor\x@\x@\fontdimen2\csname font<#1>\endcsname
     \x@\x@\fontdimen3\csname font<#1>\endcsname=\dimen0
