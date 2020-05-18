@@ -129,10 +129,10 @@ elif sys.platform == "win32":
         if 'path' in kw:
             if kw['path'] == 'xetex':
                 path = os.path.join(pt_bindir, "xetex", "bin", a[0][0]+".exe").replace("\\", "/")
+                a = [[path] + list(a[0])[1:]] + [x.replace('"', '') for x in a[1:]]
             del kw['path']
         else:
-            path = a[0][0].replace("\\", "/")
-        a = [[path] + list(a[0])[1:]] + [x.replace('"', '') for x in a[1:]]
+            a = [x.replace("\\", "/") for x in a[0]] + [x.replace('"', '') for x in a[1:]]
         res = subprocess.check_output(*a, creationflags=CREATE_NO_WINDOW, **kw).decode("utf-8", errors="ignore")
         return res
 

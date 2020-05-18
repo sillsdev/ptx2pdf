@@ -1413,7 +1413,8 @@ class PtxPrinterDialog:
 
     def onSelectScriptClicked(self, btn_selectScript):
         CustomScript = self.fileChooser("Select a Custom Script file", 
-                filters = {"Executable Scripts": {"patterns": "*.bat", "mime": "application/bat"}},
+                filters = {"Executable Scripts": {"patterns": ["*.bat", "*.exe", "*.py", "*.sh"] , "mime": "application/bat", "default": True},
+                           "All Files": {"pattern": "*"}},
                 # ),("*.sh", "mime": "application/x-sh")
                 multiple = False)
         if CustomScript is not None:
@@ -1422,9 +1423,8 @@ class PtxPrinterDialog:
         else:
             self.CustomScript = None
             btn_selectScript.set_tooltip_text("")
-            self.builder.get_object("btn_selectScript").set_sensitive(False)
             self.builder.get_object("c_processScript").set_active(False)
-            for c in ("btn_selectScript", "c_processScriptBefore", "c_processScriptAfter", "l_script2process"):
+            for c in ("c_processScriptBefore", "c_processScriptAfter", "l_processScript"):
                 self.builder.get_object(c).set_sensitive(False)
 
     def onFrontPDFsClicked(self, btn_selectFrontPDFs):
@@ -1717,18 +1717,23 @@ class PtxPrinterDialog:
             dialog.set_current_folder(basedir)
         if filters != None: # was len(filters):
             # filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}}
-            filter_in = Gtk.FileFilter()
             for k, f in filters.items():
+                filter_in = Gtk.FileFilter()
                 filter_in.set_name(k)
+                deffilter = False
                 for t, v in f.items():
                     if t == "pattern":
                         filter_in.add_pattern(v)
                     elif t == "patterns":
                         for p in v:
                             filter_in.add_pattern(p)
-                    if t == "mime":
+                    elif t == "mime":
                         filter_in.add_mime_type(v)
-            dialog.add_filter(filter_in)
+                    elif t == "default":
+                        deffilter = True
+                dialog.add_filter(filter_in)
+                if deffilter:
+                    dialog.set_filter(filter_in)
 
         dialog.set_keep_above(True)
         response = dialog.run()
