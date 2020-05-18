@@ -58,7 +58,8 @@
   \ifnum\BodyColumns=\c@rrentcols
     \penalty-200\vskip\baselineskip
   \else
-    \ifnum\BodyColumns=2 \doublecolumns\else\singlecolumn\fi
+    \ifdiglot\diglotcolumns\else
+    \ifnum\BodyColumns=2 \doublecolumns\else\singlecolumn\fi\fi
   \fi
   \global\b@dytrue\global\@ntrofalse\global\t@tlefalse\fi}
 
@@ -112,10 +113,10 @@
 % end a paragraph, handling cutouts (shaping around drop-cap) if any, and the <end> hook
 \def\par{\ifhmode \TRACE{par}%
  \makecutouts
- \csname end-\m@rker\endcsname
  \ifdiglot\setsid@%\MSG{end-\m@rker\sid@}%
    \csname end-\m@rker\sid@\endcsname % handle side-specific <end> hook
  \fi
+ \csname end-\m@rker\endcsname
  \endgraf 
  \cutoutcarryover \fi}
 
@@ -149,10 +150,10 @@
     \vskip\p@ram\verticalsp@ceunit
   \fi
   \resetp@rstyle
-  \csname after-\m@rker\endcsname % handle <after> hook for the previous style
   \ifdiglot\setsid@%\MSG{start-\thisch@rstyle\sid@}%
     \csname after-\m@rker\sid@\endcsname\relax% handle side-specific <start> hook
   \fi
+  \csname after-\m@rker\endcsname % handle <after> hook for the previous style
   \gdef\m@rker{#1} % remember the new style name
   \csname before-\m@rker\endcsname % handle its <before> hook
   \ifdiglot%

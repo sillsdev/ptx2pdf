@@ -87,6 +87,9 @@
   \else
    \leavevmode % in case the paragraph hasn't started yet
    \csname before-\newch@rstyle\endcsname % execute any <before> hook
+   \ifdiglot\setsid@%\MSG{start-\thisch@rstyle\sid@}%
+     \csname before-\newch@rstyle\sid@\endcsname\relax% handle side-specific <before> hook
+   \fi
    \bgroup % start a group to encapsulate the style's formatting changes
     \let\thisch@rstyle=\newch@rstyle % remember the current style
     \getp@ram{fontsize}{\thisch@rstyle}%
@@ -112,10 +115,10 @@
      \MSG{*** unmatched character style end-marker |\newch@rstyle*}%
    \else
     \ifskipch@rstyle\egroup\else
-     \csname end-\thisch@rstyle\endcsname % execute any <end> hook
      \ifdiglot\setsid@%\MSG{end-\thisch@rstyle\sid@}%
        \csname end-\thisch@rstyle\sid@\endcsname % handle side-specific <start> hook
      \fi
+     \csname end-\thisch@rstyle\endcsname % execute any <end> hook
      \getp@ram{fontsize}{\thisch@rstyle}%
      \ifx\p@ram\relax\let\param=\c@rrfontsize\else
      \dimen1=\p@ram \FontSizeUnit
@@ -123,18 +126,18 @@
      \getp@ram{superscript}{\thisch@rstyle}%
      \ifx\p@ram\tru@ \egroup \raise\SuperscriptRaise\box0 \fi
      \x@\global\x@\let\x@\n@xt % remember the <after> hook, if any, beyond the current group
-      \csname after-\thisch@rstyle\endcsname
+     \csname after-\thisch@rstyle\endcsname
      \global\let\n@xtt=\relax%
      %\tracingassigns=1
-     \ifdiglot\setsid@%\MSG{end-\thisch@rstyle\sid@}%
+     \ifdiglot%\MSG{end-\thisch@rstyle\sid@}%
        \x@\global\x@\let\x@\n@xtt% remember the <after> hook, if any, beyond the current group
        \csname after-\thisch@rstyle\sid@\endcsname % handle side-specific <start> hook
      \fi
      \ifnum\n@tenesting>0 \global\advance\n@tenesting by -1 % decrement nesting level
      \else \global\advance\p@ranesting by -1 \fi
     \egroup % end the style's group, so formatting reverts
+    \n@xtt % execute the <side-specific after> hook, if there was one
     \n@xt % execute the <after> hook, if there was one
-    \n@xtt % execute the <after> hook, if there was one
     \fi
    \fi
  }
