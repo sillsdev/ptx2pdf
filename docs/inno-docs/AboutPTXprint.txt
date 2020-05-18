@@ -4,6 +4,8 @@ PTXprint 0.6.3 Beta - AboutPTXprint.txt
 
 PTXprint is a GUI for the extended macros from PTX2PDF which is a XeTeX based macro package for typesetting USFM formatted (Paratext output) scripture files.
 
+PTXprint is 64-bit software and will not run on 32-bit versions of Windows.
+
 Please use "New Issue" button in the GitHub Issue Tracking System (https://github.com/sillsdev/ptx2pdf/issues) to report any bugs, or suggestions for improvement.
 
 Commandline options are also available to run headless (without the UI):

@@ -1416,10 +1416,12 @@ class PtxPrinterDialog:
                 filters = {"Executable Scripts": {"patterns": ["*.bat", "*.exe", "*.py", "*.sh"] , "mime": "application/bat", "default": True},
                            "All Files": {"pattern": "*"}},
                 # ),("*.sh", "mime": "application/x-sh")
-                multiple = False)
+                multiple = False, basedir=self.working_dir)
         if CustomScript is not None:
-            self.CustomScript = CustomScript
-            btn_selectScript.set_tooltip_text("\n".join('{}'.format(s) for s in CustomScript))
+            self.CustomScript = CustomScript[0]
+            self.builder.get_object("c_processScript").set_active(True)
+            btn_selectScript.set_tooltip_text(CustomScript[0])
+            # btn_selectScript.set_tooltip_text("\n".join('{}'.format(s) for s in CustomScript))
         else:
             self.CustomScript = None
             btn_selectScript.set_tooltip_text("")

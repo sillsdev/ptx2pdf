@@ -7,7 +7,7 @@ from gi.repository import Gtk
 from ptxprint.font import TTFont
 from ptxprint.ptsettings import chaps, books, bookcodes, oneChbooks
 from ptxprint.snippets import FancyIntro, PDFx1aOutput, FancyBorders
-from ptxprint.runner import call
+from ptxprint.runner import call2
 
 def universalopen(fname, rewrite=False):
     """ Opens a file with the right codec from a small list and perhaps rewrites as utf-8 """
@@ -64,9 +64,9 @@ class Info:
         "project/backincludes":     ("btn_selectBackPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(re.sub(r"\\","/", s)) \
                                                            for s in w.BackPDFs) if (w.BackPDFs is not None and w.BackPDFs != 'None') else ""),
         "project/useprintdraftfolder": ("c_useprintdraftfolder", lambda w,v :"true" if v else "false"),
-        "project/processscript":    ("c_processScript", lambda w,v :"true" if v else "false"),
-        "project/runscriptafter":   ("c_processScriptAfter", lambda w,v :"true" if v else "false"),
-        "project/selectscript":     ("btn_selectScript", lambda w,v: re.sub(r"\\","/", w.CustomScript) if w.CustomScript is not None else ""),
+        "project/processscript":    ("c_processScript", lambda w,v : v),
+        "project/runscriptafter":   ("c_processScriptAfter", lambda w,v : v),
+        "project/selectscript":     ("btn_selectScript", lambda w,v: re.sub(r"\\","/", w.CustomScript   ) if w.CustomScript is not None else ""),
         "project/usechangesfile":   ("c_usePrintDraftChanges", lambda w,v :"true" if v else "false"),
         "project/ifusemodstex":     ("c_useModsTex", lambda w,v: "" if v else "%"),
         "project/ifusecustomsty":   ("c_useCustomSty", lambda w,v: "" if v else "%"),
@@ -481,14 +481,19 @@ class Info:
         return "".join(res).replace("\OmitChapterNumberfalse\n\OmitChapterNumbertrue\n","")
 
     def runConversion(self, infname, after=False):
+        print("Infilename:", infname)
         outfname = infname
         if self.dict['project/processscript'] and self.dict['project/runscriptafter'] == after \
                 and self.dict['project/selectscript']:
             doti = outfname.rfind(".")
             if doti > 0:
                 outfname = outfname[:doti] + "-converted" + outfname[doti:]
+            print("Outfname:", outfname)  # This needs to be put in the working folder, surely!
             cmd = [self.dict["project/selectscript"], infname, outfname]
+            # cmd = '"{}" "{}" "{}"'.format(self.dict["project/selectscript"], infname, outfname)
+            print("Conversion Script:", cmd)
             call(cmd, shell=True)
+            # call2(cmd, shell=True)
         return outfname
 
     def convertBook(self, bk, outdir, prjdir):

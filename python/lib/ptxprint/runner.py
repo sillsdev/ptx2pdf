@@ -153,15 +153,17 @@ elif sys.platform == "win32":
             res = subprocess.call(*newa, creationflags=CREATE_NO_WINDOW, **kw)
             return res
 
-# print("before ptob")
+    def call2(*a, **kw):
+        print(*a)
+        res = subprocess.call(*a, creationflags=CREATE_NO_WINDOW, **kw)
+        print(res)
+        return res
+
 ptob = openkey("Paratext/8")
 pt_settings = "."
-# print("ptob {} before ptv".format(ptob))
 try:
     ptv = queryvalue(ptob, "ParatextVersion")
-    # print("after ptv")
 except FileNotFoundError:
-    # print("Within Except") 
     for v in ('9', '8'):
         path = "C:\\My Paratext {} Projects".format(v)
         if os.path.exists(path):
@@ -173,5 +175,3 @@ else:
         version = ptv[:ptv.find(".")]
         pt_bindir = queryvalue(ptob, 'Program_Files_Directory_Ptw'+version)
     pt_settings = queryvalue(ptob, 'Settings_Directory')
-# if ptv:
-    # print("Paratext Projects Folder: ",pt_settings,"\nParatext Program Folder:  ",pt_bindir)
