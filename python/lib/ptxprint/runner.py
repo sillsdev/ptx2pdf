@@ -57,6 +57,8 @@ if sys.platform == "linux":
         return subprocess.check_output(" ".join(a), shell=1).decode("utf-8", errors="ignore")
 
     def checkoutput(*a, **kw):
+        if 'path' in kw:
+            del kw['path']
         res = subprocess.check_output(*a, **kw).decode("utf-8", errors="ignore")
         return res
 
@@ -124,10 +126,14 @@ elif sys.platform == "win32":
     def checkoutput(*a, **kw):
         if 'shell' in kw:
             del kw['shell']
-        path = os.path.join(pt_bindir, "xetex", "bin", a[0][0]+".exe").replace("\\", "/")
-        newa = [[path] + list(a[0])[1:]] + [x.replace('"', '') for x in a[1:]]
-        # print(newa)
-        res = subprocess.check_output(*newa, creationflags=CREATE_NO_WINDOW, **kw).decode("utf-8", errors="ignore")
+        if 'path' in kw:
+            if kw['path'] == 'xetex':
+                path = os.path.join(pt_bindir, "xetex", "bin", a[0][0]+".exe").replace("\\", "/")
+            del kw['path']
+        else:
+            path = a[0][0].replace("\\", "/")
+        a = [[path] + list(a[0])[1:]] + [x.replace('"', '') for x in a[1:]]
+        res = subprocess.check_output(*a, creationflags=CREATE_NO_WINDOW, **kw).decode("utf-8", errors="ignore")
         return res
 
     def call(*a, **kw):
