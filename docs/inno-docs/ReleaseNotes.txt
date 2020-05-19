@@ -1,5 +1,17 @@
-PTXprint 0.6.4 Beta Release Notes
-18th May 2020
+PTXprint 0.6.5 Beta Release Notes
+19th May 2020
+
+Bug fixes and improvements in: 0.6.5
+
+  * Added option on Body tab to Filter Glossary entries (to only show entries marked up in the text)
+  
+  * Fixed bug in Fancy Intro Outline code, and stopped this from running on non-scripture books
+  
+  * Slight improvement in Diagnostic Error messages
+  
+  * Fixed missing '.' in keep Books together with ch[:.]vs refs
+  
+  * It now offers to delete ALL TEMPORARY files in PrintDraft folder when unchecking 'Preserve Intermediate Files'.
 
 Bug fixes and improvements in: 0.6.4
 
