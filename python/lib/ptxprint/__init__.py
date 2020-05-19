@@ -1073,7 +1073,48 @@ class PtxPrinterDialog:
         self.builder.get_object("tb_FancyBorders").set_visible(status)
 
     def onKeepTemporaryFilesClicked(self, c_keepTemporaryFiles):
+        dir = self.working_dir
         self.builder.get_object("gr_debugTools").set_sensitive(self.get("c_keepTemporaryFiles"))
+        if self.builder.get_object("nbk_Main").get_current_page() == 7:
+            if not self.get("c_keepTemporaryFiles"):
+                title = "Remove Intermediate Files and Logs?"
+                question = "Are you sure you want to delete\nALL the temporary PTXprint files?"
+                if self.msgQuestion(title, question):
+                    patterns = []
+                    for extn in ('delayed','parlocs','notepages', 'log'):
+                        patterns.append(r".+\.{}".format(extn))
+                    patterns.append(r".+\-draft\....".format(extn))
+                    patterns.append(r".+\-conv\....".format(extn))
+                    patterns.append(r".+\-draft-conv\....".format(extn))
+                    patterns.append(r".+\-conv-draft\....".format(extn))
+                    patterns.append(r".+\.toc".format(extn))
+                    patterns.append(r"NestedStyles\.sty".format(extn))
+                    patterns.append(r"ptxprint\-.+\.tex".format(extn))
+                    # print(patterns)
+                    for pattern in patterns:
+                        for f in os.listdir(dir):
+                            if re.search(pattern, f):
+                                try:
+                                    # print("Deleting:", os.path.join(dir, f))
+                                    os.remove(os.path.join(dir, f))
+                                except OSError:
+                                    dialog = Gtk.MessageDialog(parent=None, modal=True, message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
+                                        text="Warning: Could not delete temporary file.")
+                                    dialog.format_secondary_text("File: " + delfname)
+                                    dialog.set_keep_above(True)
+                                    dialog.run()
+                                    dialog.set_keep_above(False)
+                                    dialog.destroy()
+                    for p in ["tmpPics", "tmpPicLists", "PicLists", "AdjLists"]:
+                        path2del = os.path.join(dir, p)
+                        # print("Looking for folder:", path2del)
+                        # Make sure we're not deleting something closer to Root!
+                        if len(path2del) > 30 and os.path.exists(path2del):
+                            try:
+                                # print("Deleting folder:", path2del)
+                                rmtree(path2del)
+                            except OSError:
+                                print("Error Deleting temporary folder: {}".format(path2del))
 
     def onFontRclicked(self, btn):
         self.getFontNameFace("bl_fontR")

@@ -14,10 +14,13 @@ _errmsghelp = {
 "! Undefined control sequence.":         "This is related to a USFM marker error (such as an unsupported marker)\nTry 'Run Basic Checks' in Paratext\n",
 "! File ended while scanning use of":    "Try turning off PrintDraftChanges.txt and both Stylesheets on Advanced tab\n",
 "! Paratext stylesheet":                 "Try turning off the PrintDraft-mods stylesheet\n",
+"! Emergency stop.":                     "Probably a TeX macro problem - contact support, or post a bug report\n",
 "! Not a letter.":                       "Possible fault in the hyphenation file\nTry turning off Hyphenate option located on the Body tab\n",
 "! Font":                                "Font related issue - details unknown\n(Report this rare error please)\n",
 "! Too many }'s":                        "Serious TeX macro issue - contact support, or post a bug report\n",
 "! This can't happen (page)":            "Serious TeX macro issue - contact support, or post a bug report\n",
+"! I can't find file `paratext2.tex'.":  "Possibly a faulty installation.\n",
+"! I can't find file `ptx-tracing.tex'.":"Possibly a faulty installation.\n",
 "Runaway argument?":                     "Unknown issue. Maybe related to Right-aligned tabbed leaders\nTry turning off PrintDraftChanges.txt and both Stylesheets\n",
 "Unknown":                               "Sorry! No diagnostic help is available for this error.\nTry turning off all Advanced settings & disable Changes and Stylesheets\n",
 }
@@ -407,7 +410,7 @@ def carefulCopy(printer, srcpath, tgtfile):
         pass
 
 def removeTempFiles(texfiles,tmpdir,info):
-    for extn in ('delayed','parlocs','notepages', 'tex','log'):
+    for extn in ('delayed','parlocs','notepages', 'tex', 'log'):
         for t in texfiles:
             delfname = os.path.join(tmpdir, t.replace(".tex", "."+extn))
             try:
@@ -421,6 +424,7 @@ def removeTempFiles(texfiles,tmpdir,info):
                 dialog.set_keep_above(False)
                 dialog.destroy()
     for delfname in info['project/books']:
+        print("Deleting books:", delfname)
         try:
             os.remove(os.path.join(tmpdir, delfname))
         except OSError:
