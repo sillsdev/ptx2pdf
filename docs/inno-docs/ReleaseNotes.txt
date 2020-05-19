@@ -1,5 +1,9 @@
-PTXprint 0.6.5 Beta Release Notes
+PTXprint 0.6.6 Beta Release Notes
 19th May 2020
+
+Bug fixes and improvements in: 0.6.6
+
+  * Allow larger hrd and ftr position values
 
 Bug fixes and improvements in: 0.6.5
 

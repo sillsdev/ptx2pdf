@@ -1393,7 +1393,7 @@ class PtxPrinterDialog:
                 bks = bks[0]
             except IndexError:
                 bks = "No book selected!"
-        titleStr = "PTXprint [0.6.5 Beta]" + prjid + " (" + bks + ") " + (self.get("cb_savedConfig") or "")
+        titleStr = "PTXprint [0.6.6 Beta]" + prjid + " (" + bks + ") " + (self.get("cb_savedConfig") or "")
         self.builder.get_object("ptxprint").set_title(titleStr)
 
     def editFile(self, file2edit, loc="wrk"):
@@ -2000,4 +2000,3 @@ class PtxPrinterDialog:
 
     def onEnableDecorativeElementsClicked(self, c_enableDecorativeElements):
         self.builder.get_object("gr_borders").set_sensitive(self.get("c_enableDecorativeElements"))
-        

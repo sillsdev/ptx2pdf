@@ -995,7 +995,6 @@ class Info:
                 if ge is not None:
                     for g in ge:
                         gdefn = regex.sub(r"\\xt (.+)\\xt\*", r"\1", g[1])
-                        # print(r"(\\w (.+\|)?{} ?\\w\*)".format(f[0]), " --> ", r"\1\f + \fq {} \ft {}...\f* ".format(g[0],g[1][:20]))
                         self.localChanges.append((None, regex.compile(r"(\\w (.+\|)?{} ?\\w\*)".format(g[0]), flags=regex.M), \
                                                                      r"\1\\f + \\fq {}: \\ft {}\\f* ".format(g[0],gdefn)))
 
@@ -1004,8 +1003,7 @@ class Info:
         glossentries = []
         prjid = self.dict['project/id']
         prjdir = os.path.join(printer.settings_dir, prjid)
-        bks = printer.getBooks()
-        for bk in bks:
+        for bk in printer.getBooks():
             if bk not in Info._peripheralBooks:
                 fname = printer.getBookFilename(bk, prjid)
                 fpath = os.path.join(prjdir, fname)
