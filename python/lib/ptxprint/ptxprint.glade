@@ -3705,7 +3705,6 @@ start on the same page.
                                       <object class="GtkCheckButton" id="c_filterGlossary">
                                         <property name="label" translatable="yes">Filter Glossary to only include entries used in the text</property>
                                         <property name="visible">True</property>
-                                        <property name="sensitive">False</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">This option is only available if the GLO book is
@@ -3739,7 +3738,7 @@ in the scripture books used will appear.</property>
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Introductory Material</property>
+                            <property name="label" translatable="yes">Begining and Ending Material</property>
                           </object>
                         </child>
                       </object>
@@ -5477,6 +5476,7 @@ need to be checked for understanding).</property>
                                         <property name="label" translatable="yes">Only show the
 first occurence</property>
                                         <property name="visible">True</property>
+                                        <property name="sensitive">False</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">If glossary terms have been marked up multiple
