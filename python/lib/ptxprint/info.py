@@ -690,6 +690,9 @@ class Info:
         if printer.get("c_keepBookWithRefs"): # keep Booknames and ch:vs nums together within \xt and \xo 
             self.localChanges.append((regex.compile(r"(\\[xf]t [^\\]+)"), regex.compile(r"(?<!\\[fx][rto]) (\d+[:.]\d+([-,]\d+)?)"), r"\u00A0\1"))
 
+        # keep \xo & \fr refs with whatever follows (i.e the bookname or footnote) so it doesn't break at end of line
+        self.localChanges.append((None, regex.compile(r"(\\(xo|fr) (\d+[:.]\d+([-,]\d+)?)) "), r"\1\u00A0"))
+
         # Paratext marks no-break space as a tilde ~
         self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
 
