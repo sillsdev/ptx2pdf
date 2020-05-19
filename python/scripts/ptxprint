@@ -14,6 +14,7 @@ _errmsghelp = {
 "! Undefined control sequence.":         "This is related to a USFM marker error (such as an unsupported marker)\nTry 'Run Basic Checks' in Paratext\n",
 "! File ended while scanning use of":    "Try turning off PrintDraftChanges.txt and both Stylesheets on Advanced tab\n",
 "! Paratext stylesheet":                 "Try turning off the PrintDraft-mods stylesheet\n",
+"! File ended while scanning use of \iotableleader.": "Problem with Formatting Intro Outline\nTry disabling option 'Right-Align \ior with tabbed leaders' on the Body tab\n",
 "! Emergency stop.":                     "Probably a TeX macro problem - contact support, or post a bug report\n",
 "! Not a letter.":                       "Possible fault in the hyphenation file\nTry turning off Hyphenate option located on the Body tab\n",
 "! Font":                                "Font related issue - details unknown\n(Report this rare error please)\n",
@@ -234,16 +235,18 @@ def doit(printer, display=True):
                             break
             if not foundmsg:
                 finalLogLines.append(_errmsghelp["Unknown"])
-            books = re.findall(r"\d\d(...).+?-draft.SFM", "".join(finalLogLines))
+            books = re.findall(r"\d\d(...){}.+?\....".format(prjid), "".join(finalLogLines))
             if len(books):
-                book = " in {}".format(books[0])
+                book = " in {}".format(books[-1])
             else:
                 book = ""
             refs = re.findall(r"([1-9]\d{0,2}[.:][1-9]\d{0,2}[^0-9])", "".join(finalLogLines))
             if len(refs):
                 finalLogLines.append("\nReferences to check{}: {}".format(book, ", ".join(refs)))
 
-            mrkrs = re.findall(r"(\\[a-z0-9]{0,5}[ *\r\n.])", "".join(finalLogLines[-8:]))
+            texmrkrs = [r"\fi", "\if", "\\par", "\\relax"]
+            allmrkrs = re.findall(r"(\\[a-z0-9]{0,5})[ *\r\n.]", "".join(finalLogLines[-8:]))
+            mrkrs = [x for x in allmrkrs if x not in texmrkrs]
             if len(mrkrs):
                 finalLogLines.append("\nMarkers to check: {}".format(", ".join(mrkrs)))
 

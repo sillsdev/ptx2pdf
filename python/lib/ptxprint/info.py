@@ -703,7 +703,10 @@ class Info:
         # Apply any changes specified in snippets
         for w, c in self._snippets.items():
             if self.printer.get(c[0]): # if the c_checkbox is true then extend the list with those changes
-                self.localChanges.extend(c[1].regexes)
+                if w == "snippets/fancyintro" and bk in self._noPicListBooks:
+                    pass
+                else:
+                    self.localChanges.extend(c[1].regexes)
 
         if printer.get("c_tracing"):
             print("List of Local Changes:----------------------------------------------------------")

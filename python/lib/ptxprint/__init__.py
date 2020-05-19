@@ -1895,18 +1895,19 @@ class PtxPrinterDialog:
         prjdir = os.path.join(self.settings_dir, prjid)
         bks = self.getBooks()
         for bk in bks:
-            fname = self.getBookFilename(bk, prjid)
-            fpath = os.path.join(self.settings_dir, prjid, fname)
-            if os.path.exists(fpath):
-                with open(fpath, "r", encoding="utf-8") as inf:
-                    sfmtxt = inf.read()
-                # Put strict conditions on the format (including only valid \ior using 0-9, not \d digits from any script)
-                # This was probably too restrictive, but is a great RegEx: \\ior ([0-9]+(:[0-9]+)?[-\u2013][0-9]+(:[0-9]+)?) ?\\ior\*
-                if regex.search(r"\\iot .+\r?\n(\\io\d .+\\ior [0-9\-:.,\u2013\u2014 ]+\\ior\* ?\r?\n)+\\c 1", sfmtxt, flags=regex.MULTILINE) \
-                   and len(regex.findall(r"\\iot",sfmtxt)) == 1: # Must have exactly 1 \iot per book 
-                    pass
-                else:
-                    unfitBooks.append(bk)
+            if bk not in Info._noPicListBooks:
+                fname = self.getBookFilename(bk, prjid)
+                fpath = os.path.join(self.settings_dir, prjid, fname)
+                if os.path.exists(fpath):
+                    with open(fpath, "r", encoding="utf-8") as inf:
+                        sfmtxt = inf.read()
+                    # Put strict conditions on the format (including only valid \ior using 0-9, not \d digits from any script)
+                    # This was probably too restrictive, but is a great RegEx: \\ior ([0-9]+(:[0-9]+)?[-\u2013][0-9]+(:[0-9]+)?) ?\\ior\*
+                    if regex.search(r"\\iot .+\r?\n(\\io\d .+\\ior [0-9\-:.,\u2013\u2014 ]+\\ior\* ?\r?\n)+\\c 1", sfmtxt, flags=regex.MULTILINE) \
+                       and len(regex.findall(r"\\iot",sfmtxt)) == 1: # Must have exactly 1 \iot per book 
+                        pass
+                    else:
+                        unfitBooks.append(bk)
         return unfitBooks
 
     def onFindMissingCharsClicked(self, btn_findMissingChars):
