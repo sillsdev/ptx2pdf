@@ -91,13 +91,13 @@
 \def \SmallCaps      #1\relax{\defbinp@ram{smallcaps}{#1}}
 \let \Smallcaps\SmallCaps
 \def \BaseLine       #1\relax{\defp@ram{baseline}{#1}}
+\let \LineSpacing\BaseLine
 % Make a TeX macro based on the StyleType
 \def \StyleType      #1\relax{\lowercase{\def\styl@type{#1}}\m@kestyle}
 \let \Styletype=\StyleType
 % New extras that PTX supports
 \def \XMLTag         #1\relax{}
 \def \Encoding       #1\relax{}
-\def \LineSpacing    #1\relax{} % We want to do something with this
 \def \Rank           #1\relax{}
 \def \TEStyleName    #1\relax{}
 \def \NotRepeatble   #1\relax{}
