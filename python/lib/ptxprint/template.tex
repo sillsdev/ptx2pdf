@@ -4,8 +4,8 @@
 %%%%% Stylesheets %%%%%
 \stylesheet{{{/ptxpath}/usfm.sty}}
 {project/ifusecustomsty}\stylesheet{{{/ptxpath}/{project/id}/custom.sty}}
-{project/ifusemodssty}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.sty}} % User can override project stylesheet settings here
-{project/ifusenested}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/NestedStyles.sty}}     % PTXprint overrides all others (for versenums, ftnts, xref)
+\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/NestedStyles.sty}}     % PTXprint-generated stylesheet changes (for versenums, ftnts, xref, size + spacing)
+{project/ifusemodssty}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.sty}} % User can override all other stylesheet settings here
 
 %%%%% Page Setup %%%%%
 % Dimensions
@@ -108,8 +108,8 @@
 {notes/xrparagraphednotes}\ParagraphedNotes{{x}}
 %\NumericCallers{{x}}
 
-\AboveNoteSpace={document/abovenotespace}pt
-\InterNoteSpace={document/internotespace}pt
+\AboveNoteSpace={notes/abovenotespace}pt
+\InterNoteSpace={notes/internotespace}pt
 %\AboveNoteSpace=\medskipamount % but is a dimension not a skip
 %\InterNoteSpace=3.5pt
 

@@ -71,8 +71,8 @@ class Info:
         "project/ifusemodstex":     ("c_useModsTex", lambda w,v: "" if v else "%"),
         "project/ifusecustomsty":   ("c_useCustomSty", lambda w,v: "" if v else "%"),
         "project/ifusemodssty":     ("c_useModsSty", lambda w,v: "" if v else "%"),
-        "project/ifusenested":      (None, lambda w,v: "" if (w.get("c_omitallverses") or not w.get("c_includeFootnotes") \
-                                                       or not w.get("c_includeXrefs")) or w.get("c_prettyIntroOutline") else "%"),
+        # "project/ifusenested":      (None, lambda w,v: "" if (w.get("c_omitallverses") or not w.get("c_includeFootnotes") \
+                                                       # or not w.get("c_includeXrefs")) or w.get("c_prettyIntroOutline") else "%"),
         "project/ifstarthalfpage":  ("c_startOnHalfPage", lambda w,v :"true" if v else "false"),
         "project/randompicposn":    ("c_randomPicPosn", lambda w,v :"true" if v else "false"),
         "project/showlinenumbers":  ("c_showLineNumbers", lambda w,v :"true" if v else "false"),
@@ -189,8 +189,6 @@ class Info:
         "document/ifspacing":       ("c_spacing", lambda w,v :"" if v else "%"),
         "document/spacestretch":    ("s_maxSpace", lambda w,v : str((int(v) - 100) / 100.)),
         "document/spaceshrink":     ("s_minSpace", lambda w,v : str((100 - int(v)) / 100.)),
-        "document/abovenotespace":  ("s_abovenotespace", lambda w,v: "{:.3f}".format(float(v))),
-        "document/internotespace":  ("s_internote", lambda w,v: "{:.3f}".format(float(v))),
         "document/ifcolorfonts":    ("c_colorfonts", lambda w,v: "%" if v else ""),
 
         "document/ifchaplabels":    ("c_useChapterLabel", lambda w,v: "%" if v else ""),
@@ -229,7 +227,7 @@ class Info:
         "notes/fnresetcallers":     ("c_fnpageresetcallers", lambda w,v: "" if v else "%"),
         "notes/fnomitcaller":       ("c_fnomitcaller", lambda w,v: "%" if v else ""),
         "notes/fnparagraphednotes": ("c_fnparagraphednotes", lambda w,v: "" if v else "%"),
-        "notes/addColon":           ("c_addColon", lambda w,v :"true" if v else "false"),
+        "notes/addcolon":           ("c_addColon", lambda w,v: v),
         "notes/glossaryfootnotes":  ("c_glossaryFootnotes", lambda w,v :"true" if v else "false"),
 
         "notes/includexrefs":       ("c_includeXrefs", lambda w,v: "%" if v else ""),
@@ -238,6 +236,11 @@ class Info:
         "notes/xrresetcallers":     ("c_xrpageresetcallers", lambda w,v: "" if v else "%"),
         "notes/xromitcaller":       ("c_xromitcaller", lambda w,v: "%" if v else ""),
         "notes/xrparagraphednotes": ("c_paragraphedxrefs", lambda w,v: "" if v else "%"),
+
+        "notes/abovenotespace":     ("s_abovenotespace", lambda w,v: "{:.3f}".format(float(v))),
+        "notes/fnfontsize":         ("s_fnfontsize", lambda w,v: "{:.3f}".format(float(v))),
+        "notes/fnlinespacing":      ("s_fnlinespacing", lambda w,v: "{:.3f}".format(float(v))),
+        "notes/internotespace":     ("s_internote", lambda w,v: "{:.3f}".format(float(v))),
 
         "font/features":            ("t_fontfeatures", lambda w,v: v),
         "font/usegraphite":         ("c_useGraphite", lambda w,v: "true" if v else "false"),
@@ -909,9 +912,21 @@ class Info:
         nstylist = []
         if self.printer.get("c_omitallverses"):
             nstylist.append("##### Remove all verse numbers\n\\Marker v\n\\TextProperties nonpublishable\n\n")
-        if not self.printer.get("c_includeFootnotes"):
+
+        if self.printer.get("c_includeFootnotes"):
+            nstylist.append("##### Set Footnote Size and Line Spacing\n")
+            for m in ['fr', 'fq', 'fk', 'ft', 'f']:
+                nstylist.append("\\Marker {}\n\\FontSize {}\n".format(m, self.dict['notes/fnfontsize']))
+            nstylist.append("\\LineSpacing {}pt plus 2pt\n\n".format(self.dict['notes/fnlinespacing']))
+        else:
             nstylist.append("##### Remove all footnotes\n\\Marker f\n\\TextProperties nonpublishable\n\n")
-        if not self.printer.get("c_includeXrefs"):
+
+        if self.printer.get("c_includeXrefs"):
+            nstylist.append("##### Set Cross-reference Size and Line Spacing\n")
+            for m in ['xo', 'xq', 'xdc', 'xt', 'x']:
+                nstylist.append("\\Marker {}\n\\FontSize {}\n".format(m, self.dict['notes/fnfontsize']))
+            nstylist.append("\\LineSpacing {}pt plus 2pt\n\n".format(self.dict['notes/fnlinespacing']))
+        else:
             nstylist.append("##### Remove all cross-references\n\\Marker x\n\\TextProperties nonpublishable\n\n")
 
         for w, c in self._snippets.items():
