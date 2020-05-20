@@ -91,13 +91,13 @@
     <property name="page_increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_ftrposition">
-    <property name="upper">1</property>
-    <property name="value">0.80000000000000004</property>
-    <property name="step_increment">0.049999999776482583</property>
+    <property name="upper">2</property>
+    <property name="value">1</property>
+    <property name="step_increment">0.050000000000000003</property>
     <property name="page_increment">0.10000000000000001</property>
   </object>
   <object class="GtkAdjustment" id="a_hdrposition">
-    <property name="upper">1</property>
+    <property name="upper">2</property>
     <property name="value">1</property>
     <property name="step_increment">0.049999999776482583</property>
     <property name="page_increment">0.10000000000000001</property>
@@ -217,7 +217,7 @@
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 0.6.3 (Beta)</property>
+    <property name="version">Version 0.6.6 (Beta)</property>
     <property name="copyright" translatable="yes">© 2020, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -3669,6 +3669,21 @@ etc.
                                       </packing>
                                     </child>
                                     <child>
+                                      <object class="GtkCheckButton" id="c_ch1pagebreak">
+                                        <property name="label" translatable="yes">Always Start 1st Chapter on a New Page</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">Use this option to automatically make a page break after a book's introduction section. The break will come right before the \c 1 marker.</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
                                       <object class="GtkCheckButton" id="c_startOnHalfPage">
                                         <property name="label" translatable="yes">Begin next book on last page of previous book</property>
                                         <property name="visible">True</property>
@@ -3683,26 +3698,30 @@ start on the same page.
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_ch1pagebreak">
-                                        <property name="label" translatable="yes">Always Start 1st Chapter on a New Page</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Use this option to automatically make a page break after a book's introduction section. The break will come right before the \c 1 marker.</property>
-                                        <property name="halign">start</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
                                         <property name="top_attach">1</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <placeholder/>
+                                      <object class="GtkCheckButton" id="c_filterGlossary">
+                                        <property name="label" translatable="yes">Filter Glossary to only include entries used in the text</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">This option is only available if the GLO book is
+also selected.
+If you have a rather large Glossary but are only
+printing a small selection of books, you may
+benefit from this option which will strip out
+any entries from the Glossary which are not
+marked-up in the text of the selected book(s).
+i.e. only entries which have been \w marked-up\w*
+in the scripture books used will appear.</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">2</property>
+                                      </packing>
                                     </child>
                                   </object>
                                   <packing>
@@ -3719,7 +3738,7 @@ start on the same page.
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Introductory Material</property>
+                            <property name="label" translatable="yes">Begining and Ending Material</property>
                           </object>
                         </child>
                       </object>
@@ -5314,6 +5333,27 @@ elements visually distinct.</property>
                                             <property name="position">3</property>
                                           </packing>
                                         </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_keepBookWithRefs">
+                                            <property name="label" translatable="yes">Keep Book names &amp; 
+References together</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">Experimental Feature:
+This option inserts a No-Break Space (\u00A0)
+between the book name and the Ch:Vs refs
+so that they don't get split across lines.</property>
+                                            <property name="halign">start</property>
+                                            <property name="active">True</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">4</property>
+                                          </packing>
+                                        </child>
                                       </object>
                                     </child>
                                   </object>
@@ -5428,6 +5468,28 @@ need to be checked for understanding).</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">4</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_firstOccurenceOnly">
+                                        <property name="label" translatable="yes">Only show the
+first occurence</property>
+                                        <property name="visible">True</property>
+                                        <property name="sensitive">False</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">If glossary terms have been marked up multiple
+times, it may be frustrating to see the same
+glossary entry occuring in the footnote area time
+and time again. To prevent this, you can select to
+only show the Glossary entry as a footnote the first
+time that it occurs (in each book).
+  !dea only: NOT YET IMPLEMENTED</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">5</property>
                                         <property name="top_attach">0</property>
                                       </packing>
                                     </child>
@@ -6129,6 +6191,7 @@ custom script ...</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">False</property>
+                                                <property name="halign">start</property>
                                                 <property name="draw_indicator">True</property>
                                                 <property name="group">c_processScriptAfter</property>
                                               </object>
@@ -6144,6 +6207,7 @@ custom script ...</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">False</property>
+                                                <property name="halign">start</property>
                                                 <property name="active">True</property>
                                                 <property name="draw_indicator">True</property>
                                                 <property name="group">c_processScriptBefore</property>
@@ -6165,6 +6229,7 @@ custom script ...</property>
                                           <object class="GtkLabel" id="l_processScript">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
+                                            <property name="halign">start</property>
                                             <property name="label" translatable="yes">... PrintDraftChanges 
 are processed</property>
                                           </object>
@@ -6405,7 +6470,6 @@ Fonts</property>
                                         <property name="tooltip_text" translatable="yes">Do we support or ignore \Color specifications in stylesheets?</property>
                                         <property name="halign">end</property>
                                         <property name="margin_left">4</property>
-                                        <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -7071,7 +7135,7 @@ and so on...</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">2</property>
+                                    <property name="top_attach">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -7082,25 +7146,6 @@ and so on...</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">If you don't know what this means, or want to get rid of black boxes in the PDF then uncheck it. Enable this option to have TeX make overfull lines stand out.</property>
                                     <property name="halign">start</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_keepBookWithRefs">
-                                    <property name="label" translatable="yes">Keep Book names and References together</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Experimental Feature:
-This option inserts a No-Break Space (\u00A0)
-between the book name and the Ch:Vs refs
-so that they don't get split across lines.</property>
-                                    <property name="halign">start</property>
-                                    <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -7122,7 +7167,7 @@ should be trimmed to after printing.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">3</property>
+                                    <property name="top_attach">2</property>
                                   </packing>
                                 </child>
                               </object>
@@ -7422,18 +7467,17 @@ system then click here.</property>
                             <property name="receives_default">False</property>
                             <property name="tooltip_text" translatable="yes">AN AID FOR TRACKING PROBLEMS
 
-If the output is not as you expect, it
-is possible to discover what might
-have gone wrong by examining the
-intermediate files and logs. If this
-option is checked, then the folder
-which contains the resulting PDf will
-also contain several other related files.</property>
+If the output is not as you expect, it is possible to discover
+what might have gone wrong by examining the intermediate
+files and logs. If this option is checked, then the folder which
+contains the resulting PDf will also contain several other related
+files.
+Turning this option OFF will prompt you to delete ALL previous
+log and intermediate temporary file for the entire project.</property>
                             <property name="halign">start</property>
                             <property name="active">True</property>
                             <property name="draw_indicator">True</property>
                             <signal name="clicked" handler="onKeepTemporaryFilesClicked" swapped="no"/>
-                            <signal name="toggled" handler="onKeepTemporaryFilesClicked" swapped="no"/>
                           </object>
                         </child>
                       </object>
@@ -8891,7 +8935,7 @@ Consider uninstalling those that are never used.</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
-                <property name="label" translatable="yes">PTXprint (0.6.3 Beta)</property>
+                <property name="label" translatable="yes">PTXprint</property>
                 <attributes>
                   <attribute name="weight" value="ultrabold"/>
                 </attributes>

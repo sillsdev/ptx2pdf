@@ -954,7 +954,7 @@ class PtxPrinterDialog:
 
     def onProcessScriptClicked(self, c_processScript):
         status = self.get("c_processScript")
-        for c in ("c_processScriptBefore", "c_processScriptAfter", "btn_selectScript"):
+        for c in ("c_processScriptBefore", "c_processScriptAfter", "btn_selectScript", "l_processScript"):
             self.builder.get_object(c).set_sensitive(status)
             
     def onUsePrintDraftChangesClicked(self, c_usePrintDraftChanges):
@@ -1073,7 +1073,48 @@ class PtxPrinterDialog:
         self.builder.get_object("tb_FancyBorders").set_visible(status)
 
     def onKeepTemporaryFilesClicked(self, c_keepTemporaryFiles):
+        dir = self.working_dir
         self.builder.get_object("gr_debugTools").set_sensitive(self.get("c_keepTemporaryFiles"))
+        if self.builder.get_object("nbk_Main").get_current_page() == 7:
+            if not self.get("c_keepTemporaryFiles"):
+                title = "Remove Intermediate Files and Logs?"
+                question = "Are you sure you want to delete\nALL the temporary PTXprint files?"
+                if self.msgQuestion(title, question):
+                    patterns = []
+                    for extn in ('delayed','parlocs','notepages', 'log'):
+                        patterns.append(r".+\.{}".format(extn))
+                    patterns.append(r".+\-draft\....".format(extn))
+                    patterns.append(r".+\-conv\....".format(extn))
+                    patterns.append(r".+\-draft-conv\....".format(extn))
+                    patterns.append(r".+\-conv-draft\....".format(extn))
+                    patterns.append(r".+\.toc".format(extn))
+                    patterns.append(r"NestedStyles\.sty".format(extn))
+                    patterns.append(r"ptxprint\-.+\.tex".format(extn))
+                    # print(patterns)
+                    for pattern in patterns:
+                        for f in os.listdir(dir):
+                            if re.search(pattern, f):
+                                try:
+                                    # print("Deleting:", os.path.join(dir, f))
+                                    os.remove(os.path.join(dir, f))
+                                except OSError:
+                                    dialog = Gtk.MessageDialog(parent=None, modal=True, message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
+                                        text="Warning: Could not delete temporary file.")
+                                    dialog.format_secondary_text("File: " + delfname)
+                                    dialog.set_keep_above(True)
+                                    dialog.run()
+                                    dialog.set_keep_above(False)
+                                    dialog.destroy()
+                    for p in ["tmpPics", "tmpPicLists", "PicLists", "AdjLists"]:
+                        path2del = os.path.join(dir, p)
+                        # print("Looking for folder:", path2del)
+                        # Make sure we're not deleting something closer to Root!
+                        if len(path2del) > 30 and os.path.exists(path2del):
+                            try:
+                                # print("Deleting folder:", path2del)
+                                rmtree(path2del)
+                            except OSError:
+                                print("Error Deleting temporary folder: {}".format(path2del))
 
     def onFontRclicked(self, btn):
         self.getFontNameFace("bl_fontR")
@@ -1352,7 +1393,7 @@ class PtxPrinterDialog:
                 bks = bks[0]
             except IndexError:
                 bks = "No book selected!"
-        titleStr = "PTXprint [0.6.3 Beta]" + prjid + " (" + bks + ") " + (self.get("cb_savedConfig") or "")
+        titleStr = "PTXprint [0.6.6 Beta]" + prjid + " (" + bks + ") " + (self.get("cb_savedConfig") or "")
         self.builder.get_object("ptxprint").set_title(titleStr)
 
     def editFile(self, file2edit, loc="wrk"):
@@ -1409,6 +1450,8 @@ class PtxPrinterDialog:
         CustomScript = self.fileChooser("Select a Custom Script file", 
                 filters = {"Executable Scripts": {"patterns": ["*.bat", "*.exe", "*.py", "*.sh"] , "mime": "application/bat", "default": True},
                            "All Files": {"pattern": "*"}},
+                           # "TECkit Mappings": {"pattern": ["*.map", "*.tec"]},
+                           # "CC Tables": {"pattern": "*.cct"},
                 multiple = False, basedir=self.working_dir)
         if CustomScript is not None:
             self.CustomScript = CustomScript[0]
@@ -1852,18 +1895,19 @@ class PtxPrinterDialog:
         prjdir = os.path.join(self.settings_dir, prjid)
         bks = self.getBooks()
         for bk in bks:
-            fname = self.getBookFilename(bk, prjid)
-            fpath = os.path.join(self.settings_dir, prjid, fname)
-            if os.path.exists(fpath):
-                with open(fpath, "r", encoding="utf-8") as inf:
-                    sfmtxt = inf.read()
-                # Put strict conditions on the format (including only valid \ior using 0-9, not \d digits from any script)
-                # This was probably too restrictive, but is a great RegEx: \\ior ([0-9]+(:[0-9]+)?[-\u2013][0-9]+(:[0-9]+)?) ?\\ior\*
-                if regex.search(r"\\iot .+\r?\n(\\io\d .+\\ior [0-9\-:.,\u2013\u2014 ]+\\ior\* ?\r?\n)+\\c 1", sfmtxt, flags=regex.MULTILINE) \
-                   and len(regex.findall(r"\\iot",sfmtxt)) == 1: # Must have exactly 1 \iot per book 
-                    pass
-                else:
-                    unfitBooks.append(bk)
+            if bk not in Info._peripheralBooks:
+                fname = self.getBookFilename(bk, prjid)
+                fpath = os.path.join(self.settings_dir, prjid, fname)
+                if os.path.exists(fpath):
+                    with open(fpath, "r", encoding="utf-8") as inf:
+                        sfmtxt = inf.read()
+                    # Put strict conditions on the format (including only valid \ior using 0-9, not \d digits from any script)
+                    # This was probably too restrictive, but is a great RegEx: \\ior ([0-9]+(:[0-9]+)?[-\u2013][0-9]+(:[0-9]+)?) ?\\ior\*
+                    if regex.search(r"\\iot .+\r?\n(\\io\d .+\\ior [0-9\-:.,\u2013\u2014 ]+\\ior\* ?\r?\n)+\\c 1", sfmtxt, flags=regex.MULTILINE) \
+                       and len(regex.findall(r"\\iot",sfmtxt)) == 1: # Must have exactly 1 \iot per book 
+                        pass
+                    else:
+                        unfitBooks.append(bk)
         return unfitBooks
 
     def onFindMissingCharsClicked(self, btn_findMissingChars):
@@ -1956,4 +2000,3 @@ class PtxPrinterDialog:
 
     def onEnableDecorativeElementsClicked(self, c_enableDecorativeElements):
         self.builder.get_object("gr_borders").set_sensitive(self.get("c_enableDecorativeElements"))
-        

@@ -32,7 +32,7 @@ def universalopen(fname, rewrite=False):
 
 
 class Info:
-    _noPicListBooks = ["FRT", "INT", "GLO", "TDX", "NDX", "CNC", "OTH", "BAK", "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG"]
+    _peripheralBooks = ["FRT", "INT", "GLO", "TDX", "NDX", "CNC", "OTH", "BAK", "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG"]
     _mappings = {
         "config/name":              ("cb_savedConfig", lambda w,v: v or "default"),
         "config/notes":             ("t_configNotes", lambda w,v: v or ""),
@@ -175,6 +175,7 @@ class Info:
         "document/ifusepiclist":    ("c_usePicList", lambda w,v :"" if v else "%"),
         "document/spacecntxtlztn":  ("cb_spaceCntxtlztn", lambda w,v: "0" if v == "None" else "1" if v == "Some" else "2"),
         "document/glossarymarkupstyle":  ("cb_glossaryMarkupStyle", lambda w,v: w.builder.get_object("cb_glossaryMarkupStyle").get_active_id()),
+        "document/filterglossary":  ("c_filterGlossary", lambda w,v: v),
         "document/hangpoetry":      ("c_hangpoetry", lambda w,v: "" if v else "%"),
         "document/preventorphans":  ("c_preventorphans", lambda w,v: "true" if v else "false"),
         "document/preventwidows":   ("c_preventwidows", lambda w,v: "true" if v else "false"),
@@ -480,22 +481,21 @@ class Info:
                     res.append(l.format(**self.dict))
         return "".join(res).replace("\OmitChapterNumberfalse\n\OmitChapterNumbertrue\n","")
 
-    def runConversion(self, infname, after=False):
-        outfname = infname
-        if self.dict['project/processscript'] and self.dict['project/runscriptafter'] == after \
-                and self.dict['project/selectscript']:
-            doti = outfname.rfind(".")
+    def runConversion(self, infpath, outdir):
+        outfpath = infpath
+        if self.dict['project/processscript'] and self.dict['project/selectscript']:
+            outfpath = os.path.join(outdir, os.path.basename(infpath))
+            doti = outfpath.rfind(".")
             if doti > 0:
-                outfname = outfname[:doti] + "-converted" + outfname[doti:]
-            print("Outfname:", outfname)  # This needs to be put in the working folder, surely!
-            cmd = [self.dict["project/selectscript"], infname, outfname]
+                outfpath = outfpath[:doti] + "-conv" + outfpath[doti:]
+            print("outfpath:", outfpath)
+            cmd = [self.dict["project/selectscript"], infpath, outfpath]
             checkoutput(cmd, shell=True)
-        return outfname
+        return outfpath
 
     def convertBook(self, bk, outdir, prjdir):
         if self.changes is None:
             if self.dict['project/usechangesfile'] == "true":
-                # if self.changes is None: # Not sure why we aren't doing this every time.
                 self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'))
             else:
                 self.changes = []
@@ -509,17 +509,18 @@ class Info:
         fpost = self.printer.ptsettings['FileNamePostPart'] or ""
         bknamefmt = fprfx + fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + fpost
         fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
-        infname = os.path.join(prjdir, fname)
-        infname = self.runConversion(infname, after=False)
-        outfname = os.path.basename(infname)
-        if self.changes is not None or self.localChanges is not None:
-            outfname = fname
-            doti = outfname.rfind(".")
-            if doti > 0:
-                outfname = outfname[:doti] + "-draft" + outfname[doti:]
-            outfpath = os.path.join(outdir, outfname)
-            with universalopen(infname) as inf:
-                dat = inf.read()
+        infpath = os.path.join(prjdir, fname)
+        if not self.dict['project/runscriptafter']:
+            infpath = self.runConversion(infpath, outdir)
+        outfname = os.path.basename(infpath)
+        # outfname = fname
+        doti = outfname.rfind(".")
+        if doti > 0:
+            outfname = outfname[:doti] + "-draft" + outfname[doti:]
+        outfpath = os.path.join(outdir, outfname)
+        with universalopen(infpath) as inf:
+            dat = inf.read()
+            if self.changes is not None or self.localChanges is not None:
                 for c in (self.changes or []) + (self.localChanges or []):
                     if c[0] is None:
                         dat = c[1].sub(c[2], dat)
@@ -528,9 +529,12 @@ class Info:
                         for i in range(1, len(newdat), 2):
                             newdat[i] = c[1].sub(c[2], newdat[i])
                         dat = "".join(newdat)
-            with open(outfpath, "w", encoding="utf-8") as outf:
-                outf.write(dat)
-        return os.path.basename(self.runConversion(os.path.join(prjdir, outfname), after=True))
+        with open(outfpath, "w", encoding="utf-8") as outf:
+            outf.write(dat)
+        if self.dict['project/runscriptafter']:
+            return os.path.basename(self.runConversion(outfpath, outdir))
+        else:
+            return os.path.basename(outfpath)
 
     def readChanges(self, fname):
         changes = []
@@ -568,6 +572,8 @@ class Info:
 
     def makelocalChanges(self, printer, bk):
         self.localChanges = []
+        if bk == "GLO" and self.dict['document/filterglossary']:
+            self.filterGlossary(self.printer)
         first = int(printer.get("cb_chapfrom"))
         last = int(printer.get("cb_chapto"))
         
@@ -609,7 +615,7 @@ class Info:
         self.localChanges.append((None, regex.compile(r"\\w (.+?)(\|.+?)?\\w\*", flags=regex.M), gloStyle))
         
         # Remember to preserve \figs ... \figs for books that can't have PicLists (due to no ch:vs refs in them)
-        if printer.get("c_includeillustrations") and (printer.get("c_includefigsfromtext") or bk in self._noPicListBooks):
+        if printer.get("c_includeillustrations") and (printer.get("c_includefigsfromtext") or bk in self._peripheralBooks):
             # Remove any illustrations which don't have a |p| 'loc' field IF this setting is on
             if printer.get("c_figexclwebapp"):
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig ([^|]*\|){3}([aw]+)\|[^\\]*\\fig\*', flags=regex.M), ''))  # USFM2
@@ -670,19 +676,22 @@ class Info:
         if printer.get("c_preventwidows"):
             # Push the verse number onto the next line (using NBSP) if there is
             # a short widow word (3 characters or less) at the end of the line
-            self.localChanges.append((None, regex.compile(r"(\\v \d+([-,]\d+)? [\w]{1,3}) ", flags=regex.M), r"\1~")) 
+            self.localChanges.append((None, regex.compile(r"(\\v \d+([-,]\d+)? [\w]{1,3}) ", flags=regex.M), r"\1\u00A0")) 
 
         if printer.get("c_ch1pagebreak"):
             self.localChanges.append((None, regex.compile(r"(\\c 1 ?\r?\n)", flags=regex.M), r"\pagebreak\r\n\1"))
 
         if printer.get("c_glueredupwords"): # keep reduplicated words together
-            self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w\w\w+) \1(?=[\s,.!?])", flags=regex.M), r"\1~\1")) 
+            self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w\w\w+) \1(?=[\s,.!?])", flags=regex.M), r"\1\u00A0\1")) 
         
         if printer.get("c_addColon"): # Insert a colon between \fq (or \xq) and following \ft (or \xt)
             self.localChanges.append((None, regex.compile(r"(\\[fx]q .+?):* ?(\\[fx]t)", flags=regex.M), r"\1: \2")) 
         
         if printer.get("c_keepBookWithRefs"): # keep Booknames and ch:vs nums together within \xt and \xo 
-            self.localChanges.append((regex.compile(r"(\\[xf]t [^\\]+)"), regex.compile(r"(?<!\\[fx][rto]) (\d+:\d+([-,]\d+)?)"), r"~\1"))
+            self.localChanges.append((regex.compile(r"(\\[xf]t [^\\]+)"), regex.compile(r"(?<!\\[fx][rto]) (\d+[:.]\d+([-,]\d+)?)"), r"\u00A0\1"))
+
+        # keep \xo & \fr refs with whatever follows (i.e the bookname or footnote) so it doesn't break at end of line
+        self.localChanges.append((None, regex.compile(r"(\\(xo|fr) (\d+[:.]\d+([-,]\d+)?)) "), r"\1\u00A0"))
 
         # Paratext marks no-break space as a tilde ~
         self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
@@ -700,7 +709,10 @@ class Info:
         # Apply any changes specified in snippets
         for w, c in self._snippets.items():
             if self.printer.get(c[0]): # if the c_checkbox is true then extend the list with those changes
-                self.localChanges.extend(c[1].regexes)
+                if w == "snippets/fancyintro" and bk in self._peripheralBooks: # Only allow fancyIntros for scripture books
+                    pass
+                else:
+                    self.localChanges.extend(c[1].regexes)
 
         if printer.get("c_tracing"):
             print("List of Local Changes:----------------------------------------------------------")
@@ -718,9 +730,9 @@ class Info:
         prjdir = os.path.join(printer.settings_dir, prjid)
         picdir = os.path.join(self['document/directory'], 'tmpPics').replace("\\","/")
         fname = printer.getBookFilename(bk, prjdir)
-        infname = os.path.join(prjdir, fname)
+        infpath = os.path.join(prjdir, fname)
         extOrder = self.getExtOrder(printer)
-        with universalopen(infname) as inf:
+        with universalopen(infpath) as inf:
             dat = inf.read()
             inf.close()
             figlist += re.findall(r"(?i)\\fig .*?\|(.+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)    # Finds USFM2-styled markup in text:
@@ -983,6 +995,27 @@ class Info:
                 if ge is not None:
                     for g in ge:
                         gdefn = regex.sub(r"\\xt (.+)\\xt\*", r"\1", g[1])
-                        # print(r"(\\w (.+\|)?{} ?\\w\*)".format(f[0]), " --> ", r"\1\f + \fq {} \ft {}...\f* ".format(g[0],g[1][:20]))
                         self.localChanges.append((None, regex.compile(r"(\\w (.+\|)?{} ?\\w\*)".format(g[0]), flags=regex.M), \
                                                                      r"\1\\f + \\fq {}: \\ft {}\\f* ".format(g[0],gdefn)))
+
+    def filterGlossary(self, printer):
+        # Only keep entries that have appeared in this collection of books
+        glossentries = []
+        prjid = self.dict['project/id']
+        prjdir = os.path.join(printer.settings_dir, prjid)
+        for bk in printer.getBooks():
+            if bk not in Info._peripheralBooks:
+                fname = printer.getBookFilename(bk, prjid)
+                fpath = os.path.join(prjdir, fname)
+                if os.path.exists(fpath):
+                    with universalopen(fpath) as inf:
+                        sfmtxt = inf.read()
+                    glossentries += re.findall(r"\\w .*?\|?([^\|]+?)\\w\*", sfmtxt)
+        fname = printer.getBookFilename("GLO", prjdir)
+        infname = os.path.join(prjdir, fname)
+        if os.path.exists(infname):
+            with universalopen(infname, rewrite=True) as inf:
+                dat = inf.read()
+                ge = re.findall(r"\\p \\k (.+)\\k\* .+\r?\n", dat) # Finds all glossary entries in GLO book
+        for delGloEntry in [x for x in ge if x not in list(set(glossentries))]:
+            self.localChanges.append((None, regex.compile(r"\\p \\k {}\\k\* .+\r?\n".format(delGloEntry), flags=regex.M), ""))

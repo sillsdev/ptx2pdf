@@ -14,10 +14,14 @@ _errmsghelp = {
 "! Undefined control sequence.":         "This is related to a USFM marker error (such as an unsupported marker)\nTry 'Run Basic Checks' in Paratext\n",
 "! File ended while scanning use of":    "Try turning off PrintDraftChanges.txt and both Stylesheets on Advanced tab\n",
 "! Paratext stylesheet":                 "Try turning off the PrintDraft-mods stylesheet\n",
+"! File ended while scanning use of \iotableleader.": "Problem with Formatting Intro Outline\nTry disabling option 'Right-Align \ior with tabbed leaders' on the Body tab\n",
+"! Emergency stop.":                     "Probably a TeX macro problem - contact support, or post a bug report\n",
 "! Not a letter.":                       "Possible fault in the hyphenation file\nTry turning off Hyphenate option located on the Body tab\n",
 "! Font":                                "Font related issue - details unknown\n(Report this rare error please)\n",
 "! Too many }'s":                        "Serious TeX macro issue - contact support, or post a bug report\n",
 "! This can't happen (page)":            "Serious TeX macro issue - contact support, or post a bug report\n",
+"! I can't find file `paratext2.tex'.":  "Possibly a faulty installation.\n",
+"! I can't find file `ptx-tracing.tex'.":"Possibly a faulty installation.\n",
 "Runaway argument?":                     "Unknown issue. Maybe related to Right-aligned tabbed leaders\nTry turning off PrintDraftChanges.txt and both Stylesheets\n",
 "Unknown":                               "Sorry! No diagnostic help is available for this error.\nTry turning off all Advanced settings & disable Changes and Stylesheets\n",
 }
@@ -231,16 +235,18 @@ def doit(printer, display=True):
                             break
             if not foundmsg:
                 finalLogLines.append(_errmsghelp["Unknown"])
-            books = re.findall(r"\d\d(...).+?-draft.SFM", "".join(finalLogLines))
+            books = re.findall(r"\d\d(...){}.+?\....".format(prjid), "".join(finalLogLines))
             if len(books):
-                book = " in {}".format(books[0])
+                book = " in {}".format(books[-1])
             else:
                 book = ""
             refs = re.findall(r"([1-9]\d{0,2}[.:][1-9]\d{0,2}[^0-9])", "".join(finalLogLines))
             if len(refs):
                 finalLogLines.append("\nReferences to check{}: {}".format(book, ", ".join(refs)))
 
-            mrkrs = re.findall(r"(\\[a-z0-9]{0,5}[ *\r\n.])", "".join(finalLogLines[-8:]))
+            texmrkrs = [r"\fi", "\if", "\\par", "\\relax"]
+            allmrkrs = re.findall(r"(\\[a-z0-9]{0,5})[ *\r\n.]", "".join(finalLogLines[-8:]))
+            mrkrs = [x for x in allmrkrs if x not in texmrkrs]
             if len(mrkrs):
                 finalLogLines.append("\nMarkers to check: {}".format(", ".join(mrkrs)))
 
@@ -250,7 +256,7 @@ def doit(printer, display=True):
             par = par = printer.builder.get_object('ptxprint')
             dialog = Gtk.MessageDialog(parent=par, modal=True, message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK, \
                 text="Failed to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname))
-            dialog.set_title ("PTXprint [0.6.3 Beta] - Error!")
+            dialog.set_title ("PTXprint [0.6.6 Beta] - Error!")
             dialog.format_secondary_text("".join(finalLogLines[-20:]))
             dialog.set_keep_above(True)
             dialog.run()
@@ -306,7 +312,7 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
 
     for bk in jobs:
         fname = printer.getBookFilename(bk, prjdir)
-        if printer.get("c_usePicList") and bk not in info._noPicListBooks: # Read the PicList to get a list of needed illustrations
+        if printer.get("c_usePicList") and bk not in info._peripheralBooks: # Read the PicList to get a list of needed illustrations
             doti = fname.rfind(".")
             if doti > 0:
                 plfname = fname[:doti] + "-draft" + fname[doti:] + ".piclist"
@@ -407,7 +413,7 @@ def carefulCopy(printer, srcpath, tgtfile):
         pass
 
 def removeTempFiles(texfiles,tmpdir,info):
-    for extn in ('delayed','parlocs','notepages', 'tex','log'):
+    for extn in ('delayed','parlocs','notepages', 'tex', 'log'):
         for t in texfiles:
             delfname = os.path.join(tmpdir, t.replace(".tex", "."+extn))
             try:
@@ -421,6 +427,7 @@ def removeTempFiles(texfiles,tmpdir,info):
                 dialog.set_keep_above(False)
                 dialog.destroy()
     for delfname in info['project/books']:
+        print("Deleting books:", delfname)
         try:
             os.remove(os.path.join(tmpdir, delfname))
         except OSError:
