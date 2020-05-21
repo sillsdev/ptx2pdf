@@ -47,7 +47,6 @@
     \count3=#1\divide\count3 by 65536 \multiply\count3 by 65536 % b << 16
     \advance\count1 by -\count3 \divide\count3 by 65536 % count1=g << 8, count3=b
     \advance\count3 by \count2 \advance\count3 by \count1%
-    \trace{F}{Converted decimal color: \the\count3 , from \the\count1 \space and \the\count2}%
     \hex{\count3}%
 }
 
