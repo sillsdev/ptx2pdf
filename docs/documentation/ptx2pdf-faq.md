@@ -16,7 +16,7 @@ The ptx2pdf macros do not interpret the \ColorName at this time.
 
 Color text may be turned off globally by setting `\ColorFontsfalse`.
 
-### Why does TeX stop processing a .sty file half way through
+### Why does TeX stop processing a .sty file half way through?
 
 TeX will stop processing a stylesheet file if it finds an error in it. There are a number
 of ways a seemingly correct .sty file may stop processing:
@@ -30,7 +30,7 @@ To aid in debugging .sty file issues. If you insert `\tracing{s}` in your .tex f
 before it processes a .sty file, you will see analysis tracing in the .log file
 from which you may be able to work out where it went wrong.
 
-### How can I set a \FontSize relative to the size of the text around
+### How can I set a \FontSize relative to the size of the text around?
 
 This is often desirable for character styles that may turn up in footnotes or headings.
 The ptx2pdf macros will interpret a \FontSize of 2 or less as being a multiplier
@@ -47,7 +47,40 @@ character style:
 ```
 
 Notice that this is not compatible with ParaText and therefore should only be used in a
-custom stylesheet.
+custom stylesheet. 
+
+### What Style properties are there?
+
+This is a list of the various style properties and some notes on how they are used.
+Only those markers that do something and are not simply ignored, by the ptx macros are listed.
+Notice that markers are case dependent.
+
+ Marker       | Description
+------------- | -----------
+\\Color       | decimal B * 65536 + G * 256 + R, or xRRGGBB hex digits
+\\Endmarker   | ignored
+\\TextType    | "title", "section" or "other" paragraph grouping
+\\TextProperties | "nonpublishable" blocks text output
+\\FontSize    | actual font size is \\FontSize * \\FontSizeUnit
+\\FontName    | font name to pass to font specification
+\\FirstLineIndent | First line indent * \\IndentUnit
+\\LeftMargin  | Left margin * \\IndentUnit
+\\RightMargin | Right margin * \\IndentUnit
+\\Italic      | blank enables, "-" disables
+\\Bold        | blank enables, "-" disables
+\\Superscript | blank enables, "-" disables
+\\Regular     | Disables italic, bold, superscript
+\\SpaceBefore | Space before paragraph * \\VerticalSpaceFactor * \\LineSpacingFactor * \\FontSizeUnit
+\\SpaceAfter  | Space after paragraph * \\VerticalSpaceFactor * \\LineSpacingFactor * \\FontSizeUnit
+\\Justification | "center", "left", "right" anything else is fully justified
+\\CallerStyle | marker to style the body text caller
+\\CallerRaise | dimension to raise the body text caller
+\\NoteCallerStyle | marker to style the in note caller
+\\NoteCallerRaise | dimension to raise the in note caller
+\\SmallCap    | blank enables, "-" disables. Only works with fonts with a +smcp feature
+\\LineSpacing | also BaseLine. Dimension of line spacing, can include glue
+\\StyleType   | "paragraph", "character", "note"
+
 
 ## Layout
 
@@ -61,6 +94,8 @@ based on the knowledge it has, which is pretty limited and the constraints it is
 
 There are various controls a typesetter can use to adjust a page break.
 
+- Adjust the amount of stretch in interword spaces. This gives TeX much more scope
+  for changing the size of paragraphs, which feeds into the next control.
 - Use the .adj file to increase or sometimes decrease a paragraph by a line. Notice
   that you can ask for a line increase or decrease, but that doesn't mean that
   TeX will give it to you. It will if it can, but not if the resulting paragraph
@@ -111,3 +146,18 @@ pictures onto other pages. It is hard to know when to move a picture to another
 page. When does it make the page better? How far should a picture float away 
 from its anchor?
 
+### How can I format the page number?
+
+The page number is usually output as part of a header or footer. As such it can
+be formatted using style markers. For example:
+
+```
+\def\RHoddright{\pgnum \pagenumber\pgnum*}
+```
+where \\pgnum is defined as a character style:
+```
+\Marker pgnum
+\StyleType character
+\FontSize 9
+\Bold
+```

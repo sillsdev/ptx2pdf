@@ -1,5 +1,17 @@
-PTXprint 0.6.6 Beta Release Notes
-19th May 2020
+PTXprint 0.6.7 Beta Release Notes
+20th May 2020
+
+Bug fixes and improvements in: 0.6.7
+
+  * Significant improvements in footnote paragraph layout
+
+  * Can now also specify FontSize and LineSpacing for Notes (Footnotes and Cross-References)
+  
+  * Set all Fonts based on Paratext font settings when a project is first opened
+  
+  * Generated NestedStyles.sty now happens before PrintDraft-mods.sty to allow user overrides to happen
+  
+  * Fixed bug which was bolding (again) a Bold typeface in fake Bold-Italic
 
 Bug fixes and improvements in: 0.6.6
 

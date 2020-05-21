@@ -102,7 +102,8 @@
 % footnote macros based on plain.tex \footnote, \vfootnote
 \newbox\he@dingnotes
 \def\m@kenote#1#2#3{\let\@sf\empty % #1=class(e.g. f, x); 
-  % #2=caller + all the macros to setup the styling for the caller 
+  % #2=caller + all the macros to setup the styling for the caller
+  % #3=caller + styling in the footnote if there is a notecallerstyle
   % text is read later
   \ifhmode\edef\@sf{\spacefactor\the\spacefactor}\/\fi%
   % if footnote is on a chapter number ...
@@ -111,7 +112,7 @@
       \global\setbox\ch@pternote=\hbox{\box\ch@pternote #2}%
     \else #2\fi % output caller
   \fi%
-  % @sf preseirves the space factor (e.g. extra space after a period), restore it now
+  % @sf preserves the space factor (e.g. extra space after a period), restore it now
   \@sf \@wrap\vm@kenote{#1}{\getp@ram{notecallerstyle}{#1}\ifx\p@ram\relax #2\else #3\fi}}
 
 \def\vm@kenote#1#2{%
@@ -139,7 +140,7 @@
   % if note omitting caller from note (i.e. all callers are *'s)
   \testomitc@ller{#1}\ifomitc@ller\else
     % save copy of caller in temporary box, if non-empty add a little space
-    \setbox0=\hbox{#2}#2\ifdim\wd0>0pt\kern.2em\fi %
+    \setbox0=\hbox{#2}#2\ifdim\wd0>0pt\kern.2em\fi
   \fi
   % currently we do not allow footnotes to break to the next page, so this may not be necessary
 %  \splittopskip\ht\f@@tstrut % top baseline for broken footnotes
@@ -181,7 +182,7 @@
   \ifdiglot\ifdiglotL\def\f@ntstyle{#1}\else\def\f@ntstyle{#1R}\fi\else\def\f@ntstyle{#1}\fi%
   \getp@ram{baseline}{#1}\ifx\p@ram\relax
     \getp@ram{fontsize}{#1}\dimen0=\p@ram\le@dingunit
-    \multiply\dimen0 by 14 \divide\dimen0 by 12
+    \multiply\dimen0 by 18 \divide\dimen0 by 12 % default .75 shift of .85ex (ex=.5 fontsize) against 14/12
     \setp@ram{baseline}{\f@ntstyle}{\the\dimen0}\baselineskip=\dimen0\else
   \baselineskip=\p@ram\fi}
 
@@ -256,6 +257,8 @@
 % this is usually done for \x. It is sometimes done for \f.
 % (based on code from the TeXbook, appendix D)
 % #1 is vbox containing notes as individual paragraphs.
+\newif\ifNoteTracing \NoteTracingfalse
+\newskip\noteRag\noteRag=0pt plus 2em
 \def\maken@tepara#1#2{%
   \setn@tewidth
   \hsize=\n@tewidth%\advance\hsize by -\columnshift % width is full page size
@@ -266,24 +269,27 @@
   \setbox0=\hbox{\unhbox0 \removehboxes} % add internote space
   \getp@ram{baseline}{#2}\ifx\p@ram\relax\else\baselineskip=\p@ram\fi
 % Enable justification according to marker.
-  \lineskiplimit=0pt\leftskip=\columnshift\rightskip=0pt\parskip=0pt%\lineskip=10pt
+  \lineskiplimit=-10pt\leftskip=0pt\rightskip=0pt\parskip=0pt\parfillskip=0pt plus 1fil%\lineskip=10pt
   \getp@ram{justification}{#2}%
   \ifx\p@ram\c@nter
-     \leftskip=\columnshift plus 2em\rightskip=0pt plus 2em
+     \leftskip=\noteRag\rightskip=\noteRag
   \else\ifx\p@ram\l@ft
-     \rightskip=0pt plus 2em
+     \rightskip=\noteRag
   \else\ifx\p@ram\r@ght
-     \leftskip=\columnshift plus 2em\fi
-  \fi\fi
+     \leftskip=\noteRag
+  \fi\fi\fi
+  \advance\leftskip by \columnshift%
   %\showbox0
   \noindent % starting making new paragraph
   \ifRTL\beginR\fi % respect directionality
+  \ifNoteTracing\tracingparagraphs=1\fi
   \unhbox0 % unbox the text so it can be line-wrapped
   \unskip\unpenalty\unskip\unskip % remove internote skip info after last note
   % set penalty which allows breaking between notes unless this would cause
   % an extra line to be created.
   \linepenalty50
-  \par\leftskip=0pt} 
+  \trace{f}{Note #2 baselineskip=\the\baselineskip}
+  \par\leftskip=0pt\ifNoteTracing\tracingparagraphs=0\fi}
 %
 % make box0 = an hbox contining all the contents of this class
 \def\makehboxofhboxes{%
@@ -299,6 +305,7 @@
 % skip between notes in paragraph. skip is good place to break.
 \def\internotepenalty{-10}
 \def\internotespace{\hfil\hskip\intern@teskip\penalty\internotepenalty\hfilneg}
+\def\internotespace{\hskip\intern@teskip\kern 0pt\penalty\internotepenalty}
 %\def\internotespace{\hfil\hskip\intern@teskip\penalty-10\hfilneg}
 
 % don't allow stretching between notes.

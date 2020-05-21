@@ -722,6 +722,7 @@ class PtxPrinterDialog:
                 if len(styles) > 1:
                     bf = TTFont(f.family, style=styles[0])
                     if bf.filename is not None:
+                        self.set("s_{}embolden".format(esid), 0)
                         styles.pop(0)
                     else:
                         bf = f
@@ -1303,6 +1304,16 @@ class PtxPrinterDialog:
             for o in ["b_print", "bx_SavedConfigSettings", "tb_Layout", "tb_Body", "tb_HeadFoot", "tb_Pictures",
                       "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_DiglotTesting", "tb_FancyBorders"]:
                 self.builder.get_object(o).set_sensitive(True)
+            self.updateFonts()
+            
+    def updateFonts(self):
+        ptfont = self.ptsettings['DefaultFont']
+        for fb in ['bl_fontR', 'bl_verseNumFont']:  # 'bl_fontB', 'bl_fontI', 'bl_fontBI', 'bl_fontExtraR'
+            fblabel = self.builder.get_object(fb).get_label()
+            if fblabel == "Select font...":
+                w = self.builder.get_object(fb)
+                self.setFontButton(w, ptfont, "")
+                self.onFontChanged(w)
 
     def updateProjectSettings(self, saveCurrConfig=False):
         currprj = self.prjid
@@ -1357,6 +1368,8 @@ class PtxPrinterDialog:
             config.read(configfile, encoding="utf-8")
             self.info.loadConfig(self, config)
         else:
+            for fb in ['bl_fontR', 'bl_fontB', 'bl_fontI', 'bl_fontBI', 'bl_fontExtraR', 'bl_verseNumFont']:  # 
+                fblabel = self.builder.get_object(fb).set_label("Select font...")
             try:
                 self.info.update()
             except AttributeError:
@@ -1376,7 +1389,7 @@ class PtxPrinterDialog:
         self.builder.get_object("l_prjdir").set_label(os.path.join(self.settings_dir, self.prjid))
         self.builder.get_object("l_settings_dir").set_label(self.config_dir or "")
         self.builder.get_object("l_working_dir").set_label(self.working_dir)
-        self.set("c_prettyIntroOutline", False)  # This is OFF by default, they need to turn it on specifically
+        # self.set("c_prettyIntroOutline", False)  # This is OFF by default, they need to turn it on specifically
         self.setEntryBoxFont()
         self.onDiglotDimensionsChanged(None)
         self.updateDialogTitle()
@@ -1393,7 +1406,7 @@ class PtxPrinterDialog:
                 bks = bks[0]
             except IndexError:
                 bks = "No book selected!"
-        titleStr = "PTXprint [0.6.6 Beta]" + prjid + " (" + bks + ") " + (self.get("cb_savedConfig") or "")
+        titleStr = "PTXprint [0.6.7 Beta]" + prjid + " (" + bks + ") " + (self.get("cb_savedConfig") or "")
         self.builder.get_object("ptxprint").set_title(titleStr)
 
     def editFile(self, file2edit, loc="wrk"):
