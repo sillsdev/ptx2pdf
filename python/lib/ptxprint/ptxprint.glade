@@ -204,6 +204,13 @@
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">0.5</property>
   </object>
+  <object class="GtkAdjustment" id="a_startPageNum">
+    <property name="lower">1</property>
+    <property name="upper">9999</property>
+    <property name="value">1</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkAdjustment" id="a_topmarginfactor">
     <property name="upper">5</property>
     <property name="value">1.8</property>
@@ -239,7 +246,7 @@ XeTeX macros (PTX2PDF) with a long and reliable history.
 
 If you come across any bugs, 
 please file an issue in Github.</property>
-    <property name="website">http://tiny.cc/ptxprint</property>
+    <property name="website">https://software.sil.org/ptxprint/</property>
     <property name="website_label" translatable="yes">Download the latest version</property>
     <property name="authors">Mark Penny (Project Lead + UI Developer)
 Martin Hosken (Architect + TeX macros)
@@ -2840,11 +2847,9 @@ main body text begins.</property>
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="margin_left">6</property>
-                                <property name="margin_right">6</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="row_spacing">8</property>
-                                <property name="column_spacing">4</property>
+                                <property name="column_spacing">2</property>
                                 <child>
                                   <object class="GtkLabel" id="l_digits">
                                     <property name="visible">True</property>
@@ -2865,7 +2870,7 @@ are using supports these digits too.)</property>
                                 </child>
                                 <child>
                                   <object class="GtkComboBox" id="cb_digits">
-                                    <property name="width_request">160</property>
+                                    <property name="width_request">150</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">All known unicode-encoded number/digit systems
@@ -2883,24 +2888,6 @@ are using supports these digits too.)</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_omitChap1ChBooks">
-                                    <property name="label" translatable="yes">Hide Chapter Number in Single Chapter Books</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Select this option to supress the 1 at the begining
-of books that only have a single chapter (OBA, PHM,
-2JN, 3JN, JUD, etc.)</property>
-                                    <property name="halign">end</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
                                     <property name="top_attach">0</property>
                                     <property name="width">2</property>
                                   </packing>
@@ -2936,7 +2923,7 @@ this "Chapter Label" setting should be applied to.
 Note: If this list of books is left empty, then this
 setting will be applied to ALL books</property>
                                     <property name="halign">start</property>
-                                    <property name="width_chars">23</property>
+                                    <property name="width_chars">15</property>
                                     <property name="text" translatable="yes">PSA</property>
                                     <property name="caps_lock_warning">False</property>
                                   </object>
@@ -2947,7 +2934,7 @@ setting will be applied to ALL books</property>
                                 </child>
                                 <child>
                                   <object class="GtkEntry" id="t_clHeading">
-                                    <property name="width_request">210</property>
+                                    <property name="width_request">150</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">The chapter “label” to be used when rendering
@@ -2965,10 +2952,44 @@ numerals). For example, "Psalm"</property>
                                   <object class="GtkLabel" id="l_clHeading">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">Chapter Heading:</property>
+                                    <property name="label" translatable="yes">Chapter
+Heading:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_omitChap1ChBooks">
+                                    <property name="label" translatable="yes">Hide Chapter Number in Single Chapter Books</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Select this option to supress the 1 at the begining
+of books that only have a single chapter (OBA, PHM,
+2JN, 3JN, JUD, etc.)</property>
+                                    <property name="halign">end</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="top_attach">0</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_clSingleColLayout">
+                                    <property name="label" translatable="yes">Use Single Column
+Layout for these Books</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">4</property>
                                     <property name="top_attach">1</property>
                                   </packing>
                                 </child>
@@ -3729,6 +3750,7 @@ any entries from the Glossary which are not
 marked-up in the text of the selected book(s).
 i.e. only entries which have been \w marked-up\w*
 in the scripture books used will appear.</property>
+                                        <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -5861,6 +5883,7 @@ Footnotes and Cross-references.</property>
                     <property name="can_focus">False</property>
                     <property name="margin_left">6</property>
                     <property name="margin_right">6</property>
+                    <property name="resize_mode">immediate</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame">
@@ -6195,13 +6218,20 @@ TIF  (only use TIFs [converted internally to PDFs])</property>
                     </child>
                     <child>
                       <object class="GtkLabel" id="l_missingPictureString">
-                        <property name="sensitive">False</property>
+                        <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="margin_left">40</property>
-                        <property name="margin_top">7</property>
+                        <property name="valign">start</property>
+                        <property name="margin_left">12</property>
+                        <property name="margin_right">10</property>
+                        <property name="margin_top">6</property>
                         <property name="margin_bottom">6</property>
-                        <property name="label" translatable="yes">Missing Picture List</property>
+                        <property name="vexpand">False</property>
+                        <property name="label" translatable="yes">Missing Pictures: Not checked</property>
+                        <property name="wrap">True</property>
+                        <property name="selectable">True</property>
+                        <property name="max_width_chars">110</property>
+                        <property name="track_visited_links">False</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -6644,7 +6674,7 @@ Contextualization:</property>
                                       <object class="GtkComboBoxText" id="cb_spaceCntxtlztn">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">None (default): Most projects will use this setting.
+                                        <property name="tooltip_text" translatable="yes">None (default): Most projects would use this setting.
 
 Some: Spaces between words are adjusted, but the rendering of individual words is *NOT* affected by the spaces.
 
@@ -6766,20 +6796,21 @@ uses can be adjusted - allowing the text to shrink
 or grow. Lower values will enable a 'tighter' text
 and make it more flexible, but keep the readers in
 mind - and their need to distinguish word-breaks
-with ease.</property>
+with ease. This value is a % percentage of a normal
+space width.</property>
                                         <property name="opacity">0.80000000000000004</property>
                                         <property name="halign">start</property>
                                         <property name="margin_right">6</property>
                                         <property name="max_length">3</property>
                                         <property name="width_chars">3</property>
-                                        <property name="text" translatable="yes">66</property>
+                                        <property name="text" translatable="yes">50</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="input_purpose">number</property>
                                         <property name="adjustment">a_minSpace</property>
                                         <property name="climb_rate">5</property>
                                         <property name="numeric">True</property>
                                         <property name="update_policy">if-valid</property>
-                                        <property name="value">66</property>
+                                        <property name="value">50</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -6814,20 +6845,22 @@ or more lines, the horizontal distance that a space
 uses can be adjusted - allowing the text to shrink
 or grow. Larger values will enable a 'looser' text
 and make it more flexible to grow, but be careful
-to avoid 'rivers' or white space in paragraphs.</property>
+to avoid 'rivers' or white space in paragraphs.
+This value is a % percentage of a normal
+space width.</property>
                                         <property name="opacity">0.80000000000000004</property>
                                         <property name="halign">start</property>
                                         <property name="margin_right">6</property>
                                         <property name="max_length">4</property>
                                         <property name="width_chars">2</property>
-                                        <property name="text" translatable="yes">150</property>
+                                        <property name="text" translatable="yes">200</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="input_purpose">number</property>
                                         <property name="adjustment">a_maxSpace</property>
                                         <property name="climb_rate">5</property>
                                         <property name="numeric">True</property>
                                         <property name="update_policy">if-valid</property>
-                                        <property name="value">150</property>
+                                        <property name="value">200</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -7263,6 +7296,7 @@ and so on...</property>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">1</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -7278,6 +7312,7 @@ and so on...</property>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">0</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -7296,6 +7331,61 @@ should be trimmed to after printing.</property>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">2</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSpinButton" id="s_startPageNum">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="tooltip_text" translatable="yes">If the document you are creating needs
+to be appended to another, you can
+start the page numbering from where
+the first document ends.</property>
+                                    <property name="opacity">0.80000000000000004</property>
+                                    <property name="halign">start</property>
+                                    <property name="max_length">4</property>
+                                    <property name="width_chars">4</property>
+                                    <property name="text" translatable="yes">150</property>
+                                    <property name="caps_lock_warning">False</property>
+                                    <property name="input_purpose">number</property>
+                                    <property name="adjustment">a_startPageNum</property>
+                                    <property name="climb_rate">1</property>
+                                    <property name="numeric">True</property>
+                                    <property name="update_policy">if-valid</property>
+                                    <property name="value">1</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">3</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_startPageNum">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">If the document you are creating needs
+to be appended to another, you can
+start the page numbering from where
+the first document ends.</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Start Page Numbering from:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                               </object>
                             </child>
@@ -7807,6 +7897,8 @@ are likely to have to re-do it all again.</property>
                           <object class="GtkFrame">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="margin_left">6</property>
+                            <property name="margin_right">6</property>
                             <property name="margin_top">4</property>
                             <property name="margin_bottom">4</property>
                             <property name="label_xalign">0.0099999997764825821</property>
@@ -7819,7 +7911,7 @@ are likely to have to re-do it all again.</property>
                                 <property name="margin_right">6</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
-                                <property name="row_spacing">12</property>
+                                <property name="row_spacing">24</property>
                                 <property name="column_spacing">6</property>
                                 <child>
                                   <object class="GtkLabel">
@@ -7918,14 +8010,16 @@ are likely to have to re-do it all again.</property>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="halign">end</property>
-                                    <property name="hexpand">True</property>
-                                    <property name="label" translatable="yes">To use PTXprint effectively you need a good PDF viewer
+                                    <property name="tooltip_text" translatable="yes">To use PTXprint effectively you need a good PDF viewer
 which allows the PDF file to be refreshed (reloaded)
 without closing it each time the PDF is re-created.
+
 On Linux the built-in Evince PDF viewer works great.
+
 On Windows, the freely available SumatraPDF software
 is highly recommended and is a small download.</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Hints on Using an Effective PDF viewer:</property>
                                     <property name="justify">right</property>
                                   </object>
                                   <packing>
@@ -7955,20 +8049,20 @@ is highly recommended and is a small download.</property>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="halign">end</property>
-                                    <property name="hexpand">True</property>
-                                    <property name="label" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
+                                    <property name="tooltip_text" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by recently
 enhanced XeTeX macros with a long and reliable history.
-This is still a work in progress, so when you come across
+This is a work in progress, so when you come across
 bugs, annoyances or can't make it work right, please file
 an issue using this link here. The developers work on this
 in their spare time, so please be patient for a response.</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">How to report bugs, annoyances or other issues:</property>
                                     <property name="justify">right</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">6</property>
+                                    <property name="top_attach">7</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
@@ -7987,7 +8081,7 @@ in their spare time, so please be patient for a response.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
-                                    <property name="top_attach">6</property>
+                                    <property name="top_attach">7</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -8000,7 +8094,7 @@ in their spare time, so please be patient for a response.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">end</property>
                                     <property name="relief">none</property>
-                                    <property name="uri">http://tiny.cc/ptxprint</property>
+                                    <property name="uri">https://software.sil.org/ptxprint/</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
@@ -8011,13 +8105,13 @@ in their spare time, so please be patient for a response.</property>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">While PTXprint is still being developed,
-you can check for the latest version by
-visiting this link (tiny.cc/ptxprint).
-Note that you will have to install it yourself
-as there is no auto-update feature yet!</property>
+                                    <property name="tooltip_text" translatable="yes">PTXprint does not have an auto-updating
+feature, so you are encouraged to check
+for new updates at the Home Page.
+Please ensure you are using the latest
+version before reporting an issue.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Stay up-to-date with PTXprint Updates:</property>
+                                    <property name="label" translatable="yes">Home Page for Documentation, FAQs and Latest Updates:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -8035,6 +8129,41 @@ as there is no auto-update feature yet!</property>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">3</property>
                                     <property name="width">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">For technical FAQs relating to how the TeX macros
+work and how to customize the stylesheets even
+further, this FAQ document is worth visiting.</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">FAQs related to the PTX2PDF Macros:</property>
+                                    <property name="justify">right</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">6</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLinkButton">
+                                    <property name="label" translatable="yes">Right-Click for URL PTX2PDF Macros FAQ</property>
+                                    <property name="name">Report an Issue with PTXprint</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="focus_on_click">False</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">end</property>
+                                    <property name="relief">none</property>
+                                    <property name="uri">https://github.com/sillsdev/ptx2pdf/blob/master/docs/documentation/ptx2pdf-faq.md</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">6</property>
                                   </packing>
                                 </child>
                               </object>

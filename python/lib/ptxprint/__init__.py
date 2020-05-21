@@ -328,6 +328,7 @@ class PtxPrinterDialog:
         Gtk.main_quit()
 
     def onOK(self, btn):
+        Info._missingPicList = []
         jobs = self.getBooks()
         # Work out what the resulting PDFs are to be called
         if len(jobs) > 1:
@@ -354,16 +355,11 @@ class PtxPrinterDialog:
                         return
                 fileLocked = False
 
-        if self.prjid is not None:
-            self.callback(self)
+        self.callback(self)
+        if len(Info._missingPicList):
+            self.builder.get_object("l_missingPictureString").set_label("Missing Pictures:\n"+"{}".format("\n".join(Info._missingPicList)))
         else:
-            dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
-                     buttons=Gtk.ButtonsType.OK, message_format="Cannot create a PDF without a Project selected")
-            dialog.format_secondary_text("Please select a Paratext Project and try again.")
-            dialog.set_keep_above(True)
-            dialog.run()
-            dialog.set_keep_above(False)
-            dialog.destroy()
+            self.builder.get_object("l_missingPictureString").set_label("(No Missing Pictures)")
 
     def onCancel(self, btn):
         self.onDestroy(btn)
@@ -648,8 +644,8 @@ class PtxPrinterDialog:
                 self.builder.get_object("l_{}".format(pgnum)).set_text("Settings")
                 return
 
-        elif pgnum == 6: # Just show the About page with folders in use and other links.
-            self.builder.get_object("l_{}".format(pgnum)).set_text("About")
+        elif pgnum == 6: # Just show the Folders & Links page
+            self.builder.get_object("l_{}".format(pgnum)).set_text("Folders & Links")
             return
         else:
             return
@@ -822,7 +818,7 @@ class PtxPrinterDialog:
     
     def onUseChapterLabelclicked(self, c_useChapterLabel):
         status = self.get("c_useChapterLabel")
-        for c in ("t_clBookList", "l_clHeading", "t_clHeading"):
+        for c in ("t_clBookList", "l_clHeading", "t_clHeading", "c_clSingleColLayout"):
             self.builder.get_object(c).set_sensitive(status)
         
     def onClickedIncludeFootnotes(self, c_includeFootnotes):
@@ -853,6 +849,7 @@ class PtxPrinterDialog:
     def onDoubleColumnChanged(self, c_doublecolumn):
         status = self.get("c_doublecolumn")
         self.builder.get_object("gr_doubleColumn").set_sensitive(status)
+        self.builder.get_object("c_clSingleColLayout").set_sensitive(status)
 
     def onHdrVersesClicked(self, c_hdrverses):
         status = self.get("c_hdrverses")
