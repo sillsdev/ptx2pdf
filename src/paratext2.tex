@@ -236,7 +236,7 @@
   \setbox0=\hbox{\unhbox0 \removehboxes} % add internote space
   \getp@ram{baseline}{#2}\ifx\p@ram\relax\else\baselineskip=\p@ram\fi
 % Enable justification according to marker.
-  \lineskiplimit=-10pt\leftskip=0pt\rightskip=0pt\parskip=0pt%\lineskip=10pt
+  \lineskiplimit=-10pt\leftskip=0pt\rightskip=0pt\parskip=0pt\parfillskip=0pt plus 1fil%\lineskip=10pt
   \getp@ram{justification}{#2}%
   \ifx\p@ram\c@nter
      \leftskip=\noteRag\rightskip=\noteRag

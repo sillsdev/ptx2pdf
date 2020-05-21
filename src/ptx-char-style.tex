@@ -35,7 +35,7 @@
   \loop%
     \count2=\count3 \divide\count2 by 16 \multiply\count2 by 16
     \advance\count3 by -\count2
-    \ifnum\count3=0\edef\r@s{0\r@s}\else\ifnum\count3<10 \edef\r@s{\number\count0 \r@s}%
+    \ifnum\count3=0\edef\r@s{0\r@s}\else\ifnum\count3<10 \edef\r@s{\number\count3 \r@s}%
     \else\advance\count3 by -10 \edef\r@s{\ifcase\count3 A\or B\or C\or D\or E\or F\fi\r@s}\fi\fi%
     \divide\count2 by 16 \count3=\count2 \advance\count1 by 1
     \ifnum\count1<6\repeat%
@@ -43,10 +43,11 @@
 }
 
 \def\colorhex#1{\count1=#1\divide\count1 by 256\multiply\count1 by 256
-    \count2=#1\advance\count2 by -\count1 \multiply\count2 by 65536 % r
-    \count3=#1\divide\count3 by 65536 % b
-    \advance\count1 by -\count3 \multiply\count3 by 256 % g
+    \count2=#1\advance\count2 by -\count1 \multiply\count2 by 65536 % r << 16
+    \count3=#1\divide\count3 by 65536 \multiply\count3 by 65536 % b << 16
+    \advance\count1 by -\count3 \divide\count3 by 65536 % count1=g << 8, count3=b
     \advance\count3 by \count2 \advance\count3 by \count1%
+    \trace{F}{Converted decimal color: \the\count3 , from \the\count1 \space and \the\count2}%
     \hex{\count3}%
 }
 
