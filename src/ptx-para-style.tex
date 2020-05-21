@@ -73,6 +73,7 @@
   \makecutouts \endgraf
   \egroup \cutoutcarryover
 %{\showboxbreadth=200 \showbox\he@dingbox}
+  \s@tbaseline{p}%
   \gridb@x\he@dingbox\unvbox\he@dingnotes
   \global\he@dingsfalse
   \global\first@fterheadingtrue
@@ -175,6 +176,7 @@
   \ifhe@dingstyle\TRACE{headingstyle true}%
     \ifhe@dings\nsp@cebeforetrue\else
       \setbox\he@dingbox=\vbox\bgroup\global\he@dingstrue
+	\s@tbaseline{\m@rker}%Obey baseline changes for headings
         \linepenalty=1000 % minimize line count
         \interlinepenalty=10000 % never break column/page between lines
         \XeTeXdashbreakstate=0 % mainly for ranges in \r
