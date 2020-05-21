@@ -134,7 +134,7 @@ class Info:
         "document/author":          (None, lambda w,v: w.ptsettings.get('Copyright', "")),
         # "document/author":          (None, lambda w,v: re.sub('"?</?p>"?','',w.ptsettings.get('Copyright', "")).strip('"')),
 
-        "document/startpagenum":    ("s_startPageNum", lambda w,v: v or "1"),
+        "document/startpagenum":    ("s_startPageNum", lambda w,v: int(v) or "1"),
         "document/toc":             ("c_autoToC", lambda w,v: "" if v else "%"),
         "document/toctitle":        ("t_tocTitle", lambda w,v: v or ""),
         "document/usetoc1":         ("c_usetoc1", lambda w,v:"true" if v else "false"),
@@ -543,9 +543,17 @@ class Info:
         with open(outfpath, "w", encoding="utf-8") as outf:
             outf.write(dat)
         if self.dict['project/runscriptafter']:
-            return os.path.basename(self.runConversion(outfpath, outdir))
+            bn = os.path.basename(self.runConversion(outfpath, outdir))
         else:
-            return os.path.basename(outfpath)
+            bn = os.path.basename(outfpath)
+
+        if '-conv' in bn:
+            newname = re.sub("(\-draft\-conv|\-conv\-draft|\-conv)", "-draft", bn)
+            copyfile(os.path.join(outdir, bn), os.path.join(outdir, newname))
+            os.remove(os.path.join(outdir, bn))
+            return newname
+        else:
+            return bn
 
     def readChanges(self, fname):
         changes = []
