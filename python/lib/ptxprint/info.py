@@ -32,6 +32,7 @@ def universalopen(fname, rewrite=False):
 
 
 class Info:
+    _missingPicList = []
     _peripheralBooks = ["FRT", "INT", "GLO", "TDX", "NDX", "CNC", "OTH", "BAK", "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG"]
     _mappings = {
         "config/name":              ("cb_savedConfig", lambda w,v: v or "default"),
@@ -133,6 +134,7 @@ class Info:
         "document/author":          (None, lambda w,v: w.ptsettings.get('Copyright', "")),
         # "document/author":          (None, lambda w,v: re.sub('"?</?p>"?','',w.ptsettings.get('Copyright', "")).strip('"')),
 
+        "document/startpagenum":    ("s_startPageNum", lambda w,v: v or "1"),
         "document/toc":             ("c_autoToC", lambda w,v: "" if v else "%"),
         "document/toctitle":        ("t_tocTitle", lambda w,v: v or ""),
         "document/usetoc1":         ("c_usetoc1", lambda w,v:"true" if v else "false"),
@@ -194,6 +196,7 @@ class Info:
         "document/ifchaplabels":    ("c_useChapterLabel", lambda w,v: "%" if v else ""),
         "document/clabelbooks":     ("t_clBookList", lambda w,v: v.upper()),
         "document/clabel":          ("t_clHeading", lambda w,v: v),
+        "document/clsinglecol":     ("c_clSingleColLayout", lambda w,v: v),
 
         "document/ifdiglot":        ("c_diglot", lambda w,v :"" if v else "%"),
         "document/diglotsettings":  ("l_diglotString", lambda w,v: w.builder.get_object("l_diglotString").get_text() if w.get("c_diglot") else ""),
@@ -450,6 +453,12 @@ class Info:
                             res.append("\\OmitChapterNumbertrue\n")
                             res.append("\\ptxfile{{{}}}\n".format(fname))
                             res.append("\\OmitChapterNumberfalse\n")
+                        elif self.dict['paper/columns'] == '2' and \
+                             self.dict['document/clsinglecol'] and \
+                             f in self.dict['document/clabelbooks']:
+                            res.append("\\BodyColumns=1\n")
+                            res.append("\\ptxfile{{{}}}\n".format(fname))
+                            res.append("\\BodyColumns=2\n")
                         else:
                             res.append("\\ptxfile{{{}}}\n".format(fname))
                 elif l.startswith(r"%\extrafont"):
@@ -491,7 +500,6 @@ class Info:
             doti = outfpath.rfind(".")
             if doti > 0:
                 outfpath = outfpath[:doti] + "-conv" + outfpath[doti:]
-            print("outfpath:", outfpath)
             cmd = [self.dict["project/selectscript"], infpath, outfpath]
             checkoutput(cmd, shell=True)
         return outfpath
@@ -626,6 +634,7 @@ class Info:
 
             figChangeList = self.figNameChanges(printer, bk)
             if len(figChangeList):
+                missingPics = []
                 for origfn,tempfn in figChangeList:
                     origfn = re.escape(origfn)
                     if tempfn != "":
@@ -635,11 +644,13 @@ class Info:
                         self.localChanges.append((None, regex.compile(r'(?i)(\\fig .*?src="){}(" .+?\\fig\*)'.format(origfn), \
                                                      flags=regex.M), r"\1{}\2".format(tempfn)))                               #USFM3
                     else:
+                        missingPics.append(origfn[:-5])
                         if printer.get("c_skipmissingimages"):
                             # print("(?i)(\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), "--> Skipped!!!!")
                             self.localChanges.append((None, regex.compile(r"(?i)\\fig .*?\|{}\|.+?\\fig\*".format(origfn), flags=regex.M), ""))     #USFM2
                             self.localChanges.append((None, regex.compile(r'(?i)\\fig .*?src="{}" .+?\\fig\*'.format(origfn), flags=regex.M), "")) #USFM3
-
+                if len(missingPics):
+                    self._missingPicList += ["{}: {}".format(bk, ", ".join(missingPics))]
             if printer.get("c_fighiderefs"): # del ch:vs from caption 
                 self.localChanges.append((None, regex.compile(r"(\\fig [^\\]+?\|)([0-9:.\-,\u2013\u2014]+?)(\\fig\*)", \
                                           flags=regex.M), r"\1\3"))   # USFM2
