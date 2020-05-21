@@ -5,11 +5,13 @@ Bug fixes and improvements in: 0.6.8
 
   * Colors are now working the same in Paratext and in the PTXprint PDFs
   
-  * Missing Pictures are listed on Pictures tab after the PDF has been produced
+  * Picture captions are better "balanced" when they go onto 2 or more lines
+  
+  * Missing Pictures are listed on Pictures tab after the PDF has been produced (not yet consistently, though)
   
   * Start at Page number option added on Advanced tab
   
-  * Allow some books (eg. PSA and PRO) to switch to Single-Column mode in a primarily Double-Column document
+  * Allow books (eg. PSA and PRO) to switch to Single-Column mode in a primarily Double-Column document
   
   * Improved notes formatting
   
