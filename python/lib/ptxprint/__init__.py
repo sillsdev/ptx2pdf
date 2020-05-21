@@ -1082,9 +1082,9 @@ class PtxPrinterDialog:
                     for extn in ('delayed','parlocs','notepages', 'log'):
                         patterns.append(r".+\.{}".format(extn))
                     patterns.append(r".+\-draft\....".format(extn))
-                    patterns.append(r".+\-conv\....".format(extn))
-                    patterns.append(r".+\-draft-conv\....".format(extn))
-                    patterns.append(r".+\-conv-draft\....".format(extn))
+                    # patterns.append(r".+\-conv\....".format(extn))        # these are no longer kept
+                    # patterns.append(r".+\-draft-conv\....".format(extn))  # but are deleted shortly
+                    # patterns.append(r".+\-conv-draft\....".format(extn))  # after being created
                     patterns.append(r".+\.toc".format(extn))
                     patterns.append(r"NestedStyles\.sty".format(extn))
                     patterns.append(r"ptxprint\-.+\.tex".format(extn))
@@ -1403,7 +1403,7 @@ class PtxPrinterDialog:
                 bks = bks[0]
             except IndexError:
                 bks = "No book selected!"
-        titleStr = "PTXprint [0.6.7 Beta]" + prjid + " (" + bks + ") " + (self.get("cb_savedConfig") or "")
+        titleStr = "PTXprint [0.6.8 Beta]" + prjid + " (" + bks + ") " + (self.get("cb_savedConfig") or "")
         self.builder.get_object("ptxprint").set_title(titleStr)
 
     def editFile(self, file2edit, loc="wrk"):
@@ -1448,7 +1448,7 @@ class PtxPrinterDialog:
         self.editFile(modfname, "cfg")
 
     def onEditCustomSty(self, btn):
-        self.editFile("custom.sty", "wrk")
+        self.editFile("custom.sty", "prj")
 
     def onEditModsSty(self, btn):
         self.editFile("PrintDraft-mods.sty", "wrk")

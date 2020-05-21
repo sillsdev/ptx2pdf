@@ -1,5 +1,21 @@
-PTXprint 0.6.7 Beta Release Notes
-20th May 2020
+PTXprint 0.6.8 Beta Release Notes
+21st May 2020
+
+Bug fixes and improvements in: 0.6.8
+
+  * Colors are now working the same in Paratext and in the PTXprint PDFs
+  
+  * Missing Pictures are listed on Pictures tab after the PDF has been produced
+  
+  * Start at Page number option added on Advanced tab
+  
+  * Allow some books (eg. PSA and PRO) to switch to Single-Column mode in a primarily Double-Column document
+  
+  * Improved notes formatting
+  
+  * Apply baseline for headings
+  
+  * Fix regression of PicLists and AdjList not being applied if a pre/post Process has been applied
 
 Bug fixes and improvements in: 0.6.7
 
