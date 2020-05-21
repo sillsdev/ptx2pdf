@@ -50,7 +50,7 @@
 \FontSizeUnit=0.9pt
 
 % Scaling factor used to adjust line spacing, relative to font size
-\def\LineSpacingFactor{1.03}
+\def\LineSpacingFactor{0.90}
 \def\VerticalSpaceFactor{1.0}
 
 % Information to include in the running header (at top of pages, except first)
@@ -110,8 +110,10 @@
 \def\addmtlqutelw{0.2pt}
 
 %Only Left column gets NIV-style corner-brackets for added material
-\sethook{before}{add}{\lower 1pt \hbox{\vrule width \addmtlqutelw height \addmtlquteht\vrule width \addmtlqutewd height \addmtlqutelw}\kern -1pt\ignorespaces}
-\sethook{after}{add}{\kern -1pt \lower 1pt \hbox{\vrule width \addmtlqutewd height \addmtlqutelw\vrule width \addmtlqutelw height \addmtlquteht}}
+\sethook{before}{addL}{\lower 1pt \hbox{\vrule width \addmtlqutelw height \addmtlquteht\vrule width \addmtlqutewd height \addmtlqutelw}\kern -1pt\ignorespaces}
+\sethook{after}{addL}{\kern -1pt \lower 1pt \hbox{\vrule width \addmtlqutewd height \addmtlqutelw\vrule width \addmtlqutelw height \addmtlquteht}}
+\sethook{end}{xo}{\dimen0=\lastskip\unskip\penalty 10000\hskip \dimen0  minus 0.5\dimen0\penalty 10000}
+\sethook{start}{xt}{\hyphenpenalty=-10\linepenalty=900}
 
 %\sethook{before}{add}{\lower 1pt \hbox{\vrule width \addmtlqutelw height \addmtlquteht\vrule width \addmtlqutewd height \addmtlqutelw}\kern -1pt}
 %\sethook{after}{add}{\kern -1pt \lower 1pt \hbox{\vrule width \addmtlqutewd height \addmtlqutelw\vrule width \addmtlqutelw height \addmtlquteht}}
