@@ -546,11 +546,14 @@ class Info:
             bn = os.path.basename(self.runConversion(outfpath, outdir))
         else:
             bn = os.path.basename(outfpath)
+
         if '-conv' in bn:
             newname = re.sub("(\-draft\-conv|\-conv\-draft|\-conv)", "-draft", bn)
             copyfile(os.path.join(outdir, bn), os.path.join(outdir, newname))
             os.remove(os.path.join(outdir, bn))
-        return newname
+            return newname
+        else:
+            return bn
 
     def readChanges(self, fname):
         changes = []
