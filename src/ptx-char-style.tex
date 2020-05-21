@@ -196,13 +196,17 @@
     \fi%\fi%
   \else
     \dimen1=\p@ram \dimen0
-    \getp@ram{fontsize}{p}%
-    \ifx\p@ram\relax%
-      \multiply \dimen1 by 12 %standard default for missing font size is 12pt
+    \ifriskyscalefont% a font is only defined once....
+      \multiply\dimen1 by \c@rrfontsize
     \else%
-      \multiply\dimen1 by \p@ram
+      \getp@ram{fontsize}{p}%
+      \ifx\p@ram\relax%
+	\multiply \dimen1 by 12 %standard default for missing font size is 12pt
+      \else%
+	\multiply\dimen1 by \p@ram
+      \fi%
+      \trace{F}{FontScale specified. Calculated as \the\dimen1}%
     \fi%
-    \trace{F}{FontScale specified. Calculated as \the\dimen1}%
   \fi
   % create the font identifier for this style
   \trace{F}{font<#1>=\typef@ce\space at \the\dimen1}%
