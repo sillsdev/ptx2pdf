@@ -995,8 +995,7 @@ class PtxPrinterDialog:
                 self.builder.get_object(c).set_active(False)
 
             # Turn Essential Settings ON
-            for c in ("c_mainBodyText", "c_footnoterule",
-                      "c_includefigsfromtext", "c_skipmissingimages", "c_useLowResPics"):
+            for c in ("c_mainBodyText", "c_skipmissingimages", "c_includefigsfromtext"):
                 self.builder.get_object(c).set_active(True)
             self.builder.get_object("c_hideAdvancedSettings").set_opacity(0.2)
             self.builder.get_object("c_hideAdvancedSettings").set_tooltip_text("")
@@ -1012,18 +1011,18 @@ class PtxPrinterDialog:
 
         # (removed: "tb_Logging", "tb_DiglotTesting", "tb_Body", )
         # Hide a whole bunch of stuff that they don't need to see   
-        for c in ("tb_Advanced", "tb_ViewerEditor", 
-                  "btn_editPicList", "l_imageTypeOrder", "t_imageTypeOrder", "fr_chapVerse",
+        for c in ("tb_Advanced", "tb_ViewerEditor", "l_missingPictureString",
+                  "btn_editPicList", "l_imageTypeOrder", "t_imageTypeOrder", "fr_chapVerse", "s_colgutteroffset",
                   "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "bx_AdvFootnoteConfig", "l_colgutteroffset",
                   "c_usePicList", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", 
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
-                  "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection",
+                  "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection", "l_colgutteroffset",
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "row_ToC", "c_hyphenate",
                   "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", "c_preventwidows",
                   "l_sidemarginfactor", "s_sidemarginfactor", "l_min", "s_linespacingmin", "l_max", "s_linespacingmax",
                   "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "cb_textDirection", "l_digits", "cb_digits",
-                  "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "bx_ShowTabs"):
-                  # "btn_saveConfig", "btn_deleteConfig", "btn_lockunlock", "t_invisiblePassword", "t_configNotes", "l_notes"):
+                  "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "bx_ShowTabs", "cb_glossaryMarkupStyle",
+                  "gr_fnAdvOptions", "gr_fnSpacingOptions", "c_figexclwebapp", "bx_horizRule", "l_glossaryMarkupStyle"):
             self.builder.get_object(c).set_visible(not self.get("c_hideAdvancedSettings"))
 
         # Resize Main UI Window appropriately
