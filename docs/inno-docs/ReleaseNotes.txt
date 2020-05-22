@@ -1,4 +1,18 @@
-PTXprint 0.6.8 Beta Release Notes
+PTXprint 0.6.9 Beta Release Notes
+22nd May 2020
+
+Bug fixes and improvements in: 0.6.9
+
+  * Improved column balancing (allowing the final line to be filled at end of page)
+  
+  * More improvements to Notes paragraphing
+  
+  * Change attribute of \d into a Section style (rather than verse text) - for better drop-caps in Psalms
+  
+  * Fine-tune \q marker indents (still experimenting...)
+  
+  * Multiple XeTeX macro enhancements (\FontScale, footnote caller size, header baselines) and bugs fixed 
+  
 21st May 2020
 
 Bug fixes and improvements in: 0.6.8
