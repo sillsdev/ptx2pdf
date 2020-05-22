@@ -936,7 +936,8 @@ class Info:
             nstylist.append("##### Set Footnote Size and Line Spacing\n")
             for m in ['fr', 'fq', 'fk', 'ft', 'f']:
                 nstylist.append("\\Marker {}\n\\FontSize {}\n".format(m, self.dict['notes/fnfontsize']))
-            nstylist.append("\\LineSpacing {}pt plus 2pt\n\n".format(self.dict['notes/fnlinespacing']))
+            nstylist.append("\\LineSpacing {}pt plus 2pt\n".format(self.dict['notes/fnlinespacing']))
+            nstylist.append("\\Justification Left\n\n")
         else:
             nstylist.append("##### Remove all footnotes\n\\Marker f\n\\TextProperties nonpublishable\n\n")
 
@@ -944,13 +945,30 @@ class Info:
             nstylist.append("##### Set Cross-reference Size and Line Spacing\n")
             for m in ['xo', 'xq', 'xdc', 'xt', 'x']:
                 nstylist.append("\\Marker {}\n\\FontSize {}\n".format(m, self.dict['notes/fnfontsize']))
-            nstylist.append("\\LineSpacing {}pt plus 2pt\n\n".format(self.dict['notes/fnlinespacing']))
+            nstylist.append("\\LineSpacing {}pt plus 2pt\n".format(self.dict['notes/fnlinespacing']))
+            nstylist.append("\\Justification Left\n\n")
         else:
             nstylist.append("##### Remove all cross-references\n\\Marker x\n\\TextProperties nonpublishable\n\n")
 
-        # nstylist.append("##### Adjust poetic and list indents")
-# m = ["\Marker", "\LeftMargin", "\FirstLineIndent", "\Justification"]
-# v = [["q", "0.6", "-0.45", "Left"], ["q1", "0.6", "-0.45", "Left"], ["q2", "0.6", "-0.225", "Left"]]
+        nstylist.append("##### Adjust poetic indents\n")
+        m = ["\Marker", "\LeftMargin", "\FirstLineIndent"]
+        print(self.printer.get("c_doublecolumn"))
+        if self.printer.get("c_doublecolumn"): # Double Column layout so use smaller indents
+            v = [["q", "0.60", "-0.45"], ["q1", "0.60", "-0.45"], ["q2", "0.60", "-0.225"], 
+                 ["q3", "0.60", "-0.112"], ["q4", "0.60", "-0.0"]]
+        else: # Single column layout, so use larger (USFM.sty default) indents
+            v = [["q", "1.25", "-1.00"], ["q1", "1.25", "-1.00"], ["q2", "1.25", "-0.75"],
+                 ["q3", "1.25", "-0.5"], ["q4", "1.25", "-0.25"]]
+        r = [list(zip(m, x)) for x in v]
+        for mkr in r:
+            for l in range(0,3):
+                nstylist.append("{} {}\n".format(mkr[l][0],mkr[l][1]))
+            nstylist.append("\\Justification Left\n\n")
+
+        if True: # need to qualify this (look in USFM for a \cl and if it exists, then don't do this)
+            nstylist.append("# The descriptive heading is typically considered VerseText, but then often formatted as a heading.\n")
+            nstylist.append("# We need to change the TextType so that Print Draft will handle it correctly beside drop-caps.\n")
+            nstylist.append("\\Marker d\n\\TextType Section\n\\SpaceBefore 0\n\n")
 
         for w, c in self._snippets.items():
             if self.printer.get(c[0]): # if the c_checkbox is true then add the stylesheet snippet for that option
