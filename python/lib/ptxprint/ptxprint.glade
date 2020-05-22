@@ -1685,7 +1685,7 @@ PDF file (recommended).</property>
                         <property name="can_focus">False</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
-                        <property name="margin_top">6</property>
+                        <property name="margin_top">3</property>
                         <property name="margin_bottom">6</property>
                         <property name="label_xalign">0.019999999552965164</property>
                         <child>
@@ -1703,8 +1703,8 @@ PDF file (recommended).</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>
-                                    <property name="margin_top">10</property>
-                                    <property name="margin_bottom">8</property>
+                                    <property name="margin_top">3</property>
+                                    <property name="margin_bottom">3</property>
                                     <property name="column_spacing">6</property>
                                     <child>
                                       <object class="GtkLabel">
@@ -2454,7 +2454,7 @@ space between lines of text.</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">If the required size is not displayed, then just type the required page width and height separated by a comma. For example: 140mm,210mm</property>
                                         <property name="halign">start</property>
-                                        <property name="active">0</property>
+                                        <property name="active">1</property>
                                         <property name="has_entry">True</property>
                                         <property name="active_id">0</property>
                                         <items>
@@ -2508,7 +2508,7 @@ main body text (pts).</property>
                                         <property name="climb_rate">0.10000000000000001</property>
                                         <property name="digits">1</property>
                                         <property name="numeric">True</property>
-                                        <property name="value">12</property>
+                                        <property name="value">11</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">4</property>
@@ -2733,7 +2733,7 @@ Top:</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkFrame">
+                              <object class="GtkFrame" id="bx_horizRule">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="margin_top">4</property>
@@ -2860,6 +2860,7 @@ Latin/Arabic numbers [0-9], you can pick the
 appropriate script here. (Make sure the font you
 are using supports these digits too.)</property>
                                     <property name="halign">end</property>
+                                    <property name="margin_right">3</property>
                                     <property name="margin_bottom">3</property>
                                     <property name="label" translatable="yes">Script for Numbers:</property>
                                   </object>
@@ -2894,15 +2895,15 @@ are using supports these digits too.)</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_useChapterLabel">
-                                    <property name="label" translatable="yes">Use Chapter Label
+                                    <property name="label" translatable="yes">Special Features
 For These Books:</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">Some Poetical books like the Psalms, and maybe even
 Proverbs look better without drop-cap chapter numbers.
-Instead, they can use a prefix like "Chapter" at the start of
-the chapter.
+Instead, they can use a prefix like "Chapter" or "Psalm"
+at the start of the chapter.
 Note: If the text already has one or more \cl markers, then
 these settings will overrirde what has been set in the text.</property>
                                     <property name="draw_indicator">True</property>
@@ -2952,8 +2953,14 @@ numerals). For example, "Psalm"</property>
                                   <object class="GtkLabel" id="l_clHeading">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">The chapter “label” to be used when rendering
+chapter divisions as headings (instead of drop-cap
+numerals). For example, "Psalm"</property>
+                                    <property name="halign">end</property>
+                                    <property name="margin_left">3</property>
                                     <property name="label" translatable="yes">Chapter
-Heading:</property>
+Label:</property>
+                                    <property name="justify">right</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
@@ -3714,7 +3721,7 @@ etc.
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">0</property>
+                                        <property name="top_attach">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -3732,7 +3739,7 @@ start on the same page.
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">1</property>
+                                        <property name="top_attach">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -3755,7 +3762,7 @@ in the scripture books used will appear.</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">2</property>
+                                        <property name="top_attach">0</property>
                                       </packing>
                                     </child>
                                   </object>
@@ -4009,7 +4016,7 @@ marginal verse numbers. (pts)</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="l_glossaryMarkupStyle">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">Glossary words are marked up with
@@ -5275,7 +5282,7 @@ the other (with space between) to form a paragraph.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkGrid">
+                                  <object class="GtkGrid" id="gr_fnAdvOptions">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="margin_left">6</property>
@@ -5510,7 +5517,7 @@ space between lines of text.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkGrid">
+                                  <object class="GtkGrid" id="gr_fnSpacingOptions">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="valign">start</property>
@@ -5907,7 +5914,7 @@ Footnotes and Cross-references.</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">start</property>
                                 <property name="valign">start</property>
-                                <property name="row_spacing">8</property>
+                                <property name="row_spacing">6</property>
                                 <child>
                                   <object class="GtkRadioButton" id="c_useLowResPics">
                                     <property name="label" translatable="yes">Prefer Low-Resolution Pictures (smallest file size)</property>
@@ -5921,8 +5928,8 @@ will be relatively small, and therefore easy to
 share, but the image quality will be low.</property>
                                     <property name="halign">start</property>
                                     <property name="margin_left">10</property>
-                                    <property name="margin_top">6</property>
-                                    <property name="margin_bottom">6</property>
+                                    <property name="margin_top">3</property>
+                                    <property name="margin_bottom">3</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                     <property name="group">c_useHighResPics</property>
@@ -6193,6 +6200,36 @@ TIF  (only use TIFs [converted internally to PDFs])</property>
                                     <property name="left_attach">3</property>
                                     <property name="top_attach">4</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                               </object>
                             </child>
