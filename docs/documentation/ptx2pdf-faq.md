@@ -69,7 +69,6 @@ In your configuration .tex file, you need to adjust this number.
 \SuperscriptRaise{0.85ex} % note that this is in terms of the scaled-down superscript font size
 ```
 
-
 ### What Style properties are there?
 
 This is a list of the various style properties and some notes on how they are used.
@@ -84,7 +83,7 @@ Notice that markers are case dependent.
 \\TextProperties | "nonpublishable" blocks text output
 \\FontName    | font name to pass to font specification
 \\FontSize    | actual font size is \\FontSize * \\FontSizeUnit
-\\FontScale   | Scaled font size relative to some other font (e.g. \p)
+\\FontScale   | Scaled font size relative to the current font (e.g. \p)
 \\FirstLineIndent | First line indent * \\IndentUnit
 \\LeftMargin  | Left margin * \\IndentUnit
 \\RightMargin | Right margin * \\IndentUnit
@@ -102,6 +101,28 @@ Notice that markers are case dependent.
 \\SmallCap    | blank enables, "-" disables. Only works with fonts with a +smcp feature
 \\LineSpacing | also BaseLine. Dimension of line spacing, can include glue
 \\StyleType   | "paragraph", "character", "note"
+
+### How do Tables of Contents work?
+
+XeTeX produces a .toc file that contains one row per entry marked by a \\tr. Each
+non empty \\toc entry in a file is output with the first marked with \\tc1 and the
+second with \\tc2 and so on. The file entry on a line is a \\tcr marker followed by
+the current column number and then the page number. For example
+
+```
+\tr \tc1 First Book of Samuel\tc2 1 Samuel\tcr3 137
+\tr \tc1 2 Samuel\tcr2 179
+```
+
+Notice how 2SA had an empty \\toc1 entry. This will mess things up.
+
+The ptx macros have special handling for `\\tr`, `\\tc`_x_ (`\\tc1`, `\\tc2`, etc.)
+and `\\tcr`_x_. Similar handling
+is done for `\\th`_x_ and `\\thr`_x_. The 'r' suffix says to right align by default rather
+than left align. A table starts with a `\\tr` and ends with the next start of paragraph or
+end of file. The number _x_ specifies the column number in the table and table columns
+have their widths calculated automatically to fit the page. Each cell may be styled
+according to its marker character style. The default font is specified in the \\tr style.
 
 
 ## Layout

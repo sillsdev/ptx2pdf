@@ -948,6 +948,10 @@ class Info:
         else:
             nstylist.append("##### Remove all cross-references\n\\Marker x\n\\TextProperties nonpublishable\n\n")
 
+        # nstylist.append("##### Adjust poetic and list indents")
+# m = ["\Marker", "\LeftMargin", "\FirstLineIndent", "\Justification"]
+# v = [["q", "0.6", "-0.45", "Left"], ["q1", "0.6", "-0.45", "Left"], ["q2", "0.6", "-0.225", "Left"]]
+
         for w, c in self._snippets.items():
             if self.printer.get(c[0]): # if the c_checkbox is true then add the stylesheet snippet for that option
                 nstylist.append(c[1].styleInfo+"\n")

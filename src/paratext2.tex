@@ -227,7 +227,8 @@
 % (based on code from the TeXbook, appendix D)
 % #1 is vbox containing notes as individual paragraphs.
 \newif\ifNoteTracing \NoteTracingfalse
-\newskip\noteRag\noteRag=0pt plus 2em
+\newskip\intern@teskip \intern@teskip=15pt plus 3pt minus 5pt
+\newskip\noteRag\noteRag=0pt plus 18pt
 \def\maken@tepara#1#2{%
   \hsize=\textwidth%\advance\hsize by -\columnshift % width is full page size
   \let\par=\endgraf\ch@pterfalse
@@ -277,7 +278,6 @@
 %\def\internotespace{\hfil\hskip\intern@teskip\penalty-10\hfilneg}
 
 % don't allow stretching between notes.
-\newskip\intern@teskip \intern@teskip=15pt% plus 5pt minus 5pt
 
 %%%%%%%%%%%%%% OUTPUT ROUTINES %%%%%%%%%%%%%% 
 % default output routine is single-column, somewhat based on Plain TeX output routine (see TeXbook)
@@ -677,6 +677,8 @@
 %%%
   \decr{\availht}{\topins}% and by the space needed for spanning pictures
   \decr{\availht}{\bottomins}
+  \advance\availht by \dp255 % split includes depth so give it space for that
+  \trace{o}{new availht=\the\availht, topins=\the\ht\topins, bottomins=\the\ht\bottomins, baselineskip=\the\baselineskip}
 %%%
   \splittopskip=\topskip
 }
