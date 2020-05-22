@@ -330,6 +330,12 @@ class PtxPrinterDialog:
     def onOK(self, btn):
         Info._missingPicList = []
         jobs = self.getBooks()
+        # If the viewer/editor is open on an Editable tab, then "autosave" contents
+        if self.builder.get_object("nbk_Main").get_current_page() == 7:
+            pgnum = self.builder.get_object("nbk_Viewer").get_current_page()
+            if 1 <= pgnum <= 2 or pgnum == 5:
+                self.onSaveEdits(None)
+
         # Work out what the resulting PDFs are to be called
         if len(jobs) > 1:
             if self.get("c_combine"):
@@ -587,7 +593,6 @@ class PtxPrinterDialog:
     def onViewerChangePage(self, nbk_Viewer, scrollObject, pgnum):
         self.bookNoUpdate = True
         self.builder.get_object("gr_editableButtons").set_sensitive(False)
-        # self.builder.get_object("btn_saveEdits").set_sensitive(False)
         prjid = self.get("cb_project")
         prjdir = os.path.join(self.settings_dir, prjid)
         bks = self.getBooks()

@@ -2134,6 +2134,9 @@ this Tab will also disable the option.</property>
                         <property name="position">1</property>
                       </packing>
                     </child>
+                    <child>
+                      <placeholder/>
+                    </child>
                   </object>
                   <packing>
                     <property name="tab_fill">False</property>
@@ -6201,36 +6204,6 @@ TIF  (only use TIFs [converted internally to PDFs])</property>
                                     <property name="top_attach">4</property>
                                   </packing>
                                 </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
                               </object>
                             </child>
                           </object>
@@ -7759,6 +7732,7 @@ log and intermediate temporary file for the entire project.</property>
                             <property name="margin_left">6</property>
                             <property name="margin_right">6</property>
                             <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
                             <property name="shadow_type">in</property>
                             <property name="kinetic_scrolling">False</property>
                             <child>
@@ -7910,6 +7884,10 @@ are likely to have to re-do it all again.</property>
                           <object class="GtkScrolledWindow" id="scroll_Settings">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="margin_left">6</property>
+                            <property name="margin_right">6</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
                             <property name="shadow_type">in</property>
                             <child>
                               <placeholder/>
@@ -7943,7 +7921,6 @@ are likely to have to re-do it all again.</property>
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="halign">center</property>
                                 <property name="margin_left">6</property>
                                 <property name="margin_right">6</property>
                                 <property name="margin_top">6</property>
@@ -8246,6 +8223,7 @@ further, this FAQ document is worth visiting.</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
+                        <property name="margin_left">6</property>
                         <property name="margin_bottom">2</property>
                         <property name="column_homogeneous">True</property>
                         <child>
