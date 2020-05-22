@@ -677,6 +677,8 @@
 %%%
   \decr{\availht}{\topins}% and by the space needed for spanning pictures
   \decr{\availht}{\bottomins}
+  \advance\availht by \dp255 % split includes depth so give it space for that
+  \trace{o}{new availht=\the\availht, topins=\the\ht\topins, bottomins=\the\ht\bottomins, baselineskip=\the\baselineskip}
 %%%
   \splittopskip=\topskip
 }
