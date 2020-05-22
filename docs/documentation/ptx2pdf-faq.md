@@ -30,24 +30,45 @@ To aid in debugging .sty file issues. If you insert `\tracing{s}` in your .tex f
 before it processes a .sty file, you will see analysis tracing in the .log file
 from which you may be able to work out where it went wrong.
 
-### How can I set a \FontSize relative to the size of the text around?
+### How can I set a \FontSize relative to the size of the text 
 
-This is often desirable for character styles that may turn up in footnotes or headings.
-The ptx2pdf macros will interpret a \FontSize of 2 or less as being a multiplier
-against the current font size of the text the style is being processed. The value may
-be a float. Thus `\FontSize 0.5`, for example. The following is an example of a smallcaps
-character style:
+Use `\FontScale` instead of `\FontSize`  (if `\FontScale` is defined, 
+then `\FontSize` will be quietly ignored). 
+The value may be a float, thus `\FontScale 0.8`, for example. 
+
+With `\riskyscalefontfalse` ptx2pdf macros will interpret a \FontScale 
+relative to the size of the \p font. This should be boring and always work.
+If `\riskyscalefontrue`, the font size it is scaled 
+as being a multiplier against the current font size of the text the style is
+being processed. 
+
+The following is an example of a smallcaps character style:
 
 ```
 \Marker nd
 \EndMarker nd*
 \StyleType character
-\FontSize 1
+\FontScale 1
 \SmallCaps
 ```
 
-Notice that this is not compatible with ParaText and therefore should only be used in a
-custom stylesheet. 
+Notice that this should only be used in a custom stylesheet, because other tools
+will not recognise it.
+
+Unfortunately, a font is only set up once once, the first time it's used, so the
+above won't to have `\nd` scale in all circumstances. The first time it is used will 
+define the font size all future occasions.  **However, all is not lost!** 
+if hooks are automaticly  replacing `\nd` with `\s1nd`, `\s2nd` `\fnd`, etc (or
+some other scheme), and these are all copies of the above (perhaps with a
+`\Bold`) then `\riskyscalefonttrue` should work exactly as desired. Until it's
+used in an context that didn't have the hooks set up.
+
+### I shrunk my verse numbers and now they're just floating in the middle of the line
+In your configuration .tex file, you need to adjust this number.
+``` 
+\SuperscriptRaise{0.85ex} % note that this is in terms of the scaled-down superscript font size
+```
+
 
 ### What Style properties are there?
 
@@ -61,8 +82,9 @@ Notice that markers are case dependent.
 \\Endmarker   | ignored
 \\TextType    | "title", "section" or "other" paragraph grouping
 \\TextProperties | "nonpublishable" blocks text output
-\\FontSize    | actual font size is \\FontSize * \\FontSizeUnit
 \\FontName    | font name to pass to font specification
+\\FontSize    | actual font size is \\FontSize * \\FontSizeUnit
+\\FontScale   | Scaled font size relative to some other font (e.g. \p)
 \\FirstLineIndent | First line indent * \\IndentUnit
 \\LeftMargin  | Left margin * \\IndentUnit
 \\RightMargin | Right margin * \\IndentUnit

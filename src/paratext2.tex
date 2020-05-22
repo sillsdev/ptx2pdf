@@ -40,7 +40,8 @@
 \def\wlog{\immediate\write-1 } % write message to log file only
 \newif\iftemp \tempfalse
 \newif\ifinn@te\inn@tefalse
-
+\newif\ifriskyscalefont % Should scalefont be relative to \p or relative to wherever it's first used?
+\riskyscalefontfalse
 % \addtoendhooks collects macros to be executed at the end of the job
 \def\addtoendhooks#1{\x@\global\x@\@ndhooks\x@{\the\@ndhooks #1}}
 \newtoks\@ndhooks
@@ -182,7 +183,7 @@
   \ifdiglot\ifdiglotL\def\f@ntstyle{#1}\else\def\f@ntstyle{#1R}\fi\else\def\f@ntstyle{#1}\fi%
   \getp@ram{baseline}{#1}\ifx\p@ram\relax
     \getp@ram{fontsize}{#1}\dimen0=\p@ram\le@dingunit
-    \multiply\dimen0 by 18 \divide\dimen0 by 12 % default .75 shift of .85ex (ex=.5 fontsize) against 14/12
+    \multiply\dimen0 by 14 \divide\dimen0 by 12 % default .75 shift of .85ex (ex=.5 fontsize) against 14/12
     \setp@ram{baseline}{\f@ntstyle}{\the\dimen0}\baselineskip=\dimen0\else
   \baselineskip=\p@ram\fi}
 
@@ -304,7 +305,7 @@
 %
 % skip between notes in paragraph. skip is good place to break.
 \def\internotepenalty{-10}
-\def\internotespace{\hfil\hskip\intern@teskip\penalty\internotepenalty\hfilneg}
+%\def\internotespace{\hfil\hskip\intern@teskip\penalty\internotepenalty\hfilneg}
 \def\internotespace{\hskip\intern@teskip\kern 0pt\penalty\internotepenalty}
 %\def\internotespace{\hfil\hskip\intern@teskip\penalty-10\hfilneg}
 
@@ -1165,7 +1166,7 @@
     \trace{g}{Fig caption: [\c@ption] \ifx\r@f\relax\else(\r@f)\fi}
     \ifx{\c@ption}\empty\else
       \everypar={}\let\par\endgraf
-      \leftskip=0pt plus 1fil \rightskip=\leftskip \parfillskip=0pt
+      \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
       \linepenalty=1000
       \s@tbaseline{fig}
       % insert caption box
