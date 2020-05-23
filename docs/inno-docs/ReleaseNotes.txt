@@ -1,6 +1,10 @@
-PTXprint 0.6.9 Beta Release Notes
-22nd May 2020
+PTXprint 0.7.0 Beta Release Notes
+23nd May 2020
 
+Bug fixes and improvements in: 0.7.0
+
+  * Add option to force Exclusive Use of Figures Folder (without searching any other folders or subfolders)
+  
 Bug fixes and improvements in: 0.6.9
 
   * Improved column balancing (allowing the final line to be filled at end of page)
@@ -13,8 +17,6 @@ Bug fixes and improvements in: 0.6.9
   
   * Multiple XeTeX macro enhancements (\FontScale, footnote caller size, header baselines) and bugs fixed 
   
-21st May 2020
-
 Bug fixes and improvements in: 0.6.8
 
   * Colors are now working the same in Paratext and in the PTXprint PDFs
