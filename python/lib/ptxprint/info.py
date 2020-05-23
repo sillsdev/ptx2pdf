@@ -171,6 +171,7 @@ class Info:
         "document/usefigsfolder":   ("c_useLowResPics", lambda w,v :"" if v else "%"),
         "document/uselocalfigs":    ("c_useHighResPics", lambda w,v :"" if v else "%"),
         "document/customfiglocn":   ("c_useCustomFolder", lambda w,v :"" if v else "%"),
+        "document/exclusivefolder": ("c_exclusiveFiguresFolder", lambda w,v : v),
         "document/customfigfolder": ("btn_selectFigureFolder", lambda w,v: re.sub(r"\\","/", w.customFigFolder) \
                                                                if w.customFigFolder is not None else ""),
         "document/imagetypepref":   ("t_imageTypeOrder", lambda w,v: v),
@@ -952,7 +953,6 @@ class Info:
 
         nstylist.append("##### Adjust poetic indents\n")
         m = ["\Marker", "\LeftMargin", "\FirstLineIndent"]
-        print(self.printer.get("c_doublecolumn"))
         if self.printer.get("c_doublecolumn"): # Double Column layout so use smaller indents
             v = [["q", "0.60", "-0.45"], ["q1", "0.60", "-0.45"], ["q2", "0.60", "-0.225"], 
                  ["q3", "0.60", "-0.112"], ["q4", "0.60", "-0.0"]]
@@ -963,7 +963,7 @@ class Info:
         for mkr in r:
             for l in range(0,3):
                 nstylist.append("{} {}\n".format(mkr[l][0],mkr[l][1]))
-            nstylist.append("\\Justification Left\n\n")
+            nstylist.append("\\Justification left\n\n")
 
         if True: # need to qualify this (look in USFM for a \cl and if it exists, then don't do this)
             nstylist.append("# The descriptive heading is typically considered VerseText, but then often formatted as a heading.\n")

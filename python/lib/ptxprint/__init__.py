@@ -813,7 +813,11 @@ class PtxPrinterDialog:
         self.builder.get_object("gr_IllustrationOptions").set_sensitive(status)
 
     def onUseCustomFolderclicked(self, c_useCustomFolder):
-        self.builder.get_object("btn_selectFigureFolder").set_sensitive(self.get("c_useCustomFolder"))
+        status = self.get("c_useCustomFolder")
+        self.builder.get_object("btn_selectFigureFolder").set_sensitive(status)
+        self.builder.get_object("c_exclusiveFiguresFolder").set_sensitive(status)
+        if not status:
+            self.builder.get_object("c_exclusiveFiguresFolder").set_active(status)
 
     def onBlendedXrsClicked(self, c_blendfnxr):
         status = self.get("c_blendfnxr")

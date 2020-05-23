@@ -291,16 +291,17 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
         srchlist = [printer.customFigFolder]
     else:
         srchlist = []
-    if sys.platform == "win32":
-        srchlist += [os.path.join(prjdir, "figures")]
-        srchlist += [os.path.join(prjdir, "local", "figures")]
-    elif sys.platform == "linux":
-        chkpaths = []
-        for d in ("local", "figures"):
-            chkpaths += [os.path.join(prjdir, x) for x in (d, d.title())]
-        for p in chkpaths:
-            if os.path.exists(p):
-                srchlist += [p]
+    if not printer.get("c_exclusiveFiguresFolder"):
+        if sys.platform == "win32":
+            srchlist += [os.path.join(prjdir, "figures")]
+            srchlist += [os.path.join(prjdir, "local", "figures")]
+        elif sys.platform == "linux":
+            chkpaths = []
+            for d in ("local", "figures"):
+                chkpaths += [os.path.join(prjdir, x) for x in (d, d.title())]
+            for p in chkpaths:
+                if os.path.exists(p):
+                    srchlist += [p]
     extensions = []
     extdflt = ["jpg", "png", "pdf", "tif"]
     extuser = re.sub("(pdf|tif)", "pdf tif",printer.get("t_imageTypeOrder").lower())
@@ -334,15 +335,23 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
     os.makedirs(tmpPicpath, exist_ok=True)
     for srchdir in srchlist:
         if srchdir != None and os.path.exists(srchdir):
-            for subdir, dirs, files in os.walk(srchdir):
-                if subdir != "tmpPics": # Avoid recursively scanning the folder we are copying to!
-                    for file in files:
-                        origExt = file[-4:].lower()
-                        if origExt[1:] in extensions:
-                            filepath = subdir + os.sep + file
-                            if newBase(filepath) in newBaseList:
-                                # print(filepath, "-->", newBase(filepath)+origExt.lower())
-                                carefulCopy(printer, filepath, newBase(filepath)+origExt.lower())
+            if printer.get("c_exclusiveFiguresFolder"):
+                for file in os.listdir(srchdir):
+                    origExt = file[-4:].lower()
+                    if origExt[1:] in extensions:
+                        filepath = os.path.join(srchdir, file)
+                        if newBase(filepath) in newBaseList:
+                            carefulCopy(printer, filepath, newBase(filepath)+origExt.lower())
+            else: # Search all subfolders as well
+                for subdir, dirs, files in os.walk(srchdir):
+                    if subdir != "tmpPics": # Avoid recursively scanning the folder we are copying to!
+                        for file in files:
+                            origExt = file[-4:].lower()
+                            if origExt[1:] in extensions:
+                                filepath = subdir + os.sep + file
+                                if newBase(filepath) in newBaseList:
+                                    # print(filepath, "-->", newBase(filepath)+origExt.lower())
+                                    carefulCopy(printer, filepath, newBase(filepath)+origExt.lower())
 
     if printer.get("c_usePicList"): # Write out new tmpPicLists
         extOrder = info.getExtOrder(printer)

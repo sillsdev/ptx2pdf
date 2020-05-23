@@ -5940,7 +5940,7 @@ share, but the image quality will be low.</property>
                                   <packing>
                                     <property name="left_attach">2</property>
                                     <property name="top_attach">1</property>
-                                    <property name="width">2</property>
+                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -5964,7 +5964,7 @@ without illustrations.</property>
                                   <packing>
                                     <property name="left_attach">2</property>
                                     <property name="top_attach">0</property>
-                                    <property name="width">2</property>
+                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -5994,7 +5994,7 @@ the image quality will be as good as possible.</property>
                                   <packing>
                                     <property name="left_attach">2</property>
                                     <property name="top_attach">2</property>
-                                    <property name="width">2</property>
+                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -6173,12 +6173,15 @@ following search sequences:
    jpg &gt; png &gt; tif/pdf   - for smallest file size
 or
    tif/pdf &gt; png &gt; jpg   - for largest file size</property>
+                                    <property name="halign">end</property>
                                     <property name="margin_right">6</property>
                                     <property name="label" translatable="yes">Order of Prefered Image Types:</property>
+                                    <property name="justify">right</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
                                     <property name="top_attach">4</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -6197,11 +6200,37 @@ PNG TIF/PDF (use PNGs first, otherwise TIF as a PDF)
 JPG  (only use JPGs - ignore all other file types)
   or
 TIF  (only use TIFs [converted internally to PDFs])</property>
+                                    <property name="width_chars">15</property>
                                     <property name="text" translatable="yes">JPG PNG PDF/TIF</property>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">3</property>
+                                    <property name="left_attach">4</property>
                                     <property name="top_attach">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_exclusiveFiguresFolder">
+                                    <property name="label" translatable="yes">Exclusively Use 
+Selected Folder</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">PTXprint normally searches in multiple locations
+to locate the needed illustrations (including "figures",
+"local/figures" and in the folder specified on the left).
+
+By default it also searches all the sub-folders of these
+locations.
+
+If you would prefer that it only searches in the folder
+specified directly (and NOT look in any other folders
+then enable this option).</property>
+                                    <property name="halign">end</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">4</property>
+                                    <property name="top_attach">3</property>
                                   </packing>
                                 </child>
                               </object>
