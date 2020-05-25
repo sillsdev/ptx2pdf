@@ -1,6 +1,7 @@
 import configparser, re, os, gi #, time
 from datetime import datetime
 from shutil import copyfile
+from pathlib import Path
 import regex
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
@@ -59,15 +60,15 @@ class Info:
         "project/book":             ("cb_book", None),
         "project/booklist":         ("t_booklist", lambda w,v: v or ""),
         "project/ifinclfrontpdf":   ("c_inclFrontMatter", lambda w,v: "" if v else "%"),
-        "project/frontincludes":    ("btn_selectFrontPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(re.sub(r"\\","/", s)) \
+        "project/frontincludes":    ("btn_selectFrontPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s.as_posix()) \
                                                             for s in w.FrontPDFs) if (w.FrontPDFs is not None and w.FrontPDFs != 'None') else ""),
         "project/ifinclbackpdf":    ("c_inclBackMatter", lambda w,v: "" if v else "%"),
-        "project/backincludes":     ("btn_selectBackPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(re.sub(r"\\","/", s)) \
+        "project/backincludes":     ("btn_selectBackPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s.as_posix()) \
                                                            for s in w.BackPDFs) if (w.BackPDFs is not None and w.BackPDFs != 'None') else ""),
         "project/useprintdraftfolder": ("c_useprintdraftfolder", lambda w,v :"true" if v else "false"),
         "project/processscript":    ("c_processScript", lambda w,v : v),
         "project/runscriptafter":   ("c_processScriptAfter", lambda w,v : v),
-        "project/selectscript":     ("btn_selectScript", lambda w,v: re.sub(r"\\","/", w.CustomScript   ) if w.CustomScript is not None else ""),
+        "project/selectscript":     ("btn_selectScript", lambda w,v: w.CustomScript.as_posix() if w.CustomScript is not None else ""),
         "project/usechangesfile":   ("c_usePrintDraftChanges", lambda w,v :"true" if v else "false"),
         "project/ifusemodstex":     ("c_useModsTex", lambda w,v: "" if v else "%"),
         "project/ifusecustomsty":   ("c_useCustomSty", lambda w,v: "" if v else "%"),
@@ -82,7 +83,7 @@ class Info:
         "paper/width":              (None, lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", w.get("cb_pagesize")) or "148mm"),
         "paper/pagesize":           ("cb_pagesize", None),
         "paper/ifwatermark":        ("c_applyWatermark", lambda w,v: "" if v else "%"),
-        "paper/watermarkpdf":       ("btn_selectWatermarkPDF", lambda w,v: re.sub(r"\\","/", w.watermarks) \
+        "paper/watermarkpdf":       ("btn_selectWatermarkPDF", lambda w,v: w.watermarks.as_posix() \
                                                 if (w.watermarks is not None and w.watermarks != 'None') \
                                                 else get("/ptxprintlibpath")+"/A5-Draft.pdf"),
         "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),  
@@ -100,16 +101,16 @@ class Info:
         "fancy/showborderstab":     ("c_showBordersTab", None),
         "fancy/enableborders":      ("c_enableDecorativeElements", lambda w,v: "" if v else "%"),
         "fancy/pageborder":         ("c_inclPageBorder", lambda w,v: "" if v else "%"),
-        "fancy/pageborderpdf":      ("btn_selectPageBorderPDF", lambda w,v: re.sub(r"\\","/", w.pageborder) \
+        "fancy/pageborderpdf":      ("btn_selectPageBorderPDF", lambda w,v: w.pageborder.as_posix() \
                                                 if (w.pageborder is not None and w.pageborder != 'None') \
                                                 else get("/ptxprintlibpath")+"/A5 page border.pdf"),
         "fancy/sectionheader":      ("c_inclSectionHeader", lambda w,v: "" if v else "%"),
-        "fancy/sectionheaderpdf":   ("btn_selectSectionHeaderPDF", lambda w,v: re.sub(r"\\","/", w.sectionheader) \
+        "fancy/sectionheaderpdf":   ("btn_selectSectionHeaderPDF", lambda w,v: w.sectionheader.as_posix() \
                                                 if (w.sectionheader is not None and w.sectionheader != 'None') \
                                                 else get("/ptxprintlibpath")+"/A5 section head border.pdf"),
         "fancy/decorationpdf":      (None, lambda w,v: get("/ptxprintlibpath")+"/decoration.pdf"),
         "fancy/versedecorator":     ("c_inclVerseDecorator", lambda w,v: "" if v else "%"),
-        "fancy/versedecoratorpdf":  ("btn_selectVerseDecorator", lambda w,v: re.sub(r"\\","/", w.versedecorator) \
+        "fancy/versedecoratorpdf":  ("btn_selectVerseDecorator", lambda w,v: w.versedecorator.as_posix() \
                                                 if (w.versedecorator is not None and w.versedecorator != 'None') \
                                                 else get("/ptxprintlibpath")+"/Verse number star.pdf"),
         "fancy/versenumsize":       ("s_verseNumSize", lambda w,v: v or "11.00"),
@@ -172,8 +173,7 @@ class Info:
         "document/uselocalfigs":    ("c_useHighResPics", lambda w,v :"" if v else "%"),
         "document/customfiglocn":   ("c_useCustomFolder", lambda w,v :"" if v else "%"),
         "document/exclusivefolder": ("c_exclusiveFiguresFolder", lambda w,v : v),
-        "document/customfigfolder": ("btn_selectFigureFolder", lambda w,v: re.sub(r"\\","/", w.customFigFolder) \
-                                                               if w.customFigFolder is not None else ""),
+        "document/customfigfolder": ("btn_selectFigureFolder", lambda w,v: w.customFigFolder.as_posix() if w.customFigFolder is not None else ""),
         "document/imagetypepref":   ("t_imageTypeOrder", lambda w,v: v),
         "document/ifusepiclist":    ("c_usePicList", lambda w,v :"" if v else "%"),
         "document/spacecntxtlztn":  ("cb_spaceCntxtlztn", lambda w,v: "0" if v == "None" else "1" if v == "Some" else "2"),
@@ -296,7 +296,17 @@ class Info:
         "snippets/pdfx1aoutput":          ("c_PDFx1aOutput", PDFx1aOutput),
         "snippets/fancyborders":          ("c_enableDecorativeElements", FancyBorders)
     }
-    
+    _attributes = {
+        "project/frontincludes":    ("FrontPDFs", True, "lb_inclFrontMatter"),
+        "project/backincludes":     ("BackPDFs", True, "lb_inclBackMatter"),
+        "project/selectscript":     ("CustomScript", False, None),
+        "paper/watermarkpdf":       ("watermarks", False, "lb_applyWatermark"),
+        "fancy/pageborderpdf":      ("pageborder", False, "lb_inclPageBorder"),
+        "fancy/sectionheaderpdf":   ("sectionheader", False, "lb_inclSectionHeader"),
+        "fancy/versedecoratorpdf":  ("versedecorator", False, "lb_inclVerseDecorator"),
+        "document/customfigfolder": ("customFigFolder", False, None)
+    }
+ 
     def __init__(self, printer, path, prjid = None):
         self.printer = printer
         self.changes = None
@@ -819,9 +829,19 @@ class Info:
     def createConfig(self, printer):
         config = configparser.ConfigParser()
         for k, v in self._mappings.items():
-            if v[0] is None:
-                continue
-            val = printer.get(v[0], asstr=True)
+            if k in self._attributes:
+                v = self._attributes[k]
+                val = getattr(printer, v[0])
+                if val is None:
+                    continue
+                if v[1]:
+                    val = "\n".join(x.as_posix() for x in val)
+                else:
+                    val = val.as_posix()
+            else:
+                if v[0] is None:
+                    continue
+                val = printer.get(v[0], asstr=True)
             if k in self._settingmappings:
                 if val == "" or val == self.printer.ptsettings.dict.get(self._settingmappings[k], ""):
                     continue
@@ -871,45 +891,32 @@ class Info:
                 printer.set(self._mappings[k][0], self.printer.ptsettings.dict.get(v, ""))
                 self.dict[k] = self.printer.ptsettings.get(v, "")
         # Handle specials here:
-        printer.CustomScript = self.dict['project/selectscript']
+        printer.CustomScript = Path(self.dict['project/selectscript'])
         printer.customFigFolder = self.dict['document/customfigfolder']
 
-        printer.FrontPDFs = self.dict['project/frontincludes'].split("\n")
-        if printer.FrontPDFs != None:
-            printer.builder.get_object("lb_inclFrontMatter").set_text(",".join(re.sub(r".+[\\/](.+)\.pdf",r"\1",s) for s in printer.FrontPDFs))
-        else:
-            printer.builder.get_object("lb_inclFrontMatter").set_text("")
+        for s in ("front", "back"):
+            k = "project/{}includes".format(s)
+            v = "lb_incl{}Matter".format(s.title())
+            a = "{}PDFs".format(s.title())
+            d = [Path(x) for x in self.dict[k].split("\n")]
+            setattr(printer, a, d)
+            if len(d):
+                printer.builder.get_object(v).set_text(",".join(re.sub(r".+[\\/](.+)\.pdf",r"\1", str(s)) for s in d))
+            else:
+                printer.builder.get_object(v).set_text("")
 
-        printer.BackPDFs = self.dict['project/backincludes'].split("\n")
-        if printer.BackPDFs != None:
-            printer.builder.get_object("lb_inclBackMatter").set_text(",".join(re.sub(r".+[\\/](.+)\.pdf",r"\1",s) for s in printer.BackPDFs))
-        else:
-            printer.builder.get_object("lb_inclBackMatter").set_text("")
-
-# Q.for MH: I'm wondering about how to make this repetitve block of code into a callable funtion with parameters (or looping through a list)
-        printer.watermarks = self.dict['paper/watermarkpdf']
-        if printer.watermarks != None:
-            printer.builder.get_object("lb_applyWatermark").set_text(re.sub(r".+[\\/](.+)\.pdf",r"\1",printer.watermarks))
-        else:
-            printer.builder.get_object("lb_applyWatermark").set_text("")
-
-        printer.pageborder = self.dict['fancy/pageborderpdf']
-        if printer.pageborder != None:
-            printer.builder.get_object("lb_inclPageBorder").set_text(re.sub(r".+[\\/](.+)\.pdf",r"\1",printer.pageborder))
-        else:
-            printer.builder.get_object("lb_inclPageBorder").set_text("")
-
-        printer.sectionheader = self.dict['fancy/sectionheaderpdf']
-        if printer.sectionheader != None:
-            printer.builder.get_object("lb_inclSectionHeader").set_text(re.sub(r".+[\\/](.+)\.pdf",r"\1",printer.sectionheader))
-        else:
-            printer.builder.get_object("lb_inclSectionHeader").set_text("")
-
-        printer.versedecorator = self.dict['fancy/versedecoratorpdf']
-        if printer.versedecorator != None:
-            printer.builder.get_object("lb_inclVerseDecorator").set_text(re.sub(r".+[\\/](.+)\.pdf",r"\1",printer.versedecorator))
-        else:
-            printer.builder.get_object("lb_inclVerseDecorator").set_text("")
+        for k, v in self._attributes.items():
+            if v[1]:
+                d = [Path(x.strip().replace("\\", "/")) for x in self.dict.get(v[0], "").split("\n")]
+            else:
+                d = Path(self.dict.get(v[0], "").replace("\\", "/"))
+            setattr(printer, k, d)
+            if v[2] is None:
+                continue
+            if len(str(d)):
+                printer.builder.get_object(v[2]).set_text(re.sub(r".+[\\/](.+)\.pdf",r"\1", str(d)))
+            else:
+                printer.builder.get_object(v[2]).set_text("")
 
         # update UI to reflect the world it is in 
         # [Comment: this is turning things off even though the file exists. Probably running before the prj has been set?]
