@@ -210,9 +210,9 @@ class Info:
         "header/chvseparator":      ("c_sepColon", lambda w,v : ":" if v else "."),
         "header/ifrhrule":          ("c_rhrule", lambda w,v: "" if v else "%"),
         "header/ruleposition":      ("s_rhruleposition", lambda w,v: v or "10"),
-        "header/hdrleftinner":      ("cb_hdrleft", lambda w,v: v or "-empty-"),
+        "header/hdrleft":           ("cb_hdrleft", lambda w,v: v or "-empty-"),
         "header/hdrcenter":         ("cb_hdrcenter", lambda w,v: v or "-empty-"),
-        "header/hdrrightouter":     ("cb_hdrright", lambda w,v: v or "-empty-"),
+        "header/hdrright":          ("cb_hdrright", lambda w,v: v or "-empty-"),
         "header/mirrorlayout":      ("c_mirrorpages", lambda w,v: "true" if v else "false"),
         
         "footer/ftrcenter":         ("cb_ftrcenter", lambda w,v: v or "-empty-"),
@@ -290,8 +290,9 @@ class Info:
         "snippets/fancyborders":          ("c_enableDecorativeElements", FancyBorders)
     }
     
-    def __init__(self, printer, path, prjid = None):
+    def __init__(self, printer, path, ptsettings, prjid=None):
         self.printer = printer
+        self.ptsettings = ptsettings
         self.changes = None
         self.localChanges = None
         t = datetime.now()
@@ -306,23 +307,25 @@ class Info:
                      "/iccfpath": os.path.join(libpath, "ps_cmyk.icc").replace("\\","/"),
                      "document/date": t.strftime("%Y%m%d%H%M%S")+tzstr }
         self.prjid = prjid
-        self.update()
+        if self.prjid is not None:
+            self.dict['project/id'] = self.prjid
+        if self.printer is not None:
+            self.update()
 
     def update(self):
+        """ Update model from UI """
         printer = self.printer
         for k, v in self._fonts.items():
             btn = printer.builder.get_object(v[0])
             if not hasattr(btn, 'font_info'):
                 btn.font_info=["Arial", ""]
         self.updatefields(self._mappings.keys())
-        if printer.get("c_useprintdraftfolder"):
+        if self.asBool("project/useprintdraftfolder"):
             base = os.path.join(self.dict["/ptxpath"], self.dict["project/id"])
             docdir = os.path.join(base, 'PrintDraft')
         else:
             base = printer.working_dir
             docdir = base
-        if self.prjid is not None:
-            self.dict['project/id'] = self.prjid
         self.dict["document/directory"] = os.path.abspath(docdir).replace("\\","/")
         self.dict['project/adjlists'] = os.path.join(printer.configPath(), "AdjLists/").replace("\\","/")
         self.dict['project/piclists'] = os.path.join(printer.working_dir, "tmpPicLists/").replace("\\","/")
@@ -356,7 +359,20 @@ class Info:
     def __setitem__(self, key, value):
         self.dict[key] = value
 
+    def asBool(self, key, true=None, false=None):
+        if true is not None:
+            return self.dict[key] == true
+        elif false is not None:
+            return self.dict[key] != false
+        elif isinstance(self.dict[key], bool):
+            return self.dict[key]
+        elif self.dict[key] == "%" or self.dict[key] == "false":
+            return False
+        else:
+            return True
+
     def processFonts(self, printer):
+        """ Update model fonts from UI """
         silns = "{urn://www.sil.org/ldml/0.1}"
         for p in self._fonts.keys():
             if p in self.dict:
@@ -405,11 +421,12 @@ class Info:
             self.dict[p+"/engine"] = engine
 
     def processHdrFtr(self, printer):
-        v = printer.get("cb_ftrcenter")
+        """ Update model headers from model UI read values """
+        v = self.dict["footer/ftrcenter"]
         self.dict['footer/oddcenter'] = self._hdrmappings.get(v,v)
-        mirror = printer.get('c_mirrorpages')
+        mirror = self.asBool("header/mirrorlayout")
         for side in ('left', 'center', 'right'):
-            v = printer.get("cb_hdr" + side)
+            v = self.dict["header/hdr"+size]
             t = self._hdrmappings.get(v, v)
             if side == 'left':
                 if mirror:
@@ -432,7 +449,7 @@ class Info:
     def asTex(self, template="template.tex", filedir=".", jobname="Unknown"):
         for k, v in self._settingmappings.items():
             if self.dict[k] == "":
-                self.dict[k] = self.printer.ptsettings.dict.get(v, "a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z")
+                self.dict[k] = self.ptsettings.dict.get(v, "a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z")
         res = []
         self.dict['jobname'] = jobname
         with universalopen(os.path.join(os.path.dirname(__file__), template)) as inf:
@@ -471,7 +488,11 @@ class Info:
                         res.append("\\catcode`\\@=12\n")
                 elif l.startswith(r"%\snippets"):
                     for k, c in self._snippets.items():
-                        v = self.printer.get(c[0])
+                        if self.printer is None:
+                            v = self.asBool(k)
+                        else:
+                            v = self.printer.get(c[0])
+                            self.dict[k] = "true" if v else "false"
                         if v:
                             if c[1].processTex:
                                 res.append(c[1].texCode.format(**self.dict))
@@ -504,9 +525,9 @@ class Info:
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
             open(customsty, "w").close()
-        fbkfm = self.printer.ptsettings['FileNameBookNameForm']
-        fprfx = self.printer.ptsettings['FileNamePrePart'] or ""
-        fpost = self.printer.ptsettings['FileNamePostPart'] or ""
+        fbkfm = self.ptsettings['FileNameBookNameForm']
+        fprfx = self.ptsettings['FileNamePrePart'] or ""
+        fpost = self.ptsettings['FileNamePostPart'] or ""
         bknamefmt = fprfx + fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + fpost
         fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
         infpath = os.path.join(prjdir, fname)
@@ -558,7 +579,7 @@ class Info:
                     regex.compile((m.group(3) or m.group(4)), flags=regex.M), (m.group(5) or m.group(6) or "")))
         if not len(changes):
             return None
-        if self.printer.get("c_tracing"):
+        if self.printer is not None and self.printer.get("c_tracing"):
             print("List of PrintDraftChanges:-------------------------------------------------------------")
             report = "\n".join("{} -> {}".format(p[1].pattern, p[2]) for p in changes)
             if getattr(self.printer, "logger", None) is not None:
@@ -574,17 +595,17 @@ class Info:
         self.localChanges = []
         if bk == "GLO" and self.dict['document/filterglossary']:
             self.filterGlossary(self.printer)
-        first = int(printer.get("cb_chapfrom"))
-        last = int(printer.get("cb_chapto"))
+        first = int(self.dict["document/chapfrom"]) # int(printer.get("cb_chapfrom"))
+        last = int(self.dict["document/chapto"]) # int(printer.get("cb_chapto"))
         
         # This section handles PARTIAL books (from chapter X to chapter Y)
-        if printer.get("c_useChapterLabel"):
-            clabel = printer.get("t_clHeading")
-            clbooks = printer.get("t_clBookList").split(" ")
+        if self.asBool("document/ifchaplabels", true="%")
+            clabel = self.dict["document/clabel"]
+            clbooks = self.dict["document/clabelbooks"].split() # printer.get("t_clBookList").split(" ")
             # print("Chapter label: '{}' for '{}' with {}".format(clabel, " ".join(clbooks), bk))
             if len(clabel) and (not len(clbooks) or bk in clbooks):
                 self.localChanges.append((None, regex.compile(r"(\\c 1)(?=\s*\r?\n|\s)", flags=regex.S), r"\\cl {}\n\1".format(clabel)))
-        if not printer.get("c_multiplebooks"):
+        if not self.asBool("project/multiplebooks"):    # printer.get("c_multiplebooks"):
             if first > 1:
                 self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+(?=\\c {} ?\r?\n)".format(first), flags=regex.S), ""))
             if last < int(chaps.get(bk)):
@@ -594,7 +615,7 @@ class Info:
             self.localChanges.append((None, regex.compile(r"\\(usfm|ide|rem|sts|restore|pubinfo) .+?\r?\n", flags=regex.M), ""))
 
         # If a printout of JUST the book introductions is needed (i.e. no scripture text) then this option is very handy
-        if not printer.get("c_mainBodyText"):
+        if not self.isBool("document/ifmainbodytext"):
             self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+".format(first), flags=regex.S), ""))
 
         # Elipsize ranges of MISSING/Empty verses in the text (if 3 or more verses in a row are empty...) 
@@ -830,11 +851,14 @@ class Info:
                             val = None
                         if val is not None:
                             self.dict[key] = val
-                            printer.set(v[0], val)
+                            if printer is not None:
+                                printer.set(v[0], val)
                     except AttributeError:
                         pass # ignore missing keys 
-                elif key in self._snippets:
+                elif printer is not None and  key in self._snippets:
                     printer.set(self._snippets[key][0], val.lower() == "true")
+        if printer is None:
+            return
         for k, v in self._fonts.items(): 
             btn = printer.builder.get_object(v[0])
             vals = [config.get(k, a) if config.has_option(k, a) else "" for a in ("name", "style")]

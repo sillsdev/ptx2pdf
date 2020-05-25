@@ -176,7 +176,7 @@ def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
     return outfname
 
 def doit(printer, display=True):
-    info = printer.info or ptxprint.Info(printer, args.paratext, printer.prjid)
+    info = printer.info or ptxprint.Info(printer, args.paratext, printer.ptsettings, printer.prjid)
     prjid = printer.get("cb_project")
     prjdir = os.path.join(args.paratext, prjid)
     if prjid is None or not len(prjid):     # can't print no project
@@ -283,7 +283,7 @@ def newBase(fpath):
         return re.sub('[()&+,. ]', '_', base(fpath).lower())
 
 def gatherIllustrations(jobs, prjid, prjdir, printer):
-    info = printer.info or ptxprint.Info(printer, args.paratext, printer.prjid)
+    info = printer.info or ptxprint.Info(printer, args.paratext, printer.ptsettings, printer.prjid)
     tmpPicpath = os.path.join(printer.working_dir, "tmpPics")
     folderList = ["tmpPics", "tmpPicLists"] 
     removeTmpFolders(printer.working_dir, folderList)
