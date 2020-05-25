@@ -198,8 +198,10 @@ class Info:
         "document/clabel":          ("t_clHeading", lambda w,v: v),
 
         "document/ifdiglot":        ("c_diglot", lambda w,v :"" if v else "%"),
-        "document/diglotsettings":  ("l_diglotString", lambda w,v: w.builder.get_object("l_diglotString").get_text() if w.get("c_diglot") else ""),
-        # "document/diglotpriprj":    ("cb_diglotPriProject", lambda w,v: w.builder.get_object("cb_diglotPriProject").get_active_id()),
+        "document/diglotsettingsL": ("l_diglotStringL", lambda w,v: w.builder.get_object("l_diglotStringL").get_text() if w.get("c_diglot") else ""),
+        "document/diglotsettingsR": ("l_diglotStringR", lambda w,v: w.builder.get_object("l_diglotStringR").get_text() if w.get("c_diglot") else ""),
+        "document/diglotalignment": ("cb_diglotAlignment", lambda w,v: w.builder.get_object("cb_diglotAlignment").get_active_id()),
+        "document/diglotprifraction": ("s_diglotPriFraction", lambda w,v : round(v, 1) or "50.0"),
         "document/diglotsecprj":    ("cb_diglotSecProject", lambda w,v: w.builder.get_object("cb_diglotSecProject").get_active_id()),
         "document/diglotnormalhdrs": ("c_diglotHeaders", lambda w,v :"" if v else "%"),
 
@@ -426,7 +428,7 @@ class Info:
         self.dict['footer/oddcenter'] = self._hdrmappings.get(v,v)
         mirror = self.asBool("header/mirrorlayout")
         for side in ('left', 'center', 'right'):
-            v = self.dict["header/hdr"+size]
+            v = self.dict["header/hdr"+side]
             t = self._hdrmappings.get(v, v)
             if side == 'left':
                 if mirror:
@@ -599,7 +601,7 @@ class Info:
         last = int(self.dict["document/chapto"]) # int(printer.get("cb_chapto"))
         
         # This section handles PARTIAL books (from chapter X to chapter Y)
-        if self.asBool("document/ifchaplabels", true="%")
+        if self.asBool("document/ifchaplabels", true="%"):
             clabel = self.dict["document/clabel"]
             clbooks = self.dict["document/clabelbooks"].split() # printer.get("t_clBookList").split(" ")
             # print("Chapter label: '{}' for '{}' with {}".format(clabel, " ".join(clbooks), bk))
@@ -615,7 +617,7 @@ class Info:
             self.localChanges.append((None, regex.compile(r"\\(usfm|ide|rem|sts|restore|pubinfo) .+?\r?\n", flags=regex.M), ""))
 
         # If a printout of JUST the book introductions is needed (i.e. no scripture text) then this option is very handy
-        if not self.isBool("document/ifmainbodytext"):
+        if not self.asBool("document/ifmainbodytext"):
             self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+".format(first), flags=regex.S), ""))
 
         # Elipsize ranges of MISSING/Empty verses in the text (if 3 or more verses in a row are empty...) 
