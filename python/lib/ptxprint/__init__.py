@@ -980,15 +980,6 @@ class PtxPrinterDialog:
         self.builder.get_object("c_prettyIntroOutline").set_sensitive(not self.get("c_omitIntroOutline"))
         self.builder.get_object("c_prettyIntroOutline").set_active(False)
 
-    def onUsePTmacrosClicked(self, c_usePTmacros):
-        self.updateProjectSettings(True)
-        status = self.get("c_usePTmacros")
-        for c in ("c_variableLineSpacing", "s_linespacingmin", "s_linespacingmax", "l_min", "l_max",
-                  "s_colgutteroffset", "l_colgutteroffset", "c_marginalverses", "s_columnShift"):
-            self.builder.get_object(c).set_sensitive(not status)
-        # Temporarily keep these off (unless testing)
-        self.builder.get_object("c_startOnHalfPage").set_sensitive(not status)
-
     def onHideAdvancedSettingsClicked(self, c_hideAdvancedSettings):
         if self.get("c_hideAdvancedSettings"):
             # Turn Dangerous Settings OFF
@@ -1846,7 +1837,7 @@ class PtxPrinterDialog:
 \def\RHevenleft{\empty}
 \def\RHevencenter{\empty}
 \def\RHevenright{\rangeref}"""
-            DiglotStringL = "%% SECONDARY PDF settings"+ \
+            DiglotStringR = "%% SECONDARY PDF settings"+ \
                            "\n\MarginUnit={}mm".format(Margins)+ \
                            "\n\BindingGuttertrue"+ \
                            "\n\BindingGutter={:.2f}mm".format(SecBindingGutter)+ \
@@ -1860,7 +1851,7 @@ class PtxPrinterDialog:
 \def\RHevenleft{\rangeref}
 \def\RHevencenter{\empty}
 \def\RHevenright{\pagenumber}"""
-            DiglotStringR = "%% PRIMARY (+ SECONDARY) PDF settings"+ \
+            DiglotStringL = "%% PRIMARY (+ SECONDARY) PDF settings"+ \
                            "\n\MarginUnit={}mm".format(Margins)+ \
                            "\n\BindingGuttertrue"+ \
                            "\n\BindingGutter={:.2f}mm".format(PriBindingGutter)+ \

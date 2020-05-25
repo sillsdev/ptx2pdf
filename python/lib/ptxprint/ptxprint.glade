@@ -7082,7 +7082,6 @@ stable version of XeTeX macros
 (i.e. those that come with Paratext).</property>
                                 <property name="halign">center</property>
                                 <property name="draw_indicator">True</property>
-                                <signal name="clicked" handler="onUsePTmacrosClicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -8655,7 +8654,7 @@ compatible).</property>
                         <property name="halign">center</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
-                        <property name="spacing">6</property>
+                        <property name="spacing">3</property>
                         <child>
                           <object class="GtkLabel" id="l_diglotStringL">
                             <property name="sensitive">False</property>
@@ -8667,8 +8666,8 @@ compatible).</property>
                             <property name="label" translatable="yes">Generated TeX code (Left)</property>
                             <property name="wrap">True</property>
                             <property name="wrap_mode">word-char</property>
-                            <property name="width_chars">32</property>
-                            <property name="max_width_chars">32</property>
+                            <property name="width_chars">45</property>
+                            <property name="max_width_chars">45</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -8680,8 +8679,6 @@ compatible).</property>
                           <object class="GtkSeparator">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="margin_left">1</property>
-                            <property name="margin_right">3</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -8701,8 +8698,8 @@ compatible).</property>
                             <property name="label" translatable="yes">Generated TeX code (Right)</property>
                             <property name="wrap">True</property>
                             <property name="wrap_mode">word-char</property>
-                            <property name="width_chars">45</property>
-                            <property name="max_width_chars">45</property>
+                            <property name="width_chars">32</property>
+                            <property name="max_width_chars">32</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>

@@ -39,22 +39,20 @@ class Info:
         "config/pwd":               ("t_invisiblePassword", lambda w,v: v or ""),
 
         "project/id":               (None, lambda w,v: w.get("cb_project")),
-        "project/hideadvsettings":  ("c_hideAdvancedSettings", lambda w,v: "true" if v else "false"),
-        "project/showlayouttab":    ("c_showLayoutTab", lambda w,v: "true" if v else "false"),
-        "project/showbodytab":      ("c_showBodyTab", lambda w,v: "true" if v else "false"),
-        "project/showheadfoottab":  ("c_showHeadFootTab", lambda w,v: "true" if v else "false"),
-        "project/showpicturestab":  ("c_showPicturesTab", lambda w,v: "true" if v else "false"),
-        "project/showadvancedtab":  ("c_showAdvancedTab", lambda w,v: "true" if v else "false"),
-        "project/showviewertab":    ("c_showViewerTab", lambda w,v: "true" if v else "false"),
-        "project/showdiglottab":    ("c_showDiglotTab", lambda w,v: "true" if v else "false"),
-        "project/showborderstab":   ("c_showBordersTab", lambda w,v: "true" if v else "false"),
-        "project/keeptempfiles":    ("c_keepTemporaryFiles", lambda w,v: "true" if v else "false"),
-        "project/pdfx1acompliant":  ("c_PDFx1aOutput", lambda w,v: "true" if v else "false"),
+        "project/hideadvsettings":  ("c_hideAdvancedSettings", lambda w,v: v),
+        "project/showlayouttab":    ("c_showLayoutTab", lambda w,v: v),
+        "project/showbodytab":      ("c_showBodyTab", lambda w,v: v),
+        "project/showheadfoottab":  ("c_showHeadFootTab", lambda w,v: v),
+        "project/showpicturestab":  ("c_showPicturesTab", lambda w,v: v),
+        "project/showadvancedtab":  ("c_showAdvancedTab", lambda w,v: v),
+        "project/showviewertab":    ("c_showViewerTab", lambda w,v: v),
+        "project/showdiglottab":    ("c_showDiglotTab", lambda w,v: v),
+        "project/showborderstab":   ("c_showBordersTab", lambda w,v: v),
+        "project/keeptempfiles":    ("c_keepTemporaryFiles", lambda w,v: v),
+        "project/pdfx1acompliant":  ("c_PDFx1aOutput", lambda w,v: v),
         "project/blockexperimental": (None, lambda w,v: "" if w.get("c_experimental") else "%"),
-        "project/useptmacros":      ("c_usePTmacros", lambda w,v: "true" if v else "false"),
-        "project/ifnotptmacros":    ("c_usePTmacros", lambda w,v: "%" if v else ""),
-        "project/multiplebooks":    ("c_multiplebooks", lambda w,v: "true" if v else "false"),
-        "project/combinebooks":     ("c_combine", lambda w,v: "true" if v else "false"),
+        "project/multiplebooks":    ("c_multiplebooks", lambda w,v: v),
+        "project/combinebooks":     ("c_combine", lambda w,v: v),
         "project/book":             ("cb_book", None),
         "project/booklist":         ("t_booklist", lambda w,v: v or ""),
         "project/ifinclfrontpdf":   ("c_inclFrontMatter", lambda w,v: "" if v else "%"),
@@ -63,19 +61,19 @@ class Info:
         "project/ifinclbackpdf":    ("c_inclBackMatter", lambda w,v: "" if v else "%"),
         "project/backincludes":     ("btn_selectBackPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(re.sub(r"\\","/", s)) \
                                                            for s in w.BackPDFs) if (w.BackPDFs is not None and w.BackPDFs != 'None') else ""),
-        "project/useprintdraftfolder": ("c_useprintdraftfolder", lambda w,v :"true" if v else "false"),
+        "project/useprintdraftfolder": ("c_useprintdraftfolder", lambda w,v :v),
         "project/processscript":    ("c_processScript", lambda w,v : v),
         "project/runscriptafter":   ("c_processScriptAfter", lambda w,v : v),
         "project/selectscript":     ("btn_selectScript", lambda w,v: re.sub(r"\\","/", w.CustomScript   ) if w.CustomScript is not None else ""),
-        "project/usechangesfile":   ("c_usePrintDraftChanges", lambda w,v :"true" if v else "false"),
+        "project/usechangesfile":   ("c_usePrintDraftChanges", lambda w,v :v),
         "project/ifusemodstex":     ("c_useModsTex", lambda w,v: "" if v else "%"),
         "project/ifusecustomsty":   ("c_useCustomSty", lambda w,v: "" if v else "%"),
         "project/ifusemodssty":     ("c_useModsSty", lambda w,v: "" if v else "%"),
         "project/ifusenested":      (None, lambda w,v: "" if (w.get("c_omitallverses") or not w.get("c_includeFootnotes") \
                                                        or not w.get("c_includeXrefs")) or w.get("c_prettyIntroOutline") else "%"),
         "project/ifstarthalfpage":  ("c_startOnHalfPage", lambda w,v :"true" if v else "false"),
-        "project/randompicposn":    ("c_randomPicPosn", lambda w,v :"true" if v else "false"),
-        "project/showlinenumbers":  ("c_showLineNumbers", lambda w,v :"true" if v else "false"),
+        "project/randompicposn":    ("c_randomPicPosn", lambda w,v :v),
+        "project/showlinenumbers":  ("c_showLineNumbers", lambda w,v :v),
 
         "paper/height":             (None, lambda w,v: re.sub(r"^.*?,\s*(.+?)\s*(?:\(.*|$)", r"\1", w.get("cb_pagesize")) or "210mm"),
         "paper/width":              (None, lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", w.get("cb_pagesize")) or "148mm"),
@@ -125,7 +123,7 @@ class Info:
         "paragraph/ifhyphenate":    ("c_hyphenate", lambda w,v: "" if v else "%"),
         "paragraph/ifomithyphen":   ("c_omitHyphen", lambda w,v: "" if v else "%"),
         "paragraph/ifnothyphenate": ("c_hyphenate", lambda w,v: "%" if v else ""),
-        "paragraph/ifusefallback":  ("c_useFallbackFont", lambda w,v:"true" if v else "false"),
+        "paragraph/ifusefallback":  ("c_useFallbackFont", lambda w,v: v),
         "paragraph/missingchars":   ("t_missingChars", lambda w,v: v or ""),
 
         "document/title":           (None, lambda w,v: w.ptsettings.get('FullName', "")),
@@ -135,9 +133,9 @@ class Info:
 
         "document/toc":             ("c_autoToC", lambda w,v: "" if v else "%"),
         "document/toctitle":        ("t_tocTitle", lambda w,v: v or ""),
-        "document/usetoc1":         ("c_usetoc1", lambda w,v:"true" if v else "false"),
-        "document/usetoc2":         ("c_usetoc2", lambda w,v:"true" if v else "false"),
-        "document/usetoc3":         ("c_usetoc3", lambda w,v:"true" if v else "false"),
+        "document/usetoc1":         ("c_usetoc1", lambda w,v: v),
+        "document/usetoc2":         ("c_usetoc2", lambda w,v: v),
+        "document/usetoc3":         ("c_usetoc3", lambda w,v: v),
         "document/chapfrom":        ("cb_chapfrom", lambda w,v: w.builder.get_object("cb_chapfrom").get_active_id()),
         "document/chapto":          ("cb_chapto", lambda w,v: w.builder.get_object("cb_chapto").get_active_id()),
         "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: round(v*3) or "12"), # Hack to be fixed
@@ -150,22 +148,22 @@ class Info:
         "document/script":          ("cb_script", lambda w,v: ":script="+w.builder.get_object('cb_script').get_active_id().lower() \
                                                   if w.builder.get_object('cb_script').get_active_id() != "Zyyy" else ""),
         "document/digitmapping":    ("cb_digits", lambda w,v: ':mapping=mappings/'+w.get('cb_digits', 1)+'digits' if v != "Default" else ""),
-        "document/ch1pagebreak":    ("c_ch1pagebreak", lambda w,v: "true" if v else "false"),
+        "document/ch1pagebreak":    ("c_ch1pagebreak", lambda w,v: v),
         "document/marginalverses":  ("c_marginalverses", lambda w,v: "" if v else "%"),
         "document/columnshift":     ("s_columnShift", lambda w,v: v or "16"),
         "document/ifomitchapternum":   ("c_omitchapternumber", lambda w,v: "true" if v else "false"),
         "document/ifomitallchapters":  ("c_omitchapternumber", lambda w,v: "" if v else "%"),
-        "document/ifomitsinglechnum":  ("c_omitChap1ChBooks", lambda w,v: "true" if v else "false"),
+        "document/ifomitsinglechnum":  ("c_omitChap1ChBooks", lambda w,v: v),
         "document/ifomitverseone":  ("c_omitverseone", lambda w,v: "true" if v else "false"),
         "document/ifomitallverses": ("c_omitallverses", lambda w,v: "" if v else "%"),
-        "document/ifmainbodytext":  ("c_mainBodyText", lambda w,v: "true" if v else "false"),
-        "document/glueredupwords":  ("c_glueredupwords", lambda w,v :"true" if v else "false"),
-        "document/ifinclfigs":      ("c_includeillustrations", lambda w,v :"true" if v else "false"),
-        "document/iffigfrmtext":    ("c_includefigsfromtext", lambda w,v :"true" if v else "false"),
-        "document/iffigexclwebapp": ("c_figexclwebapp", lambda w,v: "true" if v else "false"),
-        "document/iffigskipmissing": ("c_skipmissingimages", lambda w,v: "true" if v else "false"),
-        "document/iffigplaceholders": ("c_figplaceholders", lambda w,v :"true" if v else "false"),
-        "document/iffighiderefs":   ("c_fighiderefs", lambda w,v :"true" if v else "false"),
+        "document/ifmainbodytext":  ("c_mainBodyText", lambda w,v: v),
+        "document/glueredupwords":  ("c_glueredupwords", lambda w,v :v),
+        "document/ifinclfigs":      ("c_includeillustrations", lambda w,v :v),
+        "document/iffigfrmtext":    ("c_includefigsfromtext", lambda w,v :v),
+        "document/iffigexclwebapp": ("c_figexclwebapp", lambda w,v: v),
+        "document/iffigskipmissing": ("c_skipmissingimages", lambda w,v: v),
+        "document/iffigplaceholders": ("c_figplaceholders", lambda w,v :v),
+        "document/iffighiderefs":   ("c_fighiderefs", lambda w,v :v),
         "document/usesmallpics":    ("c_useLowResPics", lambda w,v :"" if v else "%"),
         "document/uselargefigs":    ("c_useHighResPics", lambda w,v :"" if v else "%"),
         "document/customfiglocn":   ("c_useCustomFolder", lambda w,v :"" if v else "%"),
@@ -177,15 +175,15 @@ class Info:
         "document/glossarymarkupstyle":  ("cb_glossaryMarkupStyle", lambda w,v: w.builder.get_object("cb_glossaryMarkupStyle").get_active_id()),
         "document/filterglossary":  ("c_filterGlossary", lambda w,v: v),
         "document/hangpoetry":      ("c_hangpoetry", lambda w,v: "" if v else "%"),
-        "document/preventorphans":  ("c_preventorphans", lambda w,v: "true" if v else "false"),
-        "document/preventwidows":   ("c_preventwidows", lambda w,v: "true" if v else "false"),
-        "document/supresssectheads": ("c_omitSectHeads", lambda w,v: "true" if v else "false"),
-        "document/supressparallels": ("c_omitParallelRefs", lambda w,v: "true" if v else "false"),
-        "document/supressbookintro": ("c_omitBookIntro", lambda w,v: "true" if v else "false"),
-        "document/supressintrooutline": ("c_omitIntroOutline", lambda w,v: "true" if v else "false"),
+        "document/preventorphans":  ("c_preventorphans", lambda w,v: v),
+        "document/preventwidows":   ("c_preventwidows", lambda w,v: v),
+        "document/supresssectheads": ("c_omitSectHeads", lambda w,v: v),
+        "document/supressparallels": ("c_omitParallelRefs", lambda w,v: v),
+        "document/supressbookintro": ("c_omitBookIntro", lambda w,v: v),
+        "document/supressintrooutline": ("c_omitIntroOutline", lambda w,v: v),
         "document/supressindent":   ("c_omit1paraIndent", lambda w,v: "false" if v else "true"),
         "document/ifhidehboxerrors": ("c_showHboxErrorBars", lambda w,v :"%" if v else ""),
-        "document/elipsizemptyvs":  ("c_elipsizeMissingVerses", lambda w,v: "false" if v else "true"),
+        "document/elipsizemptyvs":  ("c_elipsizeMissingVerses", lambda w,v: v),
         "document/ifspacing":       ("c_spacing", lambda w,v :"" if v else "%"),
         "document/spacestretch":    ("s_maxSpace", lambda w,v : str((int(v) - 100) / 100.)),
         "document/spaceshrink":     ("s_minSpace", lambda w,v : str((100 - int(v)) / 100.)),
@@ -198,8 +196,8 @@ class Info:
         "document/clabel":          ("t_clHeading", lambda w,v: v),
 
         "document/ifdiglot":        ("c_diglot", lambda w,v :"" if v else "%"),
-        "document/diglotsettingsL": ("l_diglotStringL", lambda w,v: w.builder.get_object("l_diglotStringL").get_text() if w.get("c_diglot") else ""),
-        "document/diglotsettingsR": ("l_diglotStringR", lambda w,v: w.builder.get_object("l_diglotStringR").get_text() if w.get("c_diglot") else ""),
+        "document/diglotsettings":  ("l_diglotStringL", lambda w,v: w.builder.get_object("l_diglotStringL").get_text() if w.get("c_diglot") else ""),
+        # "document/diglotsettings":  ("l_diglotStringR", lambda w,v: w.builder.get_object("l_diglotStringR").get_text() if w.get("c_diglot") else ""),
         "document/diglotalignment": ("cb_diglotAlignment", lambda w,v: w.builder.get_object("cb_diglotAlignment").get_active_id()),
         "document/diglotprifraction": ("s_diglotPriFraction", lambda w,v : round(v, 1) or "50.0"),
         "document/diglotsecprj":    ("cb_diglotSecProject", lambda w,v: w.builder.get_object("cb_diglotSecProject").get_active_id()),
@@ -231,8 +229,9 @@ class Info:
         "notes/fnresetcallers":     ("c_fnpageresetcallers", lambda w,v: "" if v else "%"),
         "notes/fnomitcaller":       ("c_fnomitcaller", lambda w,v: "%" if v else ""),
         "notes/fnparagraphednotes": ("c_fnparagraphednotes", lambda w,v: "" if v else "%"),
-        "notes/addcolon":           ("c_addColon", lambda w,v :"true" if v else "false"),
-        "notes/glossaryfootnotes":  ("c_glossaryFootnotes", lambda w,v :"true" if v else "false"),
+        "notes/addcolon":           ("c_addColon", lambda w,v :v),
+        "notes/keepbookwithrefs":   ("c_keepBookWithRefs", lambda w,v: v),
+        "notes/glossaryfootnotes":  ("c_glossaryFootnotes", lambda w,v :v),
 
         "notes/includexrefs":       ("c_includeXrefs", lambda w,v: "%" if v else ""),
         "notes/ifxrautocallers":    ("c_xrautocallers", lambda w,v :"true" if v else "false"),
@@ -242,10 +241,10 @@ class Info:
         "notes/xrparagraphednotes": ("c_paragraphedxrefs", lambda w,v: "" if v else "%"),
 
         "font/features":            ("t_fontfeatures", lambda w,v: v),
-        "font/usegraphite":         ("c_useGraphite", lambda w,v: "true" if v else "false"),
-        "fontbold/fakeit":          ("c_fakebold", lambda w,v: "true" if v else "false"),
-        "fontitalic/fakeit":        ("c_fakeitalic", lambda w,v: "true" if v else "false"),
-        "fontbolditalic/fakeit":    ("c_fakebolditalic", lambda w,v :"true" if v else "false"),
+        "font/usegraphite":         ("c_useGraphite", lambda w,v: v),
+        "fontbold/fakeit":          ("c_fakebold", lambda w,v: v),
+        "fontitalic/fakeit":        ("c_fakeitalic", lambda w,v: v),
+        "fontbolditalic/fakeit":    ("c_fakebolditalic", lambda w,v :v),
         "fontbold/embolden":        ("s_boldembolden", lambda w,v: ":embolden={:.2f}".format(v) if v != 0.00 and w.get("c_fakebold") else ""),
         "fontitalic/embolden":      ("s_italicembolden", lambda w,v: ":embolden={:.2f}".format(v) if v != 0.00 and w.get("c_fakeitalic") else ""),
         "fontbolditalic/embolden":  ("s_bolditalicembolden", lambda w,v: ":embolden={:.2f}".format(v) if v != 0.00 and w.get("c_fakebolditalic") else ""),
@@ -412,7 +411,7 @@ class Info:
                     if p == "fontregular":
                         self.dict['font/features'] = ":"+ ":".join("{0}={1}".format(f.feats.get(fid, fid),
                                                     f.featvals.get(fid, {}).get(int(v), v)) for fid, v in f.features.items())
-            if 'Silf' in f and printer.get("c_useGraphite"):
+            if 'Silf' in f and self.asBool("font/usegraphite"):
                 engine = "/GR"
             else:
                 engine = ""
@@ -460,7 +459,7 @@ class Info:
                     res.append("\\PtxFilePath={"+filedir.replace("\\","/")+"/}\n")
                     for i, f in enumerate(self.dict['project/bookids']):
                         fname = self.dict['project/books'][i]
-                        if self.dict['document/ifomitsinglechnum'] == 'true' and \
+                        if self.asBool('document/ifomitsinglechnum') and \
                            self.dict['document/ifomitchapternum'] == "false" and \
                            f in oneChbooks:
                             res.append("\\OmitChapterNumbertrue\n")
@@ -518,7 +517,7 @@ class Info:
 
     def convertBook(self, bk, outdir, prjdir):
         if self.changes is None:
-            if self.dict['project/usechangesfile'] == "true":
+            if self.asBool('project/usechangesfile'):
                 self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'))
             else:
                 self.changes = []
@@ -527,9 +526,10 @@ class Info:
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
             open(customsty, "w").close()
-        fbkfm = self.ptsettings['FileNameBookNameForm']
-        fprfx = self.ptsettings['FileNamePrePart'] or ""
-        fpost = self.ptsettings['FileNamePostPart'] or ""
+        # fbkfm = self.ptsettings['FileNameBookNameForm']
+        fbkfm = self.printer.ptsettings['FileNameBookNameForm']
+        fprfx = self.printer.ptsettings['FileNamePrePart'] or ""
+        fpost = self.printer.ptsettings['FileNamePostPart'] or ""
         bknamefmt = fprfx + fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + fpost
         fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
         infpath = os.path.join(prjdir, fname)
@@ -683,7 +683,7 @@ class Info:
             self.localChanges.append((None, regex.compile(r"\\r .+", flags=regex.M), ""))
 
         if self.asBool("notes/ifblendfnxr"):
-            XrefCaller = self.dict["cb_blendedXrefCaller"]
+            XrefCaller = self.dict["notes/blendedxrmkr"]
             # To merge/blend \f and \x together, simply change all (\x to \f) (\xo to \fr) and so on...
             self.localChanges.append((None, regex.compile(r"\\x . ", flags=regex.M), r"\\f {} ".format(XrefCaller)))
             self.localChanges.append((None, regex.compile(r"\\x\* ", flags=regex.M), r"\\f* "))
@@ -724,7 +724,7 @@ class Info:
         self.localChanges.append((None, regex.compile(r"\\\+", flags=regex.M), r"\\"))  
             
         for c in range(1,4): # Remove any \toc lines that we don't want appearing in the Table of Contents
-            if not self.asBool("document/usetoc1{}".format(c)):
+            if not self.asBool("document/usetoc{}".format(c)):
                 self.localChanges.append((None, regex.compile(r"(\\toc{} .+)".format(c), flags=regex.M), ""))
 
         # Insert a rule between end of Introduction and start of body text (didn't work earlier, but might work now)

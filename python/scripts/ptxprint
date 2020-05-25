@@ -134,7 +134,8 @@ def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
             ptxmacrospath = os.path.abspath(os.path.join(b, 'ptx2pdf'))
             if os.path.exists(ptxmacrospath):
                 break
-    if info['project/useptmacros'] == "false":
+    # if info['project/useptmacros'] == "false":
+    if True:
         if not os.getenv('TEXINPUTS'):
             texinputs = [os.path.abspath(tmpdir), ptxmacrospath]
             os.putenv('TEXINPUTS', (";" if sys.platform=="win32" else ":").join(texinputs))
