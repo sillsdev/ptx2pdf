@@ -328,7 +328,7 @@
 }
 \def\onecoltrial{% single-column version of \twocoltrial (see below)
   %\tracingall=1\tracingoutput=0\tracingpages=0\tracingparagraphs=0\tracingassigns=0\tracingscantokens=0
-%%%  \msg{1c TRIAL with ht=\the\trialheight, vsize=\the\vsize, hIns=\the\holdinginserts}
+  \trace{i}{1c TRIAL with ht=\the\trialheight, vsize=\the\vsize, hIns=\the\holdinginserts}
   \edef\p@gebotmark{\botmark}% remember last \mark for running header
   \edef\t@st{\p@gefirstmark}%
   \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi % remember first, if not already set
@@ -347,7 +347,7 @@
   % and check if it all fit; if not, we'll have to back up and try again
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
   \iffitonpage
-%%%    \msg{1 SUCCEEDED, shipping page hIns=\the\holdinginserts}
+    \trace{i}{1 SUCCEEDED, shipping page hIns=\the\holdinginserts}
 % at this point:
 %   \box\colA is the page content
 %   \availht is ht that definitely works
@@ -361,13 +361,17 @@
       \hbox to \dimen1{\hbox to \columnshift{}%
         \box\colA\hbox to \ExtraRMargin{}\hfil}
       \ifvoid\bottomins\else \vfil\kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\box\bottomins} \fi % ouput bottom spanning pictures
-      \f@rstnotetrue
+      \f@rstnotetrue%
       \setbox2=\vbox{
       \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses
       \iff@rstnote % no notes actually occurred!
+        \trace{i}{No notes}%
+	\ifnoteseen\MSG{*** Page \the\pageno\space is being printed without any footnotes/xrefs, etc. At least one was seen earlier. Maybe it's ended up on the previous page or just moved to the next page, or maybe it's vanished. Human checkin gis needed.}\fi%%
         \kern-\dimen0 \vfil
-      \else
-        \setbox0=\lastbox \dimen0=\dp0 \box0 \kern-\dimen0
+      \else%
+	\setbox0=\lastbox%
+	\trace{i}{Inserted notes, ht \the\ht0\space dp \the\dimen0}%
+	\dimen0=\dp0 \box0 \kern-\dimen0
       \fi}
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}
       \unvbox2
@@ -381,7 +385,7 @@
     \else\global\output={\onecol}\fi
   \else % the contents of the "galley" didn't fit into the actual page,
         % so reduce \vsize and try again with an earlier break
-%%%    \msg{1c REDUCING VSIZE hIns=\the\holdinginserts}
+    \trace{i}{1c REDUCING VSIZE hIns=\the\holdinginserts}
     \global\advance\vsize by -\baselineskip
     \global\setbox\topins=\box\voidb@x
     \global\setbox\bottomins=\box\voidb@x
@@ -447,7 +451,7 @@
 	\global\advance\vsize by -2\ht\partial % subtract height of 1 column material
 	\global\advance\vsize by 2\baselineskip % don't get caught short by 1/2 line or so
 	% make a macro reset vsize for remaining pages which do not have 1 column material
-    \trace{o}{Going to 2 col, textheight \the\textheight}
+    \trace{o}{Going to 2 col, textheight \the\textheight - \the\ht\partial}
     \gdef\resetvsize{\trace{o}{resetvsize2}\global\vsize=2\textheight \global\advance\vsize by \baselineskip} 
     \global\output={\twocols}
     \global\c@rrentcols=2
@@ -476,6 +480,7 @@
 
 \def\savepartialpage{% save a partially-full page when switching to 2-column format,
   \xdef\p@gebotmark{\botmark}
+  \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
   \c@lcavailht
   \setbox\s@vedpage=\copy255
   % split the galley to the actual size available
@@ -497,21 +502,29 @@
       \setbox2=\vbox{
       \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses
       \iff@rstnote % no notes actually occurred!
+	\trace{i}{No notes}%
+	\ifnoteseen\MSG{*** Part of page \the\pageno\space(starting \the\ht\partial\space down the text body)  is being printed without any footnotes/Xrefs, etc. But at least one was seen earlier. Maybe it's just moved to the next page, or ended up on the previous one, or maybe it's vanished. Human checking is needed.}\fi%%
         \kern-\dimen0 \vfil
       \else
-        \setbox0=\lastbox \dimen0=\dp0 \box0 \kern-\dimen0
+	\setbox0=\lastbox%
+	\trace{i}{Inserted notes, ht \the\ht0\space dp \the\dimen0}%
+	\dimen0=\dp0 \box0 \kern-\dimen0
       \fi}
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}
       \unvbox2
     }
-    \resetvsize
-    \ifdim\ht\colA>\baselineskip\plainoutput\else\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
+    \resetvsize%
+    \ifdim\ht\colA>\baselineskip\plainoutput\else\trace{o}{Page empty \the\ht\colA, \ht\colB, \the\ht\partial}\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
     %\xdef\p@gefirstmark{}
-    \xdef\p@gebotmark{}
+    %\xdef\p@gebotmark{}
+    \tempfalse%
+    \ifdim\ht\partial>0.9\textheight \temptrue\fi%
+    \ifnum\outputpenalty<-10000 \temptrue\fi%
+    \iftemp\def\pagecontents{\box\partial}\plainoutput \fi
     \global\holdinginserts=1
   \else % the contents of the "galley" didn't fit into the actual page,
         % so reduce \vsize and try again with an earlier break
-%%%    \msg{2c REDUCING VSIZE hIns=\the\holdinginserts}
+    \trace{i}{2c REDUCING VSIZE hIns=\the\holdinginserts}
     \@mptyinserts
     \global\advance\vsize by -\baselineskip
     \let\\=\cle@rn@tecl@ss \the\n@tecl@sses
@@ -524,7 +537,7 @@
 \newbox\partial
 
 \def\twocols{% primary output routine in 2-col mode
-%%%  \msg{TWOCOLS @ \ch@pter:\v@rse, txtht=\the\textheight, partial=\the\ht\partial, hIns=\the\holdinginserts}
+  \trace{i}{TWOCOLS @ \ch@pter:\v@rse, txtht=\the\textheight, partial=\the\ht\partial, hIns=\the\holdinginserts}
   % save copy of current page so we can retry with different heights
   \trace{b}{BALANCE pagebuild: cols=2: textheight=\the\textheight}
   \global\setbox\galley=\copy255
@@ -548,7 +561,7 @@
     \ifdiglot\ifdiglotSepNotes\ifdiglotBalNotes\let\n@xt=\reduceavailht@para@bal\fi\fi\fi
   \else\let\n@xt=\reduceavailht@sep
     \ifdiglot\ifdiglotSepNotes\ifdiglotBalNotes\let\n@xt=\reduceavailht@sep@bal\fi\fi\fi
-  \fi%
+  \fi\iff@rstnote\else\global\noteseentrue\fi%
   \n@xt{#1}}
 
 \def\reduceavailht@para#1{
@@ -667,6 +680,7 @@
 \newcount\loopcount
 \newif\ifrem@inder \rem@indertrue
 \newif\ifunbalanced \unbalancedfalse% \unbalancedtrue
+\newif\ifnoteseen \noteseenfalse% A trigger to help alert user that note might have gone missing
 
 \def\s@tcolhts#1{
     \colhtA=#1 \decr{\colhtA}{\topleftins} \decr{\colhtA}{\bottomleftins}
@@ -785,21 +799,23 @@
 \xdef\p@gebotmark{}% No guarantee this will be universally set
 \def\c@lcavailht{
   \edef\t@st{\p@gefirstmark}%
-  \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi % remember first, if not already set
+  \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi% remember first, if not already set
   \edef\t@st{\p@gebotmark}%
   \ifx\t@st\empty\xdef\p@gebotmark{\botmark}\fi%
-  \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
+  %NOT HERE! \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
   \availht=\trialheight % amount of space we think is available
-  \f@rstnotetrue
-  \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
-  \trace{o}{availht = \the\availht, depth = \the\dp255}
+  \trace{i}{C@lcavailht partial:\the\ht\partial \space av:\the\availht}
+  \f@rstnotetrue%
+  \let\\=\reduceavailht\the\n@tecl@sses% reduce it by the space needed for each note class
+  \trace{i}{after inserts: \the\availht}%
+  \trace{o}{availht = \the\availht, depth = \the\dp255}%
   \advance\availht -\dp255
   % Round to lines accurate to 1/8pt in lineskip. 1/10pt causes overflow on longer pages. Support two column legal.
   \dimen0=8\baselineskip
   \multiply\availht by 8 \divide\availht by\dimen0 \multiply\availht by\dimen0 \divide\availht by 8
 %%%
   \decr{\availht}{\topins}% and by the space needed for spanning pictures
-  \decr{\availht}{\bottomins}
+  \decr{\availht}{\bottomins}%
   \advance\availht by \dp255 % split includes depth so give it space for that
   \trace{o}{new availht=\the\availht, topins=\the\ht\topins, bottomins=\the\ht\bottomins, baselineskip=\the\baselineskip}
 %%%
@@ -808,10 +824,19 @@
 
 \newif\ifrerunsavepartialpaged
 \def\savepartialpaged{%
+  \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
   \c@lcavailht
   \setbox\s@vedpage=\vbox{\unvbox255}
-  \trace{o}{balancing from savepartialpaged, height=\the\ht\s@vedpage}
-  \rem@inderfalse\balanced
+  \trace{o}{balancing from savepartialpaged, height=\the\ht\s@vedpage, hIns:\the\holdinginserts, vsz=\the\vsize}
+  \ifdim\availht<\baselineskip 
+  \rem@indertrue% No, I don't know what this does, but once If i  didn't do it then we get lost verses. 
+  %\rem@inderfalse%
+  \balanced%
+  \fitonpagetrue%There's certainly no point shrinking past this
+  \else%
+  \rem@inderfalse%
+  \balanced%
+  \fi% 
   \iffitonpage
     \c@lcboxheights
     \ht\colA=\dimen3 \ht\colB=\dimen3
@@ -827,21 +852,36 @@
         \ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\dimen0}\box\colA %
         \else \box\colA\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\dimen0}\box\colB\hbox to \ExtraRMargin{}\fi}}}
     %\advance\dimen3 by \dimen4 \ht\partial=\dimen3
+    \trace{o}{sppd: saved partial, ht:\the\ht\partial\space rem:\the\ht\s@vedpage}
     \global\holdinginserts=1
     \global\setbox255=\box\voidb@x
+    \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
+    \c@lcavailht
+    \ifdim\ht\partial>0.9\textheight\twocolp@geout \fi
+    \unvbox\s@vedpage\penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
   \else
+    \trace{o}{sppd: Not fit on page}
+    \trace{i}{sppd: emptyinserts hIns=\the\holdinginserts, \the\ht\partial, vs:\the\vsize}
     \@mptyinserts
     \global\advance\vsize by -\baselineskip
-    \global\let\whichtrial=\twocoltrial
-    \global\rerunsavepartialpagedtrue
-    \global\output={\backingup}\unvbox\s@vedpage
-%    \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
-    \penalty\outputpenalty
-  \fi
+    \global\let\whichtrial=\savepartialpaged
+    %\global\rerunsavepartialpagedtrue
+    \global\output={\backingup}%
+    \tempfalse%\ifvoid\partial\else\temptrue\fi%
+    \ifvoid\galley\temptrue\fi% Galley was created saving inserts, this is caleld without them
+    \iftemp
+     \trace{i}{Using savedpage.pen=\the\outputpenalty}%
+     \unvbox\s@vedpage\penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
+    \else%
+     \trace{i}{Using galley. pen=\the\galleypenalty}%
+     \unvbox\s@vedpage\penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
+    \fi%
+  \fi%
 }
 
 \def\twocoltrial{% trial formatting to see if current contents will fit on the page
-  \c@lcavailht
+  \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
+  \c@lcavailht%
   \ifdim\availht<0pt
     \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}
   \fi
@@ -871,12 +911,17 @@
       \setbox2=\vbox{
       \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % output all note classes
       \iff@rstnote % no notes actually occurred!
-        \kern-\dimen0 \vfil
+        \trace{i}{No notes}%
+	\ifnoteseen\MSG{Page \the\pageno\space is being printed without any footnotes/xrefs, etc. But at least one was seen earlier. Maybe it's just moved to the next page, or maybe it's vanished.}\fi%%
+        \kern-\dimen0 \vfil%
       \else
-        \setbox0=\lastbox \dimen0=\dp0 \box0 \kern-\dimen0
+        \setbox0=\lastbox%
+        \trace{i}{Inserted notes, ht \the\ht0\space dp \the\dimen0}%
+        \dimen0=\dp0 \box0 \kern-\dimen0
       \fi}
-      \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}
+      \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
       \unvbox2
+      \global\noteseenfalse%
     }
     \global\setbox255=\box\voidb@x
     \resetvsize % reset size of next page since it will not have any 1 column material
@@ -892,6 +937,7 @@
     \trace{o}{Reducing vsize \the\vsize, by \the\dimen5}
     \global\advance\vsize by -\dimen5
 	% clear insertions
+    \trace{i}{2coltrial: emptyinserts hIns=\the\holdinginserts}
     \@mptyinserts
     \let\\=\cle@rn@tecl@ss \the\n@tecl@sses
     \global\let\whichtrial=\twocoltrial
@@ -920,6 +966,7 @@
 
 \def\backingup{% this output routine is used when we reduce \vsize;
                % it will cause a new page break to be found, and then the \trial routine is called again
+  \trace{o}{backingup hIns=\the\holdinginserts(==1)}
   \global\deadcycles=0
   \global\setbox\galley=\copy255
   \global\galleypenalty=\outputpenalty
@@ -934,10 +981,14 @@
 \def\savepartialpagedbounce{
   % This output routine gets the partial galley (input text) before a 2->1 column transition
   % so that it can be re-run with holdinginserts=0, so footnotes etc can be seen.
-  \global\holdinginserts=0
+  \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
+  \c@lcavailht
+  \vsize=2\availht
+  \advance\vsize by \baselineskip
   \global\output={\savepartialpaged}
   \global\setbox\galley=\copy255 \global\setbox\galley=\vbox{\unvbox\galley}
-  \trace{o}{sppb hIns=\the\holdinginserts, \the\ht\partial, \the\ht255, \the\ht\galley}
+  \trace{o}{sppb hIns=\the\holdinginserts, pt:\the\ht\partial, g:\the\ht255, \the\ht\galley}
+  \global\holdinginserts=0
   \unvbox255\eject
 }
 
@@ -986,33 +1037,42 @@
   %\msg{Starting diglot partial: \the\ht\partial, pagetotal: \the\pagetotal, vsize: \the\vsize}
 } 
 
-\def\singlec@lumn{%
-  \trace{o}{singlecolumn}%\tracingmacros=1
+\def\twocolp@geout{%This gets used a few times
+  \def\pagecontents{
+    \trace{b}{BALANCE pageout: cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins}
+    \vbox{\dimen1=\textwidth \advance\dimen1 \ExtraRMargin
+    \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\box\partial}} \fi
+	\dimen0=\dp\partial
+    \ifvoid\bottomins\else \kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \unvbox\bottomins \fi
+    \f@rstnotetrue%
+    \setbox2=\vbox{
+    \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % output all note classes
+    \iff@rstnote % no notes actually occurred!
+      \trace{i}{No notes}%
+    \ifnoteseen\MSG{Page \the\pageno\space is being printed without any footnotes/xrefs, etc. But at least one was seen earlier. Maybe it's ended up on the previous page or moved to the next one, or maybe it's vanished. Human checking is needed.}\fi%%
+      \kern-\dimen0 \vfil%
+    \else%
+      \setbox0=\lastbox%
+      \trace{i}{Inserted notes, ht \the\ht0\space dp \the\dimen0}%
+      \dimen0=\dp0 \box0 \kern-\dimen0
+    \fi}%
+    \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
+    \unvbox2
+    }}\plainoutput\noteseenfalse}%
+
+% to switch back to single column, we reset the page size parameters
+\def\singlecolumn{%
+  \trace{o}{singlecolumn hIns=\the\holdinginserts}%\tracingmacros=1
   \ifnum\c@rrentcols>1
     \ifhe@dings\endhe@dings\fi
-    \temptrue
-    \global\output={\savepartialpagedbounce}\eject % save any partially-full page into a box
+    %\temptrue
+    \global\output={\savepartialpagedbounce}\eject\eject % save any partially-full page into a box.
+    %LOTS happens before this line is reached!
     \global\hsize=\textwidth \advance\hsize by -\columnshift
     \global\vsize=\textheight
-    \tempfalse
+    %\tempfalse
     \ifdim\ht\partial>0.9\textheight
-      \def\pagecontents{
-        \trace{b}{BALANCE pageout: cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins}
-        \vbox{\dimen1=\textwidth \advance\dimen1 \ExtraRMargin
-        \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\box\partial}} \fi
-	    \dimen0=\dp\partial
-        \ifvoid\bottomins\else \kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \unvbox\bottomins \fi
-        \setbox2=\vbox{
-        \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % output all note classes
-        \iff@rstnote % no notes actually occurred!
-          \kern-\dimen0 \vfil
-        \else
-          \setbox0=\lastbox \dimen0=\dp0 \box0 \kern-\dimen0
-        \fi}
-        \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}
-        \unvbox2
-      }}\plainoutput 
-    \fi
+      \twocolp@geout \fi%Set up pagecontents and call \plainoutput
     \global\c@rrentcols=1
     \trace{o}{resetting resetvsize for singlecolumn}\def\resetvsize{\trace{o}{resetvsize}\global\vsize=\textheight} 
     \global\output={\onecol}
@@ -1056,7 +1116,7 @@
     \ifx\p@ramid\FigP@ramCopy\global\p@ramnumber=5\else
     \ifx\p@ramid\FigP@ramAlt\global\p@ramnumber=6\else
     \ifx\p@ramid\FigP@ramRef\global\p@ramnumber=7\else
-    \ifx\p@ramid\FigP@ramXtra\global\p@ramnumber=8\else %extra parameter, post filename e.g. "rotated 90"
+    \ifx\p@ramid\FigP@ramXtra\global\p@ramnumber=8\else %experimental extra parameter, post filename e.g. "rotated 90"
     \fi\fi\fi\fi\fi\fi\fi
     \tempfalse
     \ifx\p@ramval\empty\ifusfmthree\else

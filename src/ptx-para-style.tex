@@ -185,7 +185,7 @@
     \if@ntromarker\st@rtintro\else\st@rtbody\fi
   \fi\fi\fi
   \ifhe@dingstyle\TRACE{headingstyle true}%
-    \ifhe@dings\nsp@cebeforetrue\else
+    \ifhe@dings\nsp@cebeforetrue\s@tbaseline{\m@rker}\else
       \setbox\he@dingbox=\vbox\bgroup\global\he@dingstrue
 	\s@tbaseline{\m@rker}%Obey baseline changes for headings
         \linepenalty=1000 % minimize line count

@@ -302,6 +302,7 @@
          \setbox1=\hbox{\endash\AdornVerseNumber{\v@rseto}}
          \setbox0=\vtop{\hbox to \wd1{\hfil\AdornVerseNumber{\v@rsefrom}}
                         \kern\dimen0\box1}
+         \ht0=0.5\dimen1 \dp0=0pt
          \hbox{\box0}\fi}
 \let\printv@rse=\simpleprintv@rse
 \def\@ne{1}
@@ -442,7 +443,8 @@
  \catcode`\#=6 \catcode`\%=14 % restore TeX meanings for those we might use
  \catcode`\{=1 \catcode`\}=2
  \singlecolumn\pagebreak
- \ifendbooknoeject\else\global\output={\global\setbox255=\box\voidb@x}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
+ %\ifendbooknoeject\else\global\output={\global\setbox255=\box\voidb@x}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
+ \ifendbooknoeject\else\global\output={\shipout\vbox{\box\partial\box255}}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
  \global\output={\onecol}
  }
 \newread\t@stread

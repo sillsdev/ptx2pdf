@@ -6,9 +6,8 @@ PTX2PDF is a XeTeX based macro package for typesetting USFM formatted (Paratext 
 
 There are various long term branches in this repository:
 
- * master. Stable code for release. Currently follows paratext branch
+ * master. Current main development branch undergoing main release cycle. Should always be improving.
  * paratext. TeX macros used in Paratext
- * ptxprint. GUI and extended macros from ptx2pdf
 
 ## User Support
 

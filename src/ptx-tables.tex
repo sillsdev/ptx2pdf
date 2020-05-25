@@ -44,6 +44,15 @@
   \def\th7{\t@blecell{th7}{l}}
   \def\th8{\t@blecell{th8}{l}}
   \def\th9{\t@blecell{th9}{l}}
+  \def\thc1{\t@blecell{thc1}{c}}
+  \def\thc2{\t@blecell{thc2}{c}}
+  \def\thc3{\t@blecell{thc3}{c}}
+  \def\thc4{\t@blecell{thc4}{c}}
+  \def\thc5{\t@blecell{thc5}{c}}
+  \def\thc6{\t@blecell{thc6}{c}}
+  \def\thc7{\t@blecell{thc7}{c}}
+  \def\thc8{\t@blecell{thc8}{c}}
+  \def\thc9{\t@blecell{thc9}{c}}
   \def\thr1{\t@blecell{thr1}{r}}
   \def\thr2{\t@blecell{thr2}{r}}
   \def\thr3{\t@blecell{thr3}{r}}
@@ -62,6 +71,15 @@
   \def\tc7{\t@blecell{tc7}{l}}
   \def\tc8{\t@blecell{tc8}{l}}
   \def\tc9{\t@blecell{tc9}{l}}
+  \def\tcc1{\t@blecell{tcc1}{c}}
+  \def\tcc2{\t@blecell{tcc2}{c}}
+  \def\tcc3{\t@blecell{tcc3}{c}}
+  \def\tcc4{\t@blecell{tcc4}{c}}
+  \def\tcc5{\t@blecell{tcc5}{c}}
+  \def\tcc6{\t@blecell{tcc6}{c}}
+  \def\tcc7{\t@blecell{tcc7}{c}}
+  \def\tcc8{\t@blecell{tcc8}{c}}
+  \def\tcc9{\t@blecell{tcc9}{c}}
   \def\tcr1{\t@blecell{tcr1}{r}}
   \def\tcr2{\t@blecell{tcr2}{r}}
   \def\tcr3{\t@blecell{tcr3}{r}}
@@ -252,18 +270,30 @@
     \x@\let\x@\the@lign\csname align-\the\@row-\the\@col\endcsname
     \ifx\the@lign\cell@r
       \ifRTL\let\n@xt=\rightskip\else\let\n@xt=\leftskip\fi
+    \else\ifx\the@lign\cell@c
+      \let\n@xct=\rightskip \advance\leftskip by 0pt plus 1fil
     \else
       \ifRTL\let\n@xt=\leftskip\else\let\n@xt=\rightskip\fi
-    \fi
+    \fi\fi
     \advance\n@xt by 0pt plus 1fil
-    \ifx\the@lign\cell@r\nobreak\csname leaders-tcr\the\@col\endcsname\hfill\fi
+    \ifx\the@lign\cell@r
+        \nobreak\csname leaders-tcr\the\@col\endcsname\hfill
+    \else\ifx\the@lign\cell@c
+        \nobreak\csname leaders-tcc\the\@col\endcsname\hfill
+    \fi\fi
     \unhbox0\unskip \parfillskip=0pt
-    \ifx\the@lign\cell@r\else\nobreak\csname leaders-tc\the\@col\endcsname\hfill\null\fi
+    \ifx\the@lign\cell@r\else
+      \ifx\the@lign\cell@c
+        \nobreak\csname leaders-tcc\the\@col\endcsname\hfill\null
+      \else
+        \nobreak\csname leaders-tc\the\@col\endcsname\hfill\null
+    \fi\fi
     \par}%
   \wd0=\c@rrentcolwidth
 %  \MSG{after wrap:}\showbox0
   \box0 }
 \def\cell@r{r}
+\def\cell@c{c}
 \def\extractl@stcell{% delete last cell from box \c@rrentcolbox and return it in \c@rrentcell
   \setbox\c@rrentcolbox=\vbox{\unvbox\c@rrentcolbox \unskip\unpenalty
     \global\setbox\c@rrentcell=\lastbox}}

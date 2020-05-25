@@ -164,13 +164,13 @@
   <object class="GtkAdjustment" id="a_maxSpace">
     <property name="lower">50</property>
     <property name="upper">500</property>
-    <property name="value">120</property>
+    <property name="value">200</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="a_minSpace">
     <property name="upper">100</property>
-    <property name="value">66</property>
+    <property name="value">50</property>
     <property name="step_increment">1</property>
     <property name="page_increment">5</property>
   </object>
@@ -238,7 +238,7 @@
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 0.6.8 (Beta)</property>
+    <property name="version">Version 0.7.0 (Beta)</property>
     <property name="copyright" translatable="yes">© 2020, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -2133,6 +2133,9 @@ this Tab will also disable the option.</property>
                         <property name="fill">False</property>
                         <property name="position">1</property>
                       </packing>
+                    </child>
+                    <child>
+                      <placeholder/>
                     </child>
                   </object>
                   <packing>
@@ -5937,7 +5940,7 @@ share, but the image quality will be low.</property>
                                   <packing>
                                     <property name="left_attach">2</property>
                                     <property name="top_attach">1</property>
-                                    <property name="width">2</property>
+                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -5961,7 +5964,7 @@ without illustrations.</property>
                                   <packing>
                                     <property name="left_attach">2</property>
                                     <property name="top_attach">0</property>
-                                    <property name="width">2</property>
+                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -5991,7 +5994,7 @@ the image quality will be as good as possible.</property>
                                   <packing>
                                     <property name="left_attach">2</property>
                                     <property name="top_attach">2</property>
-                                    <property name="width">2</property>
+                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -6170,12 +6173,15 @@ following search sequences:
    jpg &gt; png &gt; tif/pdf   - for smallest file size
 or
    tif/pdf &gt; png &gt; jpg   - for largest file size</property>
+                                    <property name="halign">end</property>
                                     <property name="margin_right">6</property>
                                     <property name="label" translatable="yes">Order of Prefered Image Types:</property>
+                                    <property name="justify">right</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
                                     <property name="top_attach">4</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -6194,42 +6200,38 @@ PNG TIF/PDF (use PNGs first, otherwise TIF as a PDF)
 JPG  (only use JPGs - ignore all other file types)
   or
 TIF  (only use TIFs [converted internally to PDFs])</property>
+                                    <property name="width_chars">15</property>
                                     <property name="text" translatable="yes">JPG PNG PDF/TIF</property>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">3</property>
+                                    <property name="left_attach">4</property>
                                     <property name="top_attach">4</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
+                                  <object class="GtkCheckButton" id="c_exclusiveFiguresFolder">
+                                    <property name="label" translatable="yes">Exclusively Use 
+Selected Folder</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">PTXprint normally searches in multiple locations
+to locate the needed illustrations (including "figures",
+"local/figures" and in the folder specified on the left).
+
+By default it also searches all the sub-folders of these
+locations.
+
+If you would prefer that it only searches in the folder
+specified directly (and NOT look in any other folders
+then enable this option).</property>
+                                    <property name="halign">end</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">4</property>
+                                    <property name="top_attach">3</property>
+                                  </packing>
                                 </child>
                               </object>
                             </child>
@@ -6360,7 +6362,7 @@ here are not working at all.</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_processScript">
                                             <property name="label" translatable="yes">Process text with 
-custom script ...</property>
+custom script at:</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -6381,7 +6383,7 @@ custom script ...</property>
                                             <property name="homogeneous">True</property>
                                             <child>
                                               <object class="GtkRadioButton" id="c_processScriptBefore">
-                                                <property name="label" translatable="yes">before</property>
+                                                <property name="label" translatable="yes">start</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">False</property>
@@ -6397,7 +6399,7 @@ custom script ...</property>
                                             </child>
                                             <child>
                                               <object class="GtkRadioButton" id="c_processScriptAfter">
-                                                <property name="label" translatable="yes">after</property>
+                                                <property name="label" translatable="yes">end</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">False</property>
@@ -6420,12 +6422,15 @@ custom script ...</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkLabel" id="l_processScript">
+                                          <object class="GtkButton" id="btn_selectScript">
+                                            <property name="label" translatable="yes">Select...</property>
                                             <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="halign">start</property>
-                                            <property name="label" translatable="yes">... PrintDraftChanges 
-are processed</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">True</property>
+                                            <property name="valign">center</property>
+                                            <property name="margin_top">4</property>
+                                            <property name="margin_bottom">4</property>
+                                            <signal name="clicked" handler="onSelectScriptClicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -6459,22 +6464,6 @@ can be specified in this file.</property>
                                         <property name="left_attach">0</property>
                                         <property name="top_attach">1</property>
                                         <property name="width">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkButton" id="btn_selectScript">
-                                        <property name="label" translatable="yes">Select...</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
-                                        <property name="valign">center</property>
-                                        <property name="margin_top">4</property>
-                                        <property name="margin_bottom">4</property>
-                                        <signal name="clicked" handler="onSelectScriptClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">2</property>
-                                        <property name="top_attach">0</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -6574,6 +6563,21 @@ this option checked (on).</property>
                                       <packing>
                                         <property name="left_attach">2</property>
                                         <property name="top_attach">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_editScript">
+                                        <property name="label" translatable="yes">Edit...</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="margin_top">4</property>
+                                        <property name="margin_bottom">4</property>
+                                        <signal name="clicked" handler="onEditScriptFile" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">2</property>
+                                        <property name="top_attach">0</property>
                                       </packing>
                                     </child>
                                   </object>
@@ -7041,16 +7045,9 @@ XeTeX Macros</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">By default, PTXprint uses the latest
-(improved) XeTeX macros. However
-these have only had minimal testing
-(i.e. they are EXPERIMENTAL) and could
-malfunction under rare circumstances. 
-
-Check this option if you want to 
-revert back to using the older more
-stable version of XeTeX macros
-(i.e. those that come with Paratext).</property>
+                                <property name="tooltip_text" translatable="yes">WARNING: This option has been deprecated.
+It will soon disappear completely. Turn it OFF.</property>
+                                <property name="opacity">0.5</property>
                                 <property name="halign">center</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="clicked" handler="onUsePTmacrosClicked" swapped="no"/>
@@ -7759,6 +7756,7 @@ log and intermediate temporary file for the entire project.</property>
                             <property name="margin_left">6</property>
                             <property name="margin_right">6</property>
                             <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
                             <property name="shadow_type">in</property>
                             <property name="kinetic_scrolling">False</property>
                             <child>
@@ -7910,6 +7908,10 @@ are likely to have to re-do it all again.</property>
                           <object class="GtkScrolledWindow" id="scroll_Settings">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="margin_left">6</property>
+                            <property name="margin_right">6</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
                             <property name="shadow_type">in</property>
                             <child>
                               <placeholder/>
@@ -7943,7 +7945,6 @@ are likely to have to re-do it all again.</property>
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="halign">center</property>
                                 <property name="margin_left">6</property>
                                 <property name="margin_right">6</property>
                                 <property name="margin_top">6</property>
@@ -8246,6 +8247,7 @@ further, this FAQ document is worth visiting.</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
+                        <property name="margin_left">6</property>
                         <property name="margin_bottom">2</property>
                         <property name="column_homogeneous">True</property>
                         <child>
