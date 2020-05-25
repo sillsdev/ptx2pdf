@@ -2000,6 +2000,7 @@ class PtxPrinterDialog:
     def onEnableDecorativeElementsClicked(self, c_enableDecorativeElements):
         self.builder.get_object("gr_borders").set_sensitive(self.get("c_enableDecorativeElements"))
 
-    def on_diglotPriFraction_move_slider(self, slider):
+    def on_diglotPriFraction_move_slider(self, a, b, v):
+        print(v)
         priFraction = self.builder.get_object("s_diglotPriFraction").get_value_pos()
-        print(priFraction)
+        print("{:.1f}% for primary".format(float(v)))
