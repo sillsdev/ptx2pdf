@@ -892,8 +892,8 @@ class Info:
                 printer.set(self._mappings[k][0], self.printer.ptsettings.dict.get(v, ""))
                 self.dict[k] = self.printer.ptsettings.get(v, "")
         # Handle specials here:
-        # printer.CustomScript = Path(self.dict['project/selectscript'])
-        # printer.customFigFolder = Path(self.dict['document/customfigfolder'])
+        printer.CustomScript = Path(self.dict['project/selectscript'])
+        printer.customFigFolder = Path(self.dict['document/customfigfolder'])
 
         for s in ("front", "back"):
             k = "project/{}includes".format(s)
