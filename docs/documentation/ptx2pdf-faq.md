@@ -178,7 +178,8 @@ limitations on a piclist file:
   are not read.
 
 In addition, TeX has a limitation that you cannot have more than one picture
-in the same position on the page, anchored to the same line in the text. Thus
+in the same position on the page, anchored to the same line in the text,
+whether or not they come from a piclist or inline \\fig. Thus
 for a very short verse that may not span a line boundary, or if you have two
 \\fig elements very close together in the text, one may be lost.
 
