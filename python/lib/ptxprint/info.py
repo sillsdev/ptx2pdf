@@ -502,7 +502,7 @@ class Info:
             if doti > 0:
                 outfpath = outfpath[:doti] + "-conv" + outfpath[doti:]
             cmd = [self.dict["project/selectscript"], infpath, outfpath]
-            checkoutput(cmd, shell=True)
+            checkoutput(cmd) # dont't pass cmd as list when shell=True
         return outfpath
 
     def convertBook(self, bk, outdir, prjdir):
