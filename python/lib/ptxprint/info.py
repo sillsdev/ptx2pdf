@@ -166,8 +166,8 @@ class Info:
         "document/iffigskipmissing": ("c_skipmissingimages", lambda w,v: "true" if v else "false"),
         "document/iffigplaceholders": ("c_figplaceholders", lambda w,v :"true" if v else "false"),
         "document/iffighiderefs":   ("c_fighiderefs", lambda w,v :"true" if v else "false"),
-        "document/usefigsfolder":   ("c_useLowResPics", lambda w,v :"" if v else "%"),
-        "document/uselocalfigs":    ("c_useHighResPics", lambda w,v :"" if v else "%"),
+        "document/usesmallpics":    ("c_useLowResPics", lambda w,v :"" if v else "%"),
+        "document/uselargefigs":    ("c_useHighResPics", lambda w,v :"" if v else "%"),
         "document/customfiglocn":   ("c_useCustomFolder", lambda w,v :"" if v else "%"),
         "document/customfigfolder": ("btn_selectFigureFolder", lambda w,v: re.sub(r"\\","/", w.customFigFolder) \
                                                                if w.customFigFolder is not None else ""),
@@ -231,7 +231,7 @@ class Info:
         "notes/fnresetcallers":     ("c_fnpageresetcallers", lambda w,v: "" if v else "%"),
         "notes/fnomitcaller":       ("c_fnomitcaller", lambda w,v: "%" if v else ""),
         "notes/fnparagraphednotes": ("c_fnparagraphednotes", lambda w,v: "" if v else "%"),
-        "notes/addColon":           ("c_addColon", lambda w,v :"true" if v else "false"),
+        "notes/addcolon":           ("c_addColon", lambda w,v :"true" if v else "false"),
         "notes/glossaryfootnotes":  ("c_glossaryFootnotes", lambda w,v :"true" if v else "false"),
 
         "notes/includexrefs":       ("c_includeXrefs", lambda w,v: "%" if v else ""),
@@ -597,17 +597,17 @@ class Info:
         self.localChanges = []
         if bk == "GLO" and self.dict['document/filterglossary']:
             self.filterGlossary(self.printer)
-        first = int(self.dict["document/chapfrom"]) # int(printer.get("cb_chapfrom"))
-        last = int(self.dict["document/chapto"]) # int(printer.get("cb_chapto"))
+        first = int(self.dict["document/chapfrom"])
+        last = int(self.dict["document/chapto"])
         
         # This section handles PARTIAL books (from chapter X to chapter Y)
         if self.asBool("document/ifchaplabels", true="%"):
             clabel = self.dict["document/clabel"]
-            clbooks = self.dict["document/clabelbooks"].split() # printer.get("t_clBookList").split(" ")
+            clbooks = self.dict["document/clabelbooks"].split()
             # print("Chapter label: '{}' for '{}' with {}".format(clabel, " ".join(clbooks), bk))
             if len(clabel) and (not len(clbooks) or bk in clbooks):
                 self.localChanges.append((None, regex.compile(r"(\\c 1)(?=\s*\r?\n|\s)", flags=regex.S), r"\\cl {}\n\1".format(clabel)))
-        if not self.asBool("project/multiplebooks"):    # printer.get("c_multiplebooks"):
+        if not self.asBool("project/multiplebooks"):
             if first > 1:
                 self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+(?=\\c {} ?\r?\n)".format(first), flags=regex.S), ""))
             if last < int(chaps.get(bk)):
@@ -621,7 +621,7 @@ class Info:
             self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+".format(first), flags=regex.S), ""))
 
         # Elipsize ranges of MISSING/Empty verses in the text (if 3 or more verses in a row are empty...) 
-        if printer.get("c_elipsizeMissingVerses"):
+        if self.asBool("document/elipsizemptyvs"):
             self.localChanges.append((None, regex.compile(r"\\v (\d+)([-,]\d+)? ?\r?\n(\\v (\d+)([-,]\d+)? ?\r?\n){1,}", flags=regex.M), r"\\v \1-\4 {...} "))
             # self.localChanges.append((None, regex.compile(r"(\r?\n\\c \d+ ?)(\r?\n\\v 1)", flags=regex.M), r"\1\r\n\\p \2"))
             self.localChanges.append((None, regex.compile(r" (\\c \d+ ?)(\r?\n\\v 1)", flags=regex.M), r" \r\n\1\r\n\\p \2"))
@@ -629,18 +629,18 @@ class Info:
             self.localChanges.append((None, regex.compile(r"(\\c \d+ ?(\r?\n)+\\p (\r?\n)?\\v [\d-]+ \{\.\.\.\} ?(\r?\n)+)(?=\\c)", flags=regex.M), r"\1\\m {...}\r\n"))
 
         # Probably need to make this more efficient for multi-book and lengthy glossaries (cache the GLO & changes reqd etc.)
-        if printer.get("c_glossaryFootnotes"):
+        if self.asBool("notes/glossaryfootnotes"):
             self.makeGlossaryFootnotes(printer, bk)
 
         # Glossary Word markup: Remove the second half of the \w word|glossary-form\w* and apply chosen glossary markup
-        v = printer.get("cb_glossaryMarkupStyle")
+        v = self.dict["document/glossarymarkupstyle"]
         gloStyle = self._glossarymarkup.get(v, v)
         self.localChanges.append((None, regex.compile(r"\\w (.+?)(\|.+?)?\\w\*", flags=regex.M), gloStyle))
         
         # Remember to preserve \figs ... \figs for books that can't have PicLists (due to no ch:vs refs in them)
-        if printer.get("c_includeillustrations") and (printer.get("c_includefigsfromtext") or bk in self._peripheralBooks):
+        if self.asBool("document/ifinclfigs") and (self.asBool("document/iffigfrmtext") or bk in self._peripheralBooks):
             # Remove any illustrations which don't have a |p| 'loc' field IF this setting is on
-            if printer.get("c_figexclwebapp"):
+            if self.asBool("document/iffigexclwebapp"):
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig ([^|]*\|){3}([aw]+)\|[^\\]*\\fig\*', flags=regex.M), ''))  # USFM2
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig [^\\]*\bloc="[aw]+"[^\\]*\\fig\*', flags=regex.M), ''))    # USFM3
 
@@ -655,12 +655,12 @@ class Info:
                         self.localChanges.append((None, regex.compile(r'(?i)(\\fig .*?src="){}(" .+?\\fig\*)'.format(origfn), \
                                                      flags=regex.M), r"\1{}\2".format(tempfn)))                               #USFM3
                     else:
-                        if printer.get("c_skipmissingimages"):
+                        if self.asBool("document/iffigskipmissing"):
                             # print("(?i)(\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), "--> Skipped!!!!")
                             self.localChanges.append((None, regex.compile(r"(?i)\\fig .*?\|{}\|.+?\\fig\*".format(origfn), flags=regex.M), ""))     #USFM2
                             self.localChanges.append((None, regex.compile(r'(?i)\\fig .*?src="{}" .+?\\fig\*'.format(origfn), flags=regex.M), "")) #USFM3
 
-            if printer.get("c_fighiderefs"): # del ch:vs from caption 
+            if self.asBool("document/iffighiderefs"): # del ch:vs from caption 
                 self.localChanges.append((None, regex.compile(r"(\\fig [^\\]+?\|)([0-9:.\-,\u2013\u2014]+?)(\\fig\*)", \
                                           flags=regex.M), r"\1\3"))   # USFM2
                 self.localChanges.append((None, regex.compile(r'(\\fig .+?)(ref="\d+[:.]\d+([-,\u2013\u2014]\d+)?")(.*?\\fig\*)', \
@@ -668,50 +668,51 @@ class Info:
         else: # Drop ALL Figures
             self.localChanges.append((None, regex.compile(r"\\fig .*?\\fig\*", flags=regex.M), ""))
         
-        if printer.get("c_omitBookIntro"): # Drop Introductory matter
+        if self.asBool("document/supressbookintro"): # Drop Introductory matter
             self.localChanges.append((None, regex.compile(r"\\i(s|m|mi|p|pi|li\d?|pq|mq|pr|b|q\d?) .+?\r?\n", flags=regex.M), "")) 
 
-        if printer.get("c_omitIntroOutline"): # Drop ALL Intro Outline matter & Intro Outline References
+        if self.asBool("document/supressintrooutline"): # Drop ALL Intro Outline matter & Intro Outline References
             # Wondering whether we should restrict this to just the GEN...REV books (as some xtra books only use \ixx markers for content)
             self.localChanges.append((None, regex.compile(r"\\(iot|io\d) [^\\]+", flags=regex.M), ""))
             self.localChanges.append((None, regex.compile(r"\\ior .+?\\ior\*\s?\r?\n", flags=regex.M), ""))
 
-        if printer.get("c_omitSectHeads"): # Drop ALL Section Headings (which also drops the Parallel passage refs now)
+        if self.asBool("document/supresssectheads"): # Drop ALL Section Headings (which also drops the Parallel passage refs now)
             self.localChanges.append((None, regex.compile(r"\\[sr] .+", flags=regex.M), ""))
 
-        if printer.get("c_omitParallelRefs"):# Drop ALL Parallel Passage References
+        if self.asBool("document/supressparallels"): # Drop ALL Parallel Passage References
             self.localChanges.append((None, regex.compile(r"\\r .+", flags=regex.M), ""))
 
-        if printer.get("c_blendfnxr"): 
-            XrefCaller = printer.get("cb_blendedXrefCaller")
+        if self.asBool("notes/ifblendfnxr"):
+            XrefCaller = self.dict["cb_blendedXrefCaller"]
             # To merge/blend \f and \x together, simply change all (\x to \f) (\xo to \fr) and so on...
             self.localChanges.append((None, regex.compile(r"\\x . ", flags=regex.M), r"\\f {} ".format(XrefCaller)))
             self.localChanges.append((None, regex.compile(r"\\x\* ", flags=regex.M), r"\\f* "))
             self.localChanges.append((None, regex.compile(r"\\xq ", flags=regex.M), r"\\fq "))
             self.localChanges.append((None, regex.compile(r"\\xt ", flags=regex.M), r"\\ft "))
 
-        if printer.get("c_preventorphans"): # Prevent orphans at end of *any* paragraph [anything that isn't followed by a \v]
+        if self.asBool("document/preventorphans"): # Prevent orphans at end of *any* paragraph [anything that isn't followed by a \v]
             # self.localChanges.append((None, regex.compile(r" ([^\\ ]+?) ([^\\ ]+?\r?\n)(?!\\v)", flags=regex.S), r" \1\u00A0\2"))
             # OLD RegEx: Keep final two words of \q lines together [but doesn't work if there is an \f or \x at the end of the line] 
             self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)[^\\\s]+)) (\S+\s*\n)", \
                                             flags=regex.M), r"\1\u00A0\5"))
 
-        if printer.get("c_preventwidows"):
+        if self.asBool("document/preventwidows"):
             # Push the verse number onto the next line (using NBSP) if there is
             # a short widow word (3 characters or less) at the end of the line
             self.localChanges.append((None, regex.compile(r"(\\v \d+([-,]\d+)? [\w]{1,3}) ", flags=regex.M), r"\1\u00A0")) 
 
-        if printer.get("c_ch1pagebreak"):
+        if self.asBool("document/ch1pagebreak"):
             self.localChanges.append((None, regex.compile(r"(\\c 1 ?\r?\n)", flags=regex.M), r"\pagebreak\r\n\1"))
 
-        if printer.get("c_glueredupwords"): # keep reduplicated words together
+        if self.asBool("document/glueredupwords"): # keep reduplicated words together
             self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w\w\w+) \1(?=[\s,.!?])", flags=regex.M), r"\1\u00A0\1")) 
         
-        if printer.get("c_addColon"): # Insert a colon between \fq (or \xq) and following \ft (or \xt)
+        if self.asBool("notes/addcolon"): # Insert a colon between \fq (or \xq) and following \ft (or \xt)
             self.localChanges.append((None, regex.compile(r"(\\[fx]q .+?):* ?(\\[fx]t)", flags=regex.M), r"\1: \2")) 
         
-        if printer.get("c_keepBookWithRefs"): # keep Booknames and ch:vs nums together within \xt and \xo 
+        if self.asBool("notes/keepbookwithrefs"): # keep Booknames and ch:vs nums together within \xt and \xo 
             self.localChanges.append((regex.compile(r"(\\[xf]t [^\\]+)"), regex.compile(r"(?<!\\[fx][rto]) (\d+[:.]\d+([-,]\d+)?)"), r"\u00A0\1"))
+            self.localChanges.append((regex.compile(r"(\\[xf]t [^\\]+)"), regex.compile(r"( .) "), r"\1\u00A0"))
 
         # keep \xo & \fr refs with whatever follows (i.e the bookname or footnote) so it doesn't break at end of line
         self.localChanges.append((None, regex.compile(r"(\\(xo|fr) (\d+[:.]\d+([-,]\d+)?)) "), r"\1\u00A0"))
@@ -723,21 +724,26 @@ class Info:
         self.localChanges.append((None, regex.compile(r"\\\+", flags=regex.M), r"\\"))  
             
         for c in range(1,4): # Remove any \toc lines that we don't want appearing in the Table of Contents
-            if not printer.get("c_usetoc{}".format(c)):
+            if not self.asBool("document/usetoc1{}".format(c)):
                 self.localChanges.append((None, regex.compile(r"(\\toc{} .+)".format(c), flags=regex.M), ""))
 
         # Insert a rule between end of Introduction and start of body text (didn't work earlier, but might work now)
         # self.localChanges.append((None, regex.compile(r"(\\c\s1\s?\r?\n)", flags=regex.S), r"\\par\\vskip\\baselineskip\\hskip-\\columnshift\\hrule\\vskip 2\\baselineskip\n\1"))
 
         # Apply any changes specified in snippets
-        for w, c in self._snippets.items():
-            if self.printer.get(c[0]): # if the c_checkbox is true then extend the list with those changes
-                if w == "snippets/fancyintro" and bk in self._peripheralBooks: # Only allow fancyIntros for scripture books
+        for k, c in self._snippets.items():
+            if self.printer is None:
+                v = self.asBool(k)
+            else:
+                v = self.printer.get(c[0])
+                self.dict[k] = "true" if v else "false"
+            if v: # if the c_checkbox is true then extend the list with those changes
+                if k == "snippets/fancyintro" and bk in self._peripheralBooks: # Only allow fancyIntros for scripture books
                     pass
                 else:
                     self.localChanges.extend(c[1].regexes)
 
-        if printer.get("c_tracing"):
+        if self.printer is not None and self.printer.get("c_tracing"):
             print("List of Local Changes:----------------------------------------------------------")
             report = "\n".join("{} -> {}".format(p[1].pattern, p[2]) for p in self.localChanges)
             if getattr(printer, "logger", None) is not None:
@@ -775,8 +781,7 @@ class Info:
 
     def getExtOrder(self, printer):
         # If the preferred image type(s) has(have) been specified, parse that string
-        imgord = printer.get("t_imageTypeOrder")
-        imgord = re.sub(r"(?i)(tif)", r"pdf",imgord)
+        imgord = re.sub(r"(?i)(tif)", r"pdf", self.dict["document/imagetypepref"])
         extOrder = []
         if  len(imgord):
             exts = re.findall("([a-z]{3})",imgord.lower())
@@ -784,7 +789,7 @@ class Info:
                 if e in ["jpg", "png", "pdf"] and e not in extOrder:
                     extOrder += [e]
         if not len(extOrder): # If the user hasn't defined a specific order then we can assign this
-            if printer.get("c_useLowResPics"): # based on whether they prefer small/compressed image formats
+            if self.asBool("document/usesmallpics"): # based on whether they prefer small/compressed image formats
                 extOrder = ["jpg", "png", "pdf"] 
             else:                              # or prefer larger high quality uncompresses image formats
                 extOrder = extOrder[::-1]      # reverse the order
@@ -933,15 +938,20 @@ class Info:
         prjdir = os.path.join(self.printer.settings_dir, prjid)
         nstyfname = os.path.join(self.printer.working_dir, "NestedStyles.sty")
         nstylist = []
-        if self.printer.get("c_omitallverses"):
+        if self.asBool("document/ifomitallverses"):
             nstylist.append("##### Remove all verse numbers\n\\Marker v\n\\TextProperties nonpublishable\n\n")
-        if not self.printer.get("c_includeFootnotes"):
+        if not self.asBool("notes/includefootnotes"):
             nstylist.append("##### Remove all footnotes\n\\Marker f\n\\TextProperties nonpublishable\n\n")
-        if not self.printer.get("c_includeXrefs"):
+        if not self.asBool("notes/includexrefs"):
             nstylist.append("##### Remove all cross-references\n\\Marker x\n\\TextProperties nonpublishable\n\n")
 
-        for w, c in self._snippets.items():
-            if self.printer.get(c[0]): # if the c_checkbox is true then add the stylesheet snippet for that option
+        for k, c in self._snippets.items():
+            if self.printer is None:
+                v = self.asBool(k)
+            else:
+                v = self.printer.get(c[0])
+                self.dict[k] = "true" if v else "false"
+            if v: # if the c_checkbox is true then add the stylesheet snippet for that option
                 nstylist.append(c[1].styleInfo+"\n")
 
         if nstylist == []:

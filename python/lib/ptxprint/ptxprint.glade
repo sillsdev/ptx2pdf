@@ -8441,7 +8441,7 @@ Numbers</property>
                                 <property name="has_entry">True</property>
                                 <property name="entry_text_column">0</property>
                                 <property name="id_column">0</property>
-                                <signal name="changed" handler="onDiglotDimensionsChanged" swapped="no"/>
+                                <signal name="changed" handler="onDiglotSettingsChanged" swapped="no"/>
                                 <child internal-child="entry">
                                   <object class="GtkEntry">
                                     <property name="visible">True</property>
@@ -8466,8 +8466,8 @@ Numbers</property>
                                 <property name="fill_level">100</property>
                                 <property name="round_digits">1</property>
                                 <property name="value_pos">left</property>
-                                <signal name="move-slider" handler="onDiglotDimensionsChanged" swapped="no"/>
-                                <signal name="value-changed" handler="onDiglotDimensionsChanged" swapped="no"/>
+                                <signal name="move-slider" handler="onDiglotSettingsChanged" swapped="no"/>
+                                <signal name="value-changed" handler="onDiglotSettingsChanged" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -8613,7 +8613,7 @@ Reference Ranges on the outer edges
 and Page Number in (or near) the middle.</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
-                                <signal name="clicked" handler="onDiglotDimensionsChanged" swapped="no"/>
+                                <signal name="clicked" handler="onDiglotSettingsChanged" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">2</property>
@@ -8628,19 +8628,15 @@ and Page Number in (or near) the middle.</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="tooltip_text" translatable="yes">A more sophisticated approach to Diglots is in the
-pipeline, but in the meantime, this experimental
-feature allows you to blend two independently
-created PDFs to make a Diglot. Note that you will
-need to ensure that the page layout dimensions
-and other settings for each project (on the Basic, 
-and Head &amp; Foot tabs) are the same. Then adjust
-the settings (column width, line spacing, or font size)
-so that both projects create PDFs of the same number
-of pages - so that when they are merged together
-the text more-or-less lines up. Not ideal, but usable!
+                            <property name="tooltip_text" translatable="yes">This tab allows unaligned diglots (which just
+blends 2 PDFs together for you from different
+projects), and ALIGNED diglots which can 
+align the text based on Chapter, Paragraphs
+or Verses.
 
-Now you can see why it is called "Fuzzy DiYglot" :-)</property>
+Note that setting this option will automatically
+turn off illustrations (as the 2 features are not
+compatible).</property>
                             <property name="draw_indicator">True</property>
                             <signal name="clicked" handler="onDiglotClicked" swapped="no"/>
                           </object>

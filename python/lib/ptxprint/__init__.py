@@ -1380,7 +1380,7 @@ class PtxPrinterDialog:
         self.builder.get_object("l_working_dir").set_label(self.working_dir)
         self.set("c_prettyIntroOutline", False)  # This is OFF by default, they need to turn it on specifically
         self.setEntryBoxFont()
-        self.onDiglotDimensionsChanged(None)
+        self.onDiglotSettingsChanged(None)
         self.updateDialogTitle()
 
     def updateDialogTitle(self):
@@ -1793,10 +1793,13 @@ class PtxPrinterDialog:
         self.builder.get_object("l_diglotStringR").set_visible(status)
         if status:
             self.builder.get_object("c_includeillustrations").set_active(False)
+            self.builder.get_object("c_includeillustrations").set_sensitive(False)
+        else:
+            self.builder.get_object("c_includeillustrations").set_sensitive(True)
         
-        self.onDiglotDimensionsChanged(None)
+        self.onDiglotSettingsChanged(None)
 
-    def onDiglotDimensionsChanged(self, btn):
+    def onDiglotSettingsChanged(self, btn):
         if not self.get("c_diglot"):
             DiglotStringL = ""
             DiglotStringR = ""
