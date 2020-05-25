@@ -307,8 +307,9 @@ class Info:
         "document/customfigfolder": ("customFigFolder", False, None)
     }
  
-    def __init__(self, printer, path, prjid = None):
+    def __init__(self, printer, path, ptsettings, prjid=None):
         self.printer = printer
+        self.ptsettings = ptsettings
         self.changes = None
         self.localChanges = None
         t = datetime.now()
@@ -891,8 +892,8 @@ class Info:
                 printer.set(self._mappings[k][0], self.printer.ptsettings.dict.get(v, ""))
                 self.dict[k] = self.printer.ptsettings.get(v, "")
         # Handle specials here:
-        printer.CustomScript = Path(self.dict['project/selectscript'])
-        printer.customFigFolder = self.dict['document/customfigfolder']
+        # printer.CustomScript = Path(self.dict['project/selectscript'])
+        # printer.customFigFolder = Path(self.dict['document/customfigfolder'])
 
         for s in ("front", "back"):
             k = "project/{}includes".format(s)

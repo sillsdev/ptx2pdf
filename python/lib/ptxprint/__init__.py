@@ -964,13 +964,17 @@ class PtxPrinterDialog:
 
     def onProcessScriptClicked(self, c_processScript):
         status = self.get("c_processScript")
-        for c in ("c_processScriptBefore", "c_processScriptAfter", "btn_selectScript", "l_processScript"):
+        for c in ("c_processScriptBefore", "c_processScriptAfter", "btn_selectScript"):
             self.builder.get_object(c).set_sensitive(status)
-            
+        if not status:
+            self.builder.get_object("btn_editScript").set_sensitive(False)
+        else:
+            if self.get("btn_selectScript") != None:
+                self.builder.get_object("btn_editScript").set_sensitive(True)
+
     def onUsePrintDraftChangesClicked(self, c_usePrintDraftChanges):
         status = self.get("c_usePrintDraftChanges")
-        for c in ("btn_editChangesFile", "c_processScriptBefore", "c_processScriptAfter", "l_processScript"):
-            self.builder.get_object(c).set_sensitive(status)
+        self.builder.get_object("btn_editChangesFile").set_sensitive(status)
         if self.info is not None:           # trigger a rereading of the changes
             # this is a kludge. Better to keep the last modified date and test in Info.convertBook
             self.info.changes = None
@@ -1327,7 +1331,7 @@ class PtxPrinterDialog:
         currprj = self.prjid
         if currprj is not None:
             if self.info is None:
-                self.info = Info(self, self.settings_dir, prjid = currprj)
+                self.info = Info(self, self.settings_dir, self.ptsettings, prjid = currprj)
             config = self.info.createConfig(self)
             fpath = os.path.join(self.config_dir, "ptxprint.cfg") \
                  or os.path.join(self.settings_dir, currprj, "shared", "ptxprint", "ptxprint.cfg")
@@ -1371,7 +1375,7 @@ class PtxPrinterDialog:
             if not os.path.exists(configfile): # If they are an pre 0:4:8 user, pick up .cfg from Project folder location
                 configfile = os.path.join(self.settings_dir, self.prjid, "ptxprint.cfg")
         if os.path.exists(configfile):
-            self.info = Info(self, self.settings_dir, self.prjid)
+            self.info = Info(self, self.settings_dir, self.ptsettings, self.prjid)
             config = configparser.ConfigParser()
             config.read(configfile, encoding="utf-8")
             self.info.loadConfig(self, config)
@@ -1381,7 +1385,7 @@ class PtxPrinterDialog:
             try:
                 self.info.update()
             except AttributeError:
-                self.info = Info(self, self.settings_dir, self.prjid)
+                self.info = Info(self, self.settings_dir, self.ptsettings, self.prjid)
                 self.info.update()
         status = self.get("c_multiplebooks")
         for c in ("c_combine", "t_booklist"):
@@ -1431,6 +1435,8 @@ class PtxPrinterDialog:
             fpath = os.path.join(self.configPath(), file2edit)
             if not os.path.exists(fpath):
                 fpath = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint", file2edit)
+        elif "\\" in loc or "/" in loc:
+            fpath = os.path.join(loc, file2edit)
         else:
             return
         self.builder.get_object("gr_editableButtons").set_sensitive(True)
@@ -1444,6 +1450,14 @@ class PtxPrinterDialog:
             self.fileViews[pgnum][0].set_text(txt)
         else:
             self.fileViews[pgnum][0].set_text("\nThis file doesn't exist yet!\n\nEdit here and Click 'Save' to create it.")
+
+    def onEditScriptFile(self, btn):
+        # Ask MH how to do this properly (in one line!?) with Path from pathlib
+        customScriptFPath = self.get("btn_selectScript")
+        scriptName = os.path.basename(customScriptFPath)
+        scriptPath = customScriptFPath[:-len(scriptName)]
+        if len(customScriptFPath):
+            self.editFile(scriptName, scriptPath)
 
     def onEditChangesFile(self, btn):
         self.editFile("PrintDraftChanges.txt", "prj")
@@ -1478,11 +1492,13 @@ class PtxPrinterDialog:
             self.CustomScript = CustomScript[0]
             self.builder.get_object("c_processScript").set_active(True)
             btn_selectScript.set_tooltip_text(str(CustomScript[0]))
+            for c in ("c_processScriptBefore", "c_processScriptAfter", "btn_editScript"):
+                self.builder.get_object(c).set_sensitive(True)
         else:
             self.CustomScript = None
             btn_selectScript.set_tooltip_text("")
             self.builder.get_object("c_processScript").set_active(False)
-            for c in ("c_processScriptBefore", "c_processScriptAfter", "l_processScript"):
+            for c in ("c_processScriptBefore", "c_processScriptAfter", "btn_editScript"):
                 self.builder.get_object(c).set_sensitive(False)
 
     def onSelectFigureFolderClicked(self, btn_selectFigureFolder):
@@ -1507,11 +1523,11 @@ class PtxPrinterDialog:
             self.builder.get_object("c_"+ident).set_active(True)
             if isSingle:
                 setattr(self, attr, vals[0])
-                btn.set_tooltip_text(pdfre.sub(r"\1", val))
+                btn.set_tooltip_text(pdfre.sub(r"\1", str(vals[0])))
                 self.builder.get_object("lb_"+ident).set_text(pdfre.sub(r"\1", str(vals[0])))
             else:
                 setattr(self, attr, vals)
-                btn.set_tooltip_text("\n".join(pdfre.sub(r"\1", str(s)) for s in val))
+                btn.set_tooltip_text("\n".join(pdfre.sub(r"\1", str(s)) for s in vals))
                 self.builder.get_object("lb_"+ident).set_text(",".join(pdfre.sub(r"\1", str(s)) for s in vals))
         else:
             setattr(self, attr, None)
@@ -1522,7 +1538,7 @@ class PtxPrinterDialog:
 
     def onFrontPDFsClicked(self, btn_selectFrontPDFs):
         self._onPDFClicked("Select one or more PDF(s) for FRONT matter", 
-                False, self.working_dir, "inclFrontMatter", "FrontPDFs", btn_selectBackPDFs)
+                False, self.working_dir, "inclFrontMatter", "FrontPDFs", btn_selectFrontPDFs)
 
     def onBackPDFsClicked(self, btn_selectBackPDFs):
         self._onPDFClicked("Select one or more PDF(s) for BACK matter", 
