@@ -109,8 +109,8 @@ class PtxPrinterDialog:
         self.addCR("cb_fontFaces", 0)
         self.cb_savedConfig = self.builder.get_object("cb_savedConfig")
         # self.addCR("cb_savedConfig", 0)
-        # self.addCR("cb_diglotPriProject", 0)
         # self.addCR("cb_diglotSecProject", 0)
+        self.addCR("cb_diglotSecConfig", 0)
         pb = self.builder.get_object("b_print")
         pbc = pb.get_style_context()
         pbc.add_class("printbutton")
@@ -177,6 +177,7 @@ class PtxPrinterDialog:
             self.projects.append([p])
         wide = int(len(allprojects)/16)+1
         self.builder.get_object("cb_project").set_wrap_width(wide)
+        self.builder.get_object("cb_diglotSecProject").set_wrap_width(wide)
 
     def run(self, callback, splash=True):
         self.callback = callback
@@ -1799,23 +1800,22 @@ class PtxPrinterDialog:
         else:
             secprjid = self.get("cb_diglotSecProject")
             # I'm not sure if there's a better way to handle this - looking for the already-created Secondary diglot file
-            sectmpdir = os.path.join(self.settings_dir, secprjid, 'PrintDraft') if self.get("c_useprintdraftfolder") else self.working_dir
-            jobs = self.getBooks()
-            if len(jobs) > 1:
-                secfname = os.path.join(sectmpdir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], secprjid)).replace("\\","/")
-            else:
-                secfname = os.path.join(sectmpdir, "ptxprint-{}{}.pdf".format(jobs[0], secprjid)).replace("\\","/")
+            # sectmpdir = os.path.join(self.settings_dir, secprjid, 'PrintDraft') if self.get("c_useprintdraftfolder") else self.working_dir
+            # jobs = self.getBooks()
+            # if len(jobs) > 1:
+                # secfname = os.path.join(sectmpdir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], secprjid)).replace("\\","/")
+            # else:
+                # secfname = os.path.join(sectmpdir, "ptxprint-{}{}.pdf".format(jobs[0], secprjid)).replace("\\","/")
             # TO DO: We need to be able to GET the page layout values from the PRIMARY project
             # (even when creating the Secondary PDF so that the dimensions match).
             PageWidth = int(re.split("[^0-9]",re.sub(r"^(.*?)\s*,.*$", r"\1", self.get("cb_pagesize")))[0]) or 148
             
-            Margins = self.get("s_diglotMargins")
-            MiddleGutter = self.get("s_diglotMiddleGutter")
-            BindingGutter = self.get("s_diglotpagegutter")
-            PriColWid = self.get("s_PriColWidth")
+            Margins = self.get("s_margins")
+            MiddleGutter = self.get("s_colgutterfactor")
+            BindingGutter = self.get("s_pagegutter")
+            PriColWid = PageWidth * self.get("s_diglotPriFraction") / 100  # Need to check this later!
 
             SecColWid = PageWidth - PriColWid - MiddleGutter - BindingGutter - (2 * Margins)
-            self.builder.get_object("s_SecColWidth").set_value(SecColWid)
 
             # Calc Pri Settings (right side of page; or outer if mirrored)
             # PriColWid = self.get("s_PriColWidth")
@@ -1830,19 +1830,18 @@ class PtxPrinterDialog:
             SecBindingGutter = PageWidth - (2 * SecRightMargin) - SecColWid 
 
             PriPercent = round((PriColWid / (PriColWid + SecColWid) * 100),1)
-            self.builder.get_object("t_PriPercent").set_text(str(PriPercent)+"%")
-            self.builder.get_object("t_SecPercent").set_text(str(100 - PriPercent)+"%")
             hdr = ""
-            if self.get("c_outputSecText"):
-                if self.get("c_diglotHeaders"):
-                    hdr = r"""
-\def\RHoddleft{\rangeref}
-\def\RHoddcenter{\empty}
-\def\RHoddright{\empty}
-\def\RHevenleft{\empty}
-\def\RHevencenter{\empty}
-\def\RHevenright{\rangeref}
-"""
+            if True:  # we need to change this to do both - one after the other...
+            # if self.get("c_outputSecText"):
+                # if self.get("c_diglotHeaders"):
+                    # hdr = r"""
+# \def\RHoddleft{\rangeref}
+# \def\RHoddcenter{\empty}
+# \def\RHoddright{\empty}
+# \def\RHevenleft{\empty}
+# \def\RHevencenter{\empty}
+# \def\RHevenright{\rangeref}
+# """
                 DiglotString = "%% SECONDARY PDF settings"+ \
                                "\n\MarginUnit={}mm".format(Margins)+ \
                                "\n\BindingGuttertrue"+ \
@@ -1850,14 +1849,14 @@ class PtxPrinterDialog:
                                "\n\def\SideMarginFactor{{{:.2f}}}".format(SecSideMarginFactor)+ \
                                "\n\BodyColumns=1" + hdr
             else:
-                if self.get("c_diglotHeaders"):
-                    hdr = r"""
-\def\RHoddleft{\pagenumber}
-\def\RHoddcenter{\empty}
-\def\RHoddright{\rangeref}
-\def\RHevenleft{\rangeref}
-\def\RHevencenter{\empty}
-\def\RHevenright{\pagenumber}"""
+                # if self.get("c_diglotHeaders"):
+                    # hdr = r"""
+# \def\RHoddleft{\pagenumber}
+# \def\RHoddcenter{\empty}
+# \def\RHoddright{\rangeref}
+# \def\RHevenleft{\rangeref}
+# \def\RHevencenter{\empty}
+# \def\RHevenright{\pagenumber}"""
                 DiglotString = "%% PRIMARY (+ SECONDARY) PDF settings"+ \
                                "\n\MarginUnit={}mm".format(Margins)+ \
                                "\n\BindingGuttertrue"+ \

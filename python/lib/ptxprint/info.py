@@ -199,7 +199,7 @@ class Info:
 
         "document/ifdiglot":        ("c_diglot", lambda w,v :"" if v else "%"),
         "document/diglotsettings":  ("l_diglotString", lambda w,v: w.builder.get_object("l_diglotString").get_text() if w.get("c_diglot") else ""),
-        "document/diglotpriprj":    ("cb_diglotPriProject", lambda w,v: w.builder.get_object("cb_diglotPriProject").get_active_id()),
+        # "document/diglotpriprj":    ("cb_diglotPriProject", lambda w,v: w.builder.get_object("cb_diglotPriProject").get_active_id()),
         "document/diglotsecprj":    ("cb_diglotSecProject", lambda w,v: w.builder.get_object("cb_diglotSecProject").get_active_id()),
         "document/diglotnormalhdrs": ("c_diglotHeaders", lambda w,v :"" if v else "%"),
 
