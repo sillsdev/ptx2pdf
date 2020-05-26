@@ -118,19 +118,23 @@
    \ifx\thisch@rstyle\undefined
      \MSG{*** unmatched character style end-marker |\newch@rstyle*}%
    \else
-    \ifskipch@rstyle\egroup\else
+    \ifskipch@rstyle\egroup\else%
      \ifdiglot\setsid@%\MSG{end-\thisch@rstyle\sid@}%
        \csname end-\thisch@rstyle\sid@\endcsname % handle side-specific <start> hook
      \fi
-     \csname end-\thisch@rstyle\endcsname % execute any <end> hook
-     \getp@ram{fontsize}{\thisch@rstyle}%
-     \ifx\p@ram\relax\let\param=\c@rrfontsize\else
-     \dimen1=\p@ram \FontSizeUnit
-     \ifdim\dimen1 > 2\FontSizeUnit \xdef\c@rrfontsize{\p@ram}\fi\fi
-     \getp@ram{superscript}{\thisch@rstyle}%
-     \ifx\p@ram\tru@ \egroup \raise\SuperscriptRaise\box0 \fi
-     \x@\global\x@\let\x@\n@xt % remember the <after> hook, if any, beyond the current group
-     \csname after-\thisch@rstyle\endcsname
+    \csname end-\thisch@rstyle\endcsname % execute any <end> hook
+    \getp@ram{fontscale}{\thisch@rstyle}% 
+    \ifx\p@ram\relax%if no fontscale
+      \getp@ram{fontsize}{\thisch@rstyle}% 
+      \ifx\p@ram\relax%and fontsize isn't defined...
+       \let\param=\c@rrfontsize%
+      \else%If it is defined
+       \xdef\c@rrfontsize{\p@ram}%
+      \fi\fi%
+    \getp@ram{superscript}{\thisch@rstyle}%
+    \ifx\p@ram\tru@ \egroup \raise\SuperscriptRaise\box0 \fi
+    \x@\global\x@\let\x@\n@xt % remember the <after> hook, if any, beyond the current group
+    \csname after-\thisch@rstyle\endcsname
      \global\let\n@xtt=\relax%
      %\tracingassigns=1
      \ifdiglot%\MSG{end-\thisch@rstyle\sid@}%

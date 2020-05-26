@@ -2,7 +2,7 @@
 
 ## General overview
 The diglot options allow for typesetting two versions in parallel, aligned by verse or paragraph. If that makes no sense, have a look at the samaple below, where the right hand column's paragraphs are one line shorter, but still the paragraphs in the two columns line up. To do this the two peices of text require an extra pre-processing step and then a number of extra configuration controls to make things really beautiful.
-The preprocessing step picks `pairs' of things that ought to be aligned. These might be verses, paragraphs at the same  place, and so on.  
+The preprocessing step picks `pairs' of things that ought to be aligned, and puts these pairs into what we can call a *chunk*. These pairs might be verses, paragraphs at the same  place, and so on. 
 At the moment this step is done by a perl program (or by hand for small sections of text). Efforts will eventually be underway to make a python version, which would integrate better with the rest of ptxprint.
 
 ![History of diglot](../../examples/diglot/history.png  "An example.")
@@ -77,8 +77,7 @@ Fraction of the space is used by the left column
 -  ```\def\DiglotRightFraction{0.5}``` 
 Fraction of the space is used by the right column 
 
-Hopefully, the  above fractional controls (and the font-sizes from they style sheet) should enable even the most widely different translation styles and languages to balance in an overall pleasing way, without huge gaps under every
-chunk on one column.
+Hopefully, the  above fractional controls (and the font-sizes from they style sheet) should enable even the most widely different translation styles and languages to balance in an overall pleasing way, without huge gaps under every chunk on one column.
 
 ### Hooks
 Like the markers, hooks can be made to apply to left or right columns. e.g.:
@@ -117,6 +116,26 @@ Sometimes the title or section headers can be misaligned. Seen by, for instance 
 
 If that's the case, and say one side has no descenders and the other contains a 'p', then the nasty work-around is to add ```\dstrut p``` to the side which has no 'p'. ```\dstrut```  swallows the letter that comes after it and replaces it with a non-visible object of zero width, exactly as high and deep as the letter it destroyed. 
 
+### My cross-references look ugly
+With very small columns, and long booknames, you can end up with things looking like this:
+![ ](/home/david/src/ptx2pdf/docs/documentation/Xrefs0.png  "Broken references 1")
+
+Or with left justification:
+![ ](/home/david/src/ptx2pdf/docs/documentation/Xrefs1.png  "Broken references 2")
+
+
+We could tell XeTeX that *anything* is better than line breaks between the origin reference and the text. This nasty bit of code gets rid of the gap and then puts it back, without allowing line breaking:
+```
+\sethook{end}{xo}{\dimen0=\lastskip\unskip\penalty 10000\hskip \dimen0  minus 0.5\dimen0\penalty 10000}
+```
+
+With full justification, you get this:
+![ ](/home/david/src/ptx2pdf/docs/documentation/Xrefs4.png  "Broken references 3")
+
+which looks *far worse*, so you really want left justification:
+![ ](/home/david/src/ptx2pdf/docs/documentation/Xrefs2.png  "Fixed cross references")
+
+
 ### XeTeX crashes saying:
 ```
 ! Missing number, treated as zero.
@@ -135,8 +154,8 @@ If that's the case, and say one side has no descenders and the other contains a 
                                                   \openadjlist "\the \AdjLis...
 ``` 
 This is a very characteristic error message, and can be recognised from the first three lines (or the last two). A diglot ```.usfm``` file is being processed, and XeTeX  is trying to set up a diglot version of a footnote,  (in this case ```\note-fR```, see the third line, but it might be some other ```\note-``` or side).
-However because the ```\diglottrue``` command wasn't given when the footnote ```\f``` was defined, there is no ```\note-fR```. Solution: ```\diglottrue``` **must**  be in force when style sheets are 
-loaded if diglot typesetting is to be used.
+However because the ```\diglottrue``` command wasn't given when the footnote ```\f``` was defined, there is no ```\note-fR```. Solution: ```\diglottrue``` **must**  be in force when style sheets are loaded if diglot typesetting is to be used.
+
 
 ## Debugging commands (here be dragons)
 

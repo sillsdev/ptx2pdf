@@ -113,7 +113,7 @@
       \global\setbox\ch@pternote=\hbox{\box\ch@pternote #2}%
     \else #2\fi % output caller
   \fi%
-  % @sf preseirves the space factor (e.g. extra space after a period), restore it now
+  % @sf preserves the space factor (e.g. extra space after a period), restore it now
   \@sf \@wrap\vm@kenote{#1}{\getp@ram{notecallerstyle}{#1}\ifx\p@ram\relax #2\else #3\fi}}
 
 \def\vm@kenote#1#2{%
@@ -183,7 +183,7 @@
   \ifdiglot\ifdiglotL\def\f@ntstyle{#1}\else\def\f@ntstyle{#1R}\fi\else\def\f@ntstyle{#1}\fi%
   \getp@ram{baseline}{#1}\ifx\p@ram\relax
     \getp@ram{fontsize}{#1}\dimen0=\p@ram\le@dingunit
-    \multiply\dimen0 by 14 \divide\dimen0 by 12
+    \multiply\dimen0 by 14 \divide\dimen0 by 12 % default .75 shift of .85ex (ex=.5 fontsize) against 14/12
     \setp@ram{baseline}{\f@ntstyle}{\the\dimen0}\baselineskip=\dimen0\else
   \baselineskip=\p@ram\fi}
 
@@ -558,15 +558,10 @@
   \checkp@ranotes{#1}%
   %\TRACE{av: \the\availht =>}
   \ifp@ranotes\let\n@xt=\reduceavailht@para
-<<<<<<< HEAD
     \ifdiglot\ifdiglotSepNotes\ifdiglotBalNotes\let\n@xt=\reduceavailht@para@bal\fi\fi\fi
   \else\let\n@xt=\reduceavailht@sep
     \ifdiglot\ifdiglotSepNotes\ifdiglotBalNotes\let\n@xt=\reduceavailht@sep@bal\fi\fi\fi
-  \fi%
-=======
-  \else\let\n@xt=\reduceavailht@sep\fi
-  \iff@rstnote\else\global\noteseentrue\fi%
->>>>>>> master
+  \fi\iff@rstnote\else\global\noteseentrue\fi%
   \n@xt{#1}}
 
 \def\reduceavailht@para#1{
@@ -997,7 +992,6 @@
   \unvbox255\eject
 }
 
-<<<<<<< HEAD
 \def\enddigl@t{
   \ifsk@pping \egroup \fi% if we were skipping nonpublishable text, end that mode
   \sk@ppingfalse
@@ -1043,9 +1037,6 @@
   %\msg{Starting diglot partial: \the\ht\partial, pagetotal: \the\pagetotal, vsize: \the\vsize}
 } 
 
-\def\singlec@lumn{%
-  \trace{o}{singlecolumn}%\tracingmacros=1
-=======
 \def\twocolp@geout{%This gets used a few times
   \def\pagecontents{
     \trace{b}{BALANCE pageout: cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins}
@@ -1070,9 +1061,8 @@
     }}\plainoutput\noteseenfalse}%
 
 % to switch back to single column, we reset the page size parameters
-\def\singlecolumn{%
+\def\singlec@lumn{%
   \trace{o}{singlecolumn hIns=\the\holdinginserts}%\tracingmacros=1
->>>>>>> master
   \ifnum\c@rrentcols>1
     \ifhe@dings\endhe@dings\fi
     %\temptrue
@@ -1082,7 +1072,7 @@
     \global\vsize=\textheight
     %\tempfalse
     \ifdim\ht\partial>0.9\textheight
-      \twocolp@geout \fi%Set up page and call \plainoutput
+      \twocolp@geout \fi%Set up pagecontents and call \plainoutput
     \global\c@rrentcols=1
     \trace{o}{resetting resetvsize for singlecolumn}\def\resetvsize{\trace{o}{resetvsize}\global\vsize=\textheight} 
     \global\output={\onecol}
@@ -1126,7 +1116,7 @@
     \ifx\p@ramid\FigP@ramCopy\global\p@ramnumber=5\else
     \ifx\p@ramid\FigP@ramAlt\global\p@ramnumber=6\else
     \ifx\p@ramid\FigP@ramRef\global\p@ramnumber=7\else
-    \ifx\p@ramid\FigP@ramXtra\global\p@ramnumber=8\else %extra parameter, post filename e.g. "rotated 90"
+    \ifx\p@ramid\FigP@ramXtra\global\p@ramnumber=8\else %experimental extra parameter, post filename e.g. "rotated 90"
     \fi\fi\fi\fi\fi\fi\fi
     \tempfalse
     \ifx\p@ramval\empty\ifusfmthree\else
