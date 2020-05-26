@@ -283,10 +283,11 @@
  }
 }
 
-\def\resetdropc@p{%
+\def\resetdropc@p{%The above code is in \lowercase which  breaks L and R
   \message{Setting drop-cap size to \dr@psize}
   \setp@ram{fontsize}{cL}{\dr@psize}%
   \setp@ram{fontsize}{cR}{\dr@psize}%
+  %As above, clear font<c{L,R}> so that it will get rebuilt on next setfont for \c (after we have figured out real size)
   \x@\let\csname font<cL>\endcsname=\relax %
   \x@\let\csname font<cR>\endcsname=\relax %
 }
@@ -508,7 +509,7 @@
 
 \newif\ifBindingGutter % \BindingGutter won't be used unless this is set to true
 \newif\ifDoubleSided \DoubleSidedtrue % binding gutter on alternate sides; use odd/even headers
-
+\def\debugBL{\MSG{\f@ntstyle, Baseline: \the\baselineskip}} % for scattering in usfm as desired.
 % calculate various dimensions based on the factors, units, etc that have been defined
 \def\s@tupsizes{
  \le@dingunit=\LineSpacingFactor\FontSizeUnit
@@ -517,6 +518,7 @@
                                                            % set it will remain. Otherwise, the default
                                                            % of 14 will be applied here and set text will
                                                            % hold to the grid.
+ \getp@ram{baseline}{p}\ifx\p@ram\relax\setp@ram{baseline}{p}{\the\baselineskip}\MSG{Baselineskip for p undefined, set to \the\baselineskip}\fi
  \lineskiplimit=-7\le@dingunit
  \lineskip=0pt
  \topskip=\baselineskip
