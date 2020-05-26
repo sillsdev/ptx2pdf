@@ -851,6 +851,23 @@ class Info:
             config.add_section(sect)
         config.set(sect, k, value)
 
+    def configPath(self, cfgname, makePath=False):
+        prjdir = os.path.join(self.ptsettings.basedir, self.prjid, "shared", "ptxprint")
+        if len(cfgname):
+            prjdir = os.path.join(prjdir, cfgname)
+        if makePath:
+            os.makedirs(prjdir,exist_ok=True)
+        #Update the cb_ with the sanitized (new) version of the name
+        return prjdir
+
+    def readConfig(self, cfgname=""):
+        path = os.path.join(self.configPath(cfgname), "ptxprint.cfg")
+        if not os.path.exists(path):
+            return
+        config = configparser.ConfigParser()
+        config.read(path, encoding="utf-8")
+        self.loadConfig(self, config)
+
     def createConfig(self, printer):
         config = configparser.ConfigParser()
         for k, v in self._mappings.items():
