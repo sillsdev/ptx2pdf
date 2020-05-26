@@ -53,7 +53,7 @@ and the right column will use:
 ###True/false options
 
 - ```\diglottrue```
-If there is diglot material this **must be set true*** (i.e. ```\diglottrue```), **before** the style sheet is loaded (default: ```\diglotfalse```).
+If there is diglot material this **must be set true** (i.e. ```\diglottrue```), **before** the style sheet is loaded (default: ```\diglotfalse```).
 
 - ```\diglotSepNotestrue```
 If the footnotes from the 2 languages should be split (true) or merged together (false) (default: ```\diglotSepNotestrue```). Merging footnotes is almost certainly not a wise choice if both texts have footnotes, but if only one side has notes then it probably makes a lot of sense. The exact order of the footnotes is probably complicated and may even be unpredictable.
@@ -62,7 +62,7 @@ If the footnotes from the 2 languages should be split (true) or merged together 
 If a left column footnote steals space from the right column also, and vise-versa (default: ```\diglotBalNotesfalse```). If this is a good idea or not probably depends on a lot of factors. 
 
 - ```\LeftMarkstrue```
-When you've got just one page and two texts, and one text goes until verse 15  and the other manages to fit verse 16 and 17 on as well, what do you put in the header 15 or 17?  ```\LeftMarkstrue``` says ignore all verse numbers from the right hand column. Intuitively, we'd probably expect the first 'mark' on the page to be from the left-hand column, and the last  from the right, but this possibly becomes confused with ```\noleefttext```, and even with short sections where the first verse set is on the right. At present there is no possibility to give priority to the right hand text, sorry.
+When you've got just one page and two texts, and one text goes until verse 15  and the other manages to fit verse 16 and 17 on as well, what do you put in the header 15 or 17?  ```\LeftMarkstrue``` says ignore all verse numbers from the right hand column. Intuitively, we'd probably expect the first 'mark' on the page to be from the left-hand column, and the last  from the right, but this possibly becomes confused with ```\nolefttext```, and even with short sections where the first verse set is on the right. At present there is no possibility to give priority to the right hand text, sorry.
 
 - ```\VisTracefalse``` 
 A debugging option for really sticky problems; see end of this document.
@@ -99,7 +99,7 @@ will apply the ```\hangversenumber``` only for the left column.
 
 The font-switching code requires that ```\diglottrue``` is specified before 
 any style sheets are loaded. 
-If ```\diglotrue``` has been specified, then any usfm code text is set in the left column until a ```\righttext``` is encountered. 
+If ```\diglottrue``` has been specified, then any usfm code text is set in the left column until a ```\righttext``` is encountered. 
 If ```\diglotfalse``` is in force, then the non-diglot parameters will take effect, e.g.:
 ```
 \TitleColumns=1 
@@ -118,10 +118,10 @@ If that's the case, and say one side has no descenders and the other contains a 
 
 ### My cross-references look ugly
 With very small columns, and long booknames, you can end up with things looking like this:
-![ ](/home/david/src/ptx2pdf/docs/documentation/Xrefs0.png  "Broken references 1")
+![ ](./Xrefs0.png  "Broken references 1")
 
 Or with left justification:
-![ ](/home/david/src/ptx2pdf/docs/documentation/Xrefs1.png  "Broken references 2")
+![ ](./Xrefs1.png  "Broken references 2")
 
 
 We could tell XeTeX that *anything* is better than line breaks between the origin reference and the text. This nasty bit of code gets rid of the gap and then puts it back, without allowing line breaking:
@@ -130,11 +130,11 @@ We could tell XeTeX that *anything* is better than line breaks between the origi
 ```
 
 With full justification, you get this:
-![ ](/home/david/src/ptx2pdf/docs/documentation/Xrefs4.png  "Broken references 3")
+![ ](./Xrefs4.png  "Broken references 3")
 
 which looks *far worse*, so you really want left justification:
-![ ](/home/david/src/ptx2pdf/docs/documentation/Xrefs2.png  "Fixed cross references")
-
+![ ](./Xrefs2.png  "Fixed cross references")
+Note that this *looks* like one-reference per paragraph, but it's not. If the there were shorter words,  a long list of references from one book or the booknames are shortened, then the text will suddenly form paragraphs. This may be just what you want, or it may not be.
 
 ### XeTeX crashes saying:
 ```
@@ -153,7 +153,7 @@ which looks *far worse*, so you really want left justification:
 \ptxfile ...lR {} \initp@rastyles \initn@testyles 
                                                   \openadjlist "\the \AdjLis...
 ``` 
-This is a very characteristic error message, and can be recognised from the first three lines (or the last two). A diglot ```.usfm``` file is being processed, and XeTeX  is trying to set up a diglot version of a footnote,  (in this case ```\note-fR```, see the third line, but it might be some other ```\note-``` or side).
+This is a very characteristic error message, and can be recognised from the first three lines (or the last two). A diglot ```.usfm``` file is being processed, and XeTeX  is trying to set up a diglot version of a footnote,  (in this case ```\note-fR```, see the third line, but it might be some other ``\note-```, like xR).
 However because the ```\diglottrue``` command wasn't given when the footnote ```\f``` was defined, there is no ```\note-fR```. Solution: ```\diglottrue``` **must**  be in force when style sheets are loaded if diglot typesetting is to be used.
 
 
