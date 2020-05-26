@@ -7,23 +7,31 @@ from gi.repository import Gtk, Gdk
 from shutil import copyfile, rmtree
 
 _errmsghelp = {
-"! Unable to load picture":              "Check if picture file is located in 'Figures', 'local\\figures' or a\nspecified folder. Also try the option 'Omit Missing Pictures'\n",
-"! Unable to load picture or PDF file":  "Check if image/PDF file is available on the system\n",
+"! Unable to load picture":              "Check if picture file is located in 'Figures', 'local\\figures' or a\n" +\
+                                         "specified folder. Also try the option 'Omit Missing Pictures'\n",
+"! Unable to load picture or PDF file":  "Check if image/PDF file is available on the system.\n" +
+                                         "If you have specified one or more Front/Back matter PDFs or a Watermark PDF\n" +
+                                         "then ensure that the PDF(s) exist(s); OR uncheck those options (Advanced tab).\n",
 "! Missing control sequence inserted.":  "Fallback font probably being applied to text in a footnote (not permitted!)\n",
 "! Missing number, treated as zero.":    "Related to USFM3 illustration markup\n",
-"! Undefined control sequence.":         "This is related to a USFM marker error (such as an unsupported marker)\nTry 'Run Basic Checks' in Paratext\n",
+"! Undefined control sequence.":         "This is related to a USFM marker error (such as an unsupported marker)\n" +\
+                                         "Try 'Run Basic Checks' in Paratext\n",
 "! File ended while scanning use of":    "Try turning off PrintDraftChanges.txt and both Stylesheets on Advanced tab\n",
 "! Paratext stylesheet":                 "Try turning off the PrintDraft-mods stylesheet\n",
-"! File ended while scanning use of \iotableleader.": "Problem with Formatting Intro Outline\nTry disabling option 'Right-Align \ior with tabbed leaders' on the Body tab\n",
+"! File ended while scanning use of \iotableleader.": "Problem with Formatting Intro Outline\n" +\
+                                         "Try disabling option 'Right-Align \ior with tabbed leaders' on the Body tab\n",
 "! Emergency stop.":                     "Probably a TeX macro problem - contact support, or post a bug report\n",
-"! Not a letter.":                       "Possible fault in the hyphenation file\nTry turning off Hyphenate option located on the Body tab\n",
+"! Not a letter.":                       "Possible fault in the hyphenation file\n" +\
+                                         "Try turning off Hyphenate option located on the Body tab\n",
 "! Font":                                "Font related issue - details unknown\n(Report this rare error please)\n",
 "! Too many }'s":                        "Serious TeX macro issue - contact support, or post a bug report\n",
 "! This can't happen (page)":            "Serious TeX macro issue - contact support, or post a bug report\n",
 "! I can't find file `paratext2.tex'.":  "Possibly a faulty installation.\n",
 "! I can't find file `ptx-tracing.tex'.":"Possibly a faulty installation.\n",
-"Runaway argument?":                     "Unknown issue. Maybe related to Right-aligned tabbed leaders\nTry turning off PrintDraftChanges.txt and both Stylesheets\n",
-"Unknown":                               "Sorry! No diagnostic help is available for this error.\nTry turning off all Advanced settings & disable Changes and Stylesheets\n",
+"Runaway argument?":                     "Unknown issue. Maybe related to Right-aligned tabbed leaders\n" +\
+                                         "Try turning off PrintDraftChanges.txt and both Stylesheets\n",
+"Unknown":                               "Sorry! No diagnostic help is available for this error.\n" +\
+                                         "Try turning off all Advanced settings & disable Changes and Stylesheets\n",
 }
 if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
     sys.stdout = open(os.devnull, "w")
@@ -38,7 +46,7 @@ except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
     import ptxprint
 from ptxprint.font import initFontCache
-from ptxprint.info import universalopen
+from ptxprint.info import universalopen, Info
 
 parser = argparse.ArgumentParser()
 # parser.add_argument('-h','--help', help="show this help message and exit")
@@ -257,7 +265,7 @@ def doit(printer, display=True):
             par = par = printer.builder.get_object('ptxprint')
             dialog = Gtk.MessageDialog(parent=par, modal=True, message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK, \
                 text="Failed to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname))
-            dialog.set_title ("PTXprint [0.6.6 Beta] - Error!")
+            dialog.set_title ("PTXprint [0.7.0 Beta] - Error!")
             dialog.format_secondary_text("".join(finalLogLines[-20:]))
             dialog.set_keep_above(True)
             dialog.run()
@@ -292,16 +300,17 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
         srchlist = [printer.customFigFolder]
     else:
         srchlist = []
-    if sys.platform == "win32":
-        srchlist += [os.path.join(prjdir, "figures")]
-        srchlist += [os.path.join(prjdir, "local", "figures")]
-    elif sys.platform == "linux":
-        chkpaths = []
-        for d in ("local", "figures"):
-            chkpaths += [os.path.join(prjdir, x) for x in (d, d.title())]
-        for p in chkpaths:
-            if os.path.exists(p):
-                srchlist += [p]
+    if not printer.get("c_exclusiveFiguresFolder"):
+        if sys.platform == "win32":
+            srchlist += [os.path.join(prjdir, "figures")]
+            srchlist += [os.path.join(prjdir, "local", "figures")]
+        elif sys.platform == "linux":
+            chkpaths = []
+            for d in ("local", "figures"):
+                chkpaths += [os.path.join(prjdir, x) for x in (d, d.title())]
+            for p in chkpaths:
+                if os.path.exists(p):
+                    srchlist += [p]
     extensions = []
     extdflt = ["jpg", "png", "pdf", "tif"]
     extuser = re.sub("(pdf|tif)", "pdf tif",printer.get("t_imageTypeOrder").lower())
@@ -335,18 +344,27 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
     os.makedirs(tmpPicpath, exist_ok=True)
     for srchdir in srchlist:
         if srchdir != None and os.path.exists(srchdir):
-            for subdir, dirs, files in os.walk(srchdir):
-                if subdir != "tmpPics": # Avoid recursively scanning the folder we are copying to!
-                    for file in files:
-                        origExt = file[-4:].lower()
-                        if origExt[1:] in extensions:
-                            filepath = subdir + os.sep + file
-                            if newBase(filepath) in newBaseList:
-                                # print(filepath, "-->", newBase(filepath)+origExt.lower())
-                                carefulCopy(printer, filepath, newBase(filepath)+origExt.lower())
+            if printer.get("c_exclusiveFiguresFolder"):
+                for file in os.listdir(srchdir):
+                    origExt = file[-4:].lower()
+                    if origExt[1:] in extensions:
+                        filepath = os.path.join(srchdir, file)
+                        if newBase(filepath) in newBaseList:
+                            carefulCopy(printer, filepath, newBase(filepath)+origExt.lower())
+            else: # Search all subfolders as well
+                for subdir, dirs, files in os.walk(srchdir):
+                    if subdir != "tmpPics": # Avoid recursively scanning the folder we are copying to!
+                        for file in files:
+                            origExt = file[-4:].lower()
+                            if origExt[1:] in extensions:
+                                filepath = subdir + os.sep + file
+                                if newBase(filepath) in newBaseList:
+                                    # print(filepath, "-->", newBase(filepath)+origExt.lower())
+                                    carefulCopy(printer, filepath, newBase(filepath)+origExt.lower())
 
     if printer.get("c_usePicList"): # Write out new tmpPicLists
         extOrder = info.getExtOrder(printer)
+        missingPics = []
         for bk in jobs:
             fname = printer.getBookFilename(bk, prjdir)
             if printer.get("c_usePicList"): # Read the PicList to get a list of needed illustrations
@@ -374,8 +392,10 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
                                         dat = re.sub(re.escape(f), tmpPicfname, dat)
                                         found = True
                                         break
-                                if not found and printer.get("c_skipmissingimages"):
-                                    dat = re.sub(r"(?im)(^.*{})".format(re.escape(f)), r"% \1", dat)
+                                if not found:
+                                    missingPics.append(f[:-4])
+                                    if printer.get("c_skipmissingimages"):
+                                        dat = re.sub(r"(?im)(^.*{})".format(re.escape(f)), r"% \1", dat)
 
                         if printer.get("c_fighiderefs"): # del refs (ch:vs-vs) from figure caption
                             dat = re.sub(r"\|(\d+[:.]\d+([-,\u2013\u2014]\d+)?)\r?\n".format(re.escape(f)), "|\n", dat)
@@ -386,6 +406,8 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
                         dat = "% Temporary PicList generated by PTXprint - DO NOT EDIT\n"+dat
                         with open(tmpiclstfname, "w", encoding="utf-8") as outf:
                             outf.write(dat)
+        if len(missingPics):
+            Info._missingPicList += ["{}".format(", ".join(list(set(missingPics))))]
 
 def carefulCopy(printer, srcpath, tgtfile):
     tmpPicPath = os.path.join(printer.working_dir, "tmpPics")
@@ -414,6 +436,10 @@ def carefulCopy(printer, srcpath, tgtfile):
         pass
 
 def removeTempFiles(texfiles,tmpdir,info):
+    try:
+        os.remove(os.path.join(tmpdir, "NestedStyles.sty"))
+    except:
+        pass
     for extn in ('delayed','parlocs','notepages', 'tex', 'log'):
         for t in texfiles:
             delfname = os.path.join(tmpdir, t.replace(".tex", "."+extn))
@@ -428,7 +454,6 @@ def removeTempFiles(texfiles,tmpdir,info):
                 dialog.set_keep_above(False)
                 dialog.destroy()
     for delfname in info['project/books']:
-        print("Deleting books:", delfname)
         try:
             os.remove(os.path.join(tmpdir, delfname))
         except OSError:

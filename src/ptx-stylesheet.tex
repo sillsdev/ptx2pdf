@@ -65,9 +65,11 @@
 \let \Textproperties\TextProperties
 \def \FontSize       #1\relax{\defp@ram{fontsize}{#1}}
 \let \Fontsize\FontSize
+\def \FontScale       #1\relax{\defp@ram{fontscale}{#1}}
+\let \Fontscale\FontScale
 \def \FontName       #1\relax{\defp@ram{fontname}{#1}}
 \let \Fontname\FontName
-\def \FirstLineIndent#1\relax{\defp@ram{firstindent}{#1}}
+\def \FirstLineIndent #1\relax{\defp@ram{firstindent}{#1}}
 \let \Firstlineindent\FirstLineIndent
 \def \LeftMargin     #1\relax{\defp@ram{leftmargin}{#1}}
 \let \Leftmargin\LeftMargin
@@ -91,13 +93,13 @@
 \def \SmallCaps      #1\relax{\defbinp@ram{smallcaps}{#1}}
 \let \Smallcaps\SmallCaps
 \def \BaseLine       #1\relax{\defp@ram{baseline}{#1}}
+\let \LineSpacing\BaseLine
 % Make a TeX macro based on the StyleType
 \def \StyleType      #1\relax{\lowercase{\def\styl@type{#1}}\m@kestyle}
 \let \Styletype=\StyleType
 % New extras that PTX supports
 \def \XMLTag         #1\relax{}
 \def \Encoding       #1\relax{}
-\def \LineSpacing    #1\relax{} % We want to do something with this
 \def \Rank           #1\relax{}
 \def \TEStyleName    #1\relax{}
 \def \NotRepeatble   #1\relax{}
@@ -300,6 +302,7 @@
          \setbox1=\hbox{\endash\AdornVerseNumber{\v@rseto}}
          \setbox0=\vtop{\hbox to \wd1{\hfil\AdornVerseNumber{\v@rsefrom}}
                         \kern\dimen0\box1}
+         \ht0=0.5\dimen1 \dp0=0pt
          \hbox{\box0}\fi}
 \let\printv@rse=\simpleprintv@rse
 \def\@ne{1}
@@ -440,7 +443,8 @@
  \catcode`\#=6 \catcode`\%=14 % restore TeX meanings for those we might use
  \catcode`\{=1 \catcode`\}=2
  \singlecolumn\pagebreak
- \ifendbooknoeject\else\global\output={\global\setbox255=\box\voidb@x}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
+ %\ifendbooknoeject\else\global\output={\global\setbox255=\box\voidb@x}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
+ \ifendbooknoeject\else\global\output={\shipout\vbox{\box\partial\box255}}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
  \global\output={\onecol}
  }
 \newread\t@stread

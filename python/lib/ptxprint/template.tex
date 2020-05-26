@@ -4,8 +4,8 @@
 %%%%% Stylesheets %%%%%
 \stylesheet{{{/ptxpath}/usfm.sty}}
 {project/ifusecustomsty}\stylesheet{{{/ptxpath}/{project/id}/custom.sty}}
-{project/ifusemodssty}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.sty}} % User can override project stylesheet settings here
-{project/ifusenested}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/NestedStyles.sty}}     % PTXprint overrides all others (for versenums, ftnts, xref)
+\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/NestedStyles.sty}}     % PTXprint-generated stylesheet changes (for versenums, ftnts, xref, size + spacing)
+{project/ifusemodssty}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.sty}} % User can override all other stylesheet settings here
 
 %%%%% Page Setup %%%%%
 % Dimensions
@@ -107,8 +107,8 @@
 {notes/xrparagraphednotes}\ParagraphedNotes{{x}}
 %\NumericCallers{{x}}
 
-\AboveNoteSpace={document/abovenotespace}pt
-\InterNoteSpace={document/internotespace}pt
+\AboveNoteSpace={notes/abovenotespace}pt
+\InterNoteSpace={notes/internotespace}pt
 %\AboveNoteSpace=\medskipamount % but is a dimension not a skip
 %\InterNoteSpace=3.5pt
 
@@ -138,6 +138,8 @@
 \def\RFtitlecenter{{{footer/oddcenter}}}
 {footer/ifftrtitlepagenum}\def\RFtitlecenter{{\pagenumber}}
 {footer/ifprintConfigName}\def\RFtitlecenter{{{config/name}}}
+
+\pageno={document/startpagenum}
 
 %%%%% Illustration and Adjustment Locations and Lists %%%%%
 \IncludeFigures{document/ifinclfigs}
@@ -178,11 +180,11 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% all settings need to come before this line %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%% Watermark PDF file or Grid PDFs etc. %%%%%
-{paper/ifwatermark}\def\PageBorder{{"{paper/watermarkpdf}"}}
+%%%%% Watermark PDF file or Grid PDF etc. %%%%%
+{paper/watermarkpdf}
 
 %%%%% Front Matter PDF file(s) get included here %%%%%
-{project/ifinclfrontpdf}{project/frontincludes}
+{project/frontincludes}
 
 {document/toc}\GenerateTOC[{document/toctitle}]{{{jobname}.toc}}
 {document/toc}\BodyColumns=1     % Temporarily set this to Single Column for the ToC page(s)
@@ -199,6 +201,6 @@
 \catcode`\%=14
 
 %%%%% Back Matter PDF file(s) get included here %%%%%
-{project/ifinclbackpdf}{project/backincludes}
+{project/backincludes}
 
 \end

@@ -17,22 +17,27 @@
 % tracing macros
 % trace identifiers allocated in ptx macros
 % a - all traces
-% b - balancing (info for balancing)
+% b - balancing (info for external page break analysis)
 % f - footnotes
 % F - fonts
 % g - figures
 % h - headings
+% i - inserts (tracking the value of holdinginserts)
 % j - paragraph adjustments
 % o - rebalancing
 % p - page output
 % s - stylesheet
 % v - marginal verses
-\def\tracing#1{\xdef\tr@cemode{#1}\let\trace=\tr@cer}%
+
+% Now modified so that multiple \tracing{} commands can be issued.
+
+\def\y@s{y}
+\def\tracing#1{\x@\xdef\csname tr@cemode-#1\endcsname{\y@s}\let\trace=\tr@cer}%
 \def\notr@cer#1#2{\relax}%
 \def\tr@cer#1#2{%
     \let\next=\notr@ceout
-    \if\tr@cemode #1\let\next=\tr@ceout\fi
-    \if\tr@cemode a\let\next=\tr@ceout\fi
+    \x@\ifx\csname tr@cemode-#1\endcsname\y@s \let\next=\tr@ceout\fi
+    \x@\ifx\csname tr@cemode-a\endcsname\y@s \let\next=\tr@ceout\fi
     \next{#2}}%
 \def\tr@ceout#1{%
     \immediate\write-1{#1}}%

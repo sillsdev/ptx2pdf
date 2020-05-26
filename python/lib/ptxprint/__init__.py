@@ -3,6 +3,7 @@
 import sys, os, re, regex, gi, random, subprocess, collections
 gi.require_version('Gtk', '3.0')
 from shutil import copyfile, copytree, rmtree
+from pathlib import Path
 from gi.repository import Gtk, Pango, GObject
 # gi.require_version('GtkSource', '4') 
 from gi.repository import GtkSource
@@ -70,6 +71,8 @@ _allbooks = ["FRT", "INT",
             "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG",
             "GLO", "TDX", "NDX", "CNC", "OTH", "BAK"]
 _allbkmap = {k: i for i, k in enumerate(_allbooks)} 
+
+pdfre = re.compile(r".+[\\/](.+)\.pdf")
 
 class Splash(Thread):
     def __init__(self, window):
@@ -330,7 +333,14 @@ class PtxPrinterDialog:
         Gtk.main_quit()
 
     def onOK(self, btn):
+        Info._missingPicList = []
         jobs = self.getBooks()
+        # If the viewer/editor is open on an Editable tab, then "autosave" contents
+        if self.builder.get_object("nbk_Main").get_current_page() == 7:
+            pgnum = self.builder.get_object("nbk_Viewer").get_current_page()
+            if 1 <= pgnum <= 2 or pgnum == 5:
+                self.onSaveEdits(None)
+
         # Work out what the resulting PDFs are to be called
         if len(jobs) > 1:
             if self.get("c_combine"):
@@ -356,16 +366,11 @@ class PtxPrinterDialog:
                         return
                 fileLocked = False
 
-        if self.prjid is not None:
-            self.callback(self)
+        self.callback(self)
+        if len(Info._missingPicList):
+            self.builder.get_object("l_missingPictureString").set_label("Missing Pictures:\n"+"{}".format("\n".join(Info._missingPicList)))
         else:
-            dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
-                     buttons=Gtk.ButtonsType.OK, message_format="Cannot create a PDF without a Project selected")
-            dialog.format_secondary_text("Please select a Paratext Project and try again.")
-            dialog.set_keep_above(True)
-            dialog.run()
-            dialog.set_keep_above(False)
-            dialog.destroy()
+            self.builder.get_object("l_missingPictureString").set_label("(No Missing Pictures)")
 
     def onCancel(self, btn):
         self.onDestroy(btn)
@@ -593,7 +598,6 @@ class PtxPrinterDialog:
     def onViewerChangePage(self, nbk_Viewer, scrollObject, pgnum):
         self.bookNoUpdate = True
         self.builder.get_object("gr_editableButtons").set_sensitive(False)
-        # self.builder.get_object("btn_saveEdits").set_sensitive(False)
         prjid = self.get("cb_project")
         prjdir = os.path.join(self.settings_dir, prjid)
         bks = self.getBooks()
@@ -650,8 +654,8 @@ class PtxPrinterDialog:
                 self.builder.get_object("l_{}".format(pgnum)).set_text("Settings")
                 return
 
-        elif pgnum == 6: # Just show the About page with folders in use and other links.
-            self.builder.get_object("l_{}".format(pgnum)).set_text("About")
+        elif pgnum == 6: # Just show the Folders & Links page
+            self.builder.get_object("l_{}".format(pgnum)).set_text("Folders & Links")
             return
         else:
             return
@@ -724,6 +728,7 @@ class PtxPrinterDialog:
                 if len(styles) > 1:
                     bf = TTFont(f.family, style=styles[0])
                     if bf.filename is not None:
+                        self.set("s_{}embolden".format(esid), 0)
                         styles.pop(0)
                     else:
                         bf = f
@@ -813,7 +818,11 @@ class PtxPrinterDialog:
         self.builder.get_object("gr_IllustrationOptions").set_sensitive(status)
 
     def onUseCustomFolderclicked(self, c_useCustomFolder):
-        self.builder.get_object("btn_selectFigureFolder").set_sensitive(self.get("c_useCustomFolder"))
+        status = self.get("c_useCustomFolder")
+        self.builder.get_object("btn_selectFigureFolder").set_sensitive(status)
+        self.builder.get_object("c_exclusiveFiguresFolder").set_sensitive(status)
+        if not status:
+            self.builder.get_object("c_exclusiveFiguresFolder").set_active(status)
 
     def onBlendedXrsClicked(self, c_blendfnxr):
         status = self.get("c_blendfnxr")
@@ -823,7 +832,7 @@ class PtxPrinterDialog:
     
     def onUseChapterLabelclicked(self, c_useChapterLabel):
         status = self.get("c_useChapterLabel")
-        for c in ("t_clBookList", "l_clHeading", "t_clHeading"):
+        for c in ("t_clBookList", "l_clHeading", "t_clHeading", "c_clSingleColLayout"):
             self.builder.get_object(c).set_sensitive(status)
         
     def onClickedIncludeFootnotes(self, c_includeFootnotes):
@@ -854,6 +863,7 @@ class PtxPrinterDialog:
     def onDoubleColumnChanged(self, c_doublecolumn):
         status = self.get("c_doublecolumn")
         self.builder.get_object("gr_doubleColumn").set_sensitive(status)
+        self.builder.get_object("c_clSingleColLayout").set_sensitive(status)
 
     def onHdrVersesClicked(self, c_hdrverses):
         status = self.get("c_hdrverses")
@@ -956,13 +966,17 @@ class PtxPrinterDialog:
 
     def onProcessScriptClicked(self, c_processScript):
         status = self.get("c_processScript")
-        for c in ("c_processScriptBefore", "c_processScriptAfter", "btn_selectScript", "l_processScript"):
+        for c in ("c_processScriptBefore", "c_processScriptAfter", "btn_selectScript"):
             self.builder.get_object(c).set_sensitive(status)
-            
+        if not status:
+            self.builder.get_object("btn_editScript").set_sensitive(False)
+        else:
+            if self.get("btn_selectScript") != None:
+                self.builder.get_object("btn_editScript").set_sensitive(True)
+
     def onUsePrintDraftChangesClicked(self, c_usePrintDraftChanges):
         status = self.get("c_usePrintDraftChanges")
-        for c in ("btn_editChangesFile", "c_processScriptBefore", "c_processScriptAfter", "l_processScript"):
-            self.builder.get_object(c).set_sensitive(status)
+        self.builder.get_object("btn_editChangesFile").set_sensitive(status)
         if self.info is not None:           # trigger a rereading of the changes
             # this is a kludge. Better to keep the last modified date and test in Info.convertBook
             self.info.changes = None
@@ -990,8 +1004,7 @@ class PtxPrinterDialog:
                 self.builder.get_object(c).set_active(False)
 
             # Turn Essential Settings ON
-            for c in ("c_mainBodyText", "c_footnoterule",
-                      "c_includefigsfromtext", "c_skipmissingimages", "c_useLowResPics"):
+            for c in ("c_mainBodyText", "c_skipmissingimages", "c_includefigsfromtext"):
                 self.builder.get_object(c).set_active(True)
             self.builder.get_object("c_hideAdvancedSettings").set_opacity(0.2)
             self.builder.get_object("c_hideAdvancedSettings").set_tooltip_text("")
@@ -1007,18 +1020,18 @@ class PtxPrinterDialog:
 
         # (removed: "tb_Logging", "tb_DiglotTesting", "tb_Body", )
         # Hide a whole bunch of stuff that they don't need to see   
-        for c in ("tb_Advanced", "tb_ViewerEditor", 
-                  "btn_editPicList", "l_imageTypeOrder", "t_imageTypeOrder", "fr_chapVerse",
+        for c in ("tb_Advanced", "tb_ViewerEditor", "l_missingPictureString",
+                  "btn_editPicList", "l_imageTypeOrder", "t_imageTypeOrder", "fr_chapVerse", "s_colgutteroffset",
                   "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "bx_AdvFootnoteConfig", "l_colgutteroffset",
                   "c_usePicList", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", 
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
-                  "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection",
+                  "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection", "l_colgutteroffset",
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "row_ToC", "c_hyphenate",
                   "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", "c_preventwidows",
                   "l_sidemarginfactor", "s_sidemarginfactor", "l_min", "s_linespacingmin", "l_max", "s_linespacingmax",
                   "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "cb_textDirection", "l_digits", "cb_digits",
-                  "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "bx_ShowTabs"):
-                  # "btn_saveConfig", "btn_deleteConfig", "btn_lockunlock", "t_invisiblePassword", "t_configNotes", "l_notes"):
+                  "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "bx_ShowTabs", "cb_glossaryMarkupStyle",
+                  "gr_fnAdvOptions", "gr_fnSpacingOptions", "c_figexclwebapp", "bx_horizRule", "l_glossaryMarkupStyle"):
             self.builder.get_object(c).set_visible(not self.get("c_hideAdvancedSettings"))
 
         # Resize Main UI Window appropriately
@@ -1077,9 +1090,9 @@ class PtxPrinterDialog:
                     for extn in ('delayed','parlocs','notepages', 'log'):
                         patterns.append(r".+\.{}".format(extn))
                     patterns.append(r".+\-draft\....".format(extn))
-                    patterns.append(r".+\-conv\....".format(extn))
-                    patterns.append(r".+\-draft-conv\....".format(extn))
-                    patterns.append(r".+\-conv-draft\....".format(extn))
+                    # patterns.append(r".+\-conv\....".format(extn))        # these are no longer kept
+                    # patterns.append(r".+\-draft-conv\....".format(extn))  # but are deleted shortly
+                    # patterns.append(r".+\-conv-draft\....".format(extn))  # after being created
                     patterns.append(r".+\.toc".format(extn))
                     patterns.append(r"NestedStyles\.sty".format(extn))
                     patterns.append(r"ptxprint\-.+\.tex".format(extn))
@@ -1296,12 +1309,22 @@ class PtxPrinterDialog:
             for o in ["b_print", "bx_SavedConfigSettings", "tb_Layout", "tb_Body", "tb_HeadFoot", "tb_Pictures",
                       "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_DiglotTesting", "tb_FancyBorders"]:
                 self.builder.get_object(o).set_sensitive(True)
+            self.updateFonts()
+            
+    def updateFonts(self):
+        ptfont = self.ptsettings['DefaultFont']
+        for fb in ['bl_fontR', 'bl_verseNumFont']:  # 'bl_fontB', 'bl_fontI', 'bl_fontBI', 'bl_fontExtraR'
+            fblabel = self.builder.get_object(fb).get_label()
+            if fblabel == "Select font...":
+                w = self.builder.get_object(fb)
+                self.setFontButton(w, ptfont, "")
+                self.onFontChanged(w)
 
     def updateProjectSettings(self, saveCurrConfig=False):
         currprj = self.prjid
         if currprj is not None:
             if self.info is None:
-                self.info = Info(self, self.settings_dir, prjid = currprj)
+                self.info = Info(self, self.settings_dir, self.ptsettings, prjid = currprj)
             config = self.info.createConfig(self)
             fpath = os.path.join(self.config_dir, "ptxprint.cfg") \
                  or os.path.join(self.settings_dir, currprj, "shared", "ptxprint", "ptxprint.cfg")
@@ -1345,15 +1368,17 @@ class PtxPrinterDialog:
             if not os.path.exists(configfile): # If they are an pre 0:4:8 user, pick up .cfg from Project folder location
                 configfile = os.path.join(self.settings_dir, self.prjid, "ptxprint.cfg")
         if os.path.exists(configfile):
-            self.info = Info(self, self.settings_dir, self.prjid)
+            self.info = Info(self, self.settings_dir, self.ptsettings, self.prjid)
             config = configparser.ConfigParser()
             config.read(configfile, encoding="utf-8")
             self.info.loadConfig(self, config)
         else:
+            for fb in ['bl_fontR', 'bl_fontB', 'bl_fontI', 'bl_fontBI', 'bl_fontExtraR', 'bl_verseNumFont']:  # 
+                fblabel = self.builder.get_object(fb).set_label("Select font...")
             try:
                 self.info.update()
             except AttributeError:
-                self.info = Info(self, self.settings_dir, self.prjid)
+                self.info = Info(self, self.settings_dir, self.ptsettings, self.prjid)
                 self.info.update()
         status = self.get("c_multiplebooks")
         for c in ("c_combine", "t_booklist"):
@@ -1369,7 +1394,7 @@ class PtxPrinterDialog:
         self.builder.get_object("l_prjdir").set_label(os.path.join(self.settings_dir, self.prjid))
         self.builder.get_object("l_settings_dir").set_label(self.config_dir or "")
         self.builder.get_object("l_working_dir").set_label(self.working_dir)
-        self.set("c_prettyIntroOutline", False)  # This is OFF by default, they need to turn it on specifically
+        # self.set("c_prettyIntroOutline", False)  # This is OFF by default, they need to turn it on specifically
         self.setEntryBoxFont()
         self.onDiglotSettingsChanged(None)
         self.updateDialogTitle()
@@ -1386,7 +1411,7 @@ class PtxPrinterDialog:
                 bks = bks[0]
             except IndexError:
                 bks = "No book selected!"
-        titleStr = "PTXprint [0.6.6 Beta]" + prjid + " (" + bks + ") " + (self.get("cb_savedConfig") or "")
+        titleStr = "PTXprint [0.7.0 Beta]" + prjid + " (" + bks + ") " + (self.get("cb_savedConfig") or "")
         self.builder.get_object("ptxprint").set_title(titleStr)
 
     def editFile(self, file2edit, loc="wrk"):
@@ -1403,6 +1428,8 @@ class PtxPrinterDialog:
             fpath = os.path.join(self.configPath(), file2edit)
             if not os.path.exists(fpath):
                 fpath = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint", file2edit)
+        elif "\\" in loc or "/" in loc:
+            fpath = os.path.join(loc, file2edit)
         else:
             return
         self.builder.get_object("gr_editableButtons").set_sensitive(True)
@@ -1416,6 +1443,14 @@ class PtxPrinterDialog:
             self.fileViews[pgnum][0].set_text(txt)
         else:
             self.fileViews[pgnum][0].set_text("\nThis file doesn't exist yet!\n\nEdit here and Click 'Save' to create it.")
+
+    def onEditScriptFile(self, btn):
+        # Ask MH how to do this properly (in one line!?) with Path from pathlib
+        customScriptFPath = self.get("btn_selectScript")
+        scriptName = os.path.basename(customScriptFPath)
+        scriptPath = customScriptFPath[:-len(scriptName)]
+        if len(customScriptFPath):
+            self.editFile(scriptName, scriptPath)
 
     def onEditChangesFile(self, btn):
         self.editFile("PrintDraftChanges.txt", "prj")
@@ -1431,7 +1466,7 @@ class PtxPrinterDialog:
         self.editFile(modfname, "cfg")
 
     def onEditCustomSty(self, btn):
-        self.editFile("custom.sty", "wrk")
+        self.editFile("custom.sty", "prj")
 
     def onEditModsSty(self, btn):
         self.editFile("PrintDraft-mods.sty", "wrk")
@@ -1449,68 +1484,22 @@ class PtxPrinterDialog:
         if CustomScript is not None:
             self.CustomScript = CustomScript[0]
             self.builder.get_object("c_processScript").set_active(True)
-            btn_selectScript.set_tooltip_text(CustomScript[0])
+            btn_selectScript.set_tooltip_text(str(CustomScript[0]))
+            for c in ("c_processScriptBefore", "c_processScriptAfter", "btn_editScript"):
+                self.builder.get_object(c).set_sensitive(True)
         else:
             self.CustomScript = None
             btn_selectScript.set_tooltip_text("")
             self.builder.get_object("c_processScript").set_active(False)
-            for c in ("c_processScriptBefore", "c_processScriptAfter", "l_processScript"):
+            for c in ("c_processScriptBefore", "c_processScriptAfter", "btn_editScript"):
                 self.builder.get_object(c).set_sensitive(False)
-
-    def onFrontPDFsClicked(self, btn_selectFrontPDFs):
-        FrontPDFs = self.fileChooser("Select one or more PDF(s) for FRONT matter", 
-                filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
-                multiple = True, basedir=self.working_dir)
-        if FrontPDFs is not None and FrontPDFs != 'None':
-            self.FrontPDFs = FrontPDFs
-            self.builder.get_object("c_inclFrontMatter").set_active(True)
-            btn_selectFrontPDFs.set_tooltip_text("\n".join('{}'.format(s) for s in FrontPDFs))
-            self.builder.get_object("lb_inclFrontMatter").set_text(",".join(re.sub(r".+[\\/](.+)\.pdf",r"\1",s) for s in FrontPDFs))
-        else:
-            self.FrontPDFs = None
-            btn_selectFrontPDFs.set_tooltip_text("")
-            self.builder.get_object("lb_inclFrontMatter").set_text("")
-            self.builder.get_object("btn_selectFrontPDFs").set_sensitive(False)
-            self.builder.get_object("c_inclFrontMatter").set_active(False)
-
-    def onBackPDFsClicked(self, btn_selectBackPDFs):
-        BackPDFs = self.fileChooser("Select one or more PDF(s) for BACK matter", 
-                filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
-                multiple = True, basedir=self.working_dir)
-        if BackPDFs is not None and BackPDFs != 'None':
-            self.BackPDFs = BackPDFs
-            self.builder.get_object("c_inclBackMatter").set_active(True)
-            btn_selectBackPDFs.set_tooltip_text("\n".join('{}'.format(s) for s in BackPDFs))
-            self.builder.get_object("lb_inclBackMatter").set_text(",".join(re.sub(r".+[\\/](.+)\.pdf",r"\1",s) for s in BackPDFs))
-        else:
-            self.BackPDFs = None
-            btn_selectBackPDFs.set_tooltip_text("")
-            self.builder.get_object("lb_inclBackMatter").set_text("")
-            self.builder.get_object("btn_selectBackPDFs").set_sensitive(False)
-            self.builder.get_object("c_inclBackMatter").set_active(False)
-
-    def onWatermarkPDFclicked(self, btn_selectWatermarkPDF):
-        watermarks = self.fileChooser("Select Watermark PDF file", 
-                filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
-                multiple = False, basedir=os.path.join(os.path.dirname(__file__), "PDFassets", "watermarks"))
-        if watermarks is not None and watermarks != 'None':
-            self.watermarks = watermarks[0]
-            self.builder.get_object("c_applyWatermark").set_active(True)
-            btn_selectWatermarkPDF.set_tooltip_text(watermarks[0])
-            self.builder.get_object("lb_applyWatermark").set_text(re.sub(r".+[\\/](.+)\.pdf",r"\1",watermarks[0]))
-        else:
-            self.watermarks = None
-            btn_selectWatermarkPDF.set_tooltip_text("")
-            self.builder.get_object("lb_applyWatermark").set_text("")
-            self.builder.get_object("btn_selectWatermarkPDF").set_sensitive(False)
-            self.builder.get_object("c_applyWatermark").set_active(False)
 
     def onSelectFigureFolderClicked(self, btn_selectFigureFolder):
         customFigFolder = self.fileChooser("Select the folder containing image files", 
                 filters = None, multiple = False, folder = True)
-        if customFigFolder is not None:
+        if len(customFigFolder):
             self.customFigFolder = customFigFolder[0]
-            btn_selectFigureFolder.set_tooltip_text(customFigFolder[0])
+            btn_selectFigureFolder.set_tooltip_text(str(customFigFolder[0]))
             self.builder.get_object("c_useCustomFolder").set_active(True)
         else:
             self.customFigFolder = None
@@ -1519,69 +1508,54 @@ class PtxPrinterDialog:
             self.builder.get_object("btn_selectFigureFolder").set_sensitive(False)
             # self.builder.get_object("c_useLowResPics").set_active(True)
 
-    def onPageBorderPDFclicked(self, btn_selectPageBorderPDF):
-        pageborder = self.fileChooser("Select Page Border PDF file", 
+    def _onPDFClicked(self, title, isSingle, basedir, ident, attr, btn):
+        vals = self.fileChooser(title,
                 filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
-                multiple = False, basedir=os.path.join(os.path.dirname(__file__), "PDFassets", "border-art"))
-        if pageborder is not None and pageborder != 'None':
-            self.pageborder = pageborder[0]
-            self.builder.get_object("c_inclPageBorder").set_active(True)
-            btn_selectPageBorderPDF.set_tooltip_text(pageborder[0])
-            self.builder.get_object("lb_inclPageBorder").set_text(re.sub(r".+[\\/](.+)\.pdf",r"\1",pageborder[0]))
+                multiple = not isSingle, basedir=basedir)
+        if vals != None and len(vals) and str(vals[0]) != "None":
+            self.builder.get_object("c_"+ident).set_active(True)
+            if isSingle:
+                setattr(self, attr, vals[0])
+                btn.set_tooltip_text(str(vals[0]))
+                self.builder.get_object("lb_"+ident).set_text(pdfre.sub(r"\1", str(vals[0])))
+            else:
+                setattr(self, attr, vals)
+                btn.set_tooltip_text("\n".join(str(s) for s in vals))
+                self.builder.get_object("lb_"+ident).set_text(",".join(pdfre.sub(r"\1", str(s)) for s in vals))
         else:
-            self.pageborder = None
-            btn_selectPageBorderPDF.set_tooltip_text("")
-            self.builder.get_object("lb_inclPageBorder").set_text("")
-            self.builder.get_object("btn_selectPageBorderPDF").set_sensitive(False)
-            self.builder.get_object("c_inclPageBorder").set_active(False)
+            setattr(self, attr, None)
+            btn.set_tooltip_text("")
+            btn.set_sensitive(False)
+            self.builder.get_object("c_"+ident).set_active(False)
+            self.builder.get_object("lb_"+ident).set_text("")
+
+    def onFrontPDFsClicked(self, btn_selectFrontPDFs):
+        self._onPDFClicked("Select one or more PDF(s) for FRONT matter", 
+                False, self.working_dir, "inclFrontMatter", "FrontPDFs", btn_selectFrontPDFs)
+
+    def onBackPDFsClicked(self, btn_selectBackPDFs):
+        self._onPDFClicked("Select one or more PDF(s) for BACK matter", 
+                False, self.working_dir, "inclBackMatter", "BackPDFs", btn_selectBackPDFs)
+
+    def onWatermarkPDFclicked(self, btn_selectWatermarkPDF):
+        self._onPDFClicked("Select Watermark PDF file", True,
+                os.path.join(os.path.dirname(__file__), "PDFassets", "watermarks"),
+                "applyWatermark", "watermarks", btn_selectWatermarkPDF)
+
+    def onPageBorderPDFclicked(self, btn_selectPageBorderPDF):
+        self._onPDFClicked("Select Page Border PDF file", True,
+                os.path.join(os.path.dirname(__file__), "PDFassets", "border-art"),
+                "inclPageBorder", "pageborder", btn_selectPageBorderPDF)
 
     def onSectionHeaderPDFclicked(self, btn_selectSectionHeaderPDF):
-        sectionheader = self.fileChooser("Select Section Header PDF file", 
-                filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
-                multiple = False, basedir=os.path.join(os.path.dirname(__file__), "PDFassets", "border-art"))
-        if sectionheader is not None and sectionheader != 'None':
-            self.sectionheader = sectionheader[0]
-            self.builder.get_object("c_inclSectionHeader").set_active(True)
-            btn_selectSectionHeaderPDF.set_tooltip_text(sectionheader[0])
-            self.builder.get_object("lb_inclSectionHeader").set_text(re.sub(r".+[\\/](.+)\.pdf",r"\1",sectionheader[0]))
-        else:
-            self.sectionheader = None
-            btn_selectSectionHeaderPDF.set_tooltip_text("")
-            self.builder.get_object("lb_inclSectionHeader").set_text("")
-            self.builder.get_object("btn_selectSectionHeaderPDF").set_sensitive(False)
-            self.builder.get_object("c_inclSectionHeader").set_active(False)
+        self._onPDFClicked("Select Section Header PDF file", True,
+                os.path.join(os.path.dirname(__file__), "PDFassets", "border-art"),
+                "inclSectionHeader", "sectionheader", btn_selectSectionHeaderPDF)
 
     def onVerseDecoratorPDFclicked(self, btn_selectVerseDecoratorPDF):
-        versedecorator = self.fileChooser("Select Verse Decorator PDF file", 
-                filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
-                multiple = False, basedir=os.path.join(os.path.dirname(__file__), "PDFassets", "border-art"))
-        if versedecorator is not None and versedecorator != 'None':
-            self.versedecorator = versedecorator[0]
-            self.builder.get_object("c_inclVerseDecorator").set_active(True)
-            btn_selectVerseDecoratorPDF.set_tooltip_text(versedecorator[0])
-            self.builder.get_object("lb_inclVerseDecorator").set_text(re.sub(r".+[\\/](.+)\.pdf",r"\1",versedecorator[0]))
-        else:
-            self.versedecorator = None
-            btn_selectVerseDecoratorPDF.set_tooltip_text("")
-            self.builder.get_object("lb_inclVerseDecorator").set_text("")
-            self.builder.get_object("btn_selectVerseDecoratorPDF").set_sensitive(False)
-            self.builder.get_object("c_inclVerseDecorator").set_active(False)
-
-    # def onXyzPDFclicked(self, btn_selectXyzPDF):
-        # print("onXyzPDFclicked")
-        # xyz = self.fileChooser("Select Xyz PDF file", 
-                # filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
-                # multiple = False)
-        # if xyz is not None and xyz != 'None':
-            # self.xyz = xyz[0]
-            # btn_selectXyzPDF.set_tooltip_text(xyz[0])
-            # self.builder.get_object("lb_inclXyz").set_text(re.sub(r".+[\\/](.+)\.pdf",r"\1",xyz[0]))
-        # else:
-            # self.xyz = None
-            # btn_selectXyzPDF.set_tooltip_text("")
-            # self.builder.get_object("lb_inclXyz").set_text("")
-            # self.builder.get_object("btn_selectXyzPDF").set_sensitive(False)
-            # self.builder.get_object("c_inclXyz").set_active(False)
+        self._onPDFClicked("Select Verse Decorator PDF file", True,
+                os.path.join(os.path.dirname(__file__), "PDFassets", "border-art"),
+                "inclVerseDecorator", "versedecorator", btn_selectVerseDecoratorPDF)
 
     def GeneratePicList(self, booklist):
         # Format of lines in pic-list file: BBB C.V desc|file|size|loc|copyright|caption|ref
@@ -1770,9 +1744,9 @@ class PtxPrinterDialog:
         fcFilepath = None
         if response == Gtk.ResponseType.OK:
             if folder:
-                fcFilepath = [dialog.get_filename()+"/"]
+                fcFilepath = [Path(dialog.get_filename()+"/")]
             else:
-                fcFilepath = dialog.get_filenames()
+                fcFilepath = [Path(x) for x in dialog.get_filenames()]
         dialog.set_keep_above(False)
         dialog.destroy()
         return fcFilepath

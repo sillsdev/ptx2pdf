@@ -79,47 +79,46 @@ class FancyBorders():
 \SpaceAfter 2
 \LeftMargin .3
 \RightMargin .3
-# DLR changed LeftMargin and RightMargin from .25 to .3 to avoid long section title from hitting border.
 
-\Marker p
-\FontSize 12
+# \Marker p
+# \FontSize 12
 
-\Marker mt2
-\Regular
+# \Marker mt2
+# \Regular
 
-\Marker iref
-\Endmarker iref*
-\Name (iref...iref*) Introduction reference
-\OccursUnder ip
-\TextType Other
-\TextProperties paragraph publishable vernacular
-\StyleType Character
-\FontSize 12
+# \Marker iref
+# \Endmarker iref*
+# \Name (iref...iref*) Introduction reference
+# \OccursUnder ip
+# \TextType Other
+# \TextProperties paragraph publishable vernacular
+# \StyleType Character
+# \FontSize 12
 
 # footnotes will use the 'fcaller' style for the caller, smaller text
-\Marker f
-\CallerStyle fcaller
-\FontSize 9
+# \Marker f
+# \CallerStyle fcaller
+# \FontSize 9
 
 # footnote caller is superscript (even though verse numbers are not)
-\Marker fcaller
-\Endmarker fcaller*
-\StyleType character
-\Superscript
-\FontSize 11
+# \Marker fcaller
+# \Endmarker fcaller*
+# \StyleType character
+# \Superscript
+# \FontSize 11
 
-\Marker fr
-\FontSize 9
-\Regular
+# \Marker fr
+# \FontSize 9
+# \Regular
 
-\Marker fk
-\Endmarker fk*
-\FontSize 9
-\Regular
-\Bold
+# \Marker fk
+# \Endmarker fk*
+# \FontSize 9
+# \Regular
+# \Bold
 
-\Marker ft
-\FontSize 9
+# \Marker ft
+# \FontSize 9
 """
 
     processTex = True

@@ -1,6 +1,7 @@
 import configparser, re, os, gi #, time
 from datetime import datetime
 from shutil import copyfile
+from pathlib import Path
 import regex
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
@@ -8,6 +9,8 @@ from ptxprint.font import TTFont
 from ptxprint.ptsettings import chaps, books, bookcodes, oneChbooks
 from ptxprint.snippets import FancyIntro, PDFx1aOutput, FancyBorders
 from ptxprint.runner import checkoutput
+
+pdfre = re.compile(r".+[\\/](.+)\.pdf")
 
 def universalopen(fname, rewrite=False):
     """ Opens a file with the right codec from a small list and perhaps rewrites as utf-8 """
@@ -32,6 +35,7 @@ def universalopen(fname, rewrite=False):
 
 
 class Info:
+    _missingPicList = []
     _peripheralBooks = ["FRT", "INT", "GLO", "TDX", "NDX", "CNC", "OTH", "BAK", "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG"]
     _mappings = {
         "config/name":              ("cb_savedConfig", lambda w,v: v or "default"),
@@ -55,22 +59,20 @@ class Info:
         "project/combinebooks":     ("c_combine", lambda w,v: v),
         "project/book":             ("cb_book", None),
         "project/booklist":         ("t_booklist", lambda w,v: v or ""),
-        "project/ifinclfrontpdf":   ("c_inclFrontMatter", lambda w,v: "" if v else "%"),
-        "project/frontincludes":    ("btn_selectFrontPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(re.sub(r"\\","/", s)) \
-                                                            for s in w.FrontPDFs) if (w.FrontPDFs is not None and w.FrontPDFs != 'None') else ""),
-        "project/ifinclbackpdf":    ("c_inclBackMatter", lambda w,v: "" if v else "%"),
-        "project/backincludes":     ("btn_selectBackPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(re.sub(r"\\","/", s)) \
-                                                           for s in w.BackPDFs) if (w.BackPDFs is not None and w.BackPDFs != 'None') else ""),
-        "project/useprintdraftfolder": ("c_useprintdraftfolder", lambda w,v :v),
+        "project/ifinclfrontpdf":   ("c_inclFrontMatter", lambda w,v: v),
+        "project/frontincludes":    ("btn_selectFrontPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s.as_posix()) \
+                                     for s in w.FrontPDFs) if (w.get("c_inclFrontMatter") and w.FrontPDFs is not None and w.FrontPDFs != 'None') else ""),
+        "project/ifinclbackpdf":    ("c_inclBackMatter", lambda w,v: v),
+        "project/backincludes":     ("btn_selectBackPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s.as_posix()) \
+                                     for s in w.BackPDFs) if (w.get("c_inclFrontMatter") and w.BackPDFs is not None and w.BackPDFs != 'None') else ""),
+        "project/useprintdraftfolder": ("c_useprintdraftfolder", lambda w,v :"true" if v else "false"),
         "project/processscript":    ("c_processScript", lambda w,v : v),
         "project/runscriptafter":   ("c_processScriptAfter", lambda w,v : v),
-        "project/selectscript":     ("btn_selectScript", lambda w,v: re.sub(r"\\","/", w.CustomScript   ) if w.CustomScript is not None else ""),
-        "project/usechangesfile":   ("c_usePrintDraftChanges", lambda w,v :v),
+        "project/selectscript":     ("btn_selectScript", lambda w,v: w.CustomScript.as_posix() if w.CustomScript is not None else ""),
+        "project/usechangesfile":   ("c_usePrintDraftChanges", lambda w,v :"true" if v else "false"),
         "project/ifusemodstex":     ("c_useModsTex", lambda w,v: "" if v else "%"),
         "project/ifusecustomsty":   ("c_useCustomSty", lambda w,v: "" if v else "%"),
         "project/ifusemodssty":     ("c_useModsSty", lambda w,v: "" if v else "%"),
-        "project/ifusenested":      (None, lambda w,v: "" if (w.get("c_omitallverses") or not w.get("c_includeFootnotes") \
-                                                       or not w.get("c_includeXrefs")) or w.get("c_prettyIntroOutline") else "%"),
         "project/ifstarthalfpage":  ("c_startOnHalfPage", lambda w,v :"true" if v else "false"),
         "project/randompicposn":    ("c_randomPicPosn", lambda w,v :v),
         "project/showlinenumbers":  ("c_showLineNumbers", lambda w,v :v),
@@ -78,10 +80,9 @@ class Info:
         "paper/height":             (None, lambda w,v: re.sub(r"^.*?,\s*(.+?)\s*(?:\(.*|$)", r"\1", w.get("cb_pagesize")) or "210mm"),
         "paper/width":              (None, lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", w.get("cb_pagesize")) or "148mm"),
         "paper/pagesize":           ("cb_pagesize", None),
-        "paper/ifwatermark":        ("c_applyWatermark", lambda w,v: "" if v else "%"),
-        "paper/watermarkpdf":       ("btn_selectWatermarkPDF", lambda w,v: re.sub(r"\\","/", w.watermarks) \
-                                                if (w.watermarks is not None and w.watermarks != 'None') \
-                                                else get("/ptxprintlibpath")+"/A5-Draft.pdf"),
+        "paper/ifwatermark":        ("c_applyWatermark", lambda w,v: v),
+        "paper/watermarkpdf":       ("btn_selectWatermarkPDF", lambda w,v: '\def\PageBorder{{"{}"}}'.format(w.watermarks.as_posix()) \
+                                     if (w.get("c_applyWatermark") and w.watermarks is not None and w.watermarks != 'None') else ""),
         "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),  
         "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v else "false"),
         "paper/margins":            ("s_margins", lambda w,v: round(v) or "14"),
@@ -97,16 +98,16 @@ class Info:
         "fancy/showborderstab":     ("c_showBordersTab", None),
         "fancy/enableborders":      ("c_enableDecorativeElements", lambda w,v: "" if v else "%"),
         "fancy/pageborder":         ("c_inclPageBorder", lambda w,v: "" if v else "%"),
-        "fancy/pageborderpdf":      ("btn_selectPageBorderPDF", lambda w,v: re.sub(r"\\","/", w.pageborder) \
+        "fancy/pageborderpdf":      ("btn_selectPageBorderPDF", lambda w,v: w.pageborder.as_posix() \
                                                 if (w.pageborder is not None and w.pageborder != 'None') \
                                                 else get("/ptxprintlibpath")+"/A5 page border.pdf"),
         "fancy/sectionheader":      ("c_inclSectionHeader", lambda w,v: "" if v else "%"),
-        "fancy/sectionheaderpdf":   ("btn_selectSectionHeaderPDF", lambda w,v: re.sub(r"\\","/", w.sectionheader) \
+        "fancy/sectionheaderpdf":   ("btn_selectSectionHeaderPDF", lambda w,v: w.sectionheader.as_posix() \
                                                 if (w.sectionheader is not None and w.sectionheader != 'None') \
                                                 else get("/ptxprintlibpath")+"/A5 section head border.pdf"),
         "fancy/decorationpdf":      (None, lambda w,v: get("/ptxprintlibpath")+"/decoration.pdf"),
         "fancy/versedecorator":     ("c_inclVerseDecorator", lambda w,v: "" if v else "%"),
-        "fancy/versedecoratorpdf":  ("btn_selectVerseDecorator", lambda w,v: re.sub(r"\\","/", w.versedecorator) \
+        "fancy/versedecoratorpdf":  ("btn_selectVerseDecorator", lambda w,v: w.versedecorator.as_posix() \
                                                 if (w.versedecorator is not None and w.versedecorator != 'None') \
                                                 else get("/ptxprintlibpath")+"/Verse number star.pdf"),
         "fancy/versenumsize":       ("s_verseNumSize", lambda w,v: v or "11.00"),
@@ -131,6 +132,7 @@ class Info:
         "document/author":          (None, lambda w,v: w.ptsettings.get('Copyright', "")),
         # "document/author":          (None, lambda w,v: re.sub('"?</?p>"?','',w.ptsettings.get('Copyright', "")).strip('"')),
 
+        "document/startpagenum":    ("s_startPageNum", lambda w,v: int(v) or "1"),
         "document/toc":             ("c_autoToC", lambda w,v: "" if v else "%"),
         "document/toctitle":        ("t_tocTitle", lambda w,v: v or ""),
         "document/usetoc1":         ("c_usetoc1", lambda w,v: v),
@@ -167,8 +169,8 @@ class Info:
         "document/usesmallpics":    ("c_useLowResPics", lambda w,v :"" if v else "%"),
         "document/uselargefigs":    ("c_useHighResPics", lambda w,v :"" if v else "%"),
         "document/customfiglocn":   ("c_useCustomFolder", lambda w,v :"" if v else "%"),
-        "document/customfigfolder": ("btn_selectFigureFolder", lambda w,v: re.sub(r"\\","/", w.customFigFolder) \
-                                                               if w.customFigFolder is not None else ""),
+        "document/exclusivefolder": ("c_exclusiveFiguresFolder", lambda w,v : v),
+        "document/customfigfolder": ("btn_selectFigureFolder", lambda w,v: w.customFigFolder.as_posix() if w.customFigFolder is not None else ""),
         "document/imagetypepref":   ("t_imageTypeOrder", lambda w,v: v),
         "document/ifusepiclist":    ("c_usePicList", lambda w,v :"" if v else "%"),
         "document/spacecntxtlztn":  ("cb_spaceCntxtlztn", lambda w,v: "0" if v == "None" else "1" if v == "Some" else "2"),
@@ -187,13 +189,12 @@ class Info:
         "document/ifspacing":       ("c_spacing", lambda w,v :"" if v else "%"),
         "document/spacestretch":    ("s_maxSpace", lambda w,v : str((int(v) - 100) / 100.)),
         "document/spaceshrink":     ("s_minSpace", lambda w,v : str((100 - int(v)) / 100.)),
-        "document/abovenotespace":  ("s_abovenotespace", lambda w,v: "{:.3f}".format(float(v))),
-        "document/internotespace":  ("s_internote", lambda w,v: "{:.3f}".format(float(v))),
         "document/ifcolorfonts":    ("c_colorfonts", lambda w,v: "%" if v else ""),
 
         "document/ifchaplabels":    ("c_useChapterLabel", lambda w,v: "%" if v else ""),
         "document/clabelbooks":     ("t_clBookList", lambda w,v: v.upper()),
         "document/clabel":          ("t_clHeading", lambda w,v: v),
+        "document/clsinglecol":     ("c_clSingleColLayout", lambda w,v: v),
 
         "document/ifdiglot":        ("c_diglot", lambda w,v :"" if v else "%"),
         "document/diglotsettings":  ("l_diglotStringL", lambda w,v: w.builder.get_object("l_diglotStringL").get_text() if w.get("c_diglot") else ""),
@@ -239,6 +240,11 @@ class Info:
         "notes/xrresetcallers":     ("c_xrpageresetcallers", lambda w,v: "" if v else "%"),
         "notes/xromitcaller":       ("c_xromitcaller", lambda w,v: "%" if v else ""),
         "notes/xrparagraphednotes": ("c_paragraphedxrefs", lambda w,v: "" if v else "%"),
+
+        "notes/abovenotespace":     ("s_abovenotespace", lambda w,v: "{:.3f}".format(float(v))),
+        "notes/fnfontsize":         ("s_fnfontsize", lambda w,v: "{:.3f}".format(float(v))),
+        "notes/fnlinespacing":      ("s_fnlinespacing", lambda w,v: "{:.3f}".format(float(v))),
+        "notes/internotespace":     ("s_internote", lambda w,v: "{:.3f}".format(float(v))),
 
         "font/features":            ("t_fontfeatures", lambda w,v: v),
         "font/usegraphite":         ("c_useGraphite", lambda w,v: v),
@@ -290,7 +296,17 @@ class Info:
         "snippets/pdfx1aoutput":          ("c_PDFx1aOutput", PDFx1aOutput),
         "snippets/fancyborders":          ("c_enableDecorativeElements", FancyBorders)
     }
-    
+    _attributes = {
+        "project/frontincludes":    ("FrontPDFs", True, "lb_inclFrontMatter"),
+        "project/backincludes":     ("BackPDFs", True, "lb_inclBackMatter"),
+        "project/selectscript":     ("CustomScript", False, None),
+        "paper/watermarkpdf":       ("watermarks", False, "lb_applyWatermark"),
+        "fancy/pageborderpdf":      ("pageborder", False, "lb_inclPageBorder"),
+        "fancy/sectionheaderpdf":   ("sectionheader", False, "lb_inclSectionHeader"),
+        "fancy/versedecoratorpdf":  ("versedecorator", False, "lb_inclVerseDecorator"),
+        "document/customfigfolder": ("customFigFolder", False, None)
+    }
+
     def __init__(self, printer, path, ptsettings, prjid=None):
         self.printer = printer
         self.ptsettings = ptsettings
@@ -465,6 +481,12 @@ class Info:
                             res.append("\\OmitChapterNumbertrue\n")
                             res.append("\\ptxfile{{{}}}\n".format(fname))
                             res.append("\\OmitChapterNumberfalse\n")
+                        elif self.dict['paper/columns'] == '2' and \
+                             self.dict['document/clsinglecol'] and \
+                             f in self.dict['document/clabelbooks']:
+                            res.append("\\BodyColumns=1\n")
+                            res.append("\\ptxfile{{{}}}\n".format(fname))
+                            res.append("\\BodyColumns=2\n")
                         else:
                             res.append("\\ptxfile{{{}}}\n".format(fname))
                 elif l.startswith(r"%\extrafont"):
@@ -510,9 +532,8 @@ class Info:
             doti = outfpath.rfind(".")
             if doti > 0:
                 outfpath = outfpath[:doti] + "-conv" + outfpath[doti:]
-            print("outfpath:", outfpath)
             cmd = [self.dict["project/selectscript"], infpath, outfpath]
-            checkoutput(cmd, shell=True)
+            checkoutput(cmd) # dont't pass cmd as list when shell=True
         return outfpath
 
     def convertBook(self, bk, outdir, prjdir):
@@ -555,9 +576,17 @@ class Info:
         with open(outfpath, "w", encoding="utf-8") as outf:
             outf.write(dat)
         if self.dict['project/runscriptafter']:
-            return os.path.basename(self.runConversion(outfpath, outdir))
+            bn = os.path.basename(self.runConversion(outfpath, outdir))
         else:
-            return os.path.basename(outfpath)
+            bn = os.path.basename(outfpath)
+
+        if '-conv' in bn:
+            newname = re.sub("(\-draft\-conv|\-conv\-draft|\-conv)", "-draft", bn)
+            copyfile(os.path.join(outdir, bn), os.path.join(outdir, newname))
+            os.remove(os.path.join(outdir, bn))
+            return newname
+        else:
+            return bn
 
     def readChanges(self, fname):
         changes = []
@@ -646,6 +675,7 @@ class Info:
 
             figChangeList = self.figNameChanges(printer, bk)
             if len(figChangeList):
+                missingPics = []
                 for origfn,tempfn in figChangeList:
                     origfn = re.escape(origfn)
                     if tempfn != "":
@@ -824,9 +854,19 @@ class Info:
     def createConfig(self, printer):
         config = configparser.ConfigParser()
         for k, v in self._mappings.items():
-            if v[0] is None:
-                continue
-            val = printer.get(v[0], asstr=True)
+            if k in self._attributes:
+                v = self._attributes[k]
+                val = getattr(printer, v[0])
+                if val is None:
+                    continue
+                if v[1]:
+                    val = "\n".join(x.as_posix() for x in val)
+                else:
+                    val = val.as_posix()
+            else:
+                if v[0] is None:
+                    continue
+                val = printer.get(v[0], asstr=True)
             if k in self._settingmappings:
                 if val == "" or val == self.printer.ptsettings.dict.get(self._settingmappings[k], ""):
                     continue
@@ -879,45 +919,32 @@ class Info:
                 printer.set(self._mappings[k][0], self.printer.ptsettings.dict.get(v, ""))
                 self.dict[k] = self.printer.ptsettings.get(v, "")
         # Handle specials here:
-        printer.CustomScript = self.dict['project/selectscript']
-        printer.customFigFolder = self.dict['document/customfigfolder']
+        printer.CustomScript = Path(self.dict['project/selectscript'])
+        printer.customFigFolder = Path(self.dict['document/customfigfolder'])
 
-        printer.FrontPDFs = self.dict['project/frontincludes'].split("\n")
-        if printer.FrontPDFs != None:
-            printer.builder.get_object("lb_inclFrontMatter").set_text(",".join(re.sub(r".+[\\/](.+)\.pdf",r"\1",s) for s in printer.FrontPDFs))
-        else:
-            printer.builder.get_object("lb_inclFrontMatter").set_text("")
+        for k, v in self._attributes.items():
+            if v[1]:
+                d = [Path(x.strip().replace("\\", "/")) for x in self.dict.get(k, "").split("\n")]
+            else:
+                d = Path(self.dict.get(k, "").replace("\\", "/"))
+            setattr(printer, k, d)
+            if v[2] is None:
+                continue
+            if len(str(d)):
+                printer.builder.get_object(v[2]).set_text(pdfre.sub(r"\1", str(d)))
+            else:
+                printer.builder.get_object(v[2]).set_text("")
 
-        printer.BackPDFs = self.dict['project/backincludes'].split("\n")
-        if printer.BackPDFs != None:
-            printer.builder.get_object("lb_inclBackMatter").set_text(",".join(re.sub(r".+[\\/](.+)\.pdf",r"\1",s) for s in printer.BackPDFs))
-        else:
-            printer.builder.get_object("lb_inclBackMatter").set_text("")
-
-# Q.for MH: I'm wondering about how to make this repetitve block of code into a callable funtion with parameters (or looping through a list)
-        printer.watermarks = self.dict['paper/watermarkpdf']
-        if printer.watermarks != None:
-            printer.builder.get_object("lb_applyWatermark").set_text(re.sub(r".+[\\/](.+)\.pdf",r"\1",printer.watermarks))
-        else:
-            printer.builder.get_object("lb_applyWatermark").set_text("")
-
-        printer.pageborder = self.dict['fancy/pageborderpdf']
-        if printer.pageborder != None:
-            printer.builder.get_object("lb_inclPageBorder").set_text(re.sub(r".+[\\/](.+)\.pdf",r"\1",printer.pageborder))
-        else:
-            printer.builder.get_object("lb_inclPageBorder").set_text("")
-
-        printer.sectionheader = self.dict['fancy/sectionheaderpdf']
-        if printer.sectionheader != None:
-            printer.builder.get_object("lb_inclSectionHeader").set_text(re.sub(r".+[\\/](.+)\.pdf",r"\1",printer.sectionheader))
-        else:
-            printer.builder.get_object("lb_inclSectionHeader").set_text("")
-
-        printer.versedecorator = self.dict['fancy/versedecoratorpdf']
-        if printer.versedecorator != None:
-            printer.builder.get_object("lb_inclVerseDecorator").set_text(re.sub(r".+[\\/](.+)\.pdf",r"\1",printer.versedecorator))
-        else:
-            printer.builder.get_object("lb_inclVerseDecorator").set_text("")
+        for s in ("front", "back"):
+            k = "project/{}includes".format(s)
+            v = "lb_incl{}Matter".format(s.title())
+            a = "{}PDFs".format(s.title())
+            d = [Path(x) for x in self.dict[k].split("\n")]
+            setattr(printer, a, d)
+            if d != None and len(d):
+                printer.builder.get_object(v).set_text(",".join(pdfre.sub(r"\1", str(s)) for s in d))
+            else:
+                printer.builder.get_object(v).set_text("")
 
         # update UI to reflect the world it is in 
         # [Comment: this is turning things off even though the file exists. Probably running before the prj has been set?]
@@ -940,10 +967,43 @@ class Info:
         nstylist = []
         if self.asBool("document/ifomitallverses"):
             nstylist.append("##### Remove all verse numbers\n\\Marker v\n\\TextProperties nonpublishable\n\n")
+
         if not self.asBool("notes/includefootnotes"):
+            nstylist.append("##### Set Footnote Size and Line Spacing\n")
+            for m in ['fr', 'fq', 'fk', 'ft', 'f']:
+                nstylist.append("\\Marker {}\n\\FontSize {}\n".format(m, self.dict['notes/fnfontsize']))
+            nstylist.append("\\LineSpacing {}pt plus 2pt\n".format(self.dict['notes/fnlinespacing']))
+            nstylist.append("\\Justification Left\n\n")
+        else:
             nstylist.append("##### Remove all footnotes\n\\Marker f\n\\TextProperties nonpublishable\n\n")
+
         if not self.asBool("notes/includexrefs"):
+            nstylist.append("##### Set Cross-reference Size and Line Spacing\n")
+            for m in ['xo', 'xq', 'xdc', 'xt', 'x']:
+                nstylist.append("\\Marker {}\n\\FontSize {}\n".format(m, self.dict['notes/fnfontsize']))
+            nstylist.append("\\LineSpacing {}pt plus 2pt\n".format(self.dict['notes/fnlinespacing']))
+            nstylist.append("\\Justification Left\n\n")
+        else:
             nstylist.append("##### Remove all cross-references\n\\Marker x\n\\TextProperties nonpublishable\n\n")
+
+        nstylist.append("##### Adjust poetic indents\n")
+        m = ["\Marker", "\LeftMargin", "\FirstLineIndent"]
+        if self.printer.get("c_doublecolumn"): # Double Column layout so use smaller indents
+            v = [["q", "0.60", "-0.45"], ["q1", "0.60", "-0.45"], ["q2", "0.60", "-0.225"], 
+                 ["q3", "0.60", "-0.112"], ["q4", "0.60", "-0.0"]]
+        else: # Single column layout, so use larger (USFM.sty default) indents
+            v = [["q", "1.25", "-1.00"], ["q1", "1.25", "-1.00"], ["q2", "1.25", "-0.75"],
+                 ["q3", "1.25", "-0.5"], ["q4", "1.25", "-0.25"]]
+        r = [list(zip(m, x)) for x in v]
+        for mkr in r:
+            for l in range(0,3):
+                nstylist.append("{} {}\n".format(mkr[l][0],mkr[l][1]))
+            nstylist.append("\\Justification left\n\n")
+
+        if True: # need to qualify this (look in USFM for a \cl and if it exists, then don't do this)
+            nstylist.append("# The descriptive heading is typically considered VerseText, but then often formatted as a heading.\n")
+            nstylist.append("# We need to change the TextType so that Print Draft will handle it correctly beside drop-caps.\n")
+            nstylist.append("\\Marker d\n\\TextType Section\n\\SpaceBefore 0\n\n")
 
         for k, c in self._snippets.items():
             if self.printer is None:

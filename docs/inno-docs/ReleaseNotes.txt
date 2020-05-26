@@ -1,5 +1,51 @@
-PTXprint 0.6.6 Beta Release Notes
-19th May 2020
+PTXprint 0.7.0 Beta Release Notes
+23nd May 2020
+
+Bug fixes and improvements in: 0.7.0
+
+  * Add option to force Exclusive Use of Figures Folder (without searching any other folders or subfolders)
+  
+Bug fixes and improvements in: 0.6.9
+
+  * Improved column balancing (allowing the final line to be filled at end of page)
+  
+  * More improvements to Notes paragraphing
+  
+  * Change attribute of \d into a Section style (rather than verse text) - for better drop-caps in Psalms
+  
+  * Fine-tune \q marker indents (still experimenting...)
+  
+  * Multiple XeTeX macro enhancements (\FontScale, footnote caller size, header baselines) and bugs fixed 
+  
+Bug fixes and improvements in: 0.6.8
+
+  * Colors are now working the same in Paratext and in the PTXprint PDFs
+  
+  * Picture captions are better "balanced" when they go onto 2 or more lines
+  
+  * Missing Pictures are listed on Pictures tab after the PDF has been produced (not yet consistently, though)
+  
+  * Start at Page number option added on Advanced tab
+  
+  * Allow books (eg. PSA and PRO) to switch to Single-Column mode in a primarily Double-Column document
+  
+  * Improved notes formatting
+  
+  * Apply baseline for headings
+  
+  * Fix regression of PicLists and AdjList not being applied if a pre/post Process has been applied
+
+Bug fixes and improvements in: 0.6.7
+
+  * Significant improvements in footnote paragraph layout
+
+  * Can now also specify FontSize and LineSpacing for Notes (Footnotes and Cross-References)
+  
+  * Set all Fonts based on Paratext font settings when a project is first opened
+  
+  * Generated NestedStyles.sty now happens before PrintDraft-mods.sty to allow user overrides to happen
+  
+  * Fixed bug which was bolding (again) a Bold typeface in fake Bold-Italic
 
 Bug fixes and improvements in: 0.6.6
 
