@@ -1,21 +1,28 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
+""" py3.8 Ubuntu focal test packaging """
 
-from distutils.core import setup
 from glob import glob
+from setuptools import setup, find_packages
 
-setup(name="PtxPrint",
-        version = "0.1",
-        description = "Typesetting using tex for paratext",
-        packages = ['ptxprint'],
-        package_dir = {'': 'lib'},
-        scripts = ['scripts/ptxprint'],
-        package_data = {'ptxprint': ['*.pdf', 'ptxprint.glade', 'template.tex',
-                            'mappings/*.tec', 'mappings/*.map']},
-        data_files = [('ptx2pdf', glob('../src/*.tex'))],
-        install_requires = [
-            'fonttools',
-            # 'gi',         # not a pypi python style package
-            'img2pdf',
-            'regex'
-        ]
-    )
+setup(
+    name="PTXprint",
+    version="0.7.0",
+    description="Typesetting using (Xe)TeX for ParaText",
+    url="https://software.sil.org/ptxprint",
+    maintainer="SIL International",
+    packages=find_packages('lib'),  # include all packages under lib
+    package_dir={'': 'lib'},  # indicate packages are under lib
+    include_package_data=True,  # include everything in MANIFEST.in
+    package_data={'ptxprint': ['*.*']},
+    data_files=[('ptx2pdf', glob('../src/*.tex'))],
+    scripts=["scripts/ptxprint"],
+    install_requires=["regex", "pygobject", "img2pdf", "fonttools", "pycairo"],
+    zip_safe=False,
+    license="MIT",
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "Environment :: X11 Applications :: GTK",
+        "Topic :: Text Editors :: Text Processing",
+        "License :: OSI Approved :: MIT License",
+    ]
+)
