@@ -1519,20 +1519,20 @@ class PtxPrinterDialog:
         vals = self.fileChooser(title,
                 filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
                 multiple = not isSingle, basedir=basedir)
-        if len(vals) and str(vals[0]) != "None":
+        if vals != None and len(vals) and str(vals[0]) != "None":
             self.builder.get_object("c_"+ident).set_active(True)
             if isSingle:
                 setattr(self, attr, vals[0])
-                btn.set_tooltip_text(pdfre.sub(r"\1", str(vals[0])))
+                btn.set_tooltip_text(str(vals[0]))
                 self.builder.get_object("lb_"+ident).set_text(pdfre.sub(r"\1", str(vals[0])))
             else:
                 setattr(self, attr, vals)
-                btn.set_tooltip_text("\n".join(pdfre.sub(r"\1", str(s)) for s in vals))
+                btn.set_tooltip_text("\n".join(str(s) for s in vals))
                 self.builder.get_object("lb_"+ident).set_text(",".join(pdfre.sub(r"\1", str(s)) for s in vals))
         else:
             setattr(self, attr, None)
             btn.set_tooltip_text("")
-            btn.set_active(False)
+            btn.set_sensitive(False)
             self.builder.get_object("c_"+ident).set_active(False)
             self.builder.get_object("lb_"+ident).set_text("")
 

@@ -10,6 +10,8 @@ from ptxprint.ptsettings import chaps, books, bookcodes, oneChbooks
 from ptxprint.snippets import FancyIntro, PDFx1aOutput, FancyBorders
 from ptxprint.runner import checkoutput
 
+pdfre = re.compile(r".+[\\/](.+)\.pdf")
+
 def universalopen(fname, rewrite=False):
     """ Opens a file with the right codec from a small list and perhaps rewrites as utf-8 """
     fh = open(fname, "r", encoding="utf-8")
@@ -59,12 +61,12 @@ class Info:
         "project/combinebooks":     ("c_combine", lambda w,v: "true" if v else "false"),
         "project/book":             ("cb_book", None),
         "project/booklist":         ("t_booklist", lambda w,v: v or ""),
-        "project/ifinclfrontpdf":   ("c_inclFrontMatter", lambda w,v: "" if v else "%"),
+        "project/ifinclfrontpdf":   ("c_inclFrontMatter", lambda w,v: v),
         "project/frontincludes":    ("btn_selectFrontPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s.as_posix()) \
-                                                            for s in w.FrontPDFs) if (w.FrontPDFs is not None and w.FrontPDFs != 'None') else ""),
-        "project/ifinclbackpdf":    ("c_inclBackMatter", lambda w,v: "" if v else "%"),
+                                     for s in w.FrontPDFs) if (w.get("c_inclFrontMatter") and w.FrontPDFs is not None and w.FrontPDFs != 'None') else ""),
+        "project/ifinclbackpdf":    ("c_inclBackMatter", lambda w,v: v),
         "project/backincludes":     ("btn_selectBackPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s.as_posix()) \
-                                                           for s in w.BackPDFs) if (w.BackPDFs is not None and w.BackPDFs != 'None') else ""),
+                                     for s in w.BackPDFs) if (w.get("c_inclFrontMatter") and w.BackPDFs is not None and w.BackPDFs != 'None') else ""),
         "project/useprintdraftfolder": ("c_useprintdraftfolder", lambda w,v :"true" if v else "false"),
         "project/processscript":    ("c_processScript", lambda w,v : v),
         "project/runscriptafter":   ("c_processScriptAfter", lambda w,v : v),
@@ -73,8 +75,6 @@ class Info:
         "project/ifusemodstex":     ("c_useModsTex", lambda w,v: "" if v else "%"),
         "project/ifusecustomsty":   ("c_useCustomSty", lambda w,v: "" if v else "%"),
         "project/ifusemodssty":     ("c_useModsSty", lambda w,v: "" if v else "%"),
-        # "project/ifusenested":      (None, lambda w,v: "" if (w.get("c_omitallverses") or not w.get("c_includeFootnotes") \
-                                                       # or not w.get("c_includeXrefs")) or w.get("c_prettyIntroOutline") else "%"),
         "project/ifstarthalfpage":  ("c_startOnHalfPage", lambda w,v :"true" if v else "false"),
         "project/randompicposn":    ("c_randomPicPosn", lambda w,v :"true" if v else "false"),
         "project/showlinenumbers":  ("c_showLineNumbers", lambda w,v :"true" if v else "false"),
@@ -82,10 +82,9 @@ class Info:
         "paper/height":             (None, lambda w,v: re.sub(r"^.*?,\s*(.+?)\s*(?:\(.*|$)", r"\1", w.get("cb_pagesize")) or "210mm"),
         "paper/width":              (None, lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", w.get("cb_pagesize")) or "148mm"),
         "paper/pagesize":           ("cb_pagesize", None),
-        "paper/ifwatermark":        ("c_applyWatermark", lambda w,v: "" if v else "%"),
-        "paper/watermarkpdf":       ("btn_selectWatermarkPDF", lambda w,v: w.watermarks.as_posix() \
-                                                if (w.watermarks is not None and w.watermarks != 'None') \
-                                                else get("/ptxprintlibpath")+"/A5-Draft.pdf"),
+        "paper/ifwatermark":        ("c_applyWatermark", lambda w,v: v),
+        "paper/watermarkpdf":       ("btn_selectWatermarkPDF", lambda w,v: '\def\PageBorder{{"{}"}}'.format(w.watermarks.as_posix()) \
+                                     if (w.get("c_applyWatermark") and w.watermarks is not None and w.watermarks != 'None') else ""),
         "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),  
         "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v else "false"),
         "paper/margins":            ("s_margins", lambda w,v: round(v) or "14"),
@@ -895,29 +894,29 @@ class Info:
         printer.CustomScript = Path(self.dict['project/selectscript'])
         printer.customFigFolder = Path(self.dict['document/customfigfolder'])
 
+        for k, v in self._attributes.items():
+            if v[1]:
+                d = [Path(x.strip().replace("\\", "/")) for x in self.dict.get(k, "").split("\n")]
+            else:
+                d = Path(self.dict.get(k, "").replace("\\", "/"))
+            setattr(printer, k, d)
+            if v[2] is None:
+                continue
+            if len(str(d)):
+                printer.builder.get_object(v[2]).set_text(pdfre.sub(r"\1", str(d)))
+            else:
+                printer.builder.get_object(v[2]).set_text("")
+
         for s in ("front", "back"):
             k = "project/{}includes".format(s)
             v = "lb_incl{}Matter".format(s.title())
             a = "{}PDFs".format(s.title())
             d = [Path(x) for x in self.dict[k].split("\n")]
             setattr(printer, a, d)
-            if len(d):
-                printer.builder.get_object(v).set_text(",".join(re.sub(r".+[\\/](.+)\.pdf",r"\1", str(s)) for s in d))
+            if d != None and len(d):
+                printer.builder.get_object(v).set_text(",".join(pdfre.sub(r"\1", str(s)) for s in d))
             else:
                 printer.builder.get_object(v).set_text("")
-
-        for k, v in self._attributes.items():
-            if v[1]:
-                d = [Path(x.strip().replace("\\", "/")) for x in self.dict.get(v[0], "").split("\n")]
-            else:
-                d = Path(self.dict.get(v[0], "").replace("\\", "/"))
-            setattr(printer, k, d)
-            if v[2] is None:
-                continue
-            if len(str(d)):
-                printer.builder.get_object(v[2]).set_text(re.sub(r".+[\\/](.+)\.pdf",r"\1", str(d)))
-            else:
-                printer.builder.get_object(v[2]).set_text("")
 
         # update UI to reflect the world it is in 
         # [Comment: this is turning things off even though the file exists. Probably running before the prj has been set?]
