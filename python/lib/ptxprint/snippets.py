@@ -67,6 +67,17 @@ class FancyIntro():
 \def\iotableleader#1#2{#1\leaders\hbox to 0.8em{\hss.\hss}\hfill#2\par}%
 """
 
+class AlignedDiglot():
+    regexes = []
+    styleInfo = ""
+    processTex = True
+    texCode = r"""
+\def\regularR{{"{diglot/fontregular}{diglot/fontregeng}{diglot/fontfeatures}{diglot/docscript}{diglot/docdigitmapping}"}}
+\def\boldR{{"{diglot/fontbold}{diglot/fontboldeng}{diglot/fontfeatures}{diglot/docscript}{diglot/docdigitmapping}{diglot/boldembolden}{diglot/boldslant}"}}
+\def\italicR{{"{diglot/fontitalic}{diglot/fontitaleng}{diglot/fontfeatures}{diglot/docscript}{diglot/docdigitmapping}{diglot/italembolden}{diglot/italslant}"}}
+\def\bolditalicR{{"{diglot/fontbolditalic}{diglot/fontbolditaleng}{diglot/fontfeatures}{diglot/docscript}{diglot/docdigitmapping}{diglot/bolditalembolden}{diglot/boldital/slant}"}}
+"""
+
 class FancyBorders():
     regexes = []
     styleInfo = r"""

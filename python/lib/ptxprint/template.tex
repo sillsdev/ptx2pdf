@@ -1,6 +1,11 @@
 
 \input paratext2.tex
 
+%%%%% Aligned Diglot Switches
+{document/ifaligndiglot}\diglottrue
+{document/ifaligndiglot}\diglotcolumns
+{document/ifaligndiglot}\diglotSepNotestrue
+
 %%%%% Stylesheets %%%%%
 \stylesheet{{{/ptxpath}/usfm.sty}}
 {project/ifusecustomsty}\stylesheet{{{/ptxpath}/{project/id}/custom.sty}}
@@ -153,8 +158,8 @@
 % restore page break definition (if present in USFM stylesheet, it has been re-defined and will not work)
 \let\pb=\pagebreak
 
-%%%%% Diglot settings (if applicable)
-%{document/diglotsettings}
+%%%%% Fuzzy Diglot settings (unused if AlignedDiglot is active)
+{document/diglotsettings}
 
 %%%%% Hyphenation %%%%%
 {paragraph/ifhyphenate}\input "{/ptxpath}/{project/id}/shared/ptxprint/hyphen-{project/id}.tex"

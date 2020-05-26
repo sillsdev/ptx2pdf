@@ -112,7 +112,7 @@ class PtxPrinterDialog:
         self.addCR("cb_fontFaces", 0)
         self.cb_savedConfig = self.builder.get_object("cb_savedConfig")
         # self.addCR("cb_savedConfig", 0)
-        # self.addCR("cb_diglotSecProject", 0)
+        self.addCR("cb_diglotSecProject", 0)  # Why do I get doubles when this line is enabled? Do I need to connect it to a different ls_ ???
         self.addCR("cb_diglotAlignment", 0)
         self.addCR("cb_diglotSecConfig", 0)
         pb = self.builder.get_object("b_print")

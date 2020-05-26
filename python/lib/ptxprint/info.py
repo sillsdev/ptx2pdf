@@ -7,7 +7,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from ptxprint.font import TTFont
 from ptxprint.ptsettings import chaps, books, bookcodes, oneChbooks
-from ptxprint.snippets import FancyIntro, PDFx1aOutput, FancyBorders
+from ptxprint.snippets import FancyIntro, PDFx1aOutput, AlignedDiglot, FancyBorders
 from ptxprint.runner import checkoutput
 
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
@@ -197,6 +197,7 @@ class Info:
         "document/clsinglecol":     ("c_clSingleColLayout", lambda w,v: v),
 
         "document/ifdiglot":        ("c_diglot", lambda w,v :"" if v else "%"),
+        "document/ifaligndiglot":   ("c_diglot", lambda w,v :"" if v else "%"),
         "document/diglotsettings":  ("l_diglotStringL", lambda w,v: w.builder.get_object("l_diglotStringL").get_text() if w.get("c_diglot") else ""),
         # "document/diglotsettings":  ("l_diglotStringR", lambda w,v: w.builder.get_object("l_diglotStringR").get_text() if w.get("c_diglot") else ""),
         "document/diglotalignment": ("cb_diglotAlignment", lambda w,v: w.builder.get_object("cb_diglotAlignment").get_active_id()),
@@ -294,6 +295,7 @@ class Info:
     _snippets = {
         "snippets/fancyintro":            ("c_prettyIntroOutline", FancyIntro),
         "snippets/pdfx1aoutput":          ("c_PDFx1aOutput", PDFx1aOutput),
+        "snippets/alignediglot":          ("c_diglot", AlignedDiglot),
         "snippets/fancyborders":          ("c_enableDecorativeElements", FancyBorders)
     }
     _attributes = {
@@ -751,7 +753,7 @@ class Info:
         self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
 
         # Remove the + of embedded markup (xetex handles it)
-        # self.localChanges.append((None, regex.compile(r"\\\+", flags=regex.M), r"\\"))  
+        self.localChanges.append((None, regex.compile(r"\\\+", flags=regex.M), r"\\"))  
             
         for c in range(1,4): # Remove any \toc lines that we don't want appearing in the Table of Contents
             if not self.asBool("document/usetoc{}".format(c)):
