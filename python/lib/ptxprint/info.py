@@ -383,7 +383,7 @@ class Info:
             return self.dict[key] == true
         elif false is not None:
             return self.dict[key] != false
-        elif isinstance(self.dict[key], bool):
+        elif isinstance(self.dict[key], bool): # MH: This causes a failure if the key isn't found in the .cfg file
             return self.dict[key]
         elif self.dict[key] == "%" or self.dict[key] == "false":
             return False
@@ -628,7 +628,7 @@ class Info:
     def makelocalChanges(self, printer, bk):
         self.localChanges = []
         if bk == "GLO" and self.dict['document/filterglossary']:
-            self.filterGlossary(self.printer)
+            self.filterGlossary()
         first = int(self.dict["document/chapfrom"])
         last = int(self.dict["document/chapto"])
         
@@ -662,7 +662,7 @@ class Info:
 
         # Probably need to make this more efficient for multi-book and lengthy glossaries (cache the GLO & changes reqd etc.)
         if self.asBool("notes/glossaryfootnotes"):
-            self.makeGlossaryFootnotes(printer, bk)
+            self.makeGlossaryFootnotes(bk)
 
         # Glossary Word markup: Remove the second half of the \w word|glossary-form\w* and apply chosen glossary markup
         v = self.dict["document/glossarymarkupstyle"]
@@ -786,10 +786,12 @@ class Info:
         return self.localChanges
 
     def figNameChanges(self, printer, bk):
+        if printer is None:
+            return([])
         figlist = []
         figchngs = []
         prjid = self.dict['project/id']
-        prjdir = os.path.join(printer.settings_dir, prjid)
+        prjdir = os.path.join(self.ptsettings.basedir, prjid)
         picdir = os.path.join(self['document/directory'], 'tmpPics').replace("\\","/")
         fname = printer.getBookFilename(bk, prjdir)
         infpath = os.path.join(prjdir, fname)
@@ -856,10 +858,8 @@ class Info:
 
     def configPath(self, cfgname, makePath=False):
         prjdir = os.path.join(self.ptsettings.basedir, self.prjid, "shared", "ptxprint")
-        print("in configPath: prjdir=", prjdir)
         if len(cfgname):
             prjdir = os.path.join(prjdir, cfgname)
-            print("Still in configPath: prjdir=", prjdir)
         if makePath:
             os.makedirs(prjdir,exist_ok=True)
         #Update the cb_ with the sanitized (new) version of the name
@@ -867,12 +867,11 @@ class Info:
 
     def readConfig(self, cfgname=""):
         path = os.path.join(self.configPath(cfgname), "ptxprint.cfg")
-        print("in readConfig: path=", path)
         if not os.path.exists(path):
             return
         config = configparser.ConfigParser()
         config.read(path, encoding="utf-8")
-        self.loadConfig(self, config)
+        self.loadConfig(None, config)
 
     def createConfig(self, printer):
         config = configparser.ConfigParser()
@@ -972,7 +971,7 @@ class Info:
 
         # update UI to reflect the world it is in 
         # [Comment: this is turning things off even though the file exists. Probably running before the prj has been set?]
-        prjdir = os.path.join(printer.settings_dir, printer.prjid)
+        prjdir = os.path.join(self.ptsettings.basedir, printer.prjid)
         if printer.get("c_useCustomSty"):
             if not os.path.exists(os.path.join(prjdir, "custom.sty")):
                 printer.set("c_useCustomSty", False)
@@ -986,8 +985,8 @@ class Info:
 
     def GenerateNestedStyles(self):
         prjid = self.dict['project/id']
-        prjdir = os.path.join(self.printer.settings_dir, prjid)
-        nstyfname = os.path.join(self.printer.working_dir, "NestedStyles.sty")
+        prjdir = os.path.join(self.ptsettings.basedir, prjid)
+        nstyfname = os.path.join(prjdir, "PrintDraft", "NestedStyles.sty") # hack to be fixed later
         nstylist = []
         if self.asBool("document/ifomitallverses"):
             nstylist.append("##### Remove all verse numbers\n\\Marker v\n\\TextProperties nonpublishable\n\n")
@@ -1012,7 +1011,7 @@ class Info:
 
         nstylist.append("##### Adjust poetic indents\n")
         m = ["\Marker", "\LeftMargin", "\FirstLineIndent"]
-        if self.printer.get("c_doublecolumn"): # Double Column layout so use smaller indents
+        if self.dict["paper/columns"] == "2": # Double Column layout so use smaller indents
             v = [["q", "0.60", "-0.45"], ["q1", "0.60", "-0.45"], ["q2", "0.60", "-0.225"], 
                  ["q3", "0.60", "-0.112"], ["q4", "0.60", "-0.0"]]
         else: # Single column layout, so use larger (USFM.sty default) indents
@@ -1042,15 +1041,15 @@ class Info:
             if os.path.exists(nstyfname):
                 os.remove(nstyfname)
         else:
-            os.makedirs(self.printer.working_dir, exist_ok=True)
+            os.makedirs(os.path.join(prjdir, "PrintDraft"), exist_ok=True)
             with open(nstyfname, "w", encoding="utf-8") as outf:
                 outf.write("".join(nstylist))
 
     def createHyphenationFile(self):
         listlimit = 32749
         prjid = self.dict['project/id']
-        infname = os.path.join(self.printer.settings_dir, prjid, 'hyphenatedWords.txt')
-        outfname = os.path.join(self.printer.settings_dir, prjid, "shared", "ptxprint", 'hyphen-{}.tex'.format(prjid))
+        infname = os.path.join(self.ptsettings.basedir, prjid, 'hyphenatedWords.txt')
+        outfname = os.path.join(self.ptsettings.basedir, prjid, "shared", "ptxprint", 'hyphen-{}.tex'.format(prjid))
         hyphenatedWords = []
         if not os.path.exists(infname):
             m1 = "Failed to Generate Hyphenation List"
@@ -1102,11 +1101,11 @@ class Info:
         dialog.set_keep_above(False)
         dialog.destroy()
 
-    def makeGlossaryFootnotes(self, printer, bk):
+    def makeGlossaryFootnotes(self, bk):
         # Glossary entries for the key terms appearing like footnotes
         prjid = self.dict['project/id']
-        prjdir = os.path.join(printer.settings_dir, prjid)
-        fname = printer.getBookFilename("GLO", prjdir)
+        prjdir = os.path.join(self.ptsettings.basedir, prjid)
+        fname = self.getBookFilename("GLO", prjdir)
         infname = os.path.join(prjdir, fname)
         if os.path.exists(infname):
             with universalopen(infname, rewrite=True) as inf:
@@ -1118,20 +1117,20 @@ class Info:
                         self.localChanges.append((None, regex.compile(r"(\\w (.+\|)?{} ?\\w\*)".format(g[0]), flags=regex.M), \
                                                                      r"\1\\f + \\fq {}: \\ft {}\\f* ".format(g[0],gdefn)))
 
-    def filterGlossary(self, printer):
+    def filterGlossary(self):
         # Only keep entries that have appeared in this collection of books
         glossentries = []
         prjid = self.dict['project/id']
-        prjdir = os.path.join(printer.settings_dir, prjid)
-        for bk in printer.getBooks():
+        prjdir = os.path.join(self.ptsettings.basedir, prjid)
+        for bk in self.getBooks():
             if bk not in Info._peripheralBooks:
-                fname = printer.getBookFilename(bk, prjid)
+                fname = self.getBookFilename(bk, prjid)
                 fpath = os.path.join(prjdir, fname)
                 if os.path.exists(fpath):
                     with universalopen(fpath) as inf:
                         sfmtxt = inf.read()
                     glossentries += re.findall(r"\\w .*?\|?([^\|]+?)\\w\*", sfmtxt)
-        fname = printer.getBookFilename("GLO", prjdir)
+        fname = self.getBookFilename("GLO", prjdir)
         infname = os.path.join(prjdir, fname)
         if os.path.exists(infname):
             with universalopen(infname, rewrite=True) as inf:
@@ -1139,3 +1138,26 @@ class Info:
                 ge = re.findall(r"\\p \\k (.+)\\k\* .+\r?\n", dat) # Finds all glossary entries in GLO book
         for delGloEntry in [x for x in ge if x not in list(set(glossentries))]:
             self.localChanges.append((None, regex.compile(r"\\p \\k {}\\k\* .+\r?\n".format(delGloEntry), flags=regex.M), ""))
+
+    def getBooks(self):
+        bl = self.dict["project/booklist"].split()
+        if not self.asBool('project/multiplebooks'):
+            return [self.dict['project/book']]
+        elif len(bl):
+            blst = []
+            for b in bl:
+                if os.path.exists(os.path.join(self.ptsettings.basedir, self.prjid, (self.getBookFilename(b, self.prjid)))):
+                    blst.append(b)
+            return blst
+        else:
+            return self.booklist
+
+    def getBookFilename(self, bk, prjid):
+        if self.ptsettings is None:
+            self.ptsettings = ParatextSettings(self.ptsettings.basedir, self.prjid)
+        fbkfm = self.ptsettings['FileNameBookNameForm']
+        bknamefmt = (self.ptsettings['FileNamePrePart'] or "") + \
+                    fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + \
+                    (self.ptsettings['FileNamePostPart'] or "")
+        fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
+        return fname
