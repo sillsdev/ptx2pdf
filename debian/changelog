@@ -1,0 +1,5 @@
+python3-ptxprint (0.7.0-1ubuntu1) unstable; urgency=medium
+
+  * Initial release.
+
+ -- Nicolas Spalinger <nicolas.spalinger@sil.org>  Tue, 26 May 2020 22:18:30 +0200

@@ -1,0 +1,17 @@
+Source: ptxprint
+Section: Text Processing
+Priority: optional
+Maintainer: Nicolas Spalinger <nicolas.spalinger@sil.org>
+Build-Depends: debhelper (>=9), python-setuptools, python3-all, python3-setuptools
+Standards-Version: 3.9.6
+X-Python3-Version: >= 3.6
+
+Package: python3-ptxprint
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends}, python3-gi, gobject-introspection, gir1.2-gtk-3.0, libgtk-3-0, gir1.2-gtksource-3.0, python3-cairo, python3-regex, python3-img2pdf, texlive-xetex, fonts-sil-charis
+Description: GUI frontend to XeTex typesetting macros for USFM
+ PTXprint is a GTK-based gui frontend to the Paratext print macros. It aims to make
+ using the best of the macros as easy as possible.
+ .
+ This package installs both program library and documentation for Python 3.
+
