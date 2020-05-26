@@ -160,11 +160,11 @@ class Info:
         "document/ifomitallverses": ("c_omitallverses", lambda w,v: "" if v else "%"),
         "document/ifmainbodytext":  ("c_mainBodyText", lambda w,v: v),
         "document/glueredupwords":  ("c_glueredupwords", lambda w,v :v),
-        "document/ifinclfigs":      ("c_includeillustrations", lambda w,v :v),
+        "document/ifinclfigs":      ("c_includeillustrations", lambda w,v: "true" if v else "false"),
         "document/iffigfrmtext":    ("c_includefigsfromtext", lambda w,v :v),
         "document/iffigexclwebapp": ("c_figexclwebapp", lambda w,v: v),
         "document/iffigskipmissing": ("c_skipmissingimages", lambda w,v: v),
-        "document/iffigplaceholders": ("c_figplaceholders", lambda w,v :v),
+        "document/iffigplaceholders": ("c_figplaceholders", lambda w,v: "true" if v else "false"),
         "document/iffighiderefs":   ("c_fighiderefs", lambda w,v :v),
         "document/usesmallpics":    ("c_useLowResPics", lambda w,v :"" if v else "%"),
         "document/uselargefigs":    ("c_useHighResPics", lambda w,v :"" if v else "%"),
@@ -751,7 +751,7 @@ class Info:
         self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
 
         # Remove the + of embedded markup (xetex handles it)
-        self.localChanges.append((None, regex.compile(r"\\\+", flags=regex.M), r"\\"))  
+        # self.localChanges.append((None, regex.compile(r"\\\+", flags=regex.M), r"\\"))  
             
         for c in range(1,4): # Remove any \toc lines that we don't want appearing in the Table of Contents
             if not self.asBool("document/usetoc{}".format(c)):
