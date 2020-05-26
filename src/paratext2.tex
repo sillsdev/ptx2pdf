@@ -181,7 +181,7 @@
 % baselineskip = leading
 \def\s@tbaseline#1{%
   \ifdiglot\ifdiglotL\def\f@ntstyle{#1}\else\def\f@ntstyle{#1R}\fi\else\def\f@ntstyle{#1}\fi%
-  \getp@ram{baseline}{#1}\ifx\p@ram\relax
+  \getp@ram{baseline}{\f@ntstyle}\ifx\p@ram\relax
     \getp@ram{fontsize}{#1}\dimen0=\p@ram\le@dingunit
     \multiply\dimen0 by 14 \divide\dimen0 by 12 % default .75 shift of .85ex (ex=.5 fontsize) against 14/12
     \setp@ram{baseline}{\f@ntstyle}{\the\dimen0}\baselineskip=\dimen0\else
@@ -231,7 +231,7 @@
 \everypar=\toks0}
 
 % determine if a given note class is to be paragraphed
-\def\ParagraphedNotes#1{\Par@gr@phedNotes{#1}\ifdiglot\ifdiglotSepNotes\Par@gr@phedNotes{#1}\Par@gr@phedNotes{#1R}\else\Par@gr@phedNotes{#1}\fi\fi}
+\def\ParagraphedNotes#1{\Par@gr@phedNotes{#1}\ifdiglot\ifdiglotSepNotes\Par@gr@phedNotes{#1R}\fi\fi}
 \def\Par@gr@phedNotes#1{\TRACE{Par@gr@phedNotes #1}\x@\let\csname paranotes-#1\endcsname=1}
 \newif\ifp@ranotes
 \def\checkp@ranotes#1{\x@\ifx\csname paranotes-#1\endcsname\relax
@@ -240,19 +240,11 @@
 % Notewidth for diglots depends on settings and column. 
 \newdimen\n@tewidth
 \def\setn@tewidth{%
-  \ifdiglot%
-    \ifdiglotSepNotes%
-      \ifdiglotL%
-        \n@tewidth=\columnLwidth%
-      \else%
-        \n@tewidth=\columnRwidth%
-      \fi%
-    \else%
-      \n@tewidth=\textwidth%
-    \fi%
-  \else%
-    \n@tewidth=\textwidth%
-  \fi%
+  \ifdiglot
+    \ifdiglotSepNotes
+      \ifdiglotL\n@tewidth=\columnLwidth\else\n@tewidth=\columnRwidth\fi
+    \else\n@tewidth=\textwidth\fi
+  \else\n@tewidth=\textwidth\fi
 }
 % reformat the contents of a note class insertion into a single paragraph.
 % this is usually done for \x. It is sometimes done for \f.
@@ -420,11 +412,11 @@
 % this is called from \parstyle when the new style wants to be double-columned
 \def\doublecolumns{
   \ifdiglot\enddigl@t\diglotfalse% Now force doublec@lumns to do stuff.
-  \c@rrentcols=1 
-  \fi%
-  \doublec@lumns%
+    \c@rrentcols=1 
+  \fi
+  \doublec@lumns
 }
-\def\doublec@lumns{%
+\def\doublec@lumns{
   \ifnum\c@rrentcols=1
     % make switch from single to double column
     \ifhe@dings\endhe@dings\fi % if headings in process, end headings
@@ -561,16 +553,14 @@
     \ifdiglot\ifdiglotSepNotes\ifdiglotBalNotes\let\n@xt=\reduceavailht@para@bal\fi\fi\fi
   \else\let\n@xt=\reduceavailht@sep
     \ifdiglot\ifdiglotSepNotes\ifdiglotBalNotes\let\n@xt=\reduceavailht@sep@bal\fi\fi\fi
-  \fi\iff@rstnote\else\global\noteseentrue\fi%
-  \n@xt{#1}}
+  \fi
+  \iff@rstnote\else\global\noteseentrue\fi\n@xt{#1}}
 
 \def\reduceavailht@para#1{
   \def\cl@sss{#1}%
   \ifdiglot\ifdiglotSepNotes\ifdiglotL\def\cl@sss{#1}\else\def\cl@sss{#1R}\fi\fi\fi%
   \TRACE{class \cl@sss}%
-  \relax
   \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
-  \relax
   \ifvoid\th@cl@ss\else
     \setbox0=\copy\th@cl@ss
     \setbox0=\vbox{\maken@tepara{0}{#1}}
@@ -585,43 +575,38 @@
   \TRACE{reduceavailht@para@bal #1}%
   \x@\let\x@\th@cl@ssL\csname note-#1\endcsname%
   \bgroup%leave dimen0 etc unchanged
-  \dimen0=0pt%
+  \dimen0=0pt
   %FIXME: Should this code adjust & restore diglotL?%
-  \ifvoid\th@cl@ssL\else%
-    \setbox0=\copy\th@cl@ssL%
+  \ifvoid\th@cl@ssL\else
+    \setbox0=\copy\th@cl@ssL
     \setbox0=\vbox{\maken@tepara{0}{#1}}%
     \message{reduceavailht@para@bal for #1 ht0=\the\ht0 dp0=\the\dp0}%
-    \dimen0=\ht0%
-    \advance\dimen0 by \dp0%
-  \fi%
-  \x@\let\x@\th@cl@ssR\csname note-#1R\endcsname%
-  \dimen1=0pt%
-  \ifvoid\th@cl@ssR\else%
-    \setbox0=\copy\th@cl@ssR%
+    \dimen0=\ht0
+    \advance\dimen0 by \dp0
+  \fi
+  \x@\let\x@\th@cl@ssR\csname note-#1R\endcsname
+  \dimen1=0pt
+  \ifvoid\th@cl@ssR\else
+    \setbox0=\copy\th@cl@ssR
     \setbox0=\vbox{\maken@tepara{0}{#1}}%
     \message{reduceavailht@para@bal for #1R ht1=\the\ht1 dp1=\the\dp1}%
-    \dimen1=\ht0%
-    \advance\dimen1 by \dp0%
-  \fi%
-  \ifnum\dimen1>\dimen0%
-    \dimen0=\dimen1%
-  \fi%
-  \ifdim\dimen0>0pt%
-    \advance\availht by -\dimen0%
+    \dimen1=\ht0
+    \advance\dimen1 by \dp0
+  \fi
+  \ifnum\dimen1>\dimen0 \dimen0=\dimen1 \fi
+  \ifdim\dimen0>0pt
+    \advance\availht by -\dimen0
     \iff@rstnote\advance\availht by -\AboveNoteSpace \f@rstnotefalse
     \else \advance\availht by -\InterNoteSpace\fi
     %\getp@ram{baseline}{#1}\advance\availht-\p@ram%
     \message{p@ram=\p@ram}%
   \fi\egroup}
 
-
 \def\reduceavailht@sep#1{
   \def\cl@sss{#1}%
-  \ifdiglot\ifdiglotSepNotes\ifdiglotL\def\cl@sss{#1}\else\def\cl@sss{#1R}\fi\fi\fi%
- \TRACE{class \cl@sss}%
- \relax
- \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
- \relax
+  \ifdiglot\ifdiglotSepNotes\ifdiglotL\def\cl@sss{#1}\else\def\cl@sss{#1R}\fi\fi\fi
+  \TRACE{class \cl@sss}%
+  \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
   \ifvoid\th@cl@ss\else
     \f@rstnotefalse
     \advance\availht by -\ht\th@cl@ss
@@ -632,35 +617,30 @@
 
 \def\reduceavailht@sep@bal#1{%
   \TRACE{reduceavailht@sep@bal}%
-  \x@\let\x@\th@cl@ssR\csname note-#1\endcsname%
-  \x@\let\x@\th@cl@ssL\csname note-#1R\endcsname%
+  \x@\let\x@\th@cl@ssR\csname note-#1\endcsname
+  \x@\let\x@\th@cl@ssL\csname note-#1R\endcsname
   \dimen0=0pt\dimen1=0pt
-  \ifvoid\th@cl@ssL\else%
+  \ifvoid\th@cl@ssL\else
     \dimen0=\ht\th@cl@ssL
     \advance\dimen0 by \dp\th@cl@ssL
-  \fi%
-  \ifvoid\th@cl@ssR\else%
+  \fi
+  \ifvoid\th@cl@ssR\else
     \dimen1=\ht\th@cl@ssR 
     \advance\dimen1 by \dp\th@cl@ssR
-  \fi%
+  \fi
   \ifdim\dimen0>0pt 
     \advance\availht by -\dimen0
     \advance\availht by -\AboveNoteSpace
   \fi}
 
 \def\cle@rn@tecl@ss#1{%
-  \ifdiglot%
-    \ifdiglotSepNotes%
+  \ifdiglot
+    \ifdiglotSepNotes
        \cle@rn@t@cl@ss{#1}%
        \cle@rn@t@cl@ss{#1R}%
-    \else%
-       \cle@rn@t@cl@ss{#1}%
-    \fi%
-  \else%
-    \cle@rn@t@cl@ss{#1}%
-  \fi%
+    \else\cle@rn@t@cl@ss{#1}\fi
+  \else\cle@rn@t@cl@ss{#1}\fi
 }
-
 
 \def\cle@rn@t@cl@ss#1{%
   \x@\let\x@\th@cl@ss\csname note-#1\endcsname
@@ -739,23 +719,23 @@
 		% if something left in box0, it didn't fit, quit loop
         \trace{o}{re-balancing \the\ht\colA =\the\colhtA, \the\ht\colB =\the\colhtB, from \the\shortavail, rem \the\ht0}
         \ifrem@inder\else\ifvoid0\else
-            \advance\shortavail by \baselineskip
-            \trace{o}{rebalance found extra back to \the\shortavail}\rebalancefalse
-            \setbox0=\copy\s@vedpage
-            \s@tcolhts{\shortavail}\spl@tcols0
+          \advance\shortavail by \baselineskip
+          \trace{o}{rebalance found extra back to \the\shortavail}\rebalancefalse
+          \setbox0=\copy\s@vedpage
+          \s@tcolhts{\shortavail}\spl@tcols0
         \fi\fi
         % if either column height ends up negative, rollback and bail
         \ifrebalance\ifnum\ifdim\colhtA<0pt 1\else\ifdim\colhtB<0pt 1\else 0\fi\fi =1
-            \advance\shortavail by \baselineskip
-            \trace{o}{rebalance found column height < 0, back to \the\shortavail}\rebalancefalse
-            \setbox0=\copy\s@vedpage
-            \s@tcolhts{\shortavail}\spl@tcols0
+          \advance\shortavail by \baselineskip
+          \trace{o}{rebalance found column height < 0, back to \the\shortavail}\rebalancefalse
+          \setbox0=\copy\s@vedpage
+          \s@tcolhts{\shortavail}\spl@tcols0
         \fi\fi
 		% if second column longer than first column by more than .3*line height, quit loop
         \colhtA=\ht\colA \colhtB=\ht\colB
         \dimen0=\colhtB \incr{\dimen0}{\toprightins} \incr{\dimen0}{\bottomrightins}
         \advance\dimen0 by -\colhtA \decr{\dimen0}{\topleftins} \decr{\dimen0}{\bottomleftins}
-        \ifdim\dimen0<.5\baselineskip\ifdim\dimen0>-.5\baselineskip
+        \ifdim\dimen0<.95\baselineskip\ifdim\dimen0>-.95\baselineskip
           \shortavail=\colhtB\incr{\shortavail}{\toprightins}\incr{\shortavail}{\bottomrightins}
           \ifdim\dimen0>0pt\else\advance\shortavail by -\dimen0\fi
           \trace{o}{Best height \the\shortavail}\rebalancefalse
@@ -764,8 +744,8 @@
         \ifdim\shortavail<\baselineskip \MSG{Rebalancing bailed for short block}
           \shortavail=\availht \rebalancefalse\fi
         \ifnum\loopcount>20 
-            \advance\shortavail by \baselineskip
-            \rebalancefalse\MSG{Rebalancing loop count bail}\fi
+          \advance\shortavail by \baselineskip
+          \rebalancefalse\MSG{Rebalancing loop count bail}\fi
         \ifrebalance\repeat
     \fi
     \s@tcolhts{\shortavail}\spl@tcols\s@vedpage
@@ -774,51 +754,49 @@
 }
 
 \def\c@lcboxheights{
-    \g@tcolhts
-    \trace{b}{BALANCE pageout: cols=2: texta=\the\ht\colA , \the\dp\colA : textb=\the\ht\colB , \the\dp\colB : partial=\the\ht\partial, \the\dp\partial : topins=\the\ht\topins+\the\skip\topins, \the\ht\topleftins+\the\skip\topleftins, \the\ht\toprightins+\the\skip\toprightins : bottomins=\the\ht\bottomins+\the\skip\bottomins, \the\ht\bottomleftins+\the\skip\bottomleftins, \the\ht\bottomrightins+\the\skip\bottomrightins}
-    \dimen0=\dp\colA \setbox\colA=\vbox to \availht{\unvbox\topleftins\box\colA\vfil\unvbox\bottomleftins}\dp\colA=\dimen0
-    \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\else
-      \ifdim\dimen0<\dp\colB\dimen0=\dp\colB\fi \setbox\colB=\vbox to \availht{\unvbox\toprightins\box\colB\vfil\unvbox\bottomrightins}\dp\colB=\dimen0
-    \fi
-    \ifdim\colhtA>\colhtB \dimen3=\colhtA\dimen0=\dp\colA\dp\colB=\dimen0\else
-      \dimen3=\colhtB\dimen0=\dp\colB\dp\colA=\dimen0\fi
-    \advance\dimen3 by \dimen0
+  \g@tcolhts
+  \trace{b}{BALANCE pageout: cols=2: texta=\the\ht\colA , \the\dp\colA : textb=\the\ht\colB , \the\dp\colB : partial=\the\ht\partial, \the\dp\partial : topins=\the\ht\topins+\the\skip\topins, \the\ht\topleftins+\the\skip\topleftins, \the\ht\toprightins+\the\skip\toprightins : bottomins=\the\ht\bottomins+\the\skip\bottomins, \the\ht\bottomleftins+\the\skip\bottomleftins, \the\ht\bottomrightins+\the\skip\bottomrightins}
+  \dimen0=\dp\colA \setbox\colA=\vbox to \availht{\unvbox\topleftins\box\colA\vfil\unvbox\bottomleftins}\dp\colA=\dimen0
+  \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\else
+    \ifdim\dimen0<\dp\colB\dimen0=\dp\colB\fi \setbox\colB=\vbox to \availht{\unvbox\toprightins\box\colB\vfil\unvbox\bottomrightins}\dp\colB=\dimen0
+  \fi
+  \ifdim\colhtA>\colhtB \dimen3=\colhtA\dimen0=\dp\colA\dp\colB=\dimen0\else
+    \dimen3=\colhtB\dimen0=\dp\colB\dp\colA=\dimen0\fi
+  \advance\dimen3 by \dimen0
 }
 
 \def\@mptyinserts{
-    \global\setbox\topins=\box\voidb@x
-    \global\setbox\bottomins=\box\voidb@x
-    \global\setbox\topleftins=\box\voidb@x
-    \global\setbox\toprightins=\box\voidb@x
-    \global\setbox\bottomleftins=\box\voidb@x
-    \global\setbox\bottomrightins=\box\voidb@x
-    \global\setbox255=\box\voidb@x
-    \global\holdinginserts=1
+  \global\setbox\topins=\box\voidb@x
+  \global\setbox\bottomins=\box\voidb@x
+  \global\setbox\topleftins=\box\voidb@x
+  \global\setbox\toprightins=\box\voidb@x
+  \global\setbox\bottomleftins=\box\voidb@x
+  \global\setbox\bottomrightins=\box\voidb@x
+  \global\setbox255=\box\voidb@x
+  \global\holdinginserts=1
 }
 
 \xdef\p@gebotmark{}% No guarantee this will be universally set
 \def\c@lcavailht{
-  \edef\t@st{\p@gefirstmark}%
+  \edef\t@st{\p@gefirstmark}
   \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi% remember first, if not already set
-  \edef\t@st{\p@gebotmark}%
-  \ifx\t@st\empty\xdef\p@gebotmark{\botmark}\fi%
+  \edef\t@st{\p@gebotmark}
+  \ifx\t@st\empty\xdef\p@gebotmark{\botmark}\fi
   %NOT HERE! \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
   \availht=\trialheight % amount of space we think is available
   \trace{i}{C@lcavailht partial:\the\ht\partial \space av:\the\availht}
-  \f@rstnotetrue%
-  \let\\=\reduceavailht\the\n@tecl@sses% reduce it by the space needed for each note class
-  \trace{i}{after inserts: \the\availht}%
-  \trace{o}{availht = \the\availht, depth = \the\dp255}%
+  \f@rstnotetrue
+  \let\\=\reduceavailht\the\n@tecl@sses % reduce it by the space needed for each note class
+  \trace{i}{after inserts: \the\availht}
+  \trace{o}{availht = \the\availht, depth = \the\dp255}
   \advance\availht -\dp255
   % Round to lines accurate to 1/8pt in lineskip. 1/10pt causes overflow on longer pages. Support two column legal.
   \dimen0=8\baselineskip
   \multiply\availht by 8 \divide\availht by\dimen0 \multiply\availht by\dimen0 \divide\availht by 8
-%%%
-  \decr{\availht}{\topins}% and by the space needed for spanning pictures
-  \decr{\availht}{\bottomins}%
+  \decr{\availht}{\topins} % and by the space needed for spanning pictures
+  \decr{\availht}{\bottomins}
   \advance\availht by \dp255 % split includes depth so give it space for that
   \trace{o}{new availht=\the\availht, topins=\the\ht\topins, bottomins=\the\ht\bottomins, baselineskip=\the\baselineskip}
-%%%
   \splittopskip=\topskip
 }
 
@@ -829,14 +807,12 @@
   \setbox\s@vedpage=\vbox{\unvbox255}
   \trace{o}{balancing from savepartialpaged, height=\the\ht\s@vedpage, hIns:\the\holdinginserts, vsz=\the\vsize}
   \ifdim\availht<\baselineskip 
-  \rem@indertrue% No, I don't know what this does, but once If i  didn't do it then we get lost verses. 
-  %\rem@inderfalse%
-  \balanced%
-  \fitonpagetrue%There's certainly no point shrinking past this
-  \else%
-  \rem@inderfalse%
-  \balanced%
-  \fi% 
+    \rem@indertrue % No, I don't know what this does, but once If i  didn't do it then we get lost verses. 
+    %\rem@inderfalse
+    \balanced\fitonpagetrue % There's certainly no point shrinking past this
+  \else
+    \rem@inderfalse\balanced
+  \fi
   \iffitonpage
     \c@lcboxheights
     \ht\colA=\dimen3 \ht\colB=\dimen3
@@ -868,7 +844,8 @@
     %\global\rerunsavepartialpagedtrue
     \global\output={\backingup}%
     \tempfalse%\ifvoid\partial\else\temptrue\fi%
-    \ifvoid\galley\temptrue\fi% Galley was created saving inserts, this is caleld without them
+    % remember \holdingInserts=1 from \@emptyinserts
+    \ifvoid\galley\temptrue\fi
     \iftemp
      \trace{i}{Using savedpage.pen=\the\outputpenalty}%
      \unvbox\s@vedpage\penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
@@ -878,6 +855,19 @@
     \fi%
   \fi%
 }
+
+\def\m@kenotebox{
+  \setbox2=\vbox{
+  \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % output all note classes
+  \iff@rstnote % no notes actually occurred!
+    \trace{i}{No notes}
+    \ifnoteseen\MSG{Page \the\pageno\space is being printed without any footnotes/xrefs, etc. But at least one was seen earlier. Maybe it's ended up on the previous page or moved to the next one, or maybe it's vanished. Human checking is needed.}\fi
+    \kern-\dimen0 \vfil
+  \else
+    \setbox0=\lastbox
+    \trace{i}{Inserted notes, ht \the\ht0\space dp \the\dimen0}
+    \dimen0=\dp0 \box0 \kern-\dimen0
+  \fi}}
 
 \def\twocoltrial{% trial formatting to see if current contents will fit on the page
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
@@ -908,17 +898,7 @@
         \else \box\colA\makecolumngutter{\the\dimen3}{\the\availht}{\the\dimen0}\box\colB\hbox to \ExtraRMargin{}\fi}
       \ifvoid\bottomins\else \kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \unvbox\bottomins \fi % ouput bottom spanning pictures
       \f@rstnotetrue
-      \setbox2=\vbox{
-      \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % output all note classes
-      \iff@rstnote % no notes actually occurred!
-        \trace{i}{No notes}%
-	\ifnoteseen\MSG{Page \the\pageno\space is being printed without any footnotes/xrefs, etc. But at least one was seen earlier. Maybe it's just moved to the next page, or maybe it's vanished.}\fi%%
-        \kern-\dimen0 \vfil%
-      \else
-        \setbox0=\lastbox%
-        \trace{i}{Inserted notes, ht \the\ht0\space dp \the\dimen0}%
-        \dimen0=\dp0 \box0 \kern-\dimen0
-      \fi}
+      \m@kenotebox
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
       \unvbox2
       \global\noteseenfalse%
@@ -952,16 +932,16 @@
 
 %makecolumngutter{rule height}{vbox height}{depth}
 \def\makecolumngutter#1#2#3{\hfil
-    \dimen4=#1\advance\dimen4-\ColumnGutterRuleSkip%\advance\dimen4 by #3
-    \ifColumnGutterRule
-      \setbox4=\vbox to #2{
-        \vskip\ColumnGutterRuleSkip
-        \hbox to 1pt{\vrule height \the\dimen4}%\dp5=#3 \box5
-        \vfil}
-      \dp4=#3 \box4
-    \fi
-    \hfil
-    \hbox to \columnshift{}}
+  \dimen4=#1\advance\dimen4-\ColumnGutterRuleSkip%\advance\dimen4 by #3
+  \ifColumnGutterRule
+    \setbox4=\vbox to #2{
+      \vskip\ColumnGutterRuleSkip
+      \hbox to 1pt{\vrule height \the\dimen4}%\dp5=#3 \box5
+      \vfil}
+    \dp4=#3 \box4
+  \fi
+  \hfil
+  \hbox to \columnshift{}}
 \newif\ifColumnGutterRule
 
 \def\backingup{% this output routine is used when we reduce \vsize;
@@ -1010,16 +990,15 @@
 % to switch back to diglot columns, first set the page  so far 
 % and then change the rest.
 \def\diglotcolumns{
-  \ifdiglot\enddigl@t\else%
+  \ifdiglot\enddigl@t\else
     %\ifnum\c@rrentcols=2 \singlec@lumn\else\doublec@lumns\fi%
-  \fi%
-  \diglottrue\diglots@tup%
+  \fi\diglottrue\diglots@tup
 }
 
 \def\diglots@tup{%
   % reset parameters for diglot-column formatting
   \global\hsize=\columnLwidth % always start with left column
-  \global\vsize=\textheight %
+  \global\vsize=\textheight
   \global\BodyColumns=1
   \global\advance\vsize by \baselineskip % don't get caught short by 1/2 line or so
   \global\advance\vsize by -\ht\partial % Don't mis-inform tex
@@ -1045,17 +1024,7 @@
 	\dimen0=\dp\partial
     \ifvoid\bottomins\else \kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \unvbox\bottomins \fi
     \f@rstnotetrue%
-    \setbox2=\vbox{
-    \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % output all note classes
-    \iff@rstnote % no notes actually occurred!
-      \trace{i}{No notes}%
-    \ifnoteseen\MSG{Page \the\pageno\space is being printed without any footnotes/xrefs, etc. But at least one was seen earlier. Maybe it's ended up on the previous page or moved to the next one, or maybe it's vanished. Human checking is needed.}\fi%%
-      \kern-\dimen0 \vfil%
-    \else%
-      \setbox0=\lastbox%
-      \trace{i}{Inserted notes, ht \the\ht0\space dp \the\dimen0}%
-      \dimen0=\dp0 \box0 \kern-\dimen0
-    \fi}%
+    \m@kenotebox
     \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
     \unvbox2
     }}\plainoutput\noteseenfalse}%
@@ -1181,9 +1150,7 @@
         \else\ifx\loc@ption\loc@BR \let\p@cins=\bottomrightins
         \fi\fi\fi\fi
       \else
-	\ifdiglot
-	\MSG{HOW DID THAT HAPPEN? currentcols=\the\c@rrentcols}
-	\fi
+	    \ifdiglot\MSG{HOW DID THAT HAPPEN? currentcols=\the\c@rrentcols}\fi
         \ifx\loc@ption\loc@TL \picw@rning{tl}{t}\let\p@cins=\topins
         \else\ifx\loc@ption\loc@TR \picw@rning{tr}{t}\let\p@cins=\topins
         \else\ifx\loc@ption\loc@BL \picw@rning{bl}{b}\let\p@cins=\bottomins

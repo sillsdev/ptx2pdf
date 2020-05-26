@@ -74,7 +74,7 @@
   \makecutouts \endgraf
   \egroup \cutoutcarryover
 %{\showboxbreadth=200 \showbox\he@dingbox}
-  \s@tbaseline{p}%
+  \s@tbaseline{\m@rker}%
   \gridb@x\he@dingbox\unvbox\he@dingnotes
   \global\he@dingsfalse
   \global\first@fterheadingtrue
@@ -92,9 +92,9 @@
 % Given a box of headings, output it but ensure we use an integral number of lines altogether
 %
 \def\gridb@x#1{%
-% \setbox0=\hbox{\kern-#1pt\vrule\kern#1pt\kern-.4pt\box#1\kern-.4pt\vrule}%
+% \setbox0=\vbox{\kern-#1pt\vrule\kern#1pt\kern-.4pt\box#1\kern-.4pt\vrule}%
 %\MSG{before gridbox: ht0=\the\ht0; dp0=\the\dp0}
- \setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders#1\fi%
+\setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders#1\fi%
 %\MSG{after killd: ht0=\the\ht0; dp0=\the\dp0}
 %{\showboxbreadth=100 \showboxdepth=10 \showbox0 }%
  \dimen2=\ht0 \advance\dimen2 by \dp0
@@ -157,7 +157,7 @@
   \csname after-\m@rker\endcsname % handle <after> hook for the previous style
   \gdef\m@rker{#1} % remember the new style name
   \csname before-\m@rker\endcsname % handle its <before> hook
-  \ifdiglot%
+  \ifdiglot
     \csname before-\m@rker\sid@\endcsname\relax% handle side-specific <start> hook
   \fi
   %
