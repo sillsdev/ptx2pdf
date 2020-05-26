@@ -539,6 +539,7 @@ class Info:
         return outfpath
 
     def convertBook(self, bk, outdir, prjdir):
+        print("In convertBook. prjdir: {} outdir: {}".format(prjdir, outdir))
         if self.changes is None:
             if self.asBool('project/usechangesfile'):
                 self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'))
@@ -855,8 +856,10 @@ class Info:
 
     def configPath(self, cfgname, makePath=False):
         prjdir = os.path.join(self.ptsettings.basedir, self.prjid, "shared", "ptxprint")
+        print("in configPath: prjdir=", prjdir)
         if len(cfgname):
             prjdir = os.path.join(prjdir, cfgname)
+            print("Still in configPath: prjdir=", prjdir)
         if makePath:
             os.makedirs(prjdir,exist_ok=True)
         #Update the cb_ with the sanitized (new) version of the name
@@ -864,6 +867,7 @@ class Info:
 
     def readConfig(self, cfgname=""):
         path = os.path.join(self.configPath(cfgname), "ptxprint.cfg")
+        print("in readConfig: path=", path)
         if not os.path.exists(path):
             return
         config = configparser.ConfigParser()
@@ -900,6 +904,7 @@ class Info:
         return config
 
     def loadConfig(self, printer, config):
+        print("In loadConfig. printer:", printer)
         for sect in config.sections():
             for opt in config.options(sect):
                 key = "{}/{}".format(sect, opt)
@@ -921,7 +926,7 @@ class Info:
                                 printer.set(v[0], val)
                     except AttributeError:
                         pass # ignore missing keys 
-                elif printer is not None and  key in self._snippets:
+                elif printer is not None and key in self._snippets:
                     printer.set(self._snippets[key][0], val.lower() == "true")
         if printer is None:
             return
