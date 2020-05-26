@@ -121,10 +121,24 @@
 %   #2 -> name of marker
 % Sets temporary macro \p@ram to the value
 %
-\def\getp@ram#1#2{\x@\let\x@\p@ram\csname#2:#1\endcsname}
-
-%
-%
+\def\getp@r@m#1#2{\x@\let\x@\p@ram\csname#2:#1\endcsname}
+% Diglot version = allow all parameters to have  Left/Right variant or use
+% default. (e.g when asked for paramter for v, check for vL|vR, default to v)
+\def\getp@ram#1#2{%
+\TRACEdiglot{getp@ram #1:#2}%
+\ifdiglot%
+  \ifdiglotL\getp@r@m{#1}{#2L}\else\getp@r@m{#1}{#2R}\fi%
+  \ifx\p@ram\relax%
+    \getp@r@m{#1}{#2}%
+    \TRACEdiglot{...default}%
+  \else%
+    \TRACEdiglot{...side-specfic}%
+  \fi%
+\else%
+  \getp@r@m{#1}{#2}%
+\fi%
+\x@\TRACEdiglot{\p@ram}%
+}
 %
 \def\m@kestyle{{\uccode`\|=`\\\uppercase{\message{|\m@rker}}}
  \x@\let\csname font<\m@rker>\endcsname=\relax 
@@ -219,9 +233,11 @@
    \ifOmitChapterNumber\else
     % if chapter label not present, set \ch@ptertrue to cause chapter number to be printed
     % at start of first text paragraph.
-    \ifx\ch@plabel\empty \global\ch@ptertrue 
+    \let\ch@pl@bel=\ch@plabel%
+    \ifdiglot\ifdiglotL\else\let\ch@pl@bel=\ch@plabelR\fi\fi
+    \ifx\ch@pl@bel\empty \global\ch@ptertrue 
     \else % if \cl present, output chapter label here
-      \p@rstyle{cl}\ch@plabel\ \ch@pter
+      \p@rstyle{cl}\ch@pl@bel\ \ch@pter
       \pdfb@@kmark \pdfch@ptermark
     \fi
    \fi}
@@ -261,7 +277,18 @@
   % set font size for \c
   \edef\dr@psize{\expandafter\strip@pt\the\dropnumbersize}%
   \def\m@rker{c}\defp@ram{fontsize}{\dr@psize}
+  \ifdiglot%
+  \resetdropc@p%Can't do this here since things get lowercased
+  \fi%
  }
+}
+
+\def\resetdropc@p{%
+  \message{Setting drop-cap size to \dr@psize}
+  \setp@ram{fontsize}{cL}{\dr@psize}%
+  \setp@ram{fontsize}{cR}{\dr@psize}%
+  \x@\let\csname font<cL>\endcsname=\relax %
+  \x@\let\csname font<cR>\endcsname=\relax %
 }
 {\catcode`P=12 \catcode`T=12 \lowercase{\gdef\strip@pt#1PT{#1}}}
 \def\AfterVerseSpaceFactor{2}
@@ -308,7 +335,9 @@
 \let\b@ok\relax
 \def\ch@pter{}
 \def\v@rse{}
-\def\m@rkverse{\mark{\b@ok:\ch@pter:\v@rse}}
+\def\m@rkverse{\ifdiglot\ifdiglotL\m@rkverseL\else\m@rkverseR\fi\else\m@rkverseL\fi}
+\def\m@rkverseL{\mark{\b@ok:\ch@pter:\v@rse}}
+\def\m@rkverseR{\mark{\b@okR:\ch@pter:\v@rse}}
 
 \begingroup
 \obeylines%
@@ -316,13 +345,13 @@
  \let\@H=\h%
  \def\h{\bgroup\deactiv@tecustomch@rs
         \obeylines\@h}% \h gets stored as the book name (for references)
- \def\@h ##1^^M{\gdef\b@ok{##1}\egroup}% store book id in \b@ok
+ \def\@h ##1^^M{\ifdiglot\ifdiglotL\gdef\b@ok{##1}\else\gdef\b@okR{##1}\fi\else\gdef\b@ok{##1}\fi\egroup}% store book id in \b@ok
  %
  \let\@CL=\cl%
  \def\do@CL{\global\ch@pterfalse\@CL}%
  \def\cl{\ifch@pter \let\n@xt=\do@CL \else \let\n@xt=\st@recl \fi \n@xt}%
  \def\st@recl{\bgroup\obeylines\@cl}% \cl gets stored as chapter label and changes \c format
- \def\@cl ##1^^M{\gdef\ch@plabel{##1}\egroup}%
+ \def\@cl ##1^^M{\ifdiglot\ifdiglotL\gdef\ch@plabel{##1}\else\gdef\ch@plabelR{##1}\fi\else\gdef\ch@plabel{##1}\fi\egroup}%
  %
  \let\@ID=\id%
  \def\id{\bgroup\obeylines\unc@tcodespecials \m@kedigitsother
@@ -382,6 +411,7 @@
 \def\ptxfile#1{
  \@netimesetup
  \gdef\ch@plabel{}
+ \gdef\ch@plabelR{}
  \initp@rastyles
  \initn@testyles
  \openadjlist "\the\AdjListPath#1.adj"
@@ -469,6 +499,8 @@
 \def\ColumnGutterFactor{15} % relative to FontSizeUnit
 \def\HeaderPosition{0.5} % pos of baseline from top of page, relative to MarginUnit
 \def\FooterPosition{0.5} % pos of baseline from bottom of page, relative to MarginUnit
+\def\DiglotLeftFraction{0.5} % In case texts fit better with unequal columns
+\def\DiglotRightFraction{0.5} %
 
 \newcount\TitleColumns \TitleColumns=1
 \newcount\IntroColumns \IntroColumns=1
@@ -495,6 +527,10 @@
  \advance\dimen0 by -1\ExtraRMargin
  \textwidth=\dimen0
  \colwidth=0.5\textwidth \advance\colwidth by -0.5\gutter\advance\colwidth by -\columnshift
+% Diglot dimensions
+ \advance\dimen0 by -\gutter\advance\dimen0 by -\columnshift
+ \columnLwidth=\DiglotLeftFraction\dimen0
+ \columnRwidth=\DiglotRightFraction\dimen0
  \hsize=\textwidth \advance\hsize by -\columnshift
  \topm@rgin=\TopMarginFactor\MarginUnit
  \advance\topm@rgin by -\topskip \advance\topm@rgin by 12\FontSizeUnit

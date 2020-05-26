@@ -36,9 +36,10 @@
 \TeXXeTstate=1 % enable the eTeX bidi extensions, in case we need RTL support
 
 \def\MSG{\immediate\write16 } % shorthand to write a message to the terminal
-\def\TRACE#1{} % default - consume messages
+\def\TRACE#1{}%\let\TRACE=\MSG % default - consume messages
 \def\wlog{\immediate\write-1 } % write message to log file only
 \newif\iftemp \tempfalse
+\newif\ifinn@te\inn@tefalse
 \newif\ifriskyscalefont % Should scalefont be relative to \p or relative to wherever it's first used?
 \riskyscalefontfalse
 % \addtoendhooks collects macros to be executed at the end of the job
@@ -71,6 +72,7 @@
 \edef\timestamp{\timestamp
   \ifnum\count255<10 0\fi \number\count255}%
 
+\input ptx-diglot.tex
 \input ptx-tracing.tex
 \input ptx-para-style.tex
 \input ptx-char-style.tex
@@ -115,8 +117,12 @@
   \@sf \@wrap\vm@kenote{#1}{\getp@ram{notecallerstyle}{#1}\ifx\p@ram\relax #2\else #3\fi}}
 
 \def\vm@kenote#1#2{%
-  \let\next\relax
-  \x@\insert\csname note-#1\endcsname\bgroup % insert note-f (or note-x)
+  \inn@tetrue%
+  \let\next\relax%
+  \def\n@tetype{#1}%
+  \ifdiglot\ifdiglotSepNotes\ifdiglotL\def\n@tetype{#1}\else\def\n@tetype{#1R}\fi\fi\fi%
+  \TRACE{vm@kenote \n@tetype}%
+  \x@\insert\csname note-\n@tetype\endcsname\bgroup% insert note-f (or note-x)
 %%% single-column notes:
   \checkp@ranotes{#1}% check whether this note class is to be paragraphed 
   \hsize=\ifp@ranotes\maxdimen\else\textwidth\advance\hsize by -\columnshift\fi % insert penalties to control breaking of footnotes
@@ -174,54 +180,80 @@
 % set baseline appropriately for the given style (may be using much smaller font than body)
 % baselineskip = leading
 \def\s@tbaseline#1{%
+  \ifdiglot\ifdiglotL\def\f@ntstyle{#1}\else\def\f@ntstyle{#1R}\fi\else\def\f@ntstyle{#1}\fi%
   \getp@ram{baseline}{#1}\ifx\p@ram\relax
     \getp@ram{fontsize}{#1}\dimen0=\p@ram\le@dingunit
-    \multiply\dimen0 by 14 \divide\dimen0 by 12
-    \setp@ram{baseline}{#1}{\the\dimen0}\baselineskip=\dimen0\else
+    \multiply\dimen0 by 14 \divide\dimen0 by 12 % default .75 shift of .85ex (ex=.5 fontsize) against 14/12
+    \setp@ram{baseline}{\f@ntstyle}{\the\dimen0}\baselineskip=\dimen0\else
   \baselineskip=\p@ram\fi}
 
 \def\ins@rtn@tecl@ss#1{% insert the given note class, either paragraphed or separately
+  \iff@rstnote\setn@tewidth\fi % set appropriate hsize width for diglot or not.
   \checkp@ranotes{#1}\ifp@ranotes\let\n@xt=\parains@rtn@tecl@ss
     \else\let\n@xt=\separateins@rtn@tecl@ss\fi
   \n@xt{#1}}
 
 % insert a note class in which each note is on its own line
 \def\separateins@rtn@tecl@ss#1{%
-  \x@\let\x@\th@cl@ss\csname note-#1\endcsname % make \th@cl@ss be a synonym for the current note class
+  \def\cl@ss{#1}
+  \ifdiglot\ifdiglotSepNotes\ifdiglotL\def\cl@ss{#1}\else\def\cl@ss{#1R}\fi\fi\fi%
+  \TRACE{seperateins@rtn@tecl@ss \cl@ss}%
+  \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   % if the noteclass has content to output ...
-  \ifvoid\th@cl@ss\else
+  \ifvoid\th@cl@ss\TRACE{no note}\else%
     \iff@rstnote\kern-\dimen0\vfil\fi % ignore depth of body text; fill space
     \vskip\AboveNoteSpace % output above note class space
-    \iff@rstnote\footnoterule\f@rstnotefalse\fi % output rule before first note
+    \iff@rstnote\footnoterule\global\f@rstnotefalse\fi % output rule before first note
     \hbox{\hskip\columnshift \vbox{\unvbox\th@cl@ss}}\fi}% output notes
 
 % insert a note class in which each note is in the same paragraph
 \def\parains@rtn@tecl@ss#1{%
-  \x@\let\x@\th@cl@ss\csname note-#1\endcsname % make \th@cl@ss be a synonym for the current note class
+  \def\cl@ss{#1}%
+  \ifdiglot\ifdiglotSepNotes\ifdiglotL\def\cl@ss{#1}\else\def\cl@ss{#1R}\fi\fi\fi%
+  \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\else
     \iff@rstnote\kern-\dimen0\vfil % ignore depth of body text; fill space
       \vskip\AboveNoteSpace\else\vskip\InterNoteSpace\fi
-    \iff@rstnote{\footnoterule}\f@rstnotefalse\fi % output rule before first note
+    \iff@rstnote{\footnoterule}\global\f@rstnotefalse\fi % output rule before first note
     {\maken@tepara{\th@cl@ss}{#1}}%
   \fi}
 
 \newif\iff@rstnote
 \f@rstnotetrue
 \def\footnoterule{\kern-0.5\AboveNoteSpace\kern-.4pt % the \hrule is .4pt high
-  \dimen0=\textwidth\advance\dimen0 by -\columnshift\toks0=\everypar\everypar={}\parskip=0pt\baselineskip=0pt\parindent=0pt\let\par=\endgraf\parfillskip=0pt%
+  \setn@tewidth
+  \dimen0=\n@tewidth\advance\dimen0 by -\columnshift\toks0=\everypar\everypar={}\parskip=0pt\baselineskip=0pt\parindent=0pt\let\par=\endgraf\parfillskip=0pt%
 %  \noindent\hbox{\noindent\kern\columnshift\vbox{\hrule width \dimen0}}\par
   \hbox{\kern\columnshift
     \vrule height 0.4pt width \dimen0}\kern0pt%
-    %\kern0.5\AboveNoteSpace
+    \kern0.5\AboveNoteSpace%This was commented out, without it the line was going through through some callers
 \everypar=\toks0}
 
 % determine if a given note class is to be paragraphed
-\def\ParagraphedNotes#1{\x@\let\csname paranotes-#1\endcsname=1}
+\def\ParagraphedNotes#1{\Par@gr@phedNotes{#1}\ifdiglot\ifdiglotSepNotes\Par@gr@phedNotes{#1}\Par@gr@phedNotes{#1R}\else\Par@gr@phedNotes{#1}\fi\fi}
+\def\Par@gr@phedNotes#1{\TRACE{Par@gr@phedNotes #1}\x@\let\csname paranotes-#1\endcsname=1}
 \newif\ifp@ranotes
 \def\checkp@ranotes#1{\x@\ifx\csname paranotes-#1\endcsname\relax
   \p@ranotesfalse\else\p@ranotestrue\fi}
 
+% Notewidth for diglots depends on settings and column. 
+\newdimen\n@tewidth
+\def\setn@tewidth{%
+  \ifdiglot%
+    \ifdiglotSepNotes%
+      \ifdiglotL%
+        \n@tewidth=\columnLwidth%
+      \else%
+        \n@tewidth=\columnRwidth%
+      \fi%
+    \else%
+      \n@tewidth=\textwidth%
+    \fi%
+  \else%
+    \n@tewidth=\textwidth%
+  \fi%
+}
 % reformat the contents of a note class insertion into a single paragraph.
 % this is usually done for \x. It is sometimes done for \f.
 % (based on code from the TeXbook, appendix D)
@@ -230,7 +262,8 @@
 \newskip\intern@teskip \intern@teskip=15pt plus 3pt minus 5pt
 \newskip\noteRag\noteRag=0pt plus 18pt
 \def\maken@tepara#1#2{%
-  \hsize=\textwidth%\advance\hsize by -\columnshift % width is full page size
+  \setn@tewidth
+  \hsize=\n@tewidth%\advance\hsize by -\columnshift % width is full page size
   \let\par=\endgraf\ch@pterfalse
   \everypar={}% don't do body text formatting
   \unvbox#1 % open up the vbox of notes to get at the list of individual note boxes
@@ -367,10 +400,11 @@
 
 \def\pagebody{\vbox to\textheight{\boxmaxdepth\maxdepth \pagecontents}}
 \def\makeheadline{%
+  \def\f@ntstyle{h\ifdiglot\ifdiglotL L\else R\fi\fi}
   \vbox to 0pt{\kern-\topm@rgin
    \vbox{\kern\HeaderPosition\MarginUnit
     \setbox0=\vbox{\hbox to \textwidth{\the\headline}}
-    \ht0=0.7\fontdimen6\csname font<h>\endcsname \dp0=0pt \box0
+    \ht0=0.7\fontdimen6\csname font<\f@ntstyle>\endcsname \dp0=0pt \box0
     \ifrhr@le\ifdim\RHruleposition=\maxdimen\else
       \kern\RHruleposition \hrule
     \fi\fi}\vss}\nointerlineskip}
@@ -384,7 +418,13 @@
 
 % switch to double-column mode if currently single.
 % this is called from \parstyle when the new style wants to be double-columned
-\def\doublecolumns{%
+\def\doublecolumns{
+  \ifdiglot\enddigl@t\diglotfalse% Now force doublec@lumns to do stuff.
+  \c@rrentcols=1 
+  \fi%
+  \doublec@lumns%
+}
+\def\doublec@lumns{%
   \ifnum\c@rrentcols=1
     % make switch from single to double column
     \ifhe@dings\endhe@dings\fi % if headings in process, end headings
@@ -516,13 +556,21 @@
 % this will decrease \availht by the space needed for the given class
 \def\reduceavailht#1{%
   \checkp@ranotes{#1}%
+  %\TRACE{av: \the\availht =>}
   \ifp@ranotes\let\n@xt=\reduceavailht@para
-  \else\let\n@xt=\reduceavailht@sep\fi
-  \iff@rstnote\else\global\noteseentrue\fi%
+    \ifdiglot\ifdiglotSepNotes\ifdiglotBalNotes\let\n@xt=\reduceavailht@para@bal\fi\fi\fi
+  \else\let\n@xt=\reduceavailht@sep
+    \ifdiglot\ifdiglotSepNotes\ifdiglotBalNotes\let\n@xt=\reduceavailht@sep@bal\fi\fi\fi
+  \fi\iff@rstnote\else\global\noteseentrue\fi%
   \n@xt{#1}}
 
 \def\reduceavailht@para#1{
-  \x@\let\x@\th@cl@ss\csname note-#1\endcsname
+  \def\cl@sss{#1}%
+  \ifdiglot\ifdiglotSepNotes\ifdiglotL\def\cl@sss{#1}\else\def\cl@sss{#1R}\fi\fi\fi%
+  \TRACE{class \cl@sss}%
+  \relax
+  \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
+  \relax
   \ifvoid\th@cl@ss\else
     \setbox0=\copy\th@cl@ss
     \setbox0=\vbox{\maken@tepara{0}{#1}}
@@ -532,15 +580,89 @@
     \else \advance\availht by -\InterNoteSpace\fi
     %\getp@ram{baseline}{#1}\ifx\p@ram\relax\else\advance\availht-\p@ram\fi
   \fi}
+
+\def\reduceavailht@para@bal#1{%
+  \TRACE{reduceavailht@para@bal #1}%
+  \x@\let\x@\th@cl@ssL\csname note-#1\endcsname%
+  \bgroup%leave dimen0 etc unchanged
+  \dimen0=0pt%
+  %FIXME: Should this code adjust & restore diglotL?%
+  \ifvoid\th@cl@ssL\else%
+    \setbox0=\copy\th@cl@ssL%
+    \setbox0=\vbox{\maken@tepara{0}{#1}}%
+    \message{reduceavailht@para@bal for #1 ht0=\the\ht0 dp0=\the\dp0}%
+    \dimen0=\ht0%
+    \advance\dimen0 by \dp0%
+  \fi%
+  \x@\let\x@\th@cl@ssR\csname note-#1R\endcsname%
+  \dimen1=0pt%
+  \ifvoid\th@cl@ssR\else%
+    \setbox0=\copy\th@cl@ssR%
+    \setbox0=\vbox{\maken@tepara{0}{#1}}%
+    \message{reduceavailht@para@bal for #1R ht1=\the\ht1 dp1=\the\dp1}%
+    \dimen1=\ht0%
+    \advance\dimen1 by \dp0%
+  \fi%
+  \ifnum\dimen1>\dimen0%
+    \dimen0=\dimen1%
+  \fi%
+  \ifdim\dimen0>0pt%
+    \advance\availht by -\dimen0%
+    \iff@rstnote\advance\availht by -\AboveNoteSpace \f@rstnotefalse
+    \else \advance\availht by -\InterNoteSpace\fi
+    %\getp@ram{baseline}{#1}\advance\availht-\p@ram%
+    \message{p@ram=\p@ram}%
+  \fi\egroup}
+
+
 \def\reduceavailht@sep#1{
-  \x@\let\x@\th@cl@ss\csname note-#1\endcsname
+  \def\cl@sss{#1}%
+  \ifdiglot\ifdiglotSepNotes\ifdiglotL\def\cl@sss{#1}\else\def\cl@sss{#1R}\fi\fi\fi%
+ \TRACE{class \cl@sss}%
+ \relax
+ \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
+ \relax
   \ifvoid\th@cl@ss\else
     \f@rstnotefalse
     \advance\availht by -\ht\th@cl@ss
     \advance\availht by -\dp\th@cl@ss
     \advance\availht by -\AboveNoteSpace
+%FIXME?: Shouldn't the above be using InterNoteSpace? 
   \fi}
+
+\def\reduceavailht@sep@bal#1{%
+  \TRACE{reduceavailht@sep@bal}%
+  \x@\let\x@\th@cl@ssR\csname note-#1\endcsname%
+  \x@\let\x@\th@cl@ssL\csname note-#1R\endcsname%
+  \dimen0=0pt\dimen1=0pt
+  \ifvoid\th@cl@ssL\else%
+    \dimen0=\ht\th@cl@ssL
+    \advance\dimen0 by \dp\th@cl@ssL
+  \fi%
+  \ifvoid\th@cl@ssR\else%
+    \dimen1=\ht\th@cl@ssR 
+    \advance\dimen1 by \dp\th@cl@ssR
+  \fi%
+  \ifdim\dimen0>0pt 
+    \advance\availht by -\dimen0
+    \advance\availht by -\AboveNoteSpace
+  \fi}
+
 \def\cle@rn@tecl@ss#1{%
+  \ifdiglot%
+    \ifdiglotSepNotes%
+       \cle@rn@t@cl@ss{#1}%
+       \cle@rn@t@cl@ss{#1R}%
+    \else%
+       \cle@rn@t@cl@ss{#1}%
+    \fi%
+  \else%
+    \cle@rn@t@cl@ss{#1}%
+  \fi%
+}
+
+
+\def\cle@rn@t@cl@ss#1{%
   \x@\let\x@\th@cl@ss\csname note-#1\endcsname
   \global\setbox\th@cl@ss=\box\voidb@x}
 
@@ -870,6 +992,51 @@
   \unvbox255\eject
 }
 
+\def\enddigl@t{
+  \ifsk@pping \egroup \fi% if we were skipping nonpublishable text, end that mode
+  \sk@ppingfalse
+  \ifhe@dings\endhe@dings\fi%
+  \Lneedsemptyingtrue%
+%FIXME! If \ifendbooknoeject  happens to be true, then what? 
+%Set the 2 columns, put the footnotes up in the air and carry on??
+  \eject
+}
+
+% to switch back to single column, we reset the page size parameters
+\def\singlecolumn{
+  \ifdiglot\enddigl@t\diglotfalse\fi%
+  \singlec@lumn
+}
+% to switch back to diglot columns, first set the page  so far 
+% and then change the rest.
+\def\diglotcolumns{
+  \ifdiglot\enddigl@t\else%
+    %\ifnum\c@rrentcols=2 \singlec@lumn\else\doublec@lumns\fi%
+  \fi%
+  \diglottrue\diglots@tup%
+}
+
+\def\diglots@tup{%
+  % reset parameters for diglot-column formatting
+  \global\hsize=\columnLwidth % always start with left column
+  \global\vsize=\textheight %
+  \global\BodyColumns=1
+  \global\advance\vsize by \baselineskip % don't get caught short by 1/2 line or so
+  \global\advance\vsize by -\ht\partial % Don't mis-inform tex
+  % make a macro reset vsize for remaining pages which do not have 1 column material
+  \gdef\resetvsize{\global\vsize=\textheight \global\advance\vsize by -\ht\partial \global\advance\vsize by 0.5\baselineskip} 
+  \global\availht=\vsize
+  %\global\c@rrentcols=2
+  \global\output={\diglotLeft}
+  % (\count of an insertion class is a scaling factor)
+  \count255=1000
+  \global\count\topins=\count255
+  \global\count\bottomins=\count255
+  %\let\\=\s@tn@tec@unt \the\n@tecl@sses % NECESSARY? reset \count for each note class
+  \global\holdinginserts=1 % don't pull out inserts yet, we are still adjusting page
+  %\msg{Starting diglot partial: \the\ht\partial, pagetotal: \the\pagetotal, vsize: \the\vsize}
+} 
+
 \def\twocolp@geout{%This gets used a few times
   \def\pagecontents{
     \trace{b}{BALANCE pageout: cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins}
@@ -905,7 +1072,7 @@
     \global\vsize=\textheight
     %\tempfalse
     \ifdim\ht\partial>0.9\textheight
-      \twocolp@geout \fi%Set up page and call \plainoutput
+      \twocolp@geout \fi%Set up pagecontents and call \plainoutput
     \global\c@rrentcols=1
     \trace{o}{resetting resetvsize for singlecolumn}\def\resetvsize{\trace{o}{resetvsize}\global\vsize=\textheight} 
     \global\output={\onecol}
@@ -937,7 +1104,7 @@
 % Redefine \p@rams to be rest of list
 \def\stripspace#1 \end/#2\relax#3{\if\relax#2\relax\gdef\p@ram{#3}\else\stripspace#1\end/ \end/\relax{#1}\fi}
 \def\FigP@ramAlt{alt} \def\FigP@ramSrc{src} \def\FigP@ramSize{size} \def\FigP@ramLoc{loc}
-\def\FigP@ramCopy{copy} \def\FigP@ramRef{ref}
+\def\FigP@ramCopy{copy} \def\FigP@ramRef{ref} \def\FigP@ramXtra{xetex}
 \newif\ifusfmthree \usfmthreefalse
 \def\getonepairp@ram#1="#2" {\stripspace#1\end/ \end/\relax{#1}\edef\p@ramid{\p@ram}%
   \stripspace#2\end/ \end/\relax{#2}\edef\p@ramval{\p@ram}%
@@ -949,7 +1116,8 @@
     \ifx\p@ramid\FigP@ramCopy\global\p@ramnumber=5\else
     \ifx\p@ramid\FigP@ramAlt\global\p@ramnumber=6\else
     \ifx\p@ramid\FigP@ramRef\global\p@ramnumber=7\else
-    \fi\fi\fi\fi\fi\fi
+    \ifx\p@ramid\FigP@ramXtra\global\p@ramnumber=8\else %experimental extra parameter, post filename e.g. "rotated 90"
+    \fi\fi\fi\fi\fi\fi\fi
     \tempfalse
     \ifx\p@ramval\empty\ifusfmthree\else
       \trace{g}{param-\the\p@ramnumber = "\p@ramid" but not "\p@ramval"}%
@@ -1013,6 +1181,9 @@
         \else\ifx\loc@ption\loc@BR \let\p@cins=\bottomrightins
         \fi\fi\fi\fi
       \else
+	\ifdiglot
+	\MSG{HOW DID THAT HAPPEN? currentcols=\the\c@rrentcols}
+	\fi
         \ifx\loc@ption\loc@TL \picw@rning{tl}{t}\let\p@cins=\topins
         \else\ifx\loc@ption\loc@TR \picw@rning{tr}{t}\let\p@cins=\topins
         \else\ifx\loc@ption\loc@BL \picw@rning{bl}{b}\let\p@cins=\bottomins
@@ -1041,7 +1212,7 @@
        \expandafter\ch@ckpdf\f@lename..\endf@lename
     \setbox0=\hbox to \p@cwidth{\hss
       \picfilecomm@nd "\the\PicPath\csname param-2\endcsname"
-                     width \sizem@ltiple\p@cwidth \hss}
+                     width \sizem@ltiple\p@cwidth \csname param-8\endcsname\hss}
     \ifFigurePlaceholders % replace graphic with a frame and the file name
       \setbox0=\vbox to \ht0{\offinterlineskip
         \hrule height .2pt \kern-.2pt

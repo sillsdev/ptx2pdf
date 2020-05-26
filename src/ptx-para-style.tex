@@ -58,7 +58,8 @@
   \ifnum\BodyColumns=\c@rrentcols
     \penalty-200\vskip\baselineskip
   \else
-    \ifnum\BodyColumns=2 \doublecolumns\else\singlecolumn\fi
+    \ifdiglot\diglotcolumns\else
+    \ifnum\BodyColumns=2 \doublecolumns\else\singlecolumn\fi\fi
   \fi
   \global\b@dytrue\global\@ntrofalse\global\t@tlefalse\fi}
 
@@ -113,8 +114,12 @@
 % end a paragraph, handling cutouts (shaping around drop-cap) if any, and the <end> hook
 \def\par{\ifhmode \TRACE{par}%
  \makecutouts
+ \ifdiglot\setsid@%\MSG{end-\m@rker\sid@}%
+   \csname end-\m@rker\sid@\endcsname % handle side-specific <end> hook
+ \fi
  \csname end-\m@rker\endcsname
- \endgraf \cutoutcarryover \fi}
+ \endgraf 
+ \cutoutcarryover \fi}
 
 %
 % Handle a paragraph style marker (parameter is the marker name)
@@ -146,9 +151,15 @@
     \vskip\p@ram\verticalsp@ceunit
   \fi
   \resetp@rstyle
+  \ifdiglot\setsid@%\MSG{start-\thisch@rstyle\sid@}%
+    \csname after-\m@rker\sid@\endcsname\relax% handle side-specific <start> hook
+  \fi
   \csname after-\m@rker\endcsname % handle <after> hook for the previous style
   \gdef\m@rker{#1} % remember the new style name
   \csname before-\m@rker\endcsname % handle its <before> hook
+  \ifdiglot%
+    \csname before-\m@rker\sid@\endcsname\relax% handle side-specific <start> hook
+  \fi
   %
   % now we check what kind of marker this is: intro? title? section? other?
   % and switch to the appropriate mode
@@ -293,6 +304,9 @@
    \ifvoid\ch@pterbox\else \kern-\wd\ch@pterbox \box\ch@pterbox \fi
    \global\p@ranesting=1
    \csname start-\m@rker\endcsname % handle <start> hook
+   \ifdiglot\setsid@%\MSG{start-\m@rker\sid@}%
+     \csname start-\m@rker\sid@\endcsname % handle side-specific <start> hook
+   \fi
    \ifdr@ppednumber \spacefactor=0\n@wchaptersf \fi
    \startparafalse
    % set special \spacefactor if we're at a chapter number, so \v 1 can omit the verse number here
@@ -307,8 +321,11 @@
 \def\n@wchaptersf{998}
 \let\b@ok\relax
 \let\prevb@ok\relax
+\let\b@okR\relax
+\let\prevb@okR\relax
+\def\pdfb@@kmark{\ifdiglot\ifdiglotL\pdfb@@km@rk\else\pdfb@@km@rkR\fi\else\pdfb@@km@rk\fi}
 
-\def\pdfb@@kmark{\ifx\b@ok\prevb@ok
+\def\pdfb@@km@rk{\ifx\b@ok\prevb@ok
  \else
   \global\dr@ppednumberfalse
   \bgroup\liter@lspecials
@@ -320,9 +337,33 @@
   \egroup
  \fi}
 
-\def\pdfch@ptermark{\bgroup\liter@lspecials
+\def\Alternative{\ /\ }%
+\let\b@okC=\relax
+
+\def\pdfb@@km@rkR{\ifx\b@okR\prevb@okR
+ \else
+  \bgroup\liter@lspecials
+   \special{pdf:dest (\id@@@.) [@thispage /Fit]}%
+   \ifx\b@ok\relax \let\t@mpL=\relax \else \let\t@mpL=\b@ok \fi
+   \ifx\b@okR\relax \let\t@mpR=\id@@@ \else \let\t@mpR=\b@okR \fi
+   \ifx\t@mpL\relax \let\b@okC=\t@mpR\else\ifx\b@okR\relax \let\b@okC=\t@mpL\else\def\b@okC{\t@mpL\Alternative\t@mpR}\fi\fi
+   \special{pdf:outline 0 << /Title (\b@okC)
+            /A << /S /GoTo /D (\id@@@.) >> >>}%
+   \global\let\prevb@okR\b@okR
+  \egroup
+ \fi}
+
+\def\pdfch@ptermark{\ifdiglot\ifdiglotL\pdfch@pterm@rk\else\pdfch@pterm@rkR\fi\else\pdfch@pterm@rk\fi}
+\def\pdfch@pterm@rk{\bgroup\liter@lspecials
   \special{pdf:dest (\id@@@.\ch@pter) [@thispage /Fit]}%
   \ifx\b@ok\relax \let\t@mp=\id@@@ \else \let\t@mp=\b@ok \fi
+  \special{pdf:outline 1 << /Title (\t@mp\space\ch@pter)
+           /A << /S /GoTo /D (\id@@@.\ch@pter) >> >>}%
+  \egroup}
+
+\def\pdfch@pterm@rkR{\bgroup\liter@lspecials
+  \special{pdf:dest (\id@@@.\ch@pter) [@thispage /Fit]}%
+  \ifx\b@okR\relax \let\t@mp=\id@@@ \else \let\t@mp=\b@okR \fi
   \special{pdf:outline 1 << /Title (\t@mp\space\ch@pter)
            /A << /S /GoTo /D (\id@@@.\ch@pter) >> >>}%
   \egroup}
@@ -372,9 +413,9 @@
     \fi
   \fi}
 
-\def\@parlines#1{\ifx\pendingch@pter\empty\else
+\def\@parlines#1{\ifx\pendingch@pter\empty\else%
   \advance\this@y by #1 \advance\this@y by -1
-  \MSG{* calculated \string\DelayedChapter{\pendingb@@k}{\pendingch@pter}{\the\this@y}}%
+%  \MSG{* calculated \string\DelayedChapter{\pendingb@@k}{\pendingch@pter}{\the\this@y}}%
   \wr@teDelayedChapter{\pendingb@@k}{\pendingch@pter}{\the\this@y}%
   \let\pendingch@pter\empty\let\pendingb@@k\empty\fi}
 
@@ -395,7 +436,7 @@
   \else \pr@vdelay=\csname delay-#1.#2\endcsname\fi
   \th@sdelay=#3\relax
   \ifnum\pr@vdelay=\th@sdelay % if the delay value is unchanged, all is good
-    \MSG{PARLOC: OK}%
+    %\MSG{PARLOC: OK}%
   \else
     \advance\pr@vdelay by 1
     \ifnum\pr@vdelay=\th@sdelay % if new delay is 1 greater than old, we can use \RaiseChapter

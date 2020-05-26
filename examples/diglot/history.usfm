@@ -1,0 +1,37 @@
+\lefttext
+\id HIS History of Diglot
+\h The history of diglot
+\c 1
+\p
+\v 1 This is the begining of the story of diglot.
+\v 2 First Knuth made \TeX, then Kew made \XeTeX\ from \TeX.
+\v 3 \XeTeX\ had a child called paratext2, and paratext2 had
+a child called ptxplus.
+\righttext
+\h The history of diglot
+\c 1
+\p
+\v 1 Hereby beginneth the account of the nation of diglot.
+\v 2 Knuth begat \TeX, Kew took \TeX\ unto himself and begat \XeTeX.
+\v 3 \XeTeX\ begat paratext2, paratext2 begat ptxplus.
+\lefttext
+\s The birth of diglot 
+\p
+\norighttext
+\p
+\v 4 David took ptxplus and tweaked it in various places and so diglot came into being, and it lived in dark obscurity for many years, sometimes crafting text, sometimes creating strange things.
+\p
+
+\righttext
+\p
+\v 4 And David took ptxplus and did bend it in diverse places to make diglot.  Diglot dwelt in darkness and created beauty or disaster depending upon many factors.
+\p
+\lefttext
+\p 
+\v 5 Then Mark and Martin created  of a beautiful thing called ptxprint  using Something Completely Different called python, and asked David to possibly make the diglot code fit into it. And David had time, and patched some bugs in diglot and also in ptxprint. And so it was that diglot ventured out into the world. 
+
+\p
+\righttext
+\p 
+\v 5 And then did Mark and Martin come together and used Something Completely Different,  named python, and crafted the wondrous ptxprint. And David was asked if diglot would wed ptxprint. And David found the precious  treasure called time, and trimmed some strangenesses from diglot, and even from ptxprint  also. And behold, the two became one and marched forth into the world.
+

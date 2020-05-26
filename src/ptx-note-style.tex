@@ -49,7 +49,16 @@
 % new note class: append to the list in \n@tecl@sses, and allocate an \insert number
 \def\allocatecl@ss#1{
   \x@\n@tecl@sses\x@{\the\n@tecl@sses \\{#1}}%
-  \x@\n@winsert\csname note-#1\endcsname
+  \relax%
+  \ifdiglot%
+    \n@wnoteins@rt{#1}%
+    \n@wnoteins@rt{#1R}% May not always need this, but somsone might change their minds.
+  \else%
+    \n@wnoteins@rt{#1}%
+  \fi%
+}
+\def\n@wnoteins@rt#1{
+	\x@\n@winsert\csname note-#1\endcsname
 }
 \let\n@winsert=\newinsert % work around the \outer nature of \newinsert
 
@@ -57,7 +66,20 @@
 \def\initn@testyles{\let\\=\s@tn@tep@rams \the\n@tecl@sses}
 \def\s@tn@tep@rams#1{%
   \checkp@ranotes{#1}%
-  \x@\count\csname note-#1\endcsname=\ifp@ranotes 0 \else 1000 \fi %% !!!FIXME!!!
+  \ifdiglot%
+    \ifdiglotSepNotes%
+       \s@tn@tep@r@ms{#1}%
+       \s@tn@tep@r@ms{#1R}%
+    \else%
+       \s@tn@tep@r@ms{#1}%
+    \fi%
+  \else%
+    \s@tn@tep@r@ms{#1}%
+  \fi%
+}
+
+\def\s@tn@tep@r@ms#1{%
+  \x@\count\csname note-#1\endcsname=\ifp@ranotes 500 \else 1000 \fi %% !!!FIXME!!!
   \x@\skip\csname note-#1\endcsname=\AboveNoteSpace
   \x@\dimen\csname note-#1\endcsname=\maxdimen
 }
@@ -83,7 +105,7 @@
    \let\aftern@te\relax
    \ifhe@dings\bgroup\fi
    \setbox0=\hbox\bgroup \skipn@testyletrue
-   \global\n@tenesting=1\relax
+   \global\n@Tenesting=1\relax
    \ifdim\lastskip>0pt \sp@cebeforetrue \else \sp@cebeforefalse \fi % was there a preceding space?
   \else
    \leavevmode
@@ -121,6 +143,7 @@
   \csname end-\newn@testyle\endcsname % execute <end> hook
  \fi
  \egroup \ifhe@dings\egroup\fi% end the insert (started in \m@kenote) or skip-box
+ \global\inn@tefalse
  \global\n@tenesting=0 
  \ifsp@cebefore \global\let\n@xt=\ignorespaces % ignore following spaces if there was a preceding one
    \else \global\let\n@xt\relax \fi
