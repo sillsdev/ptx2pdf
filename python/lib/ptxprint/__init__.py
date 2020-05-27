@@ -1770,7 +1770,8 @@ class PtxPrinterDialog:
         if not self.get("c_diglot") or self.info is None:
             DiglotStringL = ""
             DiglotStringR = ""
-        else:
+        else: # MH: We need to decide whether we place the secPDF in its own folder 
+              #(or whether we put it into the Pri Printdraft folder) - and fix the hardcoded 'PrintDraft" paths!
             secprjid = self.get("cb_diglotSecProject")
             # I'm not sure if there's a better way to handle this - looking for the already-created Secondary diglot file
             sectmpdir = os.path.join(self.settings_dir, secprjid, 'PrintDraft') if self.get("c_useprintdraftfolder") else self.working_dir
@@ -1974,7 +1975,3 @@ class PtxPrinterDialog:
 
     def onEnableDecorativeElementsClicked(self, c_enableDecorativeElements):
         self.builder.get_object("gr_borders").set_sensitive(self.get("c_enableDecorativeElements"))
-
-    # def on_diglotPriFraction_move_slider(self, slider): # MH: Ask why 2 or 4 positional arguments
-        # priFraction = self.get("s_diglotPriFraction")
-        # print("{:.1f}% for primary".format(float(priFraction)))

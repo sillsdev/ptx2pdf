@@ -72,11 +72,20 @@ class AlignedDiglot():
     styleInfo = ""
     processTex = True
     texCode = r"""
-\def\regularR{{"{diglot/fontregular}{diglot/fontregeng}{diglot/fontfeatures}{diglot/docscript}{diglot/docdigitmapping}"}}
-\def\boldR{{"{diglot/fontbold}{diglot/fontboldeng}{diglot/fontfeatures}{diglot/docscript}{diglot/docdigitmapping}{diglot/boldembolden}{diglot/boldslant}"}}
-\def\italicR{{"{diglot/fontitalic}{diglot/fontitaleng}{diglot/fontfeatures}{diglot/docscript}{diglot/docdigitmapping}{diglot/italembolden}{diglot/italslant}"}}
-\def\bolditalicR{{"{diglot/fontbolditalic}{diglot/fontbolditaleng}{diglot/fontfeatures}{diglot/docscript}{diglot/docdigitmapping}{diglot/bolditalembolden}{diglot/boldital/slant}"}}
+\def\regularR{{"{diglot/fontregular}{diglot/fontregeng}{diglot/texfeatures}{diglot/docscript}{diglot/docdigitmapping}"}}
+\def\boldR{{"{diglot/fontbold}{diglot/fontboldeng}{diglot/texfeatures}{diglot/docscript}{diglot/docdigitmapping}{diglot/boldembolden}{diglot/boldslant}"}}
+\def\italicR{{"{diglot/fontitalic}{diglot/fontitaleng}{diglot/texfeatures}{diglot/docscript}{diglot/docdigitmapping}{diglot/italembolden}{diglot/italslant}"}}
+\def\bolditalicR{{"{diglot/fontbolditalic}{diglot/fontbolditaleng}{diglot/texfeatures}{diglot/docscript}{diglot/docdigitmapping}{diglot/bolditalembolden}{diglot/boldital/slant}"}}
 """
+
+class AlignedDiglotTESTIING():
+    regexes = []
+    styleInfo = ""
+    processTex = False
+    texCode = r"""\def\regularR{"Annapurna SIL:litr=1:ital=1"}
+\def\boldR{"Annapurna SIL:litr=1:ital=1:embolden=1.80"}
+\def\italicR{"Annapurna SIL:litr=1:ital=1:slant=0.1500"}
+\def\bolditalicR{"Annapurna SIL:litr=1:ital=1:embolden=1.80:slant=0.1500"}"""
 
 class FancyBorders():
     regexes = []
@@ -182,7 +191,7 @@ class FancyBorders():
 
 {fancy/versedecorator}\def\getversedigits#1#2#3#4\end{{\def\digitone{{#1}}\def\digittwo{{#2}}\def\digitthree{{#3}}}}
 
-{fancy/versedecorator}\font\smallversenums="{versenumfont}" at {fancy/versenumsize}pt
+{fancy/versedecorator}\font\smallversenums="{fontfancy/versenumfont}" at {fancy/versenumsize}pt
 {fancy/versedecorator}\def\exclam{{!}}
 {fancy/versedecorator}\def\printversedigits{{%
 {fancy/versedecorator}  \beginL
