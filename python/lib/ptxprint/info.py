@@ -886,6 +886,7 @@ class Info:
         self.loadConfig(None, config)
 
     def createConfig(self, printer):
+        self.update(printer)
         config = configparser.ConfigParser()
         for k, v in self._mappings.items():
             if k in self._attributes:
@@ -906,12 +907,11 @@ class Info:
                     continue
             self._configset(config, k, str(val))
         for k, v in self._fonts.items():
-            btn = printer.builder.get_object(v[0])
-            finfo = btn.font_info
-            self._configset(config, k+"/name", finfo[0])
-            self._configset(config, k+"/style", finfo[1])
+            for a in ("name", "style"):
+                key = "{}/{}".format(k, a)
+                self._configset(config, key, self.dict[key])
         for k, v in self._snippets.items():
-            self._configset(config, k, str(printer.get(v[0], asstr=True)))
+            self._configset(config, k, self.asBool(k))
         return config
 
     def loadConfig(self, printer, config):
