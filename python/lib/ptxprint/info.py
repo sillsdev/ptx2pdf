@@ -888,7 +888,7 @@ class Info:
         self.loadConfig(None, config)
 
     def createConfig(self, printer):
-        self.update(printer)
+        self.update()
         config = configparser.ConfigParser()
         for k, v in self._mappings.items():
             if k in self._attributes:
