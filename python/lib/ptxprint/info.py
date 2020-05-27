@@ -348,6 +348,7 @@ class Info:
         self.dict["document/directory"] = os.path.abspath(docdir).replace("\\","/")
         self.dict['project/adjlists'] = os.path.join(printer.configPath(), "AdjLists/").replace("\\","/")
         self.dict['project/piclists'] = os.path.join(printer.working_dir, "tmpPicLists/").replace("\\","/")
+        self.readFonts(printer)
         self.processFonts(printer)
         self.processHdrFtr(printer)
         # sort out caseless figures folder. This is a hack
@@ -393,6 +394,13 @@ class Info:
         else:
             return True
 
+    def readFonts(self, printer):
+        for k, v in self._fonts.items():
+            btn = printer.builder.get_object(v[0])
+            name, style = btn.font_info
+            self.dict[k+"/name"] = name
+            self.dict[k+"/style"] = style
+
     def processFonts(self, printer):
         """ Update model fonts from UI """
         silns = "{urn://www.sil.org/ldml/0.1}"
@@ -402,19 +410,19 @@ class Info:
         for p in ['fontregular'] + list(self._fonts.keys()):
             if p in self.dict:
                 continue
-            btn = printer.builder.get_object(self._fonts[p][0])
-            name, style = btn.font_info
+            name = self.dict[p+"/name"]
+            style = self.dict[p+"/style"]
             f = TTFont(name, style)
-            self.dict[p+"/name"] = name
-            self.dict[p+"/style"] = style 
             # print(p, wid, f.filename, f.family, f.style)
             if f.filename is None and p != "fontregular" and self._fonts[p][1] is not None:
-                regbtn = printer.builder.get_object(self._fonts['fontregular'][0])
-                f = TTFont(*regbtn.font_info)
-                printer.set(self._fonts[p][1], True)
-                printer.setFontButton(btn, *regbtn.font_info)
-                self.updatefields([self._fonts[p][2]])
-                # print("Setting {} to {}".format(p, reg))
+                regname = self.dict["fontregular/name"]
+                regstyle = self.dict["fontregular/style"]
+                f = TTFont(regname, regstyle)
+                if printer is not None:
+                    printer.set(self._fonts[p][1], True)
+                    printer.setFontButton(btn, name, style)
+                    self.updatefields([self._fonts[p][2]])
+                    # print("Setting {} to {}".format(p, reg))
             d = self.printer.ptsettings.find_ldml('.//special/{1}external-resources/{1}font[@name="{0}"]'.format(f.family, silns))
             featstring = ""
             if d is not None:
@@ -422,7 +430,8 @@ class Info:
             if featstring == "":
                 featstring = printer.get(self._mappings["font/features"][0])
             if featstring is not None and len(featstring):
-                printer.set(self._mappings["font/features"][0], featstring)
+                if printer is not None:
+                    printer.set(self._mappings["font/features"][0], featstring)
                 f.features = {}
                 for l in re.split(r'\s*[,;:]\s*|\s+', featstring):
                     if '=' in l:
@@ -930,6 +939,7 @@ class Info:
                         pass # ignore missing keys 
                 elif printer is not None and key in self._snippets:
                     printer.set(self._snippets[key][0], val.lower() == "true")
+        self.processFonts(printer)
         if printer is None:
             return
         for k, v in self._fonts.items(): 
@@ -1154,6 +1164,9 @@ class Info:
             return blst
         else:
             return self.booklist
+
+    def updateBooklist(self, bl):
+        self.dict["project/booklist"] = " ".join(bl)
 
     def getBookFilename(self, bk, prjid):
         if self.ptsettings is None:
