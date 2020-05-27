@@ -1165,7 +1165,8 @@ class Info:
                     blst.append(b)
             return blst
         else:
-            return self.booklist
+            # return self.booklist
+            return []
 
     def updateBooklist(self, bl):
         self.dict["project/booklist"] = " ".join(bl)

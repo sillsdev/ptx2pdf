@@ -318,7 +318,7 @@ class PtxPrinterDialog:
 
     def onOK(self, btn):
         Info._missingPicList = []
-        jobs = self.getBooks()
+        jobs = self.info.getBooks()
         # If the viewer/editor is open on an Editable tab, then "autosave" contents
         if self.builder.get_object("nbk_Main").get_current_page() == 7:
             pgnum = self.builder.get_object("nbk_Viewer").get_current_page()
@@ -611,7 +611,7 @@ class PtxPrinterDialog:
         fndict = {0 : ("", ""),     1 : ("PicLists", ".piclist"), 2 : ("AdjLists", ".adj"), \
                   3 : ("", ".tex"), 4 : ("", ".log")}
         if pgnum <= 2:  # (SFM,PicList,AdjList)
-            fname = self.getBookFilename(bk, prjid)
+            fname = info.getBookFilename(bk, prjid)
             if pgnum == 0:
                 fpath = os.path.join(self.working_dir, fndict[pgnum][0], fname)
                 self.builder.get_object("btn_Generate").set_sensitive(False)
@@ -1564,7 +1564,7 @@ class PtxPrinterDialog:
         prjid = self.get("cb_project")
         prjdir = os.path.join(self.settings_dir, self.prjid)
         for bk in booklist:
-            fname = self.getBookFilename(bk, prjid)
+            fname = info.getBookFilename(bk, prjid)
             outfname = os.path.join(self.configPath(), "PicLists", fname)
             doti = outfname.rfind(".")
             if doti > 0:
@@ -1577,7 +1577,7 @@ class PtxPrinterDialog:
             if not self.msgQuestion(q1, q2):
                 return
         for bk in booklist:
-            fname = self.getBookFilename(bk, prjid)
+            fname = info.getBookFilename(bk, prjid)
             infname = os.path.join(prjdir, fname)
             outfname = os.path.join(self.configPath(), "PicLists", fname)
             doti = outfname.rfind(".")
@@ -1652,7 +1652,7 @@ class PtxPrinterDialog:
         prjid = self.get("cb_project")
         prjdir = os.path.join(self.settings_dir, self.prjid)
         for bk in booklist:
-            fname = self.getBookFilename(bk, prjid)
+            fname = info.getBookFilename(bk, prjid)
             outfname = os.path.join(self.configPath(), "AdjLists", fname)
             doti = outfname.rfind(".")
             if doti > 0:
@@ -1665,7 +1665,7 @@ class PtxPrinterDialog:
             if not self.msgQuestion(q1, q2):
                 return
         for bk in booklist:
-            fname = self.getBookFilename(bk, prjid)
+            fname = info.getBookFilename(bk, prjid)
             infname = os.path.join(prjdir, fname)
             outfname = os.path.join(self.configPath(), "AdjLists", fname)
             doti = outfname.rfind(".")
@@ -1864,7 +1864,7 @@ class PtxPrinterDialog:
         bks = self.info.getBooks()
         for bk in bks:
             if bk not in Info._peripheralBooks:
-                fname = self.getBookFilename(bk, prjid)
+                fname = info.getBookFilename(bk, prjid)
                 fpath = os.path.join(self.settings_dir, prjid, fname)
                 if os.path.exists(fpath):
                     with open(fpath, "r", encoding="utf-8") as inf:
@@ -1886,7 +1886,7 @@ class PtxPrinterDialog:
         prjdir = os.path.join(self.settings_dir, prjid)
         bks = self.info.getBooks()
         for bk in bks:
-            fname = self.getBookFilename(bk, prjid)
+            fname = info.getBookFilename(bk, prjid)
             fpath = os.path.join(self.settings_dir, prjid, fname)
             if os.path.exists(fpath):
                 with open(fpath, "r", encoding="utf-8") as inf:
