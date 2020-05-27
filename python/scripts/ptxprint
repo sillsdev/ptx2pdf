@@ -34,6 +34,8 @@ _errmsghelp = {
                                          "Try turning off all Advanced settings & disable Changes and Stylesheets\n",
 }
 _diglot = {
+"diglot/colorfonts" :       "document/ifcolorfonts",
+
 "diglot/fontregular" :      "fontregular",
 "diglot/fontregeng" :       "fontregular/engine",
 "diglot/fontfeatures" :     "font/features",
@@ -181,13 +183,17 @@ def digdojob(jobs, info, prjid, prjdir, diginfo, digprjid, digprjdir, tmpdir, lo
         digdonebooks.append(digout)
     info["project/bookids"] = jobs
     info["project/books"] = donebooks
+    diginfo["project/bookids"] = jobs
+    diginfo["project/books"] = donebooks
     
     # Now run the Perl script to merge those pairs of books and call the merged file: NNBUKPRJID-draft.ext
 
     # Pass all the needed parameters for the snippet from diginfo to info
     for k,v in _diglot.items():
-        print(info[k], "=", diginfo[v])
+        print(diginfo[v])
+        print(k, "=", v)
         info[k]=diginfo[v]
+        # print(info[k], "=", diginfo[v])
     sharedjob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None)
 
 def sharedjob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):    

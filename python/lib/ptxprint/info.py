@@ -562,11 +562,13 @@ class Info:
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
             open(customsty, "w").close()
-        # fbkfm = self.ptsettings['FileNameBookNameForm']
-        fbkfm = self.printer.ptsettings['FileNameBookNameForm']
-        fprfx = self.printer.ptsettings['FileNamePrePart'] or ""
-        fpost = self.printer.ptsettings['FileNamePostPart'] or ""
+        # fbkfm = self.printer.ptsettings['FileNameBookNameForm']
+        fbkfm = self.ptsettings['FileNameBookNameForm']
+        fprfx = self.ptsettings['FileNamePrePart'] or ""
+        fpost = self.ptsettings['FileNamePostPart'] or ""
+        print(fprfx,fbkfm,fpost)
         bknamefmt = fprfx + fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + fpost
+        print(bknamefmt)
         fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
         infpath = os.path.join(prjdir, fname)
         if not self.dict['project/runscriptafter']:

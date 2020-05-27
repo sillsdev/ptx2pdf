@@ -928,6 +928,17 @@ saved configuration.</property>
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="ls_digprojects">
+    <columns>
+      <!-- column-name digprojid -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">Unknown</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="ls_font">
     <columns>
       <!-- column-name FontFamily -->
@@ -8431,7 +8442,7 @@ Numbers</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">end</property>
-                                <property name="model">ls_projects</property>
+                                <property name="model">ls_digprojects</property>
                                 <property name="has_entry">True</property>
                                 <property name="entry_text_column">0</property>
                                 <property name="id_column">0</property>

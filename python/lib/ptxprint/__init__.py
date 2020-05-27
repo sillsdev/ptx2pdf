@@ -112,7 +112,7 @@ class PtxPrinterDialog:
         self.addCR("cb_fontFaces", 0)
         self.cb_savedConfig = self.builder.get_object("cb_savedConfig")
         # self.addCR("cb_savedConfig", 0)
-        self.addCR("cb_diglotSecProject", 0)  # Why do I get doubles when this line is enabled? Do I need to connect it to a different ls_ ???
+        self.addCR("cb_diglotSecProject", 0)
         self.addCR("cb_diglotAlignment", 0)
         self.addCR("cb_diglotSecConfig", 0)
         pb = self.builder.get_object("b_print")
@@ -161,6 +161,7 @@ class PtxPrinterDialog:
         self.builder.get_object("tv_logging").set_buffer(self.logbuffer)
         self.mw = self.builder.get_object("ptxprint")
         self.projects = self.builder.get_object("ls_projects")
+        self.digprojects = self.builder.get_object("ls_digprojects")
         self.info = None
         self.settings_dir = settings_dir
         self.working_dir = working_dir
@@ -179,6 +180,7 @@ class PtxPrinterDialog:
         self.experimental = None
         for p in sorted(allprojects, key = lambda s: s.casefold()):
             self.projects.append([p])
+            self.digprojects.append([p])
         wide = int(len(allprojects)/16)+1
         self.builder.get_object("cb_project").set_wrap_width(wide)
         self.builder.get_object("cb_diglotSecProject").set_wrap_width(wide)
