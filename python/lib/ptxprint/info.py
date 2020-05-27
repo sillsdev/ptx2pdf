@@ -379,13 +379,16 @@ class Info:
         self.dict[key] = value
 
     def asBool(self, key, true=None, false=None):
-        if true is not None:
-            return self.dict[key] == true
+        val = self.dict.get(key, None)
+        if val is None:
+            return False
+        elif true is not None:
+            return val == true
         elif false is not None:
-            return self.dict[key] != false
-        elif isinstance(self.dict[key], bool): # MH: This causes a failure if the key isn't found in the .cfg file
-            return self.dict[key]
-        elif self.dict[key] == "%" or self.dict[key] == "false":
+            return val != false
+        elif isinstance(val, bool):
+            return val
+        elif val == "%" or val == "false":
             return False
         else:
             return True
