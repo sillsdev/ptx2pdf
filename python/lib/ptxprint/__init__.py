@@ -199,12 +199,18 @@ class PtxPrinterDialog:
         lsfonts = self.builder.get_object("ls_font")
         # sleep(1)  # Until we want people to see the splash screen
 
+        olst = ["b_print", "bx_SavedConfigSettings", "tb_Layout", "tb_Body", "tb_HeadFoot", "tb_Pictures",
+                "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_DiglotTesting", "tb_FancyBorders"]
         if self.pendingPid is not None:
             self.onProjectChange(None)
             self.pendingPid = None
+            if len(self.get("cb_project")):
+                self.initialised = True
+                self.onProjectChange(None)
+                for o in olst:
+                    self.builder.get_object(o).set_sensitive(True)
         else:
-            for o in ["b_print", "bx_SavedConfigSettings", "tb_Layout", "tb_Body", "tb_HeadFoot", "tb_Pictures",
-                      "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_DiglotTesting", "tb_FancyBorders"]:
+            for o in olst:
                 self.builder.get_object(o).set_sensitive(False)
         if splash:
             self.splash.destroy()
@@ -490,6 +496,22 @@ class PtxPrinterDialog:
             self.builder.get_object("t_savedConfig").set_text("")
             self.builder.get_object("t_configNotes").set_text("")
         self.configNoUpdate = False
+
+    def updateDiglotConfigList(self):
+        self.cb_diglotSecConfig.remove_all()
+        diglotConfigs = [""]
+        digprj = self.get("cb_diglotSecProject")
+        shpath = os.path.join(self.settings_dir, digprj, "shared", "ptxprint")
+        if os.path.exists(shpath): # Get the list of Saved Configs (folders)
+            for f in next(os.walk(shpath))[1]:
+                if not f in ["PicLists", "AdjLists"]:
+                    diglotConfigs.append(f)
+        if len(diglotConfigs):
+            for cfgName in sorted(diglotConfigs):
+                self.cb_diglotSecConfig.append_text(cfgName)
+            self.cb_diglotSecConfig.set_active(0)
+        else:
+            self.builder.get_object("t_diglotSecConfig").set_text("")
 
     def onLockUnlockSavedConfig(self, btn):
         lockBtn = self.builder.get_object("btn_lockunlock")
@@ -1838,6 +1860,10 @@ class PtxPrinterDialog:
             self.builder.get_object("l_diglotStringL").set_text(DiglotStringL)
             self.builder.get_object("l_diglotStringR").set_text(DiglotStringR)
 
+    def ondiglotSecProjectChanged(self, btn):
+        self.updateDiglotConfigList()
+        self.onDiglotSettingsChanged(None)
+        
     def onGenerateHyphenationListClicked(self, btn_generateHyphenationList):
         self.info.createHyphenationFile()
 

@@ -67,7 +67,7 @@ class FancyIntro():
 \def\iotableleader#1#2{#1\leaders\hbox to 0.8em{\hss.\hss}\hfill#2\par}%
 """
 
-class AlignedDiglot():
+class AlignedDiglotREAL():
     regexes = []
     styleInfo = ""
     processTex = True
@@ -78,14 +78,14 @@ class AlignedDiglot():
 \def\bolditalicR{{"{diglot/fontbolditalic}{diglot/fontbolditaleng}{diglot/texfeatures}{diglot/docscript}{diglot/docdigitmapping}{diglot/bolditalembolden}{diglot/boldital/slant}"}}
 """
 
-class AlignedDiglotTESTIING():
+class AlignedDiglot():
     regexes = []
     styleInfo = ""
     processTex = False
-    texCode = r"""\def\regularR{"Annapurna SIL:litr=1:ital=1"}
-\def\boldR{"Annapurna SIL:litr=1:ital=1:embolden=1.80"}
-\def\italicR{"Annapurna SIL:litr=1:ital=1:slant=0.1500"}
-\def\bolditalicR{"Annapurna SIL:litr=1:ital=1:embolden=1.80:slant=0.1500"}"""
+    texCode = r"""\def\regularR{"Annapurna SIL"}
+\def\boldR{"Annapurna SIL:embolden=1.80"}
+\def\italicR{"Annapurna SIL:slant=0.1500"}
+\def\bolditalicR{"Annapurna SIL:embolden=1.80:slant=0.1500"}"""
 
 class FancyBorders():
     regexes = []

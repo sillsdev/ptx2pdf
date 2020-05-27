@@ -442,6 +442,8 @@ class Info:
                     if p == "fontregular":
                         self.dict['font/texfeatures'] = ":"+ ":".join("{0}={1}".format(f.feats.get(fid, fid),
                                                     f.featvals.get(fid, {}).get(int(v), v)) for fid, v in f.features.items())
+            else:
+                self.dict['font/texfeatures'] = ""
             if 'Silf' in f and self.asBool("font/usegraphite"):
                 engine = "/GR"
             else:
@@ -537,10 +539,8 @@ class Info:
                             else:
                                 res.append(c[1].texCode)
                 else:
-                    try:
-                        res.append(l.format(**self.dict))
-                    except:
-                        print("Exception ignored:",l)
+                    res.append(l.format(**self.dict))
+                    # print("Exception ignored:",l)
         return "".join(res).replace("\OmitChapterNumberfalse\n\OmitChapterNumbertrue\n","")
 
     def runConversion(self, infpath, outdir):
