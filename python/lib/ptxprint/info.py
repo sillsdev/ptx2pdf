@@ -750,7 +750,7 @@ class Info:
             self.localChanges.append((None, regex.compile(r"(\\c 1 ?\r?\n)", flags=regex.M), r"\pagebreak\r\n\1"))
 
         if self.asBool("document/glueredupwords"): # keep reduplicated words together
-            self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w\w\w+) \1(?=[\s,.!?])", flags=regex.M), r"\1\u00A0\1")) 
+            self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w{3,}) \1(?=[\s,.!?])", flags=regex.M), r"\1\u00A0\1")) 
         
         if self.asBool("notes/addcolon"): # Insert a colon between \fq (or \xq) and following \ft (or \xt)
             self.localChanges.append((None, regex.compile(r"(\\[fx]q .+?):* ?(\\[fx]t)", flags=regex.M), r"\1: \2")) 
@@ -805,7 +805,7 @@ class Info:
         prjid = self.dict['project/id']
         prjdir = os.path.join(self.ptsettings.basedir, prjid)
         picdir = os.path.join(self['document/directory'], 'tmpPics').replace("\\","/")
-        fname = printer.getBookFilename(bk, prjdir)
+        fname = self.getBookFilename(bk, prjdir)
         infpath = os.path.join(prjdir, fname)
         extOrder = self.getExtOrder(printer)
         with universalopen(infpath) as inf:

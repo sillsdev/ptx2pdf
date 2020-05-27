@@ -267,7 +267,7 @@ def doit(printer, display=True):
         # print("Current Config is Locked, so changes have NOT been saved")
     tmpdir = os.path.join(prjdir, 'PrintDraft') if info.asBool("project/useprintdraftfolder") else args.directory
     os.makedirs(tmpdir, exist_ok=True)
-    jobs = printer.getBooks()
+    jobs = info.getBooks()
     
     isDiglot = info.asBool("document/ifdiglot")
     if isDiglot:
@@ -404,7 +404,7 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
     fullnamelist = []
 
     for bk in jobs:
-        fname = printer.getBookFilename(bk, prjdir)
+        fname = info.getBookFilename(bk, prjdir)
         if printer.get("c_usePicList") and bk not in info._peripheralBooks: # Read the PicList to get a list of needed illustrations
             doti = fname.rfind(".")
             if doti > 0:
@@ -449,7 +449,7 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
         extOrder = info.getExtOrder(printer)
         missingPics = []
         for bk in jobs:
-            fname = printer.getBookFilename(bk, prjdir)
+            fname = info.getBookFilename(bk, prjdir)
             if printer.get("c_usePicList"): # Read the PicList to get a list of needed illustrations
                 doti = fname.rfind(".")
                 if doti > 0:
