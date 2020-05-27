@@ -265,7 +265,7 @@ class Info:
         "fontitalic":               ("bl_fontI", "c_fakeitalic", "fontitalic/embolden", "fontitalic/slant"),
         "fontbolditalic":           ("bl_fontBI", "c_fakebolditalic", "fontbolditalic/embolden", "fontbolditalic/slant"),
         "fontextraregular":         ("bl_fontExtraR", None, None, None),
-        "fontfancy/versenumfont":   ("bl_verseNumFont", None, None, None)
+        "versenumfont":             ("bl_verseNumFont", None, None, None)
     }
     _hdrmappings = {
         "First Reference":  r"\firstref",
@@ -410,8 +410,8 @@ class Info:
         for p in ['fontregular'] + list(self._fonts.keys()):
             if p in self.dict:
                 continue
-            name = self.dict[p+"/name"]
-            style = self.dict[p+"/style"]
+            name = self.dict.get(p+"/name", "")
+            style = self.dict.get(p+"/style", "")
             f = TTFont(name, style)
             # print(p, wid, f.filename, f.family, f.style)
             if f.filename is None and p != "fontregular" and self._fonts[p][1] is not None:
@@ -420,15 +420,16 @@ class Info:
                 f = TTFont(regname, regstyle)
                 if printer is not None:
                     printer.set(self._fonts[p][1], True)
+                    btn = printer.builder.get_object(self._fonts[p][0])
                     printer.setFontButton(btn, name, style)
                     self.updatefields([self._fonts[p][2]])
                     # print("Setting {} to {}".format(p, reg))
-            d = self.printer.ptsettings.find_ldml('.//special/{1}external-resources/{1}font[@name="{0}"]'.format(f.family, silns))
+            d = self.ptsettings.find_ldml('.//special/{1}external-resources/{1}font[@name="{0}"]'.format(f.family, silns))
             featstring = ""
             if d is not None:
                 featstring = d.get('features', '')
             if featstring == "":
-                featstring = printer.get(self._mappings["font/features"][0])
+                featstring = self.dict["font/features"]
             if featstring is not None and len(featstring):
                 if printer is not None:
                     printer.set(self._mappings["font/features"][0], featstring)
@@ -913,7 +914,7 @@ class Info:
                 key = "{}/{}".format(k, a)
                 self._configset(config, key, self.dict[key])
         for k, v in self._snippets.items():
-            self._configset(config, k, self.asBool(k))
+            self._configset(config, k, "true" if self.asBool(k) else "false")
         return config
 
     def loadConfig(self, printer, config):
@@ -939,6 +940,8 @@ class Info:
                                 printer.set(v[0], val)
                     except AttributeError:
                         pass # ignore missing keys 
+                elif sect in self._fonts:
+                    self.dict[key] = val
                 elif printer is not None and key in self._snippets:
                     printer.set(self._snippets[key][0], val.lower() == "true")
         self.processFonts(printer)
