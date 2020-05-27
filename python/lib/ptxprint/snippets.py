@@ -76,6 +76,9 @@ class AlignedDiglotREAL():
 \def\boldR{{"{diglot/fontbold}{diglot/fontboldeng}{diglot/texfeatures}{diglot/docscript}{diglot/docdigitmapping}{diglot/boldembolden}{diglot/boldslant}"}}
 \def\italicR{{"{diglot/fontitalic}{diglot/fontitaleng}{diglot/texfeatures}{diglot/docscript}{diglot/docdigitmapping}{diglot/italembolden}{diglot/italslant}"}}
 \def\bolditalicR{{"{diglot/fontbolditalic}{diglot/fontbolditaleng}{diglot/texfeatures}{diglot/docscript}{diglot/docdigitmapping}{diglot/bolditalembolden}{diglot/boldital/slant}"}}
+
+\def\DiglotLeftFraction{{document/diglotprifraction}}
+\def\DiglotRightFraction{{document/diglotsecfraction}}
 """
 
 class AlignedDiglot():
@@ -85,7 +88,10 @@ class AlignedDiglot():
     texCode = r"""\def\regularR{"Annapurna SIL"}
 \def\boldR{"Annapurna SIL:embolden=1.80"}
 \def\italicR{"Annapurna SIL:slant=0.1500"}
-\def\bolditalicR{"Annapurna SIL:embolden=1.80:slant=0.1500"}"""
+\def\bolditalicR{"Annapurna SIL:embolden=1.80:slant=0.1500"}
+\def\DiglotLeftFraction{0.55} % In case texts fit better with unequal columns
+\def\DiglotRightFraction{0.45}
+"""
 
 class FancyBorders():
     regexes = []

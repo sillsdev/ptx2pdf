@@ -166,6 +166,18 @@ def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
 def digdojob(jobs, info, prjid, prjdir, diginfo, digprjid, digprjdir, tmpdir, logbuffer=None):
     donebooks = []
     digdonebooks = []
+    # need to set either -v -c -p depending on what kind of merge is needed
+    alnmnt = info.dict["document/diglotalignment"]
+    if alnmnt.startswith("No alignment"):
+        P = "None"
+    elif alnmnt.endswith("Chapters"):
+        P = "-c"
+    elif alnmnt.endswith("Paragraphs"):
+        P = "-p"
+    elif alnmnt.endswith("Verses"):
+        P = "-v"
+    else:
+        P = ""
     diginfo.readConfig()
     for b in jobs:
         out = info.convertBook(b, tmpdir, prjdir)
@@ -173,35 +185,53 @@ def digdojob(jobs, info, prjid, prjdir, diginfo, digprjid, digprjdir, tmpdir, lo
         donebooks.append(out)
         digdonebooks.append(digout)
         
-        if not info.dict["document/diglotalignment"].startswith("No alignment"):
+        if P != "None":
             # Now run the Perl script to merge the secondary text (R) into the primary text (L) 
+            L = os.path.join(tmpdir, out)
+            R = os.path.join(tmpdir, digout)
+            T = os.path.join(tmpdir, "primaryText.tmp")
+            copyfile(L, T)
+
+            # Usage: diglotMerge.exe [-mode|options] LeftFile RightFile
+            # Read LeftFile and RightFile, merging them according to the selected mode)
+             # Mode may be any ONE of :
+             # -l     :Left master: splitting right page at each left text paragraph
+             # -r     :Right master: splitting left page at each right text paragraph
+             # -v     :matching verses (default)
+             # -c     :matching chapters
+             # -p     :matching paragraph breaks
+            # Options are:
+             # -L file        : Log to file
+            # -R 11:25-25:12   Only ouput specified range
+            # -s      Split off section headings into a separate chunk (makes verses line up)
+            # -C      If ?? is used, consider the chapter mark to be a heading
+            # -o file : Output to file
+            
             if sys.platform == "win32":
-                L = os.path.join(tmpdir, out)
-                R = os.path.join(tmpdir, digout)
-                T = os.path.join(tmpdir, "primaryText.tmp")
-                copyfile(L, T)
-                # print("L:{}\nR:{}\nT:{}".format(L, R, T))
-                cmd = ['C:\ptx2pdf\diglot-test\diglotMerge.exe', '-o', L, '-p', '-l', T, R]  # Change absolute path do relative
+                cmd = ['C:\ptx2pdf\diglot-test\diglotMerge.exe', '-o', L, P, '-s', '-l', T, R]  # Change the EXE's absolute path to relative
                 r = checkoutput(cmd)
-                # if r != 0:
-                    # print("Failed to merge the Primary and Secondary files! Result code: {}".format(r))
-                # else:
-                    # print("SUCCESSFULLY merged the Primary and Secondary files!")
-                    # os.remove(T)
-            elif sys.platform == "linux":
-                pass
+            elif sys.platform == "linux":  # UNTESTED code
+                cmd = ['perl', 'diglot-merge.pl', '-o', L, P, '-l', T, R]  # need to work out where the .pl file will live)
+                r = checkoutput(cmd)
+            # if r != 0:  # Not sure how to check/interpret the return codes from diglotMerge.exe
+                # print("Failed to merge the Primary and Secondary files! Result code: {}".format(r))
+            # else:
+                # print("SUCCESSFULLY merged the Primary and Secondary files!")
+                # os.remove(T)
     info["project/bookids"] = jobs
     info["project/books"] = donebooks
 
-    if info.dict["document/diglotalignment"].startswith("No alignment"):
+    if alnmnt.startswith("No"): # WARNING - work in progress!
         # Fuzzy diglot just runs the jobs twice, and the 2nd run picks up the Sec PDF and merges it
+        # Need to add SECONDARY .tex stuff to make it print on half of the page
         sharedjob(jobs, diginfo, digprjid, digprjdir, tmpdir, logbuffer=None) # Need to think where the secPDF(s) will live (tmpdir or pritmpdir)
+        # Need to add PRIMARY .tex stuff to make it print on other half of the page and merge in the SECONDARY PDF
         sharedjob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None)          # See ln 1773 in __init__.py
     else:
         # Pass all the needed parameters for the snippet from diginfo to info
         for k,v in _diglot.items():
             info[k]=diginfo[v]
-            print(k, v, diginfo[v])
+            # print(k, v, diginfo[v])
         sharedjob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None)
 
 def sharedjob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):    
