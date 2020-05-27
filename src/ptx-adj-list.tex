@@ -46,8 +46,7 @@
 
 % Perform the current adjustment, and read the next line, if any
 \def\do@dj{\looseness=\@djustment \readnext@dj
- \trace{j}{do@adj: Looseness \@djustment}%
- %\immediate\write16{(Looseness \@djustment)}
+ \trace{j}{do@adj: Looseness \the\looseness}%
  \@dvance@djfalse \ch@ckadjustments}
 
 % read the next line from the adjustment list, or set \@djref to empty if no more
@@ -102,7 +101,7 @@
  \trace{j}{checkadjustments: curref=\meaning\c@rref , prevref=\pr@vref , adjref=\meaning\@djref , curradjpar=\the\curr@djpar , adjparindex=\the\@djparindex}%
  \global\let\pr@vref=\c@rref
  \ifx\c@rref\@djref%
- \trace{j}{(Testing \c@rref against \@djref  par \the\curr@djpar against \the\@djparindex)}%
+ \trace{j}{(Testing \c@rref\space against \@djref,  par \the\curr@djpar\space against \the\@djparindex)}%
    \ifnum\@djparindex=\curr@djpar \do@dj \fi
  \fi}
 \newif\if@dvance@dj \@dvance@djtrue

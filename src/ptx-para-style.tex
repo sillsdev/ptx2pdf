@@ -98,6 +98,7 @@
 %\MSG{after killd: ht0=\the\ht0; dp0=\the\dp0}
 %{\showboxbreadth=100 \showboxdepth=10 \showbox0 }%
  \dimen2=\ht0 \advance\dimen2 by \dp0
+ %\dimen0=\ifnum\@djustment>0 -\baselineskip\else0pt\fi
  \dimen0=0pt
  \ifgridp@c\line{}\nobreak\fi % otherwise first \line in loop won't get any baselineskip
                               % when doing a picture box, because it's not part of the
@@ -118,6 +119,7 @@
    \csname end-\m@rker\sid@\endcsname % handle side-specific <end> hook
  \fi
  \csname end-\m@rker\endcsname
+ \trace{j}{baselineskip = \the\baselineskip, looseness = \the\looseness}%
  \endgraf 
  \cutoutcarryover \fi}
 
@@ -187,7 +189,7 @@
   \ifhe@dingstyle\TRACE{headingstyle true}%
     \ifhe@dings\nsp@cebeforetrue\s@tbaseline{\m@rker}%In a heading again, may be different so set a new baseline
       \else\setbox\he@dingbox=\vbox\bgroup\global\he@dingstrue
-	\s@tbaseline{\m@rker}%Obey baseline changes for headings
+        \s@tbaseline{\m@rker}% Obey baseline changes for headings
         \linepenalty=1000 % minimize line count
         \interlinepenalty=10000 % never break column/page between lines
         \XeTeXdashbreakstate=0 % mainly for ranges in \r

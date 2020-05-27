@@ -306,29 +306,11 @@ class PtxPrinterDialog:
             w.set_label(value)
 
     def getBooks(self):
-        bl = self.get('t_booklist').split()
-        if not self.get('c_multiplebooks'):
-            return [self.get('cb_book')]
-        elif len(bl):
-            blst = []
-            for b in bl:
-                if os.path.exists(os.path.join(self.settings_dir, self.prjid, (self.getBookFilename(b, self.prjid)))):
-                    blst.append(b)
-            return blst
+        if self.info is None:
+            return []
         else:
-            return self.booklist
-        # self.updateDialogTitle()
+            return self.info.getBooks()
 
-    def getBookFilename(self, bk, prjid):
-        if self.ptsettings is None:
-            self.ptsettings = ParatextSettings(self.settings_dir, self.prjid)
-        fbkfm = self.ptsettings['FileNameBookNameForm']
-        bknamefmt = (self.ptsettings['FileNamePrePart'] or "") + \
-                    fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + \
-                    (self.ptsettings['FileNamePostPart'] or "")
-        fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
-        return fname
-        
     def onDestroy(self, btn):
         Gtk.main_quit()
 
@@ -408,14 +390,13 @@ class PtxPrinterDialog:
             self.updateDialogTitle()
 
     def onBookListChanged(self, t_booklist, foo): # called on "focus-out-event"
+        if self.info is None:
+            return
         bl = self.get('t_booklist').split(" ")
-        if len(bl):
-            tmpList = []
-            for b in bl:
-                if b in allbooks:  # MH: This needs to be changed to books-present in project
-                    if os.path.exists(os.path.join(self.settings_dir, self.prjid, (self.getBookFilename(b, self.prjid)))):
-                        tmpList.append(b)
-            self.builder.get_object('t_booklist').set_text(" ".join(tmpList))
+        self.info.updateBooklist(bl)
+        bl = self.info.getBooks()
+        self.builder.get_object('t_booklist').set_text(" ".join(bl))
+        self.info.updateBooklist(bl)
         self.updateDialogTitle()
 
     def onSaveConfig(self, btn):
@@ -544,7 +525,9 @@ class PtxPrinterDialog:
             self.builder.get_object(c).set_sensitive(status)
         
     def onPrevBookClicked(self, btn_NextBook):
-        bks = self.getBooks()
+        if self.info is None:
+            return
+        bks = self.info.getBooks()
         ndx = 0
         try:
             ndx = bks.index(self.get("cb_examineBook"))
@@ -559,7 +542,9 @@ class PtxPrinterDialog:
             self.builder.get_object("btn_PrevBook").set_sensitive(False)
     
     def onNextBookClicked(self, btn_NextBook):
-        bks = self.getBooks()
+        if self.info is None:
+            return
+        bks = self.info.getBooks()
         ndx = 0
         try:
             ndx = bks.index(self.get("cb_examineBook"))
@@ -579,10 +564,13 @@ class PtxPrinterDialog:
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
         self.onViewerChangePage(None,None,pg)
 
+    # should this go into Info?
     def onGenerateClicked(self, btn):
+        if self.info is None:
+            return
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
         if pg == 1: # PicList
-            bks2gen = self.getBooks()
+            bks2gen = self.info.getBooks()
             if not self.get('c_multiplebooks') and self.get("cb_examineBook") != bks2gen[0]: 
                 self.GeneratePicList([self.get("cb_examineBook")])
             else:
@@ -596,11 +584,13 @@ class PtxPrinterDialog:
         self.onViewerChangePage(None, None, pg)
 
     def onViewerChangePage(self, nbk_Viewer, scrollObject, pgnum):
+        if self.info is None:
+            return
         self.bookNoUpdate = True
         self.builder.get_object("gr_editableButtons").set_sensitive(False)
         prjid = self.get("cb_project")
         prjdir = os.path.join(self.settings_dir, prjid)
-        bks = self.getBooks()
+        bks = self.info.getBooks()
         bk = self.get("cb_examineBook")
         genBtn = self.builder.get_object("btn_Generate")
         genBtn.set_sensitive(False)
@@ -873,7 +863,7 @@ class PtxPrinterDialog:
     def onBookSelectorChange(self, c_multiplebooks):
         status = self.get("c_multiplebooks")
         self.set("c_prettyIntroOutline", False)
-        if status and self.get("t_booklist") == "" and self.prjid is not None:
+        if self.info is None or (status and self.get("t_booklist") == "" and self.prjid is not None):
             pass
             # self.onChooseBooksClicked(None)
         else:
@@ -886,7 +876,7 @@ class PtxPrinterDialog:
             for c in ("l_singlebook", "cb_book", "l_chapfrom", "cb_chapfrom", "l_chapto", "cb_chapto"):
                 self.builder.get_object(c).set_sensitive(not status)
             self.updateDialogTitle()
-            bks = self.getBooks()
+            bks = self.info.getBooks()
             if len(bks) > 1:
                 self.builder.get_object("cb_examineBook").set_active_id(bks[0])
             
@@ -1201,9 +1191,10 @@ class PtxPrinterDialog:
         self.builder.get_object("c_multiplebooks").set_active(not self.booklist == [])
         self.set("c_prettyIntroOutline", False)
         self.updateDialogTitle()
-        bks = self.getBooks()
-        if len(bks) > 1:
-            self.builder.get_object("cb_examineBook").set_active_id(bks[0])
+        if self.info is not None:
+            bks = self.info.getBooks()
+            if len(bks) > 1:
+                self.builder.get_object("cb_examineBook").set_active_id(bks[0])
         dialog.set_keep_above(False)
         dialog.hide()
 
@@ -1401,7 +1392,10 @@ class PtxPrinterDialog:
 
     def updateDialogTitle(self):
         prjid = "  -  " + self.get("cb_project")
-        bks = self.getBooks()
+        if self.get('c_combine'):
+            bks = self.get('t_booklist').split()
+        else:
+            bks = [self.get('t_book')]
         if len(bks) == 2:
             bks = bks[0] + "," + bks[1]
         elif len(bks) > 2:
@@ -1649,8 +1643,10 @@ class PtxPrinterDialog:
                         outf.write("".join(piclist))
 
     def GenerateAdjList(self):
+        if self.info is None:
+            return
         existingFilelist = []
-        booklist = self.getBooks()
+        booklist = self.info.getBooks()
         prjid = self.get("cb_project")
         prjdir = os.path.join(self.settings_dir, self.prjid)
         for bk in booklist:
@@ -1765,14 +1761,14 @@ class PtxPrinterDialog:
         self.onDiglotSettingsChanged(None)
 
     def onDiglotSettingsChanged(self, btn):
-        if not self.get("c_diglot"):
+        if not self.get("c_diglot") or self.info is None:
             DiglotStringL = ""
             DiglotStringR = ""
         else:
             secprjid = self.get("cb_diglotSecProject")
             # I'm not sure if there's a better way to handle this - looking for the already-created Secondary diglot file
             sectmpdir = os.path.join(self.settings_dir, secprjid, 'PrintDraft') if self.get("c_useprintdraftfolder") else self.working_dir
-            jobs = self.getBooks()
+            jobs = self.info.getBooks()
             if len(jobs) > 1:
                 secfname = os.path.join(sectmpdir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], secprjid)).replace("\\","/")
             else:
@@ -1858,10 +1854,12 @@ class PtxPrinterDialog:
                 dialog.destroy()
 
     def checkSFMforFancyIntroMarkers(self):
+        if self.info is None:
+            return []
         unfitBooks = []
         prjid = self.get("cb_project")
         prjdir = os.path.join(self.settings_dir, prjid)
-        bks = self.getBooks()
+        bks = self.info.getBooks()
         for bk in bks:
             if bk not in Info._peripheralBooks:
                 fname = self.getBookFilename(bk, prjid)
@@ -1879,10 +1877,12 @@ class PtxPrinterDialog:
         return unfitBooks
 
     def onFindMissingCharsClicked(self, btn_findMissingChars):
+        if self.info is None:
+            return
         count = collections.Counter()
         prjid = self.get("cb_project")
         prjdir = os.path.join(self.settings_dir, prjid)
-        bks = self.getBooks()
+        bks = self.info.getBooks()
         for bk in bks:
             fname = self.getBookFilename(bk, prjid)
             fpath = os.path.join(self.settings_dir, prjid, fname)
