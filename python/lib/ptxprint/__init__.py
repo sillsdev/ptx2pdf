@@ -318,7 +318,7 @@ class PtxPrinterDialog:
 
     def onOK(self, btn):
         Info._missingPicList = []
-        jobs = self.info.getBooks()
+        jobs = self.getBooks()
         # If the viewer/editor is open on an Editable tab, then "autosave" contents
         if self.builder.get_object("nbk_Main").get_current_page() == 7:
             pgnum = self.builder.get_object("nbk_Viewer").get_current_page()
