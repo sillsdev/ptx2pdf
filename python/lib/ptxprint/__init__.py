@@ -112,7 +112,7 @@ class PtxPrinterDialog:
         self.addCR("cb_fontFaces", 0)
         self.cb_savedConfig = self.builder.get_object("cb_savedConfig")
         # self.addCR("cb_savedConfig", 0)
-        self.addCR("cb_diglotSecProject", 0)
+        # self.addCR("cb_diglotSecProject", 0)
         self.addCR("cb_diglotAlignment", 0)
         self.addCR("cb_diglotSecConfig", 0)
         pb = self.builder.get_object("b_print")
@@ -178,6 +178,8 @@ class PtxPrinterDialog:
         self.customFigFolder = None
         self.prjid = None
         self.experimental = None
+        self.projects.clear()
+        self.digprojects.clear()
         for p in sorted(allprojects, key = lambda s: s.casefold()):
             self.projects.append([p])
             self.digprojects.append([p])
@@ -197,7 +199,6 @@ class PtxPrinterDialog:
         lsfonts = self.builder.get_object("ls_font")
         # sleep(1)  # Until we want people to see the splash screen
 
-        self.initialised = True
         if self.pendingPid is not None:
             self.onProjectChange(None)
             self.pendingPid = None
@@ -218,6 +219,7 @@ class PtxPrinterDialog:
         tv.append_column(col)
         ts = self.builder.get_object("t_fontSearch")
         tv.set_search_entry(ts)
+        self.initialised = True
         self.mw.resize(730, 640)
         self.mw.show_all()
         Gtk.main()

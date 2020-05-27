@@ -440,7 +440,7 @@ class Info:
                         f.features[k.strip()] = v.strip()
                 if len(f.features):
                     if p == "fontregular":
-                        self.dict['font/features'] = ":"+ ":".join("{0}={1}".format(f.feats.get(fid, fid),
+                        self.dict['font/texfeatures'] = ":"+ ":".join("{0}={1}".format(f.feats.get(fid, fid),
                                                     f.featvals.get(fid, {}).get(int(v), v)) for fid, v in f.features.items())
             if 'Silf' in f and self.asBool("font/usegraphite"):
                 engine = "/GR"

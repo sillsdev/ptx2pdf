@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 -->
+<!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkAdjustment" id="a_PriColWidth">
@@ -263,7 +263,7 @@ Built on the foundation laid by:
 Jonathan Kew (Author of XeTeX + sfm2pdf)</property>
     <property name="logo">62859-open-book-icon(128).png</property>
     <property name="license_type">mit-x11</property>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child internal-child="vbox">
@@ -299,7 +299,7 @@ Jonathan Kew (Author of XeTeX + sfm2pdf)</property>
     <property name="type_hint">dialog</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="gravity">center</property>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child internal-child="vbox">
@@ -634,7 +634,7 @@ start of the publication in this oder:
     <property name="type_hint">dialog</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="gravity">center</property>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child internal-child="vbox">
@@ -1004,7 +1004,7 @@ saved configuration.</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child internal-child="vbox">
@@ -1263,7 +1263,7 @@ saved configuration.</property>
     <property name="type_hint">dialog</property>
     <property name="urgency_hint">True</property>
     <signal name="destroy" handler="onDestroy" swapped="no"/>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child internal-child="vbox">
@@ -8443,6 +8443,7 @@ Numbers</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">end</property>
                                 <property name="model">ls_digprojects</property>
+                                <property name="wrap_width">1</property>
                                 <property name="has_entry">True</property>
                                 <property name="entry_text_column">0</property>
                                 <property name="id_column">0</property>
@@ -9088,7 +9089,7 @@ be specified.</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="decorated">False</property>
     <property name="gravity">center</property>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child>
