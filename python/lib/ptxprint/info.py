@@ -451,7 +451,7 @@ class Info:
                 fname = f.family + " " + f.style.title()
             self.dict[p] = fname
             self.dict[p+"/engine"] = engine
-
+        
     def processHdrFtr(self, printer):
         """ Update model headers from model UI read values """
         v = self.dict["footer/ftrcenter"]
@@ -537,7 +537,10 @@ class Info:
                             else:
                                 res.append(c[1].texCode)
                 else:
-                    res.append(l.format(**self.dict))
+                    try:
+                        res.append(l.format(**self.dict))
+                    except:
+                        print("Exception ignored:",l)
         return "".join(res).replace("\OmitChapterNumberfalse\n\OmitChapterNumbertrue\n","")
 
     def runConversion(self, infpath, outdir):
@@ -552,7 +555,6 @@ class Info:
         return outfpath
 
     def convertBook(self, bk, outdir, prjdir):
-        print("In convertBook. prjdir: {} outdir: {}".format(prjdir, outdir))
         if self.changes is None:
             if self.asBool('project/usechangesfile'):
                 self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'))
@@ -563,13 +565,10 @@ class Info:
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
             open(customsty, "w").close()
-        # fbkfm = self.printer.ptsettings['FileNameBookNameForm']
         fbkfm = self.ptsettings['FileNameBookNameForm']
         fprfx = self.ptsettings['FileNamePrePart'] or ""
         fpost = self.ptsettings['FileNamePostPart'] or ""
-        print(fprfx,fbkfm,fpost)
         bknamefmt = fprfx + fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + fpost
-        print(bknamefmt)
         fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
         infpath = os.path.join(prjdir, fname)
         if not self.dict['project/runscriptafter']:
@@ -918,7 +917,6 @@ class Info:
         return config
 
     def loadConfig(self, printer, config):
-        print("In loadConfig. printer:", printer)
         for sect in config.sections():
             for opt in config.options(sect):
                 key = "{}/{}".format(sect, opt)

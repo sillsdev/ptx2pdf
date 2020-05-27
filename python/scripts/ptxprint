@@ -38,13 +38,13 @@ _diglot = {
 
 "diglot/fontregular" :      "fontregular",
 "diglot/fontregeng" :       "fontregular/engine",
-"diglot/fontfeatures" :     "font/features",
+"diglot/texfeatures" :     "font/features",
 "diglot/docscript" :        "document/script",
 "diglot/docdigitmapping" :  "document/digitmapping",
                             
 "diglot/fontbold" :         "fontbold",
 "diglot/fontboldeng" :      "fontbold/engine",
-"diglot/fontfeatures" :     "font/features",
+"diglot/texfeatures" :     "font/features",
 "diglot/docscript" :        "document/script",
 "diglot/docdigitmapping" :  "document/digitmapping",
 "diglot/boldembolden" :     "fontbold/embolden",
@@ -52,7 +52,7 @@ _diglot = {
                             
 "diglot/fontitalic" :       "fontitalic",
 "diglot/fontitaleng" :      "fontitalic/engine",
-"diglot/fontfeatures" :     "font/features",
+"diglot/texfeatures" :     "font/features",
 "diglot/docscript" :        "document/script",
 "diglot/docdigitmapping" :  "document/digitmapping",
 "diglot/italembolden" :     "fontitalic/embolden",
@@ -60,7 +60,7 @@ _diglot = {
                             
 "diglot/fontbolditalic" :   "fontbolditalic",
 "diglot/fontbolditaleng" :  "fontbolditalic/engine",
-"diglot/fontfeatures" :     "font/features",
+"diglot/texfeatures" :     "font/features",
 "diglot/docscript" :        "document/script",
 "diglot/docdigitmapping" :  "document/digitmapping",
 "diglot/bolditalembolden" : "fontbolditalic/embolden",
@@ -81,7 +81,7 @@ except ImportError:
 from ptxprint.font import initFontCache
 from ptxprint.info import universalopen, Info
 from ptxprint.ptsettings import ParatextSettings
-
+from ptxprint.runner import checkoutput
 
 parser = argparse.ArgumentParser()
 # parser.add_argument('-h','--help', help="show this help message and exit")
@@ -163,13 +163,12 @@ def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
     
     sharedjob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None)
 
-# "document/ifdiglot":          ("c_diglot", lambda w,v :"" if v else "%"),
-# "document/diglotsettings":    ("l_diglotStringL", lambda w,v: w.builder.get_object("l_diglotStringL").get_text() if w.get("c_diglot") else ""),
-# # "document/diglotsettings":  ("l_diglotStringR", lambda w,v: w.builder.get_object("l_diglotStringR").get_text() if w.get("c_diglot") else ""),
-# "document/diglotalignment":   ("cb_diglotAlignment", lambda w,v: w.builder.get_object("cb_diglotAlignment").get_active_id()),
-# "document/diglotprifraction": ("s_diglotPriFraction", lambda w,v : round(v, 1) or "50.0"),
-# "document/diglotsecprj":      ("cb_diglotSecProject", lambda w,v: w.builder.get_object("cb_diglotSecProject").get_active_id()),
-# "document/diglotnormalhdrs":  ("c_diglotHeaders", lambda w,v :"" if v else "%"),
+# "document/ifdiglot":         
+# "document/diglotsettings":   
+# "document/diglotalignment":  
+# "document/diglotprifraction":
+# "document/diglotsecprj":     
+# "document/diglotnormalhdrs": 
 
 def digdojob(jobs, info, prjid, prjdir, diginfo, digprjid, digprjdir, tmpdir, logbuffer=None):
     donebooks = []
@@ -177,24 +176,38 @@ def digdojob(jobs, info, prjid, prjdir, diginfo, digprjid, digprjdir, tmpdir, lo
     diginfo.readConfig()
     for b in jobs:
         out = info.convertBook(b, tmpdir, prjdir)
-        print(out)
         digout = diginfo.convertBook(b, tmpdir, digprjdir)
         donebooks.append(out)
         digdonebooks.append(digout)
-    info["project/bookids"] = jobs
-    info["project/books"] = donebooks
-    diginfo["project/bookids"] = jobs
-    diginfo["project/books"] = donebooks
-    
-    # Now run the Perl script to merge those pairs of books and call the merged file: NNBUKPRJID-draft.ext
+        
+        if not info.dict["document/diglotalignment"].startswith("No alignment"):
+            # Now run the Perl script to merge the secondary text (R) into the primary text (L) 
+            if sys.platform == "win32":
+                L = os.path.join(tmpdir, out)
+                R = os.path.join(tmpdir, digout)
+                T = os.path.join(tmpdir, "primaryText.tmp")
+                copyfile(L, T)
+                # print("L:{}\nR:{}\nT:{}".format(L, R, T))
+                cmd = ['C:\ptx2pdf\diglot-test\diglotMerge.exe', '-o', L, '-p', '-l', T, R]  # Change absolute path do relative
+                r = checkoutput(cmd)
+                # if r != 0:
+                    # print("Failed to merge the Primary and Secondary files! Result code: {}".format(r))
+                # else:
+                    # print("SUCCESSFULLY merged the Primary and Secondary files!")
+                    os.remove(T)
+            elif sys.platform == "linux":
+                pass
 
-    # Pass all the needed parameters for the snippet from diginfo to info
-    for k,v in _diglot.items():
-        print(diginfo[v])
-        print(k, "=", v)
-        info[k]=diginfo[v]
-        # print(info[k], "=", diginfo[v])
-    sharedjob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None)
+    if info.dict["document/diglotalignment"].startswith("No alignment"):
+        # Fuzzy diglot just runs the jobs twice, and the 2nd run picks up the Sec PDF and merges it
+        sharedjob(jobs, diginfo, digprjid, digprjdir, tmpdir, logbuffer=None) # Need to think where the secPDF(s) will live (tmpdir or pritmpdir)
+        sharedjob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None)          # See ln 1773 in __init__.py
+    else:
+        # Pass all the needed parameters for the snippet from diginfo to info
+        for k,v in _diglot.items():
+            info[k]=diginfo[v]
+        print((k,v) for k, v in info.dict.items() if k.startswith("font"))
+        sharedjob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None)
 
 def sharedjob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):    
     if len(jobs) > 1:
