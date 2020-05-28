@@ -205,35 +205,35 @@
       \let\b@lditalic=\tmpface\fi%
   \fi%
   \let\typef@ce=\regul@r%
-  \getp@ram{fontname}{\f@ntstyle}% see if \FontName was specified in the stylesheet
+  \getp@ram{fontname}{#1}% see if \FontName was specified in the stylesheet
   \ifx\p@ram\relax % if not, check the \Bold and \Italic properties
-	  \getp@ram{bold}{\f@ntstyle}%
+	  \getp@ram{bold}{#1}%
 	  \ifx\p@ram\tru@
 		\let\typef@ce=\b@ld
-		\getp@ram{italic}{\f@ntstyle}%
+		\getp@ram{italic}{#1}%
 		\ifx\p@ram\tru@ \let\typef@ce=\b@lditalic \fi
 	  \else
-		\getp@ram{italic}{\f@ntstyle}%
+		\getp@ram{italic}{#1}%
 		\ifx\p@ram\tru@ \let\typef@ce=\it@lic \fi
 	  \fi
   \else
    \edef\typef@ce{"\p@ram"}% use font name from the stylesheet
   \fi
-  \getp@ram{smallcaps}{\f@ntstyle}%
+  \getp@ram{smallcaps}{#1}%
   \ifx\p@ram\tru@
     \edef\typef@ce{\typef@ce\SmallCapsSuffix}%
   \fi
-  \getp@ram{color}{\f@ntstyle}%
+  \getp@ram{color}{#1}%
   \ifColorFonts\ifx\p@ram\relax\else%
     \ParseColor\p@ram\end\edef\typef@ce{\typef@ce :color=\r@s}%
   \fi\fi%
-  \getp@ram{superscript}{\f@ntstyle}% scale down by \SuperscriptFactor if superscripted style
+  \getp@ram{superscript}{#1}% scale down by \SuperscriptFactor if superscripted style
   \dimen0=\ifx\p@ram\tru@ \SuperscriptFactor\fi\FontSizeUnit%
-  \getp@ram{fontscale}{\f@ntstyle}%
+  \getp@ram{fontscale}{#1}%
   \ifx\p@ram\relax
-    \getp@ram{fontsize}{\f@ntstyle}%
+    \getp@ram{fontsize}{#1}%
     \ifx\p@ram\relax\dimen1=\c@rrfontsize\dimen0
-       \MSG{*** FontSize missing for marker '\f@ntstyle', defaulting to \c@rrfontsize}%
+       \MSG{*** FontSize missing for marker '\f@ntstyle' ('#1'), defaulting to \c@rrfontsize}%
     \else%
       \trace{F}{\f@ntstyle: Font size "\p@ram"}%
       \dimen1=\p@ram \dimen0
