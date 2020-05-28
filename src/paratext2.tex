@@ -124,7 +124,6 @@
   \TRACE{vm@kenote \n@tetype}%
   \x@\insert\csname note-\n@tetype\endcsname\bgroup% insert note-f (or note-x)
 %%% single-column notes:
-  \ifdiglot\ifdiglotL\the\leftho@ks\else\the\rightho@ks\fi\fi%
   \checkp@ranotes{#1}% check whether this note class is to be paragraphed 
   \hsize=\ifp@ranotes\maxdimen\else\textwidth\advance\hsize by -\columnshift\fi % insert penalties to control breaking of footnotes
   \interlinepenalty\interfootnotelinepenalty % set penalty to break lines
@@ -138,6 +137,7 @@
 		\trace{f}{\reference : Footnote vskip=\the\dimen1 baselineskip=\the\baselineskip strut height=\the\dimen0}
 	  \fi\fi
   \leavevmode % begin paragraph
+  \ifdiglot\ifdiglotL\the\leftho@ks\else\the\rightho@ks\fi\fi%
   \ifRTL\setbox2=\lastbox\beginR\box2\fi % if RTL text this paragraph needs to be RTL
   % if note omitting caller from note (i.e. all callers are *'s)
   \testomitc@ller{#1}\ifomitc@ller\else
@@ -174,7 +174,7 @@
   \copy\f@@tstrut}
 
 \def\@foot{\ifp@ranotes \parfillskip=0pt \else\strut\fi
-  \par\egroup}
+  \par\egroup\ifRTL\endR\fi}
 \newbox\f@@tstrut
 \def\n@teglue{2em plus 1em minus .5em\relax} % glue to be used between paragraphed notes
 

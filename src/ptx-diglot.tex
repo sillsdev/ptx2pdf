@@ -1380,6 +1380,7 @@
    \vbox to 0pt{}%
    \ifdiglotSepNotes%
    \else%
+     \ifdiglot\RTLfalse\fi %RTLness will have been asserted (or not) when the note was defined. If the righttext side is RTL, leaving it true now will make a any LTR text also RTL.
      \TRACEdiglot{Inserting Notes}%
      \f@rstnotetrue%
      \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses %
