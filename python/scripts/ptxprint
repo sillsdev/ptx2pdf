@@ -126,11 +126,16 @@ provider = Gtk.CssProvider()
 provider.load_from_data(css.encode("utf-8"))
 Gtk.StyleContext().add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
-mainw = GtkViewModel(allprojects, args.paratext, args.directory!=".")
+if args.print:
+    mainw = ViewMode(allprojects, args.paratext, args.directory!=".")
+else:
+    mainw = GtkViewModel(allprojects, args.paratext, args.directory!=".")
 mainw.ExperimentalFeatures(args.experimental)
 
 if args.pid:
-    mainw.set("fcb_project", args.pid)
+    mainw.setPrjid(args.pid)
+    if args.config is not None:
+        mainw.pendingConfig = args.config
 
 def parselog(fname, rerunp=False, lines=20):
     loglines = []

@@ -42,6 +42,7 @@ class ViewModel:
         self.versedecorator = None
         self.customFigFolder = None
         self.prjid = None
+        self.configId = None
 
         # private to this implementation
         self.dict = {}
@@ -150,25 +151,39 @@ class ViewModel:
     def updateBookList(self):
         pass
 
+    def setPrjid(self, prjid, saveCurrConfig=False):
+        self.updateProjectSettings(prjid, saveCurrConfig=saveCurrConfig)
+
+    def setConfigId(self, configid, saveCurrConfig=False):
+        self.updateProjectSettings(self.prjid, saveCurrConfig=saveCurrConfig, configName=configid)
+
     def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None):
         currprj = self.prjid
-        if currprj is not None and saveCurrConfig:
-            self.writeConfig()
-            self.updateSavedConfigList()
-            self.set("t_savedConfig", "")
-            self.set("t_configNotes", "")
-        self.ptsettings = None
-        self.prjid = self.get("fcb_project") if prjid is None else prjid
-        if self.prjid:
-            self.ptsettings = ParatextSettings(self.settings_dir, self.prjid)
-            self.updateBookList()
-        if not self.prjid:
-            return
-        if self.usePrintDraft_dir:
-            self.working_dir = os.path.join(self.settings_dir, self.prjid, 'PrintDraft')
+        readConfig = False
+        if currprj is None or currprj != prjid:
+            if currprj is not None and saveCurrConfig:
+                self.writeConfig()
+                self.updateSavedConfigList()
+                self.set("t_savedConfig", "")
+                self.set("t_configNotes", "")
+            self.ptsettings = None
+            self.prjid = self.get("fcb_project") if prjid is None else prjid
+            self.configId = None
+            if self.prjid:
+                self.ptsettings = ParatextSettings(self.settings_dir, self.prjid)
+                self.updateBookList()
+            if not self.prjid:
+                return
+            if self.usePrintDraft_dir:
+                self.working_dir = os.path.join(self.settings_dir, self.prjid, 'PrintDraft')
+            else:
+                self.working_dir = '.'
+            readConfig = True
+        if readConfig or self.configId != configName:
+            print("Reading config {}".format(configName))
+            return self.readConfig(cfgname=configName)
         else:
-            self.working_dir = '.'
-        return self.readConfig(cfgname=configName)
+            return True
 
     def getDialogTitle(self):
         prjid = "  -  " + self.get("fcb_project")

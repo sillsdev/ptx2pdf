@@ -34,11 +34,11 @@ def universalopen(fname, rewrite=False):
     return fh
 
 ModelMap = {
-    "config/name":              ("ecb_savedConfig", lambda w,v: v or "default"),
+    #"config/name":              ("ecb_savedConfig", lambda w,v: v or "default"),
     "config/notes":             ("t_configNotes", lambda w,v: v or ""),
     "config/pwd":               ("t_invisiblePassword", lambda w,v: v or ""),
 
-    "project/id":               ("fcb_project", None),
+    # "project/id":               ("fcb_project", None),
     "project/hideadvsettings":  ("c_hideAdvancedSettings", None),
     "project/showlayouttab":    ("c_showLayoutTab", None),
     "project/showbodytab":      ("c_showBodyTab", None),
@@ -340,6 +340,8 @@ class TexModel:
         self.dict["document/directory"] = os.path.abspath(docdir).replace("\\","/")
         self.dict['project/adjlists'] = os.path.join(self.printer.configPath(), "AdjLists/").replace("\\","/")
         self.dict['project/piclists'] = os.path.join(self.printer.working_dir, "tmpPicLists/").replace("\\","/")
+        self.dict['project/id'] = self.printer.get('fcb_project')
+        self.dict['config/name'] = self.printer.get('ecb_savedConfig')
         self.readFonts(self.printer)
         self.processFonts(self.printer)
         self.processHdrFtr(self.printer)

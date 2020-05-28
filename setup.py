@@ -11,11 +11,11 @@ setup(
     url="https://software.sil.org/ptxprint",
     maintainer="SIL International",
     packages=find_packages('lib'),  # include all packages under lib
-    package_dir={'': 'lib'},  # indicate packages are under lib
+    package_dir={'': 'python/lib'},  # indicate packages are under lib
     include_package_data=True,  # include everything in MANIFEST.in
     package_data={'ptxprint': ['*.*']},
-    data_files=[('ptx2pdf', glob('../src/*.tex'))],
-    scripts=["scripts/ptxprint"],
+    #data_files=[('ptx2pdf', glob('src/*.tex'))],
+    scripts=["python/scripts/ptxprint"],
     install_requires=["regex", "pygobject", "img2pdf", "fonttools", "pycairo"],
     zip_safe=False,
     license="MIT",

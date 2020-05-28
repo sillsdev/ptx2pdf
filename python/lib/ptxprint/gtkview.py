@@ -99,6 +99,7 @@ class GtkViewModel(ViewModel):
         self.chapNoUpdate = False
         self.bookNoUpdate = False
         self.pendingPid = None
+        self.pendingConfig = None
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(os.path.dirname(__file__), "ptxprint.glade"))
         self.builder.connect_signals(self)
@@ -185,17 +186,14 @@ class GtkViewModel(ViewModel):
         olst = ["b_print", "bx_SavedConfigSettings", "tb_Layout", "tb_Body", "tb_HeadFoot", "tb_Pictures",
                 "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_DiglotTesting", "tb_FancyBorders"]
         self.initialised = True
+        for o in olst:
+            self.builder.get_object(o).set_sensitive(False)
         if self.pendingPid is not None:
-            self.onProjectChange(None)
+            self.set("fcb_project", self.pendingPid)
             self.pendingPid = None
-            if len(self.get("fcb_project")):
-                self.initialised = True
-                self.onProjectChange(None)
-                for o in olst:
-                    self.builder.get_object(o).set_sensitive(True)
-        else:
-            for o in olst:
-                self.builder.get_object(o).set_sensitive(False)
+        if self.pendingConfig is not None:
+            self.set("ecb_savedConfig", self.pendingConfig)
+            self.pendingConfig = None
         if splash:
             self.splash.destroy()
             try:
@@ -373,31 +371,6 @@ class GtkViewModel(ViewModel):
         dialog.set_keep_above(False)
         dialog.hide()
             
-    def onConfigNameChanged(self, cb_savedConfig):
-        if self.configNoUpdate:
-            return
-        self.builder.get_object("c_hideAdvancedSettings").set_sensitive(True)
-        if len(self.get("ecb_savedConfig")):
-            lockBtn = self.builder.get_object("btn_lockunlock")
-            lockBtn.set_label("Lock Config")
-            lockBtn.set_sensitive(True)
-            self.builder.get_object("t_invisiblePassword").set_text("")
-            self.builder.get_object("btn_saveConfig").set_sensitive(True)
-            self.builder.get_object("btn_deleteConfig").set_sensitive(True)
-            if os.path.exists(self.configPath(cfgname=self.get("ecb_savedConfig"))):
-                self.updateProjectSettings(False) # False means DON'T Save!
-        else:
-            self.config_dir = self.configPath()
-            self.builder.get_object("t_configNotes").set_text("")
-            lockBtn = self.builder.get_object("btn_lockunlock")
-            lockBtn.set_label("Lock Config")
-            lockBtn.set_sensitive(False)
-            self.builder.get_object("t_invisiblePassword").set_text("")
-            self.builder.get_object("l_settings_dir").set_label(self.config_dir or "")
-            self.builder.get_object("btn_saveConfig").set_sensitive(False)
-            self.builder.get_object("btn_deleteConfig").set_sensitive(False)
-            self.updateDialogTitle()
-
     def onBookListChanged(self, t_booklist, foo): # called on "focus-out-event"
         bl = self.getBooks()
         self.set('t_booklist', " ".join(bl))
@@ -448,6 +421,7 @@ class GtkViewModel(ViewModel):
 
     def updateSavedConfigList(self):
         self.configNoUpdate = True
+        print("Updating SavedConfig list")
         currConf = self.builder.get_object("t_savedConfig").get_text()
         self.cb_savedConfig.remove_all()
         savedConfigs = []
@@ -1214,23 +1188,84 @@ class GtkViewModel(ViewModel):
         self.usePrintDraft_dir = upd
         self.builder.get_object("l_working_dir").set_label(self.working_dir)
 
+    def setPrjid(self, prjid, saveCurrConfig=False):
+        if not self.initialised:
+            self.pendingPid = prjid
+        else:
+            self.set("fcb_project", prjid)
+
+    def setConfigId(self, configid, saveCurrConfig=False):
+        if not self.initialised:
+            self.pendingConfig = configid
+        else:
+            self.set("ecb_savedConfig", configid)
+
     def onProjectChange(self, cb_prj):
+        print("onProjectChange")
         self.builder.get_object("l_settings_dir").set_label(self.config_dir or "")
         self.builder.get_object("btn_saveConfig").set_sensitive(False)
         self.builder.get_object("btn_deleteConfig").set_sensitive(False)
         lockBtn = self.builder.get_object("btn_lockunlock")
         lockBtn.set_label("Lock Config")
         lockBtn.set_sensitive(False)
-        if not self.initialised:
-            self.pendingPid = self.get("fcb_project")
-        else:
-            self.updateProjectSettings(True)
-            self.updateSavedConfigList()
-            for o in ["b_print", "bx_SavedConfigSettings", "tb_Layout", "tb_Body", "tb_HeadFoot", "tb_Pictures",
-                      "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_DiglotTesting", "tb_FancyBorders"]:
-                self.builder.get_object(o).set_sensitive(True)
-            self.updateFonts()
+        self.updateProjectSettings(None, saveCurrConfig=True)
+        self.updateSavedConfigList()
+        for o in ["b_print", "bx_SavedConfigSettings", "tb_Layout", "tb_Body", "tb_HeadFoot", "tb_Pictures",
+                  "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_DiglotTesting", "tb_FancyBorders"]:
+            self.builder.get_object(o).set_sensitive(True)
+        self.updateFonts()
             
+    def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None):
+        if not super(GtkViewModel, self).updateProjectSettings(prjid, saveCurrConfig=saveCurrConfig, configName=configName):
+            for fb in ['bl_fontR', 'bl_fontB', 'bl_fontI', 'bl_fontBI', 'bl_fontExtraR', 'bl_verseNumFont']:  # 
+                fblabel = self.builder.get_object(fb).set_label("Select font...")
+        if self.prjid:
+            cb_bk = self.builder.get_object("ecb_book")
+            cb_bk.set_active(0)
+            self.builder.get_object("l_prjdir").set_label(os.path.join(self.settings_dir, self.prjid))
+        status = self.get("c_multiplebooks")
+        for c in ("c_combine", "t_booklist"):
+            self.builder.get_object(c).set_sensitive(status)
+        toc = self.builder.get_object("c_autoToC") # Ensure that we're not trying to build a ToC for a single book!
+        toc.set_sensitive(status)
+        if not status:
+            toc.set_active(False)
+        for c in ("l_singlebook", "ecb_book", "l_chapfrom", "fcb_chapfrom", "l_chapto", "fcb_chapto"):
+            self.builder.get_object(c).set_sensitive(not status)
+        for i in range(0,6):
+            self.builder.get_object("l_{}".format(i)).set_tooltip_text(None)
+        self.builder.get_object("l_settings_dir").set_label(self.config_dir or "")
+        self.builder.get_object("l_working_dir").set_label(self.working_dir)
+        # self.set("c_prettyIntroOutline", False)  # This is OFF by default, they need to turn it on specifically
+        self.setEntryBoxFont()
+        self.onDiglotSettingsChanged(None)
+        self.updateDialogTitle()
+
+    def onConfigNameChanged(self, cb_savedConfig):
+        if self.configNoUpdate:
+            return
+        self.builder.get_object("c_hideAdvancedSettings").set_sensitive(True)
+        if len(self.get("ecb_savedConfig")):
+            lockBtn = self.builder.get_object("btn_lockunlock")
+            lockBtn.set_label("Lock Config")
+            lockBtn.set_sensitive(True)
+            self.builder.get_object("t_invisiblePassword").set_text("")
+            self.builder.get_object("btn_saveConfig").set_sensitive(True)
+            self.builder.get_object("btn_deleteConfig").set_sensitive(True)
+            if os.path.exists(self.configPath(cfgname=self.get("ecb_savedConfig"))):
+                self.updateProjectSettings(self.prjid, saveCurrConfig=False, configName=self.get("ecb_savedConfig")) # False means DON'T Save!
+        else:
+            self.config_dir = self.configPath()
+            self.builder.get_object("t_configNotes").set_text("")
+            lockBtn = self.builder.get_object("btn_lockunlock")
+            lockBtn.set_label("Lock Config")
+            lockBtn.set_sensitive(False)
+            self.builder.get_object("t_invisiblePassword").set_text("")
+            self.builder.get_object("l_settings_dir").set_label(self.config_dir or "")
+            self.builder.get_object("btn_saveConfig").set_sensitive(False)
+            self.builder.get_object("btn_deleteConfig").set_sensitive(False)
+            self.updateDialogTitle()
+
     def updateFonts(self):
         ptfont = self.ptsettings['DefaultFont']
         for fb in ['bl_fontR', 'bl_verseNumFont']:  # 'bl_fontB', 'bl_fontI', 'bl_fontBI', 'bl_fontExtraR'
@@ -1243,32 +1278,6 @@ class GtkViewModel(ViewModel):
     def updateDialogTitle(self):
         titleStr = super(GtkViewModel, self).getDialogTitle()
         self.builder.get_object("ptxprint").set_title(titleStr)
-
-    def updateProjectSettings(self, saveCurrConfig=False, configName=None):
-        if not super(GtkViewModel, self).updateProjectSettings(None, saveCurrConfig=saveCurrConfig, configName=configName):
-            for fb in ['bl_fontR', 'bl_fontB', 'bl_fontI', 'bl_fontBI', 'bl_fontExtraR', 'bl_verseNumFont']:  # 
-                fblabel = self.builder.get_object(fb).set_label("Select font...")
-        if self.prjid:
-            cb_bk = self.builder.get_object("ecb_book")
-            cb_bk.set_active(0)
-        status = self.get("c_multiplebooks")
-        for c in ("c_combine", "t_booklist"):
-            self.builder.get_object(c).set_sensitive(status)
-        toc = self.builder.get_object("c_autoToC") # Ensure that we're not trying to build a ToC for a single book!
-        toc.set_sensitive(status)
-        if not status:
-            toc.set_active(False)
-        for c in ("l_singlebook", "ecb_book", "l_chapfrom", "fcb_chapfrom", "l_chapto", "fcb_chapto"):
-            self.builder.get_object(c).set_sensitive(not status)
-        for i in range(0,6):
-            self.builder.get_object("l_{}".format(i)).set_tooltip_text(None)
-        self.builder.get_object("l_prjdir").set_label(os.path.join(self.settings_dir, self.prjid))
-        self.builder.get_object("l_settings_dir").set_label(self.config_dir or "")
-        self.builder.get_object("l_working_dir").set_label(self.working_dir)
-        # self.set("c_prettyIntroOutline", False)  # This is OFF by default, they need to turn it on specifically
-        self.setEntryBoxFont()
-        self.onDiglotSettingsChanged(None)
-        self.updateDialogTitle()
 
     def editFile(self, file2edit, loc="wrk"):
         pgnum = 5
