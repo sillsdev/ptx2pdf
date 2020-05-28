@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 """ py3.8 Ubuntu focal test packaging """
 
-from glob import glob
 from setuptools import setup, find_packages
 
 setup(
@@ -14,7 +13,6 @@ setup(
     package_dir={'': 'lib'},  # indicate packages are under lib
     include_package_data=True,  # include everything in MANIFEST.in
     package_data={'ptxprint': ['*.*']},
-    data_files=[('ptx2pdf', glob('../src/*.tex'))],
     scripts=["scripts/ptxprint"],
     install_requires=["regex", "pygobject", "img2pdf", "fonttools", "pycairo"],
     zip_safe=False,
