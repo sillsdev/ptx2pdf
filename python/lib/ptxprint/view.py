@@ -515,7 +515,7 @@ class ViewModel:
         prjdir = os.path.join(self.settings_dir, prjid)
         bks = self.getBooks()
         for bk in bks:
-            if bk not in Info._peripheralBooks:
+            if bk not in TexModel._peripheralBooks:
                 fname = self.getBookFilename(bk, prjid)
                 fpath = os.path.join(self.settings_dir, prjid, fname)
                 if os.path.exists(fpath):

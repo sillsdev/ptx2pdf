@@ -446,7 +446,7 @@ def gatherIllustrations(jobs, prjid, prjdir, printer, info):
 
     for bk in jobs:
         fname = printer.getBookFilename(bk, prjdir)
-        if printer.get("c_usePicList") and bk not in info._peripheralBooks: # Read the PicList to get a list of needed illustrations
+        if printer.get("c_usePicList") and bk not in TexModel._peripheralBooks: # Read the PicList to get a list of needed illustrations
             doti = fname.rfind(".")
             if doti > 0:
                 plfname = fname[:doti] + "-draft" + fname[doti:] + ".piclist"

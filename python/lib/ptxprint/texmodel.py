@@ -631,7 +631,7 @@ class TexModel:
     def makelocalChanges(self, printer, bk):
         self.localChanges = []
         if bk == "GLO" and self.dict['document/filterglossary']:
-            self.filterGlossary()
+            self.filterGlossary(printer)
         first = int(self.dict["document/chapfrom"])
         last = int(self.dict["document/chapto"])
         
@@ -984,20 +984,20 @@ class TexModel:
                         self.localChanges.append((None, regex.compile(r"(\\w (.+\|)?{} ?\\w\*)".format(g[0]), flags=regex.M), \
                                                                      r"\1\\f + \\fq {}: \\ft {}\\f* ".format(g[0],gdefn)))
 
-    def filterGlossary(self):
+    def filterGlossary(self, printer):
         # Only keep entries that have appeared in this collection of books
         glossentries = []
         prjid = self.dict['project/id']
         prjdir = os.path.join(self.ptsettings.basedir, prjid)
-        for bk in self.getBooks():
-            if bk not in Info._peripheralBooks:
-                fname = self.getBookFilename(bk, prjid)
+        for bk in printer.getBooks():
+            if bk not in TexModel._peripheralBooks:
+                fname = printer.getBookFilename(bk, prjid)
                 fpath = os.path.join(prjdir, fname)
                 if os.path.exists(fpath):
                     with universalopen(fpath) as inf:
                         sfmtxt = inf.read()
                     glossentries += re.findall(r"\\w .*?\|?([^\|]+?)\\w\*", sfmtxt)
-        fname = self.getBookFilename("GLO", prjdir)
+        fname = printer.getBookFilename("GLO", prjdir)
         infname = os.path.join(prjdir, fname)
         if os.path.exists(infname):
             with universalopen(infname, rewrite=True) as inf:
