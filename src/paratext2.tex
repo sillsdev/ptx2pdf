@@ -124,6 +124,7 @@
   \TRACE{vm@kenote \n@tetype}%
   \x@\insert\csname note-\n@tetype\endcsname\bgroup% insert note-f (or note-x)
 %%% single-column notes:
+  \ifdiglot\ifdiglotL\the\leftho@ks\else\the\rightho@ks\fi\fi%
   \checkp@ranotes{#1}% check whether this note class is to be paragraphed 
   \hsize=\ifp@ranotes\maxdimen\else\textwidth\advance\hsize by -\columnshift\fi % insert penalties to control breaking of footnotes
   \interlinepenalty\interfootnotelinepenalty % set penalty to break lines
