@@ -1,5 +1,5 @@
 
-import configparser, os, re
+import configparser, os, re, collections
 from .texmodel import ModelMap
 from .ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from .font import TTFont

@@ -665,7 +665,7 @@ class TexModel:
 
         # Probably need to make this more efficient for multi-book and lengthy glossaries (cache the GLO & changes reqd etc.)
         if self.asBool("notes/glossaryfootnotes"):
-            self.makeGlossaryFootnotes(bk)
+            self.makeGlossaryFootnotes(printer, bk)
 
         # Glossary Word markup: Remove the second half of the \w word|glossary-form\w* and apply chosen glossary markup
         v = self.dict["document/glossarymarkupstyle"]
@@ -968,11 +968,11 @@ class TexModel:
         dialog.set_keep_above(False)
         dialog.destroy()
 
-    def makeGlossaryFootnotes(self, bk):
+    def makeGlossaryFootnotes(self, printer, bk):
         # Glossary entries for the key terms appearing like footnotes
         prjid = self.dict['project/id']
         prjdir = os.path.join(self.ptsettings.basedir, prjid)
-        fname = self.getBookFilename("GLO", prjdir)
+        fname = printer.getBookFilename("GLO", prjdir)
         infname = os.path.join(prjdir, fname)
         if os.path.exists(infname):
             with universalopen(infname, rewrite=True) as inf:
