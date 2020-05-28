@@ -33,18 +33,36 @@ _errmsghelp = {
 "Unknown":                               "Sorry! No diagnostic help is available for this error.\n" +\
                                          "Try turning off all Advanced settings & disable Changes and Stylesheets\n",
 }
+# \def\LineSpacingFactor{{{paragraph/linespacingfactor}}}
+# \def\VerticalSpaceFactor{{1.0}}
+# \FontSizeUnit={paper/fontfactor}pt
+# {paragraph/useglyphmetrics}\XeTeXuseglyphmetrics=0
+# \baselineskip={paragraph/linespacing}pt {paragraph/varlinespacing} {paragraph/linemax} {paragraph/linemin}
+# \XeTeXinterwordspaceshaping = {document/spacecntxtlztn}
+# %\extrafont  %% This will be replaced by code for the fallback fonts to be used for special/missing characters
+# \RTL{document/ifrtl}   % Use right-to-left layout mode?
+# {document/iflinebreakon}\XeTeXlinebreaklocale "{document/linebreaklocale}"
+
+# {document/ifcolorfonts}\ColorFontsfalse
+# \IncludeFiguresfalse
+# "" : "document/ifrtl",
+# "" : "paper/fontfactor",
+# "" : "",
+# "" : "",
+# "" : "",
+
 _diglot = {
 "diglot/colorfonts" :       "document/ifcolorfonts",
 
 "diglot/fontregular" :      "fontregular",
 "diglot/fontregeng" :       "fontregular/engine",
-"diglot/texfeatures" :     "font/features",
+"diglot/texfeatures" :      "font/texfeatures",
 "diglot/docscript" :        "document/script",
 "diglot/docdigitmapping" :  "document/digitmapping",
                             
 "diglot/fontbold" :         "fontbold",
 "diglot/fontboldeng" :      "fontbold/engine",
-"diglot/texfeatures" :     "font/features",
+"diglot/texfeatures" :      "font/texfeatures",
 "diglot/docscript" :        "document/script",
 "diglot/docdigitmapping" :  "document/digitmapping",
 "diglot/boldembolden" :     "fontbold/embolden",
@@ -52,7 +70,7 @@ _diglot = {
                             
 "diglot/fontitalic" :       "fontitalic",
 "diglot/fontitaleng" :      "fontitalic/engine",
-"diglot/texfeatures" :     "font/features",
+"diglot/texfeatures" :      "font/texfeatures",
 "diglot/docscript" :        "document/script",
 "diglot/docdigitmapping" :  "document/digitmapping",
 "diglot/italembolden" :     "fontitalic/embolden",
@@ -60,7 +78,7 @@ _diglot = {
                             
 "diglot/fontbolditalic" :   "fontbolditalic",
 "diglot/fontbolditaleng" :  "fontbolditalic/engine",
-"diglot/texfeatures" :     "font/features",
+"diglot/texfeatures" :      "font/texfeatures",
 "diglot/docscript" :        "document/script",
 "diglot/docdigitmapping" :  "document/digitmapping",
 "diglot/bolditalembolden" : "fontbolditalic/embolden",
@@ -89,12 +107,12 @@ parser.add_argument('pid',nargs="?",help="Project id")
 parser.add_argument('-c','--config',help='Configuration path to load')
 parser.add_argument('-p','--paratext',help="Path to Paratext Projects directory")
 parser.add_argument('-d','--directory',default=".",help="Directory to store temporary files in")
-parser.add_argument('-P','--print',action='store_true',help="Hits print")
+parser.add_argument('-alignParam','--print',action='store_true',help="Hits print")
 parser.add_argument('-b','--books',help='Space separated bookid list to set')
 parser.add_argument('-m','--macros',help="Directory containing TeX macros (paratext2.tex)")
 parser.add_argument('-l','--logging',action="store_true",help="Output logging to terminal instead of logging window")
 parser.add_argument('-e','--experimental',action="store_true",help="Enable experimental features")
-parser.add_argument('-T','--timeout',default=200,type=int,help='xetex runtime timeout')
+parser.add_argument('-tmpFile','--timeout',default=200,type=int,help='xetex runtime timeout')
 parser.add_argument('-S','--splash',action="store_true",help="Force splash screen")
 # parser.add_argument('-t','--test', action='store_true',help="Quick start for a lazy typist")
 args = parser.parse_args()
@@ -163,16 +181,21 @@ def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
     
     sharedjob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None)
 
-# "document/ifdiglot":         
-# "document/diglotsettings":   
-# "document/diglotalignment":  
-# "document/diglotprifraction":
-# "document/diglotsecprj":     
-# "document/diglotnormalhdrs": 
-
 def digdojob(jobs, info, prjid, prjdir, diginfo, digprjid, digprjdir, tmpdir, logbuffer=None):
     donebooks = []
     digdonebooks = []
+    # need to set either -v -c -p depending on what kind of merge is needed
+    alnmnt = info.dict["document/diglotalignment"]
+    if alnmnt.startswith("No alignment"):
+        alignParam = "None"
+    elif alnmnt.endswith("Chapters"):
+        alignParam = "-c"
+    elif alnmnt.endswith("Paragraphs"):
+        alignParam = "-p"
+    elif alnmnt.endswith("Verses"):
+        alignParam = "-v"
+    else:
+        alignParam = ""
     diginfo.readConfig()
     for b in jobs:
         out = info.convertBook(b, tmpdir, prjdir)
@@ -180,33 +203,53 @@ def digdojob(jobs, info, prjid, prjdir, diginfo, digprjid, digprjdir, tmpdir, lo
         donebooks.append(out)
         digdonebooks.append(digout)
         
-        if not info.dict["document/diglotalignment"].startswith("No alignment"):
-            # Now run the Perl script to merge the secondary text (R) into the primary text (L) 
-            if sys.platform == "win32":
-                L = os.path.join(tmpdir, out)
-                R = os.path.join(tmpdir, digout)
-                T = os.path.join(tmpdir, "primaryText.tmp")
-                copyfile(L, T)
-                # print("L:{}\nR:{}\nT:{}".format(L, R, T))
-                cmd = ['C:\ptx2pdf\diglot-test\diglotMerge.exe', '-o', L, '-p', '-l', T, R]  # Change absolute path do relative
-                r = checkoutput(cmd)
-                # if r != 0:
-                    # print("Failed to merge the Primary and Secondary files! Result code: {}".format(r))
-                # else:
-                    # print("SUCCESSFULLY merged the Primary and Secondary files!")
-                    os.remove(T)
-            elif sys.platform == "linux":
-                pass
+        if alignParam != "None":
+            # Now run the Perl script to merge the secondary text (right) into the primary text (left) 
+            left = os.path.join(tmpdir, out)
+            right = os.path.join(tmpdir, digout)
+            tmpFile = os.path.join(tmpdir, "primaryText.tmp")
+            copyfile(left, tmpFile)
 
-    if info.dict["document/diglotalignment"].startswith("No alignment"):
+            # Usage: diglotMerge.exe [-mode|options] LeftFile RightFile
+            # Read LeftFile and RightFile, merging them according to the selected mode)
+             # Mode may be any ONE of :
+             # -l     :Left master: splitting right page at each left text paragraph
+             # -r     :Right master: splitting left page at each right text paragraph
+             # -v     :matching verses (default)
+             # -c     :matching chapters
+             # -p     :matching paragraph breaks
+            # Options are:
+             # -left file        : Log to file
+            # -right 11:25-25:12   Only ouput specified range
+            # -s      Split off section headings into a separate chunk (makes verses line up)
+            # -C      If ?? is used, consider the chapter mark to be a heading
+            # -o file : Output to file
+            
+            if sys.platform == "win32":
+                cmd = ['C:\ptx2pdf\diglot-test\diglotMerge.exe', '-o', left, alignParam, '-s', '-l', tmpFile, right]  # Change the EXE's absolute path to relative
+                r = checkoutput(cmd)
+            elif sys.platform == "linux":  # UNTESTED code
+                cmd = ['perl', 'diglot-merge.pl', '-o', left, alignParam, '-l', tmpFile, right]  # need to work out where the .pl file will live)
+                r = checkoutput(cmd)
+            # if r != 0:  # Not sure how to check/interpret the return codes from diglotMerge.exe
+                # print("Failed to merge the Primary and Secondary files! Result code: {}".format(r))
+            # else:
+                # print("SUCCESSFULLY merged the Primary and Secondary files!")
+                # os.remove(tmpFile)
+    info["project/bookids"] = jobs
+    info["project/books"] = donebooks
+
+    if alnmnt.startswith("No"): # WARNING - work in progress!
         # Fuzzy diglot just runs the jobs twice, and the 2nd run picks up the Sec PDF and merges it
+        # Need to add SECONDARY .tex stuff to make it print on half of the page
         sharedjob(jobs, diginfo, digprjid, digprjdir, tmpdir, logbuffer=None) # Need to think where the secPDF(s) will live (tmpdir or pritmpdir)
+        # Need to add PRIMARY .tex stuff to make it print on other half of the page and merge in the SECONDARY PDF
         sharedjob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None)          # See ln 1773 in __init__.py
     else:
         # Pass all the needed parameters for the snippet from diginfo to info
         for k,v in _diglot.items():
             info[k]=diginfo[v]
-        print((k,v) for k, v in info.dict.items() if k.startswith("font"))
+            # print(k, v, diginfo[v])
         sharedjob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None)
 
 def sharedjob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):    
@@ -216,6 +259,7 @@ def sharedjob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
         outfname = "ptxprint-{}{}.tex".format(jobs[0], prjid)
     info.update()
     with open(os.path.join(tmpdir, outfname), "w", encoding="utf-8") as texf:
+        # print({k:v for k,v in info.dict.items() if k.startswith("diglot")})
         texf.write(info.asTex(filedir=tmpdir, jobname=outfname.replace(".tex", "")))
     os.putenv("hyph_size", "32749")     # always run with maximum hyphenated words size (xetex is still tiny ~200MB resident)
     os.putenv("stack_size", "32768")    # extra input stack space (up from 5000)
@@ -275,7 +319,7 @@ def doit(printer, display=True):
     prjdir = os.path.join(args.paratext, prjid)
     if prjid is None or not len(prjid):     # can't print no project
         return
-    info.update()  # save config
+    info.update()
     info.GenerateNestedStyles()
     config = info.createConfig(printer)
     invPW = info.dict["config/pwd"]
@@ -441,7 +485,7 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
                 inf.close() # Look for USFM2 and USFM3 type inline \fig ... \fig* illustrations
                 fullnamelist += re.findall(r"(?i)\\fig .*?\|(.+?(?!\d{5}[a-c]?).+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)
                 fullnamelist += re.findall(r'(?i)\\fig .*?src="(.+?\.(?=jpg|tif|png|pdf)...)" .+?\\fig\*', dat) 
-        newBaseList = [newBase(f) for f in fullnamelist]
+    newBaseList = [newBase(f) for f in fullnamelist]
 
     os.makedirs(tmpPicpath, exist_ok=True)
     for srchdir in srchlist:

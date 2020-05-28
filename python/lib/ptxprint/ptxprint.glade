@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 -->
+<!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkAdjustment" id="a_PriColWidth">
@@ -1081,6 +1081,14 @@ saved configuration.</property>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Fonts which have all 4 typefaces
+(regular, bold, italic, and bold-italic)
+are shown in BOLD in the list above.
+
+If you cannot locate the desired font
+in this list, then it is quite likely that
+it has not been installed "For all Users"
+in the Windows system.</property>
                     <property name="margin_left">6</property>
                     <property name="margin_right">4</property>
                     <property name="margin_bottom">6</property>
@@ -8447,7 +8455,7 @@ Numbers</property>
                                 <property name="has_entry">True</property>
                                 <property name="entry_text_column">0</property>
                                 <property name="id_column">0</property>
-                                <signal name="changed" handler="onDiglotSettingsChanged" swapped="no"/>
+                                <signal name="changed" handler="ondiglotSecProjectChanged" swapped="no"/>
                                 <child internal-child="entry">
                                   <object class="GtkEntry">
                                     <property name="visible">True</property>
@@ -8526,15 +8534,11 @@ be used by Primary (Left) Text</property>
                               <object class="GtkComboBoxText" id="cb_diglotSecConfig">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">Select a previously-saved
+                                <property name="tooltip_text" translatable="yes">Select a previously-saved/shared
 configuration to retrieve those settings.
 
-Or type a name for the current configuration
-to be saved as and click the Save button.
-When the Paratext project is shared through
-Send/Recv, all saved configurations will be
-also made available to other PTXprint users 
-of the same Paratext project.</property>
+(Leaving this blank will use the default
+settings for the project)</property>
                                 <property name="halign">start</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
@@ -8542,7 +8546,7 @@ of the same Paratext project.</property>
                                 <property name="has_entry">True</property>
                                 <property name="active_id">0</property>
                                 <child internal-child="entry">
-                                  <object class="GtkEntry">
+                                  <object class="GtkEntry" id="t_diglotSecConfig">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">Enter a name for the configuration to be saved.

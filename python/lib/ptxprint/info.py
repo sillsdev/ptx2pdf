@@ -201,7 +201,8 @@ class Info:
         "document/diglotsettings":  ("l_diglotStringL", lambda w,v: w.builder.get_object("l_diglotStringL").get_text() if w.get("c_diglot") else ""),
         # "document/diglotsettings":  ("l_diglotStringR", lambda w,v: w.builder.get_object("l_diglotStringR").get_text() if w.get("c_diglot") else ""),
         "document/diglotalignment": ("cb_diglotAlignment", lambda w,v: w.builder.get_object("cb_diglotAlignment").get_active_id()),
-        "document/diglotprifraction": ("s_diglotPriFraction", lambda w,v : round(v, 1) or "50.0"),
+        "document/diglotprifraction": ("s_diglotPriFraction", lambda w,v : round((v/100), 3) or "0.500"),
+        "document/diglotsecfraction": ("s_diglotPriFraction", lambda w,v : round(1 - (v/100), 3) or "0.500"),
         "document/diglotsecprj":    ("cb_diglotSecProject", lambda w,v: w.builder.get_object("cb_diglotSecProject").get_active_id()),
         "document/diglotnormalhdrs": ("c_diglotHeaders", lambda w,v :"" if v else "%"),
 
@@ -442,6 +443,8 @@ class Info:
                     if p == "fontregular":
                         self.dict['font/texfeatures'] = ":"+ ":".join("{0}={1}".format(f.feats.get(fid, fid),
                                                     f.featvals.get(fid, {}).get(int(v), v)) for fid, v in f.features.items())
+            else:
+                self.dict['font/texfeatures'] = ""
             if 'Silf' in f and self.asBool("font/usegraphite"):
                 engine = "/GR"
             else:
@@ -537,10 +540,8 @@ class Info:
                             else:
                                 res.append(c[1].texCode)
                 else:
-                    try:
-                        res.append(l.format(**self.dict))
-                    except:
-                        print("Exception ignored:",l)
+                    res.append(l.format(**self.dict))
+                    # print("Exception ignored:",l)
         return "".join(res).replace("\OmitChapterNumberfalse\n\OmitChapterNumbertrue\n","")
 
     def runConversion(self, infpath, outdir):

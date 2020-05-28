@@ -205,37 +205,37 @@
       \let\b@lditalic=\tmpface\fi%
   \fi%
   \let\typef@ce=\regul@r%
-  \getp@ram{fontname}{#1}% see if \FontName was specified in the stylesheet
+  \getp@ram{fontname}{\f@ntstyle}% see if \FontName was specified in the stylesheet
   \ifx\p@ram\relax % if not, check the \Bold and \Italic properties
-	  \getp@ram{bold}{#1}%
+	  \getp@ram{bold}{\f@ntstyle}%
 	  \ifx\p@ram\tru@
 		\let\typef@ce=\b@ld
-		\getp@ram{italic}{#1}%
+		\getp@ram{italic}{\f@ntstyle}%
 		\ifx\p@ram\tru@ \let\typef@ce=\b@lditalic \fi
 	  \else
-		\getp@ram{italic}{#1}%
+		\getp@ram{italic}{\f@ntstyle}%
 		\ifx\p@ram\tru@ \let\typef@ce=\it@lic \fi
 	  \fi
   \else
    \edef\typef@ce{"\p@ram"}% use font name from the stylesheet
   \fi
-  \getp@ram{smallcaps}{#1}%
+  \getp@ram{smallcaps}{\f@ntstyle}%
   \ifx\p@ram\tru@
     \edef\typef@ce{\typef@ce\SmallCapsSuffix}%
   \fi
-  \getp@ram{color}{#1}%
+  \getp@ram{color}{\f@ntstyle}%
   \ifColorFonts\ifx\p@ram\relax\else%
     \ParseColor\p@ram\end\edef\typef@ce{\typef@ce :color=\r@s}%
   \fi\fi%
-  \getp@ram{superscript}{#1}% scale down by \SuperscriptFactor if superscripted style
+  \getp@ram{superscript}{\f@ntstyle}% scale down by \SuperscriptFactor if superscripted style
   \dimen0=\ifx\p@ram\tru@ \SuperscriptFactor\fi\FontSizeUnit%
-  \getp@ram{fontscale}{#1}%
+  \getp@ram{fontscale}{\f@ntstyle}%
   \ifx\p@ram\relax
-    \getp@ram{fontsize}{#1}%
+    \getp@ram{fontsize}{\f@ntstyle}%
     \ifx\p@ram\relax\dimen1=\c@rrfontsize\dimen0
-       \MSG{*** FontSize missing for marker '#1', defaulting to \c@rrfontsize}%
+       \MSG{*** FontSize missing for marker '\f@ntstyle', defaulting to \c@rrfontsize}%
     \else%
-      \trace{F}{#1: Font size "\p@ram"}%
+      \trace{F}{\f@ntstyle: Font size "\p@ram"}%
       \dimen1=\p@ram \dimen0
       %\ifdim\dimen1 > 2\dimen0 \else%
       %  \multiply\dimen1 by \c@rrfontsize
@@ -261,12 +261,12 @@
   \x@\global\x@\font
     \csname font<\f@ntstyle>\endcsname=\typef@ce\space at \the \dimen1
   \ifx\SpaceStretchFactor\undefined\else
-    \dimen0=\SpaceStretchFactor\x@\x@\fontdimen2\csname font<#1>\endcsname
-    \x@\x@\fontdimen3\csname font<#1>\endcsname=\dimen0
+    \dimen0=\SpaceStretchFactor\x@\x@\fontdimen2\csname font<\f@ntstyle>\endcsname
+    \x@\x@\fontdimen3\csname font<\f@ntstyle>\endcsname=\dimen0
   \fi
   \ifx\SpaceShrinkFactor\undefined\else
-    \dimen0=\SpaceShrinkFactor\x@\x@\fontdimen2\csname font<#1>\endcsname
-    \x@\x@\fontdimen4\csname font<#1>\endcsname=\dimen0
+    \dimen0=\SpaceShrinkFactor\x@\x@\fontdimen2\csname font<\f@ntstyle>\endcsname
+    \x@\x@\fontdimen4\csname font<\f@ntstyle>\endcsname=\dimen0
   \fi
  \fi
  % switch to the appropriate font
