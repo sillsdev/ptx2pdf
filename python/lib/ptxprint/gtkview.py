@@ -184,6 +184,7 @@ class GtkViewModel(ViewModel):
 
         olst = ["b_print", "bx_SavedConfigSettings", "tb_Layout", "tb_Body", "tb_HeadFoot", "tb_Pictures",
                 "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_DiglotTesting", "tb_FancyBorders"]
+        self.initialised = True
         if self.pendingPid is not None:
             self.onProjectChange(None)
             self.pendingPid = None
@@ -208,7 +209,6 @@ class GtkViewModel(ViewModel):
         tv.append_column(col)
         ts = self.builder.get_object("t_fontSearch")
         tv.set_search_entry(ts)
-        self.initialised = True
         self.mw.resize(730, 640)
         self.mw.show_all()
         Gtk.main()

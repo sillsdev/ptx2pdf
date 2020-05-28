@@ -69,8 +69,7 @@ class ViewModel:
 
     def set(self, wid, value):
         if wid.startswith("bl_"):
-            self.dict[wid + " name"] = value[0]
-            self.dict[wid + " style"] = value[1]
+            self.setFont(wid, *value)
         self.dict[wid] = value
 
     def configName(self):
@@ -100,6 +99,10 @@ class ViewModel:
                     (self.ptsettings['FileNamePostPart'] or "")
         fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
         return fname
+
+    def setFont(self, btn, name, style):
+        self.dict[btn+"/name"] = name
+        self.dict[btm+"/style"] = style
 
     def onFontChanged(self, fbtn):
         font_info = self.get("bl_fontR")
@@ -288,10 +291,9 @@ class ViewModel:
                 elif sect in ModelMap:
                     v = ModelMap[sect]
                     if v[0].startswith("bl_") and opt == "name":
-                        vname = re.sub(r"\s*,?\s*\d+\s*$", "", val) # strip legacy style and size
-                        vname = val
+                        vname = re.sub(r"\s*,?\s+\d+\s*$", "", val) # strip legacy style and size
                         vstyle = config.get(sect, "style", fallback="")
-                        self.set(sect, (vname, vstyle))
+                        self.set(ModelMap[sect][0], (vname, vstyle))
         for k, v in self._settingmappings.items():
             (sect, name) = k.split("/")
             try:

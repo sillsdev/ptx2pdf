@@ -130,7 +130,7 @@ mainw = GtkViewModel(allprojects, args.paratext, working_dir=args.directory)
 mainw.ExperimentalFeatures(args.experimental)
 
 if args.pid:
-    mainw.set("cb_project", args.pid)
+    mainw.set("fcb_project", args.pid)
 
 def parselog(fname, rerunp=False, lines=20):
     loglines = []
@@ -314,7 +314,8 @@ def doit(printer, display=True):
     os.makedirs(tmpdir, exist_ok=True)
     jobs = printer.getBooks()
     
-    isDiglot = info.asBool("document/ifdiglot")
+    isDiglot = printer.get("c_diglot")
+    print("isdiglot {}".format(isDiglot))
     if isDiglot:
         digfraction = info.dict["document/diglotprifraction"]
         digprjid = info.dict["document/diglotsecprj"]
