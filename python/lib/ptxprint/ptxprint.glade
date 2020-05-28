@@ -1101,7 +1101,7 @@ in the Windows system.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkComboBox" id="cb_fontFaces">
+                  <object class="GtkComboBox" id="fcb_fontFaces">
                     <property name="width_request">100</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -1488,7 +1488,7 @@ Shortcut key: &lt;Ctrl-P&gt;</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkComboBox" id="cb_project">
+                                      <object class="GtkComboBox" id="fcb_project">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="can_default">True</property>
@@ -1528,7 +1528,7 @@ Shortcut key: &lt;Ctrl-P&gt;</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkComboBox" id="cb_book">
+                                      <object class="GtkComboBox" id="ecb_book">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="model">ls_books</property>
@@ -1568,7 +1568,7 @@ Shortcut key: &lt;Ctrl-P&gt;</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkComboBox" id="cb_chapfrom">
+                                      <object class="GtkComboBox" id="fcb_chapfrom">
                                         <property name="width_request">70</property>
                                         <property name="visible">True</property>
                                         <property name="sensitive">False</property>
@@ -1601,7 +1601,7 @@ Shortcut key: &lt;Ctrl-P&gt;</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkComboBox" id="cb_chapto">
+                                      <object class="GtkComboBox" id="fcb_chapto">
                                         <property name="width_request">70</property>
                                         <property name="visible">True</property>
                                         <property name="sensitive">False</property>
@@ -1820,7 +1820,7 @@ Saved Configuration immediately.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkComboBoxText" id="cb_savedConfig">
+                                      <object class="GtkComboBoxText" id="ecb_savedConfig">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">Select a previously-saved
@@ -2498,7 +2498,7 @@ space between lines of text.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkComboBoxText" id="cb_pagesize">
+                                      <object class="GtkComboBoxText" id="ecb_pagesize">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">If the required size is not displayed, then just type the required page width and height separated by a comma. For example: 140mm,210mm</property>
@@ -2919,7 +2919,7 @@ are using supports these digits too.)</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkComboBox" id="cb_digits">
+                                  <object class="GtkComboBox" id="fcb_digits">
                                     <property name="width_request">150</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
@@ -3375,7 +3375,7 @@ Direction:</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkComboBox" id="cb_textDirection">
+                                      <object class="GtkComboBox" id="fcb_textDirection">
                                         <property name="width_request">100</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
@@ -3979,7 +3979,7 @@ Heading. It will appear as an \m(argin) paragraph instead of a normal \p.</prope
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkComboBox" id="cb_glossaryMarkupStyle">
+                                  <object class="GtkComboBox" id="fcb_glossaryMarkupStyle">
                                     <property name="width_request">180</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
@@ -4684,7 +4684,7 @@ of Header Line</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkComboBoxText" id="cb_hdrcenter">
+                                      <object class="GtkComboBoxText" id="ecb_hdrcenter">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="active">1</property>
@@ -4712,7 +4712,7 @@ of Header Line</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkComboBoxText" id="cb_hdrright">
+                                      <object class="GtkComboBoxText" id="ecb_hdrright">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="active">4</property>
@@ -4739,7 +4739,7 @@ of Header Line</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkComboBoxText" id="cb_hdrleft">
+                                      <object class="GtkComboBoxText" id="ecb_hdrleft">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="active">0</property>
@@ -5491,7 +5491,7 @@ which must be specified here.</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkComboBox" id="cb_blendedXrefCaller">
+                                          <object class="GtkComboBox" id="fcb_blendedXrefCaller">
                                             <property name="width_request">70</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
@@ -5836,7 +5836,7 @@ the scripture text begins).</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkComboBoxText" id="cb_ftrcenter">
+                              <object class="GtkComboBoxText" id="ecb_ftrcenter">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="active">0</property>
@@ -6680,7 +6680,7 @@ this option checked (on).</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkComboBox" id="cb_script">
+                                      <object class="GtkComboBox" id="fcb_script">
                                         <property name="width_request">200</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
@@ -6758,7 +6758,7 @@ Contextualization:</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkComboBoxText" id="cb_spaceCntxtlztn">
+                                      <object class="GtkComboBoxText" id="fcb_spaceCntxtlztn">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">None (default): Most projects would use this setting.
@@ -6775,15 +6775,6 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                                           <item id="1" translatable="yes">Some</item>
                                           <item id="2" translatable="yes">Full</item>
                                         </items>
-                                        <child internal-child="entry">
-                                          <object class="GtkEntry">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="halign">start</property>
-                                            <property name="width_chars">6</property>
-                                            <property name="progress_pulse_step">0</property>
-                                          </object>
-                                        </child>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -7604,7 +7595,7 @@ focus:</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkComboBox" id="cb_examineBook">
+                              <object class="GtkComboBox" id="ecb_examineBook">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">Choose any book (including
@@ -8446,7 +8437,7 @@ Numbers</property>
                             <property name="row_spacing">8</property>
                             <property name="column_spacing">6</property>
                             <child>
-                              <object class="GtkComboBox" id="cb_diglotSecProject">
+                              <object class="GtkComboBox" id="ecb_diglotSecProject">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">end</property>
@@ -8531,7 +8522,7 @@ be used by Primary (Left) Text</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkComboBoxText" id="cb_diglotSecConfig">
+                              <object class="GtkComboBoxText" id="ecb_diglotSecConfig">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">Select a previously-saved/shared
@@ -8567,7 +8558,7 @@ parentheses, underscores and hyphens.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkComboBox" id="cb_diglotAlignment">
+                              <object class="GtkComboBox" id="fcb_diglotAlignment">
                                 <property name="width_request">180</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>

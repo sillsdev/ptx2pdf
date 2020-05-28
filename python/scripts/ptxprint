@@ -78,8 +78,10 @@ try:
 except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
     import ptxprint
+from ptxprint.view import ViewModel, VersionStr
+from ptxprint.gtkview import GtkViewModel
 from ptxprint.font import initFontCache
-from ptxprint.info import universalopen, Info
+from ptxprint.texmodel import universalopen, TexModel
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.runner import checkoutput
 
@@ -124,7 +126,7 @@ provider = Gtk.CssProvider()
 provider.load_from_data(css.encode("utf-8"))
 Gtk.StyleContext().add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
-mainw = ptxprint.PtxPrinterDialog(allprojects, args.paratext, working_dir=args.directory)
+mainw = GtkViewModel(allprojects, args.paratext, working_dir=args.directory)
 mainw.ExperimentalFeatures(args.experimental)
 
 if args.pid:
@@ -296,23 +298,21 @@ def sharedjob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
     return outfname
 
 def doit(printer, display=True):
-    info = printer.info or ptxprint.Info(printer, args.paratext, printer.ptsettings, printer.prjid)
+    info = TexModel(printer, args.paratext, printer.ptsettings, printer.prjid)
     prjid = info.dict["project/id"]
     prjdir = os.path.join(args.paratext, prjid)
     if prjid is None or not len(prjid):     # can't print no project
         return
-    info.update()
     info.GenerateNestedStyles()
-    config = info.createConfig(printer)
-    invPW = info.dict["config/pwd"]
-    if invPW == None or invPW == "": # This config is unlocked
+    invPW = printer.get("t_invisiblePassword")
+    if invPW == None or invPW == "" or printer.configName() == "": # This config is unlocked
         # So it it safe/allowed to save the current config
-        printer.saveConfig(config)
+        printer.writeConfig()
     # else:
         # print("Current Config is Locked, so changes have NOT been saved")
     tmpdir = os.path.join(prjdir, 'PrintDraft') if info.asBool("project/useprintdraftfolder") else args.directory
     os.makedirs(tmpdir, exist_ok=True)
-    jobs = info.getBooks()
+    jobs = printer.getBooks()
     
     isDiglot = info.asBool("document/ifdiglot")
     if isDiglot:
@@ -327,7 +327,7 @@ def doit(printer, display=True):
         # diginfo.loadConfig(None, )
         
     if info.asBool("document/ifinclfigs") and not info.asBool("document/ifdiglot"):
-        gatherIllustrations(jobs, prjid, prjdir, printer)
+        gatherIllustrations(jobs, prjid, prjdir, printer, info)
 
     info.changes = None
     if isDiglot:
@@ -391,14 +391,8 @@ def doit(printer, display=True):
             if len(files):
                 finalLogLines.append("\nFile(s) to check: {}".format(", ".join(files)))
             par = par = printer.builder.get_object('ptxprint')
-            dialog = Gtk.MessageDialog(parent=par, modal=True, message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK, \
-                text="Failed to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname))
-            dialog.set_title ("PTXprint [0.7.0 Beta] - Error!")
-            dialog.format_secondary_text("".join(finalLogLines[-20:]))
-            dialog.set_keep_above(True)
-            dialog.run()
-            dialog.set_keep_above(False)
-            dialog.destroy()
+            printer.doError("Failed to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname),
+                    "PTXprint [{}] - Error!".format(VersionStr))
 
 def base(fpath):
     return os.path.basename(fpath)[:-4]
@@ -419,8 +413,7 @@ def newBase(fpath):
     else:
         return re.sub('[()&+,. ]', '_', base(fpath).lower())
 
-def gatherIllustrations(jobs, prjid, prjdir, printer):
-    info = printer.info or ptxprint.Info(printer, args.paratext, printer.ptsettings, printer.prjid)
+def gatherIllustrations(jobs, prjid, prjdir, printer, info):
     tmpPicpath = os.path.join(printer.working_dir, "tmpPics")
     folderList = ["tmpPics", "tmpPicLists"] 
     removeTmpFolders(printer.working_dir, folderList)
@@ -449,7 +442,7 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
     fullnamelist = []
 
     for bk in jobs:
-        fname = info.getBookFilename(bk, prjdir)
+        fname = printer.getBookFilename(bk, prjdir)
         if printer.get("c_usePicList") and bk not in info._peripheralBooks: # Read the PicList to get a list of needed illustrations
             doti = fname.rfind(".")
             if doti > 0:
