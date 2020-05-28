@@ -1,4 +1,4 @@
-python3-ptxprint (0.7.0-1ubuntu1) unstable; urgency=medium
+ptxprint (0.7.0-1ubuntu1) focal; urgency=medium
 
   * Initial release.
 
