@@ -26,9 +26,10 @@ class ViewModel:
         "notes/fncallers": "footnotes"
     }
 
-    def __init__(self, allprojects, settings_dir, working_dir=None):
+    def __init__(self, allprojects, settings_dir, usePrintdraft):
         self.settings_dir = settings_dir
-        self.working_dir = working_dir
+        self.usePrintDraft_dir = usePrintdraft
+        self.working_dir = None
         self.config_dir = None
         self.ptsettings = None
         self.booklist = []
@@ -102,7 +103,7 @@ class ViewModel:
 
     def setFont(self, btn, name, style):
         self.dict[btn+"/name"] = name
-        self.dict[btm+"/style"] = style
+        self.dict[btn+"/style"] = style
 
     def onFontChanged(self, fbtn):
         font_info = self.get("bl_fontR")
@@ -149,27 +150,25 @@ class ViewModel:
     def updateBookList(self):
         pass
 
-    def updateProjectSettings(self, saveCurrConfig=False):
+    def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None):
         currprj = self.prjid
         if currprj is not None and saveCurrConfig:
             self.writeConfig()
             self.updateSavedConfigList()
             self.set("t_savedConfig", "")
             self.set("t_configNotes", "")
-        self.prjid = self.get("fcb_project")
-        print("prjid=",self.prjid)
         self.ptsettings = None
-        lsbooks = self.builder.get_object("ls_books")
+        self.prjid = self.get("fcb_project") if prjid is None else prjid
         if self.prjid:
             self.ptsettings = ParatextSettings(self.settings_dir, self.prjid)
             self.updateBookList()
         if not self.prjid:
             return
-        if self.get("c_useprintdraftfolder"):
+        if self.usePrintDraft_dir:
             self.working_dir = os.path.join(self.settings_dir, self.prjid, 'PrintDraft')
         else:
             self.working_dir = '.'
-        return self.readConfig()
+        return self.readConfig(cfgname=configName)
 
     def getDialogTitle(self):
         prjid = "  -  " + self.get("fcb_project")

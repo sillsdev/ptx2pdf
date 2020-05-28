@@ -92,8 +92,8 @@ class Splash(Thread):
 
 class GtkViewModel(ViewModel):
 
-    def __init__(self, allprojects, settings_dir, working_dir=None):
-        super(GtkViewModel, self).__init__(allprojects, settings_dir, working_dir=working_dir)
+    def __init__(self, allprojects, settings_dir, usePrintdraft):
+        super(GtkViewModel, self).__init__(allprojects, settings_dir, usePrintdraft)
         self.initialised = False
         self.configNoUpdate = False
         self.chapNoUpdate = False
@@ -1228,6 +1228,7 @@ class GtkViewModel(ViewModel):
             self.working_dir = os.path.join(self.settings_dir, self.prjid, 'PrintDraft')
         else:
             self.working_dir = "."
+        self.usePrintDraft_dir = upd
         self.builder.get_object("l_working_dir").set_label(self.working_dir)
 
     def onProjectChange(self, cb_prj):
@@ -1260,8 +1261,8 @@ class GtkViewModel(ViewModel):
         titleStr = super(GtkViewModel, self).getDialogTitle()
         self.builder.get_object("ptxprint").set_title(titleStr)
 
-    def updateProjectSettings(self, saveCurrConfig=False):
-        if not super(GtkViewModel, self).updateProjectSettings(saveCurrConfig=saveCurrConfig):
+    def updateProjectSettings(self, saveCurrConfig=False, configName=None):
+        if not super(GtkViewModel, self).updateProjectSettings(None, saveCurrConfig=saveCurrConfig, configName=configName):
             for fb in ['bl_fontR', 'bl_fontB', 'bl_fontI', 'bl_fontBI', 'bl_fontExtraR', 'bl_verseNumFont']:  # 
                 fblabel = self.builder.get_object(fb).set_label("Select font...")
         if self.prjid:

@@ -126,7 +126,7 @@ provider = Gtk.CssProvider()
 provider.load_from_data(css.encode("utf-8"))
 Gtk.StyleContext().add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
-mainw = GtkViewModel(allprojects, args.paratext, working_dir=args.directory)
+mainw = GtkViewModel(allprojects, args.paratext, args.directory!=".")
 mainw.ExperimentalFeatures(args.experimental)
 
 if args.pid:
@@ -180,7 +180,6 @@ def digdojob(jobs, info, prjid, prjdir, diginfo, digprjid, digprjdir, tmpdir, lo
         P = "-v"
     else:
         P = ""
-    diginfo.readConfig()
     for b in jobs:
         out = info.convertBook(b, tmpdir, prjdir)
         digout = diginfo.convertBook(b, tmpdir, digprjdir)
@@ -319,11 +318,14 @@ def doit(printer, display=True):
     if isDiglot:
         digfraction = info.dict["document/diglotprifraction"]
         digprjid = info.dict["document/diglotsecprj"]
+        digcfg = info.dict["document/diglotsecconfig"]
         digprjdir = os.path.join(args.paratext, digprjid)
         if digprjid is None or not len(digprjid):     # can't print no project
             return
         digptsettings = ParatextSettings(args.paratext, digprjid)
-        diginfo = Info(None, args.paratext, digptsettings, digprjid)
+        digprinter = ViewModel(allprojects, args.paratext, printer.usePrintDraft_dir)
+        digprinter.updateProjectSettings(digprjid, configName=digcfg)
+        diginfo = TexModel(digprinter, args.paratext, digptsettings, digprjid)
         print(diginfo.dict["project/id"])
         # diginfo.loadConfig(None, )
         
@@ -448,7 +450,7 @@ def gatherIllustrations(jobs, prjid, prjdir, printer, info):
             doti = fname.rfind(".")
             if doti > 0:
                 plfname = fname[:doti] + "-draft" + fname[doti:] + ".piclist"
-            piclstfname = os.path.join(printer.configPath(False), "PicLists", plfname)
+            piclstfname = os.path.join(printer.configPath(makePath=False), "PicLists", plfname)
             if os.path.exists(piclstfname):
                 with universalopen(piclstfname, rewrite=True) as inf:
                     dat = inf.read()

@@ -197,6 +197,7 @@ ModelMap = {
     "document/diglotprifraction": ("s_diglotPriFraction", lambda w,v : round((v/100), 3) or "0.500"),
     "document/diglotsecfraction": ("s_diglotPriFraction", lambda w,v : round(1 - (v/100), 3) or "0.500"),
     "document/diglotsecprj":    ("ecb_diglotSecProject", None),
+    "document/diglotsecconfig": ("ecb_diglotSecConfig", None),
     "document/diglotnormalhdrs": ("c_diglotHeaders", lambda w,v :"" if v else "%"),
 
     "header/headerposition":    ("s_headerposition", lambda w,v: round(v, 2) or "1.00"),
