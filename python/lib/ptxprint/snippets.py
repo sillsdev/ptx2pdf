@@ -79,6 +79,7 @@ class AlignedDiglotREAL():
 
 \def\DiglotLeftFraction{{document/diglotprifraction}}
 \def\DiglotRightFraction{{document/diglotsecfraction}}
+\IncludeFiguresfalse
 """
 
 class AlignedDiglot():

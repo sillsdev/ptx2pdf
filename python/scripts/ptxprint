@@ -33,6 +33,24 @@ _errmsghelp = {
 "Unknown":                               "Sorry! No diagnostic help is available for this error.\n" +\
                                          "Try turning off all Advanced settings & disable Changes and Stylesheets\n",
 }
+# \def\LineSpacingFactor{{{paragraph/linespacingfactor}}}
+# \def\VerticalSpaceFactor{{1.0}}
+# \FontSizeUnit={paper/fontfactor}pt
+# {paragraph/useglyphmetrics}\XeTeXuseglyphmetrics=0
+# \baselineskip={paragraph/linespacing}pt {paragraph/varlinespacing} {paragraph/linemax} {paragraph/linemin}
+# \XeTeXinterwordspaceshaping = {document/spacecntxtlztn}
+# %\extrafont  %% This will be replaced by code for the fallback fonts to be used for special/missing characters
+# \RTL{document/ifrtl}   % Use right-to-left layout mode?
+# {document/iflinebreakon}\XeTeXlinebreaklocale "{document/linebreaklocale}"
+
+# {document/ifcolorfonts}\ColorFontsfalse
+# \IncludeFiguresfalse
+# "" : "document/ifrtl",
+# "" : "paper/fontfactor",
+# "" : "",
+# "" : "",
+# "" : "",
+
 _diglot = {
 "diglot/colorfonts" :       "document/ifcolorfonts",
 
@@ -89,12 +107,12 @@ parser.add_argument('pid',nargs="?",help="Project id")
 parser.add_argument('-c','--config',help='Configuration path to load')
 parser.add_argument('-p','--paratext',help="Path to Paratext Projects directory")
 parser.add_argument('-d','--directory',default=".",help="Directory to store temporary files in")
-parser.add_argument('-P','--print',action='store_true',help="Hits print")
+parser.add_argument('-alignParam','--print',action='store_true',help="Hits print")
 parser.add_argument('-b','--books',help='Space separated bookid list to set')
 parser.add_argument('-m','--macros',help="Directory containing TeX macros (paratext2.tex)")
 parser.add_argument('-l','--logging',action="store_true",help="Output logging to terminal instead of logging window")
 parser.add_argument('-e','--experimental',action="store_true",help="Enable experimental features")
-parser.add_argument('-T','--timeout',default=200,type=int,help='xetex runtime timeout')
+parser.add_argument('-tmpFile','--timeout',default=200,type=int,help='xetex runtime timeout')
 parser.add_argument('-S','--splash',action="store_true",help="Force splash screen")
 # parser.add_argument('-t','--test', action='store_true',help="Quick start for a lazy typist")
 args = parser.parse_args()
@@ -169,15 +187,15 @@ def digdojob(jobs, info, prjid, prjdir, diginfo, digprjid, digprjdir, tmpdir, lo
     # need to set either -v -c -p depending on what kind of merge is needed
     alnmnt = info.dict["document/diglotalignment"]
     if alnmnt.startswith("No alignment"):
-        P = "None"
+        alignParam = "None"
     elif alnmnt.endswith("Chapters"):
-        P = "-c"
+        alignParam = "-c"
     elif alnmnt.endswith("Paragraphs"):
-        P = "-p"
+        alignParam = "-p"
     elif alnmnt.endswith("Verses"):
-        P = "-v"
+        alignParam = "-v"
     else:
-        P = ""
+        alignParam = ""
     diginfo.readConfig()
     for b in jobs:
         out = info.convertBook(b, tmpdir, prjdir)
@@ -185,12 +203,12 @@ def digdojob(jobs, info, prjid, prjdir, diginfo, digprjid, digprjdir, tmpdir, lo
         donebooks.append(out)
         digdonebooks.append(digout)
         
-        if P != "None":
-            # Now run the Perl script to merge the secondary text (R) into the primary text (L) 
-            L = os.path.join(tmpdir, out)
-            R = os.path.join(tmpdir, digout)
-            T = os.path.join(tmpdir, "primaryText.tmp")
-            copyfile(L, T)
+        if alignParam != "None":
+            # Now run the Perl script to merge the secondary text (right) into the primary text (left) 
+            left = os.path.join(tmpdir, out)
+            right = os.path.join(tmpdir, digout)
+            tmpFile = os.path.join(tmpdir, "primaryText.tmp")
+            copyfile(left, tmpFile)
 
             # Usage: diglotMerge.exe [-mode|options] LeftFile RightFile
             # Read LeftFile and RightFile, merging them according to the selected mode)
@@ -201,23 +219,23 @@ def digdojob(jobs, info, prjid, prjdir, diginfo, digprjid, digprjdir, tmpdir, lo
              # -c     :matching chapters
              # -p     :matching paragraph breaks
             # Options are:
-             # -L file        : Log to file
-            # -R 11:25-25:12   Only ouput specified range
+             # -left file        : Log to file
+            # -right 11:25-25:12   Only ouput specified range
             # -s      Split off section headings into a separate chunk (makes verses line up)
             # -C      If ?? is used, consider the chapter mark to be a heading
             # -o file : Output to file
             
             if sys.platform == "win32":
-                cmd = ['C:\ptx2pdf\diglot-test\diglotMerge.exe', '-o', L, P, '-s', '-l', T, R]  # Change the EXE's absolute path to relative
+                cmd = ['C:\ptx2pdf\diglot-test\diglotMerge.exe', '-o', left, alignParam, '-s', '-l', tmpFile, right]  # Change the EXE's absolute path to relative
                 r = checkoutput(cmd)
             elif sys.platform == "linux":  # UNTESTED code
-                cmd = ['perl', 'diglot-merge.pl', '-o', L, P, '-l', T, R]  # need to work out where the .pl file will live)
+                cmd = ['perl', 'diglot-merge.pl', '-o', left, alignParam, '-l', tmpFile, right]  # need to work out where the .pl file will live)
                 r = checkoutput(cmd)
             # if r != 0:  # Not sure how to check/interpret the return codes from diglotMerge.exe
                 # print("Failed to merge the Primary and Secondary files! Result code: {}".format(r))
             # else:
                 # print("SUCCESSFULLY merged the Primary and Secondary files!")
-                # os.remove(T)
+                # os.remove(tmpFile)
     info["project/bookids"] = jobs
     info["project/books"] = donebooks
 
@@ -467,7 +485,7 @@ def gatherIllustrations(jobs, prjid, prjdir, printer):
                 inf.close() # Look for USFM2 and USFM3 type inline \fig ... \fig* illustrations
                 fullnamelist += re.findall(r"(?i)\\fig .*?\|(.+?(?!\d{5}[a-c]?).+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)
                 fullnamelist += re.findall(r'(?i)\\fig .*?src="(.+?\.(?=jpg|tif|png|pdf)...)" .+?\\fig\*', dat) 
-        newBaseList = [newBase(f) for f in fullnamelist]
+    newBaseList = [newBase(f) for f in fullnamelist]
 
     os.makedirs(tmpPicpath, exist_ok=True)
     for srchdir in srchlist:
