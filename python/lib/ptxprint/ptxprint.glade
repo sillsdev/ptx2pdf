@@ -7094,7 +7094,7 @@ XeTeX Macros</property>
                                 <property name="receives_default">False</property>
                                 <property name="tooltip_text" translatable="yes">WARNING: This option has been deprecated.
 It will soon disappear completely. Turn it OFF.</property>
-                                <property name="opacity">0.5</property>
+                                <property name="opacity">0.40000000000000002</property>
                                 <property name="halign">center</property>
                                 <property name="draw_indicator">True</property>
                               </object>
@@ -8447,25 +8447,14 @@ Numbers</property>
                             <property name="row_spacing">8</property>
                             <property name="column_spacing">6</property>
                             <child>
-                              <object class="GtkComboBox" id="ecb_diglotSecProject">
+                              <object class="GtkComboBox" id="fcb_diglotSecProject">
+                                <property name="width_request">120</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">end</property>
                                 <property name="model">ls_digprojects</property>
-                                <property name="wrap_width">1</property>
-                                <property name="has_entry">True</property>
-                                <property name="entry_text_column">0</property>
                                 <property name="id_column">0</property>
                                 <signal name="changed" handler="ondiglotSecProjectChanged" swapped="no"/>
-                                <child internal-child="entry">
-                                  <object class="GtkEntry">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="halign">start</property>
-                                    <property name="max_length">8</property>
-                                    <property name="width_chars">11</property>
-                                  </object>
-                                </child>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -8532,7 +8521,8 @@ be used by Primary (Left) Text</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkComboBoxText" id="ecb_diglotSecConfig">
+                              <object class="GtkComboBox" id="fcb_diglotSecConfig">
+                                <property name="width_request">250</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">Select a previously-saved/shared
@@ -8541,25 +8531,8 @@ configuration to retrieve those settings.
 (Leaving this blank will use the default
 settings for the project)</property>
                                 <property name="halign">start</property>
-                                <property name="margin_top">6</property>
-                                <property name="margin_bottom">6</property>
                                 <property name="active">0</property>
-                                <property name="has_entry">True</property>
                                 <property name="active_id">0</property>
-                                <child internal-child="entry">
-                                  <object class="GtkEntry" id="t_diglotSecConfig">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">Enter a name for the configuration to be saved.
-
-Note that only Roman/Latin names
-are supported using: a-z A-Z, 0-9,
-parentheses, underscores and hyphens.</property>
-                                    <property name="halign">start</property>
-                                    <property name="max_length">32</property>
-                                    <property name="width_chars">35</property>
-                                  </object>
-                                </child>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>

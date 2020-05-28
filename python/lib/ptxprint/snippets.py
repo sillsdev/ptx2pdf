@@ -67,7 +67,7 @@ class FancyIntro():
 \def\iotableleader#1#2{#1\leaders\hbox to 0.8em{\hss.\hss}\hfill#2\par}%
 """
 
-class AlignedDiglotREAL():
+class AlignedDiglot():
     regexes = []
     styleInfo = ""
     processTex = True
@@ -81,7 +81,7 @@ class AlignedDiglotREAL():
 \def\DiglotRightFraction{{document/diglotsecfraction}}
 """
 
-class AlignedDiglot():
+class AlignedDiglotTEST():
     regexes = []
     styleInfo = ""
     processTex = False

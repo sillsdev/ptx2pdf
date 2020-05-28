@@ -112,7 +112,7 @@ class GtkViewModel(ViewModel):
         self.addCR("fcb_fontFaces", 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.addCR("fcb_diglotAlignment", 0)
-        self.addCR("ecb_diglotSecConfig", 0)
+        self.addCR("fcb_diglotSecConfig", 0)
         pb = self.builder.get_object("b_print")
         pbc = pb.get_style_context()
         pbc.add_class("printbutton")
@@ -168,7 +168,7 @@ class GtkViewModel(ViewModel):
             self.digprojects.append([p])
         wide = int(len(allprojects)/16)+1
         self.builder.get_object("fcb_project").set_wrap_width(wide)
-        self.builder.get_object("ecb_diglotSecProject").set_wrap_width(wide)
+        self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
 
     def run(self, callback, splash=True):
         self.callback = callback
@@ -470,20 +470,21 @@ class GtkViewModel(ViewModel):
         self.configNoUpdate = False
 
     def updateDiglotConfigList(self):
-        self.ecb_diglotSecConfig.remove_all()
+        # self.fcb_diglotSecConfig.remove_all()
         diglotConfigs = [""]
-        digprj = self.get("ecb_diglotSecProject")
-        shpath = os.path.join(self.settings_dir, digprj, "shared", "ptxprint")
-        if os.path.exists(shpath): # Get the list of Saved Configs (folders)
-            for f in next(os.walk(shpath))[1]:
-                if not f in ["PicLists", "AdjLists"]:
-                    diglotConfigs.append(f)
-        if len(diglotConfigs):
-            for cfgName in sorted(diglotConfigs):
-                self.ecb_diglotSecConfig.append_text(cfgName)
-            self.ecb_diglotSecConfig.set_active(0)
-        else:
-            self.builder.get_object("t_diglotSecConfig").set_text("")
+        digprj = self.get("fcb_diglotSecProject")
+        if digprj is not None:
+            shpath = os.path.join(self.settings_dir, digprj, "shared", "ptxprint")
+            if os.path.exists(shpath): # Get the list of Saved Configs (folders)
+                for f in next(os.walk(shpath))[1]:
+                    if not f in ["PicLists", "AdjLists"]:
+                        diglotConfigs.append(f)
+            if len(diglotConfigs):
+                for cfgName in sorted(diglotConfigs):
+                    self.fcb_diglotSecConfig.append_text(cfgName)
+                self.fcb_diglotSecConfig.set_active(0)
+            # else:
+                # self.builder.get_object("t_diglotSecConfig").set_text("")
 
     def onLockUnlockSavedConfig(self, btn):
         lockBtn = self.builder.get_object("btn_lockunlock")
