@@ -4267,8 +4267,13 @@ file(s) in the Viewer tab.</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">In order for hyphenation to work optimally, you need 
-to have clicked the "Create XeTeX Hyphenated Word List"
-button on the Advanced tab.</property>
+to click the "Create Hyphenation List" button on the
+left. This will create a XeTeX hyphenation list from the
+hyphenation list in Paratext.
+
+Note that if you don't do this, then it will use (standard
+English) hyphenation rules which may not be ideal
+for the language you are using.</property>
                                         <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
                                         <signal name="clicked" handler="onHyphenateClicked" swapped="no"/>
@@ -6775,6 +6780,11 @@ Full: Spaces between words are adjusted, and the rendering of individual words *
                                           <item id="1" translatable="yes">Some</item>
                                           <item id="2" translatable="yes">Full</item>
                                         </items>
+                                        <child internal-child="entry">
+                                          <object class="GtkEntry">
+                                            <property name="can_focus">False</property>
+                                          </object>
+                                        </child>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>

@@ -564,11 +564,11 @@ class GtkViewModel(ViewModel):
         if pg == 1: # PicList
             bks2gen = self.getBooks()
             if not self.get('c_multiplebooks') and self.get("ecb_examineBook") != bks2gen[0]: 
-                self.GeneratePicList([self.get("ecb_examineBook")])
+                self.generatePicList([self.get("ecb_examineBook")])
             else:
-                self.GeneratePicList(bks2gen)
+                self.generatePicList(bks2gen)
         elif pg == 2: # AdjList
-            self.GenerateAdjList()
+            self.generateAdjList()
         self.onViewerChangePage(None,None,pg)
 
     def onRefreshViewerTextClicked(self, btn):
@@ -747,16 +747,6 @@ class GtkViewModel(ViewModel):
     def onHyphenateClicked(self, c_hyphenate):
         prjid = self.get("ecb_project")
         fname = os.path.join(self.settings_dir, prjid, "shared", "ptxprint", 'hyphen-{}.tex'.format(prjid))
-        # if not ????????.args.print: # We don't want pop-up messages if running in command-line mode
-            # if not os.path.exists(fname) and self.get("c_hyphenate"):
-                # dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
-                         # buttons=Gtk.ButtonsType.OK, message_format="Warning: Standard (English) Hyphenation rules will be used.")
-                # dialog.format_secondary_text("For optimum hyphenation for this project\nclick 'Create Hyphenation List'.")
-                # dialog.set_keep_above(True)
-                # dialog.run()
-                # dialog.set_keep_above(False)
-                # dialog.destroy()
-                # self.builder.get_object("c_hyphenate").set_active(False)
         
     def onUseIllustrationsClicked(self, c_includeillustrations):
         status = self.get("c_includeillustrations")
@@ -957,11 +947,9 @@ class GtkViewModel(ViewModel):
                 "set up once, or used on rare occasions. These can\nbe hidden away for most of the time if that helps.\n\n" + \
                 "This setting can be toggled off again later, but\nis intentionally almost invisible (though located\nin the same place).")
                       
-            for c in ("c_showAdvancedTab", "c_showViewerTab"):   # "c_showBodyTab", 
+            for c in ("c_showAdvancedTab", "c_showViewerTab"):
                 self.builder.get_object(c).set_active(True)
 
-        # (removed: "tb_Logging", "tb_DiglotTesting", "tb_Body", )
-        # Hide a whole bunch of stuff that they don't need to see   
         for c in ("tb_Advanced", "tb_ViewerEditor", "l_missingPictureString",
                   "btn_editPicList", "l_imageTypeOrder", "t_imageTypeOrder", "fr_chapVerse", "s_colgutteroffset",
                   "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "bx_AdvFootnoteConfig", "l_colgutteroffset",
@@ -1032,9 +1020,6 @@ class GtkViewModel(ViewModel):
                     for extn in ('delayed','parlocs','notepages', 'log'):
                         patterns.append(r".+\.{}".format(extn))
                     patterns.append(r".+\-draft\....".format(extn))
-                    # patterns.append(r".+\-conv\....".format(extn))        # these are no longer kept
-                    # patterns.append(r".+\-draft-conv\....".format(extn))  # but are deleted shortly
-                    # patterns.append(r".+\-conv-draft\....".format(extn))  # after being created
                     patterns.append(r".+\.toc".format(extn))
                     patterns.append(r"NestedStyles\.sty".format(extn))
                     patterns.append(r"ptxprint\-.+\.tex".format(extn))
@@ -1043,17 +1028,14 @@ class GtkViewModel(ViewModel):
                         for f in os.listdir(dir):
                             if re.search(pattern, f):
                                 try:
-                                    # print("Deleting:", os.path.join(dir, f))
                                     os.remove(os.path.join(dir, f))
                                 except OSError:
                                     self.doError("Warning: Could not delete temporary file.", secondary = "File: " + delfname)
                     for p in ["tmpPics", "tmpPicLists", "PicLists", "AdjLists"]:
                         path2del = os.path.join(dir, p)
-                        # print("Looking for folder:", path2del)
                         # Make sure we're not deleting something closer to Root!
                         if len(path2del) > 30 and os.path.exists(path2del):
                             try:
-                                # print("Deleting folder:", path2del)
                                 rmtree(path2del)
                             except OSError:
                                 print("Error Deleting temporary folder: {}".format(path2del))
@@ -1348,20 +1330,20 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("gr_mainBodyText").set_sensitive(self.get("c_mainBodyText"))
 
     def onSelectScriptClicked(self, btn_selectScript):
-        CustomScript = self.fileChooser("Select a Custom Script file", 
+        customScript = self.fileChooser("Select a Custom Script file", 
                 filters = {"Executable Scripts": {"patterns": ["*.bat", "*.exe", "*.py", "*.sh"] , "mime": "application/bat", "default": True},
                            "All Files": {"pattern": "*"}},
                            # "TECkit Mappings": {"pattern": ["*.map", "*.tec"]},
                            # "CC Tables": {"pattern": "*.cct"},
                 multiple = False, basedir=self.working_dir)
-        if CustomScript is not None:
-            self.CustomScript = CustomScript[0]
+        if customScript is not None:
+            self.customScript = customScript[0]
             self.builder.get_object("c_processScript").set_active(True)
-            btn_selectScript.set_tooltip_text(str(CustomScript[0]))
+            btn_selectScript.set_tooltip_text(str(customScript[0]))
             for c in ("c_processScriptBefore", "c_processScriptAfter", "btn_editScript"):
                 self.builder.get_object(c).set_sensitive(True)
         else:
-            self.CustomScript = None
+            self.customScript = None
             btn_selectScript.set_tooltip_text("")
             self.builder.get_object("c_processScript").set_active(False)
             for c in ("c_processScriptBefore", "c_processScriptAfter", "btn_editScript"):

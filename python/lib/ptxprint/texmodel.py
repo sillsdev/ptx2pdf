@@ -64,7 +64,7 @@ ModelMap = {
     "project/useprintdraftfolder": ("c_useprintdraftfolder", lambda w,v :"true" if v else "false"),
     "project/processscript":    ("c_processScript", None),
     "project/runscriptafter":   ("c_processScriptAfter", None),
-    "project/selectscript":     ("btn_selectScript", lambda w,v: w.CustomScript.as_posix() if w.CustomScript is not None else ""),
+    "project/selectscript":     ("btn_selectScript", lambda w,v: w.customScript.as_posix() if w.customScript is not None else ""),
     "project/usechangesfile":   ("c_usePrintDraftChanges", lambda w,v :"true" if v else "false"),
     "project/ifusemodstex":     ("c_useModsTex", lambda w,v: "" if v else "%"),
     "project/ifusecustomsty":   ("c_useCustomSty", lambda w,v: "" if v else "%"),
@@ -191,8 +191,7 @@ ModelMap = {
 
     "document/ifdiglot":        ("c_diglot", lambda w,v :"" if v else "%"),
     "document/ifaligndiglot":   ("c_diglot", lambda w,v :"" if v else "%"),
-    "document/diglotsettings":  ("l_diglotStringL", lambda w,v: v if w.get("c_diglot") else ""),
-    # "document/diglotsettings":  ("l_diglotStringR", lambda w,v: w.builder.get_object("l_diglotStringR").get_text() if w.get("c_diglot") else ""),
+    # "document/diglotsettings":  ("l_diglotStringL", lambda w,v: v if w.get("c_diglot") else ""),
     "document/diglotalignment": ("fcb_diglotAlignment", None),
     "document/diglotprifraction": ("s_diglotPriFraction", lambda w,v : round((v/100), 3) or "0.500"),
     "document/diglotsecfraction": ("s_diglotPriFraction", lambda w,v : round(1 - (v/100), 3) or "0.500"),
@@ -720,9 +719,9 @@ class TexModel:
             self.localChanges.append((None, regex.compile(r"\\r .+", flags=regex.M), ""))
 
         if self.asBool("notes/ifblendfnxr"):
-            XrefCaller = self.dict["notes/blendedxrmkr"]
+            xrefCaller = self.dict["notes/blendedxrmkr"]
             # To merge/blend \f and \x together, simply change all (\x to \f) (\xo to \fr) and so on...
-            self.localChanges.append((None, regex.compile(r"\\x . ", flags=regex.M), r"\\f {} ".format(XrefCaller)))
+            self.localChanges.append((None, regex.compile(r"\\x . ", flags=regex.M), r"\\f {} ".format(xrefCaller)))
             self.localChanges.append((None, regex.compile(r"\\x\* ", flags=regex.M), r"\\f* "))
             self.localChanges.append((None, regex.compile(r"\\xq ", flags=regex.M), r"\\fq "))
             self.localChanges.append((None, regex.compile(r"\\xt ", flags=regex.M), r"\\ft "))
@@ -851,7 +850,7 @@ class TexModel:
         else:
             return re.sub('[()&+,. ]', '_', self.base(fpath).lower())
 
-    def GenerateNestedStyles(self):
+    def generateNestedStyles(self):
         prjid = self.dict['project/id']
         prjdir = os.path.join(self.ptsettings.basedir, prjid)
         nstyfname = os.path.join(prjdir, "PrintDraft", "NestedStyles.sty") # hack to be fixed later

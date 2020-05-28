@@ -14,7 +14,7 @@ class ViewModel:
         # modelname: (attribute, isMultiple, label)
         "project/frontincludes":    ("FrontPDFs", True, "lb_inclFrontMatter"),
         "project/backincludes":     ("BackPDFs", True, "lb_inclBackMatter"),
-        "project/selectscript":     ("CustomScript", False, None),
+        "project/selectscript":     ("customScript", False, None),
         "paper/watermarkpdf":       ("watermarks", False, "lb_applyWatermark"),
         "fancy/pageborderpdf":      ("pageborder", False, "lb_inclPageBorder"),
         "fancy/sectionheaderpdf":   ("sectionheader", False, "lb_inclSectionHeader"),
@@ -33,7 +33,7 @@ class ViewModel:
         self.config_dir = None
         self.ptsettings = None
         self.booklist = []
-        self.CustomScript = None
+        self.customScript = None
         self.FrontPDFs = None
         self.BackPDFs = None
         self.watermarks = None
@@ -300,7 +300,7 @@ class ViewModel:
             except configparser.NoOptionError:
                 self.set(ModelMap[k][0], self.ptsettings.dict.get(v, ""))
 
-    def GeneratePicList(self, booklist):
+    def generatePicList(self, booklist):
         # Format of lines in pic-list file: BBB C.V desc|file|size|loc|copyright|caption|ref
         # MRK 1.16 fishermen...catching fish with a net.|hk00207b.png|span|b||Jesus calling the disciples to follow him.|1.16
         _picposn = {
@@ -391,7 +391,7 @@ class ViewModel:
                     with open(outfname, "w", encoding="utf-8") as outf:
                         outf.write("".join(piclist))
 
-    def GenerateAdjList(self):
+    def generateAdjList(self):
         existingFilelist = []
         booklist = self.getBooks()
         prjid = self.get("fcb_project")
@@ -438,8 +438,8 @@ class ViewModel:
 
     def onDiglotSettingsChanged(self, btn):
         if not self.get("c_diglot"):
-            DiglotStringL = ""
-            DiglotStringR = ""
+            digFzyCfgPri = ""
+            digFzyCfgSec = ""
             return
         # MH: We need to decide whether we place the secPDF in its own folder 
         #(or whether we put it into the Pri Printdraft folder) - and fix the hardcoded 'PrintDraft" paths!
@@ -453,29 +453,29 @@ class ViewModel:
             secfname = os.path.join(sectmpdir, "ptxprint-{}{}.pdf".format(jobs[0], secprjid)).replace("\\","/")
         # TO DO: We need to be able to GET the page layout values from the PRIMARY project
         # (even when creating the Secondary PDF so that the dimensions match).
-        PageWidth = int(re.split("[^0-9]",re.sub(r"^(.*?)\s*,.*$", r"\1", self.get("ecb_pagesize")))[0]) or 148
+        pageWidth = int(re.split("[^0-9]",re.sub(r"^(.*?)\s*,.*$", r"\1", self.get("ecb_pagesize")))[0]) or 148
         
-        Margins = self.get("s_margins")
-        MiddleGutter = self.get("s_colgutterfactor")
-        BindingGutter = self.get("s_pagegutter")
+        margin = self.get("s_margins")
+        middleGutter = self.get("s_colgutterfactor")
+        bindingGutter = self.get("s_pagegutter")
         priFraction = self.get("s_diglotPriFraction")
-        PriColWid = PageWidth * priFraction / 100
+        priColWidth = pageWidth * priFraction / 100
 
-        SecColWid = PageWidth - PriColWid - MiddleGutter - BindingGutter - (2 * Margins)
+        secColWidth = pageWidth - priColWidth - middleGutter - bindingGutter - (2 * margin)
 
         # Calc Pri Settings (right side of page; or outer if mirrored)
-        # PriColWid = self.get("s_PriColWidth")
-        PriSideMarginFactor = 1
-        PriBindingGutter = PageWidth - Margins - PriColWid - Margins
+        # priColWidth = self.get("s_priColWidthth")
+        priSideMarginFactor = 1
+        pribindingGutter = pageWidth - margin - priColWidth - margin
 
         # Calc Sec Settings (left side of page; or inner if mirrored)
-        # SecColWid = PageWidth - PriColWid - MiddleGutter - BindingGutter - (2 * Margins)
-        SecSideMarginFactor = (PriColWid + Margins + MiddleGutter) / Margins
-        SecRightMargin = PriColWid + Margins + MiddleGutter
+        # secColWidth = pageWidth - priColWidth - middleGutter - bindingGutter - (2 * margin)
+        secSideMarginFactor = (priColWidth + margin + middleGutter) / margin
+        secRightMargin = priColWidth + margin + middleGutter
         
-        SecBindingGutter = PageWidth - (2 * SecRightMargin) - SecColWid 
+        secbindingGutter = pageWidth - (2 * secRightMargin) - secColWidth 
 
-        PriPercent = round((PriColWid / (PriColWid + SecColWid) * 100),1)
+        priPercent = round((priColWidth / (priColWidth + secColWidth) * 100),1)
         hdr = ""
         if self.get("c_diglotHeaders"):
             hdr = r"""
@@ -485,11 +485,11 @@ class ViewModel:
 \def\RHevenleft{\empty}
 \def\RHevencenter{\empty}
 \def\RHevenright{\rangeref}"""
-        DiglotStringR = "%% SECONDARY PDF settings"+ \
-                       "\n\MarginUnit={}mm".format(Margins)+ \
-                       "\n\BindingGuttertrue"+ \
-                       "\n\BindingGutter={:.2f}mm".format(SecBindingGutter)+ \
-                       "\n\def\SideMarginFactor{{{:.2f}}}".format(SecSideMarginFactor)+ \
+        digFzyCfgSec = "%% SECONDARY PDF settings"+ \
+                       "\n\MarginUnit={}mm".format(margin)+ \
+                       "\n\bindingGuttertrue"+ \
+                       "\n\bindingGutter={:.2f}mm".format(secbindingGutter)+ \
+                       "\n\def\SideMarginFactor{{{:.2f}}}".format(secSideMarginFactor)+ \
                        "\n\BodyColumns=1" + hdr
         if self.get("c_diglotHeaders"):
             hdr = r"""
@@ -499,15 +499,15 @@ class ViewModel:
 \def\RHevenleft{\rangeref}
 \def\RHevencenter{\empty}
 \def\RHevenright{\pagenumber}"""
-        DiglotStringL = "%% PRIMARY (+ SECONDARY) PDF settings"+ \
-                       "\n\MarginUnit={}mm".format(Margins)+ \
-                       "\n\BindingGuttertrue"+ \
-                       "\n\BindingGutter={:.2f}mm".format(PriBindingGutter)+ \
-                       "\n\def\SideMarginFactor{{{:.2f}}}".format(PriSideMarginFactor)+ \
+        digFzyCfgPri = "%% PRIMARY (+ SECONDARY) PDF settings"+ \
+                       "\n\MarginUnit={}mm".format(margin)+ \
+                       "\n\bindingGuttertrue"+ \
+                       "\n\bindingGutter={:.2f}mm".format(pribindingGutter)+ \
+                       "\n\def\SideMarginFactor{{{:.2f}}}".format(priSideMarginFactor)+ \
                        "\n\BodyColumns=1"+ \
                        "\n\def\MergePDF{" + secfname + "}" + hdr
-        self.set("l_diglotStringL", DiglotStringL)
-        self.set("l_diglotStringR", DiglotStringR)
+        # self.set("l_diglotStringL", digFzyCfgPri)
+        # self.set("l_diglotStringR", digFzyCfgSec)
         
     def checkSFMforFancyIntroMarkers(self):
         unfitBooks = []

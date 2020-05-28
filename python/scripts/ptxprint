@@ -302,7 +302,7 @@ def doit(printer, display=True):
     prjdir = os.path.join(args.paratext, prjid)
     if prjid is None or not len(prjid):     # can't print no project
         return
-    info.GenerateNestedStyles()
+    info.generateNestedStyles()
     invPW = printer.get("t_invisiblePassword")
     if invPW == None or invPW == "" or printer.configName() == "": # This config is unlocked
         # So it it safe/allowed to save the current config
