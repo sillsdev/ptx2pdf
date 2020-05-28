@@ -183,7 +183,7 @@ class ViewModel:
                 bks = bks[0]
             except IndexError:
                 bks = "No book selected!"
-        return "PTXprint [{}] ({}) {}".format(prjid, bks, self.get("ecb_savedConfig") or "")
+        return "PTXprint [{}] {} ({}) {}".format(VersionStr, prjid, bks, self.get("ecb_savedConfig") or "")
 
     def configPath(self, cfgname=None, makePath=False):
         if self.settings_dir is None or self.prjid is None:
@@ -209,7 +209,7 @@ class ViewModel:
     def writeConfig(self, cfgname=None):
         if cfgname is None:
             cfgname = self.configName()
-        path = os.path.join(self.configPath(cfgname), "ptxprint.cfg")
+        path = os.path.join(self.configPath(cfgname=cfgname, makePath=True), "ptxprint.cfg")
         config = self.createConfig()
         with open(path, "w", encoding="utf-8") as outf:
             config.write(outf)

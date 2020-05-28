@@ -384,7 +384,7 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("t_invisiblePassword").set_text("")
             self.builder.get_object("btn_saveConfig").set_sensitive(True)
             self.builder.get_object("btn_deleteConfig").set_sensitive(True)
-            if os.path.exists(self.configPath()):
+            if os.path.exists(self.configPath(cfgname=self.get("ecb_savedConfig"))):
                 self.updateProjectSettings(False) # False means DON'T Save!
         else:
             self.config_dir = self.configPath()
@@ -1240,7 +1240,7 @@ class GtkViewModel(ViewModel):
         if not self.initialised:
             self.pendingPid = self.get("fcb_project")
         else:
-            self.updateProjectSettings()
+            self.updateProjectSettings(True)
             self.updateSavedConfigList()
             for o in ["b_print", "bx_SavedConfigSettings", "tb_Layout", "tb_Body", "tb_HeadFoot", "tb_Pictures",
                       "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_DiglotTesting", "tb_FancyBorders"]:
@@ -1260,8 +1260,8 @@ class GtkViewModel(ViewModel):
         titleStr = super(GtkViewModel, self).getDialogTitle()
         self.builder.get_object("ptxprint").set_title(titleStr)
 
-    def updateProjectSettings(self):
-        if not super(GtkViewModel, self).updateProjectSettings():
+    def updateProjectSettings(self, saveCurrConfig=False):
+        if not super(GtkViewModel, self).updateProjectSettings(saveCurrConfig=saveCurrConfig):
             for fb in ['bl_fontR', 'bl_fontB', 'bl_fontI', 'bl_fontBI', 'bl_fontExtraR', 'bl_verseNumFont']:  # 
                 fblabel = self.builder.get_object(fb).set_label("Select font...")
         if self.prjid:

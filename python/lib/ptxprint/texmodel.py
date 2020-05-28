@@ -436,9 +436,10 @@ class TexModel:
                     k, v = l.split('=')
                     f.features[k.strip()] = v.strip()
             if len(f.features):
-                if p == "fontregular":
-                    self.dict['font/texfeatures'] = ":"+ ":".join("{0}={1}".format(f.feats.get(fid, fid),
+                self.dict['font/texfeatures'] = ":"+ ":".join("{0}={1}".format(f.feats.get(fid, fid),
                                                 f.featvals.get(fid, {}).get(int(v), v)) for fid, v in f.features.items())
+            else:
+                self.dict['font/texfeatures'] = ""
         else:
             self.dict['font/texfeatures'] = ""
         
