@@ -77,8 +77,14 @@ class AlignedDiglot():
 \def\italicR{{"{diglot/fontitalic}{diglot/fontitaleng}{diglot/texfeatures}{diglot/docscript}{diglot/docdigitmapping}{diglot/italembolden}{diglot/italslant}"}}
 \def\bolditalicR{{"{diglot/fontbolditalic}{diglot/fontbolditaleng}{diglot/texfeatures}{diglot/docscript}{diglot/docdigitmapping}{diglot/bolditalembolden}{diglot/boldital/slant}"}}
 
-\def\DiglotLeftFraction{{document/diglotprifraction}}
-\def\DiglotRightFraction{{document/diglotsecfraction}}
+\def\DiglotLeftFraction{{{document/diglotprifraction}}}
+\def\DiglotRightFraction{{{document/diglotsecfraction}}}
+
+%\FontSizeUnitR={diglot/fontfactor}pt
+%\RTLR{diglot/ifrtl}   % Use right-to-left layout mode for secondary?
+%{diglot/iflinebreakon}\XeTeXlinebreaklocaleR "{diglot/linebreaklocale}"
+%{diglot/useglyphmetrics}\XeTeXuseglyphmetricsR=0
+
 \IncludeFiguresfalse
 """
 

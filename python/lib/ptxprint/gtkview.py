@@ -1239,7 +1239,7 @@ class GtkViewModel(ViewModel):
         self.set("l_working_dir", self.working_dir or "")
         # self.set("c_prettyIntroOutline", False)  # This is OFF by default, they need to turn it on specifically
         self.setEntryBoxFont()
-        self.onDiglotSettingsChanged(None)
+        # self.onDiglotSettingsChanged(None)
         self.updateDialogTitle()
 
     def onConfigNameChanged(self, cb_savedConfig):
@@ -1495,11 +1495,11 @@ class GtkViewModel(ViewModel):
         else:
             self.builder.get_object("c_includeillustrations").set_sensitive(True)
         
-        self.onDiglotSettingsChanged(None)
+        # self.onDiglotSettingsChanged(None)
 
     def ondiglotSecProjectChanged(self, btn):
         self.updateDiglotConfigList()
-        self.onDiglotSettingsChanged(None)
+        # self.onDiglotSettingsChanged(None)
         
     def onGenerateHyphenationListClicked(self, btn_generateHyphenationList):
         pass

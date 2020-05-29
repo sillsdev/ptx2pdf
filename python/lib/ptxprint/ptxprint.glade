@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 -->
+<!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkAdjustment" id="a_PriColWidth">
@@ -8455,8 +8455,6 @@ Numbers</property>
                                 <property name="fill_level">100</property>
                                 <property name="round_digits">1</property>
                                 <property name="value_pos">left</property>
-                                <signal name="move-slider" handler="onDiglotSettingsChanged" swapped="no"/>
-                                <signal name="value-changed" handler="onDiglotSettingsChanged" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -8570,26 +8568,6 @@ line spacing manually to try to make it match.
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="c_diglotHeaders">
-                                <property name="label" translatable="yes">Use default Header 
-settings for Diglot</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">Checking this option will override
-the header settings and place the
-Reference Ranges on the outer edges
-and Page Number in (or near) the middle.</property>
-                                <property name="active">True</property>
-                                <property name="draw_indicator">True</property>
-                                <signal name="clicked" handler="onDiglotSettingsChanged" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">2</property>
-                                <property name="top_attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkComboBox" id="fcb_diglotSecProject">
                                 <property name="width_request">120</property>
                                 <property name="visible">True</property>
@@ -8612,6 +8590,53 @@ and Page Number in (or near) the middle.</property>
                                 <property name="left_attach">1</property>
                                 <property name="top_attach">2</property>
                               </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_diglotHeaders">
+                                <property name="label" translatable="yes">Use default Header 
+settings for Diglot</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">Checking this option will override
+the header settings and place the
+Reference Ranges on the outer edges
+and Page Number in (or near) the middle.</property>
+                                <property name="active">True</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_diglotSeparateNotes">
+                                <property name="label" translatable="yes">Seperate Notes
+in two Columns</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">If this option is disabled, the footnotes from
+both sides of the diglot get merged together
+and are interspersed one after the other.
+
+Depending on the scripts and text direction,
+this may or may not be desirable. If in doubt,
+leave this option checked ON.</property>
+                                <property name="active">True</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
                             </child>
                           </object>
                         </child>

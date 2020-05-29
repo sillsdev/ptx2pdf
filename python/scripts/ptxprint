@@ -39,24 +39,19 @@ _errmsghelp = {
 }
 # \def\LineSpacingFactor{{{paragraph/linespacingfactor}}}
 # \def\VerticalSpaceFactor{{1.0}}
-# \FontSizeUnit={paper/fontfactor}pt
-# {paragraph/useglyphmetrics}\XeTeXuseglyphmetrics=0
 # \baselineskip={paragraph/linespacing}pt {paragraph/varlinespacing} {paragraph/linemax} {paragraph/linemin}
 # \XeTeXinterwordspaceshaping = {document/spacecntxtlztn}
 # %\extrafont  %% This will be replaced by code for the fallback fonts to be used for special/missing characters
-# \RTL{document/ifrtl}   % Use right-to-left layout mode?
-# {document/iflinebreakon}\XeTeXlinebreaklocale "{document/linebreaklocale}"
 
 # {document/ifcolorfonts}\ColorFontsfalse
-# \IncludeFiguresfalse
-# "" : "document/ifrtl",
-# "" : "paper/fontfactor",
-# "" : "",
-# "" : "",
-# "" : "",
+# "diglot/colorfonts" :       "document/ifcolorfonts",
 
 _diglot = {
-"diglot/colorfonts" :       "document/ifcolorfonts",
+"diglot/ifrtl" :            "document/ifrtl",
+"diglot/fontfactor" :       "paper/fontfactor",
+"diglot/iflinebreakon" :    "document/iflinebreakon",
+"diglot/linebreaklocale" :  "document/linebreaklocale",
+"diglot/useglyphmetrics" :  "paragraph/useglyphmetrics",
 
 "diglot/fontregular" :      "fontregular",
 "diglot/fontregeng" :       "fontregular/engine",
@@ -248,21 +243,28 @@ def digdojob(jobs, info, prjid, prjdir, diginfo, digprjid, digprjdir, tmpdir, lo
                 # print("Failed to merge the Primary and Secondary files! Result code: {}".format(r))
             # else:
                 # print("SUCCESSFULLY merged the Primary and Secondary files!")
-                # os.remove(tmpFile)
+                # os.remove(tmpFile) # maybe this should only be done at the end when others are also deleted
     info["project/bookids"] = jobs
     info["project/books"] = donebooks
 
     if alnmnt.startswith("No"): # WARNING - work in progress!
         # Fuzzy diglot just runs the jobs twice, and the 2nd run picks up the Sec PDF and merges it
         # Need to add SECONDARY .tex stuff to make it print on half of the page
+        print(printer.generateFzyDiglotSettings(False))
         sharedjob(jobs, diginfo, digprjid, digprjdir, tmpdir, logbuffer=None) # Need to think where the secPDF(s) will live (tmpdir or pritmpdir)
         # Need to add PRIMARY .tex stuff to make it print on other half of the page and merge in the SECONDARY PDF
+        print(printer.generateFzyDiglotSettings(True))
         sharedjob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None)          # See ln 1773 in __init__.py
     else:
         # Pass all the needed parameters for the snippet from diginfo to info
+        print(diginfo.dict["project/id"])
+        print(diginfo.dict["fontregular"])
+        print(diginfo.dict["document/ifrtl"])
+        print(diginfo.dict["paper/fontfactor"])
+
         for k,v in _diglot.items():
             info[k]=diginfo[v]
-            # print(k, v, diginfo[v])
+            print(k, v, diginfo[v])
         sharedjob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None)
 
 def sharedjob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):    
@@ -359,7 +361,10 @@ def doit(printer, display=True):
             digprinter.setConfigId(digcfg)
         diginfo = TexModel(digprinter, args.paratext, digptsettings, digprjid)
         print(diginfo.dict["project/id"])
-        # diginfo.loadConfig(None, )
+        print(diginfo.dict["fontregular"])
+        print(diginfo.dict["document/ifrtl"])
+        print(diginfo.dict["paper/fontfactor"])
+        # diginfo.loadConfig(None, info.dict["document/diglotsecconfig"])
         
     if info.asBool("document/ifinclfigs") and not info.asBool("document/ifdiglot"):
         gatherIllustrations(jobs, prjid, prjdir, printer, info)
