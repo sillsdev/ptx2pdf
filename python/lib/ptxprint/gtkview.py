@@ -425,6 +425,8 @@ class GtkViewModel(ViewModel):
 
     def getConfigList(self):
         res = []
+        if self.prjid is None:
+            return res
         root = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint")
         for s in os.scandir(root):
             if s.is_dir and os.path.exists(os.path.join(root, s.name, "ptxprint.cfg")):
@@ -722,8 +724,8 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("c_omitParallelRefs").set_active(self.get("c_omitSectHeads"))
 
     def onHyphenateClicked(self, c_hyphenate):
-        prjid = self.get("ecb_project")
-        fname = os.path.join(self.settings_dir, prjid, "shared", "ptxprint", 'hyphen-{}.tex'.format(prjid))
+        if self.prjid is not None:
+            fname = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint", 'hyphen-{}.tex'.format(self.prjid))
         
     def onUseIllustrationsClicked(self, c_includeillustrations):
         status = self.get("c_includeillustrations")
@@ -1261,6 +1263,8 @@ class GtkViewModel(ViewModel):
             self.updateDialogTitle()
 
     def updateFonts(self):
+        if self.ptsettings is None:
+            return
         ptfont = self.ptsettings['DefaultFont']
         for fb in ['bl_fontR', 'bl_verseNumFont']:  # 'bl_fontB', 'bl_fontI', 'bl_fontBI', 'bl_fontExtraR'
             fblabel = self.builder.get_object(fb).get_label()

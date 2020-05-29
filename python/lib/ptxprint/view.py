@@ -42,6 +42,7 @@ class Path(pathlib.Path):
             except ValueError:
                 continue
             return "${"+k+"}/"+rpath.as_posix()
+        return self.as_posix()
 
 
 class ViewModel:
