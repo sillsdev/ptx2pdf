@@ -1176,9 +1176,9 @@
   \setbox0=\vbox{
     \hsize=\p@cwidth
 	% insert picture based on PicPath and file name, scaled to \p@cwidth
-       \let\picfilecomm@nd=\XeTeXpicfile
-       \edef\f@lename{\csname param-2\endcsname}%
-       \expandafter\ch@ckpdf\f@lename..\endf@lename
+    \let\picfilecomm@nd=\XeTeXpicfile
+    \edef\f@lename{\csname param-2\endcsname}%
+    \expandafter\ch@ckpdf\f@lename..\endf@lename
     \setbox0=\hbox to \p@cwidth{\hss
       \picfilecomm@nd "\the\PicPath\csname param-2\endcsname"
                      width \sizem@ltiple\p@cwidth \csname param-8\endcsname\hss}

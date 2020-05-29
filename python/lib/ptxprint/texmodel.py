@@ -340,8 +340,8 @@ class TexModel:
         self.dict["document/directory"] = os.path.abspath(docdir).replace("\\","/")
         self.dict['project/adjlists'] = os.path.join(self.printer.configPath(), "AdjLists/").replace("\\","/")
         self.dict['project/piclists'] = os.path.join(self.printer.working_dir, "tmpPicLists/").replace("\\","/")
-        self.dict['project/id'] = self.printer.get('fcb_project')
-        self.dict['config/name'] = self.printer.get('ecb_savedConfig')
+        self.dict['project/id'] = self.printer.prjid
+        self.dict['config/name'] = self.printer.configId
         self.readFonts(self.printer)
         self.processFonts(self.printer)
         self.processHdrFtr(self.printer)
@@ -796,6 +796,7 @@ class TexModel:
         figlist = []
         figchngs = []
         prjid = self.dict['project/id']
+        print(self.ptsettings.basedir, prjid)
         prjdir = os.path.join(self.ptsettings.basedir, prjid)
         picdir = os.path.join(self['document/directory'], 'tmpPics').replace("\\","/")
         fname = printer.getBookFilename(bk, prjdir)

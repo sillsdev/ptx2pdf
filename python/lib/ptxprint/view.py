@@ -109,7 +109,7 @@ class ViewModel:
         self.dict[wid] = value
 
     def configName(self):
-        cfgName = re.sub('[^-a-zA-Z0-9_()/: ]+', '', self.get("ecb_savedConfig")).strip(" ")
+        cfgName = re.sub('[^-a-zA-Z0-9_()/: ]+', '', (self.get("ecb_savedConfig") or "")).strip(" ")
         return cfgName
 
     def getBooks(self):
@@ -484,6 +484,7 @@ class ViewModel:
                         outf.write("".join(adjlist))
 
     def onDiglotSettingsChanged(self, btn):
+        return
         if not self.get("c_diglot"):
             digFzyCfgPri = ""
             digFzyCfgSec = ""

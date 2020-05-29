@@ -113,7 +113,8 @@ class GtkViewModel(ViewModel):
         self.addCR("fcb_fontFaces", 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.addCR("fcb_diglotAlignment", 0)
-        self.addCR("fcb_diglotSecConfig", 0)
+        # self.addCR("fcb_diglotSecConfig", 0)
+        self.fcb_diglotSecConfig = self.builder.get_object("fcb_diglotSecConfig")
         pb = self.builder.get_object("b_print")
         pbc = pb.get_style_context()
         pbc.add_class("printbutton")
@@ -159,14 +160,15 @@ class GtkViewModel(ViewModel):
         self.logbuffer = StreamTextBuffer()
         self.builder.get_object("tv_logging").set_buffer(self.logbuffer)
         self.mw = self.builder.get_object("ptxprint")
-        self.projects = self.builder.get_object("ls_projects")
-        self.digprojects = self.builder.get_object("ls_digprojects")
         self.experimental = None
-        self.projects.clear()
-        self.digprojects.clear()
+
+        projects = self.builder.get_object("ls_projects")
+        digprojects = self.builder.get_object("ls_digprojects")
+        projects.clear()
+        digprojects.clear()
         for p in sorted(allprojects, key = lambda s: s.casefold()):
-            self.projects.append([p])
-            self.digprojects.append([p])
+            projects.append([p])
+            digprojects.append([p])
         wide = int(len(allprojects)/16)+1
         self.builder.get_object("fcb_project").set_wrap_width(wide)
         self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
@@ -426,11 +428,11 @@ class GtkViewModel(ViewModel):
         cbbook.set_model(lsbooks)
         self.bookNoUpdate = False
 
-    def getConfigList(self):
-        res = []
+    def getConfigList(self, prjid):
+        res = [""]
         if self.prjid is None:
             return res
-        root = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint")
+        root = os.path.join(self.settings_dir, prjid, "shared", "ptxprint")
         for s in os.scandir(root):
             if s.is_dir and os.path.exists(os.path.join(root, s.name, "ptxprint.cfg")):
                 res.append(s.name)
@@ -440,7 +442,7 @@ class GtkViewModel(ViewModel):
         self.configNoUpdate = True
         currConf = self.builder.get_object("t_savedConfig").get_text()
         self.cb_savedConfig.remove_all()
-        savedConfigs = self.getConfigList()
+        savedConfigs = self.getConfigList(self.prjid)
         if len(savedConfigs):
             for cfgName in sorted(savedConfigs):
                 self.cb_savedConfig.append_text(cfgName)
@@ -455,11 +457,11 @@ class GtkViewModel(ViewModel):
         self.configNoUpdate = False
 
     def updateDiglotConfigList(self):
-        # self.fcb_diglotSecConfig.remove_all()
+        self.fcb_diglotSecConfig.remove_all()
         digprj = self.get("fcb_diglotSecProject")
         if digprj is None:
             return
-        diglotConfigs = self.getConfigList()
+        diglotConfigs = self.getConfigList(digprj)
         if len(diglotConfigs):
             for cfgName in sorted(diglotConfigs):
                 self.fcb_diglotSecConfig.append_text(cfgName)

@@ -210,7 +210,6 @@ def digdojob(jobs, info, prjid, prjdir, diginfo, digprjid, digprjdir, tmpdir, lo
         alignParam = "-v"
     else:
         alignParam = ""
-    diginfo.readConfig()
     for b in jobs:
         out = info.convertBook(b, tmpdir, prjdir)
         digout = diginfo.convertBook(b, tmpdir, digprjdir)
@@ -354,8 +353,10 @@ def doit(printer, display=True):
         if digprjid is None or not len(digprjid):     # can't print no project
             return
         digptsettings = ParatextSettings(args.paratext, digprjid)
-        digprinter = ViewModel(allprojects, args.paratext, printer.usePrintDraft_dir)
-        digprinter.updateProjectSettings(digprjid, configName=digcfg)
+        digprinter = ViewModel(allprojects, args.paratext, printer.working_dir)
+        digprinter.setPrjid(digprjid)
+        if digcfg is not None and digcfg != "":
+            digprinter.setConfigId(digcfg)
         diginfo = TexModel(digprinter, args.paratext, digptsettings, digprjid)
         print(diginfo.dict["project/id"])
         # diginfo.loadConfig(None, )
