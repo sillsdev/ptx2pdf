@@ -381,12 +381,15 @@ class GtkViewModel(ViewModel):
     def onSaveConfig(self, btn):
         # Determine whether to save a NEW config or just UPDATE an existing one
         self.writeConfig()
+        if self.prjid is None:
+            return
+        prjdir = os.path.join(self.settings_dir, self.prjid)
         if self.config_dir != self.configPath(): # then it must be new
             self.cb_savedConfig.append_text(self.configName())
             # This is the first time to save, so copy other files/folders too
             tgtpath = self.configPath()
             for listname in ["PicLists", "AdjLists"]:
-                srcpath = self.config_dir or os.path.join(self.settings_dir, self.prjdir, "shared", "ptxprint")
+                srcpath = self.config_dir or os.path.join(self.settings_dir, prjdir, "shared", "ptxprint")
                 if os.path.exists(os.path.join(srcpath, listname)):
                     if srcpath != tgtpath:
                         copytree(os.path.join(srcpath, listname), os.path.join(tgtpath, listname))
@@ -395,7 +398,7 @@ class GtkViewModel(ViewModel):
             self.updateDialogTitle()
 
     def onDeleteConfig(self, btn):
-        delCfgPath = self.configPath()
+        delCfgPath = self.configPath(cfgname=self.get("t_savedConfig"))
         if not os.path.exists(os.path.join(delCfgPath, "ptxprint.cfg")):
             self.doError("Internal error occurred, trying to delete a directory tree", secondary="Folder: "+delCfgPath)
             return
@@ -469,10 +472,10 @@ class GtkViewModel(ViewModel):
         dialog = self.builder.get_object("dlg_password")
         dialog.set_keep_above(True)
         response = dialog.run()
-        if response == Gtk.ResponseType.APPLY:
+        if response == Gtk.ResponseType.OK:
             pw = self.get("t_password")
         elif response == Gtk.ResponseType.CANCEL:
-            pass # Don't do anything
+            pw = ""
         else:
             return
         invPW = self.get("t_invisiblePassword")

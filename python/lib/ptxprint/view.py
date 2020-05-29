@@ -241,6 +241,7 @@ class ViewModel:
             prjdir = os.path.join(prjdir, cfgname)
         if makePath:
             os.makedirs(prjdir,exist_ok=True)
+        print("Config Name and Path:", cfgname, prjdir)
         return prjdir
 
     def readConfig(self, cfgname=None):
