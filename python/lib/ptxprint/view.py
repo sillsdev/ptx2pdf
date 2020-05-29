@@ -216,7 +216,7 @@ class ViewModel:
             return True
 
     def getDialogTitle(self):
-        prjid = "  -  " + self.get("fcb_project")
+        prjid = "  -  " + (self.get("fcb_project") or "")
         if self.get('c_combine'):
             bks = self.get('t_booklist').split()
         else:

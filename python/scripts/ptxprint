@@ -400,7 +400,7 @@ def doit(printer, display=True):
                 finalLogLines.append("\nFile(s) to check: {}".format(", ".join(files)))
             par = par = printer.builder.get_object('ptxprint')
             printer.doError("Failed to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname),
-                    "PTXprint [{}] - Error!".format(VersionStr))
+                    secondary="".join(finalLogLines[-20:]), title="PTXprint [{}] - Error!".format(VersionStr))
 
 def base(fpath):
     return os.path.basename(fpath)[:-4]

@@ -311,9 +311,11 @@ class GtkViewModel(ViewModel):
     def onDestroy(self, btn):
         Gtk.main_quit()
 
-    def doError(self, txt, secondary=None):
+    def doError(self, txt, secondary=None, title=None):
         dialog = Gtk.MessageDialog(parent=None, modal=True, message_type=Gtk.MessageType.ERROR,
                  buttons=Gtk.ButtonsType.OK, text=txt)
+        if title is not None:
+            dialog.set_title(title)
         if secondary is not None:
             dialog.format_secondary_text(secondary)
         dialog.set_keep_above(True)
