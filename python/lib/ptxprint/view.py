@@ -1,5 +1,5 @@
 
-import configparser, os, re, collections
+import configparser, os, re, random, collections
 from .texmodel import ModelMap
 from .ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from .font import TTFont
@@ -349,12 +349,11 @@ class ViewModel:
 
     def generatePicList(self, booklist):
         # Format of lines in pic-list file: BBB C.V desc|file|size|loc|copyright|caption|ref
-        # MRK 1.16 fishermen...catching fish with a net.|hk00207b.png|span|b||Jesus calling the disciples to follow him.|1.16
-        _picposn = {
-            "col":      ("tl", "tr", "bl", "br"),
-            "span":     ("t", "b")
-        }
+        # MRK 1.16 fishermen...catching fish with a net.|hk00207b.png|span|b||Jesus calling the disciples to follow him.|1:16
+        _picposn = {"col":  ("tl", "tr", "bl", "br"),
+                    "span": ("t", "b")}
         existingFilelist = []
+        snglCol = not self.get("c_doublecolumn")
         prjid = self.get("fcb_project")
         prjdir = os.path.join(self.settings_dir, self.prjid)
         for bk in booklist:
@@ -391,7 +390,7 @@ class ViewModel:
                 #           0         1  2 3          4                          5  
                 # BKN \5 \|\0\|\1\|tr\|\|\4\|\5
                 # MAT 9.2 bringing the paralyzed man to Jesus|CN01684b.jpg|col|tr||key-kālk arsi manvan yēsunaga tarval|9:2
-                m = re.findall(r"\\fig .*?\|(.+?\....)\|(....?)\|(.+)?\|(.+)?\|(.+)?\|(\d+[\:\.]\d+([\-,\u2013\u2014]\d+)?)\\fig\*", dat)
+                m = re.findall(r"\\fig .*?\|(.+?\....)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|(\d+[\:\.]\d+?([\-,\u2013\u2014]\d+)?)\\fig\*", dat)
                 if len(m):
                     for f in m:
                         picfname = f[0]
@@ -401,17 +400,22 @@ class ViewModel:
                             pageposn = random.choice(_picposn.get(f[1], f[1]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
                         else:
                             pageposn = (_picposn.get(f[1], f[1]))[0]              # use the t or tl (first in list)
-                        piclist.append(bk+" "+re.sub(r":",".", f[5])+" |"+picfname+"|"+f[1]+"|"+pageposn+"||"+f[4]+"|"+f[5]+"\n")
+                        # Single Col publications need the images scaled down by default (so that they appear)
+                        if snglCol and f[1].lower() == "col":
+                            snglColScale = "*.5"
+                        else:
+                            snglColScale = ""
+                        piclist.append(bk+" "+re.sub(r":",".", f[5])+" |"+picfname+"|"+f[1]+snglColScale+"|"+pageposn+"||"+f[4]+"|"+f[5]+"\n")
                 else:
                     # If none of the USFM2-styled illustrations were found then look for USFM3-styled markup in text 
                     # (Q: How to handle any additional/non-standard xyz="data" ? Will the .* before \\fig\* take care of it adequately?)
                     #         0              1               2                  3      [4]
-                    # \\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,\u2013\u2014]\d+)?)".*\\fig\*
+                    # \\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,\u2013\u2014]\d+)?)".*?\\fig\*
                     # \fig hāgartun saṅga dūtal vaḍkval|src="CO00659B.TIF" size="span" ref="21:16"\fig*
                     #                   0                         1                2          3  [4]
                     # BKN \3 \|\1\|\2\|tr\|\|\0\|\3
                     # GEN 21.16 an angel speaking to Hagar|CO00659B.TIF|span|t||hāgartun saṅga dūtal vaḍkval|21:16
-                    m = re.findall(r'\\fig (.*?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,\u2013\u2014]\d+)?)".*\\fig\*', dat)
+                    m = re.findall(r'\\fig ([^\\]*?)\|src="([^\\]+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,\u2013\u2014]\d+)?)"[^\\]*?\\fig\*', dat)
                     if len(m):
                         for f in m:
                             picfname = f[1]
@@ -421,13 +425,21 @@ class ViewModel:
                                 pageposn = random.choice(_picposn.get(f[2], f[2]))     # Randomize location of illustrations on the page (tl,tr,bl,br)
                             else:
                                 pageposn = (_picposn.get(f[2], f[2]))[0]               # use the t or tl (first in list)
-                            piclist.append(bk+" "+re.sub(r":",".", f[3])+" |"+picfname+"|"+f[2]+"|"+pageposn+"||"+f[0]+"|"+f[3]+"\n")
+                            # Single Col publications need the images scaled down by default (so that they appear)
+                            if snglCol and f[2].lower() == "col":
+                                snglColScale = "*.5"
+                            else:
+                                snglColScale = ""
+                            piclist.append(bk+" "+re.sub(r":",".", f[3])+" |"+picfname+"|"+f[2]+snglColScale+"|"+pageposn+"||"+f[0]+"|"+f[3]+"\n")
                 if len(m):
                     piclist.append("\n% If illustrations are not appearing in the output PDF, check:\n")
                     piclist.append("%   a) The Location Reference on the left is very particular, so check\n")
                     piclist.append("%      (i) Only use '.' as the ch.vs separator\n")
                     piclist.append("%      (ii) Ensure there is a space after the verse and before the first |\n")
-                    piclist.append("%      (iii) Verse Refs must match the text itself? e.g. Change MRK 4.2-11 to be MRK 4.2\n")
+                    piclist.append("%      (iii) Verse Refs must match the text itself e.g. Change MRK 4.2-11 to be MRK 4.2\n")
+                    piclist.append("%      (iv) Verse Refs must be in logical ch.vs order \n")
+                    piclist.append("%      (iv) The same reference cannot be used more than once\n")
+                    piclist.append("%             (2 pictures cannot be anchored to one verse )\n")
                     piclist.append("%   b) Does the illustration exist in 'Figures' or 'Local/Figures' or another specified folder?\n")
                     piclist.append("%   c) Position on Page for a 'span' image only allows 't'=top or 'b'=bottom\n")
                     piclist.append("% Other Notes:\n")

@@ -560,6 +560,8 @@ def gatherIllustrations(jobs, prjid, prjdir, printer, info):
 
                         if printer.get("c_fighiderefs"): # del refs (ch:vs-vs) from figure caption
                             dat = re.sub(r"\|(\d+[:.]\d+([-,\u2013\u2014]\d+)?)\r?\n".format(re.escape(f)), "|\n", dat)
+                        if not printer.get("c_doublecolumn"): # Single Column layout so change all tl+tr > t and bl+br > b
+                            dat = re.sub(r"\|([tb])[lr]\|", r"|\1|", dat)
 
                         tmpiclstpath = os.path.join(printer.working_dir, "tmpPicLists")
                         tmpiclstfname = os.path.join(tmpiclstpath, plfname)
