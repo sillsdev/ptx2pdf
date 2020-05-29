@@ -3,13 +3,12 @@
 import sys, os, re, regex, gi, random, subprocess
 gi.require_version('Gtk', '3.0')
 from shutil import copyfile, copytree, rmtree
-from pathlib import Path
 from gi.repository import Gtk, Pango, GObject
 # gi.require_version('GtkSource', '4') 
 from gi.repository import GtkSource
 import xml.etree.ElementTree as et
 from ptxprint.font import TTFont, initFontCache
-from ptxprint.view import ViewModel
+from ptxprint.view import ViewModel, Path
 from ptxprint.runner import StreamTextBuffer
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 import configparser
@@ -92,8 +91,8 @@ class Splash(Thread):
 
 class GtkViewModel(ViewModel):
 
-    def __init__(self, allprojects, settings_dir, usePrintdraft):
-        super(GtkViewModel, self).__init__(allprojects, settings_dir, usePrintdraft)
+    def __init__(self, allprojects, settings_dir, workingdir):
+        super(GtkViewModel, self).__init__(allprojects, settings_dir, workingdir)
         self.initialised = False
         self.configNoUpdate = False
         self.chapNoUpdate = False
@@ -384,7 +383,7 @@ class GtkViewModel(ViewModel):
             # This is the first time to save, so copy other files/folders too
             tgtpath = self.configPath()
             for listname in ["PicLists", "AdjLists"]:
-                srcpath = self.config_dir or os.path.join(self.settings_dir, self.get("fcb_project"), "shared", "ptxprint")
+                srcpath = self.config_dir or os.path.join(self.settings_dir, self.prjdir, "shared", "ptxprint")
                 if os.path.exists(os.path.join(srcpath, listname)):
                     if srcpath != tgtpath:
                         copytree(os.path.join(srcpath, listname), os.path.join(tgtpath, listname))
@@ -421,7 +420,6 @@ class GtkViewModel(ViewModel):
 
     def updateSavedConfigList(self):
         self.configNoUpdate = True
-        print("Updating SavedConfig list")
         currConf = self.builder.get_object("t_savedConfig").get_text()
         self.cb_savedConfig.remove_all()
         savedConfigs = []
@@ -456,7 +454,7 @@ class GtkViewModel(ViewModel):
             if len(diglotConfigs):
                 for cfgName in sorted(diglotConfigs):
                     self.fcb_diglotSecConfig.append_text(cfgName)
-                self.fcb_diglotSecConfig.set_active(0)
+                self.fcb_diglotSecConfig.set_active(-1)
             # else:
                 # self.builder.get_object("t_diglotSecConfig").set_text("")
 
@@ -1180,13 +1178,7 @@ class GtkViewModel(ViewModel):
             self.fcb_chapto.set_active_id(str(self.chs))
 
     def onUsePrintDraftChanged(self, cb_upd):
-        upd = self.get("c_useprintdraftfolder")
-        if upd and self.prjid is not None:
-            self.working_dir = os.path.join(self.settings_dir, self.prjid, 'PrintDraft')
-        else:
-            self.working_dir = "."
-        self.usePrintDraft_dir = upd
-        self.builder.get_object("l_working_dir").set_label(self.working_dir)
+        pass
 
     def setPrjid(self, prjid, saveCurrConfig=False):
         if not self.initialised:
@@ -1201,7 +1193,6 @@ class GtkViewModel(ViewModel):
             self.set("ecb_savedConfig", configid)
 
     def onProjectChange(self, cb_prj):
-        print("onProjectChange")
         self.builder.get_object("l_settings_dir").set_label(self.config_dir or "")
         self.builder.get_object("btn_saveConfig").set_sensitive(False)
         self.builder.get_object("btn_deleteConfig").set_sensitive(False)

@@ -3,11 +3,46 @@ import configparser, os, re, collections
 from .texmodel import ModelMap
 from .ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from .font import TTFont
-from pathlib import Path
+import pathlib, os
 
 VersionStr = "0.7.0 beta"
 
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
+
+varpaths = {
+    'workingdir': ('working_dir',),
+    'settingsdir': ('settings_dir',),
+    'prjdir': ('settings_dir', 'prjid'),
+}
+
+class Path(pathlib.Path):
+
+    _flavour = pathlib._windows_flavour if os.name == "nt" else pathlib._posix_flavour
+
+    @staticmethod
+    def create_varlib(aView):
+        res = {}
+        for k, v in varpaths.items():
+            res[k] = pathlib.Path(*[getattr(aView, x) for x in v])
+        res['pdfassets'] = pathlib.Path(os.path.dirname(__file__), 'PDFassets')
+        return res
+
+    def __new__(cls, txt, aView=None):
+        if aView is None or not txt.startswith("${"):
+            return pathlib.Path.__new__(cls, txt)
+        varlib = cls.create_varlib(aView)
+        k = txt[2:txt.find("}")]
+        return pathlib.Path.__new__(cls, varlib[k], txt[len(k)+3:])
+
+    def withvars(self, aView):
+        varlib = self.create_varlib(aView)
+        for k, v in varlib.items():
+            try:
+                rpath = self.relative_to(v)
+            except ValueError:
+                continue
+            return "${"+k+"}/"+rpath.as_posix()
+
 
 class ViewModel:
     _attributes = {
@@ -26,10 +61,10 @@ class ViewModel:
         "notes/fncallers": "footnotes"
     }
 
-    def __init__(self, allprojects, settings_dir, usePrintdraft):
+    def __init__(self, allprojects, settings_dir, workingdir):
         self.settings_dir = settings_dir
-        self.usePrintDraft_dir = usePrintdraft
-        self.working_dir = None
+        self.fixed_wd = workingdir != None
+        self.working_dir = workingdir
         self.config_dir = None
         self.ptsettings = None
         self.booklist = []
@@ -174,13 +209,10 @@ class ViewModel:
                 self.updateBookList()
             if not self.prjid:
                 return
-            if self.usePrintDraft_dir:
+            if not self.fixed_wd:
                 self.working_dir = os.path.join(self.settings_dir, self.prjid, 'PrintDraft')
-            else:
-                self.working_dir = '.'
             readConfig = True
         if readConfig or self.configId != configName:
-            print("Reading config {}".format(configName))
             return self.readConfig(cfgname=configName)
         else:
             return True
@@ -253,9 +285,9 @@ class ViewModel:
                 if val is None:
                     continue
                 if v[1]:
-                    val = "\n".join(x.as_posix() for x in val)
+                    val = "\n".join(x.withvars(self) for x in val)
                 else:
-                    val = val.as_posix()
+                    val = val.withvars(self)
             elif v[0].startswith("bl_"):
                 val = self.get(v[0])
                 self._configset(config, k+"/name", val[0] or "")
@@ -284,11 +316,11 @@ class ViewModel:
                             val = None
                         if w[1]:
                             val = val.split("\n") if val is not None else []
-                            val = [Path(x) for x in val if x is not None]
+                            val = [Path(x, self) for x in val if x is not None]
                             if w[2] is not None:
                                 self.set(w[2], ",".join(pdfre.sub(r"\1", x.as_posix()) for x in val))
                         else:
-                            val = Path(val) if val is not None else None
+                            val = Path(val, self) if val is not None else None
                             if w[2] is not None and val is not None:
                                 self.set(w[2], pdfre.sub(r"\1", val.as_posix()))
                         setattr(self, w[0], val)
@@ -460,7 +492,7 @@ class ViewModel:
         #(or whether we put it into the Pri Printdraft folder) - and fix the hardcoded 'PrintDraft" paths!
         secprjid = self.get("fcb_diglotSecProject")
         # I'm not sure if there's a better way to handle this - looking for the already-created Secondary diglot file
-        sectmpdir = os.path.join(self.settings_dir, secprjid, 'PrintDraft') if self.get("c_useprintdraftfolder") else self.working_dir
+        sectmpdir = os.path.join(self.settings_dir, secprjid, 'PrintDraft') if not self.fixed_wd else self.working_dir
         jobs = self.getBooks()
         if len(jobs) > 1:
             secfname = os.path.join(sectmpdir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], secprjid)).replace("\\","/")
