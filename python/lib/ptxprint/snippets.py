@@ -81,7 +81,10 @@ class AlignedDiglot():
 \def\DiglotRightFraction{{{document/diglotsecfraction}}}
 
 %\FontSizeUnitR={diglot/fontfactor}pt
+\addToRightHooks{{\FontSizeUnit={diglot/fontfactor}pt}}
 %\RTLR{diglot/ifrtl}   % Use right-to-left layout mode for secondary?
+\addToLeftHooks{{\RTL{document/ifrtl}}}
+\addToRightHooks{{\RTL{diglot/ifrtl}}}
 %{diglot/iflinebreakon}\XeTeXlinebreaklocaleR "{diglot/linebreaklocale}"
 %{diglot/useglyphmetrics}\XeTeXuseglyphmetricsR=0
 
