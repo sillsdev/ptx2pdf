@@ -16,6 +16,9 @@ _errmsghelp = {
 "! Missing number, treated as zero.":    "Related to USFM3 illustration markup\n",
 "! Undefined control sequence.":         "This is related to a USFM marker error (such as an unsupported marker)\n" +\
                                          "Try 'Run Basic Checks' in Paratext\n",
+"! Illegal unit of measure (pt inserted).":    "One of the settings in the Stylesheet may be missing the units.\n" +\
+                                         "To confirm that this is a stylesheet issue, temporarily turn off Stylesheets.\n" +\
+                                         "Then, check any recent changes to the Stylesheets (on Advanced tab) and try again.\n",
 "! File ended while scanning use of":    "Try turning off PrintDraftChanges.txt and both Stylesheets on Advanced tab\n",
 "! Paratext stylesheet":                 "Try turning off the PrintDraft-mods stylesheet\n",
 "! File ended while scanning use of \iotableleader.": "Problem with Formatting Intro Outline\n" +\
