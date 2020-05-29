@@ -65,9 +65,7 @@ class ViewModel:
         self.settings_dir = settings_dir
         self.fixed_wd = workingdir != None
         self.working_dir = workingdir
-        self.config_dir = None
         self.ptsettings = None
-        self.booklist = []
         self.customScript = None
         self.FrontPDFs = None
         self.BackPDFs = None

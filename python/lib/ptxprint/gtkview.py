@@ -93,6 +93,7 @@ class GtkViewModel(ViewModel):
 
     def __init__(self, allprojects, settings_dir, workingdir):
         super(GtkViewModel, self).__init__(allprojects, settings_dir, workingdir)
+        self.config_dir = None
         self.initialised = False
         self.configNoUpdate = False
         self.chapNoUpdate = False
@@ -393,15 +394,17 @@ class GtkViewModel(ViewModel):
 
     def onDeleteConfig(self, btn):
         delCfgPath = self.configPath()
-        if len(delCfgPath) > 30: # Just to make sure we're not deleting something closer to Root!
-            try: # Delete the entire folder
-                rmtree(delCfgPath)
-            except OSError:
-                self.doError("Can't delete that configuration from disk", secondary="Folder: " + delCfgPath)
-            self.updateSavedConfigList()
-            self.set("t_savedConfig", "")
-            self.set("t_configNotes", "")
-            self.updateDialogTitle()
+        if not os.path.exists(os.path.join(delCfgPath, "ptxprint.cfg")):
+            self.doError("Internal error occurred, trying to delete a directory tree", secondary="Folder: "+delCfgPath)
+            return
+        try: # Delete the entire folder
+            rmtree(delCfgPath)
+        except OSError:
+            self.doError("Can't delete that configuration from disk", secondary="Folder: " + delCfgPath)
+        self.updateSavedConfigList()
+        self.set("t_savedConfig", "")
+        self.set("t_configNotes", "")
+        self.updateDialogTitle()
 
     def updateBookList(self):
         self.bookNoUpdate = True
@@ -418,16 +421,19 @@ class GtkViewModel(ViewModel):
         cbbook.set_model(lsbooks)
         self.bookNoUpdate = False
 
+    def getConfigList(self):
+        res = []
+        root = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint")
+        for s in os.scandir(root):
+            if s.is_dir and os.path.exists(os.path.join(root, s.name, "ptxprint.cfg")):
+                res.append(s.name)
+        return res
+
     def updateSavedConfigList(self):
         self.configNoUpdate = True
         currConf = self.builder.get_object("t_savedConfig").get_text()
         self.cb_savedConfig.remove_all()
-        savedConfigs = []
-        shpath = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint")
-        if os.path.exists(shpath): # Get the list of Saved Configs (folders)
-            for f in next(os.walk(shpath))[1]:
-                if not f in ["PicLists", "AdjLists"]:
-                    savedConfigs.append(f)
+        savedConfigs = self.getConfigList()
         if len(savedConfigs):
             for cfgName in sorted(savedConfigs):
                 self.cb_savedConfig.append_text(cfgName)
@@ -443,20 +449,16 @@ class GtkViewModel(ViewModel):
 
     def updateDiglotConfigList(self):
         # self.fcb_diglotSecConfig.remove_all()
-        diglotConfigs = [""]
         digprj = self.get("fcb_diglotSecProject")
-        if digprj is not None:
-            shpath = os.path.join(self.settings_dir, digprj, "shared", "ptxprint")
-            if os.path.exists(shpath): # Get the list of Saved Configs (folders)
-                for f in next(os.walk(shpath))[1]:
-                    if not f in ["PicLists", "AdjLists"]:
-                        diglotConfigs.append(f)
-            if len(diglotConfigs):
-                for cfgName in sorted(diglotConfigs):
-                    self.fcb_diglotSecConfig.append_text(cfgName)
-                self.fcb_diglotSecConfig.set_active(-1)
-            # else:
-                # self.builder.get_object("t_diglotSecConfig").set_text("")
+        if digprj is None:
+            return
+        diglotConfigs = self.getConfigList()
+        if len(diglotConfigs):
+            for cfgName in sorted(diglotConfigs):
+                self.fcb_diglotSecConfig.append_text(cfgName)
+            self.fcb_diglotSecConfig.set_active(-1)
+        # else:
+            # self.builder.get_object("t_diglotSecConfig").set_text("")
 
     def onLockUnlockSavedConfig(self, btn):
         lockBtn = self.builder.get_object("btn_lockunlock")
@@ -1086,10 +1088,10 @@ class GtkViewModel(ViewModel):
             mbs_grid.attach(tbox, i // 13, i % 13, 1, 1)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            self.booklist = sorted((b.get_label() for b in self.alltoggles if b.get_active()), \
+            booklist = sorted((b.get_label() for b in self.alltoggles if b.get_active()), \
                                     key=lambda x:_allbkmap.get(x, len(_allbkmap)))
-            bl.set_text(" ".join(b for b in self.booklist))
-        self.builder.get_object("c_multiplebooks").set_active(not self.booklist == [])
+            bl.set_text(" ".join(b for b in booklist))
+        self.builder.get_object("c_multiplebooks").set_active(not booklist == [])
         self.set("c_prettyIntroOutline", False)
         self.updateDialogTitle()
         bks = self.getBooks()
@@ -1211,9 +1213,8 @@ class GtkViewModel(ViewModel):
             for fb in ['bl_fontR', 'bl_fontB', 'bl_fontI', 'bl_fontBI', 'bl_fontExtraR', 'bl_verseNumFont']:  # 
                 fblabel = self.builder.get_object(fb).set_label("Select font...")
         if self.prjid:
-            cb_bk = self.builder.get_object("ecb_book")
-            cb_bk.set_active(0)
-            self.builder.get_object("l_prjdir").set_label(os.path.join(self.settings_dir, self.prjid))
+            self.builder.get_object("ecb_book").set_active(0)
+            self.set("l_prjdir", os.path.join(self.settings_dir, self.prjid))
         status = self.get("c_multiplebooks")
         for c in ("c_combine", "t_booklist"):
             self.builder.get_object(c).set_sensitive(status)
@@ -1225,8 +1226,8 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(c).set_sensitive(not status)
         for i in range(0,6):
             self.builder.get_object("l_{}".format(i)).set_tooltip_text(None)
-        self.builder.get_object("l_settings_dir").set_label(self.config_dir or "")
-        self.builder.get_object("l_working_dir").set_label(self.working_dir)
+        self.set("l_settings_dir", self.config_dir or "")
+        self.set("l_working_dir", self.working_dir or "")
         # self.set("c_prettyIntroOutline", False)  # This is OFF by default, they need to turn it on specifically
         self.setEntryBoxFont()
         self.onDiglotSettingsChanged(None)
