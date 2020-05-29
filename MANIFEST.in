@@ -1,0 +1,4 @@
+include readme.md
+include LICENSE.txt
+recursive-include python/lib/ *.*
+graft src/

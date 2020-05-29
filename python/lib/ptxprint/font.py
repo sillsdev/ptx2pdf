@@ -98,9 +98,9 @@ class TTFontCache:
 
     def get(self, name, style=None):
         f = self.cache.get(name, None)
-        if f is None or style is None:
+        if f is None:
             return f
-        if len(style) == 0:
+        if style is None or len(style) == 0:
             style = "Regular"
         res = f.get(style, None)
         if res is None and "Oblique" in style:
