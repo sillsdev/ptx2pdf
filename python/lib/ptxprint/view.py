@@ -100,13 +100,14 @@ class ViewModel:
 
     def get(self, wid, sub=0, asstr=False):
         if wid.startswith("bl_"):
-            return (self.dict.get(wid + " name", None), self.dict.get(wid + " style", None))
+            return (self.dict.get(wid + "/name", None), self.dict.get(wid + "/style", None))
         return self.dict.get(wid, None)
 
     def set(self, wid, value):
         if wid.startswith("bl_"):
             self.setFont(wid, *value)
-        self.dict[wid] = value
+        else:
+            self.dict[wid] = value
 
     def configName(self):
         cfgName = re.sub('[^-a-zA-Z0-9_()/: ]+', '', (self.get("ecb_savedConfig") or "")).strip(" ")
@@ -212,6 +213,7 @@ class ViewModel:
                 self.working_dir = os.path.join(self.settings_dir, self.prjid, 'PrintDraft')
             readConfig = True
         if readConfig or self.configId != configName:
+            self.configId = configName
             return self.readConfig(cfgname=configName)
         else:
             return True
@@ -339,6 +341,7 @@ class ViewModel:
                     if v[0].startswith("bl_") and opt == "name":
                         vname = re.sub(r"\s*,?\s+\d+\s*$", "", val) # strip legacy style and size
                         vstyle = config.get(sect, "style", fallback="")
+                        print("loadConfig: {}->{} = {},{}".format(sect, ModelMap[sect][0], vname, vstyle))
                         self.set(ModelMap[sect][0], (vname, vstyle))
         for k, v in self._settingmappings.items():
             (sect, name) = k.split("/")

@@ -392,6 +392,7 @@ class TexModel:
     def readFonts(self, printer):
         for k, v in self._fonts.items():
             finfo = printer.get(v[0])
+            print(k, v[0], finfo)
             for i, a in enumerate(("name", "style")):
                 self.dict[k+"/"+a] = finfo[i]
 

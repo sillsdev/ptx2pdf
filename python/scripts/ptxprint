@@ -61,25 +61,16 @@ _diglot = {
                             
 "diglot/fontbold" :         "fontbold",
 "diglot/fontboldeng" :      "fontbold/engine",
-"diglot/texfeatures" :      "font/texfeatures",
-"diglot/docscript" :        "document/script",
-"diglot/docdigitmapping" :  "document/digitmapping",
 "diglot/boldembolden" :     "fontbold/embolden",
 "diglot/boldslant" :        "fontbold/slant",
                             
 "diglot/fontitalic" :       "fontitalic",
 "diglot/fontitaleng" :      "fontitalic/engine",
-"diglot/texfeatures" :      "font/texfeatures",
-"diglot/docscript" :        "document/script",
-"diglot/docdigitmapping" :  "document/digitmapping",
 "diglot/italembolden" :     "fontitalic/embolden",
 "diglot/italslant" :        "fontitalic/slant",
                             
 "diglot/fontbolditalic" :   "fontbolditalic",
 "diglot/fontbolditaleng" :  "fontbolditalic/engine",
-"diglot/texfeatures" :      "font/texfeatures",
-"diglot/docscript" :        "document/script",
-"diglot/docdigitmapping" :  "document/digitmapping",
 "diglot/bolditalembolden" : "fontbolditalic/embolden",
 "diglot/boldital/slant" :   "fontbolditalic/slant",
 }
@@ -237,7 +228,8 @@ def digdojob(jobs, info, prjid, prjdir, diginfo, digprjid, digprjdir, tmpdir, lo
                 cmd = ['C:\ptx2pdf\diglot-test\diglotMerge.exe', '-o', left, alignParam, '-s', '-l', tmpFile, right]  # Change the EXE's absolute path to relative
                 r = checkoutput(cmd)
             elif sys.platform == "linux":  # UNTESTED code
-                cmd = ['perl', 'diglot-merge.pl', '-o', left, alignParam, '-l', tmpFile, right]  # need to work out where the .pl file will live)
+                p = os.path.join(os.path.dirname(__file__), "diglot_merge.pl")
+                cmd = ['perl', p, '-o', left, alignParam, '-l', tmpFile, right]  # need to work out where the .pl file will live)
                 r = checkoutput(cmd)
             # if r != 0:  # Not sure how to check/interpret the return codes from diglotMerge.exe
                 # print("Failed to merge the Primary and Secondary files! Result code: {}".format(r))
