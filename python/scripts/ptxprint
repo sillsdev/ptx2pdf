@@ -224,13 +224,14 @@ def digdojob(jobs, info, prjid, prjdir, diginfo, digprjid, digprjdir, tmpdir, lo
             # -C      If ?? is used, consider the chapter mark to be a heading
             # -o file : Output to file
             
+            cmdparms = ['-o', left, alignParam, '-s', '-l', tmpFile, right] 
             if sys.platform == "win32":
-                cmd = ['C:\ptx2pdf\diglot-test\diglotMerge.exe', '-o', left, alignParam, '-s', '-l', tmpFile, right]  # Change the EXE's absolute path to relative
-                r = checkoutput(cmd)
+                cmd = ['C:\ptx2pdf\diglot-test\diglotMerge.exe'],  # Change the EXE's absolute path to relative
+                r = checkoutput(cmd + cmdparms)
             elif sys.platform == "linux":  # UNTESTED code
                 p = os.path.join(os.path.dirname(__file__), "diglot_merge.pl")
-                cmd = ['perl', p, '-o', left, alignParam, '-l', tmpFile, right]  # need to work out where the .pl file will live)
-                r = checkoutput(cmd)
+                cmd = ['perl', p]  # need to work out where the .pl file will live)
+                r = checkoutput(cmd + cmdparms)
             # if r != 0:  # Not sure how to check/interpret the return codes from diglotMerge.exe
                 # print("Failed to merge the Primary and Secondary files! Result code: {}".format(r))
             # else:
