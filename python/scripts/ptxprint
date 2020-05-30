@@ -226,7 +226,7 @@ def digdojob(jobs, info, prjid, prjdir, diginfo, digprjid, digprjdir, tmpdir, lo
             
             cmdparms = ['-o', left, alignParam, '-s', '-l', tmpFile, right] 
             if sys.platform == "win32":
-                cmd = ['C:\ptx2pdf\diglot-test\diglotMerge.exe'],  # Change the EXE's absolute path to relative
+                cmd = ['C:\ptx2pdf\diglot-test\diglotMerge.exe']  # Change the EXE's absolute path to relative
                 r = checkoutput(cmd + cmdparms)
             elif sys.platform == "linux":  # UNTESTED code
                 p = os.path.join(os.path.dirname(__file__), "diglot_merge.pl")
@@ -289,7 +289,10 @@ def sharedjob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
             mdirs = args.macros or "/usr/lib/Paratext8/xetex/share/texmf-dist/tex/ptx2pdf:/usr/lib/Paratext9/xetex/share/texmf-dist/tex/ptx2pdf"
             os.putenv('TEXINPUTS', ".:" + mdirs)
     os.putenv("MISCFONTS", ptxmacrospath)
-    numruns = 5
+    if printer.get("cb_onlyRunOnce"):
+        numruns = 1
+    else:
+        numruns = 5
     while numruns > 0:
         if info["document/toc"] != "%":
             tocdata = readfile(os.path.join(tmpdir, outfname.replace(".tex", ".toc")))
