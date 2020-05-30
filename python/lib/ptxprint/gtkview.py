@@ -326,7 +326,6 @@ class GtkViewModel(ViewModel):
         dialog.destroy()
 
     def onOK(self, btn):
-        missingPicList = []
         jobs = self.getBooks()
         # If the viewer/editor is open on an Editable tab, then "autosave" contents
         if self.builder.get_object("nbk_Main").get_current_page() == 7:
@@ -360,10 +359,6 @@ class GtkViewModel(ViewModel):
                 fileLocked = False
 
         self.callback(self)
-        if len(missingPicList):
-            self.builder.get_object("l_missingPictureString").set_label("Missing Pictures:\n"+"{}".format("\n".join(missingPicList)))
-        else:
-            self.builder.get_object("l_missingPictureString").set_label("(No Missing Pictures)")
 
     def onCancel(self, btn):
         self.onDestroy(btn)

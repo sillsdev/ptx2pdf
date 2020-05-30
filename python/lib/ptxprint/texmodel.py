@@ -697,12 +697,12 @@ class TexModel:
                         if self.asBool("document/iffigskipmissing"):
                             # print("(?i)(\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), "--> Skipped!!!!")
                             self.localChanges.append((None, regex.compile(r"(?i)\\fig .*?\|{}\|.+?\\fig\*".format(origfn), flags=regex.M), ""))     #USFM2
-                            self.localChanges.append((None, regex.compile(r'(?i)\\fig .*?src="{}" .+?\\fig\*'.format(origfn), flags=regex.M), "")) #USFM3
+                            self.localChanges.append((None, regex.compile(r'(?i)\\fig .*?src=\"{}\" .+?\\fig\*'.format(origfn), flags=regex.M), "")) #USFM3
 
             if self.asBool("document/iffighiderefs"): # del ch:vs from caption 
                 self.localChanges.append((None, regex.compile(r"(\\fig [^\\]+?\|)([0-9:.\-,\u2013\u2014]+?)(\\fig\*)", \
                                           flags=regex.M), r"\1\3"))   # USFM2
-                self.localChanges.append((None, regex.compile(r'(\\fig .+?)(ref="\d+[:.]\d+([-,\u2013\u2014]\d+)?")(.*?\\fig\*)', \
+                self.localChanges.append((None, regex.compile(r'(\\fig .+?)(ref=\"\d+[:.]\d+([-,\u2013\u2014]\d+)?\")(.*?\\fig\*)', \
                                           flags=regex.M), r"\1\4"))   # USFM3
         else: # Drop ALL Figures
             self.localChanges.append((None, regex.compile(r"\\fig .*?\\fig\*", flags=regex.M), ""))

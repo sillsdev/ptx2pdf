@@ -519,6 +519,7 @@ def gatherIllustrations(jobs, prjid, prjdir, printer, info):
     if printer.get("c_usePicList"): # Write out new tmpPicLists
         extOrder = info.getExtOrder(printer)
         missingPics = []
+        missingPicList = []
         for bk in jobs:
             fname = printer.getBookFilename(bk, prjdir)
             if printer.get("c_usePicList"): # Read the PicList to get a list of needed illustrations
@@ -563,8 +564,12 @@ def gatherIllustrations(jobs, prjid, prjdir, printer, info):
                         with open(tmpiclstfname, "w", encoding="utf-8") as outf:
                             outf.write(dat)
         if len(missingPics):
-            Info._missingPicList += ["{}".format(", ".join(list(set(missingPics))))]
-
+            missingPicList += ["{}".format(", ".join(list(set(missingPics))))]
+    if len(missingPicList):
+        printer.builder.get_object("l_missingPictureString").set_label("Missing Pictures:\n"+"{}".format("\n".join(missingPicList)))
+    else:
+        printer.builder.get_object("l_missingPictureString").set_label("(No Missing Pictures)")
+    
 def carefulCopy(printer, srcpath, tgtfile):
     tmpPicPath = os.path.join(printer.working_dir, "tmpPics")
     tgtpath = os.path.join(tmpPicPath, tgtfile)
