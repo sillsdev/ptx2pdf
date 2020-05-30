@@ -43,10 +43,8 @@ _errmsghelp = {
 # \XeTeXinterwordspaceshaping = {document/spacecntxtlztn}
 # %\extrafont  %% This will be replaced by code for the fallback fonts to be used for special/missing characters
 
-# {document/ifcolorfonts}\ColorFontsfalse
-# "diglot/colorfonts" :       "document/ifcolorfonts",
-
 _diglot = {
+"diglot/colorfonts" :       "document/ifcolorfonts",
 "diglot/ifrtl" :            "document/ifrtl",
 "diglot/fontfactor" :       "paper/fontfactor",
 "diglot/iflinebreakon" :    "document/iflinebreakon",
@@ -171,7 +169,7 @@ def readfile(fname):
     except FileNotFoundError:
         return ""
 
-def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
+def dojob(jobs, info, prjid, prjdir, tmpdir, maxRuns, logbuffer=None):
     donebooks = []
     for b in jobs:
         out = info.convertBook(b, tmpdir, prjdir)
@@ -179,14 +177,14 @@ def dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
     info["project/bookids"] = jobs
     info["project/books"] = donebooks
     
-    sharedjob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None)
+    sharedjob(jobs, info, prjid, prjdir, tmpdir, maxRuns, logbuffer=None)
 
-def digdojob(jobs, info, prjid, prjdir, diginfo, digprjid, digprjdir, tmpdir, logbuffer=None):
+def digdojob(jobs, info, prjid, prjdir, diginfo, digprjid, digprjdir, tmpdir, maxRuns, logbuffer=None):
     donebooks = []
     digdonebooks = []
     # need to set either -v -c -p depending on what kind of merge is needed
     alnmnt = info.dict["document/diglotalignment"]
-    if alnmnt.startswith("No alignment"):
+    if alnmnt.startswith("Not"):
         alignParam = "None"
     elif alnmnt.endswith("Chapters"):
         alignParam = "-c"
@@ -196,6 +194,29 @@ def digdojob(jobs, info, prjid, prjdir, diginfo, digprjid, digprjdir, tmpdir, lo
         alignParam = "-v"
     else:
         alignParam = ""
+    if True: # alnmnt.startswith("No"):
+        _digSecSettings = ["paper/pagesize", "paper/height", "paper/width", "paper/margins",
+                           "paper/sidemarginfactor", "paper/topmarginfactor", "paper/bottommarginfactor",
+                           "paper/fontfactor", "header/headerposition", "header/footerposition", "header/ruleposition",
+                           "document/ch1pagebreak", "document/supressbookintro", "document/supressintrooutline", 
+                           "document/supressparallels", "document/elipsizemptyvs", "notes/iffootnoterule", 
+                           "notes/ifblendfnxr", "notes/includefootnotes", "notes/includexrefs", 
+                           "notes/fnparagraphednotes", "notes/xrparagraphednotes", "document/filterglossary", 
+                           "document/chapfrom", "document/chapto", "document/ifcolorfonts"]
+        diginfo["project/bookids"] = jobs
+        diginfo["project/books"] = digdonebooks
+        diginfo["document/ifaligndiglot"] = "%"
+        diginfo["footer/ftrcenter"] = "-empty-"
+        diginfo["footer/ifftrtitlepagenum"] = "%"
+        diginfo["fancy/pageborder"] = "%"
+        diginfo["document/clsinglecol"] = False
+        diginfo["snippets/alignediglot"] = False
+        print("_digSecSettings = ", _digSecSettings)
+        print("----------Passing info settings to diginfo-----------")
+        for k in _digSecSettings:
+            print("{} = {}".format(k, info[k]))
+            diginfo[k]=info[k]
+        print("-----------------------------------------------------")
     for b in jobs:
         out = info.convertBook(b, tmpdir, prjdir)
         digout = diginfo.convertBook(b, tmpdir, digprjdir)
@@ -226,7 +247,7 @@ def digdojob(jobs, info, prjid, prjdir, diginfo, digprjid, digprjdir, tmpdir, lo
             
             cmdparms = ['-o', left, alignParam, '-s', '-l', tmpFile, right] 
             if sys.platform == "win32":
-                cmd = ['C:\ptx2pdf\diglot-test\diglotMerge.exe']  # Change the EXE's absolute path to relative
+                cmd = [os.path.join(os.path.dirname(__file__), "diglotMerge.exe")]
                 r = checkoutput(cmd + cmdparms)
             elif sys.platform == "linux":  # UNTESTED code
                 p = os.path.join(os.path.dirname(__file__), "diglot_merge.pl")
@@ -240,32 +261,87 @@ def digdojob(jobs, info, prjid, prjdir, diginfo, digprjid, digprjdir, tmpdir, lo
     info["project/bookids"] = jobs
     info["project/books"] = donebooks
 
-    if alnmnt.startswith("No"): # WARNING - work in progress!
-        # Fuzzy diglot just runs the jobs twice, and the 2nd run picks up the Sec PDF and merges it
-        # Need to add SECONDARY .tex stuff to make it print on half of the page
-        print(printer.generateFzyDiglotSettings(False))
-        sharedjob(jobs, diginfo, digprjid, digprjdir, tmpdir, logbuffer=None) # Need to think where the secPDF(s) will live (tmpdir or pritmpdir)
-        # Need to add PRIMARY .tex stuff to make it print on other half of the page and merge in the SECONDARY PDF
-        print(printer.generateFzyDiglotSettings(True))
-        sharedjob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None)          # See ln 1773 in __init__.py
+    if alnmnt.startswith("No"):
+        # First create Secondary PDF
+        diginfo["diglot/fzysettings"] = generateFzyDiglotSettings(jobs, info, None, tmpdir, primary=False)
+        print("Sec:", diginfo["diglot/fzysettings"])
+        sharedjob(jobs, diginfo, digprjid, digprjdir, tmpdir, maxRuns, fzy=True, logbuffer=None)
+        # Now Primary (along with Secondary merged in with it)
+        info["diglot/fzysettings"] = generateFzyDiglotSettings(jobs, info, digprjid, tmpdir, primary=True)
+        print("Pri:", info["diglot/fzysettings"])
+        sharedjob(jobs, info, prjid, prjdir, tmpdir, maxRuns, logbuffer=None)
     else:
         # Pass all the needed parameters for the snippet from diginfo to info
-        print(diginfo.dict["project/id"])
-        print(diginfo.dict["fontregular"])
-        print(diginfo.dict["document/ifrtl"])
-        print(diginfo.dict["paper/fontfactor"])
-
         for k,v in _diglot.items():
             info[k]=diginfo[v]
-            print(k, v, diginfo[v])
-        sharedjob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None)
+            # print(k, v, diginfo[v])
+        sharedjob(jobs, info, prjid, prjdir, tmpdir, maxRuns, logbuffer=None)
 
-def sharedjob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):    
+def generateFzyDiglotSettings(jobs, info, secprjid, tmpdir, primary=True):
+    pageWidth = int(re.split("[^0-9]",re.sub(r"^(.*?)\s*,.*$", r"\1", info.dict["paper/pagesize"]))[0]) or 148
+    margin = int(info.dict["paper/margins"]) # self.get("s_margins")
+    # margin = 12
+    middleGutter = int(info.dict["document/colgutterfactor"])/3 # self.get("s_colgutterfactor")
+    bindingGutter = int(info.dict["paper/gutter"]) # self.get("s_pagegutter")
+    # bindingGutter = 0
+    priFraction = float(info.dict["document/diglotprifraction"]) # self.get("s_diglotPriFraction")
+    priColWidth = (pageWidth  - middleGutter - bindingGutter - (2 * margin)) * priFraction # / 100
+    secColWidth = pageWidth - priColWidth - middleGutter - bindingGutter - (2 * margin)
+    # Calc Pri Settings (right side of page; or outer if mirrored)
+    priSideMarginFactor = 1
+    pribindingGutter = pageWidth - margin - priColWidth - margin
+    # Calc Sec Settings (left side of page; or inner if mirrored)
+    secColWidth = pageWidth - priColWidth - middleGutter - bindingGutter - (2 * margin)
+    secSideMarginFactor = (priColWidth + margin + middleGutter) / margin
+    secRightMargin = priColWidth + margin + middleGutter
+    secbindingGutter = pageWidth - (2 * secRightMargin) - secColWidth 
+    hdr = ""
+    if not primary:
+        if info.asBool("document/diglotnormalhdrs"):
+            hdr = r"""
+\def\RHoddleft{\rangeref}
+\def\RHoddcenter{\empty}
+\def\RHoddright{\empty}
+\def\RHevenleft{\empty}
+\def\RHevencenter{\empty}
+\def\RHevenright{\rangeref}"""
+        digFzyCfg = "%% SECONDARY PDF settings"+ \
+                    "\n\MarginUnit={}mm".format(margin)+ \
+                    "\n\BindingGuttertrue"+ \
+                    "\n\BindingGutter={:.2f}mm".format(secbindingGutter)+ \
+                    "\n\def\SideMarginFactor{{{:.2f}}}".format(secSideMarginFactor)+ \
+                    "\n\BodyColumns=1" + hdr
+                    # We also need to be able to overide the page layout values from the PRIMARY project
+                    # (even when creating the Secondary PDF so that the dimensions match).
+    else:
+        if len(jobs) > 1:
+            secfname = os.path.join(tmpdir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], secprjid)).replace("\\","/")
+        else:
+            secfname = os.path.join(tmpdir, "ptxprint-{}{}.pdf".format(jobs[0], secprjid)).replace("\\","/")
+        if info.asBool("document/diglotnormalhdrs"):
+            hdr = r"""
+\def\RHoddleft{\pagenumber}
+\def\RHoddcenter{\empty}
+\def\RHoddright{\rangeref}
+\def\RHevenleft{\rangeref}
+\def\RHevencenter{\empty}
+\def\RHevenright{\pagenumber}"""
+        digFzyCfg = "%% PRIMARY (+ SECONDARY) PDF settings"+ \
+                    "\n\MarginUnit={}mm".format(margin)+ \
+                    "\n\BindingGuttertrue"+ \
+                    "\n\BindingGutter={:.2f}mm".format(pribindingGutter)+ \
+                    "\n\def\SideMarginFactor{{{:.2f}}}".format(priSideMarginFactor)+ \
+                    "\n\BodyColumns=1"+ \
+                    "\n\def\MergePDF{" + secfname + "}" + hdr
+    return digFzyCfg
+
+def sharedjob(jobs, info, prjid, prjdir, tmpdir, numruns, fzy=False, logbuffer=None):
     if len(jobs) > 1:
         outfname = "ptxprint-{}_{}{}.tex".format(jobs[0], jobs[-1], prjid)
     else:
         outfname = "ptxprint-{}{}.tex".format(jobs[0], prjid)
-    info.update()
+    if not fzy:
+        info.update()
     with open(os.path.join(tmpdir, outfname), "w", encoding="utf-8") as texf:
         # print({k:v for k,v in info.dict.items() if k.startswith("diglot")})
         texf.write(info.asTex(filedir=tmpdir, jobname=outfname.replace(".tex", "")))
@@ -289,11 +365,8 @@ def sharedjob(jobs, info, prjid, prjdir, tmpdir, logbuffer=None):
             mdirs = args.macros or "/usr/lib/Paratext8/xetex/share/texmf-dist/tex/ptx2pdf:/usr/lib/Paratext9/xetex/share/texmf-dist/tex/ptx2pdf"
             os.putenv('TEXINPUTS', ".:" + mdirs)
     os.putenv("MISCFONTS", ptxmacrospath)
-    if printer.get("cb_onlyRunOnce"):
-        numruns = 1
-    else:
-        numruns = 5
     while numruns > 0:
+        print("numruns=", numruns)
         if info["document/toc"] != "%":
             tocdata = readfile(os.path.join(tmpdir, outfname.replace(".tex", ".toc")))
         runner = ptxprint.runner.call(["xetex", "--halt-on-error", outfname], cwd=tmpdir, logbuffer=(logbuffer if not args.logging else None))
@@ -340,9 +413,9 @@ def doit(printer, display=True):
     tmpdir = os.path.join(prjdir, 'PrintDraft') if info.asBool("project/useprintdraftfolder") else args.directory
     os.makedirs(tmpdir, exist_ok=True)
     jobs = printer.getBooks()
-    
+    info["diglot/fzysettings"] = ""
+
     isDiglot = printer.get("c_diglot")
-    print("isdiglot {}".format(isDiglot))
     if isDiglot:
         digfraction = info.dict["document/diglotprifraction"]
         digprjid = info.dict["document/diglotsecprj"]
@@ -356,26 +429,25 @@ def doit(printer, display=True):
         if digcfg is not None and digcfg != "":
             digprinter.setConfigId(digcfg)
         diginfo = TexModel(digprinter, args.paratext, digptsettings, digprjid)
-        print(diginfo.dict["project/id"])
-        print(diginfo.dict["fontregular"])
-        print(diginfo.dict["document/ifrtl"])
-        print(diginfo.dict["paper/fontfactor"])
-        # diginfo.loadConfig(None, info.dict["document/diglotsecconfig"])
         
     if info.asBool("document/ifinclfigs") and not info.asBool("document/ifdiglot"):
         gatherIllustrations(jobs, prjid, prjdir, printer, info)
 
+    if printer.get("cb_onlyRunOnce"):
+        maxRuns = 1
+    else:
+        maxRuns = 5
     info.changes = None
     if isDiglot:
         if info.asBool("project/combinebooks"):
-            texfiles = [digdojob(jobs, info, prjid, prjdir, diginfo, digprjid, digprjdir, tmpdir, logbuffer=printer.logbuffer)]
+            texfiles = [digdojob(jobs, info, prjid, prjdir, diginfo, digprjid, digprjdir, tmpdir, maxRuns, logbuffer=printer.logbuffer)]
         else:
-            texfiles = [digdojob([j], info, prjid, prjdir, diginfo, digprjid, digprjdir, tmpdir, logbuffer=printer.logbuffer) for j in jobs]
+            texfiles = [digdojob([j], info, prjid, prjdir, diginfo, digprjid, digprjdir, tmpdir, maxRuns, logbuffer=printer.logbuffer) for j in jobs]
     else: # Normal (non-diglot)
         if info.asBool("project/combinebooks"):
-            texfiles = [dojob(jobs, info, prjid, prjdir, tmpdir, logbuffer=printer.logbuffer)]
+            texfiles = [dojob(jobs, info, prjid, prjdir, tmpdir, maxRuns, logbuffer=printer.logbuffer)]
         else:
-            texfiles = [dojob([j], info, prjid, prjdir, tmpdir, logbuffer=printer.logbuffer) for j in jobs]
+            texfiles = [dojob([j], info, prjid, prjdir, tmpdir, maxRuns, logbuffer=printer.logbuffer) for j in jobs]
     # Work out what the resulting PDF was called
     if len(jobs) > 1 and info.asBool("project/combinebooks"):
         pdfname = os.path.join(tmpdir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], prjid))

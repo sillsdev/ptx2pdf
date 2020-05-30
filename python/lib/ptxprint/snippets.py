@@ -80,7 +80,9 @@ class AlignedDiglot():
 \def\DiglotLeftFraction{{{document/diglotprifraction}}}
 \def\DiglotRightFraction{{{document/diglotsecfraction}}}
 
+{diglot/colorfonts}\ColorFontsfalse
 %\FontSizeUnitR={diglot/fontfactor}pt
+\addToLeftHooks{{\FontSizeUnit={paper/fontfactor}pt}}
 \addToRightHooks{{\FontSizeUnit={diglot/fontfactor}pt}}
 %\RTLR{diglot/ifrtl}   % Use right-to-left layout mode for secondary?
 \addToLeftHooks{{\RTL{document/ifrtl}}}
@@ -89,18 +91,6 @@ class AlignedDiglot():
 %{diglot/useglyphmetrics}\XeTeXuseglyphmetricsR=0
 
 \IncludeFiguresfalse
-"""
-
-class AlignedDiglotTEST():
-    regexes = []
-    styleInfo = ""
-    processTex = False
-    texCode = r"""\def\regularR{"Annapurna SIL"}
-\def\boldR{"Annapurna SIL:embolden=1.80"}
-\def\italicR{"Annapurna SIL:slant=0.1500"}
-\def\bolditalicR{"Annapurna SIL:embolden=1.80:slant=0.1500"}
-\def\DiglotLeftFraction{0.55} % In case texts fit better with unequal columns
-\def\DiglotRightFraction{0.45}
 """
 
 class FancyBorders():

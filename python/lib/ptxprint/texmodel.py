@@ -189,9 +189,8 @@ ModelMap = {
     "document/clabel":          ("t_clHeading", None),
     "document/clsinglecol":     ("c_clSingleColLayout", None),
 
-    "document/ifdiglot":        ("c_diglot", lambda w,v :"" if v else "%"),
-    "document/ifaligndiglot":   ("c_diglot", lambda w,v :"" if v else "%"),
-    # "document/diglotsettings":  ("l_diglotStringL", lambda w,v: v if w.get("c_diglot") else ""),
+    "document/ifdiglot":        ("c_diglot", lambda w,v : "" if v else "%"),
+    "document/ifaligndiglot":   ("c_diglotAutoAligned", lambda w,v: "" if v else "%"),
     "document/diglotalignment": ("fcb_diglotAlignment", None),
     "document/diglotprifraction": ("s_diglotPriFraction", lambda w,v : round((v/100), 3) or "0.550"),
     "document/diglotsecfraction": ("s_diglotPriFraction", lambda w,v : round(1 - (v/100), 3) or "0.450"),
@@ -260,7 +259,7 @@ ModelMap = {
     "fontbolditalic/slant":     ("s_bolditalicslant", lambda w,v: ":slant={:.4f}".format(v) if v != 0.0000 and w.get("c_fakebolditalic") else ""),
     "snippets/fancyintro":      ("c_prettyIntroOutline", None),
     "snippets/pdfx1aoutput":    ("c_PDFx1aOutput", None),
-    "snippets/alignediglot":    ("c_diglot", None),
+    "snippets/alignediglot":    ("c_diglotAutoAligned", None),
     "snippets/fancyborders":    ("c_enableDecorativeElements", None),
 }
 
@@ -298,7 +297,7 @@ class TexModel:
     _snippets = {
         "snippets/fancyintro":            ("c_prettyIntroOutline", FancyIntro),
         "snippets/pdfx1aoutput":          ("c_PDFx1aOutput", PDFx1aOutput),
-        "snippets/alignediglot":          ("c_diglot", AlignedDiglot),
+        "snippets/alignediglot":          ("c_diglotAutoAligned", AlignedDiglot),
         "snippets/fancyborders":          ("c_enableDecorativeElements", FancyBorders)
     }
     _settingmappings = {
@@ -392,7 +391,7 @@ class TexModel:
     def readFonts(self, printer):
         for k, v in self._fonts.items():
             finfo = printer.get(v[0])
-            print(k, v[0], finfo)
+            # print(k, v[0], finfo)
             for i, a in enumerate(("name", "style")):
                 self.dict[k+"/"+a] = finfo[i]
 
@@ -532,7 +531,6 @@ class TexModel:
                                 res.append(c[1].texCode)
                 else:
                     res.append(l.format(**self.dict))
-                    # print("Exception ignored:",l)
         return "".join(res).replace("\OmitChapterNumberfalse\n\OmitChapterNumbertrue\n","")
 
     def runConversion(self, infpath, outdir):

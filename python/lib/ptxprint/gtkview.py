@@ -1482,19 +1482,15 @@ class GtkViewModel(ViewModel):
     def onDiglotClicked(self, c_diglot):
         status = self.get("c_diglot")
         self.builder.get_object("gr_diglot").set_sensitive(status)
-        self.builder.get_object("l_diglotStringL").set_visible(status)
-        self.builder.get_object("l_diglotStringR").set_visible(status)
+        self.ondiglotAlignmentChanged(None)
         if status:
             self.set("c_includeillustrations", False)
             self.builder.get_object("c_includeillustrations").set_sensitive(False)
         else:
             self.builder.get_object("c_includeillustrations").set_sensitive(True)
-        
-        # self.onDiglotSettingsChanged(None)
 
     def ondiglotSecProjectChanged(self, btn):
         self.updateDiglotConfigList()
-        # self.onDiglotSettingsChanged(None)
         
     def onGenerateHyphenationListClicked(self, btn_generateHyphenationList):
         pass
@@ -1524,7 +1520,7 @@ class GtkViewModel(ViewModel):
                     "A fallback font is not required.\nThis 'Use Fallback Font' option has been disabled.")
 
     def msgQuestion(self, title, question):
-        par = par = self.builder.get_object('ptxprint')
+        par = self.builder.get_object('ptxprint')
         dialog = Gtk.MessageDialog(parent=par, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.YES_NO, message_format=title)
         dialog.format_secondary_text(question)
         dialog.set_keep_above(True)
@@ -1538,3 +1534,9 @@ class GtkViewModel(ViewModel):
 
     def onEnableDecorativeElementsClicked(self, c_enableDecorativeElements):
         self.builder.get_object("gr_borders").set_sensitive(self.get("c_enableDecorativeElements"))
+
+    def ondiglotAlignmentChanged(self, btn):
+        if self.get("fcb_diglotAlignment").startswith("Align") and self.get("c_diglot"):
+            self.set("c_diglotAutoAligned", True)
+        else:
+            self.set("c_diglotAutoAligned", False)

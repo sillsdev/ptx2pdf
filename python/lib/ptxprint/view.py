@@ -341,7 +341,7 @@ class ViewModel:
                     if v[0].startswith("bl_") and opt == "name":
                         vname = re.sub(r"\s*,?\s+\d+\s*$", "", val) # strip legacy style and size
                         vstyle = config.get(sect, "style", fallback="")
-                        print("loadConfig: {}->{} = {},{}".format(sect, ModelMap[sect][0], vname, vstyle))
+                        # print("loadConfig: {}->{} = {},{}".format(sect, ModelMap[sect][0], vname, vstyle))
                         self.set(ModelMap[sect][0], (vname, vstyle))
         for k, v in self._settingmappings.items():
             (sect, name) = k.split("/")
@@ -497,76 +497,6 @@ class ViewModel:
                     os.makedirs(adjpath, exist_ok=True)
                     with open(outfname, "w", encoding="utf-8") as outf:
                         outf.write("".join(adjlist))
-
-    def generateFzyDiglotSettings(self, primary=True):
-        secprjid = self.get("fcb_diglotSecProject")
-        # I'm not sure if there's a better way to handle this - looking for the already-created Secondary diglot file
-        sectmpdir = os.path.join(self.settings_dir, secprjid, 'PrintDraft') if not self.fixed_wd else self.working_dir
-        jobs = self.getBooks()
-        if len(jobs) > 1:
-            secfname = os.path.join(sectmpdir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], secprjid)).replace("\\","/")
-        else:
-            secfname = os.path.join(sectmpdir, "ptxprint-{}{}.pdf".format(jobs[0], secprjid)).replace("\\","/")
-
-        # TO DO: We need to be able to GET the page layout values from the PRIMARY project
-        # (even when creating the Secondary PDF so that the dimensions match).
-
-        pageWidth = int(re.split("[^0-9]",re.sub(r"^(.*?)\s*,.*$", r"\1", self.get("ecb_pagesize")))[0]) or 148
-        
-        margin = self.get("s_margins")
-        middleGutter = self.get("s_colgutterfactor")
-        bindingGutter = self.get("s_pagegutter")
-        priFraction = self.get("s_diglotPriFraction")
-        priColWidth = pageWidth * priFraction / 100
-
-        secColWidth = pageWidth - priColWidth - middleGutter - bindingGutter - (2 * margin)
-
-        # Calc Pri Settings (right side of page; or outer if mirrored)
-        priColWidth = self.get("s_priColWidthth")
-        priSideMarginFactor = 1
-        pribindingGutter = pageWidth - margin - priColWidth - margin
-
-        # Calc Sec Settings (left side of page; or inner if mirrored)
-        secColWidth = pageWidth - priColWidth - middleGutter - bindingGutter - (2 * margin)
-        secSideMarginFactor = (priColWidth + margin + middleGutter) / margin
-        secRightMargin = priColWidth + margin + middleGutter
-        
-        secbindingGutter = pageWidth - (2 * secRightMargin) - secColWidth 
-
-        priPercent = round((priColWidth / (priColWidth + secColWidth) * 100),1)
-        hdr = ""
-        if not primary:
-            if self.get("c_diglotHeaders"):
-                hdr = r"""
-\def\RHoddleft{\rangeref}
-\def\RHoddcenter{\empty}
-\def\RHoddright{\empty}
-\def\RHevenleft{\empty}
-\def\RHevencenter{\empty}
-\def\RHevenright{\rangeref}"""
-            digFzyCfg = "%% SECONDARY PDF settings"+ \
-                        "\n\MarginUnit={}mm".format(margin)+ \
-                        "\n\bindingGuttertrue"+ \
-                        "\n\bindingGutter={:.2f}mm".format(secbindingGutter)+ \
-                        "\n\def\SideMarginFactor{{{:.2f}}}".format(secSideMarginFactor)+ \
-                        "\n\BodyColumns=1" + hdr
-        else:
-            if self.get("c_diglotHeaders"):
-                hdr = r"""
-\def\RHoddleft{\pagenumber}
-\def\RHoddcenter{\empty}
-\def\RHoddright{\rangeref}
-\def\RHevenleft{\rangeref}
-\def\RHevencenter{\empty}
-\def\RHevenright{\pagenumber}"""
-            digFzyCfg = "%% PRIMARY (+ SECONDARY) PDF settings"+ \
-                        "\n\MarginUnit={}mm".format(margin)+ \
-                        "\n\bindingGuttertrue"+ \
-                        "\n\bindingGutter={:.2f}mm".format(pribindingGutter)+ \
-                        "\n\def\SideMarginFactor{{{:.2f}}}".format(priSideMarginFactor)+ \
-                        "\n\BodyColumns=1"+ \
-                        "\n\def\MergePDF{" + secfname + "}" + hdr
-        return digFzyCfg
 
     def checkSFMforFancyIntroMarkers(self):
         unfitBooks = []

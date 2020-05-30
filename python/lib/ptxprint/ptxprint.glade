@@ -915,16 +915,16 @@ saved configuration.</property>
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">No alignment - "Fuzzy" Diglot</col>
+        <col id="0" translatable="yes">Aligned at Paragraphs</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Aligned at Verses</col>
       </row>
       <row>
         <col id="0" translatable="yes">Aligned at Chapters</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Aligned at Paragraphs</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Aligned at Verses</col>
+        <col id="0" translatable="yes">Not auto-aligned</col>
       </row>
     </data>
   </object>
@@ -2443,7 +2443,7 @@ space between lines of text.</property>
                                         <property name="input_purpose">number</property>
                                         <property name="adjustment">a_linespacing</property>
                                         <property name="climb_rate">0.10000000000000001</property>
-                                        <property name="digits">1</property>
+                                        <property name="digits">2</property>
                                         <property name="numeric">True</property>
                                         <property name="update_policy">if-valid</property>
                                         <property name="value">15</property>
@@ -7479,13 +7479,16 @@ things don't line up exactly</property>
                                     <property name="tooltip_text" translatable="yes">Ordinarily, PTXprint will re-run the typesetting
 process (up to 5 times) in order to ensure
 everything is positioned as properly as
-possible. This gives a much neater end result,
+possible, and so that the Table of Contents
+accurately reflects what is in the document. 
+This gives a much neater end result,
 but obviously takes it longer. If you would
 rather just see a quick/rough result, then
 check this option to only run ONCE. This
 setting is only for the current session, and
 will automatically be reset the next time
 you start PTXprint.</property>
+                                    <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -8570,30 +8573,28 @@ settings for the project)</property>
                                 <property name="width_request">180</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">Select the type of Diglot you
-want to create. Options are:
+                                <property name="tooltip_text" translatable="yes">Select the type of Diglot to create. Options are:
 
-(a) None - "fuzzy" diglot - blends 2 PDFs together with no
-regard to alignment - adjust column width, font size and 
-line spacing manually to try to make it match.
+(a) Align on each verse
+(b) Align at paragraph
+(c) Align at chapters
 
-(b) by chapter
-
-(c) by paragraph
-
-(d) by verse
-</property>
+(d) Not aligned (manual diglot) places the
+2 PDFs side-by-side with no auto-alignment.
+You will need to make manual adjustments to
+column widths, font sizes and line spacing
+to try to make it line up the 2 texts.</property>
                                 <property name="halign">start</property>
                                 <property name="hexpand">False</property>
                                 <property name="model">ls_diglotAlignment</property>
                                 <property name="active">0</property>
                                 <property name="id_column">0</property>
                                 <property name="active_id">1</property>
+                                <signal name="changed" handler="ondiglotAlignmentChanged" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
                                 <property name="top_attach">0</property>
-                                <property name="width">2</property>
                               </packing>
                             </child>
                             <child>
@@ -8691,6 +8692,22 @@ Match Column Gutter Position</property>
                               <packing>
                                 <property name="left_attach">0</property>
                                 <property name="top_attach">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_diglotAutoAligned">
+                                <property name="label" translatable="yes">Automatic
+Alignment</property>
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="opacity">0.25</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">0</property>
                               </packing>
                             </child>
                             <child>
