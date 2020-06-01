@@ -702,10 +702,10 @@
   \fi
   %Other Left parameters
   \output={\diglotLeft}\relax%
-  \swapfonts{L}%
-  \global\hsize=\columnLwidth\relax\the\leftho@ks\global\holdinginserts=1}%
+  \the\leftho@ks\relax\swapfonts{L}%
+  \global\hsize=\columnLwidth\relax\global\holdinginserts=1}%
 
-\outer\def\righttext{\TRACEdiglot{righttext}\ifhe@dings\endhe@dings\fi\global\savedpenalty=\lastpenalty\n@xtc@mmand\global\holdinginserts=1\par\penalty-10001\relax\calc@vailht\global\digl@tLfalse\global\diglotRtrue\calc@vailht\global\vsize=\availht\relax\output={\diglotRight}\swapfonts{R}\global\hsize=\columnRwidth\relax\the\rightho@ks\global\holdinginserts=0}%
+\outer\def\righttext{\TRACEdiglot{righttext}\ifhe@dings\endhe@dings\fi\global\savedpenalty=\lastpenalty\n@xtc@mmand\global\holdinginserts=1\par\penalty-10001\relax\calc@vailht\global\digl@tLfalse\global\diglotRtrue\calc@vailht\global\vsize=\availht\relax\output={\diglotRight}\the\rightho@ks\relax\swapfonts{R}\global\hsize=\columnRwidth\relax\global\holdinginserts=0}%
 %
 % When there's a header on the left but not the right, but we want the verses
 % to line up nicely...
