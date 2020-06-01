@@ -77,6 +77,7 @@ class ViewModel:
         self.customFigFolder = None
         self.prjid = None
         self.configId = None
+        self.isDisplay = False
 
         # private to this implementation
         self.dict = {}
@@ -254,7 +255,7 @@ class ViewModel:
             return False
         config = configparser.ConfigParser()
         config.read(path, encoding="utf-8")
-        self.loadConfig(None, config)
+        self.loadConfig(config)
         return True
 
     def writeConfig(self, cfgname=None):
@@ -305,7 +306,7 @@ class ViewModel:
             self._configset(config, k, str(val))
         return config
 
-    def loadConfig(self, printer, config):
+    def loadConfig(self, config):
         for sect in config.sections():
             for opt in config.options(sect):
                 key = "{}/{}".format(sect, opt)
@@ -567,4 +568,20 @@ class ViewModel:
             if len(stillmissing):
                 doError("The Fallback Font just selected does NOT support all the missing characters listed.",
                         "Please select a different Font.")
+
+    def getExtOrder(self):
+        # If the preferred image type(s) has(have) been specified, parse that string
+        imgord = re.sub(r"(?i)(tif)", r"pdf", self.get("t_imageTypeOrder"))
+        extOrder = []
+        if  len(imgord):
+            exts = re.findall("([a-z]{3})",imgord.lower())
+            for e in exts:
+                if e in ["jpg", "png", "pdf"] and e not in extOrder:
+                    extOrder += [e]
+        if not len(extOrder): # If the user hasn't defined a specific order then we can assign this
+            if self.get("c_useLowResPics"): # based on whether they prefer small/compressed image formats
+                extOrder = ["jpg", "png", "pdf"] 
+            else:                              # or prefer larger high quality uncompresses image formats
+                extOrder = extOrder[::-1]      # reverse the order
+        return extOrder
 

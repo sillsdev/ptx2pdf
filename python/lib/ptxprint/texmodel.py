@@ -800,7 +800,7 @@ class TexModel:
         picdir = os.path.join(self['document/directory'], 'tmpPics').replace("\\","/")
         fname = printer.getBookFilename(bk, prjdir)
         infpath = os.path.join(prjdir, fname)
-        extOrder = self.getExtOrder(printer)
+        extOrder = printer.getExtOrder()
         with universalopen(infpath) as inf:
             dat = inf.read()
             inf.close()
@@ -818,22 +818,6 @@ class TexModel:
                 if not found:
                     figchngs.append((f,"")) 
         return(figchngs)
-
-    def getExtOrder(self, printer):
-        # If the preferred image type(s) has(have) been specified, parse that string
-        imgord = re.sub(r"(?i)(tif)", r"pdf", self.dict["document/imagetypepref"])
-        extOrder = []
-        if  len(imgord):
-            exts = re.findall("([a-z]{3})",imgord.lower())
-            for e in exts:
-                if e in ["jpg", "png", "pdf"] and e not in extOrder:
-                    extOrder += [e]
-        if not len(extOrder): # If the user hasn't defined a specific order then we can assign this
-            if self.asBool("document/usesmallpics"): # based on whether they prefer small/compressed image formats
-                extOrder = ["jpg", "png", "pdf"] 
-            else:                              # or prefer larger high quality uncompresses image formats
-                extOrder = extOrder[::-1]      # reverse the order
-        return extOrder
 
     def base(self, fpath):
         return os.path.basename(fpath)[:-4]
@@ -909,10 +893,12 @@ class TexModel:
         if nstylist == []:
             if os.path.exists(nstyfname):
                 os.remove(nstyfname)
+            return []
         else:
             os.makedirs(os.path.join(prjdir, "PrintDraft"), exist_ok=True)
             with open(nstyfname, "w", encoding="utf-8") as outf:
                 outf.write("".join(nstylist))
+            return [nstyfname]
 
     def createHyphenationFile(self):
         listlimit = 32749

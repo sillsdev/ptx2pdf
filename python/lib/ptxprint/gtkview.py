@@ -93,6 +93,7 @@ class GtkViewModel(ViewModel):
 
     def __init__(self, allprojects, settings_dir, workingdir):
         super(GtkViewModel, self).__init__(allprojects, settings_dir, workingdir)
+        self.isDisplay = True
         self.config_dir = None
         self.initialised = False
         self.configNoUpdate = False
