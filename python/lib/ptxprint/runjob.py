@@ -142,11 +142,11 @@ class RunJob:
             if digprjid is None or not len(digprjid):     # can't print no project
                 return
             digptsettings = ParatextSettings(args.paratext, digprjid)
-            digself.printer = ViewModel(None, args.paratext, self.printer.working_dir)
-            digself.printer.setPrjid(digprjid)
+            digprinter = ViewModel(None, args.paratext, self.printer.working_dir)
+            digprinter.setPrjid(digprjid)
             if digcfg is not None and digcfg != "":
-                digself.printer.setConfigId(digcfg)
-            diginfo = TexModel(digself.printer, args.paratext, digptsettings, digprjid)
+                digprinter.setConfigId(digcfg)
+            diginfo = TexModel(digprinter, args.paratext, digptsettings, digprjid)
             texfiles = sum((self.digdojob(j, info, diginfo, digprjid, digprjdir) for j in joblist), [])
         else: # Normal (non-diglot)
             texfiles = sum((self.dojob(j, info) for j in joblist), [])
@@ -240,7 +240,7 @@ class RunJob:
         info["project/books"] = donebooks
         return self.sharedjob(jobs, info, logbuffer=logbuffer)
 
-    def digdojob(jobs, info, diginfo, digprjid, digprjdir, logbuffer=None):
+    def digdojob(self, jobs, info, diginfo, digprjid, digprjdir, logbuffer=None):
         donebooks = []
         digdonebooks = []
         # need to set either -v -c -p depending on what kind of merge is needed
@@ -279,16 +279,16 @@ class RunJob:
                 diginfo[k]=info[k]
             print("-----------------------------------------------------")
         for b in jobs:
-            out = info.convertBook(b, tmpdir, prjdir)
-            digout = diginfo.convertBook(b, tmpdir, digprjdir)
+            out = info.convertBook(b, self.tmpdir, self.prjdir)
+            digout = diginfo.convertBook(b, self.tmpdir, digprjdir)
             donebooks.append(out)
             digdonebooks.append(digout)
             
             if alignParam != "None":
                 # Now run the Perl script to merge the secondary text (right) into the primary text (left) 
-                left = os.path.join(tmpdir, out)
-                right = os.path.join(tmpdir, digout)
-                tmpFile = os.path.join(tmpdir, "primaryText.tmp")
+                left = os.path.join(self.tmpdir, out)
+                right = os.path.join(self.tmpdir, digout)
+                tmpFile = os.path.join(self.tmpdir, "primaryText.tmp")
                 copyfile(left, tmpFile)
 
                 # Usage: diglotMerge.exe [-mode|options] LeftFile RightFile
@@ -330,7 +330,7 @@ class RunJob:
             print("Sec:", diginfo["diglot/fzysettings"])
             texfiles += self.sharedjob(jobs, diginfo, prjid=digprjid, prjdir=digprjdir, fzy=True)
             # Now Primary (along with Secondary merged in with it)
-            info["diglot/fzysettings"] = self.generateFzyDiglotSettings(jobs, info, digprjid, primary=True, logbuffer=logbuffer)
+            info["diglot/fzysettings"] = self.generateFzyDiglotSettings(jobs, info, digprjid, primary=True)
             print("Pri:", info["diglot/fzysettings"])
             texfiles += self.sharedjob(jobs, info)
         else:
@@ -381,7 +381,7 @@ class RunJob:
             if len(jobs) > 1:
                 secfname = os.path.join(self.tmpdir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], secprjid)).replace("\\","/")
             else:
-                secfname = os.path.join(tmpdir, "ptxprint-{}{}.pdf".format(jobs[0], secprjid)).replace("\\","/")
+                secfname = os.path.join(self.tmpdir, "ptxprint-{}{}.pdf".format(jobs[0], secprjid)).replace("\\","/")
             if info.asBool("document/diglotnormalhdrs"):
                 hdr = r"""
 \def\RHoddleft{\pagenumber}
@@ -625,7 +625,7 @@ class RunJob:
             pass
         for extn in ('delayed','parlocs','notepages', 'tex', 'log'):
             for t in texfiles:
-                delfname = os.path.join(tmpdir, t.replace(".tex", "."+extn))
+                delfname = os.path.join(self.tmpdir, t.replace(".tex", "."+extn))
                 try:
                     os.remove(delfname)
                 except OSError:
@@ -633,7 +633,7 @@ class RunJob:
                             secondary="File: " + delfname)
         for delfname in self.books:
             try:
-                os.remove(os.path.join(tmpdir, delfname))
+                os.remove(os.path.join(self.tmpdir, delfname))
             except OSError:
                 self.printer.doError("Warning: Could not delete temporary file.",
                         secondary="File: " + delfname)
