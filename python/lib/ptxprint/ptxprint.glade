@@ -245,7 +245,7 @@
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 0.7.0 (Beta)</property>
+    <property name="version">Version 0.7.1 (Beta)</property>
     <property name="copyright" translatable="yes">© 2020, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -3572,7 +3572,7 @@ automatically prepended to the output PDF.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkGrid">
+                                      <object class="GtkGrid" id="gr_toc">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="column_spacing">10</property>
@@ -3667,7 +3667,7 @@ automatically prepended to the output PDF.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="l_toc">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="margin_left">12</property>
@@ -4938,7 +4938,7 @@ in the header reference.</property>
                                             <property name="halign">start</property>
                                             <property name="left_padding">12</property>
                                             <child>
-                                              <object class="GtkBox">
+                                              <object class="GtkBox" id="bx_fnOptions">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="halign">start</property>
@@ -5144,7 +5144,7 @@ to form a paragraph.</property>
                                             <property name="halign">start</property>
                                             <property name="left_padding">10</property>
                                             <child>
-                                              <object class="GtkBox">
+                                              <object class="GtkBox" id="bx_xrOptions">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="halign">start</property>
@@ -6806,6 +6806,7 @@ Break Locale:</property>
                                         <property name="receives_default">False</property>
                                         <property name="halign">end</property>
                                         <property name="draw_indicator">True</property>
+                                        <signal name="clicked" handler="onLineBreakChanged" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -6855,6 +6856,7 @@ grow paragrahs when balancing pages.</property>
                                         <property name="margin_left">2</property>
                                         <property name="image_position">right</property>
                                         <property name="draw_indicator">True</property>
+                                        <signal name="clicked" handler="onSpacingClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -6863,7 +6865,7 @@ grow paragrahs when balancing pages.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="l_minSpace">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">Maximum size % that a space
@@ -6912,7 +6914,7 @@ space width.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="l_maxSpace">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">Maximum size % that a space
@@ -7402,7 +7404,7 @@ and so on...</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_cropmarks">
-                                    <property name="label" translatable="yes">Show Crop Marks on Page</property>
+                                    <property name="label" translatable="yes">Include Crop Marks</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -8777,8 +8779,8 @@ compatible).</property>
                 </child>
                 <child type="tab">
                   <object class="GtkLabel" id="lb_DiglotTesting">
+                    <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="no_show_all">True</property>
                     <property name="tooltip_text" translatable="yes">Experimental Feature:
 This is really a DIY-glot because
 it is work in progress and will require
@@ -8794,7 +8796,6 @@ satisfactory result.</property>
                 <child>
                   <object class="GtkBox" id="tb_FancyBorders">
                     <property name="can_focus">False</property>
-                    <property name="no_show_all">True</property>
                     <property name="halign">center</property>
                     <property name="valign">start</property>
                     <property name="orientation">vertical</property>
@@ -9064,7 +9065,7 @@ then select the font here.</property>
                           </object>
                         </child>
                         <child type="label">
-                          <object class="GtkCheckButton" id="c_enableDecorativeElements">
+                          <object class="GtkCheckButton" id="c_borders">
                             <property name="label" translatable="yes">Enable Decorative Borders</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -9087,8 +9088,8 @@ then select the font here.</property>
                 </child>
                 <child type="tab">
                   <object class="GtkLabel" id="lb_FancyBorders">
+                    <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="no_show_all">True</property>
                     <property name="tooltip_text" translatable="yes">Experimental Feature:
 This enables additional PDF files to be specified
 for fancy/decorative borders to be applied to

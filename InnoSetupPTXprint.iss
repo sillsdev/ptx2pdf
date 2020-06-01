@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "PTXprint"
-#define MyAppVersion "0.7.0 Beta"
+#define MyAppVersion "0.7.1 Beta"
 #define MyAppPublisher "SIL International"
 #define MyAppURL "http://software.sil.org/"
 #define MyAppExeName "PTXprint.exe"
@@ -26,7 +26,7 @@ DisableProgramGroupPage=yes
 LicenseFile=docs\inno-docs\MIT License.txt
 InfoBeforeFile=docs\inno-docs\AboutPTXprint.txt
 InfoAfterFile=docs\inno-docs\ReleaseNotes.txt
-OutputBaseFilename=SetupPTXprint(0.7.0-beta)
+OutputBaseFilename=SetupPTXprint(0.7.1-beta)
 SetupIconFile=icon\Google-Noto-Emoji-Objects-62859-open-book.ico
 Compression=lzma
 SolidCompression=yes
@@ -40,6 +40,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "dist\ptxprint\PTXprint.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "dist\ptxprint\diglotMerge.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; definitely needed: libepoxy-0.dll, libiconv-2.dll
 Source: "dist\ptxprint\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "icons,locale,libcrypto-1_1-x64.dll,librsvg-2-2.dll"
 Source: "dist\ptxprint\share\locale\es\*"; DestDir: "{app}\share\locale\es\"; Flags: ignoreversion recursesubdirs createallsubdirs

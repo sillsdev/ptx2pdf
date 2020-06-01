@@ -92,7 +92,7 @@ ModelMap = {
     "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
 
     "fancy/showborderstab":     ("c_showBordersTab", None),
-    "fancy/enableborders":      ("c_enableDecorativeElements", lambda w,v: "" if v else "%"),
+    "fancy/enableborders":      ("c_borders", lambda w,v: "" if v else "%"),
     "fancy/pageborder":         ("c_inclPageBorder", lambda w,v: "" if v else "%"),
     "fancy/pageborderpdf":      ("btn_selectPageBorderPDF", lambda w,v: w.pageborder.as_posix() \
                                             if (w.pageborder is not None and w.pageborder != 'None') \
@@ -262,7 +262,7 @@ ModelMap = {
     "snippets/fancyintro":      ("c_prettyIntroOutline", None),
     "snippets/pdfx1aoutput":    ("c_PDFx1aOutput", None),
     "snippets/alignediglot":    ("c_diglotAutoAligned", None),
-    "snippets/fancyborders":    ("c_enableDecorativeElements", None),
+    "snippets/fancyborders":    ("c_borders", None),
 }
 
 class TexModel:
@@ -300,7 +300,7 @@ class TexModel:
         "snippets/fancyintro":            ("c_prettyIntroOutline", FancyIntro),
         "snippets/pdfx1aoutput":          ("c_PDFx1aOutput", PDFx1aOutput),
         "snippets/alignediglot":          ("c_diglotAutoAligned", AlignedDiglot),
-        "snippets/fancyborders":          ("c_enableDecorativeElements", FancyBorders)
+        "snippets/fancyborders":          ("c_borders", FancyBorders)
     }
     _settingmappings = {
         "notes/xrcallers": "crossrefs",
