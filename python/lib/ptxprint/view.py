@@ -62,7 +62,7 @@ class ViewModel:
         "notes/fncallers": "footnotes"
     }
 
-    def __init__(self, allprojects, settings_dir, workingdir):
+    def __init__(self, settings_dir, workingdir):
         self.settings_dir = settings_dir
         self.fixed_wd = workingdir != None
         self.working_dir = workingdir

@@ -93,7 +93,8 @@ _diglot = {
 }
 
 class RunJob:
-    def __init__(self, printer):
+    def __init__(self, printer, scriptsdir):
+        self.scriptsdir = scriptsdir
         self.printer = printer
         self.tempFiles = []
         self.tmpdir = "."
@@ -142,7 +143,7 @@ class RunJob:
             if digprjid is None or not len(digprjid):     # can't print no project
                 return
             digptsettings = ParatextSettings(args.paratext, digprjid)
-            digprinter = ViewModel(None, args.paratext, self.printer.working_dir)
+            digprinter = ViewModel(args.paratext, self.printer.working_dir)
             digprinter.setPrjid(digprjid)
             if digcfg is not None and digcfg != "":
                 digprinter.setConfigId(digcfg)
@@ -307,9 +308,9 @@ class RunJob:
                 # -o file : Output to file
                 
                 if sys.platform == "win32":
-                    cmd = [os.path.join(os.path.dirname(__file__), "diglotMerge.exe")]
+                    cmd = [os.path.join(self.scriptsdir, "diglotMerge.exe")]
                 elif sys.platform == "linux":  # UNTESTED code
-                    p = os.path.join(os.path.dirname(__file__), "diglot_merge.pl")
+                    p = os.path.join(self.scriptsdir, "diglot_merge.pl")
                     cmd = ['perl', p]  # need to work out where the .pl file will live)
                 cmdparms = ['-o', left, alignParam, '-s', '-l', tmpFile, right] 
                 r = checkoutput(cmd + cmdparms)
@@ -416,7 +417,7 @@ class RunJob:
             texf.write(info.asTex(filedir=self.tmpdir, jobname=outfname.replace(".tex", "")))
         os.putenv("hyph_size", "32749")     # always run with maximum hyphenated words size (xetex is still tiny ~200MB resident)
         os.putenv("stack_size", "32768")    # extra input stack space (up from 5000)
-        ptxmacrospath = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../src"))
+        ptxmacrospath = os.path.abspath(self.scriptsdir, "..", "src"))
         if not os.path.exists(ptxmacrospath):
             for b in (getattr(sys, 'USER_BASE', '.'), sys.prefix):
                 if b is None:

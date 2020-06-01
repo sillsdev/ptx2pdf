@@ -43,14 +43,9 @@ if args.directory is not None:
 
 # Where to find the default for -p
 # HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Paratext\8:Settings_Directory
-allprojects = []
-for d in os.listdir(args.paratext):
-    if os.path.exists(os.path.join(args.paratext, d, 'Settings.xml')):
-        allprojects.append(d)
-allprojects.sort()
 
 if args.print:
-    mainw = ViewModel(allprojects, args.paratext, args.directory)
+    mainw = ViewModel(args.paratext, args.directory)
 else:
     import gi
     gi.require_version('Gtk', '3.0')
@@ -68,7 +63,7 @@ else:
     provider = Gtk.CssProvider()
     provider.load_from_data(css.encode("utf-8"))
     Gtk.StyleContext().add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
-    mainw = GtkViewModel(allprojects, args.paratext, args.directory)
+    mainw = GtkViewModel(args.paratext, args.directory)
     mainw.ExperimentalFeatures(args.experimental)
 
 if args.pid:
@@ -77,7 +72,7 @@ if args.pid:
         mainw.setConfigId(args.config)
 
 def doit(printer):
-    runjob = RunJob(printer)
+    runjob = RunJob(printer, os.path.dirname(__file__))
     runjob.doit(args)
 
 if args.print:

@@ -91,8 +91,8 @@ class Splash(Thread):
 
 class GtkViewModel(ViewModel):
 
-    def __init__(self, allprojects, settings_dir, workingdir):
-        super(GtkViewModel, self).__init__(allprojects, settings_dir, workingdir)
+    def __init__(self, settings_dir, workingdir):
+        super(GtkViewModel, self).__init__(settings_dir, workingdir)
         self.isDisplay = True
         self.config_dir = None
         self.initialised = False
@@ -167,6 +167,10 @@ class GtkViewModel(ViewModel):
         digprojects = self.builder.get_object("ls_digprojects")
         projects.clear()
         digprojects.clear()
+        allprojects = []
+        for d in os.listdir(self.settings_dir):
+            if os.path.exists(os.path.join(self.settings_dir, d, 'Settings.xml')):
+                allprojects.append(d)
         for p in sorted(allprojects, key = lambda s: s.casefold()):
             projects.append([p])
             digprojects.append([p])
