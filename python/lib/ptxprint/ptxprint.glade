@@ -2122,6 +2122,7 @@ satisfactory result.
 NOTE that turning off the view for
 this Tab will also disable the option.</property>
                                     <property name="halign">start</property>
+                                    <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="onShowDiglotTabClicked" swapped="no"/>
                                     <signal name="toggled" handler="onShowDiglotTabClicked" swapped="no"/>
@@ -4612,12 +4613,15 @@ and Illustrations.</property>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_mirrorpages">
-                                        <property name="label" translatable="yes">Mirror layout
-of Header Line</property>
+                                        <property name="label" translatable="yes">Mirrored layout</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">When this option is checked, the left header will be the inner header and the right header will be shown on the outer edge. Highly recommended.</property>
+                                        <property name="tooltip_text" translatable="yes">When this option is checked, the left header will be the inner header and the right header will be shown on the outer edge. Highly recommended.
+
+Note that this setting also affects the Diglot settings:
+making the primary text the Inner text, and the
+secondary text as the Outer text.</property>
                                         <property name="halign">start</property>
                                         <property name="margin_left">10</property>
                                         <property name="active">True</property>
@@ -8464,9 +8468,8 @@ Numbers</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox" id="tb_DiglotTesting">
+                  <object class="GtkBox" id="tb_Diglot">
                     <property name="can_focus">False</property>
-                    <property name="no_show_all">True</property>
                     <property name="halign">center</property>
                     <property name="orientation">vertical</property>
                     <child>

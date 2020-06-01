@@ -191,7 +191,7 @@ class GtkViewModel(ViewModel):
         # sleep(1)  # Until we want people to see the splash screen
 
         olst = ["b_print", "bx_SavedConfigSettings", "tb_Layout", "tb_Body", "tb_HeadFoot", "tb_Pictures",
-                "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_DiglotTesting", "tb_FancyBorders"]
+                "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_Diglot", "tb_FancyBorders"]
         self.initialised = True
         for o in olst:
             self.builder.get_object(o).set_sensitive(False)
@@ -983,7 +983,7 @@ class GtkViewModel(ViewModel):
         if not status:
             self.builder.get_object("c_diglot").set_active(False)
             self.builder.get_object("gr_diglot").set_sensitive(False)
-        self.builder.get_object("tb_DiglotTesting").set_visible(status)
+        self.builder.get_object("tb_Diglot").set_visible(status)
 
     def onShowBordersTabClicked(self, c_showBordersTab):
         status = self.get("c_showBordersTab")
@@ -1213,7 +1213,7 @@ class GtkViewModel(ViewModel):
         self.updateProjectSettings(None, saveCurrConfig=True)
         self.updateSavedConfigList()
         for o in ["b_print", "bx_SavedConfigSettings", "tb_Layout", "tb_Body", "tb_HeadFoot", "tb_Pictures",
-                  "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_DiglotTesting", "tb_FancyBorders"]:
+                  "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_Diglot", "tb_FancyBorders"]:
             self.builder.get_object(o).set_sensitive(True)
         self.updateFonts()
             
@@ -1488,11 +1488,11 @@ class GtkViewModel(ViewModel):
         status = self.get("c_diglot")
         self.builder.get_object("gr_diglot").set_sensitive(status)
         self.ondiglotAlignmentChanged(None)
-        if status:
-            self.set("c_includeillustrations", False)
-            self.builder.get_object("c_includeillustrations").set_sensitive(False)
-        else:
-            self.builder.get_object("c_includeillustrations").set_sensitive(True)
+        # if status:
+            # self.set("c_includeillustrations", False)
+            # self.builder.get_object("c_includeillustrations").set_sensitive(False)
+        # else:
+            # self.builder.get_object("c_includeillustrations").set_sensitive(True)
 
     def ondiglotSecProjectChanged(self, btn):
         self.updateDiglotConfigList()

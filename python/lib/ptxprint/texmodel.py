@@ -86,7 +86,7 @@ ModelMap = {
     "paper/bottommarginfactor": ("s_bottommarginfactor", lambda w,v: round(v, 2) or "1.00"),
     "paper/sidemarginfactor":   ("s_sidemarginfactor", lambda w,v: round(v, 2) or "1.00"),
     "paper/ifaddgutter":        ("c_pagegutter", lambda w,v :"true" if v else "false"),
-    "paper/gutter":             ("s_pagegutter", lambda w,v: round(v) or "12"),
+    "paper/gutter":             ("s_pagegutter", lambda w,v: round(v) or "0"),
     "paper/colgutteroffset":    ("s_colgutteroffset", lambda w,v: "{:.1f}".format(v) or "0.0"),
     "paper/columns":            ("c_doublecolumn", lambda w,v: "2" if v else "1"),
     "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),

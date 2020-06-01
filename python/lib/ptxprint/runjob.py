@@ -126,7 +126,7 @@ class RunJob:
         else:
             self.maxRuns = 5
         self.changes = None
-        if info.asBool("document/ifinclfigs") and not info.asBool("document/ifdiglot"):
+        if info.asBool("document/ifinclfigs"): # and not info.asBool("document/ifdiglot"):
             self.gatherIllustrations(jobs)
 
         if info.asBool("project/combinebooks"):
@@ -252,7 +252,7 @@ class RunJob:
         elif alnmnt.endswith("Chapters"):
             alignParam = "-c"
         elif alnmnt.endswith("Paragraphs"):
-            alignParam = "-p"
+            alignParam = "-l" # With the Left/Pri text driving the paragraph breaks
         elif alnmnt.endswith("Verses"):
             alignParam = "-v"
         else:
@@ -277,7 +277,7 @@ class RunJob:
             print("_digSecSettings = ", _digSecSettings)
             print("----------Passing info settings to diginfo-----------")
             for k in _digSecSettings:
-                print("{} = {}".format(k, info[k]))
+                print("{} = '{}'".format(k, info[k]))
                 diginfo[k]=info[k]
             print("-----------------------------------------------------")
         for b in jobs:
@@ -297,11 +297,11 @@ class RunJob:
                 # Usage: diglotMerge.exe [-mode|options] LeftFile RightFile
                 # Read LeftFile and RightFile, merging them according to the selected mode)
                  # Mode may be any ONE of :
-                 # -l     :Left master: splitting right page at each left text paragraph
-                 # -r     :Right master: splitting left page at each right text paragraph
+                 # -l     :Left/Pri master: splitting right column at each left text paragraph
+                 # -r     :Right/Sec master: splitting left column at each right text paragraph
                  # -v     :matching verses (default)
                  # -c     :matching chapters
-                 # -p     :matching paragraph breaks
+                 # -p     :matching paragraph breaks (only where they match?)
                 # Options are:
                  # -left file        : Log to file
                 # -right 11:25-25:12   Only ouput specified range
@@ -314,7 +314,7 @@ class RunJob:
                 elif sys.platform == "linux":  # UNTESTED code
                     p = os.path.join(self.scriptsdir, "diglot_merge.pl")
                     cmd = ['perl', p]  # need to work out where the .pl file will live)
-                cmdparms = ['-o', left, alignParam, '-L', 'ptxprint-merge.log', '-s', '-l', tmpFile, right] 
+                cmdparms = ['-o', left, alignParam,'-L', 'ptxprint-merge.log', '-s', tmpFile, right] 
                 r = checkoutput(cmd + cmdparms)
                 for f in [left, right, tmpFile, logFile]:
                     texfiles += [os.path.join(self.tmpdir, f)]

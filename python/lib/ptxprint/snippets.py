@@ -90,7 +90,6 @@ class AlignedDiglot():
 %{diglot/iflinebreakon}\XeTeXlinebreaklocaleR "{diglot/linebreaklocale}"
 %{diglot/useglyphmetrics}\XeTeXuseglyphmetricsR=0
 
-\IncludeFiguresfalse
 """
 
 class FancyBorders():
