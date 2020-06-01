@@ -356,17 +356,7 @@
         \box\colA\hbox to \ExtraRMargin{}\hfil}
       \ifvoid\bottomins\else \vfil\kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\box\bottomins} \fi % ouput bottom spanning pictures
       \f@rstnotetrue%
-      \setbox2=\vbox{
-      \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses
-      \iff@rstnote % no notes actually occurred!
-        \trace{i}{No notes}%
-	\ifnoteseen\MSG{*** Page \the\pageno\space is being printed without any footnotes/xrefs, etc. At least one was seen earlier. Maybe it's ended up on the previous page or just moved to the next page, or maybe it's vanished. Human checkin gis needed.}\fi%%
-        \kern-\dimen0 \vfil
-      \else%
-	\setbox0=\lastbox%
-	\trace{i}{Inserted notes, ht \the\ht0\space dp \the\dimen0}%
-	\dimen0=\dp0 \box0 \kern-\dimen0
-      \fi}
+      \ma@kenotebox
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}
       \unvbox2
     }
@@ -493,17 +483,7 @@
         \box\colA\hbox to \ExtraRMargin{}\hfil}
       \ifvoid\bottomins\else\kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \unvbox\bottomins \fi
       \f@rstnotetrue
-      \setbox2=\vbox{
-      \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses
-      \iff@rstnote % no notes actually occurred!
-	\trace{i}{No notes}%
-	\ifnoteseen\MSG{*** Part of page \the\pageno\space(starting \the\ht\partial\space down the text body)  is being printed without any footnotes/Xrefs, etc. But at least one was seen earlier. Maybe it's just moved to the next page, or ended up on the previous one, or maybe it's vanished. Human checking is needed.}\fi%%
-        \kern-\dimen0 \vfil
-      \else
-	\setbox0=\lastbox%
-	\trace{i}{Inserted notes, ht \the\ht0\space dp \the\dimen0}%
-	\dimen0=\dp0 \box0 \kern-\dimen0
-      \fi}
+      \m@kenotebox
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}
       \unvbox2
     }

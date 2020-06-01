@@ -1377,18 +1377,13 @@
    }%
    \ifvoid\bottomins\else%\kern-\dimen0 \dimen0=0pt 
      \vskip\skip\bottomins \unvbox\bottomins \fi%
-   \vbox to 0pt{}%
    \ifdiglotSepNotes%
    \else%
      \ifdiglot\RTLfalse\fi %RTLness will have been asserted (or not) when the note was defined. If the righttext side is RTL, leaving it true now will make a any LTR text also RTL.
      \TRACEdiglot{Inserting Notes}%
      \f@rstnotetrue%
-     \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses %
-   \fi%
-   \iff@rstnote % no notes actually occurred!
-     \kern-\dimen0 \vfil%
-   \else%
-     \setbox0=\lastbox \dimen0=\dp0 \box0 \kern-\dimen0%
+     \m@kenotebox
+     \unvbox2
    \fi%
   }%
   \TRACEdiglot{PFM:\p@gefirstmark PBM:\p@gebotmark}%
