@@ -211,7 +211,7 @@ class RunJob:
                         break
         if not foundmsg:
             finalLogLines.append(_errmsghelp["Unknown"])
-        books = re.findall(r"\d\d(...){}.+?\....".format(prjid), "".join(finalLogLines))
+        books = re.findall(r"\d\d(...){}.+?\....".format(self.prjid), "".join(finalLogLines))
         if len(books):
             book = " in {}".format(books[-1])
         else:
@@ -242,6 +242,7 @@ class RunJob:
         return self.sharedjob(jobs, info, logbuffer=logbuffer)
 
     def digdojob(self, jobs, info, diginfo, digprjid, digprjdir, logbuffer=None):
+        texfiles = []
         donebooks = []
         digdonebooks = []
         # need to set either -v -c -p depending on what kind of merge is needed
@@ -290,6 +291,7 @@ class RunJob:
                 left = os.path.join(self.tmpdir, out)
                 right = os.path.join(self.tmpdir, digout)
                 tmpFile = os.path.join(self.tmpdir, "primaryText.tmp")
+                logFile = os.path.join(self.tmpdir, "ptxprint-merge.log")
                 copyfile(left, tmpFile)
 
                 # Usage: diglotMerge.exe [-mode|options] LeftFile RightFile
@@ -312,8 +314,10 @@ class RunJob:
                 elif sys.platform == "linux":  # UNTESTED code
                     p = os.path.join(self.scriptsdir, "diglot_merge.pl")
                     cmd = ['perl', p]  # need to work out where the .pl file will live)
-                cmdparms = ['-o', left, alignParam, '-s', '-l', tmpFile, right] 
+                cmdparms = ['-o', left, alignParam, '-L', 'ptxprint-merge.log', '-s', '-l', tmpFile, right] 
                 r = checkoutput(cmd + cmdparms)
+                for f in [left, right, tmpFile, logFile]:
+                    texfiles += [os.path.join(self.tmpdir, f)]
 
                 # if r != 0:  # Not sure how to check/interpret the return codes from diglotMerge.exe
                     # print("Failed to merge the Primary and Secondary files! Result code: {}".format(r))
@@ -324,7 +328,6 @@ class RunJob:
         info["project/books"] = donebooks
         self.books += digdonebooks
 
-        texfiles = []
         if alnmnt.startswith("No"):
             # First create Secondary PDF
             diginfo["diglot/fzysettings"] = self.generateFzyDiglotSettings(jobs, info, None, primary=False)
@@ -339,37 +342,61 @@ class RunJob:
             for k,v in _diglot.items():
                 info[k]=diginfo[v]
                 # print(k, v, diginfo[v])
-            texfiles = self.sharedjob(jobs, info, logbuffer=logbuffer)
+            texfiles += self.sharedjob(jobs, info, logbuffer=logbuffer)
         return texfiles
 
     def generateFzyDiglotSettings(self, jobs, info, secprjid, primary=True):
+        switchSides = info.asBool("document/diglotswapside")
         pageWidth = int(re.split("[^0-9]",re.sub(r"^(.*?)\s*,.*$", r"\1", info.dict["paper/pagesize"]))[0]) or 148
         margin = int(info.dict["paper/margins"]) # self.get("s_margins")
+        print("margin:", margin)
         # margin = 12
         middleGutter = int(info.dict["document/colgutterfactor"])/3 # self.get("s_colgutterfactor")
         bindingGutter = int(info.dict["paper/gutter"]) # self.get("s_pagegutter")
+        print("bindingGutter:", bindingGutter)
         # bindingGutter = 0
-        priFraction = float(info.dict["document/diglotprifraction"]) # self.get("s_diglotPriFraction")
-        priColWidth = (pageWidth  - middleGutter - bindingGutter - (2 * margin)) * priFraction # / 100
-        secColWidth = pageWidth - priColWidth - middleGutter - bindingGutter - (2 * margin)
-        # Calc Pri Settings (right side of page; or outer if mirrored)
-        priSideMarginFactor = 1
-        pribindingGutter = pageWidth - margin - priColWidth - margin
-        # Calc Sec Settings (left side of page; or inner if mirrored)
-        secColWidth = pageWidth - priColWidth - middleGutter - bindingGutter - (2 * margin)
-        secSideMarginFactor = (priColWidth + margin + middleGutter) / margin
-        secRightMargin = priColWidth + margin + middleGutter
-        secbindingGutter = pageWidth - (2 * secRightMargin) - secColWidth 
+        if switchSides: # Primary on RIGHT/OUTER
+            priFraction = float(info.dict["document/diglotprifraction"]) # self.get("s_diglotPriFraction")
+            priColWidth = (pageWidth  - middleGutter - bindingGutter - (2 * margin)) * priFraction # / 100
+            secColWidth = pageWidth - priColWidth - middleGutter - bindingGutter - (2 * margin)
+            # Calc Pri Settings (right side of page; or outer if mirrored)
+            priSideMarginFactor = 1
+            pribindingGutter = pageWidth - margin - priColWidth - margin
+            # Calc Sec Settings (left side of page; or inner if mirrored)
+            secSideMarginFactor = (priColWidth + margin + middleGutter) / margin
+            secRightMargin = priColWidth + margin + middleGutter
+            secbindingGutter = pageWidth - (2 * secRightMargin) - secColWidth 
+        else: # Primary on LEFT/INNER
+            priFraction = 1 - float(info.dict["document/diglotprifraction"]) # self.get("s_diglotPriFraction")
+            priColWidth = (pageWidth  - middleGutter - bindingGutter - (2 * margin)) * priFraction # / 100
+            secColWidth = pageWidth - priColWidth - middleGutter - bindingGutter - (2 * margin)
+            # Calc Pri Settings (left side of page; or inner if mirrored)
+            secSideMarginFactor = 1
+            secbindingGutter = pageWidth - margin - priColWidth - margin
+            # Calc Sec Settings (right side of page; or outer if mirrored)
+            priSideMarginFactor = (priColWidth + margin + middleGutter) / margin
+            priRightMargin = priColWidth + margin + middleGutter
+            pribindingGutter = pageWidth - (2 * priRightMargin) - secColWidth 
         hdr = ""
         if not primary:
             if info.asBool("document/diglotnormalhdrs"):
-                hdr = r"""
+                if switchSides: # Primary on RIGHT/OUTER
+                    hdr = r"""
 \def\RHoddleft{\rangeref}
 \def\RHoddcenter{\empty}
 \def\RHoddright{\empty}
 \def\RHevenleft{\empty}
 \def\RHevencenter{\empty}
 \def\RHevenright{\rangeref}"""
+                else: # Primary on LEFT/INNER
+                    hdr = r"""
+\def\RHoddright{\rangeref}
+\def\RHoddcenter{\empty}
+\def\RHoddleft{\empty}
+\def\RHevenright{\empty}
+\def\RHevencenter{\empty}
+\def\RHevenleft{\rangeref}"""
+                
             digFzyCfg = "%% SECONDARY PDF settings"+ \
                         "\n\MarginUnit={}mm".format(margin)+ \
                         "\n\BindingGuttertrue"+ \
@@ -384,13 +411,22 @@ class RunJob:
             else:
                 secfname = os.path.join(self.tmpdir, "ptxprint-{}{}.pdf".format(jobs[0], secprjid)).replace("\\","/")
             if info.asBool("document/diglotnormalhdrs"):
-                hdr = r"""
+                if switchSides: # Primary on RIGHT/OUTER
+                    hdr = r"""
 \def\RHoddleft{\pagenumber}
 \def\RHoddcenter{\empty}
 \def\RHoddright{\rangeref}
 \def\RHevenleft{\rangeref}
 \def\RHevencenter{\empty}
 \def\RHevenright{\pagenumber}"""
+                else: # Primary on LEFT/INNER
+                    hdr = r"""
+\def\RHoddright{\pagenumber}
+\def\RHoddcenter{\empty}
+\def\RHoddleft{\rangeref}
+\def\RHevenright{\rangeref}
+\def\RHevencenter{\empty}
+\def\RHevenleft{\pagenumber}"""
             digFzyCfg = "%% PRIMARY (+ SECONDARY) PDF settings"+ \
                         "\n\MarginUnit={}mm".format(margin)+ \
                         "\n\BindingGuttertrue"+ \
@@ -619,35 +655,42 @@ class RunJob:
         except:
             pass
 
-    def removeTempFiles(self, texfiles, info):
-        try:
-            os.remove(os.path.join(self.tmpdir, "NestedStyles.sty"))
-        except:
-            pass
+    def removeTempFiles(self, texfiles):
+        notDeleted = []
+        n = os.path.join(self.tmpdir, "NestedStyles.sty")
+        if os.path.exists(n):
+            try:
+                os.remove(n)
+            except:
+                notDeleted += [n]
         for extn in ('delayed','parlocs','notepages', 'tex', 'log'):
-            for t in texfiles:
+            for t in set(texfiles):
                 delfname = os.path.join(self.tmpdir, t.replace(".tex", "."+extn))
+                if os.path.exists(delfname):
+                    try:
+                        os.remove(delfname)
+                    except OSError:
+                        notDeleted += [delfname]
+        for f in self.books:
+            delfname = os.path.join(self.tmpdir, f)
+            if os.path.exists(delfname):
                 try:
                     os.remove(delfname)
                 except OSError:
-                    self.printer.doError("Warning: Could not delete temporary file.",
-                            secondary="File: " + delfname)
-        for delfname in self.books:
-            try:
-                os.remove(os.path.join(self.tmpdir, delfname))
-            except OSError:
-                self.printer.doError("Warning: Could not delete temporary file.",
-                        secondary="File: " + delfname)
+                    notDeleted += [delfname]
         folderList = ["tmpPics", "tmpPicLists"] 
-        self.removeTmpFolders(self.tmpdir, folderList)
+        notDeleted += self.removeTmpFolders(self.tmpdir, folderList)
+        if len(notDeleted):
+            self.printer.doError("Warning: Could not delete\ntemporary file(s) or folder(s):",
+                    secondary="\n".join(set(notDeleted)))
 
     def removeTmpFolders(self, base, delFolders):
+        notDeleted = []
         for p in delFolders:
             path2del = os.path.join(base, p)
             if os.path.exists(path2del):
                 try:
                     rmtree(path2del)
                 except OSError:
-                    self.printer.doError("Warning: Could not delte temporary directory",
-                            secondary="Directory: "+path2del)
-
+                    notDeleted += [path2del]
+        return notDeleted

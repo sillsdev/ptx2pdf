@@ -8524,9 +8524,11 @@ be used by Primary (Left) Text</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">Select the project for the other text
+to be printed. This will usually appear
+in the right-hand (or outer) column.</property>
                                 <property name="halign">end</property>
-                                <property name="label" translatable="yes">Secondary/Other Project
-(for Right-hand text):</property>
+                                <property name="label" translatable="yes">Secondary (other) Project:</property>
                                 <property name="justify">right</property>
                               </object>
                               <packing>
@@ -8616,6 +8618,9 @@ to try to make it line up the 2 texts.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="can_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Select the project for the other text
+to be printed. This will usually appear
+in the right-hand (or outer) column.</property>
                                 <property name="halign">end</property>
                                 <property name="model">ls_digprojects</property>
                                 <property name="wrap_width">1</property>
@@ -8711,7 +8716,24 @@ Alignment</property>
                               </packing>
                             </child>
                             <child>
-                              <placeholder/>
+                              <object class="GtkCheckButton" id="c_diglotSwapSide">
+                                <property name="label" translatable="yes">Secondary on
+Left (or Inner)</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">Normally the Primary text is on the Left
+and the Secondary text is positioned on
+the right side of the page.
+
+If you prefer that the Secondary text appears
+on the left (or Inner) side, then check this option. </property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">2</property>
+                              </packing>
                             </child>
                           </object>
                         </child>
