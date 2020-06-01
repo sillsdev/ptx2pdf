@@ -453,7 +453,7 @@ class RunJob:
             texf.write(info.asTex(filedir=self.tmpdir, jobname=outfname.replace(".tex", "")))
         os.putenv("hyph_size", "32749")     # always run with maximum hyphenated words size (xetex is still tiny ~200MB resident)
         os.putenv("stack_size", "32768")    # extra input stack space (up from 5000)
-        ptxmacrospath = os.path.abspath(self.scriptsdir, "..", "src"))
+        ptxmacrospath = os.path.abspath(os.path.join(self.scriptsdir, "..", "src"))
         if not os.path.exists(ptxmacrospath):
             for b in (getattr(sys, 'USER_BASE', '.'), sys.prefix):
                 if b is None:
