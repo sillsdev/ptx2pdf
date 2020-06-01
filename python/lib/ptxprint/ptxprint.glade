@@ -8662,7 +8662,7 @@ and Page Number in (or near) the middle.</property>
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="c_diglotSeparateNotes">
-                                <property name="label" translatable="yes">Seperate Notes
+                                <property name="label" translatable="yes">Separate Notes
 in two Columns</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
