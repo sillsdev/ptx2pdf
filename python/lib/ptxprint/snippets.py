@@ -87,6 +87,8 @@ class AlignedDiglot():
 \addToRightHooks{{\RTL{diglot/ifrtl}}}
 %{diglot/iflinebreakon}\XeTeXlinebreaklocaleR "{diglot/linebreaklocale}"
 %{diglot/useglyphmetrics}\XeTeXuseglyphmetricsR=0
+\diglotLtrue
+\catcode `@=12
 
 """
 

@@ -341,7 +341,7 @@ class RunJob:
             # Pass all the needed parameters for the snippet from diginfo to info
             for k,v in _diglot.items():
                 info[k]=diginfo[v]
-                # print(k, v, diginfo[v])
+                print(k, v, diginfo[v])
             texfiles += self.sharedjob(jobs, info, logbuffer=logbuffer)
         return texfiles
 

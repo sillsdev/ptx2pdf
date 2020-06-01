@@ -185,6 +185,7 @@
   \getp@ram{baseline}{#1}\ifx\p@ram\relax
     \getp@ram{fontsize}{#1}\dimen0=\p@ram\le@dingunit
     \multiply\dimen0 by 14 \divide\dimen0 by 12 % default .75 shift of .85ex (ex=.5 fontsize) against 14/12
+    \trace{F}{baseline [\f@ntstyle] = \the\dimen0}%
     \setp@ram{baseline}{\f@ntstyle}{\the\dimen0}\baselineskip=\dimen0\else
   \baselineskip=\p@ram\fi
   \trace{j}{set baselineskip=\the\baselineskip}}

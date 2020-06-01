@@ -89,6 +89,11 @@ class Splash(Thread):
     def destroy(self):
         self.window.destroy()
 
+_sensitivities = {
+    "c_includeFootnotes" : ("c_fnautocallers", "t_fncallers", "c_fnomitcaller", "c_fnpageresetcallers", "c_fnparagraphednotes"),
+    "c_mainBodyText" : ("gr_mainBodyText",)
+}
+
 class GtkViewModel(ViewModel):
 
     def __init__(self, settings_dir, workingdir):
@@ -467,6 +472,14 @@ class GtkViewModel(ViewModel):
             self.ecb_diglotSecConfig.set_active_id("")
         # else:
             # self.builder.get_object("t_diglotSecConfig").set_text("")
+
+    def loadConfig(self, config):
+        super(GtkViewModel, self).loadConfig(config)
+        for k, v in _sensitivities.items():
+            state = self.get(k)
+            for w in v:
+                wid = self.builder.get_object(w)
+                wid.set_sensitive(state)
 
     def onLockUnlockSavedConfig(self, btn):
         lockBtn = self.builder.get_object("btn_lockunlock")
