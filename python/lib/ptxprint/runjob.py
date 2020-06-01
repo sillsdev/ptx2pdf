@@ -23,6 +23,36 @@ def newBase(fpath):
     else:
         return re.sub('[()&+,. ]', '_', base(fpath).lower())
 
+_diglot = {
+"diglot/colorfonts" :       "document/ifcolorfonts",
+"diglot/ifrtl" :            "document/ifrtl",
+"diglot/fontfactor" :       "paper/fontfactor",
+"diglot/iflinebreakon" :    "document/iflinebreakon",
+"diglot/linebreaklocale" :  "document/linebreaklocale",
+"diglot/useglyphmetrics" :  "paragraph/useglyphmetrics",
+
+"diglot/fontregular" :      "fontregular",
+"diglot/fontregeng" :       "fontregular/engine",
+"diglot/texfeatures" :      "font/texfeatures",
+"diglot/docscript" :        "document/script",
+"diglot/docdigitmapping" :  "document/digitmapping",
+                            
+"diglot/fontbold" :         "fontbold",
+"diglot/fontboldeng" :      "fontbold/engine",
+"diglot/boldembolden" :     "fontbold/embolden",
+"diglot/boldslant" :        "fontbold/slant",
+                            
+"diglot/fontitalic" :       "fontitalic",
+"diglot/fontitaleng" :      "fontitalic/engine",
+"diglot/italembolden" :     "fontitalic/embolden",
+"diglot/italslant" :        "fontitalic/slant",
+                            
+"diglot/fontbolditalic" :   "fontbolditalic",
+"diglot/fontbolditaleng" :  "fontbolditalic/engine",
+"diglot/bolditalembolden" : "fontbolditalic/embolden",
+"diglot/boldital/slant" :   "fontbolditalic/slant",
+}
+
 class RunJob:
     def __init__(self, printer):
         self.printer = printer

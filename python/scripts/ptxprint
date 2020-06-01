@@ -1,9 +1,6 @@
 #!/usr/bin/python3
 
 import argparse, sys, os
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gdk
 
 _errmsghelp = {
 "! Unable to load picture":              "Check if picture file is located in 'Figures', 'local\\figures' or a\n" +\
@@ -42,49 +39,12 @@ _errmsghelp = {
 # \XeTeXinterwordspaceshaping = {document/spacecntxtlztn}
 # %\extrafont  %% This will be replaced by code for the fallback fonts to be used for special/missing characters
 
-_diglot = {
-"diglot/colorfonts" :       "document/ifcolorfonts",
-"diglot/ifrtl" :            "document/ifrtl",
-"diglot/fontfactor" :       "paper/fontfactor",
-"diglot/iflinebreakon" :    "document/iflinebreakon",
-"diglot/linebreaklocale" :  "document/linebreaklocale",
-"diglot/useglyphmetrics" :  "paragraph/useglyphmetrics",
-
-"diglot/fontregular" :      "fontregular",
-"diglot/fontregeng" :       "fontregular/engine",
-"diglot/texfeatures" :      "font/texfeatures",
-"diglot/docscript" :        "document/script",
-"diglot/docdigitmapping" :  "document/digitmapping",
-                            
-"diglot/fontbold" :         "fontbold",
-"diglot/fontboldeng" :      "fontbold/engine",
-"diglot/boldembolden" :     "fontbold/embolden",
-"diglot/boldslant" :        "fontbold/slant",
-                            
-"diglot/fontitalic" :       "fontitalic",
-"diglot/fontitaleng" :      "fontitalic/engine",
-"diglot/italembolden" :     "fontitalic/embolden",
-"diglot/italslant" :        "fontitalic/slant",
-                            
-"diglot/fontbolditalic" :   "fontbolditalic",
-"diglot/fontbolditaleng" :  "fontbolditalic/engine",
-"diglot/bolditalembolden" : "fontbolditalic/embolden",
-"diglot/boldital/slant" :   "fontbolditalic/slant",
-}
-if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
-    sys.stdout = open(os.devnull, "w")
-    # sys.stdout = open("D:\Temp\ptxprint-sysout.tmp", "w")
-    sys.stderr = sys.stdout
-else:
-    gi.require_version('GtkSource', '3.0')
-
 try:
     import ptxprint
 except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
     import ptxprint
 from ptxprint.view import ViewModel, VersionStr
-from ptxprint.gtkview import GtkViewModel
 from ptxprint.font import initFontCache
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.runjob import RunJob
@@ -130,6 +90,17 @@ allprojects.sort()
 if args.print:
     mainw = ViewModel(allprojects, args.paratext, args.directory)
 else:
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gtk, Gdk
+    if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
+        sys.stdout = open(os.devnull, "w")
+        # sys.stdout = open("D:\Temp\ptxprint-sysout.tmp", "w")
+        sys.stderr = sys.stdout
+    else:
+        gi.require_version('GtkSource', '3.0')
+
+    from ptxprint.gtkview import GtkViewModel
     css = """.printbutton:active { background-color: chartreuse; background-image: None }
     .fontbutton {font-size: smaller}"""
     provider = Gtk.CssProvider()
