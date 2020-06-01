@@ -166,7 +166,7 @@ ModelMap = {
     "document/customfigfolder": ("btn_selectFigureFolder", lambda w,v: w.customFigFolder.as_posix() if w.customFigFolder is not None else ""),
     "document/imagetypepref":   ("t_imageTypeOrder", None),
     "document/ifusepiclist":    ("c_usePicList", lambda w,v :"" if v else "%"),
-    "document/spacecntxtlztn":  ("fcb_spaceCntxtlztn", lambda w,v: "0" if v == "None" else "1" if v == "Some" else "2"),
+    "document/spacecntxtlztn":  ("ecb_spaceCntxtlztn", lambda w,v: "0" if v == "None" else "1" if v == "Some" else "2"),
     "document/glossarymarkupstyle":  ("fcb_glossaryMarkupStyle", None),
     "document/filterglossary":  ("c_filterGlossary", None),
     "document/hangpoetry":      ("c_hangpoetry", lambda w,v: "" if v else "%"),
@@ -197,7 +197,7 @@ ModelMap = {
     "document/diglotsecprj":    ("fcb_diglotSecProject", None),
     "document/diglotswapside":  ("c_diglotSwapSide", lambda w,v: v),
     "document/diglotsepnotes":  ("c_diglotSeparateNotes", lambda w,v: "true" if v else "false"),
-    "document/diglotsecconfig": ("fcb_diglotSecConfig", None),
+    "document/diglotsecconfig": ("ecb_diglotSecConfig", None),
     "document/diglotnormalhdrs": ("c_diglotHeaders", lambda w,v :"" if v else "%"),
 
     "header/headerposition":    ("s_headerposition", lambda w,v: round(v, 2) or "1.00"),
@@ -797,7 +797,6 @@ class TexModel:
         figlist = []
         figchngs = []
         prjid = self.dict['project/id']
-        print(self.ptsettings.basedir, prjid)
         prjdir = os.path.join(self.ptsettings.basedir, prjid)
         picdir = os.path.join(self['document/directory'], 'tmpPics').replace("\\","/")
         fname = printer.getBookFilename(bk, prjdir)

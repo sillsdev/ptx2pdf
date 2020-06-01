@@ -61,6 +61,9 @@ class ViewModel:
         "notes/xrcallers": "crossrefs",
         "notes/fncallers": "footnotes"
     }
+    _activekeys = {
+        "document/diglotsecprj": "updateDiglotConfigList"
+    }
 
     def __init__(self, settings_dir, workingdir):
         self.settings_dir = settings_dir
@@ -188,12 +191,12 @@ class ViewModel:
         pass
 
     def setPrjid(self, prjid, saveCurrConfig=False):
-        self.updateProjectSettings(prjid, saveCurrConfig=saveCurrConfig)
+        return self.updateProjectSettings(prjid, saveCurrConfig=saveCurrConfig)
 
-    def setConfigId(self, configid, saveCurrConfig=False):
-        self.updateProjectSettings(self.prjid, saveCurrConfig=saveCurrConfig, configName=configid)
+    def setConfigId(self, configid, saveCurrConfig=False, force=False):
+        return self.updateProjectSettings(self.prjid, saveCurrConfig=saveCurrConfig, configName=configid, forceConfig=force)
 
-    def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None):
+    def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, forceConfig=False):
         currprj = self.prjid
         readConfig = False
         if currprj is None or currprj != prjid:
@@ -209,15 +212,20 @@ class ViewModel:
                 self.ptsettings = ParatextSettings(self.settings_dir, self.prjid)
                 self.updateBookList()
             if not self.prjid:
-                return
+                return False
             if not self.fixed_wd:
                 self.working_dir = os.path.join(self.settings_dir, self.prjid, 'PrintDraft')
             readConfig = True
         if readConfig or self.configId != configName:
-            self.configId = configName
-            return self.readConfig(cfgname=configName)
+            res = self.readConfig(cfgname=configName)
+            if res or forceConfig:
+                self.configId = configName
+            return res
         else:
             return True
+
+    def updateDiglotConfigList(self):
+        pass
 
     def getDialogTitle(self):
         prjid = "  -  " + (self.get("fcb_project") or "")
@@ -244,7 +252,6 @@ class ViewModel:
             prjdir = os.path.join(prjdir, cfgname)
         if makePath:
             os.makedirs(prjdir,exist_ok=True)
-        print("Config Name and Path:", cfgname, prjdir)
         return prjdir
 
     def readConfig(self, cfgname=None):
@@ -253,6 +260,7 @@ class ViewModel:
         path = os.path.join(self.configPath(cfgname), "ptxprint.cfg")
         if not os.path.exists(path):
             return False
+        print("Reading config: ", path)
         config = configparser.ConfigParser()
         config.read(path, encoding="utf-8")
         self.loadConfig(config)
@@ -278,8 +286,14 @@ class ViewModel:
         config.set(sect, k, value)
 
     def createConfig(self):
+        def sortkeys(x):
+            k, v = x
+            if k in self._activekeys:
+                return (0, k, v)
+            else:
+                return (1, k, v)
         config = configparser.ConfigParser()
-        for k, v in ModelMap.items():
+        for k, v in sorted(ModelMap.items(), key=sortkeys):
             if v[0] is None:
                 continue
             if k in self._attributes:
@@ -344,6 +358,8 @@ class ViewModel:
                         vstyle = config.get(sect, "style", fallback="")
                         # print("loadConfig: {}->{} = {},{}".format(sect, ModelMap[sect][0], vname, vstyle))
                         self.set(ModelMap[sect][0], (vname, vstyle))
+                if key in self._activekeys:
+                    getattr(self, self._activekeys[key])()
         for k, v in self._settingmappings.items():
             (sect, name) = k.split("/")
             try:

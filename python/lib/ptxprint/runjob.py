@@ -144,9 +144,11 @@ class RunJob:
                 return
             digptsettings = ParatextSettings(args.paratext, digprjid)
             digprinter = ViewModel(args.paratext, self.printer.working_dir)
+            print("Reading digcfg", digprjid, digcfg)
             digprinter.setPrjid(digprjid)
             if digcfg is not None and digcfg != "":
                 digprinter.setConfigId(digcfg)
+            print("Read to TexModel")
             diginfo = TexModel(digprinter, args.paratext, digptsettings, digprjid)
             texfiles = sum((self.digdojob(j, info, diginfo, digprjid, digprjdir) for j in joblist), [])
         else: # Normal (non-diglot)
@@ -314,7 +316,7 @@ class RunJob:
                 elif sys.platform == "linux":  # UNTESTED code
                     p = os.path.join(self.scriptsdir, "diglot_merge.pl")
                     cmd = ['perl', p]  # need to work out where the .pl file will live)
-                cmdparms = ['-o', left, alignParam,'-L', 'ptxprint-merge.log', '-s', tmpFile, right] 
+                cmdparms = ['-o', left, alignParam, '-L', logFile, '-s', tmpFile, right] 
                 r = checkoutput(cmd + cmdparms)
                 for f in [left, right, tmpFile, logFile]:
                     texfiles += [os.path.join(self.tmpdir, f)]

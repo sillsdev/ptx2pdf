@@ -6767,7 +6767,7 @@ Contextualization:</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkComboBoxText" id="fcb_spaceCntxtlztn">
+                                      <object class="GtkComboBoxText" id="ecb_spaceCntxtlztn">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">None (default): Most projects would use this setting.
@@ -8554,7 +8554,7 @@ in the right-hand (or outer) column.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkComboBoxText" id="fcb_diglotSecConfig">
+                              <object class="GtkComboBoxText" id="ecb_diglotSecConfig">
                                 <property name="width_request">250</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>

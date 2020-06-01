@@ -114,8 +114,7 @@ class GtkViewModel(ViewModel):
         self.addCR("fcb_fontFaces", 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.addCR("fcb_diglotAlignment", 0)
-        # self.addCR("fcb_diglotSecConfig", 0)
-        self.fcb_diglotSecConfig = self.builder.get_object("fcb_diglotSecConfig")
+        self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
         pb = self.builder.get_object("b_print")
         pbc = pb.get_style_context()
         pbc.add_class("printbutton")
@@ -257,7 +256,7 @@ class GtkViewModel(ViewModel):
             i = w.get_active()
             if i < 0:
                 e = w.get_child()
-                if e is not None:
+                if e is not None and isinstance(e, Gtk.Entry):
                     v = e.get_text()
             elif model is not None:
                 v = model[i][sub]
@@ -291,11 +290,11 @@ class GtkViewModel(ViewModel):
             model = w.get_model()
             e = w.get_child()
             for i, v in enumerate(model):
-                if v[w.get_id_column()] == value:
-                    w.set_active_id(value)
-                    # w.emit("changed")
+                if v[w.get_entry_text_column()] == value:
+                    w.set_active(i)
                     break
-                elif e is not None and isinstance(e, Gtk.Entry):
+            else:
+                if e is not None and isinstance(e, Gtk.Entry):
                     e.set_text(value)
         elif wid.startswith("fcb_"):
             w.set_active_id(value)
@@ -381,23 +380,23 @@ class GtkViewModel(ViewModel):
         self.updateDialogTitle()
 
     def onSaveConfig(self, btn):
-        # Determine whether to save a NEW config or just UPDATE an existing one
-        self.writeConfig()
         if self.prjid is None:
             return
-        prjdir = os.path.join(self.settings_dir, self.prjid)
-        if self.config_dir != self.configPath(): # then it must be new
-            self.cb_savedConfig.append_text(self.configName())
-            # This is the first time to save, so copy other files/folders too
-            tgtpath = self.configPath()
-            for listname in ["PicLists", "AdjLists"]:
-                srcpath = self.config_dir or os.path.join(self.settings_dir, prjdir, "shared", "ptxprint")
-                if os.path.exists(os.path.join(srcpath, listname)):
-                    if srcpath != tgtpath:
-                        copytree(os.path.join(srcpath, listname), os.path.join(tgtpath, listname))
-            self.config_dir = tgtpath # Update the current config folder location (in prep for next change)
-            self.set("l_settings_dir", self.config_dir or "")
-            self.updateDialogTitle()
+        newconfigId = self.get("ecb_savedConfig")
+        if newconfigId == self.configId:
+            self.writeConfig()
+            return
+        # don't updateProjectSettings, since don't want to read old config
+        currconfigpath = self.configPath(cfgname=self.configId)
+        configpath = self.configPath(cfgname=newconfigId, makePath=True)
+        for subdirname in ("PicLists", "AdjLists"):
+            if os.path.exists(os.path.join(configpath, subdirname)) \
+                    or not os.path.exists(os.path.join(currconfigpath, subdirname)): 
+                continue
+            copytree(os.path.join(currconfigpath, subdirname), os.path.join(configpath, subdirname))
+        self.configId = newconfigId
+        self.set("l_settings_dir", configpath)
+        self.updateDialogTitle()
 
     def onDeleteConfig(self, btn):
         delCfgPath = self.configPath(cfgname=self.get("t_savedConfig"))
@@ -457,15 +456,15 @@ class GtkViewModel(ViewModel):
         self.configNoUpdate = False
 
     def updateDiglotConfigList(self):
-        self.fcb_diglotSecConfig.remove_all()
+        self.ecb_diglotSecConfig.remove_all()
         digprj = self.get("fcb_diglotSecProject")
         if digprj is None:
             return
         diglotConfigs = self.getConfigList(digprj)
         if len(diglotConfigs):
             for cfgName in sorted(diglotConfigs):
-                self.fcb_diglotSecConfig.append_text(cfgName)
-            self.fcb_diglotSecConfig.set_active(-1)
+                self.ecb_diglotSecConfig.append_text(cfgName)
+            self.ecb_diglotSecConfig.set_active_id("")
         # else:
             # self.builder.get_object("t_diglotSecConfig").set_text("")
 
