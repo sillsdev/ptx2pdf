@@ -3,6 +3,45 @@ import img2pdf
 from shutil import copyfile, rmtree
 from ptxprint.runner import call, checkoutput
 from ptxprint.texmodel import TexModel, universalopen
+from ptxprint.ptsettings import ParatextSettings
+from ptxprint.view import ViewModel, VersionStr
+
+_errmsghelp = {
+"! Unable to load picture":              "Check if picture file is located in 'Figures', 'local\\figures' or a\n" +\
+                                         "specified folder. Also try the option 'Omit Missing Pictures'\n",
+"! Unable to load picture or PDF file":  "Check if image/PDF file is available on the system.\n" +
+                                         "If you have specified one or more Front/Back matter PDFs or a Watermark PDF\n" +
+                                         "then ensure that the PDF(s) exist(s); OR uncheck those options (Advanced tab).\n",
+"! Missing control sequence inserted.":  "Fallback font probably being applied to text in a footnote (not permitted!)\n",
+"! Missing number, treated as zero.":    "Related to USFM3 illustration markup\n",
+"! Undefined control sequence.":         "This is related to a USFM marker error (such as an unsupported marker)\n" +\
+                                         "Try 'Run Basic Checks' in Paratext\n",
+"! Illegal unit of measure (pt inserted).":    "One of the settings in the Stylesheet may be missing the units.\n" +\
+                                         "To confirm that this is a stylesheet issue, temporarily turn off Stylesheets.\n" +\
+                                         "Then, check any recent changes to the Stylesheets (on Advanced tab) and try again.\n",
+"! File ended while scanning use of":    "Try turning off PrintDraftChanges.txt and both Stylesheets on Advanced tab.\n",
+"! Output loop---25 consecutive dead cycles.":  "Unknown issue.\n",
+"! Paratext stylesheet":                 "Try turning off the PrintDraft-mods stylesheet\n",
+"! File ended while scanning use of \iotableleader.": "Problem with Formatting Intro Outline\n" +\
+                                         "Try disabling option 'Right-Align \ior with tabbed leaders' on the Body tab\n",
+"! Emergency stop.":                     "Probably a TeX macro problem - contact support, or post a bug report\n",
+"! Not a letter.":                       "Possible fault in the hyphenation file\n" +\
+                                         "Try turning off Hyphenate option located on the Body tab\n",
+"! Font":                                "Font related issue - details unknown\n(Report this rare error please)\n",
+"! Too many }'s":                        "Serious TeX macro issue - contact support, or post a bug report\n",
+"! This can't happen (page)":            "Serious TeX macro issue - contact support, or post a bug report\n",
+"! I can't find file `paratext2.tex'.":  "Possibly a faulty installation.\n",
+"! I can't find file `ptx-tracing.tex'.":"Possibly a faulty installation.\n",
+"Runaway argument?":                     "Unknown issue. Maybe related to Right-aligned tabbed leaders\n" +\
+                                         "Try turning off PrintDraftChanges.txt and both Stylesheets\n",
+"Unknown":                               "Sorry! No diagnostic help is available for this error.\n" +\
+                                         "Try turning off all Advanced settings & disable Changes and Stylesheets\n",
+}
+# \def\LineSpacingFactor{{{paragraph/linespacingfactor}}}
+# \def\VerticalSpaceFactor{{1.0}}
+# \baselineskip={paragraph/linespacing}pt {paragraph/varlinespacing} {paragraph/linemax} {paragraph/linemin}
+# \XeTeXinterwordspaceshaping = {document/spacecntxtlztn}
+# %\extrafont  %% This will be replaced by code for the fallback fonts to be used for special/missing characters
 
 def base(fpath):
     return os.path.basename(fpath)[:-4]
@@ -103,7 +142,7 @@ class RunJob:
             if digprjid is None or not len(digprjid):     # can't print no project
                 return
             digptsettings = ParatextSettings(args.paratext, digprjid)
-            digself.printer = ViewModel(allprojects, args.paratext, self.printer.working_dir)
+            digself.printer = ViewModel(None, args.paratext, self.printer.working_dir)
             digself.printer.setPrjid(digprjid)
             if digcfg is not None and digcfg != "":
                 digself.printer.setConfigId(digcfg)
