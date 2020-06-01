@@ -610,7 +610,7 @@ class ViewModel:
                     bkcntr = collections.Counter(sfmtxt)
                     count += bkcntr
         # slist = sorted(count.items(), key=lambda pair: pair[0])
-        f = TTFont(*self.builder.get("bl_fontR"))
+        f = TTFont(*self.get("bl_fontR"))
         allchars = ''.join([i[0] for i in count.items()])
         if self.get("fcb_glossaryMarkupStyle") == "with ⸤floor⸥ brackets":
             allchars += "\u2e24\u2e25"
@@ -627,11 +627,11 @@ class ViewModel:
         finfor = self.get('bl_fontR')
         finfoe = self.get('bl_fontExtraR')
         if finfor[0] == finfoe[0]:
-            self.doError("The Fallback Font should to be DIFFERENT from the Regular Font.",
+            self.doError("The Fallback Font needs to be something other than the Regular Font.",
                     "Please select a different Font.")
         else:
             f = TTFont(*finfoe)
-            msngchars = self.builder.get("t_missingChars") # .split(" ")
+            msngchars = self.get("t_missingChars") # .split(" ")
             msngchars = spclChars = re.sub(r"\\[uU]([0-9a-fA-F]{4,6})", lambda m:chr(int(m.group(1), 16)), msngchars)
             stillmissing = f.testcmap(msngchars)
             if len(stillmissing):

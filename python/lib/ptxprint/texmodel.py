@@ -502,7 +502,7 @@ class TexModel:
                 elif l.startswith(r"%\extrafont"):
                     spclChars = re.sub(r"\\[uU]([0-9a-fA-F]{4,6})", lambda m:chr(int(m.group(1), 16)), self.dict["paragraph/missingchars"])
                     # print(spclChars.split(' '), [len(x) for x in spclChars.split(' ')])
-                    if self.dict["paragraph/ifusefallback"] == "true" and len(spclChars):
+                    if self.dict["paragraph/ifusefallback"] and len(spclChars):
                         badlist = "\u2018\u2019\u201c\u201d*#%"
                         a = ["".join(chr(ord(c) + 16 if ord(c) < 58 else ord(c) - 23) for c in str(hex(ord(x)))[2:]).lower() for x in spclChars.split(" ")]
                         b = ["".join((c) for c in str(hex(ord(x)))[2:]).lower() for x in spclChars.split(" ")]
@@ -519,6 +519,8 @@ class TexModel:
                             res.append("\\DefineActiveChar{{{}{}}}{{\\@ctive{}}}\n".format( '^'*len(b), b, a))
                         res.append("\\@ctivate\n")
                         res.append("\\catcode`\\@=12\n")
+                    else:
+                        res.append("% No special/missing characters specified for fallback font")
                 elif l.startswith(r"%\snippets"):
                     for k, c in self._snippets.items():
                         if self.printer is None:
