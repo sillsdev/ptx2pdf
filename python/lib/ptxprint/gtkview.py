@@ -1497,7 +1497,7 @@ class GtkViewModel(ViewModel):
         self.updateDiglotConfigList()
         
     def onGenerateHyphenationListClicked(self, btn_generateHyphenationList):
-        pass
+        self.generateHyphenationFile()
 
     def onPrettyIntroOutlineClicked(self, btn):
         if self.get("c_prettyIntroOutline"): # if turned on...

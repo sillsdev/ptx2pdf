@@ -7474,7 +7474,7 @@ the first document ends.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="cb_onlyRunOnce">
+                                  <object class="GtkCheckButton" id="c_onlyRunOnce">
                                     <property name="label" translatable="yes">Do not re-run job when some 
 things don't line up exactly</property>
                                     <property name="visible">True</property>

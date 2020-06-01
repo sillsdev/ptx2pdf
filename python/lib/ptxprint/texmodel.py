@@ -901,62 +901,6 @@ class TexModel:
                 outf.write("".join(nstylist))
             return [nstyfname]
 
-    def createHyphenationFile(self):
-        listlimit = 32749
-        prjid = self.dict['project/id']
-        infname = os.path.join(self.ptsettings.basedir, prjid, 'hyphenatedWords.txt')
-        outfname = os.path.join(self.ptsettings.basedir, prjid, "shared", "ptxprint", 'hyphen-{}.tex'.format(prjid))
-        hyphenatedWords = []
-        if not os.path.exists(infname):
-            m1 = "Failed to Generate Hyphenation List"
-            m2 = "{} Paratext Project's Hyphenation file not found:\n{}".format(prjid, infname)
-        else:
-            m2b = ""
-            m2c = ""
-            z = 0
-            with universalopen(infname) as inf:
-                for l in inf.readlines()[8:]: # Skip over the Paratext header lines
-                    l = l.strip().replace(u"\uFEFF", "")
-                    l = re.sub(r"\*", "", l)
-                    l = re.sub(r"=", "-", l)
-                    # Paratext doesn't seem to allow segments of 1 character to be hyphenated  (for example: a-shame-d) 
-                    # (so there's nothing to filter them out, because they don't seem to exist!)
-                    if "-" in l:
-                        if "\u200C" in l or "\u200D" in l or "'" in l: # Temporary workaround until we can figure out how
-                            z += 1                                     # to allow ZWNJ and ZWJ to be included as letters.
-                        elif re.search('\d', l):
-                            pass
-                        else:
-                            if l[0] != "-":
-                                hyphenatedWords.append(l)
-            c = len(hyphenatedWords)
-            if c >= listlimit:
-                m2b = "\n\nThat is too many for XeTeX! List truncated to longest {} words.".format(listlimit)
-                hyphenatedWords.sort(key=len,reverse=True)
-                shortlist = hyphenatedWords[:listlimit]
-                hyphenatedWords = shortlist
-            hyphenatedWords.sort(key = lambda s: s.casefold())
-            outlist = '\catcode"200C=11\n\catcode"200D=11\n\hyphenation{' + "\n".join(hyphenatedWords) + "}"
-            with open(outfname, "w", encoding="utf-8") as outf:
-                outf.write(outlist)
-            if len(hyphenatedWords) > 1:
-                m1 = "Hyphenation List Generated"
-                m2a = "{} hyphenated words were gathered\nfrom Paratext's Hyphenation Word List.".format(c)
-                if z > 0:
-                    m2c = "\n\nNote for Indic languages that {} words containing ZWJ".format(z) + \
-                            "\nand ZWNJ characters have been left off the hyphenation list." 
-                m2 = m2a + m2b + m2c
-            else:
-                m1 = "Hyphenation List was NOT Generated"
-                m2 = "No valid words were found in Paratext's Hyphenation List"
-        dialog = Gtk.MessageDialog(parent=None, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.ERROR, \
-                                    buttons=Gtk.ButtonsType.OK, message_format=m1)
-        dialog.format_secondary_text(m2)
-        dialog.set_keep_above(True)
-        dialog.run()
-        dialog.set_keep_above(False)
-        dialog.destroy()
-
     def makeGlossaryFootnotes(self, printer, bk):
         # Glossary entries for the key terms appearing like footnotes
         prjid = self.dict['project/id']

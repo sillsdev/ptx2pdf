@@ -121,7 +121,7 @@ class RunJob:
         info["diglot/fzysettings"] = ""
 
         self.books = []
-        if self.printer.get("cb_onlyRunOnce"):
+        if self.printer.get("c_onlyRunOnce"):
             self.maxRuns = 1
         else:
             self.maxRuns = 5
@@ -144,11 +144,11 @@ class RunJob:
                 return
             digptsettings = ParatextSettings(args.paratext, digprjid)
             digprinter = ViewModel(args.paratext, self.printer.working_dir)
-            print("Reading digcfg", digprjid, digcfg)
+            # print("Reading digcfg", digprjid, digcfg)
             digprinter.setPrjid(digprjid)
             if digcfg is not None and digcfg != "":
                 digprinter.setConfigId(digcfg)
-            print("Read to TexModel")
+            # print("Read to TexModel")
             diginfo = TexModel(digprinter, args.paratext, digptsettings, digprjid)
             texfiles = sum((self.digdojob(j, info, diginfo, digprjid, digprjdir) for j in joblist), [])
         else: # Normal (non-diglot)
@@ -262,7 +262,7 @@ class RunJob:
         if True: # alnmnt.startswith("No"):
             _digSecSettings = ["paper/pagesize", "paper/height", "paper/width", "paper/margins",
                                "paper/sidemarginfactor", "paper/topmarginfactor", "paper/bottommarginfactor",
-                               "paper/fontfactor", "header/headerposition", "header/footerposition", "header/ruleposition",
+                               "header/headerposition", "header/footerposition", "header/ruleposition",
                                "document/ch1pagebreak", "document/supressbookintro", "document/supressintrooutline", 
                                "document/supressparallels", "document/elipsizemptyvs", "notes/iffootnoterule", 
                                "notes/ifblendfnxr", "notes/includefootnotes", "notes/includexrefs", 
@@ -276,12 +276,10 @@ class RunJob:
             diginfo["fancy/pageborder"] = "%"
             diginfo["document/clsinglecol"] = False
             diginfo["snippets/alignediglot"] = False
-            print("_digSecSettings = ", _digSecSettings)
-            print("----------Passing info settings to diginfo-----------")
+            # print("_digSecSettings = ", _digSecSettings)
             for k in _digSecSettings:
-                print("{} = '{}'".format(k, info[k]))
+                # print("{} = '{}'".format(k, info[k]))
                 diginfo[k]=info[k]
-            print("-----------------------------------------------------")
         for b in jobs:
             out = info.convertBook(b, self.tmpdir, self.prjdir)
             digout = diginfo.convertBook(b, self.tmpdir, digprjdir)
@@ -333,32 +331,28 @@ class RunJob:
         if alnmnt.startswith("No"):
             # First create Secondary PDF
             diginfo["diglot/fzysettings"] = self.generateFzyDiglotSettings(jobs, info, None, primary=False)
-            print("Sec:", diginfo["diglot/fzysettings"])
+            # print("Sec:", diginfo["diglot/fzysettings"])
             texfiles += self.sharedjob(jobs, diginfo, prjid=digprjid, prjdir=digprjdir, fzy=True)
             # Now Primary (along with Secondary merged in with it)
             info["diglot/fzysettings"] = self.generateFzyDiglotSettings(jobs, info, digprjid, primary=True)
-            print("Pri:", info["diglot/fzysettings"])
+            # print("Pri:", info["diglot/fzysettings"])
             texfiles += self.sharedjob(jobs, info)
         else:
             # Pass all the needed parameters for the snippet from diginfo to info
             for k,v in _diglot.items():
                 info[k]=diginfo[v]
-                print(k, v, diginfo[v])
+                # print(k, v, diginfo[v])
             texfiles += self.sharedjob(jobs, info, logbuffer=logbuffer)
         return texfiles
 
     def generateFzyDiglotSettings(self, jobs, info, secprjid, primary=True):
         switchSides = info.asBool("document/diglotswapside")
         pageWidth = int(re.split("[^0-9]",re.sub(r"^(.*?)\s*,.*$", r"\1", info.dict["paper/pagesize"]))[0]) or 148
-        margin = int(info.dict["paper/margins"]) # self.get("s_margins")
-        print("margin:", margin)
-        # margin = 12
-        middleGutter = int(info.dict["document/colgutterfactor"])/3 # self.get("s_colgutterfactor")
-        bindingGutter = int(info.dict["paper/gutter"]) # self.get("s_pagegutter")
-        print("bindingGutter:", bindingGutter)
-        # bindingGutter = 0
+        margin = int(info.dict["paper/margins"])
+        middleGutter = int(info.dict["document/colgutterfactor"])/3
+        bindingGutter = int(info.dict["paper/gutter"])
         if switchSides: # Primary on RIGHT/OUTER
-            priFraction = float(info.dict["document/diglotprifraction"]) # self.get("s_diglotPriFraction")
+            priFraction = float(info.dict["document/diglotprifraction"])
             priColWidth = (pageWidth  - middleGutter - bindingGutter - (2 * margin)) * priFraction # / 100
             secColWidth = pageWidth - priColWidth - middleGutter - bindingGutter - (2 * margin)
             # Calc Pri Settings (right side of page; or outer if mirrored)
@@ -369,7 +363,7 @@ class RunJob:
             secRightMargin = priColWidth + margin + middleGutter
             secbindingGutter = pageWidth - (2 * secRightMargin) - secColWidth 
         else: # Primary on LEFT/INNER
-            priFraction = 1 - float(info.dict["document/diglotprifraction"]) # self.get("s_diglotPriFraction")
+            priFraction = 1 - float(info.dict["document/diglotprifraction"])
             priColWidth = (pageWidth  - middleGutter - bindingGutter - (2 * margin)) * priFraction # / 100
             secColWidth = pageWidth - priColWidth - middleGutter - bindingGutter - (2 * margin)
             # Calc Pri Settings (left side of page; or inner if mirrored)
@@ -477,7 +471,6 @@ class RunJob:
                 os.putenv('TEXINPUTS', ".:" + mdirs)
         os.putenv("MISCFONTS", ptxmacrospath)
         while numruns > 0:
-            print("numruns=", numruns)
             if info["document/toc"] != "%":
                 tocdata = readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".toc")))
             runner = call(["xetex", "--halt-on-error", outfname], cwd=self.tmpdir, logbuffer=logbuffer)

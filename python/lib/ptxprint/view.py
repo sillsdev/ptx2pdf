@@ -1,6 +1,6 @@
 
-import configparser, os, re, random, collections
-from .texmodel import ModelMap
+import configparser, os, re, regex, random, collections
+from .texmodel import ModelMap, universalopen
 from .ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from .font import TTFont
 import pathlib, os
@@ -374,6 +374,7 @@ class ViewModel:
                     "span": ("t", "b")}
         existingFilelist = []
         snglCol = not self.get("c_doublecolumn")
+        diglot = self.get("c_diglotAutoAligned")
         prjid = self.get("fcb_project")
         prjdir = os.path.join(self.settings_dir, self.prjid)
         for bk in booklist:
@@ -421,11 +422,11 @@ class ViewModel:
                         else:
                             pageposn = (_picposn.get(f[1], f[1]))[0]              # use the t or tl (first in list)
                         # Single Col publications need the images scaled down by default (so that they appear)
-                        if snglCol and f[1].lower() == "col":
-                            snglColScale = "*.5"
+                        if (snglCol or diglot) and f[1].lower() == "col":
+                            size = "span*.5"
                         else:
-                            snglColScale = ""
-                        piclist.append(bk+" "+re.sub(r":",".", f[5])+" |"+picfname+"|"+f[1]+snglColScale+"|"+pageposn+"||"+f[4]+"|"+f[5]+"\n")
+                            size = f[1]
+                        piclist.append(bk+" "+re.sub(r":",".", f[5])+" |"+picfname+"|"+size+"|"+pageposn+"||"+f[4]+"|"+f[5]+"\n")
                 else:
                     # If none of the USFM2-styled illustrations were found then look for USFM3-styled markup in text 
                     # (Q: How to handle any additional/non-standard xyz="data" ? Will the .* before \\fig\* take care of it adequately?)
@@ -446,11 +447,11 @@ class ViewModel:
                             else:
                                 pageposn = (_picposn.get(f[2], f[2]))[0]               # use the t or tl (first in list)
                             # Single Col publications need the images scaled down by default (so that they appear)
-                            if snglCol and f[2].lower() == "col":
-                                snglColScale = "*.5"
+                            if (snglCol or diglot) and f[2].lower() == "col":
+                                size = "span*.5"
                             else:
-                                snglColScale = ""
-                            piclist.append(bk+" "+re.sub(r":",".", f[3])+" |"+picfname+"|"+f[2]+snglColScale+"|"+pageposn+"||"+f[0]+"|"+f[3]+"\n")
+                                size = f[2]
+                            piclist.append(bk+" "+re.sub(r":",".", f[3])+" |"+picfname+"|"+size+"|"+pageposn+"||"+f[0]+"|"+f[3]+"\n")
                 if len(m):
                     piclist.append("\n% If illustrations are not appearing in the output PDF, check:\n")
                     piclist.append("%   a) The Location Reference on the left is very particular, so check\n")
@@ -515,6 +516,57 @@ class ViewModel:
                     with open(outfname, "w", encoding="utf-8") as outf:
                         outf.write("".join(adjlist))
 
+    def generateHyphenationFile(self):
+        listlimit = 32749
+        prjid = self.get("fcb_project") # self.dict['project/id']
+        prjdir = os.path.join(self.settings_dir, self.prjid)
+        infname = os.path.join(self.ptsettings.basedir, prjid, 'hyphenatedWords.txt')
+        outfname = os.path.join(self.ptsettings.basedir, prjid, "shared", "ptxprint", 'hyphen-{}.tex'.format(prjid))
+        hyphenatedWords = []
+        if not os.path.exists(infname):
+            m1 = "Failed to Generate Hyphenation List"
+            m2 = "{} Paratext Project's Hyphenation file not found:\n{}".format(prjid, infname)
+        else:
+            m2b = ""
+            m2c = ""
+            z = 0
+            with universalopen(infname) as inf:
+                for l in inf.readlines()[8:]: # Skip over the Paratext header lines
+                    l = l.strip().replace(u"\uFEFF", "")
+                    l = re.sub(r"\*", "", l)
+                    l = re.sub(r"=", "-", l)
+                    # Paratext doesn't seem to allow segments of 1 character to be hyphenated  (for example: a-shame-d) 
+                    # (so there's nothing to filter them out, because they don't seem to exist!)
+                    if "-" in l:
+                        if "\u200C" in l or "\u200D" in l or "'" in l: # Temporary workaround until we can figure out how
+                            z += 1                                     # to allow ZWNJ and ZWJ to be included as letters.
+                        elif re.search('\d', l):
+                            pass
+                        else:
+                            if l[0] != "-":
+                                hyphenatedWords.append(l)
+            c = len(hyphenatedWords)
+            if c >= listlimit:
+                m2b = "\n\nThat is too many for XeTeX! List truncated to longest {} words.".format(listlimit)
+                hyphenatedWords.sort(key=len,reverse=True)
+                shortlist = hyphenatedWords[:listlimit]
+                hyphenatedWords = shortlist
+            hyphenatedWords.sort(key = lambda s: s.casefold())
+            outlist = '\catcode"200C=11\n\catcode"200D=11\n\hyphenation{' + "\n".join(hyphenatedWords) + "}"
+            with open(outfname, "w", encoding="utf-8") as outf:
+                outf.write(outlist)
+            if len(hyphenatedWords) > 1:
+                m1 = "Hyphenation List Generated"
+                m2a = "{} hyphenated words were gathered\nfrom Paratext's Hyphenation Word List.".format(c)
+                if z > 0:
+                    m2c = "\n\nNote for Indic languages that {} words containing ZWJ".format(z) + \
+                            "\nand ZWNJ characters have been left off the hyphenation list." 
+                m2 = m2a + m2b + m2c
+            else:
+                m1 = "Hyphenation List was NOT Generated"
+                m2 = "No valid words were found in Paratext's Hyphenation List"
+        self.doError(m1, m2)
+
     def checkSFMforFancyIntroMarkers(self):
         unfitBooks = []
         prjid = self.get("fcb_project")
@@ -538,7 +590,8 @@ class ViewModel:
 
     def onFindMissingCharsClicked(self, btn_findMissingChars):
         count = collections.Counter()
-        prjdir = os.path.join(self.settings_dir, self.prjid)
+        prjid = self.get("fcb_project")
+        prjdir = os.path.join(self.settings_dir, prjid)
         bks = self.getBooks()
         for bk in bks:
             fname = self.getBookFilename(bk, prjid)
@@ -574,7 +627,7 @@ class ViewModel:
         finfor = self.get('bl_fontR')
         finfoe = self.get('bl_fontExtraR')
         if finfor[0] == finfoe[0]:
-            doError("The Fallback Font should to be DIFFERENT from the Regular Font.",
+            self.doError("The Fallback Font should to be DIFFERENT from the Regular Font.",
                     "Please select a different Font.")
         else:
             f = TTFont(*finfoe)
@@ -582,7 +635,7 @@ class ViewModel:
             msngchars = spclChars = re.sub(r"\\[uU]([0-9a-fA-F]{4,6})", lambda m:chr(int(m.group(1), 16)), msngchars)
             stillmissing = f.testcmap(msngchars)
             if len(stillmissing):
-                doError("The Fallback Font just selected does NOT support all the missing characters listed.",
+                self.doError("The Fallback Font just selected does NOT support all the missing characters listed.",
                         "Please select a different Font.")
 
     def getExtOrder(self):
