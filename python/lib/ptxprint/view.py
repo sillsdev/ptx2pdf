@@ -225,25 +225,28 @@ class ViewModel:
         else:
             return True
 
-    def updateDiglotConfigList(self):
-        pass
-
     def getDialogTitle(self):
         prjid = "  -  " + (self.get("fcb_project") or "")
-        if self.get('c_combine'):
-            bks = self.get('t_booklist').split()
+        if prjid == "  -  ":
+            return "PTXprint [{}] - Welcome! Start by selecting a project to work with...".format(VersionStr)
         else:
-            bks = [self.get('t_book')]
-        if len(bks) == 2:
-            bks = bks[0] + "," + bks[1]
-        elif len(bks) > 2:
-            bks = bks[0] + "..." + bks[-1]
-        else:
-            try:
-                bks = bks[0]
-            except IndexError:
-                bks = "No book selected!"
-        return "PTXprint [{}] {} ({}) {}".format(VersionStr, prjid, bks, self.get("ecb_savedConfig") or "")
+            if self.get('c_multiplebooks'):
+                bks = self.get('t_booklist').split()
+            else:
+                bks = [self.get('ecb_book')]
+                
+            if len(bks) == 2:
+                bks = bks[0] + "," + bks[1]
+            elif len(bks) <= 4:
+                bks = ",".join(bks)
+            elif len(bks) > 4:
+                bks = bks[0] + "," + bks[1] + "..." + bks[-2] + "," + bks[-1]
+            else:
+                try:
+                    bks = bks[0]
+                except IndexError:
+                    bks = "No book selected!"
+            return "PTXprint [{}] {} ({}) {}".format(VersionStr, prjid, bks, self.get("ecb_savedConfig") or "")
 
     def configPath(self, cfgname=None, makePath=False):
         if self.settings_dir is None or self.prjid is None:

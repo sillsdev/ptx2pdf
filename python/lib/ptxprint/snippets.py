@@ -196,7 +196,7 @@ class FancyBorders():
 
 {fancy/versedecorator}\def\getversedigits#1#2#3#4\end{{\def\digitone{{#1}}\def\digittwo{{#2}}\def\digitthree{{#3}}}}
 
-{fancy/versedecorator}\font\smallversenums="{fontfancy/versenumfont}" at {fancy/versenumsize}pt
+{fancy/versedecorator}\font\smallversenums="{versenumfont}" at {fancy/versenumsize}pt
 {fancy/versedecorator}\def\exclam{{!}}
 {fancy/versedecorator}\def\printversedigits{{%
 {fancy/versedecorator}  \beginL

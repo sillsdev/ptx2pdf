@@ -22,13 +22,13 @@
   </object>
   <object class="GtkAdjustment" id="a_bolde">
     <property name="upper">10</property>
-    <property name="value">2</property>
+    <property name="value">1.6000000000000001</property>
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_bolditalice">
     <property name="upper">10</property>
-    <property name="value">2</property>
+    <property name="value">1.6000000000000001</property>
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">1</property>
   </object>
@@ -107,7 +107,7 @@
   <object class="GtkAdjustment" id="a_fontsize">
     <property name="lower">2</property>
     <property name="upper">36</property>
-    <property name="value">12</property>
+    <property name="value">11</property>
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">1</property>
   </object>
@@ -252,12 +252,12 @@ the User-Interface. The PDFs are produced by enhanced
 XeTeX macros (PTX2PDF) with a long and reliable history.
 
 If you come across any bugs, 
-please file an issue in Github.</property>
+please create an issue in Github.</property>
     <property name="website">https://software.sil.org/ptxprint/</property>
     <property name="website_label" translatable="yes">Download the latest version</property>
     <property name="authors">Mark Penny (Project Lead + UI Developer)
-Martin Hosken (Architect + TeX macros)
-David Gardner (Tex macro hacks, tweaks + Bugfixing)
+Martin Hosken (System Architect + TeX macros)
+David Gardner (TeX macro hacks, tweaks + bugfixing)
 
 Built on the foundation laid by:
 Jonathan Kew (Author of XeTeX + sfm2pdf)</property>
@@ -2022,8 +2022,7 @@ satisfactory result.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Experimental Feature:
-This is really a DIY-glot because
+                                    <property name="tooltip_text" translatable="yes">This is really a DIY-glot because
 it is work in progress and will require
 considerable trial-and-error to get a
 satisfactory result.</property>
@@ -2148,6 +2147,7 @@ be specified.
 NOTE that turning off the view for
 this Tab will also disable the option.</property>
                                     <property name="halign">start</property>
+                                    <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="onShowBordersTabClicked" swapped="no"/>
                                     <signal name="toggled" handler="onShowBordersTabClicked" swapped="no"/>
@@ -2193,9 +2193,13 @@ this Tab will also disable the option.</property>
                   <object class="GtkLabel" id="lb_Basic">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Use Saved Configuration(s)
-or Select the Project and Book(s),
-to be used to create the PDF file.</property>
+                    <property name="tooltip_text" translatable="yes">Select the Project and Book(s),
+to be used to create the PDF file.
+
+You can also use Saved/Shared
+Configuration settings, and show
+or hide various tabs to make it
+simpler for others to use.</property>
                     <property name="label" translatable="yes">Basic</property>
                   </object>
                   <packing>
@@ -2672,7 +2676,7 @@ the text of the two columns
                                         <property name="climb_rate">1</property>
                                         <property name="digits">1</property>
                                         <property name="numeric">True</property>
-                                        <property name="value">5</property>
+                                        <property name="value">4</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
@@ -2802,9 +2806,12 @@ Top:</property>
                                       <object class="GtkLabel" id="l_rhruleoffset">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">This is the space between 
-the text of the two columns 
-(measured in millimeters).</property>
+                                        <property name="tooltip_text" translatable="yes">This is the space between the 
+header line and horizontal rule.
+           (Measured in pts).
+Increase to move the line down.
+Decease to move the line up.
+</property>
                                         <property name="halign">end</property>
                                         <property name="label" translatable="yes">Vertical
 Offset:</property>
@@ -3212,7 +3219,7 @@ Layout for these Books</property>
                                     <property name="climb_rate">0.10000000000000001</property>
                                     <property name="digits">1</property>
                                     <property name="numeric">True</property>
-                                    <property name="value">1.8</property>
+                                    <property name="value">1.6000000000000001</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">3</property>
@@ -3296,7 +3303,7 @@ Layout for these Books</property>
                                     <property name="climb_rate">0.10000000000000001</property>
                                     <property name="digits">1</property>
                                     <property name="numeric">True</property>
-                                    <property name="value">1.8</property>
+                                    <property name="value">1.6000000002235175</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">3</property>
@@ -3483,9 +3490,10 @@ only supports LTR.</property>
                   <object class="GtkLabel" id="lb_Layout">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Set the Project, Book(s),
-Page Setup, Columns,
-and Font options.</property>
+                    <property name="tooltip_text" translatable="yes">Page Setup, Font Size and 
+Line Spacing. Columns,
+Chapter and Verse DIgits,
+and advanced Font Options.</property>
                     <property name="label" translatable="yes">Layout</property>
                     <property name="justify">center</property>
                   </object>
@@ -3563,7 +3571,7 @@ automatically prepended to the output PDF.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="margin_right">10</property>
-                                        <property name="placeholder_text" translatable="yes">Enter Title For Table of Contents</property>
+                                        <property name="placeholder_text" translatable="yes">Table of Contents Title</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -4147,13 +4155,15 @@ any poetry lines. \q1 \q2 \q3 etc.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">If groups of 2 or more verses are found to be empty,
-group these together as a bridged verse followed by {...}
+                                    <property name="tooltip_text" translatable="yes">If groups of 2 or more verses are found
+to be empty, then group these together 
+as a bridged verse followed by {...}
 
 e.g.  \v 4 Verse text. \v 5-11 {...} \v 12 Verse text.
 
-Useful for when only part of the text has been drafted
-but you still need a printout of what has been done so far.</property>
+Useful for when only part of the text has been
+drafted but you still need a printout of what has 
+been done so far.</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -4317,6 +4327,7 @@ tab needs to be checked to make us of this.</property>
 words onto the next line, BUT don't need to
 display the actual '-' character. If this option
 is checked, then "hyphens" will be invisible.</property>
+                                        <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -4490,8 +4501,11 @@ to ensure that they are displayed properly.</property>
                   <object class="GtkLabel" id="lb_Body">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Introductory Material,
-Main Scripture Text,
+                    <property name="tooltip_text" translatable="yes">Main settings to control the 
+beginning and ending of books,
+and  the options for Main Body
+of text. Also Adjustments and
+Hyphenation, and a Fallback Font.
 and Illustrations.</property>
                     <property name="label" translatable="yes">Body</property>
                     <property name="justify">center</property>
@@ -4794,6 +4808,7 @@ secondary text as the Outer text.</property>
                                         <property name="margin_top">4</property>
                                         <property name="margin_bottom">4</property>
                                         <property name="draw_indicator">True</property>
+                                        <signal name="clicked" handler="onOmitrhchapnumClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
@@ -5012,11 +5027,7 @@ or:  †,‡,§,∥,#    or: ✶,☆,✦,✪</property>
                                                         <property name="receives_default">True</property>
                                                         <property name="tooltip_text" translatable="yes">Clicking this button will reload
 the footnote callers from the
-Paratext project settings.
-
-Shift+Clicking this button
-will send these settings to
-Paratext :-)   [Yeah, right!]</property>
+Paratext project settings.</property>
                                                         <property name="margin_left">4</property>
                                                         <property name="margin_right">4</property>
                                                         <signal name="clicked" handler="onResetFNcallersClicked" swapped="no"/>
@@ -5217,11 +5228,7 @@ or:  †,‡,§,∥,#    or: ✶,☆,✦,✪</property>
                                                         <property name="receives_default">True</property>
                                                         <property name="tooltip_text" translatable="yes">Clicking this button will reload
 the cross-ref callers from the
-Paratext project settings.
-
-Shift+Clicking this button
-will send these settings to
-Paratext :-)   [Yeah, right!]</property>
+Paratext project settings.</property>
                                                         <property name="margin_left">4</property>
                                                         <property name="margin_right">4</property>
                                                         <signal name="clicked" handler="onResetXRcallersClicked" swapped="no"/>
@@ -5933,7 +5940,9 @@ to produce the PDF.</property>
                   <object class="GtkLabel" id="lb_HeadFoot">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Headers and Footers.
+                    <property name="tooltip_text" translatable="yes">Adjust the spacing at the top
+and bottom of the page and
+content of Headers and Footers,
 Footnotes and Cross-references.</property>
                     <property name="label" translatable="yes">Head+Foot</property>
                   </object>
@@ -6169,6 +6178,7 @@ positioning of illustrations.</property>
                                     <property name="margin_left">20</property>
                                     <property name="draw_indicator">True</property>
                                     <property name="group">c_includefigsfromtext</property>
+                                    <signal name="clicked" handler="onUsePicListChanged" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -6316,7 +6326,7 @@ then enable this option).</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
                         <property name="valign">start</property>
-                        <property name="margin_left">12</property>
+                        <property name="margin_left">8</property>
                         <property name="margin_right">10</property>
                         <property name="margin_top">6</property>
                         <property name="margin_bottom">6</property>
@@ -6342,10 +6352,12 @@ then enable this option).</property>
                 <child type="tab">
                   <object class="GtkLabel" id="lb_Pictures">
                     <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Control whether Illustrations (pictures)
-are to be used in the publication. And
-if necessary, control the position of
-illustrations within the text.</property>
+                    <property name="tooltip_text" translatable="yes">Illustrations (pictures) to be used
+in the publication. And control
+over what kinds of images are
+used, and where they are located
+(both within the text, and in the
+file system).</property>
                     <property name="label" translatable="yes">Pictures</property>
                   </object>
                   <packing>
@@ -6706,6 +6718,7 @@ script-specific rendering issues.</property>
                                         <property name="popup_fixed_width">False</property>
                                         <property name="id_column">1</property>
                                         <property name="active_id">0</property>
+                                        <signal name="changed" handler="onScriptChanged" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -7122,7 +7135,6 @@ to store generated PDF file(s).</property>
                                 <property name="halign">center</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
-                                <signal name="clicked" handler="onUsePrintDraftChanged" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -7554,9 +7566,10 @@ you start PTXprint.</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Pre-process the text prior
-to creating the PDF, add Front
-and Back Matter. Generate
-and Edit PicLists and Adj Lists.</property>
+to creating the PDF. Add Front
+and Back Matter PDFs and Watermarks.
+Also a range of Advanced typography
+settings to support any Writing System.</property>
                     <property name="margin_bottom">2</property>
                     <property name="label" translatable="yes">Advanced</property>
                     <property name="justify">center</property>
@@ -8462,6 +8475,9 @@ Numbers</property>
                   <object class="GtkLabel" id="lb_ViewerEditor">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">The Viewer allows you to view and
+edit various control and log files
+relating to PTXprint.</property>
                     <property name="label" translatable="yes">Viewer</property>
                   </object>
                   <packing>
@@ -8646,8 +8662,8 @@ in the right-hand (or outer) column.</property>
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="c_diglotHeaders">
-                                <property name="label" translatable="yes">Use default Header 
-settings for Diglot</property>
+                                <property name="label" translatable="yes">Use Default Header
+Settings for Diglot</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
@@ -8662,45 +8678,6 @@ and Page Number in (or near) the middle.</property>
                               </object>
                               <packing>
                                 <property name="left_attach">2</property>
-                                <property name="top_attach">4</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkCheckButton" id="c_diglotSeparateNotes">
-                                <property name="label" translatable="yes">Separate Notes
-in two Columns</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">If this option is disabled, the footnotes from
-both sides of the diglot get merged together
-and are interspersed one after the other.
-
-Depending on the scripts and text direction,
-this may or may not be desirable. If in doubt,
-leave this option checked ON.</property>
-                                <property name="halign">start</property>
-                                <property name="active">True</property>
-                                <property name="draw_indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">4</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkCheckButton" id="c_diglotAdjCenter">
-                                <property name="label" translatable="yes">Adjust Center Header Position to 
-Match Column Gutter Position</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="margin_left">6</property>
-                                <property name="active">True</property>
-                                <property name="draw_indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
                                 <property name="top_attach">4</property>
                               </packing>
                             </child>
@@ -8740,6 +8717,46 @@ on the left (or Inner) side, then check this option. </property>
                                 <property name="top_attach">2</property>
                               </packing>
                             </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_diglotAdjCenter">
+                                <property name="label" translatable="yes">Adjust Center Header Position to 
+Match Column Gutter Position</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="halign">start</property>
+                                <property name="active">True</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_diglotSeparateNotes">
+                                <property name="label" translatable="yes">Separate Notes
+in two Columns</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">If this option is disabled, the footnotes from
+both sides of the diglot get merged together
+and are interspersed one after the other.
+
+Depending on the scripts and text direction,
+this may or may not be desirable. If in doubt,
+leave this option checked ON.</property>
+                                <property name="halign">start</property>
+                                <property name="margin_left">6</property>
+                                <property name="active">True</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">4</property>
+                              </packing>
+                            </child>
                           </object>
                         </child>
                         <child type="label">
@@ -8748,15 +8765,9 @@ on the left (or Inner) side, then check this option. </property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="tooltip_text" translatable="yes">This tab allows unaligned diglots (which just
-blends 2 PDFs together for you from different
-projects), and ALIGNED diglots which can 
-align the text based on Chapter, Paragraphs
-or Verses.
-
-Note that setting this option will automatically
-turn off illustrations (as the 2 features are not
-compatible).</property>
+                            <property name="tooltip_text" translatable="yes">A Diglot publication contains more than
+one language, or script, or text. Set the
+options here to create a Diglot or Didoc.</property>
                             <property name="draw_indicator">True</property>
                             <signal name="clicked" handler="onDiglotClicked" swapped="no"/>
                           </object>
@@ -8781,11 +8792,9 @@ compatible).</property>
                   <object class="GtkLabel" id="lb_DiglotTesting">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Experimental Feature:
-This is really a DIY-glot because
-it is work in progress and will require
-considerable trial-and-error to get a
-satisfactory result.</property>
+                    <property name="tooltip_text" translatable="yes">Create a diglot publication
+by incorporating a secondary
+project.</property>
                     <property name="label" translatable="yes">Diglot</property>
                   </object>
                   <packing>
@@ -8825,8 +8834,10 @@ satisfactory result.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">One or more previously created PDF file(s) can be included BEFORE the scripture material being typeset. If more than one
-file is selected, then these will appear in alphabetical order.</property>
+                                <property name="tooltip_text" translatable="yes">Select a PDF for the Border of the publication.
+Note that after setting this border, it is likely
+that you will need to adjust the page margins
+to make it fit. </property>
                                 <property name="halign">start</property>
                                 <property name="margin_top">4</property>
                                 <property name="draw_indicator">True</property>
@@ -8878,9 +8889,9 @@ file is selected, then these will appear in alphabetical order.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">One or more previously created PDF file(s) can be included
-AFTER the scripture material being typeset. If more than one
-file is selected, then these will appear in alphabetical order.</property>
+                                <property name="tooltip_text" translatable="yes">The Verse numbers may be decorated by
+a PDF graphic. You may also use a special
+font and size to ensure verses fit well.</property>
                                 <property name="halign">start</property>
                                 <property name="margin_top">4</property>
                                 <property name="draw_indicator">True</property>
@@ -8915,11 +8926,10 @@ file is selected, then these will appear in alphabetical order.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">A watermark can be applied to all pages of 
-the publication. The file must be a PDF.
-
-Also note that you can use a Grid-PDF
-to show gridlines for finetuning settings.</property>
+                                <property name="tooltip_text" translatable="yes">Section Headings may be adorned with
+a special graphic. Ensure that there is
+adequate space - both horizontal as well
+as vertical to make sure all headings fit.</property>
                                 <property name="halign">start</property>
                                 <property name="margin_top">4</property>
                                 <property name="draw_indicator">True</property>
@@ -9012,6 +9022,9 @@ decorator set that here.</property>
                               <object class="GtkLabel" id="l_verseSize">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">If the font needs to appear as
+a specific size within the verse
+decorator set that here.</property>
                                 <property name="halign">end</property>
                                 <property name="hexpand">True</property>
                                 <property name="label" translatable="yes">Font Size (pts):</property>
@@ -9025,6 +9038,10 @@ decorator set that here.</property>
                               <object class="GtkLabel" id="l_verseFont">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">If a specific font (other than the
+regular font) is required so that
+it fits within the verse decorator, 
+then select the font here.</property>
                                 <property name="halign">end</property>
                                 <property name="label" translatable="yes">Font for Decorated 
 Verse Numbers:</property>
@@ -9070,6 +9087,10 @@ then select the font here.</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
+                            <property name="tooltip_text" translatable="yes">Some cultures value ornamental or
+decorative features in their scripture
+publications. This option allows you
+to specify the settings for these.</property>
                             <property name="draw_indicator">True</property>
                             <signal name="clicked" handler="onEnableDecorativeElementsClicked" swapped="no"/>
                           </object>
@@ -9090,9 +9111,8 @@ then select the font here.</property>
                   <object class="GtkLabel" id="lb_FancyBorders">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Experimental Feature:
-This enables additional PDF files to be specified
-for fancy/decorative borders to be applied to
+                    <property name="tooltip_text" translatable="yes">Enable additional PDF files to be specified
+for decorative borders to be applied to
 the output. Other textual decorations - for 
 section headings and verse numbers can also
 be specified.</property>
