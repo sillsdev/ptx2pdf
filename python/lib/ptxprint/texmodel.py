@@ -10,7 +10,7 @@ from ptxprint.ptsettings import chaps, books, bookcodes, oneChbooks
 from ptxprint.snippets import FancyIntro, PDFx1aOutput, AlignedDiglot, FancyBorders
 from ptxprint.runner import checkoutput
 
-pdfre = re.compile(r".+[\\/](.+)\.pdf")
+# pdfre = re.compile(r".+[\\/](.+)\.pdf")     # No longer used in TexModel
 
 def universalopen(fname, rewrite=False):
     """ Opens a file with the right codec from a small list and perhaps rewrites as utf-8 """
@@ -320,8 +320,8 @@ class TexModel:
         else:
             tzstr = "{0:+03}'{1:02}'".format(int(tz.seconds / 3600), int((tz.seconds % 3600) / 60))
         libpath = os.path.abspath(os.path.dirname(__file__))
-        self.dict = {"/ptxpath": path,
-                     "/ptxprintlibpath": libpath,
+        self.dict = {"/ptxpath": path.replace("\\","/"),
+                     "/ptxprintlibpath": libpath.replace("\\","/"),
                      "/iccfpath": os.path.join(libpath, "ps_cmyk.icc").replace("\\","/"),
                      "document/date": t.strftime("%Y%m%d%H%M%S")+tzstr }
         self.prjid = prjid

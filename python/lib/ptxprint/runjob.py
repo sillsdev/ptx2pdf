@@ -472,7 +472,7 @@ class RunJob:
         os.putenv("MISCFONTS", ptxmacrospath)
         while numruns > 0:
             if info["document/toc"] != "%":
-                tocdata = readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".toc")))
+                tocdata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".toc")))
             runner = call(["xetex", "--halt-on-error", outfname], cwd=self.tmpdir, logbuffer=logbuffer)
             if isinstance(runner, subprocess.Popen) and runner is not None:
                 try:
@@ -487,7 +487,7 @@ class RunJob:
             if self.res:
                 break
             elif info["document/toc"] != "%" and not rerun:
-                tocndata = readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".toc")))
+                tocndata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".toc")))
                 rerun = tocdata != tocndata
                 if rerun:
                     print("Rerunning because the Table of Contents was updated")
