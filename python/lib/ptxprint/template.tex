@@ -6,12 +6,13 @@
 {document/ifaligndiglot}\diglotcolumns
 {document/ifaligndiglot}\diglotInnerOuter{header/mirrorlayout}
 {document/ifaligndiglot}\diglotSepNotes{document/diglotsepnotes}
+{document/ifaligndiglot}\initdiglot
 
 %%%%% Stylesheets %%%%%
-\stylesheet{{{/ptxpath}/usfm.sty}}
+\stylesheet{L}{{{/ptxpath}/usfm.sty}}
 {project/ifusecustomsty}\stylesheet{{{/ptxpath}/{project/id}/custom.sty}}
-\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/NestedStyles.sty}}     % PTXprint-generated stylesheet changes (for versenums, ftnts, xref, size + spacing)
-{project/ifusemodssty}\stylesheet{{{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.sty}} % User can override all other stylesheet settings here
+\stylesheet{L}{{{/ptxpath}/{project/id}/PrintDraft/NestedStyles.sty}}     % PTXprint-generated stylesheet changes (for versenums, ftnts, xref, size + spacing)
+{project/ifusemodssty}\stylesheet{L}{{{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.sty}} % User can override all other stylesheet settings here
 
 %%%%% Page Setup %%%%%
 % Dimensions
@@ -39,23 +40,23 @@
 \endbooknoeject{project/ifstarthalfpage}
 
 %%%%% Text Spacing %%%%%
-\def\LineSpacingFactor{{{paragraph/linespacingfactor}}}
-\def\VerticalSpaceFactor{{1.0}}
+\def\LineSpacingFactor{L}{{{paragraph/linespacingfactor}}}
+\def\VerticalSpaceFactor{L}{{1.0}}
 {paragraph/useglyphmetrics}\XeTeXuseglyphmetrics=0
 \baselineskip={paragraph/linespacing}pt {paragraph/varlinespacing} {paragraph/linemax} {paragraph/linemin}
 
 %% Cross-space contextualization
-\XeTeXinterwordspaceshaping = {document/spacecntxtlztn}
+\XeTeXinterwordspaceshaping={document/spacecntxtlztn}
 
 %%%%% Fonts %%%%%
-\FontSizeUnit={paper/fontfactor}pt
+\FontSizeUnit{L}={paper/fontfactor}pt
 %% Faces
-\def\regular{{"{fontregular}{fontregular/engine}{font/texfeatures}{document/script}{document/digitmapping}"}}
-\def\bold{{"{fontbold}{fontbold/engine}{font/texfeatures}{document/script}{document/digitmapping}{fontbold/embolden}{fontbold/slant}"}}
-\def\italic{{"{fontitalic}{fontitalic/engine}{font/texfeatures}{document/script}{document/digitmapping}{fontitalic/embolden}{fontitalic/slant}"}}
-\def\bolditalic{{"{fontbolditalic}{fontbolditalic/engine}{font/texfeatures}{document/script}{document/digitmapping}{fontbolditalic/embolden}{fontbolditalic/slant}"}}
-{document/ifspacing}\def\SpaceStretchFactor{{{document/spacestretch}}}
-{document/ifspacing}\def\SpaceShrinkFactor{{{document/spaceshrink}}}
+\def\regular{L}{{"{fontregular}{fontregular/engine}{font/texfeatures}{document/script}{document/digitmapping}"}}
+\def\bold{L}{{"{fontbold}{fontbold/engine}{font/texfeatures}{document/script}{document/digitmapping}{fontbold/embolden}{fontbold/slant}"}}
+\def\italic{L}{{"{fontitalic}{fontitalic/engine}{font/texfeatures}{document/script}{document/digitmapping}{fontitalic/embolden}{fontitalic/slant}"}}
+\def\bolditalic{L}{{"{fontbolditalic}{fontbolditalic/engine}{font/texfeatures}{document/script}{document/digitmapping}{fontbolditalic/embolden}{fontbolditalic/slant}"}}
+{document/ifspacing}\def\SpaceStretchFactor{L}{{{document/spacestretch}}}
+{document/ifspacing}\def\SpaceShrinkFactor{L}{{{document/spaceshrink}}}
 {document/ifcolorfonts}\ColorFontsfalse
 
 %% Specify the fallback font to be used for special/missing characters
@@ -63,7 +64,7 @@
 
 %%%%% Layout %%%%%
 {document/ifhidehboxerrors}\overfullrule=0pt
-\RTL{document/ifrtl}   % Use right-to-left layout mode?
+\RTL{L}{document/ifrtl}   % Use right-to-left layout mode?
 {document/toptobottom}\XeTeXupwardsmode=1     % Top-to-Bottom and Left-to-Right layout
 {document/toptobottom}\rotatetrue
 % Specify ISO 639-1 language code.

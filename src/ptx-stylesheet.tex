@@ -36,10 +36,11 @@
 % either ignoring it or saving the parameter as appropriate
 %
 \def\h@phen{-}
+\def\ds@ffix{}
 % Remember the name of the marker currently being defined
-\def \Marker         #1\relax{\def\m@rker{#1} % store name of marker currently being defined
-                              \expandafter\let\csname font<#1>\endcsname\relax
-                              \expandafter\let\csname extrafont<#1>\endcsname\relax}
+\def \Marker         #1\relax{\def\m@rker{#1\ds@ffix} % store name of marker currently being defined
+                              \expandafter\let\csname font<#1\ds@ffix>\endcsname\relax
+                              \expandafter\let\csname extrafont<#1\ds@ffix>\endcsname\relax}
 
 % Ignore stylesheet markers that do not affect formatting 
 \def \Name           #1\relax{}

@@ -34,6 +34,7 @@ def universalopen(fname, rewrite=False):
     return fh
 
 ModelMap = {
+    "L":                        ("c_diglotAutoAligned", lambda w,v: "L" if v else ""),
     #"config/name":              ("ecb_savedConfig", lambda w,v: v or "default"),
     "config/notes":             ("t_configNotes", lambda w,v: v or ""),
     "config/pwd":               ("t_invisiblePassword", lambda w,v: v or ""),
