@@ -33,24 +33,43 @@
 \def\addToLeftHooks#1{\x@\global\x@\leftho@ks\x@{\the\leftho@ks #1}}
 \def\addToRightHooks#1{\x@\global\x@\rightho@ks\x@{\the\rightho@ks #1}}
 
-\def\stylesheetL#1{\gdef\ds@ffix{L}\stylesheet{#1}}
-\def\stylesheetR#1{\gdef\ds@ffix{R}\stylesheet{#1}}
+\def\stylesheetL#1{\gdef\ds@ffix{L}\stylesheet{#1}\gdef\ds@ffix{}}%Need to reset ds@ffix to {}, so that side-specific settings can be applied.
+\def\stylesheetR#1{\gdef\ds@ffix{R}\stylesheet{#1}\gdef\ds@ffix{}}
 
-\def\LR#1{\x@\gdef\csname #1\endcsname{\csname #1\ifdiglot\ifdiglotL L\else R\fi\fi\endcsname}}
+%LRspecific holds a list of things that get redefined on side-switching.
+\def\LRspecific{VerticalSpaceFactor,LineSpacingFactor,FontSizeUnit,regular,bold,italic,bolditalic,SpaceStretchFactor,SpaceShrinkFactor}%,RTL  too, but it can't be treated this way.
+\def\LRspecific{Regular,regular, bold,Bold,Italic,BoldItalic}%,RTL  too, but it can't be treated this way.
+
+% Code to cycle through \LRspecific, setting them to their L/R values.
+%Would be nice to re-use \\, but this might get called defining a font in footnotes, so shouldn't mess with that
+%Therefore use \wh@t instead.
+\def\E{}
+\def\pr@cessSp@cific#1,#2\E{\def\t@st{#1}\ifx\t@st\empty\let\n@xt\l@stSpecific\else\let\n@xt=\pr@cessSp@cific\wh@t{#1}\fi\n@xt #2,\E}
+\def\l@stSpecific#1\E{}
+\def\pr@cessSpecific{\x@\pr@cessSp@cific \LRspecific,\E}
+
+\def\sp@cificSide#1{\edef\sfx{\ifdiglot\ifdiglotL L\else R\fi\else @rig\fi}\MSG{sS #1:\sfx}\x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname}
+\def\SSsp@cificSide#1{\x@\let\csname#1\x@\endcsname\csname #1\ds@ffix\endcsname} %Stylesheet version of above.
+\def\s@veSpecific#1{\x@\let\csname#1@rig\x@\endcsname\csname #1\endcsname\ch@ckLR{#1}{L}\ch@ckLR{#1}{R}}
+\def\ch@ckLR#1#2{\x@\let\t@mp=\csname#1#2\endcsname\ifx\t@mp\relax\ifdiglot\MSG{Side-specific #1#2 not defined, global #1}\x@\let\csname#1#2\x@\endcsname\csname #1@rig\endcsname\fi}
+\def\getLRspecific{\let\wh@t=\sp@cificSide\pr@cessSpecific}% For use with style definitions, etc.
+\def\SSsetLRspecific{\let\wh@t=\SSsp@cificSide\pr@cessSpecific}% for use in stylesheet
+\def\saveLRspecific{\let\wh@t=\s@veSpecific\pr@cessSpecific\let\saveLRspecific=\relax}% Onceonly.
+
 \newdimen\VerticalSpaceFactorL\newdimen\VerticalSpaceFactorR
 \newdimen\LineSpacingFactorL\newdimen\LineSpacingFactorR
 \newdimen\FontSizeUnitL\newdimen\FontSizeUnitR
 \newdimen\SpaceStretchFactorL\newdimen\SpaceStretchFactorR
 \newdimen\SpaceShrinkFactorL\newdimen\SpaceShrinkFactorR
 \newif\ifRTLL \newif\ifRTLR
-\def\initdiglot{
-    \LR{VerticalSpaceFactor} \LR{LineSpacingFactor} \LR{FontSizeUnit}
-    \LR{regular}\LR{bold}\LR{italic}\LR{bolditalic}
-    \LR{SpaceStretchFactor}\LR{SpaceShrinkFactor}
-    \LR{RTL}
-}
+\def\initdiglot{} %keep 'old' code happy
 
-%
+    %\LR{VerticalSpaceFactor} \LR{LineSpacingFactor} \LR{FontSizeUnit}
+    %\LR{regular}\LR{bold}\LR{italic}\LR{bolditalic}
+    %\LR{SpaceStretchFactor}\LR{SpaceShrinkFactor}
+    %\LR{RTL}
+%}
+
 \diglotfalse%
 \newif\ifdiglotSepNotes %If the footnotes from the versions should be split (true) or merged together
 \diglotSepNotestrue%
