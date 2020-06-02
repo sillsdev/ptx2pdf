@@ -1,6 +1,7 @@
 .SUFFIXES: .dvi .pdf
 all: Galatians.pdf
 
+SCRIPTDIR:=../../python/scripts
 .tex.pdf:
 	TEXINPUTS=.:../../src xetex $<
 	TEXINPUTS=.:../../src xetex $<
@@ -30,11 +31,11 @@ Gal_web.usfm: engwebp_usfm.zip
 	mv 78-GALengwebp.usfm $@
 	touch $@
 	
-mergedGal.usfm: Gal_wyc.usfm Gal_web.usfm Makefile ./diglot_merge.pl 
-	./diglot_merge.pl -s -l -C -L merge.log -o merged.out Gal_web.usfm Gal_wyc.usfm 
+mergedGal.usfm: Gal_wyc.usfm Gal_web.usfm Makefile $(SCRIPTDIR)/diglot_merge.pl 
+	$(SCRIPTDIR)/diglot_merge.pl -s -l -C -L merge.log -o merged.out Gal_web.usfm Gal_wyc.usfm 
 	cat merged.out | grep -Ev '\\sts|\\rem' > $@
 	rm merged.out
 
-mergedGalV.usfm: Gal_wyc.usfm Gal_web.usfm Makefile ./diglot_merge.pl 
-	./diglot_merge.pl -s -v -C -L merge.log -o merged.out Gal_web.usfm Gal_wyc.usfm 
+mergedGalV.usfm: Gal_wyc.usfm Gal_web.usfm Makefile $(SCRIPTDIR)/diglot_merge.pl 
+	$(SCRIPTDIR)/diglot_merge.pl -s -v -C -L merge.log -o merged.out Gal_web.usfm Gal_wyc.usfm 
 	cat merged.out | grep -Ev '\\sts|\\rem' > $@
