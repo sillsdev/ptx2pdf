@@ -294,7 +294,7 @@ class ViewModel:
                 return (1, k, v)
         config = configparser.ConfigParser()
         for k, v in sorted(ModelMap.items(), key=sortkeys):
-            if v[0] is None:
+            if v[0] is None or "/" not in k:
                 continue
             if k in self._attributes:
                 v = self._attributes[k]

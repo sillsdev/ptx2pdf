@@ -33,6 +33,23 @@
 \def\addToLeftHooks#1{\x@\global\x@\leftho@ks\x@{\the\leftho@ks #1}}
 \def\addToRightHooks#1{\x@\global\x@\rightho@ks\x@{\the\rightho@ks #1}}
 
+\def\stylesheetL#1{\gdef\ds@ffix{L}\stylesheet{#1}}
+\def\stylesheetR#1{\gdef\ds@ffix{R}\stylesheet{#1}}
+
+\def\LR#1{\x@\gdef\csname #1\endcsname{\csname #1\ifdiglot\ifdiglotL L\else R\fi\fi\endcsname}}
+\newdimen\VerticalSpaceFactorL\newdimen\VerticalSpaceFactorR
+\newdimen\LineSpacingFactorL\newdimen\LineSpacingFactorR
+\newdimen\FontSizeUnitL\newdimen\FontSizeUnitR
+\newdimen\SpaceStretchFactorL\newdimen\SpaceStretchFactorR
+\newdimen\SpaceShrinkFactorL\newdimen\SpaceShrinkFactorR
+\newif\ifRTLL \newif\ifRTLR
+\def\initdiglot{
+    \LR{VerticalSpaceFactor} \LR{LineSpacingFactor} \LR{FontSizeUnit}
+    \LR{regular}\LR{bold}\LR{italic}\LR{bolditalic}
+    \LR{SpaceStretchFactor}\LR{SpaceShrinkFactor}
+    \LR{RTL}
+}
+
 %
 \diglotfalse%
 \newif\ifdiglotSepNotes %If the footnotes from the versions should be split (true) or merged together
