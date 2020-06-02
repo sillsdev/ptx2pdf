@@ -37,30 +37,34 @@
 \def\stylesheetR#1{\gdef\ds@ffix{R}\stylesheet{#1}\gdef\ds@ffix{}}
 
 %LRspecific holds a list of things that get redefined on side-switching.
-\def\LRspecific{VerticalSpaceFactor,LineSpacingFactor,FontSizeUnit,regular,bold,italic,bolditalic,SpaceStretchFactor,SpaceShrinkFactor}%,RTL  too, but it can't be treated this way.
-\def\LRspecific{Regular,regular, bold,Bold,Italic,BoldItalic}%,RTL  too, but it can't be treated this way.
+\def\LRspecificDef{VerticalSpaceFactor,LineSpacingFactor,regular,bold,italic,bolditalic}
+\def\LRspecificDim{FontSizeUnit,SpaceStretchFactor,SpaceShrinkFactor}
+
 
 % Code to cycle through \LRspecific, setting them to their L/R values.
 %Would be nice to re-use \\, but this might get called defining a font in footnotes, so shouldn't mess with that
 %Therefore use \wh@t instead.
 \def\E{}
-\def\pr@cessSp@cific#1,#2\E{\def\t@st{#1}\ifx\t@st\empty\let\n@xt\l@stSpecific\else\let\n@xt=\pr@cessSp@cific\wh@t{#1}\fi\n@xt #2,\E}
+\def\pr@cessSp@cific#1,#2\E{\def\t@st{#1}\ifx\t@st\empty\let\n@xt\l@stSpecific\else\let\n@xt\pr@cessSp@cific\wh@t{#1}\fi\n@xt #2,\E}
 \def\l@stSpecific#1\E{}
-\def\pr@cessSpecific{\x@\pr@cessSp@cific \LRspecific,\E}
+\def\pr@cessSpecific{\edef\LRs{\LRspecificDef,\LRspecificDim}\x@\pr@cessSp@cific \LRs,\E}
 
-\def\sp@cificSide#1{\edef\sfx{\ifdiglot\ifdiglotL L\else R\fi\else @rig\fi}\MSG{sS #1:\sfx}\x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname}
-\def\SSsp@cificSide#1{\x@\let\csname#1\x@\endcsname\csname #1\ds@ffix\endcsname} %Stylesheet version of above.
-\def\s@veSpecific#1{\x@\let\csname#1@rig\x@\endcsname\csname #1\endcsname\ch@ckLR{#1}{L}\ch@ckLR{#1}{R}}
-\def\ch@ckLR#1#2{\x@\let\x@\myt@mp\csname#1#2\endcsname\ifx\myt@mp\relax\ifdiglot\MSG{Side-specific #1#2 not defined, global #1}\fi\x@\let\csname#1#2\x@\endcsname\csname #1@rig\endcsname\fi}
-\def\getLRspecific{\let\wh@t=\sp@cificSide\pr@cessSpecific}% For use with style definitions, etc.
-\def\SSsetLRspecific{\let\wh@t=\SSsp@cificSide\pr@cessSpecific}% for use in stylesheet
-\def\saveLRspecific{\let\wh@t=\s@veSpecific\pr@cessSpecific\let\saveLRspecific=\relax}% Onceonly.
+\def\sp@cificSide#1{\edef\sfx{\ifdiglot\ifdiglotL L\else R\fi\else @rig\fi}\ifcsname #1\sfx\endcsname\x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname\trace{S}{SpS #1\sfx selected}\fi}
+\def\SSsp@cificSide#1{\trace{S}{SSsS: #1\ds@ffix}\ifcsname #1\ds@ffix\endcsname \x@\let\csname#1\x@\endcsname\csname #1\ds@ffix\endcsname\fi} %Stylesheet version of above.
+\def\s@veSpecific#1{\ifcsname #1\endcsname \x@\let\csname#1@rig\x@\endcsname\csname #1\endcsname\ch@ckLR{#1}{L}\ch@ckLR{#1}{R}\else\MSG{No global definition for #1}\fi}
+\def\ch@ckLR#1#2{\ifcsname#1#2\endcsname\x@\let\csname#1#2\x@\endcsname\csname #1@rig\endcsname\else\ifdiglot\MSG{Side-specific #1#2 not defined, global #1 used}\fi\fi}
+\def\sh@wSpecificDef#1{\trace{S}{#1: \csname #1\endcsname}}
+\def\sh@wSpecificDim#1{\ifcsname #1\endcsname\trace{S}{#1: \the\csname #1\endcsname}\else\trace{S}{#1: undefined}\fi}
+\def\getLRspecific{\let\wh@t\sp@cificSide\pr@cessSpecific}% For use with style definitions, etc.
+\def\SSsetLRspecific{\let\wh@t\SSsp@cificSide\pr@cessSpecific}% for use in stylesheet
+\def\saveLRspecific{\let\wh@t\s@veSpecific\pr@cessSpecific\let\saveLRspecific\relax}% Onceonly.
+\def\showLRspecific{\let\wh@t\sh@wSpecificDef\x@\pr@cessSp@cific \LRspecificDef,\E \let\wh@t\sh@wSpecificDim\x@\pr@cessSp@cific \LRspecificDim,\E}% 
 
 \newdimen\VerticalSpaceFactorL\newdimen\VerticalSpaceFactorR
 \newdimen\LineSpacingFactorL\newdimen\LineSpacingFactorR
 \newdimen\FontSizeUnitL\newdimen\FontSizeUnitR
-\newdimen\SpaceStretchFactorL\newdimen\SpaceStretchFactorR
-\newdimen\SpaceShrinkFactorL\newdimen\SpaceShrinkFactorR
+%\newdimen\SpaceStretchFactorL\newdimen\SpaceStretchFactorR
+%\newdimen\SpaceShrinkFactorL\newdimen\SpaceShrinkFactorR
 \newif\ifRTLL \newif\ifRTLR
 \def\initdiglot{} %keep 'old' code happy
 
