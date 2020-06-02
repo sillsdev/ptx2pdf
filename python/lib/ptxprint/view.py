@@ -1,6 +1,7 @@
 
 import configparser, os, re, regex, random, collections
-from .texmodel import ModelMap, universalopen
+from .texmodel import ModelMap, TexModel, universalopen  # MH: I added TeXModel here so that I could 
+                                                         # access _peripheralBooks (OK, or is there a better/proper way)
 from .ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from .font import TTFont
 import pathlib, os

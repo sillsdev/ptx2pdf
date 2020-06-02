@@ -4,7 +4,6 @@ import sys, os, re, regex, gi, subprocess
 gi.require_version('Gtk', '3.0')
 from shutil import copyfile, copytree, rmtree
 from gi.repository import Gtk, Pango, GObject
-# gi.require_version('GtkSource', '4') 
 from gi.repository import GtkSource
 import xml.etree.ElementTree as et
 from ptxprint.font import TTFont, initFontCache
@@ -13,8 +12,9 @@ from ptxprint.runner import StreamTextBuffer
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 import configparser
 import traceback
-# from time import sleep
 from threading import Thread
+
+pdfre = re.compile(r".+[\\/](.+)\.pdf")
 
 # xmlstarlet sel -t -m '//iso_15924_entry' -o '"' -v '@alpha_4_code' -o '" : "' -v '@name' -o '",' -n /usr/share/xml/iso-codes/iso_15924.xml
 _allscripts = { "Zyyy" : "Default", "Adlm" : "Adlam", "Afak" : "Afaka", "Aghb" : "Caucasian Albanian", "Ahom" : "Ahom, Tai Ahom", 
@@ -89,8 +89,6 @@ class Splash(Thread):
     def destroy(self):
         self.window.destroy()
 
-    # "c_includeFootnotes" :     ("c_fnautocallers", "t_fncallers", "c_fnomitcaller", "c_fnpageresetcallers", "c_fnparagraphednotes"),
-    # "c_includeXrefs" :         ("c_xrautocallers", "t_xrcallers", "c_xromitcaller", "c_xrpageresetcallers", "c_paragraphedxrefs"),
 _sensitivities = {
     "c_mainBodyText" :         ["gr_mainBodyText"],
     "c_doublecolumn" :         ["gr_doubleColumn", "c_clSingleColLayout"],
@@ -164,14 +162,17 @@ class GtkViewModel(ViewModel):
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(os.path.dirname(__file__), "ptxprint.glade"))
         self.builder.connect_signals(self)
-        self.addCR("fcb_digits", 0)
-        self.addCR("fcb_script", 0)
-        self.addCR("fcb_chapfrom", 0)
-        self.addCR("fcb_chapto", 0)
-        self.addCR("fcb_textDirection", 0)
-        self.addCR("fcb_blendedXrefCaller", 0)
-        self.addCR("fcb_glossaryMarkupStyle", 0)
-        self.addCR("fcb_fontFaces", 0)
+        for fcb in ("digits", "script", "chapfrom", "chapto", "textDirection", 
+                    "blendedXrefCaller", "glossaryMarkupStyle", "fontFaces"):
+            self.addCR("fcb_"+fcb, 0)
+        # self.addCR("fcb_digits", 0)
+        # self.addCR("fcb_script", 0)
+        # self.addCR("fcb_chapfrom", 0)
+        # self.addCR("fcb_chapto", 0)
+        # self.addCR("fcb_textDirection", 0)
+        # self.addCR("fcb_blendedXrefCaller", 0)
+        # self.addCR("fcb_glossaryMarkupStyle", 0)
+        # self.addCR("fcb_fontFaces", 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.addCR("fcb_diglotAlignment", 0)
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
@@ -188,7 +189,7 @@ class GtkViewModel(ViewModel):
         scripts.clear()
         for k, v in _allscripts.items():
             scripts.append([v, k])
-        self.set('fcb_script', 'Zyyy')
+        self.set('fcb_script', 'Zyyy') # i.e. Set it to "Default"
 
         digits = self.builder.get_object("ls_digits")
         currdigits = {r[0]: r[1] for r in digits}
@@ -1386,7 +1387,6 @@ class GtkViewModel(ViewModel):
             btn_selectFigureFolder.set_tooltip_text("")
             self.builder.get_object("c_useCustomFolder").set_active(False)
             self.builder.get_object("btn_selectFigureFolder").set_sensitive(False)
-            # self.builder.get_object("c_useLowResPics").set_active(True)
 
     def _onPDFClicked(self, title, isSingle, basedir, ident, attr, btn):
         vals = self.fileChooser(title,
@@ -1527,7 +1527,7 @@ class GtkViewModel(ViewModel):
             self.set("c_useFallbackFont", False)
             self.builder.get_object("gr_fallbackFont").set_sensitive(False)
             self.doError("FYI: The Regular font already supports all the characters in the text.",
-                    "A fallback font is not required.\nThis 'Use Fallback Font' option has been disabled.")
+                    "A fallback font is not required so\nthe 'Use Fallback Font' option has been disabled.")
 
     def msgQuestion(self, title, question):
         par = self.builder.get_object('ptxprint')
