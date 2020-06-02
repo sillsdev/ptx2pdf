@@ -51,13 +51,10 @@
 \def\sp@cificSide#1{\edef\sfx{\ifdiglot\ifdiglotL L\else R\fi\else @rig\fi}\MSG{sS #1:\sfx}\x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname}
 \def\SSsp@cificSide#1{\x@\let\csname#1\x@\endcsname\csname #1\ds@ffix\endcsname} %Stylesheet version of above.
 \def\s@veSpecific#1{\x@\let\csname#1@rig\x@\endcsname\csname #1\endcsname\ch@ckLR{#1}{L}\ch@ckLR{#1}{R}}
-\def\ch@ckLR#1#2{\x@\let\t@mp=\csname#1#2\endcsname\ifx\t@mp\relax\ifdiglot\MSG{Side-specific #1#2 not defined, global #1}\x@\let\csname#1#2\x@\endcsname\csname #1@rig\endcsname\fi}
+\def\ch@ckLR#1#2{\x@\let\x@\myt@mp\csname#1#2\endcsname\ifx\myt@mp\relax\ifdiglot\MSG{Side-specific #1#2 not defined, global #1}\fi\x@\let\csname#1#2\x@\endcsname\csname #1@rig\endcsname\fi}
 \def\getLRspecific{\let\wh@t=\sp@cificSide\pr@cessSpecific}% For use with style definitions, etc.
 \def\SSsetLRspecific{\let\wh@t=\SSsp@cificSide\pr@cessSpecific}% for use in stylesheet
 \def\saveLRspecific{\let\wh@t=\s@veSpecific\pr@cessSpecific\let\saveLRspecific=\relax}% Onceonly.
-\def\saveLRspecific{}
-\def\getLRspecific{}% For use with style definitions, etc.
-\def\SSsetLRspecific{}% for use in stylesheet
 
 \newdimen\VerticalSpaceFactorL\newdimen\VerticalSpaceFactorR
 \newdimen\LineSpacingFactorL\newdimen\LineSpacingFactorR

@@ -174,7 +174,7 @@
 \def\s@tfont#1{%
  \ifdiglot\ifdiglotL\def\f@ntstyle{#1L}\def\sid@{L}\else\def\f@ntstyle{#1R}\def\sid@{R}\fi\else\def\f@ntstyle{#1}\fi%
  \x@\ifx\csname font<\f@ntstyle>\endcsname \relax% check if font identifier for this style has been created
-  \getLRspecific%Whether diglot or not, it might have been diglot before.
+  %\getLRspecific%Whether diglot or not, it might have been diglot before.
   \let\regul@r=\regular%
   \let\b@ld=\bold%
   \let\it@lic=\italic%
