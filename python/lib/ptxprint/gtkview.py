@@ -89,6 +89,10 @@ class Splash(Thread):
     def destroy(self):
         self.window.destroy()
 
+# The 3 structures below are used by method: sensiVisible() to toggle object states
+
+# Checkboxes and the different objects they make (in)sensitive when toggled
+# Order is important, as the 1st object can be told to "grab_focus"
 _sensitivities = {
     "c_mainBodyText" :         ["gr_mainBodyText"],
     "c_doublecolumn" :         ["gr_doubleColumn", "c_clSingleColLayout"],
@@ -100,15 +104,6 @@ _sensitivities = {
     "c_diglot" :               ["gr_diglot"],
     "c_borders" :              ["gr_borders"],
 
-    "c_showLayoutTab" :        ["tb_Layout"],
-    "c_showBodyTab" :          ["tb_Body"],
-    "c_showHeadFootTab" :      ["tb_HeadFoot"],
-    "c_showPicturesTab" :      ["tb_Pictures"],
-    "c_showAdvancedTab" :      ["tb_Advanced"],
-    "c_showViewerTab" :        ["tb_ViewerEditor"],
-    "c_showDiglotTab" :        ["tb_Diglot"],
-    "c_showBordersTab" :       ["tb_FancyBorders"],
-    
     "c_multiplebooks" :        ["c_combine", "t_booklist"],
     "c_pagegutter" :           ["s_pagegutter"],
     "c_variableLineSpacing" :  ["s_linespacingmin", "s_linespacingmax", "l_min", "l_max"],
@@ -117,6 +112,7 @@ _sensitivities = {
     "c_useChapterLabel" :      ["t_clBookList", "l_clHeading", "t_clHeading", "c_clSingleColLayout"],
     "c_autoToC" :              ["t_tocTitle", "gr_toc", "l_toc"],
     "c_marginalverses" :       ["s_columnShift"],
+    "c_omitrhchapnum" :        ["c_hdrverses"],
     "c_hdrverses" :            ["c_sepPeriod", "c_sepColon"],
     "c_fnautocallers" :        ["t_fncallers", "btn_resetFNcallers"],
     "c_xrautocallers" :        ["t_xrcallers", "btn_resetXRcallers"],
@@ -141,11 +137,24 @@ _sensitivities = {
     "c_fakeitalic" :           ["s_italicembolden", "s_italicslant"],
     "c_fakebolditalic" :       ["s_bolditalicembolden", "s_bolditalicslant"]
 }
+# Checkboxes and the different objects they make (in)sensitive when toggled
+# These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
 _nonsensitivities = {
     "c_omitIntroOutline" :     ["c_prettyIntroOutline"],
     "c_omitSectHeads" :        ["c_omitParallelRefs"],
     "c_multiplebooks" :        ["l_singlebook", "ecb_book", "l_chapfrom", "fcb_chapfrom", "l_chapto", "fcb_chapto"],
     "c_blendfnxr" :            ["c_includeXrefs", "c_xrautocallers", "t_xrcallers", "c_xromitcaller", "c_xrpageresetcallers", "c_paragraphedxrefs"]
+}
+# Checkboxes and the Tabs that they make (in)visible
+_visibilities = {
+    "c_showLayoutTab" :        ["tb_Layout"],
+    "c_showBodyTab" :          ["tb_Body"],
+    "c_showHeadFootTab" :      ["tb_HeadFoot"],
+    "c_showPicturesTab" :      ["tb_Pictures"],
+    "c_showAdvancedTab" :      ["tb_Advanced"],
+    "c_showViewerTab" :        ["tb_ViewerEditor"],
+    "c_showDiglotTab" :        ["tb_Diglot"],
+    "c_showBordersTab" :       ["tb_FancyBorders"],
 }
 class GtkViewModel(ViewModel):
 
@@ -277,6 +286,51 @@ class GtkViewModel(ViewModel):
         self.mw.resize(730, 640)
         self.mw.show_all()
         Gtk.main()
+
+    def onHideAdvancedSettingsClicked(self, c_hideAdvancedSettings):
+    # This method needs a big tidy-up!
+        if self.get("c_hideAdvancedSettings"):
+            # Turn Dangerous Settings OFF
+            for c in ("c_startOnHalfPage", "c_marginalverses", "c_prettyIntroOutline", "c_blendfnxr", "c_autoToC",
+                      "c_figplaceholders", "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", 
+                      "c_preventwidows", "c_PDFx1aOutput", "c_diglot", "c_hyphenate", "c_variableLineSpacing",
+                      "c_showAdvancedTab", "c_showViewerTab", "c_elipsizeMissingVerses"):  # "c_showBodyTab", 
+                self.builder.get_object(c).set_active(False)
+
+            # Turn Essential Settings ON
+            for c in ("c_mainBodyText", "c_skipmissingimages", "c_includefigsfromtext"):
+                self.builder.get_object(c).set_active(True)
+            self.builder.get_object("c_hideAdvancedSettings").set_opacity(0.2)
+            self.builder.get_object("c_hideAdvancedSettings").set_tooltip_text("")
+            
+        else:
+            self.builder.get_object("c_hideAdvancedSettings").set_opacity(1.0)
+            self.builder.get_object("c_hideAdvancedSettings").set_tooltip_text("Many of the settings in this tool only need to be\n" + \
+                "set up once, or used on rare occasions. These can\nbe hidden away for most of the time if that helps.\n\n" + \
+                "This setting can be toggled off again later, but\nis intentionally almost invisible (though located\nin the same place).")
+                      
+            for c in ("c_showAdvancedTab", "c_showViewerTab"):
+                self.builder.get_object(c).set_active(True)
+
+        for c in ("tb_Advanced", "tb_ViewerEditor", "tb_Diglot", "tb_FancyBorders", "l_missingPictureString",
+                  "btn_editPicList", "l_imageTypeOrder", "t_imageTypeOrder", "fr_chapVerse", "s_colgutteroffset",
+                  "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "bx_AdvFootnoteConfig", "l_colgutteroffset",
+                  "c_usePicList", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", 
+                  "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
+                  "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection", "l_colgutteroffset",
+                  "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "row_ToC", "c_hyphenate",
+                  "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", "c_preventwidows",
+                  "l_sidemarginfactor", "s_sidemarginfactor", "l_min", "s_linespacingmin", "l_max", "s_linespacingmax",
+                  "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "fcb_textDirection", "l_digits", "fcb_digits",
+                  "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "bx_ShowTabs", "fcb_glossaryMarkupStyle",
+                  "gr_fnAdvOptions", "gr_fnSpacingOptions", "c_figexclwebapp", "bx_horizRule", "l_glossaryMarkupStyle"):
+            self.builder.get_object(c).set_visible(not self.get("c_hideAdvancedSettings"))
+
+        # Resize Main UI Window appropriately
+        if self.get("c_hideAdvancedSettings"):
+            self.mw.resize(710, 316)
+        else:
+            self.mw.resize(730, 640)
 
     def ExperimentalFeatures(self, value):
         self.experimental = value
@@ -539,7 +593,7 @@ class GtkViewModel(ViewModel):
             for w in v:
                 self.builder.get_object(w).set_sensitive(state)
 
-    def beSensitive(self, k, focus=False):
+    def sensiVisible(self, k, focus=False):
         state = self.get(k)
         try:
             for w in _sensitivities[k]:
@@ -549,6 +603,9 @@ class GtkViewModel(ViewModel):
         if k in _nonsensitivities.keys():
             for w in _nonsensitivities[k]:
                 self.builder.get_object(w).set_sensitive(not state)
+        if k in _visibilities.keys():
+            for w in _visibilities[k]:
+                self.builder.get_object(w).set_visible(state)
         if focus:
             self.builder.get_object(_sensitivities[k][0]).grab_focus()
         return state
@@ -626,7 +683,23 @@ class GtkViewModel(ViewModel):
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
         self.onViewerChangePage(None,None,pg)
 
-    # should this go into Info?
+    def onBookSelectorChange(self, btn):
+        status = self.sensiVisible("c_multiplebooks")
+        self.set("c_prettyIntroOutline", False)
+        if status and self.get("t_booklist") == "" and self.prjid is not None:
+            self.updateDialogTitle()
+            # pass
+            # self.onChooseBooksClicked(None)
+        else:
+            toc = self.builder.get_object("c_autoToC") # Ensure that we're not trying to build a ToC for a single book!
+            toc.set_sensitive(status)
+            if not status:
+                toc.set_active(False)
+            self.updateDialogTitle()
+            bks = self.getBooks()
+            if len(bks) > 1:
+                self.builder.get_object("ecb_examineBook").set_active_id(bks[0])
+
     def onGenerateClicked(self, btn):
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
         if pg == 1: # PicList
@@ -744,13 +817,10 @@ class GtkViewModel(ViewModel):
             elif sys.platform == "linux":
                 subprocess.call(('xdg-open', fpath))
 
-    def onScriptChanged(self, cb_script):
+    def onScriptChanged(self, btn):
         # If there is a matching digit style for the script that has just been set, 
         # then also turn that on (but it can be overridden by the user if needed).
-        try:
-            self.cb_digits.set_active_id(self.get('fcb_script'))
-        except:
-            pass
+        self.fcb_digits.set_active_id(self.get('fcb_script'))
 
     def onFontChanged(self, fbtn):
         # traceback.print_stack(limit=3)
@@ -774,19 +844,19 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(c).set_sensitive(status)
 
     def onFakeboldClicked(self, btn):
-        self.beSensitive("c_fakebold")
+        self.sensiVisible("c_fakebold")
         self.updateFakeLabels()
         
     def onFakeitalicClicked(self, btn):
-        self.beSensitive("c_fakeitalic")
+        self.sensiVisible("c_fakeitalic")
         self.updateFakeLabels()
 
     def onFakebolditalicClicked(self, btn):
-        self.beSensitive("c_fakebolditalic")
+        self.sensiVisible("c_fakebolditalic")
         self.updateFakeLabels()
 
     def onVariableLineSpacingClicked(self, btn):
-        self.beSensitive("c_variableLineSpacing")
+        self.sensiVisible("c_variableLineSpacing")
         lnspVal = round(self.get("s_linespacing"), 1)
         minVal = round(self.get("s_linespacingmin"), 1)
         maxVal = round(self.get("s_linespacingmax"), 1)
@@ -796,10 +866,10 @@ class GtkViewModel(ViewModel):
             self.set("s_linespacingmax", lnspVal + 2)
 
     def onVerticalRuleClicked(self, btn):
-        self.beSensitive("c_verticalrule")
+        self.sensiVisible("c_verticalrule")
 
     def onMarginalVersesClicked(self, btn):
-        self.beSensitive("c_marginalverses")
+        self.sensiVisible("c_marginalverses")
 
     def onOmitSectHeadsClicked(self, btn):
         status = self.get("c_omitSectHeads")
@@ -811,24 +881,24 @@ class GtkViewModel(ViewModel):
             fname = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint", 'hyphen-{}.tex'.format(self.prjid))
         
     def onUseIllustrationsClicked(self, btn):
-        self.beSensitive("c_includeillustrations")
+        self.sensiVisible("c_includeillustrations")
 
     def onUseCustomFolderclicked(self, btn):
-        status = self.beSensitive("c_useCustomFolder")
+        status = self.sensiVisible("c_useCustomFolder")
         if not status:
             self.builder.get_object("c_exclusiveFiguresFolder").set_active(status)
 
     def onBlendedXrsClicked(self, btn):
-        self.beSensitive("c_blendfnxr")
+        self.sensiVisible("c_blendfnxr")
     
     def onUseChapterLabelclicked(self, btn):
-        self.beSensitive("c_useChapterLabel")
+        self.sensiVisible("c_useChapterLabel")
         
     def onClickedIncludeFootnotes(self, btn):
-        self.beSensitive("c_includeFootnotes")
+        self.sensiVisible("c_includeFootnotes")
         
     def onClickedIncludeXrefs(self, btn):
-        self.beSensitive("c_includeXrefs")
+        self.sensiVisible("c_includeXrefs")
 
     def onPageNumTitlePageChanged(self, btn):
         if self.get("c_pageNumTitlePage"):
@@ -839,65 +909,55 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("c_pageNumTitlePage").set_active(False)
 
     def onPageGutterChanged(self, btn):
-        self.beSensitive("c_pagegutter", focus=True)
+        self.sensiVisible("c_pagegutter", focus=True)
 
     def onDoubleColumnChanged(self, btn):
-        self.beSensitive("c_doublecolumn")
+        self.sensiVisible("c_doublecolumn")
+
+    def onOmitrhchapnumClicked(self, btn):
+        self.sensiVisible("c_omitrhchapnum")
 
     def onHdrVersesClicked(self, btn):
-        self.beSensitive("c_hdrverses")
+        self.sensiVisible("c_hdrverses")
 
-    def onBookSelectorChange(self, btn):
-        status = self.beSensitive("c_multiplebooks")
-        self.set("c_prettyIntroOutline", False)
-        if status and self.get("t_booklist") == "" and self.prjid is not None:
-            pass
-            # self.onChooseBooksClicked(None)
-        else:
-            toc = self.builder.get_object("c_autoToC") # Ensure that we're not trying to build a ToC for a single book!
-            toc.set_sensitive(status)
-            if not status:
-                toc.set_active(False)
-            self.updateDialogTitle()
-            bks = self.getBooks()
-            if len(bks) > 1:
-                self.builder.get_object("ecb_examineBook").set_active_id(bks[0])
-            
     def onUseFallbackFontchanged(self, btn):
-        self.beSensitive("c_useFallbackFont")
+        self.sensiVisible("c_useFallbackFont")
+
+    def onUsePicListChanged(self, btn):
+        self.sensiVisible("c_usePicList")
 
     def onFigsChanged(self, btn):
-        self.beSensitive("c_includefigsfromtext")
+        self.sensiVisible("c_includefigsfromtext")
 
     def onInclFrontMatterChanged(self, btn):
-        self.beSensitive("c_inclFrontMatter")
+        self.sensiVisible("c_inclFrontMatter")
 
     def onInclBackMatterChanged(self, btn):
-        self.beSensitive("c_inclBackMatter")
+        self.sensiVisible("c_inclBackMatter")
 
     def onApplyWatermarkChanged(self, btn):
-        self.beSensitive("c_applyWatermark")
+        self.sensiVisible("c_applyWatermark")
     
     def onInclPageBorderChanged(self, btn):
-        self.beSensitive("c_inclPageBorder")
+        self.sensiVisible("c_inclPageBorder")
 
     def onInclSectionHeaderChanged(self, btn):
-        self.beSensitive("c_inclSectionHeader")
+        self.sensiVisible("c_inclSectionHeader")
 
     def onInclVerseDecoratorChanged(self, btn):
-        self.beSensitive("c_inclVerseDecorator")
+        self.sensiVisible("c_inclVerseDecorator")
     
     def onAutoTocChanged(self, btn):
-        self.beSensitive("c_autoToC", focus=True)
+        self.sensiVisible("c_autoToC", focus=True)
 
     def onSpacingClicked(self, btn):
-        self.beSensitive("c_spacing")
+        self.sensiVisible("c_spacing")
 
     def onLineBreakChanged(self, btn):
-        self.beSensitive("c_linebreakon", focus=True)
+        self.sensiVisible("c_linebreakon", focus=True)
             
     def onFnCallersChanged(self, btn):
-        self.beSensitive("c_fnautocallers", focus=True)
+        self.sensiVisible("c_fnautocallers", focus=True)
             
     def onResetFNcallersClicked(self, btn_resetFNcallers):
         self.builder.get_object("t_fncallers").set_text(re.sub(" ", ",", self.ptsettings['footnotes']))
@@ -906,13 +966,13 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("t_xrcallers").set_text(re.sub(" ", ",", self.ptsettings['crossrefs']))
         
     def onXrCallersChanged(self, btn):
-        self.beSensitive("c_xrautocallers", focus=True)
+        self.sensiVisible("c_xrautocallers", focus=True)
 
     def onRHruleChanged(self, btn):
-        self.beSensitive("c_rhrule", focus=True)
+        self.sensiVisible("c_rhrule", focus=True)
 
     def onProcessScriptClicked(self, btn):
-        status = self.beSensitive("c_processScript")
+        status = self.sensiVisible("c_processScript")
         if not status:
             self.builder.get_object("btn_editScript").set_sensitive(False)
         else:
@@ -920,89 +980,44 @@ class GtkViewModel(ViewModel):
                 self.builder.get_object("btn_editScript").set_sensitive(True)
 
     def onUsePrintDraftChangesClicked(self, btn):
-        self.beSensitive("c_usePrintDraftChanges")
+        self.sensiVisible("c_usePrintDraftChanges")
         
     def onUseModsTexClicked(self, btn):
-        self.beSensitive("c_useModsTex")
+        self.sensiVisible("c_useModsTex")
         
     def onUseCustomStyClicked(self, btn):
-        self.beSensitive("c_useCustomSty")
+        self.sensiVisible("c_useCustomSty")
         
     def onUseModsStyClicked(self, btn):
-        self.beSensitive("c_useModsSty")
+        self.sensiVisible("c_useModsSty")
         
     def onOmitOutlineClicked(self, btn):
-        self.beSensitive("c_omitIntroOutline")
+        self.sensiVisible("c_omitIntroOutline")
         self.builder.get_object("c_prettyIntroOutline").set_active(False)
 
-    def onHideAdvancedSettingsClicked(self, c_hideAdvancedSettings):
-    # This method needs a big tidy-up!
-        if self.get("c_hideAdvancedSettings"):
-            # Turn Dangerous Settings OFF
-            for c in ("c_startOnHalfPage", "c_marginalverses", "c_prettyIntroOutline", "c_blendfnxr", "c_autoToC",
-                      "c_figplaceholders", "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", 
-                      "c_preventwidows", "c_PDFx1aOutput", "c_diglot", "c_hyphenate", "c_variableLineSpacing",
-                      "c_showAdvancedTab", "c_showViewerTab", "c_elipsizeMissingVerses"):  # "c_showBodyTab", 
-                self.builder.get_object(c).set_active(False)
-
-            # Turn Essential Settings ON
-            for c in ("c_mainBodyText", "c_skipmissingimages", "c_includefigsfromtext"):
-                self.builder.get_object(c).set_active(True)
-            self.builder.get_object("c_hideAdvancedSettings").set_opacity(0.2)
-            self.builder.get_object("c_hideAdvancedSettings").set_tooltip_text("")
-            
-        else:
-            self.builder.get_object("c_hideAdvancedSettings").set_opacity(1.0)
-            self.builder.get_object("c_hideAdvancedSettings").set_tooltip_text("Many of the settings in this tool only need to be\n" + \
-                "set up once, or used on rare occasions. These can\nbe hidden away for most of the time if that helps.\n\n" + \
-                "This setting can be toggled off again later, but\nis intentionally almost invisible (though located\nin the same place).")
-                      
-            for c in ("c_showAdvancedTab", "c_showViewerTab"):
-                self.builder.get_object(c).set_active(True)
-
-        for c in ("tb_Advanced", "tb_ViewerEditor", "l_missingPictureString",
-                  "btn_editPicList", "l_imageTypeOrder", "t_imageTypeOrder", "fr_chapVerse", "s_colgutteroffset",
-                  "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "bx_AdvFootnoteConfig", "l_colgutteroffset",
-                  "c_usePicList", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", 
-                  "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
-                  "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection", "l_colgutteroffset",
-                  "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "row_ToC", "c_hyphenate",
-                  "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", "c_preventwidows",
-                  "l_sidemarginfactor", "s_sidemarginfactor", "l_min", "s_linespacingmin", "l_max", "s_linespacingmax",
-                  "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "fcb_textDirection", "l_digits", "fcb_digits",
-                  "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "bx_ShowTabs", "fcb_glossaryMarkupStyle",
-                  "gr_fnAdvOptions", "gr_fnSpacingOptions", "c_figexclwebapp", "bx_horizRule", "l_glossaryMarkupStyle"):
-            self.builder.get_object(c).set_visible(not self.get("c_hideAdvancedSettings"))
-
-        # Resize Main UI Window appropriately
-        if self.get("c_hideAdvancedSettings"):
-            self.mw.resize(710, 316)
-        else:
-            self.mw.resize(730, 640)
-
     def onShowLayoutTabClicked(self, btn):
-        self.beSensitive("c_showLayoutTab")
+        self.sensiVisible("c_showLayoutTab")
 
     def onShowBodyTabClicked(self, btn):
-        self.beSensitive("c_showBodyTab")
+        self.sensiVisible("c_showBodyTab")
 
     def onShowHeadFootTabClicked(self, btn):
-        self.beSensitive("c_showHeadFootTab")
+        self.sensiVisible("c_showHeadFootTab")
 
     def onShowPicturesTabClicked(self, btn):
-        self.beSensitive("c_showPicturesTab")
+        self.sensiVisible("c_showPicturesTab")
 
     def onShowAdvancedTabClicked(self, btn):
-        self.beSensitive("c_showAdvancedTab")
+        self.sensiVisible("c_showAdvancedTab")
 
     def onShowViewerTabClicked(self, btn):
-        self.beSensitive("c_showViewerTab")
+        self.sensiVisible("c_showViewerTab")
 
     def onShowDiglotTabClicked(self, btn):
-        self.beSensitive("c_showDiglotTab")
+        self.sensiVisible("c_showDiglotTab")
 
     def onShowBordersTabClicked(self, btn):
-        self.beSensitive("c_showBordersTab")
+        self.sensiVisible("c_showBordersTab")
 
     def onKeepTemporaryFilesClicked(self, c_keepTemporaryFiles):
         dir = self.working_dir
@@ -1108,6 +1123,7 @@ class GtkViewModel(ViewModel):
             self.alltoggles.append(tbox)
             mbs_grid.attach(tbox, i // 13, i % 13, 1, 1)
         response = dialog.run()
+        booklist = []
         if response == Gtk.ResponseType.OK:
             booklist = sorted((b.get_label() for b in self.alltoggles if b.get_active()), \
                                     key=lambda x:_allbkmap.get(x, len(_allbkmap)))
@@ -1200,10 +1216,6 @@ class GtkViewModel(ViewModel):
             self._setchap(self.chapto, (int(self.strt) if self.strt is not None else 0), self.chs)
             self.fcb_chapto.set_active_id(str(self.chs))
 
-    def onUsePrintDraftChanged(self, cb_upd):
-        # MH: Any idea what *used* to happen in this method?
-        pass
-
     def setPrjid(self, prjid, saveCurrConfig=False):
         if not self.initialised:
             self.pendingPid = prjid
@@ -1278,7 +1290,7 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("l_settings_dir").set_label(self.config_dir or "")
             self.builder.get_object("btn_saveConfig").set_sensitive(False)
             self.builder.get_object("btn_deleteConfig").set_sensitive(False)
-            self.updateDialogTitle()
+        self.updateDialogTitle()
 
     def updateFonts(self):
         if self.ptsettings is None:
@@ -1353,7 +1365,7 @@ class GtkViewModel(ViewModel):
         self.editFile("PrintDraft-mods.sty", "wrk")
 
     def onMainBodyTextChanged(self, btn):
-        self.beSensitive("c_mainBodyText")
+        self.sensiVisible("c_mainBodyText")
 
     def onSelectScriptClicked(self, btn_selectScript):
         customScript = self.fileChooser("Select a Custom Script file", 
@@ -1497,7 +1509,8 @@ class GtkViewModel(ViewModel):
         return fcFilepath
 
     def onDiglotClicked(self, btn):
-        self.beSensitive("c_diglot")
+        self.ondiglotAlignmentChanged(None)
+        self.sensiVisible("c_diglot")
 
     def ondiglotSecProjectChanged(self, btn):
         self.updateDiglotConfigList()
@@ -1543,7 +1556,7 @@ class GtkViewModel(ViewModel):
             return(False)
 
     def onEnableDecorativeElementsClicked(self, btn):
-        self.beSensitive("c_borders")
+        self.sensiVisible("c_borders")
 
     def ondiglotAlignmentChanged(self, btn):
         if self.get("fcb_diglotAlignment").startswith("Align") and self.get("c_diglot"):
