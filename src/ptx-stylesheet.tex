@@ -376,11 +376,6 @@
 \newif\ifc@ntinue
 \newread\styl@sheet
 \def\stylesheet#1{
- \saveLRspecificOrig%This becomes a \relax after first use. Always call it.
- \ifdiglot
-   \SSsetLRspecific%Use side-specifc versions of the side-specific values. 
-   \showLRspecific% Debug info, if tracing{S} defined
- \fi
  \m@kedigitsother
  \let\save@regular=\regular \let\regular=\Regular
  \let\save@bold=\bold \let\bold=\Bold
@@ -420,7 +415,12 @@
 
 % Read the files associated with this book: usfm, adjustment list, picture list
 \def\ptxfile#1{
+ \saveLRspecificOrig%This becomes a \relax after first use. Always call it.
  \@netimesetup
+ %\ifdiglot
+   %\SSsetLRspecific%Use side-specifc versions of the side-specific values. 
+   %\showLRspecific% Debug info, if tracing{S} defined
+ %\fi
  \ifdiglot\bgroup%This must be outside of @onetimesetup as there's no guarantee that diglot will be true for all ptxfiles.
    \dimen0=\baselineskip
    \diglotLfalse
