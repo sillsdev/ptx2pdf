@@ -376,7 +376,7 @@
 \newif\ifc@ntinue
 \newread\styl@sheet
 \def\stylesheet#1{
- \saveLRspecific%This becomes a \relax after first use. Always call it.
+ \saveLRspecificOrig%This becomes a \relax after first use. Always call it.
  \ifdiglot
    \SSsetLRspecific%Use side-specifc versions of the side-specific values. 
    \showLRspecific% Debug info, if tracing{S} defined
@@ -405,8 +405,11 @@
 }
 
 \newif\iflastptxfile
+\newdimen\origb@selineskip %Save the initial baselineskip here
+
 \def\@netimesetup{
  % stuff to execute after loading all stylesheets but before processing the first USFM file
+ \origb@selineskip=\baselineskip
  \s@tupsizes
  \defineheads
  \@ddcvhooks
@@ -422,11 +425,13 @@
    \dimen0=\baselineskip
    \diglotLfalse
    \showLRspecific
-   \setLRspecific\s@tb@seline{R}%
+   \setLRspecific\s@tb@dyb@seline{R}%
+   \saveLRspecificSide{R}%
    \baselineskip=\dimen0
    \diglotLtrue
    \showLRspecific
-   \setLRspecific\s@tb@seline{L}%
+   \setLRspecific\s@tb@dyb@seline{L}%
+   \saveLRspecificSide{L}%
    \baselineskip=\dimen0
    \egroup
  \fi
@@ -530,7 +535,8 @@
 \newif\ifDoubleSided \DoubleSidedtrue % binding gutter on alternate sides; use odd/even headers
 \def\debugBL{\MSG{\f@ntstyle, Baseline: \the\baselineskip}} % for scattering in usfm as desired.
 % calculate various dimensions based on the factors, units, etc that have been defined
-\def\s@tb@seline#1{
+\def\s@tb@dyb@seline#1{%Parameter is {} for monoglot, L / R for diglot.
+ \baselineskip=\origb@selineskip
  \le@dingunit=\LineSpacingFactor\FontSizeUnit
  \verticalsp@ceunit=\VerticalSpaceFactor\le@dingunit
  \ifdim\baselineskip < 1pt \baselineskip=14\le@dingunit\fi % If the baselineskip has been specifically
@@ -540,7 +546,7 @@
  \getp@ram{baseline}{p#1}\ifx\p@ram\relax\setp@ram{baseline}{p#1}{\the\baselineskip}\MSG{Baselineskip for p#1 undefined, set to \the\baselineskip}\fi
 }
 \def\s@tupsizes{
- \s@tb@seline{}%
+ \s@tb@dyb@seline{}%
  %\tracingifs=1
  \lineskiplimit=-7\le@dingunit
  \lineskip=0pt
