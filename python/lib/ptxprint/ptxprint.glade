@@ -3806,15 +3806,16 @@ start on the same page.
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">This option is only available if the GLO book is
-also selected.
-If you have a rather large Glossary but are only
-printing a small selection of books, you may
-benefit from this option which will strip out
-any entries from the Glossary which are not
-marked-up in the text of the selected book(s).
-i.e. only entries which have been \w marked-up\w*
-in the scripture books used will appear.</property>
+                                        <property name="tooltip_text" translatable="yes">This option is only available if the GLO book
+is also selected.
+If you have large glossary with many entries 
+but are only printing a small selection of books, 
+you may benefit from this option which will 
+strip out any entries from the Glossary which
+are not marked-up in the text of the selected 
+book(s) or chapter(s).
+i.e. only the \w marked-up\w* entries in the 
+selected books/chapters will show in the glossary.</property>
                                         <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
@@ -7394,7 +7395,7 @@ and so on...</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">1</property>
+                                    <property name="top_attach">2</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
@@ -7410,7 +7411,7 @@ and so on...</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">0</property>
+                                    <property name="top_attach">1</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
@@ -7428,7 +7429,7 @@ should be trimmed to after printing.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">2</property>
+                                    <property name="top_attach">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -7454,7 +7455,7 @@ the first document ends.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
-                                    <property name="top_attach">3</property>
+                                    <property name="top_attach">4</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
@@ -7471,7 +7472,7 @@ the first document ends.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">3</property>
+                                    <property name="top_attach">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -7483,14 +7484,13 @@ the first document ends.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">4</property>
+                                    <property name="top_attach">5</property>
                                     <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_onlyRunOnce">
-                                    <property name="label" translatable="yes">Do not re-run job when some 
-things don't line up exactly</property>
+                                    <property name="label" translatable="yes">Do not re-run job for exact results</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -7511,9 +7511,33 @@ you start PTXprint.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">5</property>
+                                    <property name="top_attach">6</property>
                                     <property name="width">2</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_showNonScriptureChapters">
+                                    <property name="label" translatable="yes">Show Chapter Nums in non-Scripture books</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Peripheral books often have more than one
+"chapter" but do not need the chapter number
+to be printed. By default, PTXprint removes
+the chapter numbers from non-scripture books.
+If you need it to retain (and show) those chapter
+numbers then check this option.</property>
+                                    <property name="halign">start</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                                 <child>
                                   <placeholder/>
