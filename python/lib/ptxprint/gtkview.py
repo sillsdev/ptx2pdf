@@ -1230,7 +1230,7 @@ class GtkViewModel(ViewModel):
             self.set("ecb_savedConfig", configid)
 
     def onProjectChange(self, cb_prj):
-        self.builder.get_object("l_settings_dir").set_label(self.config_dir or "")
+        self.updatePrjLinks()
         self.builder.get_object("btn_saveConfig").set_sensitive(False)
         self.builder.get_object("btn_deleteConfig").set_sensitive(False)
         lockBtn = self.builder.get_object("btn_lockunlock")
@@ -1242,6 +1242,12 @@ class GtkViewModel(ViewModel):
                   "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_Diglot", "tb_FancyBorders"]:
             self.builder.get_object(o).set_sensitive(True)
         self.updateFonts()
+
+    def updatePrjLinks(self):
+        if self.settings_dir != None and self.prjid != None:
+            self.builder.get_object("lb_prjdir").set_label(os.path.join(self.settings_dir, self.prjid))
+            self.builder.get_object("lb_settings_dir").set_label(self.configPath() or "")
+            self.builder.get_object("lb_working_dir").set_label(self.working_dir or "")
             
     def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None):
         if not super(GtkViewModel, self).updateProjectSettings(prjid, saveCurrConfig=saveCurrConfig, configName=configName):
@@ -1249,7 +1255,7 @@ class GtkViewModel(ViewModel):
                 fblabel = self.builder.get_object(fb).set_label("Select font...")
         if self.prjid:
             self.builder.get_object("ecb_book").set_active(0)
-            self.set("l_prjdir", os.path.join(self.settings_dir, self.prjid))
+            self.updatePrjLinks()
         status = self.get("c_multiplebooks")
         for c in ("c_combine", "t_booklist"):
             self.builder.get_object(c).set_sensitive(status)
@@ -1261,11 +1267,8 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(c).set_sensitive(not status)
         for i in range(0,6):
             self.builder.get_object("l_{}".format(i)).set_tooltip_text(None)
-        self.set("l_settings_dir", self.config_dir or "")
-        self.set("l_working_dir", self.working_dir or "")
-        # self.set("c_prettyIntroOutline", False)  # This is OFF by default, they need to turn it on specifically
+        self.updatePrjLinks()
         self.setEntryBoxFont()
-        # self.onDiglotSettingsChanged(None)
         self.updateDialogTitle()
 
     def onConfigNameChanged(self, cb_savedConfig):
@@ -1564,3 +1567,37 @@ class GtkViewModel(ViewModel):
             self.set("c_diglotAutoAligned", True)
         else:
             self.set("c_diglotAutoAligned", False)
+
+    def onOpenFolderPrjDirClicked(self, btn):
+        print("Clicked something")
+        self.openFolder(os.path.join(self.settings_dir, self.prjid))
+        
+    def onOpenFolderConfClicked(self, btn):
+        print("Clicked something")
+        self.openFolder(self.configPath())
+        
+    def onOpenFolderOutputClicked(self, btn):
+        print("Clicked something")
+        self.openFolder(self.working_dir)
+        
+    def openFolder(self, fldrpath):
+        path = os.path.realpath(fldrpath)
+        os.startfile(fldrpath)
+
+    def onURLhomepageClicked(self, btn):
+        self.openURL("https://software.sil.org/ptxprint/")
+        
+    def onURLsumatraClicked(self, btn):
+        self.openURL("https://www.sumatrapdfreader.org/download-free-pdf-viewer.html")
+        
+    def onURLptx2pdfFAQClicked(self, btn):
+        self.openURL("https://github.com/sillsdev/ptx2pdf/blob/master/docs/documentation/ptx2pdf-faq.md")
+        
+    def onURLgithubIssueClicked(self, btn):
+        self.openURL("https://github.com/sillsdev/ptx2pdf/issues/new")
+        
+    def openURL(self, url):
+        if sys.platform == "win32":
+            os.system("start \"\" {}".format(url))
+        elif sys.platform == "linux":
+            os.system("xdg-open \"\" {}".format(url))
