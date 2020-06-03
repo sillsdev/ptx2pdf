@@ -147,6 +147,7 @@ ModelMap = {
     "document/marginalverses":  ("c_marginalverses", lambda w,v: "" if v else "%"),
     "document/columnshift":     ("s_columnShift", lambda w,v: v or "16"),
     "document/ifomitchapternum":   ("c_omitchapternumber", lambda w,v: "true" if v else "false"),
+    "document/showxtrachapnums":   ("c_showNonScriptureChapters", lambda w,v: v),
     "document/ifomitallchapters":  ("c_omitchapternumber", lambda w,v: "" if v else "%"),
     "document/ifomitsinglechnum":  ("c_omitChap1ChBooks", lambda w,v: v),
     "document/ifomitverseone":  ("c_omitverseone", lambda w,v: "true" if v else "false"),
@@ -742,6 +743,10 @@ class TexModel:
             # a short widow word (3 characters or less) at the end of the line
             self.localChanges.append((None, regex.compile(r"(\\v \d+([-,]\d+)? [\w]{1,3}) ", flags=regex.M), r"\1\u00A0")) 
 
+        # By default, HIDE chapter numbers for all non-scripture (Peripheral) books (unless "Show... is checked)
+        if not self.asBool("document/showxtrachapnums") and bk in TexModel._peripheralBooks:
+            self.localChanges.append((None, regex.compile(r"(\\c \d+ ?\r?\n)", flags=regex.M), ""))
+
         if self.asBool("document/ch1pagebreak"):
             self.localChanges.append((None, regex.compile(r"(\\c 1 ?\r?\n)", flags=regex.M), r"\pagebreak\r\n\1"))
 
@@ -923,7 +928,7 @@ class TexModel:
         # Only keep entries that have appeared in this collection of books
         glossentries = []
         prjid = self.dict['project/id']
-        prjdir = os.path.join(self.ptsettings.basedir, prjid)
+        prjdir = os.path.join(self.dict["/ptxpath"], prjid)
         for bk in printer.getBooks():
             if bk not in TexModel._peripheralBooks:
                 fname = printer.getBookFilename(bk, prjid)
