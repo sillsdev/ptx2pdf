@@ -418,6 +418,18 @@
 % Read the files associated with this book: usfm, adjustment list, picture list
 \def\ptxfile#1{
  \@netimesetup
+ \ifdiglot\bgroup%This must be outside of @onetimesetup as there's no guarantee that diglot will be true for all ptxfiles.
+   \dimen0=\baselineskip
+   \diglotLfalse
+   \showLRspecific
+   \setLRspecific\s@tb@seline{R}%
+   \baselineskip=\dimen0
+   \diglotLtrue
+   \showLRspecific
+   \setLRspecific\s@tb@seline{L}%
+   \baselineskip=\dimen0
+   \egroup
+ \fi
  \gdef\ch@plabel{}
  \gdef\ch@plabelR{}
  \initp@rastyles
@@ -518,14 +530,18 @@
 \newif\ifDoubleSided \DoubleSidedtrue % binding gutter on alternate sides; use odd/even headers
 \def\debugBL{\MSG{\f@ntstyle, Baseline: \the\baselineskip}} % for scattering in usfm as desired.
 % calculate various dimensions based on the factors, units, etc that have been defined
-\def\s@tupsizes{
+\def\s@tb@seline#1{
  \le@dingunit=\LineSpacingFactor\FontSizeUnit
  \verticalsp@ceunit=\VerticalSpaceFactor\le@dingunit
  \ifdim\baselineskip < 1pt \baselineskip=14\le@dingunit\fi % If the baselineskip has been specifically
                                                            % set it will remain. Otherwise, the default
                                                            % of 14 will be applied here and set text will
                                                            % hold to the grid.
- \getp@ram{baseline}{p}\ifx\p@ram\relax\setp@ram{baseline}{p}{\the\baselineskip}\MSG{Baselineskip for p undefined, set to \the\baselineskip}\fi
+ \getp@ram{baseline}{p#1}\ifx\p@ram\relax\setp@ram{baseline}{p#1}{\the\baselineskip}\MSG{Baselineskip for p#1 undefined, set to \the\baselineskip}\fi
+}
+\def\s@tupsizes{
+ \s@tb@seline{}%
+ %\tracingifs=1
  \lineskiplimit=-7\le@dingunit
  \lineskip=0pt
  \topskip=\baselineskip
