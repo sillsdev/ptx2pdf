@@ -156,6 +156,7 @@ _visibilities = {
     "c_showDiglotTab" :        ["tb_Diglot"],
     "c_showBordersTab" :       ["tb_FancyBorders"],
 }
+
 class GtkViewModel(ViewModel):
 
     def __init__(self, settings_dir, workingdir):

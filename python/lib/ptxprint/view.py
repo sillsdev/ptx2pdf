@@ -10,10 +10,10 @@ VersionStr = "0.7.1 beta"
 
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
 
-varpaths = {
-    'workingdir': ('working_dir',),
-    'settingsdir': ('settings_dir',),
-    'prjdir': ('settings_dir', 'prjid'),
+varpaths = (
+    ('prjdir', ('settings_dir', 'prjid')),
+    ('settingsdir', ('settings_dir',)),
+    ('workingdir', ('working_dir',)),
 }
 
 class Path(pathlib.Path):
@@ -23,27 +23,33 @@ class Path(pathlib.Path):
     @staticmethod
     def create_varlib(aView):
         res = {}
-        for k, v in varpaths.items():
+        for k, v in varpaths:
             res[k] = pathlib.Path(*[getattr(aView, x) for x in v])
         res['pdfassets'] = pathlib.Path(os.path.dirname(__file__), 'PDFassets')
         return res
 
-    def __new__(cls, txt, aView=None):
-        if aView is None or not txt.startswith("${"):
+    def __new__(cls, txt, view=None):
+        if view is None or not txt.startswith("${"):
             return pathlib.Path.__new__(cls, txt)
-        varlib = cls.create_varlib(aView)
+        varlib = cls.create_varlib(view)
         k = txt[2:txt.find("}")]
         return pathlib.Path.__new__(cls, varlib[k], txt[len(k)+3:])
 
     def withvars(self, aView):
         varlib = self.create_varlib(aView)
+        bestl = len(self)
+        bestk = None
         for k, v in varlib.items():
             try:
                 rpath = self.relative_to(v)
             except ValueError:
                 continue
+            if len(rpath) < bestl:
+                bestk = k
+        if bestk is not None:
             return "${"+k+"}/"+rpath.as_posix()
-        return self.as_posix()
+        else:
+            return self.as_posix()
 
 
 class ViewModel:
@@ -186,6 +192,9 @@ class ViewModel:
                 self.set("c_fake"+esid, False)
 
     def updateSavedConfigList(self):
+        pass
+
+    def updateDiglotConfigList(self):
         pass
 
     def updateBookList(self):
