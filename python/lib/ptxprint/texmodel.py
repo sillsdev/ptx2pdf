@@ -34,7 +34,7 @@ def universalopen(fname, rewrite=False):
     return fh
 
 ModelMap = {
-    "L":                        ("c_diglotAutoAligned", lambda w,v: "L" if v else ""),
+    "L":                        ("c_diglotAutoAligned", lambda w,v: "L" if v and w.get("c_diglot") else ""),
     #"config/name":              ("ecb_savedConfig", lambda w,v: v or "default"),
     "config/notes":             ("t_configNotes", lambda w,v: v or ""),
     "config/pwd":               ("t_invisiblePassword", lambda w,v: v or ""),
@@ -191,7 +191,7 @@ ModelMap = {
     "document/clsinglecol":     ("c_clSingleColLayout", None),
 
     "document/ifdiglot":        ("c_diglot", lambda w,v : "" if v else "%"),
-    "document/ifaligndiglot":   ("c_diglotAutoAligned", lambda w,v: "" if v else "%"),
+    "document/ifaligndiglot":   ("c_diglotAutoAligned", lambda w,v: "" if v and w.get("c_diglot") else "%"),
     "document/diglotalignment": ("fcb_diglotAlignment", None),
     "document/diglotprifraction": ("s_diglotPriFraction", lambda w,v : round((v/100), 3) or "0.550"),
     "document/diglotsecfraction": ("s_diglotPriFraction", lambda w,v : round(1 - (v/100), 3) or "0.450"),
@@ -262,7 +262,7 @@ ModelMap = {
     "fontbolditalic/slant":     ("s_bolditalicslant", lambda w,v: ":slant={:.4f}".format(v) if v != 0.0000 and w.get("c_fakebolditalic") else ""),
     "snippets/fancyintro":      ("c_prettyIntroOutline", None),
     "snippets/pdfx1aoutput":    ("c_PDFx1aOutput", None),
-    "snippets/alignediglot":    ("c_diglotAutoAligned", None),
+    "snippets/alignediglot":    ("c_diglotAutoAligned", lambda w,v: True if v and w.get("c_diglot") else False),
     "snippets/fancyborders":    ("c_borders", None),
 }
 
@@ -524,11 +524,7 @@ class TexModel:
                         res.append("% No special/missing characters specified for fallback font")
                 elif l.startswith(r"%\snippets"):
                     for k, c in self._snippets.items():
-                        if self.printer is None:
-                            v = self.asBool(k)
-                        else:
-                            v = self.printer.get(c[0])
-                            self.dict[k] = "true" if v else "false"
+                        v = self.asBool(k)
                         if v:
                             if c[1].processTex:
                                 res.append(c[1].texCode.format(**self.dict))
