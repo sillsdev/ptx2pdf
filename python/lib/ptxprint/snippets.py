@@ -163,7 +163,7 @@ class FancyBorders():
 {fancy/sectionheader}\newbox\sectionheadbox
 {fancy/sectionheader}\def\placesectionheadbox{{%
 {fancy/sectionheader}  \ifvoid\sectionheadbox % set up the \sectionheadbox box the first time it's needed
-{fancy/sectionheader}    \global\setbox\sectionheadbox=\hbox{{\XeTeXpdffile "{fancy/sectionheaderpdf}" \relax}}%
+{fancy/sectionheader}    \global\setbox\sectionheadbox=\hbox{{\XeTeXpdffile "{fancy/sectionheaderpdf}"\relax}}%
 {fancy/sectionheader}    \global\setbox\sectionheadbox=\hbox to \hsize% \hsize is the line width
 {fancy/sectionheader}        {{\hss \box\sectionheadbox \hss}}% so now the graphic will be centered
 {fancy/sectionheader}    \global\setbox\sectionheadbox=\vbox to 0pt

@@ -26,13 +26,16 @@ class Path(pathlib.Path):
         for k, v in varpaths:
             res[k] = pathlib.Path(*[getattr(aView, x) for x in v])
         res['pdfassets'] = pathlib.Path(os.path.dirname(__file__), 'PDFassets')
+        # print("Workingdir:",res)
         return res
 
-    def __new__(cls, txt, view=None):
-        if view is None or not txt.startswith("${"):
+    def __new__(cls, txt, aView=None):
+        print("Path_new:",txt)
+        if aView is None or not txt.startswith("${"):
             return pathlib.Path.__new__(cls, txt)
         varlib = cls.create_varlib(view)
         k = txt[2:txt.find("}")]
+        print("k, varlib[k]",k, varlib[k])
         return pathlib.Path.__new__(cls, varlib[k], txt[len(k)+3:])
 
     def withvars(self, aView):
@@ -41,6 +44,7 @@ class Path(pathlib.Path):
         bestk = None
         for k, v in varlib.items():
             try:
+                print("self,k,v:", self, k, v)
                 rpath = self.relative_to(v)
             except ValueError:
                 continue
@@ -312,12 +316,14 @@ class ViewModel:
             if k in self._attributes:
                 v = self._attributes[k]
                 val = getattr(self, v[0])
+                print("val,k,v[0]", val, k, v[0])
                 if val is None:
                     continue
                 if v[1]:
                     val = "\n".join(x.withvars(self) for x in val)
                 else:
                     val = val.withvars(self)
+                print(val)
             elif v[0].startswith("bl_"):
                 val = self.get(v[0])
                 self._configset(config, k+"/name", val[0] or "")
