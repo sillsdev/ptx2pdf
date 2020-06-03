@@ -36,35 +36,42 @@
 \def\stylesheetL#1{\gdef\ds@ffix{L}\stylesheet{#1}\gdef\ds@ffix{}}%Need to reset ds@ffix to {}, so that side-specific settings can be applied.
 \def\stylesheetR#1{\gdef\ds@ffix{R}\stylesheet{#1}\gdef\ds@ffix{}}
 
-%LRspecific holds a list of things that get redefined on side-switching.
-\def\LRspecificDef{VerticalSpaceFactor,LineSpacingFactor,regular,bold,italic,bolditalic}
-\def\LRspecificDim{FontSizeUnit,SpaceStretchFactor,SpaceShrinkFactor}
+%LRspecific holds a list of things that get redefined on side-switching. Now split into Definitions and Dimensions.
+\def\LRspecificDef{VerticalSpaceFactor,LineSpacingFactor,regular,bold,italic,bolditalic,SpaceStretchFactor,SpaceShrinkFactor}
+\def\LRspecificDim{FontSizeUnit} 
 
 
-% Code to cycle through \LRspecific, setting them to their L/R values.
+% Code to cycle through \LRspecific, setting them to their L/R values, modified
+% from what the code to count callers does in ptx-callers.tex
 %Would be nice to re-use \\, but this might get called defining a font in footnotes, so shouldn't mess with that
 %Therefore use \wh@t instead.
 \def\E{}
+\def\@rig{@orig}
+% These do the looping
 \def\pr@cessSp@cific#1,#2\E{\def\t@st{#1}\ifx\t@st\empty\let\n@xt\l@stSpecific\else\let\n@xt\pr@cessSp@cific\wh@t{#1}\fi\n@xt #2,\E}
 \def\l@stSpecific#1\E{}
 \def\pr@cessSpecific{\edef\LRs{\LRspecificDef,\LRspecificDim}\x@\pr@cessSp@cific \LRs,\E}
 
-\def\sp@cificSide#1{\edef\sfx{\ifdiglot\ifdiglotL L\else R\fi\else @rig\fi}\ifcsname #1\sfx\endcsname\x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname\trace{S}{SpS #1\sfx selected}\fi}
-\def\SSsp@cificSide#1{\trace{S}{SSsS: #1\ds@ffix}\ifcsname #1\ds@ffix\endcsname \x@\let\csname#1\x@\endcsname\csname #1\ds@ffix\endcsname\fi} %Stylesheet version of above.
-\def\s@veSpecific#1{\ifcsname #1\endcsname \x@\let\csname#1@rig\x@\endcsname\csname #1\endcsname\ch@ckLR{#1}{L}\ch@ckLR{#1}{R}\else\MSG{No global definition for #1}\fi}
-\def\ch@ckLR#1#2{\ifcsname#1#2\endcsname\x@\let\csname#1#2\x@\endcsname\csname #1@rig\endcsname\else\ifdiglot\MSG{Side-specific #1#2 not defined, global #1 used}\fi\fi}
-\def\sh@wSpecificDef#1{\trace{S}{#1: \csname #1\endcsname}}
-\def\sh@wSpecificDim#1{\ifcsname #1\endcsname\trace{S}{#1: \the\csname #1\endcsname}\else\trace{S}{#1: undefined}\fi}
-\def\getLRspecific{\let\wh@t\sp@cificSide\pr@cessSpecific}% For use with style definitions, etc.
-\def\SSsetLRspecific{\let\wh@t\SSsp@cificSide\pr@cessSpecific}% for use in stylesheet
-\def\saveLRspecific{\let\wh@t\s@veSpecific\pr@cessSpecific\let\saveLRspecific\relax}% Onceonly.
-\def\showLRspecific{\let\wh@t\sh@wSpecificDef\x@\pr@cessSp@cific \LRspecificDef,\E \let\wh@t\sh@wSpecificDim\x@\pr@cessSp@cific \LRspecificDim,\E}% 
+%
+% These are the things that might get called by the loop.
+\def\sp@cificSide#1{\ifcsname #1\sfx\endcsname\x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname\trace{S}{SpS: #1\sfx\space selected}\else\ifcsname #1\@rig\endcsname\x@\let\csname#1\x@\endcsname\csname #1\@rig\endcsname\trace{S}{SpS: #1 returned to original}\else\trace{S}{SpS: #1 unmodified}\fi\fi}% If theres a side-specific version, switch to it. If there's no side-specific verision, switch to the \original version, if that exists.
+\def\s@veSpecific#1{\ifcsname #1\endcsname \x@\let\csname #1\@rig\x@\endcsname\csname #1\endcsname\ch@ckLR{#1}{L}\ch@ckLR{#1}{R}\else\MSG{No global definition for #1}\fi} % If the item exists, save its current value. 
+\def\ch@ckLR#1#2{\ifcsname#1#2\endcsname\x@\let\csname #1#2\x@\endcsname\csname #1\@rig\endcsname \else \ifdiglot\MSG{Side-specific #1#2 not defined, global #1 will be used}\fi\fi}% Helper function
+\def\sh@wSpecificDef#1{\ifcsname #1\sfx\endcsname\trace{S}{#1\sfx: \csname #1\sfx\endcsname}\else\trace{S}{#1\sfx: undefined}\fi} % Output routine for normal things.
+\def\sh@wSpecificDim#1{\ifcsname #1\sfx\endcsname\trace{S}{#1\sfx: \the\csname #1\sfx\endcsname}\else\trace{S}{#1\sfx: undefined}\fi}% Output routine for  dimensions
+%
+% And these are the interface functions. They should set \sfx  to L, R or \@rig
+\def\setLRspecific{\edef\sfx{\ifdiglot\ifdiglotL L\else R\fi\else \@rig\fi}\let\wh@t\sp@cificSide\pr@cessSpecific}% For use with style definitions, etc.
+\def\SSsetLRspecific{\ifx\ds@ffix\empty\def\sfx{@orig}\else\edef\sfx{\ds@ffix}\fi\let\wh@t\sp@cificSide\pr@cessSpecific}% for use in stylesheet
+\def\showLRspecific{\edef\sfx{\ifdiglot\ifdiglotL L\else R\fi\else \@rig\fi}\let\wh@t\sh@wSpecificDef\x@\pr@cessSp@cific \LRspecificDef,\E \let\wh@t\sh@wSpecificDim\x@\pr@cessSp@cific \LRspecificDim,\E}% Call the output routines
+% Except this onw.
+\def\saveLRspecific{\tracingassigns=1\let\wh@t\s@veSpecific\pr@cessSpecific\let\saveLRspecific\relax}% Onceonly.
 
-\newdimen\VerticalSpaceFactorL\newdimen\VerticalSpaceFactorR
-\newdimen\LineSpacingFactorL\newdimen\LineSpacingFactorR
+%\newdimen\VerticalSpaceFactorL\newdimen\VerticalSpaceFactorR
+%\newdimen\LineSpacingFactorL\newdimen\LineSpacingFactorR
 \newdimen\FontSizeUnitL\newdimen\FontSizeUnitR
-%\newdimen\SpaceStretchFactorL\newdimen\SpaceStretchFactorR
-%\newdimen\SpaceShrinkFactorL\newdimen\SpaceShrinkFactorR
+\def\SpaceStretchFactorL{}\def\SpaceStretchFactorR{}
+\def\SpaceShrinkFactorL{}\def\SpaceShrinkFactorR{}
 \newif\ifRTLL \newif\ifRTLR
 \def\initdiglot{} %keep 'old' code happy
 
