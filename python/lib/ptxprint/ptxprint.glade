@@ -8818,16 +8818,13 @@ options here to create a Diglot or Didoc.</property>
                   </packing>
                 </child>
                 <child type="tab">
-                  <object class="GtkLabel" id="lb_DiglotTesting">
+                  <object class="GtkLabel" id="lb_Diglot">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Create a diglot publication
 by incorporating a secondary
 project.</property>
                     <property name="label" translatable="yes">Diglot</property>
-                    <attributes>
-                      <attribute name="foreground" value="#cccc00000000"/>
-                    </attributes>
                   </object>
                   <packing>
                     <property name="position">8</property>

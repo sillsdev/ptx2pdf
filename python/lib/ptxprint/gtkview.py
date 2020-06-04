@@ -593,6 +593,12 @@ class GtkViewModel(ViewModel):
             state = not self.get(k)
             for w in v:
                 self.builder.get_object(w).set_sensitive(state)
+        if self.get("c_includeillustrations"):
+            self.builder.get_object("lb_Pictures").set_markup("<span color='blue'>Pictures</span>")
+        if self.get("c_diglot"):
+            self.builder.get_object("lb_Diglot").set_markup("<span color='blue'>Diglot</span>")
+        if self.get("c_borders"):
+            self.builder.get_object("lb_FancyBorders").set_markup("<span color='blue'>Borders</span>")
 
     def sensiVisible(self, k, focus=False):
         state = self.get(k)
@@ -882,7 +888,11 @@ class GtkViewModel(ViewModel):
             fname = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint", 'hyphen-{}.tex'.format(self.prjid))
         
     def onUseIllustrationsClicked(self, btn):
-        self.sensiVisible("c_includeillustrations")
+        status = self.sensiVisible("c_includeillustrations")
+        if status:
+            self.builder.get_object("lb_Pictures").set_markup("<span color='blue'>Pictures</span>")
+        else:
+            self.builder.get_object("lb_Pictures").set_markup("<span>Pictures</span>")
 
     def onUseCustomFolderclicked(self, btn):
         status = self.sensiVisible("c_useCustomFolder")
@@ -1514,7 +1524,11 @@ class GtkViewModel(ViewModel):
 
     def onDiglotClicked(self, btn):
         self.ondiglotAlignmentChanged(None)
-        self.sensiVisible("c_diglot")
+        status = self.sensiVisible("c_diglot")
+        if status:
+            self.builder.get_object("lb_Diglot").set_markup("<span color='blue'>Diglot</span>")
+        else:
+            self.builder.get_object("lb_Diglot").set_markup("<span>Diglot</span>")
 
     def ondiglotSecProjectChanged(self, btn):
         self.updateDiglotConfigList()
@@ -1560,7 +1574,11 @@ class GtkViewModel(ViewModel):
             return(False)
 
     def onEnableDecorativeElementsClicked(self, btn):
-        self.sensiVisible("c_borders")
+        status = self.sensiVisible("c_borders")
+        if status:
+            self.builder.get_object("lb_FancyBorders").set_markup("<span color='blue'>Borders</span>")
+        else:
+            self.builder.get_object("lb_FancyBorders").set_markup("<span>Borders</span>")
 
     def ondiglotAlignmentChanged(self, btn):
         if self.get("fcb_diglotAlignment").startswith("Align") and self.get("c_diglot"):

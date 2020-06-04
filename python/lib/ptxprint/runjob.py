@@ -1,5 +1,4 @@
 import os, sys, re, subprocess
-# import img2pdf
 from PIL import Image
 from io import BytesIO as cStringIO
 from shutil import copyfile, rmtree
