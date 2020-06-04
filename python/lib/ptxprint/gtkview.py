@@ -239,7 +239,11 @@ class GtkViewModel(ViewModel):
         digprojects.clear()
         allprojects = []
         for d in os.listdir(self.settings_dir):
-            if os.path.exists(os.path.join(self.settings_dir, d, 'Settings.xml')):
+            p = os.path.join(self.settings_dir, d)
+            if not os.path.isdir(p):
+                continue
+            if os.path.exists(os.path.join(p, 'Settings.xml')) \
+                    or any(x.lower().endswith("sfm") for x in os.listdir(p)):
                 allprojects.append(d)
         for p in sorted(allprojects, key = lambda s: s.casefold()):
             projects.append([p])
@@ -454,6 +458,8 @@ class GtkViewModel(ViewModel):
                 self.onSaveEdits(None)
 
         # Work out what the resulting PDFs are to be called
+        if not os.path.exists(self.working_dir):
+            os.makedirs(self.working_dir)
         if len(jobs) > 1:
             if self.get("c_combine"):
                 pdfnames = [os.path.join(self.working_dir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], self.prjid))]
@@ -971,10 +977,10 @@ class GtkViewModel(ViewModel):
         self.sensiVisible("c_fnautocallers", focus=True)
             
     def onResetFNcallersClicked(self, btn_resetFNcallers):
-        self.builder.get_object("t_fncallers").set_text(re.sub(" ", ",", self.ptsettings['footnotes']))
+        self.builder.get_object("t_fncallers").set_text(re.sub(" ", ",", self.ptsettings.get('footnotes', "")))
         
     def onResetXRcallersClicked(self, btn_resetXRcallers):
-        self.builder.get_object("t_xrcallers").set_text(re.sub(" ", ",", self.ptsettings['crossrefs']))
+        self.builder.get_object("t_xrcallers").set_text(re.sub(" ", ",", self.ptsettings.get('crossrefs', "")))
         
     def onXrCallersChanged(self, btn):
         self.sensiVisible("c_xrautocallers", focus=True)
