@@ -93,19 +93,20 @@ _diglot = {
 }
 
 class RunJob:
-    def __init__(self, printer, scriptsdir):
+    def __init__(self, printer, scriptsdir, args):
         self.scriptsdir = scriptsdir
         self.printer = printer
         self.tempFiles = []
         self.tmpdir = "."
         self.maxRuns = 1
         self.changes = None
+        self.args = args
 
-    def doit(self, args):
-        info = TexModel(self.printer, args.paratext, self.printer.ptsettings, self.printer.prjid)
+    def doit(self):
+        info = TexModel(self.printer, self.args.paratext, self.printer.ptsettings, self.printer.prjid)
         self.tempFiles = []
         self.prjid = info.dict["project/id"]
-        self.prjdir = os.path.join(args.paratext, self.prjid)
+        self.prjdir = os.path.join(self.args.paratext, self.prjid)
         if self.prjid is None or not len(self.prjid):     # can't print no project
             return
         self.tempFiles += info.generateNestedStyles()
@@ -115,7 +116,7 @@ class RunJob:
             self.printer.writeConfig()
         # else:
             # print("Current Config is Locked, so changes have NOT been saved")
-        self.tmpdir = os.path.join(self.prjdir, 'PrintDraft') if info.asBool("project/useprintdraftfolder") else args.directory
+        self.tmpdir = os.path.join(self.prjdir, 'PrintDraft') if info.asBool("project/useprintdraftfolder") else self.args.directory
         os.makedirs(self.tmpdir, exist_ok=True)
         jobs = self.printer.getBooks()
         info["diglot/fzysettings"] = ""
@@ -139,17 +140,17 @@ class RunJob:
             digfraction = info.dict["document/diglotprifraction"]
             digprjid = info.dict["document/diglotsecprj"]
             digcfg = info.dict["document/diglotsecconfig"]
-            digprjdir = os.path.join(args.paratext, digprjid)
+            digprjdir = os.path.join(self.args.paratext, digprjid)
             if digprjid is None or not len(digprjid):     # can't print no project
                 return
-            digptsettings = ParatextSettings(args.paratext, digprjid)
-            digprinter = ViewModel(args.paratext, self.printer.working_dir)
+            digptsettings = ParatextSettings(self.args.paratext, digprjid)
+            digprinter = ViewModel(self.args.paratext, self.printer.working_dir)
             # print("Reading digcfg", digprjid, digcfg)
             digprinter.setPrjid(digprjid)
             if digcfg is not None and digcfg != "":
                 digprinter.setConfigId(digcfg)
             # print("Read to TexModel")
-            diginfo = TexModel(digprinter, args.paratext, digptsettings, digprjid)
+            diginfo = TexModel(digprinter, self.args.paratext, digptsettings, digprjid)
             texfiles = sum((self.digdojob(j, info, diginfo, digprjid, digprjdir) for j in joblist), [])
         else: # Normal (non-diglot)
             texfiles = sum((self.dojob(j, info) for j in joblist), [])
@@ -169,7 +170,7 @@ class RunJob:
                 # Only delete the temp files if the PDF was created AND the user did NOT select to keep them
             if not info.asBool("project/keeptempfiles"):
                 self.removeTempFiles(texfiles)
-        elif not args.print: # We don't want pop-up messages if running in command-line mode
+        elif not self.args.print: # We don't want pop-up messages if running in command-line mode
             finalLogLines = self.parseLogLines()
             self.printer.doError("Failed to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname),
                     secondary="".join(finalLogLines[-20:]), title="PTXprint [{}] - Error!".format(VersionStr))
@@ -467,16 +468,19 @@ class RunJob:
             print("TEXINPUTS=",os.getenv('TEXINPUTS'))
         elif sys.platform == "linux":
             if not os.getenv('TEXINPUTS'):
-                mdirs = args.macros or "/usr/lib/Paratext8/xetex/share/texmf-dist/tex/ptx2pdf:/usr/lib/Paratext9/xetex/share/texmf-dist/tex/ptx2pdf"
+                mdirs = self.args.macros or "/usr/lib/Paratext8/xetex/share/texmf-dist/tex/ptx2pdf:/usr/lib/Paratext9/xetex/share/texmf-dist/tex/ptx2pdf"
                 os.putenv('TEXINPUTS', ".:" + mdirs)
         os.putenv("MISCFONTS", ptxmacrospath)
         while numruns > 0:
             if info["document/toc"] != "%":
                 tocdata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".toc")))
-            runner = call(["xetex", "--halt-on-error", outfname], cwd=self.tmpdir, logbuffer=logbuffer)
+            cmd = ["xetex", "--halot-on-error"]
+            if self.args.testing:
+                cmd += ["-no-pdf"]
+            runner = call(cmd + [outfname], cwd=self.tmpdir, logbuffer=logbuffer)
             if isinstance(runner, subprocess.Popen) and runner is not None:
                 try:
-                    runner.wait(args.timeout)
+                    runner.wait(self.args.timeout)
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
                 self.res = runner.returncode
