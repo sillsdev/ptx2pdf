@@ -15,7 +15,7 @@ setup(
     include_package_data=True,  # include everything in MANIFEST.in
     package_data={'ptxprint': ['*.*']},
     #data_files=[('ptx2pdf', glob('src/*.tex'))],
-    scripts=["python/scripts/ptxprint"],
+    scripts=["python/scripts/ptxprint", "python/scripts/xdvitype"],
     install_requires=["regex", "pygobject", "img2pdf", "fonttools", "pycairo"],
     zip_safe=False,
     license="MIT",

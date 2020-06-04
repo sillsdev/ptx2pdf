@@ -58,6 +58,14 @@ class TTFontCache:
                 for s in styles:
                     self.cache.setdefault(n, {})[s] = path
 
+    def addFontDir(self, path):
+        for fname in os.path.listdir(path):
+            if fname.lower().endswith(".ttf"):
+                fpath = os.path.join(path, fname)
+                f = TTFont(None, filename=fpath)
+                f.usepath = True
+                self.cache.setdefault(f.family, {})[f.style] = fpath
+
     def fill_liststore(self, ls):
         ls.clear()
         for k, v in sorted(self.cache.items()):
@@ -114,27 +122,33 @@ def initFontCache():
         fontcache = TTFontCache()
     return fontcache
     # print(sorted(fontcache.cache.items()))
+def cachepath(p):
+    global fontcache
+    if fontcache is None:
+        fontcache = TTFontCache()
+    fontcache.addFontDir(p)
 
 class TTFont:
     cache = {}
 
-    def __new__(cls, name, style=""):
-        k = "{}|{}".format(name, style)
-        res = TTFont.cache.get(k, None)
-        if res is not None:
-            return res
-        else:
-            return super(TTFont, cls).__new__(cls)
+    def __new__(cls, name, *a, style="", **kw):
+        if name is not None:
+            k = "{}|{}".format(name, style)
+            res = TTFont.cache.get(k, None)
+            if res is not None:
+                return res
+        return super(TTFont, cls).__new__(cls)
 
-    def __init__(self, name, style=""):
+    def __init__(self, name, style="", filename=None):
         self.extrastyles = ""
         self.family = name
         self.style = style
-        self.filename = fontcache.get(name, style)
+        self.filename = filename if filename is not None else fontcache.get(name, style)
         self.feats = {}
         self.featvals = {}
         self.names = {}
         self.ttfont = None
+        self.usepath = False
         if self.filename is not None:
             self.readfont()
             self.family = self.names.get(1, self.family)

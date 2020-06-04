@@ -8083,7 +8083,7 @@ are likely to have to re-do it all again.</property>
                                 <property name="margin_right">6</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
-                                <property name="row_spacing">24</property>
+                                <property name="row_spacing">16</property>
                                 <property name="column_spacing">6</property>
                                 <child>
                                   <object class="GtkLabel">
@@ -8095,25 +8095,6 @@ are likely to have to re-do it all again.</property>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_prjdir">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="label" translatable="yes">prjdir</property>
-                                    <property name="selectable">True</property>
-                                    <property name="ellipsize">start</property>
-                                    <property name="width_chars">20</property>
-                                    <property name="single_line_mode">True</property>
-                                    <property name="max_width_chars">75</property>
-                                    <property name="track_visited_links">False</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">0</property>
-                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -8129,25 +8110,6 @@ are likely to have to re-do it all again.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel" id="l_settings_dir">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="label" translatable="yes">settings_dir</property>
-                                    <property name="selectable">True</property>
-                                    <property name="ellipsize">start</property>
-                                    <property name="width_chars">20</property>
-                                    <property name="single_line_mode">True</property>
-                                    <property name="max_width_chars">75</property>
-                                    <property name="track_visited_links">False</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">1</property>
-                                    <property name="width">2</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
@@ -8157,25 +8119,6 @@ are likely to have to re-do it all again.</property>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_working_dir">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="label" translatable="yes">working_dir</property>
-                                    <property name="selectable">True</property>
-                                    <property name="ellipsize">start</property>
-                                    <property name="width_chars">20</property>
-                                    <property name="single_line_mode">True</property>
-                                    <property name="max_width_chars">75</property>
-                                    <property name="track_visited_links">False</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">2</property>
-                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -8191,7 +8134,8 @@ On Linux the built-in Evince PDF viewer works great.
 On Windows, the freely available SumatraPDF software
 is highly recommended and is a small download.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Hints on Using an Effective PDF viewer:</property>
+                                    <property name="label" translatable="yes">Hints on Using an 
+Effective PDF viewer:</property>
                                     <property name="justify">right</property>
                                   </object>
                                   <packing>
@@ -8202,7 +8146,7 @@ is highly recommended and is a small download.</property>
                                 </child>
                                 <child>
                                   <object class="GtkLinkButton">
-                                    <property name="label" translatable="yes">Right-Click for URL to SumatraPDF download page</property>
+                                    <property name="label" translatable="yes">Visit SumatraPDF download page</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="focus_on_click">False</property>
@@ -8211,6 +8155,7 @@ is highly recommended and is a small download.</property>
                                     <property name="valign">end</property>
                                     <property name="relief">none</property>
                                     <property name="uri">https://www.sumatrapdfreader.org/download-free-pdf-viewer.html</property>
+                                    <signal name="clicked" handler="onURLsumatraClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
@@ -8229,7 +8174,8 @@ bugs, annoyances or can't make it work right, please file
 an issue using this link here. The developers work on this
 in their spare time, so please be patient for a response.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">How to report bugs, annoyances or other issues:</property>
+                                    <property name="label" translatable="yes">How to report bugs, 
+annoyances or other issues:</property>
                                     <property name="justify">right</property>
                                   </object>
                                   <packing>
@@ -8240,7 +8186,7 @@ in their spare time, so please be patient for a response.</property>
                                 </child>
                                 <child>
                                   <object class="GtkLinkButton">
-                                    <property name="label" translatable="yes">Right-Click for URL to report an issue</property>
+                                    <property name="label" translatable="yes">Report an issue via GitHub</property>
                                     <property name="name">Report an Issue with PTXprint</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -8250,6 +8196,7 @@ in their spare time, so please be patient for a response.</property>
                                     <property name="valign">end</property>
                                     <property name="relief">none</property>
                                     <property name="uri">https://github.com/sillsdev/ptx2pdf/issues/new</property>
+                                    <signal name="clicked" handler="onURLgithubIssueClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
@@ -8258,7 +8205,7 @@ in their spare time, so please be patient for a response.</property>
                                 </child>
                                 <child>
                                   <object class="GtkLinkButton">
-                                    <property name="label" translatable="yes">Right-Click for URL to latest version</property>
+                                    <property name="label" translatable="yes">Visit PTXprint's Home Page to download latest version</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="focus_on_click">False</property>
@@ -8267,6 +8214,7 @@ in their spare time, so please be patient for a response.</property>
                                     <property name="valign">end</property>
                                     <property name="relief">none</property>
                                     <property name="uri">https://software.sil.org/ptxprint/</property>
+                                    <signal name="clicked" handler="onURLhomepageClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
@@ -8283,7 +8231,10 @@ for new updates at the Home Page.
 Please ensure you are using the latest
 version before reporting an issue.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Home Page for Documentation, FAQs and Latest Updates:</property>
+                                    <property name="margin_left">10</property>
+                                    <property name="label" translatable="yes">Home Page for Documentation, 
+FAQs and Latest Updates:</property>
+                                    <property name="justify">right</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -8311,7 +8262,8 @@ version before reporting an issue.</property>
 work and how to customize the stylesheets even
 further, this FAQ document is worth visiting.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">FAQs related to the PTX2PDF Macros:</property>
+                                    <property name="label" translatable="yes">FAQs related to 
+the PTX2PDF Macros:</property>
                                     <property name="justify">right</property>
                                   </object>
                                   <packing>
@@ -8322,8 +8274,8 @@ further, this FAQ document is worth visiting.</property>
                                 </child>
                                 <child>
                                   <object class="GtkLinkButton">
-                                    <property name="label" translatable="yes">Right-Click for URL PTX2PDF Macros FAQ</property>
-                                    <property name="name">Report an Issue with PTXprint</property>
+                                    <property name="label" translatable="yes">See PTX2PDF Macros FAQ</property>
+                                    <property name="name">Refer to further technical help</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="focus_on_click">False</property>
@@ -8332,10 +8284,63 @@ further, this FAQ document is worth visiting.</property>
                                     <property name="valign">end</property>
                                     <property name="relief">none</property>
                                     <property name="uri">https://github.com/sillsdev/ptx2pdf/blob/master/docs/documentation/ptx2pdf-faq.md</property>
+                                    <signal name="clicked" handler="onURLptx2pdfFAQClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
                                     <property name="top_attach">6</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLinkButton" id="lb_prjdir">
+                                    <property name="label" translatable="yes">prjdir</property>
+                                    <property name="name">Click to open folder</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="relief">none</property>
+                                    <property name="uri">Click to Open folder</property>
+                                    <signal name="clicked" handler="onOpenFolderPrjDirClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">0</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLinkButton" id="lb_settings_dir">
+                                    <property name="label" translatable="yes">settings_dir</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="relief">none</property>
+                                    <property name="uri">Click to Open folder</property>
+                                    <signal name="clicked" handler="onOpenFolderConfClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">1</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLinkButton" id="lb_working_dir">
+                                    <property name="label" translatable="yes">working_dir</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="relief">none</property>
+                                    <property name="uri">Click to Open folder</property>
+                                    <signal name="clicked" handler="onOpenFolderOutputClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">2</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                               </object>
@@ -8820,6 +8825,9 @@ options here to create a Diglot or Didoc.</property>
 by incorporating a secondary
 project.</property>
                     <property name="label" translatable="yes">Diglot</property>
+                    <attributes>
+                      <attribute name="foreground" value="#cccc00000000"/>
+                    </attributes>
                   </object>
                   <packing>
                     <property name="position">8</property>

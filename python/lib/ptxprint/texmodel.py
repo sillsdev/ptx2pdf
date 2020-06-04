@@ -430,7 +430,7 @@ class TexModel:
             fname = f.family
             if f.style is not None and len(f.style):
                 fname = f.family + " " + f.style.title()
-            self.dict[p] = fname
+            self.dict[p] = "[{}]".format(f.filename) if f.usepath else fname
             self.dict[p+"/engine"] = engine
         featstring = self.dict["font/features"]
         if featstring is not None and len(featstring):
