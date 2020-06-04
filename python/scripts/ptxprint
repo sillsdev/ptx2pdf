@@ -24,6 +24,7 @@ parser.add_argument('-l','--logging',action="store_true",help="Output logging to
 parser.add_argument('-e','--experimental',action="store_true",help="Enable experimental features")
 parser.add_argument('--timeout',default=200,type=int,help='xetex runtime timeout')
 parser.add_argument('-T','--testing',action='store_true',help="Run in testing, output xdv")
+parser.add_argument('-f','--fontpath',action='append',help="Directory of fonts to include (repeatable)")
 parser.add_argument('-S','--splash',action="store_true",help="Force splash screen")
 # parser.add_argument('-t','--test', action='store_true',help="Quick start for a lazy typist")
 args = parser.parse_args()
@@ -75,6 +76,11 @@ if args.pid:
 def doit(printer):
     runjob = RunJob(printer, os.path.dirname(__file__), args)
     runjob.doit()
+
+if args.fontpath is not None:
+    for p in args.fontpath:
+        if os.path.exists(p):
+            font.cachepath(p)
 
 if args.print:
     initFontCache()
