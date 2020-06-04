@@ -222,13 +222,17 @@ class RunJob:
             book = ""
         refs = re.findall(r"([1-9]\d{0,2}[.:][1-9]\d{0,2}[^0-9])", "".join(finalLogLines))
         if len(refs):
-            finalLogLines.append("\nReferences to check{}: {}".format(book, ", ".join(refs)))
+            finalLogLines.append("\nReferences to check{}: {}".format(book, " ".join(refs)))
 
-        texmrkrs = [r"\fi", "\if", "\\par", "\\relax"]
+        texmrkrs = [r"\fi", "\if", "\ifx", "\\box", "\else", "\\book", "\\par",
+                     "\\gdef", "\\hsize", "\\relax"]
         allmrkrs = re.findall(r"(\\[a-z0-9]{0,5})[ *\r\n.]", "".join(finalLogLines[-8:]))
         mrkrs = [x for x in allmrkrs if x not in texmrkrs]
         if len(mrkrs):
-            finalLogLines.append("\nMarkers to check: {}".format(", ".join(mrkrs)))
+            if "\ef" in mrkrs or "\ex" in mrkrs:
+                finalLogLines.append("Sorry, but Study Bible Markup (\ef \ex etc.) is not yet supported!")
+            else:
+                finalLogLines.append("\nMarkers to check: {}".format(", ".join(mrkrs)))
 
         files = re.findall(r'(?i)([^\\/\n."= ]*?\.(?=jpg|tif|png|pdf)...)', "".join(finalLogLines))
         if len(files):
@@ -527,12 +531,13 @@ class RunJob:
                     if os.path.exists(p):
                         srchlist += [p]
         extensions = []
-        extdflt = ["jpg", "png", "pdf", "tif"]
-        extuser = re.sub("(pdf|tif)", "pdf tif",self.printer.get("t_imageTypeOrder").lower())
+        extdflt = ["jpg", "png", "tif", "pdf"]
+        extuser = self.printer.get("t_imageTypeOrder").lower()
         extuser = re.findall("([a-z]{3})",extuser)
         extensions = [x for x in extdflt if x in extuser]
         if not len(extensions):   # If the user hasn't defined any extensions 
             extensions = extdflt  # then we can assign defaults
+        print("Extension preference order:", extensions)
         fullnamelist = []
 
         for bk in jobs:
@@ -596,10 +601,10 @@ class RunJob:
                             for f in fullnamelist:
                                 ext = f[-4:].lower()
                                 if ext[1:] == "tif":
-                                    ext = ".pdf"
+                                    ext = ".jpg"
                                 tmpPicfname = newBase(f)+ext
                                 if os.path.exists(os.path.join(tmpPicpath, tmpPicfname)):
-                                    dat = re.sub(re.escape(f), tmpPicfname, dat)  # might need to wrap the f in |filename.tif|
+                                    dat = re.sub(r"\|{}\|".format(re.escape(f)), r"\|{}\|".format(tmpPicfname), dat)
                                 else:
                                     found = False
                                     for ext in extOrder:
@@ -631,28 +636,26 @@ class RunJob:
         else:
             self.printer.set("l_missingPictureString", "(No Missing Pictures)")
 
-    def convertTIF2JPG(self, ratio, infile, outfile):
+    def convertToJPGandResize(self, ratio, infile, outfile):
         white = (255, 255, 255, 255)
         with open(infile,"rb") as inf:
             rawdata = inf.read()
         newinf = cStringIO(rawdata)
         im = Image.open(newinf)
-        print(infile)
         p = im.load()
         onlyRGBAimage = im.convert('RGBA')
-        # ih = imageheight(y), iw= imagewidth(x)
         iw = im.size[0]
         ih = im.size[1]
-        print("Orig ih={} iw={}".format(ih, iw))
-        print("iw/ih = ", iw/ih)
-        # print("ratio = ", ratio)
+        # print("Orig ih={} iw={}".format(ih, iw))
+        # print("iw/ih = ", iw/ih)
         if iw/ih < ratio:
+            print(infile)
             newWidth = int(ih * ratio)
             newimg = Image.new("RGBA", (newWidth, ih), color=white)
             newimg.alpha_composite(onlyRGBAimage, (int((newWidth-iw)/2),0))
             iw = newimg.size[0]
             ih = newimg.size[1]
-            print("Resized: ih={} iw={}".format(ih, iw))
+            print(">>>>>> Resized: ih={} iw={}".format(ih, iw))
             onlyRGBimage = newimg.convert('RGB')
             onlyRGBimage.save(outfile)
         else:
@@ -662,16 +665,20 @@ class RunJob:
     def carefulCopy(self, ratio, srcpath, tgtfile):
         tmpPicPath = os.path.join(self.printer.working_dir, "tmpPics")
         tgtpath = os.path.join(tmpPicPath, tgtfile)
-        # If the src is a TIF then we first need to convert it to a JPG
-        if srcpath[-4:].lower() == ".tif":
+        im = Image.open(srcpath)
+        iw = im.size[0]
+        ih = im.size[1]
+        # If either the source image is a TIF (or) the proportions aren't right for page dimensions 
+        # then we first need to convert to a JPG and/or pad with which space on either side
+        if srcpath[-4:].lower() == ".tif" or iw/ih < ratio:
             tempJPGname = os.path.join(tmpPicPath, "tempJPG.jpg")
             tgtpath = tgtpath[:-4]+".jpg"
-            # try:
-            self.convertTIF2JPG(ratio, srcpath, os.path.join(tmpPicPath, "tempJPG.jpg"))
-            srcpath = tempJPGname
-            # except: # What exception should I try to catch? and what result codes?
-                # print("Unable to convert TIF to JPG in runjob carefulCopy!")
-                # return
+            try:
+                self.convertToJPGandResize(ratio, srcpath, tempJPGname)
+                srcpath = tempJPGname
+            except: # Which exception should I try to catch?
+                print("Error: Unable to convert/resize image!\nImage skipped:", srcpath)
+                return
         if not os.path.exists(tgtpath):
             copyfile(srcpath, tgtpath)
         else:
@@ -681,10 +688,10 @@ class RunJob:
             else:                              # we want to use the largest file available
                 if os.path.getsize(srcpath) > os.path.getsize(tgtpath):
                     copyfile(srcpath, tgtpath)
-        # try:
-            # os.remove(tempJPGname)
-        # except:
-            # pass
+        try:
+            os.remove(tempJPGname)
+        except:
+            pass
 
     def removeTempFiles(self, texfiles):
         notDeleted = []
@@ -742,7 +749,7 @@ class RunJob:
         # ph = pageheight, pw = pagewidth
         ph = pageHeight - (margin * topMarginFactor) - (margin * bottomMarginFactor) - 20 # 16 # (3 * lineSpacingFactor)
         if info.dict["paper/columns"] == "2": # AND if 'col' (which we don't know at this stage!)
-            pw = pageWidth - middleGutter - bindingGutter - (2*(margin*sideMarginFactor))
+            pw = int(pageWidth - middleGutter - bindingGutter - (2*(margin*sideMarginFactor)))/2
         else:
             pw = pageWidth - bindingGutter - (2*(margin*sideMarginFactor))
         print("Usable ph: {}mm".format(ph), "  Usable pw: {}mm".format(pw))
