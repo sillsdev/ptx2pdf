@@ -1,5 +1,7 @@
 import os, sys, re, subprocess
-import img2pdf
+# import img2pdf
+from PIL import Image
+from io import BytesIO as cStringIO
 from shutil import copyfile, rmtree
 from ptxprint.runner import call, checkoutput
 from ptxprint.texmodel import TexModel, universalopen
@@ -128,7 +130,7 @@ class RunJob:
             self.maxRuns = 5
         self.changes = None
         if info.asBool("document/ifinclfigs"): # and not info.asBool("document/ifdiglot"):
-            self.gatherIllustrations(jobs)
+            self.gatherIllustrations(info, jobs)
 
         if info.asBool("project/combinebooks"):
             joblist = [jobs]
@@ -505,7 +507,8 @@ class RunJob:
         print("Done")
         return [outfname]
 
-    def gatherIllustrations(self, jobs):
+    def gatherIllustrations(self, info, jobs):
+        ratio = self.usablePageRatio(info)
         tmpPicpath = os.path.join(self.printer.working_dir, "tmpPics")
         folderList = ["tmpPics", "tmpPicLists"] 
         self.removeTmpFolders(self.printer.working_dir, folderList)
@@ -563,7 +566,7 @@ class RunJob:
                         if origExt[1:] in extensions:
                             filepath = os.path.join(srchdir, file)
                             if newBase(filepath) in newBaseList:
-                                self.carefulCopy(filepath, newBase(filepath)+origExt.lower())
+                                self.carefulCopy(ratio, filepath, newBase(filepath)+origExt.lower())
                 else: # Search all subfolders as well
                     for subdir, dirs, files in os.walk(srchdir):
                         if subdir != "tmpPics": # Avoid recursively scanning the folder we are copying to!
@@ -573,7 +576,7 @@ class RunJob:
                                     filepath = subdir + os.sep + file
                                     if newBase(filepath) in newBaseList:
                                         # print(filepath, "-->", newBase(filepath)+origExt.lower())
-                                        self.carefulCopy(filepath, newBase(filepath)+origExt.lower())
+                                        self.carefulCopy(ratio, filepath, newBase(filepath)+origExt.lower())
 
         missingPics = []
         missingPicList = []
@@ -628,19 +631,48 @@ class RunJob:
             self.printer.set("l_missingPictureString", "Missing Pictures:\n"+"{}".format("\n".join(missingPicList)))
         else:
             self.printer.set("l_missingPictureString", "(No Missing Pictures)")
-        
-    def carefulCopy(self, srcpath, tgtfile):
+
+    def convertTIF2JPG(self, ratio, infile, outfile):
+        white = (255, 255, 255, 255)
+        with open(infile,"rb") as inf:
+            rawdata = inf.read()
+        newinf = cStringIO(rawdata)
+        im = Image.open(newinf)
+        print(infile)
+        p = im.load()
+        onlyRGBAimage = im.convert('RGBA')
+        # ih = imageheight(y), iw= imagewidth(x)
+        iw = im.size[0]
+        ih = im.size[1]
+        print("Orig ih={} iw={}".format(ih, iw))
+        print("iw/ih = ", iw/ih)
+        # print("ratio = ", ratio)
+        if iw/ih < ratio:
+            newWidth = int(ih * ratio)
+            newimg = Image.new("RGBA", (newWidth, ih), color=white)
+            newimg.alpha_composite(onlyRGBAimage, (int((newWidth-iw)/2),0))
+            iw = newimg.size[0]
+            ih = newimg.size[1]
+            print("Resized: ih={} iw={}".format(ih, iw))
+            onlyRGBimage = newimg.convert('RGB')
+            onlyRGBimage.save(outfile)
+        else:
+            onlyRGBimage = onlyRGBAimage.convert('RGB')
+            onlyRGBimage.save(outfile)
+
+    def carefulCopy(self, ratio, srcpath, tgtfile):
         tmpPicPath = os.path.join(self.printer.working_dir, "tmpPics")
         tgtpath = os.path.join(tmpPicPath, tgtfile)
+        # If the src is a TIF then we first need to convert it to a JPG
         if srcpath[-4:].lower() == ".tif":
-            tempPDFname = os.path.join(tmpPicPath, "tempPDF.pdf")
-            tgtpath = tgtpath[:-4]+".pdf"
-            with open(tempPDFname,"wb") as f:
-                try:
-                    f.write(img2pdf.convert(srcpath))
-                    srcpath = tempPDFname
-                except:
-                    return
+            tempJPGname = os.path.join(tmpPicPath, "tempJPG.jpg")
+            tgtpath = tgtpath[:-4]+".jpg"
+            # try:
+            self.convertTIF2JPG(ratio, srcpath, os.path.join(tmpPicPath, "tempJPG.jpg"))
+            srcpath = tempJPGname
+            # except: # What exception should I try to catch? and what result codes?
+                # print("Unable to convert TIF to JPG in runjob carefulCopy!")
+                # return
         if not os.path.exists(tgtpath):
             copyfile(srcpath, tgtpath)
         else:
@@ -650,10 +682,10 @@ class RunJob:
             else:                              # we want to use the largest file available
                 if os.path.getsize(srcpath) > os.path.getsize(tgtpath):
                     copyfile(srcpath, tgtpath)
-        try:
-            os.remove(tempPDFname)
-        except:
-            pass
+        # try:
+            # os.remove(tempJPGname)
+        # except:
+            # pass
 
     def removeTempFiles(self, texfiles):
         notDeleted = []
@@ -694,3 +726,28 @@ class RunJob:
                 except OSError:
                     notDeleted += [path2del]
         return notDeleted
+
+    def usablePageRatio(self, info):
+        pageHeight = float(re.sub(r"([0-9\.]+).+", r"\1", info.dict["paper/height"]))
+        pageWidth = float(re.sub(r"([0-9\.]+).+", r"\1", info.dict["paper/width"]))
+        print("pageHeight =", pageHeight, "  pageWidth =", pageWidth)
+        margin = float(info.dict["paper/margins"])
+        print("margin =", margin)
+        sideMarginFactor = float(info.dict["paper/sidemarginfactor"])
+        middleGutter = float(info.dict["document/colgutterfactor"])/3
+        bindingGutter = float(info.dict["paper/gutter"]) if info.asBool("paper/ifaddgutter") else 0
+        topMarginFactor = info.dict["paper/topmarginfactor"]
+        bottomMarginFactor = info.dict["paper/bottommarginfactor"]
+        lineSpacingFactor = float(info.dict["paragraph/linespacingfactor"])
+        print("lineSpacingFactor=", lineSpacingFactor)
+        # ph = pageheight, pw = pagewidth
+        ph = pageHeight - (margin * topMarginFactor) - (margin * bottomMarginFactor) - 20 # 16 # (3 * lineSpacingFactor)
+        if info.dict["paper/columns"] == "2": # AND if 'col' (which we don't know at this stage!)
+            pw = pageWidth - middleGutter - bindingGutter - (2*(margin*sideMarginFactor))
+        else:
+            pw = pageWidth - bindingGutter - (2*(margin*sideMarginFactor))
+        print("Usable ph: {}mm".format(ph), "  Usable pw: {}mm".format(pw))
+        pageRatio = pw/ph # we only calculate this once at the beginning of gatherIllustrations
+        print("Page Ratio = ", pageRatio)
+        return pageRatio
+        
