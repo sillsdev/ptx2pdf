@@ -1,5 +1,6 @@
 import os, sys, re, subprocess
-import img2pdf
+from PIL import Image
+from io import BytesIO as cStringIO
 from shutil import copyfile, rmtree
 from ptxprint.runner import call, checkoutput
 from ptxprint.texmodel import TexModel, universalopen
@@ -49,7 +50,7 @@ def base(fpath):
 # https://sites.google.com/a/lci-india.org/typesetting/home/illustrations/where-to-find-illustrations
 # We could build the credit text too if we wanted to (and perhaps a list of pg numbers on which the pictures were found)
 def codeLower(fpath):
-    cl = re.findall(r"(?i)_?((?=cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?$", base(fpath))
+    cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?$", base(fpath))
     if cl:
         return cl[0].lower()
     else:
@@ -128,7 +129,7 @@ class RunJob:
             self.maxRuns = 5
         self.changes = None
         if info.asBool("document/ifinclfigs"): # and not info.asBool("document/ifdiglot"):
-            self.gatherIllustrations(jobs)
+            self.gatherIllustrations(info, jobs)
 
         if info.asBool("project/combinebooks"):
             joblist = [jobs]
@@ -221,13 +222,17 @@ class RunJob:
             book = ""
         refs = re.findall(r"([1-9]\d{0,2}[.:][1-9]\d{0,2}[^0-9])", "".join(finalLogLines))
         if len(refs):
-            finalLogLines.append("\nReferences to check{}: {}".format(book, ", ".join(refs)))
+            finalLogLines.append("\nReferences to check{}: {}".format(book, " ".join(refs)))
 
-        texmrkrs = [r"\fi", "\if", "\\par", "\\relax"]
+        texmrkrs = [r"\fi", "\if", "\ifx", "\\box", "\else", "\\book", "\\par",
+                     "\\gdef", "\\hsize", "\\relax"]
         allmrkrs = re.findall(r"(\\[a-z0-9]{0,5})[ *\r\n.]", "".join(finalLogLines[-8:]))
         mrkrs = [x for x in allmrkrs if x not in texmrkrs]
         if len(mrkrs):
-            finalLogLines.append("\nMarkers to check: {}".format(", ".join(mrkrs)))
+            if "\ef" in mrkrs or "\ex" in mrkrs:
+                finalLogLines.append("Sorry, but Study Bible Markup (\ef \ex etc.) is not yet supported!")
+            else:
+                finalLogLines.append("\nMarkers to check: {}".format(", ".join(mrkrs)))
 
         files = re.findall(r'(?i)([^\\/\n."= ]*?\.(?=jpg|tif|png|pdf)...)', "".join(finalLogLines))
         if len(files):
@@ -474,7 +479,7 @@ class RunJob:
         while numruns > 0:
             if info["document/toc"] != "%":
                 tocdata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".toc")))
-            cmd = ["xetex", "--halot-on-error"]
+            cmd = ["xetex", "--halt-on-error"]
             if self.args.testing:
                 cmd += ["-no-pdf"]
             runner = call(cmd + [outfname], cwd=self.tmpdir, logbuffer=logbuffer)
@@ -505,7 +510,8 @@ class RunJob:
         print("Done")
         return [outfname]
 
-    def gatherIllustrations(self, jobs):
+    def gatherIllustrations(self, info, jobs):
+        pageRatios = self.usablePageRatios(info)
         tmpPicpath = os.path.join(self.printer.working_dir, "tmpPics")
         folderList = ["tmpPics", "tmpPicLists"] 
         self.removeTmpFolders(self.printer.working_dir, folderList)
@@ -525,14 +531,16 @@ class RunJob:
                     if os.path.exists(p):
                         srchlist += [p]
         extensions = []
-        extdflt = ["jpg", "png", "pdf", "tif"]
-        extuser = re.sub("(pdf|tif)", "pdf tif",self.printer.get("t_imageTypeOrder").lower())
+        extdflt = ["jpg", "png", "tif", "pdf"]
+        extuser = self.printer.get("t_imageTypeOrder").lower()
         extuser = re.findall("([a-z]{3})",extuser)
         extensions = [x for x in extdflt if x in extuser]
         if not len(extensions):   # If the user hasn't defined any extensions 
             extensions = extdflt  # then we can assign defaults
+        # print("Extension preference order:", extensions)
         fullnamelist = []
-
+        spanimagelist = []
+        
         for bk in jobs:
             fname = self.printer.getBookFilename(bk, self.prjdir)
             if self.printer.get("c_usePicList") and bk not in TexModel._peripheralBooks: # Read the PicList to get a list of needed illustrations
@@ -545,6 +553,7 @@ class RunJob:
                         dat = inf.read()
                         # MAT 19.13 |CN01771C.jpg|col|tr||Bringing the children to Jesus|19:13
                         fullnamelist += re.findall(r"(?i)\|(.+?\.(?=jpg|tif|png|pdf)...)\|", dat)
+                        spanimagelist += re.findall(r"(?i)\|(.+?\.(?=jpg|tif|png|pdf)...)\|span", dat)
             else:
                 infname = os.path.join(self.prjdir, fname)
                 with universalopen(infname) as inf:
@@ -552,8 +561,11 @@ class RunJob:
                     inf.close() # Look for USFM2 and USFM3 type inline \fig ... \fig* illustrations
                     fullnamelist += re.findall(r"(?i)\\fig .*?\|(.+?(?!\d{5}[a-c]?).+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)
                     fullnamelist += re.findall(r'(?i)\\fig .*?src="(.+?\.(?=jpg|tif|png|pdf)...)" .+?\\fig\*', dat) 
+                    spanimagelist += re.findall(r"(?i)\\fig .*?\|(.+?(?!\d{5}[a-c]?).+?\.(?=jpg|tif|png|pdf)...)\|span.+?\\fig\*", dat)
+                    spanimagelist += re.findall(r'(?i)\\fig .*?src="(.+?\.(?=jpg|tif|png|pdf)...)".+?size="span.+?\\fig\*', dat)
         newBaseList = [newBase(f) for f in fullnamelist]
-
+        newBaseSpanList = [newBase(f) for f in spanimagelist]
+        # print(newBaseSpanList)
         os.makedirs(tmpPicpath, exist_ok=True)
         for srchdir in srchlist:
             if srchdir != None and os.path.exists(srchdir):
@@ -562,8 +574,10 @@ class RunJob:
                         origExt = file[-4:].lower()
                         if origExt[1:] in extensions:
                             filepath = os.path.join(srchdir, file)
-                            if newBase(filepath) in newBaseList:
-                                self.carefulCopy(filepath, newBase(filepath)+origExt.lower())
+                            nB = newBase(filepath)
+                            if nB in newBaseList:
+                                ratio = pageRatios[1] if nB not in newBaseSpanList else pageRatios[0]
+                                self.carefulCopy(ratio, filepath, nB+origExt.lower())
                 else: # Search all subfolders as well
                     for subdir, dirs, files in os.walk(srchdir):
                         if subdir != "tmpPics": # Avoid recursively scanning the folder we are copying to!
@@ -571,9 +585,10 @@ class RunJob:
                                 origExt = file[-4:].lower()
                                 if origExt[1:] in extensions:
                                     filepath = subdir + os.sep + file
-                                    if newBase(filepath) in newBaseList:
-                                        # print(filepath, "-->", newBase(filepath)+origExt.lower())
-                                        self.carefulCopy(filepath, newBase(filepath)+origExt.lower())
+                                    nB = newBase(filepath)
+                                    if nB in newBaseList:
+                                        ratio = pageRatios[1] if nB not in newBaseSpanList else pageRatios[0]
+                                        self.carefulCopy(ratio, filepath, nB+origExt.lower())
 
         missingPics = []
         missingPicList = []
@@ -594,10 +609,10 @@ class RunJob:
                             for f in fullnamelist:
                                 ext = f[-4:].lower()
                                 if ext[1:] == "tif":
-                                    ext = ".pdf"
+                                    ext = ".jpg"
                                 tmpPicfname = newBase(f)+ext
                                 if os.path.exists(os.path.join(tmpPicpath, tmpPicfname)):
-                                    dat = re.sub(re.escape(f), tmpPicfname, dat)  # might need to wrap the f in |filename.tif|
+                                    dat = re.sub(r"\|{}\|".format(re.escape(f)), r"|{}|".format(tmpPicfname), dat)
                                 else:
                                     found = False
                                     for ext in extOrder:
@@ -628,19 +643,58 @@ class RunJob:
             self.printer.set("l_missingPictureString", "Missing Pictures:\n"+"{}".format("\n".join(missingPicList)))
         else:
             self.printer.set("l_missingPictureString", "(No Missing Pictures)")
-        
-    def carefulCopy(self, srcpath, tgtfile):
+
+    def convertToJPGandResize(self, ratio, infile, outfile):
+        white = (255, 255, 255, 255)
+        with open(infile,"rb") as inf:
+            rawdata = inf.read()
+        newinf = cStringIO(rawdata)
+        im = Image.open(newinf)
+        try:
+            p = im.load()
+            onlyRGBAimage = im.convert('RGBA')
+            iw = im.size[0]
+            ih = im.size[1]
+        except OSError:
+            print("Failed to convert (image) file:", srcpath)
+            return
+        # print("Orig ih={} iw={}".format(ih, iw))
+        # print("iw/ih = ", iw/ih)
+        if iw/ih < ratio:
+            # print(infile)
+            newWidth = int(ih * ratio)
+            newimg = Image.new("RGBA", (newWidth, ih), color=white)
+            newimg.alpha_composite(onlyRGBAimage, (int((newWidth-iw)/2),0))
+            iw = newimg.size[0]
+            ih = newimg.size[1]
+            # print(">>>>>> Resized: ih={} iw={}".format(ih, iw))
+            onlyRGBimage = newimg.convert('RGB')
+            onlyRGBimage.save(outfile)
+        else:
+            onlyRGBimage = onlyRGBAimage.convert('RGB')
+            onlyRGBimage.save(outfile)
+
+    def carefulCopy(self, ratio, srcpath, tgtfile):
         tmpPicPath = os.path.join(self.printer.working_dir, "tmpPics")
         tgtpath = os.path.join(tmpPicPath, tgtfile)
-        if srcpath[-4:].lower() == ".tif":
-            tempPDFname = os.path.join(tmpPicPath, "tempPDF.pdf")
-            tgtpath = tgtpath[:-4]+".pdf"
-            with open(tempPDFname,"wb") as f:
-                try:
-                    f.write(img2pdf.convert(srcpath))
-                    srcpath = tempPDFname
-                except:
-                    return
+        try:
+            im = Image.open(srcpath)
+            iw = im.size[0]
+            ih = im.size[1]
+        except OSError:
+            print("Failed to get size of (image) file:", srcpath)
+            return
+        # If either the source image is a TIF (or) the proportions aren't right for page dimensions 
+        # then we first need to convert to a JPG and/or pad with which space on either side
+        if srcpath[-4:].lower() == ".tif" or iw/ih < ratio:
+            tempJPGname = os.path.join(tmpPicPath, "tempJPG.jpg")
+            tgtpath = tgtpath[:-4]+".jpg"
+            # try:
+            self.convertToJPGandResize(ratio, srcpath, tempJPGname)
+            srcpath = tempJPGname
+            # except: # Which exception should I try to catch?
+                # print("Error: Unable to convert/resize image!\nImage skipped:", srcpath)
+                # return
         if not os.path.exists(tgtpath):
             copyfile(srcpath, tgtpath)
         else:
@@ -651,7 +705,7 @@ class RunJob:
                 if os.path.getsize(srcpath) > os.path.getsize(tgtpath):
                     copyfile(srcpath, tgtpath)
         try:
-            os.remove(tempPDFname)
+            os.remove(tempJPGname)
         except:
             pass
 
@@ -694,3 +748,35 @@ class RunJob:
                 except OSError:
                     notDeleted += [path2del]
         return notDeleted
+
+    def usablePageRatios(self, info):
+        pageHeight = self.convert2mm(info.dict["paper/height"])
+        pageWidth = self.convert2mm(info.dict["paper/width"])
+        # print("pageHeight =", pageHeight, "  pageWidth =", pageWidth)
+        margin = self.convert2mm(info.dict["paper/margins"])
+        # print("margin =", margin)
+        sideMarginFactor = float(info.dict["paper/sidemarginfactor"])
+        middleGutter = float(info.dict["document/colgutterfactor"])/3
+        bindingGutter = float(info.dict["paper/gutter"]) if info.asBool("paper/ifaddgutter") else 0
+        topMarginFactor = info.dict["paper/topmarginfactor"]
+        bottomMarginFactor = info.dict["paper/bottommarginfactor"]
+        lineSpacingFactor = float(info.dict["paragraph/linespacingfactor"])
+        # print("lineSpacingFactor=", lineSpacingFactor)
+        # ph = pageheight, pw = pagewidth
+        ph = pageHeight - (margin * topMarginFactor) - (margin * bottomMarginFactor) - 18 # 16 # (3 * lineSpacingFactor) (Hack!)
+        pw1 = pageWidth - bindingGutter - (2*(margin*sideMarginFactor))                       # single-col layout
+        if info.dict["paper/columns"] == "2": # AND if 'col' (which we don't know at this stage!)
+            pw2 = int(pageWidth - middleGutter - bindingGutter - (2*(margin*sideMarginFactor)))/2 # double-col layout & span images
+        else:
+            pw2 = pw1
+        # print("Usable ph: {}mm".format(ph), "     Usable 1-col pw1: {}mm   Usable 2-col pw2: {}mm".format(pw2, pw1))
+        pageRatios = (pw1/ph, pw2/ph)
+        # print("Page Ratios = ", pageRatios)
+        return pageRatios
+
+    def convert2mm(self, measure):
+        _unitConv = {'mm':1, 'cm':10, 'in':25.4, '"':25.4}
+        units = _unitConv.keys()
+        num = float(re.sub(r"([0-9\.]+).*", r"\1", str(measure)))
+        unit = str(measure)[len(str(num)):].strip(" ")
+        return (num * _unitConv[unit]) if unit in units else num

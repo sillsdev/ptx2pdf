@@ -420,12 +420,12 @@ class ViewModel:
                 dat = inf.read()
                 # Finds USFM2-styled markup in text:
                 #                0         1       2     3     4              5       
-                # \\fig .*?\|(.+?\....)\|(....?)\|(.+)?\|(.+)?\|(.+)?\|(\d+[\:\.]\d+([\-,\u2013\u2014]\d+)?)\\fig\*
+                # \\fig .*?\|(.+?\....)\|(....?)\|(.+)?\|(.+)?\|(.+)?\|(\d+[\:\.]\d+[abc]?([\-,\u2013\u2014]\d+[abc]?)?)\\fig\*
                 # \fig |CN01684b.jpg|col|||key-kālk arsi manvan yēsunaga tarval|9:2\fig*
                 #           0         1  2 3          4                          5  
                 # BKN \5 \|\0\|\1\|tr\|\|\4\|\5
                 # MAT 9.2 bringing the paralyzed man to Jesus|CN01684b.jpg|col|tr||key-kālk arsi manvan yēsunaga tarval|9:2
-                m = re.findall(r"\\fig .*?\|(.+?\....)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|(\d+[\:\.]\d+?([\-,\u2013\u2014]\d+)?)\\fig\*", dat)
+                m = re.findall(r"\\fig .*?\|(.+?\....)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|(\d+[\:\.]\d+?[abc]?([\-,\u2013\u2014]\d+[abc]?)?)\\fig\*", dat)
                 if len(m):
                     for f in m:
                         picfname = f[0]
@@ -435,29 +435,20 @@ class ViewModel:
                             pageposn = random.choice(_picposn.get(f[1], f[1]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
                         else:
                             pageposn = (_picposn.get(f[1], f[1]))[0]              # use the t or tl (first in list)
-                        # Single Col publications need the images scaled down by default (so that they appear)
-                        if (snglCol or diglot) and f[1].lower() == "col":
-                            size = "span*.5"
-                        else:
-                            size = f[1]
                         chvs = re.sub(r":",".", f[5])
-                        print("chvs, usedRefs:", chvs, usedRefs)
-                        if chvs in usedRefs:
-                            cmt = "% "
-                        else:
-                            cmt = ""
-                            usedRefs += [chvs]
-                        piclist.append(cmt+bk+" "+chvs+" |"+picfname+"|"+size+"|"+pageposn+"||"+f[4]+"|"+f[5]+"\n")
+                        cmt = "% " if chvs in usedRefs else ""
+                        usedRefs += [chvs]
+                        piclist.append(cmt+bk+" "+chvs+" |"+picfname+"|"+f[1]+"|"+pageposn+"||"+f[4]+"|"+f[5]+"\n")
                 else:
                     # If none of the USFM2-styled illustrations were found then look for USFM3-styled markup in text 
                     # (Q: How to handle any additional/non-standard xyz="data" ? Will the .* before \\fig\* take care of it adequately?)
                     #         0              1               2                  3      [4]
-                    # \\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,\u2013\u2014]\d+)?)".*?\\fig\*
+                    # \\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+[abc]?([-,\u2013\u2014]\d+[abc]?)?)".*?\\fig\*
                     # \fig hāgartun saṅga dūtal vaḍkval|src="CO00659B.TIF" size="span" ref="21:16"\fig*
                     #                   0                         1                2          3  [4]
                     # BKN \3 \|\1\|\2\|tr\|\|\0\|\3
                     # GEN 21.16 an angel speaking to Hagar|CO00659B.TIF|span|t||hāgartun saṅga dūtal vaḍkval|21:16
-                    m = re.findall(r'\\fig ([^\\]*?)\|src="([^\\]+?\....)" size="(....?)" ref="(\d+[:.]\d+([-,\u2013\u2014]\d+)?)"[^\\]*?\\fig\*', dat)
+                    m = re.findall(r'\\fig ([^\\]*?)\|src="([^\\]+?\....)" size="(....?)" ref="(\d+[:.]\d+[abc]?([-,\u2013\u2014]\d+[abc]?)?)"[^\\]*?\\fig\*', dat)
                     if len(m):
                         for f in m:
                             picfname = f[1]
@@ -467,18 +458,10 @@ class ViewModel:
                                 pageposn = random.choice(_picposn.get(f[2], f[2]))     # Randomize location of illustrations on the page (tl,tr,bl,br)
                             else:
                                 pageposn = (_picposn.get(f[2], f[2]))[0]               # use the t or tl (first in list)
-                            # Single Col publications need the images scaled down by default (so that they appear)
-                            if (snglCol or diglot) and f[2].lower() == "col":
-                                size = "span*.5"
-                            else:
-                                size = f[2]
                             chvs = re.sub(r":",".", f[3])
-                            if chvs in usedRefs:
-                                cmt = "% "
-                            else:
-                                cmt = ""
-                                usedRefs += [chvs]
-                            piclist.append(cmt+bk+" "+chvs+" |"+picfname+"|"+size+"|"+pageposn+"||"+f[0]+"|"+f[3]+"\n")
+                            cmt = "% " if chvs in usedRefs else ""
+                            usedRefs += [chvs]
+                            piclist.append(cmt+bk+" "+chvs+" |"+picfname+"|"+f[2]+"|"+pageposn+"||"+f[0]+"|"+f[3]+"\n")
                 if len(m):
                     piclist.append("\n% If illustrations are not appearing in the output PDF, check:\n")
                     piclist.append("%   a) The Location Reference on the left is very particular, so check\n")
@@ -488,8 +471,8 @@ class ViewModel:
                     piclist.append("%      (iv) Verse Refs must be in logical ch.vs order \n")
                     piclist.append("%      (iv) The same reference cannot be used more than once\n")
                     piclist.append("%             (2 pictures cannot be anchored to one verse )\n")
-                    piclist.append("%   b) Does the illustration exist in 'Figures' or 'Local/Figures' or another specified folder?\n")
-                    piclist.append("%   c) Position on Page for a 'span' image only allows 't'=top or 'b'=bottom\n")
+                    piclist.append("%   b) Does the illustration exist in 'figures' or 'local/Figures' or another specified folder?\n")
+                    piclist.append("%   c) Position on Page for a 'span' image should only be 't'=top or 'b'=bottom\n")
                     piclist.append("% Other Notes:\n")
                     piclist.append("%   d) To (temporarily) remove an illustration prefix the line with % followed by a space\n")
                     piclist.append("%   e) To scale an image use this notation: span*.7  or  col*1.3)\n")
@@ -667,17 +650,16 @@ class ViewModel:
 
     def getExtOrder(self):
         # If the preferred image type(s) has(have) been specified, parse that string
-        imgord = re.sub(r"(?i)(tif)", r"pdf", self.get("t_imageTypeOrder"))
+        imgord = self.get("t_imageTypeOrder").lower()
         extOrder = []
         if  len(imgord):
-            exts = re.findall("([a-z]{3})",imgord.lower())
+            exts = re.findall("([a-z]{3})",imgord)
             for e in exts:
-                if e in ["jpg", "png", "pdf"] and e not in extOrder:
+                if e in ["jpg", "png", "tif", "pdf"] and e not in extOrder:
                     extOrder += [e]
         if not len(extOrder): # If the user hasn't defined a specific order then we can assign this
             if self.get("c_useLowResPics"): # based on whether they prefer small/compressed image formats
-                extOrder = ["jpg", "png", "pdf"] 
+                extOrder = ["jpg", "png", "tif", "pdf"] 
             else:                              # or prefer larger high quality uncompresses image formats
                 extOrder = extOrder[::-1]      # reverse the order
         return extOrder
-

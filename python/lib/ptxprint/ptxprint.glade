@@ -3026,21 +3026,22 @@ Label:</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_omitChap1ChBooks">
-                                    <property name="label" translatable="yes">Hide Chapter Number in Single Chapter Books</property>
+                                    <property name="label" translatable="yes">Hide Chapter Number 
+in Single Chapter Books</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">Select this option to supress the 1 at the begining
 of books that only have a single chapter (OBA, PHM,
 2JN, 3JN, JUD, etc.)</property>
-                                    <property name="halign">end</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_left">6</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">3</property>
                                     <property name="top_attach">0</property>
-                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -3050,11 +3051,35 @@ Layout for these Books</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_left">6</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">4</property>
                                     <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_optimizePoetryLayout">
+                                    <property name="label" translatable="yes">Optimize Layout 
+for Poetry Books</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Trying to get poetry to balance
+columns creates all sorts of
+unforeseen issues and whitespace.
+This option allows unbalanced
+poetry to improve the overall look.</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_left">6</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">4</property>
+                                    <property name="top_attach">0</property>
                                   </packing>
                                 </child>
                               </object>
@@ -6681,7 +6706,7 @@ this option checked (on).</property>
                                 <property name="margin_right">6</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="orientation">vertical</property>
-                                <property name="spacing">6</property>
+                                <property name="spacing">10</property>
                                 <child>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
@@ -8818,16 +8843,13 @@ options here to create a Diglot or Didoc.</property>
                   </packing>
                 </child>
                 <child type="tab">
-                  <object class="GtkLabel" id="lb_DiglotTesting">
+                  <object class="GtkLabel" id="lb_Diglot">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Create a diglot publication
 by incorporating a secondary
 project.</property>
                     <property name="label" translatable="yes">Diglot</property>
-                    <attributes>
-                      <attribute name="foreground" value="#cccc00000000"/>
-                    </attributes>
                   </object>
                   <packing>
                     <property name="position">8</property>

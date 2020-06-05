@@ -109,7 +109,7 @@ _sensitivities = {
     "c_variableLineSpacing" :  ["s_linespacingmin", "s_linespacingmax", "l_min", "l_max"],
     "c_verticalrule" :         ["l_colgutteroffset", "s_colgutteroffset"],
     "c_rhrule" :               ["s_rhruleposition", "gr_horizRule"],
-    "c_useChapterLabel" :      ["t_clBookList", "l_clHeading", "t_clHeading", "c_clSingleColLayout"],
+    "c_useChapterLabel" :      ["t_clBookList", "l_clHeading", "t_clHeading", "c_clSingleColLayout", "c_optimizePoetryLayout"],
     "c_autoToC" :              ["t_tocTitle", "gr_toc", "l_toc"],
     "c_marginalverses" :       ["s_columnShift"],
     "c_omitrhchapnum" :        ["c_hdrverses"],
@@ -239,7 +239,11 @@ class GtkViewModel(ViewModel):
         digprojects.clear()
         allprojects = []
         for d in os.listdir(self.settings_dir):
-            if os.path.exists(os.path.join(self.settings_dir, d, 'Settings.xml')):
+            p = os.path.join(self.settings_dir, d)
+            if not os.path.isdir(p):
+                continue
+            if os.path.exists(os.path.join(p, 'Settings.xml')) \
+                    or any(x.lower().endswith("sfm") for x in os.listdir(p)):
                 allprojects.append(d)
         for p in sorted(allprojects, key = lambda s: s.casefold()):
             projects.append([p])
@@ -454,6 +458,8 @@ class GtkViewModel(ViewModel):
                 self.onSaveEdits(None)
 
         # Work out what the resulting PDFs are to be called
+        if not os.path.exists(self.working_dir):
+            os.makedirs(self.working_dir)
         if len(jobs) > 1:
             if self.get("c_combine"):
                 pdfnames = [os.path.join(self.working_dir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], self.prjid))]
@@ -593,6 +599,12 @@ class GtkViewModel(ViewModel):
             state = not self.get(k)
             for w in v:
                 self.builder.get_object(w).set_sensitive(state)
+        if self.get("c_includeillustrations"):
+            self.builder.get_object("lb_Pictures").set_markup("<span color='blue'>Pictures</span>")
+        if self.get("c_diglot"):
+            self.builder.get_object("lb_Diglot").set_markup("<span color='blue'>Diglot</span>")
+        if self.get("c_borders"):
+            self.builder.get_object("lb_FancyBorders").set_markup("<span color='blue'>Borders</span>")
 
     def sensiVisible(self, k, focus=False):
         state = self.get(k)
@@ -882,7 +894,11 @@ class GtkViewModel(ViewModel):
             fname = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint", 'hyphen-{}.tex'.format(self.prjid))
         
     def onUseIllustrationsClicked(self, btn):
-        self.sensiVisible("c_includeillustrations")
+        status = self.sensiVisible("c_includeillustrations")
+        if status:
+            self.builder.get_object("lb_Pictures").set_markup("<span color='blue'>Pictures</span>")
+        else:
+            self.builder.get_object("lb_Pictures").set_markup("<span>Pictures</span>")
 
     def onUseCustomFolderclicked(self, btn):
         status = self.sensiVisible("c_useCustomFolder")
@@ -961,10 +977,10 @@ class GtkViewModel(ViewModel):
         self.sensiVisible("c_fnautocallers", focus=True)
             
     def onResetFNcallersClicked(self, btn_resetFNcallers):
-        self.builder.get_object("t_fncallers").set_text(re.sub(" ", ",", self.ptsettings['footnotes']))
+        self.builder.get_object("t_fncallers").set_text(re.sub(" ", ",", self.ptsettings.get('footnotes', "")))
         
     def onResetXRcallersClicked(self, btn_resetXRcallers):
-        self.builder.get_object("t_xrcallers").set_text(re.sub(" ", ",", self.ptsettings['crossrefs']))
+        self.builder.get_object("t_xrcallers").set_text(re.sub(" ", ",", self.ptsettings.get('crossrefs', "")))
         
     def onXrCallersChanged(self, btn):
         self.sensiVisible("c_xrautocallers", focus=True)
@@ -1514,7 +1530,11 @@ class GtkViewModel(ViewModel):
 
     def onDiglotClicked(self, btn):
         self.ondiglotAlignmentChanged(None)
-        self.sensiVisible("c_diglot")
+        status = self.sensiVisible("c_diglot")
+        if status:
+            self.builder.get_object("lb_Diglot").set_markup("<span color='blue'>Diglot</span>")
+        else:
+            self.builder.get_object("lb_Diglot").set_markup("<span>Diglot</span>")
 
     def ondiglotSecProjectChanged(self, btn):
         self.updateDiglotConfigList()
@@ -1560,7 +1580,11 @@ class GtkViewModel(ViewModel):
             return(False)
 
     def onEnableDecorativeElementsClicked(self, btn):
-        self.sensiVisible("c_borders")
+        status = self.sensiVisible("c_borders")
+        if status:
+            self.builder.get_object("lb_FancyBorders").set_markup("<span color='blue'>Borders</span>")
+        else:
+            self.builder.get_object("lb_FancyBorders").set_markup("<span>Borders</span>")
 
     def ondiglotAlignmentChanged(self, btn):
         if self.get("fcb_diglotAlignment").startswith("Align") and self.get("c_diglot"):

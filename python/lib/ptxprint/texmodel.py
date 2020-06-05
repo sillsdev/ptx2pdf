@@ -190,6 +190,7 @@ ModelMap = {
     "document/clabelbooks":     ("t_clBookList", lambda w,v: v.upper()),
     "document/clabel":          ("t_clHeading", None),
     "document/clsinglecol":     ("c_clSingleColLayout", None),
+    "document/cloptimizepoetry":("c_optimizePoetryLayout", None),
 
     "document/ifdiglot":        ("c_diglot", lambda w,v : "" if v else "%"),
     "document/ifaligndiglot":   ("c_diglotAutoAligned", lambda w,v: "" if v and w.get("c_diglot") else "%"),
@@ -523,6 +524,13 @@ class TexModel:
                         res.append("\\catcode`\\@=12\n")
                     else:
                         res.append("% No special/missing characters specified for fallback font")
+                elif l.startswith(r"%\optimizepoetry"):
+                    bks = self.dict["document/clabelbooks"]
+                    if self.dict["document/ifchaplabels"] == "%" and len(bks):
+                        for bk in bks.split(" "):
+                            if bk in self.dict['project/bookids']:
+                                res.append("\setbookhook{{start}}{{{}}}{{\gdef\BalanceThreshold{{3}}\clubpenalty=50\widowpenalty=50}}\n".format(bk))
+                                res.append("\setbookhook{{end}}{{{}}}{{\gdef\BalanceThreshold{{0}}\clubpenalty=10000\widowpenalty=10000}}\n".format(bk))
                 elif l.startswith(r"%\snippets"):
                     for k, c in self._snippets.items():
                         v = self.asBool(k)
@@ -822,13 +830,14 @@ class TexModel:
                         break
                 if not found:
                     figchngs.append((f,"")) 
+        # print(figchngs)
         return(figchngs)
 
     def base(self, fpath):
         return os.path.basename(fpath)[:-4]
 
     def codeLower(self, fpath):
-        cl = re.findall(r"(?i)_?((?=cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?$", self.base(fpath))
+        cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?$", self.base(fpath))
         if cl:
             return cl[0].lower()
         else:
