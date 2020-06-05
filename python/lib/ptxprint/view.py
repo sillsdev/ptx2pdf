@@ -307,7 +307,7 @@ class ViewModel:
                 return (1, k, v)
         config = configparser.ConfigParser()
         for k, v in sorted(ModelMap.items(), key=sortkeys):
-            if v[0] is None or "/" not in k:
+            if v[0] is None or k.endswith("_"):
                 continue
             if k in self._attributes:
                 v = self._attributes[k]
@@ -320,6 +320,7 @@ class ViewModel:
                     val = val.withvars(self)
             elif v[0].startswith("bl_"):
                 val = self.get(v[0])
+                print(v[0], val)
                 self._configset(config, k+"/name", val[0] or "")
                 self._configset(config, k+"/style", val[1] or "")
                 continue

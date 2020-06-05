@@ -369,7 +369,8 @@ class GtkViewModel(ViewModel):
     def get(self, wid, sub=0, asstr=False):
         w = self.builder.get_object(wid)
         if w is None:
-            raise KeyError(wid)
+            print("Can't find {} in the model".format(wid))
+            return super(GtkViewModel, self).get(wid, value)
         v = ""
         if wid.startswith("ecb_"):
             model = w.get_model()
@@ -402,10 +403,15 @@ class GtkViewModel(ViewModel):
 
     def setFontButton(self, btn, name, style):
         btn.font_info = (name, style)
+        print("Set font button {}, {}".format(name, style))
         btn.set_label("{}\n{}".format(name, style))
 
     def set(self, wid, value):
         w = self.builder.get_object(wid)
+        if w is None:
+            print("Can't find {} in the model".format(wid))
+            super(GtkViewModel, self).set(wid, value)
+            return
         if wid.startswith("ecb_"):
             model = w.get_model()
             e = w.get_child()

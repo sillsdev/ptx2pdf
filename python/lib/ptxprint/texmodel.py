@@ -34,7 +34,7 @@ def universalopen(fname, rewrite=False):
     return fh
 
 ModelMap = {
-    "L":                        ("c_diglotAutoAligned", lambda w,v: "L" if v and w.get("c_diglot") else ""),
+    "L_":                        ("c_diglotAutoAligned", lambda w,v: "L" if v and w.get("c_diglot") else ""),
     #"config/name":              ("ecb_savedConfig", lambda w,v: v or "default"),
     "config/notes":             ("t_configNotes", lambda w,v: v or ""),
     "config/pwd":               ("t_invisiblePassword", lambda w,v: v or ""),
@@ -268,6 +268,16 @@ ModelMap = {
     "snippets/fancyborders":    ("c_borders", None),
 }
 
+_fontstylemap = {
+    '': '',
+    'Regular': '',
+    'Bold': '/B',
+    'Italic': '/I',
+    'Bold Italic': '/BI',
+    'Oblique': '/I',
+    'Bold Oblique': 'BI'
+}
+
 class TexModel:
     _peripheralBooks = ["FRT", "INT", "GLO", "TDX", "NDX", "CNC", "OTH", "BAK", "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG"]
     _fonts = {
@@ -275,8 +285,8 @@ class TexModel:
         "fontbold":                 ("bl_fontB", "c_fakebold", "fontbold/embolden", "fontbold/slant"),
         "fontitalic":               ("bl_fontI", "c_fakeitalic", "fontitalic/embolden", "fontitalic/slant"),
         "fontbolditalic":           ("bl_fontBI", "c_fakebolditalic", "fontbolditalic/embolden", "fontbolditalic/slant"),
-        "fontextraregular":         ("bl_fontExtraR", None, None, None),
-        "versenumfont":             ("bl_verseNumFont", None, None, None)
+        "fontextraregular":         ("bl_fontExtraR", "", None, None, None),
+        "versenumfont":             ("bl_verseNumFont", "", None, None, None)
     }
     _hdrmappings = {
         "First Reference":  r"\firstref",
@@ -422,15 +432,18 @@ class TexModel:
                 if printer is not None:
                     printer.set(self._fonts[p][1], True)
                     printer.set(self._fonts[p][0], (name, style))
-                    self.updatefields([self._fonts[p][2]])
+                    if self._fonts[p][2] is not None:
+                        self.updatefields([self._fonts[p][2]])
                     # print("Setting {} to {}".format(p, reg))
             if 'Silf' in f and self.asBool("font/usegraphite"):
                 engine = "/GR"
             else:
                 engine = ""
             fname = f.family
+            print([f.family, f.style, f.filename])
             if f.style is not None and len(f.style):
-                fname = f.family + " " + f.style.title()
+                s = _fontstylemap.get(f.style," " + f.style)
+                fname = f.family + s
             self.dict[p] = "[{}]".format(f.filename) if f.usepath else fname
             self.dict[p+"/engine"] = engine
         featstring = self.dict["font/features"]

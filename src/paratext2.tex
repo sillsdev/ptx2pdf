@@ -711,9 +711,10 @@
         \dimen0=\shortavail\advance\dimen0 by \ifdim\dp\colA>\dp\colB \dp\colA\else\dp\colB\fi
         \s@tcolhts{\dimen0}\spl@tcols0
 		% if something left in box0, it didn't fit, quit loop
-        \trace{o}{re-balancing \the\ht\colA =\the\colhtA, \the\ht\colB =\the\colhtB, from \the\shortavail, rem \the\ht0}
+        \trace{o}{re-balancing \the\ht\colA =\the\colhtA, \the\ht\colB =\the\colhtB, from \the\shortavail, rem \the\ht0}%
         \ifrem@inder\else\ifvoid0\else
           \advance\shortavail by \baselineskip
+          \advance\shortavail by \ifdim\dp\colA>\dp\colB \dp\colA\else\dp\colB\fi
           \trace{o}{rebalance found extra back to \the\shortavail}\rebalancefalse
           \setbox0=\copy\s@vedpage
           \s@tcolhts{\shortavail}\spl@tcols0
@@ -727,23 +728,25 @@
         \fi\fi
 		% if second column longer than first column by more than .3*line height, quit loop
         \colhtA=\ht\colA \colhtB=\ht\colB
-        \dimen0=\colhtB \incr{\dimen0}{\toprightins} \incr{\dimen0}{\bottomrightins}
-        \advance\dimen0 by -\colhtA \decr{\dimen0}{\topleftins} \decr{\dimen0}{\bottomleftins}
+        \dimen0=\colhtB \incr{\dimen0}{\toprightins} \incr{\dimen0}{\bottomrightins}%
+        \advance\dimen0 by -\colhtA \decr{\dimen0}{\topleftins} \decr{\dimen0}{\bottomleftins}%
         \ifdim\dimen0<.95\baselineskip\ifdim\dimen0>-.95\baselineskip
-          \shortavail=\colhtB\incr{\shortavail}{\toprightins}\incr{\shortavail}{\bottomrightins}
+          \shortavail=\colhtB\incr{\shortavail}{\toprightins}\incr{\shortavail}{\bottomrightins}%
           \ifdim\dimen0>0pt\else\advance\shortavail by -\dimen0\fi
+          \advance\shortavail by \ifdim\dp\colA>\dp\colB \dp\colA\else\dp\colB\fi
           \trace{o}{Best height \the\shortavail}\rebalancefalse
         \fi\fi
 		% give up if target size less than 2 lines (should not happen)
-        \ifdim\shortavail<\baselineskip \MSG{Rebalancing bailed for short block}
+        \ifdim\shortavail<\baselineskip \MSG{Rebalancing bailed for short block}%
           \shortavail=\availht \rebalancefalse\fi
         \ifnum\loopcount>20 
           \advance\shortavail by \baselineskip
           \rebalancefalse\MSG{Rebalancing loop count bail}\fi
         \ifrebalance\repeat
     \fi
+    \advance\shortavail by \ifdim\dp\colA>\dp\colB \dp\colA\else\dp\colB\fi
     \s@tcolhts{\shortavail}\spl@tcols\s@vedpage
-    \trace{o}{A = \the\colhtA , B = \the\colhtB , remaining = \the\ht\s@vedpage}
+    \trace{o}{A = \the\colhtA , B = \the\colhtB , remaining = \the\ht\s@vedpage}%
   \fi
 }
 
