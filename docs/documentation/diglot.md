@@ -61,8 +61,13 @@ If the footnotes from the 2 languages should be split (true) or merged together 
 - ```\diglotBalNotesfalse```
 If a left column footnote steals space from the right column also, and vise-versa (default: ```\diglotBalNotesfalse```). If this is a good idea or not probably depends on a lot of factors. 
 
+- ```\useLeftMarkstrue```
+- ```\useRightMarkstrue```
+When you've got just one page and two texts, and one text goes until verse 15  and the other manages to fit verse 16 and 17 on as well, what do you put in the header 15 or 17?
+ Intuitively, we'd probably expect the first 'mark'  [i.e. chapter:verse] on the page to be from the left-hand column, and the last  from the right, but this possibly becomes confused with ```\nolefttext```, and even with short sections where the first verse set is on the right.  These two options control whether notes from the left-hand column and right-hand column are used in the standard heading macros.
+
 - ```\LeftMarkstrue```
-When you've got just one page and two texts, and one text goes until verse 15  and the other manages to fit verse 16 and 17 on as well, what do you put in the header 15 or 17?  ```\LeftMarkstrue``` says ignore all verse numbers from the right hand column. Intuitively, we'd probably expect the first 'mark' on the page to be from the left-hand column, and the last  from the right, but this possibly becomes confused with ```\nolefttext```, and even with short sections where the first verse set is on the right. At present there is no possibility to give priority to the right hand text, sorry.
+This used to be the only control to control the header right hand column. It is now a short-hand for \useLeftMarkstrue\useRightMarksfalse.
 
 - ```\VisTracefalse``` 
 A debugging option for really sticky problems; see end of this document.
