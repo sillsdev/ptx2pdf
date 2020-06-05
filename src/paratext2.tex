@@ -664,9 +664,19 @@
     \setbox\colB=\vsplit#1 to \colhtB \ifnum\badness>999999\setbox#1=\box9\setbox\colB\box\voidb@x\else\setbox\colB=\vbox{\unvbox\colB}\fi
 }
 
+\newdimen\availA \newdimen\availB
+\def\BalanceThreshold{0}
+
 \def\balanced{
   \setbox0=\copy\s@vedpage
   \s@tcolhts{\availht}\spl@tcols0
+  \ifnum\BalanceThreshold>0
+    \availA=\colhtA \availB=\colhtB
+    \advance\availA by -\BalanceThreshold\baselineskip
+    \advance\availB by -\BalanceThreshold\baselineskip
+  \else
+    \availA=0pt \availB=0pt
+  \fi
   % and check if it all fit; if not, we'll have to back up and try again
   \ifvoid0 \fitonpagetrue \else \fitonpagefalse \fi
   \rebalancefalse
@@ -708,7 +718,7 @@
           \s@tcolhts{\shortavail}\spl@tcols0
         \fi\fi
         % if either column height ends up negative, rollback and bail
-        \ifrebalance\ifnum\ifdim\colhtA<0pt 1\else\ifdim\colhtB<0pt 1\else 0\fi\fi =1
+        \ifrebalance\ifnum\ifdim\colhtA<\availA 1\else\ifdim\colhtB<\availB 1\else 0\fi\fi =1
           \advance\shortavail by \baselineskip
           \trace{o}{rebalance found column height < 0, back to \the\shortavail}\rebalancefalse
           \setbox0=\copy\s@vedpage
@@ -816,7 +826,8 @@
     \global\setbox255=\box\voidb@x
     \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
     \c@lcavailht
-    \ifdim\ht\partial>0.9\textheight\twocolp@geout \fi
+    \trace{o}{spdd: partial=\the\ht\partial, textheight=\the\textheight, availht=\the\availht}
+    \ifdim\availht<\baselineskip \twocolp@geout \fi
     \unvbox\s@vedpage\penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
   \else
     \trace{o}{sppd: Not fit on page}
@@ -1000,6 +1011,7 @@
 } 
 
 \def\twocolp@geout{%This gets used a few times
+  \trace{o}{twocolp@geout cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins}
   \def\pagecontents{
     \trace{b}{BALANCE pageout: cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins}
     \vbox{\dimen1=\textwidth \advance\dimen1 \ExtraRMargin

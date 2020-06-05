@@ -479,7 +479,7 @@ class RunJob:
         while numruns > 0:
             if info["document/toc"] != "%":
                 tocdata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".toc")))
-            cmd = ["xetex", "--halot-on-error"]
+            cmd = ["xetex", "--halt-on-error"]
             if self.args.testing:
                 cmd += ["-no-pdf"]
             runner = call(cmd + [outfname], cwd=self.tmpdir, logbuffer=logbuffer)

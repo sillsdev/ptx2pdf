@@ -165,6 +165,7 @@
 % Allow "hooking" custom TeX code at the beginning or ending of specific styles.
 % e.g. \sethook{start}{s1}{-} % put a hyphen at the start of every section heading
 \def\sethook#1#2#3{\x@\def\csname #1-#2\endcsname{#3}}
+\def\setbookhook#1#2#3{\x@\def\csname book#1-#2\endcsname{#3}}
 
 % All types of marker use this to check for the "nonpublishable" property
 \def\t@stpublishability#1{\n@npublishablefalse % check if "nonpublishable" occurred in the marker's \Properties
@@ -357,7 +358,8 @@
  \let\@ID=\id%
  \def\id{\bgroup\obeylines\unc@tcodespecials \m@kedigitsother
    \catcode32=10 \@id}% \id gets stored and printed in the margin with cropmarks
- \def\@id ##1^^M{\gdef\c@rrID{##1}\uppercase{\@@id##1ZZZ\end}\egroup}%
+ \def\@id ##1^^M{\gdef\c@rrID{##1}\uppercase{\@@id##1ZZZ\end}\egroup
+        \csname bookstart-\id@@@\endcsname}%
  %
  \let\fig=\ptx@fig% \fig has its own special macro to parse the fields
  %
@@ -435,6 +437,7 @@
  \ifhmode \unskip\end@llcharstyles \par \fi
  \ifsk@pping\egroup\fi % end skipping, if file ended with a non-printable marker
  \endt@ble % end table if file ended during table processing
+ \if\b@ok\relax\else\csname bookend-\id@@@\endcsname\fi
  \m@kedigitsother
  \deactiv@tecustomch@rs
  \catcode13=5
