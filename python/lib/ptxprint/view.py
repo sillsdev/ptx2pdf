@@ -340,6 +340,7 @@ class ViewModel:
                 key = "{}/{}".format(sect, opt)
                 val = config.get(sect, opt)
                 if key in ModelMap:
+                    # print("Key:", key)
                     v = ModelMap[key]
                     if key in self._attributes:
                         w = self._attributes[key]
@@ -360,7 +361,7 @@ class ViewModel:
                             if v[0].startswith("s_"):
                                 val = float(val)
                             elif v[0].startswith("c_"):
-                                val = config.getboolean(sect, opt)
+                                val = config.getboolean(sect, opt) if val != 'None' else False
                             if val is not None:
                                 self.set(v[0], val)
                         except AttributeError:
