@@ -708,7 +708,8 @@
         \advance\loopcount by 1
         \advance\shortavail by -\baselineskip
         \setbox0=\copy\s@vedpage
-        \s@tcolhts{\shortavail}\spl@tcols0
+        \dimen0=\shortavail\advance\dimen0 by \ifdim\dp\colA>\dp\colB \dp\colA\else\dp\colB\fi
+        \s@tcolhts{\dimen0}\spl@tcols0
 		% if something left in box0, it didn't fit, quit loop
         \trace{o}{re-balancing \the\ht\colA =\the\colhtA, \the\ht\colB =\the\colhtB, from \the\shortavail, rem \the\ht0}
         \ifrem@inder\else\ifvoid0\else
