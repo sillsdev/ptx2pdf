@@ -32,6 +32,7 @@ my @heading;
 my @headingstack=(['','','',''],['','','']);
 my @oldhead=(['','','',''],['','','']);
 my @first_inrange; # Shortcut to the start of interesing data
+my $logfile=undef;
 my $debug=undef; # ".diglot.dbg";
 if (defined($ENV{'DEBUG'})) {
 	$debug=$ENV{'DEBUG'};
@@ -64,11 +65,11 @@ sub logit { # Gerneral purpose logging routine
 	my ($side)=shift(@_);
 	if ($logging) {
 		if (defined($side)) {
-			print LOG (join(" ",$sides[$side],$position[$side],@_)."\n");
+			print LOG (join(" ",$sides[$side],$position[$side],@_)."\n") if (defined($logfile));
 			print DBG (join(" ",$sides[$side],$position[$side],@_)."\n") if (defined($debug));
 		} else {
 			
-			print LOG (join(" ",@_)."\n");
+			print LOG (join(" ",@_)."\n") if (defined($logfile));
 			print DBG (join(" ",@_)."\n") if (defined($debug));
 		}
 	}
@@ -206,7 +207,7 @@ sub do_output {
 	} @$chunkref;
 	if ($$chunkref[0] eq "" and $$chunkref[1] eq "") {
 		printf DBG ("skipping output at $pos since it's boring\n") if (defined($debug));
-		printf LOG ("skipping output at $pos since it's boring\n");
+		printf LOG ("skipping output at $pos since it's boring\n") if (defined($logfile));
 		return(0);
 	}
 	foreach my $oside (0,1) {
@@ -258,7 +259,6 @@ my $priority_side=0;
 my $separatesections=0;
 my $clsections=0;
 my $sectionstack;
-my $logfile=undef;
 my $outfile="-";
 my $usage="\nUsage: $0 [-mode|options] LeftFile RightFile\n"
 	. "Read LeftFile and RightFile, merging them according to the selected mode)\n " 
@@ -490,7 +490,7 @@ while($#leftdata>=0 or $#rightdata>=0) {
 				my $l=$isheading{$code};
 				my $ctxt=$data[$side][0];
 				$headingstack[$side][$l]=$cl.$ctxt; # remember the heading
-				print LOG ($code,$l,$ctxt);
+				print LOG ($code,$l,$ctxt) if (defined($logfile));
 				splice(@{$headingstack[$side]},$l,9,$cl.$ctxt); # chop off the tail of the array;
 				logit($side,"headingstack($side) now: ".join(', ', map {$_//''} @{$headingstack[$side]}));
 				if (!$inrange[$side]) {
@@ -561,10 +561,10 @@ while($#leftdata>=0 or $#rightdata>=0) {
 					for my $n (1..$chk) { # stacklevel n=0 is empty, so isheading returns a non-zero integer
 						if (defined($$cur[$n])) {
 							if ($$cur[$n] ne ($$old[$n]//"")) {
-								print LOG "$n - $$cur[$n] changed\n";
+								print LOG "$n - $$cur[$n] changed\n" if (defined($logfile));
 								$reclaim.=$$cur[$n];
 							} else {
-								print LOG "$n - $$cur[$n] not changed\n";
+								print LOG "$n - $$cur[$n] not changed\n" if (defined($logfile));
 							}
 						}
 					}
