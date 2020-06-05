@@ -190,7 +190,7 @@ ModelMap = {
     "document/clabelbooks":     ("t_clBookList", lambda w,v: v.upper()),
     "document/clabel":          ("t_clHeading", None),
     "document/clsinglecol":     ("c_clSingleColLayout", None),
-    "document/cloptimizepoetry":("c_optimizePoetryLayout", None),
+    "document/cloptimizepoetry": ("c_optimizePoetryLayout", None),
 
     "document/ifdiglot":        ("c_diglot", lambda w,v : "" if v else "%"),
     "document/ifaligndiglot":   ("c_diglotAutoAligned", lambda w,v: "" if v and w.get("c_diglot") else "%"),
