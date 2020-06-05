@@ -825,13 +825,14 @@ class TexModel:
                         break
                 if not found:
                     figchngs.append((f,"")) 
+        # print(figchngs)
         return(figchngs)
 
     def base(self, fpath):
         return os.path.basename(fpath)[:-4]
 
     def codeLower(self, fpath):
-        cl = re.findall(r"(?i)_?((?=cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?$", self.base(fpath))
+        cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?$", self.base(fpath))
         if cl:
             return cl[0].lower()
         else:

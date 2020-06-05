@@ -50,7 +50,7 @@ def base(fpath):
 # https://sites.google.com/a/lci-india.org/typesetting/home/illustrations/where-to-find-illustrations
 # We could build the credit text too if we wanted to (and perhaps a list of pg numbers on which the pictures were found)
 def codeLower(fpath):
-    cl = re.findall(r"(?i)_?((?=cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?$", base(fpath))
+    cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?$", base(fpath))
     if cl:
         return cl[0].lower()
     else:
@@ -511,7 +511,7 @@ class RunJob:
         return [outfname]
 
     def gatherIllustrations(self, info, jobs):
-        ratio = self.usablePageRatio(info)
+        pageRatios = self.usablePageRatios(info)
         tmpPicpath = os.path.join(self.printer.working_dir, "tmpPics")
         folderList = ["tmpPics", "tmpPicLists"] 
         self.removeTmpFolders(self.printer.working_dir, folderList)
@@ -537,9 +537,10 @@ class RunJob:
         extensions = [x for x in extdflt if x in extuser]
         if not len(extensions):   # If the user hasn't defined any extensions 
             extensions = extdflt  # then we can assign defaults
-        print("Extension preference order:", extensions)
+        # print("Extension preference order:", extensions)
         fullnamelist = []
-
+        spanimagelist = []
+        
         for bk in jobs:
             fname = self.printer.getBookFilename(bk, self.prjdir)
             if self.printer.get("c_usePicList") and bk not in TexModel._peripheralBooks: # Read the PicList to get a list of needed illustrations
@@ -552,6 +553,7 @@ class RunJob:
                         dat = inf.read()
                         # MAT 19.13 |CN01771C.jpg|col|tr||Bringing the children to Jesus|19:13
                         fullnamelist += re.findall(r"(?i)\|(.+?\.(?=jpg|tif|png|pdf)...)\|", dat)
+                        spanimagelist += re.findall(r"(?i)\|(.+?\.(?=jpg|tif|png|pdf)...)\|span", dat)
             else:
                 infname = os.path.join(self.prjdir, fname)
                 with universalopen(infname) as inf:
@@ -559,8 +561,11 @@ class RunJob:
                     inf.close() # Look for USFM2 and USFM3 type inline \fig ... \fig* illustrations
                     fullnamelist += re.findall(r"(?i)\\fig .*?\|(.+?(?!\d{5}[a-c]?).+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)
                     fullnamelist += re.findall(r'(?i)\\fig .*?src="(.+?\.(?=jpg|tif|png|pdf)...)" .+?\\fig\*', dat) 
+                    spanimagelist += re.findall(r"(?i)\\fig .*?\|(.+?(?!\d{5}[a-c]?).+?\.(?=jpg|tif|png|pdf)...)\|span.+?\\fig\*", dat)
+                    spanimagelist += re.findall(r'(?i)\\fig .*?src="(.+?\.(?=jpg|tif|png|pdf)...)".+?size="span.+?\\fig\*', dat)
         newBaseList = [newBase(f) for f in fullnamelist]
-
+        newBaseSpanList = [newBase(f) for f in spanimagelist]
+        # print(newBaseSpanList)
         os.makedirs(tmpPicpath, exist_ok=True)
         for srchdir in srchlist:
             if srchdir != None and os.path.exists(srchdir):
@@ -569,8 +574,10 @@ class RunJob:
                         origExt = file[-4:].lower()
                         if origExt[1:] in extensions:
                             filepath = os.path.join(srchdir, file)
-                            if newBase(filepath) in newBaseList:
-                                self.carefulCopy(ratio, filepath, newBase(filepath)+origExt.lower())
+                            nB = newBase(filepath)
+                            if nB in newBaseList:
+                                ratio = pageRatios[1] if nB not in newBaseSpanList else pageRatios[0]
+                                self.carefulCopy(ratio, filepath, nB+origExt.lower())
                 else: # Search all subfolders as well
                     for subdir, dirs, files in os.walk(srchdir):
                         if subdir != "tmpPics": # Avoid recursively scanning the folder we are copying to!
@@ -578,9 +585,10 @@ class RunJob:
                                 origExt = file[-4:].lower()
                                 if origExt[1:] in extensions:
                                     filepath = subdir + os.sep + file
-                                    if newBase(filepath) in newBaseList:
-                                        # print(filepath, "-->", newBase(filepath)+origExt.lower())
-                                        self.carefulCopy(ratio, filepath, newBase(filepath)+origExt.lower())
+                                    nB = newBase(filepath)
+                                    if nB in newBaseList:
+                                        ratio = pageRatios[1] if nB not in newBaseSpanList else pageRatios[0]
+                                        self.carefulCopy(ratio, filepath, nB+origExt.lower())
 
         missingPics = []
         missingPicList = []
@@ -604,7 +612,7 @@ class RunJob:
                                     ext = ".jpg"
                                 tmpPicfname = newBase(f)+ext
                                 if os.path.exists(os.path.join(tmpPicpath, tmpPicfname)):
-                                    dat = re.sub(r"\|{}\|".format(re.escape(f)), r"\|{}\|".format(tmpPicfname), dat)
+                                    dat = re.sub(r"\|{}\|".format(re.escape(f)), r"|{}|".format(tmpPicfname), dat)
                                 else:
                                     found = False
                                     for ext in extOrder:
@@ -642,20 +650,24 @@ class RunJob:
             rawdata = inf.read()
         newinf = cStringIO(rawdata)
         im = Image.open(newinf)
-        p = im.load()
-        onlyRGBAimage = im.convert('RGBA')
-        iw = im.size[0]
-        ih = im.size[1]
+        try:
+            p = im.load()
+            onlyRGBAimage = im.convert('RGBA')
+            iw = im.size[0]
+            ih = im.size[1]
+        except OSError:
+            print("Failed to convert (image) file:", srcpath)
+            return
         # print("Orig ih={} iw={}".format(ih, iw))
         # print("iw/ih = ", iw/ih)
         if iw/ih < ratio:
-            print(infile)
+            # print(infile)
             newWidth = int(ih * ratio)
             newimg = Image.new("RGBA", (newWidth, ih), color=white)
             newimg.alpha_composite(onlyRGBAimage, (int((newWidth-iw)/2),0))
             iw = newimg.size[0]
             ih = newimg.size[1]
-            print(">>>>>> Resized: ih={} iw={}".format(ih, iw))
+            # print(">>>>>> Resized: ih={} iw={}".format(ih, iw))
             onlyRGBimage = newimg.convert('RGB')
             onlyRGBimage.save(outfile)
         else:
@@ -665,20 +677,24 @@ class RunJob:
     def carefulCopy(self, ratio, srcpath, tgtfile):
         tmpPicPath = os.path.join(self.printer.working_dir, "tmpPics")
         tgtpath = os.path.join(tmpPicPath, tgtfile)
-        im = Image.open(srcpath)
-        iw = im.size[0]
-        ih = im.size[1]
+        try:
+            im = Image.open(srcpath)
+            iw = im.size[0]
+            ih = im.size[1]
+        except OSError:
+            print("Failed to get size of (image) file:", srcpath)
+            return
         # If either the source image is a TIF (or) the proportions aren't right for page dimensions 
         # then we first need to convert to a JPG and/or pad with which space on either side
         if srcpath[-4:].lower() == ".tif" or iw/ih < ratio:
             tempJPGname = os.path.join(tmpPicPath, "tempJPG.jpg")
             tgtpath = tgtpath[:-4]+".jpg"
-            try:
-                self.convertToJPGandResize(ratio, srcpath, tempJPGname)
-                srcpath = tempJPGname
-            except: # Which exception should I try to catch?
-                print("Error: Unable to convert/resize image!\nImage skipped:", srcpath)
-                return
+            # try:
+            self.convertToJPGandResize(ratio, srcpath, tempJPGname)
+            srcpath = tempJPGname
+            # except: # Which exception should I try to catch?
+                # print("Error: Unable to convert/resize image!\nImage skipped:", srcpath)
+                # return
         if not os.path.exists(tgtpath):
             copyfile(srcpath, tgtpath)
         else:
@@ -733,27 +749,34 @@ class RunJob:
                     notDeleted += [path2del]
         return notDeleted
 
-    def usablePageRatio(self, info):
-        pageHeight = float(re.sub(r"([0-9\.]+).+", r"\1", info.dict["paper/height"]))
-        pageWidth = float(re.sub(r"([0-9\.]+).+", r"\1", info.dict["paper/width"]))
-        print("pageHeight =", pageHeight, "  pageWidth =", pageWidth)
-        margin = float(info.dict["paper/margins"])
-        print("margin =", margin)
+    def usablePageRatios(self, info):
+        pageHeight = self.convert2mm(info.dict["paper/height"])
+        pageWidth = self.convert2mm(info.dict["paper/width"])
+        # print("pageHeight =", pageHeight, "  pageWidth =", pageWidth)
+        margin = self.convert2mm(info.dict["paper/margins"])
+        # print("margin =", margin)
         sideMarginFactor = float(info.dict["paper/sidemarginfactor"])
         middleGutter = float(info.dict["document/colgutterfactor"])/3
         bindingGutter = float(info.dict["paper/gutter"]) if info.asBool("paper/ifaddgutter") else 0
         topMarginFactor = info.dict["paper/topmarginfactor"]
         bottomMarginFactor = info.dict["paper/bottommarginfactor"]
         lineSpacingFactor = float(info.dict["paragraph/linespacingfactor"])
-        print("lineSpacingFactor=", lineSpacingFactor)
+        # print("lineSpacingFactor=", lineSpacingFactor)
         # ph = pageheight, pw = pagewidth
-        ph = pageHeight - (margin * topMarginFactor) - (margin * bottomMarginFactor) - 20 # 16 # (3 * lineSpacingFactor)
+        ph = pageHeight - (margin * topMarginFactor) - (margin * bottomMarginFactor) - 18 # 16 # (3 * lineSpacingFactor) (Hack!)
+        pw1 = pageWidth - bindingGutter - (2*(margin*sideMarginFactor))                       # single-col layout
         if info.dict["paper/columns"] == "2": # AND if 'col' (which we don't know at this stage!)
-            pw = int(pageWidth - middleGutter - bindingGutter - (2*(margin*sideMarginFactor)))/2
+            pw2 = int(pageWidth - middleGutter - bindingGutter - (2*(margin*sideMarginFactor)))/2 # double-col layout & span images
         else:
-            pw = pageWidth - bindingGutter - (2*(margin*sideMarginFactor))
-        print("Usable ph: {}mm".format(ph), "  Usable pw: {}mm".format(pw))
-        pageRatio = pw/ph # we only calculate this once at the beginning of gatherIllustrations
-        print("Page Ratio = ", pageRatio)
-        return pageRatio
-        
+            pw2 = pw1
+        # print("Usable ph: {}mm".format(ph), "     Usable 1-col pw1: {}mm   Usable 2-col pw2: {}mm".format(pw2, pw1))
+        pageRatios = (pw1/ph, pw2/ph)
+        # print("Page Ratios = ", pageRatios)
+        return pageRatios
+
+    def convert2mm(self, measure):
+        _unitConv = {'mm':1, 'cm':10, 'in':25.4, '"':25.4}
+        units = _unitConv.keys()
+        num = float(re.sub(r"([0-9\.]+).*", r"\1", str(measure)))
+        unit = str(measure)[len(str(num)):].strip(" ")
+        return (num * _unitConv[unit]) if unit in units else num
