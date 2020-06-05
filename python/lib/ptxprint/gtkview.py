@@ -109,7 +109,7 @@ _sensitivities = {
     "c_variableLineSpacing" :  ["s_linespacingmin", "s_linespacingmax", "l_min", "l_max"],
     "c_verticalrule" :         ["l_colgutteroffset", "s_colgutteroffset"],
     "c_rhrule" :               ["s_rhruleposition", "gr_horizRule"],
-    "c_useChapterLabel" :      ["t_clBookList", "l_clHeading", "t_clHeading", "c_clSingleColLayout"],
+    "c_useChapterLabel" :      ["t_clBookList", "l_clHeading", "t_clHeading", "c_clSingleColLayout", "c_optimizePoetryLayout"],
     "c_autoToC" :              ["t_tocTitle", "gr_toc", "l_toc"],
     "c_marginalverses" :       ["s_columnShift"],
     "c_omitrhchapnum" :        ["c_hdrverses"],
