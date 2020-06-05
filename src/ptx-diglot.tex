@@ -15,20 +15,13 @@
 %
 \newif\ifdiglotInnerOuter% Do pages switch columns based on page number (odd pages Left-Right, even Right-left)?
 \diglotInnerOuterfalse
-\newif\ifdiglotN@rmal % Which way round for this page?
-\newif\ifuseLeftMarks %Do we use marks from the left column
-\newif\ifuseRightMarks %Do we use them from the right columnkjjj
+\newif\ifdiglotN@rmal% Which way round for this page?
+\newif\ifLeftMarks%
 
-\def\LeftMarkstrue{\useLeftMarkstrue\useRightMarksfalse}
-\def\LeftMarksfalse{\useLeftMarkstrue\useRightMarkstrue}
 \LeftMarkstrue
-
 \newif\ifVisTrace% Show lines where boxes are joined. 
 \VisTracefalse%
-\def\topLmark{}
-\def\botLmark{}
-\def\topRmark{}
-\def\botRmark{}
+\def\oldRmark{}
 \def\p@gebotmark{}
 \def\doTRACEdiglot#1{\global\advance\diglotTRcount by 1 \MSG{\the\diglotTRcount: #1}}%
 \def\noTRACEdiglot#1{\relax}%
@@ -414,18 +407,14 @@
   \ifnum\tmppenalty=10000 %
     \tmppenalty=0 %
   \fi
-  \edef\t@st{\botmark}%
-  \ifx\t@st\empty%
-    \TRACEdiglot{Bottom mark was empty}%
-  \else%
-    \TRACEdiglot{botRmark: \botRmark, firstmark: \firstmark, botmark: \botmark}
-    \edef\botLmark{\botmark}
-    \edef\t@st{\firstmark}
+  \ifLeftMarks%
+    \edef\t@st{\botmark}%
     \ifx\t@st\empty%
-      \edef\topLmark{\botmark}
-    \ifuseLeftMarks%
+      \TRACEdiglot{Bottom mark was empty}%
+    \else%
+      \TRACEdiglot{oldRmark: \oldRmark, firstmark: \firstmark, botmark: \botmark}
       \edef\t@st{\firstmark}
-      \ifx\t@st\botRmark\else% Eh? What's this defending against?
+      \ifx\t@st\oldRmark\else%
         \TRACEdiglot{Setting (default) bottom mark to \botmark, may revise later}%
 	\xdef\b@xbotmark{\botmark}%
 	\edef\t@st{\p@gefirstmark}%
@@ -434,7 +423,7 @@
 	\fi%
       \fi% remember first, if not already set
     \fi% botmark empty or not
-  \fi% useLeftMarks
+  \fi% LeftMarks
 
   %\TRshipout{\vbox{\hbox{\the\diglotTRcount diglotLeftTrial:}\copy\LeftBox}}%
   \TRACEdiglot{Box=\the\ht\LeftBox+\the\dp\LeftBox}%
@@ -734,11 +723,8 @@
  % Do marking stuff...
  \edef\t@st{\botmark}%
  \ifx\t@st\empty\else
-   \xdef\botRmark{\botmark}
-   \edef\t@st{\topRmark}%remember first on right, if not already set
-   \ifx\t@st\empty
-     \xdef\topRmark{\firstmark}\fi %If there's a botmark, there must be a first one too.
-   \ifuseRightMarks%
+   \xdef\oldRmark{\botmark}
+   \ifLeftMarks\else%
      \TRACEdiglot{Setting (default) bottom mark to \botmark, may revise later}%
      \xdef\b@xbotmark{\botmark}
      \edef\t@st{\p@gefirstmark}%
@@ -859,7 +845,7 @@
 }
 
 \newif\ifrepeatpermitted  %Not to be confused by repeatok which is set by caller
-\newif\ifredocolok 
+\newif\ifredocolok%
 \def\setboth{%
   %Assumptions:
   %\LeftBox has been filled by diglotLeftTrial.
@@ -992,19 +978,16 @@
       \ifvoid\partialR\Rboxpenalty=\partialRpenalty \else\Rboxpenalty=0 \fi%
       {\setbox 0=\copy\partialR% Split all of what remains and use that for the next page
       \setbox 1=\vsplit 0 to \ht\partialR%
-      \ifuseRightmarks
-        \xdef\nextp@gefirstmark{\splitfirstmark}%
-      \fi}
+      \gdef\nextp@gefirstmark{\splitfirstmark}}%
       \TRACEdiglot{\the\ht\partialR+\the\dp\partialR left over in partialR after split}%
       \edef\t@st{\splitbotmark}%
-      \ifx\t@st\empty\else
+      \ifx\t@st\empty\else%
+        \ifLeftMarks%
         \TRACEdiglot{Remembering Rhs bottom mark \splitbotmark}%
-        \xdef\botRmark{\splitbotmark}%
-        \ifuseRightMarks
-          \TRACEdiglot{Setting bottom mark to \splitbotmark}%
-          \xdef\p@gebotmark{\splitbotmark}%
-        \fi
-      \fi%
+	\xdef\oldRmark{\splitbotmark}\else%
+        \TRACEdiglot{Setting bottom mark to \splitbotmark}%
+        \xdef\p@gebotmark{\splitbotmark}%
+      \fi\fi%
       \makevtop{\partialR}%
       \global\Rht=\ht\RightBox\relax%
       \pagefulltrue%
@@ -1086,7 +1069,6 @@
    \setboth%
   \fi\fi%
 }
-
 \def\checkn@sty#1#2{%
   %Parameters availht, boxheight
   %If Box needs moving to next page sets ifnastybox and \TempDim
@@ -1115,7 +1097,6 @@
     \fi%
   \fi%
 }
-
 \def\makevtop#1{%There is a strong posibility that a vbox has a depth that
 %is unrecoverable on changing it to a vtop, e.g. if the last item in the
 %vbox is a \mark. To rejoin boxes on a page accurately we need to preserve
@@ -1263,24 +1244,23 @@
 	  \fi
 	\fi
       \fi%
-      \ifdim\dp\partialL>\availht 
+      \ifdim\dp\partialL>\availht%
         %Want the first chunk in partialL, the residue in excessL, so vsplit
         %gets it backwards for us.
         %Use LeftBox as a temporary store
-	\TRACEdiglot{Spliting \the\ht\partialL to \the\availht}%
+	\TRACEdiglot{Spliting \the\ht\partialL to \the\availht}
         \global\setbox\LeftBox=\vsplit\partialL to \availht%
-	\xdef\nextp@gefirstLmark{\splitfirstmark}%
-	\ifvoid\partialL
+	\ifvoid\partialL%
 	   \Lboxpenalty=\partialLpenalty %
-	\else
+	\else%
 	   \Lboxpenalty=0 %
 	   \makevtop{\partialL}%
-	\fi
+	\fi%
 	\makevtop{\LeftBox}%
-        \global\setbox\excessL=\box\partialL
-	\global\setbox\partialL=\box\LeftBox
+        \global\setbox\excessL=\box\partialL\relax%
+	\global\setbox\partialL=\box\LeftBox\relax%
       \else%
-	\TRACEdiglot{no need to split}%
+	\TRACEdiglot{no need to split}
         \global\outputpenalty=-10002\relax%No more itterations after this
         \global\setbox\partialL=\vtop{\unvbox\partialL}%
 	%\makevtop{\partialL}
@@ -1484,19 +1464,13 @@
   \global\availhtL=\textheight%
   \global\availht=\textheight%
   \plainoutput%
-  \xdef\topLmark{\nextp@gefirstLmark}%
-  \xdef\topRmark{\nextp@gefirstRmark}%
-  \ifuseRightMarks
-  \xdef\p@gefirstmark{\nextp@gefirstRmark}%
-  \fi
-  \ifuseLeftMarks
-  \xdef\nextp@gefirstmark{\nextp@gefirstLmark}%
-  \fi
-  \xdef\botLmark{}%
-  \xdef\botRmark{}%
-  \xdef\nextp@gefirstRmark{}%
-  \xdef\nextp@gefirstLmark{}%
+  \ifLeftMarks
   \xdef\p@gefirstmark{}%
+  \xdef\nextp@gefirstmark{}%
+  \else
+  \xdef\p@gefirstmark{\nextp@gefirstmark}%
+  \xdef\nextp@gefirstmark{}%
+  \fi
   \edef\botmark{\p@gebotmark}
   \xdef\p@gebotmark{}%
   \global\setbox\RightBox=\box\voidb@x%
