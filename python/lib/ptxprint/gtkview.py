@@ -398,7 +398,6 @@ class GtkViewModel(ViewModel):
 
     def setFontButton(self, btn, name, style):
         btn.font_info = (name, style)
-        print("Set font button {}, {}".format(name, style))
         btn.set_label("{}\n{}".format(name, style))
 
     def set(self, wid, value):
@@ -591,6 +590,7 @@ class GtkViewModel(ViewModel):
             self.ecb_diglotSecConfig.set_active_id("")
 
     def loadConfig(self, config):
+        self.updateBookList()
         super(GtkViewModel, self).loadConfig(config)
         for k, v in _sensitivities.items():
             state = self.get(k)
@@ -1277,7 +1277,6 @@ class GtkViewModel(ViewModel):
             for fb in ['bl_fontR', 'bl_fontB', 'bl_fontI', 'bl_fontBI', 'bl_fontExtraR', 'bl_verseNumFont']:  # 
                 fblabel = self.builder.get_object(fb).set_label("Select font...")
         if self.prjid:
-            self.builder.get_object("ecb_book").set_active(0)
             self.updatePrjLinks()
         status = self.get("c_multiplebooks")
         for c in ("c_combine", "t_booklist"):
@@ -1600,15 +1599,12 @@ class GtkViewModel(ViewModel):
             self.set("c_diglotAutoAligned", False)
 
     def onOpenFolderPrjDirClicked(self, btn):
-        print("Clicked something")
         self.openFolder(os.path.join(self.settings_dir, self.prjid))
         
     def onOpenFolderConfClicked(self, btn):
-        print("Clicked something")
         self.openFolder(self.configPath())
         
     def onOpenFolderOutputClicked(self, btn):
-        print("Clicked something")
         self.openFolder(self.working_dir)
         
     def openFolder(self, fldrpath):

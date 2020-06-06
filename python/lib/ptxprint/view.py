@@ -273,7 +273,6 @@ class ViewModel:
         path = os.path.join(self.configPath(cfgname), "ptxprint.cfg")
         if not os.path.exists(path):
             return False
-        print("Reading config: ", path)
         config = configparser.ConfigParser()
         config.read(path, encoding="utf-8")
         self.loadConfig(config)
@@ -320,7 +319,6 @@ class ViewModel:
                     val = val.withvars(self)
             elif v[0].startswith("bl_"):
                 val = self.get(v[0])
-                print(v[0], val)
                 self._configset(config, k+"/name", val[0] or "")
                 self._configset(config, k+"/style", val[1] or "")
                 continue
