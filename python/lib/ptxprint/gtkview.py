@@ -112,7 +112,6 @@ _sensitivities = {
     "c_useChapterLabel" :      ["t_clBookList", "l_clHeading", "t_clHeading", "c_clSingleColLayout", "c_optimizePoetryLayout"],
     "c_autoToC" :              ["t_tocTitle", "gr_toc", "l_toc"],
     "c_marginalverses" :       ["s_columnShift"],
-    "c_omitrhchapnum" :        ["c_hdrverses"],
     "c_hdrverses" :            ["c_sepPeriod", "c_sepColon"],
     "c_fnautocallers" :        ["t_fncallers", "btn_resetFNcallers"],
     "c_xrautocallers" :        ["t_xrcallers", "btn_resetXRcallers"],
@@ -141,6 +140,7 @@ _sensitivities = {
 # These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
 _nonsensitivities = {
     "c_omitIntroOutline" :     ["c_prettyIntroOutline"],
+    "c_omitrhchapnum" :        ["c_hdrverses"],
     "c_omitSectHeads" :        ["c_omitParallelRefs"],
     "c_multiplebooks" :        ["l_singlebook", "ecb_book", "l_chapfrom", "fcb_chapfrom", "l_chapto", "fcb_chapto"],
     "c_blendfnxr" :            ["c_includeXrefs", "c_xrautocallers", "t_xrcallers", "c_xromitcaller", "c_xrpageresetcallers", "c_paragraphedxrefs"]
@@ -175,14 +175,6 @@ class GtkViewModel(ViewModel):
         for fcb in ("digits", "script", "chapfrom", "chapto", "textDirection", 
                     "blendedXrefCaller", "glossaryMarkupStyle", "fontFaces"):
             self.addCR("fcb_"+fcb, 0)
-        # self.addCR("fcb_digits", 0)
-        # self.addCR("fcb_script", 0)
-        # self.addCR("fcb_chapfrom", 0)
-        # self.addCR("fcb_chapto", 0)
-        # self.addCR("fcb_textDirection", 0)
-        # self.addCR("fcb_blendedXrefCaller", 0)
-        # self.addCR("fcb_glossaryMarkupStyle", 0)
-        # self.addCR("fcb_fontFaces", 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.addCR("fcb_diglotAlignment", 0)
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
@@ -293,7 +285,6 @@ class GtkViewModel(ViewModel):
         Gtk.main()
 
     def onHideAdvancedSettingsClicked(self, c_hideAdvancedSettings):
-    # This method needs a big tidy-up!
         if self.get("c_hideAdvancedSettings"):
             # Turn Dangerous Settings OFF
             for c in ("c_startOnHalfPage", "c_marginalverses", "c_prettyIntroOutline", "c_blendfnxr", "c_autoToC",
@@ -310,9 +301,13 @@ class GtkViewModel(ViewModel):
             
         else:
             self.builder.get_object("c_hideAdvancedSettings").set_opacity(1.0)
-            self.builder.get_object("c_hideAdvancedSettings").set_tooltip_text("Many of the settings in this tool only need to be\n" + \
-                "set up once, or used on rare occasions. These can\nbe hidden away for most of the time if that helps.\n\n" + \
-                "This setting can be toggled off again later, but\nis intentionally almost invisible (though located\nin the same place).")
+            self.builder.get_object("c_hideAdvancedSettings").set_tooltip_text( \
+                "Many of the settings in this tool only need to be\n" + \
+                "set up once, or used on rare occasions. These can\n" + \
+                "be hidden away for most of the time if that helps.\n\n" + \
+                "This setting can be toggled off again later, but\n" + \
+                "is intentionally almost invisible (though located\n" + \
+                "in the same place).")
                       
             for c in ("c_showAdvancedTab", "c_showViewerTab"):
                 self.builder.get_object(c).set_active(True)
@@ -320,14 +315,14 @@ class GtkViewModel(ViewModel):
         for c in ("tb_Advanced", "tb_ViewerEditor", "tb_Diglot", "tb_FancyBorders", "l_missingPictureString",
                   "btn_editPicList", "l_imageTypeOrder", "t_imageTypeOrder", "fr_chapVerse", "s_colgutteroffset",
                   "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "bx_AdvFootnoteConfig", "l_colgutteroffset",
-                  "c_usePicList", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", 
+                  "c_usePicList", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", "bx_ShowTabs", 
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
                   "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection", "l_colgutteroffset",
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "row_ToC", "c_hyphenate",
                   "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", "c_preventwidows",
                   "l_sidemarginfactor", "s_sidemarginfactor", "l_min", "s_linespacingmin", "l_max", "s_linespacingmax",
                   "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "fcb_textDirection", "l_digits", "fcb_digits",
-                  "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "bx_ShowTabs", "fcb_glossaryMarkupStyle",
+                  "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
                   "gr_fnAdvOptions", "gr_fnSpacingOptions", "c_figexclwebapp", "bx_horizRule", "l_glossaryMarkupStyle"):
             self.builder.get_object(c).set_visible(not self.get("c_hideAdvancedSettings"))
 
@@ -606,11 +601,11 @@ class GtkViewModel(ViewModel):
             for w in v:
                 self.builder.get_object(w).set_sensitive(state)
         if self.get("c_includeillustrations"):
-            self.builder.get_object("lb_Pictures").set_markup("<span color='blue'>Pictures</span>")
+            self.builder.get_object("lb_Pictures").set_markup("<span color='cornflowerblue'>Pictures</span>")
         if self.get("c_diglot"):
-            self.builder.get_object("lb_Diglot").set_markup("<span color='blue'>Diglot</span>")
+            self.builder.get_object("lb_Diglot").set_markup("<span color='cornflowerblue'>Diglot</span>")
         if self.get("c_borders"):
-            self.builder.get_object("lb_FancyBorders").set_markup("<span color='blue'>Borders</span>")
+            self.builder.get_object("lb_FancyBorders").set_markup("<span color='cornflowerblue'>Borders</span>")
 
     def sensiVisible(self, k, focus=False):
         state = self.get(k)
@@ -764,13 +759,13 @@ class GtkViewModel(ViewModel):
                 fpath = os.path.join(self.working_dir, fndict[pgnum][0], fname)
                 self.builder.get_object("btn_Generate").set_sensitive(False)
             else:
-                fpath = os.path.join(self.configPath(), fndict[pgnum][0], fname)
+                fpath = os.path.join(self.configPath(cfgname=self.configId, makePath=False), fndict[pgnum][0], fname)
             doti = fpath.rfind(".")
             if doti > 0:
                 fpath = fpath[:doti] + "-draft" + fpath[doti:] + fndict[pgnum][1]
             if pgnum == 1: # PicList
                 self.builder.get_object("c_randomPicPosn").set_sensitive(True)
-                genTip = "Generate the PicList in the\ncorrect format using the markup\n(\\fig ... \\fig*) within the text."
+                genTip = "Generate the PicList using\nthe illustrations marked up\n(\\fig ... \\fig*) within the text."
                 genBtn.set_sensitive(True)
                 genBtn.set_tooltip_text(genTip)
             elif pgnum == 2: # AdjList
@@ -787,7 +782,7 @@ class GtkViewModel(ViewModel):
                 fname = "ptxprint-{}{}{}".format(bks[0], prjid, fndict[pgnum][1])
             fpath = os.path.join(self.working_dir, fname)
 
-        elif pgnum == 5: # View/Edit one of the 4 Settings files
+        elif pgnum == 5: # View/Edit one of the 4 Settings files or scripts
             fpath = self.builder.get_object("l_{}".format(pgnum)).get_tooltip_text()
             if fpath == None:
                 self.fileViews[pgnum][0].set_text("\n Use the 'Advanced' tab to select which settings you want to view or edit.")
@@ -902,7 +897,7 @@ class GtkViewModel(ViewModel):
     def onUseIllustrationsClicked(self, btn):
         status = self.sensiVisible("c_includeillustrations")
         if status:
-            self.builder.get_object("lb_Pictures").set_markup("<span color='blue'>Pictures</span>")
+            self.builder.get_object("lb_Pictures").set_markup("<span color='cornflowerblue'>Pictures</span>")
         else:
             self.builder.get_object("lb_Pictures").set_markup("<span>Pictures</span>")
 
@@ -983,10 +978,16 @@ class GtkViewModel(ViewModel):
         self.sensiVisible("c_fnautocallers", focus=True)
             
     def onResetFNcallersClicked(self, btn_resetFNcallers):
-        self.builder.get_object("t_fncallers").set_text(re.sub(" ", ",", self.ptsettings.get('footnotes', "")))
+        w = self.builder.get_object("t_fncallers")
+        w.set_text(re.sub(" ", ",", self.ptsettings.get('footnotes', "")))
+        if w.get_text() == "":
+            w.set_text("a,b,c,d,e,f,✶,☆,✦,✪,†,‡,§")
         
     def onResetXRcallersClicked(self, btn_resetXRcallers):
-        self.builder.get_object("t_xrcallers").set_text(re.sub(" ", ",", self.ptsettings.get('crossrefs', "")))
+        w = self.builder.get_object("t_xrcallers")
+        w.set_text(re.sub(" ", ",", self.ptsettings.get('crossrefs', "")))
+        if w.get_text() == "":
+            w.set_text("†,‡,§,∥,#")
         
     def onXrCallersChanged(self, btn):
         self.sensiVisible("c_xrautocallers", focus=True)
@@ -1538,7 +1539,7 @@ class GtkViewModel(ViewModel):
         self.ondiglotAlignmentChanged(None)
         status = self.sensiVisible("c_diglot")
         if status:
-            self.builder.get_object("lb_Diglot").set_markup("<span color='blue'>Diglot</span>")
+            self.builder.get_object("lb_Diglot").set_markup("<span color='cornflowerblue'>Diglot</span>")
         else:
             self.builder.get_object("lb_Diglot").set_markup("<span>Diglot</span>")
 
@@ -1588,7 +1589,7 @@ class GtkViewModel(ViewModel):
     def onEnableDecorativeElementsClicked(self, btn):
         status = self.sensiVisible("c_borders")
         if status:
-            self.builder.get_object("lb_FancyBorders").set_markup("<span color='blue'>Borders</span>")
+            self.builder.get_object("lb_FancyBorders").set_markup("<span color='cornflowerblue'>Borders</span>")
         else:
             self.builder.get_object("lb_FancyBorders").set_markup("<span>Borders</span>")
 

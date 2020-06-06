@@ -1,6 +1,44 @@
-PTXprint 0.7.0 Beta Release Notes
-23nd May 2020
+PTXprint 0.7.2 Beta Release Notes
+6th June 2020
 
+WARNING: This beta version is the result of major restructuring of the code and includes new
+         features that have had very limited testing. Do NOT use for any mission-critical work.
+
+NOTE: Chapter Numbers in peripheral (non-scripture) books are now suppressed by default (but 
+      can be re-enabled on the Advanced tab)
+
+New Features and Improvements in: 0.7.2
+
+  * Allow multiple stylesheets for diglots to define fonts and styles for each side independently
+  
+  * Scale images to fit available space on page (rather than run off the page and disappear completely)
+  
+  * Removed dependency on img2pdf so that TIFs now get converted to become JPGs 
+  
+  * Better handling of column balancing in poetical books
+  
+  * Click on 'reload' fills footnote and cross-ref callers with default set (if none found in Paratext)
+  
+Bug fixes and improvements in: 0.7.1
+
+  * Added ability to create aligned Diglots (with limited capability), and simplified Diglot tab
+  
+  * Diglot and Border tabs are now ON by default (as they are working more predictably)
+  
+  * Highlight Picture, Diglot and Border tabs in blue when their feature is enabled
+  
+  * Allow pictures in Diglots (largely untested feature - probably requiring improvement)
+  
+  * Fixed bug in PicList generation
+  
+  * Fixed bug in Lock/Unlock password setting/clearing
+  
+  * Make folders and links clickable in the Viewer
+  
+  * Added option (on Advanced tab) to prevent re-running the job when only testing, and needing to produce a quick PDF
+  
+  * Disable all settings until a project has been selected
+  
 Bug fixes and improvements in: 0.7.0
 
   * Add option to force Exclusive Use of Figures Folder (without searching any other folders or subfolders)
@@ -238,13 +276,8 @@ Rough edges:
   * Decorative borders, section headings and verse numbers is still a work
     in progress
 
-  * Fuzzy/DIY-diglot still works if you know how to configure it but it is
-    still too difficult for most
-
   * Helping users understand how to use PicLists and ParaAdjustLists is
     another area that could do with some help
-
-  * The file/log viewer is still very fragile and needs some attention
 
   * It would be helpful to have a Linux package built for easy installation
 

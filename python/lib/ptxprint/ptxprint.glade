@@ -245,7 +245,7 @@
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 0.7.1 (Beta)</property>
+    <property name="version">Version 0.7.2 (Beta)</property>
     <property name="copyright" translatable="yes">© 2020, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -5053,7 +5053,11 @@ or:  †,‡,§,∥,#    or: ✶,☆,✦,✪</property>
                                                         <property name="receives_default">True</property>
                                                         <property name="tooltip_text" translatable="yes">Clicking this button will reload
 the footnote callers from the
-Paratext project settings.</property>
+Paratext project settings.
+
+Note that if the callers have not
+been defined in the Paratext project
+then the default set will be loaded.</property>
                                                         <property name="margin_left">4</property>
                                                         <property name="margin_right">4</property>
                                                         <signal name="clicked" handler="onResetFNcallersClicked" swapped="no"/>
@@ -5254,7 +5258,11 @@ or:  †,‡,§,∥,#    or: ✶,☆,✦,✪</property>
                                                         <property name="receives_default">True</property>
                                                         <property name="tooltip_text" translatable="yes">Clicking this button will reload
 the cross-ref callers from the
-Paratext project settings.</property>
+Paratext project settings.
+
+Note that if the callers have not
+been defined in the Paratext project
+then the default set will be loaded.</property>
                                                         <property name="margin_left">4</property>
                                                         <property name="margin_right">4</property>
                                                         <signal name="clicked" handler="onResetXRcallersClicked" swapped="no"/>
@@ -6162,7 +6170,10 @@ attribute.  Note: w= web, a=app, p=print.</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">Rather than aborting the PDF export process, pre-process
 the list of illustrations and skip/ignore/remove any which
-are not found in the specified location of image files.</property>
+are not found in the specified location of image files.
+
+A list of missing pictures should appear below AFTER
+creating the publication.</property>
                                     <property name="halign">start</property>
                                     <property name="margin_left">20</property>
                                     <property name="margin_bottom">6</property>
@@ -6199,7 +6210,10 @@ file(s) in the Viewer tab.</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">The Viewer tab has a button to Generate a PicList file
 which enables more precise control over the sizing and
-positioning of illustrations.</property>
+positioning of illustrations.
+
+Pictures can be added to or removed from the
+publication without affecting the USFM text.</property>
                                     <property name="halign">start</property>
                                     <property name="margin_left">20</property>
                                     <property name="draw_indicator">True</property>
@@ -6217,6 +6231,18 @@ positioning of illustrations.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">This is the simplest way of using pictures
+but you have no control at all about where
+the picture will be positioned on the page.
+
+Most illustrations end up in the top left corner
+of the page. You can control whether it appears
+single column size (col) or spans the whole page
+(span) but these options have to be edited in the
+USFM file(s) in Paratext.
+
+Keep in mind that  for single column publications, 
+there is no difference between 'col' and 'span'.</property>
                                     <property name="halign">start</property>
                                     <property name="margin_left">20</property>
                                     <property name="margin_top">3</property>
@@ -6261,9 +6287,9 @@ one that best matches your preferences (if found).
 
 If the box is left empty, it will default to the 
 following search sequences:
-   jpg &gt; png &gt; tif/pdf   - for smallest file size
+   jpg &gt; tif &gt; png &gt; pdf   - for smallest file size
 or
-   tif/pdf &gt; png &gt; jpg   - for largest file size</property>
+   pdf &gt; png &gt; tif &gt; jpg   - for largest file size</property>
                                     <property name="halign">end</property>
                                     <property name="margin_right">6</property>
                                     <property name="label" translatable="yes">Order of Prefered Image Types:</property>
@@ -6280,19 +6306,21 @@ or
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">If multiple versions of an image are located
-(ab12345.jpg, ab12345.png or ab12345.tif
+(ab12345B.jpg, ab12345C.png or ab12345B.tif
 then which image type should be used?
 
-Examples:
-JPG PNG TIF/PDF  (use JPGs first, if none then PNGs, etc)
+Default setting:
+JPG TIF PNG PDF  (use JPGs first, if none then TIFs, PNGs etc.)
   or
-PNG TIF/PDF (use PNGs first, otherwise TIF as a PDF)
+TIF JPG PNG (use TIFs first, otherwise JPGs or PNGs)
   or
 JPG  (only use JPGs - ignore all other file types)
   or
-TIF  (only use TIFs [converted internally to PDFs])</property>
+TIF  (only use TIFs - ignore all other file types)
+
+NOTE: TIF files are converted internally to JPGs.</property>
                                     <property name="width_chars">15</property>
-                                    <property name="text" translatable="yes">JPG PNG PDF/TIF</property>
+                                    <property name="text" translatable="yes">JPG TIF PNG PDF</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">4</property>
@@ -6706,7 +6734,7 @@ this option checked (on).</property>
                                 <property name="margin_right">6</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="orientation">vertical</property>
-                                <property name="spacing">10</property>
+                                <property name="spacing">11</property>
                                 <child>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
@@ -7179,7 +7207,7 @@ to store generated PDF file(s).</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="margin_right">6</property>
-                            <property name="margin_top">10</property>
+                            <property name="margin_top">13</property>
                             <property name="vexpand">True</property>
                             <property name="label_xalign">0.039999999105930328</property>
                             <child>
@@ -7493,7 +7521,7 @@ to be appended to another, you can
 start the page numbering from where
 the first document ends.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Start Page Numbering from:</property>
+                                    <property name="label" translatable="yes">Starting Page Number</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -7519,7 +7547,7 @@ the first document ends.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Ordinarily, PTXprint will re-run the typesetting
+                                    <property name="tooltip_text" translatable="yes">Ordinarily, PTXprint re-runs the typesetting
 process (up to 5 times) in order to ensure
 everything is positioned as properly as
 possible, and so that the Table of Contents
