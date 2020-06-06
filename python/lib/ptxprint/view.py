@@ -357,7 +357,8 @@ class ViewModel:
                     else:
                         try: # Safeguarding from changed/missing keys in .cfg  or v[0].startswith("f_") 
                             if v[0].startswith("s_"):
-                                val = float(val)
+                                # print(key,v[0])
+                                val = float(val) if val != 'None' else 0
                             elif v[0].startswith("c_"):
                                 val = config.getboolean(sect, opt) if val != 'None' else False
                             if val is not None:

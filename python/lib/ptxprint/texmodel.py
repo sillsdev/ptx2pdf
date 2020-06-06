@@ -440,7 +440,7 @@ class TexModel:
             else:
                 engine = ""
             fname = f.family
-            print([f.family, f.style, f.filename])
+            # print([f.family, f.style, f.filename])
             if f.style is not None and len(f.style):
                 s = _fontstylemap.get(f.style," " + f.style)
                 fname = f.family + s

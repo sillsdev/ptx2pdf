@@ -128,9 +128,10 @@ class RunJob:
         else:
             self.maxRuns = 5
         self.changes = None
-        if info.asBool("document/ifinclfigs"): # and not info.asBool("document/ifdiglot"):
+        self.gatherDecorations(info)
+        if info.asBool("document/ifinclfigs"):
             self.gatherIllustrations(info, jobs)
-
+        
         if info.asBool("project/combinebooks"):
             joblist = [jobs]
         else:
@@ -347,7 +348,7 @@ class RunJob:
             # Pass all the needed parameters for the snippet from diginfo to info
             for k,v in _diglot.items():
                 info[k]=diginfo[v]
-                print(k, v, diginfo[v])
+                # print(k, v, diginfo[v])
             texfiles += self.sharedjob(jobs, info, logbuffer=logbuffer)
         return texfiles
 
@@ -456,7 +457,7 @@ class RunJob:
         os.putenv("hyph_size", "32749")     # always run with maximum hyphenated words size (xetex is still tiny ~200MB resident)
         os.putenv("stack_size", "32768")    # extra input stack space (up from 5000)
         ptxmacrospath = os.path.abspath(os.path.join(self.scriptsdir, "..", "..", "src"))
-        print("ptxmacrospath:", ptxmacrospath)
+        # print("ptxmacrospath:", ptxmacrospath)
         if not os.path.exists(ptxmacrospath):
             for b in (getattr(sys, 'USER_BASE', '.'), sys.prefix):
                 if b is None:
@@ -470,7 +471,7 @@ class RunJob:
             texinputs = [envtexinputs] if envtexinputs is not None and len(envtexinputs) else []
             texinputs += [os.path.abspath(self.tmpdir), ptxmacrospath]
             os.putenv('TEXINPUTS', (";" if sys.platform=="win32" else ":").join(texinputs))
-            print("TEXINPUTS=",os.getenv('TEXINPUTS'))
+            # print("TEXINPUTS=",os.getenv('TEXINPUTS'))
         elif sys.platform == "linux":
             if not os.getenv('TEXINPUTS'):
                 mdirs = self.args.macros or "/usr/lib/Paratext8/xetex/share/texmf-dist/tex/ptx2pdf:/usr/lib/Paratext9/xetex/share/texmf-dist/tex/ptx2pdf"
@@ -509,6 +510,23 @@ class RunJob:
             numruns -= 1
         print("Done")
         return [outfname]
+
+    def gatherDecorations(self, info):
+        if info.asBool("fancy/enableborders"):
+            if info.asBool("fancy/sectionheader"):
+                try:
+                    # print("Section Heading source:", info.dict["fancy/sectionheaderpdf"])
+                    # print("Section Heading target:", os.path.join(self.tmpdir, "sectHeadDecorator.pdf"))
+                    copyfile(info.dict["fancy/sectionheaderpdf"], os.path.join(self.tmpdir, "sectHeadDecorator.pdf"))
+                    # texfiles += os.path.join(self.tmpdir,"sectHeadDecorator.pdf")
+                except FileNotFoundError:
+                    print("Warning: Couldn't locate Section Heading Decorator")
+            if info.asBool("fancy/versedecorator"):
+                try:
+                    copyfile(info.dict["fancy/versedecoratorpdf"], os.path.join(self.tmpdir, "verseNumDecorator.pdf"))
+                    # texfiles += os.path.join(self.tmpdir,"verseNumDecorator.pdf")
+                except FileNotFoundError:
+                    print("Warning: Couldn't locate Verse Number Decorator")
 
     def gatherIllustrations(self, info, jobs):
         pageRatios = self.usablePageRatios(info)

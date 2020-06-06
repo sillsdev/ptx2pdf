@@ -364,7 +364,7 @@ class GtkViewModel(ViewModel):
     def get(self, wid, sub=0, asstr=False):
         w = self.builder.get_object(wid)
         if w is None:
-            print("Can't find {} in the model".format(wid))
+            print("Can't find {} or {} in the model".format(wid, w))
             return super(GtkViewModel, self).get(wid, value)
         v = ""
         if wid.startswith("ecb_"):
@@ -403,7 +403,7 @@ class GtkViewModel(ViewModel):
     def set(self, wid, value):
         w = self.builder.get_object(wid)
         if w is None:
-            print("Can't find {} in the model".format(wid))
+            print("Can't find {} or {} in the model".format(wid, w))
             super(GtkViewModel, self).set(wid, value)
             return
         if wid.startswith("ecb_"):
