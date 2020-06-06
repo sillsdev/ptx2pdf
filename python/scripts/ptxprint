@@ -8,7 +8,7 @@ except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
     import ptxprint
 from ptxprint.view import ViewModel, VersionStr
-from ptxprint.font import initFontCache
+from ptxprint.font import initFontCache, cachepath
 from ptxprint.runjob import RunJob
 
 parser = argparse.ArgumentParser()
@@ -80,7 +80,7 @@ def doit(printer):
 if args.fontpath is not None:
     for p in args.fontpath:
         if os.path.exists(p):
-            font.cachepath(p)
+            cachepath(p)
 
 if args.print:
     initFontCache()

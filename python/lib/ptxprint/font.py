@@ -1,5 +1,5 @@
 from ptxprint.runner import fclist, checkoutput
-import struct, re
+import struct, re, os
 from gi.repository import Pango
 
 pango_styles = {Pango.Style.ITALIC: "italic",
@@ -59,7 +59,7 @@ class TTFontCache:
                     self.cache.setdefault(n, {})[s] = path
 
     def addFontDir(self, path):
-        for fname in os.path.listdir(path):
+        for fname in os.listdir(path):
             if fname.lower().endswith(".ttf"):
                 fpath = os.path.join(path, fname)
                 f = TTFont(None, filename=fpath)
