@@ -273,7 +273,7 @@ class ViewModel:
         path = os.path.join(self.configPath(cfgname), "ptxprint.cfg")
         if not os.path.exists(path):
             return False
-        print("Reading config: {}".format(path))
+        #print("Reading config: {}".format(path))
         config = configparser.ConfigParser()
         config.read(path, encoding="utf-8")
         self.loadConfig(config)
@@ -284,7 +284,7 @@ class ViewModel:
             cfgname = self.configName()
         path = os.path.join(self.configPath(cfgname=cfgname, makePath=True), "ptxprint.cfg")
         config = self.createConfig()
-        print("Writing config: {}".format(path))
+        #print("Writing config: {}".format(path))
         with open(path, "w", encoding="utf-8") as outf:
             config.write(outf)
 

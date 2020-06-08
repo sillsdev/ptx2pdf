@@ -145,6 +145,8 @@ class TTFont:
         return res
 
     def __init__(self, name, style="", filename=None):
+        if hasattr(self, 'family'):     # already init from cache
+            return
         self.extrastyles = ""
         self.family = name
         self.style = style
