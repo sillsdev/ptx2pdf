@@ -412,6 +412,7 @@ class TexModel:
 
     def processFonts(self, printer):
         """ Update model fonts from UI """
+        badfonts = set()
         for p in self._fonts.keys():
             if p in self.dict:
                 del self.dict[p]
@@ -425,16 +426,18 @@ class TexModel:
             style = self.dict.get(p+"/style", "")
             f = TTFont(name, style)
             # print(p, wid, f.filename, f.family, f.style)
-            if f.filename is None and p != "fontregular" and self._fonts[p][1] is not None:
-                regname = self.dict["fontregular/name"]
-                regstyle = self.dict["fontregular/style"]
-                f = TTFont(regname, regstyle)
-                if printer is not None:
-                    printer.set(self._fonts[p][1], True)
-                    printer.set(self._fonts[p][0], (name, style))
-                    if self._fonts[p][2] is not None:
-                        self.updatefields([self._fonts[p][2]])
-                    # print("Setting {} to {}".format(p, reg))
+            if f.filename is None:
+                badfonts.add((name, style))
+                if p != "fontregular" and self._fonts[p][1] is not None:
+                    regname = self.dict["fontregular/name"]
+                    regstyle = self.dict["fontregular/style"]
+                    f = TTFont(regname, regstyle)
+                    if printer is not None:
+                        printer.set(self._fonts[p][1], True)
+                        printer.set(self._fonts[p][0], (name, style))
+                        if self._fonts[p][2] is not None:
+                            self.updatefields([self._fonts[p][2]])
+                        # print("Setting {} to {}".format(p, reg))
             if 'Silf' in f and self.asBool("font/usegraphite"):
                 engine = "/GR"
             else:
@@ -444,7 +447,7 @@ class TexModel:
             if f.style is not None and len(f.style):
                 s = _fontstylemap.get(f.style," " + f.style)
                 fname = f.family + s
-            self.dict[p] = "[{}]".format(f.filename) if f.usepath else fname
+            self.dict[p] = "[{}]".format(f.filename.as_posix()) if f.usepath else fname
             self.dict[p+"/engine"] = engine
         featstring = self.dict["font/features"]
         if featstring is not None and len(featstring):
@@ -462,6 +465,9 @@ class TexModel:
                 self.dict['font/texfeatures'] = ""
         else:
             self.dict['font/texfeatures'] = ""
+        if len(badfonts):
+            printer.doError("The following fonts are missing from your system: " \
+                    + ", ".join("{} {}".format(*x) for x in badfonts if len(x[0])))
         
     def processHdrFtr(self, printer):
         """ Update model headers from model UI read values """

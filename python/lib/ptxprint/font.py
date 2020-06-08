@@ -1,6 +1,7 @@
 from ptxprint.runner import fclist, checkoutput
 import struct, re, os
 from gi.repository import Pango
+from pathlib import Path
 
 pango_styles = {Pango.Style.ITALIC: "italic",
     Pango.Style.NORMAL: "",
@@ -27,8 +28,10 @@ def num2tag(n):
         return struct.unpack('4s', struct.pack('>L', n))[0].replace(b'\000', b'').decode()
 
 class TTFontCache:
-    def __init__(self):
+    def __init__(self, nofclist=False):
         self.cache = {}
+        if nofclist:
+            return
         files = checkoutput(["fc-list", ":file"], path="xetex")
         for f in files.split("\n"):
             if ": " not in f:
@@ -116,10 +119,10 @@ class TTFontCache:
         return res
 
 fontcache = None
-def initFontCache():
+def initFontCache(nofclist=False):
     global fontcache
     if fontcache is None:
-        fontcache = TTFontCache()
+        fontcache = TTFontCache(nofclist=nofclist)
     return fontcache
     # print(sorted(fontcache.cache.items()))
 def cachepath(p):
@@ -143,7 +146,11 @@ class TTFont:
         self.extrastyles = ""
         self.family = name
         self.style = style
-        self.filename = filename if filename is not None else fontcache.get(name, style)
+        if filename is not None:
+            self.filename = Path(os.path.abspath(filename))
+        else:
+            fname = fontcache.get(name, style)
+            self.filename = Path(os.path.abspath(fname)) if fname is not None else None
         self.feats = {}
         self.featvals = {}
         self.names = {}

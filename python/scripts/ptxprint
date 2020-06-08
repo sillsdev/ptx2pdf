@@ -25,6 +25,7 @@ parser.add_argument('-e','--experimental',action="store_true",help="Enable exper
 parser.add_argument('--timeout',default=200,type=int,help='xetex runtime timeout')
 parser.add_argument('-T','--testing',action='store_true',help="Run in testing, output xdv")
 parser.add_argument('-f','--fontpath',action='append',help="Directory of fonts to include (repeatable)")
+parser.add_argument('--nofontcache',action="store_true",help="Don't use system fonts")
 parser.add_argument('-S','--splash',action="store_true",help="Force splash screen")
 # parser.add_argument('-t','--test', action='store_true',help="Quick start for a lazy typist")
 args = parser.parse_args()
@@ -83,7 +84,7 @@ if args.fontpath is not None:
             cachepath(p)
 
 if args.print:
-    initFontCache()
+    initFontCache(nofclist=args.nofontcache)
     if args.books is not None and len(args.books):
         mainw.bookNoUpdate = True
         bl = args.books.split(" ")

@@ -2,10 +2,10 @@ ptxprint-*
 *~
 *.bak
 *.log
-*.txt
 *.parlocs
 *.delayed
 *-draft.SFM
+*-draft.txt
 __pycache__/
 temp/
 python/dist/

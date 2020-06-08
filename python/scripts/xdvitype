@@ -18,7 +18,7 @@ opcodes += [
     ("parmop", [-4], "setcode"),
     ("multiparm", [-4]*2, "setrule"),
     ("simple", [], "nop"),
-    ("multiparm", [4]*11, "bop"),
+    ("bop", [4]*11, "bop"),
     ("simple", [], "eop"),       # code 140
     ("simple", [], "push"),
     ("simple", [], "pop"),
@@ -81,6 +81,7 @@ class XDviType:
         self.fonts = {}
         self.file = open(fname, "rb")
         self.diffable = diffable
+        self.pageno = 0
 
     def readbytes(self, num):
         return self.file.read(num)
@@ -108,7 +109,7 @@ class XDviType:
             getattr(self, opc[0])(op, lastparm, data)
 
     def out(self, txt):
-        print(txt)
+        print("pg[{}] ".format(self.pageno) + txt)
         
     def setchar(self, opcode, parm, data):
         self.out("setchar({})".format(opcode))
@@ -121,6 +122,10 @@ class XDviType:
 
     def simple(self, opcode, parm, data):
         self.out("{}".format(parm))
+
+    def bop(self, opcode, parm, data):
+        self.pageno = data[0]
+        self.out("{}({}) [{}]".format(parm, opcode, data[0]))
 
     def font(self, opcode, parm, data):
         if parm is not None:
