@@ -6,6 +6,7 @@ import configparser, os, sys
 def test_projects(projectsdir, project, config):
     testsdir = os.path.dirname(__file__)
     ptxcmd = [os.path.join(testsdir, "..", "python", "scripts", "ptxprint"),
+                "--nofontcache",
                 "-p", projectsdir, "-f", os.path.join(testsdir, "fonts"), "-T"]
     if config is not None:
         ptxcmd += ['-c', config]

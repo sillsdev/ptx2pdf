@@ -896,7 +896,7 @@ class TexModel:
         if not self.asBool("notes/includexrefs"):
             nstylist.append("##### Set Cross-reference Size and Line Spacing\n")
             for m in ['xo', 'xq', 'xdc', 'xt_f', 'xk', 'xta', 'xop', 'xot', 'xnt', 'xdc', 'x']:
-                nstylist.append("\\Marker {}\n\\FontSize {}\n".format(m, self.dict['notes/fnfontsize']))
+                nstylist.append("\\Marker {}\n\\FontSize {}\n\\StyleType Character\n".format(m, self.dict['notes/fnfontsize']))
             nstylist.append("\\LineSpacing {}pt plus 2pt\n".format(self.dict['notes/fnlinespacing']))
             nstylist.append("\\Justification Left\n\n")
         else:
