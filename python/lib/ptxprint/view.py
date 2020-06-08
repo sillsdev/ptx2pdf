@@ -329,7 +329,7 @@ class ViewModel:
             if k in self._settingmappings:
                 if val == "" or val == self.ptsettings.dict.get(self._settingmappings[k], ""):
                     continue
-            self._configset(config, k, str(val))
+            self._configset(config, k, str(val) if val is not None else "")
         return config
 
     def loadConfig(self, config):
