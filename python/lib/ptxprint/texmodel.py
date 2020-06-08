@@ -477,6 +477,7 @@ class TexModel:
         for side in ('left', 'center', 'right'):
             v = self.dict["header/hdr"+side]
             t = self._hdrmappings.get(v, v)
+            print(side,t)
             if side == 'left':
                 if mirror:
                     self.dict['header/even{}'.format('right')] = t

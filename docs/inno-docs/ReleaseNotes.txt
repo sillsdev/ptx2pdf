@@ -15,7 +15,7 @@ New Features and Improvements in: 0.7.2
   
   * Removed dependency on img2pdf so that TIFs now get converted to become JPGs 
   
-  * Better handling of column balancing in poetical books
+  * Better handling of line and page breaking (especially in poetical books)
   
   * Click on 'reload' fills footnote and cross-ref callers with default set (if none found in Paratext)
   
