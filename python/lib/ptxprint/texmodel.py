@@ -168,7 +168,7 @@ ModelMap = {
     "document/customfigfolder": ("btn_selectFigureFolder", lambda w,v: w.customFigFolder.as_posix() if w.customFigFolder is not None else ""),
     "document/imagetypepref":   ("t_imageTypeOrder", None),
     "document/ifusepiclist":    ("c_usePicList", lambda w,v :"" if v else "%"),
-    "document/spacecntxtlztn":  ("ecb_spaceCntxtlztn", lambda w,v: "0" if v == "None" else "1" if v == "Some" else "2"),
+    "document/spacecntxtlztn":  ("ecb_spaceCntxtlztn", lambda w,v: "0" if v == "None" or v is None else "1" if v == "Some" else "2"),
     "document/glossarymarkupstyle":  ("fcb_glossaryMarkupStyle", None),
     "document/filterglossary":  ("c_filterGlossary", None),
     "document/hangpoetry":      ("c_hangpoetry", lambda w,v: "" if v else "%"),
@@ -297,6 +297,7 @@ class TexModel:
     }
     _glossarymarkup = {
         "None":                    r"\1",
+        None:                      r"\1",
         "format as bold":          r"\\bd \1\\bd*",
         "format as italics":       r"\\it \1\\it*",
         "format as bold italics":  r"\\bdit \1\\bdit*",
@@ -465,6 +466,7 @@ class TexModel:
                 self.dict['font/texfeatures'] = ""
         else:
             self.dict['font/texfeatures'] = ""
+        badfonts.discard(("", ""))
         if len(badfonts):
             printer.doError("The following fonts are missing from your system: " \
                     + ", ".join("{} {}".format(*x) for x in badfonts if len(x[0])))

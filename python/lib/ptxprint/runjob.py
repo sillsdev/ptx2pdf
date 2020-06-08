@@ -111,12 +111,6 @@ class RunJob:
         if self.prjid is None or not len(self.prjid):     # can't print no project
             return
         self.tempFiles += info.generateNestedStyles()
-        invPW = self.printer.get("t_invisiblePassword")
-        if invPW == None or invPW == "" or self.printer.configName() == "": # This config is unlocked
-            # So it it safe/allowed to save the current config
-            self.printer.writeConfig()
-        # else:
-            # print("Current Config is Locked, so changes have NOT been saved")
         self.tmpdir = os.path.join(self.prjdir, 'PrintDraft') if info.asBool("project/useprintdraftfolder") else self.args.directory
         os.makedirs(self.tmpdir, exist_ok=True)
         jobs = self.printer.getBooks()

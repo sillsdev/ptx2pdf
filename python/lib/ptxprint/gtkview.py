@@ -361,7 +361,7 @@ class GtkViewModel(ViewModel):
         else:
             return [font, 0]
 
-    def get(self, wid, sub=0, asstr=False):
+    def get(self, wid, default=None, sub=0, asstr=False):
         w = self.builder.get_object(wid)
         if w is None:
             print("Can't find {} or {} in the model".format(wid, w))
@@ -394,6 +394,8 @@ class GtkViewModel(ViewModel):
                 v = "\n".join(v)
         elif wid.startswith("lb_") or wid.startswith("l_"):
             v = w.get_text()
+        if v is None:
+            return default
         return v
 
     def setFontButton(self, btn, name, style):
@@ -483,6 +485,12 @@ class GtkViewModel(ViewModel):
                     else:
                         return
                 fileLocked = False
+        invPW = self.get("t_invisiblePassword")
+        if invPW == None or invPW == "" or self.printer.configName() == "": # This config is unlocked
+            # So it it safe/allowed to save the current config
+            self.writeConfig()
+        # else:
+            # print("Current Config is Locked, so changes have NOT been saved")
 
         self.callback(self)
 

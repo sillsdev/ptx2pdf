@@ -109,10 +109,10 @@ class ViewModel:
         else:
             return [font, 0]
 
-    def get(self, wid, sub=0, asstr=False):
+    def get(self, wid, default=None, sub=0, asstr=False):
         if wid.startswith("bl_"):
             return (self.dict.get(wid + "/name", None), self.dict.get(wid + "/style", None))
-        return self.dict.get(wid, None)
+        return self.dict.get(wid, default)
 
     def set(self, wid, value):
         if wid.startswith("bl_"):
@@ -125,7 +125,7 @@ class ViewModel:
         return cfgName
 
     def getBooks(self):
-        bl = self.get("t_booklist").split()
+        bl = self.get("t_booklist", "").split()
         if not self.get('c_multiplebooks'):
             return [self.get("ecb_book")]
         elif len(bl):
@@ -273,6 +273,7 @@ class ViewModel:
         path = os.path.join(self.configPath(cfgname), "ptxprint.cfg")
         if not os.path.exists(path):
             return False
+        print("Reading config: {}".format(path))
         config = configparser.ConfigParser()
         config.read(path, encoding="utf-8")
         self.loadConfig(config)
@@ -283,6 +284,7 @@ class ViewModel:
             cfgname = self.configName()
         path = os.path.join(self.configPath(cfgname=cfgname, makePath=True), "ptxprint.cfg")
         config = self.createConfig()
+        print("Writing config: {}".format(path))
         with open(path, "w", encoding="utf-8") as outf:
             config.write(outf)
 
@@ -340,10 +342,10 @@ class ViewModel:
                 if key in ModelMap:
                     # print("Key:", key)
                     v = ModelMap[key]
+                    if val == "None":
+                        val = None
                     if key in self._attributes:
                         w = self._attributes[key]
-                        if val == "None":
-                            val = None
                         if w[1]:
                             val = val.split("\n") if val is not None else []
                             val = [Path(x, self) for x in val if x is not None]
@@ -358,9 +360,9 @@ class ViewModel:
                         try: # Safeguarding from changed/missing keys in .cfg  or v[0].startswith("f_") 
                             if v[0].startswith("s_"):
                                 # print(key,v[0])
-                                val = float(val) if val != 'None' else 0
+                                val = float(val) if val is not None and val != '' else 0
                             elif v[0].startswith("c_"):
-                                val = config.getboolean(sect, opt) if val != 'None' else False
+                                val = config.getboolean(sect, opt) if val is not None else False
                             if val is not None:
                                 self.set(v[0], val)
                         except AttributeError:
