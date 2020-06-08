@@ -1,7 +1,7 @@
 import pytest
 from subprocess import call, check_output
 from difflib import context_diff
-import configparser, os
+import configparser, os, sys
 
 def test_projects(projectsdir, project, config):
     testsdir = os.path.dirname(__file__)
@@ -12,6 +12,9 @@ def test_projects(projectsdir, project, config):
     ptxcmd += ["-P", project]
     xdvcmd = [os.path.join(testsdir, "..", "python", "scripts", "xdvitype"),
                 "-d"]
+    if sys.platform == "win32":
+        ptxcmd.insert(0, "python")
+        xdvcmd.insert(0, "python")
     cfg = configparser.ConfigParser()
     if config is not None:
         configpath = os.path.join(projectsdir, project, "shared", "ptxprint", config, "ptxprint.cfg")

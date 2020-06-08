@@ -788,6 +788,10 @@ class TexModel:
         # keep \xo & \fr refs with whatever follows (i.e the bookname or footnote) so it doesn't break at end of line
         self.localChanges.append((None, regex.compile(r"(\\(xo|fr) (\d+[:.]\d+([-,]\d+)?)) "), r"\1\u00A0"))
 
+        # Change \xt to \xt_f so that the size can be set independently to \xt in the main
+        self.localChanges.append((regex.compile(r"(\\x .+?\\x\*)"), regex.compile(r"\\xt "), r"\\xt_f "))
+        self.localChanges.append((regex.compile(r"(\\f .+?\\f\*)"), regex.compile(r"\\xt "), r"\\xt_f "))
+        
         # Paratext marks no-break space as a tilde ~
         self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
 
@@ -880,7 +884,7 @@ class TexModel:
 
         if not self.asBool("notes/includefootnotes"):
             nstylist.append("##### Set Footnote Size and Line Spacing\n")
-            for m in ['fr', 'fq', 'fk', 'ft', 'f']:
+            for m in ['fr', 'fq', 'fqa', 'fk', 'ft', 'ff', 'fl', 'fw', 'fp', 'fv', 'fdc', 'fm', 'xt', 'f']:
                 nstylist.append("\\Marker {}\n\\FontSize {}\n".format(m, self.dict['notes/fnfontsize']))
             nstylist.append("\\LineSpacing {}pt plus 2pt\n".format(self.dict['notes/fnlinespacing']))
             nstylist.append("\\Justification Left\n\n")
@@ -889,7 +893,7 @@ class TexModel:
 
         if not self.asBool("notes/includexrefs"):
             nstylist.append("##### Set Cross-reference Size and Line Spacing\n")
-            for m in ['xo', 'xq', 'xdc', 'xt', 'x']:
+            for m in ['xo', 'xq', 'xdc', 'xt_f', 'xk', 'xta', 'xop', 'xot', 'xnt', 'xdc', 'x']:
                 nstylist.append("\\Marker {}\n\\FontSize {}\n".format(m, self.dict['notes/fnfontsize']))
             nstylist.append("\\LineSpacing {}pt plus 2pt\n".format(self.dict['notes/fnlinespacing']))
             nstylist.append("\\Justification Left\n\n")
