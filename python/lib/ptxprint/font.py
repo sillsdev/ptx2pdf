@@ -138,9 +138,11 @@ class TTFont:
         if name is not None:
             k = "{}|{}".format(name, style)
             res = TTFont.cache.get(k, None)
-            if res is not None:
-                return res
-        return super(TTFont, cls).__new__(cls)
+        else:
+            res = None
+        if res is None:
+            res = super(TTFont, cls).__new__(cls)
+        return res
 
     def __init__(self, name, style="", filename=None):
         self.extrastyles = ""
@@ -166,6 +168,9 @@ class TTFont:
         else:
             self.dict = {}
         # print([name, self.family, self.style, self.filename])
+        k = "{}|{}".format(self.family, self.style)
+        if k not in TTFont.cache:
+            TTFont.cache[k] = self
 
     def readfont(self):
         self.dict = {}
