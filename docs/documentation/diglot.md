@@ -109,6 +109,11 @@ If ```\diglotfalse``` is in force, then the non-diglot parameters will take effe
 A .usfm file cannot (easily) redefine those values (as numbers are not treated as numbers within the .usfm code, otherwise ```\s2``` would be treated by XeTeX as ```\s``` followed by 
 parameter ```2```. However, ```\singlecolumn```, ```\doublecolumns``` and ```\diglotcolumns``` will probably work. These are internal commands and their use hasn't been tested recently. 
 
+### Other settings
+- ```\Alternative```
+  The PDF bookmarks are produced (by default) with a ```/``` separating the chapter name. The slash is actually produced by ```\Alternative```, in case 
+slash not the correct symbol to use. 
+
 ## Easy solutions to common problems
 
 ### Avoiding mismatched titles
