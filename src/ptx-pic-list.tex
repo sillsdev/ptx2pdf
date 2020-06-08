@@ -41,7 +41,8 @@
 % Compare ptx-adj-list.tex for comments on the code.
 
 \def\parsep@cline #1 #2.#3 #4\end{%
-  \xdef\p@cref{#1#2.#3}\gdef\p@cspec{#4}%
+  \uppercase{\def\piclstb@@kref{#1}}
+  \xdef\p@cref{\piclstb@@kref#2.#3}\gdef\p@cspec{#4}%
 }
 
 \def\dop@c{%
