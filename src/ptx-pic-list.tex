@@ -41,7 +41,7 @@
 % Compare ptx-adj-list.tex for comments on the code.
 
 \def\parsep@cline #1 #2.#3 #4\end{%
-  \uppercase{\def\piclstb@@kref{#1}}
+  \uppercase{\def\piclstb@@kref{#1}}%
   \xdef\p@cref{\piclstb@@kref#2.#3}\gdef\p@cspec{#4}%
 }
 
@@ -62,7 +62,7 @@
       \read\p@clist to \p@cline
       \ifx\p@cline\P@R\readnextp@c\else
         \ifx\p@cline\empty\readnextp@c\else
-          \immediate\write16{{Read piclist line: \p@cline}}
+          \immediate\write16{{Read piclist line: \p@cline}}%
           \expandafter\parsep@cline\p@cline\end
         \fi
       \fi
@@ -88,7 +88,7 @@
 
 \def\ch@ckpiclist{%
   \edef\c@rref{\id@@@\ch@pter.\v@rse}%
-  \trace{P}{\p@cref =\c@rref?}
+  \trace{P}{\p@cref =\c@rref?}%
   \ifx\c@rref\p@cref \dop@c\fi}
 
 \addtoversehooks{\ch@ckpiclist}
