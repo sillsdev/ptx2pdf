@@ -775,10 +775,12 @@ class RunJob:
         lineSpacingFactor = float(info.dict["paragraph/linespacingfactor"])
         # print("lineSpacingFactor=", lineSpacingFactor)
         # ph = pageheight, pw = pagewidth
-        ph = pageHeight - (margin * topMarginFactor) - (margin * bottomMarginFactor) - 18 # 16 # (3 * lineSpacingFactor) (Hack!)
+        ph = pageHeight - (margin * topMarginFactor) - (margin * bottomMarginFactor) - 22 # 16 # (3 * lineSpacingFactor) (Hack!)
         pw1 = pageWidth - bindingGutter - (2*(margin*sideMarginFactor))                       # single-col layout
-        if info.dict["paper/columns"] == "2": # AND if 'col' (which we don't know at this stage!)
+        if info.dict["paper/columns"] == "2":
             pw2 = int(pageWidth - middleGutter - bindingGutter - (2*(margin*sideMarginFactor)))/2 # double-col layout & span images
+        elif info.asBool("snippets/alignediglot"):
+            pw2 = pw1
         else:
             pw2 = pw1
         # print("Usable ph: {}mm".format(ph), "     Usable 1-col pw1: {}mm   Usable 2-col pw2: {}mm".format(pw2, pw1))

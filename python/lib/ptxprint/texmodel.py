@@ -479,7 +479,6 @@ class TexModel:
         for side in ('left', 'center', 'right'):
             v = self.dict["header/hdr"+side]
             t = self._hdrmappings.get(v, v)
-            print(side,t)
             if side == 'left':
                 if mirror:
                     self.dict['header/even{}'.format('right')] = t
@@ -886,7 +885,7 @@ class TexModel:
 
         if not self.asBool("notes/includefootnotes"):
             nstylist.append("##### Set Footnote Size and Line Spacing\n")
-            for m in ['fr', 'fq', 'fqa', 'fk', 'ft', 'ff', 'fl', 'fw', 'fp', 'fv', 'fdc', 'fm', 'xt', 'f']:
+            for m in ['fr', 'fq', 'fqa', 'fk', 'ft', 'ff', 'fl', 'fw', 'fp', 'fv', 'fdc', 'fm', 'f']:
                 nstylist.append("\\Marker {}\n\\FontSize {}\n".format(m, self.dict['notes/fnfontsize']))
             nstylist.append("\\LineSpacing {}pt plus 2pt\n".format(self.dict['notes/fnlinespacing']))
             nstylist.append("\\Justification Left\n\n")
@@ -895,12 +894,14 @@ class TexModel:
 
         if not self.asBool("notes/includexrefs"):
             nstylist.append("##### Set Cross-reference Size and Line Spacing\n")
-            for m in ['xo', 'xq', 'xdc', 'xt_f', 'xk', 'xta', 'xop', 'xot', 'xnt', 'xdc', 'x']:
-                nstylist.append("\\Marker {}\n\\FontSize {}\n\\StyleType Character\n".format(m, self.dict['notes/fnfontsize']))
+            for m in ['xo', 'xq', 'xdc', 'xk', 'xta', 'xop', 'xot', 'xnt', 'xdc', 'x']:
+                nstylist.append("\\Marker {}\n\\FontSize {}\n".format(m, self.dict['notes/fnfontsize']))
             nstylist.append("\\LineSpacing {}pt plus 2pt\n".format(self.dict['notes/fnlinespacing']))
             nstylist.append("\\Justification Left\n\n")
         else:
             nstylist.append("##### Remove all cross-references\n\\Marker x\n\\TextProperties nonpublishable\n\n")
+
+        nstylist.append("\\Marker xt_f\n\\FontSize {}\n\\StyleType Character\n\n".format(self.dict['notes/fnfontsize']))
 
         nstylist.append("##### Adjust poetic indents\n")
         m = ["\Marker", "\LeftMargin", "\FirstLineIndent"]

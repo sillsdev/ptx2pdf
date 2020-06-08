@@ -422,55 +422,69 @@ class ViewModel:
             with open(infname, "r", encoding="utf-8") as inf:
                 dat = inf.read()
                 # Finds USFM2-styled markup in text:
-                #                0         1       2     3     4              5       
-                # \\fig .*?\|(.+?\....)\|(....?)\|(.+)?\|(.+)?\|(.+)?\|(\d+[\:\.]\d+[abc]?([\-,\u2013\u2014]\d+[abc]?)?)\\fig\*
-                # \fig |CN01684b.jpg|col|||key-kālk arsi manvan yēsunaga tarval|9:2\fig*
-                #           0         1  2 3          4                          5  
-                # BKN \5 \|\0\|\1\|tr\|\|\4\|\5
+                # \v 15 <verse text> \fig |CN01684b.jpg|col|||key-kālk arsi manvan yēsunaga tarval|9:2\fig*
+                #     0     1    2             3         4  5 6          7                          8  
+                # BKN \0 \|\3\|\4\|tr\|\|\7\|\8
                 # MAT 9.2 bringing the paralyzed man to Jesus|CN01684b.jpg|col|tr||key-kālk arsi manvan yēsunaga tarval|9:2
-                m = re.findall(r"\\fig .*?\|(.+?\....)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|(\d+[\:\.]\d+?[abc]?([\-,\u2013\u2014]\d+[abc]?)?)\\fig\*", dat)
+                m = re.findall(r"(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))+\\fig .*?\|(.+?\....)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|(\d+[\:\.]\d+?[abc]?([\-,\u2013\u2014]\d+[abc]?)?)\\fig\*", dat)
                 if len(m):
                     for f in m:
-                        picfname = f[0]
+                        picfname = f[3]
                         extn = picfname[-4:]
                         picfname = re.sub('[()&+,. ]', '_', picfname)[:-4]+extn
                         if self.get("c_randomPicPosn"):
-                            pageposn = random.choice(_picposn.get(f[1], f[1]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
+                            pageposn = random.choice(_picposn.get(f[4], f[4]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
                         else:
-                            pageposn = (_picposn.get(f[1], f[1]))[0]              # use the t or tl (first in list)
-                        chvs = re.sub(r":",".", f[5])
+                            pageposn = (_picposn.get(f[4], f[4]))[0]              # use the t or tl (first in list)
+                        ch = re.sub(r"(\d+)[:.].+", r"\1", f[8])
+                        vs = f[0]
+                        if vs.endswith(('a', 'b', 'c')):
+                            vs = int(f[0].strip("abc")) - 1
+                            if vs == 0:
+                                cmt = "% "
+                                vs = 2
+                        else:
+                            vs = f[0]
+                        chvs = ch+"." + str(vs)
                         cmt = "% " if chvs in usedRefs else ""
                         usedRefs += [chvs]
-                        piclist.append(cmt+bk+" "+chvs+" |"+picfname+"|"+f[1]+"|"+pageposn+"||"+f[4]+"|"+f[5]+"\n")
+                        piclist.append(cmt+bk+" "+chvs+" |"+picfname+"|"+f[4]+"|"+pageposn+"||"+f[7]+"|"+f[8]+"\n")
                 else:
                     # If none of the USFM2-styled illustrations were found then look for USFM3-styled markup in text 
                     # (Q: How to handle any additional/non-standard xyz="data" ? Will the .* before \\fig\* take care of it adequately?)
-                    #         0              1               2                  3      [4]
-                    # \\fig (.+?)\|src="(.+?\....)" size="(....?)" ref="(\d+[:.]\d+[abc]?([-,\u2013\u2014]\d+[abc]?)?)".*?\\fig\*
-                    # \fig hāgartun saṅga dūtal vaḍkval|src="CO00659B.TIF" size="span" ref="21:16"\fig*
-                    #                   0                         1                2          3  [4]
+                    # \v 15 <verse text> \fig hāgartun saṅga dūtal vaḍkval|src="CO00659B.TIF" size="span" ref="21:16"\fig*
+                    #     0     1    2                     3                         4                5          6  [7]
                     # BKN \3 \|\1\|\2\|tr\|\|\0\|\3
                     # GEN 21.16 an angel speaking to Hagar|CO00659B.TIF|span|t||hāgartun saṅga dūtal vaḍkval|21:16
-                    m = re.findall(r'\\fig ([^\\]*?)\|src="([^\\]+?\....)" size="(....?)" ref="(\d+[:.]\d+[abc]?([-,\u2013\u2014]\d+[abc]?)?)"[^\\]*?\\fig\*', dat)
+                    m = re.findall(r'(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))+\\fig ([^\\]*?)\|src="([^\\]+?\....)" size="(....?)" ref="(\d+[:.]\d+[abc]?([-,\u2013\u2014]\d+[abc]?)?)"[^\\]*?\\fig\*', dat)
                     if len(m):
                         for f in m:
-                            picfname = f[1]
+                            picfname = f[4]
                             extn = picfname[-4:]
                             picfname = re.sub('[()&+,. ]', '_', picfname)[:-4]+extn
                             if self.get("c_randomPicPosn"):
-                                pageposn = random.choice(_picposn.get(f[2], f[2]))     # Randomize location of illustrations on the page (tl,tr,bl,br)
+                                pageposn = random.choice(_picposn.get(f[5], f[5]))     # Randomize location of illustrations on the page (tl,tr,bl,br)
                             else:
-                                pageposn = (_picposn.get(f[2], f[2]))[0]               # use the t or tl (first in list)
-                            chvs = re.sub(r":",".", f[3])
+                                pageposn = (_picposn.get(f[5], f[5]))[0]               # use the t or tl (first in list)
+                            ch = re.sub(r"(\d+)[:.].+", r"\1", f[6])
+                            vs = f[0]
+                            if vs.endswith(('a', 'b', 'c')):
+                                vs = int(f[0].strip("abc")) - 1
+                                if vs == 0:
+                                    cmt = "% "
+                                    vs = 2
+                            else:
+                                vs = f[0]
+                            chvs = ch+"." + str(vs)
                             cmt = "% " if chvs in usedRefs else ""
                             usedRefs += [chvs]
-                            piclist.append(cmt+bk+" "+chvs+" |"+picfname+"|"+f[2]+"|"+pageposn+"||"+f[0]+"|"+f[3]+"\n")
+                            piclist.append(cmt+bk+" "+chvs+" |"+picfname+"|"+f[5]+"|"+pageposn+"||"+f[3]+"|"+f[6]+"\n")
                 if len(m):
                     piclist.append("\n% If illustrations are not appearing in the output PDF, check:\n")
                     piclist.append("%   a) The Location Reference on the left is very particular, so check\n")
                     piclist.append("%      (i) Only use '.' as the ch.vs separator\n")
                     piclist.append("%      (ii) Ensure there is a space after the verse and before the first |\n")
-                    piclist.append("%      (iii) Verse Refs must match the text itself e.g. Change MRK 4.2-11 to be MRK 4.2\n")
+                    piclist.append("%      (iii) Verse Refs must match the text itself\n")
                     piclist.append("%      (iv) Verse Refs must be in logical ch.vs order \n")
                     piclist.append("%      (iv) The same reference cannot be used more than once\n")
                     piclist.append("%             (2 pictures cannot be anchored to one verse )\n")
