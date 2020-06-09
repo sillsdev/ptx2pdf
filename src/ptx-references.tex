@@ -211,6 +211,15 @@
 \def\firstref{\ifRTL\beginR\fi\f@rstref{\p@gefirstmark}\ifRTL\endR\fi}
 \def\lastref{\ifRTL\beginR\fi\l@stref{\p@gebotmark}\ifRTL\endR\fi}
 \def\rangeref{\ifRTL\beginR\fi\r@ngerefs{\p@gefirstmark}{\p@gebotmark}\ifRTL\endR\fi}
+
+\def\firstrefL{\bgroup\ifRTL\beginR\fi\diglotLtrue\s@tfont{h}\f@rstref{\topLmark}\ifRTL\endR\fi\egroup}
+\def\lastrefL{\bgroup\ifRTL\beginR\fi\diglotLtrue\s@tfont{h}\l@stref{\botLmark}\ifRTL\endR\fi\egroup}
+\def\rangerefL{\bgroup\ifRTL\beginR\fi\diglotLtrue\s@tfont{h}\r@ngerefs{\topLmark}{\botLmark}\ifRTL\endR\fi\egroup}
+
+\def\firstrefR{\bgroup\ifRTL\beginR\fi\diglotLfalse\s@tfont{h}\f@rstref{\topRmark}\ifRTL\endR\fi\egroup}
+\def\lastrefR{\bgroup\ifRTL\beginR\fi\diglotLfalse\s@tfont{h}\l@stref{\botRmark}\ifRTL\endR\fi\egroup}
+\def\rangerefR{\bgroup\ifRTL\beginR\fi\diglotLfalse\s@tfont{h}\r@ngerefs{\topRmark}{\botRmark}\ifRTL\endR\fi\egroup}
+
 \let\pagenumber=\folio
 
 %

@@ -412,12 +412,16 @@
   \ifnum\tmppenalty=10000 %
     \tmppenalty=0 %
   \fi
+  \trace{H}{digl@leftTrial: b:\botmark, f:\firstmark, tr:\topRmark, br:\botRmark}
   \edef\t@st{\botmark}%
   \ifx\t@st\empty%
     \TRACEdiglot{Bottom mark was empty}%
   \else%
     \ifx\topLmark\empty
-      \xdef\topLmark{\firstmark}%
+      \edef\t@st{\firstmark}%
+      \ifx\t@st\oldRmark\else %Dont use \firstmark if it's been used by Right!
+	\xdef\topLmark{\firstmark}% remember first, if not already set
+      \fi
     \fi
     \xdef\botLmark{\botmark}%
     \ifuseLeftMarks%
@@ -432,6 +436,7 @@
         \xdef\b@xbotmark{\botmark}%
       \fi% remember first, if not already set
     \fi% botmark empty or not
+    \let\firstmark=\empty
   \fi% LeftMarks
 
   %\TRshipout{\vbox{\hbox{\the\diglotTRcount diglotLeftTrial:}\copy\LeftBox}}%
@@ -732,11 +737,16 @@
  % Do marking stuff...
  \edef\t@st{\botmark}%
  \ifx\t@st\empty\else
+   \trace{H}{digl@tRight: b:\botmark, f:\firstmark, tl:\topLmark}
    \xdef\oldRmark{\botmark}%
    \xdef\botRmark{\botmark}%
    \edef\t@st{\topRmark}%
    \ifx\t@st\empty
-     \xdef\topRmark{\firstmark}% remember first, if not already set
+     \edef\t@st{\firstmark}%
+     \ifx\t@st\topLmark\else %Dont use \firstmark if it's been used by Left!
+       \xdef\topRmark{\firstmark}% remember first, if not already set
+       %\xdef\oldRmark{\firstmark}% because topRmark gets reset. THis doesn't
+     \fi
    \fi 
 
    \ifuseRightMarks%
@@ -1000,11 +1010,11 @@
       \TRACEdiglot{\the\ht\partialR+\the\dp\partialR left over in partialR after split}%
       \edef\t@st{\splitbotmark}%
       \ifx\t@st\empty\else%
-        \xdef\botRmark{\botmark}%
-        \edef\t@st{\topRmark}%
-        \if\t@st\empty
-          \xdef\topRmark{\firstmark}%
-        \fi
+        \xdef\botRmark{\splitbotmark}%
+        %\edef\t@st{\topRmark}%
+        %\if\t@st\empty
+          %\xdef\topRmark{\firstmark}%
+        %\fi
         \ifuseRightMarks%
           \TRACEdiglot{Setting bottom mark to \splitbotmark}%
           \xdef\p@gebotmark{\splitbotmark}%
@@ -1498,6 +1508,7 @@
   \xdef\p@gefirstmark{\nextp@gefirstmark}%
   \xdef\nextp@gefirstmark{}%
   \edef\botmark{\p@gebotmark}%
+  \let\firstmark\empty
   \xdef\p@gebotmark{}%
   \xdef\topLmark{}
   \xdef\botLmark{}
