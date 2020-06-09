@@ -811,6 +811,9 @@
 %Similarly when there's no left text, copying \righttext seems OK ...
 \def\nolefttext{\TRACEdiglot{nolefttext}\global\savedpenalty=\lastpenalty\n@xtc@mmand\par\penalty-10001\relax\global\diglotLtrue\calc@vailht\global\digl@tLfalse\global\diglotRtrue\calc@vailht\global\vsize=\availht\output={\diglotRight}\swapfonts{R}\global\hsize=\columnRwidth\relax\global\holdinginserts=0}%
 
+\def\pagenumberL{\bgroup\diglotLtrue\s@tfont{h}\pagenumber\egroup}
+\def\pagenumberR{\bgroup\diglotLfalse\s@tfont{h}\pagenumber\egroup}
+
 \newdimen\columnLwidth%
 \newdimen\columnRwidth%
 \newdimen\availhtL
