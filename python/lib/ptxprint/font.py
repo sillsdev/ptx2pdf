@@ -125,10 +125,10 @@ def initFontCache(nofclist=False):
         fontcache = TTFontCache(nofclist=nofclist)
     return fontcache
     # print(sorted(fontcache.cache.items()))
-def cachepath(p):
+def cachepath(p, nofclist=False):
     global fontcache
     if fontcache is None:
-        fontcache = TTFontCache()
+        fontcache = TTFontCache(nofclist=nofclist)
     fontcache.addFontDir(p)
 
 class TTFont:
