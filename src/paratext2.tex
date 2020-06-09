@@ -823,7 +823,7 @@
     \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
     \c@lcavailht
     \trace{o}{spdd: partial=\the\ht\partial, textheight=\the\textheight, availht=\the\availht}
-    \ifdim\availht<\baselineskip \twocolp@geout \fi
+    \ifdim\availht<2\baselineskip \twocolp@geout \fi
     \unvbox\s@vedpage\penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
   \else
     \trace{o}{sppd: Not fit on page}
