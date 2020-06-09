@@ -113,7 +113,7 @@ sub isnewverse { # read ahead to see if what follows is more of the same verse o
 			# Section that goes with whatever follows.
 			my $tmpcode=$1;
 			my $tmpidx=$active{$tmpcode};
-			my ($val)= ($$dref[$ofs++]=~m/^\s*(\S+)/);
+			my ($val)= ($$dref[$ofs++]=~m/^\s*(\d+)\D/);
 			$val=sprintf("%03d",$val);
 			updpos($tmpidx,$val,$posref);
 			return($returncode);
