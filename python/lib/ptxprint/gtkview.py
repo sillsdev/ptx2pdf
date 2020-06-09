@@ -3,8 +3,16 @@
 import sys, os, re, regex, gi, subprocess
 gi.require_version('Gtk', '3.0')
 from shutil import copyfile, copytree, rmtree
-from gi.repository import Gtk, Pango, GObject
+from gi.repository import Gdk, Gtk, Pango, GObject
+
+if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
+    sys.stdout = open(os.devnull, "w")
+    # sys.stdout = open("D:\Temp\ptxprint-sysout.tmp", "w")
+    sys.stderr = sys.stdout
+else:
+    gi.require_version('GtkSource', '3.0')
 from gi.repository import GtkSource
+
 import xml.etree.ElementTree as et
 from ptxprint.font import TTFont, initFontCache
 from ptxprint.view import ViewModel, Path
@@ -158,6 +166,7 @@ _visibilities = {
 class GtkViewModel(ViewModel):
 
     def __init__(self, settings_dir, workingdir):
+        self._setup_css()
         super(GtkViewModel, self).__init__(settings_dir, workingdir)
         self.isDisplay = True
         self.config_dir = None
@@ -241,6 +250,15 @@ class GtkViewModel(ViewModel):
         wide = int(len(allprojects)/16)+1
         self.builder.get_object("fcb_project").set_wrap_width(wide)
         self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
+
+    def _setup_css(self):
+        css = """
+            .printbutton:active { background-color: chartreuse; background-image: None }
+            .fontbutton {font-size: smaller}
+            progress, trough {min-height: 24px}"""
+        provider = Gtk.CssProvider()
+        provider.load_from_data(css.encode("utf-8"))
+        Gtk.StyleContext().add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
     def run(self, callback, splash=True):
         self.callback = callback
@@ -1646,4 +1664,3 @@ class GtkViewModel(ViewModel):
         wid.set_fraction(val)
         while Gtk.events_pending():
             Gtk.main_iteration()
-        
