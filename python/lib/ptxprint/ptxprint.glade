@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 -->
+<!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkAdjustment" id="a_PriColWidth">
@@ -6606,7 +6606,7 @@ this option checked (on).</property>
                                     </child>
                                     <child>
                                       <object class="GtkComboBox" id="fcb_script">
-                                        <property name="width_request">180</property>
+                                        <property name="width_request">170</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">In most cases XeTeX can auto-detect
@@ -7299,7 +7299,7 @@ and so on...</property>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">2</property>
-                                    <property name="width">2</property>
+                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -7315,7 +7315,7 @@ and so on...</property>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">1</property>
-                                    <property name="width">2</property>
+                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -7333,6 +7333,7 @@ should be trimmed to after printing.</property>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">3</property>
+                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -7415,7 +7416,7 @@ you start PTXprint.</property>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">6</property>
-                                    <property name="width">2</property>
+                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -7436,26 +7437,8 @@ numbers then check this option.</property>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">0</property>
-                                    <property name="width">2</property>
+                                    <property name="width">3</property>
                                   </packing>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
                                 </child>
                               </object>
                             </child>
@@ -9128,7 +9111,8 @@ in the same place).</property>
             </child>
             <child>
               <object class="GtkCheckButton" id="c_experimental">
-                <property name="label" translatable="yes">Experimental Features ON!</property>
+                <property name="label" translatable="yes">Experimental 
+Features ON!</property>
                 <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
@@ -9164,7 +9148,7 @@ using the -e flag on the command line.</property>
             </child>
             <child>
               <object class="GtkProgressBar" id="pr_runs">
-                <property name="height_request">24</property>
+                <property name="height_request">14</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">center</property>
@@ -9175,7 +9159,7 @@ using the -e flag on the command line.</property>
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="fill">True</property>
+                <property name="fill">False</property>
                 <property name="position">4</property>
               </packing>
             </child>
@@ -9187,6 +9171,8 @@ using the -e flag on the command line.</property>
                 <property name="receives_default">True</property>
                 <property name="tooltip_text" translatable="yes">Close the PTXprint tool without re-creating the PDF.</property>
                 <property name="halign">end</property>
+                <property name="margin_left">6</property>
+                <property name="margin_right">3</property>
                 <property name="margin_top">3</property>
                 <property name="margin_bottom">3</property>
                 <property name="resize_mode">immediate</property>
@@ -9213,6 +9199,8 @@ produce a PDF with the settings specified.
 
 Shortcut key: &lt;Ctrl-P&gt;</property>
                 <property name="halign">start</property>
+                <property name="margin_left">3</property>
+                <property name="margin_right">6</property>
                 <property name="margin_top">3</property>
                 <property name="margin_bottom">3</property>
                 <property name="resize_mode">immediate</property>
@@ -9225,9 +9213,6 @@ Shortcut key: &lt;Ctrl-P&gt;</property>
                 <property name="fill">False</property>
                 <property name="position">6</property>
               </packing>
-            </child>
-            <child>
-              <placeholder/>
             </child>
           </object>
           <packing>

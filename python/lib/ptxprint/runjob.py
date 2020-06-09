@@ -28,15 +28,19 @@ _errmsghelp = {
 "! Emergency stop.":                     "Probably a TeX macro problem - contact support, or post a bug report\n",
 "! Not a letter.":                       "Possible fault in the hyphenation file\n" +\
                                          "Try turning off Hyphenate option located on the Body tab\n",
+"! Font \extrafont":                     "Fallback Font issue - set a font on the Body tab.\n" +\
+                                         "(Turn off the option 'Use Fallback Font' or specify a valid font)\n",
 "! Font":                                "Font related issue - details unknown\n(Report this rare error please)\n",
-"! Too many }'s":                        "Serious TeX macro issue - contact support, or post a bug report\n",
-"! This can't happen (page)":            "Serious TeX macro issue - contact support, or post a bug report\n",
+"! Too many }'s":                        "Possibly a TeX macro issue - contact support, or post a bug report\n",
+"! This can't happen (page)":            "Possibly a TeX macro issue - contact support, or post a bug report\n",
 "! I can't find file `paratext2.tex'.":  "Possibly a faulty installation.\n",
 "! I can't find file `ptx-tracing.tex'.":"Possibly a faulty installation.\n",
 "Runaway argument?":                     "Unknown issue. Maybe related to Right-aligned tabbed leaders\n" +\
                                          "Try turning off PrintDraftChanges.txt and both Stylesheets\n",
-"Unknown":                               "Sorry! No diagnostic help is available for this error.\n" +\
-                                         "Try turning off all Advanced settings & disable Changes and Stylesheets\n",
+"Unknown":                               "Sorry, there is no diagnostic help for this error.\n" +\
+                                         "Ensure that the Basic Checks (in Paratext) pass for all books in list.\n" +\
+                                         "Try turning off various settings, and disable Changes or Stylesheets.\n" +\
+                                         "If peripheral books are selected, try excluding those."
 }
 # \def\LineSpacingFactor{{{paragraph/linespacingfactor}}}
 # \def\VerticalSpaceFactor{{1.0}}
@@ -223,7 +227,7 @@ class RunJob:
                      "\\gdef", "\\hsize", "\\relax"]
         allmrkrs = re.findall(r"(\\[a-z0-9]{0,5})[ *\r\n.]", "".join(finalLogLines[-8:]))
         mrkrs = [x for x in allmrkrs if x not in texmrkrs]
-        if len(mrkrs):
+        if 0 < len(mrkrs) < 7:
             if "\ef" in mrkrs or "\ex" in mrkrs:
                 finalLogLines.append("Sorry, but Study Bible Markup (\ef \ex etc.) is not yet supported!")
             else:
@@ -780,8 +784,8 @@ class RunJob:
         pw1 = pageWidth - bindingGutter - (2*(margin*sideMarginFactor))                       # single-col layout
         if info.dict["paper/columns"] == "2":
             pw2 = int(pageWidth - middleGutter - bindingGutter - (2*(margin*sideMarginFactor)))/2 # double-col layout & span images
-        elif info.asBool("snippets/alignediglot"):
-            pw2 = pw1
+        # elif info.asBool("snippets/alignediglot"):
+            # pw2 = pw1
         else:
             pw2 = pw1
         # print("Usable ph: {}mm".format(ph), "     Usable 1-col pw1: {}mm   Usable 2-col pw2: {}mm".format(pw2, pw1))
