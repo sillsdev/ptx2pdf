@@ -1660,7 +1660,6 @@ class GtkViewModel(ViewModel):
         if val is None:
             val = wid.get_fraction()
             val = 0.5 if val < 0.1 else 1. - (1. - val) * 0.5
-        print("Progress: {}".format(val))
         wid.set_fraction(val)
         while Gtk.events_pending():
             Gtk.main_iteration()
