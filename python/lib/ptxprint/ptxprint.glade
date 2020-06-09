@@ -5516,8 +5516,7 @@ the body text from the footnote area.</property>
                                         </child>
                                         <child>
                                           <object class="GtkCheckButton" id="c_blendfnxr">
-                                            <property name="label" translatable="yes">Blend cross-references
-with footnotes &amp; Use this caller:</property>
+                                            <property name="label" translatable="yes">Blend Cross-References in with Footnotes</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -5531,6 +5530,7 @@ one type of called (rather than a sequence)
 which must be specified here.</property>
                                             <property name="halign">start</property>
                                             <property name="margin_left">30</property>
+                                            <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="clicked" handler="onBlendedXrsClicked" swapped="no"/>
                                           </object>
@@ -5541,21 +5541,7 @@ which must be specified here.</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkComboBox" id="fcb_blendedXrefCaller">
-                                            <property name="width_request">70</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="halign">start</property>
-                                            <property name="model">ls_XrefCaller</property>
-                                            <property name="active">0</property>
-                                            <property name="id_column">0</property>
-                                            <property name="active_id">1</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">2</property>
-                                          </packing>
+                                          <placeholder/>
                                         </child>
                                         <child>
                                           <object class="GtkLabel">
