@@ -1,4 +1,4 @@
-import configparser, re, os, gi #, time
+import configparser, re, os, gi
 from datetime import datetime
 from shutil import copyfile
 from pathlib import Path
