@@ -98,6 +98,7 @@ Notice that markers are case dependent.
 \\CallerRaise | dimension to raise the body text caller
 \\NoteCallerStyle | marker to style the in note caller
 \\NoteCallerRaise | dimension to raise the in note caller
+\\NoteBlendInto   | name of note type marker to merge these notes into that class
 \\SmallCap    | blank enables, "-" disables. Only works with fonts with a +smcp feature
 \\LineSpacing | also BaseLine. Dimension of line spacing, can include glue
 \\StyleType   | "paragraph", "character", "note"

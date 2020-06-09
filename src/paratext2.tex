@@ -401,15 +401,7 @@
      \hbox to \textwidth{\the\footline}\vss}}
 \newdimen\RHruleposition \RHruleposition=\maxdimen
 
-% switch to double-column mode if currently single.
-% this is called from \parstyle when the new style wants to be double-columned
 \def\doublecolumns{
-  \ifdiglot\enddigl@t\diglotfalse% Now force doublec@lumns to do stuff.
-    \c@rrentcols=1 
-  \fi
-  \doublec@lumns
-}
-\def\doublec@lumns{
   \ifnum\c@rrentcols=1
     % make switch from single to double column
     \ifhe@dings\endhe@dings\fi % if headings in process, end headings
@@ -831,7 +823,7 @@
     \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
     \c@lcavailht
     \trace{o}{spdd: partial=\the\ht\partial, textheight=\the\textheight, availht=\the\availht}
-    \ifdim\availht<\baselineskip \twocolp@geout \fi
+    \ifdim\availht<2\baselineskip \twocolp@geout \fi
     \unvbox\s@vedpage\penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
   \else
     \trace{o}{sppd: Not fit on page}
@@ -980,18 +972,9 @@
   \eject
 }
 
-% to switch back to single column, we reset the page size parameters
-\def\singlecolumn{
-  \ifdiglot\enddigl@t\diglotfalse\fi%
-  \singlec@lumn
-}
 % to switch back to diglot columns, first set the page  so far 
 % and then change the rest.
-\def\diglotcolumns{
-  \ifdiglot\enddigl@t\else
-    %\ifnum\c@rrentcols=2 \singlec@lumn\else\doublec@lumns\fi%
-  \fi\diglottrue\diglots@tup
-}
+\def\diglotcolumns{\ifdiglot\enddigl@t\fi\diglottrue\diglots@tup}
 
 \def\diglots@tup{%
   % reset parameters for diglot-column formatting
@@ -1029,7 +1012,7 @@
     }}\plainoutput\noteseenfalse}%
 
 % to switch back to single column, we reset the page size parameters
-\def\singlec@lumn{%
+\def\singlecolumn{%
   \trace{o}{singlecolumn hIns=\the\holdinginserts}%\tracingmacros=1
   \ifnum\c@rrentcols>1
     \ifhe@dings\endhe@dings\fi

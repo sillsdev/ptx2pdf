@@ -3,8 +3,16 @@
 import sys, os, re, regex, gi, subprocess
 gi.require_version('Gtk', '3.0')
 from shutil import copyfile, copytree, rmtree
-from gi.repository import Gtk, Pango, GObject
+from gi.repository import Gdk, Gtk, Pango, GObject
+
+if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
+    sys.stdout = open(os.devnull, "w")
+    # sys.stdout = open("D:\Temp\ptxprint-sysout.tmp", "w")
+    sys.stderr = sys.stdout
+else:
+    gi.require_version('GtkSource', '3.0')
 from gi.repository import GtkSource
+
 import xml.etree.ElementTree as et
 from ptxprint.font import TTFont, initFontCache
 from ptxprint.view import ViewModel, Path
@@ -115,7 +123,6 @@ _sensitivities = {
     "c_hdrverses" :            ["c_sepPeriod", "c_sepColon"],
     "c_fnautocallers" :        ["t_fncallers", "btn_resetFNcallers"],
     "c_xrautocallers" :        ["t_xrcallers", "btn_resetXRcallers"],
-    "c_blendfnxr" :            ["fcb_blendedXrefCaller"],
     "c_glossaryFootnotes" :    ["c_firstOccurenceOnly"],
     "c_usePicList" :           ["btn_editPicList"],
     "c_useCustomFolder" :      ["btn_selectFigureFolder", "c_exclusiveFiguresFolder"],
@@ -142,8 +149,7 @@ _nonsensitivities = {
     "c_omitIntroOutline" :     ["c_prettyIntroOutline"],
     "c_omitrhchapnum" :        ["c_hdrverses"],
     "c_omitSectHeads" :        ["c_omitParallelRefs"],
-    "c_multiplebooks" :        ["l_singlebook", "ecb_book", "l_chapfrom", "fcb_chapfrom", "l_chapto", "fcb_chapto"],
-    "c_blendfnxr" :            ["c_includeXrefs", "c_xrautocallers", "t_xrcallers", "c_xromitcaller", "c_xrpageresetcallers", "c_paragraphedxrefs"]
+    "c_multiplebooks" :        ["l_singlebook", "ecb_book", "l_chapfrom", "fcb_chapfrom", "l_chapto", "fcb_chapto"]
 }
 # Checkboxes and the Tabs that they make (in)visible
 _visibilities = {
@@ -154,12 +160,13 @@ _visibilities = {
     "c_showAdvancedTab" :      ["tb_Advanced"],
     "c_showViewerTab" :        ["tb_ViewerEditor"],
     "c_showDiglotTab" :        ["tb_Diglot"],
-    "c_showBordersTab" :       ["tb_FancyBorders"],
+    "c_showBordersTab" :       ["tb_FancyBorders"]
 }
 
 class GtkViewModel(ViewModel):
 
     def __init__(self, settings_dir, workingdir):
+        self._setup_css()
         super(GtkViewModel, self).__init__(settings_dir, workingdir)
         self.isDisplay = True
         self.config_dir = None
@@ -172,8 +179,8 @@ class GtkViewModel(ViewModel):
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(os.path.dirname(__file__), "ptxprint.glade"))
         self.builder.connect_signals(self)
-        for fcb in ("digits", "script", "chapfrom", "chapto", "textDirection", 
-                    "blendedXrefCaller", "glossaryMarkupStyle", "fontFaces"):
+        for fcb in ("digits", "script", "chapfrom", "chapto",
+                    "textDirection", "glossaryMarkupStyle", "fontFaces"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.addCR("fcb_diglotAlignment", 0)
@@ -243,6 +250,15 @@ class GtkViewModel(ViewModel):
         wide = int(len(allprojects)/16)+1
         self.builder.get_object("fcb_project").set_wrap_width(wide)
         self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
+
+    def _setup_css(self):
+        css = """
+            .printbutton:active { background-color: chartreuse; background-image: None }
+            .fontbutton {font-size: smaller}
+            progress, trough {min-height: 24px}"""
+        provider = Gtk.CssProvider()
+        provider.load_from_data(css.encode("utf-8"))
+        Gtk.StyleContext().add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
     def run(self, callback, splash=True):
         self.callback = callback
@@ -492,7 +508,9 @@ class GtkViewModel(ViewModel):
         # else:
             # print("Current Config is Locked, so changes have NOT been saved")
 
+        self.incrementProgress(val=0.)
         self.callback(self)
+        self.incrementProgress(val=0.)
 
     def onCancel(self, btn):
         self.onDestroy(btn)
@@ -525,7 +543,7 @@ class GtkViewModel(ViewModel):
                 continue
             copytree(os.path.join(currconfigpath, subdirname), os.path.join(configpath, subdirname))
         self.configId = newconfigId
-        self.set("l_settings_dir", configpath)
+        self.set("lb_settings_dir", configpath)
         self.updateDialogTitle()
 
     def onDeleteConfig(self, btn):
@@ -609,11 +627,11 @@ class GtkViewModel(ViewModel):
             for w in v:
                 self.builder.get_object(w).set_sensitive(state)
         if self.get("c_includeillustrations"):
-            self.builder.get_object("lb_Pictures").set_markup("<span color='cornflowerblue'>Pictures</span>")
+            self.builder.get_object("lb_Pictures").set_markup("<span color='#7B90B7'>Pictures</span>")
         if self.get("c_diglot"):
-            self.builder.get_object("lb_Diglot").set_markup("<span color='cornflowerblue'>Diglot</span>")
+            self.builder.get_object("lb_Diglot").set_markup("<span color='#7B90B7'>Diglot</span>")
         if self.get("c_borders"):
-            self.builder.get_object("lb_FancyBorders").set_markup("<span color='cornflowerblue'>Borders</span>")
+            self.builder.get_object("lb_FancyBorders").set_markup("<span color='#7B90B7'>Borders</span>")
 
     def sensiVisible(self, k, focus=False):
         state = self.get(k)
@@ -905,7 +923,7 @@ class GtkViewModel(ViewModel):
     def onUseIllustrationsClicked(self, btn):
         status = self.sensiVisible("c_includeillustrations")
         if status:
-            self.builder.get_object("lb_Pictures").set_markup("<span color='cornflowerblue'>Pictures</span>")
+            self.builder.get_object("lb_Pictures").set_markup("<span color='#7B90B7'>Pictures</span>")
         else:
             self.builder.get_object("lb_Pictures").set_markup("<span>Pictures</span>")
 
@@ -1321,7 +1339,7 @@ class GtkViewModel(ViewModel):
             lockBtn.set_label("Lock Config")
             lockBtn.set_sensitive(False)
             self.builder.get_object("t_invisiblePassword").set_text("")
-            self.builder.get_object("l_settings_dir").set_label(self.config_dir or "")
+            self.builder.get_object("lb_settings_dir").set_label(self.config_dir or "")
             self.builder.get_object("btn_saveConfig").set_sensitive(False)
             self.builder.get_object("btn_deleteConfig").set_sensitive(False)
         self.updateDialogTitle()
@@ -1546,7 +1564,7 @@ class GtkViewModel(ViewModel):
         self.ondiglotAlignmentChanged(None)
         status = self.sensiVisible("c_diglot")
         if status:
-            self.builder.get_object("lb_Diglot").set_markup("<span color='cornflowerblue'>Diglot</span>")
+            self.builder.get_object("lb_Diglot").set_markup("<span color='#7B90B7'>Diglot</span>")
         else:
             self.builder.get_object("lb_Diglot").set_markup("<span>Diglot</span>")
 
@@ -1596,7 +1614,7 @@ class GtkViewModel(ViewModel):
     def onEnableDecorativeElementsClicked(self, btn):
         status = self.sensiVisible("c_borders")
         if status:
-            self.builder.get_object("lb_FancyBorders").set_markup("<span color='cornflowerblue'>Borders</span>")
+            self.builder.get_object("lb_FancyBorders").set_markup("<span color='#7B90B7'>Borders</span>")
         else:
             self.builder.get_object("lb_FancyBorders").set_markup("<span>Borders</span>")
 
@@ -1636,3 +1654,13 @@ class GtkViewModel(ViewModel):
             os.system("start \"\" {}".format(url))
         elif sys.platform == "linux":
             os.system("xdg-open \"\" {}".format(url))
+
+    def incrementProgress(self, val=None):
+        wid = self.builder.get_object("pr_runs")
+        if val is None:
+            val = wid.get_fraction()
+            val = 0.5 if val < 0.1 else 1. - (1. - val) * 0.5
+        print("Progress: {}".format(val))
+        wid.set_fraction(val)
+        while Gtk.events_pending():
+            Gtk.main_iteration()

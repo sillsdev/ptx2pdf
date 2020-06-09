@@ -220,8 +220,7 @@ ModelMap = {
     "footer/ifprintConfigName": ("c_printConfigName", lambda w,v: "" if v else "%"),
 
     "notes/iffootnoterule":     ("c_footnoterule", lambda w,v: "%" if v else ""),
-    "notes/ifblendfnxr":        ("c_blendfnxr", lambda w,v :"true" if v else "false"),
-    "notes/blendedxrmkr":       ("fcb_blendedXrefCaller", None),
+    "notes/ifblendfnxr":        ("c_blendfnxr", None),
 
     "notes/includefootnotes":   ("c_includeFootnotes", lambda w,v: "%" if v else ""),
     "notes/iffnautocallers":    ("c_fnautocallers", lambda w,v :"true" if v else "false"),
@@ -428,7 +427,7 @@ class TexModel:
             f = TTFont(name, style)
             # print(p, wid, f.filename, f.family, f.style)
             if f.filename is None:
-                badfonts.add((name, style))
+                badfonts.add((name or f.filename or "", style))
                 if p != "fontregular" and self._fonts[p][1] is not None:
                     regname = self.dict["fontregular/name"]
                     regstyle = self.dict["fontregular/style"]
@@ -750,14 +749,6 @@ class TexModel:
         if self.asBool("document/supressparallels"): # Drop ALL Parallel Passage References
             self.localChanges.append((None, regex.compile(r"\\r .+", flags=regex.M), ""))
 
-        if self.asBool("notes/ifblendfnxr"):
-            xrefCaller = self.dict["notes/blendedxrmkr"]
-            # To merge/blend \f and \x together, simply change all (\x to \f) (\xo to \fr) and so on...
-            self.localChanges.append((None, regex.compile(r"\\x . ", flags=regex.M), r"\\f {} ".format(xrefCaller)))
-            self.localChanges.append((None, regex.compile(r"\\x\* ", flags=regex.M), r"\\f* "))
-            self.localChanges.append((None, regex.compile(r"\\xq ", flags=regex.M), r"\\fq "))
-            self.localChanges.append((None, regex.compile(r"\\xt ", flags=regex.M), r"\\ft "))
-
         if self.asBool("document/preventorphans"): # Prevent orphans at end of *any* paragraph [anything that isn't followed by a \v]
             # self.localChanges.append((None, regex.compile(r" ([^\\ ]+?) ([^\\ ]+?\r?\n)(?!\\v)", flags=regex.S), r" \1\u00A0\2"))
             # OLD RegEx: Keep final two words of \q lines together [but doesn't work if there is an \f or \x at the end of the line] 
@@ -903,6 +894,9 @@ class TexModel:
 
         nstylist.append("\\Marker xt_f\n\\FontSize {}\n\\StyleType Character\n\n".format(self.dict['notes/fnfontsize']))
 
+        if self.dict["notes/ifblendfnxr"]:
+            nstylist.append("##### Treat x-refs as footnotes with their own caller\n\\Marker x\n\\NoteBlendInto f\n\n")
+
         nstylist.append("##### Adjust poetic indents\n")
         m = ["\Marker", "\LeftMargin", "\FirstLineIndent"]
         if self.dict["paper/columns"] == "2": # Double Column layout so use smaller indents
@@ -917,7 +911,7 @@ class TexModel:
                 nstylist.append("{} {}\n".format(mkr[l][0],mkr[l][1]))
             nstylist.append("\\Justification left\n\n")
 
-        if True: # need to qualify this (look in USFM for a \cl and if it exists, then don't do this)
+        if True: # Hack! We need to qualify this (look in USFM for a \cl and if it exists, then don't do this)
             nstylist.append("# The descriptive heading is typically considered VerseText, but then often formatted as a heading.\n")
             nstylist.append("# We need to change the TextType so that Print Draft will handle it correctly beside drop-caps.\n")
             nstylist.append("\\Marker d\n\\TextType Section\n\\SpaceBefore 0\n\n")

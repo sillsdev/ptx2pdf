@@ -50,22 +50,7 @@ if args.directory is not None:
 if args.print:
     mainw = ViewModel(args.paratext, args.directory)
 else:
-    import gi
-    gi.require_version('Gtk', '3.0')
-    from gi.repository import Gtk, Gdk
-    if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
-        sys.stdout = open(os.devnull, "w")
-        # sys.stdout = open("D:\Temp\ptxprint-sysout.tmp", "w")
-        sys.stderr = sys.stdout
-    else:
-        gi.require_version('GtkSource', '3.0')
-
     from ptxprint.gtkview import GtkViewModel
-    css = """.printbutton:active { background-color: chartreuse; background-image: None }
-    .fontbutton {font-size: smaller}"""
-    provider = Gtk.CssProvider()
-    provider.load_from_data(css.encode("utf-8"))
-    Gtk.StyleContext().add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
     mainw = GtkViewModel(args.paratext, args.directory)
     mainw.ExperimentalFeatures(args.experimental)
 
@@ -81,7 +66,7 @@ def doit(printer):
 if args.fontpath is not None:
     for p in args.fontpath:
         if os.path.exists(p):
-            cachepath(p)
+            cachepath(p, nofclist=args.nofontcache)
 
 if args.print:
     initFontCache(nofclist=args.nofontcache)
