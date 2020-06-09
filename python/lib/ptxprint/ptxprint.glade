@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 -->
+<!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkAdjustment" id="a_PriColWidth">
@@ -1281,146 +1281,10 @@ in the Windows system.</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
-            <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="halign">baseline</property>
-            <property name="margin_left">6</property>
-            <property name="margin_right">6</property>
-            <property name="resize_mode">immediate</property>
-            <property name="layout_style">end</property>
-            <child>
-              <object class="GtkButton" id="btn_about">
-                <property name="label">gtk-about</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="halign">start</property>
-                <property name="margin_top">3</property>
-                <property name="margin_bottom">3</property>
-                <property name="use_stock">True</property>
-                <property name="always_show_image">True</property>
-                <signal name="clicked" handler="onAboutClicked" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkCheckButton" id="c_hideAdvancedSettings">
-                <property name="label" translatable="yes">Hide Advanced Settings</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
-                <property name="no_show_all">True</property>
-                <property name="tooltip_text" translatable="yes">Many of the settings in this tool only need to be
-set up once, or used on rare occasions. These can
-be hidden away for most of the time if that helps.
-
-This setting can be turned off again later, but
-is intentionally almost invisible (though located
-in the same place).</property>
-                <property name="margin_top">3</property>
-                <property name="margin_bottom">3</property>
-                <property name="hexpand">True</property>
-                <property name="resize_mode">immediate</property>
-                <property name="draw_indicator">True</property>
-                <signal name="clicked" handler="onHideAdvancedSettingsClicked" swapped="no"/>
-                <signal name="toggled" handler="onHideAdvancedSettingsClicked" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">False</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkCheckButton" id="c_experimental">
-                <property name="label" translatable="yes">Experimental Features ON!</property>
-                <property name="sensitive">False</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
-                <property name="no_show_all">True</property>
-                <property name="tooltip_text" translatable="yes">Experimental features are enabled by
-using the -e flag on the command line.</property>
-                <property name="margin_top">3</property>
-                <property name="margin_bottom">3</property>
-                <property name="hexpand">True</property>
-                <property name="resize_mode">immediate</property>
-                <property name="draw_indicator">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="hexpand">True</property>
-                <property name="label" translatable="yes"> </property>
-                <property name="justify">fill</property>
-                <property name="single_line_mode">True</property>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">False</property>
-                <property name="position">3</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton">
-                <property name="label">gtk-close</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="tooltip_text" translatable="yes">Close the PTXprint tool without re-creating the PDF.</property>
-                <property name="halign">end</property>
-                <property name="margin_top">3</property>
-                <property name="margin_bottom">3</property>
-                <property name="resize_mode">immediate</property>
-                <property name="use_stock">True</property>
-                <property name="always_show_image">True</property>
-                <signal name="clicked" handler="onCancel" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">4</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="b_print">
-                <property name="label">Print</property>
-                <property name="visible">True</property>
-                <property name="sensitive">False</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="tooltip_text" translatable="yes">Apply any changes specified, save the
-current configuration (if not locked) and
-produce a PDF with the settings specified.
-
-Shortcut key: &lt;Ctrl-P&gt;</property>
-                <property name="halign">start</property>
-                <property name="margin_top">3</property>
-                <property name="margin_bottom">3</property>
-                <property name="resize_mode">immediate</property>
-                <property name="always_show_image">True</property>
-                <signal name="clicked" handler="onOK" swapped="no"/>
-                <accelerator key="p" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">5</property>
-              </packing>
-            </child>
           </object>
           <packing>
-            <property name="expand">True</property>
+            <property name="expand">False</property>
             <property name="fill">False</property>
             <property name="position">0</property>
           </packing>
@@ -9208,6 +9072,167 @@ be specified.</property>
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkButton" id="btn_about">
+                <property name="label">gtk-about</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="halign">start</property>
+                <property name="margin_top">3</property>
+                <property name="margin_bottom">3</property>
+                <property name="use_stock">True</property>
+                <property name="always_show_image">True</property>
+                <signal name="clicked" handler="onAboutClicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkCheckButton" id="c_hideAdvancedSettings">
+                <property name="label" translatable="yes">Hide Advanced Settings</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="no_show_all">True</property>
+                <property name="tooltip_text" translatable="yes">Many of the settings in this tool only need to be
+set up once, or used on rare occasions. These can
+be hidden away for most of the time if that helps.
+
+This setting can be turned off again later, but
+is intentionally almost invisible (though located
+in the same place).</property>
+                <property name="margin_top">3</property>
+                <property name="margin_bottom">3</property>
+                <property name="hexpand">True</property>
+                <property name="resize_mode">immediate</property>
+                <property name="draw_indicator">True</property>
+                <signal name="clicked" handler="onHideAdvancedSettingsClicked" swapped="no"/>
+                <signal name="toggled" handler="onHideAdvancedSettingsClicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkCheckButton" id="c_experimental">
+                <property name="label" translatable="yes">Experimental Features ON!</property>
+                <property name="sensitive">False</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="no_show_all">True</property>
+                <property name="tooltip_text" translatable="yes">Experimental features are enabled by
+using the -e flag on the command line.</property>
+                <property name="margin_top">3</property>
+                <property name="margin_bottom">3</property>
+                <property name="hexpand">True</property>
+                <property name="resize_mode">immediate</property>
+                <property name="draw_indicator">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="hexpand">True</property>
+                <property name="label" translatable="yes"> </property>
+                <property name="justify">fill</property>
+                <property name="single_line_mode">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">False</property>
+                <property name="position">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkProgressBar" id="pr_runs">
+                <property name="height_request">24</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+                <property name="margin_left">6</property>
+                <property name="margin_right">6</property>
+                <property name="vexpand">False</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">4</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton">
+                <property name="label">gtk-close</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="tooltip_text" translatable="yes">Close the PTXprint tool without re-creating the PDF.</property>
+                <property name="halign">end</property>
+                <property name="margin_top">3</property>
+                <property name="margin_bottom">3</property>
+                <property name="resize_mode">immediate</property>
+                <property name="use_stock">True</property>
+                <property name="always_show_image">True</property>
+                <signal name="clicked" handler="onCancel" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">5</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="b_print">
+                <property name="label">Print</property>
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="tooltip_text" translatable="yes">Apply any changes specified, save the
+current configuration (if not locked) and
+produce a PDF with the settings specified.
+
+Shortcut key: &lt;Ctrl-P&gt;</property>
+                <property name="halign">start</property>
+                <property name="margin_top">3</property>
+                <property name="margin_bottom">3</property>
+                <property name="resize_mode">immediate</property>
+                <property name="always_show_image">True</property>
+                <signal name="clicked" handler="onOK" swapped="no"/>
+                <accelerator key="p" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">6</property>
+              </packing>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
             <property name="position">1</property>
           </packing>
         </child>

@@ -680,3 +680,6 @@ class ViewModel:
             else:                              # or prefer larger high quality uncompresses image formats
                 extOrder = extOrder[::-1]      # reverse the order
         return extOrder
+
+    def incrementProgress(self, val=None):
+        pass
