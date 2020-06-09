@@ -153,14 +153,14 @@
     \vskip\p@ram\verticalsp@ceunit
   \fi
   \resetp@rstyle
-  \ifdiglot\setsid@%\MSG{start-\thisch@rstyle\sid@}%
+  \ifdiglot\setsid@ % \MSG{start-\thisch@rstyle\sid@}%
     \csname after-\m@rker\sid@\endcsname\relax% handle side-specific <start> hook
   \fi
   \csname after-\m@rker\endcsname % handle <after> hook for the previous style
   \gdef\m@rker{#1} % remember the new style name
   \csname before-\m@rker\endcsname % handle its <before> hook
   \ifdiglot
-    \csname before-\m@rker\sid@\endcsname\relax% handle side-specific <start> hook
+    \csname before-\m@rker\sid@\endcsname\relax % handle side-specific <start> hook
   \fi
   %
   % now we check what kind of marker this is: intro? title? section? other?

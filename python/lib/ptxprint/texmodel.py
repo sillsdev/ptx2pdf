@@ -428,7 +428,7 @@ class TexModel:
             f = TTFont(name, style)
             # print(p, wid, f.filename, f.family, f.style)
             if f.filename is None:
-                badfonts.add((name, style))
+                badfonts.add((name or f.filename or "", style))
                 if p != "fontregular" and self._fonts[p][1] is not None:
                     regname = self.dict["fontregular/name"]
                     regstyle = self.dict["fontregular/style"]

@@ -109,6 +109,7 @@
    \ifdim\lastskip>0pt \sp@cebeforetrue \else \sp@cebeforefalse \fi % was there a preceding space?
   \else
    \leavevmode
+   \getp@ram{notebase}{\newn@testyle}\edef\n@tebase{\ifx\p@ram\relax\newn@testyle\else\p@ram\fi}%
    \csname before-\newn@testyle\endcsname
    \def\t@st{#1}%
    \ifx\t@st\pl@s % if it is + then generate an auto-numbering caller
@@ -121,7 +122,7 @@
    \x@\let\x@\aftern@te\csname after-\newn@testyle\endcsname
    \ifdim\lastskip>0pt \sp@cebeforetrue \else \sp@cebeforefalse \fi % was there a preceding space?
    \resetp@rstyle
-   \m@kenote{\newn@testyle}{\everypar={}\cancelcutouts % begin a note insertion in the given style
+   \m@kenote{\n@tebase}{\everypar={}\cancelcutouts % begin a note insertion in the given style
     \getp@ram{callerstyle}{\newn@testyle}% see if a caller style was defined
     \ifx\p@ram\relax\def\c@llerstyle{v}\else\edef\c@llerstyle{\p@ram}\fi % if not, treat it like "v"
     \setbox0=\hbox to 1ex{\hss\ch@rstyle{\c@llerstyle}~\them@rk\ch@rstyle{\c@llerstyle}*\hss}%

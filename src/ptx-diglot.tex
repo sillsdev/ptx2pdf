@@ -190,7 +190,7 @@
  \tmppenalty=\outputpenalty %
  \ifnum\outputpenalty=10000% Nothing wrong with breaking here
    \tmppenalty=0\relax%
-    \Lneedsemptyingfalse%
+   \Lneedsemptyingfalse%
  \else%
    \ifnum\outputpenalty=-10001%Got to the end of the \lefttext
      \tmppenalty=\savedpenalty\relax%
@@ -237,7 +237,7 @@
 	  \else
 	    %It is small. Probably a heading, best to promote it to next page.
 	    \dimen1=0pt
-            \ifnum\tmppenalty>10000
+        \ifnum\tmppenalty>10000
 	      %But on the other hand we can't put it on the next page
 	      %so try splitting it after all
 	      \global\nastyboxfalse %only just fits. Very nasty - no space for even another line after this one. 
@@ -246,128 +246,125 @@
 	      \global\advance\availht by 1\baselineskip
 	      \advance\dimen1 by \dp\partialL
 	      \advance\dimen1 by -1\baselineskip
-	    \fi
-	  \fi
-	\fi%
-     \else % Box is too big to fit
-	\ifdim\dp\partialL>3\baselineskip
+	  \fi\fi
+	 \fi%
+   \else % Box is too big to fit
+    \ifdim\dp\partialL>3\baselineskip
 	  %this box is of reasonable size, just split it
 	  \dimen1=\availht
 	\else
 	  %It is small. Probably a heading, best to promote it 
 	  \global\nastyboxtrue
 	  \dimen1=0pt
-          \ifnum\lastsavedLpenalty=10000
+        \ifnum\lastsavedLpenalty=10000
 	    %But on the other hand we can't put it on the next page
 	    %so try splitting it after all
-	    \dimen1=\ht\partialL
-	    \advance\dimen1 by \dp\partialL
-	    \advance\dimen1 by -1\baselineskip
-	  \fi
+	      \dimen1=\ht\partialL
+	      \advance\dimen1 by \dp\partialL
+	      \advance\dimen1 by -1\baselineskip
+	    \fi
 	\fi
-     \fi
    \fi
-
-
+ \fi
+ \ifdim \dimen1<0pt
+   \dimen1=0pt
+   \global\leftfulltrue
+ \fi
+ \ifnastybox% 
+   \TRACEdiglot{Nasty box \the\ht\partialL+\the\dp\partialL, resizing to \the\dimen1, somewhere near \the\inputlineno, \botmark}
+ \else
+   \dimen0=\availht
+   \advance\dimen0 by -\ht\partialL
+   \advance\dimen0 by -\dp\partialL
+   \dimen1=\availht %Cutting length...
    \ifdim \dimen1<0pt
      \dimen1=0pt
-     \global\leftfulltrue
+     \global\leftfulltrue%
    \fi
-   \ifnastybox% 
-     \TRACEdiglot{Nasty box \the\ht\partialL+\the\dp\partialL, resizing to \the\dimen1, somewhere near \the\inputlineno, \botmark}
-   \else
-     \dimen0=\availht
-     \advance\dimen0 by -\ht\partialL
-     \advance\dimen0 by -\dp\partialL
-     \dimen1=\availht %Cutting length...
-     \ifdim \dimen1<0pt
-       \dimen1=0pt
-       \global\leftfulltrue%
-     \fi
-     \ifdim\dimen0<0pt %might cut
-       \ifdim\dimen0>-0.3\baselineskip %Tiny overshoot
-	 \advance\dimen1 by \baselineskip %ignore it.
-       \else
-	 \TRACEdiglot{Oversized box \the\ht\partialL+\the\dp\partialL, resizing to \the\dimen1, (\the\dimen0) somewhere near \the\inputlineno, \botmark}
-       \fi
-     \fi
-   \fi
-   %\leftfull is set, so Nastybox won't get touched until the page is output. Therefore use
-   % it to tell code below that we've moved everything to the next page.
-   \global\nastyboxfalse 
-   \TempDim=\dimen1% dimen1 is size of the box to fit into
-   \advance\TempDim by -\dp\partialL %TempDim is how much space would be left over
-   % altered test, 2015.jul.15 - we must not skip if it's a nastybox
-   \ifdim\TempDim<-0.0\baselineskip% Only split for significant amounts...
-     %Want the first chunk in partialL, the residue in excessL, so vsplit
-     %gets it backwards for us.
-     %Use box0 as a temporary store
-     \ifdim\dimen1>\baselineskip % was 0pt
-       %\bgroup%
-       \dimen2=\dp\partialL% compare original size...
-       \TRACEdiglot{Splitting to \the\dimen1}%
-       %{\tracingonline=0\showbox\partialL}%
-       %\setbox\partialL=\vbox{\penalty\tmppenalty\unvbox\partialL}%
-       \setbox0=\vsplit\partialL to \dimen1%
-       \setbox0=\vtop{\unvbox0}
-       \global\runLtrialtrue%
-       \global\leftfulltrue%
-       \TempDim=\ht0
-       \advance\TempDim by \dp0
-       \ifdim\TempDim>0pt % It split something off..
-	 \TRACEdiglot{spare material to excessL (\the\ht0, \the\dp0, \the\ht\partialL,\the\ht\excessL,\the\dp\partialL,\the\dp\excessL}%
-	 %\showbox\excessL%
-	 \global\earlyLrefilltrue%
-	 \global\setbox\excessL=\vtop{\joinboxes{\partialL}{\excessL}{4}{\partialLpenalty}}%
-	 \global\setbox\partialL=\box0
-	 \global\partialLpenalty=0
-       \else %The whole lot got left in partialL- potential problem
-	 \ifnum\tmppenalty>9999 % honour the penalty, pay the price...
-	   \TRACEdiglot{No material split off, but must leave box on page. \the\ht0+\the\dp0, \the\ht\partialL+\the\dp\partialL, \the\ht\excessL+\the\dp\excessL}%
-	   %\showbox\partialL%
-	   \global\setbox\partialL=\vtop{\unvbox\partialL}
-	   \global\partialLpenalty=0
-	   \global\runLtrialtrue%
-	 \else
-	   \TRACEdiglot{No material split off. Leaving box unchanged and pushing onward (\the\ht0+\the\dp0, \the\ht\partialL+\the\dp\partialL, \the\ht\excessL+\the\dp\excessL.. \the\tmppenalty)}%
-	   \global\setbox\partialL=\vtop{\unvbox\partialL}
-	   %\makevtop{\partialL}%
-	   \global\runLtrialfalse% Don't add this box
-	   \global\availht=0pt
-	   \global\nastyboxtrue% Signal to rightbox that the box has moved
-	 \fi
-       \fi
-       %\egroup
+   \ifdim\dimen0<0pt %might cut
+     \ifdim\dimen0>-0.3\baselineskip %Tiny overshoot
+   \advance\dimen1 by \baselineskip %ignore it.
      \else
-       \global\setbox\LeftBox=\vbox to \availht{\vfil}%
-       \global\Lboxpenalty=0
-       \global\availht=0pt
-       %\global\setbox\excessL=\vtop{\joinboxes{\partialL}{\excessL}{5}}
-       \global\runLtrialfalse%Don't add this text, leave it in partialL
-       \global\leftfulltrue%
-       \global\nastyboxtrue% Signal to rightbox that the box has moved
+   \TRACEdiglot{Oversized box \the\ht\partialL+\the\dp\partialL, resizing to \the\dimen1, (\the\dimen0) somewhere near \the\inputlineno, \botmark}
      \fi
-   \else
+   \fi
+ \fi
+ %\leftfull is set, so Nastybox won't get touched until the page is output. Therefore use
+ % it to tell code below that we've moved everything to the next page.
+ \global\nastyboxfalse 
+ \TempDim=\dimen1% dimen1 is size of the box to fit into
+ \advance\TempDim by -\dp\partialL %TempDim is how much space would be left over
+ % altered test, 2015.jul.15 - we must not skip if it's a nastybox
+ \ifdim\TempDim<-0.0\baselineskip% Only split for significant amounts...
+   %Want the first chunk in partialL, the residue in excessL, so vsplit
+   %gets it backwards for us.
+   %Use box0 as a temporary store
+   \ifdim\dimen1>\baselineskip % was 0pt
+     %\bgroup%
+     \dimen2=\dp\partialL% compare original size...
+     \TRACEdiglot{Splitting to \the\dimen1}%
+     %{\tracingonline=0\showbox\partialL}%
+     %\setbox\partialL=\vbox{\penalty\tmppenalty\unvbox\partialL}%
+     \setbox0=\vsplit\partialL to \dimen1%
+     \setbox0=\vtop{\unvbox0}
      \global\runLtrialtrue%
-   \fi%
-   %\egroup
-   \ifnum\outputpenalty=-10000
+     \global\leftfulltrue%
+     \TempDim=\ht0
+     \advance\TempDim by \dp0
+     \ifdim\TempDim>0pt % It split something off..
+	   \TRACEdiglot{spare material to excessL (\the\ht0, \the\dp0, \the\ht\partialL,\the\ht\excessL,\the\dp\partialL,\the\dp\excessL}%
+	 %\showbox\excessL%
+	   \global\earlyLrefilltrue%
+	   \global\setbox\excessL=\vtop{\joinboxes{\partialL}{\excessL}{4}{\partialLpenalty}}%
+	   \global\setbox\partialL=\box0
+	   \global\partialLpenalty=0
+     \else %The whole lot got left in partialL- potential problem
+	   \ifnum\tmppenalty>9999 % honour the penalty, pay the price...
+	     \TRACEdiglot{No material split off, but must leave box on page. \the\ht0+\the\dp0, \the\ht\partialL+\the\dp\partialL, \the\ht\excessL+\the\dp\excessL}%
+	     %\showbox\partialL%
+	     \global\setbox\partialL=\vtop{\unvbox\partialL}
+	     \global\partialLpenalty=0
+	     \global\runLtrialtrue%
+	   \else
+	     \TRACEdiglot{No material split off. Leaving box unchanged and pushing onward (\the\ht0+\the\dp0, \the\ht\partialL+\the\dp\partialL, \the\ht\excessL+\the\dp\excessL.. \the\tmppenalty)}%
+	     \global\setbox\partialL=\vtop{\unvbox\partialL}
+	     %\makevtop{\partialL}%
+	     \global\runLtrialfalse% Don't add this box
+	     \global\availht=0pt
+	     \global\nastyboxtrue% Signal to rightbox that the box has moved
+	   \fi
+     \fi
+       %\egroup
+    \else
+      \global\setbox\LeftBox=\vbox to \availht{\vfil}%
+      \global\Lboxpenalty=0
+      \global\availht=0pt
+      %\global\setbox\excessL=\vtop{\joinboxes{\partialL}{\excessL}{5}}
+      \global\runLtrialfalse%Don't add this text, leave it in partialL
+      \global\leftfulltrue%
+      \global\nastyboxtrue% Signal to rightbox that the box has moved
+    \fi
+  \else
+     \global\runLtrialtrue%
+  \fi%
+  %\egroup
+  \ifnum\outputpenalty=-10000
      %Must relase footnotes, this is end of page.
      \runLtrialtrue%
      \global\leftfulltrue%
-   \fi%
-   \ifnum\outputpenalty=-10001
+  \fi%
+  \ifnum\outputpenalty=-10001
      %Must release footnotes, this section of page is about to be committed
      \runLtrialtrue%
-   \fi%
-   \ifdim\dp\partialL=0pt
+  \fi%
+  \ifdim\dp\partialL=0pt
      %No point in releasing footnotes on an empty chunk
      \runLtrialfalse%
-   \fi%
-   \ifdim\availht=0pt
+  \fi%
+  \ifdim\availht=0pt
      %If there's no space (or the box has been postponed), don't add anything
      \runLtrialfalse%
-   \fi%
+  \fi%
  \fi%
  \ifrunLtrial %Apply inserts.
    \ifnum\holdinginserts=0
@@ -389,8 +386,6 @@
    \fi
  \fi%
 } %
-
-
 
 \newif\ifboxmoved%
 \def\diglotLeftTrial{%
