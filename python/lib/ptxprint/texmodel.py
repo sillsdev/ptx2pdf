@@ -35,6 +35,7 @@ def universalopen(fname, rewrite=False):
 
 ModelMap = {
     "L_":                        ("c_diglotAutoAligned", lambda w,v: "L" if v and w.get("c_diglot") else ""),
+    "R_":                        ("c_diglotAutoAligned", lambda w,v: "R" if v and w.get("c_diglot") else ""),
     #"config/name":              ("ecb_savedConfig", lambda w,v: v or "default"),
     "config/notes":             ("t_configNotes", lambda w,v: v or ""),
     "config/pwd":               ("t_invisiblePassword", lambda w,v: v or ""),
@@ -478,6 +479,15 @@ class TexModel:
         for side in ('left', 'center', 'right'):
             v = self.dict["header/hdr"+side]
             t = self._hdrmappings.get(v, v)
+            print(t)
+            if self.dict["document/ifaligndiglot"] == "" and t.endswith("ref"):
+                print("Diglot Header is on")
+                if side == 'right':
+                    t = t+'R'
+                else:
+                    t = t+'L'
+            print(t)
+            self.dict['header/odd{}'.format(side)] = t
             if side == 'left':
                 if mirror:
                     self.dict['header/even{}'.format('right')] = t
@@ -491,7 +501,6 @@ class TexModel:
             else: # centre
                 self.dict['header/even{}'.format(side)] = t
             
-            self.dict['header/odd{}'.format(side)] = t
 
     def texfix(self, path):
         return path.replace(" ", r"\ ")

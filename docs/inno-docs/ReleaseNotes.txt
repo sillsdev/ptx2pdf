@@ -1,5 +1,5 @@
-PTXprint 0.7.2 Beta Release Notes
-6th June 2020
+PTXprint 0.8.0 Beta Release Notes
+9th June 2020
 
 WARNING: This beta version is the result of major restructuring of the code and includes new
          features that have had very limited testing. Do NOT use for any mission-critical work.
@@ -7,7 +7,7 @@ WARNING: This beta version is the result of major restructuring of the code and 
 NOTE: Chapter Numbers in peripheral (non-scripture) books are now suppressed by default (but 
       can be re-enabled on the Advanced tab)
 
-New Features and Improvements in: 0.7.2
+New Features and Improvements in: 0.8.0
 
   * Allow multiple stylesheets for diglots to define fonts and styles for each side independently
   
