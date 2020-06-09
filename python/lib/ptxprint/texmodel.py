@@ -479,14 +479,14 @@ class TexModel:
         for side in ('left', 'center', 'right'):
             v = self.dict["header/hdr"+side]
             t = self._hdrmappings.get(v, v)
-            print(t)
-            if self.dict["document/ifaligndiglot"] == "" and t.endswith("ref"):
-                print("Diglot Header is on")
-                if side == 'right':
-                    t = t+'R'
-                else:
+            if self.dict["document/ifaligndiglot"] == "":
+                if t.endswith("ref"):
+                    if side == 'right':
+                        t = t+'R'
+                    else:
+                        t = t+'L'
+                elif t.endswith("number"):
                     t = t+'L'
-            print(t)
             self.dict['header/odd{}'.format(side)] = t
             if side == 'left':
                 if mirror:
