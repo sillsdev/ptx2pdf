@@ -103,7 +103,7 @@
 % footnote macros based on plain.tex \footnote, \vfootnote
 \newbox\he@dingnotes
 \def\m@kenote#1#2#3#4{\let\@sf\empty % #1=class(e.g. f, x);
-  % #2=class of styling 
+  % #2=class of styling
   % #3=caller + all the macros to setup the styling for the caller
   % #4=caller + styling in the footnote if there is a notecallerstyle
   % text is read later
@@ -130,7 +130,7 @@
   \interlinepenalty\interfootnotelinepenalty % set penalty to break lines
   \floatingpenalty\@MM % make sure note does not float away from caller to another page
   \leftskip\z@skip \rightskip\z@skip \spaceskip\z@skip \xspaceskip\z@skip % reset extra space around paragraph 0
-  \s@tbaseline{#1}
+  \s@tbaseline{#1}%
   \ifp@ranotes\else\setbox0=\hbox{\XeTeXuseglyphmetrics=0 \char32}\dimen0=\ht0
       \ifdim\dimen0<\baselineskip
         \dimen1=\baselineskip\advance\dimen1 by -\dimen0
@@ -148,7 +148,7 @@
   % currently we do not allow footnotes to break to the next page, so this may not be necessary
 %  \splittopskip\ht\f@@tstrut % top baseline for broken footnotes
 %  \splitmaxdepth\dp\f@@tstrut
-  \getp@ram{fontsize}{#2}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}
+  \getp@ram{fontsize}{#2}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%
   \s@tfont{#2}%
   \futurelet\next\fo@t}% use plain.tex footnote processor
 

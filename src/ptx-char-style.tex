@@ -123,7 +123,6 @@
        \csname end-\thisch@rstyle\sid@\endcsname % handle side-specific <start> hook
      \fi
     \csname end-\thisch@rstyle\endcsname % execute any <end> hook
-    %\getp@ram{fontsize}{\m@rker}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}
     \getp@ram{superscript}{\thisch@rstyle}%
     \ifx\p@ram\tru@ \egroup \raise\SuperscriptRaise\box0 \fi
     \x@\global\x@\let\x@\n@xt % remember the <after> hook, if any, beyond the current group
@@ -241,13 +240,7 @@
   \else
     \dimen1=\p@ram \dimen0
     \edef\f@ntstyle{\f@ntstyle-\c@rrfontsize}%
-    %\ifriskyscalefont % a font is only defined once....
-      \multiply\dimen1 by \c@rrfontsize
-    %\else%
-      %\getp@ram{fontsize}{p}%
-      %\ifx\p@ram\relax\multiply\dimen1 by 12\else\multiply\dimen1 by \p@ram\fi
-      %\trace{F}{FontScale specified. Calculated as \the\dimen1}%
-    %\fi
+    \multiply\dimen1 by \c@rrfontsize
   \fi
   % create the font identifier for this style
   \trace{F}{font<\f@ntstyle>=\typef@ce\space at \the\dimen1}%
