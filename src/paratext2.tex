@@ -102,24 +102,25 @@
 
 % footnote macros based on plain.tex \footnote, \vfootnote
 \newbox\he@dingnotes
-\def\m@kenote#1#2#3{\let\@sf\empty % #1=class(e.g. f, x); 
-  % #2=caller + all the macros to setup the styling for the caller
-  % #3=caller + styling in the footnote if there is a notecallerstyle
+\def\m@kenote#1#2#3#4{\let\@sf\empty % #1=class(e.g. f, x);
+  % #2=class of styling 
+  % #3=caller + all the macros to setup the styling for the caller
+  % #4=caller + styling in the footnote if there is a notecallerstyle
   % text is read later
   \ifhmode\edef\@sf{\spacefactor\the\spacefactor}\/\fi%
   % if footnote is on a chapter number ...
-  \ifhe@dings #2\edef\@wrap{\global\setbox\he@dingnotes=\vbox\bgroup\unvbox\he@dingnotes}\else\edef\@wrap{}%
+  \ifhe@dings #3\edef\@wrap{\global\setbox\he@dingnotes=\vbox\bgroup\unvbox\he@dingnotes}\else\edef\@wrap{}%
     \ifch@pter \everypar={}\ch@pterfalse%
-      \global\setbox\ch@pternote=\hbox{\box\ch@pternote #2}%
-    \else #2\fi % output caller
+      \global\setbox\ch@pternote=\hbox{\box\ch@pternote #3}%
+    \else #3\fi % output caller
   \fi%
   % @sf preserves the space factor (e.g. extra space after a period), restore it now
-  \@sf \@wrap\vm@kenote{#1}{\getp@ram{notecallerstyle}{#1}\ifx\p@ram\relax #2\else #3\fi}}
+  \@sf \@wrap\vm@kenote{#1}{#2}{\getp@ram{notecallerstyle}{#2}\ifx\p@ram\relax #3\else #4\fi}}
 
-\def\vm@kenote#1#2{%
+\def\vm@kenote#1#2#3{%
   \inn@tetrue%
   \let\next\relax%
-  \def\n@tetype{#1}%
+  \def\n@tetype{#2}%
   \ifdiglot\ifdiglotSepNotes\ifdiglotL\def\n@tetype{#1}\else\def\n@tetype{#1R}\fi\fi\fi%
   \TRACE{vm@kenote \n@tetype}%
   \x@\insert\csname note-\n@tetype\endcsname\bgroup% insert note-f (or note-x)
@@ -140,14 +141,15 @@
   \ifdiglot\ifdiglotL\the\leftho@ks\else\the\rightho@ks\fi\fi%
   \ifRTL\setbox2=\lastbox\beginR\box2\fi % if RTL text this paragraph needs to be RTL
   % if note omitting caller from note (i.e. all callers are *'s)
-  \testomitc@ller{#1}\ifomitc@ller\else
+  \testomitc@ller{#2}\ifomitc@ller\else
     % save copy of caller in temporary box, if non-empty add a little space
-    \setbox0=\hbox{#2}#2\ifdim\wd0>0pt\kern.2em\fi
+    \setbox0=\hbox{#3}#3\ifdim\wd0>0pt\kern.2em\fi
   \fi
   % currently we do not allow footnotes to break to the next page, so this may not be necessary
 %  \splittopskip\ht\f@@tstrut % top baseline for broken footnotes
 %  \splitmaxdepth\dp\f@@tstrut
-  \s@tfont{#1}%
+  \getp@ram{fontsize}{#2}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}
+  \s@tfont{#2}%
   \futurelet\next\fo@t}% use plain.tex footnote processor
 
 % use \OmitCallerInNote{f} to omit callers from the note at foot of page
