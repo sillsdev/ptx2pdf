@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 -->
+<!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkAdjustment" id="a_PriColWidth">
@@ -6649,20 +6649,7 @@ Fonts</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkButton" id="b_frefresh">
-                                        <property name="label" translatable="yes">Refresh
-Fonts</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
-                                        <property name="tooltip_text" translatable="yes">Refresh the font list from your system. This can take a while.</property>
-                                        <signal name="clicked" handler="onRefreshFontsclicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">3</property>
-                                      </packing>
+                                      <placeholder/>
                                     </child>
                                   </object>
                                   <packing>
@@ -7026,24 +7013,6 @@ rendering technologies).</property>
                             <property name="margin_bottom">3</property>
                             <property name="column_spacing">30</property>
                             <child>
-                              <object class="GtkCheckButton" id="c_usePTmacros">
-                                <property name="label" translatable="yes">Use Paratext's
-XeTeX Macros</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">WARNING: This option has been deprecated.
-It will soon disappear completely. Turn it OFF.</property>
-                                <property name="opacity">0.40000000000000002</property>
-                                <property name="halign">center</property>
-                                <property name="draw_indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkCheckButton" id="c_useprintdraftfolder">
                                 <property name="label" translatable="yes">Use Project's
 PrintDraft Folder</property>
@@ -7053,8 +7022,24 @@ PrintDraft Folder</property>
                                 <property name="tooltip_text" translatable="yes">Use the Project Printdraft directory 
 to store generated PDF file(s).</property>
                                 <property name="halign">center</property>
+                                <property name="margin_left">12</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="b_frefresh">
+                                <property name="label" translatable="yes">Refresh Fonts</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Refresh the font list from your system. This can take a while.</property>
+                                <property name="halign">end</property>
+                                <signal name="clicked" handler="onRefreshFontsclicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
