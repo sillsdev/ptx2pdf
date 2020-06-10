@@ -408,7 +408,9 @@ class GtkViewModel(ViewModel):
             v = getattr(w, 'font_info', (None, None))
             if asstr:
                 v = "\n".join(v)
-        elif wid.startswith("lb_") or wid.startswith("l_"):
+        elif wid.startswith("lb_"):
+            v = w.get_label()
+        elif wid.startswith("l_"):
             v = w.get_text()
         if v is None:
             return default
@@ -449,7 +451,9 @@ class GtkViewModel(ViewModel):
             w.set_tooltip_text(value)
         elif wid.startswith("bl_"):
             self.setFontButton(w, *value)
-        elif wid.startswith("lb_") or wid.startswith("l_"):
+        elif wid.startswith("lb_"):
+            w.set_label(value)
+        elif wid.startswith("l_"):
             w.set_text(value)
 
     def onDestroy(self, btn):
@@ -1280,7 +1284,7 @@ class GtkViewModel(ViewModel):
 
     def onProjectChange(self, cb_prj):
         self.updatePrjLinks()
-        self.builder.get_object("btn_saveConfig").set_sensitive(False)
+        self.builder.get_object("btn_saveConfig").set_sensitive(True)
         self.builder.get_object("btn_deleteConfig").set_sensitive(False)
         lockBtn = self.builder.get_object("btn_lockunlock")
         lockBtn.set_label("Lock Config")
@@ -1340,7 +1344,7 @@ class GtkViewModel(ViewModel):
             lockBtn.set_sensitive(False)
             self.builder.get_object("t_invisiblePassword").set_text("")
             self.builder.get_object("lb_settings_dir").set_label(self.config_dir or "")
-            self.builder.get_object("btn_saveConfig").set_sensitive(False)
+            self.builder.get_object("btn_saveConfig").set_sensitive(True)
             self.builder.get_object("btn_deleteConfig").set_sensitive(False)
         self.updateDialogTitle()
 
