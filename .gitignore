@@ -16,3 +16,5 @@ bugs/
 dist/
 build/
 PrintDraft/
+msys64/
+tmpPics/

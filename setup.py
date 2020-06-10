@@ -14,7 +14,8 @@ setup(
     package_dir={'': 'python/lib'},  # indicate packages are under lib
     include_package_data=True,  # include everything in MANIFEST.in
     package_data={'ptxprint': ['*.*']},
-    #data_files=[('ptx2pdf', glob('src/*.tex'))],
+    #data_files=[('ptx2pdf/src', glob('src/*.tex')),
+    #            ('ptx2pdf/src/mappings', glob('src/mappings/*.tec'))],
     scripts=["python/scripts/ptxprint", "python/scripts/xdvitype"],
     install_requires=["regex", "pygobject", "fonttools", "pycairo"],
     zip_safe=False,

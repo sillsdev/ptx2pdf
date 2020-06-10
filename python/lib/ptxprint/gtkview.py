@@ -14,7 +14,7 @@ else:
 from gi.repository import GtkSource
 
 import xml.etree.ElementTree as et
-from ptxprint.font import TTFont, initFontCache
+from ptxprint.font import TTFont, initFontCache, fccache
 from ptxprint.view import ViewModel, Path
 from ptxprint.runner import StreamTextBuffer
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
@@ -185,9 +185,10 @@ class GtkViewModel(ViewModel):
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.addCR("fcb_diglotAlignment", 0)
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
-        pb = self.builder.get_object("b_print")
-        pbc = pb.get_style_context()
-        pbc.add_class("printbutton")
+        for a in ("b_print", "b_frefresh"):
+            pb = self.builder.get_object(a)
+            pbc = pb.get_style_context()
+            pbc.add_class("printbutton")
         for a in ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"):
             b = self.builder.get_object(a)
             # b.get_child().set_justify(Gtk.Justification.CENTER)
@@ -380,8 +381,8 @@ class GtkViewModel(ViewModel):
     def get(self, wid, default=None, sub=0, asstr=False):
         w = self.builder.get_object(wid)
         if w is None:
-            print("Can't find {} or {} in the model".format(wid, w))
-            return super(GtkViewModel, self).get(wid, value)
+            print("Can't find {} in the model".format(wid))
+            return super(GtkViewModel, self).get(wid)
         v = ""
         if wid.startswith("ecb_"):
             model = w.get_model()
@@ -408,7 +409,9 @@ class GtkViewModel(ViewModel):
             v = getattr(w, 'font_info', (None, None))
             if asstr:
                 v = "\n".join(v)
-        elif wid.startswith("lb_") or wid.startswith("l_"):
+        elif wid.startswith("lb_"):
+            v = w.get_label()
+        elif wid.startswith("l_"):
             v = w.get_text()
         if v is None:
             return default
@@ -449,7 +452,9 @@ class GtkViewModel(ViewModel):
             w.set_tooltip_text(value)
         elif wid.startswith("bl_"):
             self.setFontButton(w, *value)
-        elif wid.startswith("lb_") or wid.startswith("l_"):
+        elif wid.startswith("lb_"):
+            w.set_label(value)
+        elif wid.startswith("l_"):
             w.set_text(value)
 
     def onDestroy(self, btn):
@@ -1101,6 +1106,11 @@ class GtkViewModel(ViewModel):
                             except OSError:
                                 print("Error Deleting temporary folder: {}".format(path2del))
 
+    def onRefreshFontsclicked(self, btn):
+        fc = fccache()
+        lsfonts = self.builder.get_object("ls_font")
+        fc.fill_liststore(lsfonts)
+
     def onFontRclicked(self, btn):
         self.getFontNameFace("bl_fontR")
         self.onFontChanged(btn)
@@ -1280,7 +1290,7 @@ class GtkViewModel(ViewModel):
 
     def onProjectChange(self, cb_prj):
         self.updatePrjLinks()
-        self.builder.get_object("btn_saveConfig").set_sensitive(False)
+        self.builder.get_object("btn_saveConfig").set_sensitive(True)
         self.builder.get_object("btn_deleteConfig").set_sensitive(False)
         lockBtn = self.builder.get_object("btn_lockunlock")
         lockBtn.set_label("Lock Config")
@@ -1340,7 +1350,7 @@ class GtkViewModel(ViewModel):
             lockBtn.set_sensitive(False)
             self.builder.get_object("t_invisiblePassword").set_text("")
             self.builder.get_object("lb_settings_dir").set_label(self.config_dir or "")
-            self.builder.get_object("btn_saveConfig").set_sensitive(False)
+            self.builder.get_object("btn_saveConfig").set_sensitive(True)
             self.builder.get_object("btn_deleteConfig").set_sensitive(False)
         self.updateDialogTitle()
 

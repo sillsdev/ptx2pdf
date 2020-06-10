@@ -30,8 +30,12 @@ def num2tag(n):
 class TTFontCache:
     def __init__(self, nofclist=False):
         self.cache = {}
+        self.fontpaths = []
         if nofclist:
             return
+        self.loadFcList()
+
+    def loadFcList(self):
         files = checkoutput(["fc-list", ":file"], path="xetex")
         for f in files.split("\n"):
             if ": " not in f:
@@ -61,7 +65,15 @@ class TTFontCache:
                 for s in styles:
                     self.cache.setdefault(n, {})[s] = path
 
+    def runFcCache(self):
+        dummy = checkoutput(["fc-cache"], path="xetex")
+        self.cache = {}
+        self.loadFcList()
+        for p in self.fontpaths:
+            self.addFontDir(p)
+        
     def addFontDir(self, path):
+        self.fontpaths.append(path)
         for fname in os.listdir(path):
             if fname.lower().endswith(".ttf"):
                 fpath = os.path.join(path, fname)
@@ -125,11 +137,19 @@ def initFontCache(nofclist=False):
         fontcache = TTFontCache(nofclist=nofclist)
     return fontcache
     # print(sorted(fontcache.cache.items()))
+
 def cachepath(p, nofclist=False):
     global fontcache
     if fontcache is None:
         fontcache = TTFontCache(nofclist=nofclist)
     fontcache.addFontDir(p)
+
+def fccache():
+    global fontcache
+    if fontcache is not None:
+        fontcache.runFcCache()
+    return fontcache
+
 
 class TTFont:
     cache = {}
