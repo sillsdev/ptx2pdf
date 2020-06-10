@@ -17,7 +17,7 @@ setup(
     #data_files=[('ptx2pdf/src', glob('src/*.tex')),
     #            ('ptx2pdf/src/mappings', glob('src/mappings/*.tec'))],
     scripts=["python/scripts/ptxprint", "python/scripts/xdvitype"],
-    install_requires=["regex", "pygobject", "fonttools", "pycairo", "PIL"],
+    install_requires=["regex", "pygobject", "fonttools", "pycairo"],
     zip_safe=False,
     license="MIT",
     classifiers=[

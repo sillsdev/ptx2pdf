@@ -14,7 +14,7 @@ else:
 from gi.repository import GtkSource
 
 import xml.etree.ElementTree as et
-from ptxprint.font import TTFont, initFontCache
+from ptxprint.font import TTFont, initFontCache, fccache
 from ptxprint.view import ViewModel, Path
 from ptxprint.runner import StreamTextBuffer
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
@@ -185,9 +185,10 @@ class GtkViewModel(ViewModel):
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.addCR("fcb_diglotAlignment", 0)
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
-        pb = self.builder.get_object("b_print")
-        pbc = pb.get_style_context()
-        pbc.add_class("printbutton")
+        for a in ("b_print", "b_frefresh"):
+            pb = self.builder.get_object(a)
+            pbc = pb.get_style_context()
+            pbc.add_class("printbutton")
         for a in ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"):
             b = self.builder.get_object(a)
             # b.get_child().set_justify(Gtk.Justification.CENTER)
@@ -1104,6 +1105,11 @@ class GtkViewModel(ViewModel):
                                 rmtree(path2del)
                             except OSError:
                                 print("Error Deleting temporary folder: {}".format(path2del))
+
+    def onRefreshFontsclicked(self, btn):
+        fc = fccache()
+        lsfonts = self.builder.get_object("ls_font")
+        fc.fill_liststore(lsfonts)
 
     def onFontRclicked(self, btn):
         self.getFontNameFace("bl_fontR")
