@@ -81,8 +81,9 @@ class AlignedDiglot():
 \def\DiglotRightFraction{{{document/diglotsecfraction}}}
 
 {diglot/colorfonts}\ColorFontsfalse
-\addToLeftHooks{{\FontSizeUnit={paper/fontfactor}pt}}
-\addToRightHooks{{\FontSizeUnit={diglot/fontfactor}pt}}
+%\addToLeftHooks{{\FontSizeUnit={paper/fontfactor}pt}}
+%\addToRightHooks{{\FontSizeUnit={diglot/fontfactor}pt}}
+\FontSizeUnitR={diglot/fontfactor}pt
 \addToLeftHooks{{\RTL{document/ifrtl}}}
 \addToRightHooks{{\RTL{diglot/ifrtl}}}
 %{diglot/iflinebreakon}\XeTeXlinebreaklocaleR "{diglot/linebreaklocale}"

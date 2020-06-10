@@ -380,8 +380,8 @@ class GtkViewModel(ViewModel):
     def get(self, wid, default=None, sub=0, asstr=False):
         w = self.builder.get_object(wid)
         if w is None:
-            print("Can't find {} or {} in the model".format(wid, w))
-            return super(GtkViewModel, self).get(wid, value)
+            print("Can't find {} in the model".format(wid))
+            return super(GtkViewModel, self).get(wid)
         v = ""
         if wid.startswith("ecb_"):
             model = w.get_model()

@@ -281,12 +281,12 @@ _fontstylemap = {
 class TexModel:
     _peripheralBooks = ["FRT", "INT", "GLO", "TDX", "NDX", "CNC", "OTH", "BAK", "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG"]
     _fonts = {
-        "fontregular":              ("bl_fontR", None, None, None),
-        "fontbold":                 ("bl_fontB", "c_fakebold", "fontbold/embolden", "fontbold/slant"),
-        "fontitalic":               ("bl_fontI", "c_fakeitalic", "fontitalic/embolden", "fontitalic/slant"),
-        "fontbolditalic":           ("bl_fontBI", "c_fakebolditalic", "fontbolditalic/embolden", "fontbolditalic/slant"),
-        "fontextraregular":         ("bl_fontExtraR", "", None, None, None),
-        "versenumfont":             ("bl_verseNumFont", "", None, None, None)
+        "fontregular":              ("bl_fontR", None, None, None, None),
+        "fontbold":                 ("bl_fontB", None, "c_fakebold", "fontbold/embolden", "fontbold/slant"),
+        "fontitalic":               ("bl_fontI", None, "c_fakeitalic", "fontitalic/embolden", "fontitalic/slant"),
+        "fontbolditalic":           ("bl_fontBI", None, "c_fakebolditalic", "fontbolditalic/embolden", "fontbolditalic/slant"),
+        "fontextraregular":         ("bl_fontExtraR", "c_useFallbackFont", None, None, None),
+        "versenumfont":             ("bl_verseNumFont", "c_inclVerseDecorator", None, None, None)
     }
     _hdrmappings = {
         "First Reference":  r"\firstref",
@@ -428,16 +428,17 @@ class TexModel:
             f = TTFont(name, style)
             # print(p, wid, f.filename, f.family, f.style)
             if f.filename is None:
-                badfonts.add((name or f.filename or "", style))
-                if p != "fontregular" and self._fonts[p][1] is not None:
+                if self._fonts[p][1] is None or printer.get(self._fonts[p][1]):
+                    badfonts.add((name or f.filename or "", style))
+                if p != "fontregular" and self._fonts[p][2] is not None:
                     regname = self.dict["fontregular/name"]
                     regstyle = self.dict["fontregular/style"]
                     f = TTFont(regname, regstyle)
                     if printer is not None:
-                        printer.set(self._fonts[p][1], True)
+                        printer.set(self._fonts[p][2], True)
                         printer.set(self._fonts[p][0], (name, style))
-                        if self._fonts[p][2] is not None:
-                            self.updatefields([self._fonts[p][2]])
+                        if self._fonts[p][3] is not None:
+                            self.updatefields([self._fonts[p][3]])
                         # print("Setting {} to {}".format(p, reg))
             if 'Silf' in f and self.asBool("font/usegraphite"):
                 engine = "/GR"
