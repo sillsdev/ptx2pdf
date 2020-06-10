@@ -1124,9 +1124,6 @@ class GtkViewModel(ViewModel):
     def onFontBIclicked(self, btn):
         self.getFontNameFace("bl_fontBI")
         
-    # def onFontExtraRclicked(self, btn):
-        # self.getFontNameFace("bl_fontExtraR")
-        
     def onVerseNumFontClicked(self, btn):
         self.getFontNameFace("bl_verseNumFont")
         
