@@ -1,5 +1,5 @@
-PTXprint 0.8.0 Beta Release Notes
-9th June 2020
+PTXprint 0.8.1 Beta Release Notes
+10th June 2020
 
 WARNING: This beta version is the result of major restructuring of the code and includes new
          features that have had very limited testing. Do NOT use for any mission-critical work.
@@ -7,6 +7,16 @@ WARNING: This beta version is the result of major restructuring of the code and 
 NOTE: Chapter Numbers in peripheral (non-scripture) books are now suppressed by default (but 
       can be re-enabled on the Advanced tab)
 
+Bug Fixes and Improvements in: 0.8.1
+
+   * Refresh fonts button (on Advanced tab) to reset the font list if it gets stale
+   
+   * \FontScale in .sty files is now honoured
+   
+   * Independent font sizes are now honoured for both sides in diglot
+   
+   * You can now hit save config without a config name
+   
 New Features and Improvements in: 0.8.0
 
   * Allow multiple stylesheets for diglots to define fonts and styles for each side independently
