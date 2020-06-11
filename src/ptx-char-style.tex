@@ -55,17 +55,30 @@
 %
 % Each USFM character style marker is defined to call \ch@rstyle with the marker name as parameter
 %
+
 \def\ch@rstyle#1{\TRACE{ch@rstyle:#1}%
  \def\newch@rstyle{#1}% record the name of the style
  \catcode32=12 % make <space> an "other" character, so it won't be skipped by \futurelet
  \catcode13=12 % ditto for <return>
  \futurelet\n@xt\doch@rstyle % look at following character and call \doch@rstyle
 }
+
+%Version of above for plus versions
+\def\ch@rstylepls#1{\leavevmode%Stacking character styles (at least in headers) seem to break paragraph styling if they are invoked before leaving vertical mode. It's something to do with grouping. On the assumption that there will *be* text coming, it ought to be safe to leave vertical mode on meeting a stacking character style
+ \TRACE{ch@rstylepls:#1}%
+ \def\newch@rstyle{#1}% record the name of the style
+ \catcode32=12 % make <space> an "other" character, so it won't be skipped by \futurelet
+ \catcode13=12 % ditto for <return>
+ \futurelet\n@xt\doch@rstylepls % look at following character and call \doch@rstylepls
+}
 \def\c@rrfontsize{12}
 
 \catcode`\~=12 \lccode`\~=32 % we'll use \lowercase{~} when we need a category-12 space
 \catcode`\_=12 \lccode`\_=13 % and \lowercase{_} for category-12 <return>
 \lccode`\|=`\\
+\def\stylest@ck{}
+\newif\ifst@ckstyle
+\st@ckstylefalse
 \lowercase{
  \def\doch@rstyle{% here, \n@xt has been \let to the next character after the marker
   \catcode32=10 % reset <space> to act like a space again
@@ -74,10 +87,27 @@
   \else\if\n@xt~\let\n@xt\startch@rstyle@spc
   \else\if\n@xt_\let\n@xt\startch@rstyle@nl\else\let\n@xt\startch@rstyle\fi\fi\fi % else we need to start it
   \n@xt} % chain to the start or end macro
+ % doch@rstylepls is like doch@rstyle, but wraps the style in a group and generates a comma-separated stack of styles.
+ \def\doch@rstylepls{% here, \n@xt has been \let to the next character after the marker
+  \catcode32=10 % reset <space> to act like a space again
+  \catcode13=10 % and <return> is also a space (we don't want blank line -> \par)
+  \if\n@xt*\let\n@xt\endch@rstylepls % check for "*", if so then we need to end the style
+    \else\if\n@xt~\let\n@xt\startch@rstyle@spc
+    \else\if\n@xt_\let\n@xt\startch@rstyle@nl
+    \else\let\n@xt\startch@rstyle\fi\fi
+    \bgroup\ifx\stylest@ck\empty\st@ckstyletrue\edef\stylest@ck{\m@rker}% Start a stackstyle group
+    \else\edef\stylest@ck{\stylest@ck+\m@rker}\fi
+    \trace{s}{inside stack of +\newch@rstyle. Style stack now \stylest@ck}%
+  \fi % else we need to start it
+  \n@xt} % chain to the start or end macro
  % when \startch@rstyle is called, the following <space> or <return> has become category-12
  % so we have to explicitly consume it here as part of the macro parameter list
  \def\startch@rstyle@spc~{\startch@rstyle}
  \def\startch@rstyle@nl_{\startch@rstyle}
+}
+\def\endch@rstylepls*{%Consume the star..
+  \endch@rstyle*\egroup
+  \trace{s}{end of +\newch@rstyle. Left style stack, now \stylest@ck, \ifst@ckstyle 1\else 0\fi}%End of st@ckstyle group
 }
 \def\startch@rstyle{\TRACE{startch@rstyle}%
   \ifnum\n@tenesting>1 \global\edef\tempch@rstyle{\newch@rstyle}\edef\newch@rstyle{\thisch@rstyle}\endch@rstyle*\edef\newch@rstyle{\tempch@rstyle}\fi
@@ -92,9 +122,9 @@
    \fi
    \bgroup % start a group to encapsulate the style's formatting changes
     \let\thisch@rstyle=\newch@rstyle % remember the current style
-    \getp@ram{fontscale}{\thisch@rstyle}%
+    \getFp@ram{fontscale}{\thisch@rstyle}%
     \ifx\p@ram\relax % if no fontscale
-      \getp@ram{fontsize}{\thisch@rstyle}% 
+      \getFp@ram{fontsize}{\thisch@rstyle}% 
       \ifx\p@ram\relax % and fontsize isn't defined...
 	     \let\param=\c@rrfontsize
       \else % If it is defined
@@ -103,7 +133,7 @@
     \s@tfont{\thisch@rstyle}% set up font attributes
     \ifnum\n@tenesting>0 \global\advance\n@tenesting by 1 % record nesting level in para or note
     \else \global\advance\p@ranesting by 1 \fi
-    \getp@ram{superscript}{\thisch@rstyle}%
+    \getFp@ram{superscript}{\thisch@rstyle}%
     \ifx\p@ram\tru@ \setbox0=\hbox\bgroup \fi
     \csname start-\thisch@rstyle\endcsname % execute any <start> hook
     \ifdiglot\setsid@ % \MSG{start-\thisch@rstyle\sid@}%
@@ -123,7 +153,7 @@
        \csname end-\thisch@rstyle\sid@\endcsname % handle side-specific <start> hook
      \fi
     \csname end-\thisch@rstyle\endcsname % execute any <end> hook
-    \getp@ram{superscript}{\thisch@rstyle}%
+    \getFp@ram{superscript}{\thisch@rstyle}%
     \ifx\p@ram\tru@ \egroup \raise\SuperscriptRaise\box0 \fi
     \x@\global\x@\let\x@\n@xt % remember the <after> hook, if any, beyond the current group
     \csname after-\thisch@rstyle\endcsname
@@ -168,10 +198,12 @@
 
 \def\s@tfont#1{%
  \ifdiglot\ifdiglotL\def\f@ntstyle{#1L}\def\sid@{L}\else\def\f@ntstyle{#1R}\def\sid@{R}\fi\else\def\f@ntstyle{#1}\def\sid@{-}\fi%
+ \ifst@ckstyle\edef\f@ntstyle{\stylest@ck+#1}\fi
  \ifdiglot\setLRspecific\fi % FIXME: Whether diglot or not, it might have been diglot before.
- \getp@ram{fontscale}{#1}%
+ \getFp@ram{fontscale}{#1}%
  % check if font identifier for this style has been created or fontscale being used
  \ifnum\ifx\p@ram\relax\x@\ifx\csname font<\f@ntstyle>\endcsname \relax 1\else 0\fi\else 1\fi =1
+  \trace{s}{s@tfont font for #1}%
   \trace{S}{Normal font for \sid@\space is \regular}%
   \let\regul@r=\regular%
   \let\b@ld=\bold%
@@ -204,33 +236,33 @@
 %      \let\b@lditalic=\tmpface\fi%
 %  \fi%
   \let\typef@ce=\regul@r%
-  \getp@ram{fontname}{#1}% see if \FontName was specified in the stylesheet
+  \getFp@ram{fontname}{#1}% see if \FontName was specified in the stylesheet
   \ifx\p@ram\relax % if not, check the \Bold and \Italic properties
-	  \getp@ram{bold}{#1}%
+	  \getFp@ram{bold}{#1}%
 	  \ifx\p@ram\tru@
 		\let\typef@ce=\b@ld
-		\getp@ram{italic}{#1}%
+		\getFp@ram{italic}{#1}%
 		\ifx\p@ram\tru@ \let\typef@ce=\b@lditalic \fi
 	  \else
-		\getp@ram{italic}{#1}%
+		\getFp@ram{italic}{#1}%
 		\ifx\p@ram\tru@ \let\typef@ce=\it@lic \fi
 	  \fi
   \else
    \edef\typef@ce{"\p@ram"}% use font name from the stylesheet
   \fi
-  \getp@ram{smallcaps}{#1}%
+  \getFp@ram{smallcaps}{#1}%
   \ifx\p@ram\tru@
     \edef\typef@ce{\typef@ce\SmallCapsSuffix}%
   \fi
-  \getp@ram{color}{#1}%
+  \getFp@ram{color}{#1}%
   \ifColorFonts\ifx\p@ram\relax\else
     \ParseColor\p@ram\end\edef\typef@ce{\typef@ce :color=\r@s}%
   \fi\fi%
-  \getp@ram{superscript}{#1}% scale down by \SuperscriptFactor if superscripted style
+  \getFp@ram{superscript}{#1}% scale down by \SuperscriptFactor if superscripted style
   \dimen0=\ifx\p@ram\tru@ \SuperscriptFactor\fi\FontSizeUnit%
-  \getp@ram{fontscale}{#1}%
+  \getFp@ram{fontscale}{#1}%
   \ifx\p@ram\relax
-    \getp@ram{fontsize}{#1}%
+    \getFp@ram{fontsize}{#1}%
     \ifx\p@ram\relax\dimen1=\c@rrfontsize\dimen0
        \MSG{*** FontSize missing for marker '\f@ntstyle' ('#1'), defaulting to \c@rrfontsize}%
     \else
@@ -262,9 +294,9 @@
 \def\s@textrafont#1{%
   \x@\ifx\csname extrafont<#1>\endcsname \relax%
     \let\typef@ce=\extraregular
-    \getp@ram{superscript}{#1}%
+    \getFp@ram{superscript}{#1}%
     \dimen0=\ifx\p@ram\tru@ \SuperscriptFactor\fi\FontSizeUnit
-    \getp@ram{fontsize}{#1}%
+    \getFp@ram{fontsize}{#1}%
     \ifx\p@ram\relax
       \MSG{*** FontSize missing for marker '#1', defaulting to 12}%
       \def\p@ram{12}

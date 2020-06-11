@@ -125,10 +125,11 @@
 % Sets temporary macro \p@ram to the value
 %
 \def\getp@r@m#1#2{\x@\let\x@\p@ram\csname#2:#1\endcsname}
-% Diglot version = allow all parameters to have  Left/Right variant or use
+
+% Diglot-aware version = allow all parameters to have  Left/Right variant or use
 % default. (e.g when asked for paramter for v, check for vL|vR, default to v)
 \def\getp@ram#1#2{%
-\TRACEdiglot{getp@ram #1:#2}%
+\TRACEdiglot{getp@ram #2:#1}%
 \ifdiglot%
   \ifdiglotL\getp@r@m{#1}{#2L}\else\getp@r@m{#1}{#2R}\fi%
   \ifx\p@ram\relax%
@@ -140,9 +141,43 @@
 \else%
   \getp@r@m{#1}{#2}%
 \fi%
-\x@\TRACEdiglot{\p@ram}%
+\trace{s}{#2:#1 is \p@ram}%
 }
+
+%Main utility function for font parameters, stacking-styles aware
+\def\getFp@ram#1#2{%
+  \ifst@ckstyle
+    \trace{s}{Style-stack:\stylest@ck, request for #2:#1}%
+    %\tracingassigns=1
+    \let\s@vep@ram=\relax %Empty to start with
+    \x@\getp@ramstack\stylest@ck+,#1\E %
+    \getp@ramignore{#1}{#2}{p}%
+    %\tracingassigns=0
+  \else
+    \getp@ram{#1}{#2}%
+  \fi
+}
+
+\def\endst@ck#1,#2\E{}% 
+%This gets the param from each marker in the stack, in turn, overwriting any previous value.
+% But preserving ones that aren't set if the nesting is deep
+\def\getp@ramstack#1+#2,#3\E{%
+  \def\t@st{#1}\ifx\t@st\empty\let\n@xt=\endst@ck %No more values
+  \else
+    \getp@ram{#3}{#1}\ifx\p@ram\relax\let\p@ram=\s@vep@ram %use old value if current one is void
+    \else\let\s@vep@ram=\p@ram\fi %save current, in case it's needed later 
+    \let\n@xt=\getp@ramstack
+  \fi
+  \n@xt#2+,#3\E}
 %
+\def\getp@ramignore#1#2#3{%IF there is already a value in p@ram, then keep that value if the retrieved value is the same as the relevant param for #3
+  \ifx\p@ram\relax
+    \trace{s}{No value yet}\getp@ram{#1}{#2}%
+  \else
+    \trace{s}{Getting #2:#1, if it's not the same as #3:#1}%
+    \let\s@vep@ram=\p@ram\getp@ram{#1}{#3}\let\pp@ram=\p@ram
+    \getp@ram{#1}{#2}\trace{s}{p's p@ram is \pp@ram, savep@ram is \s@vep@ram}\ifx\p@ram\pp@ram\let\p@ram=\s@vep@ram\fi\fi}
+
 \def\m@kestyle{{\uccode`\|=`\\\uppercase{\message{|\m@rker}}}
  \x@\let\csname font<\m@rker>\endcsname=\relax 
  \ifx\styl@type\P@ra \x@\defp@rstyle\x@{\m@rker}
@@ -162,7 +197,10 @@
 % \csname...\endcsname is used because the marker may contain numbers as well as letters
 %
 \def\defp@rstyle#1{\x@\def\csname#1\endcsname{\p@rstyle{#1}}}
-\def\defch@rstyle#1{\x@\def\csname#1\endcsname{\ch@rstyle{#1}}}
+\edef\pl@scatcode{\the\catcode`+}
+\catcode`+=12
+\def\defch@rstyle#1{\x@\def\csname#1\endcsname{\ch@rstyle{#1}}\x@\def\csname+#1\endcsname{\ch@rstylepls{#1}}}
+\catcode`+=\pl@scatcode
 \def\defn@testyle#1{\x@\def\csname#1\endcsname{\n@testyle{#1}}\m@ken@tecl@ss{#1}}
 
 % Allow "hooking" custom TeX code at the beginning or ending of specific styles.
@@ -405,6 +443,7 @@
 \newif\iflastptxfile
 \newdimen\origb@selineskip %Save the initial baselineskip here
 
+
 \def\@netimesetup{
  % stuff to execute after loading all stylesheets but before processing the first USFM file
  \origb@selineskip=\baselineskip
@@ -452,6 +491,7 @@
  \catcode`\_=11 % treat as letter for TE custom styles
  \catcode`\/=\active
  \catcode13=10
+ \catcode`+=11 % treat as letter
  \activ@tecustomch@rs
  \m@kedigitsletters %so that marker names can include digits
  % test if file is available, inform user if it's missing
@@ -472,6 +512,7 @@
  \catcode`\/=12
  \catcode`\#=6 \catcode`\%=14 % restore TeX meanings for those we might use
  \catcode`\{=1 \catcode`\}=2
+ \catcode`+=\pl@scatcode % don't treat as letter any more
  \singlecolumn\pagebreak
  %\ifendbooknoeject\else\global\output={\global\setbox255=\box\voidb@x}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
  \ifendbooknoeject\else\global\output={\shipout\vbox{\box\partial\box255}}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
