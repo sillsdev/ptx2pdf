@@ -215,8 +215,8 @@
    \the\@veryparhooks
    \beginL\pdfsavepos
    \write\p@rlocs{\noexpand\@parstart{\the\pdflastxpos}{\the\pdflastypos}}\endL
-   \ifRTL \beginR \leftskip\else\rightskip\fi =0pt
-     \ifJustifyPars\else plus .25\hsize\fi
+   %\ifRTL \rightskip\else\leftskip\fi =0pt
+   \ifRTL \beginR \leftskip\else\rightskip\fi =0pt \ifJustifyPars\else plus .25\hsize\fi
    \getp@ram{justification}{\m@rker}%
    \ifx\p@ram\c@nter
     \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
@@ -295,7 +295,7 @@
    \fi
    \ifx\f@rstindent\relax \else
     \x@\ifdim\f@rstindent pt<0pt
-     \allowp@rindenttrue
+     \allowp@rindenttrue % redundant
     \else
      \iffirst@fterheading \ifIndentAfterHeading\else \allowp@rindentfalse \fi\fi
     \fi
@@ -307,7 +307,7 @@
    \ifvoid\ch@pterbox\else \kern-\wd\ch@pterbox \box\ch@pterbox \fi
    \global\p@ranesting=1
    \csname start-\m@rker\endcsname % handle <start> hook
-   \ifdiglot\setsid@%\MSG{start-\m@rker\sid@}%
+   \ifdiglot\setsid@ % \MSG{start-\m@rker\sid@}%
      \csname start-\m@rker\sid@\endcsname % handle side-specific <start> hook
    \fi
    \ifdr@ppednumber \spacefactor=0\n@wchaptersf \fi
