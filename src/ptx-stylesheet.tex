@@ -237,8 +237,8 @@
    \ifOmitChapterNumber\else
     % if chapter label not present, set \ch@ptertrue to cause chapter number to be printed
     % at start of first text paragraph.
-    \let\ch@pl@bel=\ch@plabel%
-    \ifdiglot\ifdiglotL\else\let\ch@pl@bel=\ch@plabelR\fi\fi
+    \global\let\ch@pl@bel=\ch@plabel % p@rstyle{cl} may end a group.
+    \ifdiglot\ifdiglotL\else\global\let\ch@pl@bel=\ch@plabelR\fi\fi
     \ifx\ch@pl@bel\empty \global\ch@ptertrue 
     \else % if \cl present, output chapter label here
       \p@rstyle{cl}\ch@pl@bel\ \ch@pter
