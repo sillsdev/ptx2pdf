@@ -237,7 +237,7 @@
    \ifOmitChapterNumber\else
     % if chapter label not present, set \ch@ptertrue to cause chapter number to be printed
     % at start of first text paragraph.
-    \let\ch@pl@bel=\ch@plabel%
+    \global\let\ch@pl@bel=\ch@plabel%
     \ifdiglot\ifdiglotL\else\let\ch@pl@bel=\ch@plabelR\fi\fi
     \ifx\ch@pl@bel\empty \global\ch@ptertrue 
     \else % if \cl present, output chapter label here
@@ -356,7 +356,7 @@
  \def\do@CL{\global\ch@pterfalse\@CL}%
  \def\cl{\ifch@pter \let\n@xt=\do@CL \else \let\n@xt=\st@recl \fi \n@xt}%
  \def\st@recl{\bgroup\obeylines\@cl}% \cl gets stored as chapter label and changes \c format
- \def\@cl ##1^^M{\ifdiglot\ifdiglotL\gdef\ch@plabel{##1}\else\gdef\ch@plabelR{##1}\fi\else\gdef\ch@plabel{##1}\fi\egroup}%
+ \def\@cl ##1^^M{\ifdiglot\ifdiglotL\gdef\ch@plabel{##1}\else\gdef\ch@plabelR{##1}\fi\else\gdef\ch@plabel{##1}\fi\egroup\trace{s}{chapter label \ch@plabel}}%
  %
  \let\@ID=\id%
  \def\id{\bgroup\obeylines\unc@tcodespecials \m@kedigitsother
