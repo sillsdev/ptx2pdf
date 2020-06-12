@@ -55,13 +55,35 @@ The following is an example of a smallcaps character style:
 Notice that this should only be used in a custom stylesheet, because other tools
 will not recognise it.
 
-Unfortunately, a font is only set up once once, the first time it's used, so the
-above won't to have `\nd` scale in all circumstances. The first time it is used will 
-define the font size all future occasions.  **However, all is not lost!** 
-if hooks are automaticly  replacing `\nd` with `\s1nd`, `\s2nd` `\fnd`, etc (or
-some other scheme), and these are all copies of the above (perhaps with a
-`\Bold`) then `\riskyscalefonttrue` should work exactly as desired. Until it's
-used in an context that didn't have the hooks set up.
+Although normally a font is only set up once once (the first time it's used)
+fonts with ```\FontScale``` are a treated specially and scaling now works correctly.
+
+Normally, ```\FontScale 1``` is most useful for stacking styles.
+**Even better** the nesting form of the marker ```\+nd``` will also work.
+
+### How do nesting styles work?
+Consider this example:
+```
+\s The angel of \+nd Lord\+nd* speaks
+```
+When the ``\+nd`` is encoutered, XeTeX (now) remembers that it was previously using the settings from \s, and
+rather than looking for a font named `nd`, it first looks for a font called `s+nd`. If it doesn't find one, it 
+knows it has to make a new font, one based on the relevant style sheet parameters (FontScale, FontName, etc).
+For each parameter it searches its memory of the stylesheets in the following way:
+- Look for parameters specified for  \Marker s+nd. Normally there aren't any, but perhaps the font for ``\s``
+doesn't have a small-caps variety, making some manual tweaking necessary. If it finds that parameter, then the definition is accepted. Otherwise.
+- Tentatively load the value of the parameter for style ``\s``
+- If there were other \+something markers after the \s, load those, overwriting parameters obtained earlier.
+- Compare value parameter for ``\nd`` with the parameter for ``\p``. If they are the same, use what we had before, otherwise use 
+the parameter specified for ``\nd``.
+ 
+### I'm altering `\LineSpacingFactor` but it's not having any effect.
+\LineSpacingFactor only gets used in the following circumstance:
+- For the main text, no \baseline has been set.
+- For any paragraph style, no \BaseLine (or \LineSpace) has been set in the style sheet.
+- The paragraph style has been used before. Once a paragraph style (or font) has been used,
+it will not be recalculated.
+
 
 ### I shrunk my verse numbers and now they're just floating in the middle of the line
 In your configuration .tex file, you need to adjust this number.
@@ -100,7 +122,7 @@ Notice that markers are case dependent.
 \\NoteCallerRaise | dimension to raise the in note caller
 \\NoteBlendInto   | name of note type marker to merge these notes into that class
 \\SmallCap    | blank enables, "-" disables. Only works with fonts with a +smcp feature
-\\LineSpacing | also BaseLine. Dimension of line spacing, can include glue
+\\LineSpacing | also BaseLine. Dimension of line spacing, can include glue. *Units are required*
 \\StyleType   | "paragraph", "character", "note"
 
 ### How do Tables of Contents work?
