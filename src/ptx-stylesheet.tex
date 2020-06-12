@@ -149,9 +149,12 @@
   \ifst@ckstyle
     \trace{s}{Style-stack:\stylest@ck, request for #2:#1}%
     %\tracingassigns=1
-    \let\s@vep@ram=\relax %Empty to start with
-    \x@\getp@ramstack\stylest@ck+,#1\E %
-    \getp@ramignore{#1}{#2}{p}%
+    \getp@ram{#1}{\stylest@ck+#2}% Allow complex over-ride styles to be defined in the stylesheet
+    \ifx\p@ram\relax
+      \let\s@vep@ram=\relax %Empty to start with
+      \x@\getp@ramstack\stylest@ck+,#1\E %
+      \getp@ramignore{#1}{#2}{p}%
+    \fi
     %\tracingassigns=0
   \else
     \getp@ram{#1}{#2}%
