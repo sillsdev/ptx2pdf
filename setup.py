@@ -6,11 +6,11 @@ from setuptools import setup, find_packages
 
 setup(
     name="PTXprint",
-    version="0.7.0",
+    version="0.8.1",
     description="Typesetting using (Xe)TeX for ParaText",
     url="https://software.sil.org/ptxprint",
     maintainer="SIL International",
-    packages=find_packages('lib'),  # include all packages under lib
+    packages=find_packages('python/lib'),  # include all packages under lib
     package_dir={'': 'python/lib'},  # indicate packages are under lib
     include_package_data=True,  # include everything in MANIFEST.in
     package_data={'ptxprint': ['*.*']},

@@ -92,11 +92,12 @@
   \catcode32=10 % reset <space> to act like a space again
   \catcode13=10 % and <return> is also a space (we don't want blank line -> \par)
   \if\n@xt*\let\n@xt\endch@rstylepls % check for "*", if so then we need to end the style
-    \else\if\n@xt~\let\n@xt\startch@rstyle@spc
+  \else\if\n@xt~\let\n@xt\startch@rstyle@spc
     \else\if\n@xt_\let\n@xt\startch@rstyle@nl
-    \else\let\n@xt\startch@rstyle\fi\fi
+      \else\let\n@xt\startch@rstyle
+    \fi\fi
     \bgroup\ifx\stylest@ck\empty\st@ckstyletrue\edef\stylest@ck{\m@rker}% Start a stackstyle group
-    \else\edef\stylest@ck{\stylest@ck+\m@rker}\fi
+      \else\edef\stylest@ck{\stylest@ck+\m@rker}\fi
     \trace{s}{inside stack of +\newch@rstyle. Style stack now \stylest@ck}%
   \fi % else we need to start it
   \n@xt} % chain to the start or end macro

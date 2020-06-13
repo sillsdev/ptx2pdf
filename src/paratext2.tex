@@ -675,6 +675,7 @@
   \ifvoid0 \fitonpagetrue \else \fitonpagefalse \fi
   \rebalancefalse
   \trace{o}{first \the\availht . col=\the\ht\colA, \the\colhtA . second col=\the\ht\colB, \the\colhtB . rem=\the\ht0}
+  \ifdim\ht\colA<.5\baselineskip\ifdim\ht\colB<.5\baselineskip\MSG{I can't break this page!}\end\fi\fi
   \iffitonpage
     \shortavail=\colhtB \advance\shortavail by -\ht\colB
     \advance\shortavail by -\colhtA \advance\shortavail by \ht\colA

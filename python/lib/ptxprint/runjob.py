@@ -71,6 +71,7 @@ _diglot = {
 "diglot/colorfonts" :       "document/ifcolorfonts",
 "diglot/ifrtl" :            "document/ifrtl",
 "diglot/fontfactor" :       "paper/fontfactor",
+"diglot/linespacingfactor": "paragraph/linespacingfactor",
 "diglot/iflinebreakon" :    "document/iflinebreakon",
 "diglot/linebreaklocale" :  "document/linebreaklocale",
 "diglot/useglyphmetrics" :  "paragraph/useglyphmetrics",
