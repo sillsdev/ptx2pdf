@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 -->
+<!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkAdjustment" id="a_PriColWidth">
@@ -3809,9 +3809,9 @@ selected books/chapters will show in the glossary.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">This option ensures that re-duplicated
+                                    <property name="tooltip_text" translatable="yes">This option encourages re-duplicated
 words (i.e. those which are intentionally
-repeated) come together on the same line
+repeated) to come together on the same line
 by inserting a NoBreakSpace between them.
 For example, "gama gama", or "kala kala" 
 need to be stuck together (with a NBSP)
@@ -4009,13 +4009,13 @@ a line.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_preventorphans">
-                                    <property name="label" translatable="yes">Prevent Orphan Words in Poetry</property>
+                                    <property name="label" translatable="yes">Prevent Orphan Words</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">This option prevents single words
-from occurring on the last line of
-any poetry lines. \q1 \q2 \q3 etc.</property>
+                                    <property name="tooltip_text" translatable="yes">This option limits single words
+at the ends of paragraphs to not occur
+on a line on their own.</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                   </object>

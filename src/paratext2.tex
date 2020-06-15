@@ -673,6 +673,7 @@
   \ifvoid0 \fitonpagetrue \else \fitonpagefalse \fi
   \rebalancefalse
   \trace{o}{first \the\availht . col=\the\ht\colA, \the\colhtA . second col=\the\ht\colB, \the\colhtB . rem=\the\ht0}
+  \ifdim\ht\colA<.5\baselineskip\ifdim\ht\colB<.5\baselineskip\MSG{I can't break this page!}\end\fi\fi
   \iffitonpage
     \shortavail=\colhtB \advance\shortavail by -\ht\colB
     \advance\shortavail by -\colhtA \advance\shortavail by \ht\colA
@@ -1264,6 +1265,7 @@
 
 \def\columnbreak{\vfill\eject}
 
+\newcount\badspacepenalty \badspacepenalty=100
 \tolerance=9000
 \hbadness=10000
 \emergencystretch=1in
@@ -1281,6 +1283,7 @@
 \def\WJ{\leavevmode\nobreak} % WORD JOINER
 \def\ZWNBSP{\WJ} % ZERO WIDTH NO-BREAK SPACE
 \def\NBHYPH{\leavevmode\hbox{-}} % NON-BREAKING HYPHEN
+\def\NQUAD{\penalty\badspacepenalty\ } % subvert Unicode En-Quad as BAD BREAKING SPACE
 
 \let\pr@tect=\relax
 \def\pr@tectspecials{%
@@ -1290,6 +1293,7 @@
   \let\ZWNBSP=\relax
   \let\WJ=\relax
   \let\NBHYPH=\relax
+  \let\NQUAD=\relax
 }
 
 \catcode"A0=12
@@ -1297,6 +1301,7 @@
 \catcode"200B=12
 \catcode"2060=12
 \catcode"FEFF=12
+\catcode"2000=12
 \def\liter@lspecials{%
   \def\pr@tect{}%
   \def\NBSP{^^a0}%
@@ -1305,6 +1310,7 @@
   \def\WJ{^^^^2060}%
   \def\ZWNBSP{^^^^feff}%
   \def\NBHYPH{^^^^2011}%
+  \def\NQUAD{^^^^2000}%
 }
 
 \catcode"A0=\active   \def^^a0{\pr@tect\NBSP}
@@ -1313,6 +1319,7 @@
 \catcode"2060=\active \def^^^^2060{\pr@tect\WJ}
 \catcode"FEFF=\active \def^^^^feff{\pr@tect\ZWNBSP}
 \catcode"2011=\active \def^^^^2011{\pr@tect\NBHYPH}
+\catcode"2000=\active \def^^^^2000{\pr@tect\NQUAD}
 
 \catcode`\@=12
 

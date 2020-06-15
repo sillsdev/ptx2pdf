@@ -84,6 +84,7 @@ class AlignedDiglot():
 %\addToLeftHooks{{\FontSizeUnit={paper/fontfactor}pt}}
 %\addToRightHooks{{\FontSizeUnit={diglot/fontfactor}pt}}
 \FontSizeUnitR={diglot/fontfactor}pt
+\def\LineSpacingFactorR{{{diglot/linespacingfactor}}}
 \addToLeftHooks{{\RTL{document/ifrtl}}}
 \addToRightHooks{{\RTL{diglot/ifrtl}}}
 %{diglot/iflinebreakon}\XeTeXlinebreaklocaleR "{diglot/linebreaklocale}"
