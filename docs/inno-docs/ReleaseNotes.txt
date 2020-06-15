@@ -1,4 +1,4 @@
-PTXprint 0.8.1 Beta Release Notes
+PTXprint 0.8.2 Beta Release Notes
 10th June 2020
 
 WARNING: This beta version is the result of major restructuring of the code and includes new
@@ -6,6 +6,20 @@ WARNING: This beta version is the result of major restructuring of the code and 
 
 NOTE: Chapter Numbers in peripheral (non-scripture) books are now suppressed by default (but 
       can be re-enabled on the Advanced tab)
+
+Bug Fixes and Improvements in: 0.8.2
+
+   * Initial stab at supports \+ char styles
+
+   * Add Bad Breaking Space for reducing orphan words
+
+   * Get \thc working
+
+   * Fix properly styled fonts getting used in TeX from ptxprint
+
+   * Setup.py fixes
+
+   * Fix chapter labels
 
 Bug Fixes and Improvements in: 0.8.1
 

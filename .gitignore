@@ -11,7 +11,7 @@ temp/
 python/dist/
 python/build/
 wine/
-dev/
+/dev/
 bugs/
 dist/
 build/
