@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 -->
+<!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkAdjustment" id="a_PriColWidth">
@@ -3432,10 +3432,14 @@ and advanced Font Options.</property>
                                         <property name="tooltip_text" translatable="yes">This will automatically generate the Table of Contents
 for all the books included in the publication using
 the \toc1, \toc2 and \toc3 fields.
-NOTE that you will need to click on OK *twice*
-to get the ToC to be accurate. The first time
-the PDF is generated, the ToC index is built.
-The second time, the ToC itself gets included.
+
+NOTE that when this option is selected, the
+print process will be run at least twice - the
+first time the ToC index is built. The second
+time, the ToC itself gets included. So it may
+be worth leaving this option OFF until the
+final run.
+
 [If this option is not enabled, it is because it
 is only possible when multiple books have
 been selected on the Basic tab.]</property>
@@ -3478,6 +3482,9 @@ automatically prepended to the output PDF.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">Select which of the \toc markers
+should be included in the
+generated Table of Contents.</property>
                                             <property name="halign">center</property>
                                             <property name="valign">center</property>
                                             <property name="active">True</property>
@@ -3530,6 +3537,9 @@ automatically prepended to the output PDF.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">Select which of the \toc markers
+should be included in the
+generated Table of Contents.</property>
                                             <property name="halign">center</property>
                                             <property name="valign">center</property>
                                             <property name="active">True</property>
@@ -3546,6 +3556,9 @@ automatically prepended to the output PDF.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">Select which of the \toc markers
+should be included in the
+generated Table of Contents.</property>
                                             <property name="halign">center</property>
                                             <property name="valign">center</property>
                                             <property name="draw_indicator">True</property>
@@ -3766,6 +3779,15 @@ selected books/chapters will show in the glossary.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">There are situations when it is important to
+remove all the chapter numbers from all
+the books. Check this option to hide
+them all - making the publication read
+more like an ordinary book.
+
+Note that there is another option on the
+Layout tab which will only "Hide Chapter
+Number in Single Chapter Books".</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -3780,6 +3802,11 @@ selected books/chapters will show in the glossary.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">It is quite common to hide the first verse
+number - especially when following a
+drop-cap chapter number. By default this
+option is on. If you prefer to see verse
+number 1, then uncheck this option.</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
@@ -3795,6 +3822,11 @@ selected books/chapters will show in the glossary.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">There are situations when it is important to
+remove all the verse numbers from the
+printed output. Check this option to hide
+them all - making the publication read
+more like an ordinary book.</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -3834,8 +3866,8 @@ typesetting issues. Use with care!</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">Do not print any Section Headings.
-This option will ALSO omit Parallel
-Passage Refs.</property>
+Selecting this option will ALSO omit
+Parallel Passage Refs.</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="onOmitSectHeadsClicked" swapped="no"/>
@@ -3868,7 +3900,8 @@ Passage Refs.</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">Do NOT indent the first paragraph after a Section
-Heading. It will appear as an \m(argin) paragraph instead of a normal \p.</property>
+Heading. It will appear as an \m(argin) paragraph
+instead of a normal \p.</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -3904,7 +3937,13 @@ in the printed output.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">[Not yet implemented]</property>
+                                    <property name="tooltip_text" translatable="yes">Some language communities prefer the
+verse numbers to be displayed in a
+vertical stack NEXT to the text (rather
+than within the text itself). If that is
+what is required, check this option
+and also adjust the width of that
+column to fit the verse numbers.</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="onMarginalVersesClicked" swapped="no"/>
@@ -4014,8 +4053,8 @@ a line.</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">This option limits single words
-at the ends of paragraphs to not occur
-on a line on their own.</property>
+at the ends of paragraphs from 
+occuring on a line on their own.</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -4030,6 +4069,9 @@ on a line on their own.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">By default the text will be fully-justified.
+If you prefer a ragged edge, then uncheck
+this option.</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
@@ -4341,6 +4383,9 @@ missing in main font:</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <property name="tooltip_text" translatable="yes">Click to select a font to be used as a substitute
+or "fallback" for the characters listed above
+which are not in the Regular font.</property>
                                         <signal name="clicked" handler="onFontExtraRclicked" swapped="no"/>
                                       </object>
                                       <packing>
