@@ -33,14 +33,11 @@ from which you may be able to work out where it went wrong.
 ### How can I set a \FontSize relative to the size of the text 
 
 Use `\FontScale` instead of `\FontSize`  (if `\FontScale` is defined, 
-then `\FontSize` will be quietly ignored). 
+then `\FontSize` will be quietly ignored, for character styles). 
 The value may be a float, thus `\FontScale 0.8`, for example. 
 
-With `\riskyscalefontfalse` ptx2pdf macros will interpret a \FontScale 
-relative to the size of the \p font. This should be boring and always work.
-If `\riskyscalefontrue`, the font size it is scaled 
-as being a multiplier against the current font size of the text the style is
-being processed. 
+The font size  is scaled as being a multiplier against the current font size of
+the text the style is being processed.  
 
 The following is an example of a smallcaps character style:
 
@@ -57,25 +54,26 @@ will not recognise it.
 
 Although normally a font is only set up once once (the first time it's used)
 fonts with ```\FontScale``` are a treated specially and scaling now works correctly.
+Normally, ```\FontScale 1``` is most useful for nested styles, i.e  ```\+nd```.
 
-Normally, ```\FontScale 1``` is most useful for stacking styles.
-**Even better** the nesting form of the marker ```\+nd``` will also work.
+For **paragraph styles** `\FontScale` works a little differently. Rather than being relative to the 
+previously active style, `\FontScale` multiplies the paragraph's `\FontSize` parameter or, if that is not 
+defined the standard default of 12 x `\FontSizeUnit`.
+
 
 ### How do nesting styles work?
 Consider this example:
 ```
 \s The angel of \+nd Lord\+nd* speaks
 ```
-When the ``\+nd`` is encoutered, XeTeX (now) remembers that it was previously using the settings from \s, and
-rather than looking for a font named `nd`, it first looks for a font called `s+nd`. If it doesn't find one, it 
-knows it has to make a new font, one based on the relevant style sheet parameters (FontScale, FontName, etc).
+When the ``\+nd`` is encoutered, XeTeX has been told (from 13 Jun 2020) to remember that it was previously using the settings from \s. 
+Rather than looking for a font named `nd`, it first looks for a font called `s+nd`. If it doesn't find one, it knows it has to make a new font, one based
+on the relevant style sheet parameters (FontScale, FontName, etc).
 For each parameter it searches its memory of the stylesheets in the following way:
-- Look for parameters specified for  \Marker s+nd. Normally there aren't any, but perhaps the font for ``\s``
-doesn't have a small-caps variety, making some manual tweaking necessary. If it finds that parameter, then the definition is accepted. Otherwise.
+- Look for parameters specified for  \Marker s+nd. Normally there aren't any, but perhaps the font for ``\s`` doesn't have a small-caps variety, making some manual tweaking of a style-sheet necessary. If it finds that parameter, then the definition is accepted. Otherwise:
 - Tentatively load the value of the parameter for style ``\s``
-- If there were other \+something markers after the \s, load those, overwriting parameters obtained earlier.
-- Compare value parameter for ``\nd`` with the parameter for ``\p``. If they are the same, use what we had before, otherwise use 
-the parameter specified for ``\nd``.
+- If there were other \+something markers after the \s, load those style options too, overwriting parameters obtained earlier.
+- Compare value of the parameter for ``\nd`` with the parameter for ``\p``. If they are the same, use what we had before, otherwise use the parameter specified for ``\nd``.
  
 ### I'm altering `\LineSpacingFactor` but it's not having any effect.
 \LineSpacingFactor only gets used in the following circumstance:

@@ -40,8 +40,6 @@
 \def\wlog{\immediate\write-1 } % write message to log file only
 \newif\iftemp \tempfalse
 \newif\ifinn@te\inn@tefalse
-\newif\ifriskyscalefont % Should scalefont be relative to \p or relative to wherever it's first used?
-\riskyscalefontfalse
 % \addtoendhooks collects macros to be executed at the end of the job
 \def\addtoendhooks#1{\x@\global\x@\@ndhooks\x@{\the\@ndhooks #1}}
 \newtoks\@ndhooks

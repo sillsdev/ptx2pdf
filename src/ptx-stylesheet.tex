@@ -458,6 +458,10 @@
  \the\@nithooks
  \let\@netimesetup=\relax}
 
+
+\newif\iftildenbsp
+\tildenbsptrue
+
 % Read the files associated with this book: usfm, adjustment list, picture list
 \def\ptxfile#1{
  \saveLRspecificOrig%This becomes a \relax after first use. Always call it.
@@ -488,7 +492,12 @@
  \openpiclist "\the\PicListPath#1.piclist"
  %\catcode`\$=12
  \catcode`\^=12 % make these printable
- \catcode`\&=12 \catcode`\~=12
+ \catcode`\&=12 
+ \iftildenbsp
+  \catcode`\~=13 %Normal value
+ \else
+  \catcode`\~=13 %printable
+ \fi
  \catcode`\#=12 %\catcode`\%=12
  \catcode`\{=12 \catcode`\}=12
  \catcode`\_=11 % treat as letter for TE custom styles
