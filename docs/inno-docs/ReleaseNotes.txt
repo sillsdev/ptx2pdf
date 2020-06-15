@@ -9,6 +9,8 @@ NOTE: Chapter Numbers in peripheral (non-scripture) books are now suppressed by 
 
 Bug Fixes and Improvements in: 0.8.2
 
+   * Various tex macro bug fixes
+
    * Initial stab at supports \+ char styles
 
    * Add Bad Breaking Space for reducing orphan words
