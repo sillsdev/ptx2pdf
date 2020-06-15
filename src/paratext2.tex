@@ -675,7 +675,7 @@
   \trace{o}{first \the\availht . col=\the\ht\colA, \the\colhtA . second col=\the\ht\colB, \the\colhtB . rem=\the\ht0}
   \ifdim\ht\colA<.5\baselineskip\ifdim\ht\colB<.5\baselineskip\MSG{I can't break this page!}
     \iffitonpage\end % the split failed and there is nothing left!
-    \else\setbox\colA=\box0\setbox\s@vedpage=\voidb@x % dump it all in colA and bail
+    \else\setbox\colA=\box0\setbox\s@vedpage=\box\voidb@x % dump it all in colA and bail
   \fi\fi\fi
   \iffitonpage
     \shortavail=\colhtB \advance\shortavail by -\ht\colB

@@ -515,7 +515,7 @@
  \ifsk@pping\egroup\fi % end skipping, if file ended with a non-printable marker
  \endt@ble % end table if file ended during table processing
  \ifdiglot\ifdiglotL\norighttext\fi\enddigl@t\fi
- \if\b@ok\relax\else\csname bookend-\id@@@\endcsname\fi
+ \ifx\b@ok\relax\else\csname bookend-\id@@@\endcsname\fi
  \m@kedigitsother
  \deactiv@tecustomch@rs
  \catcode13=5
