@@ -425,6 +425,7 @@ class TexModel:
                 continue
             name = self.dict.get(p+"/name", "")
             style = self.dict.get(p+"/style", "")
+            # import pdb; pdb.set_trace()
             f = TTFont(name, style)
             # print(p, wid, f.filename, f.family, f.style)
             if f.filename is None:
@@ -445,7 +446,7 @@ class TexModel:
             else:
                 engine = ""
             fname = f.family
-            # print([f.family, f.style, f.filename])
+            print([p, name, style, f.family, f.style, f.filename])
             if f.style is not None and len(f.style):
                 s = _fontstylemap.get(f.style," " + f.style)
                 fname = f.family + s

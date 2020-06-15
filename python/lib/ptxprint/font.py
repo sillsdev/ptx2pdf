@@ -154,7 +154,7 @@ def fccache():
 class TTFont:
     cache = {}
 
-    def __new__(cls, name, *a, style="", **kw):
+    def __new__(cls, name, style="", **kw):
         if name is not None:
             k = "{}|{}".format(name, style)
             res = TTFont.cache.get(k, None)
