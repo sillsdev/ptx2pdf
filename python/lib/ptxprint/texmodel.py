@@ -764,12 +764,13 @@ class TexModel:
             # self.localChanges.append((None, regex.compile(r" ([^\\ ]+?) ([^\\ ]+?\r?\n)(?!\\v)", flags=regex.S), r" \1\u00A0\2"))
             # OLD RegEx: Keep final two words of \q lines together [but doesn't work if there is an \f or \x at the end of the line] 
             self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)[^\\\s]+)) (\S+\s*\n)", \
-                                            flags=regex.M), r"\1\u00A0\5"))
+                                            flags=regex.M), r"\1\u2000\5"))
+            self.localChanges.append((None, regex.compile(r"([^ \\\ne\u2000\u00A0]+) ([^ \\\n\u2000\u00A0]+\n(?:\\[pmqsc]|$))", flags=regex.S), r"\1\u2000\2"))
 
         if self.asBool("document/preventwidows"):
             # Push the verse number onto the next line (using NBSP) if there is
             # a short widow word (3 characters or less) at the end of the line
-            self.localChanges.append((None, regex.compile(r"(\\v \d+([-,]\d+)? [\w]{1,3}) ", flags=regex.M), r"\1\u00A0")) 
+            self.localChanges.append((None, regex.compile(r"(\\v \d+([-,]\d+)? [\w]{1,3}) ", flags=regex.M), r"\1\u2000")) 
 
         # By default, HIDE chapter numbers for all non-scripture (Peripheral) books (unless "Show... is checked)
         if not self.asBool("document/showxtrachapnums") and bk in TexModel._peripheralBooks:
@@ -779,7 +780,7 @@ class TexModel:
             self.localChanges.append((None, regex.compile(r"(\\c 1 ?\r?\n)", flags=regex.M), r"\pagebreak\r\n\1"))
 
         if self.asBool("document/glueredupwords"): # keep reduplicated words together
-            self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w{3,}) \1(?=[\s,.!?])", flags=regex.M), r"\1\u00A0\1")) 
+            self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w{3,}) \1(?=[\s,.!?])", flags=regex.M), r"\1\u2000\1")) 
         
         if self.asBool("notes/addcolon"): # Insert a colon between \fq (or \xq) and following \ft (or \xt)
             self.localChanges.append((None, regex.compile(r"(\\[fx]q .+?):* ?(\\[fx]t)", flags=regex.M), r"\1: \2")) 
@@ -789,7 +790,7 @@ class TexModel:
             self.localChanges.append((regex.compile(r"(\\[xf]t [^\\]+)"), regex.compile(r"( .) "), r"\1\u00A0"))
 
         # keep \xo & \fr refs with whatever follows (i.e the bookname or footnote) so it doesn't break at end of line
-        self.localChanges.append((None, regex.compile(r"(\\(xo|fr) (\d+[:.]\d+([-,]\d+)?)) "), r"\1\u00A0"))
+        self.localChanges.append((None, regex.compile(r"(\\(xo|fr) (\d+[:.]\d+([-,]\d+)?)) "), r"\1\u2000"))
 
         # Change \xt to \xt_f so that the size can be set independently to \xt in the main
         self.localChanges.append((regex.compile(r"(\\x .+?\\x\*)"), regex.compile(r"\\xt "), r"\\xt_f "))
