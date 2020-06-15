@@ -464,7 +464,7 @@ class RunJob:
                 ptxmacrospath = os.path.abspath(os.path.join(b, 'ptx2pdf'))
                 if os.path.exists(ptxmacrospath):
                     break
-        # if info['project/useptmacros'] == "false":
+
         if True:
             envtexinputs = os.getenv("TEXINPUTS")
             texinputs = [envtexinputs] if envtexinputs is not None and len(envtexinputs) else []
