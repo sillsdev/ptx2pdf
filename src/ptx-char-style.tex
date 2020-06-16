@@ -85,7 +85,10 @@
   \catcode13=10 % and <return> is also a space (we don't want blank line -> \par)
   \if\n@xt*\let\n@xt\endch@rstyle % check for "*", if so then we need to end the style
   \else\if\n@xt~\let\n@xt\startch@rstyle@spc
-  \else\if\n@xt_\let\n@xt\startch@rstyle@nl\else\let\n@xt\startch@rstyle\fi\fi\fi % else we need to start it
+    \else\if\n@xt_\let\n@xt\startch@rstyle@nl\else\let\n@xt\startch@rstyle\fi\fi
+    \end@llcharstyles % a char style closes all other char styles
+  \fi % else we need to start it
+  \edef\stylet@pe{C}%
   \n@xt} % chain to the start or end macro
  % doch@rstylepls is like doch@rstyle, but wraps the style in a group and generates a comma-separated stack of styles.
  \def\doch@rstylepls{% here, \n@xt has been \let to the next character after the marker
@@ -100,6 +103,7 @@
       \else\edef\stylest@ck{\stylest@ck+\m@rker}\fi
     \trace{s}{inside stack of +\newch@rstyle. Style stack now \stylest@ck}%
   \fi % else we need to start it
+  \edef\stylet@pe{c}%
   \n@xt} % chain to the start or end macro
  % when \startch@rstyle is called, the following <space> or <return> has become category-12
  % so we have to explicitly consume it here as part of the macro parameter list
@@ -111,7 +115,6 @@
   \trace{s}{end of +\newch@rstyle. Left style stack, now \stylest@ck, \ifst@ckstyle 1\else 0\fi}%End of st@ckstyle group
 }
 \def\startch@rstyle{\TRACE{startch@rstyle}%
-  \ifnum\n@tenesting>1 \global\edef\tempch@rstyle{\newch@rstyle}\edef\newch@rstyle{\thisch@rstyle}\endch@rstyle*\edef\newch@rstyle{\tempch@rstyle}\fi
   \t@stpublishability{\newch@rstyle}\ifn@npublishable
    \setbox0=\hbox\bgroup\skipch@rstyletrue
    \let\thisch@rstyle=\newch@rstyle
@@ -123,18 +126,11 @@
    \fi
    \bgroup % start a group to encapsulate the style's formatting changes
     \let\thisch@rstyle=\newch@rstyle % remember the current style
-    \getFp@ram{fontscale}{\thisch@rstyle}%
-    \ifx\p@ram\relax % if no fontscale
-      \getFp@ram{fontsize}{\thisch@rstyle}% 
-      \ifx\p@ram\relax % and fontsize isn't defined...
-	     \let\param=\c@rrfontsize
-      \else % If it is defined
-         \edef\c@rrfontsize{\p@ram}%
-    \fi\fi
+    \mcpush{\stylet@pe+\newch@rstyle}
     \s@tfont{\thisch@rstyle}% set up font attributes
     \ifnum\n@tenesting>0 \global\advance\n@tenesting by 1 % record nesting level in para or note
     \else \global\advance\p@ranesting by 1 \fi
-    \getFp@ram{superscript}{\thisch@rstyle}%
+    \getmcp@ram{superscript}%
     \ifx\p@ram\tru@ \setbox0=\hbox\bgroup \fi
     \csname start-\thisch@rstyle\endcsname % execute any <start> hook
     \ifdiglot\setsid@ % \MSG{start-\thisch@rstyle\sid@}%
@@ -146,6 +142,7 @@
 \lccode`\|=`\\ % for printing backslash in error message
 \lowercase{
  \def\endch@rstyle*{\TRACE{endch@rstyle}% consume the * that marked the SFM as ending a style
+   \def\d@##1+##2\E{\edef\thisch@rstyle{##2}}\mctop
    \ifx\thisch@rstyle\undefined
      \MSG{*** unmatched character style end-marker |\newch@rstyle*}%
    \else
@@ -153,11 +150,11 @@
      \ifdiglot\setsid@ % \MSG{end-\thisch@rstyle\sid@}%
        \csname end-\thisch@rstyle\sid@\endcsname % handle side-specific <start> hook
      \fi
-    \csname end-\thisch@rstyle\endcsname % execute any <end> hook
-    \getFp@ram{superscript}{\thisch@rstyle}%
-    \ifx\p@ram\tru@ \egroup \raise\SuperscriptRaise\box0 \fi
-    \x@\global\x@\let\x@\n@xt % remember the <after> hook, if any, beyond the current group
-    \csname after-\thisch@rstyle\endcsname
+     \csname end-\thisch@rstyle\endcsname % execute any <end> hook
+     \getmcp@ramR{superscript}%
+     \ifx\p@ram\tru@ \egroup \raise\SuperscriptRaise\box0 \fi
+     \x@\global\x@\let\x@\n@xt % remember the <after> hook, if any, beyond the current group
+     \csname after-\thisch@rstyle\endcsname
      \global\let\n@xtt=\relax%
      %\tracingassigns=1
      \ifdiglot%\MSG{end-\thisch@rstyle\sid@}%
@@ -166,10 +163,11 @@
      \fi
      \ifnum\n@tenesting>0 \global\advance\n@tenesting by -1 % decrement nesting level
      \else \global\advance\p@ranesting by -1 \fi
-    \egroup % end the style's group, so formatting reverts
-    \n@xtt % execute the <side-specific after> hook, if there was one
-    \n@xt % execute the <after> hook, if there was one
+     \egroup % end the style's group, so formatting reverts
+     \n@xtt % execute the <side-specific after> hook, if there was one
+     \n@xt % execute the <after> hook, if there was one
     \fi
+   \mcpop
    \fi
  }
 }
@@ -180,15 +178,18 @@
 %
 % end all character styles in effect within the current note or paragraph
 %
-\def\end@llcharstyles{%
- \ifnum\n@tenesting>0 \doendch@rstyles\n@tenesting
-  \else \doendch@rstyles\p@ranesting \fi}
-\def\doendch@rstyles#1{\@LOOP \ifnum#1>1 \endch@rstyle*\@REPEAT}
+\def\end@llcharstyles{\let\d@=\end@llcharstyle\mcdown}
+\def\end@llcharstyle#1+#2\E{\edef\tmp{#1}\ifx\tmp\empty\else\if#1c\endch@rstyle*\else\if#1C\endch@rstyle*\else\let\d@=\cstackrelax\fi\fi\fi}
+
+%\def\end@llcharstyles{%
+% \ifnum\n@tenesting>0 \doendch@rstyles\n@tenesting
+%  \else \doendch@rstyles\p@ranesting \fi}
+%\def\doendch@rstyles#1{\@LOOP \ifnum#1>1 \endch@rstyle*\@REPEAT}
 % loop macros copied from plain.tex, renamed to avoid clashes in case of nesting
-\def\@LOOP #1\@REPEAT{\gdef\@BODY{#1}\@ITERATE}
-\def\@ITERATE{\@BODY \global\let\@NEXT\@ITERATE
- \else \global\let\@NEXT\relax \fi \@NEXT}
-\let\@REPEAT\fi
+%\def\@LOOP #1\@REPEAT{\gdef\@BODY{#1}\@ITERATE}
+%\def\@ITERATE{\@BODY \global\let\@NEXT\@ITERATE
+% \else \global\let\@NEXT\relax \fi \@NEXT}
+%\let\@REPEAT\fi
 
 \newif\ifColorFonts \ColorFontstrue
 %
@@ -197,11 +198,14 @@
 \let\SpaceStretchFactor=\empty %default, do-nothing value
 \let\SpaceShrinkFactor=\empty %default, do-nothing value
 
-\def\s@tfont#1{%
+\def\g@tfontname#1{%
  \ifdiglot\ifdiglotL\def\f@ntstyle{#1L}\def\sid@{L}\else\def\f@ntstyle{#1R}\def\sid@{R}\fi\else\def\f@ntstyle{#1}\def\sid@{-}\fi%
- \ifst@ckstyle\edef\f@ntstyle{\stylest@ck+#1}\fi
+ \getmcs@ze\edef\f@ntstyle{\f@ntstyle-\c@rrfontsize}}
+
+\def\s@tfont#1{%
+ \g@tfontname{#1}%
  \ifdiglot\setLRspecific\fi % FIXME: Whether diglot or not, it might have been diglot before.
- \getFp@ram{fontscale}{#1}%
+ %\getFp@ram{fontscale}{#1}%
  % check if font identifier for this style has been created or fontscale being used
  \ifnum\ifx\p@ram\relax\x@\ifx\csname font<\f@ntstyle>\endcsname \relax 1\else 0\fi\else 1\fi =1
   \trace{s}{s@tfont font for #1}%
@@ -210,75 +214,38 @@
   \let\b@ld=\bold%
   \let\it@lic=\italic%
   \let\b@lditalic=\bolditalic%
-%  \ifdiglot%
-%    \x@\let\x@\tmpface\csname regular\sid@\endcsname%
-%    \ifx\tmpface\relax%
-%      %\MSG{No font regular\sid@}
-%    \else%
-%      %\MSG{Found font regular\sid@}
-%      \let\regul@r=\tmpface\fi%
-%    \x@\let\x@\tmpface\csname italic\sid@\endcsname%
-%    \ifx\tmpface\relax%
-%      %\MSG{No font italic\sid@}
-%    \else%
-%      %\MSG{Found font italic\sid@}
-%      \let\it@lic=\tmpface\fi%
-%    \x@\let\x@\tmpface\csname bold\sid@\endcsname%
-%    \ifx\tmpface\relax%
-%      %\MSG{No font bold\sid@}
-%    \else%
-%      %\MSG{Found font bold\sid@}
-%      \let\b@ld=\tmpface\fi%
-%    \x@\let\x@\tmpface\csname bolditalic\sid@\endcsname%
-%    \ifx\tmpface\relax%
-%      %\MSG{No font bolditalic\sid@}
-%    \else%
-%      %\MSG{Found font bolditalic\sid@}
-%      \let\b@lditalic=\tmpface\fi%
-%  \fi%
   \let\typef@ce=\regul@r%
-  \getFp@ram{fontname}{#1}% see if \FontName was specified in the stylesheet
+  \getmcp@ram{fontname}% see if \FontName was specified in the stylesheet
   \ifx\p@ram\relax % if not, check the \Bold and \Italic properties
-	  \getFp@ram{bold}{#1}%
+	  \getmcp@ramR{bold}%
 	  \ifx\p@ram\tru@
 		\let\typef@ce=\b@ld
-		\getFp@ram{italic}{#1}%
+		\getmcp@ramR{italic}%
 		\ifx\p@ram\tru@ \let\typef@ce=\b@lditalic \fi
 	  \else
-		\getFp@ram{italic}{#1}%
+		\getmcp@ramR{italic}%
 		\ifx\p@ram\tru@ \let\typef@ce=\it@lic \fi
 	  \fi
   \else
-   \edef\typef@ce{"\p@ram"}% use font name from the stylesheet
+    \edef\typef@ce{"\p@ram"}% use font name from the stylesheet
   \fi
-  \getFp@ram{smallcaps}{#1}%
+  \getmcp@ramR{smallcaps}%
   \ifx\p@ram\tru@
     \edef\typef@ce{\typef@ce\SmallCapsSuffix}%
   \fi
-  \getFp@ram{color}{#1}%
+  \getmcp@ram{color}%
   \ifColorFonts\ifx\p@ram\relax\else
     \ParseColor\p@ram\end\edef\typef@ce{\typef@ce :color=\r@s}%
   \fi\fi%
-  \getFp@ram{superscript}{#1}% scale down by \SuperscriptFactor if superscripted style
-  \dimen0=\ifx\p@ram\tru@ \SuperscriptFactor\fi\FontSizeUnit%
-  \getFp@ram{fontscale}{#1}%
-  \ifx\p@ram\relax
-    \getFp@ram{fontsize}{#1}%
-    \ifx\p@ram\relax\dimen1=\c@rrfontsize\dimen0
-       \MSG{*** FontSize missing for marker '\f@ntstyle' ('#1'), defaulting to \c@rrfontsize}%
-    \else
-      \trace{F}{\f@ntstyle: Font size "\p@ram"}%
-      \dimen1=\p@ram \dimen0
-    \fi
-  \else
-    \dimen1=\p@ram \dimen0
-    \edef\f@ntstyle{\f@ntstyle-\c@rrfontsize}%
-    \multiply\dimen1 by \c@rrfontsize
-  \fi
+  \getmcs@ze
+  \dimen0=\c@rrfontsize\FontSizeUnit
+  \getmcp@ramR{superscript}% scale down by \SuperscriptFactor if superscripted style
+  \ifx\p@ram\tru@ \dimen0=\SuperscriptFactor\dimen0\fi
+  %\edef\f@ntstyle{\f@ntstyle-\c@rrfontsize}%
   % create the font identifier for this style
-  \trace{F}{font<\f@ntstyle>=\typef@ce\space at \the\dimen1}%
+  \trace{F}{font<\f@ntstyle>=\typef@ce\space at \the\dimen0}%
   \x@\global\x@\font
-    \csname font<\f@ntstyle>\endcsname=\typef@ce\space at \the \dimen1
+    \csname font<\f@ntstyle>\endcsname=\typef@ce\space at \the \dimen0
   \ifx\SpaceStretchFactor\empty\else
     \dimen0=\SpaceStretchFactor\x@\x@\fontdimen2\csname font<\f@ntstyle>\endcsname
     \x@\x@\fontdimen3\csname font<\f@ntstyle>\endcsname=\dimen0
@@ -295,13 +262,10 @@
 \def\s@textrafont#1{%
   \x@\ifx\csname extrafont<#1>\endcsname \relax%
     \let\typef@ce=\extraregular
-    \getFp@ram{superscript}{#1}%
-    \dimen0=\ifx\p@ram\tru@ \SuperscriptFactor\fi\FontSizeUnit
-    \getFp@ram{fontsize}{#1}%
-    \ifx\p@ram\relax
-      \MSG{*** FontSize missing for marker '#1', defaulting to 12}%
-      \def\p@ram{12}
-    \fi
+    \getmcs@ze
+    \dimen0=\c@rrfontsize\FontSizeUnit
+    \getmcp@ramR{superscript}% scale down by \SuperscriptFactor if superscripted style
+    \ifx\p@ram\tru@ \multiply\dimen0 by \SuperscriptFactor
     \x@\global\x@\font\csname extrafont<#1>\endcsname=\typef@ce\space at \p@ram \dimen0
   \fi
   \csname extrafont<#1>\endcsname

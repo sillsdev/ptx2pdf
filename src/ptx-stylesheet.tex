@@ -80,7 +80,7 @@
 \def \Italic         #1\relax{\defbinp@ram{italic}{#1}}
 \def \Bold           #1\relax{\defbinp@ram{bold}{#1}}
 \def \Superscript    #1\relax{\defbinp@ram{superscript}{#1}}
-\def \Regular        {\defp@ram{italic}{false}\defp@ram{bold}{false}\defp@ram{superscript}{false}}
+\def \Regular        {\defp@ram{regular}{true}\defp@ram{italic}{false}\defp@ram{bold}{false}\defp@ram{superscript}{false}\defp@ram{smallcaps}{false}}
 \let \superscript\Superscript
 \def \SpaceBefore    #1\relax{\defp@ram{spacebefore}{#1}}
 \let \Spacebefore\SpaceBefore
@@ -145,6 +145,21 @@
 }
 
 %Main utility function for font parameters, stacking-styles aware
+\def\getmcp@ram#1{\let\r@s=\relax
+  \def\d@##1+##2\E{\edef\tmp{##2}\ifx\tmp\empty\else\if##1P\let\r@s\relax\else\if##1N\let\r@s\relax\fi\fi\getp@ram{#1}{##2}\let\r@s\p@ram\fi}%
+  \mcup\global\let\p@ram\r@s}
+\def\getmcp@ramR#1{\let\r@s\relax
+  \def\d@##1+##2\E{\edef\tmp{##2}\ifx\tmp\empty\else\if##1P\let\r@s\relax\else\if##1N\let\r@s\relax\fi\fi
+    \getp@ram{regular}{##2}\ifx\p@ram\relax\getp@ram{#1}{##2}\let\r@s\p@ram\else\let\r@s\relax\fi\fi}%
+  \mcup\global\let\p@ram\r@s}
+\def\getmcs@ze{\xdef\c@rrfontsize{12}%
+  \def\s@##1{\xdef\c@rrfontsize{##1}}%
+  \def\d@##1+##2\E{\edef\tmp{##2}\ifx\tmp\empty\else\if##1P\s@{12}\else\if##1N\s@{12}\fi\fi
+                   \getp@ram{fontscale}{##2}%
+                   \ifx\p@ram\relax\getp@ram{fontsize}{##2}\ifx\p@ram\relax\s@{12}\else\s@{\p@ram}\fi
+                   \else\s@{\x@\p@ram\c@rrfontsize}\fi\fi}%
+  \mcup}
+
 \def\getFp@ram#1#2{%
   \ifst@ckstyle
     \trace{s}{Style-stack:\stylest@ck, request for #2:#1}%
@@ -414,6 +429,23 @@
 \def\@@id#1#2#3#4\end{\gdef\id@@@{#1#2#3}} % get first 3 chars of the \id
 \def\ptx@fig #1\fig*{\d@figure{#1}}
 
+% marker stack operations (mcst@ck)
+\def\E{}
+\def\cstackpop#1,#2\E{#2}
+\def\cstackpush#1#2{#2,#1}
+\def\cstackpeek#1,#2\E{#1}
+\def\cstackup#1,#2\E{\edef\tmp{#2}\ifx\tmp\empty\let\n@x=\relax\else\let\n@x=\cstackup\fi\n@x #2\E\edef\tmp{#1}\ifx\tmp\empty\else\d@ #1\E\fi}
+\def\cstackdown#1,#2\E{\edef\tmp{#1}\ifx\tmp\empty\else\d@ #1\E\fi\edef\tmp{#2}\ifx\tmp\empty\let\n@x=\relax\else\let\n@x=\cstackdown\fi\n@x #2\E}
+\def\cstacktop#1,#2\E{\d@ #1\E}
+\def\cstackrelax#1\E{}
+\gdef\mcstack{,}
+\def\cstackempty{,}
+\def\mcpop{\xdef\mcstack{\x@\cstackpop\mcstack\E}\ifx\mcstack\empty\xdef\mcstack{+,}\fi}
+\def\mcpush#1{\xdef\mcstack{#1,\mcstack}}
+\def\mcup{\x@\cstackup\mcstack\E}
+\def\mcdown{\x@\cstackdown\mcstack\E}
+\def\mctop{\x@\cstacktop\mcstack\E}
+
 %
 % \stylesheet{...} reads a Paratext stylesheet line by line
 %
@@ -486,6 +518,7 @@
  \fi
  \gdef\ch@plabel{}
  \gdef\ch@plabelR{}
+ \gdef\mcstack{,}
  \initp@rastyles
  \initn@testyles
  \openadjlist "\the\AdjListPath#1.adj"

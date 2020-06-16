@@ -153,11 +153,13 @@
     \vskip\p@ram\verticalsp@ceunit
   \fi
   \resetp@rstyle
+  \mcpop
   \ifdiglot\setsid@ % \MSG{start-\thisch@rstyle\sid@}%
     \csname after-\m@rker\sid@\endcsname\relax% handle side-specific <start> hook
   \fi
   \csname after-\m@rker\endcsname % handle <after> hook for the previous style
   \gdef\m@rker{#1} % remember the new style name
+  \mcpush{P+#1}
   \csname before-\m@rker\endcsname % handle its <before> hook
   \ifdiglot
     \csname before-\m@rker\sid@\endcsname\relax % handle side-specific <start> hook
@@ -229,7 +231,7 @@
    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
    \getp@ram{rightmargin}{\m@rker}%
    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
-   \getp@ram{fontsize}{\m@rker}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%
+   %\getp@ram{fontsize}{\m@rker}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%
    \s@tfont{\m@rker}%
    \trace{j}{baselineskip=\the\baselineskip ; UseGlyphMetrics=\the\XeTeXuseglyphmetrics}%
    \allowp@rindenttrue
