@@ -200,7 +200,11 @@
 
 \def\g@tfontname#1{%
  \ifdiglot\ifdiglotL\def\f@ntstyle{#1L}\def\sid@{L}\else\def\f@ntstyle{#1R}\def\sid@{R}\fi\else\def\f@ntstyle{#1}\def\sid@{-}\fi%
- \getmcs@ze\edef\f@ntstyle{\f@ntstyle-\c@rrfontsize}}
+ \let\d@@=\d@
+ \def\d@##1+##2\E{\edef\tmp{#1}\edef\tmpa{##2}\ifx\tmp\tmpa\getmcs@ze\else
+                        \getp@ram{fontsize}{#1}\ifx\p@ram\relax\xdef\c@rrfontsize{12}%
+                        \else\global\let\c@rrfontsize=\p@ram\fi\fi}%
+ \mctop\let\d@=\d@@\edef\f@ntstyle{\f@ntstyle-\c@rrfontsize}}
 
 \def\s@tfont#1{%
  \g@tfontname{#1}%
@@ -208,38 +212,37 @@
  %\getFp@ram{fontscale}{#1}%
  % check if font identifier for this style has been created or fontscale being used
  \ifnum\ifx\p@ram\relax\x@\ifx\csname font<\f@ntstyle>\endcsname \relax 1\else 0\fi\else 1\fi =1
-  \trace{s}{s@tfont font for #1}%
+  \trace{s}{s@tfont font for #1 at \c@rrfontsize}%
   \trace{S}{Normal font for \sid@\space is \regular}%
   \let\regul@r=\regular%
   \let\b@ld=\bold%
   \let\it@lic=\italic%
   \let\b@lditalic=\bolditalic%
   \let\typef@ce=\regul@r%
-  \getmcp@ram{fontname}% see if \FontName was specified in the stylesheet
+  \getFp@ram{fontname}{#1}% see if \FontName was specified in the stylesheet
   \ifx\p@ram\relax % if not, check the \Bold and \Italic properties
-	  \getmcp@ramR{bold}%
+	  \getFp@ramR{bold}{#1}%
 	  \ifx\p@ram\tru@
 		\let\typef@ce=\b@ld
-		\getmcp@ramR{italic}%
+		\getFp@ramR{italic}{#1}%
 		\ifx\p@ram\tru@ \let\typef@ce=\b@lditalic \fi
 	  \else
-		\getmcp@ramR{italic}%
+		\getFp@ramR{italic}{#1}%
 		\ifx\p@ram\tru@ \let\typef@ce=\it@lic \fi
 	  \fi
   \else
     \edef\typef@ce{"\p@ram"}% use font name from the stylesheet
   \fi
-  \getmcp@ramR{smallcaps}%
+  \getFp@ramR{smallcaps}{#1}%
   \ifx\p@ram\tru@
     \edef\typef@ce{\typef@ce\SmallCapsSuffix}%
   \fi
-  \getmcp@ram{color}%
+  \getFp@ram{color}{#1}%
   \ifColorFonts\ifx\p@ram\relax\else
     \ParseColor\p@ram\end\edef\typef@ce{\typef@ce :color=\r@s}%
   \fi\fi%
-  \getmcs@ze
   \dimen0=\c@rrfontsize\FontSizeUnit
-  \getmcp@ramR{superscript}% scale down by \SuperscriptFactor if superscripted style
+  \getFp@ramR{superscript}{#1}% scale down by \SuperscriptFactor if superscripted style
   \ifx\p@ram\tru@ \dimen0=\SuperscriptFactor\dimen0\fi
   %\edef\f@ntstyle{\f@ntstyle-\c@rrfontsize}%
   % create the font identifier for this style
