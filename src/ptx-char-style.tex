@@ -107,15 +107,15 @@
   \n@xt} % chain to the start or end macro
  % when \startch@rstyle is called, the following <space> or <return> has become category-12
  % so we have to explicitly consume it here as part of the macro parameter list
- \def\startch@rstyle@spc~{\startch@rstyle}
- \def\startch@rstyle@nl_{\startch@rstyle}
+ \def\startch@rstyle@spc~{\startch@rstyle}%
+ \def\startch@rstyle@nl_{\startch@rstyle}%
 }
 \def\endch@rstylepls*{%Consume the star..
   \endch@rstyle*\egroup
   \trace{s}{end of +\newch@rstyle. Left style stack, now \stylest@ck, \ifst@ckstyle 1\else 0\fi}%End of st@ckstyle group
 }
 \def\startch@rstyle{\trace{s}{startch@rstyle \newch@rstyle}%
-  \mcpush{\ifx\stylet@pe\empty C\else\stylet@pe\fi+\newch@rstyle}
+  \mcpush{\ifx\stylet@pe\empty C\else\stylet@pe\fi+\newch@rstyle}%
   \t@stpublishability{\newch@rstyle}\ifn@npublishable
    \setbox0=\hbox\bgroup\skipch@rstyletrue
    \let\thisch@rstyle=\newch@rstyle

@@ -335,7 +335,7 @@
 }
 
 \def\resetdropc@p{%The above code is in \lowercase which  breaks L and R
-  \message{Setting drop-cap size to \dr@psize}
+  \message{Setting drop-cap size to \dr@psize}%
   \setp@ram{fontsize}{cL}{\dr@psize}%
   \setp@ram{fontsize}{cR}{\dr@psize}%FIXME: as things stand, this makes dropcapse for L and R the same size.
   %As above, clear font<c{L,R}> so that it will get rebuilt on next setfont for \c (after we have figured out real size)
@@ -351,9 +351,9 @@
 \def\hangprintv@rse{\ifx\v@rsefrom\v@rseto\relax\AdornVerseNumber{\v@rsefrom}%
     \else\dimen0=\SuperscriptFactor\baselineskip \advance\dimen0 by -\baselineskip
          \dimen1=\SuperscriptFactor\baselineskip \multiply\dimen1 by 2
-         \setbox1=\hbox{\endash\AdornVerseNumber{\v@rseto}}
-         \setbox0=\vtop{\hbox to \wd1{\hfil\AdornVerseNumber{\v@rsefrom}}
-                        \kern\dimen0\box1}
+         \setbox1=\hbox{\endash\AdornVerseNumber{\v@rseto}}%
+         \setbox0=\vtop{\hbox to \wd1{\hfil\AdornVerseNumber{\v@rsefrom}}%
+                        \kern\dimen0\box1}%
          \ht0=0.5\dimen1 \dp0=0pt
          \hbox{\box0}\fi}
 \let\printv@rse=\simpleprintv@rse
@@ -563,7 +563,7 @@
 \catcode`\~=\active
 \def\DefineActiveChar#1#2{\count255=`#1
   \do@ctive=\x@\x@\x@{\x@\the\x@\do@ctive
-    \x@\d@something\the\count255 }
+    \x@\d@something\the\count255 }%
   \lccode`\~=\count255
   \def\t@mp{\noexpand#2} \lowercase{\edef~{\t@mp}}}
 \newtoks\do@ctive
