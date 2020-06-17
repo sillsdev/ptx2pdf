@@ -147,18 +147,18 @@
 %Main utility function for font parameters, stacking-styles aware
 \def\getmcp@ram#1{\let\r@s=\relax
   \def\d@##1+##2\E{\edef\tmp{##2}\ifx\tmp\empty\else\if##1P\let\r@s\relax\else\if##1N\let\r@s\relax\fi\fi\getp@ram{#1}{##2}\let\r@s\p@ram\fi}%
-  \mcup\global\let\p@ram\r@s}
+  \mcup\global\let\p@ram\r@s\trace{s}{param #1 for \mcstack\space is \p@ram}}
 \def\getmcp@ramR#1{\let\r@s\relax
   \def\d@##1+##2\E{\edef\tmp{##2}\ifx\tmp\empty\else\if##1P\let\r@s\relax\else\if##1N\let\r@s\relax\fi\fi
     \getp@ram{regular}{##2}\ifx\p@ram\relax\getp@ram{#1}{##2}\let\r@s\p@ram\else\let\r@s\relax\fi\fi}%
-  \mcup\global\let\p@ram\r@s}
+  \mcup\global\let\p@ram\r@s\trace{s}{paramR #1 for \mcstack\space is \p@ram}}
 \def\getmcs@ze{\xdef\c@rrfontsize{12}%
   \def\s@##1{\xdef\c@rrfontsize{##1}}%
   \def\d@##1+##2\E{\edef\tmp{##2}\ifx\tmp\empty\else\if##1P\s@{12}\else\if##1N\s@{12}\fi\fi
                    \getp@ram{fontscale}{##2}%
                    \ifx\p@ram\relax\getp@ram{fontsize}{##2}\ifx\p@ram\relax\s@{12}\else\s@{\p@ram}\fi
                    \else\s@{\x@\p@ram\c@rrfontsize}\fi\fi}%
-  \mcup}
+  \mcup\trace{s}{set c@rrfontsize for \mcstack\space is \c@rrfontsize}}
 
 \def\getFp@ram#1#2{%
   \ifst@ckstyle
@@ -440,8 +440,8 @@
 \def\cstackrelax#1\E{}
 \gdef\mcstack{,}
 \def\cstackempty{,}
-\def\mcpop{\xdef\mcstack{\x@\cstackpop\mcstack\E}\ifx\mcstack\empty\xdef\mcstack{+,}\fi}
-\def\mcpush#1{\xdef\mcstack{#1,\mcstack}}
+\def\mcpop{\trace{s}{pop stack: \mcstack}\xdef\mcstack{\x@\cstackpop\mcstack\E}\ifx\mcstack\empty\xdef\mcstack{+,}\fi}
+\def\mcpush#1{\trace{s}{push #1 onto \mcstack}\xdef\mcstack{#1,\mcstack}}
 \def\mcup{\x@\cstackup\mcstack\E}
 \def\mcdown{\x@\cstackdown\mcstack\E}
 \def\mctop{\x@\cstacktop\mcstack\E}

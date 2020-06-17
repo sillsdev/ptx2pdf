@@ -93,7 +93,7 @@
 %
 \def\gridb@x#1{%
 % \setbox0=\vbox{\kern-#1pt\vrule\kern#1pt\kern-.4pt\box#1\kern-.4pt\vrule}%
-%\MSG{before gridbox: ht0=\the\ht0; dp0=\the\dp0}
+\trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0}
 \setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders#1\fi%
 %\MSG{after killd: ht0=\the\ht0; dp0=\the\dp0}
 %{\showboxbreadth=100 \showboxdepth=10 \showbox0 }%
@@ -107,7 +107,7 @@
    \advance\dimen0 by \baselineskip
    \line{}\nobreak \repeat
  \setbox0=\vbox to 0pt{\kern-\ht0\unvbox0}
-%\ifgridp@c\MSG{ after gridbox: dimen0=\the\dimen0; dp0=\the\dp0}\fi
+ \trace{h}{after gridbox: dimen0=\the\dimen0; dp0=\the\dp0}%
  \unvbox0 \nobreak
 }
 \newif\ifgridp@c % if applying \gridb@x to a picture box rather than headings
@@ -129,7 +129,7 @@
 \newif\ifhe@dingstyle
 \newif\ifnsp@cebefore
 \newif\ifJustifyPars \JustifyParstrue
-\def\p@rstyle#1{\TRACE{p@rstyle:#1}%
+\def\p@rstyle#1{\trace{s}{p@rstyle: #1}%
  \ifsk@pping \egroup \fi % if we were skipping nonpublishable text, end that mode
  \t@stpublishability{#1}% test if the new marker is nonpublishable
  \ifn@npublishable

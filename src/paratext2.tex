@@ -160,8 +160,6 @@
   \omitc@llerfalse \else \omitc@llertrue \fi}
 \newif\ifomitc@ller
 
-\def\@foot{\strut\egroup\mcpop}
-
 % create a "strut" (see TeXbook) of suitable size for the note style
 \def\footstrut{\s@tfont{\newn@testyle}%
   \s@tbaseline{\newn@testyle}%
@@ -177,7 +175,7 @@
   \copy\f@@tstrut}
 
 \def\@foot{\ifp@ranotes \parfillskip=0pt \else\strut\fi
-  \par\egroup\ifRTL\endR\fi}
+  \par\egroup\ifRTL\endR\fi\end@llcharstyles\mcpop}
 \newbox\f@@tstrut
 \def\n@teglue{2em plus 1em minus .5em\relax} % glue to be used between paragraphed notes
 

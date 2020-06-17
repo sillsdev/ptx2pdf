@@ -114,7 +114,8 @@
   \endch@rstyle*\egroup
   \trace{s}{end of +\newch@rstyle. Left style stack, now \stylest@ck, \ifst@ckstyle 1\else 0\fi}%End of st@ckstyle group
 }
-\def\startch@rstyle{\TRACE{startch@rstyle}%
+\def\startch@rstyle{\trace{s}{startch@rstyle \newch@rstyle}%
+  \mcpush{\ifx\stylet@pe\empty C\else\stylet@pe\fi+\newch@rstyle}
   \t@stpublishability{\newch@rstyle}\ifn@npublishable
    \setbox0=\hbox\bgroup\skipch@rstyletrue
    \let\thisch@rstyle=\newch@rstyle
@@ -126,7 +127,6 @@
    \fi
    \bgroup % start a group to encapsulate the style's formatting changes
     \let\thisch@rstyle=\newch@rstyle % remember the current style
-    \mcpush{\stylet@pe+\newch@rstyle}
     \s@tfont{\thisch@rstyle}% set up font attributes
     \ifnum\n@tenesting>0 \global\advance\n@tenesting by 1 % record nesting level in para or note
     \else \global\advance\p@ranesting by 1 \fi
