@@ -3,19 +3,18 @@ from subprocess import call, check_output
 from difflib import context_diff
 import configparser, os, sys
 
-def test_projects(projectsdir, project, config):
+def make_paths(projectsdir, project, config, xdv=False):
     testsdir = os.path.dirname(__file__)
     ptxcmd = [os.path.join(testsdir, "..", "python", "scripts", "ptxprint"),
                 "--nofontcache",
-                "-p", projectsdir, "-f", os.path.join(testsdir, "fonts"), "-T"]
+                "-p", projectsdir, "-f", os.path.join(testsdir, "fonts")]
+    if xdv:
+        ptxcmd += ["-T"]
     if config is not None:
         ptxcmd += ['-c', config]
     ptxcmd += ["-P", project]
-    xdvcmd = [os.path.join(testsdir, "..", "python", "scripts", "xdvitype"),
-                "-d"]
     if sys.platform == "win32":
         ptxcmd.insert(0, "python")
-        xdvcmd.insert(0, "python")
     cfg = configparser.ConfigParser()
     if config is not None:
         configpath = os.path.join(projectsdir, project, "shared", "ptxprint", config, "ptxprint.cfg")
@@ -29,7 +28,19 @@ def test_projects(projectsdir, project, config):
         bks = cfg.get("project", "book")
         filename = "{}{}".format(bks, project)
     stddir = os.path.join(projectsdir, '..', 'standards', project)
-    
+    return (stddir, filename, testsdir, ptxcmd)
+
+def test_pdf(projectsdir, project, config):
+    (stddir, filename, testsdir, ptxcmd) = make_paths(projectsdir, project, config, xdv=False)
+    assert call(ptxcmd) == 0
+
+def test_xdv(projectsdir, project, config):
+    (stddir, filename, testsdir, ptxcmd) = make_paths(projectsdir, project, config, xdv=True)
+    xdvcmd = [os.path.join(testsdir, "..", "python", "scripts", "xdvitype"),
+                "-d"]
+    if sys.platform == "win32":
+        xdvcmd.insert(0, "python")
+
     assert call(ptxcmd) == 0
     fromfile = os.path.join(projectsdir, project, "PrintDraft", "ptxprint-"+filename+".xdv")
     tofile = os.path.join(stddir, filename+".xdv")
