@@ -1,6 +1,6 @@
 .SUFFIXES: .dvi .pdf
 all: Galatians.pdf
-DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
+DIR:=$(shell dirname `find ../../../src  -name paratext2.tex`)
 SCRIPTDIR:=$(shell dirname `find ../../..  -name diglot_merge.pl | grep -v bisect`)
 
 .tex.pdf:
