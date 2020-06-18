@@ -56,7 +56,7 @@
 % Each USFM character style marker is defined to call \ch@rstyle with the marker name as parameter
 %
 
-\def\ch@rstyle#1{\TRACE{ch@rstyle:#1}%
+\def\ch@rstyle#1{\trace{s}{ch@rstyle:#1}%
  \def\newch@rstyle{#1}% record the name of the style
  \catcode32=12 % make <space> an "other" character, so it won't be skipped by \futurelet
  \catcode13=12 % ditto for <return>
@@ -111,6 +111,7 @@
  \def\startch@rstyle@nl_{\startch@rstyle}%
 }
 \def\endch@rstylepls*{%Consume the star..
+  \trace{s}{endch@rstylepls \newch@rstyle}%
   \endch@rstyle*\egroup
   \trace{s}{end of +\newch@rstyle. Left style stack, now \stylest@ck, \ifst@ckstyle 1\else 0\fi}%End of st@ckstyle group
 }
@@ -142,6 +143,7 @@
 \lccode`\|=`\\ % for printing backslash in error message
 \lowercase{
  \def\endch@rstyle*{\TRACE{endch@rstyle}% consume the * that marked the SFM as ending a style
+   \trace{s}{endch@rstyle \newch@rstyle}%
    \def\d@##1+##2\E{\edef\thisch@rstyle{##2}}\mctop
    \ifx\thisch@rstyle\undefined
      \MSG{*** unmatched character style end-marker |\newch@rstyle*}%
