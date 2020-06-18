@@ -122,7 +122,7 @@ class ViewModel:
 
     def configName(self):
         cfgName = re.sub('[^-a-zA-Z0-9_()/: ]+', '', (self.get("ecb_savedConfig") or "")).strip(" ")
-        return cfgName
+        return cfgName or None
 
     def getBooks(self):
         bl = self.get("t_booklist", "").split()
@@ -269,7 +269,7 @@ class ViewModel:
 
     def readConfig(self, cfgname=None):
         if cfgname is None:
-            cfgname = self.configName()
+            cfgname = self.configName() or ""
         path = os.path.join(self.configPath(cfgname), "ptxprint.cfg")
         if not os.path.exists(path):
             return False
@@ -281,7 +281,7 @@ class ViewModel:
 
     def writeConfig(self, cfgname=None):
         if cfgname is None:
-            cfgname = self.configName()
+            cfgname = self.configName() or ""
         path = os.path.join(self.configPath(cfgname=cfgname, makePath=True), "ptxprint.cfg")
         config = self.createConfig()
         #print("Writing config: {}".format(path))
@@ -395,12 +395,12 @@ class ViewModel:
         prjdir = os.path.join(self.settings_dir, self.prjid)
         for bk in booklist:
             fname = self.getBookFilename(bk, prjid)
-            outfname = os.path.join(self.configPath(), "PicLists", fname)
+            outfname = os.path.join(self.configPath(self.configName()), "PicLists", fname)
             doti = outfname.rfind(".")
             if doti > 0:
                 outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".piclist"
             if os.path.exists(outfname):
-                existingFilelist.append(outfname.split("/")[-1])
+                existingFilelist.append(re.split(r"\\|/",outfname)[-1])
         if len(existingFilelist):
             q1 = "One or more PicList file(s) already exist!"
             q2 = "\n".join(existingFilelist)+"\n\nDo you want to OVERWRITE the above-listed file(s)?"
@@ -410,7 +410,7 @@ class ViewModel:
             usedRefs = []
             fname = self.getBookFilename(bk, prjid)
             infname = os.path.join(prjdir, fname)
-            outfname = os.path.join(self.configPath(), "PicLists", fname)
+            outfname = os.path.join(self.configPath(self.configName()), "PicLists", fname)
             doti = outfname.rfind(".")
             if doti > 0:
                 outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".piclist"
@@ -493,7 +493,7 @@ class ViewModel:
                     piclist.append("% Other Notes:\n")
                     piclist.append("%   d) To (temporarily) remove an illustration prefix the line with % followed by a space\n")
                     piclist.append("%   e) To scale an image use this notation: span*.7  or  col*1.3)\n")
-                    plpath = os.path.join(self.configPath(), "PicLists")
+                    plpath = os.path.join(self.configPath(self.configName()), "PicLists")
                     os.makedirs(plpath, exist_ok=True)
                     with open(outfname, "w", encoding="utf-8") as outf:
                         outf.write("".join(piclist))
@@ -505,12 +505,12 @@ class ViewModel:
         prjdir = os.path.join(self.settings_dir, self.prjid)
         for bk in booklist:
             fname = self.getBookFilename(bk, prjid)
-            outfname = os.path.join(self.configPath(), "AdjLists", fname)
+            outfname = os.path.join(self.configPath(self.configName()), "AdjLists", fname)
             doti = outfname.rfind(".")
             if doti > 0:
                 outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".adj"
             if os.path.exists(outfname):
-                existingFilelist.append(outfname.split("/")[-1])
+                existingFilelist.append(re.split(r"\\|/",outfname)[-1])
         if len(existingFilelist):
             q1 = "One or more Paragraph Adjust file(s) already exist!"
             q2 = "\n".join(existingFilelist)+"\n\nDo you want to OVERWRITE the above-listed file(s)?"
@@ -519,7 +519,7 @@ class ViewModel:
         for bk in booklist:
             fname = self.getBookFilename(bk, prjid)
             infname = os.path.join(prjdir, fname)
-            outfname = os.path.join(self.configPath(), "AdjLists", fname)
+            outfname = os.path.join(self.configPath(self.configName()), "AdjLists", fname)
             doti = outfname.rfind(".")
             if doti > 0:
                 outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".adj"
@@ -533,12 +533,12 @@ class ViewModel:
                     prv = 0
                     ch = 1
                     for v in m:
-                        iv = int(re.sub(r"^(\d+)", "\1", v))
+                        iv = int(re.sub(r"^(\d+)", r"\1", v), 10)
                         if iv < prv:
                             ch = ch + 1
                         adjlist.append(bk+" "+str(ch)+"."+v+" +0\n")
                         prv = iv
-                    adjpath = os.path.join(self.configPath(), "AdjLists")
+                    adjpath = os.path.join(self.configPath(self.configName()), "AdjLists")
                     os.makedirs(adjpath, exist_ok=True)
                     with open(outfname, "w", encoding="utf-8") as outf:
                         outf.write("".join(adjlist))

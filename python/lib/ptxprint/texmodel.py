@@ -353,7 +353,7 @@ class TexModel:
             base = printer.working_dir
             docdir = base
         self.dict["document/directory"] = os.path.abspath(docdir).replace("\\","/")
-        self.dict['project/adjlists'] = os.path.join(self.printer.configPath(), "AdjLists/").replace("\\","/")
+        self.dict['project/adjlists'] = os.path.join(self.printer.configPath(self.printer.configName()), "AdjLists/").replace("\\","/")
         self.dict['project/piclists'] = os.path.join(self.printer.working_dir, "tmpPicLists/").replace("\\","/")
         self.dict['project/id'] = self.printer.prjid
         self.dict['config/name'] = self.printer.configId
@@ -367,7 +367,7 @@ class TexModel:
                 break
         self.dict["project/picdir"] = picdir.replace("\\","/")
         # Look in local Config folder for ptxprint-mods.tex, and drop back to shared/ptxprint if not found 
-        fpath = os.path.join(self.printer.configPath(), "ptxprint-mods.tex")
+        fpath = os.path.join(self.printer.configPath(self.printer.configName()), "ptxprint-mods.tex")
         if not os.path.exists(fpath):
             fpath = os.path.join(self.dict["/ptxpath"], self.dict["project/id"], "shared", "ptxprint", "ptxprint-mods.tex")
         self.dict['/modspath'] = fpath.replace("\\","/")
