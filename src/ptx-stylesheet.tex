@@ -201,8 +201,8 @@
 %
 \def\defp@rstyle#1{\x@\def\csname#1\endcsname{\p@rstyle{#1}}}
 \edef\pl@scatcode{\the\catcode`+}
-\catcode`+=12
-\def\defch@rstyle#1{\x@\def\csname#1\endcsname{\ch@rstyle{#1}}\x@\def\csname+#1\endcsname{\ch@rstylepls{#1}}}
+\catcode`+=11
+\def\defch@rstyle#1{\x@\def\csname#1\endcsname{\ch@rstyle{#1}}\x@\def\csname +#1\endcsname{\ch@rstylepls{#1}}}
 \catcode`+=\pl@scatcode
 \def\defn@testyle#1{\x@\def\csname#1\endcsname{\n@testyle{#1}}\m@ken@tecl@ss{#1}}
 
