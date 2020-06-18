@@ -201,7 +201,7 @@
 \def\g@tfontname#1{%
  \ifdiglot\ifdiglotL\def\f@ntstyle{#1L}\def\sid@{L}\else\def\f@ntstyle{#1R}\def\sid@{R}\fi\else\def\f@ntstyle{#1}\def\sid@{-}\fi%
  \let\d@@=\d@
- \def\d@##1+##2\E{\edef\tmp{#1}\edef\tmpa{##2}\ifx\tmp\tmpa\getmcs@ze\else
+ \def\d@##1+##2\E{\edef\tmp{#1}\edef\tmpa{##2}\ifx\tmp\tmpa\getmcfonts@ze\else
                         \getp@ram{fontsize}{#1}\ifx\p@ram\relax\xdef\c@rrfontsize{12}%
                         \else\global\let\c@rrfontsize=\p@ram\fi\fi}%
  \mctop\let\d@=\d@@\edef\f@ntstyle{\f@ntstyle-\c@rrfontsize}}
@@ -265,7 +265,7 @@
 \def\s@textrafont#1{%
   \x@\ifx\csname extrafont<#1>\endcsname \relax%
     \let\typef@ce=\extraregular
-    \getmcs@ze
+    \getmcfonts@ze
     \dimen0=\c@rrfontsize\FontSizeUnit
     \getmcp@ramR{superscript}% scale down by \SuperscriptFactor if superscripted style
     \ifx\p@ram\tru@ \multiply\dimen0 by \SuperscriptFactor
