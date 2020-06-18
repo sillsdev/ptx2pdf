@@ -23,7 +23,7 @@ engwyc2018_usfm.zip:
 engwebp_usfm.zip:
 	test -f $@ || wget https://ebible.org/Scriptures/engwebp_usfm.zip
 
-Gal_wyc.usfm: engwyc2018_usfm.zip
+Gal_wyc.usfm 78-GALengwyc2018.usfm: engwyc2018_usfm.zip
 	unzip $< 78-GALengwyc2018.usfm
 	sed 's/+//g;' <  78-GALengwyc2018.usfm > $@
 	touch $@
