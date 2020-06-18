@@ -389,6 +389,7 @@ class ViewModel:
         _picposn = {"col":  ("tl", "tr", "bl", "br"),
                     "span": ("t", "b")}
         existingFilelist = []
+        xl = []
         snglCol = not self.get("c_doublecolumn")
         diglot = self.get("c_diglotAutoAligned")
         prjid = self.get("fcb_project")
@@ -421,6 +422,10 @@ class ViewModel:
             piclist.append("%   (See end of list for more help for troubleshooting)\n\n")
             with open(infname, "r", encoding="utf-8") as inf:
                 dat = inf.read()
+                # Look for verses with more than one \fig in them
+                x = re.findall(r"\\v .+?\\fig .+?\\fig\*(.(?!\\v ))+\\fig .+?\\fig\*",dat)
+                if len(x):
+                    xl.append(bk)
                 # Finds USFM2-styled markup in text:
                 # \v 15 <verse text> \fig |CN01684b.jpg|col|||key-kālk arsi manvan yēsunaga tarval|9:2\fig*
                 #     0     1    2             3         4  5 6          7                          8  
@@ -487,7 +492,7 @@ class ViewModel:
                     piclist.append("%      (iii) Verse Refs must match the text itself\n")
                     piclist.append("%      (iv) Verse Refs must be in logical ch.vs order \n")
                     piclist.append("%      (iv) The same reference cannot be used more than once\n")
-                    piclist.append("%             (2 pictures cannot be anchored to one verse )\n")
+                    piclist.append("%             (2 pictures cannot be anchored to the same verse)\n")
                     piclist.append("%   b) Does the illustration exist in 'figures' or 'local/Figures' or another specified folder?\n")
                     piclist.append("%   c) Position on Page for a 'span' image should only be 't'=top or 'b'=bottom\n")
                     piclist.append("% Other Notes:\n")
@@ -497,6 +502,10 @@ class ViewModel:
                     os.makedirs(plpath, exist_ok=True)
                     with open(outfname, "w", encoding="utf-8") as outf:
                         outf.write("".join(piclist))
+        if len(xl):
+            self.doError("Multiple illustrations attached to a single verse", 
+                         secondary="One or more books ({}) have more than one figure attached to a single verse. ".format(", ".join(xl)) + \
+                                   "This isn't permitted with a PicList. So check the list(s) for missing illustrations.", title="PicList Warning!")
 
     def generateAdjList(self):
         existingFilelist = []
@@ -533,7 +542,7 @@ class ViewModel:
                     prv = 0
                     ch = 1
                     for v in m:
-                        iv = int(re.sub(r"^(\d+)", r"\1", v), 10)
+                        iv = int(re.sub(r"^(\d+).*$", r"\1", v), 10)
                         if iv < prv:
                             ch = ch + 1
                         adjlist.append(bk+" "+str(ch)+"."+v+" +0\n")
