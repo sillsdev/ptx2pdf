@@ -161,7 +161,7 @@
       \else\getp@ram{fontscale}{##2}\edef\sc@le{\p@ram}%
         \ifx\p@ram\relax\edef\sc@le{1}\getp@ram{fontsize}{##2}%
           \ifnum\ifx\p@ram\relax 1\else\ifx\p@ram\ps@ze 1\else 0\fi\fi =1
-            \multiply\dimen0 by \sc@le\else\trace{s}{\p@ram =\ps@ze}\s@{\p@ram}\fi
+            \multiply\dimen0 by \sc@le\else\dimen0=\p@ram pt\fi
         \else\multiply\dimen0 by \sc@le
     \fi\fi\xdef\c@rrfontsize{\x@\strip@pt\the\dimen0}\fi}%
   \mcup\trace{s}{set c@rrfontsize for \mcstack\space is \c@rrfontsize}}
