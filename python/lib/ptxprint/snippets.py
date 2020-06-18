@@ -96,17 +96,17 @@ class AlignedDiglot():
 
 class FancyBorders():
     regexes = []
-    styleInfo = r"""
+    styleInfo = lambda m: (r"""
 # need a smaller verse number to fit in the stars
 \Marker v
-\FontSize 8
-
+\FontSize {fancy/versenumsize}
+""".format(**m.dict) if m['fancy/versedecorator'] != "%" else "") + (r"""
 \Marker s
 \FontSize 10
 \SpaceAfter 2
 \LeftMargin .3
 \RightMargin .3
-
+""" if m['fancy/sectionheader'] != "%" else "") + r"""
 # \Marker p
 # \FontSize 12
 
