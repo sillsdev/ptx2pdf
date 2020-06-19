@@ -353,7 +353,7 @@ class TexModel:
             base = printer.working_dir
             docdir = base
         self.dict["document/directory"] = os.path.abspath(docdir).replace("\\","/")
-        self.dict['project/adjlists'] = os.path.join(self.printer.configPath(), "AdjLists/").replace("\\","/")
+        self.dict['project/adjlists'] = os.path.join(self.printer.configPath(self.printer.configName()), "AdjLists/").replace("\\","/")
         self.dict['project/piclists'] = os.path.join(self.printer.working_dir, "tmpPicLists/").replace("\\","/")
         self.dict['project/id'] = self.printer.prjid
         self.dict['config/name'] = self.printer.configId
@@ -367,7 +367,7 @@ class TexModel:
                 break
         self.dict["project/picdir"] = picdir.replace("\\","/")
         # Look in local Config folder for ptxprint-mods.tex, and drop back to shared/ptxprint if not found 
-        fpath = os.path.join(self.printer.configPath(), "ptxprint-mods.tex")
+        fpath = os.path.join(self.printer.configPath(self.printer.configName()), "ptxprint-mods.tex")
         if not os.path.exists(fpath):
             fpath = os.path.join(self.dict["/ptxpath"], self.dict["project/id"], "shared", "ptxprint", "ptxprint-mods.tex")
         self.dict['/modspath'] = fpath.replace("\\","/")
@@ -766,7 +766,7 @@ class TexModel:
             # OLD RegEx: Keep final two words of \q lines together [but doesn't work if there is an \f or \x at the end of the line] 
             self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)[^\\\s]+)) (\S+\s*\n)", \
                                             flags=regex.M), r"\1\u2000\5"))
-            self.localChanges.append((None, regex.compile(r"([^ \\\ne\u2000\u00A0]+) ([^ \\\n\u2000\u00A0]+\n(?:\\[pmqsc]|$))", flags=regex.S), r"\1\u2000\2"))
+            self.localChanges.append((None, regex.compile(r"(\s+[^ \\\n\u2000\u00A0]+) ([^ \\\n\u2000\u00A0]+\n(?:\\[pmqsc]|$))", flags=regex.S), r"\1\u2000\2"))
 
         if self.asBool("document/preventwidows"):
             # Push the verse number onto the next line (using NBSP) if there is
@@ -930,7 +930,10 @@ class TexModel:
                 v = self.printer.get(c[0])
                 self.dict[k] = "true" if v else "false"
             if v: # if the c_checkbox is true then add the stylesheet snippet for that option
-                nstylist.append(c[1].styleInfo+"\n")
+                if isinstance(c[1].styleInfo, str):
+                    nstylist.append(c[1].styleInfo+"\n")
+                else:
+                    nstylist.append(c[1].styleInfo(self)+"\n")
 
         if nstylist == []:
             if os.path.exists(nstyfname):

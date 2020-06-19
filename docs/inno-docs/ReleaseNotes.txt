@@ -1,37 +1,45 @@
-PTXprint 0.8.2 Beta Release Notes
-10th June 2020
+PTXprint 0.8.3 Beta Release Notes
+19th June 2020
 
-WARNING: This beta version is the result of major restructuring of the code and includes new
-         features that have had very limited testing. Do NOT use for any mission-critical work.
+Bug Fixes and Improvements in: 0.8.3
 
-NOTE: Chapter Numbers in peripheral (non-scripture) books are now suppressed by default (but 
-      can be re-enabled on the Advanced tab)
+  * Repair Footnote callers (were all turning to '+')
+  
+  * Fancy Borders now works as expected on Windows
+  
+  * Paths for generated PicLists and AdjLists fixed
+  
+  * Issue PicList warning if multiple images are found in a single verse
+  
+  * Clicking on link to download latest version now works again
+  
+  * Repair collateral damage caused by single word orphan changes
 
 Bug Fixes and Improvements in: 0.8.2
 
-   * Various tex macro bug fixes
+  * Various tex macro bug fixes
 
-   * Initial stab at supports \+ char styles
+  * Initial stab at supports \+ char styles
 
-   * Add Bad Breaking Space for reducing orphan words
+  * Add Bad Breaking Space for reducing orphan words
 
-   * Get \thc working
+  * Get \thc working
 
-   * Fix properly styled fonts getting used in TeX from ptxprint
+  * Fix properly styled fonts getting used in TeX from ptxprint
 
-   * Setup.py fixes
+  * Setup.py fixes
 
-   * Fix chapter labels
+  * Fix chapter labels
 
 Bug Fixes and Improvements in: 0.8.1
 
-   * Refresh fonts button (on Advanced tab) to reset the font list if it gets stale
+  * Refresh fonts button (on Advanced tab) to reset the font list if it gets stale
    
-   * \FontScale in .sty files is now honoured
+  * \FontScale in .sty files is now honoured
    
-   * Independent font sizes are now honoured for both sides in diglot
+  * Independent font sizes are now honoured for both sides in diglot
    
-   * You can now hit save config without a config name
+  * You can now hit save config without a config name
    
 New Features and Improvements in: 0.8.0
 
@@ -44,6 +52,8 @@ New Features and Improvements in: 0.8.0
   * Better handling of line and page breaking (especially in poetical books)
   
   * Click on 'reload' fills footnote and cross-ref callers with default set (if none found in Paratext)
+  
+  * Chapter Numbers in peripheral (non-scripture) books are now suppressed by default (but can be re-enabled on the Advanced tab)
   
 Bug fixes and improvements in: 0.7.1
 
