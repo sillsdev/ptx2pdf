@@ -165,8 +165,7 @@
         \else\multiply\dimen0 by \sc@le
     \fi\fi\xdef\c@rrfontsize{\x@\strip@pt\the\dimen0}\fi}%
   \mcup\trace{s}{set c@rrfontsize for \mcstack\space is \c@rrfontsize}}
-\def\getmct@p{\def\d@##1+##2\E{##2}\mctop}
-  
+ 
 \def\getFp@ram#1#2{%
   \def\d@##1+##2\E{\edef\tmp{##2}\edef\tmpa{#2}\ifx\tmp\tmpa\getmcp@ram{#1}\else\getp@ram{#1}{#2}\fi}%
   \mctop}
@@ -434,7 +433,7 @@
 \def\cstackpeek#1,#2\E{#1}
 \def\cstackup#1,#2\E{\edef\tmp{#2}\ifx\tmp\empty\let\n@x=\relax\else\let\n@x=\cstackup\fi\n@x #2\E\edef\tmp{#1}\ifx\tmp\empty\else\d@ #1\E\fi}
 \def\cstackdown#1,#2\E{\edef\tmp{#1}\ifx\tmp\empty\else\d@ #1\E\fi\edef\tmp{#2}\ifx\tmp\empty\let\n@x=\relax\else\let\n@x=\cstackdown\fi\n@x #2\E}
-\def\cstacktop#1,#2\E{\d@ #1\E}
+\def\cstacktop#1,#2\E{\edef\temp{#1}\ifx\temp\empty\else\d@ #1\E\fi}
 \def\cstackrelax#1\E{}
 \gdef\mcstack{+,}
 \def\cstackempty{,}
