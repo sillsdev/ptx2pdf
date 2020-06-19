@@ -83,7 +83,7 @@
  \def\doch@rstyle{% here, \n@xt has been \let to the next character after the marker
   \catcode32=10 % reset <space> to act like a space again
   \catcode13=10 % and <return> is also a space (we don't want blank line -> \par)
-  \if\n@xt*\let\n@xt@\endch@rstyle % check for "*", if so then we need to end the style
+  \if\n@xt*\let\n@xt@\endch@rstylen % check for "*", if so then we need to end the style
   \else\if\n@xt~\let\n@xt@\startch@rstyle@spc
     \else\if\n@xt_\let\n@xt@\startch@rstyle@nl\else\let\n@xt@\startch@rstyle\fi\fi
     \end@llcharstyles % a char style closes all other char styles
@@ -110,10 +110,15 @@
  \def\startch@rstyle@spc~{\startch@rstyle}%
  \def\startch@rstyle@nl_{\startch@rstyle}%
 }
+\def\endch@rstylen*{%Consume the star..
+  \trace{s}{endch@rstylen \newch@rstyle}%
+  \def\d@##1+##2\E{\tempfalse\if ##1c\else\if ##1C\else\temptrue\fi\fi}\mctop
+  \iftemp\MSG{Unexpected closing marker \newch@rstyle *. Ignoring}\else\endch@rstyle*\fi
+}
 \def\endch@rstylepls*{%Consume the star..
-  \trace{s}{endch@rstylepls \newch@rstyle}%
-  \endch@rstyle*\egroup
-  \trace{s}{end of +\newch@rstyle. Left style stack, now \stylest@ck, \ifst@ckstyle 1\else 0\fi}%End of st@ckstyle group
+  \trace{s}{endch@rstylen \newch@rstyle}%
+  \def\d@##1+##2\E{\edef\tmp{##2}\tempfalse\ifx\tmp\newch@rstyle\else\temptrue\fi}\mctop
+  \iftemp\MSG{Unexpected closing marker +\newch@rstyle *. Ignoring}\else\endch@rstyle*\egroup\fi
 }
 \def\startch@rstyle{\trace{s}{startch@rstyle \newch@rstyle}%
   \mcpush{\ifx\stylet@pe\empty C\else\stylet@pe\fi+\newch@rstyle}%

@@ -153,7 +153,9 @@
     \vskip\p@ram\verticalsp@ceunit
   \fi
   \resetp@rstyle
-  \mcpop
+  \def\d@##1+##2\E{\edef\tmp{##2}%
+    \ifx\tmp\m@rker\else\MSG{Bad closing marker \tmp\space expected \m@rker}\fi}%
+  \mctop \mcpop
   \ifdiglot\setsid@ % \MSG{start-\thisch@rstyle\sid@}%
     \csname after-\m@rker\sid@\endcsname\relax% handle side-specific <start> hook
   \fi
