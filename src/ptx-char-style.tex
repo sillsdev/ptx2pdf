@@ -83,13 +83,13 @@
  \def\doch@rstyle{% here, \n@xt has been \let to the next character after the marker
   \catcode32=10 % reset <space> to act like a space again
   \catcode13=10 % and <return> is also a space (we don't want blank line -> \par)
-  \if\n@xt*\let\n@xt\endch@rstyle % check for "*", if so then we need to end the style
-  \else\if\n@xt~\let\n@xt\startch@rstyle@spc
-    \else\if\n@xt_\let\n@xt\startch@rstyle@nl\else\let\n@xt\startch@rstyle\fi\fi
+  \if\n@xt*\let\n@xt@\endch@rstyle % check for "*", if so then we need to end the style
+  \else\if\n@xt~\let\n@xt@\startch@rstyle@spc
+    \else\if\n@xt_\let\n@xt@\startch@rstyle@nl\else\let\n@xt@\startch@rstyle\fi\fi
     \end@llcharstyles % a char style closes all other char styles
   \fi % else we need to start it
-  \edef\stylet@pe{C}%
-  \n@xt} % chain to the start or end macro
+  \xdef\stylet@pe{C}%
+  \n@xt@} % chain to the start or end macro
  % doch@rstylepls is like doch@rstyle, but wraps the style in a group and generates a comma-separated stack of styles.
  \def\doch@rstylepls{% here, \n@xt has been \let to the next character after the marker
   \catcode32=10 % reset <space> to act like a space again
@@ -103,7 +103,7 @@
       \else\edef\stylest@ck{\stylest@ck+\m@rker}\fi
     \trace{s}{inside stack of +\newch@rstyle. Style stack now \stylest@ck}%
   \fi % else we need to start it
-  \edef\stylet@pe{c}%
+  \xdef\stylet@pe{c}%
   \n@xt} % chain to the start or end macro
  % when \startch@rstyle is called, the following <space> or <return> has become category-12
  % so we have to explicitly consume it here as part of the macro parameter list
@@ -181,7 +181,7 @@
 % end all character styles in effect within the current note or paragraph
 %
 \def\end@llcharstyles{\let\d@=\end@llcharstyle\mcdown}
-\def\end@llcharstyle#1+#2\E{\edef\tmp{#1}\ifx\tmp\empty\else\if#1c\endch@rstyle*\else\if#1C\endch@rstyle*\else\let\d@=\cstackrelax\fi\fi\fi}
+\def\end@llcharstyle#1+#2\E{\trace{s}{endcharstyles: #1+#2}\edef\tmp{#1}\ifx\tmp\empty\else\if#1c\endch@rstyle*\else\if#1C\endch@rstyle*\else\let\d@=\cstackrelax\fi\fi\fi}
 
 %\def\end@llcharstyles{%
 % \ifnum\n@tenesting>0 \doendch@rstyles\n@tenesting
