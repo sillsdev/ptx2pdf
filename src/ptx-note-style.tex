@@ -168,7 +168,10 @@
   \advance\count255 by 96 \edef\them@rk{\char\count255}}
 \fi
 
-\def\pl@s{+}
+\edef\pl@scatcode{\the\catcode`+}
+\catcode`+=11
+\edef\pl@s{+}
+\catcode`+=\pl@scatcode
 \def\min@s{-}
 
 \endinput
