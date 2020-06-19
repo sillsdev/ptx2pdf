@@ -26,11 +26,10 @@ engwebp_usfm.zip:
 Gal_wyc.usfm 78-GALengwyc2018.usfm: engwyc2018_usfm.zip
 	unzip $< 78-GALengwyc2018.usfm
 	sed 's/+//g;' <  78-GALengwyc2018.usfm > $@
-	touch $@
+
 Gal_web.usfm: engwebp_usfm.zip
 	unzip $< 78-GALengwebp.usfm
-	mv 78-GALengwebp.usfm $@
-	touch $@
+	perl -CSD -pe 's/\\w ([^|]+?)\|[^\\]*?\\w\*/\1/og' 78-GALengwebp.usfm > $@
 	
 mergedGal.usfm: Gal_wyc.usfm Gal_web.usfm Makefile $(SCRIPTDIR)/diglot_merge.pl 
 	$(SCRIPTDIR)/diglot_merge.pl -s -l -C -L merge.log -o merged.out Gal_web.usfm Gal_wyc.usfm 

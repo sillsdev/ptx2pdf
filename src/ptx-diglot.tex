@@ -47,7 +47,7 @@
 \def\stylesheetR#1{\gdef\ds@ffix{R}\stylesheet{#1}\gdef\ds@ffix{}}
 
 %LRspecific holds a list of things that get redefined on side-switching. Now split into Definitions and Dimensions.
-\def\LRspecificDef{VerticalSpaceFactor,LineSpacingFactor,regular,bold,italic,bolditalic,SpaceStretchFactor,SpaceShrinkFactor,mcstack}
+\def\LRspecificDef{VerticalSpaceFactor,LineSpacingFactor,regular,bold,italic,bolditalic,SpaceStretchFactor,SpaceShrinkFactor}
 \def\LRspecificDim{FontSizeUnit,le@dingunit,verticalsp@ceunit} 
 
 
@@ -810,7 +810,7 @@
 %
 % Change which side we're adding to
 \outer\def\lefttext{%
-  \TRACEdiglot{lefttext ilp=\the\interlinepenalty}%
+  \trace{S}{lefttext ilp=\the\interlinepenalty}%
   \ifsk@pping \egroup \sk@ppingfalse\fi% if we were skipping nonpublishable text, end that mode
   \ifhe@dings\endhe@dings\fi%
   \ifinn@te\MSG{lefttext called from inside footnote?!?}\fi
@@ -834,7 +834,7 @@
   \the\leftho@ks\relax\swapfonts{L}%
   \global\hsize=\columnLwidth\relax\global\holdinginserts=1}%
 
-\outer\def\righttext{\TRACEdiglot{righttext}\ifhe@dings\endhe@dings\fi
+\outer\def\righttext{\trace{S}{righttext}\ifhe@dings\endhe@dings\fi
   \global\savedpenalty=\lastpenalty\n@xtc@mmand\global\holdinginserts=1
   \par\penalty-10001
   \calc@vailht\global\digl@tLfalse\global\diglotRtrue\calc@vailht
