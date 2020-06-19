@@ -122,7 +122,7 @@ class ViewModel:
 
     def configName(self):
         cfgName = re.sub('[^-a-zA-Z0-9_()/: ]+', '', (self.get("ecb_savedConfig") or "")).strip(" ")
-        return cfgName
+        return cfgName or None
 
     def getBooks(self):
         bl = self.get("t_booklist", "").split()
@@ -269,7 +269,7 @@ class ViewModel:
 
     def readConfig(self, cfgname=None):
         if cfgname is None:
-            cfgname = self.configName()
+            cfgname = self.configName() or ""
         path = os.path.join(self.configPath(cfgname), "ptxprint.cfg")
         if not os.path.exists(path):
             return False
@@ -281,7 +281,7 @@ class ViewModel:
 
     def writeConfig(self, cfgname=None):
         if cfgname is None:
-            cfgname = self.configName()
+            cfgname = self.configName() or ""
         path = os.path.join(self.configPath(cfgname=cfgname, makePath=True), "ptxprint.cfg")
         config = self.createConfig()
         #print("Writing config: {}".format(path))
@@ -389,18 +389,19 @@ class ViewModel:
         _picposn = {"col":  ("tl", "tr", "bl", "br"),
                     "span": ("t", "b")}
         existingFilelist = []
+        xl = []
         snglCol = not self.get("c_doublecolumn")
         diglot = self.get("c_diglotAutoAligned")
         prjid = self.get("fcb_project")
         prjdir = os.path.join(self.settings_dir, self.prjid)
         for bk in booklist:
             fname = self.getBookFilename(bk, prjid)
-            outfname = os.path.join(self.configPath(), "PicLists", fname)
+            outfname = os.path.join(self.configPath(self.configName()), "PicLists", fname)
             doti = outfname.rfind(".")
             if doti > 0:
                 outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".piclist"
             if os.path.exists(outfname):
-                existingFilelist.append(outfname.split("/")[-1])
+                existingFilelist.append(re.split(r"\\|/",outfname)[-1])
         if len(existingFilelist):
             q1 = "One or more PicList file(s) already exist!"
             q2 = "\n".join(existingFilelist)+"\n\nDo you want to OVERWRITE the above-listed file(s)?"
@@ -410,7 +411,7 @@ class ViewModel:
             usedRefs = []
             fname = self.getBookFilename(bk, prjid)
             infname = os.path.join(prjdir, fname)
-            outfname = os.path.join(self.configPath(), "PicLists", fname)
+            outfname = os.path.join(self.configPath(self.configName()), "PicLists", fname)
             doti = outfname.rfind(".")
             if doti > 0:
                 outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".piclist"
@@ -421,6 +422,10 @@ class ViewModel:
             piclist.append("%   (See end of list for more help for troubleshooting)\n\n")
             with open(infname, "r", encoding="utf-8") as inf:
                 dat = inf.read()
+                # Look for verses with more than one \fig in them
+                x = re.findall(r"\\v .+?\\fig .+?\\fig\*(.(?!\\v ))+\\fig .+?\\fig\*",dat)
+                if len(x):
+                    xl.append(bk)
                 # Finds USFM2-styled markup in text:
                 # \v 15 <verse text> \fig |CN01684b.jpg|col|||key-kālk arsi manvan yēsunaga tarval|9:2\fig*
                 #     0     1    2             3         4  5 6          7                          8  
@@ -487,16 +492,20 @@ class ViewModel:
                     piclist.append("%      (iii) Verse Refs must match the text itself\n")
                     piclist.append("%      (iv) Verse Refs must be in logical ch.vs order \n")
                     piclist.append("%      (iv) The same reference cannot be used more than once\n")
-                    piclist.append("%             (2 pictures cannot be anchored to one verse )\n")
+                    piclist.append("%             (2 pictures cannot be anchored to the same verse)\n")
                     piclist.append("%   b) Does the illustration exist in 'figures' or 'local/Figures' or another specified folder?\n")
                     piclist.append("%   c) Position on Page for a 'span' image should only be 't'=top or 'b'=bottom\n")
                     piclist.append("% Other Notes:\n")
                     piclist.append("%   d) To (temporarily) remove an illustration prefix the line with % followed by a space\n")
                     piclist.append("%   e) To scale an image use this notation: span*.7  or  col*1.3)\n")
-                    plpath = os.path.join(self.configPath(), "PicLists")
+                    plpath = os.path.join(self.configPath(self.configName()), "PicLists")
                     os.makedirs(plpath, exist_ok=True)
                     with open(outfname, "w", encoding="utf-8") as outf:
                         outf.write("".join(piclist))
+        if len(xl):
+            self.doError("Multiple illustrations attached to a single verse", 
+                         secondary="One or more books ({}) have more than one figure attached to a single verse. ".format(", ".join(xl)) + \
+                                   "This isn't permitted with a PicList. So check the list(s) for missing illustrations.", title="PicList Warning!")
 
     def generateAdjList(self):
         existingFilelist = []
@@ -505,12 +514,12 @@ class ViewModel:
         prjdir = os.path.join(self.settings_dir, self.prjid)
         for bk in booklist:
             fname = self.getBookFilename(bk, prjid)
-            outfname = os.path.join(self.configPath(), "AdjLists", fname)
+            outfname = os.path.join(self.configPath(self.configName()), "AdjLists", fname)
             doti = outfname.rfind(".")
             if doti > 0:
                 outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".adj"
             if os.path.exists(outfname):
-                existingFilelist.append(outfname.split("/")[-1])
+                existingFilelist.append(re.split(r"\\|/",outfname)[-1])
         if len(existingFilelist):
             q1 = "One or more Paragraph Adjust file(s) already exist!"
             q2 = "\n".join(existingFilelist)+"\n\nDo you want to OVERWRITE the above-listed file(s)?"
@@ -519,7 +528,7 @@ class ViewModel:
         for bk in booklist:
             fname = self.getBookFilename(bk, prjid)
             infname = os.path.join(prjdir, fname)
-            outfname = os.path.join(self.configPath(), "AdjLists", fname)
+            outfname = os.path.join(self.configPath(self.configName()), "AdjLists", fname)
             doti = outfname.rfind(".")
             if doti > 0:
                 outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".adj"
@@ -533,12 +542,12 @@ class ViewModel:
                     prv = 0
                     ch = 1
                     for v in m:
-                        iv = int(re.sub(r"^(\d+)", "\1", v))
+                        iv = int(re.sub(r"^(\d+).*$", r"\1", v), 10)
                         if iv < prv:
                             ch = ch + 1
                         adjlist.append(bk+" "+str(ch)+"."+v+" +0\n")
                         prv = iv
-                    adjpath = os.path.join(self.configPath(), "AdjLists")
+                    adjpath = os.path.join(self.configPath(self.configName()), "AdjLists")
                     os.makedirs(adjpath, exist_ok=True)
                     with open(outfname, "w", encoding="utf-8") as outf:
                         outf.write("".join(adjlist))
