@@ -165,6 +165,7 @@
         \else\multiply\dimen0 by \sc@le
     \fi\fi\xdef\c@rrfontsize{\x@\strip@pt\the\dimen0}\fi}%
   \mcup\trace{s}{set c@rrfontsize for \mcstack\space is \c@rrfontsize}}
+\def\getmct@p{\def\d@##1+##2\E{##2}\mctop}
   
 \def\getFp@ram#1#2{%
   \def\d@##1+##2\E{\edef\tmp{##2}\edef\tmpa{#2}\ifx\tmp\tmpa\getmcp@ram{#1}\else\getp@ram{#1}{#2}\fi}%
