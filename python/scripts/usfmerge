@@ -31,17 +31,26 @@ def collect(root, acc, chap=0):
             label(pending, chap, c.args[0])
         collect(c, acc, chap=chap)
 
+def merge_stylesheet(base, extras):
+    for k, v in extras.items():
+        if k in base:
+            base[k].update(v)
+        else:
+            base[k] = v
+    return base
+
 parser = argparse.ArgumentParser()
 parser.add_argument("infilea", help="Main input file")
 parser.add_argument("infileb", help="Secondary input file")
 parser.add_argument("-o","--outfile",help="output file")
-parser.add_argument("-s","--stylesheet",help="add another stylesheet")
+parser.add_argument("-s","--stylesheet",default=[],action="append",help="add another stylesheet")
 args = parser.parse_args()
 
 stylesheet=usfm._load_cached_stylesheet('usfm.sty')
-#for s in args.stylesheet:
-#    sty = style.parse(open(s))
-#    stylesheet = usfm.extend_stylesheet(stylesheet, s)
+for s in args.stylesheet:
+    sty = style.parse(open(s))
+    merge_stylesheet(stylesheet, sty)
+    #stylesheet.update(sty) # = usfm.parser.extend_stylesheet(stylesheet, s)
 
 mainpars = []
 with open(args.infilea) as inf:
@@ -49,7 +58,7 @@ with open(args.infilea) as inf:
     collect(doc, mainpars)
 mainchunks = {c.ident: c for c in mainpars}
 label(pending, 0, 0)
-# print("; ".join("_".join(str(x) for x in p.ident) for p in allpars))
+print("IAFFM")
 
 secondpars = []
 with open(args.infileb) as inf:

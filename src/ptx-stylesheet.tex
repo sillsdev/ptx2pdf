@@ -320,7 +320,7 @@
     \fi
   \fi
   % set font size for \c
-  \edef\dr@psize{\expandafter\strip@pt\the\dropnumbersize}%
+  \edef\dr@psize{\strip@pt\dropnumbersize}%
   \def\m@rker{c}\defp@ram{fontsize}{\dr@psize}
   \ifdiglot%
   \resetdropc@p%Can't do this here since things get lowercased
@@ -336,7 +336,9 @@
   \x@\let\csname font<cL>\endcsname=\relax %
   \x@\let\csname font<cR>\endcsname=\relax %
 }
-{\catcode`P=12 \catcode`T=12 \lowercase{\gdef\strip@pt#1PT{#1}}}
+\let\E=\empty
+{\catcode`P=12 \catcode`T=12 \lowercase{\gdef\@strip@pt#1PT#2\E{#1} \xdef\@pt{PT}}}
+\def\strip@pt#1{\x@\x@\x@\@strip@pt\x@\the\x@ #1\@pt\E}
 \def\AfterVerseSpaceFactor{2}
 \newif\ifOmitChapterNumber
 \newif\ifc@ncelfirstverse

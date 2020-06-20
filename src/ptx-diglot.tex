@@ -55,7 +55,7 @@
 % from what the code to count callers does in ptx-callers.tex
 %Would be nice to re-use \\, but this might get called defining a font in footnotes, so shouldn't mess with that
 %Therefore use \wh@t instead.
-\def\E{}
+%\def\E{}
 \def\@rig{@orig}
 % These do the looping
 \def\pr@cessSp@cific#1,#2\E{\def\t@st{#1}\ifx\t@st\empty\let\n@xt\l@stSpecific\else\let\n@xt\pr@cessSp@cific\wh@t{#1}\fi\n@xt #2,\E}
