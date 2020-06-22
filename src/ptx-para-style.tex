@@ -42,24 +42,30 @@
 
 % start title/intro/body, if not already in that mode, switching columns if needed
 \def\st@rtintro{\TRACE{st@rtintro}\if@ntro\else
-  \ifnum\IntroColumns=\c@rrentcols\else
-    \ifnum\IntroColumns=2 \doublecolumns\else\singlecolumn\fi
+  \ifdiglot\else
+    \ifnum\IntroColumns=\c@rrentcols\else
+      \ifnum\IntroColumns=2 \doublecolumns\else\singlecolumn\fi
+    \fi
   \fi
   \global\@ntrotrue\global\t@tlefalse\global\b@dyfalse\fi}
 
 \def\st@rttitle{\TRACE{st@rttitle}\ift@tle\else
-  \ifnum\TitleColumns=\c@rrentcols\else
-    \ifnum\TitleColumns=2 \doublecolumns\else\singlecolumn\fi
+  \ifdiglot\else 
+    \ifnum\TitleColumns=\c@rrentcols\else
+      \ifnum\TitleColumns=2 \doublecolumns\else\singlecolumn\fi
+    \fi
   \fi
   \global\t@tletrue\global\@ntrofalse\global\b@dyfalse\fi}
 
 \def\st@rtbody{%\endhe@dings
   \ifb@dy\else\TRACE{st@rtbody}%
-  \ifnum\BodyColumns=\c@rrentcols
-    \penalty-200\vskip\baselineskip
-  \else
-    \ifdiglot\diglotcolumns\else
-    \ifnum\BodyColumns=2 \doublecolumns\else\singlecolumn\fi\fi
+  \ifdiglot\else
+    \ifnum\BodyColumns=\c@rrentcols
+      \penalty-200\vskip\baselineskip
+    \else
+      \ifdiglot\diglotcolumns\else
+      \ifnum\BodyColumns=2 \doublecolumns\else\singlecolumn\fi\fi
+    \fi
   \fi
   \global\b@dytrue\global\@ntrofalse\global\t@tlefalse\fi}
 

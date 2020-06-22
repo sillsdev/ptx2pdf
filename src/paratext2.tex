@@ -994,7 +994,7 @@
   % make a macro reset vsize for remaining pages which do not have 1 column material
   \gdef\resetvsize{\global\vsize=\textheight \global\advance\vsize by -\ht\partial \global\advance\vsize by 0.5\baselineskip} 
   \global\availht=\vsize
-  %\global\c@rrentcols=2
+  \global\c@rrentcols=2
   \global\output={\diglotLeft}
   % (\count of an insertion class is a scaling factor)
   \count255=1000
@@ -1106,7 +1106,7 @@
   \loop
     \x@\gdef\csname param-\the\p@ramnumber\endcsname{}%
     \global\advance\p@ramnumber by 1
-    \ifnum\p@ramnumber<8\repeat
+    \ifnum\p@ramnumber<9\repeat
   \global\p@ramnumber=1
   \loop
     \x@\getonep@ram\p@rams\end
