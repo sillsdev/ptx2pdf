@@ -1087,7 +1087,7 @@ class GtkViewModel(ViewModel):
                         patterns.append(r".+\.{}".format(extn))
                     patterns.append(r".+\-draft\....".format(extn))
                     patterns.append(r".+\.toc".format(extn))
-                    patterns.append(r"NestedStyles\.sty".format(extn))
+                    # patterns.append(r"NestedStyles\.sty".format(extn)) # To be updated as locn has changed (maybe no longer need to delete it)
                     patterns.append(r"ptxprint\-.+\.tex".format(extn))
                     # print(patterns)
                     for pattern in patterns:
@@ -1097,7 +1097,7 @@ class GtkViewModel(ViewModel):
                                     os.remove(os.path.join(dir, f))
                                 except OSError:
                                     self.doError("Warning: Could not delete temporary file.", secondary = "File: " + delfname)
-                    for p in ["tmpPics", "tmpPicLists", "PicLists", "AdjLists"]:
+                    for p in ["tmpPics", "tmpPicLists", "PicLists", "AdjLists"]: # The last 2 can be removed from the code before v1.0 is released.
                         path2del = os.path.join(dir, p)
                         # Make sure we're not deleting something closer to Root!
                         if len(path2del) > 30 and os.path.exists(path2del):
@@ -1408,14 +1408,16 @@ class GtkViewModel(ViewModel):
         self.editFile("PrintDraftChanges.txt", "prj")
 
     def onEditModsTeX(self, btn):
-        modfname = "ptxprint-mods.tex"
         self.prjid = self.get("fcb_project")
-        fpath = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint", modfname)
+        cfgname = self.printer.configName()
+        fpath = os.path.join(self.printer.configPath(cfgname), "ptxprint-mods.tex")
         if not os.path.exists(fpath):
             openfile = open(fpath,"w", encoding="utf-8")
             openfile.write("% This is the .tex file specific for the {} project used by PTXprint.\n".format(self.prjid))
+            if cfgname != "":
+                openfile.write("% Saved Configuration name: {}\n".format(cfgname))
             openfile.close()
-        self.editFile(modfname, "cfg")
+        self.editFile("ptxprint-mods.tex", "cfg")
 
     def onEditCustomSty(self, btn):
         self.editFile("custom.sty", "prj")

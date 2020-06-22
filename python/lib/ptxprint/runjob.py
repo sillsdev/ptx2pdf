@@ -96,6 +96,16 @@ _diglot = {
 "diglot/fontbolditaleng" :  "fontbolditalic/engine",
 "diglot/bolditalembolden" : "fontbolditalic/embolden",
 "diglot/boldital/slant" :   "fontbolditalic/slant",
+
+"diglot/ifomitallverses" :  "document/ifomitallverses",
+"diglot/includefootnotes" : "notes/includefootnotes",
+"diglot/fnfontsize" :       "notes/fnfontsize",
+"diglot/fnlinespacing" :    "notes/fnlinespacing",
+"diglot/includexrefs" :     "notes/includexrefs",
+"diglot/ifblendfnxr" :      "notes/ifblendfnxr",
+"" : "",
+"" : "",
+
 }
 
 class RunJob:
@@ -116,6 +126,8 @@ class RunJob:
         if self.prjid is None or not len(self.prjid):     # can't print no project
             return
         self.tempFiles += info.generateNestedStyles()
+        if info["document/ifaligndiglot"] = "":
+            self.tempFiles += info.generateNestedStylesR()
         self.tmpdir = os.path.join(self.prjdir, 'PrintDraft') if info.asBool("project/useprintdraftfolder") else self.args.directory
         os.makedirs(self.tmpdir, exist_ok=True)
         jobs = self.printer.getBooks()
@@ -744,12 +756,12 @@ class RunJob:
 
     def removeTempFiles(self, texfiles):
         notDeleted = []
-        n = os.path.join(self.tmpdir, "NestedStyles.sty")
-        if os.path.exists(n):
-            try:
-                os.remove(n)
-            except:
-                notDeleted += [n]
+        # n = os.path.join(self.tmpdir, "NestedStyles.sty")
+        # if os.path.exists(n):
+            # try:
+                # os.remove(n)
+            # except:
+                # notDeleted += [n]
         for extn in ('delayed','parlocs','notepages', 'tex', 'log'):
             for t in set(texfiles):
                 delfname = os.path.join(self.tmpdir, t.replace(".tex", "."+extn))
