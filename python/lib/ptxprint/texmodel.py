@@ -595,8 +595,9 @@ class TexModel:
         printer = self.printer
         self.makelocalChanges(printer, bk)
         customsty = os.path.join(prjdir, 'custom.sty')
-        if not os.path.exists(customsty):
-            open(customsty, "w").close()
+        if not os.path.exists(customsty) and self.dict["project/ifusecustomsty"] == "":
+            self.dict["project/ifusecustomsty"] = "%"
+            # open(customsty, "w").close()
         fbkfm = self.ptsettings['FileNameBookNameForm']
         fprfx = self.ptsettings['FileNamePrePart'] or ""
         fpost = self.ptsettings['FileNamePostPart'] or ""
