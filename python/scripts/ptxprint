@@ -27,6 +27,7 @@ parser.add_argument('-T','--testing',action='store_true',help="Run in testing, o
 parser.add_argument('-f','--fontpath',action='append',help="Directory of fonts to include (repeatable)")
 parser.add_argument('--nofontcache',action="store_true",help="Don't use system fonts")
 parser.add_argument('-S','--splash',action="store_true",help="Force splash screen")
+parser.add_argument('--useusfmerge',action="store_true",help="Use a different kind of merge for diglot")
 # parser.add_argument('-t','--test', action='store_true',help="Quick start for a lazy typist")
 args = parser.parse_args()
 

@@ -146,7 +146,8 @@
   % currently we do not allow footnotes to break to the next page, so this may not be necessary
 %  \splittopskip\ht\f@@tstrut % top baseline for broken footnotes
 %  \splitmaxdepth\dp\f@@tstrut
-  \getp@ram{fontsize}{#2}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%
+  \mcpush{N+#2}%
+  %\getp@ram{fontsize}{#2}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%
   \s@tfont{#2}%
   \futurelet\next\fo@t}% use plain.tex footnote processor
 
@@ -174,7 +175,9 @@
   \copy\f@@tstrut}
 
 \def\@foot{\ifp@ranotes \parfillskip=0pt \else\strut\fi
-  \par\egroup\ifRTL\endR\fi}
+  \par\egroup\ifRTL\endR\fi\end@llcharstyles
+  \def\d@##1+##2\E{\if ##1N\else\MSG{Bad marker ##2\space but expected a closing note marker}\fi}\mctop
+  \mcpop}
 \newbox\f@@tstrut
 \def\n@teglue{2em plus 1em minus .5em\relax} % glue to be used between paragraphed notes
 
@@ -385,7 +388,8 @@
 
 \def\pagebody{\vbox to\textheight{\boxmaxdepth\maxdepth \pagecontents}}
 \def\makeheadline{%
-  \def\f@ntstyle{h\ifdiglot\ifdiglotL L\else R\fi\fi}
+  \g@tfontname{h}%
+  %\def\f@ntstyle{h\ifdiglot\ifdiglotL L\else R\fi\fi}
   \vbox to 0pt{\kern-\topm@rgin
    \vbox{\kern\HeaderPosition\MarginUnit
     \setbox0=\vbox{\hbox to \textwidth{\the\headline}}
@@ -1038,7 +1042,7 @@
     \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
     \ifdim\ht\partial>\baselineskip \vbox{\unvbox\partial} \fi
     \ifendbooknoeject\ifx\p@gefirstmark\t@tle \else\vskip\baselineskip\hskip-\columnshift\hrule\vskip2\baselineskip\fi\fi%
-  \fi\tracingmacros=0}%
+  \fi}%
 
 \count\topins=1000 \dimen\topins=\maxdimen \skip\topins=0pt
 \newinsert\bottomins \count\bottomins=1000 \dimen\bottomins=\maxdimen

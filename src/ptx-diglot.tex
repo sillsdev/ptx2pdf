@@ -55,7 +55,7 @@
 % from what the code to count callers does in ptx-callers.tex
 %Would be nice to re-use \\, but this might get called defining a font in footnotes, so shouldn't mess with that
 %Therefore use \wh@t instead.
-\def\E{}
+%\def\E{}
 \def\@rig{@orig}
 % These do the looping
 \def\pr@cessSp@cific#1,#2\E{\def\t@st{#1}\ifx\t@st\empty\let\n@xt\l@stSpecific\else\let\n@xt\pr@cessSp@cific\wh@t{#1}\fi\n@xt #2,\E}
@@ -64,15 +64,35 @@
 \def\pr@cessSpecificDef{\edef\LRs{\LRspecificDef}\x@\pr@cessSp@cific \LRs,\E}
 \def\pr@cessSpecificDim{\edef\LRs{\LRspecificDim}\x@\pr@cessSp@cific \LRs,\E}
 
-%
 % These are the things that might get called by the loop.
-\def\sp@cificSideDef#1{\ifcsname #1\sfx\endcsname\x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname\trace{S}{SpS: #1\sfx\space selected}\else\ifcsname #1\@rig\endcsname\x@\let\csname#1\x@\endcsname\csname #1\@rig\endcsname\trace{S}{SpS: #1 returned to original}\else\trace{S}{SpS: #1 unmodified}\fi\fi}% If theres a side-specific version, switch to it. If there's no side-specific verision, switch to the \original version, if that exists.
-\def\sp@cificSideDim#1{\x@\ifdim\csname #1\sfx\endcsname>0sp\x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname\trace{S}{SpS: #1\sfx\space selected}\else\ifcsname #1\@rig\endcsname\x@\let\csname#1\x@\endcsname\csname #1\@rig\endcsname\trace{S}{SpS: #1 returned to original}\else\trace{S}{SpS: #1 unmodified}\fi\fi}% If theres a side-specific version and its >0sp, switch to it. If there's no side-specific verision, switch to the \original version, if that exists.
-\def\s@veSpecificOrig#1{\ifcsname #1\endcsname \x@\let\csname #1\@rig\x@\endcsname\csname #1\endcsname\ch@ckLR{#1}{L}\ch@ckLR{#1}{R}\else\MSG{No global definition for #1}\fi} % If the item exists, save its current value. 
-\def\ch@ckLR#1#2{\ifcsname#1#2\endcsname\else\x@\let\csname #1#2\x@\endcsname\csname #1\@rig\endcsname  \ifdiglot\MSG{Side-specific #1#2 not defined, global #1 will be used}\fi\fi}% Helper function
-\def\s@veSpecificSide#1{\ifcsname #1\endcsname \x@\let\csname #1\sfx\x@\endcsname\csname #1\endcsname\fi} % If the item exists, save its current value. 
-\def\sh@wSpecificDef#1{\ifcsname #1\sfx\endcsname\trace{S}{#1\sfx: \csname #1\sfx\endcsname}\else\trace{S}{#1\sfx: undefined}\fi} % Output routine for normal things.
-\def\sh@wSpecificDim#1{\ifcsname #1\sfx\endcsname\trace{S}{#1\sfx: \the\csname #1\sfx\endcsname}\else\trace{S}{#1\sfx: undefined}\fi}% Output routine for  dimensions
+
+% If theres a side-specific version, switch to it. If there's no side-specific verision, 
+% switch to the \original version, if that exists.
+\def\sp@cificSideDef#1{\ifcsname #1\sfx\endcsname\x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname
+  \trace{S}{SpS: #1\sfx\space selected}\else
+  \ifcsname #1\@rig\endcsname\x@\let\csname#1\x@\endcsname\csname #1\@rig\endcsname
+    \trace{S}{SpS: #1 returned to original}\else\trace{S}{SpS: #1 unmodified}\fi\fi}
+
+% If theres a side-specific version and its >0sp, switch to it. If there's no side-specific verision,
+% switch to the \original version, if that exists.
+\def\sp@cificSideDim#1{\x@\ifdim\csname #1\sfx\endcsname>0sp\x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname
+  \trace{S}{SpS: #1\sfx\space selected}\else
+  \ifcsname #1\@rig\endcsname\x@\let\csname#1\x@\endcsname\csname #1\@rig\endcsname
+    \trace{S}{SpS: #1 returned to original}\else\trace{S}{SpS: #1 unmodified}\fi\fi}
+
+\def\s@veSpecificOrig#1{\ifcsname #1\endcsname \x@\let\csname #1\@rig\x@\endcsname\csname #1\endcsname
+  \ch@ckLR{#1}{L}\ch@ckLR{#1}{R}\else\MSG{No global definition for #1}\fi} % If the item exists, save its current value. 
+\def\ch@ckLR#1#2{\ifcsname#1#2\endcsname\else\x@\let\csname #1#2\x@\endcsname\csname #1\@rig\endcsname
+  \ifdiglot\MSG{Side-specific #1#2 not defined, global #1 will be used}\fi\fi}% Helper function
+
+% If the item exists, save its current value. 
+\def\s@veSpecificSide#1{\ifcsname #1\endcsname \x@\let\csname #1\sfx\x@\endcsname\csname #1\endcsname\fi}
+% Output routine for normal things.
+\def\sh@wSpecificDef#1{\ifcsname #1\sfx\endcsname\trace{S}{#1\sfx: \csname #1\sfx\endcsname}\else
+  \trace{S}{#1\sfx: undefined}\fi}
+% Output routine for  dimensions
+\def\sh@wSpecificDim#1{\ifcsname #1\sfx\endcsname\trace{S}{#1\sfx: \the\csname #1\sfx\endcsname}\else
+  \trace{S}{#1\sfx: undefined}\fi}
 %
 % And these are the interface functions. They should all set \sfx  to L, R or \@rig
 %
@@ -171,7 +191,9 @@
 \newif\ifearlyLrefill % In some circumstances partialL is empty deliberatly, other times it isn't
 \repeatoktrue
 
-\newcount\savedpenalty% The \lastpenalty before a \lefttext or \righttext issues a fake one, or similarly penalty to apply at end of trial text, and scratch space
+% The \lastpenalty before a \lefttext or \righttext issues a fake one,
+% or similarly penalty to apply at end of trial text, and scratch space
+\newcount\savedpenalty
 \newcount\tmppenalty%scratchspace
 \newcount\Lchunkpenalty% The penalty that should be applied at the end of the L text, according to the first output routine
 \newcount\Lboxpenalty% The penalty that goes between LeftBox and partialL
@@ -195,7 +217,8 @@
  % assumes: \availht is correct, \ifleftfull set false on page output
  % Fills: \partialL, \excessL
  % Empties: \box255
- \TRACEdiglot{diglotLeft O:\the\outputpenalty, P:\the\savedpenalty, LP:\the\lastsavedLpenalty, vs:\the\vsize, pg:\the\pagegoal, pt:\the\pagetotal, bs:\the\baselineskip, ilp:\the\interlinepenalty }%
+ \TRACEdiglot{diglotLeft O:\the\outputpenalty, P:\the\savedpenalty, LP:\the\lastsavedLpenalty, vs:\the\vsize,
+    pg:\the\pagegoal, pt:\the\pagetotal, bs:\the\baselineskip, ilp:\the\interlinepenalty }%
  \runLtrialfalse%
  \makevtop{255}%
  \tmppenalty=\outputpenalty %
@@ -228,7 +251,8 @@
    \tmppenalty=\lastsavedLpenalty\ifnum\lastsavedRpenalty>\tmppenalty \tmppenalty=\lastsavedRpenalty \fi%
    %\bgroup%
    \dimen0=\availht %
-   \dimen1=0pt % Use ifnastybox as a flag that the box should be split to dimen1, unless it stays 0pt in which case pass it on to the next page
+   % Use ifnastybox as a flag that the box should be split to dimen1, unless it stays 0pt in which case pass it on to the next page
+   \dimen1=0pt
    \ifnum\partialLpenalty=10000 %This place must not be the last on the page. How nasty is that?
      \TRACEdiglot{Checking what to do with this box}
      \advance\dimen0 by -\ht\partialL %
@@ -296,7 +320,8 @@
      \ifdim\dimen0>-0.3\baselineskip %Tiny overshoot
        \advance\dimen1 by \baselineskip %ignore it.
      \else
-       \TRACEdiglot{Oversized box \the\ht\partialL+\the\dp\partialL, resizing to \the\dimen1, (\the\dimen0) somewhere near \the\inputlineno, \botmark}
+       \TRACEdiglot{Oversized box \the\ht\partialL+\the\dp\partialL, resizing to \the\dimen1, (\the\dimen0)
+         somewhere near \the\inputlineno, \botmark}
      \fi
    \fi
  \fi
@@ -331,13 +356,15 @@
          \global\partialLpenalty=0
      \else %The whole lot got left in partialL- potential problem
          \ifnum\tmppenalty>9999 % honour the penalty, pay the price...
-           \TRACEdiglot{No material split off, but must leave box on page. \the\ht0+\the\dp0, \the\ht\partialL+\the\dp\partialL, \the\ht\excessL+\the\dp\excessL}%
+           \TRACEdiglot{No material split off, but must leave box on page. \the\ht0+\the\dp0, \the\ht\partialL+\the\dp\partialL,
+             \the\ht\excessL+\the\dp\excessL}%
            %\showbox\partialL%
            \global\setbox\partialL=\vtop{\unvbox\partialL}
            \global\partialLpenalty=0
            \global\runLtrialtrue%
          \else
-           \TRACEdiglot{No material split off. Leaving box unchanged and pushing onward (\the\ht0+\the\dp0, \the\ht\partialL+\the\dp\partialL, \the\ht\excessL+\the\dp\excessL.. \the\tmppenalty)}%
+           \TRACEdiglot{No material split off. Leaving box unchanged and pushing onward (\the\ht0+\the\dp0,
+             \the\ht\partialL+\the\dp\partialL, \the\ht\excessL+\the\dp\excessL.. \the\tmppenalty)}%
            \global\setbox\partialL=\vtop{\unvbox\partialL}
            %\makevtop{\partialL}%
            \global\runLtrialfalse% Don't add this box
@@ -406,8 +433,11 @@
 % shrink vsize and try again.
 % \LeftBox and \partialL are empty
   \TRACEdiglot{diglotLeftTrial, \the\holdinginserts, Op:\the\outputpenalty,
-  LP:\the\lastsavedLpenalty, LBP:\the\Lboxpenalty, PLP:\the\partialLpenalty,  DCyc:\the\deadcycles, LB:\the\ht\LeftBox+\the\dp\LeftBox, av:\the\availht, vs:\the\vsize, pg:\the\pagegoal}%
-  \makevtop{255}% NB: If box255 does need to go through makevtop, then when the box is unzipped to try again, the kerns would need removing somehow.
+    LP:\the\lastsavedLpenalty, LBP:\the\Lboxpenalty, PLP:\the\partialLpenalty,  DCyc:\the\deadcycles,
+    LB:\the\ht\LeftBox+\the\dp\LeftBox, av:\the\availht, vs:\the\vsize, pg:\the\pagegoal}%
+  % NB: If box255 does need to go through makevtop, then when the box is unzipped to try again,
+  % the kerns would need removing somehow.
+  \makevtop{255}
   \global\setbox\LeftBox=\vtop{\unvbox 255}
   \tmppenalty=\outputpenalty %
   \ifnum\tmppenalty=10000 %
@@ -622,7 +652,8 @@
 %If material (e.g. due to footnotes) is too big for page, shrink vsize and try again.
 % if not all material was set, hold stuff in \partialR and use \diglotRightExtra to put that into \excessR
   \TRACEdiglot{diglotRightTrial, \the\holdinginserts, \the\outputpenalty, 
-  \the\deadcycles, Rb:\the\ht\RIghtBox+\the\dp\RIghtBox, pR:\the\ht\partialR+\the\dp\partialR, av:\the\availht, vs:\the\vsize, pg:\the\pagegoal}%
+    \the\deadcycles, Rb:\the\ht\RIghtBox+\the\dp\RIghtBox, pR:\the\ht\partialR+\the\dp\partialR,
+    av:\the\availht, vs:\the\vsize, pg:\the\pagegoal}%
  \makevtop{255}%
  %\global\setbox\RightBox=\box255
  %\TRshipout{\vbox{\hbox{\the\diglotTRcount diglotRightTrial:}\copy\RightBox}}%
@@ -671,7 +702,8 @@
   %   Box255 holds new data
   %\tmppenalty contains the penalty that goes after box255
   % need to stop holding inserts
-  \TRACEdiglot{doDiglotRightTrial RB:\the\ht\RightBox+\the\dp\RightBox, pR:(\the\ht\partialR+\the\dp\partialR) 255:(\the\ht255+\the\dp255)}%
+  \TRACEdiglot{doDiglotRightTrial RB:\the\ht\RightBox+\the\dp\RightBox, pR:(\the\ht\partialR+\the\dp\partialR)
+    255:(\the\ht255+\the\dp255)}%
   \ifdiglotL%Save current state
     \global\digl@tLtrue%
     \global\diglotLfalse%
@@ -779,7 +811,7 @@
 %
 % Change which side we're adding to
 \outer\def\lefttext{%
-  \TRACEdiglot{lefttext ilp=\the\interlinepenalty}%
+  \trace{S}{lefttext ilp=\the\interlinepenalty}%
   \ifsk@pping \egroup \sk@ppingfalse\fi% if we were skipping nonpublishable text, end that mode
   \ifhe@dings\endhe@dings\fi%
   \ifinn@te\MSG{lefttext called from inside footnote?!?}\fi
@@ -803,14 +835,26 @@
   \the\leftho@ks\relax\swapfonts{L}%
   \global\hsize=\columnLwidth\relax\global\holdinginserts=1}%
 
-\outer\def\righttext{\TRACEdiglot{righttext}\ifhe@dings\endhe@dings\fi\global\savedpenalty=\lastpenalty\n@xtc@mmand\global\holdinginserts=1\par\penalty-10001\relax\calc@vailht\global\digl@tLfalse\global\diglotRtrue\calc@vailht\global\vsize=\availht\relax\output={\diglotRight}\the\rightho@ks\relax\swapfonts{R}\global\hsize=\columnRwidth\relax\global\holdinginserts=0}%
+\outer\def\righttext{\trace{S}{righttext}\ifhe@dings\endhe@dings\fi
+  \global\savedpenalty=\lastpenalty\n@xtc@mmand\global\holdinginserts=1
+  \par\penalty-10001
+  \calc@vailht\global\digl@tLfalse\global\diglotRtrue\calc@vailht
+  \global\vsize=\availht\relax\output={\diglotRight}\the\rightho@ks\relax\swapfonts{R}%
+  \global\hsize=\columnRwidth\relax\global\holdinginserts=0}
 %
 % When there's a header on the left but not the right, but we want the verses
 % to line up nicely...
-\def\norighttext{\global\savedpenalty=\lastpenalty\relax\TRACEdiglot{norighttext}\Lneedsemptyingtrue\par\penalty-10001\relax\global\diglotLtrue\global\digl@tLtrue\Lchunkpenalty=0\relax\setboth\output={\diglotLeft}\global\hsize=\columnLwidth\relax\global\holdinginserts=1}%
+\def\norighttext{\global\savedpenalty=\lastpenalty\relax\TRACEdiglot{norighttext}\Lneedsemptyingtrue
+  \par\penalty-10001
+  \global\diglotLtrue\global\digl@tLtrue\Lchunkpenalty=0\relax\setboth\output={\diglotLeft}%
+  \global\hsize=\columnLwidth\relax\global\holdinginserts=1}
 
 %Similarly when there's no left text, copying \righttext seems OK ...
-\def\nolefttext{\TRACEdiglot{nolefttext}\global\savedpenalty=\lastpenalty\n@xtc@mmand\par\penalty-10001\relax\global\diglotLtrue\calc@vailht\global\digl@tLfalse\global\diglotRtrue\calc@vailht\global\vsize=\availht\output={\diglotRight}\swapfonts{R}\global\hsize=\columnRwidth\relax\global\holdinginserts=0}%
+\def\nolefttext{\TRACEdiglot{nolefttext}\global\savedpenalty=\lastpenalty\n@xtc@mmand
+  \par\penalty-10001
+  \global\diglotLtrue\calc@vailht\global\digl@tLfalse\global\diglotRtrue\calc@vailht
+  \global\vsize=\availht\output={\diglotRight}\swapfonts{R}%
+  \global\hsize=\columnRwidth\relax\global\holdinginserts=0}
 
 \def\pagenumberL{\bgroup\diglotLtrue\s@tfont{h}\pagenumber\egroup}
 \def\pagenumberR{\bgroup\diglotLfalse\s@tfont{h}\pagenumber\egroup}
@@ -882,7 +926,8 @@
   %\partialL may have extra material in it, which hasn't been footnoted. 
   %\RightBox needs to be filled from partialR.
   %\Rchunkpenalty et al. correctly  set by caller
-  \TRACEdiglot{setboth \the\outputpenalty, \the\savedpenalty, \the\Rchunkpenalty,  \the\Rboxpenalty diglotL\ifdiglotL true\else false\fi}%
+  \TRACEdiglot{setboth \the\outputpenalty, \the\savedpenalty, \the\Rchunkpenalty,  \the\Rboxpenalty
+    diglotL\ifdiglotL true\else false\fi}%
   \calc@vailht
   \global\splittopskip=\baselineskip
   \global\topskip=\baselineskip
@@ -909,7 +954,9 @@
   \ifnum\outputpenalty=-10005 %
     \repeatpermittedtrue%
   \fi%
-  \ifnum\partialRpenalty = 10000 %Box is probably a title or similar - never OK to refill here FIXME why not refil? Not ok to break, yes, but wy not refil?
+  % Box is probably a title or similar - never OK to refill here
+  % FIXME why not refil? Not ok to break, yes, but wy not refil?
+  \ifnum\partialRpenalty = 10000
     \redocolokfalse%
   \fi%
   % Don't allow unvboxing the right column if we're in left column modeǃ
@@ -935,7 +982,8 @@
   \fi%
   \ifnum\partialRpenalty=10000\relax% Can't break page here
     \checkn@sty{\availhtL}{\Lht}%
-    \TRACEdiglot{Checking what to do with this box (\the\ht\partialR+\the\dp\partialR) av:\the\availhtR, aL:\the\availhtL, \the\Lht, ->\the\TempDim}%
+    \TRACEdiglot{Checking what to do with this box (\the\ht\partialR+\the\dp\partialR) av:\the\availhtR,
+      aL:\the\availhtL, \the\Lht, ->\the\TempDim}%
     \checkn@sty{\availhtL}{\Lht}%
     \checkn@sty{\availhtR}{\Rht}%
     \ifdim\TempDim<\Rht %split required
@@ -996,9 +1044,11 @@
     \fi
     \TempDim=\availhtR %
     \advance\TempDim by -\Rht
-    \TRACEdiglot{pL:(\the\ht\partialL+\the\dp\partialL) lb:(\the\ht\LeftBox+\the\dp\LeftBox) p:(\the\ht\partial+\the\dp\partial) rb:(\the\ht\RightBox+\the\dp\RightBox) aR:(\the\availhtR) aL:(\the\availhtL)}%
+    \TRACEdiglot{pL:(\the\ht\partialL+\the\dp\partialL) lb:(\the\ht\LeftBox+\the\dp\LeftBox)
+      p:(\the\ht\partial+\the\dp\partial) rb:(\the\ht\RightBox+\the\dp\RightBox) aR:(\the\availhtR) aL:(\the\availhtL)}%
     % It might be possible (look good?) to steal extra space for right if left has overshot, if that's only a little
-    \ifdim\availhtL<0pt\ifdim\availhtL>-1\baselineskip\TRACEdiglot{Left overshot by \the\availhtL, allowing right to also}\advance\TempDim by -\availhtL\fi\fi%
+    \ifdim\availhtL<0pt\ifdim\availhtL>-1
+      \baselineskip\TRACEdiglot{Left overshot by \the\availhtL, allowing right to also}\advance\TempDim by -\availhtL\fi\fi%
     \ifdim\TempDim<-0.3\baselineskip % Is a split required? Allow a little extra for descenders 
       \TRACEdiglot{Splitting right to \the\availhtR}%
       \ifnum\Rboxpenalty=0 \Rboxpenalty=5000 \fi%
@@ -1101,7 +1151,8 @@
   \fi %TempDim 
   %NB: Code added here gets run during trials too.
   \ifintrial\else\ifLneedsemptying%
-    \TRACEdiglot{more to empty  lb:(\the\ht\LeftBox+\the\dp\LeftBox) pL:(\the\ht\partialL+\the\dp\partialL) eL:(\the\ht\excessL+\the\dp\excessL) pR:(\the\ht\partialR+\the\dp\partialR)}%\setboth%
+    \TRACEdiglot{more to empty  lb:(\the\ht\LeftBox+\the\dp\LeftBox) pL:(\the\ht\partialL+\the\dp\partialL)
+      eL:(\the\ht\excessL+\the\dp\excessL) pR:(\the\ht\partialR+\the\dp\partialR)}%\setboth%
    \setboth%
   \fi\fi%
 }
@@ -1495,7 +1546,9 @@
      \vskip\skip\bottomins \unvbox\bottomins \fi%
    \ifdiglotSepNotes%
    \else%
-     \ifdiglot\RTLfalse\fi %RTLness will have been asserted (or not) when the note was defined. If the righttext side is RTL, leaving it true now will make a any LTR text also RTL.
+     % RTLness will have been asserted (or not) when the note was defined.
+     % If the righttext side is RTL, leaving it true now will make a any LTR text also RTL.
+     \ifdiglot\RTLfalse\fi
      \TRACEdiglot{Inserting Notes}%
      \f@rstnotetrue%
      \m@kenotebox

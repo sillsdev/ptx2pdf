@@ -1,0 +1,86 @@
+﻿#===========================================================================================
+# ENGLISH (CURLY) QUOTATION SYSTEM--REMOVE COMMENTS TO ACTIVATE ENGLISH QUOTATION PROCESSING
+#===========================================================================================
+
+#      CONVERT ANGLED QUOTES TO ENGLISH (CURLY) QUOTES
+#      -------------------------------------------------------------------------------
+   '<< *<'               >    '\u201c \u2018' # Use nested open double and single curly quotes
+                                                   #   (non-breaking thin space between)
+   '<<'                  >    '\u201c'             # Use double open curly quotes
+   '<'                   >    '\u2018'             # Use single open curly quotes 
+   '> *>>'               >    '\u2019 \u201d' # Use nested close double and single curly quotes
+                                                   #   (non-breaking thin space between)
+   '>>'                  >    '\u201d'             # Use double close curly quotes
+   '>'                   >    '\u2019'             # Use single close curly quotes
+
+#      CONVERT STANDARD ASCII QUOTES TO ENGLISH (CURLY) QUOTES
+#      -------------------------------------------------------------------------------
+#   "``"                  >    '\u201c'          # use double open  curly quotes
+#   "`"                   >    '\u2018'          # use single open  curly quotes
+#   '"'                   >    '\u201d'          # use double close curly quotes
+#   "''"                  >    '\u201d'          # use double close curly quotes
+#   "'"                   >    '\u2019'          # use double close curly quotes
+
+#     REPLACE NORMAL SPACES BETWEEN NESTED QUOTES WITH THIN SPACES
+#     OR INSERT A THIN SPACE IF THE NORMAL SPACE IS MISSING
+#     -------------------------------------------------------------------------------
+#   '(\u201c) *(\u2018)'  >    '\1\u2009\2'     # Place non-breaking thin space between
+#   '(\u2018) *(\u201c)'  >    '\1\u2009\2'     #   nested open quote marks
+#   '(\u2019) *(\u201d)'  >    '\1\u2009\2'     # Place non-breaking thin space between
+#   '(\u201d) *(\u2019)'  >    '\1\u2009\2'     #   nested close quote marks
+
+#     SWAP 200C and 200D because XeTeX is using them in the opposite way to Uniscribe
+#  This "hack" was needed with the OLD XeTeX which used ICU, but is no longer needed with 
+#  the new XeTeX which uses HarfBuzz. (so it has been commented out)
+#     -------------------------------------------------------------------------------
+# '\u0C4D\u200D'  >  '\u6543'                     #   halant+ZWJ   >  XYZ
+# '\u0C4D\u200C'  >  '\u0C4D\u200D'               #   halant+ZWNJ  >  halant+ZWJ
+# '\u6543'        >  '\u0C4D\u200C'               #            XYZ >  halant+ZWNJ
+
+#  TEMPORARY fix - because the Telugu fonts don't have thin space,
+#  we're just putting a Zero-Width No Break Space between nested quotes.
+'(\u201c)[ \u2009\u200A\u202F]*(\u2018)'  >    '\1\uFEFF\2'     # Place Zero-width non-breaking space between
+'(\u2018)[ \u2009\u200A\u202F]*(\u201c)'  >    '\1\uFEFF\2'     #   nested open quote marks
+'(\u2019)[ \u2009\u200A\u202F]*(\u201d)'  >    '\1\uFEFF\2'     # Place Zero-width non-breaking between
+'(\u201d)[ \u2009\u200A\u202F]*(\u2019)'  >    '\1\uFEFF\2'     #   nested close quote marks
+
+'\u00AB'    >   '\u2018'          # use single open  curly quotes for unspoken words «
+'\u00BB'    >   '\u2019'          # use single close curly quotes for unspoken words »
+
+#   Drop the references for the Figure Captions
+#  in "\\fig .*?\\fig\*": "\d+\:\d+(\-\d+)?" > ""
+#    "(\\fig .*?)(\d+\:\d+(\-\d+)?)(.*?\\fig\*)" > "\1\4"
+
+#   Drop the glossary words
+#	in "\\w .+?\\w\*": "\|.+?\\w\*" > "\w*"
+	
+# Temporary hack!
+#	'\u202F'	> ''  # delete thin space
+
+#	Ensure re-duplicated words come together (with a NBSP between them)
+#	"(?<=[ ])(\S\S\S+)[- ]*\1(?=[\s,.!?])" > "\1\u00A0\1"
+
+	#	Add a colon after quoted text, before the \ft begins, or \xt begins.
+#	"(\\[fx]q .+?):* (\\[fx]t)" > "\1: \2"
+
+    #   Add a :- to glossary entries
+#    "(\\p \\k [^\\]+?\\k\*) " > "\1: "
+
+#	Ensure "those who" and "he who" are kept together in Gondi with a NBSP
+#	"ur vur"                                           > "ur\u00A0vūr"
+	"(\u0C4A\u0C30\u0C4D) (\u0C35\u0C4B\u0C30\u0C4D)"  > "\1\u00A0\2"
+#	"or vor"                                           > "or\u00A0vōr"
+	"(\u0C41\u0C30\u0C4D) (\u0C35\u0C42\u0C30\u0C4D)"  > "\1\u00A0\2"
+
+# Temporary fix so that the special Intro Outline table doesn't break
+# '\\io2 ' > '\\io1 '
+# '\\io2 ' > '\\io1 \u00A0\u00A0\u00A0\u00A0'
+
+# Beginning of customized TOC
+# in '\\iot .+?\r\n': '\r\n' > '\r\n\iotable\r\n\makedigitsother\r\n\catcode`{=1\r\n\catcode`}=2\r\n\makedigitsother\r\n\catcode`{=1\r\n\catcode`}=2'
+# '\\io1 ' > '\iotableleader{'
+# ' \\ior ' > '}{'
+# '\\ior\*'  > '}'
+# ' \\ior\*'  > '}'
+# This next rule makes an assumption that the \io1 lines always finish right before \c 1  [This should be true, but...?]
+# '\\c 1\r\n' > '\catcode`{=11 \catcode`}=11\r\n\makedigitsletters\r\n\c 1\r\n'

@@ -1,0 +1,66 @@
+﻿<ScriptureText>
+  <StyleSheet>usfm.sty</StyleSheet>
+  <BooksPresent>111111111111111111111111111111111111111111111111111111111111111111000000000000000000000000001111111111000010111000000000000</BooksPresent>
+  <LanguageIsoCode>wsg:Deva::</LanguageIsoCode>
+  <Language>Adilabad Gondi DEV</Language>
+  <MinParatextVersion>8.0.63.1</MinParatextVersion>
+  <FullName>WSG Adilabad Gondi DEV (Telangana, India)</FullName>
+  <Encoding>65001</Encoding>
+  <Editable>F</Editable>
+  <Copyright>(C) 2010-2018 SIL SAG CIC WSG Team</Copyright>
+  <Name>WSGdev</Name>
+  <Guid>e1f4dda73ae2904ca3e480a4b49b5756f6bd89f3</Guid>
+  <AssociatedLexicalProject />
+  <FileNameBookNameForm>41MAT</FileNameBookNameForm>
+  <FileNamePrePart />
+  <FileNamePostPart>WSGdev.SFM</FileNamePostPart>
+  <NormalizationForm>NFC</NormalizationForm>
+  <BiblicalTermsListSetting>Project:WSGdev:ProjectBiblicalTerms.xml</BiblicalTermsListSetting>
+  <MatchBasedOnStems>F</MatchBasedOnStems>
+  <AllowReadAccess>F</AllowReadAccess>
+  <AllowSharingWithSLDR>T</AllowSharingWithSLDR>
+  <Visibility>Public</Visibility>
+  <TranslationInfo>TransliterationWithEncoder:WSGng:009173cec5b190db0bc60c4f518658eb52aae9ec</TranslationInfo>
+  <EncodingConverter>TEL2DEVwithTweaks(Paratext)</EncodingConverter>
+  <DefaultFont>Annapurna SIL</DefaultFont>
+  <DefaultFontSize>12</DefaultFontSize>
+  <FontFeatures />
+  <HtmlLanguage />
+  <NumberDecimalPoint>.</NumberDecimalPoint>
+  <NumberThousandsSeparator>,</NumberThousandsSeparator>
+  <NumberOrdinals>वा</NumberOrdinals>
+  <NumberInitialPunctuation>+"({</NumberInitialPunctuation>
+  <NumberFinalPunctuation>)}"&gt;.!?:,;</NumberFinalPunctuation>
+  <NumberMedialPunctuation>/–</NumberMedialPunctuation>
+  <NumberOrdinalType>suffix</NumberOrdinalType>
+  <HindiUrduNumberGrouping>T</HindiUrduNumberGrouping>
+  <NumberSettingsHaveBeenReviewed>T</NumberSettingsHaveBeenReviewed>
+  <ChapterVerseSeparator>:</ChapterVerseSeparator>
+  <ReferenceFinalPunctuation />
+  <BookSourceForMarkerXt>ShortName</BookSourceForMarkerXt>
+  <BookSourceForMarkerR>ShortName</BookSourceForMarkerR>
+  <OriginRangeOption>NoteInAnyVerse</OriginRangeOption>
+  <CrossReferenceSettingsHaveBeenReviewed>T</CrossReferenceSettingsHaveBeenReviewed>
+  <RefsMustMatchVerseSegments>False</RefsMustMatchVerseSegments>
+  <SegmentsMustHaveFinalPunctuation>False</SegmentsMustHaveFinalPunctuation>
+  <NoSpaceBetweenBookAndChapter>False</NoSpaceBetweenBookAndChapter>
+  <RangeIndicator>-</RangeIndicator>
+  <SequenceIndicator>,</SequenceIndicator>
+  <ChapterRangeSeparator>–</ChapterRangeSeparator>
+  <BookSequenceSeparator>; </BookSequenceSeparator>
+  <ChapterNumberSeparator>; </ChapterNumberSeparator>
+  <ReferenceExtraMaterial />
+  <CharacterAdvancedView>False</CharacterAdvancedView>
+  <ValidCharacters>  
+ 
+ ं अ आ इ ई उ ऊ ए ओ अं क ग च ज ट ड त द न प ब म य र ल व स ह ा ि ी ु ू े ो - ‌ ‍ ] [ – » « ; ’ ‘ 7 ) ( 8 9 | 0 6 5 ? 4 3 ! 2 ” “ : 1 , . ्</ValidCharacters>
+  <InvalidCharacters />
+  <AdvancedView>False</AdvancedView>
+  <ValidPunctuation>- ‌ ‍ _..._ _]_ _[_ ]_ _[ »_ _« :_ ;_ _‘ ’_ )_ _( ?_ !_ ”_ _“ ,_ ._</ValidPunctuation>
+  <InvalidPunctuation />
+  <RepeatableWords>गमा कुटा गुब्डंग जेय दुस्रोक कुला डगुक तरा पोरो बय जगा कुसा गडि अलग उंदि गोड गजा रमा पेजेय डुगा रोह्‍क अहन करल तंवा जोडा माड्सा बहन तम्वा सिगा किचा बव कला नुया दुस्रुर वोरोन दीव्सि सार्निंग वेलेक वेरेंग करा मह्‍क्सेर लेसा गेंडेंग डुक बिचंग गार बरा पोंग रोपो नड्डुम वेल इचुक बदुर बतंग चिंदा बतल पूनंग नाल्विर मनेके चंगा बूर करुम सोनेके रगक अस्के मुने</RepeatableWords>
+  <NonRepeatableWords />
+  <PaOriginalStylesheetName />
+  <UsfmVersion />
+  <Naming PrePart="" PostPart="WSGdev.SFM" BookNameForm="41MAT" />
+</ScriptureText>

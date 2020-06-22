@@ -20,7 +20,7 @@ def make_paths(projectsdir, project, config, xdv=False):
         configpath = os.path.join(projectsdir, project, "shared", "ptxprint", config, "ptxprint.cfg")
     else:
         configpath = os.path.join(projectsdir, project, "shared", "ptxprint", "ptxprint.cfg")
-    cfg.read(configpath)
+    cfg.read(configpath, encoding="utf-8")
     if cfg.getboolean("project", "multiplebooks"):
         bks = cfg.get("project", "booklist").split()
         filename = "{}_{}{}".format(bks[0], bks[1], project)

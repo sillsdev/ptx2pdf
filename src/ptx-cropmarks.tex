@@ -87,8 +87,16 @@
     \ifCropMarks
     \pdfcropwidth=\pdfpagewidth\advance\pdfcropwidth by -\dimen0
     \pdfcropheight=\pdfpageheight\advance\pdfcropheight by -\dimen0
-    \special {pdf:put @thispage <</MediaBox [0 0 \x@\strip@pt\pdfpagewidth\space \x@\strip@pt\pdfpageheight] /TrimBox [\x@\strip@pt\dimen0\space \x@\strip@pt\dimen0\space \x@\strip@pt\pdfcropwidth\space \x@\strip@pt\pdfcropheight] /ArtBox [\x@\strip@pt\dimen0\space \x@\strip@pt\dimen0\space \x@\strip@pt\pdfcropwidth\space \x@\strip@pt\pdfcropheight]>>}
-    \else\special {pdf:put @thispage <</MediaBox [0 0 \x@\strip@pt\the\pdfpagewidth\space \x@\strip@pt\the\pdfpageheight] /TrimBox [0 0 \x@\strip@pt\the\pdfpagewidth\space \x@\strip@pt\the\pdfpageheight] /ArtBox [0 0 \x@\strip@pt\the\pdfpagewidth\space \x@\strip@pt\the\pdfpageheight]>>}\fi
+    \def\tmp{\dimen0}
+    \special {pdf:put @thispage <</MediaBox [0 0 \strip@pt\pdfpagewidth \space
+        \strip@pt\pdfpageheight ] /TrimBox [\strip@pt\tmp \space
+        \strip@pt\tmp \space \strip@pt\pdfcropwidth \space
+        \strip@pt\pdfcropheight ] /ArtBox [\strip@pt\tmp \space
+        \strip@pt\tmp \space \strip@pt\pdfcropwidth \space \strip@pt\pdfcropheight ]>>}
+    \else\trace{s}{pdfpagewidth=\the\pdfpagewidth}\special {pdf:put @thispage <</MediaBox [0 0 \strip@pt{\pdfpagewidth} \space
+        \strip@pt{\pdfpageheight} ] /TrimBox [0 0 \strip@pt{\pdfpagewidth} \space
+        \strip@pt{\pdfpageheight} ] /ArtBox [0 0 \strip@pt{\pdfpagewidth} \space
+        \strip@pt{\pdfpageheight} ]>>}\fi
     % End inserted \special line
     \let\g@tterside=0 % figure out if we're adding a binding gutter, and which side
     \ifBindingGutter
@@ -146,9 +154,17 @@
     \ifCropMarks
       \pdfcropwidth=\pdfpagewidth\advance\pdfcropwidth by -\dimen0
       \pdfcropheight=\pdfpageheight\advance\pdfcropheight by -\dimen0
-      \special {pdf: put @thispage <</MediaBox [0 0 \the\pdfpagewidth\ \the\pdfpageheight] /TrimBox [\the\dimen0\ \the\dimen0\ \the\pdfcropwidth\ \the\pdfcropheight] /ArtBox [\the\dimen0\ \the\dimen0\ \the\pdfcropwidth\ \the\pdfcropheight]>>}
+      \def\tmp{\dimen0}
+      \special {pdf: put @thispage <</MediaBox [0 0 \strip@pt\pdfpagewidth \space
+        \strip@pt\pdfpageheight ] /TrimBox [\strip@pt\tmp \space
+        \strip@pt\tmp \space \strip@pt\pdfcropwidth \space
+        \strip@pt\pdfcropheight ] /ArtBox [\strip@pt\tmp \space
+        \strip@pt\tmp \space \strip@pt\pdfcropwidth \space \strip@pt\pdfcropheight ]>>}
     \else
-      \special {pdf: put @thispage <</MediaBox [0 0 \the\pdfpagewidth\ \the\pdfpageheight] /TrimBox [0 0 \the\pdfpagewidth\ \the\pdfpageheight] /ArtBox [0 0 \the\pdfpagewidth\ \the\pdfpageheight]>>}
+      \special {pdf: put @thispage <</MediaBox [0 0 \strip@pt\pdfpagewidth \space
+        \strip@pt\pdfpageheight ] /TrimBox [0 0 \strip@pt\pdfpagewidth \space
+        \strip@pt\pdfpageheight ] /ArtBox [0 0 \strip@pt\pdfpagewidth \space
+        \strip@pt\pdfpageheight ]>>}
     \fi
     \trace{p}{Pagesize \the\pdfpagewidth, \the\pdfpageheight}
     % End inserted \special line

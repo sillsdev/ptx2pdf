@@ -22,7 +22,7 @@ if sys.platform == "win32":
                      'GObject-2.0', 'fontconfig-2.0', 'win32-1.0', 'GtkSource-3.0')] \
               + [('C:\\msys64\\mingw64\\lib\\python3.7\\site-packages\\cairo\\_cairo-cpython-37m.dll',
                 'cairo/_cairo-cpython-37m.dll')] \
-              + [('C:\\msys64\\mingw64\\bin\\gspawn-win64-helper.exe', 'gspawn-win64-helper.exe')]
+              + [('C:\\msys64\\mingw64\\bin\\gspawn-win64-helper.exe', 'ptxprint')]
 else:
     pathex = []
     binaries = []
