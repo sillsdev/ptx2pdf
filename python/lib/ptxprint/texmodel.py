@@ -377,11 +377,11 @@ class TexModel:
             fpath = os.path.join(self.printer.configPath(""), "NestedStyles.sty")
         self.dict['/nststypath'] = fpath.replace("\\","/")
         # If AlignedDiglot, look in local Config folder for NestedStylesR.sty, and drop back to shared/ptxprint if not found
+        fpathR = os.path.join(self.printer.configPath(self.printer.configName()), "NestedStylesR.sty")
         if self.dict["document/ifaligndiglot"] == "":
-            fpathR = os.path.join(self.printer.configPath(self.printer.configName()), "NestedStylesR.sty")
             if not os.path.exists(fpathR):
                 fpathR = os.path.join(self.printer.configPath(""), "NestedStylesR.sty")
-            self.dict['/nststypathR'] = fpathR.replace("\\","/")
+        self.dict['/nststypathR'] = fpathR.replace("\\","/")
         self.dict['paragraph/linespacingfactor'] = "{:.3f}".format(float(self.dict['paragraph/linespacing']) / 14 / float(self.dict['paper/fontfactor']))
 
     def updatefields(self, a):
@@ -606,9 +606,10 @@ class TexModel:
         printer = self.printer
         self.makelocalChanges(printer, bk)
         customsty = os.path.join(prjdir, 'custom.sty')
-        if not os.path.exists(customsty) and self.dict["project/ifusecustomsty"] == "":
-            self.dict["project/ifusecustomsty"] = "%"
-            # open(customsty, "w").close()
+        if not os.path.exists(customsty):
+            self.dict["/nocustomsty"] = "%"
+        else:
+            self.dict["/nocustomsty"] = ""
         fbkfm = self.ptsettings['FileNameBookNameForm']
         fprfx = self.ptsettings['FileNamePrePart'] or ""
         fpost = self.ptsettings['FileNamePostPart'] or ""
@@ -887,78 +888,78 @@ class TexModel:
         else:
             return re.sub('[()&+,. ]', '_', self.base(fpath).lower())
 
-    def generateNestedStyles(self):
-        sfxs = [".sty"]
-        if self.dict["document/ifaligndiglot"] == "":
-            sfxs += "R.sty"
-        for sfx in sfxs:
-            pfx = "notes" if sfx == ".sty" else "diglot"
-            self.prjid = self.printer.get("fcb_project")
-            cfgname = self.printer.configName()
-            nstyfname = os.path.join(self.printer.configPath(cfgname), "NestedStyles"+sfx)
-            nstylist = []
-            if self.asBool("document/ifomitallverses"):
-                nstylist.append("##### Remove all verse numbers\n\\Marker v\n\\TextProperties nonpublishable\n\n")
+    def generateNestedStyles(self, diglot=False):
+        if diglot:
+            pfx = "diglot"
+            sfx = "R.sty"
+        else:
+            pfx = "notes"
+            sfx = ".sty"
+        cfgname = self.printer.configName()
+        nstyfname = os.path.join(self.printer.configPath(cfgname), "NestedStyles"+sfx)
+        nstylist = []
+        if self.asBool("document/ifomitallverses"):
+            nstylist.append("##### Remove all verse numbers\n\\Marker v\n\\TextProperties nonpublishable\n\n")
 
-            if not self.asBool(pfx+"/includefootnotes"):
-                nstylist.append("##### Set Footnote Size and Line Spacing\n")
-                nstylist.append("\\Marker {}\n\\FontSize {}\n".format("f", self.dict[pfx+'/fnfontsize']))
-                nstylist.append("\\LineSpacing {}pt plus 2pt\n".format(self.dict[pfx+'/fnlinespacing']))
-                nstylist.append("\\Justification Left\n\n")
+        if not self.asBool(pfx+"/includefootnotes"):
+            nstylist.append("##### Set Footnote Size and Line Spacing\n")
+            nstylist.append("\\Marker {}\n\\FontSize {}\n".format("f", self.dict[pfx+'/fnfontsize']))
+            nstylist.append("\\LineSpacing {}pt plus 2pt\n".format(self.dict[pfx+'/fnlinespacing']))
+            nstylist.append("\\Justification Left\n\n")
+        else:
+            nstylist.append("##### Remove all footnotes\n\\Marker f\n\\TextProperties nonpublishable\n\n")
+
+        if not self.asBool("notes/includexrefs"):
+            nstylist.append("##### Set Cross-reference Size and Line Spacing\n")
+            nstylist.append("\\Marker {}\n\\FontSize {}\n".format("x", self.dict[pfx+'/fnfontsize']))
+            nstylist.append("\\LineSpacing {}pt plus 2pt\n".format(self.dict[pfx+'/fnlinespacing']))
+            nstylist.append("\\Justification Left\n\n")
+        else:
+            nstylist.append("##### Remove all cross-references\n\\Marker x\n\\TextProperties nonpublishable\n\n")
+
+        if self.dict[pfx+"/ifblendfnxr"]:
+            nstylist.append("##### Treat x-refs as footnotes with their own caller\n\\Marker x\n\\NoteBlendInto f\n\n")
+
+        nstylist.append("##### Adjust poetic indents\n")
+        m = ["\Marker", "\LeftMargin", "\FirstLineIndent"]
+        if self.dict["paper/columns"] == "2" or self.dict["document/ifaligndiglot"] == "": # Double Column layout so use smaller indents
+            v = [["q", "0.60", "-0.45"], ["q1", "0.60", "-0.45"], ["q2", "0.60", "-0.225"], 
+                 ["q3", "0.60", "-0.112"], ["q4", "0.60", "-0.0"]]
+        else: # Single column layout, so use larger (USFM.sty default) indents
+            v = [["q", "1.25", "-1.00"], ["q1", "1.25", "-1.00"], ["q2", "1.25", "-0.75"],
+                 ["q3", "1.25", "-0.5"], ["q4", "1.25", "-0.25"]]
+        r = [list(zip(m, x)) for x in v]
+        for mkr in r:
+            for l in range(0,3):
+                nstylist.append("{} {}\n".format(mkr[l][0],mkr[l][1]))
+            nstylist.append("\\Justification Left\n\n")
+
+        if True: # Hack! We need to qualify this (look in USFM for a \cl and if it exists, then don't do this)
+            nstylist.append("# The descriptive heading is typically considered VerseText, but then often formatted as a heading.\n")
+            nstylist.append("# We need to change the TextType so that Print Draft will handle it correctly beside drop-caps.\n")
+            nstylist.append("\\Marker d\n\\TextType Section\n\\SpaceBefore 0\n\n")
+
+        for k, c in self._snippets.items():
+            if self.printer is None:
+                v = self.asBool(k)
             else:
-                nstylist.append("##### Remove all footnotes\n\\Marker f\n\\TextProperties nonpublishable\n\n")
-
-            if not self.asBool("notes/includexrefs"):
-                nstylist.append("##### Set Cross-reference Size and Line Spacing\n")
-                nstylist.append("\\Marker {}\n\\FontSize {}\n".format("x", self.dict[pfx+'/fnfontsize']))
-                nstylist.append("\\LineSpacing {}pt plus 2pt\n".format(self.dict[pfx+'/fnlinespacing']))
-                nstylist.append("\\Justification Left\n\n")
-            else:
-                nstylist.append("##### Remove all cross-references\n\\Marker x\n\\TextProperties nonpublishable\n\n")
-
-            if self.dict[pfx+"/ifblendfnxr"]:
-                nstylist.append("##### Treat x-refs as footnotes with their own caller\n\\Marker x\n\\NoteBlendInto f\n\n")
-
-            nstylist.append("##### Adjust poetic indents\n")
-            m = ["\Marker", "\LeftMargin", "\FirstLineIndent"]
-            if self.dict["paper/columns"] == "2" or self.dict["document/ifaligndiglot"] == "": # Double Column layout so use smaller indents
-                v = [["q", "0.60", "-0.45"], ["q1", "0.60", "-0.45"], ["q2", "0.60", "-0.225"], 
-                     ["q3", "0.60", "-0.112"], ["q4", "0.60", "-0.0"]]
-            else: # Single column layout, so use larger (USFM.sty default) indents
-                v = [["q", "1.25", "-1.00"], ["q1", "1.25", "-1.00"], ["q2", "1.25", "-0.75"],
-                     ["q3", "1.25", "-0.5"], ["q4", "1.25", "-0.25"]]
-            r = [list(zip(m, x)) for x in v]
-            for mkr in r:
-                for l in range(0,3):
-                    nstylist.append("{} {}\n".format(mkr[l][0],mkr[l][1]))
-                nstylist.append("\\Justification left\n\n")
-
-            if True: # Hack! We need to qualify this (look in USFM for a \cl and if it exists, then don't do this)
-                nstylist.append("# The descriptive heading is typically considered VerseText, but then often formatted as a heading.\n")
-                nstylist.append("# We need to change the TextType so that Print Draft will handle it correctly beside drop-caps.\n")
-                nstylist.append("\\Marker d\n\\TextType Section\n\\SpaceBefore 0\n\n")
-
-            for k, c in self._snippets.items():
-                if self.printer is None:
-                    v = self.asBool(k)
+                v = self.printer.get(c[0])
+                self.dict[k] = "true" if v else "false"
+            if v: # if the c_checkbox is true then add the stylesheet snippet for that option
+                if isinstance(c[1].styleInfo, str):
+                    nstylist.append(c[1].styleInfo+"\n")
                 else:
-                    v = self.printer.get(c[0])
-                    self.dict[k] = "true" if v else "false"
-                if v: # if the c_checkbox is true then add the stylesheet snippet for that option
-                    if isinstance(c[1].styleInfo, str):
-                        nstylist.append(c[1].styleInfo+"\n")
-                    else:
-                        nstylist.append(c[1].styleInfo(self)+"\n")
+                    nstylist.append(c[1].styleInfo(self)+"\n")
 
-            if nstylist == []:
-                if os.path.exists(nstyfname):
-                    os.remove(nstyfname)
-                return []
-            else:
-                os.makedirs(self.printer.configPath(cfgname), exist_ok=True)
-                with open(nstyfname, "w", encoding="utf-8") as outf:
-                    outf.write("".join(nstylist))
-                return [nstyfname]
+        if nstylist == []:
+            if os.path.exists(nstyfname):
+                os.remove(nstyfname)
+            return []
+        else:
+            os.makedirs(self.printer.configPath(cfgname), exist_ok=True)
+            with open(nstyfname, "w", encoding="utf-8") as outf:
+                outf.write("".join(nstylist))
+            return [nstyfname]
 
     def makeGlossaryFootnotes(self, printer, bk):
         # Glossary entries for the key terms appearing like footnotes

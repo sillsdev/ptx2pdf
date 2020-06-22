@@ -14,10 +14,10 @@
 %\stylesheet{L_}{{{/ptxpath}/{project/id}/usfm.sty}}
 
 {document/ifaligndiglot}{project/ifusecustomsty}\stylesheet{R_}{{{/ptxpath}/{document/diglotsecprj}/custom.sty}}
-{project/ifusecustomsty}\stylesheet{L_}{{{/ptxpath}/{project/id}/custom.sty}}
+{project/ifusecustomsty}{/nocustomsty}\stylesheet{L_}{{{/ptxpath}/{project/id}/custom.sty}}
 
-\stylesheet{L_}{{{/nststypath}}} % PTXprint-generated stylesheet changes (for versenums, ftnts, xref, size + spacing)
-{document/ifaligndiglot}\stylesheet{R_}{{/nststypathR}} % generated stylesheet for Secondary project (for versenums, ftnts, xref, size + spacing)
+{document/ifaligndiglot}\stylesheet{R_}{{{/nststypathR}}} % generated stylesheet for Secondary project
+\stylesheet{L_}{{{/nststypath}}} % generated stylesheet for monodoc or Primary project
 
 {document/ifaligndiglot}{project/ifusemodssty}\stylesheet{R_}{{{/ptxpath}/{document/diglotsecprj}/PrintDraft/PrintDraft-mods.sty}} % Right-side/Diglot Secondary stylesheet override settings
 {project/ifusemodssty}\stylesheet{L_}{{{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.sty}} % Left-side stylesheet override settings
