@@ -192,17 +192,61 @@ in a file. Each entry is of the form: _bk_ _C.V_ _figure info_. There are some
 limitations on a piclist file:
 
 - References must be in order. A subsequent line in the piclist file is only
-  read after the previous line is matched against the current reference being
-  processed as text.
-- There can only be one line for any given reference. Having two means the
-  second is not matched, the file gets out of sync and all subsequent lines
-  are not read.
+  read after the previous line is matched against the current reference being  processed as text.
+- There can only be one line for any given reference (except diglots, which can match on left and right). Having two means the   second is not matched, the file gets out of sync and all subsequent lines  are not read.
 
 In addition, TeX has a limitation that you cannot have more than one picture
 in the same position on the page, anchored to the same line in the text,
 whether or not they come from a piclist or inline \\fig. Thus
 for a very short verse that may not span a line boundary, or if you have two
 \\fig elements very close together in the text, one may be lost.
+
+### Can I scale / rotate / crop / transform an image?
+You may **scale** and **rotate** images. Cropping and other image transformations need to happen in an external  tool. This is from a piclist. ```\pic```  lines are somewhat similar
+```
+RUT 4.11 Boaz addresses the crowd|07.jpeg|span*0.6|t|Artist McArty| You are witnesses |Ruth 4:10|rotate 3|
+```
+This instructs XeTeX to put image 07.jpeg by Arist McArty (Boaz addresses the crowd) at the top of the page containing Ruth 4:11, and with the caption "(Ruth 4:10) You are witnesses". It goes on to say it should have a width of 0.6 of the span (the combined width of both columns, another measurement is `col`, the column width), and that it should be rotated three degrees anti-clockwise. 
+
+**N.B.**  The size of the image is set before rotation. If you want an  image to fit the page width after rotation 90degrees, and before rotation the image is  twice as high as it is wide, then you will need to give its width as ```span*2.0```
+
+There is no mechanism to rotate the caption.
+
+### How do I change the font / fontsize for a caption?
+Captions are set using the style defined for ```\Marker fig```. Edit the style in the stylesheet.
+
+### How do I change the font / fontsize for the reference part of the caption, including the brackets?
+You probably can't, sorry. The brackets are put around as part of the XeTeX code, without any font-changing code. Instead, leave the reference parameter empty and see below.
+
+
+### How do I change the font / fontsize for part of the text of a caption?
+This is tricky. The normal font-selecting code cannot work.  The solution comes in two varieties:
+- Direct font specification. In the ```.tex``` file, put a TeX font definition, like:
+```
+\font\mySmallCap="Gentium Plus:smcp" at 10.3pt
+```
+and in caption in the piclist (it will probably only  work there), put something like: ```The {\mySmallCap Lord} spoke to Abraham.```
+
+- Using an already-used font:
+Fonts are remembered as you go along, but the naming scheme keeps on changing as the developers add more capability. The font name might be as simple as ```font<s2>``` (font for paragraph style s2) or it might be ```font<ndL-12.0>``` (font used for the divine name on the left side of a diglot, when the font was previously 12.0 ```\FontSizeUnit```s). You cannot just specify such complex names, you need to wrap them up in ```\csname ...  \endcsname```.  ```The {\csname font<ndL-12.0>\endcsname Lord} spoke to Abraham.```
+
+To find out the names that fonts are saved as, put \tracing{F} into your .tex file and read the logfile, looking for lines like:
+
+
+### // doesn't work in my caption. How do I make the line break in the right place?
+This probably only works in a piclist. If the piclist line is:
+```
+RUT 4.2 Boaz talks to kinsman-redeemer|06.jpeg|span*0.8|t|Arty McArtful|O Boaz del duma \penalty -1000\ le răskumpărătoresa|Rut 4:1|rotated 0
+```
+Then ```\penalty -1000``` is telling XeTeX that after ```duma`` is a really amazingly good place
+to break. The slash after the 1000 means it shouldn't eat the space that comes
+next. If you put -2000 in there, you'll probably force a line break.
+
+
+### Can I use a top-left or top-right image in a diglot?
+
+Yes. It probably makes most sense to use **both**, for top images. Using the piclist you can even specify the same verse. Assign one ```tl```, the other ```tr```.  If you get a message about the tl being converted to t, you probably have \BodyColumns=1. Diglot doesn't currently care (eventually it may mean something else), at the moment you have two.
+	
 
 ### Could pictures float onto pages other than their anchor?
 
