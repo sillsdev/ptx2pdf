@@ -157,10 +157,15 @@ class RunJob:
             texfiles = sum((self.dojob(j, info) for j in joblist), [])
 
         # Work out what the resulting PDF was called
-        if len(jobs) > 1 and info.asBool("project/combinebooks"):
-            pdfname = os.path.join(self.tmpdir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], self.prjid))
+        cfgname = info['config/name']
+        if cfgname is not None:
+            cfgname = "-"+cfgname
         else:
-            pdfname = os.path.join(self.tmpdir, "ptxprint-{}{}.pdf".format(jobs[0], self.prjid))
+            cfgname = ""
+        if len(jobs) > 1 and info.asBool("project/combinebooks"):
+            pdfname = os.path.join(self.tmpdir, "ptxprint{}-{}_{}{}.pdf".format(cfgname, jobs[0], jobs[-1], self.prjid))
+        else:
+            pdfname = os.path.join(self.tmpdir, "ptxprint{}-{}{}.pdf".format(cfgname, jobs[0], self.prjid))
         # Check the return code to see if generating the PDF was successful before opening the PDF
         if self.res == 0:
             if self.printer.isDisplay and os.path.exists(pdfname):
@@ -449,10 +454,15 @@ class RunJob:
             prjid = self.prjid
         if prjdir is None:
             prjdir = self.prjdir
-        if len(jobs) > 1:
-            outfname = "ptxprint-{}_{}{}.tex".format(jobs[0], jobs[-1], prjid)
+        cfgname = info['config/name']
+        if cfgname is None:
+            cfgname = ""
         else:
-            outfname = "ptxprint-{}{}.tex".format(jobs[0], prjid)
+            cfgname = "-" + cfgname
+        if len(jobs) > 1:
+            outfname = "ptxprint{}-{}_{}{}.tex".format(cfgname, jobs[0], jobs[-1], prjid)
+        else:
+            outfname = "ptxprint{}-{}{}.tex".format(cfgname, jobs[0], prjid)
         if not fzy:
             info.update()
         with open(os.path.join(self.tmpdir, outfname), "w", encoding="utf-8") as texf:

@@ -131,7 +131,8 @@ class ViewModel:
         elif len(bl):
             blst = []
             for b in bl:
-                if os.path.exists(os.path.join(self.settings_dir, self.prjid, (self.getBookFilename(b, self.prjid)))):
+                bname = self.getBookFilename(b, self.prjid)
+                if os.path.exists(os.path.join(self.settings_dir, self.prjid, bname)):
                     blst.append(b)
             return blst
         else:
