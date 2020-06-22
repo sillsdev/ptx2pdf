@@ -124,6 +124,7 @@
     \@ndcell
     \st@rtcell
     \x@\xdef\csname align-\the\tabler@ws-\the\tablec@l\endcsname{#2}%
+    \trace{t}{Define cell [\the\tabler@ws, \the\tablec@l] = #2}%
     \ifnum\tablec@l>\maxtablec@l \global\maxtablec@l=\tablec@l \fi
     \ch@rstyle{#1}~\ignorespaces}%
 }
@@ -151,6 +152,8 @@
   \if@cell
     \unskip
     \end@llcharstyles
+    \getp@ram{rightmargin}{tr}%
+    \ifx\p@ram\relax\else\kern\p@ram\IndentUnit\fi
     \egroup
     \setbox0=\vbox{\unvbox\cellb@x \global\setbox\cellb@x=\lastbox}%
     \global\setbox\cellb@x=\hbox{\unhbox\cellb@x \unskip\unskip\unpenalty}%
@@ -263,10 +266,10 @@
     \everypar={}\resetp@rstyle\noindent
     \ifRTL\beginR\fi
     \getp@ram{leftmargin}{tr}%
-    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
+    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit\fi
     \kern-\p@ram\IndentUnit
     \getp@ram{rightmargin}{tr}%
-    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
+    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit\fi
     \x@\let\x@\the@lign\csname align-\the\@row-\the\@col\endcsname
     \ifx\the@lign\cell@r
       \ifRTL\let\n@xt=\rightskip\else\let\n@xt=\leftskip\fi
@@ -277,16 +280,17 @@
     \fi\fi
     \advance\n@xt by 0pt plus 1fil
     \ifx\the@lign\cell@r
-        \nobreak\csname leaders-tcr\the\@col\endcsname\hfill
+        \nobreak\csname leaders-tcr\the\@col\endcsname\hfil
     \else\ifx\the@lign\cell@c
-        \nobreak\csname leaders-tcc\the\@col\endcsname\hfill
+        \nobreak\csname leaders-tcc\the\@col\endcsname
     \fi\fi
+    \trace{t}{cell(\the@lign)[\the\@row, \the\@col]: leaders. leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip}%
     \unhbox0\unskip \parfillskip=0pt
     \ifx\the@lign\cell@r\else
       \ifx\the@lign\cell@c
-        \nobreak\csname leaders-tcc\the\@col\endcsname\hfill\null
+        \nobreak\csname leaders-tcc\the\@col\endcsname\null
       \else
-        \nobreak\csname leaders-tc\the\@col\endcsname\hfill\null
+        \nobreak\csname leaders-tc\the\@col\endcsname\hfil\null
     \fi\fi
     \par}%
   \wd0=\c@rrentcolwidth
