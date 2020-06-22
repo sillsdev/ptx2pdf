@@ -113,7 +113,7 @@ ModelMap = {
     "paragraph/varlinespacing":    ("c_variableLineSpacing", lambda w,v: "" if v else "%"),
     "paragraph/useglyphmetrics":   ("c_variableLineSpacing", lambda w,v: "%" if v else ""),
     "paragraph/linespacing":       ("s_linespacing", lambda w,v: "{:.3f}".format(v) or "15.000"),
-    #"paragraph/linespacingfactor": ("s_linespacing", lambda w,v: "{:.3f}".format(float(v or "15") / 14)),
+    # "paragraph/linespacingfactor": ("s_linespacing", lambda w,v: "{:.3f}".format(float(v or "15") / 14)),
     "paragraph/linemin":           ("s_linespacingmin", lambda w,v: "minus {:.3f}pt".format(w.get("s_linespacing") - v) \
                                                      if v < w.get("s_linespacing") else ""),
     "paragraph/linemax":        ("s_linespacingmax", lambda w,v: "plus {:.3f}pt".format(v - w.get("s_linespacing")) \
@@ -793,10 +793,6 @@ class TexModel:
         # keep \xo & \fr refs with whatever follows (i.e the bookname or footnote) so it doesn't break at end of line
         self.localChanges.append((None, regex.compile(r"(\\(xo|fr) (\d+[:.]\d+([-,]\d+)?)) "), r"\1\u2000"))
 
-        # Change \xt to \xt_f so that the size can be set independently to \xt in the main
-        self.localChanges.append((regex.compile(r"(\\x .+?\\x\*)"), regex.compile(r"\\xt "), r"\\xt_f "))
-        self.localChanges.append((regex.compile(r"(\\f .+?\\f\*)"), regex.compile(r"\\xt "), r"\\xt_f "))
-        
         # Paratext marks no-break space as a tilde ~
         self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
 
@@ -904,8 +900,6 @@ class TexModel:
             nstylist.append("\\Justification Left\n\n")
         else:
             nstylist.append("##### Remove all cross-references\n\\Marker x\n\\TextProperties nonpublishable\n\n")
-
-        nstylist.append("\\Marker xt_f\n\\FontSize {}\n\\StyleType Character\n\n".format(self.dict['notes/fnfontsize']))
 
         if self.dict["notes/ifblendfnxr"]:
             nstylist.append("##### Treat x-refs as footnotes with their own caller\n\\Marker x\n\\NoteBlendInto f\n\n")

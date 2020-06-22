@@ -101,44 +101,48 @@
  \def\startn@testyle~#1 {% get the caller code as a space-delimited parameter
   \TRACE{startn@testyle}%
   \t@stpublishability{\newn@testyle}\ifn@npublishable
-   \begingroup
-   \let\aftern@te\relax
-   \ifhe@dings\bgroup\fi
-   \setbox0=\hbox\bgroup \skipn@testyletrue
-   \global\n@tenesting=1\relax
-   \ifdim\lastskip>0pt \sp@cebeforetrue \else \sp@cebeforefalse \fi % was there a preceding space?
+    \begingroup
+    \let\aftern@te\relax
+    \ifhe@dings\bgroup\fi
+    \setbox0=\hbox\bgroup \skipn@testyletrue
+    \global\n@tenesting=1\relax
+    \ifdim\lastskip>0pt \sp@cebeforetrue \else \sp@cebeforefalse \fi % was there a preceding space?
   \else
-   \leavevmode
-   \getp@ram{notebase}{\newn@testyle}\edef\n@tebase{\ifx\p@ram\relax\newn@testyle\else\p@ram\fi}%
-   \csname before-\newn@testyle\endcsname
-   \def\t@st{#1}%
-   \ifx\t@st\pl@s % if it is + then generate an auto-numbering caller
-    \inc@utonum{\newn@testyle}%
-    \x@\gen@utonum\x@{\newn@testyle}%
-   \else\ifx\t@st\min@s \def\them@rk{}% if it is - then there is no caller
-   \else \def\them@rk{#1}% otherwise the caller is the parameter
-   \fi\fi
-   \begingroup
-   \x@\let\x@\aftern@te\csname after-\newn@testyle\endcsname
-   \ifdim\lastskip>0pt \sp@cebeforetrue \else \sp@cebeforefalse \fi % was there a preceding space?
-   \resetp@rstyle
-   \m@kenote{\n@tebase}{\newn@testyle}{\everypar={}\cancelcutouts % begin a note insertion in the given style
-    \getp@ram{callerstyle}{\newn@testyle}% see if a caller style was defined
-    \ifx\p@ram\relax\def\c@llerstyle{v}\else\edef\c@llerstyle{\p@ram}\fi % if not, treat it like "v"
-    \setbox0=\hbox to 1ex{\hss\ch@rstyle{\c@llerstyle}~\them@rk\ch@rstyle{\c@llerstyle}*\hss}%
-    \ht0=0pt \getp@ram{callerraise}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi % suppress height of caller
-    }{\getp@ram{notecallerstyle}{\newn@testyle}\ifx\p@ram\relax\else\edef\c@llerstyle{\p@ram}%
+    \leavevmode
+    \getp@ram{notebase}{\newn@testyle}\edef\n@tebase{\ifx\p@ram\relax\newn@testyle\else\p@ram\fi}%
+    \csname before-\newn@testyle\endcsname
+    \def\t@st{#1}%
+    \ifx\t@st\pl@s % if it is + then generate an auto-numbering caller
+      \inc@utonum{\newn@testyle}%
+      \x@\gen@utonum\x@{\newn@testyle}%
+    \else\ifx\t@st\min@s \def\them@rk{}% if it is - then there is no caller
+    \else \def\them@rk{#1}% otherwise the caller is the parameter
+    \fi\fi
+    \begingroup
+    \x@\let\x@\aftern@te\csname after-\newn@testyle\endcsname
+    \ifdim\lastskip>0pt \sp@cebeforetrue \else \sp@cebeforefalse \fi % was there a preceding space?
+    \resetp@rstyle
+    \m@kenote{\n@tebase}{\newn@testyle}{%
+        \everypar={}\cancelcutouts % begin a note insertion in the given style
+        \getp@ram{callerstyle}{\newn@testyle}% see if a caller style was defined
+        \ifx\p@ram\relax\def\c@llerstyle{v}\else\edef\c@llerstyle{\p@ram}\fi % if not, treat it like "v"
         \setbox0=\hbox to 1ex{\hss\ch@rstyle{\c@llerstyle}~\them@rk\ch@rstyle{\c@llerstyle}*\hss}%
-        \ht0=0pt \getp@ram{notecallerraise}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi\fi}\bgroup
-   \global\n@tenesting=1\relax
-   \trace{b}{BALANCE note: style=\newn@testyle}%
-   \csname start-\newn@testyle\endcsname % execute the <start> hook, if defined
-   \ignorespaces
+        \ht0=0pt \getp@ram{callerraise}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi % suppress height of caller
+      }{\getp@ram{notecallerstyle}{\newn@testyle}\ifx\p@ram\relax\else
+          \edef\c@llerstyle{\p@ram}%
+          \setbox0=\hbox to 1ex{\hss\ch@rstyle{\c@llerstyle}~\them@rk\ch@rstyle{\c@llerstyle}*\hss}%
+          \ht0=0pt \getp@ram{notecallerraise}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi
+        \fi}\bgroup
+    \global\n@tenesting=1\relax
+    \trace{b}{BALANCE note: style=\newn@testyle}%
+    \csname start-\newn@testyle\endcsname % execute the <start> hook, if defined
+    \ignorespaces
   \fi
  }
 }
 
 \def\endn@testyle*{\TRACE{endn@testyle}%
+ \trace{f}{endn@testyle}%
  \end@llcharstyles % end any character styles within the note
  \ifskipn@testyle \else
   \csname end-\newn@testyle\endcsname % execute <end> hook
