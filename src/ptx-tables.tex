@@ -246,6 +246,10 @@
 \newcount\linec@unt \newcount\lct@mp
 \newdimen\sp@re \newdimen\exc@ss \newdimen\thr@shold
 
+\def\@LOOP #1\@REPEAT{\gdef\@BODY{#1}\@ITERATE}
+\def\@ITERATE{\@BODY \global\let\@NEXT\@ITERATE
+ \else \global\let\@NEXT\relax \fi \@NEXT}
+\let\@REPEAT\fi
 % more copies of plain.tex loop macros (see also ptx-char-style)
 \def\@@LOOP #1\@@REPEAT{\gdef\@@BODY{#1}\@@ITERATE}
 \def\@@ITERATE{\@@BODY \global\let\@@NEXT\@@ITERATE
