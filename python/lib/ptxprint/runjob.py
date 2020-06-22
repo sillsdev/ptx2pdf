@@ -102,10 +102,7 @@ _diglot = {
 "diglot/fnfontsize" :       "notes/fnfontsize",
 "diglot/fnlinespacing" :    "notes/fnlinespacing",
 "diglot/includexrefs" :     "notes/includexrefs",
-"diglot/ifblendfnxr" :      "notes/ifblendfnxr",
-"" : "",
-"" : "",
-
+"diglot/ifblendfnxr" :      "notes/ifblendfnxr"
 }
 
 class RunJob:
@@ -126,8 +123,6 @@ class RunJob:
         if self.prjid is None or not len(self.prjid):     # can't print no project
             return
         self.tempFiles += info.generateNestedStyles()
-        if info["document/ifaligndiglot"] == "":
-            self.tempFiles += info.generateNestedStylesR()
         self.tmpdir = os.path.join(self.prjdir, 'PrintDraft') if info.asBool("project/useprintdraftfolder") else self.args.directory
         os.makedirs(self.tmpdir, exist_ok=True)
         jobs = self.printer.getBooks()
@@ -370,6 +365,7 @@ class RunJob:
             for k,v in _diglot.items():
                 info[k]=diginfo[v]
                 # print(k, v, diginfo[v])
+            self.tempFiles += info.generateNestedStyles(diglot=True)
             texfiles += self.sharedjob(jobs, info, logbuffer=logbuffer)
         return texfiles
 
@@ -430,10 +426,11 @@ class RunJob:
                         # We also need to be able to overide the page layout values from the PRIMARY project
                         # (even when creating the Secondary PDF so that the dimensions match).
         else:
-            if len(jobs) > 1:
-                secfname = os.path.join(self.tmpdir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], secprjid)).replace("\\","/")
-            else:
-                secfname = os.path.join(self.tmpdir, "ptxprint-{}{}.pdf".format(jobs[0], secprjid)).replace("\\","/")
+            # if len(jobs) > 1:
+                # secfname = os.path.join(self.tmpdir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], secprjid)).replace("\\","/")
+            # else:
+                # secfname = os.path.join(self.tmpdir, "ptxprint-{}{}.pdf".format(jobs[0], secprjid)).replace("\\","/")
+            secfname = baseTeXPDFname()+".pdf".replace("\\","/")
             if info.asBool("document/diglotnormalhdrs"):
                 if switchSides: # Primary on RIGHT/OUTER
                     hdr = r"""
@@ -475,15 +472,15 @@ class RunJob:
             outfname = "ptxprint{}-{}_{}{}.tex".format(cfgname, jobs[0], jobs[-1], prjid)
         else:
             outfname = "ptxprint{}-{}{}.tex".format(cfgname, jobs[0], prjid)
+        # MH - What can I pass to make this call work? 
+        # outfname = ViewModel.baseTeXPDFname(???)+".tex"
         if not fzy:
             info.update()
         with open(os.path.join(self.tmpdir, outfname), "w", encoding="utf-8") as texf:
-            # print({k:v for k,v in info.dict.items() if k.startswith("diglot")})
             texf.write(info.asTex(filedir=self.tmpdir, jobname=outfname.replace(".tex", "")))
         os.putenv("hyph_size", "32749")     # always run with maximum hyphenated words size (xetex is still tiny ~200MB resident)
         os.putenv("stack_size", "32768")    # extra input stack space (up from 5000)
         ptxmacrospath = os.path.abspath(os.path.join(self.scriptsdir, "..", "..", "src"))
-        # print("ptxmacrospath:", ptxmacrospath)
         if not os.path.exists(ptxmacrospath):
             for b in (getattr(sys, 'USER_BASE', '.'), sys.prefix):
                 if b is None:

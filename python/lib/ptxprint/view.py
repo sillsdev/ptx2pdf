@@ -121,9 +121,27 @@ class ViewModel:
             self.dict[wid] = value
 
     def configName(self):
-        cfgName = re.sub('[^-a-zA-Z0-9_()/: ]+', '', (self.get("ecb_savedConfig") or "")).strip(" ")
+        cfgName = re.sub('[^-a-zA-Z0-9_()]+', '', (self.get("ecb_savedConfig") or ""))
+        self.set("ecb_savedConfig", cfgName)
         return cfgName or None
 
+    def baseTeXPDFname(self):
+        bks = self.getBooks()
+        if self.working_dir == None:
+            self.working_dir = os.path.join(self.settings_dir, self.prjid, 'PrintDraft')
+        cfgname = self.configName()
+        if cfgname is None:
+            cfgname = ""
+        else:
+            cfgname = "-" + cfgname
+        if len(bks) > 1:
+            fname = "ptxprint{}-{}_{}{}".format(cfgname, bks[0], bks[-1], self.prjid)
+        else:
+            fname = "ptxprint{}-{}{}".format(cfgname, bks[0], self.prjid)
+        if not os.path.exists(self.working_dir):
+            os.makedirs(self.working_dir)
+        return os.path.join(self.working_dir, fname)
+        
     def getBooks(self):
         bl = self.get("t_booklist", "").split()
         if not self.get('c_multiplebooks'):

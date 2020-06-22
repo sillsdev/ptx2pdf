@@ -481,15 +481,20 @@ class GtkViewModel(ViewModel):
                 self.onSaveEdits(None)
 
         # Work out what the resulting PDFs are to be called
+        cfgname = self.configName()
+        if cfgname is None:
+            cfgname = ""
+        else:
+            cfgname = "-" + cfgname
         if not os.path.exists(self.working_dir):
             os.makedirs(self.working_dir)
         if len(jobs) > 1:
             if self.get("c_combine"):
-                pdfnames = [os.path.join(self.working_dir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], self.prjid))]
+                pdfnames = [os.path.join(self.working_dir, "ptxprint{}-{}_{}{}.pdf".format(cfgname, jobs[0], jobs[-1], self.prjid))]
             else:
-                pdfnames = [os.path.join(self.working_dir, "ptxprint-{}{}.pdf".format(j, self.prjid)) for j in jobs]
+                pdfnames = [os.path.join(self.working_dir, "ptxprint{}-{}{}.pdf".format(cfgname, j, self.prjid)) for j in jobs]
         else:
-            pdfnames = [os.path.join(self.working_dir, "ptxprint-{}{}.pdf".format(jobs[0], self.prjid))]
+            pdfnames = [os.path.join(self.working_dir, "ptxprint{}-{}{}.pdf".format(cfgname, jobs[0], self.prjid))]
         for pdfname in pdfnames:
             fileLocked = True
             while fileLocked:
@@ -807,11 +812,7 @@ class GtkViewModel(ViewModel):
                 genBtn.set_label("Regenerate")
 
         elif 3 <= pgnum <= 4:  # (TeX,Log)
-            if len(bks) > 1:
-                fname = "ptxprint-{}_{}{}{}".format(bks[0], bks[-1], prjid, fndict[pgnum][1])
-            else:
-                fname = "ptxprint-{}{}{}".format(bks[0], prjid, fndict[pgnum][1])
-            fpath = os.path.join(self.working_dir, fname)
+            fpath = self.baseTeXPDFname()+fndict[pgnum][1]
 
         elif pgnum == 5: # View/Edit one of the 4 Settings files or scripts
             fpath = self.builder.get_object("l_{}".format(pgnum)).get_tooltip_text()
@@ -1377,9 +1378,10 @@ class GtkViewModel(ViewModel):
         elif loc == "prj":
             fpath = os.path.join(self.settings_dir, self.prjid, file2edit)
         elif loc == "cfg":
-            fpath = os.path.join(self.configPath(), file2edit)
+            cfgname = self.printer.configName()
+            fpath = os.path.join(self.configPath(cfgname), file2edit)
             if not os.path.exists(fpath):
-                fpath = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint", file2edit)
+                fpath = os.path.join(self.configPath(""), file2edit)
         elif "\\" in loc or "/" in loc:
             fpath = os.path.join(loc, file2edit)
         else:

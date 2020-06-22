@@ -1711,7 +1711,10 @@ of the same Paratext project.</property>
 
 Note that only Roman/Latin names
 are supported using: a-z A-Z, 0-9,
-parentheses, underscores and hyphens.</property>
+parentheses, underscores and hyphens.
+
+Longer descriptions may be typed into
+the Notes field below.</property>
                                             <property name="halign">start</property>
                                             <property name="max_length">32</property>
                                             <property name="width_chars">35</property>
