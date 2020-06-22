@@ -126,7 +126,7 @@ class RunJob:
         if self.prjid is None or not len(self.prjid):     # can't print no project
             return
         self.tempFiles += info.generateNestedStyles()
-        if info["document/ifaligndiglot"] = "":
+        if info["document/ifaligndiglot"] == "":
             self.tempFiles += info.generateNestedStylesR()
         self.tmpdir = os.path.join(self.prjdir, 'PrintDraft') if info.asBool("project/useprintdraftfolder") else self.args.directory
         os.makedirs(self.tmpdir, exist_ok=True)

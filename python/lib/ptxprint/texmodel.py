@@ -893,7 +893,7 @@ class TexModel:
             sfxs += "R.sty"
         for sfx in sfxs:
             pfx = "notes" if sfx == ".sty" else "diglot"
-            self.prjid = self.get("fcb_project")
+            self.prjid = self.printer.get("fcb_project")
             cfgname = self.printer.configName()
             nstyfname = os.path.join(self.printer.configPath(cfgname), "NestedStyles"+sfx)
             nstylist = []
@@ -955,7 +955,7 @@ class TexModel:
                     os.remove(nstyfname)
                 return []
             else:
-                os.makedirs(self.printer.configPath(cfgname)), exist_ok=True)
+                os.makedirs(self.printer.configPath(cfgname), exist_ok=True)
                 with open(nstyfname, "w", encoding="utf-8") as outf:
                     outf.write("".join(nstylist))
                 return [nstyfname]

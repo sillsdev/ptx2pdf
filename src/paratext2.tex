@@ -118,7 +118,7 @@
 \def\vm@kenote#1#2#3{%
   \inn@tetrue%
   \let\next\relax%
-  \def\n@tetype{#2}%
+  \def\n@tetype{#1}%
   \ifdiglot\ifdiglotSepNotes\ifdiglotL\def\n@tetype{#1}\else\def\n@tetype{#1R}\fi\fi\fi%
   \TRACE{vm@kenote \n@tetype}%
   \x@\insert\csname note-\n@tetype\endcsname\bgroup% insert note-f (or note-x)
