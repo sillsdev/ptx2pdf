@@ -141,7 +141,7 @@
 \else%
   \getp@r@m{#1}{#2}%
 \fi%
-\trace{s}{#2:#1 is \p@ram}%
+\trace{s}{\space\space #2:#1 is \p@ram}%
 }
 
 %Main utility function for font parameters, stacking-styles aware
@@ -163,7 +163,7 @@
           \ifnum\ifx\p@ram\relax 1\else\ifx\p@ram\ps@ze 1\else 0\fi\fi =1
             \dimen0=\sc@le\dimen0\else\dimen0=\p@ram pt\fi
         \else\dimen0=\sc@le\dimen0
-    \fi\fi\xdef\c@rrfontsize{\strip@pt{\dimen0}}\trace{s}{working c@rrfontsize from ##2 is \c@rrfontsize}\fi}%
+    \fi\fi\xdef\c@rrfontsize{\strip@pt{\dimen0}}\trace{s}{\space working c@rrfontsize from ##2 is \c@rrfontsize}\fi}%
   \mcup\trace{s}{set c@rrfontsize for \mcstack\space is \c@rrfontsize}}
  
 \def\getFp@ram#1#2{%
@@ -172,26 +172,6 @@
 \def\getFp@ramR#1#2{%
   \def\d@##1+##2\E{\edef\tmp{##2}\edef\tmpa{#2}\ifx\tmp\tmpa\getmcp@ramR{#1}\else\getp@ram{#1}{#2}\fi}%
   \mctop}
-
-\def\endst@ck#1,#2\E{}% 
-%This gets the param from each marker in the stack, in turn, overwriting any previous value.
-% But preserving ones that aren't set if the nesting is deep
-\def\getp@ramstack#1+#2,#3\E{%
-  \def\t@st{#1}\ifx\t@st\empty\let\n@xt=\endst@ck %No more values
-  \else
-    \getp@ram{#3}{#1}\ifx\p@ram\relax\let\p@ram=\s@vep@ram %use old value if current one is void
-    \else\let\s@vep@ram=\p@ram\fi %save current, in case it's needed later 
-    \let\n@xt=\getp@ramstack
-  \fi
-  \n@xt#2+,#3\E}
-%
-\def\getp@ramignore#1#2#3{%IF there is already a value in p@ram, then keep that value if the retrieved value is the same as the relevant param for #3
-  \ifx\p@ram\relax
-    \trace{s}{No value yet}\getp@ram{#1}{#2}%
-  \else
-    \trace{s}{Getting #2:#1, if it's not the same as #3:#1}%
-    \let\s@vep@ram=\p@ram\getp@ram{#1}{#3}\let\pp@ram=\p@ram
-    \getp@ram{#1}{#2}\trace{s}{p's p@ram is \pp@ram, savep@ram is \s@vep@ram}\ifx\p@ram\pp@ram\let\p@ram=\s@vep@ram\fi\fi}
 
 \def\m@kestyle{{\uccode`\|=`\\\uppercase{\message{|\m@rker}}}
  \x@\let\csname font<\m@rker>\endcsname=\relax 
