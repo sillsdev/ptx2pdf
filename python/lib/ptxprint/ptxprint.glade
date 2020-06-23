@@ -170,13 +170,13 @@
   </object>
   <object class="GtkAdjustment" id="a_maxSpace">
     <property name="lower">50</property>
-    <property name="upper">500</property>
+    <property name="upper">999</property>
     <property name="value">200</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="a_minSpace">
-    <property name="upper">100</property>
+    <property name="upper">200</property>
     <property name="value">50</property>
     <property name="step_increment">1</property>
     <property name="page_increment">5</property>
@@ -4646,6 +4646,7 @@ secondary text as the Outer text.</property>
                                     </child>
                                     <child>
                                       <object class="GtkComboBoxText" id="ecb_hdrcenter">
+                                        <property name="width_request">190</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="active">1</property>
@@ -4661,8 +4662,7 @@ secondary text as the Outer text.</property>
                                           <object class="GtkEntry">
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
-                                            <property name="halign">center</property>
-                                            <property name="width_chars">22</property>
+                                            <property name="width_chars">8</property>
                                             <property name="xalign">0.5</property>
                                           </object>
                                         </child>
@@ -4674,6 +4674,7 @@ secondary text as the Outer text.</property>
                                     </child>
                                     <child>
                                       <object class="GtkComboBoxText" id="ecb_hdrright">
+                                        <property name="width_request">190</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="active">4</property>
@@ -4689,7 +4690,7 @@ secondary text as the Outer text.</property>
                                           <object class="GtkEntry">
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
-                                            <property name="width_chars">22</property>
+                                            <property name="width_chars">8</property>
                                             <property name="xalign">1</property>
                                           </object>
                                         </child>
@@ -4701,6 +4702,7 @@ secondary text as the Outer text.</property>
                                     </child>
                                     <child>
                                       <object class="GtkComboBoxText" id="ecb_hdrleft">
+                                        <property name="width_request">190</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="active">0</property>
@@ -4716,7 +4718,7 @@ secondary text as the Outer text.</property>
                                           <object class="GtkEntry">
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
-                                            <property name="width_chars">22</property>
+                                            <property name="width_chars">8</property>
                                           </object>
                                         </child>
                                       </object>
@@ -4937,7 +4939,7 @@ or:  †,‡,§,∥,#    or: ✶,☆,✦,✪</property>
                                                     </child>
                                                     <child>
                                                       <object class="GtkEntry" id="t_fncallers">
-                                                        <property name="width_request">60</property>
+                                                        <property name="width_request">140</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="tooltip_text" translatable="yes">These callers should automatically be loaded from
@@ -4949,7 +4951,7 @@ Separate callers with a comma (no spaces).
 For example: a,b,c,d,e,f,g,h, etc.
 or:  †,‡,§,∥,#    or: ✶,☆,✦,✪</property>
                                                         <property name="halign">start</property>
-                                                        <property name="width_chars">23</property>
+                                                        <property name="width_chars">8</property>
                                                       </object>
                                                       <packing>
                                                         <property name="expand">False</property>
@@ -5143,6 +5145,7 @@ or:  †,‡,§,∥,#    or: ✶,☆,✦,✪</property>
                                                     </child>
                                                     <child>
                                                       <object class="GtkEntry" id="t_xrcallers">
+                                                        <property name="width_request">140</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="tooltip_text" translatable="yes">These callers should automatically be loaded from
@@ -5154,7 +5157,7 @@ Separate callers with a comma (no spaces).
 For example: a,b,c,d,e,f,g,h, etc.
 or:  †,‡,§,∥,#    or: ✶,☆,✦,✪</property>
                                                         <property name="halign">start</property>
-                                                        <property name="width_chars">22</property>
+                                                        <property name="width_chars">8</property>
                                                       </object>
                                                       <packing>
                                                         <property name="expand">False</property>
@@ -5785,6 +5788,7 @@ the scripture text begins).</property>
                             </child>
                             <child>
                               <object class="GtkComboBoxText" id="ecb_ftrcenter">
+                                <property name="width_request">340</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="active">0</property>
@@ -5799,7 +5803,7 @@ the scripture text begins).</property>
                                   <object class="GtkEntry">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="width_chars">20</property>
+                                    <property name="width_chars">10</property>
                                     <property name="xalign">0.5</property>
                                   </object>
                                 </child>

@@ -879,9 +879,11 @@ class GtkViewModel(ViewModel):
         # Set the font of any GtkEntry boxes to the primary body text font for this project
         fsize = self.get("s_fontsize")
         (name, style) = self.get("bl_fontR")
-        pangostr = "{} {} {}".format(name, style, fsize)
-        p = Pango.font_description_from_string(pangostr)
-        for w in ("t_clHeading", "t_tocTitle", "ecb_ftrcenter", "scroll_FinalSFM", "scroll_PicList"):   # "t_runningFooter",
+        fallback = ',Sans'
+        pangostr = '{}{} {} {}'.format(name, fallback, style, fsize)
+        p = Pango.FontDescription(pangostr)
+        for w in ("t_clHeading", "t_tocTitle", "t_configNotes", "scroll_FinalSFM", "scroll_PicList", \
+                  "ecb_ftrcenter", "ecb_hdrleft", "ecb_hdrcenter", "ecb_hdrright", "t_fncallers", "t_xrcallers"):
             self.builder.get_object(w).modify_font(p)
 
     def updateFakeLabels(self):
