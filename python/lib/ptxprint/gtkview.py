@@ -1411,8 +1411,8 @@ class GtkViewModel(ViewModel):
 
     def onEditModsTeX(self, btn):
         self.prjid = self.get("fcb_project")
-        cfgname = self.printer.configName()
-        fpath = os.path.join(self.printer.configPath(cfgname), "ptxprint-mods.tex")
+        cfgname = self.configName()
+        fpath = os.path.join(self.configPath(cfgname), "ptxprint-mods.tex")
         if not os.path.exists(fpath):
             openfile = open(fpath,"w", encoding="utf-8")
             openfile.write("% This is the .tex file specific for the {} project used by PTXprint.\n".format(self.prjid))
