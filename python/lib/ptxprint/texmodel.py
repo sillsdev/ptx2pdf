@@ -812,6 +812,9 @@ class TexModel:
         # Paratext marks no-break space as a tilde ~
         self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
 
+        # Hack for JraKhmr
+        self.localChanges.append((None, regex.compile(r"\\ft»", flags=regex.M), r"\\ft »")) 
+
         # Remove the + of embedded markup (xetex handles it)
         self.localChanges.append((None, regex.compile(r"\\\+", flags=regex.M), r"\\"))  
             

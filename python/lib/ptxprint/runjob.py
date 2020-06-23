@@ -813,7 +813,8 @@ class RunJob:
         lineSpacingFactor = float(info.dict["paragraph/linespacingfactor"])
         # print("lineSpacingFactor=", lineSpacingFactor)
         # ph = pageheight, pw = pagewidth
-        ph = pageHeight - (margin * topMarginFactor) - (margin * bottomMarginFactor) - 22 # 16 # (3 * lineSpacingFactor) (Hack!)
+        # print("margin={} topMarginFactor={} bottomMarginFactor={}".format(margin, topMarginFactor, bottomMarginFactor))
+        ph = pageHeight - (margin * float(topMarginFactor)) - (margin * float(bottomMarginFactor)) - 22  # 16 # (3 * lineSpacingFactor) (Hack!)
         pw1 = pageWidth - bindingGutter - (2*(margin*sideMarginFactor))                       # single-col layout
         if info.dict["paper/columns"] == "2":
             pw2 = int(pageWidth - middleGutter - bindingGutter - (2*(margin*sideMarginFactor)))/2 # double-col layout & span images
