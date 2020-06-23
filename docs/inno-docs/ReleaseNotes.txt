@@ -1,6 +1,10 @@
-PTXprint 0.8.4 Beta Release Notes
+PTXprint 0.8.5 Beta Release Notes
 23rd June 2020
 
+Bug Fixes and Improvements in: 0.8.5
+
+  * Fix page-size calcs causing some projects with illustrations to fail
+  
 Bug Fixes and Improvements in: 0.8.4
 
   * Output PDF filenames now include SavedConfig name

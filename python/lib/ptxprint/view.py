@@ -6,7 +6,7 @@ from .ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from .font import TTFont
 import pathlib, os
 
-VersionStr = "0.8.4 beta"
+VersionStr = "0.8.5 beta"
 
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
 
