@@ -117,6 +117,7 @@ class RunJob:
 
     def doit(self):
         info = TexModel(self.printer, self.args.paratext, self.printer.ptsettings, self.printer.prjid)
+        info.debug = self.args.debug
         self.tempFiles = []
         self.prjid = info.dict["project/id"]
         self.prjdir = os.path.join(self.args.paratext, self.prjid)

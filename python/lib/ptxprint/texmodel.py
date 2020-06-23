@@ -326,6 +326,7 @@ class TexModel:
         self.ptsettings = ptsettings
         self.changes = None
         self.localChanges = None
+        self.debug = False
         t = datetime.now()
         tz = t.utcoffset()
         if tz is None:
@@ -628,6 +629,7 @@ class TexModel:
             dat = inf.read()
             if self.changes is not None or self.localChanges is not None:
                 for c in (self.changes or []) + (self.localChanges or []):
+                    if self.debug: print(c)
                     if c[0] is None:
                         dat = c[1].sub(c[2], dat)
                     else:
@@ -742,10 +744,10 @@ class TexModel:
                     origfn = re.escape(origfn)
                     if tempfn != "":
                         # print("(?i)(\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), "-->", tempfn)
-                        self.localChanges.append((None, regex.compile(r"(?i)(\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), \
-                                                     flags=regex.M), r"\1{}\2".format(tempfn)))                               #USFM2
-                        self.localChanges.append((None, regex.compile(r'(?i)(\\fig .*?src="){}(" .+?\\fig\*)'.format(origfn), \
-                                                     flags=regex.M), r"\1{}\2".format(tempfn)))                               #USFM3
+                        self.localChanges.append((None, regex.compile(r"(?i)(?<fig>\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), \
+                                                     flags=regex.M), r"\g<fig>{}\2".format(tempfn)))                               #USFM2
+                        self.localChanges.append((None, regex.compile(r'(?i)(?<fig>\\fig .*?src="){}(" .+?\\fig\*)'.format(origfn), \
+                                                     flags=regex.M), r"\g<fig>{}\2".format(tempfn)))                               #USFM3
                     else:
                         if self.asBool("document/iffigskipmissing"):
                             # print("(?i)(\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), "--> Skipped!!!!")
