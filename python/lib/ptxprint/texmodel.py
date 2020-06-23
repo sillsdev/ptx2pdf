@@ -351,7 +351,7 @@ class TexModel:
             base = os.path.join(self.dict["/ptxpath"], self.dict["project/id"])
             docdir = os.path.join(base, 'PrintDraft')
         else:
-            base = self.printer.working_dir
+            base = printer.working_dir
             docdir = base
         self.dict["document/directory"] = os.path.abspath(docdir).replace("\\","/")
         self.dict['project/adjlists'] = os.path.join(self.printer.configPath(self.printer.configName()), "AdjLists/").replace("\\","/")
