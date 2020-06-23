@@ -1357,7 +1357,7 @@ class GtkViewModel(ViewModel):
     def updateFonts(self):
         if self.ptsettings is None:
             return
-        ptfont = self.ptsettings['DefaultFont']
+        ptfont = self.ptsettings.get("DefaultFont", "Arial")
         for fb in ['bl_fontR', 'bl_verseNumFont']:  # 'bl_fontB', 'bl_fontI', 'bl_fontBI', 'bl_fontExtraR'
             fblabel = self.builder.get_object(fb).get_label()
             if fblabel == "Select font...":
