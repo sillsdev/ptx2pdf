@@ -739,7 +739,7 @@ class TexModel:
 
             figChangeList = self.figNameChanges(printer, bk)
             if len(figChangeList):
-                missingPics = []
+                # missingPics = []
                 for origfn,tempfn in figChangeList:
                     origfn = re.escape(origfn)
                     if tempfn != "":
@@ -749,6 +749,7 @@ class TexModel:
                         self.localChanges.append((None, regex.compile(r'(?i)(?<fig>\\fig .*?src="){}(" .+?\\fig\*)'.format(origfn), \
                                                      flags=regex.M), r"\g<fig>{}\2".format(tempfn)))                               #USFM3
                     else:
+                        # missingPics += [origfn]
                         if self.asBool("document/iffigskipmissing"):
                             # print("(?i)(\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), "--> Skipped!!!!")
                             self.localChanges.append((None, regex.compile(r"(?i)\\fig .*?\|{}\|.+?\\fig\*".format(origfn), flags=regex.M), ""))     #USFM2
@@ -862,6 +863,8 @@ class TexModel:
             for f in figlist:
                 found = False
                 for ext in extOrder:
+                    if ext.lower() == "tif":
+                        ext = "jpg"
                     tmpf = self.newBase(f)+"."+ext
                     fname = os.path.join(picdir, tmpf)
                     if os.path.exists(fname):
