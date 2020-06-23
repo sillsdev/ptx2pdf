@@ -1,5 +1,23 @@
-PTXprint 0.8.3 Beta Release Notes
-19th June 2020
+PTXprint 0.8.4 Beta Release Notes
+23rd June 2020
+
+Bug Fixes and Improvements in: 0.8.4
+
+  * Output PDF filenames now include SavedConfig name
+
+  * Fix PicList path to use Saved Config location
+  
+  * Various illustration-related bug fixes
+  
+  * Enable several more UI controls to show font/script of target text (with fallback to Sans)
+  
+  * Cascading Styles improved
+  
+  * Suppress creation of a blank custom.sty if file not found
+  
+  * Fixed centered table cells
+  
+  * More improvements and bug fixes to diglots
 
 Bug Fixes and Improvements in: 0.8.3
 
