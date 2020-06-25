@@ -180,6 +180,7 @@ ModelMap = {
     "document/supressparallels": ("c_omitParallelRefs", None),
     "document/supressbookintro": ("c_omitBookIntro", None),
     "document/supressintrooutline": ("c_omitIntroOutline", None),
+    "document/indentunit":      ("s_indentUnit", lambda w,v: round(v, 1) or "2.0"),
     "document/supressindent":   ("c_omit1paraIndent", lambda w,v: "false" if v else "true"),
     "document/ifhidehboxerrors": ("c_showHboxErrorBars", lambda w,v :"%" if v else ""),
     "document/elipsizemptyvs":  ("c_elipsizeMissingVerses", None),
@@ -866,22 +867,17 @@ class TexModel:
         fname = printer.getBookFilename(bk, prjdir)
         infpath = os.path.join(prjdir, fname)
         extOrder = printer.getExtOrder()
-        print("extOrder in figNameChanges):", extOrder)
         with universalopen(infpath) as inf:
             dat = inf.read()
             inf.close()
             figlist += re.findall(r"(?i)\\fig .*?\|(.+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)\|.+?\\fig\*", dat)    # Finds USFM2-styled markup in text:
             figlist += re.findall(r'(?i)\\fig .+src="(.+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text:
-            print("figlist in figNameChanges:", figlist)
             for f in figlist:
-                print(f)
                 found = False
                 for ext in extOrder:
                     if ext.lower().startswith("tif"):
-                        print("found one startswith TIF")
                         ext = "jpg"
                     tmpf = self.newBase(f)+"."+ext
-                    print("tmpf:", tmpf)
                     fname = os.path.join(picdir, tmpf)
                     if os.path.exists(fname):
                         figchngs.append((f,tmpf))
@@ -889,7 +885,7 @@ class TexModel:
                         break
                 if not found:
                     figchngs.append((f,"")) 
-        print(figchngs)
+        # print(figchngs)
         return(figchngs)
 
     def base(self, fpath):

@@ -581,7 +581,6 @@ class RunJob:
         extensions = [x for x in extdflt if x in extuser]
         if not len(extensions):   # If the user hasn't defined any extensions 
             extensions = extdflt  # then we can assign defaults
-        print("Extension preference order:", extensions)
         fullnamelist = []
         spanimagelist = []
         
@@ -609,8 +608,8 @@ class RunJob:
                     spanimagelist += re.findall(r'(?i)\\fig .*?src="(.+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)".+?size="span.+?\\fig\*', dat)
         newBaseList = [newBase(f) for f in fullnamelist]
         newBaseSpanList = [newBase(f) for f in spanimagelist]
-        print("newBaseList:", newBaseList)
-        print("newBaseSpanList:", newBaseSpanList)
+        # print("newBaseList:", newBaseList)
+        # print("newBaseSpanList:", newBaseSpanList)
         os.makedirs(tmpPicpath, exist_ok=True)
         for srchdir in srchlist:
             if srchdir != None and os.path.exists(srchdir):
@@ -630,12 +629,9 @@ class RunJob:
                             for file in files:
                                 doti = file.rfind(".")
                                 origExt = file[doti:].lower()
-                                print(file, " Ext:", origExt)
                                 if origExt[1:] in extensions:
                                     filepath = subdir + os.sep + file
-                                    print("filepath:", filepath)
                                     nB = newBase(filepath)
-                                    print("nB:", nB)
                                     if nB in newBaseList:
                                         ratio = pageRatios[1] if nB not in newBaseSpanList else pageRatios[0]
                                         self.carefulCopy(ratio, filepath, nB+origExt.lower())
@@ -705,7 +701,6 @@ class RunJob:
             self.printer.set("l_missingPictureString", "No Missing Pictures")
 
     def convertToJPGandResize(self, ratio, infile, outfile):
-        print("Converting tif to jpg or changing ratio", ratio, infile, outfile)
         white = (255, 255, 255, 255)
         with open(infile,"rb") as inf:
             rawdata = inf.read()
@@ -719,8 +714,8 @@ class RunJob:
         except OSError:
             print("Failed to convert (image) file:", srcpath)
             return
-        print("Orig ih={} iw={}".format(ih, iw))
-        print("iw/ih = ", iw/ih)
+        # print("Orig ih={} iw={}".format(ih, iw))
+        # print("iw/ih = ", iw/ih)
         if iw/ih < ratio:
             # print(infile)
             newWidth = int(ih * ratio)
@@ -728,16 +723,14 @@ class RunJob:
             newimg.alpha_composite(onlyRGBAimage, (int((newWidth-iw)/2),0))
             iw = newimg.size[0]
             ih = newimg.size[1]
-            print(">>>>>> Resized: ih={} iw={}".format(ih, iw))
+            # print(">>>>>> Resized: ih={} iw={}".format(ih, iw))
             onlyRGBimage = newimg.convert('RGB')
             onlyRGBimage.save(outfile)
         else:
             onlyRGBimage = onlyRGBAimage.convert('RGB')
             onlyRGBimage.save(outfile)
-        print("End of Conversion")
 
     def carefulCopy(self, ratio, srcpath, tgtfile):
-        print("carefulCopy: {} > {}".format(srcpath, tgtfile))
         tmpPicPath = os.path.join(self.printer.working_dir, "tmpPics")
         tgtpath = os.path.join(tmpPicPath, tgtfile)
         try:
@@ -751,20 +744,16 @@ class RunJob:
         # then we first need to convert to a JPG and/or pad with which space on either side
         doti = srcpath.rfind(".")
         if srcpath[doti:].lower().startswith(".tif") or iw/ih < ratio:
-            print("Inside .tif conversion or ratio change >>>>>>>>>>>>>>>>>>>>")
             tempJPGname = os.path.join(tmpPicPath, "tempJPG.jpg")
             doti = tgtpath.rfind(".")
             tgtpath = tgtpath[:doti]+".jpg"
-            print("tgtpath:", tgtpath)
             # try:
             self.convertToJPGandResize(ratio, srcpath, tempJPGname)
             srcpath = tempJPGname
-            print("srcpath:", srcpath)
             # except: # MH: Which exception should I try to catch?
                 # print("Error: Unable to convert/resize image!\nImage skipped:", srcpath)
                 # return
         if not os.path.exists(tgtpath):
-            print("Simple copy only")
             copyfile(srcpath, tgtpath)
         else:
             if self.printer.get("c_useLowResPics"): # we want to use the smallest available file
@@ -843,9 +832,9 @@ class RunJob:
             # pw2 = pw1
         else:
             pw2 = pw1
-        print("Usable ph: {}mm".format(ph), "     Usable 1-col pw1: {}mm   Usable 2-col pw2: {}mm".format(pw2, pw1))
+        # print("Usable ph: {}mm".format(ph), "     Usable 1-col pw1: {}mm   Usable 2-col pw2: {}mm".format(pw2, pw1))
         pageRatios = (pw1/ph, pw2/ph)
-        print("Page Ratios = ", pageRatios)
+        # print("Page Ratios = ", pageRatios)
         return pageRatios
 
     def convert2mm(self, measure):

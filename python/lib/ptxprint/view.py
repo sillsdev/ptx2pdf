@@ -699,13 +699,6 @@ class ViewModel:
         # If the preferred image type(s) has(have) been specified, parse that string
         imgord = self.get("t_imageTypeOrder").lower()
         extOrder = re.sub("[ ,;/><]"," ",imgord).split()
-        print(extOrder)
-        # extOrder = []
-        # if len(imgord):
-            # exts = re.findall("([a-z]{3})",imgord)
-            # for e in exts:
-                # if e in ["jpg", "jpeg", "png", "tif", "tiff", "pdf"] and e not in extOrder:
-                    # extOrder += [e]
         if not len(extOrder): # If the user hasn't defined a specific order then we can assign this
             if self.get("c_useLowResPics"): # based on whether they prefer small/compressed image formats
                 extOrder = ["jpg", "jpeg", "png", "tif", "tiff", "pdf"] 
