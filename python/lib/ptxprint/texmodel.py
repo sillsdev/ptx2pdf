@@ -62,7 +62,7 @@ ModelMap = {
                                  for s in w.FrontPDFs) if (w.get("c_inclFrontMatter") and w.FrontPDFs is not None and w.FrontPDFs != 'None') else ""),
     "project/ifinclbackpdf":    ("c_inclBackMatter", None),
     "project/backincludes":     ("btn_selectBackPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s.as_posix()) \
-                                 for s in w.BackPDFs) if (w.get("c_inclFrontMatter") and w.BackPDFs is not None and w.BackPDFs != 'None') else ""),
+                                 for s in w.BackPDFs) if (w.get("c_inclBackMatter") and w.BackPDFs is not None and w.BackPDFs != 'None') else ""),
     "project/useprintdraftfolder": ("c_useprintdraftfolder", lambda w,v :"true" if v else "false"),
     "project/processscript":    ("c_processScript", None),
     "project/runscriptafter":   ("c_processScriptAfter", None),
@@ -91,7 +91,8 @@ ModelMap = {
     "paper/gutter":             ("s_pagegutter", lambda w,v: round(v) or "0"),
     "paper/colgutteroffset":    ("s_colgutteroffset", lambda w,v: "{:.1f}".format(v) or "0.0"),
     "paper/columns":            ("c_doublecolumn", lambda w,v: "2" if v else "1"),
-    "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
+    # "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
+    "paper/fontfactor":         ("s_fontsize", lambda w,v: "{:.3f}".format(v / 12) or "1.000"),
 
     "fancy/showborderstab":     ("c_showBordersTab", None),
     "fancy/enableborders":      ("c_borders", lambda w,v: "" if v else "%"),
@@ -532,6 +533,13 @@ class TexModel:
                     res.append("\\PtxFilePath={"+filedir.replace("\\","/")+"/}\n")
                     for i, f in enumerate(self.dict['project/bookids']):
                         fname = self.dict['project/books'][i]
+                        # May ALSO need to check if top center header is pagenumber AND bottomcenter is NOT pagenumber:
+                        # before adding this to the top of GLO bks etc.
+                        # if f in ["XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG",
+                                # "GLO", "TDX", "NDX", "CNC", "OTH", "BAK"]:
+                            # res.append("\\def\RHtitlecenter{\pagenumber}\n")
+                            # res.append("\\defineheads\n")
+                            # res.append("\\def\RHtitlecenter{{}}\n".format(self.dict['header/hdrcenter']))
                         if self.asBool('document/ifomitsinglechnum') and \
                            self.dict['document/ifomitchapternum'] == "false" and \
                            f in oneChbooks:
@@ -858,17 +866,22 @@ class TexModel:
         fname = printer.getBookFilename(bk, prjdir)
         infpath = os.path.join(prjdir, fname)
         extOrder = printer.getExtOrder()
+        print("extOrder in figNameChanges):", extOrder)
         with universalopen(infpath) as inf:
             dat = inf.read()
             inf.close()
-            figlist += re.findall(r"(?i)\\fig .*?\|(.+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)    # Finds USFM2-styled markup in text:
-            figlist += re.findall(r'(?i)\\fig .+src="(.+?\.(?=jpg|tif|png|pdf)...)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text:
+            figlist += re.findall(r"(?i)\\fig .*?\|(.+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)\|.+?\\fig\*", dat)    # Finds USFM2-styled markup in text:
+            figlist += re.findall(r'(?i)\\fig .+src="(.+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text:
+            print("figlist in figNameChanges:", figlist)
             for f in figlist:
+                print(f)
                 found = False
                 for ext in extOrder:
-                    if ext.lower() == "tif":
+                    if ext.lower().startswith("tif"):
+                        print("found one startswith TIF")
                         ext = "jpg"
                     tmpf = self.newBase(f)+"."+ext
+                    print("tmpf:", tmpf)
                     fname = os.path.join(picdir, tmpf)
                     if os.path.exists(fname):
                         figchngs.append((f,tmpf))
@@ -876,11 +889,12 @@ class TexModel:
                         break
                 if not found:
                     figchngs.append((f,"")) 
-        # print(figchngs)
+        print(figchngs)
         return(figchngs)
 
     def base(self, fpath):
-        return os.path.basename(fpath)[:-4]
+        doti = fpath.rfind(".")
+        return os.path.basename(fpath[:doti])
 
     def codeLower(self, fpath):
         cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?$", self.base(fpath))

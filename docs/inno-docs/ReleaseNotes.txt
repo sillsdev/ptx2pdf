@@ -1,6 +1,12 @@
-PTXprint 0.8.5 Beta Release Notes
-23rd June 2020
+PTXprint 0.8.6 Beta Release Notes
+25rd June 2020
 
+Bug Fixes and Improvements in: 0.8.6
+
+  * Fixed bug with missing back-matter PDF
+  
+  * Fixed path to ptxprint-mods.tex
+  
 Bug Fixes and Improvements in: 0.8.5
 
   * Fix page-size calcs causing some projects with illustrations to fail

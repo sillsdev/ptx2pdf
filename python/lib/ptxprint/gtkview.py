@@ -512,7 +512,7 @@ class GtkViewModel(ViewModel):
                         return
                 fileLocked = False
         invPW = self.get("t_invisiblePassword")
-        if invPW == None or invPW == "" or self.printer.configName() == "": # This config is unlocked
+        if invPW == None or invPW == "" or self.configName() == "": # This config is unlocked
             # So it it safe/allowed to save the current config
             self.writeConfig()
         # else:
@@ -553,6 +553,8 @@ class GtkViewModel(ViewModel):
                 continue
             copytree(os.path.join(currconfigpath, subdirname), os.path.join(configpath, subdirname))
         self.configId = newconfigId
+        self.writeConfig()
+        self.updateSavedConfigList()
         self.set("lb_settings_dir", configpath)
         self.updateDialogTitle()
 
@@ -1380,7 +1382,7 @@ class GtkViewModel(ViewModel):
         elif loc == "prj":
             fpath = os.path.join(self.settings_dir, self.prjid, file2edit)
         elif loc == "cfg":
-            cfgname = self.printer.configName()
+            cfgname = self.configName()
             fpath = os.path.join(self.configPath(cfgname), file2edit)
             if not os.path.exists(fpath):
                 fpath = os.path.join(self.configPath(""), file2edit)

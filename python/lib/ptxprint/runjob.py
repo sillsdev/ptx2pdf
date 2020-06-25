@@ -49,7 +49,8 @@ _errmsghelp = {
 # %\extrafont  %% This will be replaced by code for the fallback fonts to be used for special/missing characters
 
 def base(fpath):
-    return os.path.basename(fpath)[:-4]
+    doti = fpath.rfind(".")
+    return os.path.basename(fpath[:doti])
 
 # https://sites.google.com/a/lci-india.org/typesetting/home/illustrations/where-to-find-illustrations
 # We could build the credit text too if we wanted to (and perhaps a list of pg numbers on which the pictures were found)
@@ -237,8 +238,8 @@ class RunJob:
         if len(refs):
             finalLogLines.append("\nReferences to check{}: {}".format(book, " ".join(refs)))
 
-        texmrkrs = [r"\fi", "\if", "\ifx", "\\box", "\else", "\\book", "\\par",
-                     "\\gdef", "\\hsize", "\\relax"]
+        texmrkrs = [r"\fi", "\if", "\ifx", "\\box", "\\hbox", "\\vbox", "\else", "\\book", "\\par",
+                     "\\edef", "\\gdef", "\\dimen" "\\hsize", "\\relax"]
         allmrkrs = re.findall(r"(\\[a-z0-9]{0,5})[ *\r\n.]", "".join(finalLogLines[-8:]))
         mrkrs = [x for x in allmrkrs if x not in texmrkrs]
         if 0 < len(mrkrs) < 7:
@@ -247,7 +248,7 @@ class RunJob:
             else:
                 finalLogLines.append("\nMarkers to check: {}".format(", ".join(mrkrs)))
 
-        files = re.findall(r'(?i)([^\\/\n."= ]*?\.(?=jpg|tif|png|pdf)...)', "".join(finalLogLines))
+        files = re.findall(r'(?i)([^\\/\n."= ]*?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)', "".join(finalLogLines))
         if len(files):
             finalLogLines.append("\nFile(s) to check: {}".format(", ".join(files)))
         return finalLogLines
@@ -574,13 +575,13 @@ class RunJob:
                     if os.path.exists(p):
                         srchlist += [p]
         extensions = []
-        extdflt = ["jpg", "png", "tif", "pdf"]
-        extuser = self.printer.get("t_imageTypeOrder").lower()
-        extuser = re.findall("([a-z]{3})",extuser)
+        extdflt = ["jpg", "jpeg", "png", "tif", "tiff", "pdf"]
+        imgord = self.printer.get("t_imageTypeOrder").lower()
+        extuser = re.sub("[ ,;/><]"," ",imgord).split()
         extensions = [x for x in extdflt if x in extuser]
         if not len(extensions):   # If the user hasn't defined any extensions 
             extensions = extdflt  # then we can assign defaults
-        # print("Extension preference order:", extensions)
+        print("Extension preference order:", extensions)
         fullnamelist = []
         spanimagelist = []
         
@@ -595,26 +596,28 @@ class RunJob:
                     with universalopen(piclstfname, rewrite=True) as inf:
                         dat = inf.read()
                         # MAT 19.13 |CN01771C.jpg|col|tr||Bringing the children to Jesus|19:13
-                        fullnamelist += re.findall(r"(?i)\|(.+?\.(?=jpg|tif|png|pdf)...)\|", dat)
-                        spanimagelist += re.findall(r"(?i)\|(.+?\.(?=jpg|tif|png|pdf)...)\|span", dat)
+                        fullnamelist += re.findall(r"(?i)\|(.+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)\|", dat)
+                        spanimagelist += re.findall(r"(?i)\|(.+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)\|span", dat)
             else:
                 infname = os.path.join(self.prjdir, fname)
                 with universalopen(infname) as inf:
                     dat = inf.read()
                     inf.close() # Look for USFM2 and USFM3 type inline \fig ... \fig* illustrations
-                    fullnamelist += re.findall(r"(?i)\\fig .*?\|(.+?(?!\d{5}[a-c]?).+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)
-                    fullnamelist += re.findall(r'(?i)\\fig .*?src="(.+?\.(?=jpg|tif|png|pdf)...)" .+?\\fig\*', dat) 
-                    spanimagelist += re.findall(r"(?i)\\fig .*?\|(.+?(?!\d{5}[a-c]?).+?\.(?=jpg|tif|png|pdf)...)\|span.+?\\fig\*", dat)
-                    spanimagelist += re.findall(r'(?i)\\fig .*?src="(.+?\.(?=jpg|tif|png|pdf)...)".+?size="span.+?\\fig\*', dat)
+                    fullnamelist += re.findall(r"(?i)\\fig .*?\|(.+?(?!\d{5}[a-c]?).+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)\|.+?\\fig\*", dat)
+                    fullnamelist += re.findall(r'(?i)\\fig .*?src="(.+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)" .+?\\fig\*', dat) 
+                    spanimagelist += re.findall(r"(?i)\\fig .*?\|(.+?(?!\d{5}[a-c]?).+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)\|span.+?\\fig\*", dat)
+                    spanimagelist += re.findall(r'(?i)\\fig .*?src="(.+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)".+?size="span.+?\\fig\*', dat)
         newBaseList = [newBase(f) for f in fullnamelist]
         newBaseSpanList = [newBase(f) for f in spanimagelist]
-        # print(newBaseSpanList)
+        print("newBaseList:", newBaseList)
+        print("newBaseSpanList:", newBaseSpanList)
         os.makedirs(tmpPicpath, exist_ok=True)
         for srchdir in srchlist:
             if srchdir != None and os.path.exists(srchdir):
                 if self.printer.get("c_exclusiveFiguresFolder"):
                     for file in os.listdir(srchdir):
-                        origExt = file[-4:].lower()
+                        doti = file.rfind(".")
+                        origExt = file[doti:].lower()
                         if origExt[1:] in extensions:
                             filepath = os.path.join(srchdir, file)
                             nB = newBase(filepath)
@@ -625,10 +628,14 @@ class RunJob:
                     for subdir, dirs, files in os.walk(srchdir):
                         if subdir != "tmpPics": # Avoid recursively scanning the folder we are copying to!
                             for file in files:
-                                origExt = file[-4:].lower()
+                                doti = file.rfind(".")
+                                origExt = file[doti:].lower()
+                                print(file, " Ext:", origExt)
                                 if origExt[1:] in extensions:
                                     filepath = subdir + os.sep + file
+                                    print("filepath:", filepath)
                                     nB = newBase(filepath)
+                                    print("nB:", nB)
                                     if nB in newBaseList:
                                         ratio = pageRatios[1] if nB not in newBaseSpanList else pageRatios[0]
                                         self.carefulCopy(ratio, filepath, nB+origExt.lower())
@@ -649,8 +656,9 @@ class RunJob:
                             dat = inf.read()
                             dat = re.sub(r"(?m)%.+?\r?\n", "", dat) # Throw out all comments
                             for f in fullnamelist:
-                                ext = f[-4:].lower()
-                                if ext[1:] == "tif":
+                                doti = f.rfind(".")
+                                ext = f[doti:].lower()
+                                if ext[1:3] == "tif":
                                     ext = ".jpg"
                                 tmpPicfname = newBase(f)+ext
                                 if os.path.exists(os.path.join(tmpPicpath, tmpPicfname)):
@@ -664,7 +672,8 @@ class RunJob:
                                             found = True
                                             break
                                     if not found:
-                                        missingPics.append(f[:-4])
+                                        doti = f.rfind(".")
+                                        missingPics.append(f[:doti])
                                         if self.printer.get("c_skipmissingimages"):
                                             dat = re.sub(r"(?im)(^.*{})".format(re.escape(f)), r"% \1", dat)
 
@@ -684,7 +693,8 @@ class RunJob:
             if len(foundPics):
                 bl = []
                 for b in foundPics:
-                    bl += [b[:-4]]
+                    doti = b.rfind(".")
+                    bl += [b[:doti]]
                 missingPics = set(newBaseList) - set(bl)
             else:
                 missingPics = newBaseList
@@ -695,6 +705,7 @@ class RunJob:
             self.printer.set("l_missingPictureString", "No Missing Pictures")
 
     def convertToJPGandResize(self, ratio, infile, outfile):
+        print("Converting tif to jpg or changing ratio", ratio, infile, outfile)
         white = (255, 255, 255, 255)
         with open(infile,"rb") as inf:
             rawdata = inf.read()
@@ -708,8 +719,8 @@ class RunJob:
         except OSError:
             print("Failed to convert (image) file:", srcpath)
             return
-        # print("Orig ih={} iw={}".format(ih, iw))
-        # print("iw/ih = ", iw/ih)
+        print("Orig ih={} iw={}".format(ih, iw))
+        print("iw/ih = ", iw/ih)
         if iw/ih < ratio:
             # print(infile)
             newWidth = int(ih * ratio)
@@ -717,14 +728,16 @@ class RunJob:
             newimg.alpha_composite(onlyRGBAimage, (int((newWidth-iw)/2),0))
             iw = newimg.size[0]
             ih = newimg.size[1]
-            # print(">>>>>> Resized: ih={} iw={}".format(ih, iw))
+            print(">>>>>> Resized: ih={} iw={}".format(ih, iw))
             onlyRGBimage = newimg.convert('RGB')
             onlyRGBimage.save(outfile)
         else:
             onlyRGBimage = onlyRGBAimage.convert('RGB')
             onlyRGBimage.save(outfile)
+        print("End of Conversion")
 
     def carefulCopy(self, ratio, srcpath, tgtfile):
+        print("carefulCopy: {} > {}".format(srcpath, tgtfile))
         tmpPicPath = os.path.join(self.printer.working_dir, "tmpPics")
         tgtpath = os.path.join(tmpPicPath, tgtfile)
         try:
@@ -736,16 +749,22 @@ class RunJob:
             return
         # If either the source image is a TIF (or) the proportions aren't right for page dimensions 
         # then we first need to convert to a JPG and/or pad with which space on either side
-        if srcpath[-4:].lower() == ".tif" or iw/ih < ratio:
+        doti = srcpath.rfind(".")
+        if srcpath[doti:].lower().startswith(".tif") or iw/ih < ratio:
+            print("Inside .tif conversion or ratio change >>>>>>>>>>>>>>>>>>>>")
             tempJPGname = os.path.join(tmpPicPath, "tempJPG.jpg")
-            tgtpath = tgtpath[:-4]+".jpg"
+            doti = tgtpath.rfind(".")
+            tgtpath = tgtpath[:doti]+".jpg"
+            print("tgtpath:", tgtpath)
             # try:
             self.convertToJPGandResize(ratio, srcpath, tempJPGname)
             srcpath = tempJPGname
-            # except: # Which exception should I try to catch?
+            print("srcpath:", srcpath)
+            # except: # MH: Which exception should I try to catch?
                 # print("Error: Unable to convert/resize image!\nImage skipped:", srcpath)
                 # return
         if not os.path.exists(tgtpath):
+            print("Simple copy only")
             copyfile(srcpath, tgtpath)
         else:
             if self.printer.get("c_useLowResPics"): # we want to use the smallest available file
@@ -761,6 +780,8 @@ class RunJob:
 
     def removeTempFiles(self, texfiles):
         notDeleted = []
+        # MH: Should we try to remove the generated Nested files (now that they are stored aloong with the config)?
+        # What impact does that have on Paratext's S/R (cluttering)
         # n = os.path.join(self.tmpdir, "NestedStyles.sty")
         # if os.path.exists(n):
             # try:
@@ -822,9 +843,9 @@ class RunJob:
             # pw2 = pw1
         else:
             pw2 = pw1
-        # print("Usable ph: {}mm".format(ph), "     Usable 1-col pw1: {}mm   Usable 2-col pw2: {}mm".format(pw2, pw1))
+        print("Usable ph: {}mm".format(ph), "     Usable 1-col pw1: {}mm   Usable 2-col pw2: {}mm".format(pw2, pw1))
         pageRatios = (pw1/ph, pw2/ph)
-        # print("Page Ratios = ", pageRatios)
+        print("Page Ratios = ", pageRatios)
         return pageRatios
 
     def convert2mm(self, measure):
