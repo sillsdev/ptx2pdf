@@ -217,12 +217,14 @@
   \vbox to 0pt{\XeTeXpdffile "\MergePDF" page \pageno media\relax}
 \fi}
 
+\m@rksonpagefalse
 % redefine plain TeX's output routine to add the cropmarks
 \def\plainoutput{%
+  \ifm@rksonpage\else\trace{m}{No marks on page \the\pageno}\fi
   \dimen9=\pdfpagewidth \dimen8=\pdfpageheight
   \shipwithcr@pmarks{\vbox{\makeheadline\pagebody\makefootline}}%
   \pdfpagewidth=\dimen9 \pdfpageheight=\dimen8
   \advancepageno
-  \ifnum\outputpenalty>-\@MM \else\dosupereject\fi}
+  \ifnum\outputpenalty>-\@MM \else\dosupereject\fi\global\m@rksonpagefalse}
 
 \endinput

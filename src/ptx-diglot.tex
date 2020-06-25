@@ -220,6 +220,10 @@
  \TRACEdiglot{diglotLeft O:\the\outputpenalty, P:\the\savedpenalty, LP:\the\lastsavedLpenalty, vs:\the\vsize,
     pg:\the\pagegoal, pt:\the\pagetotal, bs:\the\baselineskip, ilp:\the\interlinepenalty }%
  \runLtrialfalse%
+  % tempoarily split and see if there are marks in this text
+  \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
+   \edef\t@mp{\splitbotmark}
+   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{m}{Found mark \splitbotmark}\fi
  \makevtop{255}%
  \tmppenalty=\outputpenalty %
  \ifnum\outputpenalty=10000% Nothing wrong with breaking here
@@ -456,10 +460,11 @@
     \fi
     \xdef\botLmark{\botmark}%
     \ifuseLeftMarks%
-      \edef\t@st{\p@gefirstmark}%
-      \ifx\t@st\empty%
-        \xdef\p@gefirstmark{\firstmark}%
-      \fi%
+      %\ifm@rksonpage
+        \edef\t@st{\p@gefirstmark}%
+        \ifx\t@st\empty%
+          \xdef\p@gefirstmark{\firstmark}%
+      \fi%\fi%
       \TRACEdiglot{oldRmark: \oldRmark, firstmark: \firstmark, botmark: \botmark}
       \edef\t@st{\firstmark}
       \ifx\t@st\oldRmark\else%
@@ -733,6 +738,10 @@
  % (traditionally they weren't)
  \TRACEdiglot{diglotRight \the\outputpenalty, \the\savedpenalty, \the\Rchunkpenalty, (\ifnum\holdinginserts=0 Not\fi holding)}%
  \tmppenalty=\outputpenalty %
+  % tempoarily split and see if there are marks in this text
+  \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
+   \edef\t@mp{\splitbotmark}
+   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{m}{Found mark \splitbotmark}\fi
  \ifnum\outputpenalty=10000\relax% Nothing wrong with breaking here
    \tmppenalty=0 %
    \Rchunkpenalty=\tmppenalty %
@@ -785,10 +794,11 @@
    \ifuseRightMarks%
      \TRACEdiglot{Setting (default) bottom mark to \botmark, may revise later}%
      \xdef\b@xbotmark{\botmark}%
-     \edef\t@st{\p@gefirstmark}%
-     \ifx\t@st\empty
-       \xdef\p@gefirstmark{\firstmark}% remember first, if not already set
-     \fi 
+     %\ifm@rksonpage
+       \edef\t@st{\p@gefirstmark}%
+       \ifx\t@st\empty
+         \xdef\p@gefirstmark{\firstmark}% remember first, if not already set
+     \fi%\fi
    \fi% useRightMarks
  \fi
  \hsize=\columnRwidth\relax%
@@ -1562,7 +1572,9 @@
   \global\availhtL=\textheight%
   \global\availht=\textheight%
   \plainoutput%
-  \xdef\p@gefirstmark{\nextp@gefirstmark}%
+  %\ifm@rksonpage
+    \xdef\p@gefirstmark{\nextp@gefirstmark}%
+  %\fi
   \xdef\nextp@gefirstmark{}%
   \edef\botmark{\p@gebotmark}%
   \let\firstmark\empty
