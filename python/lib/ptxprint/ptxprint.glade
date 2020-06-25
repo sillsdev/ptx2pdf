@@ -123,6 +123,12 @@
     <property name="step_increment">0.049999999776482583</property>
     <property name="page_increment">0.10000000000000001</property>
   </object>
+  <object class="GtkAdjustment" id="a_indentUnit">
+    <property name="upper">6</property>
+    <property name="value">2</property>
+    <property name="step_increment">0.5</property>
+    <property name="page_increment">1</property>
+  </object>
   <object class="GtkAdjustment" id="a_internote">
     <property name="upper">100</property>
     <property name="value">3.5</property>
@@ -170,13 +176,13 @@
   </object>
   <object class="GtkAdjustment" id="a_maxSpace">
     <property name="lower">50</property>
-    <property name="upper">500</property>
+    <property name="upper">999</property>
     <property name="value">200</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="a_minSpace">
-    <property name="upper">100</property>
+    <property name="upper">200</property>
     <property name="value">50</property>
     <property name="step_increment">1</property>
     <property name="page_increment">5</property>
@@ -245,7 +251,7 @@
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 0.8.3 (Beta)</property>
+    <property name="version">Version 0.8.5 (Beta)</property>
     <property name="copyright" translatable="yes">© 2020, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -4646,6 +4652,7 @@ secondary text as the Outer text.</property>
                                     </child>
                                     <child>
                                       <object class="GtkComboBoxText" id="ecb_hdrcenter">
+                                        <property name="width_request">190</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="active">1</property>
@@ -4661,8 +4668,7 @@ secondary text as the Outer text.</property>
                                           <object class="GtkEntry">
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
-                                            <property name="halign">center</property>
-                                            <property name="width_chars">22</property>
+                                            <property name="width_chars">8</property>
                                             <property name="xalign">0.5</property>
                                           </object>
                                         </child>
@@ -4674,6 +4680,7 @@ secondary text as the Outer text.</property>
                                     </child>
                                     <child>
                                       <object class="GtkComboBoxText" id="ecb_hdrright">
+                                        <property name="width_request">190</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="active">4</property>
@@ -4689,7 +4696,7 @@ secondary text as the Outer text.</property>
                                           <object class="GtkEntry">
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
-                                            <property name="width_chars">22</property>
+                                            <property name="width_chars">8</property>
                                             <property name="xalign">1</property>
                                           </object>
                                         </child>
@@ -4701,6 +4708,7 @@ secondary text as the Outer text.</property>
                                     </child>
                                     <child>
                                       <object class="GtkComboBoxText" id="ecb_hdrleft">
+                                        <property name="width_request">190</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="active">0</property>
@@ -4716,7 +4724,7 @@ secondary text as the Outer text.</property>
                                           <object class="GtkEntry">
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
-                                            <property name="width_chars">22</property>
+                                            <property name="width_chars">8</property>
                                           </object>
                                         </child>
                                       </object>
@@ -4937,7 +4945,7 @@ or:  †,‡,§,∥,#    or: ✶,☆,✦,✪</property>
                                                     </child>
                                                     <child>
                                                       <object class="GtkEntry" id="t_fncallers">
-                                                        <property name="width_request">60</property>
+                                                        <property name="width_request">140</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="tooltip_text" translatable="yes">These callers should automatically be loaded from
@@ -4949,7 +4957,7 @@ Separate callers with a comma (no spaces).
 For example: a,b,c,d,e,f,g,h, etc.
 or:  †,‡,§,∥,#    or: ✶,☆,✦,✪</property>
                                                         <property name="halign">start</property>
-                                                        <property name="width_chars">23</property>
+                                                        <property name="width_chars">8</property>
                                                       </object>
                                                       <packing>
                                                         <property name="expand">False</property>
@@ -5143,6 +5151,7 @@ or:  †,‡,§,∥,#    or: ✶,☆,✦,✪</property>
                                                     </child>
                                                     <child>
                                                       <object class="GtkEntry" id="t_xrcallers">
+                                                        <property name="width_request">140</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="tooltip_text" translatable="yes">These callers should automatically be loaded from
@@ -5154,7 +5163,7 @@ Separate callers with a comma (no spaces).
 For example: a,b,c,d,e,f,g,h, etc.
 or:  †,‡,§,∥,#    or: ✶,☆,✦,✪</property>
                                                         <property name="halign">start</property>
-                                                        <property name="width_chars">22</property>
+                                                        <property name="width_chars">8</property>
                                                       </object>
                                                       <packing>
                                                         <property name="expand">False</property>
@@ -5785,6 +5794,7 @@ the scripture text begins).</property>
                             </child>
                             <child>
                               <object class="GtkComboBoxText" id="ecb_ftrcenter">
+                                <property name="width_request">340</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="active">0</property>
@@ -5799,7 +5809,7 @@ the scripture text begins).</property>
                                   <object class="GtkEntry">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="width_chars">20</property>
+                                    <property name="width_chars">10</property>
                                     <property name="xalign">0.5</property>
                                   </object>
                                 </child>
@@ -7437,7 +7447,7 @@ the first document ends.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">5</property>
+                                    <property name="top_attach">6</property>
                                     <property name="width">3</property>
                                   </packing>
                                 </child>
@@ -7464,7 +7474,7 @@ you start PTXprint.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">6</property>
+                                    <property name="top_attach">7</property>
                                     <property name="width">3</property>
                                   </packing>
                                 </child>
@@ -7487,6 +7497,50 @@ numbers then check this option.</property>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">0</property>
                                     <property name="width">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_indentUnit">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">The factor by which paragraphs
+should be indented. This also
+affects poetry indentation.
+(default=2, min=0, max=6)</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Indentation Unit</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">5</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSpinButton" id="s_indentUnit">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="tooltip_text" translatable="yes">The factor by which paragraphs
+should be indented. This also
+affects poetry indentation.
+(default=2, min=0, max=6)</property>
+                                    <property name="opacity">0.80000000000000004</property>
+                                    <property name="halign">start</property>
+                                    <property name="max_length">4</property>
+                                    <property name="width_chars">4</property>
+                                    <property name="text" translatable="yes">1</property>
+                                    <property name="caps_lock_warning">False</property>
+                                    <property name="input_purpose">number</property>
+                                    <property name="adjustment">a_indentUnit</property>
+                                    <property name="climb_rate">0.5</property>
+                                    <property name="digits">1</property>
+                                    <property name="numeric">True</property>
+                                    <property name="update_policy">if-valid</property>
+                                    <property name="value">2</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">5</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                               </object>

@@ -62,7 +62,7 @@ ModelMap = {
                                  for s in w.FrontPDFs) if (w.get("c_inclFrontMatter") and w.FrontPDFs is not None and w.FrontPDFs != 'None') else ""),
     "project/ifinclbackpdf":    ("c_inclBackMatter", None),
     "project/backincludes":     ("btn_selectBackPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s.as_posix()) \
-                                 for s in w.BackPDFs) if (w.get("c_inclFrontMatter") and w.BackPDFs is not None and w.BackPDFs != 'None') else ""),
+                                 for s in w.BackPDFs) if (w.get("c_inclBackMatter") and w.BackPDFs is not None and w.BackPDFs != 'None') else ""),
     "project/useprintdraftfolder": ("c_useprintdraftfolder", lambda w,v :"true" if v else "false"),
     "project/processscript":    ("c_processScript", None),
     "project/runscriptafter":   ("c_processScriptAfter", None),
@@ -91,7 +91,8 @@ ModelMap = {
     "paper/gutter":             ("s_pagegutter", lambda w,v: round(v) or "0"),
     "paper/colgutteroffset":    ("s_colgutteroffset", lambda w,v: "{:.1f}".format(v) or "0.0"),
     "paper/columns":            ("c_doublecolumn", lambda w,v: "2" if v else "1"),
-    "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
+    # "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
+    "paper/fontfactor":         ("s_fontsize", lambda w,v: "{:.3f}".format(v / 12) or "1.000"),
 
     "fancy/showborderstab":     ("c_showBordersTab", None),
     "fancy/enableborders":      ("c_borders", lambda w,v: "" if v else "%"),
@@ -179,6 +180,7 @@ ModelMap = {
     "document/supressparallels": ("c_omitParallelRefs", None),
     "document/supressbookintro": ("c_omitBookIntro", None),
     "document/supressintrooutline": ("c_omitIntroOutline", None),
+    "document/indentunit":      ("s_indentUnit", lambda w,v: round(v, 1) or "2.0"),
     "document/supressindent":   ("c_omit1paraIndent", lambda w,v: "false" if v else "true"),
     "document/ifhidehboxerrors": ("c_showHboxErrorBars", lambda w,v :"%" if v else ""),
     "document/elipsizemptyvs":  ("c_elipsizeMissingVerses", None),
@@ -326,6 +328,7 @@ class TexModel:
         self.ptsettings = ptsettings
         self.changes = None
         self.localChanges = None
+        self.debug = False
         t = datetime.now()
         tz = t.utcoffset()
         if tz is None:
@@ -531,6 +534,13 @@ class TexModel:
                     res.append("\\PtxFilePath={"+filedir.replace("\\","/")+"/}\n")
                     for i, f in enumerate(self.dict['project/bookids']):
                         fname = self.dict['project/books'][i]
+                        # May ALSO need to check if top center header is pagenumber AND bottomcenter is NOT pagenumber:
+                        # before adding this to the top of GLO bks etc.
+                        # if f in ["XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG",
+                                # "GLO", "TDX", "NDX", "CNC", "OTH", "BAK"]:
+                            # res.append("\\def\RHtitlecenter{\pagenumber}\n")
+                            # res.append("\\defineheads\n")
+                            # res.append("\\def\RHtitlecenter{{}}\n".format(self.dict['header/hdrcenter']))
                         if self.asBool('document/ifomitsinglechnum') and \
                            self.dict['document/ifomitchapternum'] == "false" and \
                            f in oneChbooks:
@@ -628,6 +638,7 @@ class TexModel:
             dat = inf.read()
             if self.changes is not None or self.localChanges is not None:
                 for c in (self.changes or []) + (self.localChanges or []):
+                    if self.debug: print(c)
                     if c[0] is None:
                         dat = c[1].sub(c[2], dat)
                     else:
@@ -737,16 +748,17 @@ class TexModel:
 
             figChangeList = self.figNameChanges(printer, bk)
             if len(figChangeList):
-                missingPics = []
+                # missingPics = []
                 for origfn,tempfn in figChangeList:
                     origfn = re.escape(origfn)
                     if tempfn != "":
                         # print("(?i)(\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), "-->", tempfn)
-                        self.localChanges.append((None, regex.compile(r"(?i)(\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), \
-                                                     flags=regex.M), r"\1{}\2".format(tempfn)))                               #USFM2
-                        self.localChanges.append((None, regex.compile(r'(?i)(\\fig .*?src="){}(" .+?\\fig\*)'.format(origfn), \
-                                                     flags=regex.M), r"\1{}\2".format(tempfn)))                               #USFM3
+                        self.localChanges.append((None, regex.compile(r"(?i)(?<fig>\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), \
+                                                     flags=regex.M), r"\g<fig>{}\2".format(tempfn)))                               #USFM2
+                        self.localChanges.append((None, regex.compile(r'(?i)(?<fig>\\fig .*?src="){}(" .+?\\fig\*)'.format(origfn), \
+                                                     flags=regex.M), r"\g<fig>{}\2".format(tempfn)))                               #USFM3
                     else:
+                        # missingPics += [origfn]
                         if self.asBool("document/iffigskipmissing"):
                             # print("(?i)(\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), "--> Skipped!!!!")
                             self.localChanges.append((None, regex.compile(r"(?i)\\fig .*?\|{}\|.+?\\fig\*".format(origfn), flags=regex.M), ""))     #USFM2
@@ -809,6 +821,9 @@ class TexModel:
         # Paratext marks no-break space as a tilde ~
         self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
 
+        # Hack for JraKhmr
+        self.localChanges.append((None, regex.compile(r"\\ft»", flags=regex.M), r"\\ft »")) 
+
         # Remove the + of embedded markup (xetex handles it)
         self.localChanges.append((None, regex.compile(r"\\\+", flags=regex.M), r"\\"))  
             
@@ -855,11 +870,13 @@ class TexModel:
         with universalopen(infpath) as inf:
             dat = inf.read()
             inf.close()
-            figlist += re.findall(r"(?i)\\fig .*?\|(.+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)    # Finds USFM2-styled markup in text:
-            figlist += re.findall(r'(?i)\\fig .+src="(.+?\.(?=jpg|tif|png|pdf)...)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text:
+            figlist += re.findall(r"(?i)\\fig .*?\|(.+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)\|.+?\\fig\*", dat)    # Finds USFM2-styled markup in text:
+            figlist += re.findall(r'(?i)\\fig .+src="(.+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text:
             for f in figlist:
                 found = False
                 for ext in extOrder:
+                    if ext.lower().startswith("tif"):
+                        ext = "jpg"
                     tmpf = self.newBase(f)+"."+ext
                     fname = os.path.join(picdir, tmpf)
                     if os.path.exists(fname):
@@ -872,7 +889,8 @@ class TexModel:
         return(figchngs)
 
     def base(self, fpath):
-        return os.path.basename(fpath)[:-4]
+        doti = fpath.rfind(".")
+        return os.path.basename(fpath[:doti])
 
     def codeLower(self, fpath):
         cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?$", self.base(fpath))

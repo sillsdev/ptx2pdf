@@ -66,15 +66,16 @@ Consider this example:
 ```
 \s The angel of \+nd Lord\+nd* speaks
 ```
-When the ``\+nd`` is encoutered, XeTeX has been told (from 13 Jun 2020) to remember that it was previously using the settings from \s. 
-Rather than looking for a font named `nd`, it first looks for a font called `s+nd`. If it doesn't find one, it knows it has to make a new font, one based
-on the relevant style sheet parameters (FontScale, FontName, etc).
-For each parameter it searches its memory of the stylesheets in the following way:
-- Look for parameters specified for  \Marker s+nd. Normally there aren't any, but perhaps the font for ``\s`` doesn't have a small-caps variety, making some manual tweaking of a style-sheet necessary. If it finds that parameter, then the definition is accepted. Otherwise:
-- Tentatively load the value of the parameter for style ``\s``
-- If there were other \+something markers after the \s, load those style options too, overwriting parameters obtained earlier.
-- Compare value of the parameter for ``\nd`` with the parameter for ``\p``. If they are the same, use what we had before, otherwise use the parameter specified for ``\nd``.
- 
+The macros now support full cascading character styling. For the most part, this is straightforward.
+The value is set from the paragraph or note base and then is potentially reset by any active character
+styles above that.
+
+In the case of fontsize, things are little more complex:
+- `\fontscale` takes precedence over `\fontsize`. Thus if a style specifies a fontscale, that is
+  used in preference to a character style below it (nearer to the base) setting a `\fontsize`.
+- Specifying a fontsize will set the fontsize, unless that fontsize is the same as the fontsize
+  specified for `\p`, in which case it is treated as `\fontscale 1`.
+
 ### I'm altering `\LineSpacingFactor` but it's not having any effect.
 \LineSpacingFactor only gets used in the following circumstance:
 - For the main text, no \baseline has been set.
@@ -123,6 +124,18 @@ Notice that markers are case dependent.
 \\LineSpacing | also BaseLine. Dimension of line spacing, can include glue. *Units are required*
 \\StyleType   | "paragraph", "character", "note"
 
+These styles are used by other programs but have no action in the macros:
+
+ Marker         | Description
+ -------------- | -----------
+ \\Name         | UI name of the marker
+ \\Description  | Descriptive text of the marker
+ \\OccursUnder  | List of markers, this marker may nest under
+ \\Rank         |
+ \\Underline    | We don't do underlining. It's not pretty
+ \\NotRepeatable |
+ \\ColorName    | Color names are not supported. Use \\Color instead
+
 ### How do Tables of Contents work?
 
 XeTeX produces a .toc file that contains one row per entry marked by a \\tr. Each
@@ -150,9 +163,19 @@ according to its marker character style. The default font is specified in the \\
 
 ### Why are there sometimes big gaps at the bottoms of pages?
 
+The TeX macros work hard to balance columns in two column text. Sometimes it
+is not possible to balance well. One option is to always balance however bad
+the break is. But this would often end up with very short pages. A fallback
+has been added that allows columns to be unbalanced if the break would result in
+a short page. This is felt preferable to give something reasonable in hard cases.
+It is still possible to get a short page if one has poorly located pictures.
+
+The rest of this answer considers how to improve page breaks to ensure that columns
+stay balanced.
+
 TeX breaks pages based on some notion of how bad a page break is. This in turn
 is based on how full the page is. The ptx macros further work to ensure that
-columns balance by shortening the page until they do. Therefore, when TeX comes
+columns balance by shortening the page until they do. Therefore, when TeX would
 up with a relatively short page, it is the best page break it can come up with
 based on the knowledge it has, which is pretty limited and the constraints it is under.
 
@@ -270,3 +293,31 @@ where \\pgnum is defined as a character style:
 \FontSize 9
 \Bold
 ```
+
+By default elements in the heading row are styled according to the `\h` marker.
+
+### How does \AboveNoteSpace work?
+
+This value is used to ensure space above the footnotes area. The footnote rule
+is inserted halfway up that space.
+
+### My tables look terrible.
+
+The table support in the macros is not great, but it can do a reasonable job.
+The important marker to consider is the styling of the `\tr` marker, which drives
+much of the column spacing. Each cell is given `\LeftMargin` and `\RightMargin`
+from the `\tr` marker and these values are multiplied by the `\IndentUnit` which
+defaults to 1in. This can result in really wide margins for a table. The `\FirstLineIndent`
+is also used. It is advisable therefore to reduce the values found in USFM.sty. For
+example:
+
+```
+\Marker tr
+\LeftMargin 0.1
+\RightMargin 0.1
+\FirstLineIndent 0
+```
+
+Table column widths are calculated by measuring the widest cell in each column, including
+the header and then trying to share out spare width and averaging the resulting lack over
+all the columns. The results are OK but could be better.

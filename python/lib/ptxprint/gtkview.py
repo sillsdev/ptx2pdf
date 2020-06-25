@@ -512,7 +512,7 @@ class GtkViewModel(ViewModel):
                         return
                 fileLocked = False
         invPW = self.get("t_invisiblePassword")
-        if invPW == None or invPW == "" or self.printer.configName() == "": # This config is unlocked
+        if invPW == None or invPW == "" or self.configName() == "": # This config is unlocked
             # So it it safe/allowed to save the current config
             self.writeConfig()
         # else:
@@ -553,6 +553,8 @@ class GtkViewModel(ViewModel):
                 continue
             copytree(os.path.join(currconfigpath, subdirname), os.path.join(configpath, subdirname))
         self.configId = newconfigId
+        self.writeConfig()
+        self.updateSavedConfigList()
         self.set("lb_settings_dir", configpath)
         self.updateDialogTitle()
 
@@ -879,9 +881,11 @@ class GtkViewModel(ViewModel):
         # Set the font of any GtkEntry boxes to the primary body text font for this project
         fsize = self.get("s_fontsize")
         (name, style) = self.get("bl_fontR")
-        pangostr = "{} {} {}".format(name, style, fsize)
-        p = Pango.font_description_from_string(pangostr)
-        for w in ("t_clHeading", "t_tocTitle", "ecb_ftrcenter", "scroll_FinalSFM", "scroll_PicList"):   # "t_runningFooter",
+        fallback = ',Sans'
+        pangostr = '{}{} {} {}'.format(name, fallback, style, fsize)
+        p = Pango.FontDescription(pangostr)
+        for w in ("t_clHeading", "t_tocTitle", "t_configNotes", "scroll_FinalSFM", "scroll_PicList", \
+                  "ecb_ftrcenter", "ecb_hdrleft", "ecb_hdrcenter", "ecb_hdrright", "t_fncallers", "t_xrcallers"):
             self.builder.get_object(w).modify_font(p)
 
     def updateFakeLabels(self):
@@ -1355,7 +1359,7 @@ class GtkViewModel(ViewModel):
     def updateFonts(self):
         if self.ptsettings is None:
             return
-        ptfont = self.ptsettings['DefaultFont']
+        ptfont = self.ptsettings.get("DefaultFont", "Arial")
         for fb in ['bl_fontR', 'bl_verseNumFont']:  # 'bl_fontB', 'bl_fontI', 'bl_fontBI', 'bl_fontExtraR'
             fblabel = self.builder.get_object(fb).get_label()
             if fblabel == "Select font...":
@@ -1378,7 +1382,7 @@ class GtkViewModel(ViewModel):
         elif loc == "prj":
             fpath = os.path.join(self.settings_dir, self.prjid, file2edit)
         elif loc == "cfg":
-            cfgname = self.printer.configName()
+            cfgname = self.configName()
             fpath = os.path.join(self.configPath(cfgname), file2edit)
             if not os.path.exists(fpath):
                 fpath = os.path.join(self.configPath(""), file2edit)
@@ -1411,8 +1415,8 @@ class GtkViewModel(ViewModel):
 
     def onEditModsTeX(self, btn):
         self.prjid = self.get("fcb_project")
-        cfgname = self.printer.configName()
-        fpath = os.path.join(self.printer.configPath(cfgname), "ptxprint-mods.tex")
+        cfgname = self.configName()
+        fpath = os.path.join(self.configPath(cfgname), "ptxprint-mods.tex")
         if not os.path.exists(fpath):
             openfile = open(fpath,"w", encoding="utf-8")
             openfile.write("% This is the .tex file specific for the {} project used by PTXprint.\n".format(self.prjid))
