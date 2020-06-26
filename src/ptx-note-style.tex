@@ -99,7 +99,7 @@
 
 \lowercase{
  \def\startn@testyle~#1 {% get the caller code as a space-delimited parameter
-  \TRACE{startn@testyle}%
+  \trace{n}{startn@testyle #1}%
   \t@stpublishability{\newn@testyle}\ifn@npublishable
     \begingroup
     \let\aftern@te\relax
