@@ -128,13 +128,9 @@
 \def\SpaceStretchFactorL{}\def\SpaceStretchFactorR{}
 \def\SpaceShrinkFactorL{}\def\SpaceShrinkFactorR{}
 \newif\ifRTLL \newif\ifRTLR
-\def\initdiglot{} %keep 'old' code happy
-
-    %\LR{VerticalSpaceFactor} \LR{LineSpacingFactor} \LR{FontSizeUnit}
-    %\LR{regular}\LR{bold}\LR{italic}\LR{bolditalic}
-    %\LR{SpaceStretchFactor}\LR{SpaceShrinkFactor}
-    %\LR{RTL}
-%}
+\def\doVisTrace#1{
+  \setbox0=\vtop to 0pt{\hrule height 0pt depth 0.5pt width 15pt\hbox{#1 \the\TRACEcount}\vss}\ht0=0pt\dp0=0pt
+}
 
 \diglotfalse%
 \newif\ifdiglotSepNotes %If the footnotes from the versions should be split (true) or merged together
@@ -1208,7 +1204,8 @@
 %vbox is a \mark. To rejoin boxes on a page accurately we need to preserve
 %the depth of the box. We therefore assume the box will be joined and if
 %the depth is not recoverable we add a kern to remove the orignial depth.
- \trace{D}{makevtop #1, before vtop dp=\the\dp#1}%
+ \s@tbaseline{p}
+ \trace{D}{makevtop #1, before vtop dp=\the\dp#1, ht=\the\ht#1}%
  %\ifnum\diglotTRcount<61\showbox#1\fi
  \pr@vdepth=\dp#1\relax%
  \ifdim\pr@vdepth>\baselineskip \trace{D}{Looks like this is already a vtop}\pr@vdepth=0pt
@@ -1219,32 +1216,40 @@
  \global\setbox#1=\vtop{\unvbox#1\ifdim\dp2=0pt\ifdim\pr@vdepth=0pt\else\kern-\pr@vdepth\fi\fi}}%\egroup}%
 
 \def\joinboxes#1#2#3#4{%Join 2 vtops together and preserve baselineskip%
-\traceNum{d}{joinboxes #1 #2 called from locn #3}
-\ifnum\TRACEcount=\diglotDbgJoinboxes
-  \showbox#1\showbox#2
-\fi\relax
-%\bgroup
-%\ifnum#3=10\showbox#1\fi%
-\ifvoid#1\else%
-  \unvbox#1%
-  %\showlists
-  \setbox0=\lastbox%
-  \copy0%
-  \traceNum{d}{final bit of deconstructed first box \the\ht0+\the\dp0}%
-  \ifdim\dp0<\baselineskip
-    \kern -\dp0
-    %\else
-    %\showbox0
-  \fi%
-  \ifnum#3=99\hrule\kern -0.4pt
-  \fi% Test code
-\fi%
-%
-\ifvoid#2\else%
-  \penalty#4%put the appropriate penalty back 
-  \unvbox#2%
-\fi%
-}%\egroup}
+ \traceNum{d}{joinboxes #1 #2 called from locn #3}%
+ \ifnum\TRACEcount=\diglotDbgJoinboxes
+   \showbox#1\showbox#2
+ \fi\relax
+ %\bgroup
+ %\ifnum#3=10\showbox#1\fi%
+ \ifvoid#1\else%
+   \s@tbaseline{p}%
+   \unvbox#1%
+   %\showlists
+   \dimen4=\lastkern%
+  % \unkern
+   \setbox0=\lastbox%
+   \copy0%
+   \traceNum{d}{lk: \the\dimen4, final bit of deconstructed first box \the\ht0+\the\dp0}%
+   \ifdim\dp0<\baselineskip
+     \kern -\dp0
+     %\else
+     %\showbox0
+   \fi%
+   \ifVisTrace
+     \hrule\kern -0.4pt
+     \hbox to 0pt{\hss\doVisTrace{s}\box0}%
+   \fi
+ \fi%
+ %
+ \ifvoid#2\else%
+   \penalty#4%put the appropriate penalty back 
+   %\setbox0=\copy#2
+   %\setbox1=\vsplit0 to \baselineskip
+   %\trace{D}{Next box, h:\the\ht1, d:\the\dp1}
+   \unvbox#2%
+ \fi%
+}
 
 \def\joinb@xes#1#2{%Join a vtop and an hbox together and preserve baselineskip%
 %\showbox#1\showbox#2%
@@ -1277,7 +1282,7 @@
   %
   \traceNum{d}{Adding to page: LB:\the\ht\LeftBox+\the\dp\LeftBox RB:\the\ht\RightBox+\the\dp\RightBox}
   \ifVisTrace
-  \setbox0=\vtop to 0pt{\hrule height 0pt depth 0.5pt width 15pt\hbox{\the\TRACEcount}\vss}\ht0=0pt\dp0=0pt
+    \doVisTrace{L}
   \fi
   \global\setbox\LeftBox=\vtop{\hbox to \textwidth{\ifVisTrace\llap{\box0}\fi%
   \ifdiglotN@rmal%Are the sides swapped?

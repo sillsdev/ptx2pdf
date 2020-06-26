@@ -57,6 +57,7 @@
 %
 \def\getcaller#1#2{%
   \c@llernum=#1\relax
+  \trace{n}{Caller requested for #2 (#1)}
   \expandafter\ifx\csname page-caller #2\endcsname\relax \else % if this note class is using per-page callers...
     \write\n@tepages{\string\noteonpage{#2}{#1}{\the\pageno}}% record the page where this note occurred
     \expandafter\let\expandafter\thisc@llerpage\csname notepage-#2-#1\endcsname
