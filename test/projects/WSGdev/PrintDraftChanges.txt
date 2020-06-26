@@ -1,0 +1,5 @@
+'\u00AB'    >   '\u2018'          # use single open  curly quotes for unspoken words «
+'\u00BB'    >   '\u2019'          # use single close curly quotes for unspoken words »
+
+#	Put a dagger in place of the # for the cross-references
+	"\\x #" > "\\x \u2020"

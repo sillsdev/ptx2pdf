@@ -18,15 +18,17 @@ def make_paths(projectsdir, project, config, xdv=False):
     cfg = configparser.ConfigParser()
     if config is not None:
         configpath = os.path.join(projectsdir, project, "shared", "ptxprint", config, "ptxprint.cfg")
+        cfgname = config + "-"
     else:
         configpath = os.path.join(projectsdir, project, "shared", "ptxprint", "ptxprint.cfg")
-    cfg.read(configpath)
+        cfgname = ""
+    cfg.read(configpath, encoding="utf-8")
     if cfg.getboolean("project", "multiplebooks"):
         bks = cfg.get("project", "booklist").split()
-        filename = "{}_{}{}".format(bks[0], bks[1], project)
+        filename = "{}{}_{}{}".format(cfgname, bks[0], (bks[1] if len(bks) > 1 else bks[0]), project)
     else:
         bks = cfg.get("project", "book")
-        filename = "{}{}".format(bks, project)
+        filename = "{}{}{}".format(cfgname, bks, project)
     stddir = os.path.join(projectsdir, '..', 'standards', project)
     return (stddir, filename, testsdir, ptxcmd)
 

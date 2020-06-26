@@ -6,7 +6,7 @@ from .ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from .font import TTFont
 import pathlib, os
 
-VersionStr = "0.8.3 beta"
+VersionStr = "0.8.5 beta"
 
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
 
@@ -121,9 +121,27 @@ class ViewModel:
             self.dict[wid] = value
 
     def configName(self):
-        cfgName = re.sub('[^-a-zA-Z0-9_()/: ]+', '', (self.get("ecb_savedConfig") or "")).strip(" ")
+        cfgName = re.sub('[^-a-zA-Z0-9_()]+', '', (self.get("ecb_savedConfig") or ""))
+        self.set("ecb_savedConfig", cfgName)
         return cfgName or None
 
+    def baseTeXPDFname(self):
+        bks = self.getBooks()
+        if self.working_dir == None:
+            self.working_dir = os.path.join(self.settings_dir, self.prjid, 'PrintDraft')
+        cfgname = self.configName()
+        if cfgname is None:
+            cfgname = ""
+        else:
+            cfgname = "-" + cfgname
+        if len(bks) > 1:
+            fname = "ptxprint{}-{}_{}{}".format(cfgname, bks[0], bks[-1], self.prjid)
+        else:
+            fname = "ptxprint{}-{}{}".format(cfgname, bks[0], self.prjid)
+        if not os.path.exists(self.working_dir):
+            os.makedirs(self.working_dir)
+        return os.path.join(self.working_dir, fname)
+        
     def getBooks(self):
         bl = self.get("t_booklist", "").split()
         if not self.get('c_multiplebooks'):
@@ -131,7 +149,8 @@ class ViewModel:
         elif len(bl):
             blst = []
             for b in bl:
-                if os.path.exists(os.path.join(self.settings_dir, self.prjid, (self.getBookFilename(b, self.prjid)))):
+                bname = self.getBookFilename(b, self.prjid)
+                if os.path.exists(os.path.join(self.settings_dir, self.prjid, bname)):
                     blst.append(b)
             return blst
         else:
@@ -431,12 +450,13 @@ class ViewModel:
                 #     0     1    2             3         4  5 6          7                          8  
                 # BKN \0 \|\3\|\4\|tr\|\|\7\|\8
                 # MAT 9.2 bringing the paralyzed man to Jesus|CN01684b.jpg|col|tr||key-kālk arsi manvan yēsunaga tarval|9:2
-                m = re.findall(r"(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))+\\fig .*?\|(.+?\....)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|(\d+[\:\.]\d+?[abc]?([\-,\u2013\u2014]\d+[abc]?)?)\\fig\*", dat)
+                m = re.findall(r"(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))+\\fig .*?\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|(\d+[\:\.]\d+?[abc]?([\-,\u2013\u2014]\d+[abc]?)?)\\fig\*", dat)
                 if len(m):
                     for f in m:
                         picfname = f[3]
-                        extn = picfname[-4:]
-                        picfname = re.sub('[()&+,. ]', '_', picfname)[:-4]+extn
+                        doti = picfname.rfind(".")
+                        extn = picfname[doti:]
+                        picfname = re.sub('[()&+,. ]', '_', picfname)[:doti]+extn
                         if self.get("c_randomPicPosn"):
                             pageposn = random.choice(_picposn.get(f[4], f[4]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
                         else:
@@ -461,12 +481,13 @@ class ViewModel:
                     #     0     1    2                     3                         4                5          6  [7]
                     # BKN \3 \|\1\|\2\|tr\|\|\0\|\3
                     # GEN 21.16 an angel speaking to Hagar|CO00659B.TIF|span|t||hāgartun saṅga dūtal vaḍkval|21:16
-                    m = re.findall(r'(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))+\\fig ([^\\]*?)\|src="([^\\]+?\....)" size="(....?)" ref="(\d+[:.]\d+[abc]?([-,\u2013\u2014]\d+[abc]?)?)"[^\\]*?\\fig\*', dat)
+                    m = re.findall(r'(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))+\\fig ([^\\]*?)\|src="([^\\]+?\.....?)" size="(....?)" ref="(\d+[:.]\d+[abc]?([-,\u2013\u2014]\d+[abc]?)?)"[^\\]*?\\fig\*', dat)
                     if len(m):
                         for f in m:
                             picfname = f[4]
-                            extn = picfname[-4:]
-                            picfname = re.sub('[()&+,. ]', '_', picfname)[:-4]+extn
+                            doti = picfname.rfind(".")
+                            extn = picfname[doti:]
+                            picfname = re.sub('[()&+,. ]', '_', picfname)[:doti]+extn
                             if self.get("c_randomPicPosn"):
                                 pageposn = random.choice(_picposn.get(f[5], f[5]))     # Randomize location of illustrations on the page (tl,tr,bl,br)
                             else:
@@ -677,17 +698,12 @@ class ViewModel:
     def getExtOrder(self):
         # If the preferred image type(s) has(have) been specified, parse that string
         imgord = self.get("t_imageTypeOrder").lower()
-        extOrder = []
-        if  len(imgord):
-            exts = re.findall("([a-z]{3})",imgord)
-            for e in exts:
-                if e in ["jpg", "png", "tif", "pdf"] and e not in extOrder:
-                    extOrder += [e]
+        extOrder = re.sub("[ ,;/><]"," ",imgord).split()
         if not len(extOrder): # If the user hasn't defined a specific order then we can assign this
             if self.get("c_useLowResPics"): # based on whether they prefer small/compressed image formats
-                extOrder = ["jpg", "png", "tif", "pdf"] 
-            else:                              # or prefer larger high quality uncompresses image formats
-                extOrder = extOrder[::-1]      # reverse the order
+                extOrder = ["jpg", "jpeg", "png", "tif", "tiff", "pdf"] 
+            else:                              # or prefer larger high quality uncompressed image formats
+                extOrder = ["pdf", "tiff", "tif", "png", "jpeg", "jpg"] # reverse order
         return extOrder
 
     def incrementProgress(self, val=None):

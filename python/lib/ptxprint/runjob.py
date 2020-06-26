@@ -49,7 +49,8 @@ _errmsghelp = {
 # %\extrafont  %% This will be replaced by code for the fallback fonts to be used for special/missing characters
 
 def base(fpath):
-    return os.path.basename(fpath)[:-4]
+    doti = fpath.rfind(".")
+    return os.path.basename(fpath[:doti])
 
 # https://sites.google.com/a/lci-india.org/typesetting/home/illustrations/where-to-find-illustrations
 # We could build the credit text too if we wanted to (and perhaps a list of pg numbers on which the pictures were found)
@@ -96,6 +97,13 @@ _diglot = {
 "diglot/fontbolditaleng" :  "fontbolditalic/engine",
 "diglot/bolditalembolden" : "fontbolditalic/embolden",
 "diglot/boldital/slant" :   "fontbolditalic/slant",
+
+"diglot/ifomitallverses" :  "document/ifomitallverses",
+"diglot/includefootnotes" : "notes/includefootnotes",
+"diglot/fnfontsize" :       "notes/fnfontsize",
+"diglot/fnlinespacing" :    "notes/fnlinespacing",
+"diglot/includexrefs" :     "notes/includexrefs",
+"diglot/ifblendfnxr" :      "notes/ifblendfnxr"
 }
 
 class RunJob:
@@ -110,6 +118,7 @@ class RunJob:
 
     def doit(self):
         info = TexModel(self.printer, self.args.paratext, self.printer.ptsettings, self.printer.prjid)
+        info.debug = self.args.debug
         self.tempFiles = []
         self.prjid = info.dict["project/id"]
         self.prjdir = os.path.join(self.args.paratext, self.prjid)
@@ -157,10 +166,15 @@ class RunJob:
             texfiles = sum((self.dojob(j, info) for j in joblist), [])
 
         # Work out what the resulting PDF was called
-        if len(jobs) > 1 and info.asBool("project/combinebooks"):
-            pdfname = os.path.join(self.tmpdir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], self.prjid))
+        cfgname = info['config/name']
+        if cfgname is not None:
+            cfgname = "-"+cfgname
         else:
-            pdfname = os.path.join(self.tmpdir, "ptxprint-{}{}.pdf".format(jobs[0], self.prjid))
+            cfgname = ""
+        if len(jobs) > 1 and info.asBool("project/combinebooks"):
+            pdfname = os.path.join(self.tmpdir, "ptxprint{}-{}_{}{}.pdf".format(cfgname, jobs[0], jobs[-1], self.prjid))
+        else:
+            pdfname = os.path.join(self.tmpdir, "ptxprint{}-{}{}.pdf".format(cfgname, jobs[0], self.prjid))
         # Check the return code to see if generating the PDF was successful before opening the PDF
         if self.res == 0:
             if self.printer.isDisplay and os.path.exists(pdfname):
@@ -224,8 +238,8 @@ class RunJob:
         if len(refs):
             finalLogLines.append("\nReferences to check{}: {}".format(book, " ".join(refs)))
 
-        texmrkrs = [r"\fi", "\if", "\ifx", "\\box", "\else", "\\book", "\\par",
-                     "\\gdef", "\\hsize", "\\relax"]
+        texmrkrs = [r"\fi", "\if", "\ifx", "\\box", "\\hbox", "\\vbox", "\else", "\\book", "\\par",
+                     "\\edef", "\\gdef", "\\dimen" "\\hsize", "\\relax"]
         allmrkrs = re.findall(r"(\\[a-z0-9]{0,5})[ *\r\n.]", "".join(finalLogLines[-8:]))
         mrkrs = [x for x in allmrkrs if x not in texmrkrs]
         if 0 < len(mrkrs) < 7:
@@ -234,7 +248,7 @@ class RunJob:
             else:
                 finalLogLines.append("\nMarkers to check: {}".format(", ".join(mrkrs)))
 
-        files = re.findall(r'(?i)([^\\/\n."= ]*?\.(?=jpg|tif|png|pdf)...)', "".join(finalLogLines))
+        files = re.findall(r'(?i)([^\\/\n."= ]*?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)', "".join(finalLogLines))
         if len(files):
             finalLogLines.append("\nFile(s) to check: {}".format(", ".join(files)))
         return finalLogLines
@@ -300,27 +314,32 @@ class RunJob:
                 logFile = os.path.join(self.tmpdir, "ptxprint-merge.log")
                 copyfile(left, tmpFile)
 
-                # Usage: diglotMerge.exe [-mode|options] LeftFile RightFile
-                # Read LeftFile and RightFile, merging them according to the selected mode)
-                 # Mode may be any ONE of :
-                 # -l     :Left/Pri master: splitting right column at each left text paragraph
-                 # -r     :Right/Sec master: splitting left column at each right text paragraph
-                 # -v     :matching verses (default)
-                 # -c     :matching chapters
-                 # -p     :matching paragraph breaks (only where they match?)
-                # Options are:
-                 # -left file        : Log to file
-                # -right 11:25-25:12   Only ouput specified range
-                # -s      Split off section headings into a separate chunk (makes verses line up)
-                # -C      If ?? is used, consider the chapter mark to be a heading
-                # -o file : Output to file
-                
-                if sys.platform == "win32":
-                    cmd = [os.path.join(self.scriptsdir, "diglotMerge.exe")]
-                elif sys.platform == "linux":  # UNTESTED code
-                    p = os.path.join(self.scriptsdir, "diglot_merge.pl")
-                    cmd = ['perl', p]  # need to work out where the .pl file will live)
-                cmdparms = ['-o', left, alignParam, '-L', logFile, '-s', tmpFile, right] 
+                if self.args.useusfmerge:
+                    cmd = [os.path.join(self.scriptsdir, "usfmerge")]
+                    if sys.platform == "win32":
+                        cmd = ["python"] + cmd
+                    cmdparms = ["-o", left, tmpFile, right]
+                else:
+                    # Usage: diglotMerge.exe [-mode|options] LeftFile RightFile
+                    # Read LeftFile and RightFile, merging them according to the selected mode)
+                    # Mode may be any ONE of :
+                    # -l     :Left/Pri master: splitting right column at each left text paragraph
+                    # -r     :Right/Sec master: splitting left column at each right text paragraph
+                    # -v     :matching verses (default)
+                    # -c     :matching chapters
+                    # -p     :matching paragraph breaks (only where they match?)
+                    # Options are:
+                    # -left file        : Log to file
+                    # -right 11:25-25:12   Only ouput specified range
+                    # -s      Split off section headings into a separate chunk (makes verses line up)
+                    # -C      If ?? is used, consider the chapter mark to be a heading
+                    # -o file : Output to file
+                    if sys.platform == "win32":
+                        cmd = [os.path.join(self.scriptsdir, "diglotMerge.exe")]
+                    elif sys.platform == "linux":  # UNTESTED code
+                        p = os.path.join(self.scriptsdir, "diglot_merge.pl")
+                        cmd = ['perl', p]  # need to work out where the .pl file will live)
+                    cmdparms = ['-o', left, alignParam, '-L', logFile, '-s', tmpFile, right] 
                 r = checkoutput(cmd + cmdparms)
                 for f in [left, right, tmpFile, logFile]:
                     texfiles += [os.path.join(self.tmpdir, f)]
@@ -348,6 +367,7 @@ class RunJob:
             for k,v in _diglot.items():
                 info[k]=diginfo[v]
                 # print(k, v, diginfo[v])
+            self.tempFiles += info.generateNestedStyles(diglot=True)
             texfiles += self.sharedjob(jobs, info, logbuffer=logbuffer)
         return texfiles
 
@@ -408,10 +428,11 @@ class RunJob:
                         # We also need to be able to overide the page layout values from the PRIMARY project
                         # (even when creating the Secondary PDF so that the dimensions match).
         else:
-            if len(jobs) > 1:
-                secfname = os.path.join(self.tmpdir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], secprjid)).replace("\\","/")
-            else:
-                secfname = os.path.join(self.tmpdir, "ptxprint-{}{}.pdf".format(jobs[0], secprjid)).replace("\\","/")
+            # if len(jobs) > 1:
+                # secfname = os.path.join(self.tmpdir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], secprjid)).replace("\\","/")
+            # else:
+                # secfname = os.path.join(self.tmpdir, "ptxprint-{}{}.pdf".format(jobs[0], secprjid)).replace("\\","/")
+            secfname = baseTeXPDFname()+".pdf".replace("\\","/")
             if info.asBool("document/diglotnormalhdrs"):
                 if switchSides: # Primary on RIGHT/OUTER
                     hdr = r"""
@@ -444,19 +465,24 @@ class RunJob:
             prjid = self.prjid
         if prjdir is None:
             prjdir = self.prjdir
-        if len(jobs) > 1:
-            outfname = "ptxprint-{}_{}{}.tex".format(jobs[0], jobs[-1], prjid)
+        cfgname = info['config/name']
+        if cfgname is None:
+            cfgname = ""
         else:
-            outfname = "ptxprint-{}{}.tex".format(jobs[0], prjid)
+            cfgname = "-" + cfgname
+        if len(jobs) > 1:
+            outfname = "ptxprint{}-{}_{}{}.tex".format(cfgname, jobs[0], jobs[-1], prjid)
+        else:
+            outfname = "ptxprint{}-{}{}.tex".format(cfgname, jobs[0], prjid)
+        # MH - What can I pass to make this call work? 
+        # outfname = ViewModel.baseTeXPDFname(???)+".tex"
         if not fzy:
             info.update()
         with open(os.path.join(self.tmpdir, outfname), "w", encoding="utf-8") as texf:
-            # print({k:v for k,v in info.dict.items() if k.startswith("diglot")})
             texf.write(info.asTex(filedir=self.tmpdir, jobname=outfname.replace(".tex", "")))
         os.putenv("hyph_size", "32749")     # always run with maximum hyphenated words size (xetex is still tiny ~200MB resident)
         os.putenv("stack_size", "32768")    # extra input stack space (up from 5000)
         ptxmacrospath = os.path.abspath(os.path.join(self.scriptsdir, "..", "..", "src"))
-        # print("ptxmacrospath:", ptxmacrospath)
         if not os.path.exists(ptxmacrospath):
             for b in (getattr(sys, 'USER_BASE', '.'), sys.prefix):
                 if b is None:
@@ -549,13 +575,12 @@ class RunJob:
                     if os.path.exists(p):
                         srchlist += [p]
         extensions = []
-        extdflt = ["jpg", "png", "tif", "pdf"]
-        extuser = self.printer.get("t_imageTypeOrder").lower()
-        extuser = re.findall("([a-z]{3})",extuser)
+        extdflt = ["jpg", "jpeg", "png", "tif", "tiff", "pdf"]
+        imgord = self.printer.get("t_imageTypeOrder").lower()
+        extuser = re.sub("[ ,;/><]"," ",imgord).split()
         extensions = [x for x in extdflt if x in extuser]
         if not len(extensions):   # If the user hasn't defined any extensions 
             extensions = extdflt  # then we can assign defaults
-        # print("Extension preference order:", extensions)
         fullnamelist = []
         spanimagelist = []
         
@@ -565,31 +590,33 @@ class RunJob:
                 doti = fname.rfind(".")
                 if doti > 0:
                     plfname = fname[:doti] + "-draft" + fname[doti:] + ".piclist"
-                piclstfname = os.path.join(self.printer.configPath(makePath=False), "PicLists", plfname)
+                piclstfname = os.path.join(self.printer.configPath(cfgname=self.printer.configId, makePath=False), "PicLists", plfname)
                 if os.path.exists(piclstfname):
                     with universalopen(piclstfname, rewrite=True) as inf:
                         dat = inf.read()
                         # MAT 19.13 |CN01771C.jpg|col|tr||Bringing the children to Jesus|19:13
-                        fullnamelist += re.findall(r"(?i)\|(.+?\.(?=jpg|tif|png|pdf)...)\|", dat)
-                        spanimagelist += re.findall(r"(?i)\|(.+?\.(?=jpg|tif|png|pdf)...)\|span", dat)
+                        fullnamelist += re.findall(r"(?i)\|(.+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)\|", dat)
+                        spanimagelist += re.findall(r"(?i)\|(.+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)\|span", dat)
             else:
                 infname = os.path.join(self.prjdir, fname)
                 with universalopen(infname) as inf:
                     dat = inf.read()
                     inf.close() # Look for USFM2 and USFM3 type inline \fig ... \fig* illustrations
-                    fullnamelist += re.findall(r"(?i)\\fig .*?\|(.+?(?!\d{5}[a-c]?).+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)
-                    fullnamelist += re.findall(r'(?i)\\fig .*?src="(.+?\.(?=jpg|tif|png|pdf)...)" .+?\\fig\*', dat) 
-                    spanimagelist += re.findall(r"(?i)\\fig .*?\|(.+?(?!\d{5}[a-c]?).+?\.(?=jpg|tif|png|pdf)...)\|span.+?\\fig\*", dat)
-                    spanimagelist += re.findall(r'(?i)\\fig .*?src="(.+?\.(?=jpg|tif|png|pdf)...)".+?size="span.+?\\fig\*', dat)
+                    fullnamelist += re.findall(r"(?i)\\fig .*?\|(.+?(?!\d{5}[a-c]?).+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)\|.+?\\fig\*", dat)
+                    fullnamelist += re.findall(r'(?i)\\fig .*?src="(.+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)" .+?\\fig\*', dat) 
+                    spanimagelist += re.findall(r"(?i)\\fig .*?\|(.+?(?!\d{5}[a-c]?).+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)\|span.+?\\fig\*", dat)
+                    spanimagelist += re.findall(r'(?i)\\fig .*?src="(.+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)".+?size="span.+?\\fig\*', dat)
         newBaseList = [newBase(f) for f in fullnamelist]
         newBaseSpanList = [newBase(f) for f in spanimagelist]
-        # print(newBaseSpanList)
+        # print("newBaseList:", newBaseList)
+        # print("newBaseSpanList:", newBaseSpanList)
         os.makedirs(tmpPicpath, exist_ok=True)
         for srchdir in srchlist:
             if srchdir != None and os.path.exists(srchdir):
                 if self.printer.get("c_exclusiveFiguresFolder"):
                     for file in os.listdir(srchdir):
-                        origExt = file[-4:].lower()
+                        doti = file.rfind(".")
+                        origExt = file[doti:].lower()
                         if origExt[1:] in extensions:
                             filepath = os.path.join(srchdir, file)
                             nB = newBase(filepath)
@@ -600,14 +627,14 @@ class RunJob:
                     for subdir, dirs, files in os.walk(srchdir):
                         if subdir != "tmpPics": # Avoid recursively scanning the folder we are copying to!
                             for file in files:
-                                origExt = file[-4:].lower()
+                                doti = file.rfind(".")
+                                origExt = file[doti:].lower()
                                 if origExt[1:] in extensions:
                                     filepath = subdir + os.sep + file
                                     nB = newBase(filepath)
                                     if nB in newBaseList:
                                         ratio = pageRatios[1] if nB not in newBaseSpanList else pageRatios[0]
                                         self.carefulCopy(ratio, filepath, nB+origExt.lower())
-
         missingPics = []
         missingPicList = []
         if self.printer.get("c_usePicList"): # Write out new tmpPicLists
@@ -625,8 +652,9 @@ class RunJob:
                             dat = inf.read()
                             dat = re.sub(r"(?m)%.+?\r?\n", "", dat) # Throw out all comments
                             for f in fullnamelist:
-                                ext = f[-4:].lower()
-                                if ext[1:] == "tif":
+                                doti = f.rfind(".")
+                                ext = f[doti:].lower()
+                                if ext[1:3] == "tif":
                                     ext = ".jpg"
                                 tmpPicfname = newBase(f)+ext
                                 if os.path.exists(os.path.join(tmpPicpath, tmpPicfname)):
@@ -640,7 +668,8 @@ class RunJob:
                                             found = True
                                             break
                                     if not found:
-                                        missingPics.append(f[:-4])
+                                        doti = f.rfind(".")
+                                        missingPics.append(f[:doti])
                                         if self.printer.get("c_skipmissingimages"):
                                             dat = re.sub(r"(?im)(^.*{})".format(re.escape(f)), r"% \1", dat)
 
@@ -655,12 +684,21 @@ class RunJob:
                             dat = "% Temporary PicList generated by PTXprint - DO NOT EDIT\n"+dat
                             with open(tmpiclstfname, "w", encoding="utf-8") as outf:
                                 outf.write(dat)
-            if len(missingPics):
-                missingPicList += ["{}".format(", ".join(list(set(missingPics))))]
-        if len(missingPicList):
+        if not len(missingPics):
+            foundPics=os.listdir(os.path.join(self.printer.working_dir, "tmpPics"))
+            if len(foundPics):
+                bl = []
+                for b in foundPics:
+                    doti = b.rfind(".")
+                    bl += [b[:doti]]
+                missingPics = set(newBaseList) - set(bl)
+            else:
+                missingPics = newBaseList
+        if len(missingPics):
+            missingPicList += ["{}".format(", ".join(list(set(missingPics))))]
             self.printer.set("l_missingPictureString", "Missing Pictures:\n"+"{}".format("\n".join(missingPicList)))
         else:
-            self.printer.set("l_missingPictureString", "(No Missing Pictures)")
+            self.printer.set("l_missingPictureString", "No Missing Pictures")
 
     def convertToJPGandResize(self, ratio, infile, outfile):
         white = (255, 255, 255, 255)
@@ -704,13 +742,15 @@ class RunJob:
             return
         # If either the source image is a TIF (or) the proportions aren't right for page dimensions 
         # then we first need to convert to a JPG and/or pad with which space on either side
-        if srcpath[-4:].lower() == ".tif" or iw/ih < ratio:
+        doti = srcpath.rfind(".")
+        if srcpath[doti:].lower().startswith(".tif") or iw/ih < ratio:
             tempJPGname = os.path.join(tmpPicPath, "tempJPG.jpg")
-            tgtpath = tgtpath[:-4]+".jpg"
+            doti = tgtpath.rfind(".")
+            tgtpath = tgtpath[:doti]+".jpg"
             # try:
             self.convertToJPGandResize(ratio, srcpath, tempJPGname)
             srcpath = tempJPGname
-            # except: # Which exception should I try to catch?
+            # except: # MH: Which exception should I try to catch?
                 # print("Error: Unable to convert/resize image!\nImage skipped:", srcpath)
                 # return
         if not os.path.exists(tgtpath):
@@ -729,12 +769,14 @@ class RunJob:
 
     def removeTempFiles(self, texfiles):
         notDeleted = []
-        n = os.path.join(self.tmpdir, "NestedStyles.sty")
-        if os.path.exists(n):
-            try:
-                os.remove(n)
-            except:
-                notDeleted += [n]
+        # MH: Should we try to remove the generated Nested files (now that they are stored aloong with the config)?
+        # What impact does that have on Paratext's S/R (cluttering)
+        # n = os.path.join(self.tmpdir, "NestedStyles.sty")
+        # if os.path.exists(n):
+            # try:
+                # os.remove(n)
+            # except:
+                # notDeleted += [n]
         for extn in ('delayed','parlocs','notepages', 'tex', 'log'):
             for t in set(texfiles):
                 delfname = os.path.join(self.tmpdir, t.replace(".tex", "."+extn))
@@ -781,7 +823,8 @@ class RunJob:
         lineSpacingFactor = float(info.dict["paragraph/linespacingfactor"])
         # print("lineSpacingFactor=", lineSpacingFactor)
         # ph = pageheight, pw = pagewidth
-        ph = pageHeight - (margin * topMarginFactor) - (margin * bottomMarginFactor) - 22 # 16 # (3 * lineSpacingFactor) (Hack!)
+        # print("margin={} topMarginFactor={} bottomMarginFactor={}".format(margin, topMarginFactor, bottomMarginFactor))
+        ph = pageHeight - (margin * float(topMarginFactor)) - (margin * float(bottomMarginFactor)) - 22  # 16 # (3 * lineSpacingFactor) (Hack!)
         pw1 = pageWidth - bindingGutter - (2*(margin*sideMarginFactor))                       # single-col layout
         if info.dict["paper/columns"] == "2":
             pw2 = int(pageWidth - middleGutter - bindingGutter - (2*(margin*sideMarginFactor)))/2 # double-col layout & span images

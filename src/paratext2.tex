@@ -40,6 +40,8 @@
 \def\wlog{\immediate\write-1 } % write message to log file only
 \newif\iftemp \tempfalse
 \newif\ifinn@te\inn@tefalse
+\newif\ifm@rksonpage % Try to keep track of marks, so we can kill them in end-sections. 
+\m@rksonpagefalse
 % \addtoendhooks collects macros to be executed at the end of the job
 \def\addtoendhooks#1{\x@\global\x@\@ndhooks\x@{\the\@ndhooks #1}}
 \newtoks\@ndhooks
@@ -118,7 +120,7 @@
 \def\vm@kenote#1#2#3{%
   \inn@tetrue%
   \let\next\relax%
-  \def\n@tetype{#2}%
+  \def\n@tetype{#1}%
   \ifdiglot\ifdiglotSepNotes\ifdiglotL\def\n@tetype{#1}\else\def\n@tetype{#1R}\fi\fi\fi%
   \TRACE{vm@kenote \n@tetype}%
   \x@\insert\csname note-\n@tetype\endcsname\bgroup% insert note-f (or note-x)
@@ -317,6 +319,10 @@
 \def\onecol{%
   \trace{b}{BALANCE pagebuild: cols=1: textheight=\the\textheight}
   \global\setbox\galley=\copy255
+  % tempoarily split and see if there are marks in this text
+  \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
+   \edef\t@mp{\splitbotmark}
+   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
   \global\galleypenalty=\outputpenalty
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
   \global\output={\onecoltrial}
@@ -365,9 +371,10 @@
       \unvbox2
     }
     \resetvsize
-    \ifdim\ht\colA>\baselineskip\plainoutput \else\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
-    \xdef\p@gefirstmark{}
-    \xdef\p@gebotmark{}
+    \ifdim\ht\colA>\baselineskip\plainoutput
+    \xdef\p@gefirstmark{}%
+    \xdef\p@gebotmark{}%
+    \else\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
     \global\holdinginserts=1
     \ifrerunsavepartialpaged\trace{o}{onecoltrial: rerunsavepartialpage}\global\output={\savepartialpage}\global\rerunsavepartialpagedfalse
     \else\global\output={\onecol}\fi
@@ -485,13 +492,17 @@
       \unvbox2
     }
     \resetvsize%
-    \ifdim\ht\colA>\baselineskip\plainoutput\else\trace{o}{Page empty \the\ht\colA, \ht\colB, \the\ht\partial}\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
-    %\xdef\p@gefirstmark{}
-    %\xdef\p@gebotmark{}
+    \ifdim\ht\colA>\baselineskip\plainoutput
+    \xdef\p@gefirstmark{}
+    \xdef\p@gebotmark{}
+    \else\trace{o}{Page empty \the\ht\colA, \ht\colB, \the\ht\partial}\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
     \tempfalse%
     \ifdim\ht\partial>0.9\textheight \temptrue\fi%
     \ifnum\outputpenalty<-10000 \temptrue\fi%
-    \iftemp\def\pagecontents{\box\partial}\plainoutput \fi
+    \iftemp\def\pagecontents{\box\partial}\plainoutput 
+    \xdef\p@gefirstmark{}
+    \xdef\p@gebotmark{}
+    \fi
     \global\holdinginserts=1
   \else % the contents of the "galley" didn't fit into the actual page,
         % so reduce \vsize and try again with an earlier break
@@ -502,6 +513,7 @@
     \global\let\whichtrial=\onecoltrial
     \global\output={\backingup}
     \global\rerunsavepartialpagedtrue
+    \ifm@rksonpage\else\gdef\p@gefirstmark{}\mark{}\fi%No marks on the page, and it didn't fit, so add a blank mark
     \unvbox\s@vedpage \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
   \fi}
   % save 1 column material since we are switching to 2 columns
@@ -512,6 +524,9 @@
   % save copy of current page so we can retry with different heights
   \trace{b}{BALANCE pagebuild: cols=2: textheight=\the\textheight}
   \global\setbox\galley=\copy255
+  \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
+   \edef\t@mp{\splitbotmark}
+   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
   \global\galleypenalty=\outputpenalty % save current penalty so we can restore it at (A)
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
   \global\output={\twocoltrial}
@@ -844,6 +859,7 @@
     \tempfalse%\ifvoid\partial\else\temptrue\fi%
     % remember \holdingInserts=1 from \@emptyinserts
     \ifvoid\galley\temptrue\fi
+    \ifm@rksonpage\else\gdef\p@gefirstmark{}\mark{}\fi%No marks on the page, and it didn't fit, so add a blank mark
     \iftemp
      \trace{i}{Using savedpage.pen=\the\outputpenalty}%
      \unvbox\s@vedpage\penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
@@ -904,8 +920,8 @@
     \global\setbox255=\box\voidb@x
     \resetvsize % reset size of next page since it will not have any 1 column material
     \plainoutput 
-    \xdef\p@gefirstmark{}
-    \xdef\p@gebotmark{}
+    \xdef\p@gefirstmark{}%
+    \xdef\p@gebotmark{}%
     \global\holdinginserts=1
     \ifrerunsavepartialpaged
       \global\output={\savepartialpaged}\unvbox\s@vedpage\global\rerunsavepartialpagedfalse
@@ -920,6 +936,7 @@
     \let\\=\cle@rn@tecl@ss \the\n@tecl@sses
     \global\let\whichtrial=\twocoltrial
     \global\output={\backingup}
+    \ifm@rksonpage\else\gdef\p@gefirstmark{}\mark{}\fi%No marks on the page, and it didn't fit, so add a blank mark
     \unvbox\galley \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
   \fi}
 \newif\iffitonpage
@@ -965,6 +982,9 @@
   \advance\vsize by \baselineskip
   \global\output={\savepartialpaged}
   \global\setbox\galley=\copy255 \global\setbox\galley=\vbox{\unvbox\galley}
+  \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
+   \edef\t@mp{\splitbotmark}
+   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
   \trace{o}{sppb hIns=\the\holdinginserts, pt:\the\ht\partial, g:\the\ht255, \the\ht\galley}
   \global\holdinginserts=0
   \unvbox255\eject
@@ -994,7 +1014,7 @@
   % make a macro reset vsize for remaining pages which do not have 1 column material
   \gdef\resetvsize{\global\vsize=\textheight \global\advance\vsize by -\ht\partial \global\advance\vsize by 0.5\baselineskip} 
   \global\availht=\vsize
-  %\global\c@rrentcols=2
+  \global\c@rrentcols=2
   \global\output={\diglotLeft}
   % (\count of an insertion class is a scaling factor)
   \count255=1000
@@ -1017,7 +1037,9 @@
     \m@kenotebox
     \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
     \unvbox2
-    }}\plainoutput\noteseenfalse}%
+    }}\plainoutput\noteseenfalse
+    \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
+}%
 
 % to switch back to single column, we reset the page size parameters
 \def\singlecolumn{%
@@ -1106,7 +1128,7 @@
   \loop
     \x@\gdef\csname param-\the\p@ramnumber\endcsname{}%
     \global\advance\p@ramnumber by 1
-    \ifnum\p@ramnumber<8\repeat
+    \ifnum\p@ramnumber<9\repeat
   \global\p@ramnumber=1
   \loop
     \x@\getonep@ram\p@rams\end
@@ -1196,7 +1218,7 @@
     \fi
     \vskip.5\baselineskip
   }%
-  \trace{b}{BALANCE fig: height=\the\ht0: baselineskip=\the\baselineskip}
+  \trace{b}{BALANCE fig: height=\the\ht0: baselineskip=\the\baselineskip}%
   % insert into proper insertion class for this position
   \insert\p@cins{\penalty10000 % make sure this picture does not float away to another page
     \splittopskip\z@skip

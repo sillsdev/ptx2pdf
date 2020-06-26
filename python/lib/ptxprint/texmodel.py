@@ -62,7 +62,7 @@ ModelMap = {
                                  for s in w.FrontPDFs) if (w.get("c_inclFrontMatter") and w.FrontPDFs is not None and w.FrontPDFs != 'None') else ""),
     "project/ifinclbackpdf":    ("c_inclBackMatter", None),
     "project/backincludes":     ("btn_selectBackPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s.as_posix()) \
-                                 for s in w.BackPDFs) if (w.get("c_inclFrontMatter") and w.BackPDFs is not None and w.BackPDFs != 'None') else ""),
+                                 for s in w.BackPDFs) if (w.get("c_inclBackMatter") and w.BackPDFs is not None and w.BackPDFs != 'None') else ""),
     "project/useprintdraftfolder": ("c_useprintdraftfolder", lambda w,v :"true" if v else "false"),
     "project/processscript":    ("c_processScript", None),
     "project/runscriptafter":   ("c_processScriptAfter", None),
@@ -91,7 +91,8 @@ ModelMap = {
     "paper/gutter":             ("s_pagegutter", lambda w,v: round(v) or "0"),
     "paper/colgutteroffset":    ("s_colgutteroffset", lambda w,v: "{:.1f}".format(v) or "0.0"),
     "paper/columns":            ("c_doublecolumn", lambda w,v: "2" if v else "1"),
-    "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
+    # "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
+    "paper/fontfactor":         ("s_fontsize", lambda w,v: "{:.3f}".format(v / 12) or "1.000"),
 
     "fancy/showborderstab":     ("c_showBordersTab", None),
     "fancy/enableborders":      ("c_borders", lambda w,v: "" if v else "%"),
@@ -179,6 +180,7 @@ ModelMap = {
     "document/supressparallels": ("c_omitParallelRefs", None),
     "document/supressbookintro": ("c_omitBookIntro", None),
     "document/supressintrooutline": ("c_omitIntroOutline", None),
+    "document/indentunit":      ("s_indentUnit", lambda w,v: round(v, 1) or "2.0"),
     "document/supressindent":   ("c_omit1paraIndent", lambda w,v: "false" if v else "true"),
     "document/ifhidehboxerrors": ("c_showHboxErrorBars", lambda w,v :"%" if v else ""),
     "document/elipsizemptyvs":  ("c_elipsizeMissingVerses", None),
@@ -326,6 +328,7 @@ class TexModel:
         self.ptsettings = ptsettings
         self.changes = None
         self.localChanges = None
+        self.debug = False
         t = datetime.now()
         tz = t.utcoffset()
         if tz is None:
@@ -366,11 +369,22 @@ class TexModel:
             if os.path.exists(picdir):
                 break
         self.dict["project/picdir"] = picdir.replace("\\","/")
-        # Look in local Config folder for ptxprint-mods.tex, and drop back to shared/ptxprint if not found 
+        # Look in local Config folder for ptxprint-mods.tex, and drop back to shared/ptxprint if not found
         fpath = os.path.join(self.printer.configPath(self.printer.configName()), "ptxprint-mods.tex")
         if not os.path.exists(fpath):
-            fpath = os.path.join(self.dict["/ptxpath"], self.dict["project/id"], "shared", "ptxprint", "ptxprint-mods.tex")
+            fpath = os.path.join(self.printer.configPath(""), "ptxprint-mods.tex")
         self.dict['/modspath'] = fpath.replace("\\","/")
+        # Look in local Config folder for NestedStyles.sty, and drop back to shared/ptxprint if not found
+        fpath = os.path.join(self.printer.configPath(self.printer.configName()), "NestedStyles.sty")
+        if not os.path.exists(fpath):
+            fpath = os.path.join(self.printer.configPath(""), "NestedStyles.sty")
+        self.dict['/nststypath'] = fpath.replace("\\","/")
+        # If AlignedDiglot, look in local Config folder for NestedStylesR.sty, and drop back to shared/ptxprint if not found
+        fpathR = os.path.join(self.printer.configPath(self.printer.configName()), "NestedStylesR.sty")
+        if self.dict["document/ifaligndiglot"] == "":
+            if not os.path.exists(fpathR):
+                fpathR = os.path.join(self.printer.configPath(""), "NestedStylesR.sty")
+        self.dict['/nststypathR'] = fpathR.replace("\\","/")
         self.dict['paragraph/linespacingfactor'] = "{:.3f}".format(float(self.dict['paragraph/linespacing']) / 14 / float(self.dict['paper/fontfactor']))
 
     def updatefields(self, a):
@@ -520,6 +534,13 @@ class TexModel:
                     res.append("\\PtxFilePath={"+filedir.replace("\\","/")+"/}\n")
                     for i, f in enumerate(self.dict['project/bookids']):
                         fname = self.dict['project/books'][i]
+                        # May ALSO need to check if top center header is pagenumber AND bottomcenter is NOT pagenumber:
+                        # before adding this to the top of GLO bks etc.
+                        # if f in ["XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG",
+                                # "GLO", "TDX", "NDX", "CNC", "OTH", "BAK"]:
+                            # res.append("\\def\RHtitlecenter{\pagenumber}\n")
+                            # res.append("\\defineheads\n")
+                            # res.append("\\def\RHtitlecenter{{}}\n".format(self.dict['header/hdrcenter']))
                         if self.asBool('document/ifomitsinglechnum') and \
                            self.dict['document/ifomitchapternum'] == "false" and \
                            f in oneChbooks:
@@ -596,7 +617,9 @@ class TexModel:
         self.makelocalChanges(printer, bk)
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
-            open(customsty, "w").close()
+            self.dict["/nocustomsty"] = "%"
+        else:
+            self.dict["/nocustomsty"] = ""
         fbkfm = self.ptsettings['FileNameBookNameForm']
         fprfx = self.ptsettings['FileNamePrePart'] or ""
         fpost = self.ptsettings['FileNamePostPart'] or ""
@@ -615,6 +638,7 @@ class TexModel:
             dat = inf.read()
             if self.changes is not None or self.localChanges is not None:
                 for c in (self.changes or []) + (self.localChanges or []):
+                    if self.debug: print(c)
                     if c[0] is None:
                         dat = c[1].sub(c[2], dat)
                     else:
@@ -724,16 +748,17 @@ class TexModel:
 
             figChangeList = self.figNameChanges(printer, bk)
             if len(figChangeList):
-                missingPics = []
+                # missingPics = []
                 for origfn,tempfn in figChangeList:
                     origfn = re.escape(origfn)
                     if tempfn != "":
                         # print("(?i)(\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), "-->", tempfn)
-                        self.localChanges.append((None, regex.compile(r"(?i)(\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), \
-                                                     flags=regex.M), r"\1{}\2".format(tempfn)))                               #USFM2
-                        self.localChanges.append((None, regex.compile(r'(?i)(\\fig .*?src="){}(" .+?\\fig\*)'.format(origfn), \
-                                                     flags=regex.M), r"\1{}\2".format(tempfn)))                               #USFM3
+                        self.localChanges.append((None, regex.compile(r"(?i)(?<fig>\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), \
+                                                     flags=regex.M), r"\g<fig>{}\2".format(tempfn)))                               #USFM2
+                        self.localChanges.append((None, regex.compile(r'(?i)(?<fig>\\fig .*?src="){}(" .+?\\fig\*)'.format(origfn), \
+                                                     flags=regex.M), r"\g<fig>{}\2".format(tempfn)))                               #USFM3
                     else:
+                        # missingPics += [origfn]
                         if self.asBool("document/iffigskipmissing"):
                             # print("(?i)(\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), "--> Skipped!!!!")
                             self.localChanges.append((None, regex.compile(r"(?i)\\fig .*?\|{}\|.+?\\fig\*".format(origfn), flags=regex.M), ""))     #USFM2
@@ -796,6 +821,9 @@ class TexModel:
         # Paratext marks no-break space as a tilde ~
         self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
 
+        # Hack for JraKhmr
+        self.localChanges.append((None, regex.compile(r"\\ft»", flags=regex.M), r"\\ft »")) 
+
         # Remove the + of embedded markup (xetex handles it)
         self.localChanges.append((None, regex.compile(r"\\\+", flags=regex.M), r"\\"))  
             
@@ -842,11 +870,13 @@ class TexModel:
         with universalopen(infpath) as inf:
             dat = inf.read()
             inf.close()
-            figlist += re.findall(r"(?i)\\fig .*?\|(.+?\.(?=jpg|tif|png|pdf)...)\|.+?\\fig\*", dat)    # Finds USFM2-styled markup in text:
-            figlist += re.findall(r'(?i)\\fig .+src="(.+?\.(?=jpg|tif|png|pdf)...)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text:
+            figlist += re.findall(r"(?i)\\fig .*?\|(.+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)\|.+?\\fig\*", dat)    # Finds USFM2-styled markup in text:
+            figlist += re.findall(r'(?i)\\fig .+src="(.+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text:
             for f in figlist:
                 found = False
                 for ext in extOrder:
+                    if ext.lower().startswith("tif"):
+                        ext = "jpg"
                     tmpf = self.newBase(f)+"."+ext
                     fname = os.path.join(picdir, tmpf)
                     if os.path.exists(fname):
@@ -859,7 +889,8 @@ class TexModel:
         return(figchngs)
 
     def base(self, fpath):
-        return os.path.basename(fpath)[:-4]
+        doti = fpath.rfind(".")
+        return os.path.basename(fpath[:doti])
 
     def codeLower(self, fpath):
         cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?$", self.base(fpath))
@@ -875,38 +906,41 @@ class TexModel:
         else:
             return re.sub('[()&+,. ]', '_', self.base(fpath).lower())
 
-    def generateNestedStyles(self):
-        prjid = self.dict['project/id']
-        prjdir = os.path.join(self.ptsettings.basedir, prjid)
-        nstyfname = os.path.join(prjdir, "PrintDraft", "NestedStyles.sty") # hack to be fixed later
+    def generateNestedStyles(self, diglot=False):
+        if diglot:
+            pfx = "diglot"
+            sfx = "R.sty"
+        else:
+            pfx = "notes"
+            sfx = ".sty"
+        cfgname = self.printer.configName()
+        nstyfname = os.path.join(self.printer.configPath(cfgname), "NestedStyles"+sfx)
         nstylist = []
         if self.asBool("document/ifomitallverses"):
             nstylist.append("##### Remove all verse numbers\n\\Marker v\n\\TextProperties nonpublishable\n\n")
 
-        if not self.asBool("notes/includefootnotes"):
+        if not self.asBool(pfx+"/includefootnotes"):
             nstylist.append("##### Set Footnote Size and Line Spacing\n")
-            for m in ['fr', 'fq', 'fqa', 'fk', 'ft', 'ff', 'fl', 'fw', 'fp', 'fv', 'fdc', 'fm', 'f']:
-                nstylist.append("\\Marker {}\n\\FontSize {}\n".format(m, self.dict['notes/fnfontsize']))
-            nstylist.append("\\LineSpacing {}pt plus 2pt\n".format(self.dict['notes/fnlinespacing']))
+            nstylist.append("\\Marker {}\n\\FontSize {}\n".format("f", self.dict[pfx+'/fnfontsize']))
+            nstylist.append("\\LineSpacing {}pt plus 2pt\n".format(self.dict[pfx+'/fnlinespacing']))
             nstylist.append("\\Justification Left\n\n")
         else:
             nstylist.append("##### Remove all footnotes\n\\Marker f\n\\TextProperties nonpublishable\n\n")
 
         if not self.asBool("notes/includexrefs"):
             nstylist.append("##### Set Cross-reference Size and Line Spacing\n")
-            for m in ['xo', 'xq', 'xdc', 'xk', 'xta', 'xop', 'xot', 'xnt', 'xdc', 'x']:
-                nstylist.append("\\Marker {}\n\\FontSize {}\n".format(m, self.dict['notes/fnfontsize']))
-            nstylist.append("\\LineSpacing {}pt plus 2pt\n".format(self.dict['notes/fnlinespacing']))
+            nstylist.append("\\Marker {}\n\\FontSize {}\n".format("x", self.dict[pfx+'/fnfontsize']))
+            nstylist.append("\\LineSpacing {}pt plus 2pt\n".format(self.dict[pfx+'/fnlinespacing']))
             nstylist.append("\\Justification Left\n\n")
         else:
             nstylist.append("##### Remove all cross-references\n\\Marker x\n\\TextProperties nonpublishable\n\n")
 
-        if self.dict["notes/ifblendfnxr"]:
+        if self.dict[pfx+"/ifblendfnxr"]:
             nstylist.append("##### Treat x-refs as footnotes with their own caller\n\\Marker x\n\\NoteBlendInto f\n\n")
 
         nstylist.append("##### Adjust poetic indents\n")
         m = ["\Marker", "\LeftMargin", "\FirstLineIndent"]
-        if self.dict["paper/columns"] == "2": # Double Column layout so use smaller indents
+        if self.dict["paper/columns"] == "2" or self.dict["document/ifaligndiglot"] == "": # Double Column layout so use smaller indents
             v = [["q", "0.60", "-0.45"], ["q1", "0.60", "-0.45"], ["q2", "0.60", "-0.225"], 
                  ["q3", "0.60", "-0.112"], ["q4", "0.60", "-0.0"]]
         else: # Single column layout, so use larger (USFM.sty default) indents
@@ -916,7 +950,7 @@ class TexModel:
         for mkr in r:
             for l in range(0,3):
                 nstylist.append("{} {}\n".format(mkr[l][0],mkr[l][1]))
-            nstylist.append("\\Justification left\n\n")
+            nstylist.append("\\Justification Left\n\n")
 
         if True: # Hack! We need to qualify this (look in USFM for a \cl and if it exists, then don't do this)
             nstylist.append("# The descriptive heading is typically considered VerseText, but then often formatted as a heading.\n")
@@ -940,7 +974,7 @@ class TexModel:
                 os.remove(nstyfname)
             return []
         else:
-            os.makedirs(os.path.join(prjdir, "PrintDraft"), exist_ok=True)
+            os.makedirs(self.printer.configPath(cfgname), exist_ok=True)
             with open(nstyfname, "w", encoding="utf-8") as outf:
                 outf.write("".join(nstylist))
             return [nstyfname]

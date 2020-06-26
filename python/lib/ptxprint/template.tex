@@ -14,9 +14,10 @@
 %\stylesheet{L_}{{{/ptxpath}/{project/id}/usfm.sty}}
 
 {document/ifaligndiglot}{project/ifusecustomsty}\stylesheet{R_}{{{/ptxpath}/{document/diglotsecprj}/custom.sty}}
-{project/ifusecustomsty}\stylesheet{L_}{{{/ptxpath}/{project/id}/custom.sty}}
+{project/ifusecustomsty}{/nocustomsty}\stylesheet{L_}{{{/ptxpath}/{project/id}/custom.sty}}
 
-\stylesheet{L_}{{{/ptxpath}/{project/id}/PrintDraft/NestedStyles.sty}}     % PTXprint-generated stylesheet changes (for versenums, ftnts, xref, size + spacing)
+{document/ifaligndiglot}\stylesheet{R_}{{{/nststypathR}}} % generated stylesheet for Secondary project
+\stylesheet{L_}{{{/nststypath}}} % generated stylesheet for monodoc or Primary project
 
 {document/ifaligndiglot}{project/ifusemodssty}\stylesheet{R_}{{{/ptxpath}/{document/diglotsecprj}/PrintDraft/PrintDraft-mods.sty}} % Right-side/Diglot Secondary stylesheet override settings
 {project/ifusemodssty}\stylesheet{L_}{{{/ptxpath}/{project/id}/PrintDraft/PrintDraft-mods.sty}} % Left-side stylesheet override settings
@@ -82,6 +83,7 @@
 % Introduce some stretchability (glue) at each potential line break
 %\XeTeXlinebreakskip=0em plus 0.1em minus 0.01em
 \JustifyPars{paragraph/ifjustify}
+\IndentUnit={document/indentunit}in
 \IndentAfterHeading{document/supressindent}
 
 %%% Chapters & Verses %%%
@@ -151,6 +153,7 @@
 \def\RFoddcenter{{{footer/oddcenter}}}
 \def\RFevencenter{{{footer/oddcenter}}}
 \def\RFtitlecenter{{{footer/oddcenter}}}
+
 {footer/ifftrtitlepagenum}\def\RFtitlecenter{{\pagenumber}}
 {footer/ifprintConfigName}\def\RFtitlecenter{{{config/name}}}
 

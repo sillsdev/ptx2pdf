@@ -1,0 +1,202 @@
+﻿<ScriptureText>
+  <AdvancedView>False</AdvancedView>
+  <BookSequenceSeparator>; </BookSequenceSeparator>
+  <BookSourceForMarkerR>ShortName</BookSourceForMarkerR>
+  <BookSourceForMarkerXt>ShortName</BookSourceForMarkerXt>
+  <Book_1CH>1 Chronicles</Book_1CH>
+  <Book_1CO>1 Corinthians</Book_1CO>
+  <Book_1JN>1 John</Book_1JN>
+  <Book_1KI>1 Kings</Book_1KI>
+  <Book_1PE>1 Peter</Book_1PE>
+  <Book_1SA>1 Samuel</Book_1SA>
+  <Book_1TH>1 Thessalonians</Book_1TH>
+  <Book_1TI>1 Timothy</Book_1TI>
+  <Book_2CH>2 Chronicles</Book_2CH>
+  <Book_2CO>2 Corinthians</Book_2CO>
+  <Book_2JN>2 John</Book_2JN>
+  <Book_2KI>2 Kings</Book_2KI>
+  <Book_2PE>2 Peter</Book_2PE>
+  <Book_2SA>2 Samuel</Book_2SA>
+  <Book_2TH>2 Thessalonians</Book_2TH>
+  <Book_2TI>2 Timothy</Book_2TI>
+  <Book_3JN>3 John</Book_3JN>
+  <Book_ACT>Acts</Book_ACT>
+  <Book_AMO>Amos</Book_AMO>
+  <Book_COL>Colossians</Book_COL>
+  <Book_DAN>Daniel</Book_DAN>
+  <Book_DEU>Deuteronomy</Book_DEU>
+  <Book_ECC>Ecclesiastes</Book_ECC>
+  <Book_EPH>Ephesians</Book_EPH>
+  <Book_EST>Esther</Book_EST>
+  <Book_EXO>Exodus</Book_EXO>
+  <Book_EZK>Ezekiel</Book_EZK>
+  <Book_EZR>Ezra</Book_EZR>
+  <Book_GAL>Galatians</Book_GAL>
+  <Book_GEN>Genesis</Book_GEN>
+  <Book_HAB>Habakkuk</Book_HAB>
+  <Book_HAG>Haggai</Book_HAG>
+  <Book_HEB>Hebrews</Book_HEB>
+  <Book_HOS>Hosea</Book_HOS>
+  <Book_ISA>Isaiah</Book_ISA>
+  <Book_JAS>James</Book_JAS>
+  <Book_JDG>Judges</Book_JDG>
+  <Book_JER>Jeremiah</Book_JER>
+  <Book_JHN>John</Book_JHN>
+  <Book_JOB>Job</Book_JOB>
+  <Book_JOL>Joel</Book_JOL>
+  <Book_JON>Jonah</Book_JON>
+  <Book_JOS>Joshua</Book_JOS>
+  <Book_JUD>Jude</Book_JUD>
+  <Book_LAM>Lamentationes</Book_LAM>
+  <Book_LEV>Leviticus</Book_LEV>
+  <Book_LUK>Luke</Book_LUK>
+  <Book_MAL>Malachi</Book_MAL>
+  <Book_MAT>Matthew</Book_MAT>
+  <Book_MIC>Micah</Book_MIC>
+  <Book_MRK>Mark</Book_MRK>
+  <Book_NAM>Nahum</Book_NAM>
+  <Book_NEH>Nehemiah</Book_NEH>
+  <Book_NUM>Numbers</Book_NUM>
+  <Book_OBA>Obadiah</Book_OBA>
+  <Book_PHM>Philemon</Book_PHM>
+  <Book_PHP>Philippians</Book_PHP>
+  <Book_PRO>Proverbs</Book_PRO>
+  <Book_PSA>Psalms</Book_PSA>
+  <Book_REV>Revelation</Book_REV>
+  <Book_ROM>Romans</Book_ROM>
+  <Book_RUT>Rut</Book_RUT>
+  <Book_SNG>Song of Songs</Book_SNG>
+  <Book_TIT>Titus</Book_TIT>
+  <Book_ZEC>Zechariah</Book_ZEC>
+  <Book_ZEP>Zephaniah</Book_ZEP>
+  <ChapterNumberSeparator>; </ChapterNumberSeparator>
+  <ChapterRangeSeparator>–</ChapterRangeSeparator>
+  <ChapterVerseSeparator>:</ChapterVerseSeparator>
+  <ClosedByParagraph>No</ClosedByParagraph>
+  <ContinueAt>p pi</ContinueAt>
+  <ContinueInnerQuotes>Yes</ContinueInnerQuotes>
+  <ContinueQuotes>Yes</ContinueQuotes>
+  <CrossReferenceSettingsHaveBeenReviewed>T</CrossReferenceSettingsHaveBeenReviewed>
+  <DefaultFont>Suranna UI</DefaultFont>
+  <DefaultFontSize>16</DefaultFontSize>
+  <Editable>T</Editable>
+  <Encoding>65001</Encoding>
+  <FileName>JLOT.lcf</FileName>
+  <FileNameBookNameForm>41MAT</FileNameBookNameForm>
+  <FileNameForm>41MAT</FileNameForm>
+  <FileNamePostPart>SGA.txt</FileNamePostPart>
+  <FullName>Adilabad Gondi (Telangana, India)</FullName>
+  <GuessTranslationsDestinationText>WSGBT</GuessTranslationsDestinationText>
+  <Guid>9e944fc08f02acf9cc7033f4b006cc335e7ef48f</Guid>
+  <InnerInnerQuotes>“ ”</InnerInnerQuotes>
+  <InnerQuotes>‘ ’</InnerQuotes>
+  <InterlinearExportOnApprove.RSV52>False</InterlinearExportOnApprove.RSV52>
+  <InterlinearExportOnApprove.SGABT>False</InterlinearExportOnApprove.SGABT>
+  <InterlinearExportText.SGABT>SGABT</InterlinearExportText.SGABT>
+  <InterlinearModelText>NET08</InterlinearModelText>
+  <InterlinearRelatedLanguages.RSV52>False</InterlinearRelatedLanguages.RSV52>
+  <InterlinearRelatedLanguages.SGABT>False</InterlinearRelatedLanguages.SGABT>
+  <IntroductionOutlineStyles>io io1 io2 io3 io4</IntroductionOutlineStyles>
+  <InvalidCharacters>o l షే d శు చౌ &amp; చో స్ం భి # … ష _ వృ * + &lt; &gt; ɣ ː गु ग् तु न ना न् म यो रो लो वा ह ఐ క్ॊ ఖ డ్् ణ ధిం ధ్ నై పై̄ ఫ ఫి బాం బీం చూ ఎం నెం ‎ ఙా నౌ ఙి శ్ పై ఙ్ తాం శా ఙె శం హృ ఞి మోం ఙు శ ఙూ బై భు థా జై ష్ ఙం డై భ ఙొ ౩ హీం ౯ హ్̥ ౫ డేం ఞె ఞు షో ళ ఞీ గృ యీ ళ్ బోం సృ p ఖం దుః శీ ణ్ ఢ T G D v   ఘ C f A g ​ I B P ః s c h S y u r థ b ధ n i e t a ౌ ై ఓ ృ ఞ '   ఙ M x m J F N / w</InvalidCharacters>
+  <InvalidPunctuation>_&gt;_ _&lt;_ ‍_ _&lt; &gt;_ _#_ _- ___ : #_ -_ . _+_ * _?_ _:_ _.._ .._ _/ _"_ *_ _, '_ _' _*_ _._ _“_ / , "_ _" " ( ? _,_ __ /_ _(_ _* ‘ _‌ …_ _‘_ ...._ ) _”_ _| ! ” _)_ ‘_ “_ _/_ “ _# _” .. _… ..._ _’_</InvalidPunctuation>
+  <Language>Adilabad Gondi</Language>
+  <LanguageIsoCode>wsg:::</LanguageIsoCode>
+  <LeftToRight>T</LeftToRight>
+  <Name>WSG</Name>
+  <NeedsEnglishLanguageFix>No</NeedsEnglishLanguageFix>
+  <NeedsPortugueseLanguageFix>No</NeedsPortugueseLanguageFix>
+  <Pairs>(/) [/] {/} «/»</Pairs>
+  <PoeticStyles>ib iq iq1 iq2 iq3 q q1 q2 q3 q4 qc qr qs qa qac qm qm1 qm2 qm3 b</PoeticStyles>
+  <Quotes>“ ”</Quotes>
+  <RangeIndicator>-</RangeIndicator>
+  <RepeatableWords>డగుక్ రమ్మ దుస్రొక్ ఉంది దుస్రొ బెయ్ గుబుడంగ్ రండ్ సెలె పెజెయ్ ఇచుర్ గమ్మ డుక్ బతంగ్ గుబ్డంగ్ పొరొ బహన్ బతి బోర్ తమ్వంగ్ వొరొన్ బతల్ బరొ టుక్డెంగ్ తిరిసి బయ్ పొంగ్ కుల్ల కుట్ గడి ఇవిర్ వాయ తిరిసెర్ అహన్ దుమర్ కుస మంజి వోన్ నడ్డుమ్ జుర్ జగ పూనంగ్ సవ్లు యేలోయి సొనెకె తమ్వ రె సత్తర్ వెలెక్ తన్వ మునె కీసి కుసి ఇచ్చుర్ పూడ్సి ఇచుక్ బదుర్ మహ్క్‌సెర్ వెల్ కర వెరెంగ్ అస్కె కరుమ్ బూర్ చంగ చింద నాల్విర్ మనెకె సార్నింగ్ దీవ్సి డెస రగక్ కల బిచంగ్ గార్ గమ రొపొ బర సారుంగ్ కిచ జొడ దుస్రుర్ మాడ్స సిగ నుయ గజ రొహ్క్ డుగ కరల్ బవ్ రమ గోడ్ అలగ్ కుల తర జెయ్ కుట లెస గెండెంగ్ గుడ గిర చక కారి జయ్ చిల వటి చెందె ఆహ మక్సి జుర్క్ రోజి తమ కేపత్ సప సీమ్ పనస్ చుడ్డుక్ వొరొర్</RepeatableWords>
+  <SequenceIndicator>,</SequenceIndicator>
+  <ShowReferences>Yes</ShowReferences>
+  <ShowVerseNumbers>Yes</ShowVerseNumbers>
+  <StyleSheet>usfm.sty</StyleSheet>
+  <TextEntryFontSizeAdjustment>0</TextEntryFontSizeAdjustment>
+  <UseVisibleBreak>No</UseVisibleBreak>
+  <ValidCharacters>  ‌ ‍ “ ర్ అ అం త ! " ( ) , - . 0 1 2 3 4 5 6 7 8 9 : ? ఆ ఆం ఇ ఇం ఈ ఉ ఉం ఊ ఎ న్ ూ ో క కం గి గు ల్ న వ సి గ తె తొ త్ మ బ క్ య్ కు స్ మ్ గ్ ట్ కె ద్ ర రి జె డ్ ని స ది నె లి కీ తు య తి వె రొ వో హ్ కి వా యే మా ద సు సా ప టి మం జ నా దు వం సె లె హ బా వూ వ్ రె డ ప్ ము మి పొ డి కా పి కొ సీ జి దె వొ రు చి పె రా వి సొ ట మీ దొ ల తం తా సం బో డె నీ పు మె హి దా చ్ బు బ్ సూ ను గొ చొ జ్ పా చ యె మొ డు నొ పూ రం యొ వే సొం లు బొ సే నం జా రో కేం యు లా టు బె యో పే యి యా టె లొ జీ కీం కే యూ దే చు హు వీ నే దం రూ చె జు లో పం మో బూ తీ హిం వు హం టొ గె టా జో హా డొ తో బే సీం తే కో రీ యం సో టిం హో మాం హె డం జే సోం వాం గా టం తిం పో హే బం డుం కాం లం పీ కూ చా టెం దూ డిం మూం మూ చం గం లే బి మేం తుం నో హొ దాం నేం నిం రెం మీం టుం యుం బీ పాం రిం ’ సాం యెం మిం గో విం రే నూ డే తెం చొం ; చీ జం లుం నుం దీ దో సెం రుం దుం ‘ దిం డో చే టే హూ లూ రాం పోం టొం తూ కుం డెం హీ కిం దూం లేం హెం యిం టాం లిం లెం కొం కోం చుం యొం వోం పిం డా వెం కెం చాం ే గూం పొం జొ ఞా రొం మెం పుం సిం గూ హుం మే జూ గే ” వుం గెం చిం ముం దొం టూ ీ ా ొ ం ు ె ి ్ ఏ ఒ — 
+ | \ – [ ] ?? ??? ?????? ఁ ఋ ఌ ఔ అః ౠ ౡ ఛ ఝ ఠ ఱ ఺ ౄ ౕ ౖ ౦ ౧ ౨ ౪ ౬ ౭ ౮ » « © ~ బెం మొం సూం సుం లాం లొం వేం టో ఊం గోం తొం హేం నోం చేం డొం జుం గొం గీ యేం నొం జొం బిం బొం లీ టీ జాం గిం నాం పెం గాం బేం డూం డీ రూం సేం జిం వొం రోం జెం చెం డాం దెం గుం 
+ ఓ</ValidCharacters>
+  <ValidPunctuation>;_ ... ._ ,_ ‌ _“ ”_ ?_ )_ _( !_ :_ ’_ _‘ - _-_ … ‌_ ‍ ]_ | _[ _©_ _..._ »_ _« _[_ _]_ ”._ !_«</ValidPunctuation>
+  <VerboseQuotes>No</VerboseQuotes>
+  <MinParatextVersion>8.0.100.25</MinParatextVersion>
+  <Versification>4</Versification>
+  <chapterText>Chapter</chapterText>
+  <deleteExtraSpaces>No</deleteExtraSpaces>
+  <mappingFile>ePub-HtmlMap.txt</mappingFile>
+  <noteReturnText>Go Back</noteReturnText>
+  <productName>Gondi (Adilabad) Scripture</productName>
+  <resetAllQuotes>No</resetAllQuotes>
+  <seeChapterText>See Chapter</seeChapterText>
+  <seeVerseText>See Verse</seeVerseText>
+  <smartenWordMedialApostrophe>No</smartenWordMedialApostrophe>
+  <CharacterAdvancedView>False</CharacterAdvancedView>
+  <TranslationInfo>Standard::</TranslationInfo>
+  <BiblicalTermsListSetting>Project:WSG:ProjectBiblicalTerms.xml</BiblicalTermsListSetting>
+  <RefsMustMatchVerseSegments>False</RefsMustMatchVerseSegments>
+  <SegmentsMustHaveFinalPunctuation>False</SegmentsMustHaveFinalPunctuation>
+  <NoSpaceBetweenBookAndChapter>False</NoSpaceBetweenBookAndChapter>
+  <P6TermsImported>T</P6TermsImported>
+  <OriginRangeOption>NoteInAnyVerse</OriginRangeOption>
+  <AllowReadAccess>F</AllowReadAccess>
+  <AllowSharingWithSLDR>T</AllowSharingWithSLDR>
+  <DefaultFootnoteCaller>*</DefaultFootnoteCaller>
+  <Continuer>“</Continuer>
+  <InnerContinuer>‘</InnerContinuer>
+  <InnerInnerContinuer>“</InnerInnerContinuer>
+  <QuoteClosesAllQuoteLevels>No</QuoteClosesAllQuoteLevels>
+  <BibleModuleAssociations>XXD:Pentecost.sfm|XXA:Gospel Book.sfm|XXC:TopicalVersesForWhatsApp.sfm|XXG:Gospel Book.sfm|XXE:WordsOfJesusVerses.sfm|XXB:Proverbs-Sorted-By-TOPIC.sfm</BibleModuleAssociations>
+  <DefaultCrossRefCaller>#</DefaultCrossRefCaller>
+  <InterlinearRelatedLanguages.NET08>False</InterlinearRelatedLanguages.NET08>
+  <InterlinearExportOnApprove.NET08>False</InterlinearExportOnApprove.NET08>
+  <SentenceFinalAdvancedView>True</SentenceFinalAdvancedView>
+  <SentenceFinalPunctuation>. ! ?</SentenceFinalPunctuation>
+  <MarkersCheckedForFinalPunctuation>ip ipi imi ipq imq ipr ib iq iq1 iq2 iq3 iex ie p m po cls pmo pm pmc pmr pi pi1 pi2 pi3 pc mi nb q q1 q2 q3 q4 qc qr qa qm qm1 qm2 qm3 qd b d tr lh li li1 li2 li3 li4 lf lim lim1 lim2 lim3 lim4 lit p1 p2 k1 k2 pr ph ph1 ph2 ph3 phi tr1 tr2 ps psi pub toc pref intro conc glo idx maps cov spine</MarkersCheckedForFinalPunctuation>
+  <MarkersStartingNewSentencesForFinalPunctuation>ip p b is is1 is2 ms ms1 ms2 ms3 mr s s1 s2 s3 s4 sr r sp periph</MarkersStartingNewSentencesForFinalPunctuation>
+  <MarkersSkippedForFinalPunctuation>qs</MarkersSkippedForFinalPunctuation>
+  <CheckFinalPunctuationInFootnotes>No</CheckFinalPunctuationInFootnotes>
+  <CheckFinalPunctuationInCrossRefs>No</CheckFinalPunctuationInCrossRefs>
+  <CheckFinalPunctuationInFigures>No</CheckFinalPunctuationInFigures>
+  <NonRepeatableWords>బచి సాటి ఇంజెర్ వూరుర్ జగ్డ తాన నాకున్ గిల్గాల్‌తగ అగక్ వోర్ బయల్ తాన్ అగటల్ వూరంగ్ రగల్ కావక్ పేడల్ మీవంగ్ వెహ కాల్ పియ్సి పర్జతున్ సియన్ తవ్వంగ్ -</NonRepeatableWords>
+  <NumberDecimalPoint>.</NumberDecimalPoint>
+  <NumberThousandsSeparator>,</NumberThousandsSeparator>
+  <NumberOrdinals>వ</NumberOrdinals>
+  <NumberInitialPunctuation>+"({</NumberInitialPunctuation>
+  <NumberFinalPunctuation>)}"&gt;.!?:,;</NumberFinalPunctuation>
+  <NumberMedialPunctuation>/–</NumberMedialPunctuation>
+  <NumberOrdinalType>suffix</NumberOrdinalType>
+  <HindiUrduNumberGrouping>T</HindiUrduNumberGrouping>
+  <NumberSettingsHaveBeenReviewed>T</NumberSettingsHaveBeenReviewed>
+  <Copyright>&lt;p&gt;© Wycliffe Bible Translators, Inc.&lt;/p&gt;</Copyright>
+  <InvalidParagraphFinalPunctuationItems>p_/ p_; q1_: q2_/ q2_:</InvalidParagraphFinalPunctuationItems>
+  <DBLIncludeFonts>True</DBLIncludeFonts>
+  <FileNamePrePart />
+  <PaOriginalStylesheetName />
+  <AssociatedLexicalProject>FieldWorks:Adilabad Gondi</AssociatedLexicalProject>
+  <EncodingConverter />
+  <NormalizationForm>NFC</NormalizationForm>
+  <BooksPresent>111111111111111111111111111111111111111111111111111111111111111111000000000000000000000000001111111111000010111000000000000</BooksPresent>
+  <FontFeatures />
+  <HtmlLanguage />
+  <MatchBasedOnStems>F</MatchBasedOnStems>
+  <Visibility>Public</Visibility>
+  <ParatextRegistryId>5qd8Wcnav7WcDgsgT</ParatextRegistryId>
+  <MarkerAdvancedView>False</MarkerAdvancedView>
+  <ReferenceFinalPunctuation />
+  <ReferenceExtraMaterial />
+  <DateArchived>2018-05-30T19:53:06.963241</DateArchived>
+  <GBCId>5b0f00f4f8b34b7f52480882</GBCId>
+  <GBCSummary>Adilabad Gondi(wsg), Pavitra Vachan, India, Bible, WSG, dbl: matches</GBCSummary>
+  <ReplaceDigits>Deva</ReplaceDigits>
+  <UsfmVersion />
+  <OptionBasePlan>CIC Base Plan v2</OptionBasePlan>
+  <OptionChecks>new</OptionChecks>
+  <OptionLanguage>en</OptionLanguage>
+  <OptionStagesExpanded>Y</OptionStagesExpanded>
+  <OptionTasksExpanded>Y</OptionTasksExpanded>
+  <SegmentOrder>a b c d e f g h</SegmentOrder>
+  <ValidParagraphFinalPunctuationItems>toca1_. toca1_! toca1_? toca2_. toca2_! toca2_? toca3_. toca3_! toca3_? io_. io_! io_? ip_. ip_! ip_? im_. im_! im_? ipi_. ipi_! ipi_? imi_. imi_! imi_? ipq_. ipq_! ipq_? imq_. imq_! imq_? ipr_. ipr_! ipr_? ib_. ib_! ib_? iq_. iq_! iq_? iq1_. iq1_! iq1_? iq2_. iq2_! iq2_? iq3_. iq3_! iq3_? iex_. iex_! iex_? ie_. ie_! ie_? p_. p_! p_? m_. m_! m_? po_. po_! po_? pr_. pr_! pr_? cls_. cls_! cls_? pmo_. pmo_! pmo_? pm_. pm_! pm_? pmc_. pmc_! pmc_? pmr_. pmr_! pmr_? pi_. pi_! pi_? pi1_. pi1_! pi1_? pi2_. pi2_! pi2_? pi3_. pi3_! pi3_? pc_. pc_! pc_? mi_. mi_! mi_? nb_. nb_! nb_? q_. q_! q_? q1_. q1_! q1_? q2_. q2_! q2_? q3_. q3_! q3_? q4_. q4_! q4_? qc_. qc_! qc_? qr_. qr_! qr_? qa_. qa_! qa_? qm_. qm_! qm_? qm1_. qm1_! qm1_? qm2_. qm2_! qm2_? qm3_. qm3_! qm3_? qd_. qd_! qd_? b_. b_! b_? d_. d_! d_? tr_. tr_! tr_? lh_. lh_! lh_? li_. li_! li_? li1_. li1_! li1_? li2_. li2_! li2_? li3_. li3_! li3_? li4_. li4_! li4_? lf_. lf_! lf_? lim_. lim_! lim_? lim1_. lim1_! lim1_? lim2_. lim2_! lim2_? lim3_. lim3_! lim3_? lim4_. lim4_! lim4_? lit_. lit_! lit_? p1_. p1_! p1_? p2_. p2_! p2_? k1_. k1_! k1_? k2_. k2_! k2_? ph_. ph_! ph_? ph1_. ph1_! ph1_? ph2_. ph2_! ph2_? ph3_. ph3_! ph3_? phi_. phi_! phi_? tr1_. tr1_! tr1_? tr2_. tr2_! tr2_? ps_. ps_! ps_? psi_. psi_! psi_? pub_. pub_! pub_? toc_. toc_! toc_? pref_. pref_! pref_? intro_. intro_! intro_? conc_. conc_! conc_? glo_. glo_! glo_? idx_. idx_! idx_? maps_. maps_! maps_? cov_. cov_! cov_? spine_. spine_! spine_? li_, m_, m_: nb_, p_, p_: p_[ q1_, q2 q2_, qa q1</ValidParagraphFinalPunctuationItems>
+  <Naming PrePart="" PostPart="SGA.txt" BookNameForm="41MAT" />
+</ScriptureText>

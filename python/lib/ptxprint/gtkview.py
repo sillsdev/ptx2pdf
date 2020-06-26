@@ -481,15 +481,20 @@ class GtkViewModel(ViewModel):
                 self.onSaveEdits(None)
 
         # Work out what the resulting PDFs are to be called
+        cfgname = self.configName()
+        if cfgname is None:
+            cfgname = ""
+        else:
+            cfgname = "-" + cfgname
         if not os.path.exists(self.working_dir):
             os.makedirs(self.working_dir)
         if len(jobs) > 1:
             if self.get("c_combine"):
-                pdfnames = [os.path.join(self.working_dir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], self.prjid))]
+                pdfnames = [os.path.join(self.working_dir, "ptxprint{}-{}_{}{}.pdf".format(cfgname, jobs[0], jobs[-1], self.prjid))]
             else:
-                pdfnames = [os.path.join(self.working_dir, "ptxprint-{}{}.pdf".format(j, self.prjid)) for j in jobs]
+                pdfnames = [os.path.join(self.working_dir, "ptxprint{}-{}{}.pdf".format(cfgname, j, self.prjid)) for j in jobs]
         else:
-            pdfnames = [os.path.join(self.working_dir, "ptxprint-{}{}.pdf".format(jobs[0], self.prjid))]
+            pdfnames = [os.path.join(self.working_dir, "ptxprint{}-{}{}.pdf".format(cfgname, jobs[0], self.prjid))]
         for pdfname in pdfnames:
             fileLocked = True
             while fileLocked:
@@ -507,7 +512,7 @@ class GtkViewModel(ViewModel):
                         return
                 fileLocked = False
         invPW = self.get("t_invisiblePassword")
-        if invPW == None or invPW == "" or self.printer.configName() == "": # This config is unlocked
+        if invPW == None or invPW == "" or self.configName() == "": # This config is unlocked
             # So it it safe/allowed to save the current config
             self.writeConfig()
         # else:
@@ -548,6 +553,8 @@ class GtkViewModel(ViewModel):
                 continue
             copytree(os.path.join(currconfigpath, subdirname), os.path.join(configpath, subdirname))
         self.configId = newconfigId
+        self.writeConfig()
+        self.updateSavedConfigList()
         self.set("lb_settings_dir", configpath)
         self.updateDialogTitle()
 
@@ -807,11 +814,7 @@ class GtkViewModel(ViewModel):
                 genBtn.set_label("Regenerate")
 
         elif 3 <= pgnum <= 4:  # (TeX,Log)
-            if len(bks) > 1:
-                fname = "ptxprint-{}_{}{}{}".format(bks[0], bks[-1], prjid, fndict[pgnum][1])
-            else:
-                fname = "ptxprint-{}{}{}".format(bks[0], prjid, fndict[pgnum][1])
-            fpath = os.path.join(self.working_dir, fname)
+            fpath = self.baseTeXPDFname()+fndict[pgnum][1]
 
         elif pgnum == 5: # View/Edit one of the 4 Settings files or scripts
             fpath = self.builder.get_object("l_{}".format(pgnum)).get_tooltip_text()
@@ -878,9 +881,11 @@ class GtkViewModel(ViewModel):
         # Set the font of any GtkEntry boxes to the primary body text font for this project
         fsize = self.get("s_fontsize")
         (name, style) = self.get("bl_fontR")
-        pangostr = "{} {} {}".format(name, style, fsize)
-        p = Pango.font_description_from_string(pangostr)
-        for w in ("t_clHeading", "t_tocTitle", "ecb_ftrcenter", "scroll_FinalSFM", "scroll_PicList"):   # "t_runningFooter",
+        fallback = ',Sans'
+        pangostr = '{}{} {} {}'.format(name, fallback, style, fsize)
+        p = Pango.FontDescription(pangostr)
+        for w in ("t_clHeading", "t_tocTitle", "t_configNotes", "scroll_FinalSFM", "scroll_PicList", \
+                  "ecb_ftrcenter", "ecb_hdrleft", "ecb_hdrcenter", "ecb_hdrright", "t_fncallers", "t_xrcallers"):
             self.builder.get_object(w).modify_font(p)
 
     def updateFakeLabels(self):
@@ -1087,7 +1092,7 @@ class GtkViewModel(ViewModel):
                         patterns.append(r".+\.{}".format(extn))
                     patterns.append(r".+\-draft\....".format(extn))
                     patterns.append(r".+\.toc".format(extn))
-                    patterns.append(r"NestedStyles\.sty".format(extn))
+                    # patterns.append(r"NestedStyles\.sty".format(extn)) # To be updated as locn has changed (maybe no longer need to delete it)
                     patterns.append(r"ptxprint\-.+\.tex".format(extn))
                     # print(patterns)
                     for pattern in patterns:
@@ -1097,7 +1102,7 @@ class GtkViewModel(ViewModel):
                                     os.remove(os.path.join(dir, f))
                                 except OSError:
                                     self.doError("Warning: Could not delete temporary file.", secondary = "File: " + delfname)
-                    for p in ["tmpPics", "tmpPicLists", "PicLists", "AdjLists"]:
+                    for p in ["tmpPics", "tmpPicLists", "PicLists", "AdjLists"]: # The last 2 can be removed from the code before v1.0 is released.
                         path2del = os.path.join(dir, p)
                         # Make sure we're not deleting something closer to Root!
                         if len(path2del) > 30 and os.path.exists(path2del):
@@ -1354,7 +1359,7 @@ class GtkViewModel(ViewModel):
     def updateFonts(self):
         if self.ptsettings is None:
             return
-        ptfont = self.ptsettings['DefaultFont']
+        ptfont = self.ptsettings.get("DefaultFont", "Arial")
         for fb in ['bl_fontR', 'bl_verseNumFont']:  # 'bl_fontB', 'bl_fontI', 'bl_fontBI', 'bl_fontExtraR'
             fblabel = self.builder.get_object(fb).get_label()
             if fblabel == "Select font...":
@@ -1377,9 +1382,10 @@ class GtkViewModel(ViewModel):
         elif loc == "prj":
             fpath = os.path.join(self.settings_dir, self.prjid, file2edit)
         elif loc == "cfg":
-            fpath = os.path.join(self.configPath(), file2edit)
+            cfgname = self.configName()
+            fpath = os.path.join(self.configPath(cfgname), file2edit)
             if not os.path.exists(fpath):
-                fpath = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint", file2edit)
+                fpath = os.path.join(self.configPath(""), file2edit)
         elif "\\" in loc or "/" in loc:
             fpath = os.path.join(loc, file2edit)
         else:
@@ -1408,14 +1414,16 @@ class GtkViewModel(ViewModel):
         self.editFile("PrintDraftChanges.txt", "prj")
 
     def onEditModsTeX(self, btn):
-        modfname = "ptxprint-mods.tex"
         self.prjid = self.get("fcb_project")
-        fpath = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint", modfname)
+        cfgname = self.configName()
+        fpath = os.path.join(self.configPath(cfgname), "ptxprint-mods.tex")
         if not os.path.exists(fpath):
             openfile = open(fpath,"w", encoding="utf-8")
             openfile.write("% This is the .tex file specific for the {} project used by PTXprint.\n".format(self.prjid))
+            if cfgname != "":
+                openfile.write("% Saved Configuration name: {}\n".format(cfgname))
             openfile.close()
-        self.editFile(modfname, "cfg")
+        self.editFile("ptxprint-mods.tex", "cfg")
 
     def onEditCustomSty(self, btn):
         self.editFile("custom.sty", "prj")

@@ -1,0 +1,95 @@
+#!/usr/bin/python3
+
+import palaso.sfm as sfm
+from palaso.sfm import usfm
+from palaso.sfm import style
+import argparse, difflib, sys
+
+def label(pending, chap, verse):
+    counts = {}
+    for c in pending:
+        c.ident = (c.name, chap, verse, counts.get(c.name, 0))
+        counts[c.name] = counts.get(c.name, 0) + 1
+    pending.clear()
+
+pending=[]
+def collect(root, acc, chap=0):
+    ispara = sfm.text_properties('paragraph', 'publishable', 'vernacular')
+    ischap = sfm.text_properties('chapter')
+    isverse = sfm.text_properties('verse')
+    for c in root:
+        if not isinstance(c, sfm.element):
+            continue
+        if ispara(c):
+            acc.append(c)
+            pending.append(c)
+            print(c.name)
+        if ischap(c):
+            label(pending, chap, 0)
+            chap = c.args[0]
+        elif isverse(c):
+            label(pending, chap, c.args[0])
+        collect(c, acc, chap=chap)
+
+def merge_stylesheet(base, extras):
+    for k, v in extras.items():
+        if k in base:
+            base[k].update(v)
+        else:
+            base[k] = v
+    return base
+
+parser = argparse.ArgumentParser()
+parser.add_argument("infilea", help="Main input file")
+parser.add_argument("infileb", help="Secondary input file")
+parser.add_argument("-o","--outfile",help="output file")
+parser.add_argument("-s","--stylesheet",default=[],action="append",help="add another stylesheet")
+args = parser.parse_args()
+
+stylesheet=usfm._load_cached_stylesheet('usfm.sty')
+for s in args.stylesheet:
+    sty = style.parse(open(s))
+    merge_stylesheet(stylesheet, sty)
+    #stylesheet.update(sty) # = usfm.parser.extend_stylesheet(stylesheet, s)
+
+mainpars = []
+with open(args.infilea) as inf:
+    doc = list(usfm.parser(inf, stylesheet=stylesheet))
+    collect(doc, mainpars)
+mainchunks = {c.ident: c for c in mainpars}
+label(pending, 0, 0)
+print("IAFFM")
+
+secondpars = []
+with open(args.infileb) as inf:
+    doc = list(usfm.parser(inf, stylesheet=stylesheet))
+    collect(doc, secondpars)
+secondchunks = {c.ident: c for c in secondpars}
+mainkeys = ["_".join(str(x) for x in c.ident) for c in mainpars]
+secondkeys = ["_".join(str(x) for x in c.ident) for c in secondpars]
+diff = difflib.SequenceMatcher(None, mainkeys, secondkeys)
+pairs = []
+for op in diff.get_opcodes():
+    (action, ab, ae, bb, be) = op
+    if action == "equal":
+        pairs.extend([[mainpars[ab+i], secondpars[bb+i]] for i in range(ae-ab)])
+    elif action == "delete":
+        pairs.extend([[mainpars[ab+i], None] for i in range(ae-ab)])
+    elif action == "insert":
+        pairs.extend([[None, secondpars[bb+i]] for i in range(be-bb)])
+    elif action == "replace":
+        for i in range(ae-ab):
+            pairs += [mainpars[ab+i], None] + [None, secondpars[bb+i]]
+
+if args.outfile:
+    outf = open(args.outfile, "w")
+else:
+    outf = sys.stdout
+
+for p in pairs:
+    outf.write("\\lefttext\n")
+    outf.write(str(p[0]))
+    outf.write("\\righttext\n")
+    outf.write(str(p[1]))
+
+

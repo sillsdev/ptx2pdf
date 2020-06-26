@@ -147,17 +147,24 @@
  \s@tfont{h}%
  \edef\t@st{\p@gefirstmark}% check first mark on page to see if this is a "title" page
  \global\rhr@letrue
- \ifx\t@st\t@tle
-  \hfil \global\rhr@lefalse
+ \ifx\t@st\empty
+  \trace{h}{no p@gefirstmark} 
+    \ifodd\pageno
+      \the\noVoddhead
+    \else
+      \ifDoubleSided \the\noVevenhead \else \the\noVoddhead\fi\fi
+
+  \global\rhr@lefalse
  \else
   \ifendbooknoeject
+    \trace{h}{endbooknoeject, so treating as normal page}
     \ifodd\pageno
       \the\oddhead
     \else
       \ifDoubleSided \the\evenhead \else \the\oddhead \fi
     \fi
   \else
-    \trace{h}{Testing for \t@st}%
+    \trace{h}{Testing for \t@tle\space in \t@st}%
     \ifx\t@st\t@tle
       \the\titlehead \global\rhr@lefalse
     \else\ifx\t@st\n@thing
@@ -177,14 +184,20 @@
 \newtoks\oddhead
 \newtoks\evenhead
 \newtoks\titlehead
+\newtoks\noVoddhead
+\newtoks\noVevenhead
 \def\defineheads{
   \ifnum\BodyColumns=2
     \oddhead={\hbox to \columnshift{}\rlap{\RHoddleft}\hfil\RHoddcenter\hfil\hbox to \columnshift{}\llap{\RHoddright}}
     \evenhead={\hbox to \columnshift{}\rlap{\RHevenleft}\hfil\RHevencenter\hfil\hbox to \columnshift{}\llap{\RHevenright}}
+    \noVoddhead={\hbox to \columnshift{}\rlap{\RHnoVoddleft}\hfil\RHnoVoddcenter\hfil\hbox to \columnshift{}\llap{\RHnoVoddright}}
+    \noVevenhead={\hbox to \columnshift{}\rlap{\RHnoVevenleft}\hfil\RHnoVevencenter\hfil\hbox to \columnshift{}\llap{\RHnoVevenright}}
     \titlehead={\hbox to \columnshift{}\rlap{\RHtitleleft}\hfil\RHtitlecenter\hfil\hbox to \columnshift{}\llap{\RHtitleright}}
   \else
     \oddhead={\hbox to \columnshift{}\rlap{\RHoddleft}\hfil\RHoddcenter\hfil\llap{\RHoddright}}
     \evenhead={\hbox to \columnshift{}\rlap{\RHevenleft}\hfil\RHevencenter\hfil\llap{\RHevenright}}
+    \noVoddhead={\hbox to \columnshift{}\rlap{\RHnoVoddleft}\hfil\RHnoVoddcenter\hfil\llap{\RHnoVoddright}}
+    \noVevenhead={\hbox to \columnshift{}\rlap{\RHnoVevenleft}\hfil\RHnoVevencenter\hfil\llap{\RHnoVevenright}}
     \titlehead={\hbox to \columnshift{}\rlap{\RHtitleleft}\hfil\RHtitlecenter\hfil\llap{\RHtitleright}}
   \fi
 }
@@ -193,7 +206,10 @@
 \footline={{%
  \s@tfont{h}%
  \edef\t@st{\p@gefirstmark}%
- \ifx\t@st\empty \hfil \else
+ \ifx\t@st\empty 
+ \ifodd\pageno \the\noVoddfoot \else 
+   \ifDoubleSided \the\noVevenfoot \else \the\noVoddfoot \fi\fi
+ \else
   \ifx\t@st\t@tle \the\titlefoot \else
   \ifodd\pageno \the\oddfoot \else 
     \ifDoubleSided \the\evenfoot \else \the\oddfoot \fi
@@ -201,8 +217,12 @@
 \newtoks\oddfoot
 \newtoks\evenfoot
 \newtoks\titlefoot
+\newtoks\noVoddfoot
+\newtoks\noVevenfoot
 \oddfoot={\rlap{\RFoddleft}\hfil\RFoddcenter\hfil\llap{\RFoddright}}
 \evenfoot={\rlap{\RFevenleft}\hfil\RFevencenter\hfil\llap{\RFevenright}}
+\noVoddfoot={\rlap{\RFnoVoddleft}\hfil\RFnoVoddcenter\hfil\llap{\RFnoVoddright}}
+\noVevenfoot={\rlap{\RFnoVevenleft}\hfil\RFnoVevencenter\hfil\llap{\RFnoVevenright}}
 \titlefoot={\rlap{\RFtitleleft}\hfil\RFtitlecenter\hfil\llap{\RFtitleright}}
 
 %
@@ -233,6 +253,14 @@
 \def\RHevencenter{\rangeref}
 \def\RHevenright{\empty}
 
+\def\RHnoVoddleft{\empty}
+\def\RHnoVoddcenter{\empty}
+\def\RHnoVoddright{\pagenumber}
+
+\def\RHnoVevenleft{\pagenumber}
+\def\RHnoVevencenter{\empty}
+\def\RHnoVevenright{\empty}
+
 \def\RHtitleleft{\empty}
 \def\RHtitlecenter{\empty}
 \def\RHtitleright{\empty}
@@ -244,6 +272,14 @@
 \def\RFevenleft{\empty}
 \def\RFevencenter{\empty}
 \def\RFevenright{\empty}
+
+\def\RFnoVoddleft{\empty}
+\def\RFnoVoddcenter{\empty}
+\def\RFnoVoddright{\empty}
+
+\def\RFnoVevenleft{\empty}
+\def\RFnoVevencenter{\empty}
+\def\RFnoVevenright{\empty}
 
 \def\RFtitleleft{\empty}
 \def\RFtitlecenter{\pagenumber}
