@@ -322,7 +322,7 @@
   % tempoarily split and see if there are marks in this text
   \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
    \edef\t@mp{\splitbotmark}
-   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{m}{Found mark \splitbotmark}\fi
+   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
   \global\galleypenalty=\outputpenalty
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
   \global\output={\onecoltrial}
@@ -526,7 +526,7 @@
   \global\setbox\galley=\copy255
   \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
    \edef\t@mp{\splitbotmark}
-   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{m}{Found mark \splitbotmark}\fi
+   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
   \global\galleypenalty=\outputpenalty % save current penalty so we can restore it at (A)
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
   \global\output={\twocoltrial}
@@ -984,7 +984,7 @@
   \global\setbox\galley=\copy255 \global\setbox\galley=\vbox{\unvbox\galley}
   \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
    \edef\t@mp{\splitbotmark}
-   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{m}{Found mark \splitbotmark}\fi
+   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
   \trace{o}{sppb hIns=\the\holdinginserts, pt:\the\ht\partial, g:\the\ht255, \the\ht\galley}
   \global\holdinginserts=0
   \unvbox255\eject
