@@ -97,10 +97,10 @@
 %
 % Given a box of headings, output it but ensure we use an integral number of lines altogether
 %
-\def\gridb@x#1{%
+\def\gr@db@x#1{%
 % \setbox0=\vbox{\kern-#1pt\vrule\kern#1pt\kern-.4pt\box#1\kern-.4pt\vrule}%
-\trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0}
 \setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders#1\fi%
+\trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0}%
 %\MSG{after killd: ht0=\the\ht0; dp0=\the\dp0}
 %{\showboxbreadth=100 \showboxdepth=10 \showbox0 }%
  \dimen2=\ht0 \advance\dimen2 by \dp0
@@ -117,6 +117,21 @@
  \unvbox0 \nobreak
 }
 \newif\ifgridp@c % if applying \gridb@x to a picture box rather than headings
+\def\m@d{\count1=\dimen0\count2=\dimen1\count3=\count2\divide\count2 by \count1\multiply\count2 by \count1
+    \advance\count2 by -\count3\advance\count2 by \count1\dimen1=\count2 sp}
+\def\gr@db@@x#1{%
+  \setbox0=\vbox{\box#1}%\ifgridp@c\vbox{\box#1}\else\killd@scenders#1\fi
+  \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0; spacebefore=\headingtopspace*\the\verticalsp@ceunit}%
+  \s@tbaseline{p}\dimen1=\ht0 \advance\dimen1 by \dp0
+  \dimen0=\baselineskip \m@d \dimen2=\dimen1 % dimen2 is grid space
+  \dimen1=\ht0 \advance\dimen1 by -\headingtopspace\verticalsp@ceunit
+  \m@d \advance\dimen2 by -\dimen1 \vskip\dimen2 \kern\dimen1
+  \trace{h}{after gridbox: skip \the\dimen1, kern \the\dimen3; grid space \the\dimen2}%
+  \unvbox0 \nobreak
+}
+
+\newif\ifsquashgridbox\squashgridboxtrue
+\let\gridb@x\gr@db@@x
 
 % end a paragraph, handling cutouts (shaping around drop-cap) if any, and the <end> hook
 \def\par{\ifhmode \TRACE{par}%
@@ -198,7 +213,9 @@
   \fi\fi\fi
   \ifhe@dingstyle\TRACE{headingstyle true}%
     \ifhe@dings\nsp@cebeforetrue\s@tbaseline{\m@rker}%In a heading again, may be different so set a new baseline
-      \else\setbox\he@dingbox=\vbox\bgroup\global\he@dingstrue
+      \else
+        \getp@ram{spacebefore}{\m@rker}\ifx\p@ram\relax\xdef\headingtopspace{0}\else\xdef\headingtopspace{\p@ram}\fi
+        \setbox\he@dingbox=\vbox\bgroup\global\he@dingstrue
         \s@tbaseline{\m@rker}% Obey baseline changes for headings
         \linepenalty=1000 % minimize line count
         \interlinepenalty=10000 % never break column/page between lines

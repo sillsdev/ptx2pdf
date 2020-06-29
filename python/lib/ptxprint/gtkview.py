@@ -402,7 +402,7 @@ class GtkViewModel(ViewModel):
         elif wid.startswith("c_"):
             v = w.get_active()
         elif wid.startswith("s_"):
-            v = w.get_value()
+            v = "{:.3f}".format(w.get_value())
         elif wid.startswith("btn_"):
             v = w.get_tooltip_text()
         elif wid.startswith("bl_"):
@@ -447,7 +447,7 @@ class GtkViewModel(ViewModel):
         elif wid.startswith("c_"):
             w.set_active(value)
         elif wid.startswith("s_"):
-            w.set_value(value)
+            w.set_value(float(value))
         elif wid.startswith("btn_"):
             w.set_tooltip_text(value)
         elif wid.startswith("bl_"):

@@ -117,6 +117,8 @@ class ViewModel:
     def set(self, wid, value):
         if wid.startswith("bl_"):
             self.setFont(wid, *value)
+        elif wid.startswith("s_"):
+            self.dict[wid] = "{:.3f}".format(float(value))
         else:
             self.dict[wid] = value
 
