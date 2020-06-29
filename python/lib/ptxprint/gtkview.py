@@ -402,7 +402,7 @@ class GtkViewModel(ViewModel):
         elif wid.startswith("c_"):
             v = w.get_active()
         elif wid.startswith("s_"):
-            v = w.get_value()
+            v = "{:.3f}".format(w.get_value())
         elif wid.startswith("btn_"):
             v = w.get_tooltip_text()
         elif wid.startswith("bl_"):
@@ -447,7 +447,7 @@ class GtkViewModel(ViewModel):
         elif wid.startswith("c_"):
             w.set_active(value)
         elif wid.startswith("s_"):
-            w.set_value(value)
+            w.set_value(float(value))
         elif wid.startswith("btn_"):
             w.set_tooltip_text(value)
         elif wid.startswith("bl_"):
@@ -461,15 +461,17 @@ class GtkViewModel(ViewModel):
         Gtk.main_quit()
 
     def doError(self, txt, secondary=None, title=None):
-        dialog = Gtk.MessageDialog(parent=None, modal=True, message_type=Gtk.MessageType.ERROR,
+        dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
                  buttons=Gtk.ButtonsType.OK, text=txt)
         if title is not None:
             dialog.set_title(title)
         if secondary is not None:
             dialog.format_secondary_text(secondary)
-        dialog.set_keep_above(True)
+        if sys.platform == "win32":
+            dialog.set_keep_above(True)
         dialog.run()
-        dialog.set_keep_above(False)
+        if sys.platform == "win32":
+            dialog.set_keep_above(False)
         dialog.destroy()
 
     def onOK(self, btn):
