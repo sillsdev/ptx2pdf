@@ -536,11 +536,16 @@ class TexModel:
                         fname = self.dict['project/books'][i]
                         # May ALSO need to check if top center header is pagenumber AND bottomcenter is NOT pagenumber:
                         # before adding this to the top of GLO bks etc.
-                        # if f in ["XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG",
-                                # "GLO", "TDX", "NDX", "CNC", "OTH", "BAK"]:
+                        if f in ["XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG",
+                                "GLO", "TDX", "NDX", "CNC", "OTH", "BAK"]:
+                            v = self.dict["footer/ftrcenter"]
+                            print('self.dict["footer/ftrcenter"]', v)
+                            print('self._hdrmappings.get(v,v)', self._hdrmappings.get(v,v)) 
+                            print(self.dict['footer/oddcenter'])
+                            print("self.dict['header/hdrcenter']=", self.dict['header/hdrcenter'])
+                            res.append("\\def\RHtitlecenter{{}}\n".format(self.dict['header/hdrcenter']))
                             # res.append("\\def\RHtitlecenter{\pagenumber}\n")
                             # res.append("\\defineheads\n")
-                            # res.append("\\def\RHtitlecenter{{}}\n".format(self.dict['header/hdrcenter']))
                         if self.asBool('document/ifomitsinglechnum') and \
                            self.dict['document/ifomitchapternum'] == "false" and \
                            f in oneChbooks:
