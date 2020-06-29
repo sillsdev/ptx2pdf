@@ -118,7 +118,7 @@
 }
 \newif\ifgridp@c % if applying \gridb@x to a picture box rather than headings
 \def\m@d{\count1=\dimen0\count2=\dimen1\count3=\count2\divide\count2 by \count1\multiply\count2 by \count1
-    \advance\count2 by -\count3\advance\count2 by \count1\dimen1=\count2 sp}
+    \advance\count2 by -\count3\advance\count2 by \count1\dimen1=\count2 sp\count1=0\count2=0\count3=0}
 \def\gr@db@@x#1{%
   \setbox0=\vbox{\box#1}%\ifgridp@c\vbox{\box#1}\else\killd@scenders#1\fi
   \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0; spacebefore=\headingtopspace*\the\verticalsp@ceunit}%

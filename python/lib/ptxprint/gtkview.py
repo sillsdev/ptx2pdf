@@ -461,15 +461,17 @@ class GtkViewModel(ViewModel):
         Gtk.main_quit()
 
     def doError(self, txt, secondary=None, title=None):
-        dialog = Gtk.MessageDialog(parent=None, modal=True, message_type=Gtk.MessageType.ERROR,
+        dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
                  buttons=Gtk.ButtonsType.OK, text=txt)
         if title is not None:
             dialog.set_title(title)
         if secondary is not None:
             dialog.format_secondary_text(secondary)
-        dialog.set_keep_above(True)
+        if sys.platform == "win32":
+            dialog.set_keep_above(True)
         dialog.run()
-        dialog.set_keep_above(False)
+        if sys.platform == "win32":
+            dialog.set_keep_above(False)
         dialog.destroy()
 
     def onOK(self, btn):
