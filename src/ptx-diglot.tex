@@ -55,7 +55,6 @@
 % from what the code to count callers does in ptx-callers.tex
 %Would be nice to re-use \\, but this might get called defining a font in footnotes, so shouldn't mess with that
 %Therefore use \wh@t instead.
-%\def\E{}
 \def\@rig{@orig}
 % These do the looping
 \def\pr@cessSp@cific#1,#2\E{\def\t@st{#1}\ifx\t@st\empty\let\n@xt\l@stSpecific\else\let\n@xt\pr@cessSp@cific\wh@t{#1}\fi\n@xt #2,\E}
@@ -241,6 +240,10 @@
    \global\vsize=\textheight
    %Text in partialL has already be re-processed. 
  \else%
+   \ifdim\dp\excessL>0pt
+     \MSG{*** Synchronisation lost (excessL is not empty: \the\ht\excessL+\the\dp\excessL).}% Needs to be fixed before now.
+     \global\setbox\partialL=\vtop{\joinboxes{\partialL}{\excessL}{2e}{0}}%
+   \fi
    \traceNum{d}{adding mtl (\the\ht255+\the\dp255) to partialL pl:\the\ht\partialL, av:\the\availht}%
    %\TRshipout{\vbox{\hbox{\the\diglotTRcount diglotLeft -> partialL:}\copy255}}%
    \global\setbox\partialL=\vtop{\joinboxes{\partialL}{255}{2}{\partialLpenalty}}%
@@ -523,6 +526,8 @@
       \trace{D}{Final penalty found \the\outputpenalty}%
       \intrialfalse
       \ifx\n@xtc@mmand\empty \trace{D}{no next command set?}
+         \ifdim\ht\excessL>0pt \trace{D}{excessL is not empty}
+         \fi
       %\ifboxmoved\setboth\fi
       \fi
       \global\Lboxpenalty=\savedpenalty %
@@ -1221,6 +1226,7 @@
  \fi\relax
  %\bgroup
  %\ifnum#3=10\showbox#1\fi%
+ \ifdim\ht#1=0pt \ifdim\dp#1=0pt \ifdim\wd0=0pt \setbox0=\box#1\fi\fi\fi
  \ifvoid#1\else%
    \s@tbaseline{p}%
    \unvbox#1%
@@ -1245,7 +1251,7 @@
      \vskip \dimen3
    \fi
    \ifVisTrace
-     \hrule\kern -0.4pt
+  %   \hrule\kern -0.4pt
      \hbox to 0pt{\hss\doVisTrace{s}\box0}%
    \fi
  \fi%
@@ -1321,8 +1327,8 @@
   \fi%
   \global\setbox\RightBox=\box\voidb@x %
   \ifdim\dp\partialL=0pt %
-    \ifvoid\excessL%
-      \trace{D}{partialL and excessL now empty}
+    \ifvoid\excessL %
+      \trace{D}{partialL and excessL now empty}%
       \Lneedsemptyingfalse%
      \fi
   \fi

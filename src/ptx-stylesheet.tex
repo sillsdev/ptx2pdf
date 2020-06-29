@@ -129,14 +129,14 @@
 % Diglot-aware version = allow all parameters to have  Left/Right variant or use
 % default. (e.g when asked for paramter for v, check for vL|vR, default to v)
 \def\getp@ram#1#2{%
-\trace{D}{getp@ram #2:#1}%
+\trace{Ds}{getp@ram #2:#1}%
 \ifdiglot%
   \ifdiglotL\getp@r@m{#1}{#2L}\else\getp@r@m{#1}{#2R}\fi%
   \ifx\p@ram\relax%
     \getp@r@m{#1}{#2}%
-    \trace{D}{...default}%
+    \trace{Ds}{...default -> \p@ram}%
   \else%
-    \trace{D}{...side-specfic}%
+    \trace{Ds}{...side-specfic -> \p@ram}%
   \fi%
 \else%
   \getp@r@m{#1}{#2}%
