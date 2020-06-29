@@ -1174,12 +1174,9 @@
     %\errmessage{Unknown picture location "\loc@ption",
     %  expected one of t,b,tl,tr,bl,br}
 	\ifnum\c@rrentcols>1
-      \iffiglocleft
-        \let\p@cins=\topleftins \figlocleftfalse
-      \else\let\p@cins=\toprightins \figloclefttrue\fi
-    \else
-      \let\p@cins=\topins
-    \fi
+      \iffiglocleft\let\p@cins=\topleftins\figlocleftfalse
+      \else\let\p@cins=\toprightins\figloclefttrue\fi
+    \else \let\p@cins=\topins\fi
   \fi
   % create box to contain picture
   \trace{g}{Figure size=\size@ption, loc=\loc@ption, picins=\the\p@cins}%
@@ -1313,6 +1310,14 @@
 \def\ZWNBSP{\WJ} % ZERO WIDTH NO-BREAK SPACE
 \def\NBHYPH{\leavevmode\hbox{-}} % NON-BREAKING HYPHEN
 \def\NQUAD{\penalty\badspacepenalty\ } % subvert Unicode En-Quad as BAD BREAKING SPACE
+\def\MQUAD{\penalty\badspacepenalty\hskip 1em}
+\def\MSPACE{\hskip 1em}
+\def\NSPACE{\ }
+\def\THREEPEREMSPACE{\hskip .333em}
+\def\FOURPEREMSPACE{\hskip .25em}
+\def\SIXPEREMSPACE{\hskip .1666em}
+\def\THINSPACE{\hskip .2em}
+\def\HAIRSPACE{\hskip 1sp}
 
 \let\pr@tect=\relax
 \def\pr@tectspecials{%
@@ -1323,6 +1328,14 @@
   \let\WJ=\relax
   \let\NBHYPH=\relax
   \let\NQUAD=\relax
+  \let\MQUAD=\relax
+  \let\MSPACE=\relax
+  \let\NSPACE=\relax
+  \let\THREEPEREMSPACE=\relax
+  \let\FOURPEREMSPACE=\relax
+  \let\SIXPEREMSPACE=\relax
+  \let\THINSPACE=\relax
+  \let\HAIRSPACE=\relax
 }
 
 \catcode"A0=12
@@ -1331,6 +1344,14 @@
 \catcode"2060=12
 \catcode"FEFF=12
 \catcode"2000=12
+\catcode"2001=12
+\catcode"2002=12
+\catcode"2003=12
+\catcode"2004=12
+\catcode"2005=12
+\catcode"2006=12
+\catcode"2009=12
+\catcode"200A=12
 \def\liter@lspecials{%
   \def\pr@tect{}%
   \def\NBSP{^^a0}%
@@ -1340,6 +1361,14 @@
   \def\ZWNBSP{^^^^feff}%
   \def\NBHYPH{^^^^2011}%
   \def\NQUAD{^^^^2000}%
+  \def\MQUAD{^^^^2001}%
+  \def\NSPACE{^^^^2002}%
+  \def\MSPACE{^^^^2003}%
+  \def\THREEPEREMSPACE{^^^^2004}%
+  \def\FOURPEREMSPACE{^^^^2005}%
+  \def\SIXPEREMSPACE{^^^^2006}%
+  \def\THINSPACE{^^^^2009}%
+  \def\HAIRSPACE{^^^^200a}%
 }
 
 \catcode"A0=\active   \def^^a0{\pr@tect\NBSP}
@@ -1349,6 +1378,14 @@
 \catcode"FEFF=\active \def^^^^feff{\pr@tect\ZWNBSP}
 \catcode"2011=\active \def^^^^2011{\pr@tect\NBHYPH}
 \catcode"2000=\active \def^^^^2000{\pr@tect\NQUAD}
+\catcode"2001=\active \def^^^^2001{\pr@tect\MQUAD}
+\catcode"2002=\active \def^^^^2002{\pr@tect\NSPACE}
+\catcode"2003=\active \def^^^^2003{\pr@tect\MSPACE}
+\catcode"2004=\active \def^^^^2004{\pr@tect\THREEPEREMSPACE}
+\catcode"2005=\active \def^^^^2005{\pr@tect\FOURPEREMSPACE}
+\catcode"2006=\active \def^^^^2006{\pr@tect\SIXPEREMSPACE}
+\catcode"2009=\active \def^^^^2009{\pr@tect\THINSPACE}
+\catcode"200A=\active \def^^^^200a{\pr@tect\HAIRSPACE}
 
 \catcode`\@=12
 
