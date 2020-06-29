@@ -1173,12 +1173,12 @@
   \ifx\p@cins\relax
     %\errmessage{Unknown picture location "\loc@ption",
     %  expected one of t,b,tl,tr,bl,br}
-    \ifx\size@ption\size@SPAN
-      \let\p@cins=\topins
-	\else
+	\ifnum\c@rrentcols>1
       \iffiglocleft
         \let\p@cins=\topleftins \figlocleftfalse
       \else\let\p@cins=\toprightins \figloclefttrue\fi
+    \else
+      \let\p@cins=\topins
     \fi
   \fi
   % create box to contain picture
