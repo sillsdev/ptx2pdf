@@ -1231,11 +1231,20 @@
    \setbox0=\lastbox%
    \copy0%
    \traceNum{d}{lk: \the\dimen4, final bit of deconstructed first box \the\ht0+\the\dp0}%
-   \ifdim\dp0<\baselineskip
-     \kern -\dp0
-     %\else
-     %\showbox0
-   \fi%
+   \ifdim\dp0=0pt
+     \kern \lastkern
+   \else
+     \ifdim\dp0>\baselineskip
+       \kern -\dp0
+       %\else
+       %\showbox0
+     \fi%
+   \fi
+   \ifvoid#2\else
+     \dimen3=\baselineskip
+     \advance\dimen3 by -\topskip
+     \vskip \dimen3
+   \fi
    \ifVisTrace
      \hrule\kern -0.4pt
      \hbox to 0pt{\hss\doVisTrace{s}\box0}%
