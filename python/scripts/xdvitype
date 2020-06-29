@@ -141,7 +141,7 @@ class XDviType:
         n = self.readbytes(a+l).decode("utf-8")
         # the k to c mapping may vary across 'identical' files
         self.out("fontdef({}) checksum={:04x} sf={:f} name=\"{}\"".format(opcode, c, s / 1000. / d, n))
-        self.fonts[data] = (c, n)
+        self.fonts[k] = (c, n)
 
     def pre(self, opcode, parm, data):
         (i, n, d, m, k) = data

@@ -146,15 +146,17 @@
 \headline={\hbox to \textwidth{%
  \s@tfont{h}%
  \edef\t@st{\p@gefirstmark}% check first mark on page to see if this is a "title" page
+ \ifm@rksonpage\trace{H}{marks on page}\else\trace{H}{No marks on page}\fi
  \global\rhr@letrue
  \ifx\t@st\empty
   \trace{h}{no p@gefirstmark} 
     \ifodd\pageno
       \the\noVoddhead
+      \trace{h}{using noVoddhead} 
     \else
-      \ifDoubleSided \the\noVevenhead \else \the\noVoddhead\fi\fi
+      \ifDoubleSided \trace{h}{using noVevenhead} \the\noVevenhead \else \trace{h}{using noVoddhead} \the\noVoddhead\fi\fi
 
-  \global\rhr@lefalse
+  %\global\rhr@lefalse
  \else
   \ifendbooknoeject
     \trace{h}{endbooknoeject, so treating as normal page}

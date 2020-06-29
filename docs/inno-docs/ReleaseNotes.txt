@@ -3,6 +3,8 @@ PTXprint 0.8.6 Beta Release Notes
 
 Bug Fixes and Improvements in: 0.8.6
 
+  * Added IndentUnit option on Advanced tab to control how much paragraphs and poetry get indented
+  
   * Fixed bug with missing back-matter PDF
   
   * Fixed path to ptxprint-mods.tex

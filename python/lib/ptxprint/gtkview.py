@@ -154,6 +154,7 @@ _nonsensitivities = {
 # Checkboxes and the Tabs that they make (in)visible
 _visibilities = {
     "c_showLayoutTab" :        ["tb_Layout"],
+    # "c_showFontTab" :          ["tb_Font"],
     "c_showBodyTab" :          ["tb_Body"],
     "c_showHeadFootTab" :      ["tb_HeadFoot"],
     "c_showPicturesTab" :      ["tb_Pictures"],
@@ -162,6 +163,16 @@ _visibilities = {
     "c_showDiglotTab" :        ["tb_Diglot"],
     "c_showBordersTab" :       ["tb_FancyBorders"]
 }
+# _tabIDs = {
+    # "tb_Layout"],
+    # "tb_Font"],
+    # "tb_Body"],
+    # "tb_HeadFoot"],
+    # "tb_Pictures"],
+    # "tb_Advanced"],
+    # "tb_ViewerEditor"]
+    # "tb_Diglot"],
+    # "tb_FancyBorders"]
 
 class GtkViewModel(ViewModel):
 
@@ -790,7 +801,11 @@ class GtkViewModel(ViewModel):
         if len(bks) == 1:
             self.builder.get_object("btn_PrevBook").set_sensitive(False)
             self.builder.get_object("btn_NextBook").set_sensitive(False)
-            
+        # pgdict = {0 : 'SFM',
+                  # 1 : 'PIC',
+                  # 2 : 'ADJ',
+                  # 3 : 'TEX',
+                  # 4 : 'LOG'}
         fndict = {0 : ("", ""),     1 : ("PicLists", ".piclist"), 2 : ("AdjLists", ".adj"), \
                   3 : ("", ".tex"), 4 : ("", ".log")}
         if pgnum <= 2:  # (SFM,PicList,AdjList)
