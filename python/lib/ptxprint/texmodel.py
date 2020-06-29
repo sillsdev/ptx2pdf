@@ -297,6 +297,9 @@ class TexModel:
         "Reference Range":  r"\rangeref",
         "-empty-":          r"\empty"
     }
+    _swapRL = {'left' : 'right',
+               'right' : 'left'
+    }
     _glossarymarkup = {
         "None":                    r"\1",
         None:                      r"\1",
@@ -504,19 +507,24 @@ class TexModel:
                         t = t+'L'
                 elif t.endswith("number"):
                     t = t+'L'
+            
             self.dict['header/odd{}'.format(side)] = t
-            if side == 'left':
-                if mirror:
-                    self.dict['header/even{}'.format('right')] = t
-                else:
-                    self.dict['header/even{}'.format(side)] = t
-            elif side == 'right':
-                if mirror:
-                    self.dict['header/even{}'.format('left')] = t
-                else:
-                    self.dict['header/even{}'.format(side)] = t
-            else: # centre
+            if mirror and side != 'center':
+                self.dict['header/even{}'.format(self._swapRL[side])] = t
+            else:
                 self.dict['header/even{}'.format(side)] = t
+            # if side == 'left':
+                # if mirror:
+                    # self.dict['header/even{}'.format('right')] = t
+                # else:
+                    # self.dict['header/even{}'.format(side)] = t
+            # elif side == 'right':
+                # if mirror:
+                    # self.dict['header/even{}'.format('left')] = t
+                # else:
+                    # self.dict['header/even{}'.format(side)] = t
+            # else: # centre
+                # self.dict['header/even{}'.format(side)] = t
             
 
     def texfix(self, path):
@@ -534,18 +542,19 @@ class TexModel:
                     res.append("\\PtxFilePath={"+filedir.replace("\\","/")+"/}\n")
                     for i, f in enumerate(self.dict['project/bookids']):
                         fname = self.dict['project/books'][i]
-                        # May ALSO need to check if top center header is pagenumber AND bottomcenter is NOT pagenumber:
-                        # before adding this to the top of GLO bks etc.
                         if f in ["XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG",
                                 "GLO", "TDX", "NDX", "CNC", "OTH", "BAK"]:
-                            v = self.dict["footer/ftrcenter"]
-                            print('self.dict["footer/ftrcenter"]', v)
-                            print('self._hdrmappings.get(v,v)', self._hdrmappings.get(v,v)) 
-                            print(self.dict['footer/oddcenter'])
-                            print("self.dict['header/hdrcenter']=", self.dict['header/hdrcenter'])
-                            res.append("\\def\RHtitlecenter{{}}\n".format(self.dict['header/hdrcenter']))
-                            # res.append("\\def\RHtitlecenter{\pagenumber}\n")
-                            # res.append("\\defineheads\n")
+                            mirror = self.asBool("header/mirrorlayout")
+                            for toe in ['title', 'noVodd', 'noVeven']:
+                                for side in ('left', 'center', 'right'):
+                                    v = self.dict["header/hdr"+side]
+                                    t = self._hdrmappings.get(v, v)
+                                    if not t.endswith("ref"):
+                                        if mirror and side != 'center' and toe == 'noVeven': 
+                                            res.append("\\def\RH{}{}{{{}}}\n".format(toe, self._swapRL[side], t))
+                                        else:
+                                            res.append("\\def\RH{}{}{{{}}}\n".format(toe, side, t))
+                                res.append("\n")
                         if self.asBool('document/ifomitsinglechnum') and \
                            self.dict['document/ifomitchapternum'] == "false" and \
                            f in oneChbooks:
@@ -952,9 +961,11 @@ class TexModel:
             v = [["q", "1.25", "-1.00"], ["q1", "1.25", "-1.00"], ["q2", "1.25", "-0.75"],
                  ["q3", "1.25", "-0.5"], ["q4", "1.25", "-0.25"]]
         r = [list(zip(m, x)) for x in v]
+        iu = float(self.dict["document/indentunit"])/2
         for mkr in r:
-            for l in range(0,3):
-                nstylist.append("{} {}\n".format(mkr[l][0],mkr[l][1]))
+            nstylist.append("{} {}\n".format(mkr[0][0],mkr[0][1]))
+            for l in range(1,3): # Adjust the amount of indent according to the IndentUnit setting 2=default (2/2 = 1)
+                nstylist.append("{} {}\n".format(mkr[l][0],float(mkr[l][1])*iu))
             nstylist.append("\\Justification Left\n\n")
 
         if True: # Hack! We need to qualify this (look in USFM for a \cl and if it exists, then don't do this)
