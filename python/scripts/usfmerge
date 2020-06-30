@@ -13,23 +13,25 @@ def label(pending, chap, verse):
     pending.clear()
 
 pending=[]
-def collect(root, acc, chap=0):
+def collect(root, acc, args, chap=0, primary=True):
     ispara = sfm.text_properties('paragraph', 'publishable', 'vernacular')
     ischap = sfm.text_properties('chapter')
     isverse = sfm.text_properties('verse')
     for c in root:
         if not isinstance(c, sfm.element):
             continue
-        if ispara(c):
+        if c.name == "fig":
+            if args.fsecondary == primary:
+                root.remove(c)
+        elif ispara(c):
             acc.append(c)
             pending.append(c)
-            print(c.name)
         if ischap(c):
             label(pending, chap, 0)
             chap = c.args[0]
         elif isverse(c):
             label(pending, chap, c.args[0])
-        collect(c, acc, chap=chap)
+        collect(c, acc, args, chap=chap, primary=primary)
 
 def merge_stylesheet(base, extras):
     for k, v in extras.items():
@@ -44,18 +46,17 @@ parser.add_argument("infilea", help="Main input file")
 parser.add_argument("infileb", help="Secondary input file")
 parser.add_argument("-o","--outfile",help="output file")
 parser.add_argument("-s","--stylesheet",default=[],action="append",help="add another stylesheet")
+parser.add_argument("--fsecondary",action="store_true",help="Use fig elements from secondary not primary source")
 args = parser.parse_args()
 
 stylesheet=usfm._load_cached_stylesheet('usfm.sty')
 for s in args.stylesheet:
-    sty = style.parse(open(s))
-    merge_stylesheet(stylesheet, sty)
-    #stylesheet.update(sty) # = usfm.parser.extend_stylesheet(stylesheet, s)
+    stylesheet = style.parse(open(s), base=stylesheet)
 
 mainpars = []
 with open(args.infilea) as inf:
     doc = list(usfm.parser(inf, stylesheet=stylesheet))
-    collect(doc, mainpars)
+    collect(doc, mainpars, args)
 mainchunks = {c.ident: c for c in mainpars}
 label(pending, 0, 0)
 print("IAFFM")
@@ -63,7 +64,7 @@ print("IAFFM")
 secondpars = []
 with open(args.infileb) as inf:
     doc = list(usfm.parser(inf, stylesheet=stylesheet))
-    collect(doc, secondpars)
+    collect(doc, secondpars, args, primary=False)
 secondchunks = {c.ident: c for c in secondpars}
 mainkeys = ["_".join(str(x) for x in c.ident) for c in mainpars]
 secondkeys = ["_".join(str(x) for x in c.ident) for c in secondpars]

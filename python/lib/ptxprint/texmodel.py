@@ -180,7 +180,7 @@ ModelMap = {
     "document/supressparallels": ("c_omitParallelRefs", None),
     "document/supressbookintro": ("c_omitBookIntro", None),
     "document/supressintrooutline": ("c_omitIntroOutline", None),
-    "document/indentunit":      ("s_indentUnit", lambda w,v: round(float(v), 1) or "2.0"),
+    "document/indentunit":      ("s_indentUnit", lambda w,v: round(float(v or "2.0"), 1)),
     "document/supressindent":   ("c_omit1paraIndent", lambda w,v: "false" if v else "true"),
     "document/ifhidehboxerrors": ("c_showHboxErrorBars", lambda w,v :"%" if v else ""),
     "document/elipsizemptyvs":  ("c_elipsizeMissingVerses", None),
