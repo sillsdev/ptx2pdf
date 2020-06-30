@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=PTXprint
+Comment=GUI to control PTX macros for XeTeX
+Exec=ptxprint
+Icon=icon/Google-Noto-Emoji-Objects-62859-open-book.ico
+TryExec=ptxprint
+Terminal=false
+Type=Application
+Categories=Application;Publishing;Education;Translation;Spirituality
