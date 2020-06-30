@@ -487,11 +487,13 @@
    \diglotLfalse
    \showLRspecific
    \setLRspecific\s@tb@dyb@seline{R}%
+   \global\baselineDelta=\baselineskip
    \saveLRspecificSide{R}%
    \baselineskip=\dimen0
    \diglotLtrue
    \showLRspecific
    \setLRspecific\s@tb@dyb@seline{L}%
+   \global\advance\baselineDelta by -\baselineskip
    \saveLRspecificSide{L}%
    \baselineskip=\dimen0
    \egroup

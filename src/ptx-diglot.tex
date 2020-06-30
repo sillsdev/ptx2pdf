@@ -118,8 +118,6 @@
   \let\wh@t\s@veSpecificOrig\pr@cessSpecific\let\saveLRspecificOrig=\relax}
 
 
-%\newdimen\VerticalSpaceFactorL\newdimen\VerticalSpaceFactorR
-%\newdimen\LineSpacingFactorL\newdimen\LineSpacingFactorR
 \newdimen\FontSizeUnitL\FontSizeUnitL=-1sp\newdimen\FontSizeUnitR\FontSizeUnitR=-1sp
 \newdimen\le@dingunitL\le@dingunitL=-1sp\newdimen\le@dingunitR\le@dingunitR=-1sp
 \newdimen\verticalsp@ceunitL\verticalsp@ceunitL=-1sp\newdimen\verticalsp@ceunitR\verticalsp@ceunitR=-1sp
@@ -161,7 +159,16 @@
    \global\advance\availht by \adjustp@ge % Panic measure..
    \global\advance\availht by -\ht\partial %
    \global\advance\availht by -\dp\partial %
+   \trace{D}{after part1:\the\availht}%
+   \ifdim\baselineDelta<0pt %
+   \global\advance\availht by \baselineDelta%
+   \else
+   \global\advance\availht by -\baselineDelta%
+   \fi
+   \trace{D}{after part2:\the\availht}%
+   \f@rstnotetrue
    \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
+   \trace{D}{after notes:\the\availht}%
    \decr{\availht}{\topins}%pictures
    \ifdim\ht\topleftins>\ht\toprightins %
      \decr{\availht}{\topleftins}%
@@ -190,7 +197,7 @@
 % or similarly penalty to apply at end of trial text, and scratch space
 \newcount\savedpenalty
 \newcount\tmppenalty%scratchspace
-\newcount\Lchunkpenalty% The penalty that should be applied at the end of the L text, according to the first output routine
+\newcount\Lchunkpenalty% The penalty that should be applied at the end of the L text (either partialL or excessL), according to the first output routine. 
 \newcount\Lboxpenalty% The penalty that goes between LeftBox and partialL
 \newcount\partialLpenalty% The penalty that goes between partialL and excessL
 \newcount\Rchunkpenalty%
@@ -213,7 +220,16 @@
  % Fills: \partialL, \excessL
  % Empties: \box255
  \trace{D}{diglotLeft O:\the\outputpenalty, P:\the\savedpenalty, LP:\the\lastsavedLpenalty, vs:\the\vsize,
-    pg:\the\pagegoal, pt:\the\pagetotal, bs:\the\baselineskip, ilp:\the\interlinepenalty }%
+    pg:\the\pagegoal, pt:\the\pagetotal, bs:\the\baselineskip, ilp:\the\interlinepenalty, \ifintrial INTRIAL\fi}%
+ \ifnum\outputpenalty=-10005%Why are we here after a trial?
+   \ifintrial\diglotLeftTrial\fi
+   %\tmppenalty=\savedpenalty\relax%
+   %\Lneedsemptyingtrue%
+   %\upd@tep@rtial
+%
+   %%\setboth
+   %%\diglotLeftAfterTrial
+ \fi
  \runLtrialfalse%
  % tempoarily split and see if there are marks in this text
  \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
@@ -242,7 +258,8 @@
  \else%
    \ifdim\dp\excessL>0pt
      \MSG{*** Synchronisation lost (excessL is not empty: \the\ht\excessL+\the\dp\excessL).}% Needs to be fixed before now.
-     \global\setbox\partialL=\vtop{\joinboxes{\partialL}{\excessL}{2e}{0}}%
+     \global\setbox\partialL=\vtop{\joinboxes{\partialL}{\excessL}{2e}{\partialLpenalty}}%
+     \partialLpenalty=\Lchunkpenalty
    \fi
    \traceNum{d}{adding mtl (\the\ht255+\the\dp255) to partialL pl:\the\ht\partialL, av:\the\availht}%
    %\TRshipout{\vbox{\hbox{\the\diglotTRcount diglotLeft -> partialL:}\copy255}}%
@@ -279,7 +296,7 @@
               %But on the other hand we can't put it on the next page
               %so try splitting it after all
               \global\nastyboxfalse %only just fits. Very nasty - no space for even another line after this one. 
-              \trace{D}{Box must not move on to next page} \dimen1=\ht\partialL
+              \trace{D}{Box must NOT move on to next page} \dimen1=\ht\partialL
               \global\advance\adjustp@ge by 1\baselineskip
               \global\advance\availht by 1\baselineskip
               \advance\dimen1 by \dp\partialL
@@ -346,12 +363,13 @@
        %\setbox\partialL=\vbox{\penalty\tmppenalty\unvbox\partialL}%
        \setbox0=\vsplit\partialL to \dimen1%
        \setbox0=\vtop{\unvbox0}
+       %FIXME: save penalty of split? Or test badness? spl@tcols comment says it'll ALWAYS pull a line.
        \global\runLtrialtrue%
        \global\leftfulltrue%
        \TempDim=\ht0
        \advance\TempDim by \dp0
        \ifdim\TempDim>0pt % It split something off..
-         \trace{D}{spare material to excessL (\the\ht0, \the\dp0, \the\ht\partialL,\the\ht\excessL,\the\dp\partialL,\the\dp\excessL}%
+         \trace{D}{spare material to excessL (badness: \the\badness \the\ht0, \the\dp0, \the\ht\partialL,\the\ht\excessL,\the\dp\partialL,\the\dp\excessL}%
          %\showbox\excessL%
          \global\earlyLrefilltrue%
          \global\setbox\excessL=\vtop{\joinboxes{\partialL}{\excessL}{4}{\partialLpenalty}}%
@@ -446,7 +464,7 @@
   \ifnum\tmppenalty=10000 %
     \tmppenalty=0 %
   \fi
-  \trace{H}{digl@leftTrial: b:\botmark, f:\firstmark, tr:\topRmark, br:\botRmark}
+  \trace{H}{digloleftTrial: b:\botmark, f:\firstmark, tr:\topRmark, br:\botRmark}
   \edef\t@st{\botmark}%
   \ifx\t@st\empty%
     \trace{H}{Bottom mark was empty}%
@@ -487,7 +505,7 @@
   \boxmovedfalse%
   \advance\TempDim by -\the\ht\LeftBox %
   \advance\TempDim by -\the\dp\LeftBox %
-  \trace{D}{av: \the\availht, remaing:\the\TempDim, bs:\the\baselineskip}
+  \trace{D}{av: \the\availht, remaining:\the\TempDim, bs:\the\baselineskip}
   \ifdim\trialheight<\baselineskip %It's not going to work, give up somehow
     \trace{D}{Box will not fit. td:\the\TempDim lb:\the\ht\LeftBox+\the\dp\LeftBox}
     \ifdim\TempDim<-1.5\baselineskip % better move it onto next page.
@@ -523,7 +541,7 @@
       \global\leftfulltrue%
     \fi
     \ifnum\outputpenalty=-10005 %
-      \trace{D}{Final penalty found \the\outputpenalty}%
+      \trace{D}{Final penalty found \the\outputpenalty.} 
       \intrialfalse
       \ifx\n@xtc@mmand\empty \trace{D}{no next command set?}
          \ifdim\ht\excessL>0pt \trace{D}{excessL is not empty}
@@ -532,8 +550,9 @@
       \fi
       \global\Lboxpenalty=\savedpenalty %
       \global\savedpenalty=0 %
-      \n@xtc@mmand %
+      \let\do@nce=\n@xtc@mmand %
       \global\def\n@xtc@mmand{} %
+      \do@nce
       %start returning to processing input..
       \ifdigl@tL%
         \global\output={\diglotLeft}\relax%
@@ -617,7 +636,7 @@
   \global\vsize=\trialheight\relax%
   \global\holdinginserts=0%
   \global\savedpenalty=\partialLpenalty %
-  \intrialtrue
+  \global\intrialtrue
   %\bgroup
   \dimen3=\ht\LeftBox
   \advance\dimen3 by \dp\LeftBox
@@ -773,7 +792,7 @@
  \ifnum\holdinginserts=0 %Inserts not held, continue
          \digl@tRight%
  \else%
-        %\doDiglotRightTrial% FIXME - still broken?
+        %\oDiglotRightTrial% FIXME - still broken?
         \digl@tRight%
  \fi%
 }
@@ -830,7 +849,7 @@
 %
 % Change which side we're adding to
 \outer\def\lefttext{%
-  \trace{S}{lefttext ilp=\the\interlinepenalty}%
+  \trace{d}{lefttext ilp=\the\interlinepenalty}%
   \ifsk@pping \egroup \sk@ppingfalse\fi% if we were skipping nonpublishable text, end that mode
   \ifhe@dings\endhe@dings\fi%
   \ifinn@te\MSG{lefttext called from inside footnote?!?}\fi
@@ -854,7 +873,7 @@
   \the\leftho@ks\relax\swapfonts{L}%
   \global\hsize=\columnLwidth\relax\global\holdinginserts=1}%
 
-\outer\def\righttext{\trace{S}{righttext}\ifhe@dings\endhe@dings\fi
+\outer\def\righttext{\trace{d}{righttext pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR}\ifhe@dings\endhe@dings\fi
   \global\savedpenalty=\lastpenalty\n@xtc@mmand\global\holdinginserts=1
   \par\penalty-10001
   \calc@vailht\global\digl@tLfalse\global\diglotRtrue\calc@vailht
@@ -882,8 +901,10 @@
 \newdimen\columnRwidth%
 \newdimen\availhtL
 \newdimen\availhtR
-\newdimen\pr@vdepth
-\newdimen\adjustp@ge
+\newdimen\chunkDelta % Difference between the last boxes set on the page (-ve=left longer)
+\newdimen\baselineDelta % difference between the L and R baselines (-ve=left longer)
+\newdimen\thisjointDelta % difference between the L and R baselines (-ve=left longer)
+\newdimen\adjustp@ge %emergency stretch to page
 \adjustp@ge=0pt
 \def\m@rkerL{}
 \def\m@rkerR{}
@@ -950,37 +971,37 @@
   \calc@vailht
   \global\splittopskip=\baselineskip
   \global\topskip=\baselineskip
-  \global\Lht=\ht\LeftBox\relax%
+  \global\Lht=\ht\LeftBox\relax
   \advance\Lht by \dp\LeftBox
-  \global\Rht=\ht\partialR\relax%
+  \global\Rht=\ht\partialR\relax
   \advance\Rht by \dp\partialR
   % Force page output if user-caused and not by a column swap.
-  \redocoloktrue%
-  \pagefullfalse%
+  \redocoloktrue
+  \pagefullfalse
   \repeatpermittedfalse% in many situations we don't want this looping.
   \ifnum\outputpenalty=-10000
-   \pagefulltrue%
-  \fi%
+   \pagefulltrue
+  \fi
   \ifnum\outputpenalty=-10002 %Set on self-repeat calls
-   \pagefullfalse%
-   \redocoloktrue%
-  \fi%
+   \pagefullfalse
+   \redocoloktrue
+  \fi
   \ifnum\outputpenalty=-10001 % Column break.
-   \pagefullfalse%
-   \redocolokfalse%
-   \repeatpermittedtrue%
-  \fi%
-  \ifnum\outputpenalty=-10005 %
-    \repeatpermittedtrue%
-  \fi%
+   \pagefullfalse
+   \redocolokfalse
+   \repeatpermittedtrue
+  \fi
+  \ifnum\outputpenalty=-10005 
+    \repeatpermittedtrue
+  \fi
   % Box is probably a title or similar - never OK to refill here
   % FIXME why not refil? Not ok to break, yes, but wy not refil?
   \ifnum\partialRpenalty = 10000
-    \redocolokfalse%
-  \fi%
+    \redocolokfalse
+  \fi
   % Don't allow unvboxing the right column if we're in left column modeǃ
-  \ifdiglotL%
-    \redocolokfalse%
+  \ifdiglotL
+    \redocolokfalse
   % I don't understand why this next bit causes problems...
   %\else%  We're in right column mode..
     %\ifnum\outputpenalty>-10000 % and a normal page break
@@ -988,17 +1009,17 @@
         %\repeatpermittedtrue % let this setboth be called again
       %\fi
     %\fi
-  \fi%
-  \ifdigl@tL%
-    \redocolokfalse%
-  \fi%
+  \fi
+  \ifdigl@tL
+    \redocolokfalse
+  \fi
   % Eject a partial page when we're done too, in some cases
   \ifnum\outputpenalty=-20000 % End of document / supereject
-   \traceNum{d}{SuperEject encountered}
-   \pagefulltrue%
-   \redocolokfalse%
-   \aftergroup\emitpartial%
-  \fi%
+   \traceNum{d}{SuperEject encountered}%
+   \pagefulltrue
+   \redocolokfalse
+   \aftergroup\emitpartial
+  \fi
   \ifnum\partialRpenalty=10000\relax% Can't break page here
     \checkn@sty{\availhtL}{\Lht}%
     \trace{D}{Checking what to do with this box (\the\ht\partialR+\the\dp\partialR) av:\the\availhtR,
@@ -1007,23 +1028,23 @@
     \checkn@sty{\availhtR}{\Rht}%
     \ifdim\TempDim<\Rht %split required
       \availht=\TempDim\relax% Save the cutting length
-    \else%
-      \trace{D}{No split required}
-    \fi%
-  \fi%
-  \TempDim=\availht\relax%
+    \else
+      \trace{D}{No split required}%
+    \fi
+  \fi
+  \TempDim=\availht\relax
   \ifnastybox% All the last left box was shifted to the next page. Since the first line of l+r
     %boxes should line up then the right box should be passed on too
     \trace{D}{Box should move}%
-    \global\pagefulltrue%
+    \global\pagefulltrue
     \global\TempDim=-10pt %<--that SPACE after pt is critical!
-  \else%
-  \fi%
+  \else
+  \fi
   \global\nastyboxfalse %unset it 
   %\trace{D}{\the\TempDim}
-  \ifdim\TempDim<0pt %
+  \ifdim\TempDim<0pt 
     %\trace{D}{SKIP2}
-    \ifdim\availht<-2\baselineskip %
+    \ifdim\availht<-2\baselineskip 
       %Need to drop something. Picture or text, I don't know
       %FIXME This shouldn't happen... 
       \message{Out of space: av = \the\availht, th=\the\textheight,
@@ -1031,10 +1052,10 @@
     \fi
     %Leave partialR untouched - out of space anyway.
     \trace{D}{Leaving R box for next page}
-    \global\setbox\RightBox=\box\voidb@x%
+    \global\setbox\RightBox=\box\voidb@x
     \global\Rht=0pt 
-    \pagefulltrue%
-  \else%  
+    \pagefulltrue
+  \else  
     %pagefulltrue should be set if the left column can't hold more too.
     \ifleftfull
       \pagefulltrue
@@ -1042,20 +1063,22 @@
     %Not sure this is needed, but it shouldn't hurt
     \advance\availhtL by -\Lht
     \TempDim=\availhtL
-    \ifdim\TempDim<\baselineskip%
-      \pagefulltrue%
-    \fi%
+    \ifdim\TempDim<\baselineskip
+      \pagefulltrue
+    \fi
     %\ifdim\ht\partialL>0pt %
       %\trace{D}{partialL not empty. Not setting extra \the\ht\partialL of material this time}%
     %\fi%
     \ifvoid\partialL
-      \traceNum{d}{Refilling empty partialL from excessL}
+      \traceNum{d}{Refilling empty partialL from excessL}%
       \global\setbox\partialL=\vtop{\unvbox\excessL}%
-      \partialLpenalty=\Lchunkpenalty %
+      \partialLpenalty=\Lchunkpenalty
     \else
       \ifvoid\excessL\else
-        \traceNum{d}{Refilling non-empty partialL from excessL}
+        \traceNum{d}{Refilling non-empty partialL from excessL}%
+        \bgroup \diglotLtrue
         \global\setbox\partialL=\vtop{\joinboxes{\partialL}{\excessL}{9}{\partialLpenalty}}%
+        \egroup
         \partialLpenalty=\Lchunkpenalty %
 
       \fi
@@ -1070,35 +1093,35 @@
       \traceNum{d}{Left overshot by \the\availhtL, allowing right to also}\advance\TempDim by -\availhtL\fi\fi%
     \ifdim\TempDim<-0.3\baselineskip % Is a split required? Allow a little extra for descenders 
       \trace{D}{Splitting right to \the\availhtR}%
-      \ifnum\Rboxpenalty=0 \Rboxpenalty=5000 \fi%
+      \ifnum\Rboxpenalty=0 \Rboxpenalty=5000 \fi
       \global\setbox\partialR=\vbox{\penalty \Rboxpenalty\unvbox\partialR}% sometimes we'd rather split everything off than nothing 
-      \global\setbox\RightBox=\vsplit\partialR to \availhtR%
-      \ifvoid\partialR\Rboxpenalty=\partialRpenalty \else\Rboxpenalty=0 \fi%
+      \global\setbox\RightBox=\vsplit\partialR to \availhtR
+      \ifvoid\partialR\Rboxpenalty=\partialRpenalty \else\Rboxpenalty=0 \fi
       {\setbox 0=\copy\partialR% Split all of what remains and use that for the next page
-      \setbox 1=\vsplit 0 to \ht\partialR%
+      \setbox 1=\vsplit 0 to \ht\partialR
       \ifuseRightMarks
         \gdef\nextp@gefirstmark{\splitfirstmark}%
       \fi
       }%
       \trace{D}{\the\ht\partialR+\the\dp\partialR left over in partialR after split}%
       \edef\t@st{\splitbotmark}%
-      \ifx\t@st\empty\else%
+      \ifx\t@st\empty\else
         \xdef\botRmark{\splitbotmark}%
         %\edef\t@st{\topRmark}%
         %\if\t@st\empty
           %\xdef\topRmark{\firstmark}%
         %\fi
-        \ifuseRightMarks%
+        \ifuseRightMarks
           \traceNum{d}{Setting bottom mark to \splitbotmark}%
           \xdef\p@gebotmark{\splitbotmark}%
         \fi
-      \fi%
+      \fi
       \makevtop{\partialR}%
-      \global\Rht=\ht\RightBox\relax%
-      \pagefulltrue%
+      \global\Rht=\ht\RightBox\relax
+      \pagefulltrue
     \else% It all fits...
-      \global\setbox\RightBox=\box\partialR%
-      \Rboxpenalty=\partialRpenalty %
+      \global\setbox\RightBox=\box\partialR
+      \Rboxpenalty=\partialRpenalty 
       \edef\t@st{\b@xbotmark}%
       \ifx\t@st\empty
         \trace{H}{Setting page bottom mark to \emptym@rk as emergency measure}%
@@ -1111,25 +1134,25 @@
     %pagefulltrue should be set if the page can't hold more too.
     \TempDim=\availht %
     \advance\TempDim by -\Rht
-    \ifdim\TempDim<\baselineskip%
-      \pagefulltrue%
-    \fi%
-  \fi%
+    \ifdim\TempDim<\baselineskip
+      \pagefulltrue
+    \fi
+  \fi
   \trace{D}{av:\the\availht}%
   \trace{D}{L:\the\ht\LeftBox+\the\dp\LeftBox}%
   \trace{D}{R:\the\ht\RightBox+\the\dp\RightBox}%
-  \TempDim=\ht\RightBox\relax%
-  \advance\TempDim by -\ht\LeftBox
+  \TempDim=\ht\RightBox\relax
   \advance\TempDim by \dp\RightBox
+  \advance\TempDim by -\ht\LeftBox
   \advance\TempDim by -\dp\LeftBox
   %\message{TempDim is \the\TempDim}
   \ifdim \TempDim>0pt %Right box is longest
     \dimen0=\dp\LeftBox\relax%
-    \advance\TempDim by -\dp\LeftBox
+    %\advance\TempDim by -\dp\LeftBox
     \global\setbox\LeftBox=\vtop{\unvbox\LeftBox}%
   \fi%
   \ifdim \TempDim<0pt %Left box is longest
-    \advance\TempDim by \dp\RightBox
+    %\advance\TempDim by \dp\RightBox
     \dimen0=\dp\RightBox\relax%
     \ifredocolok%
       \ifpagefull%
@@ -1211,13 +1234,13 @@
  \s@tbaseline{p}
  \trace{D}{makevtop #1, before vtop dp=\the\dp#1, ht=\the\ht#1}%
  %\ifnum\diglotTRcount<61\showbox#1\fi
- \pr@vdepth=\dp#1\relax%
- \ifdim\pr@vdepth>\baselineskip \trace{D}{Looks like this is already a vtop}\pr@vdepth=0pt
+ \TempDim=\dp#1\relax%
+ \ifdim\TempDim>\baselineskip \trace{D}{Looks like this is already a vtop}\TempDim=0pt
  \fi%
  %\bgroup
  \setbox0=\copy#1\setbox1=\vtop{\unvbox 0\setbox2=\lastbox}%Work on a copy so we don't break stuff.
- \trace{D}{pd:\the\dp2, ph=\the\ht2, d:\the\pr@vdepth}%
- \global\setbox#1=\vtop{\unvbox#1\ifdim\dp2=0pt\ifdim\pr@vdepth=0pt\else\kern-\pr@vdepth\fi\fi}}%\egroup}%
+ \trace{D}{pd:\the\dp2, ph=\the\ht2, d:\the\TempDim}%
+ \global\setbox#1=\vtop{\unvbox#1\ifdim\dp2=0pt\ifdim\TempDim=0pt\else\kern-\TempDim\fi\fi}}%\egroup}%
 
 \def\joinboxes#1#2#3#4{%Join 2 vtops together and preserve baselineskip%
  \traceNum{d}{joinboxes #1 #2 called from locn #3}%
@@ -1275,7 +1298,7 @@
 \box#2}%\egroup}
 
 
-\def\upd@tep@rtial{%
+\def\upd@tep@rtial{%Actually add stuff to the page.
   \trace{D}{upd@tep@rtial \the\outputpenalty}%
   \diglotN@rmaltrue\ifdiglotInnerOuter\ifodd\pageno\else\diglotN@rmalfalse\fi\fi 
   \showboxdepth=3 %
@@ -1294,11 +1317,26 @@
   \fi%
   %Re-use LeftBox for this page chunk
   %
-  \traceNum{d}{Adding to page: LB:\the\ht\LeftBox+\the\dp\LeftBox RB:\the\ht\RightBox+\the\dp\RightBox}
+  
+  
+  \traceNum{d}{Adding to page: LB:\the\ht\LeftBox+\the\dp\LeftBox\space RB:\the\ht\RightBox+\the\dp\RightBox\space Last Delta:\the\chunkDelta}
   \ifVisTrace
     \doVisTrace{L}
   \fi
-  \global\setbox\LeftBox=\vtop{\hbox to \textwidth{\ifVisTrace\llap{\box0}\fi%
+  \thisjointDelta=0pt %Do we need extra space
+  \ifdim\dp\LeftBox>0pt \ifdim\chunkDelta<0pt
+    %left are 'touching' and need separating
+    \ifdim\baselineDelta<0pt 
+      \trace{D}{Separating chunks \the\baselineDelta}%
+      \advance\thisjointDelta by -\baselineDelta
+    \fi 
+    %FIXME: RHS / small L baseline needs more attention
+  \fi\fi
+  \chunkDelta=\ht\RightBox\relax
+  \advance\chunkDelta by \dp\RightBox
+  \advance\chunkDelta by -\ht\LeftBox
+  \global\advance\chunkDelta by -\dp\LeftBox
+  \global\setbox\LeftBox=\vtop{\ifdim\thisjointDelta>0pt\vskip \thisjointDelta\fi\hbox to \textwidth{\ifVisTrace\llap{\box0}\fi%
   \ifdiglotN@rmal%Are the sides swapped?
     \hbox to\columnLwidth{\box\LeftBox\hss}\hskip\gutter%
     \hbox to\columnRwidth{\box\RightBox\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
@@ -1339,20 +1377,33 @@
 
     \global\availht=\textheight %
     \global\vsize=\availht\relax%
+    \ifdim\dp\excessL>0pt \ifdim\dp\partialL=0pt 
+        \trace{D}{Forcing early refill of partialL. pL:(\the\ht\partialL+\the\dp\partialL) eL:(\the\ht\excessL+\the\dp\excessL) }%
+        \global\earlyLrefilltrue
+        \global\Lneedsemptyingtrue
+        \global\def\n@xtc@mmand{\upd@tep@rtial}
+    \fi\fi
     \ifearlyLrefill%
       %There is material in excessL which should be added now, not later.
-      \trace{D}{Refilling partialL early pl:(\the\ht\partialL+\the\dp\partialL) eL:(\the\ht\excessL+\the\dp\excessL) }%
+      \trace{D}{Refilling partialL early. pL:(\the\ht\partialL+\the\dp\partialL) eL:(\the\ht\excessL+\the\dp\excessL) }%
       \global\setbox\partialL=\vtop{\joinboxes{\partialL}{\excessL}{12}{\partialLpenalty}}%
       \partialLpenalty=\Lchunkpenalty %
       \global\earlyLrefillfalse%
+    \else
+      \trace{D}{no early refill of  partialL. pL:(\the\ht\partialL+\the\dp\partialL) eL:(\the\ht\excessL+\the\dp\excessL) }%
     \fi
     \trace{D}{pL:(\the\ht\partialL+\the\dp\partialL) pR:(\the\ht\partialR+\the\dp\partialR)}%
     \ifdim\dp\partialL>0pt %
       %Assumptions: Page is empty, LeftBox is empty, partialL contains extra
       %material for left column, excessL is possibly empty (from setboth or above). 
-      \ifrepeatpermitted%
+      \ifrepeatpermitted 
         % Quite possibly have enough material already - repeat 'til not a full page.
-        \ifdim\dp\partialR>0pt %
+        \tempfalse
+        \ifLneedsemptying\else
+          \ifdim\dp\partialR>0pt %Only test right if we've finished emptying left.
+            \temptrue
+        \fi\fi
+        \iftemp
           %There is something to add to the RHS.. After re-setting partialL, setboth should be called.
           \traceNum{d}{Repeating setboth after trial (both sides have data)}%
           \global\def\n@xtc@mmand{\trace{D}{n@xtc@mmand}\setboth}%
@@ -1596,6 +1647,7 @@
   \global\availhtL=\textheight%
   \global\availht=\textheight%
   \plainoutput%
+  \global\chunkDelta=0pt
   %\ifm@rksonpage
     \xdef\p@gefirstmark{\nextp@gefirstmark}%
   %\fi
