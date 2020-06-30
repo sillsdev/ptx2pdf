@@ -495,6 +495,8 @@ class RunJob:
             envtexinputs = os.getenv("TEXINPUTS")
             texinputs = [envtexinputs] if envtexinputs is not None and len(envtexinputs) else []
             texinputs += [os.path.abspath(self.tmpdir), ptxmacrospath]
+            if sys.platform != "win32":
+                texinputs += ["/usr/share/ptx2pdf/texmacros"]
             os.putenv('TEXINPUTS', (";" if sys.platform=="win32" else ":").join(texinputs))
             # print("TEXINPUTS=",os.getenv('TEXINPUTS'))
         elif sys.platform == "linux":

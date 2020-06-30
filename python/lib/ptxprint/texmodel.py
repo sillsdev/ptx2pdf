@@ -180,7 +180,7 @@ ModelMap = {
     "document/supressparallels": ("c_omitParallelRefs", None),
     "document/supressbookintro": ("c_omitBookIntro", None),
     "document/supressintrooutline": ("c_omitIntroOutline", None),
-    "document/indentunit":      ("s_indentUnit", lambda w,v: round(float(v), 1) or "2.0"),
+    "document/indentunit":      ("s_indentUnit", lambda w,v: round(float(v or "2.0"), 1)),
     "document/supressindent":   ("c_omit1paraIndent", lambda w,v: "false" if v else "true"),
     "document/ifhidehboxerrors": ("c_showHboxErrorBars", lambda w,v :"%" if v else ""),
     "document/elipsizemptyvs":  ("c_elipsizeMissingVerses", None),
@@ -952,6 +952,11 @@ class TexModel:
         if self.dict[pfx+"/ifblendfnxr"]:
             nstylist.append("##### Treat x-refs as footnotes with their own caller\n\\Marker x\n\\NoteBlendInto f\n\n")
 
+        # Adjust the amount of indent on \p according to the IndentUnit setting 2=default
+        iu = float(self.dict["document/indentunit"])
+        cols = int(self.dict["paper/columns"])
+        nstylist.append("##### Adjust p-first-line-indent\n\\Marker p\n\\FirstLineIndent {:.3f}\n\n".format(0.250 * iu / cols))
+
         nstylist.append("##### Adjust poetic indents\n")
         m = ["\Marker", "\LeftMargin", "\FirstLineIndent"]
         if self.dict["paper/columns"] == "2" or self.dict["document/ifaligndiglot"] == "": # Double Column layout so use smaller indents
@@ -961,11 +966,10 @@ class TexModel:
             v = [["q", "1.25", "-1.00"], ["q1", "1.25", "-1.00"], ["q2", "1.25", "-0.75"],
                  ["q3", "1.25", "-0.5"], ["q4", "1.25", "-0.25"]]
         r = [list(zip(m, x)) for x in v]
-        iu = float(self.dict["document/indentunit"])/2
+        
         for mkr in r:
-            nstylist.append("{} {}\n".format(mkr[0][0],mkr[0][1]))
-            for l in range(1,3): # Adjust the amount of indent according to the IndentUnit setting 2=default (2/2 = 1)
-                nstylist.append("{} {}\n".format(mkr[l][0],float(mkr[l][1])*iu))
+            for l in range(0,3):
+                nstylist.append("{} {}\n".format(mkr[l][0],mkr[l][1]))
             nstylist.append("\\Justification Left\n\n")
 
         if True: # Hack! We need to qualify this (look in USFM for a \cl and if it exists, then don't do this)

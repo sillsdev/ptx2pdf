@@ -61,8 +61,12 @@ if args.pid:
     if args.config is not None:
         mainw.setConfigId(args.config)
 
+scriptsdir = os.path.dirname(__file__)
+if os.path.exists("/usr/share/ptx2pdf") and not os.path.exists(os.path.join(scriptsdir, "..", "..", "src")):
+    scriptsdir = "/usr/share/ptx2pdf"
+
 def doit(printer):
-    runjob = RunJob(printer, os.path.dirname(__file__), args)
+    runjob = RunJob(printer, scriptsdir, args)
     runjob.doit()
 
 if args.fontpath is not None:

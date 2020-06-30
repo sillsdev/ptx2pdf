@@ -448,11 +448,11 @@ class ViewModel:
                 if len(x):
                     xl.append(bk)
                 # Finds USFM2-styled markup in text:
-                # \v 15 <verse text> \fig |CN01684b.jpg|col|||key-kālk arsi manvan yēsunaga tarval|9:2\fig*
-                #     0     1    2             3         4  5 6          7                          8  
-                # BKN \0 \|\3\|\4\|tr\|\|\7\|\8
+                # \v 15 <verse text> \fig |CN01684b.jpg|col|||key-kālk arsi manvan yēsunaga tarval|[Matthew ]9:2\fig*
+                #     0     1    2             3         4  5 6          7                             8      9  
+                # BKN \0 \|\3\|\4\|tr\|\|\7\|\8\9
                 # MAT 9.2 bringing the paralyzed man to Jesus|CN01684b.jpg|col|tr||key-kālk arsi manvan yēsunaga tarval|9:2
-                m = re.findall(r"(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))+\\fig .*?\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|(\d+[\:\.]\d+?[abc]?([\-,\u2013\u2014]\d+[abc]?)?)\\fig\*", dat)
+                m = re.findall(r"(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))+\\fig .*?\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+? ?)?(\d+[\:\.]\d+?[abc]?([\-,\u2013\u2014]\d+[abc]?)?)\\fig\*", dat)
                 if len(m):
                     for f in m:
                         picfname = f[3]
@@ -463,7 +463,7 @@ class ViewModel:
                             pageposn = random.choice(_picposn.get(f[4], f[4]))    # Randomize location of illustrations on the page (tl,tr,bl,br)
                         else:
                             pageposn = (_picposn.get(f[4], f[4]))[0]              # use the t or tl (first in list)
-                        ch = re.sub(r"(\d+)[:.].+", r"\1", f[8])
+                        ch = re.sub(r"(\d+)[:.].+", r"\1", f[9])
                         vs = f[0]
                         if vs.endswith(('a', 'b', 'c')):
                             vs = int(f[0].strip("abc")) - 1
@@ -475,7 +475,7 @@ class ViewModel:
                         chvs = ch+"." + str(vs)
                         cmt = "% " if chvs in usedRefs else ""
                         usedRefs += [chvs]
-                        piclist.append(cmt+bk+" "+chvs+" |"+picfname+"|"+f[4]+"|"+pageposn+"||"+f[7]+"|"+f[8]+"\n")
+                        piclist.append(cmt+bk+" "+chvs+" |"+picfname+"|"+f[4]+"|"+pageposn+"||"+f[7]+"|"+f[8]+f[9]+"\n")
                 else:
                     # If none of the USFM2-styled illustrations were found then look for USFM3-styled markup in text 
                     # (Q: How to handle any additional/non-standard xyz="data" ? Will the .* before \\fig\* take care of it adequately?)
