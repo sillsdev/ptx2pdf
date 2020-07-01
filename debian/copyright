@@ -25,3 +25,31 @@ License: MIT
  COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
  IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+Files: python/scripts/merge_diglot.pl
+Copyright: 
+ Copyright (c) 2020, SIL International (http://www.sil.org)
+License:
+ You may use it and distribute it under terms of the Perl Artistic Licence 2.0:
+
+
+Files: examples/diglot/*
+Copyright: 
+ The World English Bible is in the Public Domain. That means that it is not copyrighted. However, "World English Bible" is a Trademark of eBible.org.
+License:
+ None 
+
+
+Files: examples/jas/*
+Copyright: 
+ This is a relatively simple example of using the ptx2pdf macros to typeset the book of James as translated by Dennis Drescher.
+License:
+ None 
+
+
+Files: examples/testcases
+Copyright: 
+ More examples
+License:
+ None 

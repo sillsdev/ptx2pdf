@@ -1,5 +1,5 @@
-ptxprint (0.7.0-1ubuntu1) focal; urgency=medium
+ptxprint (0.8.6-1ubuntu1) focal; urgency=medium
 
-  * Initial release.
+  * Initial release. Still beta. 
 
- -- Nicolas Spalinger <nicolas.spalinger@sil.org>  Tue, 26 May 2020 22:18:30 +0200
+ -- Nicolas Spalinger <nicolas.spalinger@sil.org>  Mon, 29 Jun 2020 15:08:13 +0200

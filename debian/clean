@@ -1,2 +1,6 @@
-lib/ptxprint/__pycache_/*
-lib/PTXprint.egg-info/*
+build/*
+dist/*
+python/build/*
+python/lib/ptxprint/__pycache_/*
+python/lib/*.egg-info/*
+.pybuild/*
