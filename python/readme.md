@@ -14,12 +14,12 @@ PTXprint also has the following python dependencies:
 
 - PyGObject. In particular GTK, Pango, GLib.
 - regex. This is a package beyond re
-- img2pdf
+- PIL
 - fonttools
 - cairo
 
 On Ubuntu (20.04 Focal Fossa) type the following to install the dependencies:
-sudo apt install python3-gi gobject-introspection gir1.2-gtk-3.0 libgtk-3-0 gir1.2-gtksource-3.0 python3-cairo python3-regex python3-img2pdf texlive-xetex fonts-sil-charis 
+sudo apt install python3-gi gobject-introspection gir1.2-gtk-3.0 libgtk-3-0 gir1.2-gtksource-3.0 python3-cairo python3-regex python3-pil texlive-xetex fonts-sil-charis 
 
 To install the project in develop mode for Ubuntu 20.04 and python3.8:
 sudo python3 setup.py develop 
