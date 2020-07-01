@@ -6,6 +6,7 @@ from ptxprint.runner import call, checkoutput
 from ptxprint.texmodel import TexModel, universalopen
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.view import ViewModel, VersionStr
+from ptxprint.font import getfontcache
 
 _errmsghelp = {
 "! Unable to load picture":              "Check if picture file is located in 'Figures', 'local\\figures' or a\n" +\
@@ -115,6 +116,7 @@ class RunJob:
         self.maxRuns = 1
         self.changes = None
         self.args = args
+        self.res = 0
 
     def doit(self):
         info = TexModel(self.printer, self.args.paratext, self.printer.ptsettings, self.printer.prjid)
@@ -491,19 +493,17 @@ class RunJob:
                 if os.path.exists(ptxmacrospath):
                     break
 
-        if True:
-            envtexinputs = os.getenv("TEXINPUTS")
-            texinputs = [envtexinputs] if envtexinputs is not None and len(envtexinputs) else []
-            texinputs += [os.path.abspath(self.tmpdir), ptxmacrospath]
-            if sys.platform != "win32":
-                texinputs += ["/usr/share/ptx2pdf/texmacros"]
-            os.putenv('TEXINPUTS', (";" if sys.platform=="win32" else ":").join(texinputs))
-            # print("TEXINPUTS=",os.getenv('TEXINPUTS'))
-        elif sys.platform == "linux":
-            if not os.getenv('TEXINPUTS'):
-                mdirs = self.args.macros or "/usr/lib/Paratext8/xetex/share/texmf-dist/tex/ptx2pdf:/usr/lib/Paratext9/xetex/share/texmf-dist/tex/ptx2pdf"
-                os.putenv('TEXINPUTS', ".:" + mdirs)
-        os.putenv("MISCFONTS", ptxmacrospath)
+        pathjoin = (";" if sys.platform=="win32" else ":").join
+        envtexinputs = os.getenv("TEXINPUTS")
+        texinputs = [envtexinputs] if envtexinputs is not None and len(envtexinputs) else []
+        texinputs += [os.path.abspath(self.tmpdir), ptxmacrospath]
+        if sys.platform != "win32":
+            texinputs += ["/usr/share/ptx2pdf/texmacros"]
+        os.putenv('TEXINPUTS', pathjoin(texinputs))
+        # print("TEXINPUTS=",os.getenv('TEXINPUTS'))
+        miscfonts = getfontcache().fontpaths
+        if len(miscfonts):
+            os.putenv("MISCFONTS", pathjoin(miscfonts))
         while numruns > 0:
             self.printer.incrementProgress()
             if info["document/toc"] != "%":

@@ -68,6 +68,7 @@ if os.path.exists("/usr/share/ptx2pdf") and not os.path.exists(os.path.join(scri
 def doit(printer):
     runjob = RunJob(printer, scriptsdir, args)
     runjob.doit()
+    return runjob.res
 
 if args.fontpath is not None:
     for p in args.fontpath:
@@ -85,7 +86,7 @@ if args.print:
         elif len(bl) > 1:
             mainw.set("t_booklist", args.books)
             mainw.set("c_multiplebooks", True)
-    doit(mainw)
+    sys.exit(doit(mainw))
 else:
     splash = args.splash
     mainw.run(doit, splash=splash)

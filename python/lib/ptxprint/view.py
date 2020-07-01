@@ -181,10 +181,11 @@ class ViewModel:
         else:
             self.set("c_useGraphite", False)
         silns = "{urn://www.sil.org/ldml/0.1}"
-        d = self.ptsettings.find_ldml('.//special/{1}external-resources/{1}font[@name="{0}"]'.format(f.family, silns))
-        if d is not None:
-            featstring = d.get('features', '')
-            self.set("t_fontfeatures", featstring)
+        if self.get("t_fontfeatures") == "":
+            d = self.ptsettings.find_ldml('.//special/{1}external-resources/{1}font[@name="{0}"]'.format(f.family, silns))
+            if d is not None:
+                featstring = d.get('features', '')
+                self.set("t_fontfeatures", featstring)
         for s in ('Bold', 'Italic', 'Bold Italic'):
             sid = "".join(x[0] for x in s.split())
             esid = s.lower().replace(" ", "")

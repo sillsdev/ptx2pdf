@@ -150,6 +150,8 @@ def fccache():
         fontcache.runFcCache()
     return fontcache
 
+def getfontcache():
+    return initFontCache()
 
 class TTFont:
     cache = {}

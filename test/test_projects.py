@@ -36,7 +36,7 @@ def test_pdf(projectsdir, project, config):
     (stddir, filename, testsdir, ptxcmd) = make_paths(projectsdir, project, config, xdv=False)
     assert call(ptxcmd) == 0
 
-def test_xdv(projectsdir, project, config):
+def disabled_test_xdv(projectsdir, project, config):
     (stddir, filename, testsdir, ptxcmd) = make_paths(projectsdir, project, config, xdv=True)
     xdvcmd = [os.path.join(testsdir, "..", "python", "scripts", "xdvitype"),
                 "-d"]

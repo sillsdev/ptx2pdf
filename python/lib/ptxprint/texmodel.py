@@ -445,7 +445,7 @@ class TexModel:
             style = self.dict.get(p+"/style", "")
             # import pdb; pdb.set_trace()
             f = TTFont(name, style)
-            # print(p, wid, f.filename, f.family, f.style)
+            # print(p, f.filename, f.family, f.style)
             if f.filename is None:
                 if self._fonts[p][1] is None or printer.get(self._fonts[p][1]):
                     badfonts.add((name or f.filename or "", style))
