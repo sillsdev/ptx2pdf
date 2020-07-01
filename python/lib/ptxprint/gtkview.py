@@ -924,9 +924,9 @@ class GtkViewModel(ViewModel):
 
     def onVariableLineSpacingClicked(self, btn):
         self.sensiVisible("c_variableLineSpacing")
-        lnspVal = round(self.get("s_linespacing"), 1)
-        minVal = round(self.get("s_linespacingmin"), 1)
-        maxVal = round(self.get("s_linespacingmax"), 1)
+        lnspVal = round(float(self.get("s_linespacing")), 1)
+        minVal = round(float(self.get("s_linespacingmin")), 1)
+        maxVal = round(float(self.get("s_linespacingmax")), 1)
         status = self.get("c_variableLineSpacing")
         if status and lnspVal == minVal and lnspVal == maxVal:
             self.set("s_linespacingmin", lnspVal - 1)
