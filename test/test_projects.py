@@ -1,7 +1,8 @@
 import pytest
 from subprocess import call, check_output
 from difflib import context_diff
-import configparser, os, sys
+import configparser, os, sys, shutil
+from ptxprint.ptsettings import ParatextSettings
 
 def make_paths(projectsdir, project, config, xdv=False):
     testsdir = os.path.dirname(__file__)
@@ -23,12 +24,16 @@ def make_paths(projectsdir, project, config, xdv=False):
         configpath = os.path.join(projectsdir, project, "shared", "ptxprint", "ptxprint.cfg")
         cfgname = ""
     cfg.read(configpath, encoding="utf-8")
+    ptsettings = ParatextSettings(projectsdir, project)
     if cfg.getboolean("project", "multiplebooks"):
-        bks = cfg.get("project", "booklist").split()
-        filename = "{}{}_{}{}".format(cfgname, bks[0], (bks[1] if len(bks) > 1 else bks[0]), project)
+        bks = [x for x in cfg.get("project", "booklist").split() \
+            if os.path.exists(os.path.join(projectsdir, project, ptsettings.getBookFilename(x)))]
     else:
-        bks = cfg.get("project", "book")
-        filename = "{}{}{}".format(cfgname, bks, project)
+        bks = [cfg.get("project", "book")]
+    if len(bks) > 1:
+        filename = "{}{}_{}{}".format(cfgname, bks[0], bks[-1], project)
+    else:
+        filename = "{}{}{}".format(cfgname, bks[0], project)
     stddir = os.path.join(projectsdir, '..', 'standards', project)
     return (stddir, filename, testsdir, ptxcmd)
 
@@ -36,18 +41,21 @@ def test_pdf(projectsdir, project, config):
     (stddir, filename, testsdir, ptxcmd) = make_paths(projectsdir, project, config, xdv=False)
     assert call(ptxcmd) == 0
 
-def disabled_test_xdv(projectsdir, project, config):
+def test_xdv(projectsdir, project, config):
     (stddir, filename, testsdir, ptxcmd) = make_paths(projectsdir, project, config, xdv=True)
-    xdvcmd = [os.path.join(testsdir, "..", "python", "scripts", "xdvitype"),
-                "-d"]
+    xdvcmd = [os.path.join(testsdir, "..", "python", "scripts", "xdvitype"), "-d"]
     if sys.platform == "win32":
         xdvcmd.insert(0, "python")
 
     assert call(ptxcmd) == 0
     fromfile = os.path.join(projectsdir, project, "PrintDraft", "ptxprint-"+filename+".xdv")
     tofile = os.path.join(stddir, filename+".xdv")
+    if not os.path.exists(tofile) and os.path.exists(fromfile):
+        shutil.copy(fromfile, tofile)
+        pytest.xfail("No regression xdv. Copying...")
     resdat = check_output(xdvcmd + [fromfile]).decode("utf-8")
     stddat = check_output(xdvcmd + [tofile]).decode("utf-8")
     diff = "\n".join(context_diff(stddat.split("\n"), resdat.split("\n"), fromfile=fromfile, tofile=tofile))
-    assert diff == ""
+    if diff != "":
+        pytest.xfail("xdvs are inconsistent")
 

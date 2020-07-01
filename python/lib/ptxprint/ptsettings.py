@@ -112,3 +112,12 @@ class ParatextSettings:
             if os.path.exists(os.path.join(path, bknamefmt.format(bkid=k, bkcode=v))):
                 bookspresent[v-1] = 1
         self.dict['BooksPresent'] = "".join(str(x) for x in bookspresent)
+
+    def getBookFilename(self, bk):
+        fbkfm = self['FileNameBookNameForm']
+        bknamefmt = (self['FileNamePrePart'] or "") + \
+                    fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + \
+                    (self['FileNamePostPart'] or "")
+        fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
+        return fname
+    
