@@ -1239,36 +1239,6 @@ in the Windows system.</property>
       </row>
     </data>
   </object>
-  <object class="GtkListStore" id="ls_scripts">
-    <columns>
-      <!-- column-name name -->
-      <column type="gchararray"/>
-      <!-- column-name id -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0">Latn</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="ls_textDirection">
-    <columns>
-      <!-- column-name Direction -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Left-to-Right</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Right-to-Left</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Top-to-Bottom</col>
-      </row>
-    </data>
-  </object>
   <object class="GtkDialog" id="ptxprint">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">PTXprint App</property>
@@ -2781,49 +2751,6 @@ main body text begins.</property>
                                 <property name="row_spacing">8</property>
                                 <property name="column_spacing">2</property>
                                 <child>
-                                  <object class="GtkLabel" id="l_digits">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">All known unicode-encoded number/digit systems
-are catered for. So if you don't want to use the
-Latin/Arabic numbers [0-9], you can pick the
-appropriate script here. (Make sure the font you
-are using supports these digits too.)</property>
-                                    <property name="halign">end</property>
-                                    <property name="margin_right">3</property>
-                                    <property name="margin_bottom">3</property>
-                                    <property name="label" translatable="yes">Script for Numbers:</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkComboBox" id="fcb_digits">
-                                    <property name="width_request">150</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">All known unicode-encoded number/digit systems
-are catered for. So if you don't want to use the
-Latin/Arabic numbers [0-9], you can pick the
-appropriate script here. (Make sure the font you
-are using supports these digits too.)</property>
-                                    <property name="halign">start</property>
-                                    <property name="model">ls_digits</property>
-                                    <property name="wrap_width">3</property>
-                                    <property name="active">0</property>
-                                    <property name="popup_fixed_width">False</property>
-                                    <property name="id_column">0</property>
-                                    <property name="active_id">0</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">0</property>
-                                    <property name="width">2</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkCheckButton" id="c_useChapterLabel">
                                     <property name="label" translatable="yes">Special Features
 For These Books:</property>
@@ -2898,26 +2825,6 @@ Label:</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_omitChap1ChBooks">
-                                    <property name="label" translatable="yes">Hide Chapter Number 
-in Single Chapter Books</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Select this option to supress the 1 at the begining
-of books that only have a single chapter (OBA, PHM,
-2JN, 3JN, JUD, etc.)</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin_left">6</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">3</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkCheckButton" id="c_clSingleColLayout">
                                     <property name="label" translatable="yes">Use Single Column
 Layout for these Books</property>
@@ -2934,9 +2841,28 @@ Layout for these Books</property>
                                   </packing>
                                 </child>
                                 <child>
+                                  <object class="GtkCheckButton" id="c_omitChap1ChBooks">
+                                    <property name="label" translatable="yes">Hide Chapter Number in Single Chapter Books</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Select this option to supress the 1 at the begining
+of books that only have a single chapter (OBA, PHM,
+2JN, 3JN, JUD, etc.)</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
                                   <object class="GtkCheckButton" id="c_optimizePoetryLayout">
-                                    <property name="label" translatable="yes">Optimize Layout 
-for Poetry Books</property>
+                                    <property name="label" translatable="yes">Optimize Layout for Poetry Books</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -2946,14 +2872,17 @@ unforeseen issues and whitespace.
 This option allows unbalanced
 poetry to improve the overall look.</property>
                                     <property name="halign">start</property>
-                                    <property name="margin_left">6</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">4</property>
+                                    <property name="left_attach">3</property>
                                     <property name="top_attach">0</property>
+                                    <property name="width">2</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                               </object>
                             </child>
@@ -2963,7 +2892,7 @@ poetry to improve the overall look.</property>
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Chapter &amp; Verse Settings</property>
+                            <property name="label" translatable="yes">Handling Special Books </property>
                           </object>
                         </child>
                       </object>
@@ -2973,12 +2902,37 @@ poetry to improve the overall look.</property>
                         <property name="position">1</property>
                       </packing>
                     </child>
-                    <child type="center">
+                  </object>
+                  <packing>
+                    <property name="position">1</property>
+                    <property name="tab_fill">False</property>
+                  </packing>
+                </child>
+                <child type="tab">
+                  <object class="GtkLabel" id="lb_Layout">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Page Setup, Font Size and 
+Line Spacing. Columns,
+Chapter and Verse DIgits,
+and advanced Font Options.</property>
+                    <property name="label" translatable="yes">Layout</property>
+                    <property name="justify">center</property>
+                  </object>
+                  <packing>
+                    <property name="position">1</property>
+                    <property name="tab_fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox" id="tb_Font">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="orientation">vertical</property>
+                    <child>
                       <object class="GtkFrame" id="fr_FontConfig">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="margin_left">6</property>
-                        <property name="margin_right">6</property>
                         <property name="margin_top">6</property>
                         <property name="margin_bottom">6</property>
                         <property name="label_xalign">0.0099999997764825821</property>
@@ -3110,7 +3064,7 @@ poetry to improve the overall look.</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">If the required font does not have a BOLD typeface, you can use this setting to create a BOLD effect. (For example, setting Embolden to 2.0 would thicken the Regular typeface making it appear as bold).</property>
                                     <property name="width_chars">5</property>
-                                    <property name="text" translatable="yes">1.8</property>
+                                    <property name="text" translatable="yes">1.6</property>
                                     <property name="caps_lock_warning">False</property>
                                     <property name="input_purpose">number</property>
                                     <property name="adjustment">a_bolde</property>
@@ -3194,7 +3148,7 @@ poetry to improve the overall look.</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">If the required font does not have a BOLD-ITALIC typeface, you can use this setting to create the BOLD effect. (For example, setting Embolden to 2.0 would thicken the Regular typeface making it appear as bold), and use the Slant settings for the ITALIC effect.</property>
                                     <property name="width_chars">5</property>
-                                    <property name="text" translatable="yes">1.8</property>
+                                    <property name="text" translatable="yes">1.6</property>
                                     <property name="caps_lock_warning">False</property>
                                     <property name="input_purpose">number</property>
                                     <property name="adjustment">a_bolditalice</property>
@@ -3269,7 +3223,6 @@ poetry to improve the overall look.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">end</property>
-                                        <property name="margin_left">6</property>
                                         <property name="margin_right">6</property>
                                         <property name="label" translatable="yes">Text Flow
 Direction:</property>
@@ -3282,7 +3235,7 @@ Direction:</property>
                                     </child>
                                     <child>
                                       <object class="GtkComboBox" id="fcb_textDirection">
-                                        <property name="width_request">100</property>
+                                        <property name="width_request">130</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">Select the direction for the
@@ -3375,28 +3328,802 @@ only supports LTR.</property>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">2</property>
+                        <property name="position">0</property>
                       </packing>
+                    </child>
+                    <child>
+                      <object class="GtkGrid">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <child>
+                          <object class="GtkFrame">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_right">6</property>
+                            <property name="margin_top">2</property>
+                            <property name="margin_bottom">6</property>
+                            <property name="label_xalign">0.039999999105930328</property>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="margin_bottom">6</property>
+                                <property name="orientation">vertical</property>
+                                <property name="spacing">11</property>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="spacing">6</property>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="label" translatable="yes">Script for Text:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkComboBox" id="fcb_script">
+                                        <property name="width_request">170</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">In most cases XeTeX can auto-detect
+the appropriate script, so leave this
+set as "Default" unless there are
+script-specific rendering issues.</property>
+                                        <property name="halign">start</property>
+                                        <property name="resize_mode">queue</property>
+                                        <property name="model">ls_scripts</property>
+                                        <property name="wrap_width">6</property>
+                                        <property name="active">0</property>
+                                        <property name="popup_fixed_width">False</property>
+                                        <property name="id_column">1</property>
+                                        <property name="active_id">0</property>
+                                        <signal name="changed" handler="onScriptChanged" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_colorfonts">
+                                        <property name="label" translatable="yes">Color Fonts</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">Do we support or ignore \Color specifications in stylesheets?</property>
+                                        <property name="halign">end</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">2</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <child>
+                                      <object class="GtkLabel" id="l_digits">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">All known unicode-encoded number/digit systems
+are catered for. So if you don't want to use the
+Latin/Arabic numbers [0-9], you can pick the
+appropriate script here. (Make sure the font you
+are using supports these digits too.)</property>
+                                        <property name="halign">end</property>
+                                        <property name="margin_right">3</property>
+                                        <property name="margin_bottom">3</property>
+                                        <property name="label" translatable="yes">Script for Numbers:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkComboBox" id="fcb_digits">
+                                        <property name="width_request">230</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">All known unicode-encoded number/digit systems
+are catered for. So if you don't want to use the
+Latin/Arabic numbers [0-9], you can pick the
+appropriate script here. (Make sure the font you
+are using supports these digits too.)</property>
+                                        <property name="halign">start</property>
+                                        <property name="margin_left">3</property>
+                                        <property name="model">ls_digits</property>
+                                        <property name="wrap_width">3</property>
+                                        <property name="active">0</property>
+                                        <property name="popup_fixed_width">False</property>
+                                        <property name="id_column">0</property>
+                                        <property name="active_id">0</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="spacing">6</property>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">Font features that have been set up in the
+Paratext project's language settings should
+automatically show up here. These may be
+modified here if necessary. </property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Font Features:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEntry" id="t_fontfeatures">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">Font features that have been set up in the
+Paratext project's language settings should
+automatically show up here. These may be
+modified here if necessary. 
+
+For example, Graphite font features may
+be specified something like this:
+      litr=1,dig0=1,dig4=1,dg69=0,dig7=1</property>
+                                        <property name="halign">start</property>
+                                        <property name="hexpand">False</property>
+                                        <property name="width_chars">30</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_useGraphite">
+                                        <property name="label" translatable="yes">Graphite
+Rendering</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">By default, PTXprint will use Graphite
+Rendering technology for any fonts
+which have Graphite support.
+
+There may be rare occasions when this
+needs to be disabled (for example to
+compare the outputs of two different
+rendering technologies).</property>
+                                        <property name="halign">end</property>
+                                        <property name="active">True</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">2</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">2</property>
+                                  </packing>
+                                </child>
+                              </object>
+                            </child>
+                            <child type="label">
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="margin_top">6</property>
+                                <property name="margin_bottom">6</property>
+                                <property name="label" translatable="yes">Writing System</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkFrame" id="fr_fallbackFont">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
+                            <property name="label_xalign">0.019999999552965164</property>
+                            <child>
+                              <object class="GtkAlignment">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="margin_top">6</property>
+                                <property name="margin_bottom">6</property>
+                                <property name="left_padding">12</property>
+                                <child>
+                                  <object class="GtkGrid" id="gr_fallbackFont">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="row_spacing">6</property>
+                                    <property name="column_spacing">12</property>
+                                    <child>
+                                      <object class="GtkButton" id="btn_findMissingChars">
+                                        <property name="label" translatable="yes">Find Missing Characters:</property>
+                                        <property name="width_request">164</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="tooltip_text" translatable="yes">If the primary font is missing any characters
+(usually special punctuation, or quotes), then
+these can be listed here, and handled using
+the Font specified below.
+
+It is recommended that you select as many
+scripture books as available before using
+this tool to find missing characters.
+
+Note that the following characters are reserved
+and are ignored by the Fallback font functionality:
+           \u2018 \u2019 \u201c \u201d * # %</property>
+                                        <property name="halign">end</property>
+                                        <signal name="clicked" handler="onFindMissingCharsClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEntry" id="t_missingChars">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">First use the button (on the left) to find
+any characters missing from the primary
+font. You may add to this list if needed.
+Use spaces between items.
+Note that you can also use \u0ABC codes
+to enter hard-to-type characters.</property>
+                                        <property name="halign">start</property>
+                                        <property name="width_chars">24</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_fallbackFont">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">Select a font to be used as a substitute or
+"fallback" for the characters listed above
+which are not in the Regular font.
+
+Note that if the label text is RED, it means 
+that the font currently selected doesn't 
+have/support all the missing characters
+either - so it is wise to choose another font.</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Font for characters
+missing in main font:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="bl_fontExtraR">
+                                        <property name="label" translatable="yes">Select font...</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="tooltip_text" translatable="yes">Click to select a font to be used as a substitute
+or "fallback" for the characters listed above
+which are not in the Regular font.</property>
+                                        <signal name="clicked" handler="onFontExtraRclicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child type="label">
+                              <object class="GtkCheckButton" id="c_useFallbackFont">
+                                <property name="label" translatable="yes">Use Fallback Font</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">This setting is used to prevent [] "Tofu" in the
+printed text. If the primary font is missing any
+special characters (for example curly quotes),
+then an alternative "fallback" font can be used
+to ensure that they are displayed properly.</property>
+                                <property name="draw_indicator">True</property>
+                                <signal name="toggled" handler="onUseFallbackFontchanged" swapped="no"/>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkFrame" id="fr_paragraphAdjust">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="halign">start</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
+                            <property name="hexpand">False</property>
+                            <property name="label_xalign">0.039999999105930328</property>
+                            <child>
+                              <object class="GtkAlignment">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="margin_top">6</property>
+                                <property name="margin_bottom">6</property>
+                                <property name="left_padding">12</property>
+                                <child>
+                                  <object class="GtkGrid">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="row_spacing">6</property>
+                                    <property name="column_spacing">12</property>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">A Paragraph Adjust List needs to be in this format:
+MRK 2.7 +1    (i.e. expand the para at Mark 2.7 by one line) 
+MRK 3.20 -1   (i.e. shrink the para at Mark 3:20 by one line)
+%MARK 4.14 +1   (ignore this line - treat it as a comment)   
+MRK 5.8 +2    (i.e. expand the para at Mark 2.7 by two lines)
+etc.
+Note that adjusting paragraphs needs to be done right at the
+end when all other settings have been finalized. Otherwise you
+are likely to have to re-do it all again.</property>
+                                        <property name="halign">start</property>
+                                        <property name="label" translatable="yes">Adjust layout by shrinking
+or expanding paragraphs:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_editParaAdjList">
+                                        <property name="label" translatable="yes">Edit Adjust List...</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="tooltip_text" translatable="yes">Click to view or edit the Para Adj List
+file(s) in the Viewer tab.</property>
+                                        <signal name="clicked" handler="onEditAdjListClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_hyphenate">
+                                        <property name="label" translatable="yes">Hyphenate</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">In order for hyphenation to work optimally, you need 
+to click the "Create Hyphenation List" button on the
+left. This will create a XeTeX hyphenation list from the
+hyphenation list in Paratext.
+
+Note that if you don't do this, then it will use (standard
+English) hyphenation rules which may not be ideal
+for the language you are using.</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                        <signal name="clicked" handler="onHyphenateClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_generateHyphenationList">
+                                        <property name="label" translatable="yes">Create Hyphenation List</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="tooltip_text" translatable="yes">Click this button to generate a hyphenation 
+list that can be used by XeTeX to optimize
+hyphenation. This will read Paratext's
+HyphenatedWords.txt list and optimize it.
+Note that the Hypenate option on the Body
+tab needs to be checked to make us of this.</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="hexpand">True</property>
+                                        <signal name="clicked" handler="onGenerateHyphenationListClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">1</property>
+                                        <property name="height">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_omitHyphen">
+                                        <property name="label" translatable="yes">Omit '-'hyphen</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">Some scripts use hyphenation to break long
+words onto the next line, BUT don't need to
+display the actual '-' character. If this option
+is checked, then "hyphens" will be invisible.</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">2</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child type="label">
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Paragraph Adjustments</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkFrame">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_left">6</property>
+                            <property name="margin_top">2</property>
+                            <property name="margin_bottom">6</property>
+                            <property name="label_xalign">0.039999999105930328</property>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="margin_bottom">6</property>
+                                <property name="orientation">vertical</property>
+                                <property name="spacing">11</property>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="spacing">4</property>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_spacing">
+                                        <property name="label" translatable="yes">Spacing 
+stretch:</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">The horizontal distance that the space
+character can use between words is
+adjustable - and allows a greater degree
+of flexibility when trying to shrink or
+grow paragrahs when balancing pages.</property>
+                                        <property name="halign">end</property>
+                                        <property name="image_position">right</property>
+                                        <property name="draw_indicator">True</property>
+                                        <signal name="clicked" handler="onSpacingClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_minSpace">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">Maximum size % that a space
+can grow to when necessary.</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Min:</property>
+                                        <property name="justify">right</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSpinButton" id="s_minSpace">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">When justifying paragraphs, and especially when
+trying to shrink or grow a paragraph to take fewer
+or more lines, the horizontal distance that a space
+uses can be adjusted - allowing the text to shrink
+or grow. Lower values will enable a 'tighter' text
+and make it more flexible, but keep the readers in
+mind - and their need to distinguish word-breaks
+with ease. This value is a % percentage of a normal
+space width.</property>
+                                        <property name="opacity">0.80000000000000004</property>
+                                        <property name="halign">start</property>
+                                        <property name="max_length">3</property>
+                                        <property name="width_chars">3</property>
+                                        <property name="text" translatable="yes">50</property>
+                                        <property name="caps_lock_warning">False</property>
+                                        <property name="input_purpose">number</property>
+                                        <property name="adjustment">a_minSpace</property>
+                                        <property name="climb_rate">5</property>
+                                        <property name="numeric">True</property>
+                                        <property name="update_policy">if-valid</property>
+                                        <property name="value">50</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_maxSpace">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">Maximum size % that a space
+can grow to when necessary.</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Max:</property>
+                                        <property name="justify">right</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSpinButton" id="s_maxSpace">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">When justifying paragraphs, and especially when
+trying to shrink or grow a paragraph to take fewer
+or more lines, the horizontal distance that a space
+uses can be adjusted - allowing the text to shrink
+or grow. Larger values will enable a 'looser' text
+and make it more flexible to grow, but be careful
+to avoid 'rivers' or white space in paragraphs.
+This value is a % percentage of a normal
+space width.</property>
+                                        <property name="opacity">0.80000000000000004</property>
+                                        <property name="halign">start</property>
+                                        <property name="max_length">4</property>
+                                        <property name="width_chars">2</property>
+                                        <property name="text" translatable="yes">200</property>
+                                        <property name="caps_lock_warning">False</property>
+                                        <property name="input_purpose">number</property>
+                                        <property name="adjustment">a_maxSpace</property>
+                                        <property name="climb_rate">5</property>
+                                        <property name="numeric">True</property>
+                                        <property name="update_policy">if-valid</property>
+                                        <property name="value">200</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">4</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="spacing">8</property>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">None (default): Most projects will use this setting.
+
+Some: Spaces between words are adjusted, but the rendering of individual words is *NOT* affected by the spaces.
+
+Full: Spaces between words are adjusted, and the rendering of individual words *IS* affected by the spaces.</property>
+                                        <property name="halign">end</property>
+                                        <property name="margin_top">1</property>
+                                        <property name="margin_bottom">1</property>
+                                        <property name="label" translatable="yes">Cross-space 
+Contextualization:</property>
+                                        <property name="justify">right</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkComboBoxText" id="ecb_spaceCntxtlztn">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">None (default): Most projects would use this setting.
+
+Some: Spaces between words are adjusted, but the rendering of individual words is *NOT* affected by the spaces.
+
+Full: Spaces between words are adjusted, and the rendering of individual words *IS* affected by the spaces.</property>
+                                        <property name="halign">start</property>
+                                        <property name="active">0</property>
+                                        <property name="has_entry">True</property>
+                                        <property name="active_id">0</property>
+                                        <items>
+                                          <item id="0" translatable="yes">None</item>
+                                          <item id="1" translatable="yes">Some</item>
+                                          <item id="2" translatable="yes">Full</item>
+                                        </items>
+                                        <child internal-child="entry">
+                                          <object class="GtkEntry">
+                                            <property name="can_focus">True</property>
+                                            <property name="width_chars">6</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_linebreakon">
+                                        <property name="label" translatable="yes">Specify Line 
+Break Locale:</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="draw_indicator">True</property>
+                                        <signal name="clicked" handler="onLineBreakChanged" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEntry" id="t_linebreaklocale">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="width_chars">9</property>
+                                        <property name="max_width_chars">4</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">3</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                              </object>
+                            </child>
+                            <child type="label">
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="margin_top">6</property>
+                                <property name="margin_bottom">6</property>
+                                <property name="label" translatable="yes">Character Spacing</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <placeholder/>
                     </child>
                   </object>
                   <packing>
-                    <property name="position">1</property>
-                    <property name="tab_fill">False</property>
+                    <property name="position">2</property>
                   </packing>
                 </child>
                 <child type="tab">
-                  <object class="GtkLabel" id="lb_Layout">
+                  <object class="GtkLabel" id="lb_Font">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Page Setup, Font Size and 
-Line Spacing. Columns,
-Chapter and Verse DIgits,
-and advanced Font Options.</property>
-                    <property name="label" translatable="yes">Layout</property>
-                    <property name="justify">center</property>
+                    <property name="label" translatable="yes">Font</property>
                   </object>
                   <packing>
-                    <property name="position">1</property>
+                    <property name="position">2</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
@@ -4149,284 +4876,10 @@ be turned OFF (to omit the main text).</property>
                         <property name="can_focus">False</property>
                         <property name="spacing">5</property>
                         <child>
-                          <object class="GtkFrame" id="fr_paragraphAdjust">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="halign">start</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="hexpand">False</property>
-                            <property name="label_xalign">0.039999999105930328</property>
-                            <child>
-                              <object class="GtkAlignment">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="halign">start</property>
-                                <property name="margin_top">6</property>
-                                <property name="margin_bottom">6</property>
-                                <property name="left_padding">12</property>
-                                <child>
-                                  <object class="GtkGrid">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin_right">6</property>
-                                    <property name="margin_bottom">6</property>
-                                    <property name="row_spacing">6</property>
-                                    <property name="column_spacing">12</property>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">A Paragraph Adjust List needs to be in this format:
-MRK 2.7 +1    (i.e. expand the para at Mark 2.7 by one line) 
-MRK 3.20 -1   (i.e. shrink the para at Mark 3:20 by one line)
-%MARK 4.14 +1   (ignore this line - treat it as a comment)   
-MRK 5.8 +2    (i.e. expand the para at Mark 2.7 by two lines)
-etc.
-Note that adjusting paragraphs needs to be done right at the
-end when all other settings have been finalized. Otherwise you
-are likely to have to re-do it all again.</property>
-                                        <property name="halign">start</property>
-                                        <property name="label" translatable="yes">Adjust layout by shrinking
-or expanding paragraphs:</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkButton" id="btn_editParaAdjList">
-                                        <property name="label" translatable="yes">Edit Adjust List...</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
-                                        <property name="tooltip_text" translatable="yes">Click to view or edit the Para Adj List
-file(s) in the Viewer tab.</property>
-                                        <property name="margin_right">6</property>
-                                        <signal name="clicked" handler="onEditAdjListClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_hyphenate">
-                                        <property name="label" translatable="yes">Hyphenate</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">In order for hyphenation to work optimally, you need 
-to click the "Create Hyphenation List" button on the
-left. This will create a XeTeX hyphenation list from the
-hyphenation list in Paratext.
-
-Note that if you don't do this, then it will use (standard
-English) hyphenation rules which may not be ideal
-for the language you are using.</property>
-                                        <property name="halign">start</property>
-                                        <property name="draw_indicator">True</property>
-                                        <signal name="clicked" handler="onHyphenateClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkButton" id="btn_generateHyphenationList">
-                                        <property name="label" translatable="yes">Create Hyphenation List</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
-                                        <property name="tooltip_text" translatable="yes">Click this button to generate a hyphenation 
-list that can be used by XeTeX to optimize
-hyphenation. This will read Paratext's
-HyphenatedWords.txt list and optimize it.
-Note that the Hypenate option on the Body
-tab needs to be checked to make us of this.</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="hexpand">True</property>
-                                        <signal name="clicked" handler="onGenerateHyphenationListClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">1</property>
-                                        <property name="height">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_omitHyphen">
-                                        <property name="label" translatable="yes">Omit '-'hyphen</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Some scripts use hyphenation to break long
-words onto the next line, BUT don't need to
-display the actual '-' character. If this option
-is checked, then "hyphens" will be invisible.</property>
-                                        <property name="halign">start</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                            <child type="label">
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Paragraph Adjustments</property>
-                              </object>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="position">0</property>
-                          </packing>
+                          <placeholder/>
                         </child>
                         <child>
-                          <object class="GtkFrame" id="fr_fallbackFont">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="margin_left">6</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="label_xalign">0.019999999552965164</property>
-                            <child>
-                              <object class="GtkAlignment">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="halign">start</property>
-                                <property name="margin_top">6</property>
-                                <property name="margin_bottom">6</property>
-                                <property name="left_padding">12</property>
-                                <child>
-                                  <object class="GtkGrid" id="gr_fallbackFont">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin_right">6</property>
-                                    <property name="margin_bottom">6</property>
-                                    <property name="row_spacing">6</property>
-                                    <property name="column_spacing">12</property>
-                                    <child>
-                                      <object class="GtkButton" id="btn_findMissingChars">
-                                        <property name="label" translatable="yes">Find Missing Characters:</property>
-                                        <property name="width_request">164</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
-                                        <property name="tooltip_text" translatable="yes">If the primary font is missing any characters
-(usually special punctuation, or quotes), then
-these can be listed here, and handled using
-the Font specified below.
-
-It is recommended that you select as many
-scripture books as available before using
-this tool to find missing characters.
-
-Note that the following characters are reserved
-and are ignored by the Fallback font functionality:
-           \u2018 \u2019 \u201c \u201d * # %</property>
-                                        <property name="halign">end</property>
-                                        <signal name="clicked" handler="onFindMissingCharsClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEntry" id="t_missingChars">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">First use the button (on the left) to find
-any characters missing from the primary
-font. You may add to this list if needed.
-Use spaces between items.
-Note that you can also use \u0ABC codes
-to enter hard-to-type characters.</property>
-                                        <property name="halign">start</property>
-                                        <property name="margin_right">6</property>
-                                        <property name="width_chars">24</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel" id="l_fallbackFont">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">Select a font to be used as a substitute or
-"fallback" for the characters listed above
-which are not in the Regular font.
-
-Note that if the label text is RED, it means 
-that the font currently selected doesn't 
-have/support all the missing characters
-either - so it is wise to choose another font.</property>
-                                        <property name="halign">end</property>
-                                        <property name="label" translatable="yes">Font for characters
-missing in main font:</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkButton" id="bl_fontExtraR">
-                                        <property name="label" translatable="yes">Select font...</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
-                                        <property name="tooltip_text" translatable="yes">Click to select a font to be used as a substitute
-or "fallback" for the characters listed above
-which are not in the Regular font.</property>
-                                        <signal name="clicked" handler="onFontExtraRclicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                            <child type="label">
-                              <object class="GtkCheckButton" id="c_useFallbackFont">
-                                <property name="label" translatable="yes">Use Fallback Font</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">This setting is used to prevent [] "Tofu" in the
-printed text. If the primary font is missing any
-special characters (for example curly quotes),
-then an alternative "fallback" font can be used
-to ensure that they are displayed properly.</property>
-                                <property name="draw_indicator">True</property>
-                                <signal name="toggled" handler="onUseFallbackFontchanged" swapped="no"/>
-                              </object>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="position">1</property>
-                          </packing>
+                          <placeholder/>
                         </child>
                       </object>
                       <packing>
@@ -4437,7 +4890,7 @@ to ensure that they are displayed properly.</property>
                     </child>
                   </object>
                   <packing>
-                    <property name="position">2</property>
+                    <property name="position">3</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
@@ -4455,7 +4908,7 @@ and Illustrations.</property>
                     <property name="justify">center</property>
                   </object>
                   <packing>
-                    <property name="position">2</property>
+                    <property name="position">3</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
@@ -5874,7 +6327,7 @@ to produce the PDF.</property>
                     </child>
                   </object>
                   <packing>
-                    <property name="position">3</property>
+                    <property name="position">4</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
@@ -5889,7 +6342,7 @@ Footnotes and Cross-references.</property>
                     <property name="label" translatable="yes">Head+Foot</property>
                   </object>
                   <packing>
-                    <property name="position">3</property>
+                    <property name="position">4</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
@@ -6307,7 +6760,7 @@ then enable this option).</property>
                     </child>
                   </object>
                   <packing>
-                    <property name="position">4</property>
+                    <property name="position">5</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
@@ -6323,7 +6776,7 @@ file system).</property>
                     <property name="label" translatable="yes">Pictures</property>
                   </object>
                   <packing>
-                    <property name="position">4</property>
+                    <property name="position">5</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
@@ -6628,423 +7081,7 @@ this option checked (on).</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkFrame">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="margin_top">2</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="label_xalign">0.039999999105930328</property>
-                            <child>
-                              <object class="GtkBox">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="margin_left">6</property>
-                                <property name="margin_right">6</property>
-                                <property name="margin_bottom">6</property>
-                                <property name="orientation">vertical</property>
-                                <property name="spacing">11</property>
-                                <child>
-                                  <object class="GtkBox">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="spacing">6</property>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="label" translatable="yes">Script for text:</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkComboBox" id="fcb_script">
-                                        <property name="width_request">170</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">In most cases XeTeX can auto-detect
-the appropriate script, so leave this
-set as "Default" unless there are
-script-specific rendering issues.</property>
-                                        <property name="halign">start</property>
-                                        <property name="margin_right">6</property>
-                                        <property name="resize_mode">queue</property>
-                                        <property name="model">ls_scripts</property>
-                                        <property name="wrap_width">6</property>
-                                        <property name="active">0</property>
-                                        <property name="popup_fixed_width">False</property>
-                                        <property name="id_column">1</property>
-                                        <property name="active_id">0</property>
-                                        <signal name="changed" handler="onScriptChanged" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">False</property>
-                                        <property name="position">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_colorfonts">
-                                        <property name="label" translatable="yes">Color
-Fonts</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Do we support or ignore \Color specifications in stylesheets?</property>
-                                        <property name="halign">end</property>
-                                        <property name="margin_left">4</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkBox">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="spacing">8</property>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">None (default): Most projects will use this setting.
-
-Some: Spaces between words are adjusted, but the rendering of individual words is *NOT* affected by the spaces.
-
-Full: Spaces between words are adjusted, and the rendering of individual words *IS* affected by the spaces.</property>
-                                        <property name="halign">end</property>
-                                        <property name="margin_left">2</property>
-                                        <property name="margin_top">1</property>
-                                        <property name="margin_bottom">1</property>
-                                        <property name="label" translatable="yes">Cross-space 
-Contextualization:</property>
-                                        <property name="justify">right</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkComboBoxText" id="ecb_spaceCntxtlztn">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">None (default): Most projects would use this setting.
-
-Some: Spaces between words are adjusted, but the rendering of individual words is *NOT* affected by the spaces.
-
-Full: Spaces between words are adjusted, and the rendering of individual words *IS* affected by the spaces.</property>
-                                        <property name="halign">start</property>
-                                        <property name="active">0</property>
-                                        <property name="has_entry">True</property>
-                                        <property name="active_id">0</property>
-                                        <items>
-                                          <item id="0" translatable="yes">None</item>
-                                          <item id="1" translatable="yes">Some</item>
-                                          <item id="2" translatable="yes">Full</item>
-                                        </items>
-                                        <child internal-child="entry">
-                                          <object class="GtkEntry">
-                                            <property name="can_focus">False</property>
-                                            <property name="width_chars">6</property>
-                                          </object>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">False</property>
-                                        <property name="position">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_linebreakon">
-                                        <property name="label" translatable="yes">Specify Line 
-Break Locale:</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="halign">end</property>
-                                        <property name="draw_indicator">True</property>
-                                        <signal name="clicked" handler="onLineBreakChanged" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEntry" id="t_linebreaklocale">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="width_chars">9</property>
-                                        <property name="max_width_chars">4</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">3</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkBox">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="spacing">4</property>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_spacing">
-                                        <property name="label" translatable="yes">Spacing 
-stretch:</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">The horizontal distance that the space
-character can use between words is
-adjustable - and allows a greater degree
-of flexibility when trying to shrink or
-grow paragrahs when balancing pages.</property>
-                                        <property name="halign">end</property>
-                                        <property name="margin_left">2</property>
-                                        <property name="image_position">right</property>
-                                        <property name="draw_indicator">True</property>
-                                        <signal name="clicked" handler="onSpacingClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel" id="l_minSpace">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">Maximum size % that a space
-can grow to when necessary.</property>
-                                        <property name="halign">end</property>
-                                        <property name="label" translatable="yes">Min:</property>
-                                        <property name="justify">right</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkSpinButton" id="s_minSpace">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">When justifying paragraphs, and especially when
-trying to shrink or grow a paragraph to take fewer
-or more lines, the horizontal distance that a space
-uses can be adjusted - allowing the text to shrink
-or grow. Lower values will enable a 'tighter' text
-and make it more flexible, but keep the readers in
-mind - and their need to distinguish word-breaks
-with ease. This value is a % percentage of a normal
-space width.</property>
-                                        <property name="opacity">0.80000000000000004</property>
-                                        <property name="halign">start</property>
-                                        <property name="margin_right">6</property>
-                                        <property name="max_length">3</property>
-                                        <property name="width_chars">3</property>
-                                        <property name="text" translatable="yes">50</property>
-                                        <property name="caps_lock_warning">False</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_minSpace</property>
-                                        <property name="climb_rate">5</property>
-                                        <property name="numeric">True</property>
-                                        <property name="update_policy">if-valid</property>
-                                        <property name="value">50</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">False</property>
-                                        <property name="position">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel" id="l_maxSpace">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">Maximum size % that a space
-can grow to when necessary.</property>
-                                        <property name="halign">end</property>
-                                        <property name="margin_left">6</property>
-                                        <property name="label" translatable="yes">Max:</property>
-                                        <property name="justify">right</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">3</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkSpinButton" id="s_maxSpace">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">When justifying paragraphs, and especially when
-trying to shrink or grow a paragraph to take fewer
-or more lines, the horizontal distance that a space
-uses can be adjusted - allowing the text to shrink
-or grow. Larger values will enable a 'looser' text
-and make it more flexible to grow, but be careful
-to avoid 'rivers' or white space in paragraphs.
-This value is a % percentage of a normal
-space width.</property>
-                                        <property name="opacity">0.80000000000000004</property>
-                                        <property name="halign">start</property>
-                                        <property name="margin_right">6</property>
-                                        <property name="max_length">4</property>
-                                        <property name="width_chars">2</property>
-                                        <property name="text" translatable="yes">200</property>
-                                        <property name="caps_lock_warning">False</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_maxSpace</property>
-                                        <property name="climb_rate">5</property>
-                                        <property name="numeric">True</property>
-                                        <property name="update_policy">if-valid</property>
-                                        <property name="value">200</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">False</property>
-                                        <property name="position">4</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkBox">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="spacing">6</property>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">Font features that have been set up in the
-Paratext project's language settings should
-automatically show up here. These may be
-modified here if necessary. </property>
-                                        <property name="halign">end</property>
-                                        <property name="margin_left">6</property>
-                                        <property name="label" translatable="yes">Font Features:</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEntry" id="t_fontfeatures">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">Font features that have been set up in the
-Paratext project's language settings should
-automatically show up here. These may be
-modified here if necessary. 
-
-For example, Graphite font features may
-be specified something like this:
-      litr=1,dig0=1,dig4=1,dg69=0,dig7=1</property>
-                                        <property name="halign">start</property>
-                                        <property name="margin_right">6</property>
-                                        <property name="hexpand">False</property>
-                                        <property name="width_chars">30</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_useGraphite">
-                                        <property name="label" translatable="yes">Graphite
-Rendering</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">By default, PTXprint will use Graphite
-Rendering technology for any fonts
-which have Graphite support.
-
-There may be rare occasions when this
-needs to be disabled (for example to
-compare the outputs of two different
-rendering technologies).</property>
-                                        <property name="halign">end</property>
-                                        <property name="margin_left">6</property>
-                                        <property name="margin_right">6</property>
-                                        <property name="active">True</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">2</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">4</property>
-                                  </packing>
-                                </child>
-                              </object>
-                            </child>
-                            <child type="label">
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="margin_top">6</property>
-                                <property name="margin_bottom">6</property>
-                                <property name="label" translatable="yes">Writing System</property>
-                              </object>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
+                          <placeholder/>
                         </child>
                       </object>
                       <packing>
@@ -7570,7 +7607,7 @@ affects poetry indentation.
                     </child>
                   </object>
                   <packing>
-                    <property name="position">5</property>
+                    <property name="position">6</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
@@ -7588,7 +7625,7 @@ settings to support any Writing System.</property>
                     <property name="justify">center</property>
                   </object>
                   <packing>
-                    <property name="position">5</property>
+                    <property name="position">6</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
@@ -7631,7 +7668,7 @@ settings to support any Writing System.</property>
                     </child>
                   </object>
                   <packing>
-                    <property name="position">6</property>
+                    <property name="position">7</property>
                   </packing>
                 </child>
                 <child type="tab">
@@ -7644,7 +7681,7 @@ from XeTeX processing.</property>
                     <property name="label" translatable="yes">Log</property>
                   </object>
                   <packing>
-                    <property name="position">6</property>
+                    <property name="position">7</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
@@ -8485,7 +8522,7 @@ Numbers</property>
                     </child>
                   </object>
                   <packing>
-                    <property name="position">7</property>
+                    <property name="position">8</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
@@ -8499,7 +8536,7 @@ relating to PTXprint.</property>
                     <property name="label" translatable="yes">Viewer</property>
                   </object>
                   <packing>
-                    <property name="position">7</property>
+                    <property name="position">8</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
@@ -8802,7 +8839,7 @@ options here to create a Diglot or Didoc.</property>
                     </child>
                   </object>
                   <packing>
-                    <property name="position">9</property>
+                    <property name="position">10</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
@@ -8816,7 +8853,7 @@ project.</property>
                     <property name="label" translatable="yes">Diglot</property>
                   </object>
                   <packing>
-                    <property name="position">8</property>
+                    <property name="position">9</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
@@ -9122,7 +9159,7 @@ to specify the settings for these.</property>
                     </child>
                   </object>
                   <packing>
-                    <property name="position">9</property>
+                    <property name="position">10</property>
                   </packing>
                 </child>
                 <child type="tab">
@@ -9137,7 +9174,7 @@ be specified.</property>
                     <property name="label" translatable="yes">Borders</property>
                   </object>
                   <packing>
-                    <property name="position">9</property>
+                    <property name="position">10</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
@@ -9326,6 +9363,36 @@ Shortcut key: &lt;Ctrl-P&gt;</property>
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkListStore" id="ls_scripts">
+    <columns>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name id -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">Latn</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="ls_textDirection">
+    <columns>
+      <!-- column-name Direction -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Left-to-Right</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Right-to-Left</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Top-to-Bottom</col>
+      </row>
+    </data>
   </object>
   <object class="GtkWindow" id="w_splash">
     <property name="width_request">450</property>
