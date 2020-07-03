@@ -1,4 +1,4 @@
-ptxprint (0.8.7-1ubuntu2) bionic; urgency=medium
+ptxprint (0.8.6-1ubuntu2) bionic; urgency=medium
 
   * Adjusted packaging for LP recipe. 
 
