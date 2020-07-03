@@ -2,9 +2,9 @@ Source: ptxprint
 Section: text
 Priority: optional
 Maintainer: Nicolas Spalinger <nicolas.spalinger@sil.org>
-Build-Depends: debhelper (>=12), dh-python, python3-all, python3-dev, python3-setuptools, python3-all-dev
+Build-Depends: debhelper (>=10), dh-python, python3-all, python3-dev, python3-setuptools, python3-all-dev
 Standards-Version: 4.5.0
-X-Python3-Version: >= 3.8
+X-Python3-Version: >= 3.6
 
 Package: python3-ptxprint
 Architecture: all

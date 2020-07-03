@@ -1,3 +1,9 @@
+ptxprint (0.8.7-1ubuntu2) bionic; urgency=medium
+
+  * Adjusted packaging for LP recipe. 
+
+ -- Nicolas Spalinger <nicolas.spalinger@sil.org>  Fri, 03 Jul 2020 10:47:19 +0200
+
 ptxprint (0.8.6-1ubuntu1) focal; urgency=medium
 
   * Initial release. Still beta. 
