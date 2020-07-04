@@ -44,13 +44,13 @@ ModelMap = {
     # "project/id":               ("fcb_project", None),
     "project/hideadvsettings":  ("c_hideAdvancedSettings", None),
     "project/showlayouttab":    ("c_showLayoutTab", None),
+    "project/showfonttab":      ("c_showFontTab", None),
     "project/showbodytab":      ("c_showBodyTab", None),
     "project/showheadfoottab":  ("c_showHeadFootTab", None),
     "project/showpicturestab":  ("c_showPicturesTab", None),
     "project/showadvancedtab":  ("c_showAdvancedTab", None),
+    "project/showdiglottab":    ("c_showDiglotBorderTab", None),
     "project/showviewertab":    ("c_showViewerTab", None),
-    "project/showdiglottab":    ("c_showDiglotTab", None),
-    "project/showborderstab":   ("c_showBordersTab", None),
     "project/keeptempfiles":    ("c_keepTemporaryFiles", None),
     "project/pdfx1acompliant":  ("c_PDFx1aOutput", None),
     "project/blockexperimental": ("c_experimental", lambda w,v: "" if v else "%"),
@@ -95,7 +95,6 @@ ModelMap = {
     # "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
     "paper/fontfactor":         ("s_fontsize", lambda w,v: "{:.3f}".format(float(v) / 12) or "1.000"),
 
-    "fancy/showborderstab":     ("c_showBordersTab", None),
     "fancy/enableborders":      ("c_borders", lambda w,v: "" if v else "%"),
     "fancy/pageborder":         ("c_inclPageBorder", lambda w,v: "" if v else "%"),
     "fancy/pageborderpdf":      ("btn_selectPageBorderPDF", lambda w,v: w.pageborder.as_posix() \

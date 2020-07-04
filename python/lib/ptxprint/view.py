@@ -358,8 +358,8 @@ class ViewModel:
         return config
 
     def versionFwdConfig(self, config):
-        version = config.getfloat("config", "version", fallback=0.)
-        if version < 0.9:
+        version = config.getfloat("config", "version", fallback="0.0")
+        if float(version) < 0.9:
             # self._configset(config, "document/ifchapternum", not config.getboolean("document", "ifomitchapternum"))
             # config.set("config", "version", "0.9")
             pass
@@ -393,6 +393,7 @@ class ViewModel:
                                 # print(key,v[0])
                                 val = float(val) if val is not None and val != '' else 0
                             elif v[0].startswith("c_"):
+                                print("v[0]:", v[0])
                                 val = config.getboolean(sect, opt) if val is not None else False
                             if val is not None:
                                 setv(v[0], val)

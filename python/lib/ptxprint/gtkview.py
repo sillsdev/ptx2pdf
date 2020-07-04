@@ -104,7 +104,7 @@ class Splash(Thread):
 _sensitivities = {
     "c_mainBodyText" :         ["gr_mainBodyText"],
     "c_doublecolumn" :         ["gr_doubleColumn", "c_clSingleColLayout"],
-    "c_useFallbackFont" :      ["gr_fallbackFont"],
+    "c_useFallbackFont" :      ["btn_findMissingChars", "t_missingChars", "l_fallbackFont", "bl_fontExtraR"],
     "c_includeFootnotes" :     ["bx_fnOptions"],
     "c_includeXrefs" :         ["bx_xrOptions"],
     "c_includeillustrations" : ["gr_IllustrationOptions"],
@@ -154,14 +154,13 @@ _nonsensitivities = {
 # Checkboxes and the Tabs that they make (in)visible
 _visibilities = {
     "c_showLayoutTab" :        ["tb_Layout"],
-    # "c_showFontTab" :          ["tb_Font"],
+    "c_showFontTab" :          ["tb_Font"],
     "c_showBodyTab" :          ["tb_Body"],
     "c_showHeadFootTab" :      ["tb_HeadFoot"],
     "c_showPicturesTab" :      ["tb_Pictures"],
     "c_showAdvancedTab" :      ["tb_Advanced"],
-    "c_showViewerTab" :        ["tb_ViewerEditor"],
-    "c_showDiglotTab" :        ["tb_Diglot"],
-    "c_showBordersTab" :       ["tb_FancyBorders"]
+    "c_showDiglotBorderTab" :  ["tb_DiglotBorder"],
+    "c_showViewerTab" :        ["tb_ViewerEditor"]
 }
 # _tabIDs = {
     # "tb_Layout"],
@@ -170,9 +169,8 @@ _visibilities = {
     # "tb_HeadFoot"],
     # "tb_Pictures"],
     # "tb_Advanced"],
+    # "tb_DiglotBorder"],
     # "tb_ViewerEditor"]
-    # "tb_Diglot"],
-    # "tb_FancyBorders"]
 
 class GtkViewModel(ViewModel):
 
@@ -284,8 +282,8 @@ class GtkViewModel(ViewModel):
         lsfonts = self.builder.get_object("ls_font")
         # sleep(1)  # Until we want people to see the splash screen
 
-        olst = ["b_print", "bx_SavedConfigSettings", "tb_Layout", "tb_Body", "tb_HeadFoot", "tb_Pictures",
-                "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_Diglot", "tb_FancyBorders"]
+        olst = ["b_print", "bx_SavedConfigSettings", "tb_Font", "tb_Layout", "tb_Body", "tb_HeadFoot", "tb_Pictures",
+                "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_DiglotBorder"]
         self.initialised = True
         for o in olst:
             self.builder.get_object(o).set_sensitive(False)
@@ -340,7 +338,7 @@ class GtkViewModel(ViewModel):
             for c in ("c_showAdvancedTab", "c_showViewerTab"):
                 self.builder.get_object(c).set_active(True)
 
-        for c in ("tb_Advanced", "tb_ViewerEditor", "tb_Diglot", "tb_FancyBorders", "l_missingPictureString",
+        for c in ("tb_Advanced", "tb_ViewerEditor", "tb_DiglotBorder", "l_missingPictureString",
                   "btn_editPicList", "l_imageTypeOrder", "t_imageTypeOrder", "fr_chapVerse", "s_colgutteroffset",
                   "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "bx_AdvFootnoteConfig", "l_colgutteroffset",
                   "c_usePicList", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", "c_exclusiveFiguresFolder", 
@@ -352,6 +350,7 @@ class GtkViewModel(ViewModel):
                   "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "fcb_textDirection", "l_digits", "fcb_digits",
                   "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
                   "gr_fnAdvOptions", "gr_fnSpacingOptions", "c_figexclwebapp", "bx_horizRule", "l_glossaryMarkupStyle"):
+            print("c in 355", c)
             self.builder.get_object(c).set_visible(not self.get("c_hideAdvancedSettings"))
 
         # Resize Main UI Window appropriately
@@ -392,7 +391,7 @@ class GtkViewModel(ViewModel):
     def get(self, wid, default=None, sub=0, asstr=False, skipmissing=False):
         w = self.builder.get_object(wid)
         if w is None:
-            if not skipmissing and not w.startswith("_"):
+            if not skipmissing and not wid.startswith("_"):
                 print("Can't find {} in the model".format(wid))
             return super(GtkViewModel, self).get(wid)
         v = None
@@ -490,7 +489,7 @@ class GtkViewModel(ViewModel):
     def onOK(self, btn):
         jobs = self.getBooks()
         # If the viewer/editor is open on an Editable tab, then "autosave" contents
-        if self.builder.get_object("nbk_Main").get_current_page() == 7:
+        if self.builder.get_object("nbk_Main").get_current_page() == 9:
             pgnum = self.builder.get_object("nbk_Viewer").get_current_page()
             if 1 <= pgnum <= 2 or pgnum == 5:
                 self.onSaveEdits(None)
@@ -647,7 +646,9 @@ class GtkViewModel(ViewModel):
         super(GtkViewModel, self).loadConfig(config)
         for k, v in _sensitivities.items():
             state = self.get(k)
+            # print("k,v", k,v)
             for w in v:
+                # print("w", w)
                 self.builder.get_object(w).set_sensitive(state)
         for k, v in _nonsensitivities.items():
             state = not self.get(k)
@@ -655,10 +656,8 @@ class GtkViewModel(ViewModel):
                 self.builder.get_object(w).set_sensitive(state)
         if self.get("c_includeillustrations"):
             self.builder.get_object("lb_Pictures").set_markup("<span color='#7B90B7'>Pictures</span>")
-        if self.get("c_diglot"):
-            self.builder.get_object("lb_Diglot").set_markup("<span color='#7B90B7'>Diglot</span>")
-        if self.get("c_borders"):
-            self.builder.get_object("lb_FancyBorders").set_markup("<span color='#7B90B7'>Borders</span>")
+        if self.get("c_diglot") or self.get("c_borders"):
+            self.builder.get_object("lb_DiglotBorder").set_markup("<span color='#7B90B7'>Diglot+Border</span>")
 
     def sensiVisible(self, k, focus=False):
         state = self.get(k)
@@ -1077,6 +1076,9 @@ class GtkViewModel(ViewModel):
     def onShowLayoutTabClicked(self, btn):
         self.sensiVisible("c_showLayoutTab")
 
+    def onShowFontTabClicked(self, btn):
+        self.sensiVisible("c_showFontTab")
+
     def onShowBodyTabClicked(self, btn):
         self.sensiVisible("c_showBodyTab")
 
@@ -1092,16 +1094,13 @@ class GtkViewModel(ViewModel):
     def onShowViewerTabClicked(self, btn):
         self.sensiVisible("c_showViewerTab")
 
-    def onShowDiglotTabClicked(self, btn):
-        self.sensiVisible("c_showDiglotTab")
-
-    def onShowBordersTabClicked(self, btn):
-        self.sensiVisible("c_showBordersTab")
+    def onShowDiglotBorderTabClicked(self, btn):
+        self.sensiVisible("c_showDiglotBorderTab")
 
     def onKeepTemporaryFilesClicked(self, c_keepTemporaryFiles):
         dir = self.working_dir
         self.builder.get_object("gr_debugTools").set_sensitive(self.get("c_keepTemporaryFiles"))
-        if self.builder.get_object("nbk_Main").get_current_page() == 7:
+        if self.builder.get_object("nbk_Main").get_current_page() == 9:
             if not self.get("c_keepTemporaryFiles"):
                 title = "Remove Intermediate Files and Logs?"
                 question = "Are you sure you want to delete\nALL the temporary PTXprint files?"
@@ -1318,8 +1317,8 @@ class GtkViewModel(ViewModel):
         lockBtn.set_sensitive(False)
         self.updateProjectSettings(None, saveCurrConfig=True)
         self.updateSavedConfigList()
-        for o in ["b_print", "bx_SavedConfigSettings", "tb_Layout", "tb_Body", "tb_HeadFoot", "tb_Pictures",
-                  "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_Diglot", "tb_FancyBorders"]:
+        for o in ["b_print", "bx_SavedConfigSettings", "tb_Font", "tb_Layout", "tb_Body", "tb_HeadFoot", "tb_Pictures",
+                  "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_DiglotBorder"]:
             self.builder.get_object(o).set_sensitive(True)
         self.updateFonts()
 
@@ -1594,13 +1593,14 @@ class GtkViewModel(ViewModel):
         dialog.destroy()
         return fcFilepath
 
-    def onDiglotClicked(self, btn):
+    def onDiglotOrBorderClicked(self, btn):
         self.ondiglotAlignmentChanged(None)
-        status = self.sensiVisible("c_diglot")
-        if status:
-            self.builder.get_object("lb_Diglot").set_markup("<span color='#7B90B7'>Diglot</span>")
+        status1 = self.sensiVisible("c_diglot")
+        status2 = self.sensiVisible("c_borders")
+        if status1 or status2:
+            self.builder.get_object("lb_DiglotBorder").set_markup("<span color='#7B90B7'>Diglot+Border</span>")
         else:
-            self.builder.get_object("lb_Diglot").set_markup("<span>Diglot</span>")
+            self.builder.get_object("lb_DiglotBorder").set_markup("<span>Diglot+Border</span>")
 
     def ondiglotSecProjectChanged(self, btn):
         self.updateDiglotConfigList()
@@ -1628,10 +1628,10 @@ class GtkViewModel(ViewModel):
             self.set("c_useFallbackFont", True)
         else:
             self.set("c_useFallbackFont", False)
-            self.builder.get_object("gr_fallbackFont").set_sensitive(False)
             self.doError("FYI: The Regular font already supports all the characters in the text.",
-                    "A fallback font is not required so\nthe 'Use Fallback Font' option has been disabled.")
-
+                    "A fallback font is not required so\nthe 'Use Fallback Font' option will be disabled.")
+        self.sensiVisible("c_useFallbackFont")
+        
     def msgQuestion(self, title, question):
         par = self.builder.get_object('ptxprint')
         dialog = Gtk.MessageDialog(parent=par, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.YES_NO, message_format=title)
@@ -1644,13 +1644,6 @@ class GtkViewModel(ViewModel):
             return(True)
         elif response == Gtk.ResponseType.NO:
             return(False)
-
-    def onEnableDecorativeElementsClicked(self, btn):
-        status = self.sensiVisible("c_borders")
-        if status:
-            self.builder.get_object("lb_FancyBorders").set_markup("<span color='#7B90B7'>Borders</span>")
-        else:
-            self.builder.get_object("lb_FancyBorders").set_markup("<span>Borders</span>")
 
     def ondiglotAlignmentChanged(self, btn):
         if self.get("fcb_diglotAlignment").startswith("Align") and self.get("c_diglot"):
