@@ -109,12 +109,12 @@ class ViewModel:
         else:
             return [font, 0]
 
-    def get(self, wid, default=None, sub=0, asstr=False):
+    def get(self, wid, default=None, sub=0, asstr=False, skipmissing=False):
         if wid.startswith("bl_"):
             return (self.dict.get(wid + "/name", None), self.dict.get(wid + "/style", None))
         return self.dict.get(wid, default)
 
-    def set(self, wid, value):
+    def set(self, wid, value, skipmissing=False):
         if wid.startswith("bl_"):
             self.setFont(wid, *value)
         elif wid.startswith("s_"):
@@ -298,6 +298,7 @@ class ViewModel:
         #print("Reading config: {}".format(path))
         config = configparser.ConfigParser()
         config.read(path, encoding="utf-8")
+        self.versionFwdConfig(config)
         self.loadConfig(config)
         return True
 
@@ -356,7 +357,15 @@ class ViewModel:
             self._configset(config, k, str(val) if val is not None else "")
         return config
 
+    def versionFwdConfig(self, config):
+        version = config.getfloat("config", "version", fallback=0.)
+        if version < 0.9:
+            # self._configset(config, "document/ifchapternum", not config.getboolean("document", "ifomitchapternum"))
+            # config.set("config", "version", "0.9")
+            pass
+
     def loadConfig(self, config):
+        def setv(k, v): self.set(k, v, skipmissing=True)
         for sect in config.sections():
             for opt in config.options(sect):
                 key = "{}/{}".format(sect, opt)
@@ -372,11 +381,11 @@ class ViewModel:
                             val = val.split("\n") if val is not None else []
                             val = [Path(x, self) for x in val if x is not None]
                             if w[2] is not None:
-                                self.set(w[2], ",".join(pdfre.sub(r"\1", x.as_posix()) for x in val))
+                                setv(w[2], ",".join(pdfre.sub(r"\1", x.as_posix()) for x in val))
                         else:
                             val = Path(val, self) if val is not None else None
                             if w[2] is not None and val is not None:
-                                self.set(w[2], pdfre.sub(r"\1", val.as_posix()))
+                                setv(w[2], pdfre.sub(r"\1", val.as_posix()))
                         setattr(self, w[0], val)
                     else:
                         try: # Safeguarding from changed/missing keys in .cfg  or v[0].startswith("f_") 
@@ -386,7 +395,7 @@ class ViewModel:
                             elif v[0].startswith("c_"):
                                 val = config.getboolean(sect, opt) if val is not None else False
                             if val is not None:
-                                self.set(v[0], val)
+                                setv(v[0], val)
                         except AttributeError:
                             pass # ignore missing keys 
                 elif sect in ModelMap:
@@ -395,7 +404,7 @@ class ViewModel:
                         vname = re.sub(r"\s*,?\s+\d+\s*$", "", val) # strip legacy style and size
                         vstyle = config.get(sect, "style", fallback="")
                         # print("loadConfig: {}->{} = {},{}".format(sect, ModelMap[sect][0], vname, vstyle))
-                        self.set(ModelMap[sect][0], (vname, vstyle))
+                        setv(ModelMap[sect][0], (vname, vstyle))
                 if key in self._activekeys:
                     getattr(self, self._activekeys[key])()
         for k, v in self._settingmappings.items():
@@ -403,7 +412,7 @@ class ViewModel:
             try:
                 val = config.get(sect, name)
             except configparser.NoOptionError:
-                self.set(ModelMap[k][0], self.ptsettings.dict.get(v, ""))
+                setv(ModelMap[k][0], self.ptsettings.dict.get(v, ""))
 
     def generatePicList(self, booklist):
         # Format of lines in pic-list file: BBB C.V desc|file|size|loc|copyright|caption|ref

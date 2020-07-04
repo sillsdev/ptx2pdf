@@ -332,6 +332,7 @@
   \penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
 }
 \def\onecoltrial{% single-column version of \twocoltrial (see below)
+  \tracingparagraphs=0
   %\tracingall=1\tracingoutput=0\tracingpages=0\tracingparagraphs=0\tracingassigns=0\tracingscantokens=0
   \trace{i}{1c TRIAL with ht=\the\trialheight, vsize=\the\vsize, hIns=\the\holdinginserts}
   \edef\p@gebotmark{\botmark}% remember last \mark for running header
@@ -885,6 +886,7 @@
   \fi}}
 
 \def\twocoltrial{% trial formatting to see if current contents will fit on the page
+  \tracingparagraphs=0
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
   \c@lcavailht%
   \ifdim\availht<0pt

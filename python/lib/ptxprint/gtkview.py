@@ -389,12 +389,13 @@ class GtkViewModel(ViewModel):
         else:
             return [font, 0]
 
-    def get(self, wid, default=None, sub=0, asstr=False):
+    def get(self, wid, default=None, sub=0, asstr=False, skipmissing=False):
         w = self.builder.get_object(wid)
         if w is None:
-            print("Can't find {} in the model".format(wid))
+            if not skipmissing and not w.startswith("_"):
+                print("Can't find {} in the model".format(wid))
             return super(GtkViewModel, self).get(wid)
-        v = ""
+        v = None
         if wid.startswith("ecb_"):
             model = w.get_model()
             i = w.get_active()
@@ -432,10 +433,11 @@ class GtkViewModel(ViewModel):
         btn.font_info = (name, style)
         btn.set_label("{}\n{}".format(name, style))
 
-    def set(self, wid, value):
+    def set(self, wid, value, skipmissing=False):
         w = self.builder.get_object(wid)
         if w is None:
-            print("Can't find {} or {} in the model".format(wid, w))
+            if not skipmissing and not w.startswith("_"):
+                print("Can't find {} in the model".format(wid))
             super(GtkViewModel, self).set(wid, value)
             return
         if wid.startswith("ecb_"):
