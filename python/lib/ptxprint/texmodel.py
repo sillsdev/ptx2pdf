@@ -149,12 +149,12 @@ ModelMap = {
     "document/ch1pagebreak":    ("c_ch1pagebreak", None),
     "document/marginalverses":  ("c_marginalverses", lambda w,v: "" if v else "%"),
     "document/columnshift":     ("s_columnShift", lambda w,v: v or "16"),
-    "document/ifomitchapternum":  ("c_chapternumber", lambda w,v: "false" if v else "true"),
+    "document/ifshowchapternums": ("c_chapterNumber", lambda w,v: "%" if v else ""),
     "document/showxtrachapnums":  ("c_showNonScriptureChapters", lambda w,v: v),
-    "document/ifomitallchapters": ("c_chapternumber", lambda w,v: "%" if v else ""),
+    # "document/ifomitallchapters": ("c_chapterNumber", lambda w,v: "%" if v else ""),
     "document/ifomitsinglechnum": ("c_omitChap1ChBooks", lambda w,v: v),
     "document/ifomitverseone":  ("c_omitverseone", lambda w,v: "true" if v else "false"),
-    "document/ifomitallverses": ("c_verseNumbers", lambda w,v: "%" if v else ""),
+    "document/ifshowversenums":   ("c_verseNumbers", lambda w,v: "%" if v else ""),
     "document/ifmainbodytext":  ("c_mainBodyText", None),
     "document/glueredupwords":  ("c_glueredupwords", None),
     "document/ifinclfigs":      ("c_includeillustrations", lambda w,v: "true" if v else "false"),
@@ -556,7 +556,7 @@ class TexModel:
                                             res.append("\\def\RH{}{}{{{}}}\n".format(toe, side, t))
                                 res.append("\n")
                         if self.asBool('document/ifomitsinglechnum') and \
-                           self.dict['document/ifomitchapternum'] == "false" and \
+                           self.asBool('document/showchapternums') and \
                            f in oneChbooks:
                             res.append("\\OmitChapterNumbertrue\n")
                             res.append("\\ptxfile{{{}}}\n".format(fname))
@@ -624,6 +624,7 @@ class TexModel:
     def convertBook(self, bk, outdir, prjdir):
         if self.changes is None:
             if self.asBool('project/usechangesfile'):
+                print("Applying PrntDrftChgs:", os.path.join(prjdir, 'PrintDraftChanges.txt'))
                 self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'))
             else:
                 self.changes = []
@@ -930,7 +931,7 @@ class TexModel:
         cfgname = self.printer.configName()
         nstyfname = os.path.join(self.printer.configPath(cfgname), "NestedStyles"+sfx)
         nstylist = []
-        if self.asBool("document/ifomitallverses"):
+        if self.dict["document/ifshowversenums"] == '':
             nstylist.append("##### Remove all verse numbers\n\\Marker v\n\\TextProperties nonpublishable\n\n")
 
         if not self.asBool(pfx+"/includefootnotes"):

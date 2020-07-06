@@ -350,7 +350,7 @@ class GtkViewModel(ViewModel):
                   "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "fcb_textDirection", "l_digits", "fcb_digits",
                   "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
                   "gr_fnAdvOptions", "gr_fnSpacingOptions", "c_figexclwebapp", "bx_horizRule", "l_glossaryMarkupStyle"):
-            print("c in 355", c)
+            # print("c in 355", c)
             self.builder.get_object(c).set_visible(not self.get("c_hideAdvancedSettings"))
 
         # Resize Main UI Window appropriately
@@ -1391,7 +1391,7 @@ class GtkViewModel(ViewModel):
 
     def editFile(self, file2edit, loc="wrk"):
         pgnum = 5
-        self.builder.get_object("nbk_Main").set_current_page(7)
+        self.builder.get_object("nbk_Main").set_current_page(9)
         self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
         self.prjid = self.get("fcb_project")
         self.prjdir = os.path.join(self.settings_dir, self.prjid)
@@ -1536,14 +1536,14 @@ class GtkViewModel(ViewModel):
 
     def onEditAdjListClicked(self, btn_editParaAdjList):
         pgnum = 2
-        self.builder.get_object("nbk_Main").set_current_page(7)
+        self.builder.get_object("nbk_Main").set_current_page(9)
         self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
         self.onViewerChangePage(None,None,pgnum)
 
     def onEditPicListClicked(self, btn_editPicList):
         pgnum = 1
         self.builder.get_object("c_usePicList").set_active(True)
-        self.builder.get_object("nbk_Main").set_current_page(7)
+        self.builder.get_object("nbk_Main").set_current_page(9)
         self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
         self.onViewerChangePage(None,None,pgnum)
     

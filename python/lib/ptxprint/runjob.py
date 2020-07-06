@@ -99,7 +99,7 @@ _diglot = {
 "diglot/bolditalembolden" : "fontbolditalic/embolden",
 "diglot/boldital/slant" :   "fontbolditalic/slant",
 
-"diglot/ifomitallverses" :  "document/ifomitallverses",
+"diglot/ifshowversenums" :  "document/ifshowversenums",
 "diglot/includefootnotes" : "notes/includefootnotes",
 "diglot/fnfontsize" :       "notes/fnfontsize",
 "diglot/fnlinespacing" :    "notes/fnlinespacing",
