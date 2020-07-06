@@ -6,7 +6,7 @@ from .ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from .font import TTFont
 import pathlib, os
 
-VersionStr = "0.8.6 beta"
+VersionStr = "0.8.7 beta"
 
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
 
@@ -361,8 +361,13 @@ class ViewModel:
         version = config.getfloat("config", "version", fallback="0.0")
         print("version=",version)
         if float(version) < 0.9:
-            # self._configset(config, "document/ifshowchapternums", not config.getboolean("document", "ifomitchapternum"))
-            # self._configset(config, "document/ifshowversenums", not config.getboolean("document", "ifomitallverses"))
+            self._configset(config, "document/ifshowchapternums", not config.getboolean("document", "ifomitchapternum"))
+            self._configset(config, "document/ifshowversenums", not config.getboolean("document", "ifomitallverses"))
+            self._configset(config, "document/bookintro", not config.getboolean("document", "supressbookintro"))
+            self._configset(config, "document/introoutline", not config.getboolean("document", "supressintrooutline"))
+            self._configset(config, "document/firstparaindent", not config.getboolean("document", "supressindent"))
+            self._configset(config, "document/sectionheads", not config.getboolean("document", "supresssectheads"))
+            self._configset(config, "document/parallelrefs", not config.getboolean("document", "supressparallels"))
             config.set("config", "version", "0.9")
             pass
 

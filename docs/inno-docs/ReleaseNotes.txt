@@ -1,5 +1,15 @@
-PTXprint 0.8.6 Beta Release Notes
-25rd June 2020
+PTXprint 0.8.7 Beta Release Notes
+7th July 2020
+
+Bug Fixes and Improvements in: 0.8.7
+
+  * Re-arranged UI to put all font and script elements on a new Font tab
+  
+  * Removed "Omit..." wording from check-boxes to reduce confusion
+  
+  * Blended Diglot and Border tabs; moved Viewer to the final tab position
+  
+  * 
 
 Bug Fixes and Improvements in: 0.8.6
 

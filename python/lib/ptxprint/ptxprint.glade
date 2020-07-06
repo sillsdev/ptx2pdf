@@ -251,7 +251,7 @@
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 0.8.6 (Beta)</property>
+    <property name="version">Version 0.8.7 (Beta)</property>
     <property name="copyright" translatable="yes">© 2020, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -2763,7 +2763,7 @@ main body text begins.</property>
                         <property name="can_focus">False</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
-                        <property name="margin_top">6</property>
+                        <property name="margin_top">3</property>
                         <property name="margin_bottom">6</property>
                         <property name="label_xalign">0.0099999997764825821</property>
                         <child>
@@ -2964,7 +2964,7 @@ poetry to improve the overall look.</property>
                       <object class="GtkFrame" id="fr_chapVerse1">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="margin_top">6</property>
+                        <property name="margin_top">3</property>
                         <property name="margin_bottom">6</property>
                         <property name="label_xalign">0.0099999997764825821</property>
                         <child>
@@ -2979,7 +2979,7 @@ poetry to improve the overall look.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="margin_bottom">6</property>
-                                <property name="row_spacing">8</property>
+                                <property name="row_spacing">6</property>
                                 <property name="column_spacing">2</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_pageNumTitlePage">
@@ -2993,6 +2993,7 @@ to place the page number at the bottom of
 the page (only on Intoductory Pages before 
 the scripture text begins).</property>
                                     <property name="halign">start</property>
+                                    <property name="margin_top">4</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="onPageNumTitlePageChanged" swapped="no"/>
@@ -3015,6 +3016,7 @@ page (of every book) as a reminder for
 later - as to which settings were used
 to produce the PDF.</property>
                                     <property name="halign">start</property>
+                                    <property name="margin_top">6</property>
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="onPrintConfigNameChanged" swapped="no"/>
                                   </object>
