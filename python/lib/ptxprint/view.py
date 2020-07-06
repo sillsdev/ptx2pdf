@@ -360,8 +360,8 @@ class ViewModel:
     def versionFwdConfig(self, config):
         version = config.getfloat("config", "version", fallback="0.0")
         if float(version) < 0.9:
-            # self._configset(config, "document/ifchapternum", not config.getboolean("document", "ifomitchapternum"))
-            # config.set("config", "version", "0.9")
+            self._configset(config, "document/ifchapternum", not config.getboolean("document", "ifomitchapternum"))
+            config.set("config", "version", "0.9")
             pass
 
     def loadConfig(self, config):

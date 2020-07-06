@@ -117,6 +117,8 @@ _sensitivities = {
     "c_variableLineSpacing" :  ["s_linespacingmin", "s_linespacingmax", "l_min", "l_max"],
     "c_verticalrule" :         ["l_colgutteroffset", "s_colgutteroffset"],
     "c_rhrule" :               ["s_rhruleposition", "gr_horizRule"],
+    "c_introOutline" :         ["c_prettyIntroOutline"],
+    "c_sectionHeads" :         ["c_parallelRefs"],
     "c_useChapterLabel" :      ["t_clBookList", "l_clHeading", "t_clHeading", "c_clSingleColLayout", "c_optimizePoetryLayout"],
     "c_autoToC" :              ["t_tocTitle", "gr_toc", "l_toc"],
     "c_marginalverses" :       ["s_columnShift"],
@@ -146,9 +148,7 @@ _sensitivities = {
 # Checkboxes and the different objects they make (in)sensitive when toggled
 # These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
 _nonsensitivities = {
-    "c_omitIntroOutline" :     ["c_prettyIntroOutline"],
     "c_omitrhchapnum" :        ["c_hdrverses"],
-    "c_omitSectHeads" :        ["c_omitParallelRefs"],
     "c_multiplebooks" :        ["l_singlebook", "ecb_book", "l_chapfrom", "fcb_chapfrom", "l_chapto", "fcb_chapto"]
 }
 # Checkboxes and the Tabs that they make (in)visible
@@ -314,13 +314,13 @@ class GtkViewModel(ViewModel):
         if self.get("c_hideAdvancedSettings"):
             # Turn Dangerous Settings OFF
             for c in ("c_startOnHalfPage", "c_marginalverses", "c_prettyIntroOutline", "c_blendfnxr", "c_autoToC",
-                      "c_figplaceholders", "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", 
+                      "c_figplaceholders", "c_glueredupwords", "c_hangpoetry", 
                       "c_preventwidows", "c_PDFx1aOutput", "c_diglot", "c_hyphenate", "c_variableLineSpacing",
                       "c_showAdvancedTab", "c_showViewerTab", "c_elipsizeMissingVerses"):  # "c_showBodyTab", 
                 self.builder.get_object(c).set_active(False)
 
             # Turn Essential Settings ON
-            for c in ("c_mainBodyText", "c_skipmissingimages", "c_includefigsfromtext"):
+            for c in ("c_mainBodyText", "c_skipmissingimages", "c_includefigsfromtext", "c_verseNumbers", "c_firstParaIndent"):
                 self.builder.get_object(c).set_active(True)
             self.builder.get_object("c_hideAdvancedSettings").set_opacity(0.2)
             self.builder.get_object("c_hideAdvancedSettings").set_tooltip_text("")
@@ -345,7 +345,7 @@ class GtkViewModel(ViewModel):
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
                   "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection", "l_colgutteroffset",
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "row_ToC", "c_hyphenate",
-                  "c_omitallverses", "c_glueredupwords", "c_omit1paraIndent", "c_hangpoetry", "c_preventwidows", "bx_ShowTabs", 
+                  "c_verseNumbers", "c_glueredupwords", "c_firstParaIndent", "c_hangpoetry", "c_preventwidows", "bx_ShowTabs", 
                   "l_sidemarginfactor", "s_sidemarginfactor", "l_min", "s_linespacingmin", "l_max", "s_linespacingmax",
                   "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "fcb_textDirection", "l_digits", "fcb_digits",
                   "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
@@ -939,10 +939,9 @@ class GtkViewModel(ViewModel):
     def onMarginalVersesClicked(self, btn):
         self.sensiVisible("c_marginalverses")
 
-    def onOmitSectHeadsClicked(self, btn):
-        status = self.get("c_omitSectHeads")
-        self.builder.get_object("c_omitParallelRefs").set_sensitive(not status)
-        self.builder.get_object("c_omitParallelRefs").set_active(status)
+    def onSectionHeadsClicked(self, btn):
+        status = self.sensiVisible("c_sectionHeads")
+        self.builder.get_object("c_parallelRefs").set_active(status)
 
     def onHyphenateClicked(self, btn):
         if self.prjid is not None:
@@ -1069,9 +1068,10 @@ class GtkViewModel(ViewModel):
     def onUseModsStyClicked(self, btn):
         self.sensiVisible("c_useModsSty")
         
-    def onOmitOutlineClicked(self, btn):
-        self.sensiVisible("c_omitIntroOutline")
-        self.builder.get_object("c_prettyIntroOutline").set_active(False)
+    def onIntroOutlineClicked(self, btn):
+        status = self.sensiVisible("c_introOutline")
+        if not status:
+            self.builder.get_object("c_prettyIntroOutline").set_active(False)
 
     def onShowLayoutTabClicked(self, btn):
         self.sensiVisible("c_showLayoutTab")

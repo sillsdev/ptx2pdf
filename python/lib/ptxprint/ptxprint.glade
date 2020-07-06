@@ -2923,6 +2923,7 @@ unforeseen issues and whitespace.
 This option allows unbalanced
 poetry to improve the overall look.</property>
                                     <property name="halign">start</property>
+                                    <property name="margin_top">6</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -2992,6 +2993,7 @@ to place the page number at the bottom of
 the page (only on Intoductory Pages before 
 the scripture text begins).</property>
                                     <property name="halign">start</property>
+                                    <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="onPageNumTitlePageChanged" swapped="no"/>
                                   </object>
@@ -3109,6 +3111,7 @@ PDF/X-1a files are regular PDF 1.3 or PDF 1.4 files to which a number of restric
 * The file contains an output intent which describes the intended printing condition (in this case an ICC color profile). 
 and so on...</property>
                                     <property name="halign">start</property>
+                                    <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -3487,8 +3490,15 @@ and advanced Font Options.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
-                                        <property name="tooltip_text" translatable="yes">Refresh the font list from your system. This can take a while.</property>
-                                        <property name="opacity">0.65000000000000002</property>
+                                        <property name="tooltip_text" translatable="yes">If you have recently installed a font but it
+isn't showing up in the list of available
+fonts, there are two likely reasons for this:
+(a) Refresh the font list from your system by
+clicking this button (which will take a while).
+(b) Re-install the font "For All Users" by
+right-clicking on the font file and choosing
+that option - then Refresh Fonts.</property>
+                                        <property name="opacity">0.80000000000000004</property>
                                         <property name="halign">end</property>
                                         <signal name="clicked" handler="onRefreshFontsclicked" swapped="no"/>
                                       </object>
@@ -4341,7 +4351,7 @@ to ensure that they are displayed properly.</property>
                                     <property name="can_focus">False</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_autoToC">
-                                        <property name="label" translatable="yes">Generate Table of Contents.       Title for ToC:</property>
+                                        <property name="label" translatable="yes">Generate Table of Contents       Title for ToC:</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -4527,14 +4537,16 @@ of Contents</property>
                                     <property name="row_spacing">6</property>
                                     <property name="column_homogeneous">True</property>
                                     <child>
-                                      <object class="GtkCheckButton" id="c_omitBookIntro">
-                                        <property name="label" translatable="yes">Omit Book Introductions (\i..)</property>
+                                      <object class="GtkCheckButton" id="c_bookIntro">
+                                        <property name="label" translatable="yes">Book Introductions (\i..)</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Do not print the Book Introductions.</property>
+                                        <property name="tooltip_text" translatable="yes">Print the Book Introductions which
+appear at the beginning of each book.</property>
                                         <property name="halign">start</property>
                                         <property name="resize_mode">immediate</property>
+                                        <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -4543,13 +4555,15 @@ of Contents</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="c_omitIntroOutline">
-                                        <property name="label" translatable="yes">Omit Introductory Outlines (\io..)</property>
+                                      <object class="GtkCheckButton" id="c_introOutline">
+                                        <property name="label" translatable="yes">Introductory Outlines (\io..)</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Do not print the Introductory Outlines.</property>
+                                        <property name="tooltip_text" translatable="yes">Print the Introductory Outlines which
+appear at the beginning of each book.</property>
                                         <property name="halign">start</property>
+                                        <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                         <signal name="clicked" handler="onOmitOutlineClicked" swapped="no"/>
                                       </object>
@@ -4690,21 +4704,20 @@ selected books/chapters will show in the glossary.</property>
                                 <property name="row_spacing">8</property>
                                 <property name="column_spacing">6</property>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_omitchapternumber">
-                                    <property name="label" translatable="yes">Omit Chapter number(s)</property>
+                                  <object class="GtkCheckButton" id="c_chapterNumber">
+                                    <property name="label" translatable="yes">Chapter numbers</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">There are situations when it is important to
-remove all the chapter numbers from all
-the books. Check this option to hide
-them all - making the publication read
+                                    <property name="tooltip_text" translatable="yes">Uncheck this option to hide all chapter 
+numbers - making the publication read
 more like an ordinary book.
 
 Note that there is another option on the
 Layout tab which will only "Hide Chapter
 Number in Single Chapter Books".</property>
                                     <property name="halign">start</property>
+                                    <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -4714,7 +4727,7 @@ Number in Single Chapter Books".</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_omitverseone">
-                                    <property name="label" translatable="yes">Omit First Verse Number</property>
+                                    <property name="label" translatable="yes">Hide First Verse Number</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -4729,26 +4742,25 @@ number 1, then uncheck this option.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">1</property>
+                                    <property name="top_attach">2</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_omitallverses">
-                                    <property name="label" translatable="yes">Omit All Verse Numbers</property>
+                                  <object class="GtkCheckButton" id="c_verseNumbers">
+                                    <property name="label" translatable="yes">Verse Numbers</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">There are situations when it is important to
-remove all the verse numbers from the
-printed output. Check this option to hide
-them all - making the publication read
+                                    <property name="tooltip_text" translatable="yes">Uncheck this option to hide all verse 
+numbers - making the publication read
 more like an ordinary book.</property>
                                     <property name="halign">start</property>
+                                    <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">2</property>
+                                    <property name="top_attach">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -4776,17 +4788,19 @@ typesetting issues. Use with care!</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_omitSectHeads">
-                                    <property name="label" translatable="yes">Omit Section Headings (\s)</property>
+                                  <object class="GtkCheckButton" id="c_sectionHeads">
+                                    <property name="label" translatable="yes">Section Headings (\s)</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Do not print any Section Headings.
-Selecting this option will ALSO omit
-Parallel Passage Refs.</property>
+                                    <property name="tooltip_text" translatable="yes">Uncheck this option if you don't want
+to print any Section Headings.
+Unchecking this option will ALSO 
+uncheck the Parallel Passage Refs.</property>
                                     <property name="halign">start</property>
+                                    <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onOmitSectHeadsClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onSectionHeadsClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
@@ -4794,14 +4808,16 @@ Parallel Passage Refs.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_omitParallelRefs">
-                                    <property name="label" translatable="yes">Omit Parallel Passage Refs (\r)   </property>
+                                  <object class="GtkCheckButton" id="c_parallelRefs">
+                                    <property name="label" translatable="yes">Parallel Passage Refs (\r)   </property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Do not print any Parallel Pasage References
-(these normally appear below Section Headings).</property>
+                                    <property name="tooltip_text" translatable="yes">Uncheck this option to hide all the
+Parallel Pasage References which
+occur below Section Headings.</property>
                                     <property name="halign">start</property>
+                                    <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -4810,15 +4826,17 @@ Parallel Passage Refs.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_omit1paraIndent">
-                                    <property name="label" translatable="yes">Don't Indent First Paragraph</property>
+                                  <object class="GtkCheckButton" id="c_firstParaIndent">
+                                    <property name="label" translatable="yes">Indent First Paragraph</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Do NOT indent the first paragraph after a Section
-Heading. It will appear as an \m(argin) paragraph
-instead of a normal \p.</property>
+                                    <property name="tooltip_text" translatable="yes">If this option is unchecked, it will make the 1st
+\p(aragraph) after a Chapter number or Section
+Heading appear as an \m(argin) paragraph
+with no indentation.</property>
                                     <property name="halign">start</property>
+                                    <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -4972,6 +4990,7 @@ a line.</property>
 at the ends of paragraphs from 
 occuring on a line on their own.</property>
                                     <property name="halign">start</property>
+                                    <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -5069,6 +5088,7 @@ be turned OFF (to omit the main text).</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">start</property>
+                                <property name="margin_right">6</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="left_padding">12</property>

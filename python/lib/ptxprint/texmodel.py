@@ -149,12 +149,12 @@ ModelMap = {
     "document/ch1pagebreak":    ("c_ch1pagebreak", None),
     "document/marginalverses":  ("c_marginalverses", lambda w,v: "" if v else "%"),
     "document/columnshift":     ("s_columnShift", lambda w,v: v or "16"),
-    "document/ifomitchapternum":   ("c_omitchapternumber", lambda w,v: "true" if v else "false"),
-    "document/showxtrachapnums":   ("c_showNonScriptureChapters", lambda w,v: v),
-    "document/ifomitallchapters":  ("c_omitchapternumber", lambda w,v: "" if v else "%"),
-    "document/ifomitsinglechnum":  ("c_omitChap1ChBooks", lambda w,v: v),
+    "document/ifomitchapternum":  ("c_chapternumber", lambda w,v: "false" if v else "true"),
+    "document/showxtrachapnums":  ("c_showNonScriptureChapters", lambda w,v: v),
+    "document/ifomitallchapters": ("c_chapternumber", lambda w,v: "%" if v else ""),
+    "document/ifomitsinglechnum": ("c_omitChap1ChBooks", lambda w,v: v),
     "document/ifomitverseone":  ("c_omitverseone", lambda w,v: "true" if v else "false"),
-    "document/ifomitallverses": ("c_omitallverses", lambda w,v: "" if v else "%"),
+    "document/ifomitallverses": ("c_verseNumbers", lambda w,v: "%" if v else ""),
     "document/ifmainbodytext":  ("c_mainBodyText", None),
     "document/glueredupwords":  ("c_glueredupwords", None),
     "document/ifinclfigs":      ("c_includeillustrations", lambda w,v: "true" if v else "false"),
@@ -176,12 +176,12 @@ ModelMap = {
     "document/hangpoetry":      ("c_hangpoetry", lambda w,v: "" if v else "%"),
     "document/preventorphans":  ("c_preventorphans", None),
     "document/preventwidows":   ("c_preventwidows", None),
-    "document/supresssectheads": ("c_omitSectHeads", None),
-    "document/supressparallels": ("c_omitParallelRefs", None),
-    "document/supressbookintro": ("c_omitBookIntro", None),
-    "document/supressintrooutline": ("c_omitIntroOutline", None),
+    "document/sectionheads":    ("c_sectionHeads", None),
+    "document/parallelRefs":    ("c_parallelRefs", None),
+    "document/bookintro":       ("c_bookIntro", None),
+    "document/introoutline":    ("c_introOutline", None),
     "document/indentunit":      ("s_indentUnit", lambda w,v: round(float(v or "2.0"), 1)),
-    "document/supressindent":   ("c_omit1paraIndent", lambda w,v: "false" if v else "true"),
+    "document/firstparaindent": ("c_firstParaIndent", lambda w,v: "true" if v else "false"),
     "document/ifhidehboxerrors": ("c_showHboxErrorBars", lambda w,v :"%" if v else ""),
     "document/elipsizemptyvs":  ("c_elipsizeMissingVerses", None),
     "document/ifspacing":       ("c_spacing", lambda w,v :"" if v else "%"),
@@ -786,18 +786,18 @@ class TexModel:
         else: # Drop ALL Figures
             self.localChanges.append((None, regex.compile(r"\\fig .*?\\fig\*", flags=regex.M), ""))
         
-        if self.asBool("document/supressbookintro"): # Drop Introductory matter
+        if not self.asBool("document/bookintro"): # Drop Introductory matter
             self.localChanges.append((None, regex.compile(r"\\i(s|m|mi|p|pi|li\d?|pq|mq|pr|b|q\d?) .+?\r?\n", flags=regex.M), "")) 
 
-        if self.asBool("document/supressintrooutline"): # Drop ALL Intro Outline matter & Intro Outline References
+        if not self.asBool("document/introoutline"): # Drop ALL Intro Outline matter & Intro Outline References
             # Wondering whether we should restrict this to just the GEN...REV books (as some xtra books only use \ixx markers for content)
             self.localChanges.append((None, regex.compile(r"\\(iot|io\d) [^\\]+", flags=regex.M), ""))
             self.localChanges.append((None, regex.compile(r"\\ior .+?\\ior\*\s?\r?\n", flags=regex.M), ""))
 
-        if self.asBool("document/supresssectheads"): # Drop ALL Section Headings (which also drops the Parallel passage refs now)
+        if not self.asBool("document/sectionheads"): # Drop ALL Section Headings (which also drops the Parallel passage refs now)
             self.localChanges.append((None, regex.compile(r"\\[sr] .+", flags=regex.M), ""))
 
-        if self.asBool("document/supressparallels"): # Drop ALL Parallel Passage References
+        if not self.asBool("document/parallelRefs"): # Drop ALL Parallel Passage References
             self.localChanges.append((None, regex.compile(r"\\r .+", flags=regex.M), ""))
 
         if self.asBool("document/preventorphans"): # Prevent orphans at end of *any* paragraph [anything that isn't followed by a \v]

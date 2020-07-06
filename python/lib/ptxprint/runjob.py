@@ -285,8 +285,8 @@ class RunJob:
             _digSecSettings = ["paper/pagesize", "paper/height", "paper/width", "paper/margins",
                                "paper/sidemarginfactor", "paper/topmarginfactor", "paper/bottommarginfactor",
                                "header/headerposition", "header/footerposition", "header/ruleposition",
-                               "document/ch1pagebreak", "document/supressbookintro", "document/supressintrooutline", 
-                               "document/supressparallels", "document/elipsizemptyvs", "notes/iffootnoterule", 
+                               "document/ch1pagebreak", "document/bookintro", "document/introoutline", 
+                               "document/parallelRefs", "document/elipsizemptyvs", "notes/iffootnoterule", 
                                "notes/ifblendfnxr", "notes/includefootnotes", "notes/includexrefs", 
                                "notes/fnparagraphednotes", "notes/xrparagraphednotes", "document/filterglossary", 
                                "document/chapfrom", "document/chapto", "document/ifcolorfonts"]
