@@ -1,3 +1,9 @@
+ptxprint (0.8.7-1ubuntu1) bionic; urgency=medium
+
+  *  Bumped version to 0.8.7
+
+ -- Nicolas Spalinger <nicolas.spalinger@sil.org>  Tue, 07 Jul 2020 16:21:07 +0200
+
 ptxprint (0.8.6-1ubuntu2) bionic; urgency=medium
 
   * Adjusted packaging for LP recipe. 
