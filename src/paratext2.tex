@@ -1129,7 +1129,8 @@
   \ifx\t@mp\loc@Inl
     \trace{g}{Experimental in-line graphic}%
     \global\picUsesInsfalse
-    \gdef\l@cspec{#2}}
+    \xdef\l@cspec{#2}
+  \fi}
 \def\d@figure#1{%
  \ifIncludeFigures
   \trace{g}{In d@figure #1}\usfmthreefalse
@@ -1163,7 +1164,7 @@
     \errmessage{Unknown picture size "\size@ption", expected "col" or "span"}\fi\fi
   \let\p@cins=\relax
   % make \p@cins point to insertion class for this location
-  \d@espicUseIns\loc@ption\end
+  \x@\d@espicUseIns\loc@ption\end
   \ifx\loc@ption\loc@T \let\p@cins=\topins
   \else\ifx\loc@ption\loc@B \let\p@cins=\bottomins
   \else
@@ -1193,12 +1194,16 @@
   % create box to contain picture
   \trace{g}{Figure size=\size@ption, loc=\loc@ption, \ifpicUsesIns picins=\the\p@cins\fi}%
   \setbox0=\vbox{
-    \hsize=\p@cwidth
+    \ifpicUsesIns
+      \hsize=\p@cwidth
+    \else
+      \hsize=\sizem@ltiple\p@cwidth
+    \fi
 	% insert picture based on PicPath and file name, scaled to \p@cwidth
     \let\picfilecomm@nd=\XeTeXpicfile
     \edef\f@lename{\csname param-2\endcsname}%
     \expandafter\ch@ckpdf\f@lename..\endf@lename
-    \setbox0=\hbox to \p@cwidth{\hss
+    \setbox0=\hbox to \sizem@ltiple\p@cwidth{\hss
       \picfilecomm@nd "\the\PicPath\csname param-2\endcsname"
                      width \sizem@ltiple\p@cwidth \csname param-8\endcsname\hss}
     \ifFigurePlaceholders % replace graphic with a frame and the file name
@@ -1236,12 +1241,47 @@
       \gridp@ctrue\gridb@x0\gridp@cfalse% make sure we align to the page grid
     }%
   \else
-   {\penalty10 % Allow the page to break
-   \splittopskip\z@skip
-   \splitmaxdepth\maxdimen \floatingpenalty20000 % was zero
-   \gridp@ctrue\gridb@x0\gridp@cfalse% make sure we align to the page grid
-   \penalty10
-   }%
+   % Calculate lines used for the picture
+   \dimen0=\ht0
+   \divide\dimen0 by \baselineskip
+   \count0=\dimen0
+   \trace{g}{Inline picture takes \the\count0 lines}%
+   \ifx\l@cspec\empty
+     \advance\count0 by \prevgraf % tell cutouts what's happened
+     \prevgraf=\count0
+     \penalty10 % Allow the page to break
+     \splittopskip\z@skip
+     \splitmaxdepth\maxdimen \floatingpenalty20000 % was zero
+     \gridp@ctrue\gridb@x0\gridp@cfalse% make sure we align to the page grid
+     \penalty10
+   \else
+     \dimen1=\baselineskip
+     \advance\count0 by 1
+     \multiply\dimen1 by \count0
+     \dimen2=\wd0
+     \advance\dimen2 by 10pt
+     \ifx\l@cspec\loc@Cl
+       \setbox\picb@x\hbox to 0pt {\lower\dimen1\box0\hss}
+       \ht\picb@x=0pt 
+       \dp\picb@x=0pt
+       \vskip-\baselineskip  %Yuck
+       \box\picb@x %FIXME? Box here Adds vertical space
+       \leftcutout{\dimen2}{0}{\count0}%
+     \else
+       \ifx\l@cspec\loc@Cr
+         \setbox\picb@x\hbox to \hsize{\hss\lower\dimen1\box0}%
+         \ht\picb@x=0pt 
+         \dp\picb@x=0pt
+         \vskip-\baselineskip %Yuck
+         \box\picb@x% FIXME? Box here Adds vertical space
+         \rightcutout{\dimen2}{0}{\count0}%
+       \else
+        \message{*** Unknown position i\l@cspec, picture misplaced}%
+        \box0
+       \fi
+         \unskip
+     \fi
+   \fi
   \fi
  \fi% end \ifIncludeFigures
 }
@@ -1263,8 +1303,10 @@
 \def\loc@TR{tr}
 \def\loc@BL{bl}
 \def\loc@BR{br}
-\def\loc@Inl{i}
-
+\def\loc@Inl{i}% In-line graphic, not a float.
+\def\loc@Cl{Cl}
+\def\loc@Cr{Cr}
+\newbox\picb@x
 \newcount\p@ramnumber
 \newdimen\p@cwidth
 \newif\ifmorep@rams
