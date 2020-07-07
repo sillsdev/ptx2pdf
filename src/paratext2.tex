@@ -1122,6 +1122,14 @@
   \global\advance\p@ramnumber by 1 }
 
 \newif\iffiglocleft \figloclefttrue
+\newif\ifpicUsesIns \picUsesInstrue
+\def\d@espicUseIns#1#2\end{
+  \edef\t@mp{#1}\picUsesInstrue
+  \trace{g}{doespicUseIns? #1 #2}
+  \ifx\t@mp\loc@Inl
+    \trace{g}{Experimental in-line graphic}%
+    \global\picUsesInsfalse
+    \gdef\l@cspec{#2}}
 \def\d@figure#1{%
  \ifIncludeFigures
   \trace{g}{In d@figure #1}\usfmthreefalse
@@ -1155,6 +1163,7 @@
     \errmessage{Unknown picture size "\size@ption", expected "col" or "span"}\fi\fi
   \let\p@cins=\relax
   % make \p@cins point to insertion class for this location
+  \d@espicUseIns\loc@ption\end
   \ifx\loc@ption\loc@T \let\p@cins=\topins
   \else\ifx\loc@ption\loc@B \let\p@cins=\bottomins
   \else
@@ -1176,13 +1185,13 @@
   \ifx\p@cins\relax
     %\errmessage{Unknown picture location "\loc@ption",
     %  expected one of t,b,tl,tr,bl,br}
-	\ifnum\c@rrentcols>1
+    \ifnum\c@rrentcols>1
       \iffiglocleft\let\p@cins=\topleftins\figlocleftfalse
       \else\let\p@cins=\toprightins\figloclefttrue\fi
     \else \let\p@cins=\topins\fi
   \fi
   % create box to contain picture
-  \trace{g}{Figure size=\size@ption, loc=\loc@ption, picins=\the\p@cins}%
+  \trace{g}{Figure size=\size@ption, loc=\loc@ption, \ifpicUsesIns picins=\the\p@cins\fi}%
   \setbox0=\vbox{
     \hsize=\p@cwidth
 	% insert picture based on PicPath and file name, scaled to \p@cwidth
@@ -1220,11 +1229,20 @@
   }%
   \trace{b}{BALANCE fig: height=\the\ht0: baselineskip=\the\baselineskip}%
   % insert into proper insertion class for this position
-  \insert\p@cins{\penalty10000 % make sure this picture does not float away to another page
-    \splittopskip\z@skip
-    \splitmaxdepth\maxdimen \floatingpenalty20000 % was zero
-    \gridp@ctrue\gridb@x0\gridp@cfalse% make sure we align to the page grid
-  }%
+  \ifpicUsesIns
+    \insert\p@cins{\penalty10000 % make sure this picture does not float away to another page
+      \splittopskip\z@skip
+      \splitmaxdepth\maxdimen \floatingpenalty20000 % was zero
+      \gridp@ctrue\gridb@x0\gridp@cfalse% make sure we align to the page grid
+    }%
+  \else
+   {\penalty10 % Allow the page to break
+   \splittopskip\z@skip
+   \splitmaxdepth\maxdimen \floatingpenalty20000 % was zero
+   \gridp@ctrue\gridb@x0\gridp@cfalse% make sure we align to the page grid
+   \penalty10
+   }%
+  \fi
  \fi% end \ifIncludeFigures
 }
 \newtoks\PicPath % directory containing picture files
@@ -1245,6 +1263,7 @@
 \def\loc@TR{tr}
 \def\loc@BL{bl}
 \def\loc@BR{br}
+\def\loc@Inl{i}
 
 \newcount\p@ramnumber
 \newdimen\p@cwidth
