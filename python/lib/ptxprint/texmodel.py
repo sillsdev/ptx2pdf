@@ -167,6 +167,7 @@ ModelMap = {
     "document/customfiglocn":   ("c_useCustomFolder", lambda w,v :"" if v else "%"),
     "document/exclusivefolder": ("c_exclusiveFiguresFolder", None),
     "document/customfigfolder": ("btn_selectFigureFolder", lambda w,v: w.customFigFolder.as_posix() if w.customFigFolder is not None else ""),
+    "document/customoutputfolder": ("btn_selectOutputFolder", lambda w,v: w.customOutputFolder.as_posix() if w.customOutputFolder is not None else ""),
     "document/imagetypepref":   ("t_imageTypeOrder", None),
     "document/ifusepiclist":    ("c_usePicList", lambda w,v :"" if v else "%"),
     "document/spacecntxtlztn":  ("ecb_spaceCntxtlztn", lambda w,v: "0" if v == "None" or v is None else "1" if v == "Some" else "2"),
@@ -200,6 +201,7 @@ ModelMap = {
     "document/diglotprifraction": ("s_diglotPriFraction", lambda w,v : round((float(v)/100), 3) if v is not None else "0.550"),
     "document/diglotsecfraction": ("s_diglotPriFraction", lambda w,v : round(1 - (float(v)/100), 3) if v is not None else "0.450"),
     "document/diglotsecprj":    ("fcb_diglotSecProject", None),
+    "document/diglotpicsources": ("fcb_diglotPicListSources", None),
     "document/diglotswapside":  ("c_diglotSwapSide", lambda w,v: v),
     "document/diglotsepnotes":  ("c_diglotSeparateNotes", lambda w,v: "true" if v else "false"),
     "document/diglotsecconfig": ("ecb_diglotSecConfig", None),
@@ -797,7 +799,7 @@ class TexModel:
         if not self.asBool("document/sectionheads"): # Drop ALL Section Headings (which also drops the Parallel passage refs now)
             self.localChanges.append((None, regex.compile(r"\\[sr] .+", flags=regex.M), ""))
 
-        if not self.asBool("document/parallelRefs"): # Drop ALL Parallel Passage References
+        if not self.asBool("document/parallelrefs"): # Drop ALL Parallel Passage References
             self.localChanges.append((None, regex.compile(r"\\r .+", flags=regex.M), ""))
 
         if self.asBool("document/preventorphans"): # Prevent orphans at end of *any* paragraph [anything that isn't followed by a \v]

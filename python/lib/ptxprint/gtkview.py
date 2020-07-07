@@ -109,7 +109,7 @@ _sensitivities = {
     "c_includeXrefs" :         ["bx_xrOptions"],
     "c_includeillustrations" : ["gr_IllustrationOptions"],
     "c_includefigsfromtext"  : ["c_figexclwebapp"],
-    "c_diglot" :               ["gr_diglot"],
+    "c_diglot" :               ["gr_diglot", "fcb_diglotPicListSources"],
     "c_borders" :              ["gr_borders"],
 
     "c_multiplebooks" :        ["c_combine", "t_booklist"],
@@ -149,7 +149,8 @@ _sensitivities = {
 # These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
 _nonsensitivities = {
     "c_omitrhchapnum" :        ["c_hdrverses"],
-    "c_multiplebooks" :        ["l_singlebook", "ecb_book", "l_chapfrom", "fcb_chapfrom", "l_chapto", "fcb_chapto"]
+    "c_multiplebooks" :        ["l_singlebook", "ecb_book", "l_chapfrom", "fcb_chapfrom", "l_chapto", "fcb_chapto"],
+    "c_useprintdraftfolder" :  ["btn_selectOutputFolder"]
 }
 # Checkboxes and the Tabs that they make (in)visible
 _visibilities = {
@@ -188,7 +189,7 @@ class GtkViewModel(ViewModel):
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(os.path.dirname(__file__), "ptxprint.glade"))
         self.builder.connect_signals(self)
-        for fcb in ("digits", "script", "chapfrom", "chapto",
+        for fcb in ("digits", "script", "chapfrom", "chapto", "diglotPicListSources",
                     "textDirection", "glossaryMarkupStyle", "fontFaces"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
@@ -338,14 +339,14 @@ class GtkViewModel(ViewModel):
             for c in ("c_showAdvancedTab", "c_showViewerTab"):
                 self.builder.get_object(c).set_active(True)
 
-        for c in ("tb_Advanced", "tb_ViewerEditor", "tb_DiglotBorder", "l_missingPictureString",
-                  "btn_editPicList", "l_imageTypeOrder", "t_imageTypeOrder", "fr_chapVerse", "s_colgutteroffset",
+        for c in ("tb_Font", "tb_Advanced", "tb_ViewerEditor", "tb_DiglotBorder", "l_missingPictureString", "btn_editPicList", 
+                  "l_imageTypeOrder", "t_imageTypeOrder", "fr_layoutSpecialBooks", "fr_layoutOther", "s_colgutteroffset",
                   "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "bx_AdvFootnoteConfig", "l_colgutteroffset",
                   "c_usePicList", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", "c_exclusiveFiguresFolder", 
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
-                  "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection", "l_colgutteroffset",
+                  "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection", "l_colgutteroffset", "fr_hyphenation",
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "row_ToC", "c_hyphenate",
-                  "c_verseNumbers", "c_glueredupwords", "c_firstParaIndent", "c_hangpoetry", "c_preventwidows", "bx_ShowTabs", 
+                  "c_omitverseone", "c_glueredupwords", "c_firstParaIndent", "c_hangpoetry", "c_preventwidows", "bx_ShowTabs", 
                   "l_sidemarginfactor", "s_sidemarginfactor", "l_min", "s_linespacingmin", "l_max", "s_linespacingmax",
                   "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "fcb_textDirection", "l_digits", "fcb_digits",
                   "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
@@ -1472,7 +1473,24 @@ class GtkViewModel(ViewModel):
             for c in ("c_processScriptBefore", "c_processScriptAfter", "btn_editScript"):
                 self.builder.get_object(c).set_sensitive(False)
 
+    def onUsePrintDraftFolderClicked(self, c_useprintdraftfolder):
+        self.sensiVisible("c_useprintdraftfolder")
+
+    def onSelectOutputFolderClicked(self, btn_selectOutputFolder):
+        customOutputFolder = self.fileChooser("Select the output folder", 
+                filters = None, multiple = False, folder = True)
+        if len(customOutputFolder):
+            self.customOutputFolder = customOutputFolder[0]
+            btn_selectOutputFolder.set_tooltip_text(str(customOutputFolder[0]))
+            self.builder.get_object("c_useprintdraftfolder").set_active(False)
+        else:
+            self.customOutputFolder = None
+            btn_selectOutputFolder.set_tooltip_text("")
+            self.builder.get_object("c_useprintdraftfolder").set_active(True)
+            self.builder.get_object("btn_selectOutputFolder").set_sensitive(False)
+
     def onSelectFigureFolderClicked(self, btn_selectFigureFolder):
+        # MH: This needs some work - especially if the commandline option sets the output path
         customFigFolder = self.fileChooser("Select the folder containing image files", 
                 filters = None, multiple = False, folder = True)
         if len(customFigFolder):
