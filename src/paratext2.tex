@@ -1110,7 +1110,7 @@
       \temptrue
     \fi\fi
     \iftemp\else
-      \trace{g}{param-\the\p@ramnumber [\p@ramid]  = "\@paramval" from "\p@ramval"}%
+      \trace{g}{param-\the\p@ramnumber [\p@ramid]  = "#2" from "\p@ramval"}%
       \x@\gdef\csname param-\the\p@ramnumber\endcsname{#2}%
       \let\next=\getonepairp@ram \usfmthreetrue
     \fi
