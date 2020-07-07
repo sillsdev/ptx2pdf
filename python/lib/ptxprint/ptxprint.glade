@@ -2758,7 +2758,7 @@ main body text begins.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkFrame" id="fr_chapVerse">
+                      <object class="GtkFrame" id="fr_layoutSpecialBooks">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="margin_left">6</property>
@@ -2961,7 +2961,7 @@ poetry to improve the overall look.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkFrame" id="fr_chapVerse1">
+                      <object class="GtkFrame" id="fr_layoutOther">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="margin_top">3</property>
@@ -3208,7 +3208,7 @@ and advanced Font Options.</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="row_spacing">6</property>
-                                <property name="column_spacing">6</property>
+                                <property name="column_spacing">12</property>
                                 <child>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
@@ -3612,13 +3612,14 @@ that option - then Refresh Fonts.</property>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="spacing">6</property>
+                                    <property name="spacing">4</property>
                                     <child>
                                       <object class="GtkLabel" id="l_textDirection">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">end</property>
-                                        <property name="label" translatable="yes">Text Flow Direction:</property>
+                                        <property name="label" translatable="yes">Text Flow
+Direction:</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -3676,14 +3677,16 @@ Fonts</property>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="spacing">6</property>
+                                    <property name="spacing">4</property>
                                     <child>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
-                                        <property name="label" translatable="yes">Script for Text:</property>
+                                        <property name="label" translatable="yes">Text
+Script:</property>
+                                        <property name="justify">right</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -3693,7 +3696,7 @@ Fonts</property>
                                     </child>
                                     <child>
                                       <object class="GtkComboBox" id="fcb_script">
-                                        <property name="width_request">170</property>
+                                        <property name="width_request">120</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">In most cases XeTeX can auto-detect
@@ -3727,7 +3730,7 @@ script-specific rendering issues.</property>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="spacing">6</property>
+                                    <property name="spacing">4</property>
                                     <child>
                                       <object class="GtkLabel" id="l_digits">
                                         <property name="visible">True</property>
@@ -3738,9 +3741,9 @@ Latin/Arabic numbers [0-9], you can pick the
 appropriate script here. (Make sure the font you
 are using supports these digits too.)</property>
                                         <property name="halign">end</property>
-                                        <property name="margin_right">3</property>
                                         <property name="margin_bottom">3</property>
-                                        <property name="label" translatable="yes">Script for Numbers:</property>
+                                        <property name="label" translatable="yes">Script for 
+Numbers:</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -3750,7 +3753,7 @@ are using supports these digits too.)</property>
                                     </child>
                                     <child>
                                       <object class="GtkComboBox" id="fcb_digits">
-                                        <property name="width_request">200</property>
+                                        <property name="width_request">140</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">All known unicode-encoded number/digit systems
@@ -3759,7 +3762,6 @@ Latin/Arabic numbers [0-9], you can pick the
 appropriate script here. (Make sure the font you
 are using supports these digits too.)</property>
                                         <property name="halign">start</property>
-                                        <property name="margin_left">3</property>
                                         <property name="model">ls_digits</property>
                                         <property name="wrap_width">3</property>
                                         <property name="active">0</property>
@@ -3784,7 +3786,7 @@ are using supports these digits too.)</property>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="spacing">6</property>
+                                    <property name="spacing">4</property>
                                     <child>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
@@ -3794,7 +3796,9 @@ Paratext project's language settings should
 automatically show up here. These may be
 modified here if necessary. </property>
                                         <property name="halign">end</property>
-                                        <property name="label" translatable="yes">Font Features:</property>
+                                        <property name="label" translatable="yes">Font
+Features:</property>
+                                        <property name="justify">right</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -3816,7 +3820,7 @@ be specified something like this:
       litr=1,dig0=1,dig4=1,dg69=0,dig7=1</property>
                                         <property name="halign">start</property>
                                         <property name="hexpand">False</property>
-                                        <property name="width_chars">24</property>
+                                        <property name="width_chars">20</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -3896,7 +3900,7 @@ rendering technologies).</property>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="spacing">4</property>
+                                    <property name="spacing">3</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_spacing">
                                         <property name="label" translatable="yes">Spacing 
@@ -4027,7 +4031,7 @@ space width.</property>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="spacing">8</property>
+                                    <property name="spacing">6</property>
                                     <child>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
@@ -4165,7 +4169,7 @@ Break Locale:</property>
                                         <child>
                                           <object class="GtkButton" id="btn_findMissingChars">
                                             <property name="label" translatable="yes">Find Missing Characters:</property>
-                                            <property name="width_request">164</property>
+                                            <property name="width_request">160</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
@@ -4192,6 +4196,7 @@ and are ignored by the Fallback font functionality:
                                         </child>
                                         <child>
                                           <object class="GtkEntry" id="t_missingChars">
+                                            <property name="width_request">190</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="tooltip_text" translatable="yes">First use the button (on the left) to find
@@ -4201,7 +4206,7 @@ Use spaces between items.
 Note that you can also use \u0ABC codes
 to enter hard-to-type characters.</property>
                                             <property name="halign">end</property>
-                                            <property name="width_chars">24</property>
+                                            <property name="width_chars">22</property>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -4234,6 +4239,7 @@ that the font currently selected doesn't
 have/support all the missing characters
 either - so it is wise to choose another font.</property>
                                             <property name="halign">end</property>
+                                            <property name="margin_left">50</property>
                                             <property name="label" translatable="yes">Show missing
 characters in:</property>
                                           </object>
@@ -4706,6 +4712,7 @@ selected books/chapters will show in the glossary.</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="row_spacing">8</property>
                                 <property name="column_spacing">6</property>
+                                <property name="column_homogeneous">True</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_chapterNumber">
                                     <property name="label" translatable="yes">Chapter numbers</property>
@@ -4768,7 +4775,7 @@ more like an ordinary book.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_glueredupwords">
-                                    <property name="label" translatable="yes">Keep Re-duplicated Words Together </property>
+                                    <property name="label" translatable="yes">Keep Repeated Words Together </property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -4870,7 +4877,7 @@ in the printed output.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_marginalverses">
-                                    <property name="label" translatable="yes">Marginal Verses ... with col width (pts):</property>
+                                    <property name="label" translatable="yes">Marginal Verses ... Col width (pts):</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -4892,7 +4899,7 @@ column to fit the verse numbers.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_hangpoetry">
-                                    <property name="label" translatable="yes">Hanging Verse Numbers (in poetry)</property>
+                                    <property name="label" translatable="yes">Hanging Poetry Verse Numbers</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -5201,7 +5208,7 @@ affects poetry indentation.
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkFrame" id="fr_paragraphAdjust1">
+                          <object class="GtkFrame" id="fr_hyphenation">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
@@ -8442,13 +8449,13 @@ project.</property>
                   <object class="GtkBox" id="tb_ViewerEditor">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="halign">start</property>
+                    <property name="margin_left">4</property>
+                    <property name="margin_right">4</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame" id="fr_Debugging">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="halign">start</property>
                         <property name="margin_top">4</property>
                         <property name="margin_bottom">4</property>
                         <property name="label_xalign">0.019999999552965164</property>
@@ -8456,7 +8463,7 @@ project.</property>
                           <object class="GtkGrid" id="gr_debugTools">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="column_spacing">3</property>
+                            <property name="column_spacing">6</property>
                             <child>
                               <object class="GtkLabel" id="l_examineBook">
                                 <property name="visible">True</property>
@@ -8841,7 +8848,7 @@ are likely to have to re-do it all again.</property>
                                 <property name="can_focus">False</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
-                                <property name="row_spacing">16</property>
+                                <property name="row_spacing">10</property>
                                 <property name="column_spacing">6</property>
                                 <child>
                                   <object class="GtkLabel">
@@ -8898,7 +8905,7 @@ Effective PDF viewer:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">5</property>
+                                    <property name="top_attach">6</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
@@ -8917,7 +8924,7 @@ Effective PDF viewer:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
-                                    <property name="top_attach">5</property>
+                                    <property name="top_attach">6</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -8938,7 +8945,7 @@ annoyances or other issues:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">7</property>
+                                    <property name="top_attach">8</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
@@ -8958,7 +8965,7 @@ annoyances or other issues:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
-                                    <property name="top_attach">7</property>
+                                    <property name="top_attach">8</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -8990,7 +8997,7 @@ Please ensure you are using the latest
 version before reporting an issue.</property>
                                     <property name="halign">end</property>
                                     <property name="label" translatable="yes">Home Page for Documentation, 
-FAQs and Latest Updates:</property>
+Videos, FAQs and Latest Updates:</property>
                                     <property name="justify">right</property>
                                   </object>
                                   <packing>
@@ -9025,14 +9032,14 @@ the PTX2PDF Macros:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">6</property>
+                                    <property name="top_attach">7</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLinkButton">
                                     <property name="label" translatable="yes">See PTX2PDF Macros FAQ</property>
-                                    <property name="name">Refer to further technical help</property>
+                                    <property name="name">Refer to deeper technical help</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="focus_on_click">False</property>
@@ -9045,7 +9052,7 @@ the PTX2PDF Macros:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
-                                    <property name="top_attach">6</property>
+                                    <property name="top_attach">7</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -9097,6 +9104,39 @@ the PTX2PDF Macros:</property>
                                   <packing>
                                     <property name="left_attach">1</property>
                                     <property name="top_attach">2</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLinkButton">
+                                    <property name="label" translatable="yes">Answers to Frequently Asked Questions (FAQs)</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="focus_on_click">False</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">end</property>
+                                    <property name="relief">none</property>
+                                    <property name="uri">https://software.sil.org/ptxprint/faq/</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">5</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">Frequently Asked Questions (FAQs) from
+general users and common solutions.</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">PTXprint FAQ page:</property>
+                                    <property name="justify">right</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">5</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>

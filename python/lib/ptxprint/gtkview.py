@@ -338,14 +338,14 @@ class GtkViewModel(ViewModel):
             for c in ("c_showAdvancedTab", "c_showViewerTab"):
                 self.builder.get_object(c).set_active(True)
 
-        for c in ("tb_Advanced", "tb_ViewerEditor", "tb_DiglotBorder", "l_missingPictureString",
-                  "btn_editPicList", "l_imageTypeOrder", "t_imageTypeOrder", "fr_chapVerse", "s_colgutteroffset",
+        for c in ("tb_Font", "tb_Advanced", "tb_ViewerEditor", "tb_DiglotBorder", "l_missingPictureString", "btn_editPicList", 
+                  "l_imageTypeOrder", "t_imageTypeOrder", "fr_layoutSpecialBooks", "fr_layoutOther", "s_colgutteroffset",
                   "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "bx_AdvFootnoteConfig", "l_colgutteroffset",
                   "c_usePicList", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", "c_exclusiveFiguresFolder", 
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
-                  "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection", "l_colgutteroffset",
+                  "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection", "l_colgutteroffset", "fr_hyphenation",
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "row_ToC", "c_hyphenate",
-                  "c_verseNumbers", "c_glueredupwords", "c_firstParaIndent", "c_hangpoetry", "c_preventwidows", "bx_ShowTabs", 
+                  "c_omitverseone", "c_glueredupwords", "c_firstParaIndent", "c_hangpoetry", "c_preventwidows", "bx_ShowTabs", 
                   "l_sidemarginfactor", "s_sidemarginfactor", "l_min", "s_linespacingmin", "l_max", "s_linespacingmax",
                   "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "fcb_textDirection", "l_digits", "fcb_digits",
                   "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
