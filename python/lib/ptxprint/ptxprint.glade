@@ -934,6 +934,23 @@ saved configuration.</property>
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="ls_diglotPicListSources">
+    <columns>
+      <!-- column-name DiglotPicSources -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Primary (Left)</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Secondary (Right)</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Both Pri &amp; Sec</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="ls_digprojects">
     <columns>
       <!-- column-name digprojid -->
@@ -3072,8 +3089,8 @@ the first document ends.</property>
                                   <object class="GtkSeparator">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="margin_left">6</property>
-                                    <property name="margin_right">6</property>
+                                    <property name="margin_left">36</property>
+                                    <property name="margin_right">18</property>
                                     <property name="orientation">vertical</property>
                                   </object>
                                   <packing>
@@ -3113,6 +3130,7 @@ PDF/X-1a files are regular PDF 1.3 or PDF 1.4 files to which a number of restric
 * The file contains an output intent which describes the intended printing condition (in this case an ICC color profile). 
 and so on...</property>
                                     <property name="halign">start</property>
+                                    <property name="margin_top">6</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -3820,7 +3838,7 @@ be specified something like this:
       litr=1,dig0=1,dig4=1,dg69=0,dig7=1</property>
                                         <property name="halign">start</property>
                                         <property name="hexpand">False</property>
-                                        <property name="width_chars">20</property>
+                                        <property name="width_chars">22</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -5084,6 +5102,7 @@ be turned OFF (to omit the main text).</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="spacing">5</property>
+                        <property name="homogeneous">True</property>
                         <child>
                           <object class="GtkFrame" id="fr_paragraphAdjust">
                             <property name="visible">True</property>
@@ -7468,9 +7487,6 @@ this option checked (on).</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
-                        <child>
-                          <placeholder/>
-                        </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -7491,13 +7507,13 @@ this option checked (on).</property>
                           <object class="GtkGrid">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="margin_left">14</property>
+                            <property name="margin_left">12</property>
                             <property name="margin_top">25</property>
                             <property name="margin_bottom">3</property>
-                            <property name="column_spacing">30</property>
+                            <property name="column_spacing">3</property>
                             <child>
                               <object class="GtkCheckButton" id="c_useprintdraftfolder">
-                                <property name="label" translatable="yes">Use Project's
+                                <property name="label" translatable="yes">Output to Project's
 PrintDraft Folder</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -7508,6 +7524,7 @@ to store generated PDF file(s).</property>
                                 <property name="margin_left">12</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
+                                <signal name="clicked" handler="onUsePrintDraftFolderClicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -7515,21 +7532,15 @@ to store generated PDF file(s).</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="c_experimental">
-                                <property name="label" translatable="yes">Experimental 
-Features ON!</property>
-                                <property name="sensitive">False</property>
+                              <object class="GtkButton" id="btn_selectOutputFolder">
+                                <property name="label" translatable="yes">Change Output Folder...</property>
+                                <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="no_show_all">True</property>
-                                <property name="tooltip_text" translatable="yes">Experimental features are enabled by
-using the -e flag on the command line.</property>
-                                <property name="halign">start</property>
-                                <property name="margin_top">3</property>
-                                <property name="margin_bottom">3</property>
-                                <property name="hexpand">True</property>
-                                <property name="resize_mode">immediate</property>
-                                <property name="draw_indicator">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">WARNING: Not yet implemented!</property>
+                                <property name="halign">end</property>
+                                <property name="valign">center</property>
+                                <signal name="clicked" handler="onSelectOutputFolderClicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -7753,9 +7764,6 @@ to show gridlines for finetuning settings.</property>
                             <property name="fill">True</property>
                             <property name="position">1</property>
                           </packing>
-                        </child>
-                        <child>
-                          <placeholder/>
                         </child>
                       </object>
                       <packing>
@@ -8065,7 +8073,9 @@ and the Secondary text is positioned on
 the right side of the page.
 
 If you prefer that the Secondary text appears
-on the left (or Inner) side, then check this option. </property>
+on the left (or Inner) side, then check this option. 
+
+This is quite likely required for RTL languages.</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
@@ -8555,6 +8565,13 @@ of books to be printed.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">This button will (re-)generate the PicList(s)
+or AdjList(s) for the books which have been
+selected for printiing. So if you only want to
+generate a List for a single book, then select
+only that book on the Basic tab. Alternatively
+several books for multiple Pic/Adj Lists to be
+generated.</property>
                                 <property name="halign">start</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
@@ -8585,21 +8602,6 @@ place illustrations in one of these 4 locations.</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
-                                <property name="left_attach">4</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkCheckButton" id="c_tracing">
-                                <property name="label" translatable="yes">Debug 
-Tracing</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="halign">end</property>
-                                <property name="draw_indicator">True</property>
-                              </object>
-                              <packing>
                                 <property name="left_attach">6</property>
                                 <property name="top_attach">0</property>
                               </packing>
@@ -8627,6 +8629,30 @@ with a text editor (such as Notepad or NP++).</property>
                                 <property name="top_attach">0</property>
                               </packing>
                             </child>
+                            <child>
+                              <object class="GtkComboBox" id="fcb_diglotPicListSources">
+                                <property name="width_request">121</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">When generating a PicList for a
+Diglot/DiScript publication, you
+need to decide which images to
+include in the publication.
+
+Note that this control remains
+inactive until Diglot is enabled.</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="model">ls_diglotPicListSources</property>
+                                <property name="active">0</property>
+                                <property name="id_column">0</property>
+                                <property name="active_id">1</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">4</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
                           </object>
                         </child>
                         <child type="label">
@@ -8643,7 +8669,8 @@ files and logs. If this option is checked, then the folder which
 contains the resulting PDf will also contain several other related
 files.
 Turning this option OFF will prompt you to delete ALL previous
-log and intermediate temporary file for the entire project.</property>
+log and intermediate temporary file for the entire project and is
+a good way to easily remove a whole bunch of unwanted files.</property>
                             <property name="halign">start</property>
                             <property name="active">True</property>
                             <property name="draw_indicator">True</property>
@@ -9205,7 +9232,7 @@ Shortcut key: &lt;Ctrl-S&gt;</property>
                             <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                           </object>
                           <packing>
-                            <property name="left_attach">4</property>
+                            <property name="left_attach">5</property>
                             <property name="top_attach">0</property>
                           </packing>
                         </child>
@@ -9262,7 +9289,7 @@ of this file as it was when last saved.</property>
                             <signal name="clicked" handler="onRefreshViewerTextClicked" swapped="no"/>
                           </object>
                           <packing>
-                            <property name="left_attach">5</property>
+                            <property name="left_attach">6</property>
                             <property name="top_attach">0</property>
                           </packing>
                         </child>
@@ -9277,6 +9304,24 @@ Numbers</property>
                           </object>
                           <packing>
                             <property name="left_attach">0</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="c_tracing">
+                            <property name="label" translatable="yes">Debug
+Tracing</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="tooltip_text" translatable="yes">This advanced feature is for
+troubleshooting use only.</property>
+                            <property name="opacity">0.80000000000000004</property>
+                            <property name="halign">end</property>
+                            <property name="draw_indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">4</property>
                             <property name="top_attach">0</property>
                           </packing>
                         </child>
@@ -9375,6 +9420,29 @@ in the same place).</property>
               </packing>
             </child>
             <child>
+              <object class="GtkCheckButton" id="c_experimental">
+                <property name="label" translatable="yes">Experimental 
+Features ON!</property>
+                <property name="sensitive">False</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="no_show_all">True</property>
+                <property name="tooltip_text" translatable="yes">Experimental features are enabled by
+using the -e flag on the command line.</property>
+                <property name="halign">start</property>
+                <property name="margin_top">3</property>
+                <property name="margin_bottom">3</property>
+                <property name="hexpand">True</property>
+                <property name="resize_mode">immediate</property>
+                <property name="draw_indicator">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -9386,7 +9454,7 @@ in the same place).</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">2</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <child>
@@ -9415,7 +9483,7 @@ you start PTXprint.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">3</property>
+                <property name="position">4</property>
               </packing>
             </child>
             <child>
@@ -9432,7 +9500,7 @@ you start PTXprint.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">4</property>
+                <property name="position">5</property>
               </packing>
             </child>
             <child>
@@ -9455,7 +9523,7 @@ you start PTXprint.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">5</property>
+                <property name="position">6</property>
               </packing>
             </child>
             <child>
@@ -9483,7 +9551,7 @@ Shortcut key: &lt;Ctrl-P&gt;</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">6</property>
+                <property name="position">7</property>
               </packing>
             </child>
           </object>
