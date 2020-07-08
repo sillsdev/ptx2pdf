@@ -1,0 +1,17 @@
+\id TST Test file
+\h small test file
+
+\c 1
+\s2 This is a title
+\p
+\v 1 This is normal text.  Dolorem ad ducimus quia ducimus minima aperiam ab saepe qui
+\p
+\fig This is a rose, not a fig |loc="cr" src="image.jpg" alt="Figs are tasty"  ref="1:1" size="col*0.25"\fig*
+\v 2 I didn't put a paragraph break after the pic. I wonder what happens. 
+\p
+\v 3 New para. Reiciendis voluptatem ut qui ex officiis. Qui a qui omnis inventore nostrum quo doloribus.
+\p
+\v 4 Et sed nemo sapiente quaerat necessitatibus. Enim illum id enim cumque expedita iure. Quis vitae tempora aliquid sint quisquam facilis voluptatum cupiditate. 
+\v 5  Autem nesciunt cumque odit esse et eum eum sunt. Voluptatum laboriosam qui facere. Voluptas unde in adipisci. Pariatur eos animi dolorem tempora eos temporibus. Odio autem maiores ea.
+\v 6 deserunt qui et quod laboriosam ab et fugiat sed cum numquam sequi a ullam tempore fugiat non necessitatibus nihil vel cumque illum vel tenetur corrupti assumenda at qui quia officia est earum molestias totam dolores est commodi nostrum vero et assumenda sit delectus omnis voluptas soluta consectetur neque voluptatem distinctio
+
