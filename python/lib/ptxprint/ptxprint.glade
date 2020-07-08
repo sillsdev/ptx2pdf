@@ -4648,9 +4648,14 @@ etc.
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">If the last page of a book uses less than
-half the page, then the next book will
-start on the same page.
-(This is currently an experimental feature)</property>
+half the page (50%), then the next book
+will start on the same page.
+
+Note that if you want the next book
+to start AFTER 50% of the page, then
+add a line to your ptxprint-mods.tex
+file as follows (for 75%):
+\def\PageFullFactor{0.75}</property>
                                         <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
