@@ -24,3 +24,4 @@
 - can override \defineheaders to define \oddhead, \evenhead, \titlehead (why?)
 - do we need to bring in \calch@ngverseoffset and \HangVerseAlignMarker from PT?
 - Add \SpaceStrechFactor and \SpaceShrinkFactor in .tex setting fontdimen for all used fonts
+- Add \PageFullFactor defaults to 0.9 to set how much of a page must be full at the end of a book to force a page break \ifendbooknoeject is true.
