@@ -5,6 +5,7 @@ from .texmodel import ModelMap, TexModel, universalopen  # MH: I added TeXModel 
 from .ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from .font import TTFont
 import pathlib, os
+from configparser import NoSectionError, NoOptionError, _UNSET
 
 VersionStr = "0.8.7 beta"
 
@@ -359,9 +360,21 @@ class ViewModel:
             self._configset(config, k, str(val) if val is not None else "")
         return config
 
+    def _config_get(self, config, section, option, conv=None, fallback=_UNSET, **kw):
+        try:
+            v = config.get(section, option, **kw)
+        except (NoSectionError, NoOptionError):
+            if fallback is _UNSET:
+                raise
+            return fallback
+        if conv is None:
+            return v
+        if v == "" and fallback is not _UNSET:
+            return fallback
+        return conv(v)
+
     def versionFwdConfig(self, config):
-        version = config.getfloat("config", "version", fallback="0.0")
-        print("version=",version)
+        version = self._config_get(config, "config", "version", conv=float, fallback=0.0)
         if float(version) < 0.9:
             self._configset(config, "document/ifshowchapternums", not config.getboolean("document", "ifomitchapternum"))
             self._configset(config, "document/ifshowversenums", not config.getboolean("document", "ifomitallverses"))
