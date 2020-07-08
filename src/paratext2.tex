@@ -414,6 +414,7 @@
      \hbox to \textwidth{\the\footline}\vss}}
 \newdimen\RHruleposition \RHruleposition=\maxdimen
 
+\def\PageFullFactor{0.9}
 \def\doublecolumns{
   \ifnum\c@rrentcols=1
     % make switch from single to double column
@@ -422,13 +423,13 @@
     \global\output={\savepartialpage}\eject % save any partially-full page
 	% if single column material already fills 3/4 page, go to next page to start double columns
     \dimen0=\ht\partial
-    \ifdim\dimen0>0.9\textheight
+    \ifdim\dimen0>\PageFullFactor\textheight
 %%%      \msg{Output full page from 1 to 2 columns}%
       \global\output={\onecol} % but output it immediately if 75% full
       \loop\ifdim\dimen0>\textheight\advance\dimen0-\textheight\repeat
      %\vbox{\hskip-\columnshift\box\partial}
       \unvbox\partial
-      \ifdim\dimen0>0.9\textheight\vfill\eject
+      \ifdim\dimen0>\PageFullFactor\textheight\vfill\eject
         \else\global\output={\savepartialpage}\eject
       \fi
     \else
@@ -499,7 +500,7 @@
     \xdef\p@gebotmark{}
     \else\trace{o}{Page empty \the\ht\colA, \ht\colB, \the\ht\partial}\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
     \tempfalse%
-    \ifdim\ht\partial>0.9\textheight \temptrue\fi%
+    \ifdim\ht\partial>\PageFullFactor\textheight \temptrue\fi%
     \ifnum\outputpenalty<-10000 \temptrue\fi%
     \iftemp\def\pagecontents{\box\partial}\plainoutput 
     \xdef\p@gefirstmark{}
@@ -1055,7 +1056,7 @@
     \global\hsize=\textwidth \advance\hsize by -\columnshift
     \global\vsize=\textheight
     %\tempfalse
-    \ifdim\ht\partial>0.9\textheight
+    \ifdim\ht\partial>\PageFullFactor\textheight
       \twocolp@geout \fi%Set up pagecontents and call \plainoutput
     \global\c@rrentcols=1
     \trace{o}{resetting resetvsize for singlecolumn}\def\resetvsize{\trace{o}{resetvsize}\global\vsize=\textheight} 
@@ -1065,8 +1066,9 @@
     \global\count\topins=\count255
     \global\count\bottomins=\count255
     \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
-    \ifdim\ht\partial>\baselineskip \vbox{\unvbox\partial} \fi
-    \ifendbooknoeject\ifx\p@gefirstmark\t@tle \else\vskip\baselineskip\hskip-\columnshift\hrule\vskip2\baselineskip\fi\fi%
+    \ifdim\ht\partial>\baselineskip \vbox{\unvbox\partial}
+      \ifendbooknoeject\ifx\p@gefirstmark\t@tle \else\vskip\baselineskip\hskip-\columnshift\hrule\vskip2\baselineskip\fi\fi
+    \fi
   \fi}%
 
 \count\topins=1000 \dimen\topins=\maxdimen \skip\topins=0pt
