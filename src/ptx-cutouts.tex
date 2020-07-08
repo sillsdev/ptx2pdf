@@ -40,7 +40,7 @@
 \def\rightcutout{\@cutout{R}}
 
 \def\@cutout#1#2#3#4{%
-  \trace{C}{@cutout #1 #2 #3 #4}
+  \x@\trace{C}{@cutout #1 #2 #3 #4}%
   \global\advance\@numcuts by 1
   \expandafter\xdef\csname cut@side\the\@numcuts\endcsname{#1}%
   \expandafter\xdef\csname cut@width\the\@numcuts\endcsname{#2}%

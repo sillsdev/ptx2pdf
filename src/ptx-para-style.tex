@@ -134,6 +134,8 @@
 \def\paratrace{0}
 \let\gridb@x\gr@db@@x
 
+
+\def\at@ndofthispar{}
 % end a paragraph, handling cutouts (shaping around drop-cap) if any, and the <end> hook
 \def\par{\ifhmode \TRACE{par}%
  \makecutouts
@@ -143,7 +145,7 @@
  \csname end-\m@rker\endcsname
  \trace{j}{baselineskip = \the\baselineskip, looseness = \the\looseness}%
  \endgraf
- \cutoutcarryover \fi}
+ \cutoutcarryover \fi\let\pn@xt=\at@ndofthispar\let\at@ndofthispar=\empty\pn@xt}
 
 %
 % Handle a paragraph style marker (parameter is the marker name)

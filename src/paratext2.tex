@@ -1126,8 +1126,8 @@
 \newif\ifpicNarrow \picNarrowfalse
 
 \def\p@rsePicXtra#1#2\end{% Parse optional new picture options, and remember them
-  \edef\t@mpb{#1}%
-  \edef\t@mpc{#2}%
+  \xdef\t@mpb{#1}%
+  \xdef\t@mpc{#2}%
 }
 \def\p@rsePicUse#1#2\end{% Parse the new picture options, and remember them
   \picUsesInstrue
@@ -1136,7 +1136,7 @@
   \gdef\picl@c{}% location code for in-line pictures
   \edef\t@mp{#1}
   \edef\t@mpb{#2}
-  \ifx\t@mpb\empty\let\t@mpc=\t@mpb\else\p@rsePicXtra\t@mpb\end\fi
+  \ifx\t@mpb\empty\let\t@mpc=\t@mpb\else\x@\p@rsePicXtra\t@mpb\end\fi
   \trace{g}{doespicUseIns? #1 \t@mpb \t@mpc}
   \ifx\t@mp\loc@Inl
     \trace{g}{Experimental inline graphic}%
@@ -1150,14 +1150,17 @@
     \global\let\picl@c\loc@Cut
     \global\picUsesInsfalse
     \global\picNarrowtrue
-    \xdef\l@cspec{#2}
-    \ifx\t@mpc\empty\def\c@tskip{0}\else\edef\c@tskip{\t@mpc}\fi%
+    \xdef\l@cspec{\t@mpb}
+    \ifx\t@mpc\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\t@mpc}\fi%
     \trace{g}{Experimental graphic in cutout, after \c@tskip lines}%
   \fi
   \ifx\t@mp\loc@Par
-    \global\let\picl@c\loc@par
-    \trace{g}{Unimplemented after-paragraph graphic}%
+    \global\let\picl@c=\loc@Par
+    \trace{g}{Experimental after-paragraph graphic}%
+    \xdef\pic@lign{\t@mpb}
     \global\picUsesInsfalse
+    \ifx\t@mpb\@lignLeft\picNarrowtrue\fi
+    \ifx\t@mpb\@lignRight\picNarrowtrue\fi
   \fi
   }
 \def\d@figure#1{%
@@ -1285,6 +1288,8 @@
   \else
     % Calculate lines used for the picture
     \dimen0=\ht0
+    \advance\dimen0 by \dp0
+    \advance\dimen0 by 0.5\baselineskip
     \divide\dimen0 by \baselineskip
     \count0=\dimen0
     \trace{g}{Inline picture takes \the\count0 lines}%
@@ -1296,12 +1301,37 @@
       \splittopskip\z@skip
       \splitmaxdepth\maxdimen \floatingpenalty20000 % was zero
       \ifpicNarrow\ifx\pic@lign\@lignLeft
-        \setbox0\hbox to \colwidth{\hskip4em \box0\hss}\else\setbox0\hbox to \colwidth{\hss\box0}\fi
+        \setbox0\hbox to \colwidth{\box0\hss}\else\setbox0\hbox to \colwidth{\hss\box0}\fi
       \fi
       \gridp@ctrue\gridb@x0\gridp@cfalse% make sure we align to the page grid
       \penalty10
     \fi
+    \ifx\picl@c\loc@Par
+      \trace{g}{Picture is post-paragraph}%
+      \x@\global\x@\setbox\x@\picb@x\box0
+      \gdef\at@ndofthispar{
+        \penalty10 % Allow the page to break
+        \splittopskip\z@skip
+        \splitmaxdepth\maxdimen \floatingpenalty20000 % was zero
+        \ifpicNarrow\ifx\pic@lign\@lignLeft
+          \setbox\picb@x\hbox to \colwidth{\box\picb@x\hss}\trace{g}{Pic aligned left}%
+          \else\setbox\picb@x\hbox to \colwidth{\hss\box\picb@x}\trace{g}{Pic aligned right}\fi
+        \fi
+        \gridp@ctrue\gridb@x\picb@x\gridp@cfalse% make sure we align to the page grid
+        \penalty10
+       }%
+    \fi
     \ifx\picl@c\loc@Cut
+        \ifhmode
+           \ifx\prev@rsemode\empty
+             \trace{g}{Cutout in horizontal mode. forcing \m@rker}%
+             \csname\m@rker\endcsname
+           \else
+             \trace{g}{Cutout in horizontal mode, but verse was in vertical. forcing \prev@rsemode and negative lineskip}%
+             \csname\prev@rsemode\endcsname
+             \vskip -\baselineskip
+           \fi
+        \fi 
       \trace{g}{Picture is cutout}%
       \dimen1=\baselineskip
       \advance\count0 by 1
@@ -1310,13 +1340,13 @@
       \dimen2=\wd0
       \advance\dimen2 by 10pt
       \ifx\l@cspec\@lignLeft
-        \setbox\picb@x\hbox to 0pt {\lower\dimen1\box0\hss}
+        \setbox\picb@x\hbox to 0pt {\lower\dimen1\box0\hss}%
         \ht\picb@x=0pt 
          \dp\picb@x=0pt
         \vskip-\baselineskip  %Yuck
         \box\picb@x %FIXME? Box here Adds vertical space
         \trace{g}{leftcutout \the\dimen2, \c@tskip, \the\count0}%
-        \leftcutout{\dimen2}{\c@tskip}{\count0}%
+        \leftcutout{\the\dimen2}{\c@tskip}{\the\count0}%
       \else
         \ifx\l@cspec\@lignRight
           \setbox\picb@x\hbox to \hsize{\hss\lower\dimen1\box0}%
@@ -1325,9 +1355,10 @@
           \vskip-\baselineskip %Yuck
           \box\picb@x% FIXME? Box here Adds vertical space
           \trace{g}{rightcutout \the\dimen2, \c@tskip, \the\count0}%\
-          \rightcutout{\dimen2}{\c@tskip}{\count0}%
+          %\edef\t@mpd{\the\dimen2}
+          \rightcutout{\the\dimen2}{\c@tskip}{\the\count0}%\emspace
         \else
-          \message{*** Unknown position i\l@cspec, picture misplaced}%
+          \message{*** Unknown position \l@cspec, picture misplaced}%
           \box0
         \fi
         \unskip

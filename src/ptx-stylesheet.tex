@@ -245,7 +245,9 @@
    \nobreak\hskip0.5sp % let \x detect that there's "space" (or maybe drop-chapter) here
   }
   % define handling for usfm \v marker
-  \def\v{\leavevmode % ensure we are in horizontal mode to build paragraph
+  \def\v{%
+   \ifvmode\xdef\prev@rsemode{\m@rker}\else\gdef\prev@rsemode{}\fi
+   \leavevmode % ensure we are in horizontal mode to build paragraph
    % set c@ncelfirstversetrue if we are immediately following a drop cap chapter number
    % and the user has requested omission of the first verse number in a chapter
    \c@ncelfirstversefalse %

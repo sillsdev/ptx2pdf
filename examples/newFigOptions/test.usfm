@@ -1,0 +1,35 @@
+\id TST Test file
+\h small test file
+
+\c 1
+\s2 This is a demonstration of some of the new picture positions.
+\p
+\v 1 There are three new picture positions, for when the normal
+top-left/bottom-right, etc. are not sufficient. These positions are: 
+\q1 '\bd here\bd*', also known as  'in-line';  
+\q1 '\bd cut-out\bd*' or 'wrapped'  which makes a notch in the
+text; 
+\q1 '\bd post-paragraph\bd*' or 'delayed', mainly
+for the end of chapters, when there is no verse to put the picture before.  
+\m Each of the positions
+have left and right variations, the 'here' and 'delayed' have a centred option
+too.  
+\v 2 There is no paragraph break in the text here, before the verse that the pic will attach to. An in-line or cut-out image must 
+have a paragraph break so it will force one (same type as last-time).  
+\p
+\v 3 A new paragraph mid cut-out does not  cause  a problem.  And a cut-out will stop 
+without a new paragraph starting. 
+\p Notice that the image did not
+start at the start of the paragraph, but some lines lower. That is determined by
+the digit that follows the side. 
+\p Left and right variations have captions the same width as the picture, centred ones get the whole column/page width.
+\p Don't rely on forced paragraphs, particularly if you intend to insert another image. Two cut-outs in a 
+single paragraph cause problems.
+The rest of this document is computer-generated fake latin. Reiciendis voluptatem ut qui ex officiis. Qui a qui omnis inventore nostrum quo doloribus.
+\p
+\v 4 Et sed nemo sapiente quaerat necessitatibus. Enim illum id enim cumque expedita iure. Quis vitae tempora aliquid sint quisquam facilis voluptatum cupiditate. 
+\v 5 Autem nesciunt cumque odit esse et eum eum sunt. Voluptatum laboriosam qui facere. Voluptas unde in adipisci. Pariatur eos animi dolorem tempora eos temporibus. Odio autem maiores ea.
+\v 6 deserunt qui et quod laboriosam ab et fugiat sed cum numquam sequi a ullam tempore fugiat non necessitatibus nihil vel cumque illum vel tenetur corrupti assumenda at qui quia officia est earum molestias totam dolores est commodi nostrum vero et assumenda sit delectus omnis voluptas soluta consectetur neque voluptatem distinctio
+\v 7 Quasi consequuntur eligendi est. Consequatur omnis enim sapiente natus harum quia aut et. Sit libero impedit quod distinctio quam adipisci molestias. Saepe et dolor beatae temporibus. Ut quod alias similique.
+\m
+\v 8 Aut nihil praesentium fuga totam consequatur ipsum. Debitis rerum qui et dolor. Quaerat distinctio laudantium omnis ea aspernatur. Minima vel unde numquam perspiciatis quia reprehenderit.
