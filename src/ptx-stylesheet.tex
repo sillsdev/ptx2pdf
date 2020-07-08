@@ -220,6 +220,7 @@
   \let\@V=\v% remember \v defn for (A) below
   % Define a macro to read an actual space delimited verse number
   \def\@v@ ##1 {\gdef\v@rse{##1}%
+   \the\prev@rsehooks
    \x@\spl@tverses\v@rse--\relax % split verse in a verse bridge (e.g. 3-4) into \v@rsefrom, \v@rseto
    % if not cancelling first verse, output verse number
    \ifc@ncelfirstverse\else%
@@ -357,7 +358,9 @@
 
 % other modules can use \addtoversehooks to insert macros that will be executed at each verse
 \def\addtoversehooks#1{\x@\global\x@\v@rsehooks\x@{\the\v@rsehooks #1}}
+\def\addtopreversehooks#1{\x@\global\x@\prev@rsehooks\x@{\the\prev@rsehooks #1}}
 \newtoks\v@rsehooks
+\newtoks\prev@rsehooks
 
 \newif\ifch@pter \def\ch@plabel{}
 
