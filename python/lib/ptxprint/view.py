@@ -375,16 +375,19 @@ class ViewModel:
 
     def versionFwdConfig(self, config):
         version = self._config_get(config, "config", "version", conv=float, fallback=0.0)
+        print("version=",version)
         if float(version) < 0.9:
-            self._configset(config, "document/ifshowchapternums", not config.getboolean("document", "ifomitchapternum"))
-            self._configset(config, "document/ifshowversenums", not config.getboolean("document", "ifomitallverses"))
-            self._configset(config, "document/bookintro", not config.getboolean("document", "supressbookintro"))
-            self._configset(config, "document/introoutline", not config.getboolean("document", "supressintrooutline"))
-            self._configset(config, "document/firstparaindent", not config.getboolean("document", "supressindent"))
-            self._configset(config, "document/sectionheads", not config.getboolean("document", "supresssectheads"))
-            self._configset(config, "document/parallelrefs", not config.getboolean("document", "supressparallels"))
+            try:
+                self._configset(config, "document/ifshowchapternums", not config.getboolean("document", "ifomitchapternum"))
+                self._configset(config, "document/ifshowversenums", not config.getboolean("document", "ifomitallverses"))
+                self._configset(config, "document/bookintro", not config.getboolean("document", "supressbookintro"))
+                self._configset(config, "document/introoutline", not config.getboolean("document", "supressintrooutline"))
+                self._configset(config, "document/firstparaindent", not config.getboolean("document", "supressindent"))
+                self._configset(config, "document/sectionheads", not config.getboolean("document", "supresssectheads"))
+                self._configset(config, "document/parallelrefs", not config.getboolean("document", "supressparallels"))
+            except:
+                pass
             config.set("config", "version", "0.9")
-            pass
 
     def loadConfig(self, config):
         def setv(k, v): self.set(k, v, skipmissing=True)

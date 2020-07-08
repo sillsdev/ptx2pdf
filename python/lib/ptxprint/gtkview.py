@@ -316,8 +316,8 @@ class GtkViewModel(ViewModel):
             # Turn Dangerous Settings OFF
             for c in ("c_startOnHalfPage", "c_marginalverses", "c_prettyIntroOutline", "c_blendfnxr", "c_autoToC",
                       "c_figplaceholders", "c_glueredupwords", "c_hangpoetry", 
-                      "c_preventwidows", "c_PDFx1aOutput", "c_diglot", "c_hyphenate", "c_variableLineSpacing",
-                      "c_showAdvancedTab", "c_showViewerTab", "c_elipsizeMissingVerses"):  # "c_showBodyTab", 
+                      "c_showAdvancedTab", "c_showViewerTab", "c_elipsizeMissingVerses"):
+                      # "c_preventwidows", "c_PDFx1aOutput", "c_hyphenate", "c_variableLineSpacing", "c_showBodyTab"
                 self.builder.get_object(c).set_active(False)
 
             # Turn Essential Settings ON
