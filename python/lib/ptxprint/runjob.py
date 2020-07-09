@@ -31,7 +31,8 @@ _errmsghelp = {
                                          "Try turning off Hyphenate option located on the Body tab\n",
 "! Font \extrafont":                     "Fallback Font issue - set a font on the Body tab.\n" +\
                                          "(Turn off the option 'Use Fallback Font' or specify a valid font)\n",
-"! Font":                                "Font related issue - details unknown\n(Report this rare error please)\n",
+"! Font":                                "Font related issue. The most likely reason for this error is that\n" +\
+                                         "the selected font has not been installed for all users. See FAQ.\n",
 "! Too many }'s":                        "Possibly a TeX macro issue - contact support, or post a bug report\n",
 "! This can't happen (page)":            "Possibly a TeX macro issue - contact support, or post a bug report\n",
 "! I can't find file `paratext2.tex'.":  "Possibly a faulty installation.\n",
@@ -191,6 +192,7 @@ class RunJob:
             finalLogLines = self.parseLogLines()
             self.printer.doError("Failed to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname),
                     secondary="".join(finalLogLines[-20:]), title="PTXprint [{}] - Error!".format(VersionStr))
+            self.printer.showLogFile()
 
     def parselog(self, fname, rerunp=False, lines=20):
         loglines = []

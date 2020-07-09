@@ -492,7 +492,10 @@ class ViewModel:
             if digmode.startswith("Sec") or digmode.startswith("Both"): 
                 secfname = self.getBookFilename(bk, secprjid)
                 flist += [os.path.join(secprjdir, secfname)]
-            sfx = 'a'
+            if len(flist) == 2:
+                sfx = 'L'
+            else:
+                sfx = ""
             _picposn = {"col":  ("tl", "tr", "bl", "br"),
                         "span": ("t", "b")}
             for infname in flist:
@@ -500,7 +503,7 @@ class ViewModel:
                     _picposn = {"col":  ("tl", "bl"),
                                 "span": ("t")}
                 elif len(flist) == 2 and infname == flist[1]:
-                    sfx = 'b'
+                    sfx = 'R'
                     _picposn = {"col":  ("tr", "br"),
                                 "span": ("b")}
                 usedRefs = []
@@ -539,7 +542,7 @@ class ViewModel:
                             srtchvs = "{:0>3}{:0>3}{}".format(ch,vs,sfx)
                             cmt = "% " if chvs in usedRefs else ""
                             usedRefs += [chvs]
-                            tmplist.append(srtchvs+"\u0009"+cmt+bk+" "+chvs+" |"+picfname+"|"+f[4]+"|"+pageposn+"||"+f[7]+"|"+f[8]+f[9])
+                            tmplist.append(srtchvs+"\u0009"+cmt+bk+sfx+" "+chvs+" |"+picfname+"|"+f[4]+"|"+pageposn+"||"+f[7]+"|"+f[8]+f[9])
                     else:
                         # If none of the USFM2-styled illustrations were found then look for USFM3-styled markup in text 
                         # (Q: How to handle any additional/non-standard xyz="data" ? Will the .* before \\fig\* take care of it adequately?)
@@ -568,9 +571,10 @@ class ViewModel:
                                 else:
                                     vs = f[0]
                                 chvs = ch+"." + str(vs)
+                                srtchvs = "{:0>3}{:0>3}{}".format(ch,vs,sfx)
                                 cmt = "% " if chvs in usedRefs else ""
                                 usedRefs += [chvs]
-                                piclist.append(cmt+bk+" "+chvs+" |"+picfname+"|"+f[5]+"|"+pageposn+"||"+f[3]+"|"+f[6]+"\n")
+                                tmplist.append(srtchvs+"\u0009"+cmt+bk+sfx+" "+chvs+" |"+picfname+"|"+f[5]+"|"+pageposn+"||"+f[3]+"|"+f[6]+"\n")
             if len(tmplist):
                 for pc in sorted(tmplist):
                     piclist.append(pc.split("\u0009")[1]+"\n")
@@ -600,7 +604,18 @@ class ViewModel:
     def generateAdjList(self):
         existingFilelist = []
         booklist = self.getBooks()
+        diglot  = self.get("c_diglotAutoAligned")
+        digmode = self.get("fcb_diglotPicListSources") if diglot else "Primary"
         prjid = self.get("fcb_project")
+        secprjid = ""
+        if diglot:
+            secprjid = self.get("fcb_diglotSecProject")
+            if secprjid is not None:
+                secprjdir = os.path.join(self.settings_dir, secprjid)
+            else:
+                self.doError("No Secondary Project Set", secondary="In order to generate an AdjList for Diglots, the \n"+
+                                                                    "Secondary project must be set on the Diglot+Border tab.")
+                return
         prjdir = os.path.join(self.settings_dir, self.prjid)
         for bk in booklist:
             fname = self.getBookFilename(bk, prjid)
@@ -616,31 +631,46 @@ class ViewModel:
             if not self.msgQuestion(q1, q2):
                 return
         for bk in booklist:
+            tmplist = []
             fname = self.getBookFilename(bk, prjid)
-            infname = os.path.join(prjdir, fname)
             outfname = os.path.join(self.configPath(self.configName()), "AdjLists", fname)
             doti = outfname.rfind(".")
             if doti > 0:
                 outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".adj"
             adjlist = []
-            with open(infname, "r", encoding="utf-8") as inf:
-                dat = inf.read()
-                # It would be good to make this more inclusive (\p \m \q1 \q2 etc.) 
-                # and also include \s Section Heads as comments to help show whichs paragraphs are within a single section
-                m = re.findall(r"\\p ?\r?\n\\v (\S+)",dat)
-                if m is not None:
-                    prv = 0
-                    ch = 1
-                    for v in m:
-                        iv = int(re.sub(r"^(\d+).*$", r"\1", v), 10)
-                        if iv < prv:
-                            ch = ch + 1
-                        adjlist.append(bk+" "+str(ch)+"."+v+" +0\n")
-                        prv = iv
-                    adjpath = os.path.join(self.configPath(self.configName()), "AdjLists")
-                    os.makedirs(adjpath, exist_ok=True)
-                    with open(outfname, "w", encoding="utf-8") as outf:
-                        outf.write("".join(adjlist))
+            flist = [os.path.join(prjdir, fname)]
+            if diglot: 
+                secfname = self.getBookFilename(bk, secprjid)
+                flist += [os.path.join(secprjdir, secfname)]
+            if len(flist) == 2:
+                sfx = 'L'
+            else:
+                sfx = ""
+            for infname in flist:
+                if len(flist) == 2 and infname == flist[1]:
+                    sfx = 'R'
+                with open(infname, "r", encoding="utf-8") as inf:
+                    dat = inf.read()
+                    # It would be good to make this more inclusive (\p \m \q1 \q2 etc.) 
+                    # and also include \s Section Heads as comments to help show whichs paragraphs are within a single section
+                    m = re.findall(r"\\p ?\r?\n\\v (\S+)",dat)
+                    if m is not None:
+                        prv = 0
+                        ch = 1
+                        for v in m:
+                            iv = int(re.sub(r"^(\d+).*$", r"\1", v), 10)
+                            if iv < prv:
+                                ch = ch + 1
+                            srtchvs = "{:0>3}{:0>3}{}".format(ch,v,sfx)
+                            tmplist.append(srtchvs+"\u0009"+bk+sfx+" "+str(ch)+"."+v+" +0\n")
+                            prv = iv
+            if len(tmplist):
+                for al in sorted(tmplist):
+                    adjlist.append(al.split("\u0009")[1]+"\n")
+            adjpath = os.path.join(self.configPath(self.configName()), "AdjLists")
+            os.makedirs(adjpath, exist_ok=True)
+            with open(outfname, "w", encoding="utf-8") as outf:
+                outf.write("".join(adjlist))
 
     def generateHyphenationFile(self):
         listlimit = 32749

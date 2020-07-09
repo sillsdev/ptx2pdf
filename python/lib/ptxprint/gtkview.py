@@ -826,6 +826,7 @@ class GtkViewModel(ViewModel):
                 genBtn.set_tooltip_text(genTip)
             elif pgnum == 1: # AdjList
                 self.builder.get_object("c_randomPicPosn").set_opacity(0.2)
+                self.builder.get_object("fcb_diglotPicListSources").set_opacity(0.2)
                 genTip = "Generate a list of paragraphs\nthat may be adjusted (using\nshrink or expand values)."
                 genBtn.set_sensitive(True)
                 genBtn.set_tooltip_text(genTip)
@@ -1709,3 +1710,8 @@ class GtkViewModel(ViewModel):
         wid.set_fraction(val)
         while Gtk.events_pending():
             Gtk.main_iteration()
+
+    def showLogFile(self):
+        self.builder.get_object("nbk_Main").set_current_page(9)   # Switch to the Viewer tab
+        self.builder.get_object("nbk_Viewer").set_current_page(4) # Display the tab with the .log file
+        # self.view.scroll_to_mark(self.buf.get_insert(), 0.0, True, 0.5, 0.5)

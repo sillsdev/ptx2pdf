@@ -8711,7 +8711,7 @@ a good way to easily remove a whole bunch of unwanted files.</property>
                           </object>
                         </child>
                         <child type="tab">
-                          <object class="GtkLabel" id="l_1">
+                          <object class="GtkLabel" id="l_0">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="tooltip_text" translatable="yes">A PicList is used to specify the 
@@ -8743,7 +8743,7 @@ for "col": tl=top left, tr=top right,
                           </packing>
                         </child>
                         <child type="tab">
-                          <object class="GtkLabel" id="l_2">
+                          <object class="GtkLabel" id="l_1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="tooltip_text" translatable="yes">To balance columns of text on a page it is possible
@@ -8781,7 +8781,7 @@ are likely to have to re-do it all again.</property>
                           </packing>
                         </child>
                         <child type="tab">
-                          <object class="GtkLabel" id="l_0">
+                          <object class="GtkLabel" id="l_2">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">Final SFM</property>
