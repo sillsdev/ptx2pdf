@@ -188,6 +188,17 @@ class RunJob:
                 # Only delete the temp files if the PDF was created AND the user did NOT select to keep them
             if not info.asBool("project/keeptempfiles"):
                 self.removeTempFiles(texfiles)
+
+            if not self.args.print: # We don't want pop-up messages if running in command-line mode
+                fname = os.path.join(self.tmpdir, pdfname.replace(".pdf", ".log"))
+                with open(fname, "r", encoding="utf-8", errors="ignore") as logfile:
+                    log = logfile.read() # unlike other places, we *do* want the entire log file
+                badpgs = re.findall(r'(?i)SOMETHING BAD HAPPENED on page (\d+)\.', "".join(log))
+                if len(badpgs):
+                    print("Layout problems encountered on page(s):"+", ".join(badpgs))
+                    self.printer.doError("PDF was created BUT...",
+                        secondary="Layout problems were encountered on page(s): "+",".join(badpgs), title="PTXprint [{}] - Warning!".format(VersionStr))
+
         elif not self.args.print: # We don't want pop-up messages if running in command-line mode
             finalLogLines = self.parseLogLines()
             self.printer.doError("Failed to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname),
