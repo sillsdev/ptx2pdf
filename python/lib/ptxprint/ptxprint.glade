@@ -8711,12 +8711,19 @@ a good way to easily remove a whole bunch of unwanted files.</property>
                           </object>
                         </child>
                         <child type="tab">
-                          <object class="GtkLabel" id="l_0">
+                          <object class="GtkLabel" id="l_1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Final SFM</property>
+                            <property name="tooltip_text" translatable="yes">A PicList is used to specify the 
+position of illustrations on the page. 
+Any one of the following are possible:
+for "span": t=top, b=bottom  of page
+for "col": tl=top left, tr=top right,
+        bl=bottom left,  br=bottom right</property>
+                            <property name="label" translatable="yes">Pic List</property>
                           </object>
                           <packing>
+                            <property name="position">1</property>
                             <property name="tab_fill">False</property>
                           </packing>
                         </child>
@@ -8736,16 +8743,22 @@ a good way to easily remove a whole bunch of unwanted files.</property>
                           </packing>
                         </child>
                         <child type="tab">
-                          <object class="GtkLabel" id="l_1">
+                          <object class="GtkLabel" id="l_2">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">A PicList is used to specify the 
-position of illustrations on the page. 
-Any one of the following are possible:
-for "span": t=top, b=bottom  of page
-for "col": tl=top left, tr=top right,
-        bl=bottom left,  br=bottom right</property>
-                            <property name="label" translatable="yes">Pic List</property>
+                            <property name="tooltip_text" translatable="yes">To balance columns of text on a page it is possible
+to specify paragraphs adjustments (shrink or expand):
+
+A Paragraph Adjust List needs to be in this format:
+MRK 2.7 +1    (i.e. expand the para at Mark 2.7 by one line) 
+MRK 3.20 -1   (i.e. shrink the para at Mark 3:20 by one line)
+%MARK 4.14 +1   (ignore this line - treat it as a comment)   
+MRK 5.8 +2    (i.e. expand the para at Mark 2.7 by two lines)
+etc.
+Note that adjusting paragraphs needs to be done right at the
+end when all other settings have been finalized. Otherwise you
+are likely to have to re-do it all again.</property>
+                            <property name="label" translatable="yes">Adj List</property>
                           </object>
                           <packing>
                             <property name="position">1</property>
@@ -8768,22 +8781,10 @@ for "col": tl=top left, tr=top right,
                           </packing>
                         </child>
                         <child type="tab">
-                          <object class="GtkLabel" id="l_2">
+                          <object class="GtkLabel" id="l_0">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">To balance columns of text on a page it is possible
-to specify paragraphs adjustments (shrink or expand):
-
-A Paragraph Adjust List needs to be in this format:
-MRK 2.7 +1    (i.e. expand the para at Mark 2.7 by one line) 
-MRK 3.20 -1   (i.e. shrink the para at Mark 3:20 by one line)
-%MARK 4.14 +1   (ignore this line - treat it as a comment)   
-MRK 5.8 +2    (i.e. expand the para at Mark 2.7 by two lines)
-etc.
-Note that adjusting paragraphs needs to be done right at the
-end when all other settings have been finalized. Otherwise you
-are likely to have to re-do it all again.</property>
-                            <property name="label" translatable="yes">Adj List</property>
+                            <property name="label" translatable="yes">Final SFM</property>
                           </object>
                           <packing>
                             <property name="position">2</property>

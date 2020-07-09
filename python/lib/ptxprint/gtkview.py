@@ -770,13 +770,13 @@ class GtkViewModel(ViewModel):
 
     def onGenerateClicked(self, btn):
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
-        if pg == 1: # PicList
+        if pg == 0: # PicList
             bks2gen = self.getBooks()
             if not self.get('c_multiplebooks') and self.get("ecb_examineBook") != bks2gen[0]: 
                 self.generatePicList([self.get("ecb_examineBook")])
             else:
                 self.generatePicList(bks2gen)
-        elif pg == 2: # AdjList
+        elif pg == 1: # AdjList
             self.generateAdjList()
         self.onViewerChangePage(None,None,pg)
 
@@ -791,6 +791,9 @@ class GtkViewModel(ViewModel):
         prjdir = os.path.join(self.settings_dir, prjid)
         bks = self.getBooks()
         bk = self.get("ecb_examineBook")
+        opa = 1.0 if pgnum < 2 else 0.1  # (Visible for PicList and AdjList, but very hidden for the rest)
+        for w in ["fcb_diglotPicListSources", "btn_Generate", "c_randomPicPosn"]:
+            self.builder.get_object(w).set_opacity(opa)
         genBtn = self.builder.get_object("btn_Generate")
         genBtn.set_sensitive(False)
         self.builder.get_object("c_randomPicPosn").set_sensitive(False)
@@ -803,11 +806,11 @@ class GtkViewModel(ViewModel):
         if len(bks) == 1:
             self.builder.get_object("btn_PrevBook").set_sensitive(False)
             self.builder.get_object("btn_NextBook").set_sensitive(False)
-        fndict = {0 : ("", ""),     1 : ("PicLists", ".piclist"), 2 : ("AdjLists", ".adj"), \
+        fndict = {0 : ("PicLists", ".piclist"), 1 : ("AdjLists", ".adj"), 2 : ("", ""), \
                   3 : ("", ".tex"), 4 : ("", ".log")}
-        if pgnum <= 2:  # (SFM,PicList,AdjList)
+        if pgnum <= 2:  # (PicList,AdjList,SFM)
             fname = self.getBookFilename(bk, prjid)
-            if pgnum == 0:
+            if pgnum == 2:
                 fpath = os.path.join(self.working_dir, fndict[pgnum][0], fname)
                 self.builder.get_object("btn_Generate").set_sensitive(False)
                 self.builder.get_object("fcb_diglotPicListSources").set_sensitive(False)
@@ -816,12 +819,13 @@ class GtkViewModel(ViewModel):
             doti = fpath.rfind(".")
             if doti > 0:
                 fpath = fpath[:doti] + "-draft" + fpath[doti:] + fndict[pgnum][1]
-            if pgnum == 1: # PicList
+            if pgnum == 0: # PicList
                 self.builder.get_object("c_randomPicPosn").set_sensitive(True)
                 genTip = "Generate the PicList using\nthe illustrations marked up\n(\\fig ... \\fig*) within the text."
                 genBtn.set_sensitive(True)
                 genBtn.set_tooltip_text(genTip)
-            elif pgnum == 2: # AdjList
+            elif pgnum == 1: # AdjList
+                self.builder.get_object("c_randomPicPosn").set_opacity(0.2)
                 genTip = "Generate a list of paragraphs\nthat may be adjusted (using\nshrink or expand values)."
                 genBtn.set_sensitive(True)
                 genBtn.set_tooltip_text(genTip)
@@ -842,7 +846,7 @@ class GtkViewModel(ViewModel):
         else:
             return
         if os.path.exists(fpath):
-            if 1 <= pgnum <= 2 or pgnum == 5:
+            if 0 <= pgnum <= 1 or pgnum == 5:
                 self.builder.get_object("gr_editableButtons").set_sensitive(True)
             self.builder.get_object("l_{}".format(pgnum)).set_tooltip_text(fpath)
             with open(fpath, "r", encoding="utf-8", errors="ignore") as inf:
