@@ -109,7 +109,7 @@ _sensitivities = {
     "c_includeXrefs" :         ["bx_xrOptions"],
     "c_includeillustrations" : ["gr_IllustrationOptions"],
     "c_includefigsfromtext"  : ["c_figexclwebapp"],
-    "c_diglot" :               ["gr_diglot", "fcb_diglotPicListSources"],
+    "c_diglot" :               ["gr_diglot"],
     "c_borders" :              ["gr_borders"],
 
     "c_multiplebooks" :        ["c_combine", "t_booklist"],
@@ -138,6 +138,7 @@ _sensitivities = {
     "c_applyWatermark" :       ["btn_selectWatermarkPDF"],
     "c_linebreakon" :          ["t_linebreaklocale"],
     "c_spacing" :              ["l_minSpace", "s_minSpace", "l_maxSpace", "s_maxSpace"],
+    "c_diglotAutoAligned" :    ["fcb_diglotPicListSources"],
     "c_inclPageBorder" :       ["btn_selectPageBorderPDF"],
     "c_inclSectionHeader" :    ["btn_selectSectionHeaderPDF"],
     "c_inclVerseDecorator" :   ["l_verseFont", "bl_verseNumFont", "l_verseSize", "s_verseNumSize", "btn_selectVerseDecorator"],
@@ -792,22 +793,16 @@ class GtkViewModel(ViewModel):
         bk = self.get("ecb_examineBook")
         genBtn = self.builder.get_object("btn_Generate")
         genBtn.set_sensitive(False)
-        genBtn.set_label("Generate")
         self.builder.get_object("c_randomPicPosn").set_sensitive(False)
         if bk == None or bk == "":
             bk = bks[0]
             self.builder.get_object("ecb_examineBook").set_active_id(bk)
-        for o in ("l_examineBook", "btn_PrevBook", "ecb_examineBook", "btn_NextBook", "btn_Generate"):
+        for o in ("l_examineBook", "btn_PrevBook", "ecb_examineBook", "btn_NextBook", "fcb_diglotPicListSources", "btn_Generate"):
             self.builder.get_object(o).set_sensitive( 0 <= pgnum <= 2)
 
         if len(bks) == 1:
             self.builder.get_object("btn_PrevBook").set_sensitive(False)
             self.builder.get_object("btn_NextBook").set_sensitive(False)
-        # pgdict = {0 : 'SFM',
-                  # 1 : 'PIC',
-                  # 2 : 'ADJ',
-                  # 3 : 'TEX',
-                  # 4 : 'LOG'}
         fndict = {0 : ("", ""),     1 : ("PicLists", ".piclist"), 2 : ("AdjLists", ".adj"), \
                   3 : ("", ".tex"), 4 : ("", ".log")}
         if pgnum <= 2:  # (SFM,PicList,AdjList)
@@ -815,6 +810,7 @@ class GtkViewModel(ViewModel):
             if pgnum == 0:
                 fpath = os.path.join(self.working_dir, fndict[pgnum][0], fname)
                 self.builder.get_object("btn_Generate").set_sensitive(False)
+                self.builder.get_object("fcb_diglotPicListSources").set_sensitive(False)
             else:
                 fpath = os.path.join(self.configPath(cfgname=self.configId, makePath=False), fndict[pgnum][0], fname)
             doti = fpath.rfind(".")
@@ -829,8 +825,6 @@ class GtkViewModel(ViewModel):
                 genTip = "Generate a list of paragraphs\nthat may be adjusted (using\nshrink or expand values)."
                 genBtn.set_sensitive(True)
                 genBtn.set_tooltip_text(genTip)
-            if os.path.exists(fpath):
-                genBtn.set_label("Regenerate")
 
         elif 3 <= pgnum <= 4:  # (TeX,Log)
             fpath = self.baseTeXPDFname()+fndict[pgnum][1]
@@ -855,7 +849,7 @@ class GtkViewModel(ViewModel):
                 txt = inf.read()
                 if len(txt) > 60000:
                     txt = txt[:60000]+"\n\n------------------------------------- \
-                                          \n[Display of file has been truncated] \
+                                          \n[File has been truncated for display] \
                                           \nClick on View/Edit... button to see more."
             self.fileViews[pgnum][0].set_text(txt)
         else:
@@ -1479,7 +1473,7 @@ class GtkViewModel(ViewModel):
     def onSelectOutputFolderClicked(self, btn_selectOutputFolder):
         customOutputFolder = self.fileChooser("Select the output folder", 
                 filters = None, multiple = False, folder = True)
-        if len(customOutputFolder):
+        if customOutputFolder is not None and len(customOutputFolder):
             self.customOutputFolder = customOutputFolder[0]
             btn_selectOutputFolder.set_tooltip_text(str(customOutputFolder[0]))
             self.builder.get_object("c_useprintdraftfolder").set_active(False)
@@ -1620,6 +1614,9 @@ class GtkViewModel(ViewModel):
         else:
             self.builder.get_object("lb_DiglotBorder").set_markup("<span>Diglot+Border</span>")
 
+    def onDiglotAutoAlignedToggled(self, btn):
+        self.sensiVisible("c_diglotAutoAligned")
+
     def ondiglotSecProjectChanged(self, btn):
         self.updateDiglotConfigList()
         
@@ -1682,23 +1679,23 @@ class GtkViewModel(ViewModel):
         path = os.path.realpath(fldrpath)
         os.startfile(fldrpath)
 
-    def onURLhomepageClicked(self, btn):
-        self.openURL("https://software.sil.org/ptxprint/")
+    # def onURLhomepageClicked(self, btn):
+        # self.openURL("https://software.sil.org/ptxprint/")
         
-    def onURLsumatraClicked(self, btn):
-        self.openURL("https://www.sumatrapdfreader.org/download-free-pdf-viewer.html")
+    # def onURLsumatraClicked(self, btn):
+        # self.openURL("https://www.sumatrapdfreader.org/download-free-pdf-viewer.html")
         
-    def onURLptx2pdfFAQClicked(self, btn):
-        self.openURL("https://github.com/sillsdev/ptx2pdf/blob/master/docs/documentation/ptx2pdf-faq.md")
+    # def onURLptx2pdfFAQClicked(self, btn):
+        # self.openURL("https://github.com/sillsdev/ptx2pdf/blob/master/docs/documentation/ptx2pdf-faq.md")
         
-    def onURLgithubIssueClicked(self, btn):
-        self.openURL("https://github.com/sillsdev/ptx2pdf/issues/new")
+    # def onURLgithubIssueClicked(self, btn):
+        # self.openURL("https://github.com/sillsdev/ptx2pdf/issues/new")
         
-    def openURL(self, url):
-        if sys.platform == "win32":
-            os.system("start \"\" {}".format(url))
-        elif sys.platform == "linux":
-            os.system("xdg-open \"\" {}".format(url))
+    # def openURL(self, url):
+        # if sys.platform == "win32":
+            # os.system("start \"\" {}".format(url))
+        # elif sys.platform == "linux":
+            # os.system("xdg-open \"\" {}".format(url))
 
     def incrementProgress(self, val=None):
         wid = self.builder.get_object("pr_runs")

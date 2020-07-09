@@ -941,13 +941,13 @@ saved configuration.</property>
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">Primary (Left)</col>
+        <col id="0" translatable="yes">Pri (Left)</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Secondary (Right)</col>
+        <col id="0" translatable="yes">Sec (Right)</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Both Pri &amp; Sec</col>
+        <col id="0" translatable="yes">Both Pri+Sec</col>
       </row>
     </data>
   </object>
@@ -2981,6 +2981,8 @@ poetry to improve the overall look.</property>
                       <object class="GtkFrame" id="fr_layoutOther">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
                         <property name="margin_top">3</property>
                         <property name="margin_bottom">6</property>
                         <property name="label_xalign">0.0099999997764825821</property>
@@ -3838,7 +3840,7 @@ be specified something like this:
       litr=1,dig0=1,dig4=1,dg69=0,dig7=1</property>
                                         <property name="halign">start</property>
                                         <property name="hexpand">False</property>
-                                        <property name="width_chars">22</property>
+                                        <property name="width_chars">23</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -5347,7 +5349,6 @@ is checked, then "hyphens" will be invisible.</property>
                   </object>
                   <packing>
                     <property name="position">3</property>
-                    <property name="tab_fill">False</property>
                   </packing>
                 </child>
                 <child type="tab">
@@ -5518,7 +5519,7 @@ secondary text as the Outer text.</property>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="label" translatable="yes">Left (Inner)</property>
+                                        <property name="label" translatable="yes">Inner (Left)</property>
                                         <property name="xalign">0.079999998211860657</property>
                                         <attributes>
                                           <attribute name="weight" value="bold"/>
@@ -5548,7 +5549,7 @@ secondary text as the Outer text.</property>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="label" translatable="yes">Right (Outer)</property>
+                                        <property name="label" translatable="yes">Outer (Right)</property>
                                         <property name="xalign">0.60000002384185791</property>
                                         <attributes>
                                           <attribute name="weight" value="bold"/>
@@ -6740,7 +6741,6 @@ PrintDraft-mods.sty stylesheet.</property>
                   </object>
                   <packing>
                     <property name="position">4</property>
-                    <property name="tab_fill">False</property>
                   </packing>
                 </child>
                 <child type="tab">
@@ -7512,7 +7512,7 @@ this option checked (on).</property>
                           <object class="GtkGrid">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="margin_left">12</property>
+                            <property name="margin_left">6</property>
                             <property name="margin_top">25</property>
                             <property name="margin_bottom">3</property>
                             <property name="column_spacing">3</property>
@@ -7526,7 +7526,7 @@ PrintDraft Folder</property>
                                 <property name="tooltip_text" translatable="yes">Use the Project Printdraft directory 
 to store generated PDF file(s).</property>
                                 <property name="halign">center</property>
-                                <property name="margin_left">12</property>
+                                <property name="margin_left">6</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="clicked" handler="onUsePrintDraftFolderClicked" swapped="no"/>
@@ -7538,7 +7538,7 @@ to store generated PDF file(s).</property>
                             </child>
                             <child>
                               <object class="GtkButton" id="btn_selectOutputFolder">
-                                <property name="label" translatable="yes">Change Output Folder...</property>
+                                <property name="label" translatable="yes">Set Output Folder...</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
@@ -8060,6 +8060,7 @@ Alignment</property>
                                 <property name="receives_default">False</property>
                                 <property name="opacity">0.25098039215686274</property>
                                 <property name="draw_indicator">True</property>
+                                <signal name="toggled" handler="onDiglotAutoAlignedToggled" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">2</property>
@@ -8589,8 +8590,8 @@ generated.</property>
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="c_randomPicPosn">
-                                <property name="label" translatable="yes">Randomize picture
-position on page</property>
+                                <property name="label" translatable="yes">Random
+position</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
@@ -8636,7 +8637,7 @@ with a text editor (such as Notepad or NP++).</property>
                             </child>
                             <child>
                               <object class="GtkComboBox" id="fcb_diglotPicListSources">
-                                <property name="width_request">121</property>
+                                <property name="width_request">90</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">When generating a PicList for a
@@ -8929,7 +8930,9 @@ without closing it each time the PDF is re-created.
 On Linux the built-in Evince PDF viewer works great.
 
 On Windows, the freely available SumatraPDF software
-is highly recommended and is a small download.</property>
+is highly recommended and is a small download. You
+will need to set SumatraPDf as the default PDF viewer
+for best results.</property>
                                     <property name="halign">end</property>
                                     <property name="label" translatable="yes">Hints on Using an 
 Effective PDF viewer:</property>
@@ -8952,7 +8955,6 @@ Effective PDF viewer:</property>
                                     <property name="valign">end</property>
                                     <property name="relief">none</property>
                                     <property name="uri">https://www.sumatrapdfreader.org/download-free-pdf-viewer.html</property>
-                                    <signal name="clicked" handler="onURLsumatraClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
@@ -8993,7 +8995,6 @@ annoyances or other issues:</property>
                                     <property name="valign">end</property>
                                     <property name="relief">none</property>
                                     <property name="uri">https://github.com/sillsdev/ptx2pdf/issues/new</property>
-                                    <signal name="clicked" handler="onURLgithubIssueClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
@@ -9011,7 +9012,6 @@ annoyances or other issues:</property>
                                     <property name="valign">end</property>
                                     <property name="relief">none</property>
                                     <property name="uri">https://software.sil.org/ptxprint/</property>
-                                    <signal name="clicked" handler="onURLhomepageClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
@@ -9080,7 +9080,6 @@ the PTX2PDF Macros:</property>
                                     <property name="valign">end</property>
                                     <property name="relief">none</property>
                                     <property name="uri">https://github.com/sillsdev/ptx2pdf/blob/master/docs/documentation/ptx2pdf-faq.md</property>
-                                    <signal name="clicked" handler="onURLptx2pdfFAQClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
