@@ -886,8 +886,8 @@ class TexModel:
         with universalopen(infpath) as inf:
             dat = inf.read()
             inf.close()
-            figlist += re.findall(r"(?i)\\fig .*?\|(.+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)\|.+?\\fig\*", dat)    # Finds USFM2-styled markup in text:
-            figlist += re.findall(r'(?i)\\fig .+src="(.+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text:
+            figlist += re.findall(r"(?i)\\fig .*?\|(.+?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)\|.+?\\fig\*", dat)    # Finds USFM2-styled markup in text:
+            figlist += re.findall(r'(?i)\\fig .+src="(.+?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text:
             for f in figlist:
                 found = False
                 for ext in extOrder:
@@ -901,7 +901,6 @@ class TexModel:
                         break
                 if not found:
                     figchngs.append((f,"")) 
-        # print(figchngs)
         return(figchngs)
 
     def base(self, fpath):

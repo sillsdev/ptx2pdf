@@ -1,16 +1,34 @@
-PTXprint 0.8.7 Beta Release Notes
-7th July 2020
+PTXprint 0.8.8 Beta Release Notes
+9th July 2020
 
+Bug Fixes and Improvements in: 0.8.8
+
+  * Added ability to do inline figures/illustrations (needs further testing)
+
+  * Also enabled .bmp images to be used
+  
+  * Enabled Diglot PicLists and AdjList to pull info from both Pri and Sec projects
+  
+  * Re-ordered Viewer tabs to be more logical
+  
+  * Automatically show .log file in Viewer tab if failed to produce a PDF
+  
+  * Improved page-breaking logic and removed infinte looping bugs
+
+  * Fixed bug of missing illustrations when building PicLists
+  
+  * Fixed bug of URL links opening two identical tabs for each click
+  
 Bug Fixes and Improvements in: 0.8.7
 
+  * Installer now uses the folder for 64-bit applications (C:\Program Files\ rather than the 32-bit x86 location)
+  
   * Re-arranged UI to put all font and script elements on a new Font tab
   
   * Removed "Omit..." wording from check-boxes to reduce confusion
   
   * Blended Diglot and Border tabs; moved Viewer to the final tab position
   
-  * 
-
 Bug Fixes and Improvements in: 0.8.6
 
   * Added IndentUnit option on Advanced tab to control how much paragraphs and poetry get indented

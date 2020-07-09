@@ -227,13 +227,14 @@ class GtkViewModel(ViewModel):
                 Gtk.STOCK_OK, Gtk.ResponseType.OK)
 
         self.fileViews = []
+        self.buf = {}
         for i,k in enumerate(["FinalSFM", "PicList", "AdjList", "TeXfile", "XeTeXlog", "Settings"]):
-            buf = GtkSource.Buffer()
-            view = GtkSource.View.new_with_buffer(buf)
+            self.buf[i] = GtkSource.Buffer()
+            view = GtkSource.View.new_with_buffer(self.buf[i])
             scroll = self.builder.get_object("scroll_" + k)
             #scroll.add_with_viewport(view)
             scroll.add(view)
-            self.fileViews.append((buf, view))
+            self.fileViews.append((self.buf[i], view))
             if i > 2:
                 view.set_show_line_numbers(True)  # Turn these ON
             else:
@@ -1552,13 +1553,13 @@ class GtkViewModel(ViewModel):
                 "inclVerseDecorator", "versedecorator", btn_selectVerseDecoratorPDF)
 
     def onEditAdjListClicked(self, btn_editParaAdjList):
-        pgnum = 2
+        pgnum = 1
         self.builder.get_object("nbk_Main").set_current_page(9)
         self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
         self.onViewerChangePage(None,None,pgnum)
 
     def onEditPicListClicked(self, btn_editPicList):
-        pgnum = 1
+        pgnum = 0
         self.builder.get_object("c_usePicList").set_active(True)
         self.builder.get_object("nbk_Main").set_current_page(9)
         self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
@@ -1684,18 +1685,6 @@ class GtkViewModel(ViewModel):
         path = os.path.realpath(fldrpath)
         os.startfile(fldrpath)
 
-    # def onURLhomepageClicked(self, btn):
-        # self.openURL("https://software.sil.org/ptxprint/")
-        
-    # def onURLsumatraClicked(self, btn):
-        # self.openURL("https://www.sumatrapdfreader.org/download-free-pdf-viewer.html")
-        
-    # def onURLptx2pdfFAQClicked(self, btn):
-        # self.openURL("https://github.com/sillsdev/ptx2pdf/blob/master/docs/documentation/ptx2pdf-faq.md")
-        
-    # def onURLgithubIssueClicked(self, btn):
-        # self.openURL("https://github.com/sillsdev/ptx2pdf/issues/new")
-        
     # def openURL(self, url):
         # if sys.platform == "win32":
             # os.system("start \"\" {}".format(url))
@@ -1714,4 +1703,5 @@ class GtkViewModel(ViewModel):
     def showLogFile(self):
         self.builder.get_object("nbk_Main").set_current_page(9)   # Switch to the Viewer tab
         self.builder.get_object("nbk_Viewer").set_current_page(4) # Display the tab with the .log file
-        # self.view.scroll_to_mark(self.buf.get_insert(), 0.0, True, 0.5, 0.5)
+        self.builder.get_object("scroll_XeTeXlog").scroll_to_mark(self.buf[4].get_insert(), 0.0, True, 0.5, 0.5)
+        # self.builder.get_object("tv_logging").scroll_to_mark(self.logbuffer.get_insert(), 0.0, True, 0.5, 0.5)

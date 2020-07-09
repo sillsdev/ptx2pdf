@@ -542,7 +542,9 @@ class ViewModel:
                             srtchvs = "{:0>3}{:0>3}{}".format(ch,vs,sfx)
                             cmt = "% " if chvs in usedRefs else ""
                             usedRefs += [chvs]
-                            tmplist.append(srtchvs+"\u0009"+cmt+bk+sfx+" "+chvs+" |"+picfname+"|"+f[4]+"|"+pageposn+"||"+f[7]+"|"+f[8]+f[9])
+                        # put back in when macros handle xyzR and xyzL 
+                        #    tmplist.append(srtchvs+"\u0009"+cmt+bk+sfx+" "+chvs+" |"+picfname+"|"+f[4]+"|"+pageposn+"||"+f[7]+"|"+f[8]+f[9])
+                            tmplist.append(srtchvs+"\u0009"+cmt+bk+" "+chvs+" |"+picfname+"|"+f[4]+"|"+pageposn+"||"+f[7]+"|"+f[8]+f[9])
                     else:
                         # If none of the USFM2-styled illustrations were found then look for USFM3-styled markup in text 
                         # (Q: How to handle any additional/non-standard xyz="data" ? Will the .* before \\fig\* take care of it adequately?)
@@ -800,9 +802,9 @@ class ViewModel:
         extOrder = re.sub("[ ,;/><]"," ",imgord).split()
         if not len(extOrder): # If the user hasn't defined a specific order then we can assign this
             if self.get("c_useLowResPics"): # based on whether they prefer small/compressed image formats
-                extOrder = ["jpg", "jpeg", "png", "tif", "tiff", "pdf"] 
+                extOrder = ["jpg", "jpeg", "png", "tif", "tiff", "bmp", "pdf"] 
             else:                              # or prefer larger high quality uncompressed image formats
-                extOrder = ["pdf", "tiff", "tif", "png", "jpeg", "jpg"] # reverse order
+                extOrder = ["pdf", "bmp", "tiff", "tif", "png", "jpeg", "jpg"] # reverse order
         return extOrder
 
     def incrementProgress(self, val=None):
