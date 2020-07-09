@@ -90,8 +90,8 @@
 
 \def\killd@scenders#1{%
   \vbox{\unvbox#1 \skip0=\lastskip\unskip \count255=\lastpenalty\unpenalty
-    \setbox0=\lastbox
-    \ifvoid0\else \dp0=0pt \box0 \fi
+    \setbox0=\lastbox\dimen4=0pt
+    \ifvoid0\else\dimen4=\dp0 \dp0=0pt \box0 \fi
     \ifdim\skip0>0pt \penalty\count255 \vskip\skip0 \fi}}
 
 %
@@ -117,17 +117,19 @@
  \unvbox0 \nobreak
 }
 \newif\ifgridp@c % if applying \gridb@x to a picture box rather than headings
-\def\m@d{\count1=\dimen0\count2=\dimen1\count3=\count2\divide\count2 by \count1\multiply\count2 by \count1
-    \advance\count2 by -\count3\advance\count2 by \count1\dimen1=\count2 sp\count1=0\count2=0\count3=0}
+
+\def\m@d{\dimen3=\dimen1\divide\dimen1\dimen0\multiply\dimen1\dimen0\advance\dimen3 by -\dimen1\advance\dimen0 by -\dimen3}
 \def\gr@db@@x#1{%
-  \setbox0=\vbox{\box#1}%\ifgridp@c\vbox{\box#1}\else\killd@scenders#1\fi
-  \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0; spacebefore=\headingtopspace*\the\verticalsp@ceunit}%
-  \s@tbaseline{p}\dimen1=\ht0 \advance\dimen1 by \dp0
-  \dimen0=\baselineskip \m@d \dimen2=\dimen1 % dimen2 is grid space
-  \dimen1=\ht0 \advance\dimen1 by -\headingtopspace\verticalsp@ceunit
-  \m@d \advance\dimen2 by -\dimen1 \vskip\dimen2 \kern\dimen1
-  \trace{h}{after gridbox: skip \the\dimen1, kern \the\dimen3; grid space \the\dimen2}%
-  \unvbox0 \nobreak
+  \setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders#1\fi
+  \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0; spacebefore=\headingtopspace*\the\verticalsp@ceunit; depth=\the\dimen4}%
+  \s@tbaseline{p}\dimen1=\ht0 \dimen0=\baselineskip \m@d \dimen2=\dimen0 % dimen2 is grid space
+  \dimen1=\ht0 \advance\dimen1 by -\headingtopspace \verticalsp@ceunit
+  \dimen0=\baselineskip \m@d \advance\dimen2 by -\dimen0
+  \advance\dimen2 by \headingtopspace\verticalsp@ceunit
+  \ifdim\prevdepth>0pt\advance\dimen2 by -\prevdepth\fi
+  \vskip\dimen2 \vbox{\kern\dimen0\vskip-\headingtopspace\verticalsp@ceunit
+    \trace{h}{after gridbox: skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip}%
+    \unvbox0}\prevdepth=0pt \nobreak
 }
 
 \newif\ifsquashgridbox\squashgridboxtrue
@@ -345,7 +347,7 @@
    \ifdr@ppednumber \spacefactor=0\n@wchaptersf \fi
    \startparafalse
    % set special \spacefactor if we're at a chapter number, so \v 1 can omit the verse number here
-  }%
+  }% end everypar
  \fi}
 \newif\ifRTL
 \newif\ifallowp@rindent

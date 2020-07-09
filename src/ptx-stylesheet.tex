@@ -628,7 +628,8 @@
  %\tracingifs=1
  \lineskiplimit=-7\le@dingunit
  \lineskip=0pt
- \topskip=\baselineskip
+ \s@tbaseline{p}%
+ \topskip=\baselineskip\MSG{topskip=\the\topskip}
  \gutter=\ColumnGutterFactor\FontSizeUnit
  \dimen0=\PaperWidth \dimen2=\SideMarginFactor\MarginUnit
  \advance\dimen0 by -2\dimen2
