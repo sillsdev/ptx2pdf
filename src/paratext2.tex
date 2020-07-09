@@ -673,6 +673,7 @@
 \def\spl@tcols#1{
     % even if \vsplit to 0pt, TeX will always pull one line from the input box over
     %\trace{o}{split params maxdepth=\the\splitmaxdepth, topskip=\the\splittopskip, colhtA=\the\colhtA, colhtB=\the\colhtB}
+    \splittopskip=\topskip
     \setbox9=\copy#1
     \setbox\colA=\vsplit#1 to \colhtA \ifnum\badness>999999\setbox#1=\box9\setbox\colA\box\voidb@x\else\setbox\colA=\vbox{\unvbox\colA}\fi
     \setbox9=\copy#1

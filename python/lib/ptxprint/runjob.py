@@ -141,7 +141,7 @@ class RunJob:
         self.changes = None
         self.gatherDecorations(info)
         if info.asBool("document/ifinclfigs"):
-            self.gatherIllustrations(info, jobs)
+            self.gatherIllustrations(info, jobs, self.args.paratext)
         
         if info.asBool("project/combinebooks"):
             joblist = [jobs]
@@ -252,7 +252,7 @@ class RunJob:
             else:
                 finalLogLines.append("\nMarkers to check: {}".format(", ".join(mrkrs)))
 
-        files = re.findall(r'(?i)([^\\/\n."= ]*?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)', "".join(finalLogLines))
+        files = re.findall(r'(?i)([^\\/\n."= ]*?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)', "".join(finalLogLines))
         if len(files):
             finalLogLines.append("\nFile(s) to check: {}".format(", ".join(files)))
         return finalLogLines
@@ -558,11 +558,19 @@ class RunJob:
                 except FileNotFoundError:
                     print("Warning: Couldn't locate Verse Number Decorator")
 
-    def gatherIllustrations(self, info, jobs):
+    def gatherIllustrations(self, info, jobs, ptfolder):
         pageRatios = self.usablePageRatios(info)
         tmpPicpath = os.path.join(self.printer.working_dir, "tmpPics")
         folderList = ["tmpPics", "tmpPicLists"] 
         self.removeTmpFolders(self.printer.working_dir, folderList)
+
+        diglot  = self.printer.get("c_diglotAutoAligned")
+        secprjid = ""
+        if diglot:
+            secprjid = self.printer.get("fcb_diglotSecProject")
+            if secprjid is not None:
+                secprjdir = os.path.join(ptfolder, secprjid)
+
         if self.printer.get("c_useCustomFolder"):
             srchlist = [self.printer.customFigFolder]
         else:
@@ -571,15 +579,20 @@ class RunJob:
             if sys.platform == "win32":
                 srchlist += [os.path.join(self.prjdir, "figures")]
                 srchlist += [os.path.join(self.prjdir, "local", "figures")]
+                if diglot and secprjid != "":
+                    srchlist += [os.path.join(secprjdir, "figures")]
+                    srchlist += [os.path.join(secprjdir, "local", "figures")]
             elif sys.platform == "linux":
                 chkpaths = []
                 for d in ("local", "figures"):
                     chkpaths += [os.path.join(self.prjdir, x) for x in (d, d.title())]
+                    if diglot and secprjid != "":
+                        chkpaths += [os.path.join(secprjdir, x) for x in (d, d.title())]
                 for p in chkpaths:
                     if os.path.exists(p):
                         srchlist += [p]
         extensions = []
-        extdflt = ["jpg", "jpeg", "png", "tif", "tiff", "pdf"]
+        extdflt = ["jpg", "jpeg", "png", "tif", "tiff", "bmp", "pdf"]
         imgord = self.printer.get("t_imageTypeOrder").lower()
         extuser = re.sub("[ ,;/><]"," ",imgord).split()
         extensions = [x for x in extdflt if x in extuser]
@@ -599,17 +612,17 @@ class RunJob:
                     with universalopen(piclstfname, rewrite=True) as inf:
                         dat = inf.read()
                         # MAT 19.13 |CN01771C.jpg|col|tr||Bringing the children to Jesus|19:13
-                        fullnamelist += re.findall(r"(?i)\|(.+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)\|", dat)
-                        spanimagelist += re.findall(r"(?i)\|(.+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)\|span", dat)
+                        fullnamelist += re.findall(r"(?i)\|(.+?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)\|", dat)
+                        spanimagelist += re.findall(r"(?i)\|(.+?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)\|span", dat)
             else:
                 infname = os.path.join(self.prjdir, fname)
                 with universalopen(infname) as inf:
                     dat = inf.read()
                     inf.close() # Look for USFM2 and USFM3 type inline \fig ... \fig* illustrations
-                    fullnamelist += re.findall(r"(?i)\\fig .*?\|(.+?(?!\d{5}[a-c]?).+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)\|.+?\\fig\*", dat)
-                    fullnamelist += re.findall(r'(?i)\\fig .*?src="(.+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)" .+?\\fig\*', dat) 
-                    spanimagelist += re.findall(r"(?i)\\fig .*?\|(.+?(?!\d{5}[a-c]?).+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)\|span.+?\\fig\*", dat)
-                    spanimagelist += re.findall(r'(?i)\\fig .*?src="(.+?\.(?=jpg|jpeg|tif|tiff|png|pdf)....?)".+?size="span.+?\\fig\*', dat)
+                    fullnamelist += re.findall(r"(?i)\\fig .*?\|(.+?(?!\d{5}[a-c]?).+?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)\|.+?\\fig\*", dat)
+                    fullnamelist += re.findall(r'(?i)\\fig .*?src="(.+?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)" .+?\\fig\*', dat) 
+                    spanimagelist += re.findall(r"(?i)\\fig .*?\|(.+?(?!\d{5}[a-c]?).+?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)\|span.+?\\fig\*", dat)
+                    spanimagelist += re.findall(r'(?i)\\fig .*?src="(.+?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)".+?size="span.+?\\fig\*', dat)
         newBaseList = [newBase(f) for f in fullnamelist]
         newBaseSpanList = [newBase(f) for f in spanimagelist]
         # print("newBaseList:", newBaseList)
