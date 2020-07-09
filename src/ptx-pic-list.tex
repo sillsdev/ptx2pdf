@@ -89,7 +89,14 @@
 \def\ch@ckpiclist{%
   \edef\c@rref{\id@@@\ch@pter.\v@rse}%
   \trace{P}{\p@cref =\c@rref?}%
-  \ifx\c@rref\p@cref \dop@c\fi}
+  \ifx\c@rref\p@cref \dop@c
+  \else
+    \ifdiglot
+      \edef\dc@rref{\id@@@\ifdiglotL L\else R\fi\ch@pter.\v@rse}%
+      \trace{P}{\p@cref =\dc@rref?}%
+      \ifx\dc@rref\p@cref \dop@c\fi
+    \fi
+  \fi}
 
 \addtopreversehooks{\ch@ckpiclist}
 

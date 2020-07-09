@@ -4,6 +4,8 @@
 \newcount\diglotDbgJoinboxes%
 \diglotDbgJoinboxes=-1% Set to the debug message of a joinboxes to execute showbox on that join
 
+\def\diglotbadbrk{\penalty 10000}
+
 %\def\TRshipout#1{\shipout#1}
 \def\TRshipout#1{}
 \def\b@xbotmark{}
@@ -175,6 +177,7 @@
    \else%
      \decr{\availht}{\toprightins}%
    \fi%
+   \trace{D}{after top:\the\availht (\the\ht\topleftins,\the\ht\toprightins}%
    \ifdim\ht\bottomleftins>\ht\bottomrightins %
      \decr{\availht}{\bottomleftins}%
    \else%
@@ -186,7 +189,7 @@
    \else%
      \global\availhtR=\availht %
    \fi%
-   \trace{D}{...\the\availht}%
+   \trace{D}{final:\the\availht}%
 }
 \newif\ifnastybox  % Signal that box must be treated specially
 \newif\ifrepeatok  % Signal that an unusual calling sequence has happend
@@ -220,7 +223,7 @@
  % Fills: \partialL, \excessL
  % Empties: \box255
  \trace{D}{diglotLeft O:\the\outputpenalty, P:\the\savedpenalty, LP:\the\lastsavedLpenalty, vs:\the\vsize,
-    pg:\the\pagegoal, pt:\the\pagetotal, bs:\the\baselineskip, ilp:\the\interlinepenalty, \ifintrial INTRIAL\fi}%
+    pg:\the\pagegoal, pt:\the\pagetotal, bs:\the\baselineskip, ilp:\the\interlinepenalty, \ifintrial INTRIAL\fi}% 
  \ifnum\outputpenalty=-10005%Why are we here after a trial?
    \ifintrial\diglotLeftTrial\fi
    %\tmppenalty=\savedpenalty\relax%
@@ -231,11 +234,20 @@
    %%\diglotLeftAfterTrial
  \fi
  \runLtrialfalse%
- % tempoarily split and see if there are marks in this text
- \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
- \edef\t@mp{\splitbotmark}
- \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
- \makevtop{255}%
+ \ifdim\ht255<-20pt % eek. we've been given a seriously -ve height box.
+  \ifleftfull
+  \else
+    \message{*** SOMETHING BAD HAPPENED on page \the\pageno. Probably a picture that there was no space for.}%
+    \leftfulltrue
+    \setbox\excessL\box\partialL
+    \nastyboxtrue
+  \fi
+ \fi
+  % tempoarily split and see if there are marks in this text
+  \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
+  \edef\t@mp{\splitbotmark}
+  \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
+  \makevtop{255}%
  \tmppenalty=\outputpenalty %
  \ifnum\outputpenalty=10000% Nothing wrong with breaking here
    \tmppenalty=0\relax%
@@ -337,7 +349,7 @@
        \global\leftfulltrue%
      \fi
      \ifdim\dimen0<0pt %might cut
-       \ifdim\dimen0>-0.3\baselineskip %Tiny overshoot
+       \ifdim\dimen0>-0.1\baselineskip %Tiny overshoot
          \advance\dimen1 by \baselineskip %ignore it.
        \else
          \trace{D}{Oversized box \the\ht\partialL+\the\dp\partialL, resizing to \the\dimen1, (\the\dimen0)
@@ -630,6 +642,13 @@
   \trace{D}{av: \the\availht, tr: \the\trialheight}%
   % don't know why it might not be, but...
   \ifdim\availht<\trialheight
+    \ifdim\availht<0pt
+      \bgroup
+        \dimen0=\trialheight
+        \advance\dimen0 by -\availht
+        \message{*** A picture or footnote on page \the\pageno (near \botmark) has just taken \the\dimen0 of space. There's no space left for text.}%
+      \egroup
+     \fi
     \global\trialheight=\availht
   \fi
   \global\output={\diglotLeftTrial}\relax%
@@ -653,7 +672,7 @@
 
 \def\diglotRightExtra{%
   %Tertiary output routine for right hand side - collect all the extra stuff.
-  \trace{D}{diglotRightExtra, \the\outputpenalty, (\the\ht255+\the\dp255) (\the\ht\excessR+\the\dp\excessR) dc:\the\deadcycles }%
+  \traceNum{D}{diglotRightExtra, \the\outputpenalty, (\the\ht255+\the\dp255) (\the\ht\excessR+\the\dp\excessR) dc:\the\deadcycles }%
   \makevtop{255}%
   \tmppenalty=\outputpenalty %
   \ifnum\tmppenalty=10000 %
@@ -685,7 +704,7 @@
 % material in 255 and calls setboth via digl@tRight.
 %If material (e.g. due to footnotes) is too big for page, shrink vsize and try again.
 % if not all material was set, hold stuff in \partialR and use \diglotRightExtra to put that into \excessR
-  \trace{D}{diglotRightTrial, \the\holdinginserts, \the\outputpenalty, 
+  \traceNum{D}{diglotRightTrial, \the\holdinginserts, \the\outputpenalty, 
     \the\deadcycles, Rb:\the\ht\RIghtBox+\the\dp\RIghtBox, pR:\the\ht\partialR+\the\dp\partialR,
     av:\the\availht, vs:\the\vsize, pg:\the\pagegoal}%
  \makevtop{255}%
@@ -765,27 +784,24 @@
  %\RightBox and \partialR are empty, 
  %Calls appropriate handler based on whether inserts are held or not
  % (traditionally they weren't)
- \traceNum{d}{diglotRight \the\outputpenalty, \the\savedpenalty, \the\Rchunkpenalty, (\ifnum\holdinginserts=0 Not\fi holding)}%
+ \traceNum{d}{diglotRight \the\outputpenalty, \the\savedpenalty, \the\Rchunkpenalty, (\ifnum\holdinginserts=0 Not\fi holding) pg:\the\pagegoal}%
  \tmppenalty=\outputpenalty %
   % tempoarily split and see if there are marks in this text
   \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
    \edef\t@mp{\splitbotmark}
    \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
  \ifnum\outputpenalty=10000\relax% Nothing wrong with breaking here
-   \tmppenalty=0 %
-   \Rchunkpenalty=\tmppenalty %
+   \tmppenalty=0 % and leave Rchunkpenalty alone
  \else%
    \ifnum\outputpenalty=-10001\relax%Got to the end of the \righttext
      \Rchunkpenalty=\savedpenalty %
-     \tmppenalty=\savedpenalty %
+     \tmppenalty=\Rchunkpenalty %
      \global\savedpenalty=0 %
    \else%
      \ifnum\outputpenalty=-10006\relax%Got to the end of the trialtext. why are we here?
        \tmppenalty=\savedpenalty %
        \global\savedpenalty=0 %
        %\Rchunkpenalty should already have been set.
-     \else%
-       \Rchunkpenalty=\tmppenalty %
      \fi%
    \fi%
  \fi%
@@ -806,6 +822,7 @@
  %Sets partialRpenalty, and some provisional page marking
  %
  % Do marking stuff...
+ \traceNum{D}{digl@tRight: \the\pagegoal, \the\tmppenalty}
  \edef\t@st{\botmark}%
  \ifx\t@st\empty\else
    \trace{H}{digl@tRight: b:\botmark, f:\firstmark, tl:\topLmark}
@@ -843,18 +860,28 @@
    %\global\setbox\partialR=\vtop{\unvbox\partialR\penalty\savedpenalty}
  %\fi
  %\ifnum\pageno=21\showbox\partialR\fi
- \setboth%
+ \temptrue
+ \ifdim\pagegoal<0pt
+   \calc@vailht
+   \ifdim\availhtR>\baselineskip\tempfalse\fi
+ \fi
+ \iftemp
+   %\Rboxpenalty=\tmppenalty %
+   \setboth%
+ \else % We are trying to collect more.
+   \penalty\Rboxpenalty
+ \fi
 } %
 %
 %
 % Change which side we're adding to
 \outer\def\lefttext{%
-  \trace{d}{lefttext ilp=\the\interlinepenalty}%
+  \global\savedpenalty=\lastpenalty % This MUST be first, or the last thing won't be a penalty
+  \trace{d}{lefttext ilp=\the\interlinepenalty, lp:\the\savedpenalty}%
   \ifsk@pping \egroup \sk@ppingfalse\fi% if we were skipping nonpublishable text, end that mode
   \ifhe@dings\endhe@dings\fi%
-  \ifinn@te\MSG{lefttext called from inside footnote?!?}\fi
+  \ifinn@te\message{*** lefttext called from inside footnote?!?}\fi
   \Lneedsemptyingtrue%
-  \global\savedpenalty=\lastpenalty\relax%
   \calc@vailht%
   \n@xtc@mmand%
   \par\penalty-10001%
@@ -873,9 +900,9 @@
   \the\leftho@ks\relax\swapfonts{L}%
   \global\hsize=\columnLwidth\relax\global\holdinginserts=1}%
 
-\outer\def\righttext{\trace{d}{righttext pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR}\ifhe@dings\endhe@dings\fi
-  \global\savedpenalty=\lastpenalty\n@xtc@mmand\global\holdinginserts=1
-  \par\penalty-10001
+\outer\def\righttext{\global\savedpenalty=\lastpenalty\n@xtc@mmand\global\holdinginserts=1
+  \trace{d}{righttext pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, lp:\the\savedpenalty}
+  \ifhe@dings\endhe@dings\fi\par\penalty-10001
   \calc@vailht\global\digl@tLfalse\global\diglotRtrue\calc@vailht
   \global\vsize=\availht\relax\output={\diglotRight}\the\rightho@ks\relax\swapfonts{R}%
   \global\hsize=\columnRwidth\relax\global\holdinginserts=0}
@@ -888,7 +915,8 @@
   \global\hsize=\columnLwidth\relax\global\holdinginserts=1}
 
 %Similarly when there's no left text, copying \righttext seems OK ...
-\def\nolefttext{\trace{D}{nolefttext}\global\savedpenalty=\lastpenalty\n@xtc@mmand
+\def\nolefttext{\global\savedpenalty=\lastpenalty
+  \trace{D}{nolefttext}\n@xtc@mmand
   \par\penalty-10001
   \global\diglotLtrue\calc@vailht\global\digl@tLfalse\global\diglotRtrue\calc@vailht
   \global\vsize=\availht\output={\diglotRight}\swapfonts{R}%
@@ -966,7 +994,7 @@
   %\partialL may have extra material in it, which hasn't been footnoted. 
   %\RightBox needs to be filled from partialR.
   %\Rchunkpenalty et al. correctly  set by caller
-  \trace{D}{setboth \the\outputpenalty, \the\savedpenalty, \the\Rchunkpenalty,  \the\Rboxpenalty
+  \traceNum{d}{setboth \the\outputpenalty, \the\savedpenalty, \the\Rchunkpenalty,  rbp:\the\Rboxpenalty
     diglotL\ifdiglotL true\else false\fi}%
   \calc@vailht
   \global\splittopskip=\baselineskip
@@ -975,6 +1003,7 @@
   \advance\Lht by \dp\LeftBox
   \global\Rht=\ht\partialR\relax
   \advance\Rht by \dp\partialR
+  \trace{D}{Rht \the\Rht, Lht \the\Lht}
   % Force page output if user-caused and not by a column swap.
   \redocoloktrue
   \pagefullfalse
@@ -1084,10 +1113,11 @@
       \fi
       %\showbox\partialL
     \fi
+    
     \TempDim=\availhtR %
     \advance\TempDim by -\Rht
     \trace{D}{pL:(\the\ht\partialL+\the\dp\partialL) lb:(\the\ht\LeftBox+\the\dp\LeftBox)
-      p:(\the\ht\partial+\the\dp\partial) rb:(\the\ht\RightBox+\the\dp\RightBox) aR:(\the\availhtR) aL:(\the\availhtL)}%
+      p:(\the\ht\partial+\the\dp\partial) rb:(\the\ht\RightBox+\the\dp\RightBox) aR:(\the\availhtR) aL:(\the\availhtL) lbp:\the\Lboxpenalty,rbp:\the\Rboxpenalty}%
     % It might be possible (look good?) to steal extra space for right if left has overshot, if that's only a little
     \ifdim\availhtL<0pt\ifdim\availhtL>-1 \baselineskip
       \traceNum{d}{Left overshot by \the\availhtL, allowing right to also}\advance\TempDim by -\availhtL\fi\fi%
@@ -1097,6 +1127,7 @@
       \global\setbox\partialR=\vbox{\penalty \Rboxpenalty\unvbox\partialR}% sometimes we'd rather split everything off than nothing 
       \global\setbox\RightBox=\vsplit\partialR to \availhtR
       \ifvoid\partialR\Rboxpenalty=\partialRpenalty \else\Rboxpenalty=0 \fi
+      \trace{D}{rbp:\the\Rboxpenalty}%
       {\setbox 0=\copy\partialR% Split all of what remains and use that for the next page
       \setbox 1=\vsplit 0 to \ht\partialR
       \ifuseRightMarks
@@ -1121,7 +1152,8 @@
       \pagefulltrue
     \else% It all fits...
       \global\setbox\RightBox=\box\partialR
-      \Rboxpenalty=\partialRpenalty 
+      \global\Rboxpenalty=\partialRpenalty 
+      \trace{D}{rbp:\the\Rboxpenalty}%
       \edef\t@st{\b@xbotmark}%
       \ifx\t@st\empty
         \trace{H}{Setting page bottom mark to \emptym@rk as emergency measure}%
@@ -1138,7 +1170,7 @@
       \pagefulltrue
     \fi
   \fi
-  \trace{D}{av:\the\availht}%
+  \trace{D}{av:\the\availht, rbp:\the\Rboxpenalty}%
   \trace{D}{L:\the\ht\LeftBox+\the\dp\LeftBox}%
   \trace{D}{R:\the\ht\RightBox+\the\dp\RightBox}%
   \TempDim=\ht\RightBox\relax
@@ -1231,7 +1263,7 @@
 %vbox is a \mark. To rejoin boxes on a page accurately we need to preserve
 %the depth of the box. We therefore assume the box will be joined and if
 %the depth is not recoverable we add a kern to remove the orignial depth.
- \s@tbaseline{p}
+ \s@tbaseline{p}%
  \trace{D}{makevtop #1, before vtop dp=\the\dp#1, ht=\the\ht#1}%
  %\ifnum\diglotTRcount<61\showbox#1\fi
  \TempDim=\dp#1\relax%
@@ -1260,7 +1292,7 @@
    \copy0%
    \traceNum{d}{lk: \the\dimen4, final bit of deconstructed first box \the\ht0+\the\dp0}%
    \ifdim\dp0=0pt
-     \kern \lastkern
+%     \kern \lastkern
    \else
      \ifdim\dp0>\baselineskip
        \kern -\dp0
@@ -1318,10 +1350,9 @@
   %Re-use LeftBox for this page chunk
   %
   
-  
-  \traceNum{d}{Adding to page: LB:\the\ht\LeftBox+\the\dp\LeftBox\space RB:\the\ht\RightBox+\the\dp\RightBox\space Last Delta:\the\chunkDelta}
+  \traceNum{d}{Adding to page: LB:\the\ht\LeftBox+\the\dp\LeftBox\space RB:\the\ht\RightBox+\the\dp\RightBox\space Last Delta:\the\chunkDelta}%
   \ifVisTrace
-    \doVisTrace{L}
+    \doVisTrace{L}%
   \fi
   \thisjointDelta=0pt %Do we need extra space
   \ifdim\dp\LeftBox>0pt \ifdim\chunkDelta<0pt
@@ -1381,7 +1412,7 @@
         \trace{D}{Forcing early refill of partialL. pL:(\the\ht\partialL+\the\dp\partialL) eL:(\the\ht\excessL+\the\dp\excessL) }%
         \global\earlyLrefilltrue
         \global\Lneedsemptyingtrue
-        \global\def\n@xtc@mmand{\upd@tep@rtial}
+        \global\def\n@xtc@mmand{\upd@tep@rtial}%
     \fi\fi
     \ifearlyLrefill%
       %There is material in excessL which should be added now, not later.
@@ -1424,7 +1455,7 @@
         %Want the first chunk in partialL, the residue in excessL, so vsplit
         %gets it backwards for us.
         %Use LeftBox as a temporary store
-        \trace{D}{Spliting \the\ht\partialL to \the\availht}
+        \trace{D}{Spliting \the\ht\partialL to \the\availht}%
         \global\setbox\LeftBox=\vsplit\partialL to \availht
         \edef\t@st{\splitbotmark}%
         \ifx\t@st\empty\else
@@ -1445,7 +1476,7 @@
         \global\setbox\excessL=\box\partialL\relax%
         \global\setbox\partialL=\box\LeftBox\relax%
       \else%
-        \trace{D}{no need to split}
+        \trace{D}{no need to split}%
         \global\outputpenalty=-10002\relax%No more itterations after this
         \global\setbox\partialL=\vtop{\unvbox\partialL}%
         %\makevtop{\partialL}
@@ -1557,7 +1588,7 @@
           %\hbox to\columnLwidth{\copy\LeftBox\hss}\hskip\gutter\hbox to%
           %\columnRwidth{\copy\RightBox\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
         %}%
-
+        %dimen1 is step in text, dimen 2 is step in notes...
         \ifdim\dimen1<0pt %dimen1 -ve
         \ifdim\dimen2<0pt %dimen2 -ve
               \dimen3=0pt %No adjustment
@@ -1580,7 +1611,7 @@
           \fi%
         \fi%
         \trace{f}{Adjusting footnotebox}%
-        \global\setbox\galley=\vbox{\unvbox\galley\kern -\dimen3\box\LeftBox}%
+        \global\setbox\galley=\vbox{\unvbox\galley\kern -\dimen3\vskip 0.5\AboveNoteSpace plus 1fil \box\LeftBox}%
         }%
       \else%
         \trace{f}{No footnotes}%

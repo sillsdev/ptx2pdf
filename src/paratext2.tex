@@ -462,7 +462,8 @@
   \checkp@ranotes{#1}%
   % notes made into paragraphs (e.g. \x) are counted as 0 height for now,
   % later we will backup making page size smaller until things fit
-  \global\count\th@cl@ss=\ifp@ranotes 0 \else \count255 \fi
+  % Diglot prefers to get things closer 1st time round...
+  \global\count\th@cl@ss=\ifp@ranotes \ifdiglot 500\else 0\fi \else \count255 \fi
   \global\skip\th@cl@ss=\AboveNoteSpace }
 
 \def\resetvsize{\trace{o}{resetvsize}\global\vsize=\textheight} 
@@ -1249,6 +1250,7 @@
           \csname param-2\endcsname\hss}\vss}
         \kern-.2pt \hrule height .2pt}
     \fi
+    \trace{g}{Picture height=\the\ht0, vs:\the\vsize, \the\partialLpenalty,  pg:\the\pagegoal, pt:\the\pagetotal, av:\the\availht}%
     \ifpicNarrow
       \ifx\pic@line\@lignRight
         \line{\hfil\box0}%

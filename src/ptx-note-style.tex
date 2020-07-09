@@ -79,9 +79,9 @@
 }
 
 \def\s@tn@tep@r@ms#1{%
-  \x@\count\csname note-#1\endcsname=\ifp@ranotes 500 \else 1000 \fi %% !!!FIXME!!!
-  \x@\skip\csname note-#1\endcsname=\AboveNoteSpace
-  \x@\dimen\csname note-#1\endcsname=\maxdimen
+  \x@\count\csname note-#1\endcsname=\ifdiglot 1000 \else \ifp@ranotes 500 \else 1000 \fi\fi %% !!!FIXME!!! This guesses p@ranotes take half a line each. There are better ways. 
+  \x@\skip\csname note-#1\endcsname=\AboveNoteSpace %Skip before footntoes
+  \x@\dimen\csname note-#1\endcsname=\maxdimen %Max note skip
 }
 \newdimen\AboveNoteSpace \AboveNoteSpace=\medskipamount
 \newdimen\InterNoteSpace \InterNoteSpace=3.5pt
