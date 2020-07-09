@@ -1,11 +1,11 @@
 PTXprint 0.8.8 Beta Release Notes
-9th July 2020
+10th July 2020
 
 Bug Fixes and Improvements in: 0.8.8
 
   * Added ability to do inline figures/illustrations (needs further testing)
 
-  * Also enabled .bmp images to be used
+  * Enabled .bmp images to be used for illustrations (supported: jpg,jpeg,png,bmp,tif,tiff,pdf)
   
   * Enabled Diglot PicLists and AdjList to pull info from both Pri and Sec projects
   

@@ -7,7 +7,7 @@ from .font import TTFont
 import pathlib, os
 from configparser import NoSectionError, NoOptionError, _UNSET
 
-VersionStr = "0.8.7 beta"
+VersionStr = "0.8.8 beta"
 
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
 
