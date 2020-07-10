@@ -122,6 +122,7 @@
 \def\m@d{\dimen3=\dimen1\divide\dimen1\dimen0\multiply\dimen1\dimen0\advance\dimen3 by -\dimen1\advance\dimen0 by -\dimen3}
 
 \def\gr@db@@x#1{%
+  \prevdepth=0pt
   \setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders#1\fi
   \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0; spacebefore=\headingtopspace*\the\verticalsp@ceunit; depth=\the\lastdepth}%
   \s@tbaseline{p}\dimen1=\ht0 \dimen0=\baselineskip \m@d \dimen2=\dimen0 % dimen2 is grid space
@@ -132,7 +133,7 @@
   \ifdiglot\kern\else\vskip\fi\dimen2
   \vbox{\kern\dimen0\vskip-\headingtopspace\verticalsp@ceunit
     \trace{h}{after gridbox: skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip}%
-    \unvbox0}\prevdepth=0pt \nobreak
+    \unvbox0}\nobreak
 }
 
 \newif\ifsquashgridbox\squashgridboxtrue
