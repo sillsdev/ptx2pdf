@@ -548,11 +548,11 @@ class ViewModel:
                     else:
                         # If none of the USFM2-styled illustrations were found then look for USFM3-styled markup in text 
                         # (Q: How to handle any additional/non-standard xyz="data" ? Will the .* before \\fig\* take care of it adequately?)
-                        # \v 15 <verse text> \fig hāgartun saṅga dūtal vaḍkval|src="CO00659B.TIF" size="span" ref="[MAT]?21:16"\fig*
-                        #     0     1    2                     3                         4                5          6     7    [8]
+                        # \v 15 <verse text> \fig hāgartun saṅga dūtal vaḍkval|src="CO00659B.TIF" size="span" loc="tl" ref="[MAT]?21:16"\fig*
+                        #     0     1    2                     3                         4                5         6         7     8    [9]
                         # BKN \3 \|\1\|\2\|tr\|\|\0\|\3
                         # GEN 21.16 an angel speaking to Hagar|CO00659B.TIF|span|t||hāgartun saṅga dūtal vaḍkval|21:16
-                        m = re.findall(r'(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig ([^\\]*?)\|src="([^\\]+?\.....?)" size="(....?)" ref="([^\d\\]+? ?)?(\d+[:.]\d+[abc]?([-,\u2013\u2014]\d+[abc]?)?)"[^\\]*?\\fig\*', dat)
+                        m = re.findall(r'(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig ([^\\]*?)\|[^\\]*?src="([^\\]+?\.....?)" size="(....?)"[^\\]*?ref="([^\d\\]+? ?)?(\d+[:.]\d+[abc]?([-,\u2013\u2014]\d+[abc]?)?)"[^\\]*?\\fig\*', dat)
                         if len(m):
                             for f in m:
                                 picfname = f[4]
@@ -562,8 +562,11 @@ class ViewModel:
                                 if self.get("c_randomPicPosn"):
                                     pageposn = random.choice(_picposn.get(f[5], f[5]))     # Randomize location of illustrations on the page (tl,tr,bl,br)
                                 else:
-                                    pageposn = (_picposn.get(f[5], f[5]))[0]               # use the t or tl (first in list)
-                                ch = re.sub(r"(\d+)[:.].+", r"\1", f[7])
+                                    if f[6] in ["t", "b", "tl", "tr", "bl", "br"]:
+                                        pageposn = f[6]
+                                    else:
+                                        pageposn = (_picposn.get(f[5], f[5]))[0]           # use the t or tl (first in list)
+                                ch = re.sub(r"(\d+)[:.].+", r"\1", f[8])
                                 vs = f[0]
                                 if vs.endswith(('a', 'b', 'c')):
                                     vs = int(f[0].strip("abc")) - 1
@@ -576,7 +579,7 @@ class ViewModel:
                                 srtchvs = "{:0>3}{:0>3}{}".format(ch,vs,sfx)
                                 cmt = "% " if chvs in usedRefs else ""
                                 usedRefs += [chvs]
-                                tmplist.append(srtchvs+"\u0009"+cmt+bk+sfx+" "+chvs+" |"+picfname+"|"+f[5]+"|"+pageposn+"||"+f[3]+"|"+f[6]+"\n")
+                                tmplist.append(srtchvs+"\u0009"+cmt+bk+sfx+" "+chvs+" |"+picfname+"|"+f[5]+"|"+pageposn+"||"+f[3]+"|"+f[7]+"\n")
             if len(tmplist):
                 for pc in sorted(tmplist):
                     piclist.append(pc.split("\u0009")[1]+"\n")

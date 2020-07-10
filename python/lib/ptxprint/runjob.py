@@ -195,9 +195,11 @@ class RunJob:
                     log = logfile.read() # unlike other places, we *do* want the entire log file
                 badpgs = re.findall(r'(?i)SOMETHING BAD HAPPENED on page (\d+)\.', "".join(log))
                 if len(badpgs):
-                    print("Layout problems encountered on page(s):"+", ".join(badpgs))
+                    print("Layout problems were encountered on page(s): " + ", ".join(badpgs))
                     self.printer.doError("PDF was created BUT...",
-                        secondary="Layout problems were encountered on page(s): "+",".join(badpgs), title="PTXprint [{}] - Warning!".format(VersionStr))
+                        secondary="Layout problems were encountered on page(s): " + ",".join(badpgs) + \
+                              "\n\nTry changing the PicList and/or AdjList settings to solve issues.", \
+                              title="PTXprint [{}] - Warning!".format(VersionStr))
 
         elif not self.args.print: # We don't want pop-up messages if running in command-line mode
             finalLogLines = self.parseLogLines()
