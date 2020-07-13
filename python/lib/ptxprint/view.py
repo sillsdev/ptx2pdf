@@ -545,39 +545,50 @@ class ViewModel:
                             tmplist.append(srtchvs+"\u0009"+cmt+bk+" "+chvs+" |"+picfname+"|"+f[4]+"|"+pageposn+"||"+f[7]+"|"+f[8]+f[9])
                     else:
                         # If none of the USFM2-styled illustrations were found then look for USFM3-styled markup in text 
-                        # (Q: How to handle any additional/non-standard xyz="data" ? Will the .* before \\fig\* take care of it adequately?)
+                        # (MH: How to handle any additional/non-standard xyz="data" ? Will the .* before \\fig\* take care of it adequately?)
                         # \v 15 <verse text> \fig hāgartun saṅga dūtal vaḍkval|src="CO00659B.TIF" size="span" loc="tl" ref="[MAT]?21:16"\fig*
-                        #     0     1    2                     3                         4                5         6         7     8    [9]
-                        # BKN \3 \|\1\|\2\|tr\|\|\0\|\3
+                        #     0     1    2                     3              <--------------------------4----------------------------->
                         # GEN 21.16 an angel speaking to Hagar|CO00659B.TIF|span|t||hāgartun saṅga dūtal vaḍkval|21:16
-                        m = re.findall(r'(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig ([^\\]*?)\|[^\\]*?src="([^\\]+?\.....?)" size="(....?)"[^\\]*?ref="([^\d\\]+? ?)?(\d+[:.]\d+[abc]?([-,\u2013\u2014]\d+[abc]?)?)"[^\\]*?\\fig\*', dat)
+                        m = re.findall(r'(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig ([^\\]*?)\|([^\\]+)\\fig\*', dat)
                         if len(m):
                             for f in m:
-                                picfname = f[4]
-                                doti = picfname.rfind(".")
-                                extn = picfname[doti:]
-                                picfname = re.sub('[()&+,. ]', '_', picfname)[:doti]+extn
-                                if self.get("c_randomPicPosn"):
-                                    pageposn = random.choice(_picposn.get(f[5], f[5]))     # Randomize location of illustrations on the page (tl,tr,bl,br)
-                                else:
-                                    if f[6] in ["t", "b", "tl", "tr", "bl", "br"]:
-                                        pageposn = f[6]
+                                caption = f[3]
+                                labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f[4])
+                                if len(labelParams) >= 3: # we need src, size & ref at a minimum
+                                    for l in labelParams:
+                                        if l.startswith("src"):
+                                            picfname = l.split("=")[1].strip('"')
+                                        elif l.startswith("size"):
+                                            size = l.split("=")[1].strip('"')
+                                        elif l.startswith("loc"):
+                                            loc = l.split("=")[1].strip('"')
+                                        elif l.startswith("ref"):
+                                            ref = l.split("=")[1].strip('"')
+                                            ch = re.sub(r"([^\d\\]+? ?)?(\d+)[:.].+", r"\2", ref)
+                                
+                                    doti = picfname.rfind(".")
+                                    extn = picfname[doti:]
+                                    picfname = re.sub('[()&+,. ]', '_', picfname)[:doti]+extn
+                                    if self.get("c_randomPicPosn"):
+                                        pageposn = random.choice(_picposn.get(size, size)) # Randomize location of illustrations on the page (tl,tr,bl,br)
                                     else:
-                                        pageposn = (_picposn.get(f[5], f[5]))[0]           # use the t or tl (first in list)
-                                ch = re.sub(r"(\d+)[:.].+", r"\1", f[8])
-                                vs = f[0]
-                                if vs.endswith(('a', 'b', 'c')):
-                                    vs = int(f[0].strip("abc")) - 1
-                                    if vs == 0:
-                                        cmt = "% "
-                                        vs = 2
-                                else:
+                                        if loc in ["t", "b", "tl", "tr", "bl", "br"]:
+                                            pageposn = loc
+                                        else:
+                                            pageposn = (_picposn.get(size, size))[0]       # use the t or tl (first in list)
                                     vs = f[0]
-                                chvs = ch+"." + str(vs)
-                                srtchvs = "{:0>3}{:0>3}{}".format(ch,vs,sfx)
-                                cmt = "% " if chvs in usedRefs else ""
-                                usedRefs += [chvs]
-                                tmplist.append(srtchvs+"\u0009"+cmt+bk+sfx+" "+chvs+" |"+picfname+"|"+f[5]+"|"+pageposn+"||"+f[3]+"|"+f[7]+"\n")
+                                    if vs.endswith(('a', 'b', 'c')):
+                                        vs = int(f[0].strip("abc")) - 1
+                                        if vs == 0:
+                                            cmt = "% "
+                                            vs = 2
+                                    else:
+                                        vs = f[0]
+                                    chvs = ch+"." + str(vs)
+                                    srtchvs = "{:0>3}{:0>3}{}".format(ch,vs,sfx)
+                                    cmt = "% " if chvs in usedRefs else ""
+                                    usedRefs += [chvs]
+                                    tmplist.append(srtchvs+"\u0009"+cmt+bk+sfx+" "+chvs+" |"+picfname+"|"+size+"|"+pageposn+"||"+caption+"|"+ref+"\n")
             if len(tmplist):
                 for pc in sorted(tmplist):
                     piclist.append(pc.split("\u0009")[1]+"\n")

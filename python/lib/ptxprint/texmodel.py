@@ -145,7 +145,7 @@ ModelMap = {
     "document/iflinebreakon":   ("c_linebreakon", lambda w,v: "" if v else "%"),
     "document/linebreaklocale": ("t_linebreaklocale", lambda w,v: v or ""),
     "document/script":          ("fcb_script", lambda w,v: ":script="+v.lower() if v != "Zyyy" else ""),
-    "document/digitmapping":    ("fcb_digits", lambda w,v: ':mapping=mappings/'+v+'digits' if v != "Default" else ""),
+    "document/digitmapping":    ("fcb_digits", lambda w,v: ':mapping=mappings/'+v.lower()+'digits' if v != "Default" else ""),
     "document/ch1pagebreak":    ("c_ch1pagebreak", None),
     "document/marginalverses":  ("c_marginalverses", lambda w,v: "" if v else "%"),
     "document/columnshift":     ("s_columnShift", lambda w,v: v or "16"),
