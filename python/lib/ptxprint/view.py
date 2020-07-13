@@ -126,9 +126,7 @@ class ViewModel:
             self.dict[wid] = value
 
     def configName(self):
-        cfgName = re.sub('[^-a-zA-Z0-9_()]+', '', (self.get("ecb_savedConfig") or ""))
-        self.set("ecb_savedConfig", cfgName)
-        return cfgName or None
+        return self.configId or None
 
     def baseTeXPDFname(self):
         bks = self.getBooks()
