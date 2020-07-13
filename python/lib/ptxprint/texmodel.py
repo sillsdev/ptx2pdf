@@ -625,7 +625,7 @@ class TexModel:
     def convertBook(self, bk, outdir, prjdir):
         if self.changes is None:
             if self.asBool('project/usechangesfile'):
-                print("Applying PrntDrftChgs:", os.path.join(prjdir, 'PrintDraftChanges.txt'))
+                # print("Applying PrntDrftChgs:", os.path.join(prjdir, 'PrintDraftChanges.txt'))
                 self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'))
             else:
                 self.changes = []
@@ -753,7 +753,7 @@ class TexModel:
         # Glossary Word markup: Remove the second half of the \w word|glossary-form\w* and apply chosen glossary markup
         v = self.dict["document/glossarymarkupstyle"]
         gloStyle = self._glossarymarkup.get(v, v)
-        self.localChanges.append((None, regex.compile(r"\\w (.+?)(\|.+?)?\\w\*", flags=regex.M), gloStyle))
+        self.localChanges.append((None, regex.compile(r"\\\+?w (.+?)(\|.+?)?\\\+?w\*", flags=regex.M), gloStyle))
         
         # Remember to preserve \figs ... \figs for books that can't have PicLists (due to no ch:vs refs in them)
         if self.asBool("document/ifinclfigs") and (self.asBool("document/iffigfrmtext") or bk in self._peripheralBooks):
@@ -862,6 +862,14 @@ class TexModel:
                     pass
                 else:
                     self.localChanges.extend(c[1].regexes)
+
+        ## Final tweaks
+        # Strip out any spaces either side of an en-quad 
+        self.localChanges.append((None, regex.compile(r"\s?\u2000\s?", flags=regex.M), r"\u2000")) 
+        # Change double-spaces to singles
+        self.localChanges.append((None, regex.compile(r"  ", flags=regex.M), r" ")) 
+        # Escape special codes % and $ that could be in the text itself
+        self.localChanges.append((None, regex.compile(r"([%$])", flags=regex.M), r"\\1")) 
 
         if self.printer is not None and self.printer.get("c_tracing"):
             print("List of Local Changes:----------------------------------------------------------")

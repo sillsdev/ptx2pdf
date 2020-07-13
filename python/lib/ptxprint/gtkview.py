@@ -1703,5 +1703,5 @@ class GtkViewModel(ViewModel):
     def showLogFile(self):
         self.builder.get_object("nbk_Main").set_current_page(9)   # Switch to the Viewer tab
         self.builder.get_object("nbk_Viewer").set_current_page(4) # Display the tab with the .log file
-        self.builder.get_object("scroll_XeTeXlog").scroll_to_mark(self.buf[4].get_insert(), 0.0, True, 0.5, 0.5)
+        # self.builder.get_object("scroll_XeTeXlog").scroll_to_mark(self.buf[4].get_insert(), 0.0, True, 0.5, 0.5)
         # self.builder.get_object("tv_logging").scroll_to_mark(self.logbuffer.get_insert(), 0.0, True, 0.5, 0.5)
