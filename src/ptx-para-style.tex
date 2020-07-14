@@ -126,6 +126,7 @@
   \dimen1=\ht0 \advance\dimen1 by -\headingtopspace \verticalsp@ceunit
   \dimen0=\baselineskip \m@d \advance\dimen2 by -\dimen0
   \advance\dimen2 by \headingtopspace\verticalsp@ceunit
+  \ifhmode\endgraf\fi % Not sure why, but sometiems we get here in hmode
   \ifdim\prevdepth>0pt\advance\dimen2 by -\prevdepth\fi
   \vskip\dimen2 \vbox{\kern\dimen0\vskip-\headingtopspace\verticalsp@ceunit
     \trace{h}{after gridbox: skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip}%

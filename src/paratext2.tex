@@ -1138,14 +1138,14 @@
   \picNarrowfalse
   \gdef\pic@lign{c}%How does the picture align within the box?
   \gdef\picl@c{}% location code for in-line pictures
-  \edef\t@mp{#1}
-  \edef\t@mpb{#2}
+  \edef\t@mp{#1}%
+  \edef\t@mpb{#2}%
   \ifx\t@mpb\empty\let\t@mpc=\t@mpb\else\x@\p@rsePicXtra\t@mpb\end\fi
-  \trace{g}{doespicUseIns? #1 \t@mpb \t@mpc}
+  \trace{g}{p@rsePicUse: #1 \t@mpb \t@mpc}%
   \ifx\t@mp\loc@Inl
     \trace{g}{Experimental inline graphic}%
     \global\let\picl@c\loc@Inl
-    \xdef\pic@lign{\t@mpb}
+    \xdef\pic@lign{\t@mpb}%
     \global\picUsesInsfalse
     \ifx\t@mpb\@lignLeft\picNarrowtrue\fi
     \ifx\t@mpb\@lignRight\picNarrowtrue\fi
@@ -1154,22 +1154,23 @@
     \global\let\picl@c\loc@Cut
     \global\picUsesInsfalse
     \global\picNarrowtrue
-    \xdef\l@cspec{\t@mpb}
+    \xdef\l@cspec{\t@mpb}%
     \ifx\t@mpc\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\t@mpc}\fi%
     \trace{g}{Experimental graphic in cutout, after \c@tskip lines}%
   \fi
   \ifx\t@mp\loc@Par
     \global\let\picl@c=\loc@Par
     \trace{g}{Experimental after-paragraph graphic}%
-    \xdef\pic@lign{\t@mpb}
+    \xdef\pic@lign{\t@mpb}%
     \global\picUsesInsfalse
     \ifx\t@mpb\@lignLeft\picNarrowtrue\fi
     \ifx\t@mpb\@lignRight\picNarrowtrue\fi
   \fi
-  }
+  }%
 \def\d@figure#1{%
  \ifIncludeFigures
   \trace{g}{In d@figure #1}\usfmthreefalse
+  \edef\curc@lsz{\the\hsize}% Current col size
   \gdef\p@rams{#1|}% ensure there is a trailing | separator
   % place parts of text into \param-1, \param-2, ...
   \global\p@ramnumber=1
@@ -1201,15 +1202,17 @@
   \let\p@cins=\relax
   % Parse the location option 
   \x@\p@rsePicUse\loc@ption\end
+  % By default, set the insert width to full span
+  \p@cinswid=\textwidth\advance\p@cinswid by -\columnshift
   % make \p@cins point to insertion class for this location
   \ifx\loc@ption\loc@T \let\p@cins=\topins
   \else\ifx\loc@ption\loc@B \let\p@cins=\bottomins
   \else
       \ifnum\c@rrentcols>1
-        \ifx\loc@ption\loc@TL \let\p@cins=\topleftins
-        \else\ifx\loc@ption\loc@TR \let\p@cins=\toprightins
-        \else\ifx\loc@ption\loc@BL \let\p@cins=\bottomleftins
-        \else\ifx\loc@ption\loc@BR \let\p@cins=\bottomrightins
+        \ifx\loc@ption\loc@TL \let\p@cins=\topleftins \p@cinswid=\hsize
+        \else\ifx\loc@ption\loc@TR \let\p@cins=\toprightins \p@cinswid=\hsize
+        \else\ifx\loc@ption\loc@BL \let\p@cins=\bottomleftins \p@cinswid=\hsize
+        \else\ifx\loc@ption\loc@BR \let\p@cins=\bottomrightins \p@cinswid=\hsize
         \fi\fi\fi\fi
       \else
 	    \ifdiglot\MSG{HOW DID THAT HAPPEN? currentcols=\the\c@rrentcols}\fi
@@ -1220,21 +1223,32 @@
         \fi\fi\fi\fi
       \fi
   \fi\fi
-  \ifx\p@cins\relax
-    %\errmessage{Unknown picture location "\loc@ption",
-    %  expected one of t,b,tl,tr,bl,br}
-    \ifnum\c@rrentcols>1
-      \iffiglocleft\let\p@cins=\topleftins\figlocleftfalse
-      \else\let\p@cins=\toprightins\figloclefttrue\fi
-    \else \let\p@cins=\topins\fi
+  \ifpicUsesIns
+    \ifx\p@cins\relax
+      %\errmessage{Unknown picture location "\loc@ption",
+      %  expected one of t,b,tl,tr,bl,br}%
+      \ifnum\c@rrentcols>1
+        \iffiglocleft\let\p@cins=\topleftins\figlocleftfalse
+        \else\let\p@cins=\toprightins\figloclefttrue\fi
+      \else \let\p@cins=\topins\fi
+    \fi
+  \else
+    \p@cinswid=\hsize
+  \fi
+  \ifdim\p@cinswid<\p@cwidth
+    \message{*** Picture \the\p@cwidth\space wide in  \the\p@cinswid\space space. \ifx\size@ption\size@SPAN Did you mean to use col, instead of span?\fi}%\emspace
   \fi
   % create box to contain picture
-  \trace{g}{Figure size=\size@ption, loc=\loc@ption, \ifpicUsesIns picins=\the\p@cins\fi}%
+  \trace{g}{Figure size=\size@ption, loc=\loc@ption \ifpicUsesIns, picins=\the\p@cins\fi, hsz=\the\hsize}%
   \setbox0=\vbox{
     \ifpicNarrow
       \hsize=\sizem@ltiple\p@cwidth
+      \p@cinswid=\hsize
     \else
-      \hsize=\p@cwidth
+      \hsize=\p@cinswid
+    \fi
+    \ifx\picl@c\loc@Inl
+       %\vskip0.5\baselineskip
     \fi
 	% insert picture based on PicPath and file name, scaled to \p@cwidth
     \let\picfilecomm@nd=\XeTeXpicfile
@@ -1242,37 +1256,37 @@
     \expandafter\ch@ckpdf\f@lename..\endf@lename
     \setbox0=\hbox to \sizem@ltiple\p@cwidth{\hss
       \picfilecomm@nd "\the\PicPath\csname param-2\endcsname"
-                     width \sizem@ltiple\p@cwidth \csname param-8\endcsname\hss}
+                     width \sizem@ltiple\p@cwidth \csname param-8\endcsname\hss}%
     \ifFigurePlaceholders % replace graphic with a frame and the file name
       \setbox0=\vbox to \ht0{\offinterlineskip
         \hrule height .2pt \kern-.2pt
-        \hbox to \wd0{\vrule height \ht0 width .2pt \hfil \vrule width .2pt}
+        \hbox to \wd0{\vrule height \ht0 width .2pt \hfil \vrule width .2pt}%
         \vbox to 0pt{\kern-\ht0 \vss \hbox to \wd0{\hss\idf@nt
-          \csname param-2\endcsname\hss}\vss}
-        \kern-.2pt \hrule height .2pt}
+          \csname param-2\endcsname\hss}\vss}%
+        \kern-.2pt \hrule height .2pt}%
     \fi
     \trace{g}{Picture height=\the\ht0, vs:\the\vsize, \the\partialLpenalty,  pg:\the\pagegoal, pt:\the\pagetotal, av:\the\availht}%
     \ifpicNarrow
       \ifx\pic@line\@lignRight
-        \line{\hfil\box0}%
+        \hbox to \p@cinswid{\hss\box0}%
       \else\ifx\pic@lign\@lignLeft
-          \line{\box0\hfil}%
+          \hbox to \p@cinswid{\box0\hss}%
         \else
-          \line{\hfil\box0\hfil}%
+          \hbox to \p@cinswid{\hss\box0\hss}%
         \fi
       \fi
     \else
-      \line{\hfil\box0\hfil}%
+      \hbox to \p@cinswid{\hss\box0\hss}%
     \fi
-    \edef\r@f{\csname param-7\endcsname} % get reference
-    \stripspace\r@f\end/ \end/\relax\r@f \edef\r@f{\p@ram} % strip space
-    \edef\c@ption{\ifusfmthree\csname param-1\endcsname\else\csname param-6\endcsname\fi} % get caption
-    \trace{g}{Fig caption: [\c@ption] \ifx\r@f\relax\else(\r@f)\fi}
+    \xdef\r@f{\csname param-7\endcsname}% get reference
+    \stripspace\r@f\end/ \end/\relax\r@f \edef\r@f{\p@ram}% strip space
+    \edef\c@ption{\ifusfmthree\csname param-1\endcsname\else\csname param-6\endcsname\fi}% get caption
+    \trace{g}{Fig caption: [\c@ption] \ifx\r@f\relax\else(\r@f)\fi}%
     \ifx{\c@ption}\empty\else
       \everypar={}\let\par\endgraf
       \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
       \linepenalty=1000
-      \s@tbaseline{fig}
+      \s@tbaseline{fig}%
       % insert caption box
       \noindent\leavevmode
         \s@tfont{fig}\c@ption\unskip
@@ -1303,26 +1317,41 @@
       \advance\count0 by \prevgraf % tell cutouts what's happened
       \prevgraf=\count0
       \penalty10 % Allow the page to break
-      \splittopskip\z@skip
-      \splitmaxdepth\maxdimen \floatingpenalty20000 % was zero
-      \ifpicNarrow\ifx\pic@lign\@lignLeft
-        \setbox0\hbox to \colwidth{\box0\hss}\else\setbox0\hbox to \colwidth{\hss\box0}\fi
+      %\splittopskip\z@skip
+      %\splitmaxdepth\maxdimen \floatingpenalty20000 % was zero
+      \ifpicNarrow
+        \ifx\pic@lign\@lignLeft
+          \setbox0\hbox to \colwidth{\box0\hss}\else\setbox0\hbox to \colwidth{\hss\box0}%
+        \fi
       \fi
-      \gridp@ctrue\gridb@x0\gridp@cfalse% make sure we align to the page grid
+      %\endgraf\vbox to 0pt{}
+      %\splittopskip\baselineskip
+      \gridp@ctrue
+        \gridb@x0
+      \gridp@cfalse% make sure we align to the page grid
       \penalty10
     \fi
     \ifx\picl@c\loc@Par
       \trace{g}{Picture is post-paragraph}%
-      \x@\global\x@\setbox\x@\picb@x\box0
-      \gdef\at@ndofthispar{
+      \global\setbox\picb@x\box0
+      \ifpicNarrow
+        \ifx\pic@lign\@lignLeft
+          \global\setbox\picb@x\hbox to \colwidth{\box\picb@x\hss}\trace{g}{Pic aligned left}%
+        \else
+          \global\setbox\picb@x\hbox to \colwidth{\hss\box\picb@x}\trace{g}{Pic aligned right}%
+         \fi
+      \fi
+      \xdef\at@ndofthispar{
+        \relax
+        \endgraf
         \penalty10 % Allow the page to break
-        \splittopskip\z@skip
+        %\splittopskip\z@skip
+        \splittopskip\baselineskip
         \splitmaxdepth\maxdimen \floatingpenalty20000 % was zero
-        \ifpicNarrow\ifx\pic@lign\@lignLeft
-          \setbox\picb@x\hbox to \colwidth{\box\picb@x\hss}\trace{g}{Pic aligned left}%
-          \else\setbox\picb@x\hbox to \colwidth{\hss\box\picb@x}\trace{g}{Pic aligned right}\fi
-        \fi
-        \gridp@ctrue\gridb@x\picb@x\gridp@cfalse% make sure we align to the page grid
+        \gridp@ctrue
+           \gridb@x
+            \box\picb@x
+        \gridp@cfalse % make sure we align to the page grid
         \penalty10
        }%
     \fi
@@ -1332,7 +1361,7 @@
              \trace{g}{Cutout in horizontal mode. forcing \m@rker}%
              \csname\m@rker\endcsname
            \else
-             \trace{g}{Cutout in horizontal mode, but verse was in vertical. forcing \prev@rsemode and negative lineskip}%
+             \trace{g}{Cutout in horizontal mode, but verse was in vertical. Using \prev@rsemode and negative lineskip}%
              \csname\prev@rsemode\endcsname
              \vskip -\baselineskip
            \fi
@@ -1344,6 +1373,9 @@
       \advance\dimen1 by \c@tskip\baselineskip
       \dimen2=\wd0
       \advance\dimen2 by 10pt
+      \dimen3=\curc@lsz
+      \advance\dimen3 by -\dimen2
+      \ifdim\dimen3<5em\message{*** Picture specification of \size@ption \sizem@ltiple (at \ch@pter:\v@rse) leaves \the\dimen3 \space for text. That's probably not enough.}\fi
       \ifx\l@cspec\@lignLeft
         \setbox\picb@x\hbox to 0pt {\lower\dimen1\box0\hss}%
         \ht\picb@x=0pt 
@@ -1358,12 +1390,12 @@
           \ht\picb@x=0pt 
           \dp\picb@x=0pt
           \vskip-\baselineskip %Yuck
-          \box\picb@x% FIXME? Box here Adds vertical space
+          \box\picb@x% FIXME? Box here adds vertical space
           \trace{g}{rightcutout \the\dimen2, \c@tskip, \the\count0}%\
-          %\edef\t@mpd{\the\dimen2}
+          %\edef\t@mpd{\the\dimen2}%
           \rightcutout{\the\dimen2}{\c@tskip}{\the\count0}%\emspace
         \else
-          \message{*** Unknown position \l@cspec, picture misplaced}%
+          \message{*** Unknown cutout position \l@cspec, picture misplaced}%
           \box0
         \fi
         \unskip
@@ -1390,13 +1422,14 @@
 \def\loc@TR{tr}
 \def\loc@BL{bl}
 \def\loc@BR{br}
-\def\loc@Inl{i}% In-line graphic, not a float.
+\def\loc@Inl{h}% In-line graphic, not a float.
 \def\loc@Cut{c}% cutout
 \def\loc@Par{p}% post-paragrpah
 \def\@lignLeft{l}
 \def\@lignRight{r}
 \newbox\picb@x
 \newcount\p@ramnumber
+\newdimen\p@cinswid
 \newdimen\p@cwidth
 \newif\ifmorep@rams
 
