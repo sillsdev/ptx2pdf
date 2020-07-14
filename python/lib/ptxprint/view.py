@@ -958,7 +958,7 @@ class ViewModel:
 
         picsrcs = self.getFigureSources(pictures)
         for p, f in picsrcs.items():
-            res[f] = "figures/"+p
+            res[f] = "figures/"+os.path.basename(f)
         adjpath = os.path.join(basecfpath, "AdjLists")
         if os.path.exists(adjpath):
             for adj in os.listdir(adjpath):
