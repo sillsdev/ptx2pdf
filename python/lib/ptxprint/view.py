@@ -419,7 +419,7 @@ class ViewModel:
                                 val = float(val) if val is not None and val != '' else 0
                             elif v[0].startswith("c_"):
                                 # print("v[0]:", v[0])
-                                val = config.getboolean(sect, opt) if val is not None else False
+                                val = config.getboolean(sect, opt) if val else False
                             if val is not None:
                                 setv(v[0], val)
                         except AttributeError:
@@ -827,11 +827,11 @@ class ViewModel:
     def incrementProgress(self, val=None):
         pass
 
-    def getArchiveFiles(self, prjid=None, cfgid=None):
-        sfiles = {'c_useModsTex': ("ptxprint-mods.tex", True),
-                  'c_useCustomSty': ("custom.sty", False),
-                  'c_useModsSty': ("PrintDraft/PrintDraft-mods.sty", False),
-                  'c_usePrintDraftChanges': ("PrintDraftChanges.txt", False)}
+    def _getArchiveFiles(self, books, prjid=None, cfgid=None):
+        sfiles = {'c_useCustomSty': "custom.sty",
+                  'c_useModsSty': "PrintDraft/PrintDraft-mods.sty",
+                  'c_usePrintDraftChanges': "PrintDraftChanges.txt",
+                  None: "Settings.xml"}
         res = {}
         cfgchanges = {}
         if prjid is None:
@@ -843,7 +843,7 @@ class ViewModel:
             cfpath += cfgid+"/"
         basecfpath = self.configPath(cfgid, prjid)
 
-        for bk in self.getBooks():
+        for bk in books:
             fname = self.getBookFilename(bk, prjid)
             fpath = os.path.join(self.settings_dir, prjid)
             res[os.path.join(fpath, fname)] = fname
@@ -855,14 +855,23 @@ class ViewModel:
                     res[os.path.join(adjpath, adj)] = cfpath+"AdjLists/"+adj
 
         for t,a in sfiles.items():
-            if a[1]:
-                p = os.path.join(basecfpath, a[0])
-                b = cfpath + a[0]
-            else:
-                p = os.path.join(self.settings_dir, prjid, a[0])
-                b = a[0]
+            if isinstance(t, str) and not self.get(t):
+                continue
+            p = os.path.join(self.settings_dir, prjid, a[0])
             if os.path.exists(p):
-                res[p] = b
+                res[p] = a
+
+        if self.get("c_useModsTex"):
+            loaded = False
+            if cfgid is not None:
+                p = os.path.join(self.settings_dir, prjid, 'shared', 'ptxprint', cfgid, 'ptxprint-mods.tex')
+                if os.path.exists(p):
+                    res[p] = "shared/ptxprint/" + cfgid + "/ptxprint-mods.tex"
+                    loaded = True
+            if not loaded:
+                p = os.path.join(self.settings_dir, prjid, 'shared', 'ptxprint', 'ptxprint-mods.tex')
+                if os.path.exists(p):
+                    res[p] = "shared/ptxprint/ptxprint-mods.tex"
 
         script = self.get("btn_selectscript")
         if script is not None and len(script):
@@ -882,7 +891,8 @@ class ViewModel:
         if not filename.lower().endswith(".zip"):
             filename += ".zip"
         zf = ZipFile(filename, mode="w", compression=ZIP_DEFLATED, compresslevel=9)
-        self.archiveAdd(zf)
+        zf.write(os.path.join(self.settings_dir, "usfm.sty"), "usfm.sty")
+        self._archiveAdd(zf, self.getBooks())
         if self.get("c_diglot"):
             prjid = self.get("fcb_diglotSecProject")
             cfgid = self.get("ecb_diglotSecConfig")
@@ -890,13 +900,13 @@ class ViewModel:
             digprinter.setPrjid(prjid)
             if cfgid is not None and cfgid != "":
                 digprinter.setConfigId(cfgid)
-            digprinter.archiveAdd(zf)
+            digprinter._archiveAdd(zf, self.getBooks())
         zf.close()
 
-    def archiveAdd(self, zf):
+    def _archiveAdd(self, zf, books):
         prjid = self.prjid
         cfgid = self.configName()
-        entries, cfgchanges = self.getArchiveFiles(prjid=prjid, cfgid=cfgid)
+        entries, cfgchanges = self._getArchiveFiles(books, prjid=prjid, cfgid=cfgid)
         for k, v in entries.items():
             zf.write(k, arcname=prjid + "/" + v)
         tmpcfg = {}
@@ -911,4 +921,4 @@ class ViewModel:
         configstr.close()
         for k, v in tmpcfg.items():
             self.set(k, v)
-            
+
