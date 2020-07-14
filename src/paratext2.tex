@@ -326,7 +326,7 @@
   \global\galleypenalty=\outputpenalty
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
   \global\output={\onecoltrial}
-  \ifm@rksonpage\else\gdef\p@gefirstmark{}\mark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
+  \ifm@rksonpage\else\gdef\p@gefirstmark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
   \global\holdinginserts=0
   \unvbox255
   \penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
@@ -517,7 +517,7 @@
     \global\let\whichtrial=\onecoltrial
     \global\output={\backingup}
     \global\rerunsavepartialpagedtrue
-    \ifm@rksonpage\else\gdef\p@gefirstmark{}\mark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
+    \ifm@rksonpage\else\gdef\p@gefirstmark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
     \unvbox\s@vedpage \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
   \fi}
   % save 1 column material since we are switching to 2 columns
@@ -864,7 +864,7 @@
     \tempfalse%\ifvoid\partial\else\temptrue\fi%
     % remember \holdingInserts=1 from \@emptyinserts
     \ifvoid\galley\temptrue\fi
-    \ifm@rksonpage\else\gdef\p@gefirstmark{}\mark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
+    \ifm@rksonpage\else\gdef\p@gefirstmark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
     \iftemp
      \trace{i}{Using savedpage.pen=\the\outputpenalty}%
      \unvbox\s@vedpage\penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
@@ -942,7 +942,7 @@
     \let\\=\cle@rn@tecl@ss \the\n@tecl@sses
     \global\let\whichtrial=\twocoltrial
     \global\output={\backingup}
-    \ifm@rksonpage\else\gdef\p@gefirstmark{}\mark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
+    \ifm@rksonpage\else\gdef\p@gefirstmark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
     \unvbox\galley \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
   \fi}
 \newif\iffitonpage
