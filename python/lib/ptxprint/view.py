@@ -551,12 +551,11 @@ class ViewModel:
                             else:
                                 vs = f[0]
                             chvs = ch+"." + str(vs)
-                            srtchvs = "{:0>3}{:0>3}{}".format(ch, re.sub(r"(\d+)(\-.+)?", r"\1", vs), sfx)
+                            srtchvs = "{:0>3}{:0>3}{}".format(int(ch), int(re.sub(r"(\d+)(\-.+)?", r"\1", vs)), sfx)
+                            print(srtchvs)
                             cmt = "% " if chvs in usedRefs else ""
                             usedRefs += [chvs]
-                        # put back in when macros handle xyzR and xyzL 
-                        #    tmplist.append(srtchvs+"\u0009"+cmt+bk+sfx+" "+chvs+" |"+picfname+"|"+f[4]+"|"+pageposn+"||"+f[7]+"|"+f[8]+f[9])
-                            tmplist.append(srtchvs+"\u0009"+cmt+bk+" "+chvs+" |"+picfname+"|"+f[4]+"|"+pageposn+"||"+f[7]+"|"+f[8]+f[9])
+                            tmplist.append(srtchvs+"\u0009"+cmt+bk+sfx+" "+chvs+" |"+picfname+"|"+f[4]+"|"+pageposn+"||"+f[7]+"|"+f[8]+f[9])
                     else:
                         # If none of the USFM2-styled illustrations were found then look for USFM3-styled markup in text 
                         # (MH: How to handle any additional/non-standard xyz="data" ? Will the .* before \\fig\* take care of it adequately?)
