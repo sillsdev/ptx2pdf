@@ -1341,10 +1341,12 @@
           \global\setbox\picb@x\hbox to \colwidth{\hss\box\picb@x}\trace{g}{Pic aligned right}%
          \fi
       \fi
-      \xdef\at@ndofthispar{
+      \edef\eotpn@me{at@ndofthispar\ifdiglot\ifdiglotL L\else R\fi\fi}% Which endofthispar macro?
+      \trace{g}{\eotpn@me\space defined}%
+      \x@\xdef\csname \eotpn@me\endcsname{
         \relax
         \endgraf
-        \penalty10 % Allow the page to break
+        %\penalty10 % Allow the page to break
         %\splittopskip\z@skip
         \splittopskip\baselineskip
         \splitmaxdepth\maxdimen \floatingpenalty20000 % was zero
@@ -1352,7 +1354,7 @@
            %\gridb@x
             \box\picb@x\vskip-\prevdepth
         %\gridp@cfalse % make sure we align to the page grid
-        \penalty10
+        %\penalty10
        }%
     \fi
     \ifx\picl@c\loc@Cut

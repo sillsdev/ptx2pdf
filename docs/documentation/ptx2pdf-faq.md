@@ -207,33 +207,99 @@ about a layout is exactly as wanted in terms of headers and footers, point size
 and spacing, styles, pictures, etc. Otherwise if you change anything after that,
 you will almost inevitable have to go through and refix page breaks later.
 
+### How can I position pictures?
+Paratext's export to print-draft removes picture formatting information before it gets to XeTeX. PTXprint leaves the formatting intact, and assumes you've got it (mostly) right.  The USFM standard is not very useful here; for location it says "a list of verses where it might be inserted", and for size it offers only 'span' and 'col'. The ptx2pdf XeTeX macros give better control on both of these, offering multiple positioning options and if you want a smaller image than full-page or column-width you can say, e.g. `span*0.6` (see a later discusion also) 
+
+There are several picture line-formats available, depending if you're using USFM3.0 or the earlier standard, and whether a piclist is in use, e.g.:
+- Inline USFM old: 
+```
+  \fig_DESC|FILE|SIZE|LOC|COPY|CAP|REF\fig*
+```
+- Inline USFM 3.0 (example):
+```
+  \fig The Caption.|src="co00621.jpg" size="span" alt="desc" loc="LOC" ref="1.18"\fig*
+```
+
+- Piclist, USFM old and USFM 3.0(example):
+```
+HEBR 3.9 Description of picture|co00621.jpg|col*0.5|cr2||The people worshipping idols having forgotten God|3:9
+HEBR 3.9 The people worshipping idols having forgotten God|src="co00621.jpgsrc" size="col*0.5" loc="cr2" ref="3:9" alt="Description of picture"
+```
+
+The 'location' specification is the one you want to use. 
+
+
+In the above pic-list line, (for the *right* column of a diglot, hence the **R** after the 'HEB'), the picture will be set in a cut-out on the right side of the column, two lines below the beginning of the paragraph starting at 3:9, with the picture half a column wide and the text a little distance away.  This may **force** a paragraph at this point.
+. The following locations are now available:
+
+Code | Mnemnonic              | Position                                                      | Caption position / width 
+---- | -----------------------|-----------------------------------------------------------|-----------------------------------------------
+t    | 'Top'                  | Above everything except the header line.                      | Centred across both columns 
+b    | 'Bottom'               | Below all verse text and footnotes.                           | Centred across both columns 
+tl   | 'Top-Left' [1]         | At the top of the left-hand [2] column                           | Centred within column 
+tr   | 'Top-Right' [1]        | At the top of the right-hand [2] column                          | Centred within column 
+bl   | 'Bottom-Left' [1]      | At the bottom of the left-hand [2] column                           | Centred within column 
+br   | 'Bottom-Right' [1]     | At the bottom of the right-hand [2] column                          | Centred within column 
+-----|------------------------|       ***Experimental Additions***                               |----------------------------
+h    | 'Here'                 | Where defined / before the verse in piclist[3,4], centred       | Centred within column
+hl   | 'Here'                 | Where defined / before the verse in piclist[3,4], left-aligned  | Centred below image, and the same width
+hr   | 'Here'                 | Where defined / before the verse in piclist[3,4], right-aligned | Centred below image, and the same width
+p    | 'Post-paragraph'       | After this paragraph[4]                                        | Centred within column
+pr   | 'Post-paragraph, Right'| After this paragraph[4], right-aligned                           | Centred below image, and the same width
+pl   | 'Post-paragraph, Left' | After this paragraph[4], left-aligned                            | Centred below image, and the same width
+cl   | 'Cutout Left'          | In the top-left corner of this paragraph [3]                   | Centred below image, and the same width
+cr   | 'Cutout Right'         | In the top-right corner of this paragraph [3]                  | Centred below image, and the same width
+cl#  | 'Cutout Left'          | In a notch # lines[5] below the top of this paragraph [3]       | Centred below image, and the same width
+cr#  | 'Cutout Right'         | In a notch # lines[5] below the top of this paragraph [3]       | Centred below image, and the same width
+
+
+Notes:
+[1] If Two columns are in use.
+[2] If a diglot is being set inner-outer rather than left/right, then the 'left' column is the inner column. 
+[3] *Here*  and *cutout* images need to start at a new paragraph. If the specified location is not a paragraph boundary, a new paragraph will be forced.
+[4] The 'insert image here' code will be activated at the end of the paragraph except in the case that the paragraph crosses a page-boundary, in which case it may appear at the top of the new page.
+[5] Multi-digit numbers be specified, but little sanity checking is done. The image will be on the same page as the calling verse (or off the page's bottom), even if the notch is partly or fully on the next. A negative number will raise the image and shorten the cut-out, but will not make space above.
+
+
+### How mature are the experimental picture positions?
+At the time of writing (14 Jul 2020), there are some known bugs, mostly grid alignment and some very poor behaviour at page boundaries:
+- c  The cutout functionality seems to work reliably, within the capabilities it has. 
+- p  The post-paragraph code seems to function well as long as the paragraph does not cross a page boundary. If it does in diglot, then the picture is always set at the top of the left-hand text of the follow-on page. In monoglot text, all text on the follow-on page vanishes. Following text may have problems with grid-alignment. 
+- h  Following text may have problems with grid alignment.
+
+### Do the new picture positions conform to examples in the USFM specification?
+In some ways, they conform better than the previously available options. USFM specification indicates that a picture can occur immediately after text, ending the previous paragraph. This works with *here* and *cutout* picture locations, (the 'automatic' paragraph style for text surrounding the cutout is intended to be the same as the previous paragraph style, but until further testing reveals this to be 100% reliable, sensible users will supply their own style marker).  USFM makes no reference to left or right alignment, nor scaling images, nor images in cutouts.
+ 
+### Why might I use unusual positions?
+- cl / cr  Small images, perhaps glossary items?
+- d  A picture to be set after the final verse of a book, otherwise impossible from a piclist. Possibly also for some kind of decorative 'end of section' mark.
+- hl / hr Handy for a sponsor's or publisher's logo, perhaps?
+
 
 ### What limitations are there on the use of piclist files?
 
 Piclist files allow an external file to associate pictures with verse references
-in a file. Each entry is of the form: _bk_ _C.V_ _figure info_. There are some
-limitations on a piclist file:
+in a file. Each entry is of the form: _bk_ _C.V_ _figure info_, where _bk_ is the 3 letter (all-caps) book I.D. (which may be followed by L or R in diglots). There are some limitations on a piclist file:
 
 - References must be in order. A subsequent line in the piclist file is only
   read after the previous line is matched against the current reference being  processed as text.
 - There can only be one line for any given reference (except diglots, which can match on left and right). Having two means the   second is not matched, the file gets out of sync and all subsequent lines  are not read.
+- Each line must be complete. Don't allow the line to be saved in a wrapped form (broken into multiple chunks).
 
-In addition, TeX has a limitation that you cannot have more than one picture
-in the same position on the page, anchored to the same line in the text,
-whether or not they come from a piclist or inline \\fig. Thus
-for a very short verse that may not span a line boundary, or if you have two
-\\fig elements very close together in the text, one may be lost.
+In addition, TeX has a limitation that you cannot have more than one picture in the same position on the page, anchored to the same line in the text, whether or not they come from a piclist or inline \\fig. Thus for a very short verse that may not span a line boundary, or if you have two \\fig elements very close together in the text, one may be lost.
 
 ### Can I scale / rotate / crop / transform an image?
 You may **scale** and **rotate** images. Cropping and other image transformations need to happen in an external  tool. This is from a piclist. ```\pic```  lines are somewhat similar
 ```
-RUT 4.11 Boaz addresses the crowd|07.jpeg|span*0.6|t|Artist McArty| You are witnesses |Ruth 4:10|rotate 3|
+RUT 4.11 Boaz addresses the crowd|07.jpeg|span*0.6|t|Artist McArty| You are witnesses |Ruth 4:10|rotated 3|
 ```
+
 This instructs XeTeX to put image 07.jpeg by Arist McArty (Boaz addresses the crowd) at the top of the page containing Ruth 4:11, and with the caption "(Ruth 4:10) You are witnesses". It goes on to say it should have a width of 0.6 of the span (the combined width of both columns, another measurement is `col`, the column width), and that it should be rotated three degrees anti-clockwise. 
+The final `rotated 3` is an extension to the USFM standard. The  USFM 3.0 equivalent is ```xetex="rotated 3"```.
 
 **N.B.**  The size of the image is set before rotation. If you want an  image to fit the page width after rotation 90degrees, and before rotation the image is  twice as high as it is wide, then you will need to give its width as ```span*2.0```
 
-There is no mechanism to rotate the caption.
+There is no mechanism to rotate the caption with the picture.
 
 ### How do I change the font / fontsize for a caption?
 Captions are set using the style defined for ```\Marker fig```. Edit the style in the stylesheet.
@@ -259,7 +325,7 @@ To find out the names that fonts are saved as, put \tracing{F} into your .tex fi
 ### // doesn't work in my caption. How do I make the line break in the right place?
 This probably only works in a piclist. If the piclist line is:
 ```
-RUT 4.2 Boaz talks to kinsman-redeemer|06.jpeg|span*0.8|t|Arty McArtful|O Boaz del duma \penalty -1000\ le răskumpărătoresa|Rut 4:1|rotated 0
+RUT 4.2 Boaz talks to kinsman-redeemer|06.jpeg|span*0.8|t|Arty McArtful|O Boaz del duma \penalty -1000\ le raskumparatoresa|Rut 4:1|rotated 0
 ```
 Then ```\penalty -1000``` is telling XeTeX that after ```duma`` is a really amazingly good place
 to break. The slash after the 1000 means it shouldn't eat the space that comes
@@ -277,6 +343,8 @@ It would be really hard for the ptx macros to work out when and how to float
 pictures onto other pages. It is hard to know when to move a picture to another
 page. When does it make the page better? How far should a picture float away 
 from its anchor?
+
+In some error situations, the picture will not be on the same page as the anchor in a diglot. This is normally because trying to do that would have made the page too big. It is usually accompanied with other errors and possibly the page overflowing.
 
 ### How can I format the page number?
 

@@ -143,16 +143,28 @@
 
 
 \def\at@ndofthispar{}
+\def\at@ndofthisparR{}
+\def\at@ndofthisparL{}
 % end a paragraph, handling cutouts (shaping around drop-cap) if any, and the <end> hook
-\def\par{\ifhmode \TRACE{par}%
- \makecutouts
- \ifdiglot\setsid@%\MSG{end-\m@rker\sid@}%
-   \csname end-\m@rker\sid@\endcsname % handle side-specific <end> hook
+\def\par{\ifhmode \trace{g}{par \ifdiglot\ifdiglotL L \else R \fi\fi \the\pagetotal}%
+   \makecutouts
+   \ifdiglot\setsid@%\MSG{end-\m@rker\sid@}%
+     \csname end-\m@rker\sid@\endcsname % handle side-specific <end> hook
+   \fi
+   \csname end-\m@rker\endcsname
+   \trace{j}{baselineskip = \the\baselineskip, looseness = \the\looseness}%
+   \endgraf
+   \cutoutcarryover 
  \fi
- \csname end-\m@rker\endcsname
- \trace{j}{baselineskip = \the\baselineskip, looseness = \the\looseness}%
- \endgraf
- \cutoutcarryover \fi\let\pn@xt=\at@ndofthispar\let\at@ndofthispar=\empty\pn@xt}
+ \edef\eotpn@me{at@ndofthispar\ifdiglot\ifdiglotL L\else R\fi\fi}% Which endofthispar macro?
+ \x@\let\x@\pn@xt\x@=\csname \eotpn@me\endcsname
+ \ifdim\pagetotal=0pt\edef\eotpn@me{empty}\let\pn@xt=\relax\trace{g}{Not here}\fi%It's not a paragraph if there's a zero \pagetotal
+ \ifx\pn@xt\relax\else
+   \trace{g}{\eotpn@me\space used (\the\holdinginserts)}%
+   %\edef\pn@xt{\hbox{x}}% test code
+   \x@\let\csname\eotpn@me\endcsname=\relax\pn@xt
+ \fi
+}
 
 %
 % Handle a paragraph style marker (parameter is the marker name)
