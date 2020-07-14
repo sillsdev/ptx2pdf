@@ -4,7 +4,7 @@ from .texmodel import ModelMap, TexModel, universalopen  # MH: I added TeXModel 
                                                          # access _peripheralBooks (OK, or is there a better/proper way)
 from .ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from .font import TTFont
-import pathlib, os
+import pathlib, os, sys
 from configparser import NoSectionError, NoOptionError, _UNSET
 from zipfile import ZipFile, ZIP_DEFLATED
 from io import StringIO
@@ -18,6 +18,15 @@ varpaths = (
     ('settingsdir', ('settings_dir',)),
     ('workingdir', ('working_dir',)),
 )
+
+def newBase(fpath):
+    doti = fpath.rfind(".")
+    f = os.path.basename(fpath[:doti])
+    cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?$", f)
+    if cl:
+        return cl[0].lower()
+    else:
+        return re.sub('[()&+,. ]', '_', f.lower())
 
 class Path(pathlib.Path):
 
@@ -620,6 +629,101 @@ class ViewModel:
                          secondary="One or more books ({}) have more than one figure attached to a single verse. ".format(", ".join(xl)) + \
                                    "This isn't permitted with a PicList. So check the list(s) for missing illustrations.", title="PicList Warning!")
 
+    def getFigures(self, bk, sfmonly=False):
+        posparms = ("desc", "src", "size", "loc", "copy", "alt", "ref", "xetex")
+        res = {}
+        fname = self.getBookFilename(bk, self.prjid)
+        usepiclist = not sfmonly and self.get("c_usePicList") and bk not in TexModel._peripheralBooks
+        if usepiclist:
+            doti = fname.rfind(".")
+            if doti > 0:
+                plfname = fname[:doti] + "-draft" + fname[doti:] + ".piclist"
+            piclstfname = os.path.join(self.configPath(cfgname=self.configName()), "PicLists", plfname)
+            if not os.path.exists(piclstfname):
+                usepiclist = False
+            else:
+                fname = piclstfname
+        if not usepiclist:
+            fname = os.path.join(self.settings_dir, self.prjid, fname)
+        if usepiclist:
+            with universalopen(fname) as inf:
+                for l in inf.readlines():
+                    m = l.strip().split("|")
+                    if len(m) < 7 or m[0].startswith("%"):
+                        continue
+                    r = m[0].split()[1]
+                    res[r] = {}
+                    for i, f in enumerate(m[1:]):
+                        res[r][posparms[i+1]] = f
+        else:
+            with universalopen(fname) as inf:
+                dat = inf.read()
+                blocks = [""] + re.split(r"\\c\s+(\d+)", dat)
+                for c, t in zip(blocks[0::2], blocks[1::2]):
+                    m = re.findall(r"(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\d\\]+? ?)?(\d+[\:\.]\d+?[abc]?([\-,\u2013\u2014]\d+[abc]?)?)\\fig\*", t)
+                    for f in m:     # usfm 2
+                        r = "{}.{}".format(c, f[0])
+                        res[r] = {}
+                        for i, v in enumerate(f[3:]):
+                            res[r][posparms[i]] = v
+                    m = re.findall(r'(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig ([^\\]*?)\|([^\\]+)\\fig\*', t)
+                    for f in m:     # usfm 3
+                        caption = f[3]
+                        r = "{}.{}".format(c, f[0])
+                        res[r] = {}
+                        labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f[4])
+                        for l in labelParams:
+                            k,v = l.split("=")
+                            res[r][k.strip()] = v.strip('"')
+        return res
+
+    def getFigureSources(self, figlist, filt=newBase):
+        res = {}
+        if filt is not None:
+            newfigs = {filt(f): f for f in figlist}
+        else:
+            newfigs = {f: f for f in figlist}
+        if self.get("c_useCustomFolder"):
+            srchlist = [self.printer.customFigFolder]
+        else:
+            srchlist = []
+        if not self.get("c_exclusiveFiguresFolder"):
+            if sys.platform == "win32":
+                srchlist += [os.path.join(self.settings_dir, self.prjid, "figures")]
+                srchlist += [os.path.join(self.settings_dir, self.prjid, "local", "figures")]
+            elif sys.platform == "linux":
+                chkpaths = []
+                for d in ("local", "figures"):
+                    chkpaths += [os.path.join(self.settings_dir, self.prjid, x) for x in (d, d.title())]
+                for p in chkpaths:
+                    if os.path.exists(p):
+                        srchlist += [p]
+        extensions = []
+        extdflt = ["jpg", "jpeg", "png", "tif", "tiff", "bmp", "pdf"]
+        imgord = self.get("t_imageTypeOrder").lower()
+        extuser = re.sub("[ ,;/><]"," ",imgord).split()
+        extensions = [x for x in extdflt if x in extuser]
+        if not len(extensions):   # If the user hasn't defined any extensions 
+            extensions = extdflt  # then we can assign defaults
+
+        for srchdir in srchlist:
+            if srchdir is None or not os.path.exists(srchdir):
+                continue
+            if self.get("c_exclusiveFiguresFolder"):
+                search = [srchdir, [], os.listdir(srchdir)]
+            else:
+                search = os.walk(srchdir)
+            for subdir, dirs, files in search:
+                for f in files:
+                    doti = f.rfind(".")
+                    origExt = f[doti:].lower()
+                    if origExt[1:] in extensions:
+                        filepath = os.path.join(subdir, f)
+                        nB = filt(f) if filt is not None else f
+                        if nB in newfigs:
+                            res[newfigs[nB]] = filepath
+        return res
+
     def generateAdjList(self):
         existingFilelist = []
         booklist = self.getBooks()
@@ -834,6 +938,7 @@ class ViewModel:
                   None: "Settings.xml"}
         res = {}
         cfgchanges = {}
+        pictures = set()
         if prjid is None:
             prjid = self.prjid
         if cfgid is None:
@@ -847,7 +952,13 @@ class ViewModel:
             fname = self.getBookFilename(bk, prjid)
             fpath = os.path.join(self.settings_dir, prjid)
             res[os.path.join(fpath, fname)] = fname
+            picinfos = self.getFigures(bk)
+            for p in picinfos.values():
+                pictures.add(p['src'])
 
+        picsrcs = self.getFigureSources(pictures)
+        for p, f in picsrcs.items():
+            res[f] = "figures/"+p
         adjpath = os.path.join(basecfpath, "AdjLists")
         if os.path.exists(adjpath):
             for adj in os.listdir(adjpath):
