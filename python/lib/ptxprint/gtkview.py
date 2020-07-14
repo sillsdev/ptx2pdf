@@ -1473,7 +1473,22 @@ class GtkViewModel(ViewModel):
     def onUsePrintDraftFolderClicked(self, c_useprintdraftfolder):
         self.sensiVisible("c_useprintdraftfolder")
 
+    def onCreateZipArchiveClicked(self, btn_createZipArchive):
+        zfname = self.prjid+"-"+self.configName()+"PTXprintArchive.zip"
+        archiveZipFile = self.fileChooser("Select the location and name for the Archive file",
+                filters = {"ZIP files": {"pattern": "*.zip", "mime": "application/zip"}},
+                multiple = False, folder = False, save= True, basedir = self.working_dir, defaultSaveName=zfname)
+        if archiveZipFile is not None:
+            # self.archiveZipFile = archiveZipFile[0]
+            btn_createZipArchive.set_tooltip_text(str(archiveZipFile[0]))
+            self.createArchive(str(archiveZipFile[0]))
+            
+        else:
+            # self.archiveZipFile = None
+            btn_createZipArchive.set_tooltip_text("No Archive File Created")
+
     def onSelectOutputFolderClicked(self, btn_selectOutputFolder):
+        # MH: This needs some work - especially if the commandline option sets the output path
         customOutputFolder = self.fileChooser("Select the output folder", 
                 filters = None, multiple = False, folder = True)
         if customOutputFolder is not None and len(customOutputFolder):
@@ -1487,7 +1502,6 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("btn_selectOutputFolder").set_sensitive(False)
 
     def onSelectFigureFolderClicked(self, btn_selectFigureFolder):
-        # MH: This needs some work - especially if the commandline option sets the output path
         customFigFolder = self.fileChooser("Select the folder containing image files", 
                 filters = None, multiple = False, folder = True)
         if len(customFigFolder):
@@ -1567,15 +1581,31 @@ class GtkViewModel(ViewModel):
         it = b.get_iter_at_offset(-1)
         atv.scroll_to_iter(it, 0, False, 0, 0)
 
-    def fileChooser(self, title, filters=None, multiple=True, folder=False, basedir=None):
+    def fileChooser(self, title, filters=None, multiple=True, folder=False, save=False, basedir=None, defaultSaveName=None):
+        if folder:
+            action = Gtk.FileChooserAction.SELECT_FOLDER
+            btnlabel = "Select"
+        elif save:
+            action = Gtk.FileChooserAction.SAVE
+            btnlabel = "Create"
+        else:
+            action = Gtk.FileChooserAction.OPEN
+            btnlabel = Gtk.STOCK_OPEN
+
         dialog = Gtk.FileChooserDialog(title, None,
-            (Gtk.FileChooserAction.SELECT_FOLDER if folder else Gtk.FileChooserAction.OPEN),
+            (action),
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-            ("Select" if folder else Gtk.STOCK_OPEN), Gtk.ResponseType.OK))
+            (btnlabel), Gtk.ResponseType.OK))
         dialog.set_default_size(730, 565)
         dialog.set_select_multiple(multiple)
         if basedir is not None:
             dialog.set_current_folder(basedir)
+        if save:
+            dialog.set_do_overwrite_confirmation(True)
+            if defaultSaveName is None:
+                dialog.set_current_name("XYZptxPrintArchive.zip")
+            else:
+                dialog.set_current_name(defaultSaveName)
         if filters != None: # was len(filters):
             # filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}}
             for k, f in filters.items():
@@ -1600,7 +1630,7 @@ class GtkViewModel(ViewModel):
         response = dialog.run()
         fcFilepath = None
         if response == Gtk.ResponseType.OK:
-            if folder:
+            if folder or save:
                 fcFilepath = [Path(dialog.get_filename()+"/")]
             else:
                 fcFilepath = [Path(x) for x in dialog.get_filenames()]

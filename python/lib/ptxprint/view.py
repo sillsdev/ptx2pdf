@@ -854,6 +854,12 @@ class ViewModel:
                 if adj.endswith(".adj"):
                     res[os.path.join(adjpath, adj)] = cfpath+"AdjLists/"+adj
 
+        piclstpath = os.path.join(basecfpath, "PicLists")
+        if os.path.exists(piclstpath):
+            for pic in os.listdir(piclstpath):
+                if pic.endswith(".piclist"):
+                    res[os.path.join(piclstpath, pic)] = cfpath+"PicLists/"+pic
+
         for t,a in sfiles.items():
             if isinstance(t, str) and not self.get(t):
                 continue
@@ -873,10 +879,10 @@ class ViewModel:
                 if os.path.exists(p):
                     res[p] = "shared/ptxprint/ptxprint-mods.tex"
 
-        script = self.get("btn_selectscript")
+        script = self.get("btn_selectScript")
         if script is not None and len(script):
             res[script] = os.path.basename(script)
-            cfgchanges["btn_selectscript"] = os.path.join(self.settings_dir, prjid, os.path.basename(script))
+            cfgchanges["btn_selectScript"] = os.path.join(self.settings_dir, prjid, os.path.basename(script))
 
         hyphenfpath = os.path.join(self.settings_dir, prjid, "shared", "ptxprint")
         hyphentpath = "shared/ptxprint/"

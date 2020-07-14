@@ -6226,13 +6226,13 @@ first occurence</property>
                                         <property name="sensitive">False</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Currently just an idea: NOT YET IMPLEMENTED
-If glossary terms have been marked up multiple
+                                        <property name="tooltip_text" translatable="yes">If glossary terms have been marked up multiple
 times, it may be frustrating to see the same
 glossary entry occuring in the footnote area time
 and time again. To prevent this, you can select to
 only show the Glossary entry as a footnote the first
-time that it occurs (in each book).</property>
+time that it occurs (in each book).
+  !dea only: NOT YET IMPLEMENTED</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -7744,6 +7744,34 @@ to show gridlines for finetuning settings.</property>
                             <property name="expand">True</property>
                             <property name="fill">True</property>
                             <property name="position">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="btn_createZipArchive">
+                            <property name="label" translatable="yes">Create ZIP Archive...</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Create a ZIPped archive of all the files
+required to recreate this configuration
+on a different computer. Mainly used
+for troubleshooting/diagnosing issues.
+Note that no fonts or illustrations will
+be included. Only the various PTXprint
+settings files, along with the relevant
+Paratext USFM data files. You can
+examine the contents of the ZIPped
+file before manually sending it to the
+PTXprint team for support.</property>
+                            <property name="halign">end</property>
+                            <property name="valign">center</property>
+                            <property name="margin_top">250</property>
+                            <signal name="clicked" handler="onCreateZipArchiveClicked" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">2</property>
                           </packing>
                         </child>
                       </object>
