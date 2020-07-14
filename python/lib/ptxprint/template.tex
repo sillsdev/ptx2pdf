@@ -180,7 +180,7 @@
 {diglot/fzysettings}
 
 %%%%% Hyphenation %%%%%
-{paragraph/ifhyphenate}\input "{/ptxpath}/{project/id}/shared/ptxprint/hyphen-{project/id}.tex"
+{paragraph/ifhavehyphenate}{paragraph/ifhyphenate}\input "{/ptxpath}/{project/id}/shared/ptxprint/hyphen-{project/id}.tex"
 {paragraph/ifomithyphen}\defaulthyphenchar=8203
 {paragraph/ifnothyphenate}\hyphenpenalty=10000
 \exhyphenpenalty=2000
@@ -218,9 +218,7 @@
 \def\closeadjlist{{\relax}}
 \def\closepiclist{{\relax}}
 % job files:
-\catcode`\%=12
 \ptxfile{{PrintDraft/41MATprojid-draft.SFM}}
-\catcode`\%=14
 
 %%%%% Back Matter PDF file(s) get included here %%%%%
 {project/backincludes}

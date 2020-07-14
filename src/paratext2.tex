@@ -321,12 +321,12 @@
   \global\setbox\galley=\copy255
   % tempoarily split and see if there are marks in this text
   \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
-   \edef\t@mp{\splitbotmark}
-   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
+  \edef\t@mp{\splitbotmark}
+  \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
   \global\galleypenalty=\outputpenalty
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
   \global\output={\onecoltrial}
-  \ifm@rksonpage\else\gdef\p@gefirstmark{}\mark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
+  \ifm@rksonpage\else\gdef\p@gefirstmark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
   \global\holdinginserts=0
   \unvbox255
   \penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
@@ -361,7 +361,7 @@
 %      \msg{upwards mode = \the\XeTeXupwardsmode}
       \dimen1=\textwidth \advance\dimen1 \ExtraRMargin
       \trace{b}{BALANCE pangeoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins}
-      \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\partial}} \fi
+      \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}} \fi
       \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
       \dimen0=\dp\colA
       \hbox to \dimen1{\hbox to \columnshift{}%
@@ -369,13 +369,13 @@
       \ifvoid\bottomins\else \vfil\kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\box\bottomins} \fi % ouput bottom spanning pictures
       \f@rstnotetrue%
       \m@kenotebox
-      \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}
+      \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2 \space Leaving \the\ht255, \the\dp255}
+      \ifdim\ht2<0pt\trace{b}{Strange notes height}\fi
       \unvbox2
     }
     \resetvsize
-    \ifdim\ht\colA>\baselineskip\plainoutput
-    \xdef\p@gefirstmark{}%
-    \xdef\p@gebotmark{}%
+    \ifdim\ht\colA>\baselineskip\plainoutput\trace{p}{plainoutput from onecoltrial}%
+      \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
     \else\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
     \global\holdinginserts=1
     \ifrerunsavepartialpaged\trace{o}{onecoltrial: rerunsavepartialpage}\global\output={\savepartialpage}\global\rerunsavepartialpagedfalse
@@ -517,7 +517,7 @@
     \global\let\whichtrial=\onecoltrial
     \global\output={\backingup}
     \global\rerunsavepartialpagedtrue
-    \ifm@rksonpage\else\gdef\p@gefirstmark{}\mark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
+    \ifm@rksonpage\else\gdef\p@gefirstmark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
     \unvbox\s@vedpage \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
   \fi}
   % save 1 column material since we are switching to 2 columns
@@ -864,7 +864,7 @@
     \tempfalse%\ifvoid\partial\else\temptrue\fi%
     % remember \holdingInserts=1 from \@emptyinserts
     \ifvoid\galley\temptrue\fi
-    \ifm@rksonpage\else\gdef\p@gefirstmark{}\mark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
+    \ifm@rksonpage\else\gdef\p@gefirstmark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
     \iftemp
      \trace{i}{Using savedpage.pen=\the\outputpenalty}%
      \unvbox\s@vedpage\penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
@@ -942,7 +942,7 @@
     \let\\=\cle@rn@tecl@ss \the\n@tecl@sses
     \global\let\whichtrial=\twocoltrial
     \global\output={\backingup}
-    \ifm@rksonpage\else\gdef\p@gefirstmark{}\mark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
+    \ifm@rksonpage\else\gdef\p@gefirstmark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
     \unvbox\galley \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
   \fi}
 \newif\iffitonpage
@@ -1348,10 +1348,10 @@
         %\splittopskip\z@skip
         \splittopskip\baselineskip
         \splitmaxdepth\maxdimen \floatingpenalty20000 % was zero
-        \gridp@ctrue
-           \gridb@x
-            \box\picb@x
-        \gridp@cfalse % make sure we align to the page grid
+        %\gridp@ctrue
+           %\gridb@x
+            \box\picb@x\vskip-\prevdepth
+        %\gridp@cfalse % make sure we align to the page grid
         \penalty10
        }%
     \fi

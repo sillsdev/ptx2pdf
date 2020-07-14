@@ -10,8 +10,6 @@ from ptxprint.ptsettings import chaps, books, bookcodes, oneChbooks
 from ptxprint.snippets import FancyIntro, PDFx1aOutput, AlignedDiglot, FancyBorders
 from ptxprint.runner import checkoutput
 
-# pdfre = re.compile(r".+[\\/](.+)\.pdf")     # No longer used in TexModel
-
 def universalopen(fname, rewrite=False):
     """ Opens a file with the right codec from a small list and perhaps rewrites as utf-8 """
     fh = open(fname, "r", encoding="utf-8")
@@ -145,7 +143,7 @@ ModelMap = {
     "document/iflinebreakon":   ("c_linebreakon", lambda w,v: "" if v else "%"),
     "document/linebreaklocale": ("t_linebreaklocale", lambda w,v: v or ""),
     "document/script":          ("fcb_script", lambda w,v: ":script="+v.lower() if v != "Zyyy" else ""),
-    "document/digitmapping":    ("fcb_digits", lambda w,v: ':mapping=mappings/'+v+'digits' if v != "Default" else ""),
+    "document/digitmapping":    ("fcb_digits", lambda w,v: ':mapping=mappings/'+v.lower()+'digits' if v != "Default" else ""),
     "document/ch1pagebreak":    ("c_ch1pagebreak", None),
     "document/marginalverses":  ("c_marginalverses", lambda w,v: "" if v else "%"),
     "document/columnshift":     ("s_columnShift", lambda w,v: v or "16"),
@@ -390,6 +388,8 @@ class TexModel:
                 fpathR = os.path.join(self.printer.configPath(""), "NestedStylesR.sty")
         self.dict['/nststypathR'] = fpathR.replace("\\","/")
         self.dict['paragraph/linespacingfactor'] = "{:.3f}".format(float(self.dict['paragraph/linespacing']) / 14 / float(self.dict['paper/fontfactor']))
+        self.dict['paragraph/ifhavehyphenate'] = "" if os.path.exists(os.path.join(self.printer.configPath(""), \
+                                                       "hyphen-"+self.dict["project/id"]+".tex")) else "%"
 
     def updatefields(self, a):
         global get
@@ -625,7 +625,7 @@ class TexModel:
     def convertBook(self, bk, outdir, prjdir):
         if self.changes is None:
             if self.asBool('project/usechangesfile'):
-                print("Applying PrntDrftChgs:", os.path.join(prjdir, 'PrintDraftChanges.txt'))
+                # print("Applying PrntDrftChgs:", os.path.join(prjdir, 'PrintDraftChanges.txt'))
                 self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'))
             else:
                 self.changes = []
@@ -753,7 +753,7 @@ class TexModel:
         # Glossary Word markup: Remove the second half of the \w word|glossary-form\w* and apply chosen glossary markup
         v = self.dict["document/glossarymarkupstyle"]
         gloStyle = self._glossarymarkup.get(v, v)
-        self.localChanges.append((None, regex.compile(r"\\w (.+?)(\|.+?)?\\w\*", flags=regex.M), gloStyle))
+        self.localChanges.append((None, regex.compile(r"\\\+?w (.+?)(\|.+?)?\\\+?w\*", flags=regex.M), gloStyle))
         
         # Remember to preserve \figs ... \figs for books that can't have PicLists (due to no ch:vs refs in them)
         if self.asBool("document/ifinclfigs") and (self.asBool("document/iffigfrmtext") or bk in self._peripheralBooks):
@@ -862,6 +862,14 @@ class TexModel:
                     pass
                 else:
                     self.localChanges.extend(c[1].regexes)
+
+        ## Final tweaks
+        # Strip out any spaces either side of an en-quad 
+        self.localChanges.append((None, regex.compile(r"\s?\u2000\s?", flags=regex.M), r"\u2000")) 
+        # Change double-spaces to singles
+        self.localChanges.append((None, regex.compile(r"  ", flags=regex.M), r" ")) 
+        # Escape special codes % and $ that could be in the text itself
+        self.localChanges.append((None, regex.compile(r"([%$])", flags=regex.M), r"\\1")) 
 
         if self.printer is not None and self.printer.get("c_tracing"):
             print("List of Local Changes:----------------------------------------------------------")

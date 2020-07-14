@@ -90,8 +90,8 @@
 
 \def\killd@scenders#1{%
   \vbox{\unvbox#1 \skip0=\lastskip\unskip \count255=\lastpenalty\unpenalty
-    \setbox0=\lastbox\dimen4=0pt
-    \ifvoid0\else\dimen4=\dp0 \dp0=0pt \box0 \fi
+    \setbox0=\lastbox
+    \ifvoid0\else\dp0=0pt \box0 \fi
     \ifdim\skip0>0pt \penalty\count255 \vskip\skip0 \fi}}
 
 %
@@ -118,19 +118,23 @@
 }
 \newif\ifgridp@c % if applying \gridb@x to a picture box rather than headings
 
+% returns in \dimen0 how much to advance \dimen1 to be an integral multiple of \dimen0
 \def\m@d{\dimen3=\dimen1\divide\dimen1\dimen0\multiply\dimen1\dimen0\advance\dimen3 by -\dimen1\advance\dimen0 by -\dimen3}
+
 \def\gr@db@@x#1{%
+  \ifhmode\endgraf\fi % Not sure why, but sometiems we get here in hmode
+  \prevdepth=0pt
   \setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders#1\fi
-  \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0; spacebefore=\headingtopspace*\the\verticalsp@ceunit; depth=\the\dimen4}%
+  \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0; spacebefore=\headingtopspace*\the\verticalsp@ceunit; depth=\the\lastdepth}%
   \s@tbaseline{p}\dimen1=\ht0 \dimen0=\baselineskip \m@d \dimen2=\dimen0 % dimen2 is grid space
   \dimen1=\ht0 \advance\dimen1 by -\headingtopspace \verticalsp@ceunit
   \dimen0=\baselineskip \m@d \advance\dimen2 by -\dimen0
   \advance\dimen2 by \headingtopspace\verticalsp@ceunit
-  \ifhmode\endgraf\fi % Not sure why, but sometiems we get here in hmode
-  \ifdim\prevdepth>0pt\advance\dimen2 by -\prevdepth\fi
-  \vskip\dimen2 \vbox{\kern\dimen0\vskip-\headingtopspace\verticalsp@ceunit
+  \ifdim\lastdepth>0pt\advance\dimen2 by -\lastdepth\fi
+  \ifdiglot\kern\else\vskip\fi\dimen2
+  \vbox{\kern\dimen0\vskip-\headingtopspace\verticalsp@ceunit
     \trace{h}{after gridbox: skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip}%
-    \unvbox0}\prevdepth=0pt \nobreak
+    \unvbox0}\nobreak
 }
 
 \newif\ifsquashgridbox\squashgridboxtrue
@@ -156,6 +160,7 @@
 \newif\ifhe@dingstyle
 \newif\ifnsp@cebefore
 \newif\ifJustifyPars \JustifyParstrue
+\newdimen\lastdepth
 \def\p@rstyle#1{\trace{s}{p@rstyle: #1}%
  \ifsk@pping \egroup \fi % if we were skipping nonpublishable text, end that mode
  \t@stpublishability{#1}% test if the new marker is nonpublishable
@@ -169,6 +174,7 @@
     \write\p@rlocs{\noexpand\@parend{\the\pdflastxpos}{\the\pdflastypos}}\endL
     \ifnum\paratrace>0\tracingparagraphs=1\ifnum\paratrace>1\looseness=-1\fi\else\tolerance=10\fi
     \par % end the paragraph
+    \ifdim\prevdepth>0pt\lastdepth=\prevdepth\else\lastdepth=-1pt\fi
     \ifnum\paratrace>0\tracingparagraphs=0\fi
     \ifdr@ppednumber % the preceding par had a dropped number;
                      % add \nobreak if it was a single line, else clear the flag

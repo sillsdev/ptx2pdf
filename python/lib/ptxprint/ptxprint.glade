@@ -1867,11 +1867,8 @@ saved or the configuration to be deleted.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Experimental Feature:
-This is really a DIY-glot because
-it is work in progress and will require
-considerable trial-and-error to get a
-satisfactory result.</property>
+                                    <property name="tooltip_text" translatable="yes">Show/Hide the
+Layout tab.</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
@@ -1890,14 +1887,8 @@ satisfactory result.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Experimental Feature:
-This enables additional PDF files to be specified
-for fancy/decorative borders to be applied to
-the output. Other textual decorations - for 
-section headings and verse numbers can also
-be specified.
-NOTE that turning off the view for
-this Tab will also disable the option.</property>
+                                    <property name="tooltip_text" translatable="yes">Show/Hide the
+Font tab.</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
@@ -1916,11 +1907,8 @@ this Tab will also disable the option.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Experimental Feature:
-This is really a DIY-glot because
-it is work in progress and will require
-considerable trial-and-error to get a
-satisfactory result.</property>
+                                    <property name="tooltip_text" translatable="yes">Show/Hide the
+Font tab.</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
@@ -1939,10 +1927,8 @@ satisfactory result.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">This is really a DIY-glot because
-it is work in progress and will require
-considerable trial-and-error to get a
-satisfactory result.</property>
+                                    <property name="tooltip_text" translatable="yes">Show/Hide the
+Header+Footer tab.</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
@@ -1961,11 +1947,8 @@ satisfactory result.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Experimental Feature:
-This is really a DIY-glot because
-it is work in progress and will require
-considerable trial-and-error to get a
-satisfactory result.</property>
+                                    <property name="tooltip_text" translatable="yes">Show/Hide the
+Pictures tab.</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
@@ -1984,11 +1967,8 @@ satisfactory result.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Experimental Feature:
-This is really a DIY-glot because
-it is work in progress and will require
-considerable trial-and-error to get a
-satisfactory result.</property>
+                                    <property name="tooltip_text" translatable="yes">Show/Hide the
+Advanced tab.</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
@@ -2007,13 +1987,8 @@ satisfactory result.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Experimental Feature:
-This is really a DIY-glot because
-it is work in progress and will require
-considerable trial-and-error to get a
-satisfactory result.
-NOTE that turning off the view for
-this Tab will also disable the option.</property>
+                                    <property name="tooltip_text" translatable="yes">Show/Hide the
+Diglot+Border tab.</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
@@ -2032,11 +2007,8 @@ this Tab will also disable the option.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Experimental Feature:
-This is really a DIY-glot because
-it is work in progress and will require
-considerable trial-and-error to get a
-satisfactory result.</property>
+                                    <property name="tooltip_text" translatable="yes">Show/Hide the
+Viewer tab.</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
@@ -6254,13 +6226,13 @@ first occurence</property>
                                         <property name="sensitive">False</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">If glossary terms have been marked up multiple
+                                        <property name="tooltip_text" translatable="yes">Currently just an idea: NOT YET IMPLEMENTED
+If glossary terms have been marked up multiple
 times, it may be frustrating to see the same
 glossary entry occuring in the footnote area time
 and time again. To prevent this, you can select to
 only show the Glossary entry as a footnote the first
-time that it occurs (in each book).
-  !dea only: NOT YET IMPLEMENTED</property>
+time that it occurs (in each book).</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -7543,7 +7515,10 @@ to store generated PDF file(s).</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">WARNING: Not yet implemented!</property>
+                                <property name="tooltip_text" translatable="yes">WARNING: Not yet implemented!
+This button wil allow you to specify
+a different folder for the resulting
+PDF (and associated interim files).</property>
                                 <property name="halign">end</property>
                                 <property name="valign">center</property>
                                 <signal name="clicked" handler="onSelectOutputFolderClicked" swapped="no"/>
@@ -8452,9 +8427,9 @@ to specify the settings for these.</property>
                   <object class="GtkLabel" id="lb_DiglotBorder">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Create a diglot publication
-by incorporating a secondary
-project.</property>
+                    <property name="tooltip_text" translatable="yes">Create a diglot publication by incorporating 
+a secondary project. And/Or add decorative
+borders and embelishments to the text.</property>
                     <property name="label" translatable="yes">Diglot+Border</property>
                   </object>
                   <packing>
@@ -8699,13 +8674,12 @@ a good way to easily remove a whole bunch of unwanted files.</property>
                         <signal name="select-page" handler="onViewerChangePage" swapped="no"/>
                         <signal name="switch-page" handler="onViewerChangePage" swapped="no"/>
                         <child>
-                          <object class="GtkScrolledWindow" id="scroll_FinalSFM">
+                          <object class="GtkScrolledWindow" id="scroll_PicList">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="margin_top">6</property>
                             <property name="margin_bottom">6</property>
                             <property name="shadow_type">in</property>
-                            <property name="kinetic_scrolling">False</property>
                             <child>
                               <placeholder/>
                             </child>
@@ -8729,7 +8703,7 @@ for "col": tl=top left, tr=top right,
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkScrolledWindow" id="scroll_PicList">
+                          <object class="GtkScrolledWindow" id="scroll_AdjList">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="margin_top">6</property>
@@ -8767,12 +8741,13 @@ are likely to have to re-do it all again.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkScrolledWindow" id="scroll_AdjList">
+                          <object class="GtkScrolledWindow" id="scroll_FinalSFM">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="margin_top">6</property>
                             <property name="margin_bottom">6</property>
                             <property name="shadow_type">in</property>
+                            <property name="kinetic_scrolling">False</property>
                             <child>
                               <placeholder/>
                             </child>

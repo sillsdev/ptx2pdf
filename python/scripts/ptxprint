@@ -27,6 +27,7 @@ parser.add_argument('-T','--testing',action='store_true',help="Run in testing, o
 parser.add_argument('-f','--fontpath',action='append',help="Directory of fonts to include (repeatable)")
 parser.add_argument('--nofontcache',action="store_true",help="Don't use system fonts")
 parser.add_argument('-S','--splash',action="store_true",help="Force splash screen")
+parser.add_argument('-A','--archive',help="Create archive of project")
 parser.add_argument('--useusfmerge',action="store_true",help="Use a different kind of merge for diglot")
 parser.add_argument('--debug',action="store_true",help="Give debug output")
 # parser.add_argument('-t','--test', action='store_true',help="Quick start for a lazy typist")
@@ -49,7 +50,7 @@ if args.directory is not None:
 # Where to find the default for -p
 # HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Paratext\8:Settings_Directory
 
-if args.print:
+if args.print or args.archive is not None:
     mainw = ViewModel(args.paratext, args.directory)
 else:
     from ptxprint.gtkview import GtkViewModel
@@ -75,18 +76,23 @@ if args.fontpath is not None:
         if os.path.exists(p):
             cachepath(p, nofclist=args.nofontcache)
 
-if args.print:
-    initFontCache(nofclist=args.nofontcache)
-    if args.books is not None and len(args.books):
-        mainw.bookNoUpdate = True
-        bl = args.books.split(" ")
-        if len(bl) == 1:
-            mainw.set("cb_book", bl[0])
-            mainw.set("c_multiplebooks", False)
-        elif len(bl) > 1:
-            mainw.set("t_booklist", args.books)
-            mainw.set("c_multiplebooks", True)
-    sys.exit(doit(mainw))
+if args.print or args.archive is not None:
+    res = 0
+    if args.print:
+        initFontCache(nofclist=args.nofontcache)
+        if args.books is not None and len(args.books):
+            mainw.bookNoUpdate = True
+            bl = args.books.split(" ")
+            if len(bl) == 1:
+                mainw.set("cb_book", bl[0])
+                mainw.set("c_multiplebooks", False)
+            elif len(bl) > 1:
+                mainw.set("t_booklist", args.books)
+                mainw.set("c_multiplebooks", True)
+        res = doit(mainw)
+    if args.archive:
+        mainw.createArchive(args.archive)
+    sys.exit(res)
 else:
     splash = args.splash
     mainw.run(doit, splash=splash)

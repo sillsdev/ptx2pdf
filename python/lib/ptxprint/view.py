@@ -6,6 +6,8 @@ from .ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from .font import TTFont
 import pathlib, os
 from configparser import NoSectionError, NoOptionError, _UNSET
+from zipfile import ZipFile, ZIP_DEFLATED
+from io import StringIO
 
 VersionStr = "0.8.8 beta"
 
@@ -125,11 +127,6 @@ class ViewModel:
         else:
             self.dict[wid] = value
 
-    def configName(self):
-        cfgName = re.sub('[^-a-zA-Z0-9_()]+', '', (self.get("ecb_savedConfig") or ""))
-        self.set("ecb_savedConfig", cfgName)
-        return cfgName or None
-
     def baseTeXPDFname(self):
         bks = self.getBooks()
         if self.working_dir == None:
@@ -163,8 +160,8 @@ class ViewModel:
             return []
 
     def getBookFilename(self, bk, prjid):
-        # if self.ptsettings is None or self.prjid != prjid:
-        self.ptsettings = ParatextSettings(self.settings_dir, prjid)
+        if self.ptsettings is None or self.prjid != prjid:
+            self.ptsettings = ParatextSettings(self.settings_dir, prjid)
         fbkfm = self.ptsettings['FileNameBookNameForm']
         bknamefmt = (self.ptsettings['FileNamePrePart'] or "") + \
                     fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + \
@@ -281,6 +278,9 @@ class ViewModel:
                 except IndexError:
                     bks = "No book selected!"
             return "PTXprint [{}] {} ({}) {}".format(VersionStr, prjid, bks, self.get("ecb_savedConfig") or "")
+
+    def configName(self):
+        return self.configId or None
 
     def configPath(self, cfgname=None, makePath=False):
         if self.settings_dir is None or self.prjid is None:
@@ -419,7 +419,7 @@ class ViewModel:
                                 val = float(val) if val is not None and val != '' else 0
                             elif v[0].startswith("c_"):
                                 # print("v[0]:", v[0])
-                                val = config.getboolean(sect, opt) if val is not None else False
+                                val = config.getboolean(sect, opt) if val else False
                             if val is not None:
                                 setv(v[0], val)
                         except AttributeError:
@@ -440,7 +440,7 @@ class ViewModel:
             except configparser.NoOptionError:
                 setv(ModelMap[k][0], self.ptsettings.dict.get(v, ""))
 
-    def generatePicList(self, booklist):
+    def generatePicList(self, booklist, generateMissingLists=False):
         # Format of lines in pic-list file: BBB C.V desc|file|size|loc|copyright|caption|ref
         # MRK 1.16 fishermen...catching fish with a net.|hk00207b.png|span|b||Jesus calling the disciples to follow him.|1:16
         existingFilelist = []
@@ -459,20 +459,23 @@ class ViewModel:
                                                                     "Secondary project must be set on the Diglot+Border tab.")
                 return
         prjdir = os.path.join(self.settings_dir, prjid)
+        existingList = []
         for bk in booklist:
             fname = self.getBookFilename(bk, prjid)
             outfname = os.path.join(self.configPath(self.configName()), "PicLists", fname)
             doti = outfname.rfind(".")
             if doti > 0:
                 outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".piclist"
-            if os.path.exists(outfname):
+            if os.path.exists(outfname) and os.path.getsize(outfname) != 0:
                 existingFilelist.append(re.split(r"\\|/",outfname)[-1])
-        if len(existingFilelist):
+                existingList.append(bk)
+        if len(existingFilelist) and not generateMissingLists:
             q1 = "One or more PicList file(s) already exist!"
             q2 = "\n".join(existingFilelist)+"\n\nDo you want to OVERWRITE the above-listed file(s)?"
-            if not self.msgQuestion(q1, q2):
-                return
-        for bk in booklist:
+            if self.msgQuestion(q1, q2):
+                existingList =[]
+        makePicListBooks = list(set(booklist) - set(existingList))
+        for bk in makePicListBooks:
             flist = []
             tmplist = []
             fname = self.getBookFilename(bk, prjid)
@@ -539,7 +542,7 @@ class ViewModel:
                             else:
                                 vs = f[0]
                             chvs = ch+"." + str(vs)
-                            srtchvs = "{:0>3}{:0>3}{}".format(ch,vs,sfx)
+                            srtchvs = "{:0>3}{:0>3}{}".format(ch, re.sub(r"(\d+)(\-.+)?", r"\1", vs), sfx)
                             cmt = "% " if chvs in usedRefs else ""
                             usedRefs += [chvs]
                         # put back in when macros handle xyzR and xyzL 
@@ -547,36 +550,50 @@ class ViewModel:
                             tmplist.append(srtchvs+"\u0009"+cmt+bk+" "+chvs+" |"+picfname+"|"+f[4]+"|"+pageposn+"||"+f[7]+"|"+f[8]+f[9])
                     else:
                         # If none of the USFM2-styled illustrations were found then look for USFM3-styled markup in text 
-                        # (Q: How to handle any additional/non-standard xyz="data" ? Will the .* before \\fig\* take care of it adequately?)
-                        # \v 15 <verse text> \fig hāgartun saṅga dūtal vaḍkval|src="CO00659B.TIF" size="span" ref="[MAT]?21:16"\fig*
-                        #     0     1    2                     3                         4                5          6     7    [8]
-                        # BKN \3 \|\1\|\2\|tr\|\|\0\|\3
+                        # (MH: How to handle any additional/non-standard xyz="data" ? Will the .* before \\fig\* take care of it adequately?)
+                        # \v 15 <verse text> \fig hāgartun saṅga dūtal vaḍkval|src="CO00659B.TIF" size="span" loc="tl" ref="[MAT]?21:16"\fig*
+                        #     0     1    2                     3              <--------------------------4----------------------------->
                         # GEN 21.16 an angel speaking to Hagar|CO00659B.TIF|span|t||hāgartun saṅga dūtal vaḍkval|21:16
-                        m = re.findall(r'(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig ([^\\]*?)\|src="([^\\]+?\.....?)" size="(....?)" ref="([^\d\\]+? ?)?(\d+[:.]\d+[abc]?([-,\u2013\u2014]\d+[abc]?)?)"[^\\]*?\\fig\*', dat)
+                        m = re.findall(r'(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig ([^\\]*?)\|([^\\]+)\\fig\*', dat)
                         if len(m):
                             for f in m:
-                                picfname = f[4]
-                                doti = picfname.rfind(".")
-                                extn = picfname[doti:]
-                                picfname = re.sub('[()&+,. ]', '_', picfname)[:doti]+extn
-                                if self.get("c_randomPicPosn"):
-                                    pageposn = random.choice(_picposn.get(f[5], f[5]))     # Randomize location of illustrations on the page (tl,tr,bl,br)
-                                else:
-                                    pageposn = (_picposn.get(f[5], f[5]))[0]               # use the t or tl (first in list)
-                                ch = re.sub(r"(\d+)[:.].+", r"\1", f[7])
-                                vs = f[0]
-                                if vs.endswith(('a', 'b', 'c')):
-                                    vs = int(f[0].strip("abc")) - 1
-                                    if vs == 0:
-                                        cmt = "% "
-                                        vs = 2
-                                else:
+                                caption = f[3]
+                                labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f[4])
+                                if len(labelParams) >= 3: # we need src, size & ref at a minimum
+                                    for l in labelParams:
+                                        if l.startswith("src"):
+                                            picfname = l.split("=")[1].strip('"')
+                                        elif l.startswith("size"):
+                                            size = l.split("=")[1].strip('"')
+                                        elif l.startswith("loc"):
+                                            loc = l.split("=")[1].strip('"')
+                                        elif l.startswith("ref"):
+                                            ref = l.split("=")[1].strip('"')
+                                            ch = re.sub(r"([^\d\\]+? ?)?(\d+)[:.].+", r"\2", ref)
+                                
+                                    doti = picfname.rfind(".")
+                                    extn = picfname[doti:]
+                                    picfname = re.sub('[()&+,. ]', '_', picfname)[:doti]+extn
+                                    if self.get("c_randomPicPosn"):
+                                        pageposn = random.choice(_picposn.get(size, size)) # Randomize location of illustrations on the page (tl,tr,bl,br)
+                                    else:
+                                        if loc in ["t", "b", "tl", "tr", "bl", "br"]:
+                                            pageposn = loc
+                                        else:
+                                            pageposn = (_picposn.get(size, size))[0]       # use the t or tl (first in list)
                                     vs = f[0]
-                                chvs = ch+"." + str(vs)
-                                srtchvs = "{:0>3}{:0>3}{}".format(ch,vs,sfx)
-                                cmt = "% " if chvs in usedRefs else ""
-                                usedRefs += [chvs]
-                                tmplist.append(srtchvs+"\u0009"+cmt+bk+sfx+" "+chvs+" |"+picfname+"|"+f[5]+"|"+pageposn+"||"+f[3]+"|"+f[6]+"\n")
+                                    if vs.endswith(('a', 'b', 'c')):
+                                        vs = int(f[0].strip("abc")) - 1
+                                        if vs == 0:
+                                            cmt = "% "
+                                            vs = 2
+                                    else:
+                                        vs = f[0]
+                                    chvs = ch+"." + str(vs)
+                                    srtchvs = "{:0>3}{:0>3}{}".format(ch, re.sub(r"(\d+)(\-.+)?", r"\1", vs), sfx)
+                                    cmt = "% " if chvs in usedRefs else ""
+                                    usedRefs += [chvs]
+                                    tmplist.append(srtchvs+"\u0009"+cmt+bk+sfx+" "+chvs+" |"+picfname+"|"+size+"|"+pageposn+"||"+caption+"|"+ref+"\n")
             if len(tmplist):
                 for pc in sorted(tmplist):
                     piclist.append(pc.split("\u0009")[1]+"\n")
@@ -598,7 +615,7 @@ class ViewModel:
                 os.makedirs(plpath, exist_ok=True)
                 with open(outfname, "w", encoding="utf-8") as outf:
                     outf.write("".join(piclist))
-        if len(xl):
+        if len(xl) and not generateMissingLists:
             self.doError("Multiple illustrations attached to a single verse", 
                          secondary="One or more books ({}) have more than one figure attached to a single verse. ".format(", ".join(xl)) + \
                                    "This isn't permitted with a PicList. So check the list(s) for missing illustrations.", title="PicList Warning!")
@@ -809,3 +826,99 @@ class ViewModel:
 
     def incrementProgress(self, val=None):
         pass
+
+    def _getArchiveFiles(self, books, prjid=None, cfgid=None):
+        sfiles = {'c_useCustomSty': "custom.sty",
+                  'c_useModsSty': "PrintDraft/PrintDraft-mods.sty",
+                  'c_usePrintDraftChanges': "PrintDraftChanges.txt",
+                  None: "Settings.xml"}
+        res = {}
+        cfgchanges = {}
+        if prjid is None:
+            prjid = self.prjid
+        if cfgid is None:
+            cfgid = self.configName()
+        cfpath = "shared/ptxprint/"
+        if cfgid is not None:
+            cfpath += cfgid+"/"
+        basecfpath = self.configPath(cfgid, prjid)
+
+        for bk in books:
+            fname = self.getBookFilename(bk, prjid)
+            fpath = os.path.join(self.settings_dir, prjid)
+            res[os.path.join(fpath, fname)] = fname
+
+        adjpath = os.path.join(basecfpath, "AdjLists")
+        if os.path.exists(adjpath):
+            for adj in os.listdir(adjpath):
+                if adj.endswith(".adj"):
+                    res[os.path.join(adjpath, adj)] = cfpath+"AdjLists/"+adj
+
+        for t,a in sfiles.items():
+            if isinstance(t, str) and not self.get(t):
+                continue
+            p = os.path.join(self.settings_dir, prjid, a[0])
+            if os.path.exists(p):
+                res[p] = a
+
+        if self.get("c_useModsTex"):
+            loaded = False
+            if cfgid is not None:
+                p = os.path.join(self.settings_dir, prjid, 'shared', 'ptxprint', cfgid, 'ptxprint-mods.tex')
+                if os.path.exists(p):
+                    res[p] = "shared/ptxprint/" + cfgid + "/ptxprint-mods.tex"
+                    loaded = True
+            if not loaded:
+                p = os.path.join(self.settings_dir, prjid, 'shared', 'ptxprint', 'ptxprint-mods.tex')
+                if os.path.exists(p):
+                    res[p] = "shared/ptxprint/ptxprint-mods.tex"
+
+        script = self.get("btn_selectscript")
+        if script is not None and len(script):
+            res[script] = os.path.basename(script)
+            cfgchanges["btn_selectscript"] = os.path.join(self.settings_dir, prjid, os.path.basename(script))
+
+        hyphenfpath = os.path.join(self.settings_dir, prjid, "shared", "ptxprint")
+        hyphentpath = "shared/ptxprint/"
+        hyphenfile = "hyphen-{}.tex".format(self.prjid)
+        if os.path.exists(os.path.join(hyphenfpath, hyphenfile)):
+            res[os.path.join(hyphenfpath, hyphenfile)] = hyphentpath + hyphenfile
+        return (res, cfgchanges)
+
+    def createArchive(self, filename=None):
+        if filename is None:
+            filename = os.path.join(self.configPath(self.configName()), "ptxprintArchive.zip")
+        if not filename.lower().endswith(".zip"):
+            filename += ".zip"
+        zf = ZipFile(filename, mode="w", compression=ZIP_DEFLATED, compresslevel=9)
+        zf.write(os.path.join(self.settings_dir, "usfm.sty"), "usfm.sty")
+        self._archiveAdd(zf, self.getBooks())
+        if self.get("c_diglot"):
+            prjid = self.get("fcb_diglotSecProject")
+            cfgid = self.get("ecb_diglotSecConfig")
+            digprinter = ViewModel(self.settings_dir, self.working_dir)
+            digprinter.setPrjid(prjid)
+            if cfgid is not None and cfgid != "":
+                digprinter.setConfigId(cfgid)
+            digprinter._archiveAdd(zf, self.getBooks())
+        zf.close()
+
+    def _archiveAdd(self, zf, books):
+        prjid = self.prjid
+        cfgid = self.configName()
+        entries, cfgchanges = self._getArchiveFiles(books, prjid=prjid, cfgid=cfgid)
+        for k, v in entries.items():
+            zf.write(k, arcname=prjid + "/" + v)
+        tmpcfg = {}
+        for k,v in cfgchanges.items():
+            tmpcfg[k] = self.get(k)
+            self.set(k, v)
+        config = self.createConfig()
+        configstr = StringIO()
+        config.write(configstr)
+        zf.writestr(prjid + "/shared/ptxprint/" + (cfgid + "/" if cfgid else "") + "ptxprint.cfg",
+                    configstr.getvalue())
+        configstr.close()
+        for k, v in tmpcfg.items():
+            self.set(k, v)
+
