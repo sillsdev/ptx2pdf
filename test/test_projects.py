@@ -1,8 +1,10 @@
 import pytest
+import unittest
 from subprocess import call, check_output
 from difflib import context_diff
 import configparser, os, sys, shutil
 from ptxprint.ptsettings import ParatextSettings
+from collections import namedtuple
 
 def make_paths(projectsdir, project, config, xdv=False):
     testsdir = os.path.dirname(__file__)
@@ -37,25 +39,33 @@ def make_paths(projectsdir, project, config, xdv=False):
     stddir = os.path.join(projectsdir, '..', 'standards', project)
     return (stddir, filename, testsdir, ptxcmd)
 
-def test_pdf(projectsdir, project, config):
-    (stddir, filename, testsdir, ptxcmd) = make_paths(projectsdir, project, config, xdv=False)
-    assert call(ptxcmd) == 0
+XdvInfo = namedtuple("XdvInfo", ["projectsdir", "project", "config", "stddir", "filename", "filebasepath", "testsdir"])
 
-def test_xdv(projectsdir, project, config):
+@pytest.fixture(scope="class")
+def xdv(request, projectsdir, project, config):
     (stddir, filename, testsdir, ptxcmd) = make_paths(projectsdir, project, config, xdv=True)
-    xdvcmd = [os.path.join(testsdir, "..", "python", "scripts", "xdvitype"), "-d"]
-    if sys.platform == "win32":
-        xdvcmd.insert(0, "python")
-
     assert call(ptxcmd) == 0
-    fromfile = os.path.join(projectsdir, project, "PrintDraft", "ptxprint-"+filename+".xdv")
-    tofile = os.path.join(stddir, filename+".xdv")
-    if not os.path.exists(tofile) and os.path.exists(fromfile):
-        shutil.copy(fromfile, tofile)
-        pytest.xfail("No regression xdv. Copying...")
-    resdat = check_output(xdvcmd + [fromfile]).decode("utf-8")
-    stddat = check_output(xdvcmd + [tofile]).decode("utf-8")
-    diff = "\n".join(context_diff(stddat.split("\n"), resdat.split("\n"), fromfile=fromfile, tofile=tofile))
-    if diff != "":
-        pytest.xfail("xdvs are inconsistent")
+    filebasepath = os.path.join(projectsdir, project, "PrintDraft", "ptxprint-"+filename)
+    yield XdvInfo(projectsdir, project, config, stddir, filename, filebasepath, testsdir)
 
+@pytest.mark.usefixtures("xdv")
+class TestXetex:
+    def test_pdf(self, xdv):
+        xdvcmd = "xdvipdfmx -q -E -o " + xdv.filebasepath+".pdf"
+        assert call(xdvcmd, shell=True)
+
+    def test_xdv(self, xdv):
+        xdvcmd = [os.path.join(xdv.testsdir, "..", "python", "scripts", "xdvitype"), "-d"]
+        if sys.platform == "win32":
+            xdvcmd.insert(0, "python")
+
+        fromfile = xdv.filebasepath+".xdv"
+        tofile = os.path.join(xdv.stddir, xdv.filename+".xdv")
+        if not os.path.exists(tofile) and os.path.exists(fromfile):
+            shutil.copy(fromfile, tofile)
+            pytest.xfail("No regression xdv. Copying...")
+        resdat = check_output(xdvcmd + [fromfile]).decode("utf-8")
+        stddat = check_output(xdvcmd + [tofile]).decode("utf-8")
+        diff = "\n".join(context_diff(stddat.split("\n"), resdat.split("\n"), fromfile=fromfile, tofile=tofile))
+        if diff != "":
+            pytest.xfail("xdvs are inconsistent")
