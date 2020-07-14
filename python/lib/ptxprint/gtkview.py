@@ -1300,6 +1300,11 @@ class GtkViewModel(ViewModel):
             self._setchap(self.chapto, (int(self.strt) if self.strt is not None else 0), self.chs)
             self.fcb_chapto.set_active_id(str(self.chs))
 
+    def configName(self):
+        cfgName = re.sub('[^-a-zA-Z0-9_()]+', '', (self.get("ecb_savedConfig") or ""))
+        self.set("ecb_savedConfig", cfgName)
+        return cfgName or None
+
     def setPrjid(self, prjid, saveCurrConfig=False):
         if not self.initialised:
             self.pendingPid = prjid

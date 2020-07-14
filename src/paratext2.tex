@@ -321,8 +321,8 @@
   \global\setbox\galley=\copy255
   % tempoarily split and see if there are marks in this text
   \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
-   \edef\t@mp{\splitbotmark}
-   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
+  \edef\t@mp{\splitbotmark}
+  \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
   \global\galleypenalty=\outputpenalty
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
   \global\output={\onecoltrial}
@@ -361,7 +361,7 @@
 %      \msg{upwards mode = \the\XeTeXupwardsmode}
       \dimen1=\textwidth \advance\dimen1 \ExtraRMargin
       \trace{b}{BALANCE pangeoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins}
-      \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\partial}} \fi
+      \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}} \fi
       \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
       \dimen0=\dp\colA
       \hbox to \dimen1{\hbox to \columnshift{}%
@@ -369,13 +369,13 @@
       \ifvoid\bottomins\else \vfil\kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\box\bottomins} \fi % ouput bottom spanning pictures
       \f@rstnotetrue%
       \m@kenotebox
-      \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}
+      \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2 \space Leaving \the\ht255, \the\dp255}
+      \ifdim\ht2<0pt\trace{b}{Strange notes height}\global\tracingmacros=1\global\tracingcommands=1\global\tracingpages=1\fi
       \unvbox2
     }
     \resetvsize
-    \ifdim\ht\colA>\baselineskip\plainoutput
-    \xdef\p@gefirstmark{}%
-    \xdef\p@gebotmark{}%
+    \ifdim\ht\colA>\baselineskip\plainoutput\trace{p}{plainoutput from onecoltrial}%
+      \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
     \else\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
     \global\holdinginserts=1
     \ifrerunsavepartialpaged\trace{o}{onecoltrial: rerunsavepartialpage}\global\output={\savepartialpage}\global\rerunsavepartialpagedfalse
