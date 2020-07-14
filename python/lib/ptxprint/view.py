@@ -438,7 +438,7 @@ class ViewModel:
             except configparser.NoOptionError:
                 setv(ModelMap[k][0], self.ptsettings.dict.get(v, ""))
 
-    def generatePicList(self, booklist):
+    def generatePicList(self, booklist, generateMissingLists=False):
         # Format of lines in pic-list file: BBB C.V desc|file|size|loc|copyright|caption|ref
         # MRK 1.16 fishermen...catching fish with a net.|hk00207b.png|span|b||Jesus calling the disciples to follow him.|1:16
         existingFilelist = []
@@ -457,20 +457,23 @@ class ViewModel:
                                                                     "Secondary project must be set on the Diglot+Border tab.")
                 return
         prjdir = os.path.join(self.settings_dir, prjid)
+        existingList = []
         for bk in booklist:
             fname = self.getBookFilename(bk, prjid)
             outfname = os.path.join(self.configPath(self.configName()), "PicLists", fname)
             doti = outfname.rfind(".")
             if doti > 0:
                 outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".piclist"
-            if os.path.exists(outfname):
+            if os.path.exists(outfname) and os.path.getsize(outfname) != 0:
                 existingFilelist.append(re.split(r"\\|/",outfname)[-1])
-        if len(existingFilelist):
+                existingList.append(bk)
+        if len(existingFilelist) and not generateMissingLists:
             q1 = "One or more PicList file(s) already exist!"
             q2 = "\n".join(existingFilelist)+"\n\nDo you want to OVERWRITE the above-listed file(s)?"
-            if not self.msgQuestion(q1, q2):
-                return
-        for bk in booklist:
+            if self.msgQuestion(q1, q2):
+                existingList =[]
+        makePicListBooks = list(set(booklist) - set(existingList))
+        for bk in makePicListBooks:
             flist = []
             tmplist = []
             fname = self.getBookFilename(bk, prjid)
@@ -537,7 +540,7 @@ class ViewModel:
                             else:
                                 vs = f[0]
                             chvs = ch+"." + str(vs)
-                            srtchvs = "{:0>3}{:0>3}{}".format(ch,vs,sfx)
+                            srtchvs = "{:0>3}{:0>3}{}".format(ch, re.sub(r"(\d+)(\-.+)?", r"\1", vs), sfx)
                             cmt = "% " if chvs in usedRefs else ""
                             usedRefs += [chvs]
                         # put back in when macros handle xyzR and xyzL 
@@ -585,7 +588,7 @@ class ViewModel:
                                     else:
                                         vs = f[0]
                                     chvs = ch+"." + str(vs)
-                                    srtchvs = "{:0>3}{:0>3}{}".format(ch,vs,sfx)
+                                    srtchvs = "{:0>3}{:0>3}{}".format(ch, re.sub(r"(\d+)(\-.+)?", r"\1", vs), sfx)
                                     cmt = "% " if chvs in usedRefs else ""
                                     usedRefs += [chvs]
                                     tmplist.append(srtchvs+"\u0009"+cmt+bk+sfx+" "+chvs+" |"+picfname+"|"+size+"|"+pageposn+"||"+caption+"|"+ref+"\n")
@@ -610,7 +613,7 @@ class ViewModel:
                 os.makedirs(plpath, exist_ok=True)
                 with open(outfname, "w", encoding="utf-8") as outf:
                     outf.write("".join(piclist))
-        if len(xl):
+        if len(xl) and not generateMissingLists:
             self.doError("Multiple illustrations attached to a single verse", 
                          secondary="One or more books ({}) have more than one figure attached to a single verse. ".format(", ".join(xl)) + \
                                    "This isn't permitted with a PicList. So check the list(s) for missing illustrations.", title="PicList Warning!")

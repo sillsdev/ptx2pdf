@@ -496,6 +496,9 @@ class GtkViewModel(ViewModel):
             pgnum = self.builder.get_object("nbk_Viewer").get_current_page()
             if 1 <= pgnum <= 2 or pgnum == 5:
                 self.onSaveEdits(None)
+        # If any PicLists are missing, they need to be generated
+        if self.get('c_includeillustrations') and self.get("c_usePicList"):
+            self.generatePicList(jobs, generateMissingLists=True)
 
         # Work out what the resulting PDFs are to be called
         cfgname = self.configName()
