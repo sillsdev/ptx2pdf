@@ -97,7 +97,7 @@ class Splash(Thread):
     def destroy(self):
         self.window.destroy()
 
-# The 3 structures below are used by method: sensiVisible() to toggle object states
+# The 3 dicts below are used by method: sensiVisible() to toggle object states
 
 # Checkboxes and the different objects they make (in)sensitive when toggled
 # Order is important, as the 1st object can be told to "grab_focus"
@@ -164,16 +164,6 @@ _visibilities = {
     "c_showDiglotBorderTab" :  ["tb_DiglotBorder"],
     "c_showViewerTab" :        ["tb_ViewerEditor"]
 }
-# _tabIDs = {
-    # "tb_Layout"],
-    # "tb_Font"],
-    # "tb_Body"],
-    # "tb_HeadFoot"],
-    # "tb_Pictures"],
-    # "tb_Advanced"],
-    # "tb_DiglotBorder"],
-    # "tb_ViewerEditor"]
-
 class GtkViewModel(ViewModel):
 
     def __init__(self, settings_dir, workingdir):
@@ -228,11 +218,10 @@ class GtkViewModel(ViewModel):
 
         self.fileViews = []
         self.buf = {}
-        for i,k in enumerate(["FinalSFM", "PicList", "AdjList", "TeXfile", "XeTeXlog", "Settings"]):
+        for i,k in enumerate(["PicList", "AdjList", "FinalSFM", "TeXfile", "XeTeXlog", "Settings"]):
             self.buf[i] = GtkSource.Buffer()
             view = GtkSource.View.new_with_buffer(self.buf[i])
             scroll = self.builder.get_object("scroll_" + k)
-            #scroll.add_with_viewport(view)
             scroll.add(view)
             self.fileViews.append((self.buf[i], view))
             if i > 2:
@@ -315,11 +304,10 @@ class GtkViewModel(ViewModel):
 
     def onHideAdvancedSettingsClicked(self, c_hideAdvancedSettings):
         if self.get("c_hideAdvancedSettings"):
-            # Turn Dangerous Settings OFF
-            for c in ("c_startOnHalfPage", "c_marginalverses", "c_prettyIntroOutline", "c_blendfnxr", "c_autoToC",
-                      "c_figplaceholders", "c_glueredupwords", "c_hangpoetry", 
-                      "c_showAdvancedTab", "c_showViewerTab", "c_elipsizeMissingVerses"):
-                      # "c_preventwidows", "c_PDFx1aOutput", "c_hyphenate", "c_variableLineSpacing", "c_showBodyTab"
+            # Turn Dangerous Settings OFF  (the commented out ones aren't considered 'dangerous' any more)
+            # "c_preventwidows", "c_PDFx1aOutput", "c_hyphenate", "c_variableLineSpacing", "c_showBodyTab", "c_elipsizeMissingVerses"
+            # "c_prettyIntroOutline", "c_blendfnxr", "c_autoToC", "c_glueredupwords", "c_hangpoetry", 
+            for c in ("c_startOnHalfPage", "c_marginalverses", "c_figplaceholders", "c_showAdvancedTab", "c_showViewerTab"):
                 self.builder.get_object(c).set_active(False)
 
             # Turn Essential Settings ON
@@ -525,6 +513,7 @@ class GtkViewModel(ViewModel):
                     question = "                   >>> PLEASE CLOSE the PDF <<<\
                      \n\n{}\n\n Or use a different PDF viewer which will \
                              \n allow updates even while the PDF is open. \
+                             \n See 'Links' on Viewer tab for more details. \
                            \n\n                        Do you want to try again?".format(pdfname)
                     if self.msgQuestion("The old PDF file is open!", question):
                         continue
@@ -1693,12 +1682,6 @@ class GtkViewModel(ViewModel):
         path = os.path.realpath(fldrpath)
         os.startfile(fldrpath)
 
-    # def openURL(self, url):
-        # if sys.platform == "win32":
-            # os.system("start \"\" {}".format(url))
-        # elif sys.platform == "linux":
-            # os.system("xdg-open \"\" {}".format(url))
-
     def incrementProgress(self, val=None):
         wid = self.builder.get_object("pr_runs")
         if val is None:
@@ -1712,4 +1695,3 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("nbk_Main").set_current_page(9)   # Switch to the Viewer tab
         self.builder.get_object("nbk_Viewer").set_current_page(4) # Display the tab with the .log file
         # self.builder.get_object("scroll_XeTeXlog").scroll_to_mark(self.buf[4].get_insert(), 0.0, True, 0.5, 0.5)
-        # self.builder.get_object("tv_logging").scroll_to_mark(self.logbuffer.get_insert(), 0.0, True, 0.5, 0.5)

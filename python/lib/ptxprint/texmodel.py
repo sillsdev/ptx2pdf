@@ -10,8 +10,6 @@ from ptxprint.ptsettings import chaps, books, bookcodes, oneChbooks
 from ptxprint.snippets import FancyIntro, PDFx1aOutput, AlignedDiglot, FancyBorders
 from ptxprint.runner import checkoutput
 
-# pdfre = re.compile(r".+[\\/](.+)\.pdf")     # No longer used in TexModel
-
 def universalopen(fname, rewrite=False):
     """ Opens a file with the right codec from a small list and perhaps rewrites as utf-8 """
     fh = open(fname, "r", encoding="utf-8")
@@ -390,6 +388,8 @@ class TexModel:
                 fpathR = os.path.join(self.printer.configPath(""), "NestedStylesR.sty")
         self.dict['/nststypathR'] = fpathR.replace("\\","/")
         self.dict['paragraph/linespacingfactor'] = "{:.3f}".format(float(self.dict['paragraph/linespacing']) / 14 / float(self.dict['paper/fontfactor']))
+        self.dict['paragraph/ifhavehyphenate'] = "" if os.path.exists(os.path.join(self.printer.configPath(""), \
+                                                       "hyphen-"+self.dict["project/id"]+".tex")) else "%"
 
     def updatefields(self, a):
         global get
