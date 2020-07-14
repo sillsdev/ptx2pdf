@@ -158,11 +158,9 @@ class RunJob:
                 return
             digptsettings = ParatextSettings(self.args.paratext, digprjid)
             digprinter = ViewModel(self.args.paratext, self.printer.working_dir)
-            # print("Reading digcfg", digprjid, digcfg)
             digprinter.setPrjid(digprjid)
             if digcfg is not None and digcfg != "":
                 digprinter.setConfigId(digcfg)
-            # print("Read to TexModel")
             diginfo = TexModel(digprinter, self.args.paratext, digptsettings, digprjid)
             texfiles = sum((self.digdojob(j, info, diginfo, digprjid, digprjdir) for j in joblist), [])
         else: # Normal (non-diglot)

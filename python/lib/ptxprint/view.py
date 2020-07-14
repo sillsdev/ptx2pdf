@@ -6,6 +6,8 @@ from .ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from .font import TTFont
 import pathlib, os
 from configparser import NoSectionError, NoOptionError, _UNSET
+from zipfile import ZipFile, ZIP_DEFLATED
+from io import StringIO
 
 VersionStr = "0.8.8 beta"
 
@@ -125,9 +127,6 @@ class ViewModel:
         else:
             self.dict[wid] = value
 
-    def configName(self):
-        return self.configId or None
-
     def baseTeXPDFname(self):
         bks = self.getBooks()
         if self.working_dir == None:
@@ -161,8 +160,8 @@ class ViewModel:
             return []
 
     def getBookFilename(self, bk, prjid):
-        # if self.ptsettings is None or self.prjid != prjid:
-        self.ptsettings = ParatextSettings(self.settings_dir, prjid)
+        if self.ptsettings is None or self.prjid != prjid:
+            self.ptsettings = ParatextSettings(self.settings_dir, prjid)
         fbkfm = self.ptsettings['FileNameBookNameForm']
         bknamefmt = (self.ptsettings['FileNamePrePart'] or "") + \
                     fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + \
@@ -279,6 +278,9 @@ class ViewModel:
                 except IndexError:
                     bks = "No book selected!"
             return "PTXprint [{}] {} ({}) {}".format(VersionStr, prjid, bks, self.get("ecb_savedConfig") or "")
+
+    def configName(self):
+        return self.configId or None
 
     def configPath(self, cfgname=None, makePath=False):
         if self.settings_dir is None or self.prjid is None:
@@ -824,3 +826,89 @@ class ViewModel:
 
     def incrementProgress(self, val=None):
         pass
+
+    def getArchiveFiles(self, prjid=None, cfgid=None):
+        sfiles = {'c_useModsTex': ("ptxprint-mods.tex", True),
+                  'c_useCustomSty': ("custom.sty", False),
+                  'c_useModsSty': ("PrintDraft/PrintDraft-mods.sty", False),
+                  'c_usePrintDraftChanges': ("PrintDraftChanges.txt", False)}
+        res = {}
+        cfgchanges = {}
+        if prjid is None:
+            prjid = self.prjid
+        if cfgid is None:
+            cfgid = self.configName()
+        cfpath = "shared/ptxprint/"
+        if cfgid is not None:
+            cfpath += cfgid+"/"
+        basecfpath = self.configPath(cfgid, prjid)
+
+        for bk in self.getBooks():
+            fname = self.getBookFilename(bk, prjid)
+            fpath = os.path.join(self.settings_dir, prjid)
+            res[os.path.join(fpath, fname)] = fname
+
+        adjpath = os.path.join(basecfpath, "AdjLists")
+        if os.path.exists(adjpath):
+            for adj in os.listdir(adjpath):
+                if adj.endswith(".adj"):
+                    res[os.path.join(adjpath, adj)] = cfpath+"AdjLists/"+adj
+
+        for t,a in sfiles.items():
+            if a[1]:
+                p = os.path.join(basecfpath, a[0])
+                b = cfpath + a[0]
+            else:
+                p = os.path.join(self.settings_dir, prjid, a[0])
+                b = a[0]
+            if os.path.exists(p):
+                res[p] = b
+
+        script = self.get("btn_selectscript")
+        if script is not None and len(script):
+            res[script] = os.path.basename(script)
+            cfgchanges["btn_selectscript"] = os.path.join(self.settings_dir, prjid, os.path.basename(script))
+
+        hyphenfpath = os.path.join(self.settings_dir, prjid, "shared", "ptxprint")
+        hyphentpath = "shared/ptxprint/"
+        hyphenfile = "hyphen-{}.tex".format(self.prjid)
+        if os.path.exists(os.path.join(hyphenfpath, hyphenfile)):
+            res[os.path.join(hyphenfpath, hyphenfile)] = hyphentpath + hyphenfile
+        return (res, cfgchanges)
+
+    def createArchive(self, filename=None):
+        if filename is None:
+            filename = os.path.join(self.configPath(self.configName()), "ptxprintArchive.zip")
+        if not filename.lower().endswith(".zip"):
+            filename += ".zip"
+        zf = ZipFile(filename, mode="w", compression=ZIP_DEFLATED, compresslevel=9)
+        self.archiveAdd(zf)
+        if self.get("c_diglot"):
+            prjid = self.get("fcb_diglotSecProject")
+            cfgid = self.get("ecb_diglotSecConfig")
+            digprinter = ViewModel(self.settings_dir, self.working_dir)
+            digprinter.setPrjid(prjid)
+            if cfgid is not None and cfgid != "":
+                digprinter.setConfigId(cfgid)
+            digprinter.archiveAdd(zf)
+        zf.close()
+
+    def archiveAdd(self, zf):
+        prjid = self.prjid
+        cfgid = self.configName()
+        entries, cfgchanges = self.getArchiveFiles(prjid=prjid, cfgid=cfgid)
+        for k, v in entries.items():
+            zf.write(k, arcname=prjid + "/" + v)
+        tmpcfg = {}
+        for k,v in cfgchanges.items():
+            tmpcfg[k] = self.get(k)
+            self.set(k, v)
+        config = self.createConfig()
+        configstr = StringIO()
+        config.write(configstr)
+        zf.writestr(prjid + "/shared/ptxprint/" + (cfgid + "/" if cfgid else "") + "ptxprint.cfg",
+                    configstr.getvalue())
+        configstr.close()
+        for k, v in tmpcfg.items():
+            self.set(k, v)
+            
