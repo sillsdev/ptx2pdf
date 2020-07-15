@@ -486,7 +486,7 @@ class GtkViewModel(ViewModel):
                 self.onSaveEdits(None)
         # If any PicLists are missing, they need to be generated
         if self.get('c_includeillustrations') and self.get("c_usePicList"):
-            self.generatePicList(jobs, generateMissingLists=True)
+            self.generatePicLists(jobs, generateMissingLists=True)
 
         # Work out what the resulting PDFs are to be called
         cfgname = self.configName()
@@ -766,9 +766,9 @@ class GtkViewModel(ViewModel):
         if pg == 0: # PicList
             bks2gen = self.getBooks()
             if not self.get('c_multiplebooks') and self.get("ecb_examineBook") != bks2gen[0]: 
-                self.generatePicList([self.get("ecb_examineBook")])
+                self.generatePicLists([self.get("ecb_examineBook")])
             else:
-                self.generatePicList(bks2gen)
+                self.generatePicLists(bks2gen)
         elif pg == 1: # AdjList
             self.generateAdjList()
         self.onViewerChangePage(None,None,pg)

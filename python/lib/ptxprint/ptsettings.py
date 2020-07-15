@@ -34,21 +34,23 @@ class ParatextSettings:
         self.dict = {}
         self.ldml = None
         self.basedir = basedir
-        self.parse(prjid)
+        self.prjid = prjid
+        self.langid = None
+        self.parse()
 
-    def parse(self, prjid):
-        path = os.path.join(self.basedir, prjid, "Settings.xml")
+    def parse(self):
+        path = os.path.join(self.basedir, self.prjid, "Settings.xml")
         if not os.path.exists(path):
-            self.inferValues(prjid)
+            self.inferValues()
         else:
             doc = et.parse(path)
             for c in doc.getroot():
                 self.dict[c.tag] = c.text
-            self.read_ldml(prjid)
+            self.read_ldml()
 
-    def read_ldml(self, prjid):
-        langid = regex.sub('-(?=-|$)', '', self.dict['LanguageIsoCode'].replace(":", "-"))
-        fname = os.path.join(self.basedir, prjid, langid+".ldml")
+    def read_ldml(self):
+        self.langid = regex.sub('-(?=-|$)', '', self.dict['LanguageIsoCode'].replace(":", "-"))
+        fname = os.path.join(self.basedir, self.prjid, self.langid+".ldml")
         silns = "{urn://www.sil.org/ldml/0.1}"
         if os.path.exists(fname):
             self.ldml = et.parse(fname)
@@ -77,8 +79,8 @@ class ParatextSettings:
             return None
         return self.ldml.find(path)
 
-    def inferValues(self, prjid):
-        path = os.path.join(self.basedir, prjid)
+    def inferValues(self):
+        path = os.path.join(self.basedir, self.prjid)
         sfmfiles = [x for x in os.listdir(path) if x.lower().endswith("sfm")]
         for f in sfmfiles:
             m = re.search(r"(\d{2})", f)
@@ -120,4 +122,16 @@ class ParatextSettings:
                     (self['FileNamePostPart'] or "")
         fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
         return fname
+
+    def getArchiveFiles(self):
+        res = {}
+        path = os.path.join(self.basedir, self.prjid, "Settings.xml")
+        if os.path.exists(path):
+            res[path] = "Settings.xml"
+            if self.langid is None:
+                return res
+            fname = os.path.join(self.basedir, self.prjid, self.langid+".ldml")
+            if os.path.exists(fname):
+                res[fname] = self.langid+".ldml"
+        return res
     
