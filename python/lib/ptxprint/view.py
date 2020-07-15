@@ -169,8 +169,8 @@ class ViewModel:
             return []
 
     def getBookFilename(self, bk, prjid):
-        # if self.ptsettings is None or self.prjid != prjid:
-        self.ptsettings = ParatextSettings(self.settings_dir, prjid)
+        if self.ptsettings is None or self.prjid != prjid:
+            self.ptsettings = ParatextSettings(self.settings_dir, prjid)
         fbkfm = self.ptsettings['FileNameBookNameForm']
         bknamefmt = (self.ptsettings['FileNamePrePart'] or "") + \
                     fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + \
@@ -531,7 +531,7 @@ class ViewModel:
                     #     0     1    2             3         4  5 6          7                             8      9  
                     # BKN \0 \|\3\|\4\|tr\|\|\7\|\8\9
                     # MAT 9.2 bringing the paralyzed man to Jesus|CN01684b.jpg|col|tr||key-kālk arsi manvan yēsunaga tarval|9:2
-                    m = re.findall(r"(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig .*?\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\d\\]+? ?)?(\d+[\:\.]\d+?[abc]?([\-,\u2013\u2014]\d+[abc]?)?)\\fig\*", dat)
+                    m = re.findall(r"(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig .*?\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|((?[^\d\\]+? ?)?(\d+[\:\.]\d+?[abc]?(?[\-,\u2013\u2014]\d+[abc]?)?))\\fig\*", dat)
                     if len(m):
                         for f in m:
                             picfname = f[3]
@@ -628,15 +628,21 @@ class ViewModel:
                          secondary="One or more books ({}) have more than one figure attached to a single verse. ".format(", ".join(xl)) + \
                                    "This isn't permitted with a PicList. So check the list(s) for missing illustrations.", title="PicList Warning!")
 
+    def getDraftFilename(self, bk, ext=".piclist"):
+        fname = self.getBookFilename(bk, self.prjid)
+        doti = fname.rfind(".")
+        if doti > 0:
+            return fname[:doti] + "-draft" + fname[doti:] + ext
+        else:
+            return fname + "-draft" + ext
+
     def getFigures(self, bk, sfmonly=False):
         posparms = ("desc", "src", "size", "loc", "copy", "alt", "ref", "xetex")
         res = {}
         fname = self.getBookFilename(bk, self.prjid)
         usepiclist = not sfmonly and self.get("c_usePicList") and bk not in TexModel._peripheralBooks
         if usepiclist:
-            doti = fname.rfind(".")
-            if doti > 0:
-                plfname = fname[:doti] + "-draft" + fname[doti:] + ".piclist"
+            plfname = self.getDraftFilename(bk)
             piclstfname = os.path.join(self.configPath(cfgname=self.configName()), "PicLists", plfname)
             if not os.path.exists(piclstfname):
                 usepiclist = False
@@ -659,21 +665,23 @@ class ViewModel:
                 dat = inf.read()
                 blocks = [""] + re.split(r"\\c\s+(\d+)", dat)
                 for c, t in zip(blocks[0::2], blocks[1::2]):
-                    m = re.findall(r"(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\d\\]+? ?)?(\d+[\:\.]\d+?[abc]?([\-,\u2013\u2014]\d+[abc]?)?)\\fig\*", t)
-                    for f in m:     # usfm 2
-                        r = "{}.{}".format(c, f[0])
-                        res[r] = {}
-                        for i, v in enumerate(f[3:]):
-                            res[r][posparms[i]] = v
-                    m = re.findall(r'(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig ([^\\]*?)\|([^\\]+)\\fig\*', t)
-                    for f in m:     # usfm 3
-                        caption = f[3]
-                        r = "{}.{}".format(c, f[0])
-                        res[r] = {}
-                        labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f[4])
-                        for l in labelParams:
-                            k,v = l.split("=")
-                            res[r][k.strip()] = v.strip('"')
+                    m = re.findall(r"(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|((?:[^\d\\]+? ?)?(\d+[\:\.]\d+?[abc]?(?:[\-,\u2013\u2014]\d+[abc]?)?))\\fig\*", t)
+                    if len(m):
+                        for f in m:     # usfm 2
+                            r = "{}.{}".format(c, f[0])
+                            res[r] = {}
+                            for i, v in enumerate(f[3:]):
+                                res[r][posparms[i]] = v
+                        m = re.findall(r'(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig ([^\\]*?)\|([^\\]+)\\fig\*', t)
+                    else:
+                        for f in m:     # usfm 3
+                            caption = f[3]
+                            r = "{}.{}".format(c, f[0])
+                            res[r] = {}
+                            labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f[4])
+                            for l in labelParams:
+                                k,v = l.split("=")
+                                res[r][k.strip()] = v.strip('"')
         return res
 
     def getFigureSources(self, figlist, filt=newBase):
@@ -698,10 +706,10 @@ class ViewModel:
                     if os.path.exists(p):
                         srchlist += [p]
         extensions = []
-        extdflt = ["jpg", "jpeg", "png", "tif", "tiff", "bmp", "pdf"]
+        extdflt = {x:i for i, x in enumerate(["jpg", "jpeg", "png", "tif", "tiff", "bmp", "pdf"])}
         imgord = self.get("t_imageTypeOrder").lower()
         extuser = re.sub("[ ,;/><]"," ",imgord).split()
-        extensions = [x for x in extdflt if x in extuser]
+        extensions = {x:i for i, x in enumerate(extuser) if x in extdflt}
         if not len(extensions):   # If the user hasn't defined any extensions 
             extensions = extdflt  # then we can assign defaults
 
@@ -716,11 +724,23 @@ class ViewModel:
                 for f in files:
                     doti = f.rfind(".")
                     origExt = f[doti:].lower()
-                    if origExt[1:] in extensions:
-                        filepath = os.path.join(subdir, f)
-                        nB = filt(f) if filt is not None else f
-                        if nB in newfigs:
-                            res[newfigs[nB]] = filepath
+                    if origExt[1:] not in extensions:
+                        continue
+                    filepath = os.path.join(subdir, f)
+                    nB = filt(f) if filt is not None else f
+                    if nB not in newfigs:
+                        continue
+                    k = newfigs[nB]
+                    if k in res:
+                        old = extensions.get(os.path.splitext(res[k]).lower(), 10000)
+                        new = extensions.get(os.path.splitext(filepath).lower(), 10000)
+                        if old > new:
+                            res[k] = filepath
+                        elif old == new and (self.printer.get("c_useLowResPics") \
+                                            != bool(os.path.getsize(res[k]) < os.path.getsize(filepath))):
+                            res[k] = filepath
+                    else:
+                        res[k] = filepath
         return res
 
     def generateAdjList(self):
@@ -933,8 +953,7 @@ class ViewModel:
     def _getArchiveFiles(self, books, prjid=None, cfgid=None):
         sfiles = {'c_useCustomSty': "custom.sty",
                   'c_useModsSty': "PrintDraft/PrintDraft-mods.sty",
-                  'c_usePrintDraftChanges': "PrintDraftChanges.txt",
-                  None: "Settings.xml"}
+                  'c_usePrintDraftChanges': "PrintDraftChanges.txt"}
         res = {}
         cfgchanges = {}
         pictures = set()
@@ -959,15 +978,17 @@ class ViewModel:
         for p, f in picsrcs.items():
             res[f] = "figures/"+os.path.basename(f)
         adjpath = os.path.join(basecfpath, "AdjLists")
+        adjbks = set(self.getDraftFilename(bk, ext=".adj") for x in books)
         if os.path.exists(adjpath):
             for adj in os.listdir(adjpath):
-                if adj.endswith(".adj"):
+                if adj.endswith(".adj") and adj in adjbks:
                     res[os.path.join(adjpath, adj)] = cfpath+"AdjLists/"+adj
 
         piclstpath = os.path.join(basecfpath, "PicLists")
+        picbks = set(self.getDraftFilename(bk) for x in books)
         if os.path.exists(piclstpath):
             for pic in os.listdir(piclstpath):
-                if pic.endswith(".piclist"):
+                if pic.endswith(".piclist") and pic in picbks:
                     res[os.path.join(piclstpath, pic)] = cfpath+"PicLists/"+pic
 
         for t,a in sfiles.items():
@@ -999,6 +1020,11 @@ class ViewModel:
         hyphenfile = "hyphen-{}.tex".format(self.prjid)
         if os.path.exists(os.path.join(hyphenfpath, hyphenfile)):
             res[os.path.join(hyphenfpath, hyphenfile)] = hyphentpath + hyphenfile
+
+        if self.ptsettings is None or self.prjid != prjid:
+            self.ptsettings = ParatextSettings(self.settings_dir, prjid)
+        ptres = self.ptsettings.getArchiveFiles()
+        res.update(ptres)
         return (res, cfgchanges)
 
     def createArchive(self, filename=None):
