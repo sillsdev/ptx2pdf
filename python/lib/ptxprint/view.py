@@ -169,8 +169,8 @@ class ViewModel:
             return []
 
     def getBookFilename(self, bk, prjid):
-        if self.ptsettings is None or self.prjid != prjid:
-            self.ptsettings = ParatextSettings(self.settings_dir, prjid)
+        # if self.ptsettings is None or self.prjid != prjid:
+        self.ptsettings = ParatextSettings(self.settings_dir, prjid)
         fbkfm = self.ptsettings['FileNameBookNameForm']
         bknamefmt = (self.ptsettings['FileNamePrePart'] or "") + \
                     fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + \
@@ -510,6 +510,7 @@ class ViewModel:
                 sfx = ""
             _picposn = {"col":  ("tl", "tr", "bl", "br"),
                         "span": ("t", "b")}
+            print(flist)
             for infname in flist:
                 if len(flist) == 2 and infname == flist[0]:
                     _picposn = {"col":  ("tl", "bl"),
@@ -552,7 +553,6 @@ class ViewModel:
                                 vs = f[0]
                             chvs = ch+"." + str(vs)
                             srtchvs = "{:0>3}{:0>3}{}".format(int(ch), int(re.sub(r"(\d+)(\-.+)?", r"\1", vs)), sfx)
-                            print(srtchvs)
                             cmt = "% " if chvs in usedRefs else ""
                             usedRefs += [chvs]
                             tmplist.append(srtchvs+"\u0009"+cmt+bk+sfx+" "+chvs+" |"+picfname+"|"+f[4]+"|"+pageposn+"||"+f[7]+"|"+f[8]+f[9])
