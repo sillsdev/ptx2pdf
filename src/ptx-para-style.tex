@@ -145,8 +145,12 @@
 \def\at@ndofthispar{}
 \def\at@ndofthisparR{}
 \def\at@ndofthisparL{}
+\def\at@ndofthisparDelay{}
+\def\at@ndofthisparRDelay{}
+\def\at@ndofthisparLDelay{}
+
 % end a paragraph, handling cutouts (shaping around drop-cap) if any, and the <end> hook
-\def\par{\ifhmode \trace{g}{par \ifdiglot\ifdiglotL L \else R \fi\fi \the\pagetotal}%
+\def\par{\ifhmode 
    \makecutouts
    \ifdiglot\setsid@%\MSG{end-\m@rker\sid@}%
      \csname end-\m@rker\sid@\endcsname % handle side-specific <end> hook
@@ -156,16 +160,46 @@
    \endgraf
    \cutoutcarryover 
  \fi
+ \do@ndofthispar
+}
+\def\do@ndofthispar{
  \edef\eotpn@me{at@ndofthispar\ifdiglot\ifdiglotL L\else R\fi\fi}% Which endofthispar macro?
- \x@\let\x@\pn@xt\x@=\csname \eotpn@me\endcsname
- \ifdim\pagetotal=0pt\edef\eotpn@me{empty}\let\pn@xt=\relax\trace{g}{Not here}\fi%It's not a paragraph if there's a zero \pagetotal
- \ifx\pn@xt\relax\else
-   \trace{g}{\eotpn@me\space used (\the\holdinginserts)}%
+ \x@\let\x@\pn@xt\csname \eotpn@me\endcsname
+ \trace{g}{doendofthispar \ch@pter:\v@rse \ifdiglot\ifdiglotL L \else R \fi\fi \the\pagetotal, \the\holdinginserts, page/chunk-\ifp@gestart start\else -middle\fi}%
+ \temptrue
+ \ifx\pn@xt\empty\tempfalse\fi
+ \ifdiglot
+   \ifp@gestart\tempfalse\fi
+ \else 
+   \ifdim\pagetotal=0pt \tempfalse\fi
+ \fi
+ \ifx\pn@xt\empty\else
+   \iftemp
+     \edef\temp{\csname\eotpn@me Delay\endcsname}
+     \ifx\temp\empty\else
+       \let\pn@xt=\empty
+       \trace{g}{\ch@pter:\v@rse. Delayed by specification (\temp)}
+       \x@\shrinkdel@y \temp\EDLY
+       \trace{g}{Delay for \eotpn@me set to \temp}
+       \x@\xdef\csname \eotpn@me Delay\endcsname{\temp}
+       \edef\eotpn@me{empty}
+     \fi
+   \else
+     \edef\eotpn@me{empty}
+     \let\pn@xt=\empty
+     \trace{g}{\ch@pter:\v@rse. Not here}
+   \fi
+ \fi
+ \ifx\pn@xt\empty\else
+   \trace{g}{\eotpn@me\space used (\the\holdinginserts)\the\ht\picb@x}%
+   \nonstopmode
+   \show\pn@xt
    %\edef\pn@xt{\hbox{x}}% test code
-   \x@\let\csname\eotpn@me\endcsname=\relax\pn@xt
+   \x@\global\x@\let\csname\eotpn@me\endcsname=\empty\pn@xt\relax
  \fi
 }
 
+\def\shrinkdel@y#1|#2\EDLY{\trace{g}{shrint {#1}{#2}}\xdef\temp{#2}}
 %
 % Handle a paragraph style marker (parameter is the marker name)
 %

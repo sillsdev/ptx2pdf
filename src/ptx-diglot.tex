@@ -39,6 +39,7 @@
 %\def\noTRACEdiglot#1{\relax}%
 %\let\TRACEdiglot=\noTRACEdiglot%
 \newif\ifdiglot %If there is diglot material
+\newif\ifp@gestart % temporary hold while things get going.
 \def\setsid@{\ifdiglotL\xdef\sid@{L}\else\xdef\sid@{R}\fi}
 \newtoks\leftho@ks
 \newtoks\rightho@ks
@@ -224,6 +225,7 @@
  % Empties: \box255
  \trace{D}{diglotLeft O:\the\outputpenalty, P:\the\savedpenalty, LP:\the\lastsavedLpenalty, vs:\the\vsize,
     pg:\the\pagegoal, pt:\the\pagetotal, bs:\the\baselineskip, ilp:\the\interlinepenalty, \ifintrial INTRIAL\fi}% 
+ \p@gestarttrue % or at least, this isn't the right place to place things that go after a paragraph
  \ifnum\outputpenalty=-10005%Why are we here after a trial?
    \ifintrial\diglotLeftTrial\fi
    %\tmppenalty=\savedpenalty\relax%
@@ -470,6 +472,7 @@
     LB:\the\ht\LeftBox+\the\dp\LeftBox, av:\the\availht, vs:\the\vsize, pg:\the\pagegoal}%
   % NB: If box255 does need to go through makevtop, then when the box is unzipped to try again,
   % the kerns would need removing somehow.
+  \p@gestarttrue % or at least, this isn't the right place to place things that go after a paragraph
   \makevtop{255}
   \global\setbox\LeftBox=\vtop{\unvbox 255}
   \tmppenalty=\outputpenalty %
@@ -666,7 +669,7 @@
   \ifdim\dimen3>\trialheight %Is this likely to be the last chunk added to the page? 
     \ifm@rksonpage\else\mark{}\fi
   \fi
-  \joinboxes{\LeftBox}{\partialL}{10}{\Lboxpenalty}\par\penalty-10005
+  \joinboxes{\LeftBox}{\partialL}{10}{\Lboxpenalty}\endgraf\penalty-10005
 \relax{\aftergroup\relax}%
 }
 
@@ -705,7 +708,7 @@
 %If material (e.g. due to footnotes) is too big for page, shrink vsize and try again.
 % if not all material was set, hold stuff in \partialR and use \diglotRightExtra to put that into \excessR
   \traceNum{D}{diglotRightTrial, \the\holdinginserts, \the\outputpenalty, 
-    \the\deadcycles, Rb:\the\ht\RIghtBox+\the\dp\RIghtBox, pR:\the\ht\partialR+\the\dp\partialR,
+    \the\deadcycles, Rb:\the\ht\RightBox+\the\dp\RightBox, pR:\the\ht\partialR+\the\dp\partialR,
     av:\the\availht, vs:\the\vsize, pg:\the\pagegoal}%
  \makevtop{255}%
  %\global\setbox\RightBox=\box255
@@ -772,7 +775,7 @@
   \global\savedpenalty=\tmppenalty %
   %\bgroup
   \joinboxes{\partialR}{255}{12}{\partialRpenalty}%
-  \par\penalty-10006
+  \endgraf\penalty-10006
   %\egroup%
   \relax{\aftergroup\relax}%
 }
@@ -785,20 +788,21 @@
  %Calls appropriate handler based on whether inserts are held or not
  % (traditionally they weren't)
  \traceNum{d}{diglotRight \the\outputpenalty, \the\savedpenalty, \the\Rchunkpenalty, (\ifnum\holdinginserts=0 Not\fi holding) pg:\the\pagegoal}%
+ \p@gestarttrue % or at least, this isn't the right place to place things that go after a paragraph
  \tmppenalty=\outputpenalty %
   % tempoarily split and see if there are marks in this text
   \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
    \edef\t@mp{\splitbotmark}
    \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
- \ifnum\outputpenalty=10000\relax% Nothing wrong with breaking here
+ \ifnum\outputpenalty=10000 % Nothing wrong with breaking here
    \tmppenalty=0 % and leave Rchunkpenalty alone
  \else%
-   \ifnum\outputpenalty=-10001\relax%Got to the end of the \righttext
+   \ifnum\outputpenalty=-10001 %Got to the end of the \righttext
      \Rchunkpenalty=\savedpenalty %
      \tmppenalty=\Rchunkpenalty %
      \global\savedpenalty=0 %
    \else%
-     \ifnum\outputpenalty=-10006\relax%Got to the end of the trialtext. why are we here?
+     \ifnum\outputpenalty=-10006 %Got to the end of the trialtext. why are we here?
        \tmppenalty=\savedpenalty %
        \global\savedpenalty=0 %
        %\Rchunkpenalty should already have been set.
@@ -808,7 +812,7 @@
  \ifnum\holdinginserts=0 %Inserts not held, continue
          \digl@tRight%
  \else%
-        %\oDiglotRightTrial% FIXME - still broken?
+        \doDiglotRightTrial% FIXME - still broken?
         \digl@tRight%
  \fi%
 }
@@ -877,6 +881,7 @@
 % Change which side we're adding to
 \outer\def\lefttext{%
   \global\savedpenalty=\lastpenalty % This MUST be first, or the last thing won't be a penalty
+  %\par\do@ndofthispar
   \trace{d}{lefttext ilp=\the\interlinepenalty, lp:\the\savedpenalty}%
   \ifsk@pping \egroup \sk@ppingfalse\fi% if we were skipping nonpublishable text, end that mode
   \ifhe@dings\endhe@dings\fi%
@@ -884,7 +889,7 @@
   \Lneedsemptyingtrue%
   \calc@vailht%
   \n@xtc@mmand%
-  \par\penalty-10001%
+  \endgraf\penalty-10001%
   \relax%
   \global\digl@tLtrue%
   \global\diglotLtrue%
@@ -900,24 +905,30 @@
   \the\leftho@ks\relax\swapfonts{L}%
   \global\hsize=\columnLwidth\relax\global\holdinginserts=1}%
 
-\outer\def\righttext{\global\savedpenalty=\lastpenalty\n@xtc@mmand\global\holdinginserts=1
-  \trace{d}{righttext pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, lp:\the\savedpenalty}
-  \ifhe@dings\endhe@dings\fi\par\penalty-10001
+\outer\def\righttext{\global\savedpenalty=\lastpenalty
+  \trace{d}{righttext pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, lp:\the\savedpenalty}%
+  \par\do@ndofthispar
+  \n@xtc@mmand
+  \global\holdinginserts=1
+  \ifhe@dings\endhe@dings\fi\endgraf\penalty-10001
   \calc@vailht\global\digl@tLfalse\global\diglotRtrue\calc@vailht
   \global\vsize=\availht\relax\output={\diglotRight}\the\rightho@ks\relax\swapfonts{R}%
   \global\hsize=\columnRwidth\relax\global\holdinginserts=0}
 %
 % When there's a header on the left but not the right, but we want the verses
 % to line up nicely...
-\def\norighttext{\global\savedpenalty=\lastpenalty\relax\trace{D}{norighttext}\Lneedsemptyingtrue
-  \par\penalty-10001
+\def\norighttext{\global\savedpenalty=\lastpenalty
+  %\par\do@ndofthispar
+  \relax\trace{D}{norighttext}\Lneedsemptyingtrue
+  \endgraf\penalty-10001
   \global\diglotLtrue\global\digl@tLtrue\Lchunkpenalty=0\relax\setboth\output={\diglotLeft}%
   \global\hsize=\columnLwidth\relax\global\holdinginserts=1}
 
 %Similarly when there's no left text, copying \righttext seems OK ...
 \def\nolefttext{\global\savedpenalty=\lastpenalty
+  %\par\do@ndofthispar
   \trace{D}{nolefttext}\n@xtc@mmand
-  \par\penalty-10001
+  \endgraf\penalty-10001
   \global\diglotLtrue\calc@vailht\global\digl@tLfalse\global\diglotRtrue\calc@vailht
   \global\vsize=\availht\output={\diglotRight}\swapfonts{R}%
   \global\hsize=\columnRwidth\relax\global\holdinginserts=0}
@@ -1405,7 +1416,6 @@
     \global\leftfullfalse%
     \global\pagefullfalse%
     \global\holdinginserts=1 %
-
     \global\availht=\textheight %
     \global\vsize=\availht\relax%
     \ifdim\dp\excessL>0pt \ifdim\dp\partialL=0pt 
@@ -1625,6 +1635,7 @@
   %\showthe\everyhbox
   %\showthe\leftskip
   %\showthe\rightskip
+  \p@gestarttrue
   \def\pagecontents{%
    \diglotN@rmaltrue\ifdiglotInnerOuter\ifodd\pageno\else\diglotN@rmalfalse\fi\fi 
    \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi%
@@ -1679,12 +1690,14 @@
   \global\availht=\textheight%
   \plainoutput%
   \global\chunkDelta=0pt
+  \p@gestartfalse
   %\ifm@rksonpage
     \xdef\p@gefirstmark{\nextp@gefirstmark}%
   %\fi
   \xdef\nextp@gefirstmark{}%
   \edef\botmark{\p@gebotmark}%
   \let\firstmark\empty
+  \ifdigl@tL\diglotLtrue\else\diglotLfalse\fi
   \xdef\p@gebotmark{}%
   \xdef\topLmark{}
   \xdef\botLmark{}
@@ -1692,6 +1705,9 @@
   \xdef\botRmark{}
   \global\setbox\RightBox=\box\voidb@x%
   \global\setbox\LeftBox=\box\voidb@x%
+  %\nonstopmode
+  %\showthe\output
+  %%somejunk
 }
 
 \def\testmarker{\hbox to 0pt{\vrule height 7pt depth 0pt width 0.5pt \kern-0.5pt}\message{_}}

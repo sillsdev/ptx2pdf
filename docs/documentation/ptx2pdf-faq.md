@@ -262,10 +262,10 @@ Notes:
 
 
 ### How mature are the experimental picture positions?
-At the time of writing (14 Jul 2020), there are some known bugs, mostly grid alignment and some very poor behaviour at page boundaries:
+At the time of writing (15 Jul 2020), there are some recently-fixed bugs: mostly grid alignment and some poor behaviour at page boundaries:
 - c  The cutout functionality seems to work reliably, within the capabilities it has. 
-- p  The post-paragraph code seems to function well as long as the paragraph does not cross a page boundary. If it does in diglot, then the picture is always set at the top of the left-hand text of the follow-on page. In monoglot text, all text on the follow-on page vanishes. Following text may have problems with grid-alignment. 
-- h  Following text may have problems with grid alignment.
+- p  The post-paragraph code seems to function well as long as the paragraph does not cross a page boundary. If it did in diglot, then the picture was always set at the top of the left-hand text of the follow-on page.  Hopefully this has now been fixed.
+- h and p  Following text may have problems with grid alignment, but this is hopefully solved.
 
 ### Do the new picture positions conform to examples in the USFM specification?
 In some ways, they conform better than the previously available options. USFM specification indicates that a picture can occur immediately after text, ending the previous paragraph. This works with *here* and *cutout* picture locations, (the 'automatic' paragraph style for text surrounding the cutout is intended to be the same as the previous paragraph style, but until further testing reveals this to be 100% reliable, sensible users will supply their own style marker).  USFM makes no reference to left or right alignment, nor scaling images, nor images in cutouts.

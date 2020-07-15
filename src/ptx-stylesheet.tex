@@ -246,7 +246,7 @@
   }
   % define handling for usfm \v marker
   \def\v{%
-   \ifvmode\xdef\prev@rsemode{\m@rker}\else\gdef\prev@rsemode{}\fi
+   \ifvmode\xdef\prev@rsemode{\m@rker}\else\global\let\prev@rsemode\empty\fi
    \leavevmode % ensure we are in horizontal mode to build paragraph
    % set c@ncelfirstversetrue if we are immediately following a drop cap chapter number
    % and the user has requested omission of the first verse number in a chapter
