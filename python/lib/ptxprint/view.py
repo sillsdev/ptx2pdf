@@ -528,8 +528,6 @@ class ViewModel:
 %   (See end of list for more help for troubleshooting)
 
 """)
-                        
-            # print(allpicinfo)
             for k in sorted(allpicinfo.keys()):
                 p = allpicinfo[k]
                 picposn = picposns[k[1]] if digmode == "Bot" else picposns[""]
@@ -618,6 +616,16 @@ class ViewModel:
                             res[r]['anchor'] = "{}.{}".format(c, f[0])
                             for i, v in enumerate(f[3:]):
                                 res[r][posparms[i]] = v
+                            # interpret pgpos as possibly other things
+                            p = res[r]['pgpos']
+                            if re.match(r"^[tbhpg][lrc]?(?:-\d*)?$", p):
+                                pass
+                            elif p in "apw":
+                                res[r]['media'] = p
+                                del res[r]['pgpos']
+                            elif re.match(r"^(?:\S*)\s*\d+\.?\d*\s*$", p):
+                                res[r]['loc'] = p
+                                del res[r]['pgpos']
                     else:
                         m = re.findall(r'(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig ([^\\]*?)\|([^\\]+)\\fig\*', t)
                         for f in m:     # usfm 3
