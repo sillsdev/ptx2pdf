@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
-import palaso.sfm as sfm
-from palaso.sfm import usfm
-from palaso.sfm import style
+import ptxprint.sfm as sfm
+from ptxprint.sfm import usfm
+from ptxprint.sfm import style
 import argparse, difflib, sys
 
 class Chunk(list):

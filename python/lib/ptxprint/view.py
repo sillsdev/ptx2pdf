@@ -490,6 +490,7 @@ class ViewModel:
         existingFilelist = []
         for bk in booklist:
             outfname = self.getDraftFilename(bk)
+            outfname = os.path.join(self.configPath(cfgname=self.configName()), "PicLists", outfname)
             if os.path.exists(outfname) and os.path.getsize(outfname) != 0:
                 existingFilelist.append(os.path.basename(outfname))
                 existingList.append(bk)
