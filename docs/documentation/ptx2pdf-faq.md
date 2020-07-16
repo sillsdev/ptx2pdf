@@ -228,9 +228,10 @@ HEBR 3.9 The people worshipping idols having forgotten God|src="co00621.jpgsrc" 
 
 The 'location' specification is the one you want to use. 
 
-
 In the above pic-list line, (for the *right* column of a diglot, hence the **R** after the 'HEB'), the picture will be set in a cut-out on the right side of the column, two lines below the beginning of the paragraph starting at 3:9, with the picture half a column wide and the text a little distance away.  This may **force** a paragraph at this point.
-. The following locations are now available:
+
+In the table below, 'left-aligned' means that the left hand edge of the image is lined up with the left-hand image of (unindented) paragraph text.
+The following locations are now available:
 
 Code | Mnemnonic              | Position                                                      | Caption position / width 
 ---- | -----------------------|-----------------------------------------------------------|-----------------------------------------------
@@ -243,16 +244,16 @@ br   | 'Bottom-Right' [1]     | At the bottom of the right-hand [2] column      
 -----|------------------------|       ***Experimental Additions***                               |----------------------------
 h    | 'Here'                 | Where defined / before the verse in piclist[3,4], centred       | Centred within column
 hc   | 'Here',centred         | Where defined / before the verse in piclist[3,4], centred       | Centred within column
-hl   | 'Here'                 | Where defined / before the verse in piclist[3,4], left-aligned  | Centred below image, and the same width
-hr   | 'Here'                 | Where defined / before the verse in piclist[3,4], right-aligned | Centred below image, and the same width
+hl   | 'Here',Left            | Where defined / before the verse in piclist[3,4], left-aligned  | Centred below image, and the same width
+hr   | 'Here',Right           | Where defined / before the verse in piclist[3,4], right-aligned | Centred below image, and the same width
 p    | 'Post-paragraph'       | After this paragraph[4], centred                                | Centred within column
 pc   | 'Post-paragraph', centred  | After this paragraph[4], centred                                | Centred within column
 pr   | 'Post-paragraph, Right'| After this paragraph[4], right-aligned                           | Centred below image, and the same width
 pl   | 'Post-paragraph, Left' | After this paragraph[4], left-aligned                            | Centred below image, and the same width
-cl   | 'Cutout Left'          | In the top-left corner of this paragraph [3]                   | Centred below image, and the same width
 pc#  | 'Post-paragraph'       | After # paragraphs[4,5], centred                                | Centred within column
 pr#  | 'Post-paragraph, Right'| After # paragraphs[4,5], right-aligned                           | Centred below image, and the same width
 pl#  | 'Post-paragraph, Left' | After # paragraphs[4,5], left-aligned                            | Centred below image, and the same width
+cl   | 'Cutout Left'          | In the top-left corner of this paragraph [3]                   | Centred below image, and the same width
 cr   | 'Cutout Right'         | In the top-right corner of this paragraph [3]                  | Centred below image, and the same width
 cl#  | 'Cutout Left'          | In a notch # lines[6] below the top of this paragraph [3]       | Centred below image, and the same width
 cr#  | 'Cutout Right'         | In a notch # lines[6] below the top of this paragraph [3]       | Centred below image, and the same width
