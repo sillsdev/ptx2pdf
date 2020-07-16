@@ -264,8 +264,8 @@ Notes:
 [3] *Here*  and *cutout* images need to start at a new paragraph. If the specified location is not a paragraph boundary, a new paragraph will be forced.
 [4] The 'insert image here' code will be activated at the end of the paragraph. Counting starts at the paragraph containing the verse number or the 
 \fig definition.
-[5] pc1 is interpreted as meaning the same as pc (the c is assumed if no number is specified, but required if supplying a number).
-[5] Multi-digit numbers be specified, but little sanity checking is done. The image will be on the same page as the calling verse (or off the page's bottom), even if the notch is partly or fully on the next. A negative number will raise the image and shorten the cut-out, but will not make space above.
+[5] pc1 'after one paragraph' is interpreted as meaning the same as p or pc (the c is assumed if no number is specified, but required if supplying a number), pc2 means after the next paragraph. This is useful if the verse contains poetry.
+[6] Multi-digit numbers may be specified, but little sanity checking is done. The image will be on the same page as the calling verse (or off the page's bottom), even if the notch is partly or fully on the next. A negative number (e.g. cr-1) will raise the image and shorten the cut-out, but will not make space above.
 
 
 ### How mature are the experimental picture positions?
