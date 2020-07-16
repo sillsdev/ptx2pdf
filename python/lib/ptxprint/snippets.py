@@ -5,29 +5,29 @@ class PDFx1aOutput():
     styleInfo = ""
     processTex = True
     texCode = r"""
-\special{{pdf:docinfo<< 
-/Title({document/title})% 
-/Subject({document/subject})% 
-/Author({document/author})% 
-/Creator(PTXprint ({config/name}))% 
-/CreationDate(D:{document/date})% 
-/ModDate(D:{document/date})% 
-/Producer(XeTeX)% 
-/Trapped /False 
-/GTS_PDFXVersion(PDF/X-1:2003)% 
-/GTS_PDFXConformance(PDF/X-1a:2003)% 
+\special{{pdf:docinfo<<
+/Title({document/title})%
+/Subject({document/subject})%
+/Author({document/author})%
+/Creator(PTXprint ({config/name}))%
+/CreationDate(D:{date_})%
+/ModDate(D:{date_})%
+/Producer(XeTeX)%
+/Trapped /False
+/GTS_PDFXVersion(PDF/X-1:2003)%
+/GTS_PDFXConformance(PDF/X-1a:2003)%
 >> }} 
-\special{{pdf:fstream @OBJCVR ({/iccfpath})}} 
-\special{{pdf:put @OBJCVR <</N 4>>}} 
-%\special{{pdf:close @OBJCVR}} 
-\special{{pdf:docview << 
-/OutputIntents [ << 
-/Type/OutputIndent 
-/S/GTS_PDFX 
-/OutputCondition (An Unknown print device) 
-/OutputConditionIdentifier (Custom) 
-/DestOutputProfile @OBJCVR 
-/RegistryName (http://www.color.og) 
+\special{{pdf:fstream @OBJCVR ({/iccfpath})}}
+\special{{pdf:put @OBJCVR <</N 4>>}}
+%\special{{pdf:close @OBJCVR}}
+\special{{pdf:docview <<
+/OutputIntents [ <<
+/Type/OutputIndent
+/S/GTS_PDFX
+/OutputCondition (An Unknown print device)
+/OutputConditionIdentifier (Custom)
+/DestOutputProfile @OBJCVR
+/RegistryName (http://www.color.og)
 >> ] >>}} 
     """
     

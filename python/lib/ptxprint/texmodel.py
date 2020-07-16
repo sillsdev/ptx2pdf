@@ -32,8 +32,9 @@ def universalopen(fname, rewrite=False):
     return fh
 
 ModelMap = {
-    "L_":                        ("c_diglotAutoAligned", lambda w,v: "L" if v and w.get("c_diglot") else ""),
-    "R_":                        ("c_diglotAutoAligned", lambda w,v: "R" if v and w.get("c_diglot") else ""),
+    "L_":                       ("c_diglotAutoAligned", lambda w,v: "L" if v and w.get("c_diglot") else ""),
+    "R_":                       ("c_diglotAutoAligned", lambda w,v: "R" if v and w.get("c_diglot") else ""),
+    "date_":                    ("_date", lambda w,v: v),
     #"config/name":              ("ecb_savedConfig", lambda w,v: v or "default"),
     "config/notes":             ("t_configNotes", lambda w,v: v or ""),
     "config/pwd":               ("t_invisiblePassword", lambda w,v: v or ""),
@@ -331,17 +332,10 @@ class TexModel:
         self.changes = None
         self.localChanges = None
         self.debug = False
-        t = datetime.now()
-        tz = t.utcoffset()
-        if tz is None:
-            tzstr = "Z"
-        else:
-            tzstr = "{0:+03}'{1:02}'".format(int(tz.seconds / 3600), int((tz.seconds % 3600) / 60))
         libpath = os.path.abspath(os.path.dirname(__file__))
         self.dict = {"/ptxpath": path.replace("\\","/"),
                      "/ptxprintlibpath": libpath.replace("\\","/"),
-                     "/iccfpath": os.path.join(libpath, "ps_cmyk.icc").replace("\\","/"),
-                     "document/date": t.strftime("%Y%m%d%H%M%S")+tzstr }
+                     "/iccfpath": os.path.join(libpath, "ps_cmyk.icc").replace("\\","/")}
         self.prjid = prjid
         if self.prjid is not None:
             self.dict['project/id'] = self.prjid
