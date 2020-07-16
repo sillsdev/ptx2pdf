@@ -342,46 +342,55 @@ class TexModel:
         if self.printer is not None:
             self.update()
 
-    def update(self):
-        """ Update model from UI """
-        self.printer.setDate()  # Update date/time to now
-        self.updatefields(ModelMap.keys())
+    def docdir(self):
         if self.asBool("project/useprintdraftfolder"):
             base = os.path.join(self.dict["/ptxpath"], self.dict["project/id"])
             docdir = os.path.join(base, 'PrintDraft')
         else:
             base = printer.working_dir
             docdir = base
-        self.dict["document/directory"] = os.path.abspath(docdir).replace("\\","/")
-        self.dict['project/adjlists'] = os.path.join(self.printer.configPath(self.printer.configName()), "AdjLists/").replace("\\","/")
-        self.dict['project/piclists'] = os.path.join(self.printer.working_dir, "tmpPicLists/").replace("\\","/")
+        return docdir, base
+
+    def update(self):
+        """ Update model from UI """
+        j = os.path.join
+        rel = os.path.relpath
+        self.printer.setDate()  # Update date/time to now
+        cpath = self.printer.configPath(self.printer.configName())
+        rcpath = self.printer.configPath("")
+        self.updatefields(ModelMap.keys())
+        docdir, base = self.docdir()
+        self.dict["document/directory"] = "." # os.path.abspath(docdir).replace("\\","/")
+        self.dict['project/adjlists'] = rel(j(cpath, "AdjLists"), docdir).replace("\\","/") + "/"
+        self.dict['project/piclists'] = rel(j(self.printer.working_dir, "tmpPicLists"), docdir).replace("\\","/") + "/"
         self.dict['project/id'] = self.printer.prjid
         self.dict['config/name'] = self.printer.configId
+        self.dict['/ptxrpath'] = rel(self.dict['/ptxpath'], docdir)
         self.readFonts(self.printer)
         self.processFonts(self.printer)
         self.processHdrFtr(self.printer)
         # sort out caseless figures folder. This is a hack
         for p in ("Figures", "figures"):
-            picdir = os.path.join(base, p)
+            picdir = j(base, p)
             if os.path.exists(picdir):
                 break
-        self.dict["project/picdir"] = picdir.replace("\\","/")
+        self.dict["project/picdir"] = rel(picdir).replace("\\","/")
         # Look in local Config folder for ptxprint-mods.tex, and drop back to shared/ptxprint if not found
-        fpath = os.path.join(self.printer.configPath(self.printer.configName()), "ptxprint-mods.tex")
+        fpath = j(cpath, "ptxprint-mods.tex")
         if not os.path.exists(fpath):
-            fpath = os.path.join(self.printer.configPath(""), "ptxprint-mods.tex")
-        self.dict['/modspath'] = fpath.replace("\\","/")
+            fpath = j(rcpath, "ptxprint-mods.tex")
+        self.dict['/modspath'] = rel(fpath, docdir).replace("\\","/")
         # Look in local Config folder for NestedStyles.sty, and drop back to shared/ptxprint if not found
-        fpath = os.path.join(self.printer.configPath(self.printer.configName()), "NestedStyles.sty")
+        fpath = j(cpath, "NestedStyles.sty")
         if not os.path.exists(fpath):
-            fpath = os.path.join(self.printer.configPath(""), "NestedStyles.sty")
-        self.dict['/nststypath'] = fpath.replace("\\","/")
+            fpath = j(rcpath, "NestedStyles.sty")
+        self.dict['/nststypath'] = rel(fpath, docdir).replace("\\","/")
         # If AlignedDiglot, look in local Config folder for NestedStylesR.sty, and drop back to shared/ptxprint if not found
-        fpathR = os.path.join(self.printer.configPath(self.printer.configName()), "NestedStylesR.sty")
+        fpathR = j(cpath, "NestedStylesR.sty")
         if self.dict["document/ifaligndiglot"] == "":
             if not os.path.exists(fpathR):
-                fpathR = os.path.join(self.printer.configPath(""), "NestedStylesR.sty")
-        self.dict['/nststypathR'] = fpathR.replace("\\","/")
+                fpathR = j(rcpath, "NestedStylesR.sty")
+        self.dict['/nststypathR'] = rel(fpathR, docdir).replace("\\","/")
         self.dict['paragraph/linespacingfactor'] = "{:.3f}".format(float(self.dict['paragraph/linespacing']) / 14 / float(self.dict['paper/fontfactor']))
         self.dict['paragraph/ifhavehyphenate'] = "" if os.path.exists(os.path.join(self.printer.configPath(""), \
                                                        "hyphen-"+self.dict["project/id"]+".tex")) else "%"
@@ -531,11 +540,12 @@ class TexModel:
             if self.dict[k] == "":
                 self.dict[k] = self.ptsettings.dict.get(v, "a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z")
         res = []
+        docdir, docbase = self.docdir()
         self.dict['jobname'] = jobname
         with universalopen(os.path.join(os.path.dirname(__file__), template)) as inf:
             for l in inf.readlines():
                 if l.startswith(r"\ptxfile"):
-                    res.append("\\PtxFilePath={"+filedir.replace("\\","/")+"/}\n")
+                    res.append("\\PtxFilePath={"+os.path.relpath(filedir, docdir).replace("\\","/")+"/}\n")
                     for i, f in enumerate(self.dict['project/bookids']):
                         fname = self.dict['project/books'][i]
                         if f in ["XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG",
