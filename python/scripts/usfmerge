@@ -145,7 +145,7 @@ def alignChunks(pchunks, schunks, pkeys, skeys, filt=None, fns=[], depth=0):
     diff = difflib.SequenceMatcher(None, pk, sk)
     for op in diff.get_opcodes():
         (action, ab, ae, bb, be) = op
-        print("    "*depth, op, pk[ab:ae], sk[bb:be])
+        #print("    "*depth, op, pk[ab:ae], sk[bb:be])
         if action == "equal":
             pairs.extend([[pchunks[ab+i], schunks[bb+i]] for i in range(ae-ab)])
         elif action == "delete":
@@ -172,7 +172,7 @@ def pairchunks(pchunks, schunks, pkeys, skeys, starti, i, startj, j, fns=[], dep
     rkeys = skeys[startj:j] if j > startj else []
     if not len(lchunks) and not len(rchunks):
         return []  
-    print("    "*depth, ("group", starti, i, startj, j), lkeys, rkeys)
+    #print("    "*depth, ("group", starti, i, startj, j), lkeys, rkeys)
     if len(fns):
         return fns[0](lchunks, rchunks, lkeys, rkeys, fns=fns[1:], depth=depth+1)
     else:

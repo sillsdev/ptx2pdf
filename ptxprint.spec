@@ -27,7 +27,7 @@ else:
     pathex = []
     binaries = []
 
-a = Analysis(['python/scripts/ptxprint'],
+a = Analysis(['python/scripts/ptxprint', 'python/scripts/usfmerge'],
              pathex =   ['python/lib'] + pathex,
              binaries = binaries,
              datas =    [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
