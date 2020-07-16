@@ -449,8 +449,6 @@ class ViewModel:
                 setv(ModelMap[k][0], self.ptsettings.dict.get(v, ""))
 
     def generatePicLists(self, booklist, generateMissingLists=False):
-        # Format of lines in pic-list file: BBB C.V desc|file|size|loc|copyright|caption|ref
-        # MRK 1.16 fishermen...catching fish with a net|hk00207b.png|span|b||Jesus calling the disciples to follow him.|1:16
         xl = []
         randomizePosn = self.get("c_randomPicPosn")
         diglot   = self.get("c_diglotAutoAligned")
@@ -502,6 +500,7 @@ class ViewModel:
             piclist.append("% book ch.vs |filename.ext|span/col|t/b/tl/tr/bl/br||Caption Text|ch:vs\n")
             piclist.append("%   (See end of list for more help for troubleshooting)\n\n")
                         
+            # print(allpicinfo)
             for k in sorted(allpicinfo.keys()):
                 p = allpicinfo[k]
                 if   k[1] == "L" and digmode == "Bot":
@@ -523,9 +522,10 @@ class ViewModel:
                 extn = p['src'][doti:]
                 picfname = re.sub('[()&+,. ]', '_', p['src'])[:doti]+extn
                 
+                # Format of lines in pic-list file: BBB C.V desc|file|size|loc|copyright|caption|ref
+                # MRK 1.16 fishermen...catching fish with a net|hk00207b.png|span|b||Jesus calling the disciples to follow him.|1:16
                 piclist.append("{}{} {} {}|{}|{}|{}|{}|{}|{}\n".format(bk, k[1], p['anchor'], p.get('desc', ''), picfname, \
                                                     p['size'], pageposn, p.get('copy', ''), p['alt'], p.get('ref', '')))
-                # MRK 1.16 fishermen...catching fish with a net.|hk00207b.png|span|b||Jesus calling the disciples to follow him.|1:16
 
             piclist.append("\n% If illustrations are not appearing in the output PDF, check:\n")
             piclist.append("%   a) The anchor location reference on the far left is very particular, so check\n")
@@ -582,7 +582,9 @@ class ViewModel:
                 dat = inf.read()
                 blocks = [""] + re.split(r"\\c\s+(\d+)", dat)
                 for c, t in zip(blocks[0::2], blocks[1::2]):
-                    m = re.findall(r"(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|((?:[^\d\\]+? ?)?(\d+[\:\.]\d+?[abc]?(?:[\-,\u2013\u2014]\d+[abc]?)?))\\fig\*", t)
+                    m = re.findall(r"(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+)\\fig\*", t)
+                    # I removed the complex ref piece as it is no longer needed, now that we get the c.v from text itself:
+                    #                       ((?:[^\d\\]+? ?)?(\d+[\:\.]\d+?[abc]?(?:[\-,\u2013\u2014]\d+[abc]?)?))
                     if len(m):
                         for f in m:     # usfm 2
                             r = self._sortkey(c, f[0])
@@ -605,7 +607,6 @@ class ViewModel:
 
     def _sortkey(self, c, v):
         return "{:0>3}{:0>3}".format(c, re.sub(r"(\d+)[\-,abc\d]*", r"\1", v))
-        
 
     def getFigureSources(self, figlist, filt=newBase):
         res = {}
