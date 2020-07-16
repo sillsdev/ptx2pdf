@@ -242,30 +242,38 @@ bl   | 'Bottom-Left' [1]      | At the bottom of the left-hand [2] column       
 br   | 'Bottom-Right' [1]     | At the bottom of the right-hand [2] column                          | Centred within column 
 -----|------------------------|       ***Experimental Additions***                               |----------------------------
 h    | 'Here'                 | Where defined / before the verse in piclist[3,4], centred       | Centred within column
+hc   | 'Here',centred         | Where defined / before the verse in piclist[3,4], centred       | Centred within column
 hl   | 'Here'                 | Where defined / before the verse in piclist[3,4], left-aligned  | Centred below image, and the same width
 hr   | 'Here'                 | Where defined / before the verse in piclist[3,4], right-aligned | Centred below image, and the same width
-p    | 'Post-paragraph'       | After this paragraph[4]                                        | Centred within column
+p    | 'Post-paragraph'       | After this paragraph[4], centred                                | Centred within column
+pc   | 'Post-paragraph', centred  | After this paragraph[4], centred                                | Centred within column
 pr   | 'Post-paragraph, Right'| After this paragraph[4], right-aligned                           | Centred below image, and the same width
 pl   | 'Post-paragraph, Left' | After this paragraph[4], left-aligned                            | Centred below image, and the same width
 cl   | 'Cutout Left'          | In the top-left corner of this paragraph [3]                   | Centred below image, and the same width
+pc#  | 'Post-paragraph'       | After # paragraphs[4,5], centred                                | Centred within column
+pr#  | 'Post-paragraph, Right'| After # paragraphs[4,5], right-aligned                           | Centred below image, and the same width
+pl#  | 'Post-paragraph, Left' | After # paragraphs[4,5], left-aligned                            | Centred below image, and the same width
 cr   | 'Cutout Right'         | In the top-right corner of this paragraph [3]                  | Centred below image, and the same width
-cl#  | 'Cutout Left'          | In a notch # lines[5] below the top of this paragraph [3]       | Centred below image, and the same width
-cr#  | 'Cutout Right'         | In a notch # lines[5] below the top of this paragraph [3]       | Centred below image, and the same width
+cl#  | 'Cutout Left'          | In a notch # lines[6] below the top of this paragraph [3]       | Centred below image, and the same width
+cr#  | 'Cutout Right'         | In a notch # lines[6] below the top of this paragraph [3]       | Centred below image, and the same width
 
 
 Notes:
-[1] If Two columns are in use.
+[1] If two columns are in use.
 [2] If a diglot is being set inner-outer rather than left/right, then the 'left' column is the inner column. 
 [3] *Here*  and *cutout* images need to start at a new paragraph. If the specified location is not a paragraph boundary, a new paragraph will be forced.
-[4] The 'insert image here' code will be activated at the end of the paragraph except in the case that the paragraph crosses a page-boundary, in which case it may appear at the top of the new page.
+[4] The 'insert image here' code will be activated at the end of the paragraph. Counting starts at the paragraph containing the verse number or the 
+\fig definition.
+[5] pc1 is interpreted as meaning the same as pc (the c is assumed if no number is specified, but required if supplying a number).
 [5] Multi-digit numbers be specified, but little sanity checking is done. The image will be on the same page as the calling verse (or off the page's bottom), even if the notch is partly or fully on the next. A negative number will raise the image and shorten the cut-out, but will not make space above.
 
 
 ### How mature are the experimental picture positions?
-At the time of writing (15 Jul 2020), there are some recently-fixed bugs: mostly grid alignment and some poor behaviour at page boundaries:
-- c  The cutout functionality seems to work reliably, within the capabilities it has. 
-- p  The post-paragraph code seems to function well as long as the paragraph does not cross a page boundary. If it did in diglot, then the picture was always set at the top of the left-hand text of the follow-on page.  Hopefully this has now been fixed.
-- h and p  Following text may have problems with grid alignment, but this is hopefully solved.
+At the time of writing (15 Jul 2020), there are some very recently-fixed bugs. Assuming your copy is more recent than this, please report any recurrance.
+- p  : The post-paragraph code seems to function well as long as the paragraph does not cross a page boundary. If it did in diglot, then the picture was always set at the top of the left-hand text of the follow-on page.  Hopefully this has now been solved.
+- h and p :  Following text may have problems with grid alignment, but this is hopefully solved.
+- pc2 : seems to work in limited testing
+- pc3 : very unexpected results.
 
 ### Do the new picture positions conform to examples in the USFM specification?
 In some ways, they conform better than the previously available options. USFM specification indicates that a picture can occur immediately after text, ending the previous paragraph. This works with *here* and *cutout* picture locations, (the 'automatic' paragraph style for text surrounding the cutout is intended to be the same as the previous paragraph style, but until further testing reveals this to be 100% reliable, sensible users will supply their own style marker).  USFM makes no reference to left or right alignment, nor scaling images, nor images in cutouts.
