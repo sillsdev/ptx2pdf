@@ -168,6 +168,9 @@ class GtkViewModel(ViewModel):
 
     def __init__(self, settings_dir, workingdir):
         self._setup_css()
+        self.builder = Gtk.Builder()
+        self.builder.add_from_file(os.path.join(os.path.dirname(__file__), "ptxprint.glade"))
+        self.builder.connect_signals(self)
         super(GtkViewModel, self).__init__(settings_dir, workingdir)
         self.isDisplay = True
         self.config_dir = None
@@ -177,9 +180,6 @@ class GtkViewModel(ViewModel):
         self.bookNoUpdate = False
         self.pendingPid = None
         self.pendingConfig = None
-        self.builder = Gtk.Builder()
-        self.builder.add_from_file(os.path.join(os.path.dirname(__file__), "ptxprint.glade"))
-        self.builder.connect_signals(self)
         for fcb in ("digits", "script", "chapfrom", "chapto", "diglotPicListSources",
                     "textDirection", "glossaryMarkupStyle", "fontFaces"):
             self.addCR("fcb_"+fcb, 0)

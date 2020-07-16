@@ -119,7 +119,6 @@ class ViewModel:
         zd = datetime.timedelta(seconds=-(time.altzone if time.daylight else time.timezone))
         tzhrs = zd.days * 24 + (zd.seconds // 3600)
         tzmins = (zd.seconds % 3600) // 60
-        print(zd, tzhrs, tzmins)
         
         if tzhrs == 0:
             tzstr = "Z"
