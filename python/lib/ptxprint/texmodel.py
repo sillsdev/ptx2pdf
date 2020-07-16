@@ -895,6 +895,7 @@ class TexModel:
         return self.localChanges
 
     def figNameChanges(self, printer, bk):
+        # This method will probably disappear once we have the dict in place matching origname to newBase name (which is what will be in the tmpPics folder)
         if printer is None:
             return([])
         figlist = []
