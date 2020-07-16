@@ -531,13 +531,13 @@ class ViewModel:
             # print(allpicinfo)
             for k in sorted(allpicinfo.keys()):
                 p = allpicinfo[k]
-                picposn = picposns[k[1]] if digmode == "Bot" else picposn[""]
+                picposn = picposns[k[1]] if digmode == "Bot" else picposns[""]
 
                 if randomizePosn:
                     pageposn = random.choice(picposn.get(p['size'], 'col')) # Randomize location of illustrations on the page (tl,tr,bl,br)
                 else:
-                    if p['loc'] in ["t", "b", "tl", "tr", "bl", "br"]:
-                        pageposn = p['loc']
+                    if p['pgpos'] in ["t", "b", "tl", "tr", "bl", "br"]:
+                        pageposn = p['pgpos']
                     else:
                         pageposn = (picposn.get(p['size'], 'col'))[0]       # use the t or tl (first in list)
 
@@ -579,7 +579,7 @@ class ViewModel:
             return fname + "-draft" + ext
 
     def getFigures(self, bk, sfmonly=False):
-        posparms = ("desc", "src", "size", "loc", "copy", "alt", "ref", "xetex")
+        posparms = ("desc", "src", "size", "pgpos", "copy", "alt", "ref", "xetex")
         res = {}
         fname = self.getBookFilename(bk, self.prjid)
         usepiclist = not sfmonly and self.get("c_usePicList") and bk not in TexModel._peripheralBooks

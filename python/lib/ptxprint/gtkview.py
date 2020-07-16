@@ -426,7 +426,7 @@ class GtkViewModel(ViewModel):
     def set(self, wid, value, skipmissing=False):
         w = self.builder.get_object(wid)
         if w is None:
-            if not skipmissing and not w.startswith("_"):
+            if not skipmissing and not wid.startswith("_"):
                 print("Can't find {} in the model".format(wid))
             super(GtkViewModel, self).set(wid, value)
             return

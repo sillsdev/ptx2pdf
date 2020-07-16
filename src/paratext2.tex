@@ -1092,7 +1092,7 @@
 % Redefine \p@rams to be rest of list
 \def\stripspace#1 \end/#2\relax#3{\if\relax#2\relax\gdef\p@ram{#3}\else\stripspace#1\end/ \end/\relax{#1}\fi}
 \def\FigP@ramAlt{alt} \def\FigP@ramSrc{src} \def\FigP@ramSize{size} \def\FigP@ramLoc{loc}
-\def\FigP@ramCopy{copy} \def\FigP@ramRef{ref} \def\FigP@ramXtra{xetex}
+\def\FigP@ramCopy{copy} \def\FigP@ramRef{ref} \def\FigP@ramXtra{xetex} \def\FigP@ramPgpos{pgpos}
 \newif\ifusfmthree \usfmthreefalse
 \def\getonepairp@ram#1="#2" {\stripspace#1\end/ \end/\relax{#1}\edef\p@ramid{\p@ram}%
   \stripspace#2\end/ \end/\relax{#2}\edef\p@ramval{\p@ram}%
@@ -1100,12 +1100,13 @@
   \ifx\p@ramid\empty\let\next=\relax\else
     \ifx\p@ramid\FigP@ramSrc\global\p@ramnumber=2\else
     \ifx\p@ramid\FigP@ramSize\global\p@ramnumber=3 \trace{g}{Got Size}\else
-    \ifx\p@ramid\FigP@ramLoc\global\p@ramnumber=4\else
+    \ifx\p@ramid\FigP@ramLoc\global\p@ramnumber=\x@\ifx\csname param-4\endcsname\empty 4\else 5\fi\else
+    \ifx\p@ramid\FigP@ramPgpos\global\p@ramnumber=4\else
     \ifx\p@ramid\FigP@ramCopy\global\p@ramnumber=5\else
     \ifx\p@ramid\FigP@ramAlt\global\p@ramnumber=6\else
     \ifx\p@ramid\FigP@ramRef\global\p@ramnumber=7\else
     \ifx\p@ramid\FigP@ramXtra\global\p@ramnumber=8\else %experimental extra parameter, post filename e.g. "rotated 90"
-    \fi\fi\fi\fi\fi\fi\fi
+    \fi\fi\fi\fi\fi\fi\fi\fi
     \tempfalse
     \ifx\p@ramval\empty\ifusfmthree\else
       \trace{g}{param-\the\p@ramnumber = "\p@ramid" but not "\p@ramval"}%
@@ -1168,6 +1169,7 @@
     \ifx\t@mpc\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\t@mpc}\fi%Borrow cutskip for parskip 
   \fi
   }%
+
 \def\d@figure#1{%
  \ifIncludeFigures
   \trace{g}{In d@figure #1}\usfmthreefalse
