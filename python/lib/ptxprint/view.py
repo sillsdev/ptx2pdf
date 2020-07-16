@@ -7,6 +7,7 @@ import pathlib, os, sys
 from configparser import NoSectionError, NoOptionError, _UNSET
 from zipfile import ZipFile, ZIP_DEFLATED
 from io import StringIO
+import datetime, time
 
 VersionStr = "0.8.8 beta"
 
@@ -27,12 +28,12 @@ def newBase(fpath):
     else:
         return re.sub('[()&+,. ]', '_', f.lower())
 
-def refKey(r):
+def refKey(r, info=""):
     m = re.match(r"(\d*\.?\d*)(\S*)$", r)
     if m:
-        return (float(m.group(1)), m.group(2))
+        return (float(m.group(1)), info, m.group(2))
     else:
-        return r
+        return (r, info)
 
 class Path(pathlib.Path):
 
@@ -111,15 +112,21 @@ class ViewModel:
 
         # private to this implementation
         self.dict = {}
+        self.setDate()
 
-    def initvals(self):
-        t = datetime.now()
-        tz = t.utcoffset()
-        if tz is None:
+    def setDate(self):
+        t = datetime.datetime.now()
+        zd = datetime.timedelta(seconds=-(time.altzone if time.daylight else time.timezone))
+        tzhrs = zd.days * 24 + (zd.seconds // 3600)
+        tzmins = (zd.seconds % 3600) // 60
+        print(zd, tzhrs, tzmins)
+        
+        if tzhrs == 0:
             tzstr = "Z"
         else:
-            tzstr = "{0:+03}'{1:02}'".format(int(tz.seconds / 3600), int((tz.seconds % 3600) / 60))
-        self.set("_date", t.strftime("%Y%m%d%H%M%S")+tzstr)
+            tzstr = "{0:+03}'{1:02}'".format(tzhrs, tzmins)
+        self.set("_pdfdate", t.strftime("%Y%m%d%H%M%S")+tzstr)
+        self.set("_date", t.strftime("%Y-%m-%d %H:%M:%S ")+tzstr)
 
     def doError(self, txt, secondary=None):
         print(txt)
@@ -479,6 +486,7 @@ class ViewModel:
             self.doError("No Secondary Project Set", secondary="In order to use the blended PicList for Diglots, the \n"+
                                                                 "Secondary project must be set on the Diglot+Border tab.")
             return
+        self.setDate()  # update date/time to now
         existingList = []
         existingFilelist = []
         for bk in booklist:
@@ -503,10 +511,10 @@ class ViewModel:
             if len(leftpicinfo) + len(rightpicinfo) == 0:
                 continue
             if diglot:
-                allpicinfo = {refKey(k)+("L",):v for k, v in leftpicinfo.items()}
-                allpicinfo.update({refKey(k)+("R",):v for k, v in rightpicinfo.items()})
+                allpicinfo = {refKey(k, info="L"):v for k, v in leftpicinfo.items()}
+                allpicinfo.update({refKey(k, info="R"):v for k, v in rightpicinfo.items()})
             else:
-                allpicinfo = {refKey(k)+("",):v for k, v in leftpicinfo.items()}
+                allpicinfo = {refKey(k):v for k, v in leftpicinfo.items()}
 
             fname = self.getBookFilename(bk, prjid)
             piclist = []
@@ -524,7 +532,7 @@ class ViewModel:
             # print(allpicinfo)
             for k in sorted(allpicinfo.keys()):
                 p = allpicinfo[k]
-                picposn = picposns[k[-1]] if digmode == "Bot" else picposn[""]
+                picposn = picposns[k[1]] if digmode == "Bot" else picposn[""]
 
                 if randomizePosn:
                     pageposn = random.choice(picposn.get(p['size'], 'col')) # Randomize location of illustrations on the page (tl,tr,bl,br)

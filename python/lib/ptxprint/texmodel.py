@@ -1,5 +1,4 @@
 import configparser, re, os, gi
-from datetime import datetime
 from shutil import copyfile
 from pathlib import Path
 import regex
@@ -35,6 +34,7 @@ ModelMap = {
     "L_":                       ("c_diglotAutoAligned", lambda w,v: "L" if v and w.get("c_diglot") else ""),
     "R_":                       ("c_diglotAutoAligned", lambda w,v: "R" if v and w.get("c_diglot") else ""),
     "date_":                    ("_date", lambda w,v: v),
+    "pdfdate_":                 ("_pdfdate", lambda w,v: v),
     #"config/name":              ("ecb_savedConfig", lambda w,v: v or "default"),
     "config/notes":             ("t_configNotes", lambda w,v: v or ""),
     "config/pwd":               ("t_invisiblePassword", lambda w,v: v or ""),
@@ -344,6 +344,7 @@ class TexModel:
 
     def update(self):
         """ Update model from UI """
+        self.printer.setDate()  # Update date/time to now
         self.updatefields(ModelMap.keys())
         if self.asBool("project/useprintdraftfolder"):
             base = os.path.join(self.dict["/ptxpath"], self.dict["project/id"])

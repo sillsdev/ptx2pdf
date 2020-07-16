@@ -10,8 +10,8 @@ class PDFx1aOutput():
 /Subject({document/subject})%
 /Author({document/author})%
 /Creator(PTXprint ({config/name}))%
-/CreationDate(D:{date_})%
-/ModDate(D:{date_})%
+/CreationDate(D:{pdfdate_})%
+/ModDate(D:{pdfdate_})%
 /Producer(XeTeX)%
 /Trapped /False
 /GTS_PDFXVersion(PDF/X-1:2003)%
