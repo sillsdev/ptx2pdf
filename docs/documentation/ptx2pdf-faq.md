@@ -273,8 +273,9 @@ Notes:
 At the time of writing (15 Jul 2020), there are some very recently-fixed bugs. Assuming your copy is more recent than this, please report any recurrance.
 - p  : The post-paragraph code seems to function well as long as the paragraph does not cross a page boundary. If it did in diglot, then the picture was always set at the top of the left-hand text of the follow-on page.  Hopefully this has now been solved.
 - h and p :  Following text may have problems with grid alignment, but this is hopefully solved.
-- pc2 : seems to work in limited testing
-- pc3 : very unexpected results.
+
+### Can I put a picture in a footnote?
+No.
 
 ### Do the new picture positions conform to examples in the USFM specification?
 In some ways, they conform better than the previously available options. USFM specification indicates that a picture can occur immediately after text, ending the previous paragraph. This works with *here* and *cutout* picture locations, (the 'automatic' paragraph style for text surrounding the cutout is intended to be the same as the previous paragraph style, but until further testing reveals this to be 100% reliable, sensible users will supply their own style marker).  USFM makes no reference to left or right alignment, nor scaling images, nor images in cutouts.

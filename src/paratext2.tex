@@ -1313,12 +1313,12 @@
     \advance\dimen0 by \dp0
     \advance\dimen0 by 0.5\baselineskip % Rounding correction
     \divide\dimen0 by \baselineskip
-    \count0=\dimen0
-    \trace{g}{Inline picture takes \the\count0 lines}%
+    \count255=\dimen0
+    \trace{g}{Inline picture takes \the\count255 lines}%
     \ifx\picl@c\loc@Inl
       \trace{g}{Picture is inline}%
-      \advance\count0 by \prevgraf % tell cutouts what's happened
-      \prevgraf=\count0
+      \advance\count255 by \prevgraf % tell cutouts what's happened
+      \prevgraf=\count255
       \penalty10 % Allow the page to break
       \ifpicNarrow
         \ifx\pic@lign\@lignLeft
@@ -1343,7 +1343,7 @@
           \global\setbox\picb@x\hbox to \colwidth{\box\picb@x\hss}\trace{g}{Pic aligned left}%
         \else
           \global\setbox\picb@x\hbox to \colwidth{\hss\box\picb@x}\trace{g}{Pic aligned right}%
-         \fi
+        \fi
       \fi
       \edef\eotpn@me{at@ndofthispar\ifdiglot\ifdiglotL L\else R\fi\fi}% Which endofthispar macro?\emspace
       \trace{g}{\eotpn@me\space defined}%
@@ -1357,11 +1357,12 @@
        }%
        \def\temp{}
        \ifnum\c@tskip>1
-         \count0=\c@tskip
-         \loop\ifnum\count0>1
-         \edef\temp{D|\temp}
-         \advance\count0 by -1
+         \count255=\c@tskip
+         \loop\ifnum\count255>1
+          \edef\temp{D|\temp}
+          \advance\count255 by -1
          \repeat
+       \fi
        \trace{g}{Delay for \eotpn@me set to \temp}
        \x@\xdef\csname \eotpn@me Delay\endcsname{\temp}
        \relax\relax
@@ -1379,8 +1380,8 @@
         \fi 
       \trace{g}{Picture is cutout}%
       \dimen1=\baselineskip
-      \advance\count0 by 1
-      \multiply\dimen1 by \count0
+      \advance\count255 by 1
+      \multiply\dimen1 by \count255
       \advance\dimen1 by \c@tskip\baselineskip
       \dimen2=\wd0
       \advance\dimen2 by 10pt
@@ -1393,8 +1394,8 @@
          \dp\picb@x=0pt
         \vskip-\baselineskip  %Yuck
         \box\picb@x %FIXME? Box here Adds vertical space
-        \trace{g}{leftcutout \the\dimen2, \c@tskip, \the\count0}%
-        \leftcutout{\the\dimen2}{\c@tskip}{\the\count0}%
+        \trace{g}{leftcutout \the\dimen2, \c@tskip, \the\count255}%
+        \leftcutout{\the\dimen2}{\c@tskip}{\the\count255}%
       \else
         \ifx\l@cspec\@lignRight
           \setbox\picb@x\hbox to \hsize{\hss\lower\dimen1\box0}%
@@ -1402,9 +1403,9 @@
           \dp\picb@x=0pt
           \vskip-\baselineskip %Yuck
           \box\picb@x% FIXME? Box here adds vertical space
-          \trace{g}{rightcutout \the\dimen2, \c@tskip, \the\count0}%\
+          \trace{g}{rightcutout \the\dimen2, \c@tskip, \the\count255}%\
           %\edef\t@mpd{\the\dimen2}%
-          \rightcutout{\the\dimen2}{\c@tskip}{\the\count0}%\emspace
+          \rightcutout{\the\dimen2}{\c@tskip}{\the\count255}%\emspace
         \else
           \message{*** Unknown cutout position \l@cspec, picture misplaced}%
           \box0

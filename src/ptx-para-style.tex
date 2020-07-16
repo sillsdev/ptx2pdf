@@ -165,9 +165,10 @@
 \def\do@ndofthispar{
  \edef\eotpn@me{at@ndofthispar\ifdiglot\ifdiglotL L\else R\fi\fi}% Which endofthispar macro?
  \x@\let\x@\pn@xt\csname \eotpn@me\endcsname
- \trace{g}{doendofthispar \ch@pter:\v@rse \ifdiglot\ifdiglotL L \else R \fi\fi \the\pagetotal, \the\holdinginserts, page/chunk-\ifp@gestart start\else -middle\fi}%
+ \trace{g}{doendofthispar \ch@pter:\v@rse\ifdiglot\ifdiglotL L \else R \fi\fi\space \the\pagetotal, \the\holdinginserts, page/chunk-\ifp@gestart start\else -middle\fi}%
  \temptrue
  \ifx\pn@xt\empty\tempfalse\fi
+ \ifinn@te\tempfalse\fi %No pictures in notes!
  \ifdiglot
    \ifp@gestart\tempfalse\fi
  \else 
@@ -175,13 +176,13 @@
  \fi
  \ifx\pn@xt\empty\else
    \iftemp
-     \edef\temp{\csname\eotpn@me Delay\endcsname}
+     \edef\temp{\csname\eotpn@me Delay\endcsname}%
      \ifx\temp\empty\else
        \let\pn@xt=\empty
-       \trace{g}{\ch@pter:\v@rse. Delayed by specification (\temp)}
-       \x@\shrinkdel@y \temp\EDLY
-       \trace{g}{Delay for \eotpn@me set to \temp}
-       \x@\xdef\csname \eotpn@me Delay\endcsname{\temp}
+       \trace{g}{\ch@pter:\v@rse. Delayed by specification (\temp)}%
+       \x@\shrinkdel@y \temp\EDLY\relax
+       \trace{g}{Delay for \eotpn@me set to \temp}%
+       \x@\xdef\csname \eotpn@me Delay\endcsname{\temp}%
        \edef\eotpn@me{empty}
      \fi
    \else
@@ -192,8 +193,8 @@
  \fi
  \ifx\pn@xt\empty\else
    \trace{g}{\eotpn@me\space used (\the\holdinginserts)\the\ht\picb@x}%
-   \nonstopmode
-   \show\pn@xt
+   %\nonstopmode
+   %\show\pn@xt
    %\edef\pn@xt{\hbox{x}}% test code
    \x@\global\x@\let\csname\eotpn@me\endcsname=\empty\pn@xt\relax
  \fi
