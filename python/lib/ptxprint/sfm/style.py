@@ -21,8 +21,8 @@ import re
 import ptxprint.sfm.records as records
 import warnings
 from collections import abc
-from palaso.sfm.records import sequence, flag, unique, level
-from palaso.sfm.records import UnrecoverableError
+from ptxprint.sfm.records import sequence, flag, unique, level
+from ptxprint.sfm.records import UnrecoverableError
 from functools import partial
 
 class _absent:

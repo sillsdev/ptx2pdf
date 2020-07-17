@@ -75,7 +75,7 @@ def parse(parser,handler,source):
 
 
 if __name__ == '__main__':
-    import palaso.sfm.usfm as usfm
+    import ptxprint.sfm.usfm as usfm
     import sys, codecs
     mat=codecs.open(sys.argv[1],'rb',encoding='utf-8_sig')
     out=codecs.open(sys.argv[2],'wb',encoding='utf-8',buffering=1)

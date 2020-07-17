@@ -23,7 +23,7 @@ import collections
 import ptxprint.sfm as sfm
 from functools import partial, reduce
 from itertools import chain
-from palaso.sfm import level
+from ptxprint.sfm import level
 
 
 class schema(collections.namedtuple('schema','start fields')): pass
