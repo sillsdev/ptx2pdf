@@ -141,14 +141,14 @@ images in cutouts.
  
 #### Why might I use unusual positions?
 - cl / cr  Small images, perhaps glossary items?
-- d  A picture to be set after the final verse of a book, otherwise impossible
+- p  A picture to be set after the final verse of a book, otherwise impossible
   from a piclist. Possibly also for some kind of decorative 'end of section'
   mark.
 - hl / hr Handy for a sponsor's or publisher's logo, perhaps?
 
 ### span Attribute
 
-The `span` attribute has been extended to support scaling. Following the `col`
+The `size` attribute has been extended to support scaling. Following the `col`
 or `span` values, there may be an optional `*` followed by scale factor, with
 1.0 being the unity scaling. For example in a piclist:
 
@@ -205,12 +205,15 @@ A piclist file has a strict format:
 - Blank lines consisting only of whitespace (after % comment removal) are
   ignored.
 - A piclist entry consists of an anchor reference followed by the contents of a
-  `\fig` element (without the `\fig` markers).
+  `\fig` element (without the `\fig` markers) USFM2 or USFM3 format may be used.
 - Piclist entries must be in reference order. The ptx macros will read the next
   entry and if the anchor reference entry is before or equal to the anchor reference entry
   of the previous entry, it and all future piclist entries will be ignored.
 - The anchor reference is of the form _bk_ _C_._V_, where _bk_ is the 3 letter
   (all-caps) book identifier. The _C_ and _V_ are chapter and verse references.
   The _bk_ may also have a 4th letter of `R` or `L` to indicate which side in a
-  diglot is being referenced. Lack of a 4th letter implies `L`.
+  diglot is being referenced. Lack of a 4th letter implies it may be matched
+  while processing either column, and the user has no preference about
+  which font, etc. are used (normally `L` will match it first, but this is not guaranteed).
+
 
