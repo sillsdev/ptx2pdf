@@ -329,7 +329,7 @@ class RunJob:
                 logFile = os.path.join(self.tmpdir, "ptxprint-merge.log")
                 copyfile(left, tmpFile)
 
-                if self.args.useusfmerge:
+                if not self.args.nuseusfmerge:
                     cmd = [os.path.join(self.scriptsdir, "usfmerge")]
                     if sys.platform == "win32":
                         cmd = ["python"] + cmd
