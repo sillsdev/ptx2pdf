@@ -42,13 +42,15 @@
 % Print the first reference from the mark data
 %
 \newif\ifOmitBookRef
-\def\f@rstref#1{\edef\t@st{#1}\x@\extr@ctfirst\t@st\relax
- \ifx\@book\empty\else
-  \ifOmitBookRef\else\@book\ \fi
-  \ifOmitChapterNumberRH\else\@chapter\fi
-  \ifVerseRefs
-   \ifOmitChapterNumberRH\else\cvs@p\fi
-  \@verse
+\def\f@rstref#1{\edef\t@st{#1}
+ \ifx\t@st\empty\else\x@\extr@ctfirst\t@st\relax
+  \ifx\@book\empty\else
+   \ifOmitBookRef\else\@book\ \fi
+   \ifOmitChapterNumberRH\else\@chapter\fi
+   \ifVerseRefs
+    \ifOmitChapterNumberRH\else\cvs@p\fi
+    \@verse
+   \fi
   \fi
  \fi}
 

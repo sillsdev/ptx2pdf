@@ -1486,8 +1486,22 @@
         \global\setbox\excessL=\box\partialL\relax%
         \global\setbox\partialL=\box\LeftBox\relax%
       \else%
-        \trace{D}{no need to split}%
+        \ifx\topLmark\empty
+          \trace{D}{need to split to get marks}%
+          \setbox0=\copy\partialL
+          \setbox0=\vsplit0 to \maxdimen
+            
+          \xdef\topLmark{\splitfirstmark}
+          \ifuseLeftMarks
+            \ifx\p@gefirstmark\empty%
+              \xdef\p@gefirstmark{\firstmark}%
+            \fi
+          \fi
+        \else
+          \trace{D}{no need to split}%
+        \fi
         \global\outputpenalty=-10002\relax%No more itterations after this
+        % but we do need 
         \global\setbox\partialL=\vtop{\unvbox\partialL}%
         %\makevtop{\partialL}
       \fi%

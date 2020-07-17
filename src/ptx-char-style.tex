@@ -215,7 +215,12 @@
  \ifdiglot\setLRspecific\fi % FIXME: Whether diglot or not, it might have been diglot before.
  %\getFp@ram{fontscale}{#1}%
  % check if font identifier for this style has been created or fontscale being used
- \ifnum\ifx\p@ram\relax\x@\ifx\csname font<\f@ntstyle>\endcsname \relax 1\else 0\fi\else 1\fi =1
+ %\ifnum
+   %\ifx\p@ram\relax
+ %     \x@\ifx\csname font<\f@ntstyle>\endcsname \relax 1\else 0\fi
+   %\else 1
+ %fi=1
+ \x@\ifx\csname font<\f@ntstyle>\endcsname \relax 
   \trace{s}{s@tfont font for #1 at \c@rrfontsize}%
   \trace{S}{Normal font for \sid@\space is \regular}%
   \let\regul@r=\regular%
