@@ -577,7 +577,7 @@ class ViewModel:
         else:
             return fname + "-draft" + ext
 
-    def getFigures(self, bk, sfmonly=False):
+    def getFigures(self, bk, sfmonly=False, media=None):
         posparms = ("desc", "src", "size", "pgpos", "copy", "alt", "ref", "xetex")
         res = {}
         fname = self.getBookFilename(bk, self.prjid)
@@ -609,20 +609,20 @@ class ViewModel:
                     m = re.findall(r"(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+)\\fig\*", t)
                     # I removed the complex ref piece as it is no longer needed, now that we get the c.v from text itself:
                     #                       ((?:[^\d\\]+? ?)?(\d+[\:\.]\d+?[abc]?(?:[\-,\u2013\u2014]\d+[abc]?)?))
+                    r = self._sortkey(c, f[0])
                     if len(m):
                         for f in m:     # usfm 2
-                            r = self._sortkey(c, f[0])
                             res[r] = {}
                             res[r]['anchor'] = "{}.{}".format(c, f[0])
                             for i, v in enumerate(f[3:]):
                                 res[r][posparms[i]] = v
                             # interpret pgpos as possibly other things
                             p = res[r]['pgpos']
-                            if re.match(r"^[tbhpg][lrc]?(?:-\d*)?$", p):
-                                pass
-                            elif p in "apw":
+                            if all(x in "apw" for x in p):
                                 res[r]['media'] = p
                                 del res[r]['pgpos']
+                            elif re.match(r"^[tbhpg][lrc]?(?:-\d*)?$", p):
+                                res[r]['media'] = 'p'
                             elif re.match(r"^(?:\S*)\s*\d+\.?\d*\s*$", p):
                                 res[r]['loc'] = p
                                 del res[r]['pgpos']
@@ -630,24 +630,27 @@ class ViewModel:
                         m = re.findall(r'(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig ([^\\]*?)\|([^\\]+)\\fig\*', t)
                         for f in m:     # usfm 3
                             caption = f[3]
-                            r = self._sortkey(c, f[0])
                             res[r] = {}
                             res[r]['anchor'] = "{}.{}".format(c, f[0])
                             labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f[4])
                             for l in labelParams:
                                 k,v = l.split("=")
                                 res[r][k.strip()] = v.strip('"')
+                    if media is not None and r in res:
+                        if 'media' in res[r] and not any(x in media for x in res[r]['media']):
+                            del res[r]
         return res
 
     def _sortkey(self, c, v):
         return "{:0>3}{:0>3}".format(c, re.sub(r"(\d+)[\-,abc\d]*", r"\1", v))
 
-    def getFigureSources(self, figlist, filt=newBase):
+    def getFigureSources(self, figinfos, filt=newBase):
         res = {}
+        outkey = 'src path'
         if filt is not None:
-            newfigs = {filt(f): f for f in figlist}
+            newfigs = {filt(f['src']): k for k,f in figinfos.items()}
         else:
-            newfigs = {f: f for f in figlist}
+            newfigs = {f['src']: k for k,f in figinfos.items()}
         if self.get("c_useCustomFolder"):
             srchlist = [self.printer.customFigFolder]
         else:
@@ -689,17 +692,16 @@ class ViewModel:
                     if nB not in newfigs:
                         continue
                     k = newfigs[nB]
-                    if k in res:
+                    if outkey in figinfos[k]:
                         old = extensions.get(os.path.splitext(res[k]).lower(), 10000)
                         new = extensions.get(os.path.splitext(filepath).lower(), 10000)
                         if old > new:
-                            res[k] = filepath
+                            figinfos[k][outkey] = filepath
                         elif old == new and (self.printer.get("c_useLowResPics") \
                                             != bool(os.path.getsize(res[k]) < os.path.getsize(filepath))):
-                            res[k] = filepath
+                            figinfos[k][outkey] = filepath
                     else:
-                        res[k] = filepath
-        return res
+                        figinfos[k][outkey] = filepath
 
     def generateAdjList(self):
         existingFilelist = []
@@ -924,17 +926,17 @@ class ViewModel:
             cfpath += cfgid+"/"
         basecfpath = self.configPath(cfgid, prjid)
 
+        picinfos = {}
         for bk in books:
             fname = self.getBookFilename(bk, prjid)
             fpath = os.path.join(self.settings_dir, prjid)
             res[os.path.join(fpath, fname)] = fname
-            picinfos = self.getFigures(bk)
-            for p in picinfos.values():
-                pictures.add(p['src'])
+            picinfos.update(("{} {}".format(bk, k), v) for k,v in self.getFigures(bk).items())
 
-        picsrcs = self.getFigureSources(pictures)
-        for p, f in picsrcs.items():
-            res[f] = "figures/"+os.path.basename(f)
+        self.getFigureSources(picinfos)
+        pathkey = 'src path'
+        for f in (p[pathkey] for p in picinfos.values() if pathkey in p):
+                res[f] = "figures/"+os.path.basename(f)
         adjpath = os.path.join(basecfpath, "AdjLists")
         adjbks = set(self.getDraftFilename(bk, ext=".adj") for x in books)
         if os.path.exists(adjpath):

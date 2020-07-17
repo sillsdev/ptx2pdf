@@ -1092,7 +1092,7 @@
 % Redefine \p@rams to be rest of list
 \def\stripspace#1 \end/#2\relax#3{\if\relax#2\relax\gdef\p@ram{#3}\else\stripspace#1\end/ \end/\relax{#1}\fi}
 \def\FigP@ramAlt{alt} \def\FigP@ramSrc{src} \def\FigP@ramSize{size} \def\FigP@ramLoc{loc}
-\def\FigP@ramCopy{copy} \def\FigP@ramRef{ref} \def\FigP@ramXtra{xetex} \def\FigP@ramPgpos{pgpos}
+\def\FigP@ramCopy{copy} \def\FigP@ramRef{ref} \def\FigP@ramXtra{x-xetex} \def\FigP@ramPgpos{pgpos}
 \newif\ifusfmthree \usfmthreefalse
 \def\getonepairp@ram#1="#2" {\stripspace#1\end/ \end/\relax{#1}\edef\p@ramid{\p@ram}%
   \stripspace#2\end/ \end/\relax{#2}\edef\p@ramval{\p@ram}%
