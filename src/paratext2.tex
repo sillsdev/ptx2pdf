@@ -326,7 +326,8 @@
   \global\galleypenalty=\outputpenalty
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
   \global\output={\onecoltrial}
-  \ifm@rksonpage\else\gdef\p@gefirstmark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
+  % No marks on the page, and it didn't fit, so add a blank mark
+  \ifm@rksonpage\else\gdef\p@gefirstmark{}\trace{H}{No marks found. Setting empty mark}\fi
   \global\holdinginserts=0
   \unvbox255
   \penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi

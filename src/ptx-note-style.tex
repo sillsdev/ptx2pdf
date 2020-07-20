@@ -97,6 +97,7 @@
  \if\n@xt*\let\n@xt\endn@testyle\else\let\n@xt\startn@testyle\fi
  \n@xt}
 
+\def\b@lance{BALANCE}
 \lowercase{
  \def\startn@testyle~#1 {% get the caller code as a space-delimited parameter
   \trace{n}{startn@testyle #1}%
@@ -126,21 +127,19 @@
         \everypar={}\cancelcutouts % begin a note insertion in the given style
         \getp@ram{callerstyle}{\newn@testyle}% see if a caller style was defined
         \ifx\p@ram\relax\def\c@llerstyle{v}\else\edef\c@llerstyle{\p@ram}\fi % if not, treat it like "v"
-        \ifx\them@rk\empty
-          \setbox0=\box\voidb@x
-        \else
-          \setbox0=\hbox to 1ex{\hss\ch@rstyle{\c@llerstyle}~\them@rk\ch@rstyle{\c@llerstyle}*\hss}%
+        \ifx\them@rk\empty \setbox0=\box\voidb@x \else
+          \setbox0=\hbox to 1ex{\hss\ch@rstyle{\c@llerstyle}~\them@rk\ch@rstyle{\c@llerstyle}*\hss}\ht0=0pt
         \fi
-        \ht0=0pt 
         \getp@ram{callerraise}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi % suppress height of caller
+        \ifnum\pagetracing>0
+          \edef\n@tetxt{\b@lance\space note \newn@testyle\space in \n@tebase. \id@@@\space \ch@pter.\v@rse}%
+          \x@\x@\x@\write-1\x@{\n@tetxt}
+        \fi
       }{\getp@ram{notecallerstyle}{\newn@testyle}\ifx\p@ram\relax\else
           \edef\c@llerstyle{\p@ram}%
-          \ifx\them@rk\empty
-            \setbox0=\box\voidb@x
-          \else
-            \setbox0=\hbox to 1ex{\hss\ch@rstyle{\c@llerstyle}~\them@rk\ch@rstyle{\c@llerstyle}*\hss}%
+          \ifx\them@rk\empty \setbox0=\box\voidb@x \else
+            \setbox0=\hbox to 1ex{\hss\ch@rstyle{\c@llerstyle}~\them@rk\ch@rstyle{\c@llerstyle}*\hss}\ht0=0pt
           \fi
-          \ht0=0pt
           \getp@ram{notecallerraise}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi
         \fi}\bgroup
     \global\n@tenesting=1\relax

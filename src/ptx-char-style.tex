@@ -223,11 +223,11 @@
  \x@\ifx\csname font<\f@ntstyle>\endcsname \relax 
   \trace{s}{s@tfont font for #1 at \c@rrfontsize}%
   \trace{S}{Normal font for \sid@\space is \regular}%
-  \let\regul@r=\regular%
-  \let\b@ld=\bold%
-  \let\it@lic=\italic%
-  \let\b@lditalic=\bolditalic%
-  \let\typef@ce=\regul@r%
+  \let\regul@r=\regular
+  \let\b@ld=\bold
+  \let\it@lic=\italic
+  \let\b@lditalic=\bolditalic
+  \let\typef@ce=\regul@r
   \getFp@ram{fontname}{#1}% see if \FontName was specified in the stylesheet
   \ifx\p@ram\relax % if not, check the \Bold and \Italic properties
 	  \getFp@ramR{bold}{#1}%

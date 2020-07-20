@@ -112,7 +112,7 @@
  \loop \ifdim\dimen0<\dimen2
    \advance\dimen0 by \baselineskip
    \line{}\nobreak \repeat
- \setbox0=\vbox to 0pt{\kern-\ht0\unvbox0}
+ \setbox0=\vbox to 0pt{\kern-\ht0\unvbox0}%
  \trace{h}{after gridbox: dimen0=\the\dimen0; dp0=\the\dp0}%
  \unvbox0 \nobreak
 }
@@ -138,7 +138,6 @@
 }
 
 \newif\ifsquashgridbox\squashgridboxtrue
-\def\paratrace{0}
 \let\gridb@x\gr@db@@x
 
 
@@ -219,10 +218,10 @@
     \end@llcharstyles % end any character styles in effect
     \beginL\pdfsavepos
     \write\p@rlocs{\noexpand\@parend{\the\pdflastxpos}{\the\pdflastypos}}\endL
-    \ifnum\paratrace>0\tracingparagraphs=1\ifnum\paratrace>1\looseness=-1\fi\else\tolerance=10\fi
+    \ifnum\pagetracing>0\tracingparagraphs=1\ifnum\pagetracing>1\looseness=-1\fi\else\tolerance=10\fi
     \par % end the paragraph
     \ifdim\prevdepth>0pt\lastdepth=\prevdepth\else\lastdepth=-1pt\fi
-    \ifnum\paratrace>0\tracingparagraphs=0\fi
+    \ifnum\pagetracing>0\tracingparagraphs=0\fi
     \ifdr@ppednumber % the preceding par had a dropped number;
                      % add \nobreak if it was a single line, else clear the flag
       \x@\write\x@\p@rlocs\x@{\x@\noexpand\x@\@parlines\x@{\the\prevgraf}}%
@@ -242,8 +241,8 @@
     \csname after-\m@rker\sid@\endcsname\relax% handle side-specific <start> hook
   \fi
   \csname after-\m@rker\endcsname % handle <after> hook for the previous style
-  \gdef\m@rker{#1} % remember the new style name
-  \mcpush{P+#1}
+  \gdef\m@rker{#1}% remember the new style name
+  \mcpush{P+#1}%
   \csname before-\m@rker\endcsname % handle its <before> hook
   \ifdiglot
     \csname before-\m@rker\sid@\endcsname\relax % handle side-specific <start> hook
@@ -303,7 +302,7 @@
    \the\@veryparhooks
    \beginL\pdfsavepos
    \write\p@rlocs{\noexpand\@parstart{\the\pdflastxpos}{\the\pdflastypos}}\endL
-   %\ifRTL \rightskip\else\leftskip\fi =0pt
+   \ifRTL \rightskip\else\leftskip\fi =0pt
    \ifRTL \beginR \leftskip\else\rightskip\fi =0pt \ifJustifyPars\else plus .25\hsize\fi
    \getp@ram{justification}{\m@rker}%
    \ifx\p@ram\c@nter
