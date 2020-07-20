@@ -133,7 +133,7 @@
         \getp@ram{callerraise}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi % suppress height of caller
         \ifnum\pagetracing>0
           \edef\n@tetxt{\b@lance\space note \newn@testyle\space in \n@tebase. \id@@@\space \ch@pter.\v@rse}%
-          \x@\x@\x@\write-1\x@{\n@tetxt}
+          \x@\x@\x@\write-1\x@{\n@tetxt}%
         \fi
       }{\getp@ram{notecallerstyle}{\newn@testyle}\ifx\p@ram\relax\else
           \edef\c@llerstyle{\p@ram}%

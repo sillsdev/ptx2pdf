@@ -268,7 +268,7 @@
   \everypar={}% don't do body text formatting
   \unvbox#1 % open up the vbox of notes to get at the list of individual note boxes
   \makehboxofhboxes % make a single hbox for all notes of this class
-  \setbox0=\hbox{\unhbox0 \removehboxes} % add internote space
+  \setbox0=\hbox{\unhbox0 \removehboxes}% add internote space
   \getp@ram{baseline}{#2}\ifx\p@ram\relax\else\baselineskip=\p@ram\fi
 % Enable justification according to marker.
   \lineskiplimit=-10pt\leftskip=0pt\rightskip=0pt\parskip=0pt\parfillskip=0pt plus 1fil%\lineskip=10pt
@@ -796,25 +796,25 @@
 
 \xdef\p@gebotmark{}% No guarantee this will be universally set
 \def\c@lcavailht{
-  \edef\t@st{\p@gefirstmark}
+  \edef\t@st{\p@gefirstmark}%
   \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi% remember first, if not already set
-  \edef\t@st{\p@gebotmark}
+  \edef\t@st{\p@gebotmark}%
   \ifx\t@st\empty\xdef\p@gebotmark{\botmark}\fi
   %NOT HERE! \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
   \availht=\trialheight % amount of space we think is available
-  \trace{i}{C@lcavailht partial:\the\ht\partial \space av:\the\availht}
+  \trace{i}{C@lcavailht partial:\the\ht\partial \space av:\the\availht}%
   \f@rstnotetrue
   \let\\=\reduceavailht\the\n@tecl@sses % reduce it by the space needed for each note class
-  \trace{i}{after inserts: \the\availht}
-  \trace{o}{availht = \the\availht, depth = \the\dp255}
+  \trace{i}{after inserts: \the\availht}%
+  \trace{o}{availht = \the\availht, depth = \the\dp255}%
   \advance\availht -\dp255
   % Round to lines accurate to 1/8pt in lineskip. 1/10pt causes overflow on longer pages. Support two column legal.
   \dimen0=8\baselineskip
   \multiply\availht by 8 \divide\availht by\dimen0 \multiply\availht by\dimen0 \divide\availht by 8
-  \decr{\availht}{\topins} % and by the space needed for spanning pictures
-  \decr{\availht}{\bottomins}
+  \decr{\availht}{\topins}% and by the space needed for spanning pictures
+  \decr{\availht}{\bottomins}%
   \advance\availht by \dp255 % split includes depth so give it space for that
-  \trace{o}{new availht=\the\availht, topins=\the\ht\topins, bottomins=\the\ht\bottomins, baselineskip=\the\baselineskip}
+  \trace{o}{new availht=\the\availht, topins=\the\ht\topins, bottomins=\the\ht\bottomins, baselineskip=\the\baselineskip}%
   \splittopskip=\topskip
 }
 
@@ -1331,7 +1331,7 @@
         \gridb@x0
         \dimen9=\lastdepth
         \kern\dimen9
-        \trace{g}{gridbox dp=\the\dimen9} %There's a skip at the bottom of the box, but somehow the depth is kept. Need to kill it.
+        \trace{g}{gridbox dp=\the\dimen9}%There's a skip at the bottom of the box, but somehow the depth is kept. Need to kill it.
       \gridp@cfalse% make sure we align to the page grid
       \squashgridboxtrue
       \penalty10
@@ -1356,16 +1356,16 @@
         \gridp@cfalse % make sure we align to the page grid
         \penalty10
        }%
-       \def\temp{}
+       \def\temp{}%
        \ifnum\c@tskip>1
          \count255=\c@tskip
          \loop\ifnum\count255>1
-          \edef\temp{D|\temp}
+          \edef\temp{D|\temp}%
           \advance\count255 by -1
          \repeat
        \fi
-       \trace{g}{Delay for \eotpn@me set to \temp}
-       \x@\xdef\csname \eotpn@me Delay\endcsname{\temp}
+       \trace{g}{Delay for \eotpn@me set to \temp}%
+       \x@\xdef\csname \eotpn@me Delay\endcsname{\temp}%
        \relax\relax
     \fi
     \ifx\picl@c\loc@Cut
