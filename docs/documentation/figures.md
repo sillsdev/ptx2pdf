@@ -65,7 +65,15 @@ treated as a `pgpos` attribute for backward compatibility.
 
 ### pgpos Attribute
 
-In the above pic-list line, (for the *right* column of a diglot, hence the `R`
+The `pgpos` attribute gives a suggestion as to where on the page a figure should
+be placed. Given that picture placement is highly specific to a particular
+publication, it is advisable not to use `pgpos` in a USFM file itself, but to
+use it in a piclist file. It can be used in a USFM file when a piclist is
+unavailable, but users should recognise that in a different publication, the
+typesetter will almost certainly change the page position.
+
+An example of the `pgpos` attribute may be found in the piclist line shown in
+the initial section above. In that line (for the *right* column of a diglot, hence the `R`
 after the `HEB`), the picture will be set in a cut-out on the right side of the
 column, two lines below the beginning of the paragraph starting at 3:9, with the
 picture half a column wide and the text a little distance away.  This may
