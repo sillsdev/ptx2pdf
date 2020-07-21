@@ -181,10 +181,10 @@
 {diglot/fzysettings}
 
 %%%%% Hyphenation %%%%%
+\newlanguage\langund \language\langund
 {paragraph/ifhavehyphenate}{paragraph/ifhyphenate}\input "{/ptxrpath}/{project/id}/shared/ptxprint/hyphen-{project/id}.tex"
 {paragraph/ifomithyphen}\defaulthyphenchar=8203
-{paragraph/ifnothyphenate}\hyphenpenalty=10000
-\exhyphenpenalty=2000
+{paragraph/ifnothyphenate}\hyphenpenalty=10000 \exhyphenpenalty=10000
 \tracingstats=1
 
 % Extras not yet templated (if ever)

@@ -261,10 +261,12 @@
   \ifx\SpaceStretchFactor\empty\else
     \dimen0=\SpaceStretchFactor\x@\x@\fontdimen2\csname font<\f@ntstyle>\endcsname
     \x@\x@\fontdimen3\csname font<\f@ntstyle>\endcsname=\dimen0
+    \trace{F}{Font \f@ntstyle, space stretch \the\dimen0}%
   \fi
   \ifx\SpaceShrinkFactor\empty\else
     \dimen0=\SpaceShrinkFactor\x@\x@\fontdimen2\csname font<\f@ntstyle>\endcsname
     \x@\x@\fontdimen4\csname font<\f@ntstyle>\endcsname=\dimen0
+    \trace{F}{Font \f@ntstyle, space shrink \the\dimen0}%
   \fi
  \fi
  % switch to the appropriate font
