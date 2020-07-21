@@ -231,9 +231,13 @@
 \f@rstnotetrue
 \def\footnoterule{\kern-0.5\AboveNoteSpace\kern-.4pt % the \hrule is .4pt high
   \setn@tewidth
-  \dimen0=\n@tewidth\advance\dimen0 by -\columnshift\toks0=\everypar\everypar={}\parskip=0pt\baselineskip=0pt\parindent=0pt\let\par=\endgraf\parfillskip=0pt%
+  \dimen0=\n@tewidth
+  \ifdiglot\else
+     \advance\dimen0 by -\columnshift %handled differently in diglot
+  \fi
+  \toks0=\everypar\everypar={}\parskip=0pt\baselineskip=0pt\parindent=0pt\let\par=\endgraf\parfillskip=0pt%
 %  \noindent\hbox{\noindent\kern\columnshift\vbox{\hrule width \dimen0}}\par
-  \hbox{\kern\columnshift
+  \hbox{\ifdiglot\else\kern\columnshift\fi
     \vrule height 0.4pt width \dimen0}\kern0pt%
     \kern0.5\AboveNoteSpace%This was commented out, without it the line was going through through some callers
 \everypar=\toks0}
@@ -280,7 +284,9 @@
   \else\ifx\p@ram\r@ght
      \leftskip=\noteRag
   \fi\fi\fi
-  \advance\leftskip by \columnshift%
+  \ifdiglot\else
+    \advance\leftskip by \columnshift%
+  \fi
   %\showbox0
   \noindent % starting making new paragraph
   \ifRTL\beginR\fi % respect directionality
@@ -1093,7 +1099,7 @@
 % Redefine \p@rams to be rest of list
 \def\stripspace#1 \end/#2\relax#3{\if\relax#2\relax\gdef\p@ram{#3}\else\stripspace#1\end/ \end/\relax{#1}\fi}
 \def\FigP@ramAlt{alt} \def\FigP@ramSrc{src} \def\FigP@ramSize{size} \def\FigP@ramLoc{loc}
-\def\FigP@ramCopy{copy} \def\FigP@ramRef{ref} \def\FigP@ramXtra{x-xetex} \def\FigP@ramPgpos{pgpos}
+\def\FigP@ramCopy{copy} \def\FigP@ramRef{ref} \def\FigP@ramXtra{x-xetex} \def\FigP@ramPgpos{pgpos} \def\FigP@ramMirror{mirror}
 \newif\ifusfmthree \usfmthreefalse
 \def\getonepairp@ram#1="#2" {\stripspace#1\end/ \end/\relax{#1}\edef\p@ramid{\p@ram}%
   \stripspace#2\end/ \end/\relax{#2}\edef\p@ramval{\p@ram}%
@@ -1107,7 +1113,9 @@
     \ifx\p@ramid\FigP@ramAlt\global\p@ramnumber=6\else
     \ifx\p@ramid\FigP@ramRef\global\p@ramnumber=7\else
     \ifx\p@ramid\FigP@ramXtra\global\p@ramnumber=8\else %experimental extra parameter, post filename e.g. "rotated 90"
-    \fi\fi\fi\fi\fi\fi\fi\fi
+    \ifx\p@ramid\FigP@ramMirror\global\p@ramnumber=9\else %experimental mirror parameter.
+    \trace{g}{Unrecognised usfm3 parameter \p@ramid}%
+    \fi\fi\fi\fi\fi\fi\fi\fi\fi
     \tempfalse
     \ifx\p@ramval\empty\ifusfmthree\else
       \trace{g}{param-\the\p@ramnumber = "\p@ramid" but not "\p@ramval"}%
@@ -1181,7 +1189,7 @@
   \loop
     \x@\gdef\csname param-\the\p@ramnumber\endcsname{}%
     \global\advance\p@ramnumber by 1
-    \ifnum\p@ramnumber<9\repeat
+    \ifnum\p@ramnumber<10\repeat
   \global\p@ramnumber=1
   \loop
     \x@\getonep@ram\p@rams\end
@@ -1196,7 +1204,7 @@
   \ifx\loc@ption\empty % if location empty
     \ifx\size@ption\size@SPAN%
 	   \def\loc@ption{t}% if size is SPAN default to top
-	\else\def\loc@ption{tl}\fi % else default to top left
+	\else\def\loc@ption{tl}\fi % else default to top left FIXME? Standard says inline. Could swap to h if that proves stable.
   \fi
   % set width to column width or span width
   \p@cwidth=\ifx\size@ption\size@COL \hsize
@@ -1257,6 +1265,7 @@
 	% insert picture based on PicPath and file name, scaled to \p@cwidth
     \let\picfilecomm@nd=\XeTeXpicfile
     \edef\f@lename{\csname param-2\endcsname}%
+    \edef\mirr@r{\csname param-9\endcsname}%
     \expandafter\ch@ckpdf\f@lename..\endf@lename
     \setbox0=\hbox to \sizem@ltiple\p@cwidth{\hss
       \picfilecomm@nd "\the\PicPath\csname param-2\endcsname"
@@ -1268,6 +1277,19 @@
         \vbox to 0pt{\kern-\ht0 \vss \hbox to \wd0{\hss\idf@nt
           \csname param-2\endcsname\hss}\vss}%
         \kern-.2pt \hrule height .2pt}%
+    \fi
+    % FIXME: Something like this?
+    \tempfalse
+    \ifx\mirr@r\empty\else
+      \trace{g}{Mirror: \mirr@r, \the\pageno}%
+      \ifx\mirr@r\@dd\ifodd\pageno\temptrue\fi\fi %Page number is frequently low by one or 2 when image is read. Needs external toc-style file.
+      \ifx\mirr@r\@ven\ifodd\pageno\else\temptrue\fi\fi
+      \ifx\mirr@r\b@th\temptrue\fi
+      \iftemp
+          \trace{g}{Mirrored image requested}%
+          %This bit tested:
+          \setbox0\hbox{\dimen0=\wd0\kern\dimen0\special{pdf:  begintransform}\special{x:scale -1 1}\box0\special{pdf: endtransform}\kern-\dimen0}%
+      \fi
     \fi
     \trace{g}{Picture height=\the\ht0, vs:\the\vsize, \the\partialLpenalty,  pg:\the\pagegoal, pt:\the\pagetotal, av:\the\availht}%
     \ifpicNarrow
@@ -1440,6 +1462,10 @@
 \def\loc@Par{p}% post-paragrpah
 \def\@lignLeft{l}
 \def\@lignRight{r}
+\def\@dd{odd}
+\def\@ven{even}
+\def\b@th{both}
+
 \newbox\picb@x
 \newcount\p@ramnumber
 \newdimen\p@cinswid

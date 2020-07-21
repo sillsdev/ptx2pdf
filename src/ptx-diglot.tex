@@ -1385,6 +1385,7 @@
   \ifdim \dimen9 <\dp\RightBox \dimen9=\dp\RightBox \fi
   \trace{d}{Gutter \the\dimen8 height, \the\dimen9 deep}%
   \dimen7=0pt%.5\baselineskip
+  \hbox to\columnshift{}%
   \ifdiglotN@rmal%Are the sides swapped?
     \hbox to\columnLwidth{\box\LeftBox\hss}\makediglotgutter{\dimen7}{\dimen8}{\dimen9}
     \hbox to\columnRwidth{\box\RightBox\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
@@ -1584,10 +1585,12 @@
         \trace{d}{Gutter \the\dimen8 hight, \the\dimen9 deep}%
         \dimen7=0pt
         \setbox\LeftBox=\hbox to \textwidth{%\vllap{\the\ht\LeftBox \the\dp\LeftBox}
+          \hbox to\columnshift{}%
           \ifdiglotN@rmal%are the sides swapped?
             \hbox to\columnLwidth{\copy\LeftBox\hss}\makediglotgutter{\dimen7}{\dimen8}{\dimen9}%
             \hbox to\columnRwidth{\copy\RightBox\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
           \else%
+            \hbox to\columnshift{}%
             \hbox to\columnRwidth{\copy\RightBox\hss}\makediglotgutter{\dimen7}{\dimen8}{\dimen9}%
             \hbox to\columnLwidth{\copy\LeftBox\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
           \fi%
@@ -1621,11 +1624,14 @@
         %\fi
         \trace{d}{Gutter \the\dimen8 tall, \the\dimen9 deep}%
         \setbox\LeftBox\hbox to \textwidth{%\vllap{\the\ht\LeftBox \the\dp\LeftBox}
+          \hbox to\columnshift{}%
           \ifdiglotN@rmal%are the sides swapped?
             \hbox to\columnLwidth{\copy\LeftBox\hss}\makediglotgutter{\dimen8}{\dimen8}{\dimen9}%
+            \hbox to\columnshift{}%
             \hbox to\columnRwidth{\copy\RightBox\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
           \else%
             \hbox to\columnRwidth{\copy\RightBox\hss}\makediglotgutter{\dimen8}{\dimen8}{\dimen9}%
+            \hbox to\columnshift{}%
             \hbox to\columnLwidth{\copy\LeftBox\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
           \fi%
         }%
@@ -1689,6 +1695,7 @@
   \dimen7=\dimen9
   \advance\dimen7 by \dimen8
    \hbox to \textwidth{%\vllap{\the\ht\LeftBox \the\dp\LeftBox}
+     \hbox to\columnshift{}%
      \ifdiglotN@rmal%Are the sides swapped?
        \hbox to\columnLwidth{\box\topleftins\hss}\hskip\gutter%
        \hbox to\columnRwidth{\box\toprightins\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
@@ -1705,6 +1712,7 @@
       \setbox\bottomleftins=\vbox to \ht\bottomrightins{\box\bottomleftins\vss}%
    \fi%
    \hbox to \textwidth{%\vllap{\the\ht\LeftBox \the\dp\LeftBox}
+     \hbox to\columnshift{}%
      \ifdiglotN@rmal%Are the sides swapped?
        \hbox to\columnLwidth{\box\bottomleftins\hss}\hskip\gutter%
        \hbox to\columnRwidth{\box\bottomrightins\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
@@ -1754,7 +1762,7 @@
   %%somejunk
 }
 
-\def\makediglotgutter#1#2#3{\hbox to0.5\columnshift{}\hbox to \gutter{\hss
+\def\makediglotgutter#1#2#3{\hbox to \gutter{\hss
   \dimen4=#1\advance \dimen4 by #3
   \ifColumnGutterRule
     \setbox4=\vbox to #2{
