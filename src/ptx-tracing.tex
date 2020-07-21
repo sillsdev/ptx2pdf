@@ -52,3 +52,7 @@
 \def\notr@ceout#1{\relax}%
 \let\trace=\notr@cer
 \def\pagetracing{0}
+\def\tc@mmands{commands,pages,output,macros,paragraphs,ifs,restores}
+\def\s@vens@ttrace#1{\x@\xdef\csname tracing-#1\endcsname{\csname #1\endcsname}\csname #1\endcsname=1}
+\def\r@storetrace#1{\csname #1\endcsname=\csname tracing-#1\endcsname}
+\def\alltrace#1{\ifnum#1>0\let\wh@t=\s@vens@ttrace\else\let\wh@t=\r@storetrace\fi\x@\pr@cessSp@cific \tc@mmands,\E}

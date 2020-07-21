@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 -->
+<!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkAdjustment" id="a_PriColWidth">
@@ -5237,15 +5237,18 @@ affects poetry indentation.
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">In order for hyphenation to work optimally, you need 
+                                        <property name="tooltip_text" translatable="yes">If disabled, hyphens will not cause line breaks. If enabled, then
+any hyphens in the text may cause a line break.
+
+To have hyphenation happen automatically, without having
+to insert them in the source text, you need 
 to click the "Create Hyphenation List" button on the
 left. This will create a XeTeX hyphenation list from the
 hyphenation list in Paratext.
 
-Note that if you don't do this, then it will use (standard
-English) hyphenation rules which may not be ideal
-for the language you are using.</property>
+</property>
                                         <property name="halign">start</property>
+                                        <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>

@@ -363,6 +363,9 @@
 \def\addtopreversehooks#1{\x@\global\x@\prev@rsehooks\x@{\the\prev@rsehooks #1}}
 \newtoks\v@rsehooks
 \newtoks\prev@rsehooks
+\def\setcvhook#1#2{\x@\gdef\csname cv-#1\endcsname{#2}}
+\def\docvhook{\edef\c@rref{\id@@@\ch@pter.\v@rse}\csname cv-\c@rref\endcsname}
+\addtoversehooks{\docvhook}
 
 \newif\ifch@pter \def\ch@plabel{}
 
