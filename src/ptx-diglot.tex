@@ -1372,18 +1372,24 @@
       \trace{D}{Separating chunks \the\baselineDelta}%
       \advance\thisjointDelta by -\baselineDelta
     \fi 
-    %FIXME: RHS / small L baseline needs more attention
+    %FIXME: RHS / small L baseline may need more attention
   \fi\fi
   \chunkDelta=\ht\RightBox\relax
   \advance\chunkDelta by \dp\RightBox
   \advance\chunkDelta by -\ht\LeftBox
   \global\advance\chunkDelta by -\dp\LeftBox
   \global\setbox\LeftBox=\vtop{\ifdim\thisjointDelta>0pt\vskip \thisjointDelta\fi\hbox to \textwidth{\ifVisTrace\llap{\box0}\fi%
+  \dimen8=\ht\LeftBox
+  \ifdim \dimen8 <\ht\RightBox \dimen8=\ht\RightBox \fi
+  \dimen9=\dp\LeftBox
+  \ifdim \dimen9 <\dp\RightBox \dimen9=\dp\RightBox \fi
+  \trace{d}{Gutter \the\dimen8 height, \the\dimen9 deep}%
+  \dimen7=0pt%.5\baselineskip
   \ifdiglotN@rmal%Are the sides swapped?
-    \hbox to\columnLwidth{\box\LeftBox\hss}\hskip\gutter%
+    \hbox to\columnLwidth{\box\LeftBox\hss}\makediglotgutter{\dimen7}{\dimen8}{\dimen9}
     \hbox to\columnRwidth{\box\RightBox\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
   \else%
-    \hbox to\columnRwidth{\box\RightBox\hss}\hskip\gutter%
+    \hbox to\columnRwidth{\box\RightBox\hss}\makediglotgutter{\dimen7}{\dimen8}{\dimen9}%
     \hbox to\columnLwidth{\box\LeftBox\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
   \fi
   }}%
@@ -1571,12 +1577,18 @@
         \else%
           \setbox\LeftBox=\vbox to \ht\RightBox{\box\LeftBox\vss}%
         \fi%
+        \dimen8=\ht\LeftBox
+        \ifdim \dimen8 <\ht\RightBox \dimen8=\ht\RightBox \fi
+        \dimen9=\dp\LeftBox
+        \ifdim \dimen9 <\dp\RightBox \dimen9=\dp\RightBox \fi
+        \trace{d}{Gutter \the\dimen8 hight, \the\dimen9 deep}%
+        \dimen7=0pt
         \setbox\LeftBox=\hbox to \textwidth{%\vllap{\the\ht\LeftBox \the\dp\LeftBox}
           \ifdiglotN@rmal%are the sides swapped?
-            \hbox to\columnLwidth{\copy\LeftBox\hss}\hskip\gutter%
+            \hbox to\columnLwidth{\copy\LeftBox\hss}\makediglotgutter{\dimen7}{\dimen8}{\dimen9}%
             \hbox to\columnRwidth{\copy\RightBox\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
           \else%
-            \hbox to\columnRwidth{\copy\RightBox\hss}\hskip\gutter%
+            \hbox to\columnRwidth{\copy\RightBox\hss}\makediglotgutter{\dimen7}{\dimen8}{\dimen9}%
             \hbox to\columnLwidth{\copy\LeftBox\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
           \fi%
         }%
@@ -1596,12 +1608,24 @@
         \trace{D}{L:\the\Lht R:\the\Rht lf:(\the\ht\LeftBox+\the\dp\LeftBox) rf:(\the\ht\RightBox+\the\dp\RightBox)}
         \advance\dimen2 by -\ht\RightBox % dimen2 is step in footnotes
         %
+        \dimen8=\ht\LeftBox
+        \ifdim \dimen8 <\ht\RightBox \dimen8=\ht\RightBox \fi
+        \dimen9=\dp\LeftBox
+        \ifdim \dimen9 <\dp\RightBox \dimen9=\dp\RightBox \fi
+        \advance\dimen8 by -\AboveNoteSpace
+        %\advance\dimen8 by \baselineskip
+        %\advance\dimen7 by \dimen8
+        %\ifdim\availht>0pt
+          %\advance\dimen7 by \the\availht
+          %\advance\dimen8 by \the\availht
+        %\fi
+        \trace{d}{Gutter \the\dimen8 tall, \the\dimen9 deep}%
         \setbox\LeftBox\hbox to \textwidth{%\vllap{\the\ht\LeftBox \the\dp\LeftBox}
           \ifdiglotN@rmal%are the sides swapped?
-            \hbox to\columnLwidth{\copy\LeftBox\hss}\hskip\gutter%
+            \hbox to\columnLwidth{\copy\LeftBox\hss}\makediglotgutter{\dimen8}{\dimen8}{\dimen9}%
             \hbox to\columnRwidth{\copy\RightBox\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
           \else%
-            \hbox to\columnRwidth{\copy\RightBox\hss}\hskip\gutter%
+            \hbox to\columnRwidth{\copy\RightBox\hss}\makediglotgutter{\dimen8}{\dimen8}{\dimen9}%
             \hbox to\columnLwidth{\copy\LeftBox\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
           \fi%
         }%
@@ -1657,6 +1681,13 @@
    \else%
       \setbox\topleftins=\vbox to \ht\toprightins{\box\topleftins\vss}%
    \fi%
+  \dimen8=\ht\LeftBox
+  \ifdim \dimen8 <\ht\RightBox \dimen8=\ht\RightBox \fi
+  \dimen9=\dp\LeftBox
+  \ifdim \dimen9 <\dp\RightBox \dimen9=\dp\RightBox \fi
+  \trace{d}{Gutter \the\dimen8 hight, \the\dimen9 deep}%
+  \dimen7=\dimen9
+  \advance\dimen7 by \dimen8
    \hbox to \textwidth{%\vllap{\the\ht\LeftBox \the\dp\LeftBox}
      \ifdiglotN@rmal%Are the sides swapped?
        \hbox to\columnLwidth{\box\topleftins\hss}\hskip\gutter%
@@ -1723,6 +1754,16 @@
   %%somejunk
 }
 
+\def\makediglotgutter#1#2#3{\hbox to0.5\columnshift{}\hbox to \gutter{\hss
+  \dimen4=#1\advance \dimen4 by #3
+  \ifColumnGutterRule
+    \setbox4=\vbox to #2{
+      \hbox to 1pt{\vrule height \the\dimen4 }%\dp5=#3 \box5
+      \vss}%
+    \box4
+  \fi
+  \hss}}
+\newif\ifColumnGutterRule
 \def\testmarker{\hbox to 0pt{\vrule height 7pt depth 0pt width 0.5pt \kern-0.5pt}\message{_}}
 %
 \endinput
