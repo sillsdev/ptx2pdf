@@ -914,9 +914,9 @@ class ViewModel:
         pass
 
     def _getArchiveFiles(self, books, prjid=None, cfgid=None):
-        sfiles = {'c_useCustomSty': "custom.sty",
-                  'c_useModsSty': "PrintDraft/PrintDraft-mods.sty",
-                  'c_usePrintDraftChanges': "PrintDraftChanges.txt"}
+        sfiles = {'c_useCustomSty': ("custom.sty", None),
+                  'c_useModsSty': ("PrintDraft/PrintDraft-mods.sty", "PrintDraft"),
+                  'c_usePrintDraftChanges': ("PrintDraftChanges.txt", None)}
         res = {}
         cfgchanges = {}
         pictures = set()
@@ -971,7 +971,7 @@ class ViewModel:
                 continue
             p = os.path.join(self.settings_dir, prjid, a[0])
             if os.path.exists(p):
-                res[p] = a
+                res[p] = a[0]
 
         if self.get("c_useModsTex"):
             loaded = False
