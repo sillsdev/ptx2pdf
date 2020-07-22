@@ -78,8 +78,8 @@ if args.fontpath is not None:
 
 if args.print or args.archive is not None:
     res = 0
+    initFontCache(nofclist=args.nofontcache)
     if args.print:
-        initFontCache(nofclist=args.nofontcache)
         if args.books is not None and len(args.books):
             mainw.bookNoUpdate = True
             bl = args.books.split(" ")

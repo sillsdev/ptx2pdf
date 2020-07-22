@@ -506,7 +506,7 @@
     \ifdim\ht\colA>\baselineskip\plainoutput
     \xdef\p@gefirstmark{}
     \xdef\p@gebotmark{}
-    \else\trace{o}{Page empty \the\ht\colA, \ht\colB, \the\ht\partial}\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
+    \else\trace{o}{Page empty cols=\the\ht\colA, \the\ht\colB, partial=\the\ht\partial}\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
     \tempfalse%
     \ifdim\ht\partial>\PageFullFactor\textheight \temptrue\fi%
     \ifnum\outputpenalty<-10000 \temptrue\fi%
@@ -738,7 +738,7 @@
         \dimen0=\shortavail\advance\dimen0 by \ifdim\dp\colA>\dp\colB \dp\colA\else\dp\colB\fi
         \s@tcolhts{\dimen0}\spl@tcols0
 		% if something left in box0, it didn't fit, quit loop
-        \trace{o}{re-balancing \the\ht\colA =\the\colhtA, \the\ht\colB =\the\colhtB, from \the\shortavail, rem \the\ht0}%
+        \trace{o}{re-balancing cols=\the\ht\colA =\the\colhtA, \the\ht\colB =\the\colhtB, from \the\shortavail, rem \the\ht0}%
         \ifrem@inder\else\ifvoid0\else
           \advance\shortavail by \baselineskip
           \advance\shortavail by \ifdim\dp\colA>\dp\colB \dp\colA\else\dp\colB\fi

@@ -42,6 +42,10 @@
       \vrule height .2pt depth .2pt width 25pt
       \kern 4.8pt
       \vrule height 30pt depth -5pt width .4pt
+      \kern -30.4pt
+      \dimen0=\topm@rgin \advance\dimen0 by -.4pt
+      \vrule height -\dimen0 depth \topm@rgin width 15pt
+      \kern 15pt
       \hss
       \raise20pt\vtop{\hsize\PaperWidth \everypar={}
         \lineskiplimit=0pt \baselineskip=10pt
@@ -51,23 +55,30 @@
       \vrule height 30pt depth -5pt width .4pt
       \kern 4.8pt
       \vrule height .2pt depth .2pt width 25pt
+      \kern -15pt
+      \vrule height -\dimen0 depth \topm@rgin width 15pt
       \kern -30pt
     }%
-  }% end \vbox for \topcr@p
+  }\dp\topcr@p=0pt % end \vbox for \topcr@p
   \global\setbox\bottomcr@p=\vbox to 0pt{%
-    \hbox to \PaperWidth{%
+    \setbox0=\hbox to \PaperWidth{%
+      \dimen0=\bottomm@rgin \advance\dimen0 by 0.4pt
       \kern -30pt
       \vrule height .2pt depth .2pt width 25pt
+      \kern -15pt
+      \vrule height \dimen0 depth -\bottomm@rgin width 15pt
       \kern 4.8pt
       \vrule height -5pt depth 30pt width .4pt
       \hss
       \vrule height -5pt depth 30pt width .4pt
       \kern 4.8pt
+      \vrule height \dimen0 depth -\bottomm@rgin width 15pt
+      \kern -15pt
       \vrule height .2pt depth .2pt width 25pt
       \kern -30pt
     }%
-    \vss
-  }% end \vbox for \bottomcr@p
+    \dp0=0pt\ht0=0pt\box0
+  }\ht\bottomcr@p=0pt\dp\bottomcr@p=0pt% end \vbox for \bottomcr@p
 }
 
 \newif\ifrotate\rotatefalse

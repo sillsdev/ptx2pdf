@@ -2,7 +2,7 @@
 import configparser, os, re, regex, random, collections
 from .texmodel import ModelMap, TexModel, universalopen
 from .ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
-from .font import TTFont
+from .font import TTFont, cachepath
 import pathlib, os, sys
 from configparser import NoSectionError, NoOptionError, _UNSET
 from zipfile import ZipFile, ZIP_DEFLATED
@@ -277,6 +277,9 @@ class ViewModel:
                 return False
             if not self.fixed_wd:
                 self.working_dir = os.path.join(self.settings_dir, self.prjid, 'PrintDraft')
+            fdir = os.path.join(self.settings_dir, self.prjid, 'Fonts')
+            if os.path.exists(fdir):
+                cachepath(fdir)
             readConfig = True
         if readConfig or self.configId != configName:
             res = self.readConfig(cfgname=configName)
@@ -652,7 +655,7 @@ class ViewModel:
         else:
             newfigs = {f['src']: k for k,f in figinfos.items()}
         if self.get("c_useCustomFolder"):
-            srchlist = [self.printer.customFigFolder]
+            srchlist = [self.customFigFolder]
         else:
             srchlist = []
         if not self.get("c_exclusiveFiguresFolder"):
@@ -926,17 +929,19 @@ class ViewModel:
             cfpath += cfgid+"/"
         basecfpath = self.configPath(cfgid, prjid)
 
+        # pictures
         picinfos = {}
         for bk in books:
             fname = self.getBookFilename(bk, prjid)
             fpath = os.path.join(self.settings_dir, prjid)
             res[os.path.join(fpath, fname)] = fname
             picinfos.update(("{} {}".format(bk, k), v) for k,v in self.getFigures(bk).items())
-
         self.getFigureSources(picinfos)
         pathkey = 'src path'
         for f in (p[pathkey] for p in picinfos.values() if pathkey in p):
                 res[f] = "figures/"+os.path.basename(f)
+
+        # adjlists
         adjpath = os.path.join(basecfpath, "AdjLists")
         adjbks = set(self.getDraftFilename(bk, ext=".adj") for x in books)
         if os.path.exists(adjpath):
@@ -944,6 +949,7 @@ class ViewModel:
                 if adj.endswith(".adj") and adj in adjbks:
                     res[os.path.join(adjpath, adj)] = cfpath+"AdjLists/"+adj
 
+        # piclists
         piclstpath = os.path.join(basecfpath, "PicLists")
         picbks = set(self.getDraftFilename(bk) for x in books)
         if os.path.exists(piclstpath):
@@ -951,6 +957,15 @@ class ViewModel:
                 if pic.endswith(".piclist") and pic in picbks:
                     res[os.path.join(piclstpath, pic)] = cfpath+"PicLists/"+pic
 
+        # fonts
+        for k, v in TexModel._fonts.items():
+            if v[1] is None or self.get(v[1]):
+                font_info = self.get(v[0])
+                f = TTFont(*font_info)
+                fname = os.path.basename(f.filename)
+                res[f.filename] = "Fonts/"+fname
+
+        # config files
         for t,a in sfiles.items():
             if isinstance(t, str) and not self.get(t):
                 continue

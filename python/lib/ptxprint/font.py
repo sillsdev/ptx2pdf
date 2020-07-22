@@ -44,19 +44,15 @@ class TTFontCache:
                 (path, full) = f.strip().split(": ")
                 if ":style=" in full:
                     (name, style) = full.split(':style=')
-                    # print(f.encode("unicode_escape"))
                 else:
                     name = full
                     style = ""
                 if "," in name:
-                    # print(f.encode("unicode_escape"))
                     names = name.split(",")
-                    # print names.encode("unicode_escape")
                 else:
                     names = [name]
                 if "," in style:
                     styles = style.split(",")
-                    # print styles.encode("unicode_escape")
                 else:
                     styles = [style]
             except ValueError:
