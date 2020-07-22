@@ -90,7 +90,7 @@
 
 \def\killd@scenders#1{%
   \vbox{\unvbox#1 \skip0=\lastskip\unskip \count255=\lastpenalty\unpenalty
-    \setbox0=\lastbox
+    \setbox0=\lastbox\dimen4=\dp0  % Remember last box's depth
     \ifvoid0\else\dp0=0pt \box0 \fi
     \ifdim\skip0>0pt \penalty\count255 \vskip\skip0 \fi}}
 
@@ -100,7 +100,7 @@
 \def\gr@db@x#1{%
 % \setbox0=\vbox{\kern-#1pt\vrule\kern#1pt\kern-.4pt\box#1\kern-.4pt\vrule}%
 \setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders#1\fi%
-\trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0}%
+\trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0 (dp was \the\dimen4)}%
 %\MSG{after killd: ht0=\the\ht0; dp0=\the\dp0}
 %{\showboxbreadth=100 \showboxdepth=10 \showbox0 }%
  \dimen2=\ht0 \advance\dimen2 by \dp0
@@ -125,12 +125,14 @@
   \ifhmode\endgraf\fi % Not sure why, but sometiems we get here in hmode
   \prevdepth=0pt
   \setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders#1\fi
-  \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0; spacebefore=\headingtopspace*\the\verticalsp@ceunit; depth=\the\lastdepth}%
+  \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0 (\the\dimen4); spacebefore=\headingtopspace*\the\verticalsp@ceunit; depth=\the\lastdepth}%
   \s@tbaseline{p}\dimen1=\ht0 \dimen0=\baselineskip \m@d \dimen2=\dimen0 % dimen2 is grid space
   \dimen1=\ht0 \advance\dimen1 by -\headingtopspace \verticalsp@ceunit
   \dimen0=\baselineskip \m@d \advance\dimen2 by -\dimen0
   \advance\dimen2 by \headingtopspace\verticalsp@ceunit
-  \ifdim\lastdepth>0pt\advance\dimen2 by -\lastdepth\fi
+  \ifgridp@c\else
+    \ifdim\lastdepth>0pt\advance\dimen2 by -\lastdepth\fi
+  \fi
   \ifdiglot\kern\else\vskip\fi\dimen2
   \vbox{\kern\dimen0\vskip-\headingtopspace\verticalsp@ceunit
     \trace{h}{after gridbox: skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip}%
