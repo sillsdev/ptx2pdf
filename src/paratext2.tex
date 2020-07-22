@@ -1349,13 +1349,13 @@
         \fi
       \fi
       %\splittopskip\baselineskip
-      \gridp@ctrue% 
+      \gridp@cfalse% Not true! It's not floating. 
         \gridb@x0
         \dimen9=\lastdepth
         \kern\dimen9
         \trace{g}{gridbox dp=\the\dimen9}%There's a skip at the bottom of the box, but somehow the depth is kept. Need to kill it.
       \gridp@cfalse% make sure we align to the page grid
-      \squashgridboxtrue
+      %\squashgridboxtrue
       \penalty10
     \fi
     \ifx\picl@c\loc@Par
@@ -1373,9 +1373,10 @@
       \x@\gdef\csname \eotpn@me\endcsname{
         \relax
         \penalty10 % Allow the page to break
-        \gridp@ctrue
-           \gridb@x\picb@x\vskip-\prevdepth
-        \gridp@cfalse % make sure we align to the page grid
+        %\gridp@cfalse% Not true. Not a floating image.
+           \gridb@x\picb@x
+           %\vskip-\prevdepth
+        %\gridp@cfalse % make sure we align to the page grid
         \penalty10
        }%
        \def\temp{}%
