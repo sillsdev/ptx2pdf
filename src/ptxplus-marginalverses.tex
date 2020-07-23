@@ -10,6 +10,7 @@
 {\catcode`\~=12 \lccode`\~=32 \catcode`\*=12 \lowercase{%
 \gdef\marginverse #1 {%
     \gdef\v@rse{#1}% 
+    \the\prev@rsehooks
     \x@\spl@tverses\v@rse--\relax
     \global\setbox2\hbox{\ifc@ncelfirstverse\else\myoldv ~\printv@rse\myoldv *\fi}%
     \egroup\str@t\dimen0=\ht2\advance\dimen0 by \dp\str@tbox
@@ -25,14 +26,22 @@
           \kern\AfterVerseSpaceFactor\FontSizeUnit}}%
         \ht1=\dimen0\dp1=0pt\tracingparagraphs=0
         \trace{v}{\reference - tolerance=\the\tolerance}\box1}\nobreak
-    \hskip 1sp% *%
+    \m@rkverse % generate a milestone for running headers
+    % run the hooks for picture insertion, paragraph adjustments, etc.
+    % these hooks were added via \addtoversehooks
+    \the\v@rsehooks
+    % remember current chapter:verse, not currently used. Could potentially be used
+    % to insert chapter:verse in footnotes.
+    \gdef\reference{\ch@pter:\v@rse}%
+    \nobreak\hskip 1sp% *%
     \everypar=\myeverypar}}}
+
 \gdef\marginremovehboxes{%
   \setbox0=\lastbox 
   \ifhbox0{\removehboxes}\unhbox0\fi}
 
 \def\myv{%
-    \x@\global\x@\let\x@\n@xt\csname after-v\endcsname \n@xt
+    \ifvmode\xdef\prev@rsemode{\m@rker}\else\global\let\prev@rsemode\empty\fi
     \leavevmode\c@ncelfirstversefalse
     \ifnum\spacefactor=\n@wchaptersf \kern0sp %
      \ifOmitVerseNumberOne \c@ncelfirstversetrue \fi\fi

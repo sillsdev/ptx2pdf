@@ -812,7 +812,7 @@ class TexModel:
             # OLD RegEx: Keep final two words of \q lines together [but doesn't work if there is an \f or \x at the end of the line] 
             self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)[^\\\s]+)) (\S+\s*\n)", \
                                             flags=regex.M), r"\1\u2000\5"))
-            self.localChanges.append((None, regex.compile(r"(\s+[^ \\\n\u2000\u00A0]+) ([^ \\\n\u2000\u00A0]+\n(?:\\[pmqsc]|$))", flags=regex.S), r"\1\u2000\2"))
+            self.localChanges.append((None, regex.compile(r"(\s+[^ 0-9\\\n\u2000\u00A0]+) ([^ 0-9\\\n\u2000\u00A0]+\n(?:\\[pmqsc]|$))", flags=regex.S), r"\1\u2000\2"))
 
         if self.asBool("document/preventwidows"):
             # Push the verse number onto the next line (using NBSP) if there is

@@ -29,11 +29,11 @@ def newBase(fpath):
         return re.sub('[()&+,. ]', '_', f.lower())
 
 def refKey(r, info=""):
-    m = re.match(r"(\d*\.?\d*)(\S*)$", r)
+    m = re.match(r"^(\D*)\s*(\d*)\.?(\d*)(\S*)$", r)
     if m:
-        return (float(m.group(1)), info, m.group(2))
+        return (m.group(1), int(m.group(2) or 0), int(m.group(3) or 0), info, m.group(4))
     else:
-        return (r, info)
+        return (r, 0., info)
 
 class Path(pathlib.Path):
 
@@ -596,25 +596,29 @@ class ViewModel:
             fname = os.path.join(self.settings_dir, self.prjid, fname)
         if usepiclist:
             with universalopen(fname) as inf:
-                for l in inf.readlines():
-                    m = l.strip().split("|")
-                    if len(m) < 7 or m[0].startswith("%"):
+                for l in (x.strip() for x in inf.readlines()):
+                    if not len(l) or l.startswith("%"):
                         continue
+                    m = l.split("|")
                     r = m[0].split()[1]
                     res[r] = {}
-                    for i, f in enumerate(m[1:]):
-                        res[r][posparms[i+1]] = f
+                    if len(m) > 6:
+                        for i, f in enumerate(m[1:]):
+                            res[r][posparms[i+1]] = f
+                    else:
+                        for d in re.findall(r'(\S+)\s*=\s*"([^"]+)"', m[-1]):
+                            res[r][d[0]] = d[1]
         else:
             with universalopen(fname) as inf:
                 dat = inf.read()
-                blocks = [""] + re.split(r"\\c\s+(\d+)", dat)
+                blocks = ["0"] + re.split(r"\\c\s+(\d+)", dat)
                 for c, t in zip(blocks[0::2], blocks[1::2]):
                     m = re.findall(r"(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+)\\fig\*", t)
                     # I removed the complex ref piece as it is no longer needed, now that we get the c.v from text itself:
                     #                       ((?:[^\d\\]+? ?)?(\d+[\:\.]\d+?[abc]?(?:[\-,\u2013\u2014]\d+[abc]?)?))
-                    r = self._sortkey(c, f[0])
                     if len(m):
                         for f in m:     # usfm 2
+                            r = self._sortkey(c, f[0])
                             res[r] = {}
                             res[r]['anchor'] = "{}.{}".format(c, f[0])
                             for i, v in enumerate(f[3:]):
@@ -631,25 +635,27 @@ class ViewModel:
                                 del res[r]['pgpos']
                     else:
                         m = re.findall(r'(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig ([^\\]*?)\|([^\\]+)\\fig\*', t)
-                        for f in m:     # usfm 3
-                            caption = f[3]
-                            res[r] = {}
-                            res[r]['anchor'] = "{}.{}".format(c, f[0])
-                            labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f[4])
-                            for l in labelParams:
-                                k,v = l.split("=")
-                                res[r][k.strip()] = v.strip('"')
+                        if len(m):
+                            for f in m:     # usfm 3
+                                r = self._sortkey(c, f[0])
+                                caption = f[3]
+                                res[r] = {}
+                                res[r]['anchor'] = "{}.{}".format(c, f[0])
+                                labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f[4])
+                                for l in labelParams:
+                                    k,v = l.split("=")
+                                    res[r][k.strip()] = v.strip('"')
                     if media is not None and r in res:
                         if 'media' in res[r] and not any(x in media for x in res[r]['media']):
                             del res[r]
         return res
 
     def _sortkey(self, c, v):
-        return "{:0>3}{:0>3}".format(c, re.sub(r"(\d+)[\-,abc\d]*", r"\1", v))
+        return "{:0>3}{:0>3}".format(c, re.sub(r"(\d+)[\-,abc\d]*", r"\1", v or "0"))
 
-    def getFigureSources(self, figinfos, filt=newBase):
+    def getFigureSources(self, figinfos, filt=newBase, key='src path'):
+        ''' Add source filename information to each figinfo, stored with the key '''
         res = {}
-        outkey = 'src path'
         if filt is not None:
             newfigs = {filt(f['src']): k for k,f in figinfos.items()}
         else:
@@ -695,16 +701,16 @@ class ViewModel:
                     if nB not in newfigs:
                         continue
                     k = newfigs[nB]
-                    if outkey in figinfos[k]:
+                    if key in figinfos[k]:
                         old = extensions.get(os.path.splitext(res[k]).lower(), 10000)
                         new = extensions.get(os.path.splitext(filepath).lower(), 10000)
                         if old > new:
-                            figinfos[k][outkey] = filepath
+                            figinfos[k][key] = filepath
                         elif old == new and (self.printer.get("c_useLowResPics") \
                                             != bool(os.path.getsize(res[k]) < os.path.getsize(filepath))):
-                            figinfos[k][outkey] = filepath
+                            figinfos[k][key] = filepath
                     else:
-                        figinfos[k][outkey] = filepath
+                        figinfos[k][key] = filepath
 
     def generateAdjList(self):
         existingFilelist = []
@@ -929,7 +935,7 @@ class ViewModel:
             cfpath += cfgid+"/"
         basecfpath = self.configPath(cfgid, prjid)
 
-        # pictures
+        # pictures and texts
         picinfos = {}
         for bk in books:
             fname = self.getBookFilename(bk, prjid)

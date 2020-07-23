@@ -5,7 +5,7 @@ from shutil import copyfile, rmtree
 from ptxprint.runner import call, checkoutput
 from ptxprint.texmodel import TexModel, universalopen
 from ptxprint.ptsettings import ParatextSettings
-from ptxprint.view import ViewModel, VersionStr
+from ptxprint.view import ViewModel, VersionStr, refKey
 from ptxprint.font import getfontcache
 
 _errmsghelp = {
@@ -570,100 +570,41 @@ class RunJob:
                     print("Warning: Couldn't locate Verse Number Decorator")
 
     def gatherIllustrations(self, info, jobs, ptfolder):
+        posparms = ("desc", "src", "size", "pgpos", "copy", "alt", "ref", "xetex")
+        srcfkey = 'src path'
         pageRatios = self.usablePageRatios(info)
         tmpPicpath = os.path.join(self.printer.working_dir, "tmpPics")
         folderList = ["tmpPics", "tmpPicLists"] 
-        self.removeTmpFolders(self.printer.working_dir, folderList)
+        self.removeTmpFolders(self.printer.working_dir, folderList, mkdirs=True)
 
-        diglot  = self.printer.get("c_diglotAutoAligned")
-        secprjid = ""
-        if diglot:
-            secprjid = self.printer.get("fcb_diglotSecProject")
-            if secprjid is not None:
-                secprjdir = os.path.join(ptfolder, secprjid)
+        diglotPrinter = None
+        if self.printer.get("c_diglotAutoAligned"):
+            diglotPrinter = self.printer.createDiglotView()
+            diglotPics = {}
 
-        if self.printer.get("c_useCustomFolder"):
-            srchlist = [self.printer.customFigFolder]
-        else:
-            srchlist = []
-        if not self.printer.get("c_exclusiveFiguresFolder"):
-            if sys.platform == "win32":
-                srchlist += [os.path.join(self.prjdir, "figures")]
-                srchlist += [os.path.join(self.prjdir, "local", "figures")]
-                if diglot and secprjid != "":
-                    srchlist += [os.path.join(secprjdir, "figures")]
-                    srchlist += [os.path.join(secprjdir, "local", "figures")]
-            elif sys.platform == "linux":
-                chkpaths = []
-                for d in ("local", "figures"):
-                    chkpaths += [os.path.join(self.prjdir, x) for x in (d, d.title())]
-                    if diglot and secprjid != "":
-                        chkpaths += [os.path.join(secprjdir, x) for x in (d, d.title())]
-                for p in chkpaths:
-                    if os.path.exists(p):
-                        srchlist += [p]
-        extensions = []
-        extdflt = ["jpg", "jpeg", "png", "tif", "tiff", "bmp", "pdf"]
-        imgord = self.printer.get("t_imageTypeOrder").lower()
-        extuser = re.sub("[ ,;/><]"," ",imgord).split()
-        extensions = [x for x in extdflt if x in extuser]
-        if not len(extensions):   # If the user hasn't defined any extensions 
-            extensions = extdflt  # then we can assign defaults
-        fullnamelist = []
-        spanimagelist = []
-        
+        # Assemble a list of figures and their sources
+        picinfos = {}
         for bk in jobs:
-            fname = self.printer.getBookFilename(bk, self.prjdir)
-            if self.printer.get("c_usePicList") and bk not in TexModel._peripheralBooks: # Read the PicList to get a list of needed illustrations
-                doti = fname.rfind(".")
-                if doti > 0:
-                    plfname = fname[:doti] + "-draft" + fname[doti:] + ".piclist"
-                piclstfname = os.path.join(self.printer.configPath(cfgname=self.printer.configId, makePath=False), "PicLists", plfname)
-                if os.path.exists(piclstfname):
-                    with universalopen(piclstfname, rewrite=True) as inf:
-                        dat = inf.read()
-                        # MAT 19.13 |CN01771C.jpg|col|tr||Bringing the children to Jesus|19:13
-                        fullnamelist += re.findall(r"(?i)\|(.+?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)\|", dat)
-                        spanimagelist += re.findall(r"(?i)\|(.+?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)\|span", dat)
-            else:
-                infname = os.path.join(self.prjdir, fname)
-                with universalopen(infname) as inf:
-                    dat = inf.read()
-                    inf.close() # Look for USFM2 and USFM3 type inline \fig ... \fig* illustrations
-                    fullnamelist += re.findall(r"(?i)\\fig .*?\|(.+?(?!\d{5}[a-c]?).+?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)\|.+?\\fig\*", dat)
-                    fullnamelist += re.findall(r'(?i)\\fig .*?src="(.+?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)" .+?\\fig\*', dat) 
-                    spanimagelist += re.findall(r"(?i)\\fig .*?\|(.+?(?!\d{5}[a-c]?).+?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)\|span.+?\\fig\*", dat)
-                    spanimagelist += re.findall(r'(?i)\\fig .*?src="(.+?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)".+?size="span.+?\\fig\*', dat)
-        newBaseList = [newBase(f) for f in fullnamelist]
-        newBaseSpanList = [newBase(f) for f in spanimagelist]
-        # print("newBaseList:", newBaseList)
-        # print("newBaseSpanList:", newBaseSpanList)
-        os.makedirs(tmpPicpath, exist_ok=True)
-        for srchdir in srchlist:
-            if srchdir != None and os.path.exists(srchdir):
-                if self.printer.get("c_exclusiveFiguresFolder"):
-                    for file in os.listdir(srchdir):
-                        doti = file.rfind(".")
-                        origExt = file[doti:].lower()
-                        if origExt[1:] in extensions:
-                            filepath = os.path.join(srchdir, file)
-                            nB = newBase(filepath)
-                            if nB in newBaseList:
-                                ratio = pageRatios[1] if nB not in newBaseSpanList else pageRatios[0]
-                                self.carefulCopy(ratio, filepath, nB+origExt.lower())
-                else: # Search all subfolders as well
-                    for subdir, dirs, files in os.walk(srchdir):
-                        if subdir != "tmpPics": # Avoid recursively scanning the folder we are copying to!
-                            for file in files:
-                                doti = file.rfind(".")
-                                origExt = file[doti:].lower()
-                                if origExt[1:] in extensions:
-                                    filepath = subdir + os.sep + file
-                                    nB = newBase(filepath)
-                                    if nB in newBaseList:
-                                        ratio = pageRatios[1] if nB not in newBaseSpanList else pageRatios[0]
-                                        self.carefulCopy(ratio, filepath, nB+origExt.lower())
+            picinfos.update(("{} {}".format(bk, k), v) for k,v in self.printer.getFigures(bk).items())
+            if diglotPrinter is not None:
+                diglotPics.update(("{}R {}".format(bk, k), v) for k,v in diglotPrinter.getFigures(bk).items())
+        self.printer.getFigureSources(picinfos, key=srcfkey)
+        if diglotPrinter is not None:
+            diglotPrinter.getFigureSources(diglotPics, key=srcfkey)
+            picinfos.update(diglotPics)
+
+        # Copy them
         missingPics = []
+        for k, v in picinfos.items():
+            nB = newBase(v['src'])
+            if srcfkey not in v:
+                missingPics.append(v['src'])
+                continue
+            fpath = v[srcfkey]
+            origExt = os.path.splitext(fpath)[1]
+            ratio = pageRatios[1 if v['size'].startswith("span") else 0]
+            v['dest file'] = self.carefulCopy(ratio, v[srcfkey], nB+origExt.lower())
+
         missingPicList = []
         if self.printer.get("c_usePicList"): # Write out new tmpPicLists
             extOrder = self.printer.getExtOrder()
@@ -675,7 +616,7 @@ class RunJob:
                         plfname = fname[:doti] + "-draft" + fname[doti:] + ".piclist"
                     # Now write out the new PicList to a temp folder
                     piclstfname = os.path.join(self.printer.configPath(cfgname=self.printer.configId, makePath=False), "PicLists", plfname)
-                    if os.path.exists(piclstfname):
+                    if False and os.path.exists(piclstfname):
                         with universalopen(piclstfname) as inf:
                             dat = inf.read()
                             dat = re.sub(r"(?m)%.+?\r?\n", "", dat) # Throw out all comments
@@ -703,16 +644,32 @@ class RunJob:
 
                             if self.printer.get("c_fighiderefs"): # del refs (ch:vs-vs) from figure caption
                                 dat = re.sub(r"\|(\d+[:.]\d+([-,\u2013\u2014]\d+)?)\r?\n".format(re.escape(f)), "|\n", dat)
-                            if not self.printer.get("c_doublecolumn"): # Single Column layout so change all tl+tr > t and bl+br > b
+                            # Single Column layout so change all tl+tr > t and bl+br > b
+                            if not self.printer.get("c_doublecolumn"):
                                 dat = re.sub(r"\|([tb])[lr]\|", r"|\1|", dat)
-
-                            tmpiclstpath = os.path.join(self.printer.working_dir, "tmpPicLists")
-                            tmpiclstfname = os.path.join(tmpiclstpath, plfname)
-                            os.makedirs(tmpiclstpath, exist_ok=True)
-                            dat = "% Temporary PicList generated by PTXprint - DO NOT EDIT\n"+dat
-                            with open(tmpiclstfname, "w", encoding="utf-8") as outf:
-                                outf.write(dat)
-        if not len(missingPics):
+                    else:
+                        isdblcol = self.printer.get("c_doublecolumn")
+                        ishiderefs = self.printer.get("c_fighiderefs")
+                        lines = []
+                        for k, v in sorted(picinfos.items(),
+                                        key=lambda x: refKey(x[0], info="R" if len(x[0])>4 and x[0][3]=="R" else "")):
+                            if 'dest file' not in v:
+                                missingPics.append(v['src'])
+                                continue
+                            if not isdblcol: # Single Column layout so change all tl+tr > t and bl+br > b
+                                v['size'] = re.sub(r"([tb])[lr]", r"\1", v['size'])
+                            if 'ref' in v and ishiderefs:
+                                del v['ref']
+                            v['src'] = os.path.basename(v['dest file'])
+                            lines.append(" ".join([k] + ['{}="{}"'.format(x, v[x]) for x in posparms if x in v]))
+                        dat = "\n".join(lines)
+                    tmpiclstpath = os.path.join(self.printer.working_dir, "tmpPicLists")
+                    tmpiclstfname = os.path.join(tmpiclstpath, plfname)
+                    # os.makedirs(tmpiclstpath, exist_ok=True)
+                    dat = "% Temporary PicList generated by PTXprint - DO NOT EDIT\n\n"+dat
+                    with open(tmpiclstfname, "w", encoding="utf-8") as outf:
+                        outf.write(dat)
+        if False and not len(missingPics):
             foundPics=os.listdir(os.path.join(self.printer.working_dir, "tmpPics"))
             if len(foundPics):
                 bl = []
@@ -794,6 +751,7 @@ class RunJob:
             os.remove(tempJPGname)
         except:
             pass
+        return tgtpath
 
     def removeTempFiles(self, texfiles):
         notDeleted = []
@@ -826,7 +784,7 @@ class RunJob:
             self.printer.doError("Warning: Could not delete\ntemporary file(s) or folder(s):",
                     secondary="\n".join(set(notDeleted)))
 
-    def removeTmpFolders(self, base, delFolders):
+    def removeTmpFolders(self, base, delFolders, mkdirs=False):
         notDeleted = []
         for p in delFolders:
             path2del = os.path.join(base, p)
@@ -835,6 +793,8 @@ class RunJob:
                     rmtree(path2del)
                 except OSError:
                     notDeleted += [path2del]
+            if mkdirs:
+                os.makedirs(path2del)
         return notDeleted
 
     def usablePageRatios(self, info):
