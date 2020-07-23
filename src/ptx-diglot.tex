@@ -290,7 +290,7 @@
    \advance\dimen0 by -\ht\partialL %
    \advance\dimen0 by -\dp\partialL %
    \ifnum\partialLpenalty=10000 %This place must not be the last on the page. How nasty is that?
-     \trace{D}{Checking what to do with this box}
+     \trace{D}{Checking what to do with this box}%
      \ifdim\dimen0>-0.3\baselineskip % The box fits..
         \trace{D}{box itself fits}
         \dimen1=\availht%Default: put it on the page
@@ -1331,19 +1331,40 @@
  \fi%
 }
 
-\def\joinb@xes#1#2{%Join a vtop and an hbox together and preserve baselineskip%
+\def\joinb@xes#1#2{%Join a vtop/vbox and a vtop/vbox together and preserve baselineskip%
 %\showbox#1\showbox#2%
-%\bgroup
-\dimen0=\baselineskip\advance\dimen0 by -\ht#1\unvbox#1\setbox0=\lastbox\box0
-\ifdim\dp0<\baselineskip\advance\dimen0 by -\dp0\fi
-%\ifdim\dimen0<0pt\dimen0=0pt\fi%
-%\vglue\dimen0
-\box#2}%\egroup}
+\bgroup
+ \setbox0=\box#1
+ \setbox1=\box#2
+ \dimen0=0pt
+ \ifdim\ht0>0pt \ifdim\dp0<0.5\baselineskip
+   %box0 is not a vtop, it's a vbox
+   \advance\dimen0 by -\baselineskip
+ \fi\fi
+ \ifdim\ht1>0pt \ifdim\dp1<0.5\baselineskip
+   %box1 is not a vtop, it's a vbox
+   %Theoretically, there ought to be a \baselineskip here. It doesn't seem to be needed.
+   %\advance\dimen0 by \baselineskip
+ \fi\fi
+ \trace{D}{joinb@xes #1 #2, skip \the\dimen0}%
+ \box0
+ \ifdim\dimen0=0pt
+ \else
+   \vskip\dimen0
+ \fi
+ \box1
+\egroup}
 
 
 \def\upd@tep@rtial{%Actually add stuff to the page.
   \trace{D}{upd@tep@rtial \the\outputpenalty}%
-  \diglotN@rmaltrue\ifdiglotInnerOuter\ifodd\pageno\else\diglotN@rmalfalse\fi\fi 
+  \trace{D}{plp:\the\partialLpenalty, prp:\the\partialRpenalty, lcp:\the\Lchunkpenalty, rcp:\the\Rchunkpenalty, lbp:\the\Lboxpenalty, rbp:\the\Rboxpenalty}%
+  \ifnum\Lboxpenalty=10000 \ifnum\Rboxpenalty=10000
+    \trace{D}{Un vtopping heading}%
+    \setbox\LeftBox=\vbox{\unvbox\LeftBox}%
+    \setbox\RightBox=\vbox{\unvbox\RightBox}%
+  \fi\fi
+   \diglotN@rmaltrue\ifdiglotInnerOuter\ifodd\pageno\else\diglotN@rmalfalse\fi\fi 
   \showboxdepth=3 %
   \showboxbreadth=1000 %
   %\ifnum\pageno=1%
@@ -1360,7 +1381,7 @@
   \fi%
   %Re-use LeftBox for this page chunk
   %
-  
+ 
   \traceNum{d}{Adding to page: LB:\the\ht\LeftBox+\the\dp\LeftBox\space RB:\the\ht\RightBox+\the\dp\RightBox\space Last Delta:\the\chunkDelta}%
   \ifVisTrace
     \doVisTrace{L}%
@@ -1384,10 +1405,10 @@
   \dimen9=\dp\LeftBox
   \ifdim \dimen9 <\dp\RightBox \dimen9=\dp\RightBox \fi
   \trace{d}{Gutter \the\dimen8 height, \the\dimen9 deep}%
-  \dimen7=0pt%.5\baselineskip
+  \dimen7=\dimen8%.5\baselineskip
   \hbox to\columnshift{}%
   \ifdiglotN@rmal%Are the sides swapped?
-    \hbox to\columnLwidth{\box\LeftBox\hss}\makediglotgutter{\dimen7}{\dimen8}{\dimen9}
+    \hbox to\columnLwidth{\box\LeftBox\hss}\makediglotgutter{\dimen7}{\dimen8}{\dimen9}%
     \hbox to\columnRwidth{\box\RightBox\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
   \else%
     \hbox to\columnRwidth{\box\RightBox\hss}\makediglotgutter{\dimen7}{\dimen8}{\dimen9}%
@@ -1534,6 +1555,9 @@
 
 \newif\ifLRf@@tnotes%
 \newif\ifs@vedL%
+\newif\ifNoteGutterRule \NoteGutterRulefalse
+\newif\ifFigGutterRule \FigGutterRulefalse
+\newif\ifJoinGutterRule \FigGutterRulefalse
 \def\@writep@ge {%
   \trace{D}{@writep@ge}%
   \diglotN@rmaltrue\ifdiglotInnerOuter\ifodd\pageno\else\diglotN@rmalfalse\fi\fi 
@@ -1582,16 +1606,16 @@
         \ifdim \dimen8 <\ht\RightBox \dimen8=\ht\RightBox \fi
         \dimen9=\dp\LeftBox
         \ifdim \dimen9 <\dp\RightBox \dimen9=\dp\RightBox \fi
-        \trace{d}{Gutter \the\dimen8 hight, \the\dimen9 deep}%
+        \trace{d}{Gutter \the\dimen8 high, \the\dimen9 deep}%
         \dimen7=0pt
         \setbox\LeftBox=\hbox to \textwidth{%\vllap{\the\ht\LeftBox \the\dp\LeftBox}
           \hbox to\columnshift{}%
           \ifdiglotN@rmal%are the sides swapped?
-            \hbox to\columnLwidth{\copy\LeftBox\hss}\makediglotgutter{\dimen7}{\dimen8}{\dimen9}%
+            \hbox to\columnLwidth{\copy\LeftBox\hss}\ifNoteGutterRule\makediglotgutter{\dimen7}{\dimen8}{\dimen9}\else\hskip\gutter\fi%%%
             \hbox to\columnRwidth{\copy\RightBox\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
           \else%
             \hbox to\columnshift{}%
-            \hbox to\columnRwidth{\copy\RightBox\hss}\makediglotgutter{\dimen7}{\dimen8}{\dimen9}%
+            \hbox to\columnRwidth{\copy\RightBox\hss}\ifNoteGutterRule\makediglotgutter{\dimen7}{\dimen8}{\dimen9}\else\hskip\gutter\fi%%
             \hbox to\columnLwidth{\copy\LeftBox\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
           \fi%
         }%
@@ -1608,7 +1632,7 @@
         {\dimen1=\Lht
         \advance\dimen1 by -\Rht % dimen1 is step in text
         \dimen2=\ht\LeftBox\relax%
-        \trace{D}{L:\the\Lht R:\the\Rht lf:(\the\ht\LeftBox+\the\dp\LeftBox) rf:(\the\ht\RightBox+\the\dp\RightBox)}
+        \trace{D}{L:\the\Lht R:\the\Rht lf:(\the\ht\LeftBox+\the\dp\LeftBox) rf:(\the\ht\RightBox+\the\dp\RightBox)}%
         \advance\dimen2 by -\ht\RightBox % dimen2 is step in footnotes
         %
         \dimen8=\ht\LeftBox
@@ -1617,20 +1641,22 @@
         \ifdim \dimen9 <\dp\RightBox \dimen9=\dp\RightBox \fi
         \advance\dimen8 by -\AboveNoteSpace
         %\advance\dimen8 by \baselineskip
-        %\advance\dimen7 by \dimen8
-        %\ifdim\availht>0pt
-          %\advance\dimen7 by \the\availht
-          %\advance\dimen8 by \the\availht
-        %\fi
+        \dimen7=\dimen8
+          %\ifdim\availht>0pt%
+            %\advance\dimen7 by \the\availht
+            %\advance\dimen8 by \the\availht
+          %\fi
+          %\advance\dimen7 by \baselineskip
+          %\advance\dimen8 by \baselineskip
         \trace{d}{Gutter \the\dimen8 tall, \the\dimen9 deep}%
         \setbox\LeftBox\hbox to \textwidth{%\vllap{\the\ht\LeftBox \the\dp\LeftBox}
           \hbox to\columnshift{}%
           \ifdiglotN@rmal%are the sides swapped?
-            \hbox to\columnLwidth{\copy\LeftBox\hss}\makediglotgutter{\dimen8}{\dimen8}{\dimen9}%
+            \hbox to\columnLwidth{\copy\LeftBox\hss}\ifNoteGutterRule\makediglotgutter{\dimen7}{\dimen8}{\dimen9}\else\hskip\gutter\fi%
             \hbox to\columnshift{}%
             \hbox to\columnRwidth{\copy\RightBox\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
           \else%
-            \hbox to\columnRwidth{\copy\RightBox\hss}\makediglotgutter{\dimen8}{\dimen8}{\dimen9}%
+            \hbox to\columnRwidth{\copy\RightBox\hss}\ifNoteGutterRule\makediglotgutter{\dimen7}{\dimen8}{\dimen9}\else\hskip\gutter\fi%
             \hbox to\columnshift{}%
             \hbox to\columnLwidth{\copy\LeftBox\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
           \fi%
@@ -1687,20 +1713,20 @@
    \else%
       \setbox\topleftins=\vbox to \ht\toprightins{\box\topleftins\vss}%
    \fi%
-  \dimen8=\ht\LeftBox
-  \ifdim \dimen8 <\ht\RightBox \dimen8=\ht\RightBox \fi
-  \dimen9=\dp\LeftBox
-  \ifdim \dimen9 <\dp\RightBox \dimen9=\dp\RightBox \fi
-  \trace{d}{Gutter \the\dimen8 hight, \the\dimen9 deep}%
-  \dimen7=\dimen9
-  \advance\dimen7 by \dimen8
+   \dimen8=\ht\bottomleftins
+   \ifdim \dimen8 <\ht\toprightins \dimen8=\ht\toprightins \fi
+   \dimen9=\dp\topleftins
+   \ifdim \dimen9 <\dp\toprightins \dimen9=\dp\toprightins \fi
+   \trace{d}{Gutter \the\dimen8 hight, \the\dimen9 deep}%
+   \dimen7=\dimen9
+   \advance\dimen7 by \dimen8
    \hbox to \textwidth{%\vllap{\the\ht\LeftBox \the\dp\LeftBox}
      \hbox to\columnshift{}%
      \ifdiglotN@rmal%Are the sides swapped?
-       \hbox to\columnLwidth{\box\topleftins\hss}\hskip\gutter%
+       \hbox to\columnLwidth{\box\topleftins\hss}\ifFigGutterRule\makediglotgutter{\dimen8}{\dimen8}{\dimen9}\else\hskip\gutter\fi %
        \hbox to\columnRwidth{\box\toprightins\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
      \else%
-       \hbox to\columnRwidth{\box\toprightins\hss}\hskip\gutter%
+       \hbox to\columnRwidth{\box\toprightins\hss}\ifFigGutterRule\makediglotgutter{\dimen8}{\dimen8}{\dimen9}\else\hskip\gutter\fi %
        \hbox to\columnLwidth{\box\topleftins\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
      \fi%
    }%
@@ -1711,13 +1737,20 @@
    \else%
       \setbox\bottomleftins=\vbox to \ht\bottomrightins{\box\bottomleftins\vss}%
    \fi%
+   \dimen8=\ht\bottomleftins
+   \ifdim \dimen8 <\ht\bottomrightins \dimen8=\ht\bottomrightins \fi
+   \dimen9=\dp\bottomleftins
+   \ifdim \dimen9 <\dp\bottomrightins \dimen9=\dp\bottomrightins \fi
+   \trace{d}{Gutter \the\dimen8 hight, \the\dimen9 deep}%
+   \dimen7=\dimen9
+   \advance\dimen7 by \dimen8
    \hbox to \textwidth{%\vllap{\the\ht\LeftBox \the\dp\LeftBox}
      \hbox to\columnshift{}%
      \ifdiglotN@rmal%Are the sides swapped?
-       \hbox to\columnLwidth{\box\bottomleftins\hss}\hskip\gutter%
+       \hbox to\columnLwidth{\box\bottomleftins\hss}\ifFigGutterRule\makediglotgutter{\dimen8}{\dimen8}{\dimen9}\else\hskip\gutter\fi %
        \hbox to\columnRwidth{\box\bottomrightins\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
      \else%
-       \hbox to\columnRwidth{\box\bottomrightins\hss}\hskip\gutter%
+       \hbox to\columnRwidth{\box\bottomrightins\hss}\ifFigGutterRule\makediglotgutter{\dimen8}{\dimen8}{\dimen9}\else\hskip\gutter\fi %
        \hbox to\columnLwidth{\box\bottomleftins\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
      \fi%
    }%
@@ -1731,7 +1764,7 @@
      \traceNum{d}{Inserting Notes}%
      \f@rstnotetrue%
      \m@kenotebox
-     \unvbox2
+     \unvbox2 % defined by m@kenotebox
    \fi%
   }%
   \trace{D}{PFM:\p@gefirstmark PBM:\p@gebotmark}%
@@ -1763,15 +1796,16 @@
 }
 
 \def\makediglotgutter#1#2#3{\hbox to \gutter{\hss
+  \trace{D}{makediglotgutter \the#1,\the#2,\the#3}%
   \dimen4=#1\advance \dimen4 by #3
   \ifColumnGutterRule
-    \setbox4=\vbox to #2{
+    \setbox4=\vbox to #2{%
       \hbox to 1pt{\vrule height \the\dimen4 }%\dp5=#3 \box5
       \vss}%
+    \dp4=#3
     \box4
   \fi
   \hss}}
-\newif\ifColumnGutterRule
 \def\testmarker{\hbox to 0pt{\vrule height 7pt depth 0pt width 0.5pt \kern-0.5pt}\message{_}}
 %
 \endinput

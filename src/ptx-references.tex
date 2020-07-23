@@ -42,7 +42,7 @@
 % Print the first reference from the mark data
 %
 \newif\ifOmitBookRef
-\def\f@rstref#1{\edef\t@st{#1}
+\def\f@rstref#1{\edef\t@st{#1}%
  \ifx\t@st\empty\else\x@\extr@ctfirst\t@st\relax
   \ifx\@book\empty\else
    \ifOmitBookRef\else\@book\ \fi
@@ -58,8 +58,9 @@
 % Print the last reference from the mark data
 % (same as above unless there are bridged verses)
 %
-\def\l@stref#1{\edef\t@st{#1}\x@\extr@ctlast\t@st\relax
- \ifx\@@book\empty\else\ifx\@@book\t@tle\else\ifOmitBookRef\else\@@book\ \fi\ifOmitChapterNumberRH\else\@@chapter\fi\ifVerseRefs\ifOmitChapterNumberRH\else\cvs@p\fi\@@verse\fi\fi\fi}
+\def\l@stref#1{\edef\t@st{#1}%
+ \ifx\t@st\empty\else\x@\extr@ctlast\t@st\relax
+ \ifx\@@book\empty\else\ifx\@@book\t@tle\else\ifOmitBookRef\else\@@book\ \fi\ifOmitChapterNumberRH\else\@@chapter\fi\ifVerseRefs\ifOmitChapterNumberRH\else\cvs@p\fi\@@verse\fi\fi\fi\fi}
 
 %
 % Print the range of references from a pair of marks
