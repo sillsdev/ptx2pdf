@@ -6,3 +6,4 @@
 - InnoSetupPTXprint.iss (2)
 - docs/inno-docs/AboutPTXprint.txt
 - docs/inno-docs/ReleaseNotes.txt
+- setup.py
