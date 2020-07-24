@@ -21,7 +21,7 @@ PTXprint also has the following python dependencies:
 
 ### Ubuntu package installation
 
-The following works for both 18.04 (bionic) and 20.4 (focal), a recipe in LaunchPad provides daily builds from git master:
+The following works for both 18.04 (bionic) and 20.04 (focal), a recipe in LaunchPad provides daily builds from git master:
 
 `sudo add-apt-repository ppa:silnrsi/ptxprint`
 
