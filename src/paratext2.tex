@@ -1099,7 +1099,7 @@
 % Redefine \p@rams to be rest of list
 \def\stripspace#1 \end/#2\relax#3{\if\relax#2\relax\gdef\p@ram{#3}\else\stripspace#1\end/ \end/\relax{#1}\fi}
 \def\FigP@ramAlt{alt} \def\FigP@ramSrc{src} \def\FigP@ramSize{size} \def\FigP@ramLoc{loc}
-\def\FigP@ramCopy{copy} \def\FigP@ramRef{ref} \def\FigP@ramXtra{x-xetex} \def\FigP@ramPgpos{pgpos} \def\FigP@ramMirror{mirror}
+\def\FigP@ramCopy{copy} \def\FigP@ramRef{ref} \def\FigP@ramXtra{x-xetex} \def\FigP@ramPgpos{pgpos} \def\FigP@ramMirror{x-mirror}
 \newif\ifusfmthree \usfmthreefalse
 \def\getonepairp@ram#1="#2" {\stripspace#1\end/ \end/\relax{#1}\edef\p@ramid{\p@ram}%
   \stripspace#2\end/ \end/\relax{#2}\edef\p@ramval{\p@ram}%
@@ -1280,16 +1280,21 @@
     \fi
     % FIXME: Something like this?
     \tempfalse
+    \def\pr@pic{}\def\p@stpic{}
     \ifx\mirr@r\empty\else
       \trace{g}{Mirror: \mirr@r, \the\pageno}%
-      \ifx\mirr@r\@dd\ifodd\pageno\temptrue\fi\fi %Page number is frequently low by one or 2 when image is read. Needs external toc-style file.
-      \ifx\mirr@r\@ven\ifodd\pageno\else\temptrue\fi\fi
-      \ifx\mirr@r\b@th\temptrue\fi
-      \iftemp
-          \trace{g}{Mirrored image requested}%
-          %This bit tested:
-          \setbox0\hbox{\dimen0=\wd0\kern\dimen0\special{pdf:  begintransform}\special{x:scale -1 1}\box0\special{pdf: endtransform}\kern-\dimen0}%
-      \fi
+      %THIS LOGIC is also non-effective. Need to re-write to use an aux file, probably.
+      \global\def\pr@pic{
+         \trace{g}{prepic: Mirror: \mirr@r, \the\pageno}%
+         \ifx\mirr@r\@dd\ifodd\pageno\temptrue\fi\fi %Page number is frequently low by one or 2 when image is read. Needs external toc-style file.
+         \ifx\mirr@r\@ven\ifodd\pageno\else\temptrue\fi\fi
+         \ifx\mirr@r\b@th\temptrue\fi
+         \iftemp\trace{g}{Mirrored image requested}%
+           \dimen0=\wd0\kern\dimen0\special{pdf:  begintransform}\special{x:scale -1 1}\fi
+      }%
+      \global\def\p@stpic{\iftemp\special{pdf: endtransform}\kern-\dimen0\fi
+      }%
+      \setbox0\hbox{\pr@pic\box0\p@stpic}%
     \fi
     \trace{g}{Picture height=\the\ht0, vs:\the\vsize, \the\partialLpenalty,  pg:\the\pagegoal, pt:\the\pagetotal, av:\the\availht}%
     \ifpicNarrow
@@ -1339,9 +1344,7 @@
     \count255=\dimen0
     \trace{g}{Inline picture takes \the\count255 lines}%
     \ifx\picl@c\loc@Inl
-      \trace{g}{Picture is inline}%
-      \advance\count255 by \prevgraf % tell cutouts what's happened
-      \prevgraf=\count255
+      \trace{g}{Picture is inline \ifhmode in HMODE\fi}%
       \penalty10 % Allow the page to break
       \ifpicNarrow
         \ifx\pic@lign\@lignLeft
@@ -1349,6 +1352,7 @@
         \fi
       \fi
       %\splittopskip\baselineskip
+      \vadjust pre {
       \gridp@cfalse% Not true! It's not floating. 
         \gridb@x0
         \dimen9=\lastdepth
@@ -1356,7 +1360,7 @@
         \trace{g}{gridbox dp=\the\dimen9}%There's a skip at the bottom of the box, but somehow the depth is kept. Need to kill it.
       \gridp@cfalse% make sure we align to the page grid
       %\squashgridboxtrue
-      \penalty10
+      \penalty10}%
     \fi
     \ifx\picl@c\loc@Par
       \trace{g}{Picture is post-paragraph}%
@@ -1397,7 +1401,7 @@
              \trace{g}{Cutout in horizontal mode. forcing \m@rker}%
              \csname\m@rker\endcsname
            \else
-             \trace{g}{Cutout now in horizontal mode, but before verse was started it was in vertical mode. Using \prev@rsemode and negative lineskip}%
+             \trace{g}{Cutout now in horizontal mode, but before this verse was started it was in vertical mode. Using \prev@rsemode and negative lineskip}%
              \csname\prev@rsemode\endcsname
              \vskip -\baselineskip
            \fi

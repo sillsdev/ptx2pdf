@@ -1331,7 +1331,7 @@
  \fi%
 }
 
-\def\joinb@xes#1#2{%Join a vtop/vbox and a vtop/vbox together and preserve baselineskip%
+\def\joinb@xes#1#2{%Called (ONLY) by pagebuilder. Join a vtop/vbox and a vtop/vbox together and preserve baselineskip%
 %\showbox#1\showbox#2%
 \bgroup
  \setbox0=\box#1
@@ -1343,6 +1343,9 @@
  \fi\fi
  \ifdim\ht1>0pt \ifdim\dp1<0.5\baselineskip
    %box1 is not a vtop, it's a vbox
+   \ifdim\dimen0<0pt
+     \dimen0=0pt
+   \fi
    %Theoretically, there ought to be a \baselineskip here. It doesn't seem to be needed.
    %\advance\dimen0 by \baselineskip
  \fi\fi
