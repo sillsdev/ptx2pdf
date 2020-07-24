@@ -173,7 +173,7 @@ ptxprint and the ptx macros support an optional extra column in a USFM2 `\fig`
 element, which corresponds to the `x-xetex` USFM3 attribute. It consists of a
 space separated list of image specifications:
 
-- rotated _degrees_ Rotates the image anticlockwise the given number of degrees.
+- `rotated` _degrees_ Rotates the image anticlockwise the given number of degrees.
 
 For example, in the piclist entry from the previous section, the image is
 rotated anticlockwise by 3 degrees.
@@ -186,9 +186,20 @@ The media attribute consists of a string of single letter media types for which
 this figure is intended. It is currently ignored in the ptx macros and all
 images are included.
 
-- a Include in scripture applications, like Scripture App Builder.
-- p Include in print publications.
-- w Include in web page presentations of the text.
+- `a` Include in scripture applications, like Scripture App Builder.
+- `p` Include in print publications.
+- `w` Include in web page presentations of the text.
+
+### x-mirror Attribute
+
+Sometimes the people in the picture are just looking the wrong way. Sometimes it
+would be good to have the picture mirrored. In fact you might want it mirrored
+only on left, or right pages or both. The `x-mirrored` tells the ptx macros when
+to mirror the picture. The possible values are:
+
+- `odd` Mirror on odd pages
+- `even` Mirror on even pages
+- `both` Mirror on all pages 
 
 ## Piclist files
 

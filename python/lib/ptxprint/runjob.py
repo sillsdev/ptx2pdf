@@ -570,7 +570,7 @@ class RunJob:
                     print("Warning: Couldn't locate Verse Number Decorator")
 
     def gatherIllustrations(self, info, jobs, ptfolder):
-        posparms = ("desc", "src", "size", "pgpos", "copy", "alt", "ref", "xetex")
+        posparms = ("desc", "src", "size", "pgpos", "copy", "alt", "ref", "x-xetex", "x-mirror")
         srcfkey = 'src path'
         pageRatios = self.usablePageRatios(info)
         tmpPicpath = os.path.join(self.printer.working_dir, "tmpPics")
