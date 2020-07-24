@@ -688,20 +688,23 @@ class TexModel:
             return []
         qreg = r'(?:"((?:[^"\\]|\\.)*?)"|' + r"'((?:[^'\\]|\\.)*?)')"
         with universalopen(fname) as inf:
-            for l in inf.readlines():
+            for i, l in enumerate(inf.readlines()):
                 l = l.strip().replace(u"\uFEFF", "")
                 l = re.sub(r"\s*#.*$", "", l)
                 if not len(l):
                     continue
-                m = re.match(r"^"+qreg+r"\s*>\s*"+qreg, l)
-                if m:
-                    changes.append((None, regex.compile(m.group(1) or m.group(2), flags=regex.M),
-                                    m.group(3) or m.group(4) or ""))
-                    continue
-                m = re.match(r"^in\s+"+qreg+r"\s*:\s*"+qreg+r"\s*>\s*"+qreg, l)
-                if m:
-                    changes.append((regex.compile("("+(m.group(1) or m.group(2))+")", flags=regex.M), \
-                    regex.compile((m.group(3) or m.group(4)), flags=regex.M), (m.group(5) or m.group(6) or "")))
+                try:
+                    m = re.match(r"^"+qreg+r"\s*>\s*"+qreg, l)
+                    if m:
+                        changes.append((None, regex.compile(m.group(1) or m.group(2), flags=regex.M),
+                                        m.group(3) or m.group(4) or ""))
+                        continue
+                    m = re.match(r"^in\s+"+qreg+r"\s*:\s*"+qreg+r"\s*>\s*"+qreg, l)
+                    if m:
+                        changes.append((regex.compile("("+(m.group(1) or m.group(2))+")", flags=regex.M), \
+                        regex.compile((m.group(3) or m.group(4)), flags=regex.M), (m.group(5) or m.group(6) or "")))
+                except regex._regex_core.error as e:
+                    self.printer.doError("Regular expression error: {} in changes file at line {}".format(str(e), i+1))
         if not len(changes):
             return None
         if self.printer is not None and self.printer.get("c_tracing"):
