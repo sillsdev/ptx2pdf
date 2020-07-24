@@ -51,8 +51,8 @@ def xdv(request, projectsdir, project, config):
 @pytest.mark.usefixtures("xdv")
 class TestXetex:
     def test_pdf(self, xdv):
-        xdvcmd = "xdvipdfmx -q -E -o " + xdv.filebasepath+".pdf"
-        assert call(xdvcmd, shell=True)
+        xdvcmd = "xdvipdfmx -q -E -o " + xdv.filebasepath+".pdf " + xdv.filebasepath+".xdv"
+        assert call(xdvcmd, shell=True) == 0
 
     def test_xdv(self, xdv):
         xdvcmd = [os.path.join(xdv.testsdir, "..", "python", "scripts", "xdvitype"), "-d"]

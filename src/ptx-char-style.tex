@@ -274,14 +274,16 @@
 }
 \def\extraregular{"Times New Roman"}
 \def\s@textrafont#1{%
-  \x@\ifx\csname extrafont<#1>\endcsname \relax%
+  \ifcsname extrafont<#1>\endcsname\else
     \let\typef@ce=\extraregular
     \getmcfonts@ze
     \dimen0=\c@rrfontsize\FontSizeUnit
     \getmcp@ramR{superscript}% scale down by \SuperscriptFactor if superscripted style
-    \ifx\p@ram\tru@ \multiply\dimen0 by \SuperscriptFactor
-    \x@\global\x@\font\csname extrafont<#1>\endcsname=\typef@ce\space at \p@ram \dimen0
+    \ifx\p@ram\tru@ \multiply\dimen0 by \SuperscriptFactor\fi
+    \x@\global\x@\font\csname extrafont<#1>\endcsname=\typef@ce\space at \dimen0
+    \trace{s}{define extrafont<#1> \typef@ce\space at \the\dimen0}%
   \fi
+  \trace{s}{extrafont<#1> =\csname extrafont<#1>\endcsname}%
   \csname extrafont<#1>\endcsname
 }
 \def\tru@{true}
