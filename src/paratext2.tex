@@ -1142,7 +1142,10 @@
 \def\writefigp@gelog#1{
   \write\n@tepages{\string\figonpage{\the\pageno}#1}%
 }
-\def\figonpage#1#2#3#4#5{\trace{P}{Picture "#2" turned up on page #5}}
+
+\def\figonpage#1#2#3#4#5{\x@\gdef\csname fig#2p@ge\endcsname{#1}%
+\trace{P}{Picture "#3" turned up on page #1}%
+}%
 \def\p@rsePicXtra#1#2\end{% Parse optional new picture options, and remember them
   \xdef\t@mpb{#1}%
   \xdef\t@mpc{#2}%
@@ -1287,14 +1290,22 @@
     \fi
     % FIXME: Something like this?
     \tempfalse
-    \def\pr@pic{}\def\p@stpic{}
+    \def\pr@pic{}\def\p@stpic{}%
+    \x@\let\x@\pgn@\csname fig\the\im@gecount p@ge\endcsname
     \ifx\mirr@r\empty\else
+      \ifx\pgn@\relax
+        \whichp@ge=\pageno
+        \trace{g}{Picture \the\im@gecount may not be mirrored properly}%
+      \else
+        \whichp@ge=\pgn@
+        \trace{g}{Picture \the\im@gecount was on page \pgn@ last time. [\the\pageno]}%
+      \fi
       \trace{g}{Mirror: \mirr@r, \the\pageno}%
       %THIS LOGIC is also non-effective. Need to re-write to use an aux file, probably.
       \global\def\pr@pic{
          \trace{g}{prepic: Mirror: \mirr@r, \the\pageno}%
-         \ifx\mirr@r\@dd\ifodd\pageno\temptrue\fi\fi %Page number is frequently low by one or 2 when image is read. Needs external toc-style file.
-         \ifx\mirr@r\@ven\ifodd\pageno\else\temptrue\fi\fi
+         \ifx\mirr@r\@dd\ifodd\whichp@ge\temptrue\fi\fi %Page number is frequently low by one or 2 when image is read. Needs external toc-style file.
+         \ifx\mirr@r\@ven\ifodd\whichp@ge\else\temptrue\fi\fi
          \ifx\mirr@r\b@th\temptrue\fi
          \iftemp\trace{g}{Mirrored image requested}%
            \dimen0=\wd0\kern\dimen0\special{pdf:  begintransform}\special{x:scale -1 1}\fi
