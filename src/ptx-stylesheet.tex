@@ -96,7 +96,7 @@
 \def \SmallCaps      #1\relax{\defbinp@ram{smallcaps}{#1}}
 \let \Smallcaps\SmallCaps
 \def \BaseLine       #1\relax{\defp@ram{baseline}{#1}}
-\let \LineSpacing\BaseLine
+\def\LineSpacing        #1\relax{\defp@ram{baseline}{#1\FontSizeUnit}}
 % Make a TeX macro based on the StyleType
 \def \StyleType      #1\relax{\lowercase{\def\styl@type{#1}}\m@kestyle}
 \let \Styletype=\StyleType

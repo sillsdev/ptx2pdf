@@ -98,6 +98,7 @@ Notice that markers are case dependent.
 
  Marker       | Description
 ------------- | -----------
+\\BaseLine    | (see also LineSpacing.) Dimension of line spacing. An absolute measure that can include glue. (e.g. `12pt plus 1pt minus 1pt`). *Units are required*
 \\Color       | decimal B * 65536 + G * 256 + R, or xRRGGBB hex digits
 \\Endmarker   | ignored
 \\TextType    | "title", "section" or "other" paragraph grouping
@@ -121,7 +122,7 @@ Notice that markers are case dependent.
 \\NoteCallerRaise | dimension to raise the in note caller
 \\NoteBlendInto   | name of note type marker to merge these notes into that class
 \\SmallCap    | blank enables, "-" disables. Only works with fonts with a +smcp feature
-\\LineSpacing | also BaseLine. Dimension of line spacing, can include glue. *Units are required*
+\\LineSpacing | (see also BaseLine.) Dimension of line spacing, in the same units as fontsize. I.e. actual measurement is \\LineSpacing * \\FontSizeUnit
 \\StyleType   | "paragraph", "character", "note"
 
 These styles are used by other programs but have no action in the macros:

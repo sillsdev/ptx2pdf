@@ -1139,6 +1139,10 @@
 \newif\ifpicUsesIns \picUsesInstrue
 \newif\ifpicNarrow \picNarrowfalse
 
+\def\writefigp@gelog#1{
+  \write\n@tepages{\string\figonpage{\the\pageno}#1}%
+}
+\def\figonpage#1#2#3#4#5{\trace{P}{Picture "#2" turned up on page #5}}
 \def\p@rsePicXtra#1#2\end{% Parse optional new picture options, and remember them
   \xdef\t@mpb{#1}%
   \xdef\t@mpc{#2}%
@@ -1250,8 +1254,9 @@
   \ifdim\p@cinswid<\p@cwidth
     \message{*** Picture \the\p@cwidth\space wide in  \the\p@cinswid\space space. \ifx\size@ption\size@SPAN Did you mean to use col, instead of span?\fi}%\emspace
   \fi
+  \global\advance\im@gecount by 1
   % create box to contain picture
-  \trace{g}{Figure size=\size@ption, loc=\loc@ption \ifpicUsesIns, picins=\the\p@cins\fi, hsz=\the\hsize}%
+  \trace{g}{Figure \the\im@gecount\space size=\size@ption, loc=\loc@ption \ifpicUsesIns, picins=\the\p@cins\fi, hsz=\the\hsize}%
   \setbox0=\vbox{
     \ifpicNarrow
       \hsize=\sizem@ltiple\p@cwidth
@@ -1268,6 +1273,8 @@
     \edef\mirr@r{\csname param-9\endcsname}%
     \expandafter\ch@ckpdf\f@lename..\endf@lename
     \setbox0=\hbox to \sizem@ltiple\p@cwidth{\hss
+      \edef\l@gstring{{\the\im@gecount}{\f@lename}{\csname param-4\endcsname}{\csname param-5\endcsname}}% Fully expand figure parameters, but leave page no. to be expanded later.
+      \x@\writefigp@gelog\x@{\l@gstring}%
       \picfilecomm@nd "\the\PicPath\csname param-2\endcsname"
                      width \sizem@ltiple\p@cwidth \csname param-8\endcsname\hss}%
     \ifFigurePlaceholders % replace graphic with a frame and the file name
@@ -1509,6 +1516,7 @@
 }
 \newcount\totalp@ges
 \newcount\whichp@ge
+\newcount\im@gecount
 
 \newif\ifendbooknoeject \endbooknoejectfalse
 \def\pagebreak{
