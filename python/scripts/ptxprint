@@ -33,6 +33,11 @@ parser.add_argument('--debug',action="store_true",help="Give debug output")
 # parser.add_argument('-t','--test', action='store_true',help="Quick start for a lazy typist")
 args = parser.parse_args()
 
+if args.logging and getattr(sys, 'frozen') and hasattr(sys, '_MEIPASS'):
+    errfile = open("ptxprint.log", "w")
+    sys.stdio = errfile
+    sys.stderr = errfile
+
 if args.paratext is None:
     args.paratext = ptxprint.runner.pt_settings
 

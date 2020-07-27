@@ -842,6 +842,12 @@ class TexModel:
         # keep \xo & \fr refs with whatever follows (i.e the bookname or footnote) so it doesn't break at end of line
         self.localChanges.append((None, regex.compile(r"(\\(xo|fr) (\d+[:.]\d+([-,]\d+)?)) "), r"\1\u2000"))
 
+        # Remove the space after a note caller if the caller is omitted.
+        for c in ("fn", "xr"):
+            if self.asBool("notes/{}omitcaller".format(c)):
+                self.localChanges.append(None, regex.compile((r"(\\[{}]\*)\s+".format(c[0])), r"\1"))
+        self.localChanges.append((None, regex.compile(r"(\\[fx] - .*?\\[fx]\*)\s+"), r"\1"))
+
         # Paratext marks no-break space as a tilde ~
         self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
 
