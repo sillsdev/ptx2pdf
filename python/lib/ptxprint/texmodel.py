@@ -797,7 +797,7 @@ class TexModel:
             self.localChanges.append((None, regex.compile(r"\\fig .*?\\fig\*", flags=regex.M), ""))
         
         if not self.asBool("document/bookintro"): # Drop Introductory matter
-            self.localChanges.append((None, regex.compile(r"\\i(s|m|mi|p|pi|li\d?|pq|mq|pr|b|q\d?) .+?\r?\n", flags=regex.M), "")) 
+            self.localChanges.append((None, regex.compile(r"\\i(s|m|mi|mt|p|pi|li\d?|pq|mq|pr|b|q\d?) .+?\r?\n", flags=regex.M), "")) 
 
         if not self.asBool("document/introoutline"): # Drop ALL Intro Outline matter & Intro Outline References
             # Wondering whether we should restrict this to just the GEN...REV books (as some xtra books only use \ixx markers for content)
