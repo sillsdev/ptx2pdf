@@ -616,53 +616,21 @@ class RunJob:
                         plfname = fname[:doti] + "-draft" + fname[doti:] + ".piclist"
                     # Now write out the new PicList to a temp folder
                     piclstfname = os.path.join(self.printer.configPath(cfgname=self.printer.configId, makePath=False), "PicLists", plfname)
-                    if False and os.path.exists(piclstfname):
-                        with universalopen(piclstfname) as inf:
-                            dat = inf.read()
-                            dat = re.sub(r"(?m)%.+?\r?\n", "", dat) # Throw out all comments
-                            for f in fullnamelist:
-                                doti = f.rfind(".")
-                                ext = f[doti:].lower()
-                                if ext[1:3] == "tif":
-                                    ext = ".jpg"
-                                tmpPicfname = newBase(f)+ext
-                                if os.path.exists(os.path.join(tmpPicpath, tmpPicfname)):
-                                    dat = re.sub(r"\|{}\|".format(re.escape(f)), r"|{}|".format(tmpPicfname), dat)
-                                else:
-                                    found = False
-                                    for ext in extOrder:
-                                        tmpPicfname = newBase(f)+"."+ext
-                                        if os.path.exists(os.path.join(tmpPicpath, tmpPicfname)):
-                                            dat = re.sub(re.escape(f), tmpPicfname, dat)
-                                            found = True
-                                            break
-                                    if not found:
-                                        doti = f.rfind(".")
-                                        missingPics.append(f[:doti])
-                                        if self.printer.get("c_skipmissingimages"):
-                                            dat = re.sub(r"(?im)(^.*{})".format(re.escape(f)), r"% \1", dat)
-
-                            if self.printer.get("c_fighiderefs"): # del refs (ch:vs-vs) from figure caption
-                                dat = re.sub(r"\|(\d+[:.]\d+([-,\u2013\u2014]\d+)?)\r?\n".format(re.escape(f)), "|\n", dat)
-                            # Single Column layout so change all tl+tr > t and bl+br > b
-                            if not self.printer.get("c_doublecolumn"):
-                                dat = re.sub(r"\|([tb])[lr]\|", r"|\1|", dat)
-                    else:
-                        isdblcol = self.printer.get("c_doublecolumn")
-                        ishiderefs = self.printer.get("c_fighiderefs")
-                        lines = []
-                        for k, v in sorted(picinfos.items(),
-                                        key=lambda x: refKey(x[0], info="R" if len(x[0])>4 and x[0][3]=="R" else "")):
-                            if 'dest file' not in v:
-                                missingPics.append(v['src'])
-                                continue
-                            if not isdblcol: # Single Column layout so change all tl+tr > t and bl+br > b
-                                v['size'] = re.sub(r"([tb])[lr]", r"\1", v['size'])
-                            if 'ref' in v and ishiderefs:
-                                del v['ref']
-                            v['src'] = os.path.basename(v['dest file'])
-                            lines.append(" ".join([k] + ['{}="{}"'.format(x, v[x]) for x in posparms if x in v]))
-                        dat = "\n".join(lines)
+                    isdblcol = self.printer.get("c_doublecolumn")
+                    ishiderefs = self.printer.get("c_fighiderefs")
+                    lines = []
+                    for k, v in sorted(picinfos.items(),
+                                    key=lambda x: refKey(x[0], info="R" if len(x[0])>4 and x[0][3]=="R" else "")):
+                        if 'dest file' not in v:
+                            missingPics.append(v['src'])
+                            continue
+                        if not isdblcol: # Single Column layout so change all tl+tr > t and bl+br > b
+                            v['size'] = re.sub(r"([tb])[lr]", r"\1", v['size'])
+                        if 'ref' in v and ishiderefs:
+                            del v['ref']
+                        v['src'] = os.path.basename(v['dest file'])
+                        lines.append(" ".join([k] + ['{}="{}"'.format(x, v[x]) for x in posparms if x in v]))
+                    dat = "\n".join(lines)
                     tmpiclstpath = os.path.join(self.printer.working_dir, "tmpPicLists")
                     tmpiclstfname = os.path.join(tmpiclstpath, plfname)
                     # os.makedirs(tmpiclstpath, exist_ok=True)
