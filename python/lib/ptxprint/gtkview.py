@@ -494,6 +494,7 @@ class GtkViewModel(ViewModel):
             cfgname = ""
         else:
             cfgname = "-" + cfgname
+        print(self.working_dir)
         if not os.path.exists(self.working_dir):
             os.makedirs(self.working_dir)
         if len(jobs) > 1:
