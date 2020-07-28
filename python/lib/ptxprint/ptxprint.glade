@@ -1353,10 +1353,17 @@ in the Windows system.</property>
                 <property name="can_focus">True</property>
                 <property name="halign">start</property>
                 <property name="valign">start</property>
+                <property name="tab_pos">left</property>
+                <property name="scrollable">True</property>
+                <property name="enable_popup">True</property>
                 <child>
                   <object class="GtkBox" id="tb_Basic">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="margin_left">6</property>
+                    <property name="margin_right">6</property>
+                    <property name="margin_top">6</property>
+                    <property name="margin_bottom">6</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame">
@@ -2102,6 +2109,10 @@ simpler for others to use.</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
+                    <property name="margin_left">6</property>
+                    <property name="margin_right">6</property>
+                    <property name="margin_top">6</property>
+                    <property name="margin_bottom">6</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkBox">
@@ -3203,6 +3214,10 @@ and advanced Font Options.</property>
                   <object class="GtkBox" id="tb_Font">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="margin_left">6</property>
+                    <property name="margin_right">6</property>
+                    <property name="margin_top">6</property>
+                    <property name="margin_bottom">6</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame" id="fr_FontConfig">
@@ -4355,6 +4370,8 @@ to ensure that they are displayed properly.</property>
                     <property name="valign">start</property>
                     <property name="margin_left">6</property>
                     <property name="margin_right">6</property>
+                    <property name="margin_top">6</property>
+                    <property name="margin_bottom">6</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame">
@@ -5378,6 +5395,10 @@ and Illustrations.</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
+                    <property name="margin_left">6</property>
+                    <property name="margin_right">6</property>
+                    <property name="margin_top">6</property>
+                    <property name="margin_bottom">6</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame">
@@ -6768,6 +6789,8 @@ Footnotes and Cross-references.</property>
                     <property name="can_focus">False</property>
                     <property name="margin_left">6</property>
                     <property name="margin_right">6</property>
+                    <property name="margin_top">6</property>
+                    <property name="margin_bottom">6</property>
                     <property name="resize_mode">immediate</property>
                     <property name="orientation">vertical</property>
                     <child>
@@ -7202,6 +7225,10 @@ file system).</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="valign">start</property>
+                    <property name="margin_left">6</property>
+                    <property name="margin_right">6</property>
+                    <property name="margin_top">6</property>
+                    <property name="margin_bottom">6</property>
                     <child>
                       <object class="GtkBox">
                         <property name="visible">True</property>
@@ -7896,6 +7923,10 @@ from XeTeX processing.</property>
                   <object class="GtkBox" id="tb_DiglotBorder">
                     <property name="can_focus">False</property>
                     <property name="halign">center</property>
+                    <property name="margin_left">6</property>
+                    <property name="margin_right">6</property>
+                    <property name="margin_top">6</property>
+                    <property name="margin_bottom">6</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame">
@@ -8500,8 +8531,10 @@ borders and embelishments to the text.</property>
                   <object class="GtkBox" id="tb_ViewerEditor">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="margin_left">4</property>
-                    <property name="margin_right">4</property>
+                    <property name="margin_left">6</property>
+                    <property name="margin_right">6</property>
+                    <property name="margin_top">6</property>
+                    <property name="margin_bottom">6</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame" id="fr_Debugging">

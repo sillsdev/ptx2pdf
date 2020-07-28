@@ -347,7 +347,7 @@ class TexModel:
             base = os.path.join(self.dict["/ptxpath"], self.dict["project/id"])
             docdir = os.path.join(base, 'PrintDraft')
         else:
-            base = printer.working_dir
+            base = self.printer.working_dir
             docdir = base
         return docdir, base
 
@@ -740,7 +740,7 @@ class TexModel:
                 self.localChanges.append((None, regex.compile(r"\\c {} ?\r?\n.+".format(last+1), flags=regex.S), ""))
 
         # Throw out the known "nonpublishable" markers and their text (if any)
-        self.localChanges.append((None, regex.compile(r"\\(usfm|ide|rem|sts|restore|pubinfo) .+?\r?\n(?=\\)", flags=regex.M), ""))
+        self.localChanges.append((None, regex.compile(r"\\(usfm|ide|rem|sts|restore|pubinfo)( .*?)?\r?\n(?=\\)", flags=regex.M), ""))
 
         # If a printout of JUST the book introductions is needed (i.e. no scripture text) then this option is very handy
         if not self.asBool("document/ifmainbodytext"):
