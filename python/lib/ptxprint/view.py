@@ -482,6 +482,7 @@ class ViewModel:
         randomizePosn = self.get("c_randomPicPosn")
         diglot   = self.get("c_diglotAutoAligned")
         digmode  = self.get("fcb_diglotPicListSources")[:3] if diglot else "Pri"
+        print("digmode:", digmode)
         prjid    = self.get("fcb_project")
         secprjid = self.get("fcb_diglotSecProject")
         if diglot and secprjid is None and digmode != "Pri":
@@ -526,9 +527,7 @@ class ViewModel:
                 digsrc = prjid if digmode != "Sec" else secprjid
                 digsrc += "=L + R="+secprjid if digmode == "Bot" else "" 
                 piclist.append("% Source for DIGLOT Illustrations: {}\n".format(digsrc))
-            piclist.append("""% Location   |Image Name|Img.Size|Position on Page||Illustration|Ref.
-% book ch.vs |filename.ext|span/col|t/b/tl/tr/bl/br||Caption Text|ch:vs
-%   (See end of list for more help for troubleshooting)
+            piclist.append("""% book ch.vs caption|src="filename.ext" size="col/span" pgpos="t/b/tl/bl/tr/br" ref="ch:vs" alt="description"
 
 """)
             for k in sorted(allpicinfo.keys()):
@@ -538,7 +537,7 @@ class ViewModel:
                 if randomizePosn:
                     pageposn = random.choice(picposn.get(p['size'], 'col')) # Randomize location of illustrations on the page (tl,tr,bl,br)
                 else:
-                    if p['pgpos'] in ["t", "b", "tl", "tr", "bl", "br"]:
+                    if p.get('pgpos', '') in ["t", "b", "tl", "tr", "bl", "br"]:
                         pageposn = p['pgpos']
                     else:
                         pageposn = (picposn.get(p['size'], 'col'))[0]       # use the t or tl (first in list)
@@ -549,22 +548,23 @@ class ViewModel:
                 
                 # Format of lines in pic-list file: BBB C.V desc|file|size|loc|copyright|caption|ref
                 # MRK 1.16 fishermen...catching fish with a net|hk00207b.png|span|b||Jesus calling the disciples to follow him.|1:16
-                piclist.append("{}{} {} {}|{}|{}|{}|{}|{}|{}\n".format(bk, k[1], p['anchor'], p.get('desc', ''), picfname, \
-                                                    p['size'], pageposn, p.get('copy', ''), p['alt'], p.get('ref', '')))
+                # piclist.append("{}{} {} {}|{}|{}|{}|{}|{}|{}\n".format(bk, k[1], p['anchor'], p.get('desc', ''), picfname, \
+                                                    # p['size'], pageposn, p.get('copy', ''), p['alt'], p.get('ref', '')))
+                # Format of lines in USFM3 pic-list file: BBB C.V desc|file|size|loc|copyright|caption|ref
+                # HEBR 3.9 The people worshipping idols having forgotten God|src="co00621.jpg" size="col*0.5" pgpos="cr2" ref="3:9" alt="Description of picture"
+                piclist.append('{}{} {} {}|src="{}" size="{}" pgpos="{}" copy="{}" ref="{}" alt="{}"\n'.format(bk, p.get('info', ''), p['anchor'], p['alt'], picfname, \
+                                                    p['size'], pageposn, p.get('copy', ''), p.get('ref', ''), p.get('desc', '')))
 
             piclist.append("""
 % If illustrations are not appearing in the output PDF, check:
 %   a) The anchor location reference on the far left is very particular, so check
 %      (i) only use '.' as the ch.vs separator
-%      (ii) ensure there is a space after the verse and before the first |
-%      (iii) anchor refs must match the text itself
-%      (iv) anchor refs must be in logical ch.vs order
-%      (iv) the same anchor reference cannot be used more than once (except in a diglot)
+%      (ii) anchor refs must match the text itself and be in logical ch.vs order
+%      (iii) the same anchor reference cannot be used more than once (except in a diglot)
 %   b) Does the illustration exist in 'figures' or 'local/Figures' or another specified folder?
-%   c) Position on Page for a 'span' image should only be 't'=top or 'b'=bottom
 % Other Notes:
-%   d) To (temporarily) remove an illustration prefix the line with % followed by a space
-%   e) To scale an image use this notation: span*.7  or  col*1.3)
+%   c) To (temporarily) remove an illustration prefix the line with % followed by a space
+%   d) To scale an image use this notation: span*.7  or  col*1.3)
 """)
             plpath = os.path.join(self.configPath(self.configName()), "PicLists")
             os.makedirs(plpath, exist_ok=True)
@@ -614,8 +614,6 @@ class ViewModel:
                 blocks = ["0"] + re.split(r"\\c\s+(\d+)", dat)
                 for c, t in zip(blocks[0::2], blocks[1::2]):
                     m = re.findall(r"(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+)\\fig\*", t)
-                    # I removed the complex ref piece as it is no longer needed, now that we get the c.v from text itself:
-                    #                       ((?:[^\d\\]+? ?)?(\d+[\:\.]\d+?[abc]?(?:[\-,\u2013\u2014]\d+[abc]?)?))
                     if len(m):
                         for f in m:     # usfm 2
                             r = self._sortkey(c, f[0])
@@ -706,8 +704,8 @@ class ViewModel:
                         new = extensions.get(os.path.splitext(filepath)[1].lower(), 10000)
                         if old > new:
                             figinfos[k][key] = filepath
-                        elif old == new and (self.printer.get("c_useLowResPics") \
-                                            != bool(os.path.getsize(res[k]) < os.path.getsize(filepath))):
+                        elif old == new and (self.get("c_useLowResPics") \
+                                            != bool(os.path.getsize(figinfos[k][key]) < os.path.getsize(filepath))):
                             figinfos[k][key] = filepath
                     else:
                         figinfos[k][key] = filepath
