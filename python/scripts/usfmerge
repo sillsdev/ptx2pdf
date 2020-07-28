@@ -297,7 +297,7 @@ pairs = alignChunks(pcoll.acc, scoll.acc, mainkeys, secondkeys,
          alignFilter(lambda s:s[:s.find("_")])])
 
 if args.outfile:
-    outf = open(args.outfile, "w")
+    outf = open(args.outfile, "w", encoding="utf-8")
 else:
     outf = sys.stdout
 
