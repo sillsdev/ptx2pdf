@@ -347,14 +347,14 @@ class TexModel:
             base = os.path.join(self.dict["/ptxpath"], self.dict["project/id"])
             docdir = os.path.join(base, 'PrintDraft')
         else:
-            base = printer.working_dir
+            base = self.printer.working_dir
             docdir = base
         return docdir, base
 
     def update(self):
         """ Update model from UI """
         j = os.path.join
-        rel = lambda x:os.path.relpath(x).replace("\\", "/")
+        rel = lambda x, y:os.path.relpath(x, y).replace("\\", "/")
         self.printer.setDate()  # Update date/time to now
         cpath = self.printer.configPath(self.printer.configName())
         rcpath = self.printer.configPath("")
@@ -374,7 +374,7 @@ class TexModel:
             picdir = j(base, p)
             if os.path.exists(picdir):
                 break
-        self.dict["project/picdir"] = rel(picdir).replace("\\","/")
+        self.dict["project/picdir"] = rel(picdir, docdir).replace("\\","/")
         # Look in local Config folder for ptxprint-mods.tex, and drop back to shared/ptxprint if not found
         fpath = j(cpath, "ptxprint-mods.tex")
         if not os.path.exists(fpath):
@@ -740,7 +740,7 @@ class TexModel:
                 self.localChanges.append((None, regex.compile(r"\\c {} ?\r?\n.+".format(last+1), flags=regex.S), ""))
 
         # Throw out the known "nonpublishable" markers and their text (if any)
-            self.localChanges.append((None, regex.compile(r"\\(usfm|ide|rem|sts|restore|pubinfo) .+?\r?\n", flags=regex.M), ""))
+        self.localChanges.append((None, regex.compile(r"\\(usfm|ide|rem|sts|restore|pubinfo)( .*?)?\r?\n(?=\\)", flags=regex.M), ""))
 
         # If a printout of JUST the book introductions is needed (i.e. no scripture text) then this option is very handy
         if not self.asBool("document/ifmainbodytext"):

@@ -475,6 +475,13 @@ class ViewModel:
                 val = config.get(sect, name)
             except configparser.NoOptionError:
                 setv(ModelMap[k][0], self.ptsettings.dict.get(v, ""))
+        #self.customFolder = self.get("btn_selectOutputFolder")
+        #if not self.get("c_useprintdraftfolder") and self.customFolder is not None and len(self.customFolder):
+        #    self.working_dir = self.customFolder
+        #    self.fixed_wd = True
+        #else:
+        #    self.working_dir = os.path.join(self.settings_dir, self.prjid, "PrintDraft")
+        #    self.fixed_wd = False
 
     def generateNProcPicLists(self, bks, outdir, processor, sfmonly=False, isTemp=False):
         picposns = { "L": {"col":  ("tl", "bl"),             "span": ("t")},
