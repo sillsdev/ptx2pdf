@@ -532,7 +532,9 @@ class ViewModel:
 """)
             for k in sorted(allpicinfo.keys()):
                 p = allpicinfo[k]
-                picposn = picposns[k[-1] if diglot else ""]
+                print("k[-1]", k[-1])
+                picposn = picposns[k[-1] if digmode == "Bot" else ""]
+                # picposn = picposns[k[-1] if diglot else ""]
 
                 if randomizePosn:
                     pageposn = random.choice(picposn.get(p['size'], 'col')) # Randomize location of illustrations on the page (tl,tr,bl,br)
@@ -552,7 +554,7 @@ class ViewModel:
                                                     # p['size'], pageposn, p.get('copy', ''), p['alt'], p.get('ref', '')))
                 # Format of lines in USFM3 pic-list file: BBB C.V desc|file|size|loc|copyright|caption|ref
                 # HEBR 3.9 The people worshipping idols having forgotten God|src="co00621.jpg" size="col*0.5" pgpos="cr2" ref="3:9" alt="Description of picture"
-                piclist.append('{}{} {} {}|src="{}" size="{}" pgpos="{}" copy="{}" ref="{}" alt="{}"\n'.format(bk, p.get('info', ''), p['anchor'], p['alt'], picfname, \
+                piclist.append('{}{} {} {}|src="{}" size="{}" pgpos="{}" copy="{}" ref="{}" alt="{}"\n'.format(bk, k[-1], p['anchor'], p['alt'], picfname, \
                                                     p['size'], pageposn, p.get('copy', ''), p.get('ref', ''), p.get('desc', '')))
 
             piclist.append("""
