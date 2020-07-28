@@ -1495,6 +1495,9 @@ class GtkViewModel(ViewModel):
             self.customOutputFolder = customOutputFolder[0]
             btn_selectOutputFolder.set_tooltip_text(str(customOutputFolder[0]))
             self.builder.get_object("c_useprintdraftfolder").set_active(False)
+            self.working_dir = self.customOutputFolder
+            self.set("btn_selectOutputFolder", self.customOutputFolder)
+            self.fixed_wd = True
         else:
             self.customOutputFolder = None
             btn_selectOutputFolder.set_tooltip_text("")
