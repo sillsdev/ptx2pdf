@@ -2098,6 +2098,7 @@ You can also use Saved/Shared
 Configuration settings, and show
 or hide various tabs to make it
 simpler for others to use.</property>
+                    <property name="halign">start</property>
                     <property name="label" translatable="yes">Basic</property>
                   </object>
                   <packing>
@@ -3202,6 +3203,7 @@ should be trimmed to after printing.</property>
 Line Spacing. Columns,
 Chapter and Verse DIgits,
 and advanced Font Options.</property>
+                    <property name="halign">start</property>
                     <property name="label" translatable="yes">Layout</property>
                     <property name="justify">center</property>
                   </object>
@@ -4355,6 +4357,7 @@ to ensure that they are displayed properly.</property>
                   <object class="GtkLabel" id="lb_Font">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="halign">start</property>
                     <property name="label" translatable="yes">Font</property>
                   </object>
                   <packing>
@@ -5382,6 +5385,7 @@ and  the options for Main Body
 of text. Also Adjustments and
 Hyphenation, and a Fallback Font.
 and Illustrations.</property>
+                    <property name="halign">start</property>
                     <property name="label" translatable="yes">Body</property>
                     <property name="justify">center</property>
                   </object>
@@ -6776,6 +6780,7 @@ PrintDraft-mods.sty stylesheet.</property>
 and bottom of the page and
 content of Headers and Footers,
 Footnotes and Cross-references.</property>
+                    <property name="halign">start</property>
                     <property name="label" translatable="yes">Head+Foot</property>
                   </object>
                   <packing>
@@ -7212,6 +7217,7 @@ over what kinds of images are
 used, and where they are located
 (both within the text, and in the
 file system).</property>
+                    <property name="halign">start</property>
                     <property name="label" translatable="yes">Pictures</property>
                   </object>
                   <packing>
@@ -7854,6 +7860,7 @@ to creating the PDF. Add Front
 and Back Matter PDFs and Watermarks.
 Also a range of Advanced typography
 settings to support any Writing System.</property>
+                    <property name="halign">start</property>
                     <property name="margin_bottom">2</property>
                     <property name="label" translatable="yes">Advanced</property>
                     <property name="justify">center</property>
@@ -7912,6 +7919,7 @@ settings to support any Writing System.</property>
                     <property name="no_show_all">True</property>
                     <property name="tooltip_text" translatable="yes">Display the output log 
 from XeTeX processing.</property>
+                    <property name="halign">start</property>
                     <property name="label" translatable="yes">Log</property>
                   </object>
                   <packing>
@@ -8520,6 +8528,7 @@ to specify the settings for these.</property>
                     <property name="tooltip_text" translatable="yes">Create a diglot publication by incorporating 
 a secondary project. And/Or add decorative
 borders and embelishments to the text.</property>
+                    <property name="halign">start</property>
                     <property name="label" translatable="yes">Diglot+Border</property>
                   </object>
                   <packing>
@@ -9420,6 +9429,7 @@ troubleshooting use only.</property>
                     <property name="tooltip_text" translatable="yes">The Viewer allows you to view and
 edit various control and log files
 relating to PTXprint.</property>
+                    <property name="halign">start</property>
                     <property name="label" translatable="yes">Viewer</property>
                   </object>
                   <packing>
