@@ -7930,7 +7930,7 @@ from XeTeX processing.</property>
                 <child>
                   <object class="GtkBox" id="tb_DiglotBorder">
                     <property name="can_focus">False</property>
-                    <property name="halign">center</property>
+                    <property name="halign">start</property>
                     <property name="margin_left">6</property>
                     <property name="margin_right">6</property>
                     <property name="margin_top">6</property>
@@ -7941,6 +7941,8 @@ from XeTeX processing.</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">center</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
                         <property name="margin_top">6</property>
                         <property name="margin_bottom">6</property>
                         <property name="label_xalign">0.019999999552965164</property>
@@ -8220,7 +8222,7 @@ options here to create a Diglot or Didoc.</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">True</property>
+                        <property name="fill">False</property>
                         <property name="position">0</property>
                       </packing>
                     </child>
@@ -8230,7 +8232,9 @@ options here to create a Diglot or Didoc.</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
                         <property name="valign">end</property>
-                        <property name="margin_top">10</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
+                        <property name="margin_top">12</property>
                         <property name="margin_bottom">6</property>
                         <property name="label_xalign">0.039999999105930328</property>
                         <child>
@@ -8519,6 +8523,7 @@ to specify the settings for these.</property>
                   </object>
                   <packing>
                     <property name="position">8</property>
+                    <property name="tab_fill">False</property>
                   </packing>
                 </child>
                 <child type="tab">
