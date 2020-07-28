@@ -354,7 +354,7 @@ class TexModel:
     def update(self):
         """ Update model from UI """
         j = os.path.join
-        rel = os.path.relpath
+        rel = lambda x:os.path.relpath(x).replace("\\", "/")
         self.printer.setDate()  # Update date/time to now
         cpath = self.printer.configPath(self.printer.configName())
         rcpath = self.printer.configPath("")
