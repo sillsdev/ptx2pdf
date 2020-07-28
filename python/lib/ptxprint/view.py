@@ -702,8 +702,8 @@ class ViewModel:
                         continue
                     k = newfigs[nB]
                     if key in figinfos[k]:
-                        old = extensions.get(os.path.splitext(res[k]).lower(), 10000)
-                        new = extensions.get(os.path.splitext(filepath).lower(), 10000)
+                        old = extensions.get(os.path.splitext(figinfos[k][key])[1].lower(), 10000)
+                        new = extensions.get(os.path.splitext(filepath)[1].lower(), 10000)
                         if old > new:
                             figinfos[k][key] = filepath
                         elif old == new and (self.printer.get("c_useLowResPics") \

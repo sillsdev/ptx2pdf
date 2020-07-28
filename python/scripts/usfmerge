@@ -1,6 +1,11 @@
 #!/usr/bin/python3
 
-import ptxprint.sfm as sfm
+try:
+    import ptxprint.sfm as sfm
+except ImportError:
+    sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
+    import ptxprint.sfm as sfm
+
 from ptxprint.sfm import usfm
 from ptxprint.sfm import style
 import argparse, difflib, sys
