@@ -695,31 +695,18 @@ class RunJob:
             return
         # If either the source image is a TIF (or) the proportions aren't right for page dimensions 
         # then we first need to convert to a JPG and/or pad with which space on either side
-        doti = srcpath.rfind(".")
-        if srcpath[doti:].lower().startswith(".tif") or iw/ih < ratio:
-            tempJPGname = os.path.join(tmpPicPath, "tempJPG.jpg")
-            doti = tgtpath.rfind(".")
-            tgtpath = tgtpath[:doti]+".jpg"
-            # try:
-            self.convertToJPGandResize(ratio, srcpath, tempJPGname)
-            srcpath = tempJPGname
-            # except: # MH: Which exception should I try to catch?
-                # print("Error: Unable to convert/resize image!\nImage skipped:", srcpath)
-                # return
-        if not os.path.exists(tgtpath):
-            copyfile(srcpath, tgtpath)
+        if iw/ih < ratio or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
+            tgtpath = os.path.splitext(tgtpath)[0]+".jpg"
+            try:
+                self.convertToJPGandResize(ratio, srcpath, tgtpath)
+            except: # MH: Which exception should I try to catch?
+                print("Error: Unable to convert/resize image!\nImage skipped:", srcpath)
+                return
         else:
-            if self.printer.get("c_useLowResPics"): # we want to use the smallest available file
-                if os.path.getsize(srcpath) < os.path.getsize(tgtpath):
-                    copyfile(srcpath, tgtpath)
-            else:                              # we want to use the largest file available
-                if os.path.getsize(srcpath) > os.path.getsize(tgtpath):
-                    copyfile(srcpath, tgtpath)
-        try:
-            os.remove(tempJPGname)
-        except:
-            pass
-        return tgtpath
+            try:
+                copyfile(srcpath, tgtpath)
+            except OSError:
+                print("Error: Unable to copy {}\n       image to {} in tmpPics folder", srcpath, tgtpath)
 
     def removeTempFiles(self, texfiles):
         notDeleted = []
