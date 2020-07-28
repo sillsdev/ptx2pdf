@@ -580,7 +580,7 @@ class RunJob:
         missingPics = self.printer.generateNProcPicLists(jobs, os.path.join(self.printer.working_dir, "tmpPicLists"), carefulCopy, isTemp=True)
             
         if len(missingPics):
-            missingPicList += ["{}".format(", ".join(list(set(missingPics))))]
+            missingPicList = ["{}".format(", ".join(list(set(missingPics))))]
             self.printer.set("l_missingPictureString", "Missing Pictures:\n"+"{}".format("\n".join(missingPicList)))
         else:
             self.printer.set("l_missingPictureString", "No Missing Pictures")
