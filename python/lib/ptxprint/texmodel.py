@@ -959,7 +959,7 @@ class TexModel:
         if not self.asBool(pfx+"/includefootnotes"):
             nstylist.append("##### Set Footnote Size and Line Spacing\n")
             nstylist.append("\\Marker {}\n\\FontSize {}\n".format("f", self.dict[pfx+'/fnfontsize']))
-            nstylist.append("\\LineSpacing {}pt plus 2pt\n".format(self.dict[pfx+'/fnlinespacing']))
+            nstylist.append("\\BaseLine {}pt plus 2pt\n".format(self.dict[pfx+'/fnlinespacing']))
             nstylist.append("\\Justification Left\n\n")
         else:
             nstylist.append("##### Remove all footnotes\n\\Marker f\n\\TextProperties nonpublishable\n\n")
@@ -967,7 +967,7 @@ class TexModel:
         if not self.asBool("notes/includexrefs"):
             nstylist.append("##### Set Cross-reference Size and Line Spacing\n")
             nstylist.append("\\Marker {}\n\\FontSize {}\n".format("x", self.dict[pfx+'/fnfontsize']))
-            nstylist.append("\\LineSpacing {}pt plus 2pt\n".format(self.dict[pfx+'/fnlinespacing']))
+            nstylist.append("\\BaseLine {}pt plus 2pt\n".format(self.dict[pfx+'/fnlinespacing']))
             nstylist.append("\\Justification Left\n\n")
         else:
             nstylist.append("##### Remove all cross-references\n\\Marker x\n\\TextProperties nonpublishable\n\n")

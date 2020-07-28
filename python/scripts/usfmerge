@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import sys
 try:
     import ptxprint.sfm as sfm
 except ImportError:
@@ -101,7 +102,8 @@ class Collector:
                         newchunk = True
                         self.currType = None
                 elif self.currType == 'Chap':
-                    self.currType = 'Section' if isSection else None
+                    if not isSection:
+                        self.currType = None
                 elif isSection:
                     newchunk = True
                     self.currType = 'Section'
@@ -278,12 +280,12 @@ for s in args.stylesheet:
 def texttype(m):
     return stylesheet.get(m, {'TextType': 'other'}).get('TextType').lower()
 
-with open(args.infilea) as inf:
+with open(args.infilea, encoding="utf-8") as inf:
     doc = list(usfm.parser(inf, stylesheet=stylesheet, purefootnotes=True))
     pcoll = Collector(args, doc=doc)
 mainchunks = {c.ident: c for c in pcoll.acc}
 
-with open(args.infileb) as inf:
+with open(args.infileb, encoding="utf-8") as inf:
     doc = list(usfm.parser(inf, stylesheet=stylesheet, purefootnotes=True))
     scoll = Collector(args, doc=doc, primary=False)
 secondchunks = {c.ident: c for c in scoll.acc}

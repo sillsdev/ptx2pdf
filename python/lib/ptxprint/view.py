@@ -475,7 +475,7 @@ class ViewModel:
 
     def generatePicLists(self, booklist, generateMissingLists=False):
         xl = []
-        picposns = {"L": {"col":  ("tl", "bl"),             "span": ("t")},
+        picposns = { "L": {"col":  ("tl", "bl"),             "span": ("t")},
                      "R": {"col":  ("tr", "br"),             "span": ("b")},
                      "":  {"col":  ("tl", "tr", "bl", "br"), "span": ("t", "b")}}
 
@@ -533,7 +533,7 @@ class ViewModel:
 """)
             for k in sorted(allpicinfo.keys()):
                 p = allpicinfo[k]
-                picposn = picposns[k[1]] if digmode == "Bot" else picposns[""]
+                picposn = picposns[k[-1] if diglot else ""]
 
                 if randomizePosn:
                     pageposn = random.choice(picposn.get(p['size'], 'col')) # Randomize location of illustrations on the page (tl,tr,bl,br)
