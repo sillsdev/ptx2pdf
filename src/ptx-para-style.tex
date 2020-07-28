@@ -213,6 +213,7 @@
  \ifsk@pping \egroup \fi % if we were skipping nonpublishable text, end that mode
  \t@stpublishability{#1}% test if the new marker is nonpublishable
  \ifn@npublishable
+  \par % End the present paragaph, to make sure that cutouts, etc. are handled properly
   \setbox\j@nkbox=\vbox\bgroup\def\m@rker{#1}\sk@ppingtrue % and if so, start a box to consume and discard the text
  \else % else we need to actually process it!
   \the\p@rstylehooks % allow other modules to hook in here

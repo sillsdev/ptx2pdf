@@ -50,7 +50,7 @@
 \newcount\@numcuts
 
 % Forget any current cutouts
-\def\cancelcutouts{\@numcuts=0 }
+\def\cancelcutouts{\ifnum\@numcuts>0 \trace{C}{Cancelled \the\@numcuts\space cutout(s)}\fi \@numcuts=0 }
 
 %
 % This must be called after each paragraph to carry-over any residual amout of cutout
