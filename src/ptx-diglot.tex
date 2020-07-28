@@ -880,12 +880,12 @@
 %
 % Change which side we're adding to
 \outer\def\lefttext{%
-  \global\savedpenalty=\lastpenalty % This MUST be first, or the last thing won't be a penalty
+  \global\savedpenalty=\lastpenalty % This MUST be first, or the last /thing/ won't be a penalty
   %\par\do@ndofthispar
   \trace{d}{lefttext ilp=\the\interlinepenalty, lp:\the\savedpenalty}%
   \ifsk@pping \egroup \sk@ppingfalse\fi% if we were skipping nonpublishable text, end that mode
   \ifhe@dings\endhe@dings\fi%
-  \ifinn@te\message{*** lefttext called from inside footnote?!?}\fi
+  \ifinn@te\errmessage{*** lefttext called from inside footnote?!?}\fi
   \Lneedsemptyingtrue%
   \calc@vailht%
   \n@xtc@mmand%
@@ -894,7 +894,7 @@
   \global\digl@tLtrue%
   \global\diglotLtrue%
   \ifleftfull % Already full, just swallow text...
-    \global\vsize=\textheight
+    \global\vsize=\maxdimen
     \global\availht=\vsize
   \else%
     \calc@vailht%Recalculate for this column
@@ -941,8 +941,10 @@
 \newdimen\availhtL
 \newdimen\availhtR
 \newdimen\chunkDelta % Difference between the last boxes set on the page (-ve=left longer)
-\newdimen\baselineDelta % difference between the L and R baselines (-ve=left longer)
-\newdimen\thisjointDelta % difference between the L and R baselines (-ve=left longer)
+\newdimen\baselineDelta % semi-constant: difference between the L and R baselines (-ve=left longer)
+\newdimen\thisjointDelta % difference between the L and R boxes (-ve=left longer)
+\newdimen\cumulativeDelta % Sum of \chunkDelta values
+\cumulativeDelta=0pt
 \newdimen\adjustp@ge %emergency stretch to page
 \adjustp@ge=0pt
 \def\m@rkerL{}
@@ -1385,7 +1387,7 @@
   %Re-use LeftBox for this page chunk
   %
  
-  \traceNum{d}{Adding to page: LB:\the\ht\LeftBox+\the\dp\LeftBox\space RB:\the\ht\RightBox+\the\dp\RightBox\space Last Delta:\the\chunkDelta}%
+  \traceNum{d}{Adding to page: LB:\the\ht\LeftBox+\the\dp\LeftBox\space RB:\the\ht\RightBox+\the\dp\RightBox\space Last Delta:\the\chunkDelta\space Tot:\the\cumulativeDelta}%
   \ifVisTrace
     \doVisTrace{L}%
   \fi
@@ -1402,6 +1404,7 @@
   \advance\chunkDelta by \dp\RightBox
   \advance\chunkDelta by -\ht\LeftBox
   \global\advance\chunkDelta by -\dp\LeftBox
+  \global\advance\cumulativeDelta by \chunkDelta
   \global\setbox\LeftBox=\vtop{\ifdim\thisjointDelta>0pt\vskip \thisjointDelta\fi\hbox to \textwidth{\ifVisTrace\llap{\box0}\fi%
   \dimen8=\ht\LeftBox
   \ifdim \dimen8 <\ht\RightBox \dimen8=\ht\RightBox \fi
@@ -1809,6 +1812,14 @@
     \box4
   \fi
   \hss}}
+
+\def\diglotgr@db@x#1{%
+ \vbox{\gr@db@@x{#1}}%
+ \nobreak
+}
 \def\testmarker{\hbox to 0pt{\vrule height 7pt depth 0pt width 0.5pt \kern-0.5pt}\message{_}}
 %
+\addtoendhooks{\ifdim\cumulativeDelta=0pt\else\message{Overall column delta \the\cumulativeDelta\space(-ve means left longer)}\fi}
+%\addtoinithooks{\let\gridb@x\diglotgr@db@x}
+
 \endinput

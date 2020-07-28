@@ -475,7 +475,9 @@
  \defineheads
  \@ddcvhooks
  \@ddspecialhooks
- \ifsquashgridbox\let\gridb@x\gr@db@@x\else\let\gridb@x\gr@db@x\fi
+ \ifdiglot\else
+   \ifsquashgridbox\let\gridb@x\gr@db@@x\else\let\gridb@x\gr@db@x\fi
+ \fi
  \global\lastptxfiletrue
  \the\@nithooks
  \let\@netimesetup=\relax}
@@ -506,6 +508,7 @@
    \global\advance\baselineDelta by -\baselineskip
    \saveLRspecificSide{L}%
    \baselineskip=\dimen0
+   %\global\let\gridb@x\diglotgr@db@x
    \egroup
  \fi
  \gdef\ch@plabel{}

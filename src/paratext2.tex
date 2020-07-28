@@ -1022,14 +1022,15 @@
   % reset parameters for diglot-column formatting
   \global\hsize=\columnLwidth % always start with left column
   \global\vsize=\textheight
-  \global\BodyColumns=1
+  \global\BodyColumns=2
   \global\advance\vsize by \baselineskip % don't get caught short by 1/2 line or so
-  \global\advance\vsize by -\ht\partial % Don't mis-inform tex
+  \global\advance\vsize by -\ht\partial % Don't mis-inform TeX
   % make a macro reset vsize for remaining pages which do not have 1 column material
   \gdef\resetvsize{\global\vsize=\textheight \global\advance\vsize by -\ht\partial \global\advance\vsize by 0.5\baselineskip} 
   \global\availht=\vsize
   \global\c@rrentcols=2
   \global\output={\diglotLeft}
+  
   % (\count of an insertion class is a scaling factor)
   \count255=1000
   \global\count\topins=\count255
