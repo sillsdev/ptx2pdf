@@ -583,7 +583,7 @@ class ViewModel:
             return fname + "-draft" + ext
 
     def getFigures(self, bk, sfmonly=False, media=None):
-        posparms = ("desc", "src", "size", "pgpos", "copy", "alt", "ref", "x-xetex", "x-mirror")
+        posparms = ("desc", "src", "size", "pgpos", "copy", "alt", "ref", "x-xetex", "mirror")
         res = {}
         fname = self.getBookFilename(bk, self.prjid)
         usepiclist = not sfmonly and self.get("c_usePicList") and bk not in TexModel._peripheralBooks

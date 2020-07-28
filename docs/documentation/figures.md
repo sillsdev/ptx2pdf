@@ -190,11 +190,11 @@ images are included.
 - `p` Include in print publications.
 - `w` Include in web page presentations of the text.
 
-### x-mirror Attribute
+### mirror Attribute
 
 Sometimes the people in the picture are just looking the wrong way. Sometimes it
 would be good to have the picture mirrored. In fact you might want it mirrored
-only on left, or right pages or both. The `x-mirrored` tells the ptx macros when
+only on left, or right pages or both. The `mirror` tells the ptx macros when
 to mirror the picture. The possible values are:
 
 - `odd` Mirror on odd pages
