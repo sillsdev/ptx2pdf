@@ -34,7 +34,7 @@ def refKey(r, info=""):
     if m:
         return (m.group(1), int(m.group(2) or 0), int(m.group(3) or 0), info, m.group(4))
     else:
-        return (r, 0., info)
+        return (r, 0, 0, info)
 
 class Path(pathlib.Path):
 
@@ -71,6 +71,8 @@ class Path(pathlib.Path):
         else:
             return self.as_posix()
 
+posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror"]
+pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "mirror", "x-xetex"]
 
 class ViewModel:
     _attributes = {
@@ -474,90 +476,75 @@ class ViewModel:
             except configparser.NoOptionError:
                 setv(ModelMap[k][0], self.ptsettings.dict.get(v, ""))
 
-    def generatePicLists(self, booklist, generateMissingLists=False):
-        xl = []
+    def generateNProcPicLists(self, bks, outdir, processor, isTemp=False):
         picposns = { "L": {"col":  ("tl", "bl"),             "span": ("t")},
                      "R": {"col":  ("tr", "br"),             "span": ("b")},
                      "":  {"col":  ("tl", "tr", "bl", "br"), "span": ("t", "b")}}
-
+        srcfkey = 'src path'
         randomizePosn = self.get("c_randomPicPosn")
-        diglot   = self.get("c_diglotAutoAligned")
-        digmode  = self.get("fcb_diglotPicListSources")[:3] if diglot else "Pri"
-        print("digmode:", digmode)
-        prjid    = self.get("fcb_project")
-        secprjid = self.get("fcb_diglotSecProject")
-        if diglot and secprjid is None and digmode != "Pri":
-            self.doError("No Secondary Project Set", secondary="In order to use the blended PicList for Diglots, the \n"+
-                                                                "Secondary project must be set on the Diglot+Border tab.")
-            return
+        diglotPrinter = None
+        if self.printer.get("c_diglotAutoAligned"):
+            diglotPrinter = self.createDiglotView()
+            diglotPics = {}
         self.setDate()  # update date/time to now
-        existingList = []
-        existingFilelist = []
-        for bk in booklist:
-            outfname = self.getDraftFilename(bk)
-            outfname = os.path.join(self.configPath(cfgname=self.configName()), "PicLists", outfname)
-            if os.path.exists(outfname) and os.path.getsize(outfname) != 0:
-                existingFilelist.append(os.path.basename(outfname))
-                existingList.append(bk)
-        if len(existingFilelist) and not generateMissingLists:
-            q1 = "One or more PicList file(s) already exist!"
-            q2 = "\n".join(existingFilelist)+"\n\nDo you want to OVERWRITE the above-listed file(s)?"
-            if self.msgQuestion(q1, q2):
-                existingList = []
-        for bk in list(set(booklist) - set(existingList)):
-            leftpicinfo = {}
-            rightpicinfo = {}
-            if not (diglot and digmode == "Sec"):
-                leftpicinfo = self.getFigures(bk, sfmonly=True)
-            if diglot and digmode != "Pri":
-                digview = self.createDiglotView()
-                rightpicinfo = digview.getFigures(bk, sfmonly=True)
 
-            if len(leftpicinfo) + len(rightpicinfo) == 0:
+        # Assemble a list of figures and their sources
+        picinfos = {}
+        for bk in bks:
+            picinfos.update(("{} {}".format(bk, k), v) for k,v in self.getFigures(bk).items())
+            if diglotPrinter is not None:
+                diglotPics.update(("{}R {}".format(bk, k), v) for k,v in diglotPrinter.getFigures(bk).items())
+        self.getFigureSources(picinfos, key=srcfkey)
+        if diglotPrinter is not None:
+            diglotPrinter.getFigureSources(diglotPics, key=srcfkey)
+            picinfos.update(diglotPics)
+
+        # Copy them
+        missingPics = []
+        for k, v in picinfos.items():
+            nB = newBase(v['src'])
+            if srcfkey not in v:
+                missingPics.append(v['src'])
                 continue
-            if diglot:
-                allpicinfo = {refKey(k, info="L"):v for k, v in leftpicinfo.items()}
-                allpicinfo.update({refKey(k, info="R"):v for k, v in rightpicinfo.items()})
+            fpath = v[srcfkey]
+            origExt = os.path.splitext(fpath)[1]
+            v['dest file'] = processor(v, v[srcfkey], nB+origExt.lower())
+
+        missingPicList = []
+        extOrder = self.getExtOrder()
+        for bk in jobs:
+            fname = self.getBookFilename(bk, self.prjdir)
+            doti = fname.rfind(".")
+            if doti > 0:
+                plfname = fname[:doti] + "-draft" + fname[doti:] + ".piclist"
+            # Now write out the new PicList to a temp folder
+            piclstfname = os.path.join(self.printer.configPath(cfgname=self.printer.configId, makePath=False), "PicLists", plfname)
+            isdblcol = self.printer.get("c_doublecolumn")
+            ishiderefs = self.printer.get("c_fighiderefs")
+            lines = []
+            if isTemp:
+                lines.append("% Temporary PicList generated by PTXprint - DO NOT EDIT\n")
             else:
-                allpicinfo = {refKey(k):v for k, v in leftpicinfo.items()}
-
-            fname = self.getBookFilename(bk, prjid)
-            piclist = []
-            piclist.append("% PicList Generated by PTXprint: {}\n".format(self.get("_date")))
-            if diglot:
-                digsrc = prjid if digmode != "Sec" else secprjid
-                digsrc += "=L + R="+secprjid if digmode == "Bot" else "" 
-                piclist.append("% Source for DIGLOT Illustrations: {}\n".format(digsrc))
-            piclist.append("""% book ch.vs caption|src="filename.ext" size="col/span" pgpos="t/b/tl/bl/tr/br" ref="ch:vs" alt="description"
-
-""")
-            for k in sorted(allpicinfo.keys()):
-                p = allpicinfo[k]
-                print("k[-1]", k[3])
-                picposn = picposns[k[3] if digmode == "Bot" else ""]
-
-                if randomizePosn:
-                    pageposn = random.choice(picposn.get(p['size'], 'col')) # Randomize location of illustrations on the page (tl,tr,bl,br)
-                else:
-                    if p.get('pgpos', '') in ["t", "b", "tl", "tr", "bl", "br"]:
-                        pageposn = p['pgpos']
-                    else:
-                        pageposn = (picposn.get(p['size'], 'col'))[0]       # use the t or tl (first in list)
-
-                doti = p['src'].rfind(".")
-                extn = p['src'][doti:]
-                picfname = re.sub('[()&+,. ]', '_', p['src'])[:doti]+extn
-                
-                # Format of lines in pic-list file: BBB C.V desc|file|size|loc|copyright|caption|ref
-                # MRK 1.16 fishermen...catching fish with a net|hk00207b.png|span|b||Jesus calling the disciples to follow him.|1:16
-                # piclist.append("{}{} {} {}|{}|{}|{}|{}|{}|{}\n".format(bk, k[1], p['anchor'], p.get('desc', ''), picfname, \
-                                                    # p['size'], pageposn, p.get('copy', ''), p['alt'], p.get('ref', '')))
-                # Format of lines in USFM3 pic-list file: BBB C.V desc|file|size|loc|copyright|caption|ref
-                # HEBR 3.9 The people worshipping idols having forgotten God|src="co00621.jpg" size="col*0.5" pgpos="cr2" ref="3:9" alt="Description of picture"
-                piclist.append('{}{} {} {}|src="{}" size="{}" pgpos="{}" copy="{}" ref="{}" alt="{}"\n'.format(bk, k[3], p['anchor'], p['alt'], picfname, \
-                                                    p['size'], pageposn, p.get('copy', ''), p.get('ref', ''), p.get('desc', '')))
-
-            piclist.append("""
+                lines.append("% PicList Generated by PTXprint: {}\n".format(self.get("_date")))
+            lines.append('% book ch.vs caption|src="filename.ext" size="col/span" pgpos="t/b/tl/bl/tr/br" ref="ch:vs" alt="description"')
+            for k, v in sorted(picinfos.items(),
+                            key=lambda x: refKey(x[0], info="R" if len(x[0])>4 and x[0][3]=="R" else "")):
+                picposn = picposns[k[-1] if diglot else ""]
+                if 'dest file' not in v:
+                    missingPics.append(v['src'])
+                    continue
+                if not isdblcol: # Single Column layout so change all tl+tr > t and bl+br > b
+                    v['pgpos'] = re.sub(r"([tb])[lr]", r"\1", v['pgpos'])
+                if not isTemp and randomizePosn:
+                    v['pgpos'] = random.choice(picposn.get(v['size'], 'col')) # Randomize location of illustrations on the page (tl,tr,bl,br)
+                elif 'pgpos' not in v:
+                    v['pgpos'] = picposn.get(v['size'], 'col')[0]
+                if 'ref' in v and ishiderefs:
+                    del v['ref']
+                v['src'] = os.path.basename(v['dest file'])
+                lines.append("{} {}|".format(k, v['caption']) + " ".join('{}="{}"'.format(x, v[x]) for x in pos3parms if x in v))
+            if not isTemp:
+                lines.append("""
 % If illustrations are not appearing in the output PDF, check:
 %   a) The anchor location reference on the far left is very particular, so check
 %      (i) only use '.' as the ch.vs separator
@@ -568,11 +555,31 @@ class ViewModel:
 %   c) To (temporarily) remove an illustration prefix the line with % followed by a space
 %   d) To scale an image use this notation: span*.7  or  col*1.3)
 """)
-            plpath = os.path.join(self.configPath(self.configName()), "PicLists")
-            os.makedirs(plpath, exist_ok=True)
-            outfname = os.path.join(plpath, self.getDraftFilename(bk))
-            with open(outfname, "w", encoding="utf-8") as outf:
-                outf.write("".join(piclist))
+            dat = "\n".join(lines)
+            piclstfname = os.path.join(outdir, plfname)
+            with open(piclstfname, "w", encoding="utf-8") as outf:
+                outf.write(dat)
+        return missingPics
+
+    def generatePicLists(self, booklist, generateMissingLists=False):
+        xl = []
+        outdir = os.path.join(self.configPath(cfgname=self.configName()), "PicLists")
+        existingList = []
+        existingFilelist = []
+        for bk in booklist:
+            outfname = os.path.join(outdir, self.getDraftFilename(bk))
+            if os.path.exists(outfname) and os.path.getsize(outfname) != 0:
+                existingFilelist.append(os.path.basename(outfname))
+                existingList.append(bk)
+        if len(existingFilelist) and not generateMissingLists:
+            q1 = "One or more PicList file(s) already exist!"
+            q2 = "\n".join(existingFilelist)+"\n\nDo you want to OVERWRITE the above-listed file(s)?"
+            if self.msgQuestion(q1, q2):
+                existingList = []
+        bks = list(set(booklist) - set(existingList))
+        def procbk(pic, src, tgt):
+            return pic['src']
+        missingPics = self.generateNProcPicLists(bks, outdir, procbk)
 
     def getDraftFilename(self, bk, ext=".piclist"):
         fname = self.getBookFilename(bk, self.prjid)
@@ -583,7 +590,6 @@ class ViewModel:
             return fname + "-draft" + ext
 
     def getFigures(self, bk, sfmonly=False, media=None):
-        posparms = ("desc", "src", "size", "pgpos", "copy", "alt", "ref", "x-xetex", "mirror")
         res = {}
         fname = self.getBookFilename(bk, self.prjid)
         usepiclist = not sfmonly and self.get("c_usePicList") and bk not in TexModel._peripheralBooks
@@ -618,7 +624,7 @@ class ViewModel:
                     m = re.findall(r"(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+)\\fig\*", t)
                     if len(m):
                         for f in m:     # usfm 2
-                            r = self._sortkey(c, f[0])
+                            r = "{} {}.{}".format(bk, c, f[0])
                             res[r] = {}
                             res[r]['anchor'] = "{}.{}".format(c, f[0])
                             for i, v in enumerate(f[3:]):
@@ -628,16 +634,16 @@ class ViewModel:
                             if all(x in "apw" for x in p):
                                 res[r]['media'] = p
                                 del res[r]['pgpos']
-                            elif re.match(r"^[tbhpg][lrc]?(?:-\d*)?$", p):
+                            elif re.match(r"^[tbhpg][lrc]?(?:\*\d+\.?\d*)?$", p):
                                 res[r]['media'] = 'p'
-                            elif re.match(r"^(?:\S*)\s*\d+\.?\d*\s*$", p):
+                            else:
                                 res[r]['loc'] = p
                                 del res[r]['pgpos']
                     else:
                         m = re.findall(r'(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig ([^\\]*?)\|([^\\]+)\\fig\*', t)
                         if len(m):
                             for f in m:     # usfm 3
-                                r = self._sortkey(c, f[0])
+                                r = "{} {}.{}".format(bk, c, f[0])
                                 caption = f[3]
                                 res[r] = {}
                                 res[r]['anchor'] = "{}.{}".format(c, f[0])
