@@ -624,7 +624,7 @@ class RunJob:
             ih = im.size[1]
         except OSError:
             print("Failed to get size of (image) file:", srcpath)
-            return
+            return srcpath
         # If either the source image is a TIF (or) the proportions aren't right for page dimensions 
         # then we first need to convert to a JPG and/or pad with which space on either side
         if iw/ih < ratio or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
@@ -633,12 +633,14 @@ class RunJob:
                 self.convertToJPGandResize(ratio, srcpath, tgtpath)
             except: # MH: Which exception should I try to catch?
                 print("Error: Unable to convert/resize image!\nImage skipped:", srcpath)
-                return
+                return srcpath
         else:
             try:
                 copyfile(srcpath, tgtpath)
             except OSError:
                 print("Error: Unable to copy {}\n       image to {} in tmpPics folder", srcpath, tgtpath)
+                return srcpath
+        return tgtpath
 
     def removeTempFiles(self, texfiles):
         notDeleted = []
