@@ -211,27 +211,27 @@
 \newdimen\lastdepth
 \def\p@rstyle#1{\trace{s}{p@rstyle: #1}%
  \ifsk@pping \egroup \fi % if we were skipping nonpublishable text, end that mode
+ \the\p@rstylehooks % allow other modules to hook in here
+ \ifhmode\unskip % remove any trailing space
+   \end@llcharstyles % end any character styles in effect
+   \beginL\pdfsavepos
+   \write\p@rlocs{\noexpand\@parend{\the\pdflastxpos}{\the\pdflastypos}}\endL
+   \ifnum\pagetracing>0\tracingparagraphs=1\ifnum\pagetracing>1\looseness=-1%\emergencystretch=1sp
+     \fi\else\tolerance=10\fi
+   \par % end the paragraph
+   \ifdim\prevdepth>0pt\lastdepth=\prevdepth\else\lastdepth=-1pt\fi
+   \ifnum\pagetracing>0\tracingparagraphs=0\fi
+   \ifdr@ppednumber % the preceding par had a dropped number;
+                    % add \nobreak if it was a single line, else clear the flag
+     \x@\write\x@\p@rlocs\x@{\x@\noexpand\x@\@parlines\x@{\the\prevgraf}}%
+     \ifnum\prevgraf=1 \nobreak \else \dr@ppednumberfalse \fi
+   \fi
+ \fi
  \t@stpublishability{#1}% test if the new marker is nonpublishable
  \ifn@npublishable
   \par % End the present paragaph, to make sure that cutouts, etc. are handled properly
   \setbox\j@nkbox=\vbox\bgroup\def\m@rker{#1}\sk@ppingtrue % and if so, start a box to consume and discard the text
  \else % else we need to actually process it!
-  \the\p@rstylehooks % allow other modules to hook in here
-  \ifhmode\unskip % remove any trailing space
-    \end@llcharstyles % end any character styles in effect
-    \beginL\pdfsavepos
-    \write\p@rlocs{\noexpand\@parend{\the\pdflastxpos}{\the\pdflastypos}}\endL
-    \ifnum\pagetracing>0\tracingparagraphs=1\ifnum\pagetracing>1\looseness=-1%\emergencystretch=1sp
-      \fi\else\tolerance=10\fi
-    \par % end the paragraph
-    \ifdim\prevdepth>0pt\lastdepth=\prevdepth\else\lastdepth=-1pt\fi
-    \ifnum\pagetracing>0\tracingparagraphs=0\fi
-    \ifdr@ppednumber % the preceding par had a dropped number;
-                     % add \nobreak if it was a single line, else clear the flag
-      \x@\write\x@\p@rlocs\x@{\x@\noexpand\x@\@parlines\x@{\the\prevgraf}}%
-      \ifnum\prevgraf=1 \nobreak \else \dr@ppednumberfalse \fi
-    \fi
-  \fi
   \getp@ram{spaceafter}{\m@rker}% output any <spaceafter> for the previous style
   \ifx\p@ram\relax \else
     \ifhe@dings\nobreak\fi
