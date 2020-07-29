@@ -8,6 +8,7 @@ from configparser import NoSectionError, NoOptionError, _UNSET
 from zipfile import ZipFile, ZIP_DEFLATED
 from io import StringIO
 import datetime, time
+from shutil import copyfile, copytree
 
 VersionStr = "0.9.0 beta"
 
@@ -264,6 +265,7 @@ class ViewModel:
 
     def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, forceConfig=False):
         currprj = self.prjid
+        currcfg = self.configId
         readConfig = False
         if currprj is None or currprj != prjid:
             if currprj is not None and saveCurrConfig:
@@ -286,6 +288,18 @@ class ViewModel:
                 cachepath(fdir)
             readConfig = True
         if readConfig or self.configId != configName:
+            oldp = self.configPath(prjid=currprj, cfgname=currcfg)
+            newp = self.configPath(cfgname=configName)
+            if not os.path.exists(newp):
+                os.makedirs(newp)
+                for f in ('ptxprint-mods.sty', 'ptxprint-mods.tex', 'PicLists', 'AdjLists'):
+                    srcp = os.path.join(oldp, f)
+                    destp = os.path.join(newp, f)
+                    if os.path.exists(srcp):
+                        if os.path.isdir(srcp):
+                            copytree(srcp, destp)
+                        else:
+                            copyfile(srcp, destp)
             res = self.readConfig(cfgname=configName)
             if res or forceConfig:
                 self.configId = configName
@@ -319,10 +333,12 @@ class ViewModel:
     def configName(self):
         return self.configId or None
 
-    def configPath(self, cfgname=None, makePath=False):
-        if self.settings_dir is None or self.prjid is None:
+    def configPath(self, cfgname=None, prjid=None, makePath=False):
+        if prjid is None:
+            prjid = self.prjid
+        if self.settings_dir is None or prjid is None:
             return None
-        prjdir = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint")
+        prjdir = os.path.join(self.settings_dir, prjid, "shared", "ptxprint")
         if cfgname is not None and len(cfgname):
             prjdir = os.path.join(prjdir, cfgname)
         if makePath:
@@ -526,7 +542,6 @@ class ViewModel:
             origExt = os.path.splitext(fpath)[1]
             v['dest file'] = processor(v, v[srcfkey], nB+origExt.lower())
 
-        print(picinfos)
         missingPicList = []
         extOrder = self.getExtOrder()
         for bk in bks:
@@ -947,9 +962,10 @@ class ViewModel:
         pass
 
     def _getArchiveFiles(self, books, prjid=None, cfgid=None):
-        sfiles = {'c_useCustomSty': ("custom.sty", None),
-                  'c_useModsSty': ("PrintDraft/PrintDraft-mods.sty", "PrintDraft"),
-                  'c_usePrintDraftChanges': ("PrintDraftChanges.txt", None)}
+        sfiles = {'c_useCustomSty': ("custom.sty", False),
+                  'c_useModsSty': ("ptxprint-mods.sty", True),
+                  'c_useModsTex': ("ptxprint-mods.tex", True),
+                  'c_usePrintDraftChanges': ("PrintDraftChanges.txt", False)}
         res = {}
         cfgchanges = {}
         pictures = set()
@@ -960,7 +976,7 @@ class ViewModel:
         cfpath = "shared/ptxprint/"
         if cfgid is not None:
             cfpath += cfgid+"/"
-        basecfpath = self.configPath(cfgid, prjid)
+        basecfpath = self.configPath(cfgname=cfgid, prjid=prjid)
 
         # pictures and texts
         picinfos = {}
@@ -999,20 +1015,23 @@ class ViewModel:
                 res[f.filename] = "Fonts/"+fname
 
         # config files
-        for t,a in sfiles.items():
+        for t, a in sfiles.items():
             if isinstance(t, str) and not self.get(t):
                 continue
-            p = os.path.join(self.settings_dir, prjid, a[0])
+            if a[1]:
+                s = os.path.join(basecfpath, a[0])
+                d = cfpath + a[0]
+            else:
+                s = os.path.join(self.settings_dir, prjid, a[0])
+                d = a[0]
             if os.path.exists(p):
-                res[p] = a[0]
+                res[p] = d
 
         if self.get("c_useModsTex"):
             loaded = False
             if cfgid is not None:
                 p = os.path.join(self.settings_dir, prjid, 'shared', 'ptxprint', cfgid, 'ptxprint-mods.tex')
-                if os.path.exists(p):
-                    res[p] = "shared/ptxprint/" + cfgid + "/ptxprint-mods.tex"
-                    loaded = True
+                loaded = os.path.exists(p)
             if not loaded:
                 p = os.path.join(self.settings_dir, prjid, 'shared', 'ptxprint', 'ptxprint-mods.tex')
                 if os.path.exists(p):

@@ -367,6 +367,7 @@ class TexModel:
         self.dict['project/id'] = self.printer.prjid
         self.dict['config/name'] = self.printer.configId
         self.dict['/ptxrpath'] = rel(self.dict['/ptxpath'], docdir)
+        self.dict['/cfgrpath'] = rel(cpath, docdir)
         self.readFonts(self.printer)
         self.processFonts(self.printer)
         self.processHdrFtr(self.printer)
@@ -391,10 +392,19 @@ class TexModel:
         if self.dict["document/ifdiglot"] == "":
             if not os.path.exists(fpathR):
                 fpathR = j(rcpath, "NestedStylesR.sty")
+        if "document/diglotcfgrpath" not in self.dict:
+            self.dict["document/diglotcfgrpath"] = ""
         self.dict['/nststypathR'] = rel(fpathR, docdir).replace("\\","/")
         self.dict['paragraph/linespacingfactor'] = "{:.3f}".format(float(self.dict['paragraph/linespacing']) / 14 / float(self.dict['paper/fontfactor']))
         self.dict['paragraph/ifhavehyphenate'] = "" if os.path.exists(os.path.join(self.printer.configPath(""), \
                                                        "hyphen-"+self.dict["project/id"]+".tex")) else "%"
+        # forward cleanup. If ask for ptxprint-mods.tex but don't have it, copy PrintDraft-mods.tex
+        if self.dict["project/ifusemodssty"] == "":
+            modspath = os.path.join(cpath, "ptxprint-mods.sty")
+            if not os.path.exists(modspath):
+                spath = os.path.join(docdir, "PrintDraft-mods.sty")
+                if os.path.exists(spath):
+                    copyfile(spath, modspath)
 
     def updatefields(self, a):
         global get

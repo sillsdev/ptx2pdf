@@ -1448,7 +1448,7 @@ class GtkViewModel(ViewModel):
         self.editFile("custom.sty", "prj")
 
     def onEditModsSty(self, btn):
-        self.editFile("PrintDraft-mods.sty", "wrk")
+        self.editFile("ptxprint-mods.tex", "cfg")
 
     def onMainBodyTextChanged(self, btn):
         self.sensiVisible("c_mainBodyText")

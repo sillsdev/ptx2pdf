@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 
+<!-- Generated with glade 3.22.2 
 
 The MIT License (MIT)
 
@@ -4734,7 +4734,7 @@ selected books/chapters will show in the glossary.</property>
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Begining and Ending Material</property>
+                            <property name="label" translatable="yes">Beginning and Ending Material</property>
                           </object>
                         </child>
                       </object>
@@ -7512,7 +7512,7 @@ can be specified in this file.</property>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_useModsSty">
-                                        <property name="label" translatable="yes">Apply Stylesheet Overrides (in PrintDraft-mods.sty)</property>
+                                        <property name="label" translatable="yes">Apply Stylesheet Overrides (in ptxprint-mods.sty)</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>

@@ -24,7 +24,7 @@ _errmsghelp = {
                                          "Then, check any recent changes to the Stylesheets (on Advanced tab) and try again.\n",
 "! File ended while scanning use of":    "Try turning off PrintDraftChanges.txt and both Stylesheets on Advanced tab.\n",
 "! Output loop---25 consecutive dead cycles.":  "Unknown issue.\n",
-"! Paratext stylesheet":                 "Try turning off the PrintDraft-mods stylesheet\n",
+"! Paratext stylesheet":                 "Try turning off the ptxprint-mods stylesheet\n",
 "! File ended while scanning use of \iotableleader.": "Problem with Formatting Intro Outline\n" +\
                                          "Try disabling option 'Right-Align \ior with tabbed leaders' on the Body tab\n",
 "! Emergency stop.":                     "Probably a TeX macro problem - contact support, or post a bug report\n",
@@ -298,6 +298,7 @@ class RunJob:
         diginfo["fancy/pageborder"] = "%"
         diginfo["document/clsinglecol"] = False
         diginfo["snippets/diglot"] = False
+        docdir = os.path.join(info["/ptxpath"], info["project/id"], "PrintDraft")
         # print("_digSecSettings = ", _digSecSettings)
         for k in _digSecSettings:
             # print("{} = '{}'".format(k, info[k]))
@@ -350,6 +351,8 @@ class RunJob:
         for k,v in _diglot.items():
             info[k]=diginfo[v]
             # print(k, v, diginfo[v])
+        info["document/diglotcfgrpath"] = os.path.relpath(diginfo.printer.configPath(diginfo.printer.configName()), docdir).replace("\\","/")
+        print("diglotcfgrpath = {}".format(info["document/diglotcfgrpath"]))
         self.tempFiles += info.generateNestedStyles(diglot=True)
         texfiles += self.sharedjob(jobs, info, logbuffer=logbuffer)
         return texfiles
