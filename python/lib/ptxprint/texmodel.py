@@ -776,12 +776,13 @@ class TexModel:
         
         
         # Remember to preserve \figs ... \figs for books that can't have PicLists (due to no ch:vs refs in them)
-        if self.asBool("document/ifinclfigs") and (self.asBool("document/iffigfrmtext") or bk in self._peripheralBooks):
+        if self.asBool("document/ifinclfigs") and bk in self._peripheralBooks:
             # Remove any illustrations which don't have a |p| 'loc' field IF this setting is on
             if self.asBool("document/iffigexclwebapp"):
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig ([^|]*\|){3}([aw]+)\|[^\\]*\\fig\*', flags=regex.M), ''))  # USFM2
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig [^\\]*\bloc="[aw]+"[^\\]*\\fig\*', flags=regex.M), ''))    # USFM3
 
+            #### TO DO: Need to change orig-fname to newbase-name + new extension
             # figChangeList = self.figNameChanges(printer, bk)
             # if len(figChangeList):
                 ## missingPics = []
@@ -800,11 +801,11 @@ class TexModel:
                             # self.localChanges.append((None, regex.compile(r"(?i)\\fig .*?\|{}\|.+?\\fig\*".format(origfn), flags=regex.M), ""))     #USFM2
                             # self.localChanges.append((None, regex.compile(r'(?i)\\fig .*?src=\"{}\" .+?\\fig\*'.format(origfn), flags=regex.M), "")) #USFM3
 
-            if self.asBool("document/iffighiderefs"): # del ch:vs from caption 
-                self.localChanges.append((None, regex.compile(r"(\\fig [^\\]+?\|)([0-9:.\-,\u2013\u2014]+?)(\\fig\*)", \
-                                          flags=regex.M), r"\1\3"))   # USFM2
-                self.localChanges.append((None, regex.compile(r'(\\fig .+?)(ref=\"\d+[:.]\d+([-,\u2013\u2014]\d+)?\")(.*?\\fig\*)', \
-                                          flags=regex.M), r"\1\4"))   # USFM3
+            # if self.asBool("document/iffighiderefs"): # del ch:vs from caption 
+                # self.localChanges.append((None, regex.compile(r"(\\fig [^\\]+?\|)([0-9:.\-,\u2013\u2014]+?)(\\fig\*)", \
+                                          # flags=regex.M), r"\1\3"))   # USFM2
+                # self.localChanges.append((None, regex.compile(r'(\\fig .+?)(ref=\"\d+[:.]\d+([-,\u2013\u2014]\d+)?\")(.*?\\fig\*)', \
+                                          # flags=regex.M), r"\1\4"))   # USFM3
         else:
             # Strip out all \figs from the USFM as an internally generated temp PicList will do the same job
             self.localChanges.append((None, regex.compile(r'\\fig [^\\]+?\\fig\*', flags=regex.M), ""))
