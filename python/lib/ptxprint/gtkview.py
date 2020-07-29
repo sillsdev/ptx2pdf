@@ -1393,7 +1393,7 @@ class GtkViewModel(ViewModel):
 
     def editFile(self, file2edit, loc="wrk"):
         pgnum = 5
-        self.builder.get_object("nbk_Main").set_current_page(9)
+        self.builder.get_object("nbk_Main").set_current_page(10)
         self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
         self.prjid = self.get("fcb_project")
         self.prjdir = os.path.join(self.settings_dir, self.prjid)
