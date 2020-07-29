@@ -500,14 +500,17 @@ class ViewModel:
 
         # Assemble a list of figures and their sources
         picinfos = {}
-        def makekey(bk, k, e):
-            return "{}{} {}".format(bk, e, k)
         for bk in bks:
             if diglotPrinter is not None:
-                picinfos.update((makekey(bk, k, "L"), v) for k,v in self.getFigures(bk, sfmonly=sfmonly).items())
-                diglotPics.update((makekey(bk, k, "R"), v) for k,v in diglotPrinter.getFigures(bk, sfmonly=sfmonly).items())
+                if isTemp and not sfmonly:      # only merge if source doesn't have L/R
+                    tmppics = self.getFigures(bk)
+                    if any(x[3] in "LR" for x in tmppics.keys()):
+                        picinfos.update(tmppics)
+                        continue
+                picinfos.update(self.getFigures(bk, suffix="L", sfmonly=sfmonly))
+                diglotPics.update(diglotPrinter.getFigures(bk, suffix="R", sfmonly=sfmonly))
             else:
-                picinfos.update((makekey(bk, k, ""), v) for k,v in self.getFigures(bk, sfmonly=sfmonly).items())
+                picinfos.update(self.getFigures(bk, sfmonly=sfmonly))
         self.getFigureSources(picinfos, key=srcfkey)
         if diglotPrinter is not None:
             diglotPrinter.getFigureSources(diglotPics, key=srcfkey)
@@ -523,6 +526,7 @@ class ViewModel:
             origExt = os.path.splitext(fpath)[1]
             v['dest file'] = processor(v, v[srcfkey], nB+origExt.lower())
 
+        print(picinfos)
         missingPicList = []
         extOrder = self.getExtOrder()
         for bk in bks:
@@ -602,7 +606,7 @@ class ViewModel:
         else:
             return fname + "-draft" + ext
 
-    def getFigures(self, bk, sfmonly=False, media=None):
+    def getFigures(self, bk, suffix="", sfmonly=False, media=None):
         res = {}
         fname = self.getBookFilename(bk, self.prjid)
         usepiclist = not sfmonly and self.get("c_usePicList") and bk not in TexModel._peripheralBooks
@@ -613,7 +617,7 @@ class ViewModel:
                 usepiclist = False
             else:
                 fname = piclstfname
-        if not usepiclist:
+        else:
             fname = os.path.join(self.settings_dir, self.prjid, fname)
         if usepiclist:
             with universalopen(fname) as inf:
@@ -622,13 +626,17 @@ class ViewModel:
                         continue
                     m = l.split("|")
                     r = m[0].split(maxsplit=2)
-                    res[r[1]] = {'caption': r[2]}
+                    if suffix == "":
+                        k = "{} {}".format(r[0], r[1])
+                    else:
+                        k = "{}{} {}".format(r[0][:3], suffix, r[1])
+                    res[k] = {'caption': r[2]}
                     if len(m) > 6:
                         for i, f in enumerate(m[1:]):
-                            res[r[1]][posparms[i+1]] = f
+                            res[k][posparms[i+1]] = f
                     else:
                         for d in re.findall(r'(\S+)\s*=\s*"([^"]+)"', m[-1]):
-                            res[r[1]][d[0]] = d[1]
+                            res[k][d[0]] = d[1]
         else:
             with universalopen(fname) as inf:
                 dat = inf.read()
@@ -637,7 +645,7 @@ class ViewModel:
                     m = re.findall(r"(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+)\\fig\*", t)
                     if len(m):
                         for f in m:     # usfm 2
-                            r = "{}.{}".format(c, f[0])
+                            r = "{}{} {}.{}".format(bk, suffix, c, f[0])
                             res[r] = {}
                             res[r] = {'caption':f[8]}
                             res[r]['anchor'] = "{}.{}".format(c, f[0])
@@ -657,7 +665,7 @@ class ViewModel:
                         m = re.findall(r'(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig ([^\\]*?)\|([^\\]+)\\fig\*', t)
                         if len(m):
                             for f in m:     # usfm 3
-                                r = "{}.{}".format(c, f[0])
+                                r = "{}{} {}.{}".format(bk, suffix, c, f[0])
                                 res[r] = {'caption':f[3]}
                                 res[r]['anchor'] = "{}.{}".format(c, f[0])
                                 labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f[4])
@@ -960,7 +968,7 @@ class ViewModel:
             fname = self.getBookFilename(bk, prjid)
             fpath = os.path.join(self.settings_dir, prjid)
             res[os.path.join(fpath, fname)] = fname
-            picinfos.update(("{} {}".format(bk, k), v) for k,v in self.getFigures(bk).items())
+            picinfos.update(self.getFigures(bk))
         self.getFigureSources(picinfos)
         pathkey = 'src path'
         for f in (p[pathkey] for p in picinfos.values() if pathkey in p):

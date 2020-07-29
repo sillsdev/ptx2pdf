@@ -161,6 +161,7 @@ ModelMap = {
     "document/ifinclfigs":      ("c_includeillustrations", lambda w,v: "true" if v else "false"),
     "document/ifusepiclist":    ("c_includeillustrations", lambda w,v :"" if v else "%"),
     "document/iffigfrmtext":    ("c_includefigsfromtext", None),
+    "document/iffigfrmpiclist": ("c_usePicList", None),
     "document/iffigexclwebapp": ("c_figexclwebapp", None),
     "document/iffigskipmissing": ("c_skipmissingimages", None),
     "document/iffigplaceholders": ("c_figplaceholders", lambda w,v: "true" if v else "false"),
