@@ -31,8 +31,8 @@ def universalopen(fname, rewrite=False):
     return fh
 
 ModelMap = {
-    "L_":                       ("c_diglotAutoAligned", lambda w,v: "L" if v and w.get("c_diglot") else ""),
-    "R_":                       ("c_diglotAutoAligned", lambda w,v: "R" if v and w.get("c_diglot") else ""),
+    "L_":                       ("c_diglot", lambda w,v: "L" if v else ""),
+    "R_":                       ("c_diglot", lambda w,v: "R" if v else ""),
     "date_":                    ("_date", lambda w,v: v),
     "pdfdate_":                 ("_pdfdate", lambda w,v: v),
     #"config/name":              ("ecb_savedConfig", lambda w,v: v or "default"),
@@ -103,7 +103,10 @@ ModelMap = {
     "fancy/sectionheaderpdf":   ("btn_selectSectionHeaderPDF", lambda w,v: w.sectionheader.as_posix() \
                                             if (w.sectionheader is not None and w.sectionheader != 'None') \
                                             else get("/ptxprintlibpath")+"/A5 section head border.pdf"),
-    "fancy/decorationpdf":      (None, lambda w,v: get("/ptxprintlibpath")+"/decoration.pdf"),
+    "fancy/endofbook":          ("c_inclEndOfBook", lambda w,v: "" if v else "%"),
+    "fancy/endofbookpdf":       ("btn_selectEndOfBookPDF", lambda w,v: w.endofbook.as_posix() \
+                                            if (w.endofbook is not None and w.endofbook != 'None') \
+                                            else get("/ptxprintlibpath")+"/decoration.pdf"),
     "fancy/versedecorator":     ("c_inclVerseDecorator", lambda w,v: "" if v else "%"),
     "fancy/versedecoratorpdf":  ("btn_selectVerseDecorator", lambda w,v: w.versedecorator.as_posix() \
                                             if (w.versedecorator is not None and w.versedecorator != 'None') \
@@ -195,8 +198,6 @@ ModelMap = {
     "document/cloptimizepoetry": ("c_optimizePoetryLayout", None),
 
     "document/ifdiglot":        ("c_diglot", lambda w,v : "" if v else "%"),
-    "document/ifaligndiglot":   ("c_diglotAutoAligned", lambda w,v: "" if v and w.get("c_diglot") else "%"),
-    "document/diglotalignment": ("fcb_diglotAlignment", None),
     "document/diglotprifraction": ("s_diglotPriFraction", lambda w,v : round((float(v)/100), 3) if v is not None else "0.550"),
     "document/diglotsecfraction": ("s_diglotPriFraction", lambda w,v : round(1 - (float(v)/100), 3) if v is not None else "0.450"),
     "document/diglotsecprj":    ("fcb_diglotSecProject", None),
@@ -204,7 +205,6 @@ ModelMap = {
     "document/diglotswapside":  ("c_diglotSwapSide", lambda w,v: v),
     "document/diglotsepnotes":  ("c_diglotSeparateNotes", lambda w,v: "true" if v else "false"),
     "document/diglotsecconfig": ("ecb_diglotSecConfig", None),
-    "document/diglotnormalhdrs": ("c_diglotHeaders", lambda w,v :"" if v else "%"),
 
     "header/headerposition":    ("s_headerposition", lambda w,v: round(float(v), 2) or "1.00"),
     "header/footerposition":    ("s_footerposition", lambda w,v: round(float(v), 2) or "1.00"),
@@ -266,7 +266,7 @@ ModelMap = {
     "fontbolditalic/slant":     ("s_bolditalicslant", lambda w,v: ":slant={:.4f}".format(float(v)) if float(v) != 0.0000 and w.get("c_fakebolditalic") else ""),
     "snippets/fancyintro":      ("c_prettyIntroOutline", None),
     "snippets/pdfx1aoutput":    ("c_PDFx1aOutput", None),
-    "snippets/alignediglot":    ("c_diglotAutoAligned", lambda w,v: True if v and w.get("c_diglot") else False),
+    "snippets/diglot":          ("c_diglot", lambda w,v: True if v else False),
     "snippets/fancyborders":    ("c_borders", None),
 }
 
@@ -318,7 +318,7 @@ class TexModel:
     _snippets = {
         "snippets/fancyintro":            ("c_prettyIntroOutline", FancyIntro),
         "snippets/pdfx1aoutput":          ("c_PDFx1aOutput", PDFx1aOutput),
-        "snippets/alignediglot":          ("c_diglotAutoAligned", AlignedDiglot),
+        "snippets/diglot":          ("c_diglotAutoAligned", AlignedDiglot),
         "snippets/fancyborders":          ("c_borders", FancyBorders)
     }
     _settingmappings = {
@@ -387,7 +387,7 @@ class TexModel:
         self.dict['/nststypath'] = rel(fpath, docdir).replace("\\","/")
         # If AlignedDiglot, look in local Config folder for NestedStylesR.sty, and drop back to shared/ptxprint if not found
         fpathR = j(cpath, "NestedStylesR.sty")
-        if self.dict["document/ifaligndiglot"] == "":
+        if self.dict["document/ifdiglot"] == "":
             if not os.path.exists(fpathR):
                 fpathR = j(rcpath, "NestedStylesR.sty")
         self.dict['/nststypathR'] = rel(fpathR, docdir).replace("\\","/")
@@ -504,7 +504,7 @@ class TexModel:
         for side in ('left', 'center', 'right'):
             v = self.dict["header/hdr"+side]
             t = self._hdrmappings.get(v, v)
-            if self.dict["document/ifaligndiglot"] == "":
+            if self.dict["document/ifdiglot"] == "":
                 if t.endswith("ref"):
                     if side == 'right':
                         t = t+'R'
@@ -983,7 +983,7 @@ class TexModel:
 
         nstylist.append("##### Adjust poetic indents\n")
         m = ["\Marker", "\LeftMargin", "\FirstLineIndent"]
-        if self.dict["paper/columns"] == "2" or self.dict["document/ifaligndiglot"] == "": # Double Column layout so use smaller indents
+        if self.dict["paper/columns"] == "2" or self.dict["document/ifdiglot"] == "": # Double Column layout so use smaller indents
             v = [["q", "0.60", "-0.45"], ["q1", "0.60", "-0.45"], ["q2", "0.60", "-0.225"], 
                  ["q3", "0.60", "-0.112"], ["q4", "0.60", "-0.0"]]
         else: # Single column layout, so use larger (USFM.sty default) indents

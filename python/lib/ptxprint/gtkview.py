@@ -138,9 +138,9 @@ _sensitivities = {
     "c_applyWatermark" :       ["btn_selectWatermarkPDF"],
     "c_linebreakon" :          ["t_linebreaklocale"],
     "c_spacing" :              ["l_minSpace", "s_minSpace", "l_maxSpace", "s_maxSpace"],
-    "c_diglotAutoAligned" :    ["fcb_diglotPicListSources"],
     "c_inclPageBorder" :       ["btn_selectPageBorderPDF"],
     "c_inclSectionHeader" :    ["btn_selectSectionHeaderPDF"],
+    "c_inclEndOfBook" :        ["btn_selectEndOfBookPDF"],
     "c_inclVerseDecorator" :   ["l_verseFont", "bl_verseNumFont", "l_verseSize", "s_verseNumSize", "btn_selectVerseDecorator"],
     "c_fakebold" :             ["s_boldembolden", "s_boldslant"],
     "c_fakeitalic" :           ["s_italicembolden", "s_italicslant"],
@@ -184,7 +184,6 @@ class GtkViewModel(ViewModel):
                     "textDirection", "glossaryMarkupStyle", "fontFaces"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
-        self.addCR("fcb_diglotAlignment", 0)
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
         for a in ("b_print", "b_frefresh"):
             pb = self.builder.get_object(a)
@@ -1009,6 +1008,9 @@ class GtkViewModel(ViewModel):
     def onInclSectionHeaderChanged(self, btn):
         self.sensiVisible("c_inclSectionHeader")
 
+    def onInclEndOfBookChanged(self, btn):
+        self.sensiVisible("c_inclEndOfBook")
+
     def onInclVerseDecoratorChanged(self, btn):
         self.sensiVisible("c_inclVerseDecorator")
     
@@ -1562,6 +1564,11 @@ class GtkViewModel(ViewModel):
                 os.path.join(os.path.dirname(__file__), "PDFassets", "border-art"),
                 "inclSectionHeader", "sectionheader", btn_selectSectionHeaderPDF)
 
+    def onEndOfBookPDFclicked(self, btn_selectEndOfBookPDF):
+        self._onPDFClicked("Select End of Book PDF file", True,
+                os.path.join(os.path.dirname(__file__), "PDFassets", "border-art"),
+                "inclEndOfBook", "endofbook", btn_selectEndOfBookPDF)
+
     def onVerseDecoratorPDFclicked(self, btn_selectVerseDecoratorPDF):
         self._onPDFClicked("Select Verse Decorator PDF file", True,
                 os.path.join(os.path.dirname(__file__), "PDFassets", "border-art"),
@@ -1643,16 +1650,12 @@ class GtkViewModel(ViewModel):
         return fcFilepath
 
     def onDiglotOrBorderClicked(self, btn):
-        self.ondiglotAlignmentChanged(None)
         status1 = self.sensiVisible("c_diglot")
         status2 = self.sensiVisible("c_borders")
         if status1 or status2:
             self.builder.get_object("lb_DiglotBorder").set_markup("<span color='#7B90B7'>Diglot+Border</span>")
         else:
             self.builder.get_object("lb_DiglotBorder").set_markup("<span>Diglot+Border</span>")
-
-    def onDiglotAutoAlignedToggled(self, btn):
-        self.sensiVisible("c_diglotAutoAligned")
 
     def ondiglotSecProjectChanged(self, btn):
         self.updateDiglotConfigList()
@@ -1696,12 +1699,6 @@ class GtkViewModel(ViewModel):
             return(True)
         elif response == Gtk.ResponseType.NO:
             return(False)
-
-    def ondiglotAlignmentChanged(self, btn):
-        if self.get("fcb_diglotAlignment").startswith("Align") and self.get("c_diglot"):
-            self.set("c_diglotAutoAligned", True)
-        else:
-            self.set("c_diglotAutoAligned", False)
 
     def onOpenFolderPrjDirClicked(self, btn):
         self.openFolder(os.path.join(self.settings_dir, self.prjid))

@@ -83,6 +83,7 @@ class ViewModel:
         "paper/watermarkpdf":       ("watermarks", False, "lb_applyWatermark"),
         "fancy/pageborderpdf":      ("pageborder", False, "lb_inclPageBorder"),
         "fancy/sectionheaderpdf":   ("sectionheader", False, "lb_inclSectionHeader"),
+        "fancy/endofbookpdf":       ("endofbook", False, "lb_inclEndOfBook"),
         "fancy/versedecoratorpdf":  ("versedecorator", False, "lb_inclVerseDecorator"),
         "document/customfigfolder": ("customFigFolder", False, None),
         "document/customoutputfolder": ("customOutputFolder", False, None)
@@ -106,6 +107,7 @@ class ViewModel:
         self.watermarks = None
         self.pageborder = None
         self.sectionheader = None
+        self.endofbook = None
         self.versedecorator = None
         self.customFigFolder = None
         self.customOutputFolder = None
@@ -490,7 +492,7 @@ class ViewModel:
         srcfkey = 'src path'
         randomizePosn = self.get("c_randomPicPosn")
         diglotPrinter = None
-        if self.get("c_diglotAutoAligned"):
+        if self.get("c_diglot"):
             diglotPrinter = self.createDiglotView()
             diglotPics = {}
         self.setDate()  # update date/time to now
@@ -734,7 +736,7 @@ class ViewModel:
     def generateAdjList(self):
         existingFilelist = []
         booklist = self.getBooks()
-        diglot  = self.get("c_diglotAutoAligned")
+        diglot  = self.get("c_diglot")
         digmode = self.get("fcb_diglotPicListSources") if diglot else "Primary"
         prjid = self.get("fcb_project")
         secprjid = ""

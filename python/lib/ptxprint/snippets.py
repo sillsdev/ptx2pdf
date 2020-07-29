@@ -156,11 +156,9 @@ class FancyBorders():
 %   or "width 5.5in height 8in" to scale to a known size
 {fancy/pageborder}\def\PageBorder{{"{fancy/pageborderpdf}" width {paper/width} height {paper/height}}}
 
-% NOT YET SURE WHAT THIS IS USED FOR. Commented out until we have clarity on whether it is needed
-% and what the UI should call this "decoration"
-%\newbox\decorationbox
-%\setbox\decorationbox=\hbox{{\XeTeXpdffile "{fancy/decorationpdf}"\relax}}
-%\def\z{{\par\nobreak\vskip 16pt\centerline{{\copy\decorationbox}}}}
+{fancy/endofbook}\newbox\decorationbox
+{fancy/endofbook}\setbox\decorationbox=\hbox{{\XeTeXpdffile "{fancy/endofbookpdf}"\relax}}
+{fancy/endofbook}\def\z{{\par\nobreak\vskip 16pt\centerline{{\copy\decorationbox}}}}
 
 {fancy/sectionheader}\newbox\sectionheadbox
 {fancy/sectionheader}\def\placesectionheadbox{{%

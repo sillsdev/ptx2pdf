@@ -3,23 +3,23 @@
 \input paratext2.tex
 
 %%%%% Aligned Diglot Switches
-{document/ifaligndiglot}\diglottrue
-{document/ifaligndiglot}\diglotcolumns
-{document/ifaligndiglot}\diglotInnerOuter{header/mirrorlayout}
-{document/ifaligndiglot}\diglotSepNotes{document/diglotsepnotes}
+{document/ifdiglot}\diglottrue
+{document/ifdiglot}\diglotcolumns
+{document/ifdiglot}\diglotInnerOuter{header/mirrorlayout}
+{document/ifdiglot}\diglotSepNotes{document/diglotsepnotes}
 
 %%%%% Stylesheets %%%%%
 \stylesheet{{{/ptxrpath}/usfm.sty}}
-%{document/ifaligndiglot}\stylesheet{R_}{{{/ptxrpath}/{document/diglotsecprj}/usfm.sty}}
+%{document/ifdiglot}\stylesheet{R_}{{{/ptxrpath}/{document/diglotsecprj}/usfm.sty}}
 %\stylesheet{L_}{{{/ptxrpath}/{project/id}/usfm.sty}}
 
-{document/ifaligndiglot}{project/ifusecustomsty}\stylesheet{R_}{{{/ptxrpath}/{document/diglotsecprj}/custom.sty}}
+{document/ifdiglot}{project/ifusecustomsty}\stylesheet{R_}{{{/ptxrpath}/{document/diglotsecprj}/custom.sty}}
 {project/ifusecustomsty}{/nocustomsty}\stylesheet{L_}{{{/ptxrpath}/{project/id}/custom.sty}}
 
-{document/ifaligndiglot}\stylesheet{R_}{{{/nststypathR}}} % generated stylesheet for Secondary project
+{document/ifdiglot}\stylesheet{R_}{{{/nststypathR}}} % generated stylesheet for Secondary project
 \stylesheet{L_}{{{/nststypath}}} % generated stylesheet for monodoc or Primary project
 
-{document/ifaligndiglot}{project/ifusemodssty}\stylesheet{R_}{{{/ptxrpath}/{document/diglotsecprj}/PrintDraft/PrintDraft-mods.sty}} % Right-side/Diglot Secondary stylesheet override settings
+{document/ifdiglot}{project/ifusemodssty}\stylesheet{R_}{{{/ptxrpath}/{document/diglotsecprj}/PrintDraft/PrintDraft-mods.sty}} % Right-side/Diglot Secondary stylesheet override settings
 {project/ifusemodssty}\stylesheet{L_}{{{/ptxrpath}/{project/id}/PrintDraft/PrintDraft-mods.sty}} % Left-side stylesheet override settings
 
 %%%%% Page Setup %%%%%
@@ -176,9 +176,6 @@
 
 %%%%% Set hooks to allow Poetical books more freedom when column-balancing
 %\optimizepoetry
-
-%%%%% Fuzzy Diglot settings (unused if AlignedDiglot is active)
-{diglot/fzysettings}
 
 %%%%% Hyphenation %%%%%
 \newlanguage\langund \language\langund
