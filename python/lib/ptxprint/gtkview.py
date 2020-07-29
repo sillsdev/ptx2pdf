@@ -256,7 +256,8 @@ class GtkViewModel(ViewModel):
         css = """
             .printbutton:active { background-color: chartreuse; background-image: None }
             .fontbutton {font-size: smaller}
-            progress, trough {min-height: 24px}"""
+            progress, trough {min-height: 24px}
+            notebook tab {min-height: 0pt; margin: 0pt; padding-bottom: 15pt} """
         provider = Gtk.CssProvider()
         provider.load_from_data(css.encode("utf-8"))
         Gtk.StyleContext().add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
