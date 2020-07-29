@@ -685,7 +685,7 @@
     \setbox\colA=\vsplit#1 to \colhtA \ifnum\badness>999999\setbox#1=\box9\setbox\colA\box\voidb@x\else\setbox\colA=\vbox{\unvbox\colA}\fi
     \setbox9=\copy#1
     \setbox\colB=\vsplit#1 to \colhtB \ifnum\badness>999999\setbox#1=\box9\setbox\colB\box\voidb@x\else\setbox\colB=\vbox{\unvbox\colB}\fi
-    \ifvoid\colA\ifvoid\colB\else\setbox\colA=\box\colB\fi\fi
+    \ifvoid\colA\ifvoid\colB\else\ifdim\colhtB<\colhtA\else\setbox\colA=\box\colB\fi\fi\fi
 }
 
 \newdimen\availA \newdimen\availB

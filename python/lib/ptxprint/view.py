@@ -1024,8 +1024,8 @@ class ViewModel:
             else:
                 s = os.path.join(self.settings_dir, prjid, a[0])
                 d = a[0]
-            if os.path.exists(p):
-                res[p] = d
+            if os.path.exists(s):
+                res[s] = d
 
         if self.get("c_useModsTex"):
             loaded = False

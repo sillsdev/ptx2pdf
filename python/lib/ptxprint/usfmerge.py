@@ -179,7 +179,7 @@ def pairchunks(pchunks, schunks, pkeys, skeys, starti, i, startj, j, fns=[], dep
     else:
         return [["".join(str(x) for x in lchunks), "".join(str(x) for x in rchunks)]]
 
-def groupChunks(pchunks, schunks, pkeys, skeys, fns=[], depth=0):
+def groupChunks(pchunks, schunks, pkeys, skeys, texttype, fns=[], depth=0):
     pairs = []
     i = 0
     starti = 0
@@ -267,6 +267,9 @@ def usfmerge(infilea, infileb, outfile, stylesheets=[], fsecondary=False):
     def texttype(m):
         return stylesheet.get(m, {'TextType': 'other'}).get('TextType').lower()
 
+    def myGroupChunks(*a, **kw):
+        return groupChunks(*a, texttype, **kw)
+
     with open(infilea, encoding="utf-8") as inf:
         doc = list(usfm.parser(inf, stylesheet=stylesheet, purefootnotes=True))
         pcoll = Collector(doc=doc, fsecondary=fsecondary)
@@ -279,7 +282,7 @@ def usfmerge(infilea, infileb, outfile, stylesheets=[], fsecondary=False):
     mainkeys = ["_".join(str(x) for x in c.ident) for c in pcoll.acc]
     secondkeys = ["_".join(str(x) for x in c.ident) for c in scoll.acc]
     pairs = alignChunks(pcoll.acc, scoll.acc, mainkeys, secondkeys,
-        fns=[groupChunks, alignFilter(lambda s:ptypekey(s, stylesheet)),
+        fns=[myGroupChunks, alignFilter(lambda s:ptypekey(s, stylesheet)),
              alignFilter(lambda s:s[:s.find("_")])])
 
     if outfile is not None:
