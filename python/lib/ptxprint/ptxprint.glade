@@ -7897,7 +7897,7 @@ file before manually sending it to the
 PTXprint team for support.</property>
                             <property name="halign">end</property>
                             <property name="valign">center</property>
-                            <property name="margin_top">250</property>
+                            <property name="margin_top">30</property>
                             <signal name="clicked" handler="onCreateZipArchiveClicked" swapped="no"/>
                           </object>
                           <packing>
@@ -8852,6 +8852,7 @@ a good way to easily remove a whole bunch of unwanted files.</property>
                       <object class="GtkNotebook" id="nbk_Viewer">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="valign">start</property>
                         <signal name="change-current-page" handler="onViewerChangePage" swapped="no"/>
                         <signal name="select-page" handler="onViewerChangePage" swapped="no"/>
                         <signal name="switch-page" handler="onViewerChangePage" swapped="no"/>

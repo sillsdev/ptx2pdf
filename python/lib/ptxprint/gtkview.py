@@ -479,7 +479,7 @@ class GtkViewModel(ViewModel):
     def onOK(self, btn):
         jobs = self.getBooks()
         # If the viewer/editor is open on an Editable tab, then "autosave" contents
-        if self.builder.get_object("nbk_Main").get_current_page() == 9:
+        if self.builder.get_object("nbk_Main").get_current_page() == 10:
             pgnum = self.builder.get_object("nbk_Viewer").get_current_page()
             if 1 <= pgnum <= 2 or pgnum == 5:
                 self.onSaveEdits(None)
@@ -1096,7 +1096,7 @@ class GtkViewModel(ViewModel):
     def onKeepTemporaryFilesClicked(self, c_keepTemporaryFiles):
         dir = self.working_dir
         self.builder.get_object("gr_debugTools").set_sensitive(self.get("c_keepTemporaryFiles"))
-        if self.builder.get_object("nbk_Main").get_current_page() == 9:
+        if self.builder.get_object("nbk_Main").get_current_page() == 10:
             if not self.get("c_keepTemporaryFiles"):
                 title = "Remove Intermediate Files and Logs?"
                 question = "Are you sure you want to delete\nALL the temporary PTXprint files?"
@@ -1576,14 +1576,14 @@ class GtkViewModel(ViewModel):
 
     def onEditAdjListClicked(self, btn_editParaAdjList):
         pgnum = 1
-        self.builder.get_object("nbk_Main").set_current_page(9)
+        self.builder.get_object("nbk_Main").set_current_page(10)
         self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
         self.onViewerChangePage(None,None,pgnum)
 
     def onEditPicListClicked(self, btn_editPicList):
         pgnum = 0
         self.builder.get_object("c_usePicList").set_active(True)
-        self.builder.get_object("nbk_Main").set_current_page(9)
+        self.builder.get_object("nbk_Main").set_current_page(10)
         self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
         self.onViewerChangePage(None,None,pgnum)
     
@@ -1723,6 +1723,6 @@ class GtkViewModel(ViewModel):
             Gtk.main_iteration()
 
     def showLogFile(self):
-        self.builder.get_object("nbk_Main").set_current_page(9)   # Switch to the Viewer tab
+        self.builder.get_object("nbk_Main").set_current_page(10)   # Switch to the Viewer tab
         self.builder.get_object("nbk_Viewer").set_current_page(4) # Display the tab with the .log file
         # self.builder.get_object("scroll_XeTeXlog").scroll_to_mark(self.buf[4].get_insert(), 0.0, True, 0.5, 0.5)

@@ -30,7 +30,6 @@ def newBase(fpath):
 
 def refKey(r, info=""):
     m = re.match(r"^(\D*)\s*(\d*)\.?(\d*)(\S*)$", r)
-    print("r, m", r, m)
     if m:
         return (m.group(1), int(m.group(2) or 0), int(m.group(3) or 0), info, m.group(4))
     else:
@@ -513,7 +512,6 @@ class ViewModel:
         if diglotPrinter is not None:
             diglotPrinter.getFigureSources(diglotPics, key=srcfkey)
             picinfos.update(diglotPics)
-        print(picinfos)
         # Copy them
         missingPics = []
         for k, v in picinfos.items():

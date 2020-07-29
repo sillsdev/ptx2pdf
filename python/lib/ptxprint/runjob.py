@@ -458,7 +458,11 @@ class RunJob:
         pageRatios = self.usablePageRatios(info)
         tmpPicpath = os.path.join(self.printer.working_dir, "tmpPics")
         folderList = ["tmpPics", "tmpPicLists"] 
-        self.removeTmpFolders(self.printer.working_dir, folderList, mkdirs=True)
+        try:
+            self.removeTmpFolders(self.printer.working_dir, folderList, mkdirs=True)
+        except PermissionError:
+            print("Warning: Couldn't Remove Temporary Folders - is a temp file open?")
+            
         def carefulCopy(p, src, tgt):
             ratio = pageRatios[1 if p['size'].startswith("span") else 0]
             return self.carefulCopy(ratio, src, tgt)

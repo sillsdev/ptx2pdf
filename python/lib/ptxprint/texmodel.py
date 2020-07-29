@@ -6,7 +6,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from ptxprint.font import TTFont
 from ptxprint.ptsettings import chaps, books, bookcodes, oneChbooks
-from ptxprint.snippets import FancyIntro, PDFx1aOutput, AlignedDiglot, FancyBorders
+from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders
 from ptxprint.runner import checkoutput
 
 def universalopen(fname, rewrite=False):
@@ -318,7 +318,7 @@ class TexModel:
     _snippets = {
         "snippets/fancyintro":            ("c_prettyIntroOutline", FancyIntro),
         "snippets/pdfx1aoutput":          ("c_PDFx1aOutput", PDFx1aOutput),
-        "snippets/diglot":          ("c_diglotAutoAligned", AlignedDiglot),
+        "snippets/diglot":                ("c_diglot", Diglot),
         "snippets/fancyborders":          ("c_borders", FancyBorders)
     }
     _settingmappings = {
@@ -385,7 +385,7 @@ class TexModel:
         if not os.path.exists(fpath):
             fpath = j(rcpath, "NestedStyles.sty")
         self.dict['/nststypath'] = rel(fpath, docdir).replace("\\","/")
-        # If AlignedDiglot, look in local Config folder for NestedStylesR.sty, and drop back to shared/ptxprint if not found
+        # If Diglot, look in local Config folder for NestedStylesR.sty, and drop back to shared/ptxprint if not found
         fpathR = j(cpath, "NestedStylesR.sty")
         if self.dict["document/ifdiglot"] == "":
             if not os.path.exists(fpathR):
@@ -762,6 +762,9 @@ class TexModel:
         v = self.dict["document/glossarymarkupstyle"]
         gloStyle = self._glossarymarkup.get(v, v)
         self.localChanges.append((None, regex.compile(r"\\\+?w (.+?)(\|.+?)?\\\+?w\*", flags=regex.M), gloStyle))
+        
+        # Strip out all \figs from the USFM as an internally generated temp PicList will do the same job
+        self.localChanges.append((None, regex.compile(r'\\fig [^\\]+?\\fig\*', flags=regex.M), ""))
         
         # Remember to preserve \figs ... \figs for books that can't have PicLists (due to no ch:vs refs in them)
         if self.asBool("document/ifinclfigs") and (self.asBool("document/iffigfrmtext") or bk in self._peripheralBooks):

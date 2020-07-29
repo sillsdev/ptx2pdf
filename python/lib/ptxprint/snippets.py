@@ -67,7 +67,7 @@ class FancyIntro():
 \def\iotableleader#1#2{#1\leaders\hbox to 0.8em{\hss.\hss}\hfill#2\par}%
 """
 
-class AlignedDiglot():
+class Diglot():
     regexes = []
     styleInfo = ""
     processTex = True
