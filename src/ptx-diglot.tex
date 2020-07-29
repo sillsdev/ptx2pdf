@@ -173,6 +173,17 @@
    \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
    \trace{D}{after notes:\the\availht}%
    \decr{\availht}{\topins}%pictures
+   \setbox1\copy\topleftins\setbox1\vbox{\unvbox1}%
+   \setbox2\copy\topleftins\setbox2\vbox{\unvbox2}%
+   \trace{D}{\the\ht1=\the\ht\topleftins? \the\ht2=\the\ht\toprightins?}%
+   \ifdim\ht1>\ht\topleftins
+     \trace{D}{Box was shrunk: \the\ht1 > \the\ht\topleftins}%
+     \ht\topleftins=\ht1
+   \fi
+   \ifdim\ht2>\ht\toprightins
+     \trace{D}{Box was shrunk: \the\ht2 > \the\ht\toprightins}%
+     \ht\toprightins=\ht2
+   \fi
    \ifdim\ht\topleftins>\ht\toprightins %
      \decr{\availht}{\topleftins}%
    \else%
@@ -239,7 +250,7 @@
  \ifdim\ht255<-20pt % eek. we've been given a seriously -ve height box.
   \ifleftfull
   \else
-    \message{*** SOMETHING BAD HAPPENED on page \the\pageno. Probably a picture that there was no space for.}%
+    \message{*** SOMETHING BAD, pg. \the\pageno. Probably a picture there was no space for.}%
     \leftfulltrue
     \setbox\excessL\box\partialL
     \nastyboxtrue
@@ -526,7 +537,7 @@
     \ifdim\TempDim<-1.5\baselineskip % better move it onto next page.
       \trace{D}{Box size means it moves}
       \ifnum\lastsavedLpenalty=10000 %
-        \MSG{Bad column break on \count0}%
+        \MSG{*** Bad column break on \the\pageno}%
       \fi%
       \global\setbox\partialL=\box\LeftBox%
       \boxmovedtrue%
@@ -649,7 +660,7 @@
       \bgroup
         \dimen0=\trialheight
         \advance\dimen0 by -\availht
-        \message{*** A picture or footnote on page \the\pageno (near \botmark) has just taken \the\dimen0 of space. There's no space left for text.}%
+        \message{*** SOMETHING BAD, pg. \the\pageno.  A picture or footnote (probable range: \topmark-\botmark) has just taken \the\dimen0 of space. There's no space left for text.}%
       \egroup
      \fi
     \global\trialheight=\availht
@@ -1089,7 +1100,7 @@
     \ifdim\availht<-2\baselineskip 
       %Need to drop something. Picture or text, I don't know
       %FIXME This shouldn't happen... 
-      \message{*** SOMETHING BAD HAPPENED on page \the\pageno. Out of space: av = \the\availht, th=\the\textheight,
+      \message{*** SOMETHING BAD,  pg. \the\pageno. Out of space: av = \the\availht, th=\the\textheight,
       tr=\the\trialheight, part=(\the\ht\partial+\the\dp\partial)}%
     \fi
     %Leave partialR untouched - out of space anyway.
@@ -1814,8 +1825,8 @@
   \hss}}
 
 \def\diglotgr@db@x#1{%
- \vbox{\gr@db@@x{#1}}%
- \nobreak
+ \vbox{\gr@db@@x{#1}\penalty 10000}%
+ \penalty 10000
 }
 \def\testmarker{\hbox to 0pt{\vrule height 7pt depth 0pt width 0.5pt \kern-0.5pt}\message{_}}
 %
