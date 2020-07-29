@@ -7,6 +7,7 @@ from ptxprint.texmodel import TexModel, universalopen
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.view import ViewModel, VersionStr, refKey
 from ptxprint.font import getfontcache
+from ptxprint.usfmerge import usfmerge
 
 _errmsghelp = {
 "! Unable to load picture":              "Check if picture file is located in 'Figures', 'local\\figures' or a\n" +\
@@ -315,10 +316,7 @@ class RunJob:
             copyfile(left, tmpFile)
 
             if not self.args.nuseusfmerge:
-                cmd = [os.path.join(self.scriptsdir, "usfmerge")]
-                if sys.platform == "win32":
-                    cmd = ["python"] + cmd
-                cmdparms = ["-o", left, tmpFile, right]
+                usfmerge(tmpFile, right, left)
             else:
                 # Usage: diglotMerge.exe [-mode|options] LeftFile RightFile
                 # Read LeftFile and RightFile, merging them according to the selected mode)
@@ -340,7 +338,7 @@ class RunJob:
                     p = os.path.join(self.scriptsdir, "diglot_merge.pl")
                     cmd = ['perl', p]  # need to work out where the .pl file will live)
                 cmdparms = ['-o', left, '-p', '-L', logFile, '-s', tmpFile, right] 
-            r = checkoutput(cmd + cmdparms)
+                r = checkoutput(cmd + cmdparms)
             for f in [left, right, tmpFile, logFile]:
                 texfiles += [os.path.join(self.tmpdir, f)]
 
