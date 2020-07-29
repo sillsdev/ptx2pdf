@@ -6,7 +6,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from ptxprint.font import TTFont
 from ptxprint.ptsettings import chaps, books, bookcodes, oneChbooks
-from ptxprint.snippets import FancyIntro, PDFx1aOutput, AlignedDiglot, FancyBorders
+from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders
 from ptxprint.runner import checkoutput
 
 def universalopen(fname, rewrite=False):
@@ -31,8 +31,8 @@ def universalopen(fname, rewrite=False):
     return fh
 
 ModelMap = {
-    "L_":                       ("c_diglotAutoAligned", lambda w,v: "L" if v and w.get("c_diglot") else ""),
-    "R_":                       ("c_diglotAutoAligned", lambda w,v: "R" if v and w.get("c_diglot") else ""),
+    "L_":                       ("c_diglot", lambda w,v: "L" if v else ""),
+    "R_":                       ("c_diglot", lambda w,v: "R" if v else ""),
     "date_":                    ("_date", lambda w,v: v),
     "pdfdate_":                 ("_pdfdate", lambda w,v: v),
     #"config/name":              ("ecb_savedConfig", lambda w,v: v or "default"),
@@ -103,7 +103,10 @@ ModelMap = {
     "fancy/sectionheaderpdf":   ("btn_selectSectionHeaderPDF", lambda w,v: w.sectionheader.as_posix() \
                                             if (w.sectionheader is not None and w.sectionheader != 'None') \
                                             else get("/ptxprintlibpath")+"/A5 section head border.pdf"),
-    "fancy/decorationpdf":      (None, lambda w,v: get("/ptxprintlibpath")+"/decoration.pdf"),
+    "fancy/endofbook":          ("c_inclEndOfBook", lambda w,v: "" if v else "%"),
+    "fancy/endofbookpdf":       ("btn_selectEndOfBookPDF", lambda w,v: w.endofbook.as_posix() \
+                                            if (w.endofbook is not None and w.endofbook != 'None') \
+                                            else get("/ptxprintlibpath")+"/decoration.pdf"),
     "fancy/versedecorator":     ("c_inclVerseDecorator", lambda w,v: "" if v else "%"),
     "fancy/versedecoratorpdf":  ("btn_selectVerseDecorator", lambda w,v: w.versedecorator.as_posix() \
                                             if (w.versedecorator is not None and w.versedecorator != 'None') \
@@ -156,7 +159,9 @@ ModelMap = {
     "document/ifmainbodytext":  ("c_mainBodyText", None),
     "document/glueredupwords":  ("c_glueredupwords", None),
     "document/ifinclfigs":      ("c_includeillustrations", lambda w,v: "true" if v else "false"),
+    "document/ifusepiclist":    ("c_includeillustrations", lambda w,v :"" if v else "%"),
     "document/iffigfrmtext":    ("c_includefigsfromtext", None),
+    "document/iffigfrmpiclist": ("c_usePicList", None),
     "document/iffigexclwebapp": ("c_figexclwebapp", None),
     "document/iffigskipmissing": ("c_skipmissingimages", None),
     "document/iffigplaceholders": ("c_figplaceholders", lambda w,v: "true" if v else "false"),
@@ -168,7 +173,6 @@ ModelMap = {
     "document/customfigfolder": ("btn_selectFigureFolder", lambda w,v: w.customFigFolder.as_posix() if w.customFigFolder is not None else ""),
     "document/customoutputfolder": ("btn_selectOutputFolder", lambda w,v: w.customOutputFolder.as_posix() if w.customOutputFolder is not None else ""),
     "document/imagetypepref":   ("t_imageTypeOrder", None),
-    "document/ifusepiclist":    ("c_usePicList", lambda w,v :"" if v else "%"),
     "document/spacecntxtlztn":  ("ecb_spaceCntxtlztn", lambda w,v: "0" if v == "None" or v is None else "1" if v == "Some" else "2"),
     "document/glossarymarkupstyle":  ("fcb_glossaryMarkupStyle", None),
     "document/filterglossary":  ("c_filterGlossary", None),
@@ -195,8 +199,6 @@ ModelMap = {
     "document/cloptimizepoetry": ("c_optimizePoetryLayout", None),
 
     "document/ifdiglot":        ("c_diglot", lambda w,v : "" if v else "%"),
-    "document/ifaligndiglot":   ("c_diglotAutoAligned", lambda w,v: "" if v and w.get("c_diglot") else "%"),
-    "document/diglotalignment": ("fcb_diglotAlignment", None),
     "document/diglotprifraction": ("s_diglotPriFraction", lambda w,v : round((float(v)/100), 3) if v is not None else "0.550"),
     "document/diglotsecfraction": ("s_diglotPriFraction", lambda w,v : round(1 - (float(v)/100), 3) if v is not None else "0.450"),
     "document/diglotsecprj":    ("fcb_diglotSecProject", None),
@@ -204,7 +206,6 @@ ModelMap = {
     "document/diglotswapside":  ("c_diglotSwapSide", lambda w,v: v),
     "document/diglotsepnotes":  ("c_diglotSeparateNotes", lambda w,v: "true" if v else "false"),
     "document/diglotsecconfig": ("ecb_diglotSecConfig", None),
-    "document/diglotnormalhdrs": ("c_diglotHeaders", lambda w,v :"" if v else "%"),
 
     "header/headerposition":    ("s_headerposition", lambda w,v: round(float(v), 2) or "1.00"),
     "header/footerposition":    ("s_footerposition", lambda w,v: round(float(v), 2) or "1.00"),
@@ -266,7 +267,7 @@ ModelMap = {
     "fontbolditalic/slant":     ("s_bolditalicslant", lambda w,v: ":slant={:.4f}".format(float(v)) if float(v) != 0.0000 and w.get("c_fakebolditalic") else ""),
     "snippets/fancyintro":      ("c_prettyIntroOutline", None),
     "snippets/pdfx1aoutput":    ("c_PDFx1aOutput", None),
-    "snippets/alignediglot":    ("c_diglotAutoAligned", lambda w,v: True if v and w.get("c_diglot") else False),
+    "snippets/diglot":          ("c_diglot", lambda w,v: True if v else False),
     "snippets/fancyborders":    ("c_borders", None),
 }
 
@@ -318,7 +319,7 @@ class TexModel:
     _snippets = {
         "snippets/fancyintro":            ("c_prettyIntroOutline", FancyIntro),
         "snippets/pdfx1aoutput":          ("c_PDFx1aOutput", PDFx1aOutput),
-        "snippets/alignediglot":          ("c_diglotAutoAligned", AlignedDiglot),
+        "snippets/diglot":                ("c_diglot", Diglot),
         "snippets/fancyborders":          ("c_borders", FancyBorders)
     }
     _settingmappings = {
@@ -366,6 +367,7 @@ class TexModel:
         self.dict['project/id'] = self.printer.prjid
         self.dict['config/name'] = self.printer.configId
         self.dict['/ptxrpath'] = rel(self.dict['/ptxpath'], docdir)
+        self.dict['/cfgrpath'] = rel(cpath, docdir)
         self.readFonts(self.printer)
         self.processFonts(self.printer)
         self.processHdrFtr(self.printer)
@@ -385,15 +387,24 @@ class TexModel:
         if not os.path.exists(fpath):
             fpath = j(rcpath, "NestedStyles.sty")
         self.dict['/nststypath'] = rel(fpath, docdir).replace("\\","/")
-        # If AlignedDiglot, look in local Config folder for NestedStylesR.sty, and drop back to shared/ptxprint if not found
+        # If Diglot, look in local Config folder for NestedStylesR.sty, and drop back to shared/ptxprint if not found
         fpathR = j(cpath, "NestedStylesR.sty")
-        if self.dict["document/ifaligndiglot"] == "":
+        if self.dict["document/ifdiglot"] == "":
             if not os.path.exists(fpathR):
                 fpathR = j(rcpath, "NestedStylesR.sty")
+        if "document/diglotcfgrpath" not in self.dict:
+            self.dict["document/diglotcfgrpath"] = ""
         self.dict['/nststypathR'] = rel(fpathR, docdir).replace("\\","/")
         self.dict['paragraph/linespacingfactor'] = "{:.3f}".format(float(self.dict['paragraph/linespacing']) / 14 / float(self.dict['paper/fontfactor']))
         self.dict['paragraph/ifhavehyphenate'] = "" if os.path.exists(os.path.join(self.printer.configPath(""), \
                                                        "hyphen-"+self.dict["project/id"]+".tex")) else "%"
+        # forward cleanup. If ask for ptxprint-mods.tex but don't have it, copy PrintDraft-mods.tex
+        if self.dict["project/ifusemodssty"] == "":
+            modspath = os.path.join(cpath, "ptxprint-mods.sty")
+            if not os.path.exists(modspath):
+                spath = os.path.join(docdir, "PrintDraft-mods.sty")
+                if os.path.exists(spath):
+                    copyfile(spath, modspath)
 
     def updatefields(self, a):
         global get
@@ -504,7 +515,7 @@ class TexModel:
         for side in ('left', 'center', 'right'):
             v = self.dict["header/hdr"+side]
             t = self._hdrmappings.get(v, v)
-            if self.dict["document/ifaligndiglot"] == "":
+            if self.dict["document/ifdiglot"] == "":
                 if t.endswith("ref"):
                     if side == 'right':
                         t = t+'R'
@@ -763,6 +774,7 @@ class TexModel:
         gloStyle = self._glossarymarkup.get(v, v)
         self.localChanges.append((None, regex.compile(r"\\\+?w (.+?)(\|.+?)?\\\+?w\*", flags=regex.M), gloStyle))
         
+        
         # Remember to preserve \figs ... \figs for books that can't have PicLists (due to no ch:vs refs in them)
         if self.asBool("document/ifinclfigs") and (self.asBool("document/iffigfrmtext") or bk in self._peripheralBooks):
             # Remove any illustrations which don't have a |p| 'loc' field IF this setting is on
@@ -770,31 +782,32 @@ class TexModel:
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig ([^|]*\|){3}([aw]+)\|[^\\]*\\fig\*', flags=regex.M), ''))  # USFM2
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig [^\\]*\bloc="[aw]+"[^\\]*\\fig\*', flags=regex.M), ''))    # USFM3
 
-            figChangeList = self.figNameChanges(printer, bk)
-            if len(figChangeList):
-                # missingPics = []
-                for origfn,tempfn in figChangeList:
-                    origfn = re.escape(origfn)
-                    if tempfn != "":
-                        # print("(?i)(\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), "-->", tempfn)
-                        self.localChanges.append((None, regex.compile(r"(?i)(?<fig>\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), \
-                                                     flags=regex.M), r"\g<fig>{}\2".format(tempfn)))                               #USFM2
-                        self.localChanges.append((None, regex.compile(r'(?i)(?<fig>\\fig .*?src="){}(" .+?\\fig\*)'.format(origfn), \
-                                                     flags=regex.M), r"\g<fig>{}\2".format(tempfn)))                               #USFM3
-                    else:
-                        # missingPics += [origfn]
-                        if self.asBool("document/iffigskipmissing"):
-                            # print("(?i)(\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), "--> Skipped!!!!")
-                            self.localChanges.append((None, regex.compile(r"(?i)\\fig .*?\|{}\|.+?\\fig\*".format(origfn), flags=regex.M), ""))     #USFM2
-                            self.localChanges.append((None, regex.compile(r'(?i)\\fig .*?src=\"{}\" .+?\\fig\*'.format(origfn), flags=regex.M), "")) #USFM3
+            # figChangeList = self.figNameChanges(printer, bk)
+            # if len(figChangeList):
+                ## missingPics = []
+                # for origfn,tempfn in figChangeList:
+                    # origfn = re.escape(origfn)
+                    # if tempfn != "":
+                        ## print("(?i)(\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), "-->", tempfn)
+                        # self.localChanges.append((None, regex.compile(r"(?i)(?<fig>\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), \
+                                                     # flags=regex.M), r"\g<fig>{}\2".format(tempfn)))                               #USFM2
+                        # self.localChanges.append((None, regex.compile(r'(?i)(?<fig>\\fig .*?src="){}(" .+?\\fig\*)'.format(origfn), \
+                                                     # flags=regex.M), r"\g<fig>{}\2".format(tempfn)))                               #USFM3
+                    # else:
+                        ## missingPics += [origfn]
+                        # if self.asBool("document/iffigskipmissing"):
+                            ## print("(?i)(\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), "--> Skipped!!!!")
+                            # self.localChanges.append((None, regex.compile(r"(?i)\\fig .*?\|{}\|.+?\\fig\*".format(origfn), flags=regex.M), ""))     #USFM2
+                            # self.localChanges.append((None, regex.compile(r'(?i)\\fig .*?src=\"{}\" .+?\\fig\*'.format(origfn), flags=regex.M), "")) #USFM3
 
             if self.asBool("document/iffighiderefs"): # del ch:vs from caption 
                 self.localChanges.append((None, regex.compile(r"(\\fig [^\\]+?\|)([0-9:.\-,\u2013\u2014]+?)(\\fig\*)", \
                                           flags=regex.M), r"\1\3"))   # USFM2
                 self.localChanges.append((None, regex.compile(r'(\\fig .+?)(ref=\"\d+[:.]\d+([-,\u2013\u2014]\d+)?\")(.*?\\fig\*)', \
                                           flags=regex.M), r"\1\4"))   # USFM3
-        else: # Drop ALL Figures
-            self.localChanges.append((None, regex.compile(r"\\fig .*?\\fig\*", flags=regex.M), ""))
+        else:
+            # Strip out all \figs from the USFM as an internally generated temp PicList will do the same job
+            self.localChanges.append((None, regex.compile(r'\\fig [^\\]+?\\fig\*', flags=regex.M), ""))
         
         if not self.asBool("document/bookintro"): # Drop Introductory matter
             self.localChanges.append((None, regex.compile(r"\\i(s|m|mi|mt|p|pi|li\d?|pq|mq|pr|b|q\d?) .+?\r?\n", flags=regex.M), "")) 
@@ -983,7 +996,7 @@ class TexModel:
 
         nstylist.append("##### Adjust poetic indents\n")
         m = ["\Marker", "\LeftMargin", "\FirstLineIndent"]
-        if self.dict["paper/columns"] == "2" or self.dict["document/ifaligndiglot"] == "": # Double Column layout so use smaller indents
+        if self.dict["paper/columns"] == "2" or self.dict["document/ifdiglot"] == "": # Double Column layout so use smaller indents
             v = [["q", "0.60", "-0.45"], ["q1", "0.60", "-0.45"], ["q2", "0.60", "-0.225"], 
                  ["q3", "0.60", "-0.112"], ["q4", "0.60", "-0.0"]]
         else: # Single column layout, so use larger (USFM.sty default) indents

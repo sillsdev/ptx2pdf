@@ -7,6 +7,7 @@ from ptxprint.texmodel import TexModel, universalopen
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.view import ViewModel, VersionStr, refKey
 from ptxprint.font import getfontcache
+from ptxprint.usfmerge import usfmerge
 
 _errmsghelp = {
 "! Unable to load picture":              "Check if picture file is located in 'Figures', 'local\\figures' or a\n" +\
@@ -23,7 +24,7 @@ _errmsghelp = {
                                          "Then, check any recent changes to the Stylesheets (on Advanced tab) and try again.\n",
 "! File ended while scanning use of":    "Try turning off PrintDraftChanges.txt and both Stylesheets on Advanced tab.\n",
 "! Output loop---25 consecutive dead cycles.":  "Unknown issue.\n",
-"! Paratext stylesheet":                 "Try turning off the PrintDraft-mods stylesheet\n",
+"! Paratext stylesheet":                 "Try turning off the ptxprint-mods stylesheet\n",
 "! File ended while scanning use of \iotableleader.": "Problem with Formatting Intro Outline\n" +\
                                          "Try disabling option 'Right-Align \ior with tabbed leaders' on the Body tab\n",
 "! Emergency stop.":                     "Probably a TeX macro problem - contact support, or post a bug report\n",
@@ -131,7 +132,6 @@ class RunJob:
         self.tmpdir = os.path.join(self.prjdir, 'PrintDraft') if info.asBool("project/useprintdraftfolder") else self.args.directory
         os.makedirs(self.tmpdir, exist_ok=True)
         jobs = self.printer.getBooks()
-        info["diglot/fzysettings"] = ""
 
         self.books = []
         if self.printer.get("c_onlyRunOnce"):
@@ -282,199 +282,82 @@ class RunJob:
         texfiles = []
         donebooks = []
         digdonebooks = []
-        # need to set either -v -c -p depending on what kind of merge is needed
-        alnmnt = info.dict["document/diglotalignment"]
-        if alnmnt.startswith("Not"):
-            alignParam = "None"
-        elif alnmnt.endswith("Chapters"):
-            alignParam = "-c"
-        elif alnmnt.endswith("Paragraphs"):
-            alignParam = "-l" # With the Left/Pri text driving the paragraph breaks
-        elif alnmnt.endswith("Verses"):
-            alignParam = "-v"
-        else:
-            alignParam = ""
-        if True: # alnmnt.startswith("No"):
-            _digSecSettings = ["paper/pagesize", "paper/height", "paper/width", "paper/margins",
-                               "paper/sidemarginfactor", "paper/topmarginfactor", "paper/bottommarginfactor",
-                               "header/headerposition", "header/footerposition", "header/ruleposition",
-                               "document/ch1pagebreak", "document/bookintro", "document/introoutline", 
-                               "document/parallelrefs", "document/elipsizemptyvs", "notes/iffootnoterule",
-                               "notes/ifblendfnxr", "notes/includefootnotes", "notes/includexrefs", 
-                               "notes/fnparagraphednotes", "notes/xrparagraphednotes", "document/filterglossary", 
-                               "document/chapfrom", "document/chapto", "document/ifcolorfonts"]
-            diginfo["project/bookids"] = jobs
-            diginfo["project/books"] = digdonebooks
-            diginfo["document/ifaligndiglot"] = "%"
-            diginfo["footer/ftrcenter"] = "-empty-"
-            diginfo["footer/ifftrtitlepagenum"] = "%"
-            diginfo["fancy/pageborder"] = "%"
-            diginfo["document/clsinglecol"] = False
-            diginfo["snippets/alignediglot"] = False
-            # print("_digSecSettings = ", _digSecSettings)
-            for k in _digSecSettings:
-                # print("{} = '{}'".format(k, info[k]))
-                diginfo[k]=info[k]
+        _digSecSettings = ["paper/pagesize", "paper/height", "paper/width", "paper/margins",
+                           "paper/sidemarginfactor", "paper/topmarginfactor", "paper/bottommarginfactor",
+                           "header/headerposition", "header/footerposition", "header/ruleposition",
+                           "document/ch1pagebreak", "document/bookintro", "document/introoutline", 
+                           "document/parallelrefs", "document/elipsizemptyvs", "notes/iffootnoterule",
+                           "notes/ifblendfnxr", "notes/includefootnotes", "notes/includexrefs", 
+                           "notes/fnparagraphednotes", "notes/xrparagraphednotes", "document/filterglossary", 
+                           "document/chapfrom", "document/chapto", "document/ifcolorfonts"]
+        diginfo["project/bookids"] = jobs
+        diginfo["project/books"] = digdonebooks
+        diginfo["document/ifdiglot"] = "%"
+        diginfo["footer/ftrcenter"] = "-empty-"
+        diginfo["footer/ifftrtitlepagenum"] = "%"
+        diginfo["fancy/pageborder"] = "%"
+        diginfo["document/clsinglecol"] = False
+        diginfo["snippets/diglot"] = False
+        docdir = os.path.join(info["/ptxpath"], info["project/id"], "PrintDraft")
+        # print("_digSecSettings = ", _digSecSettings)
+        for k in _digSecSettings:
+            # print("{} = '{}'".format(k, info[k]))
+            diginfo[k]=info[k]
         for b in jobs:
             out = info.convertBook(b, self.tmpdir, self.prjdir)
             digout = diginfo.convertBook(b, self.tmpdir, digprjdir)
             donebooks.append(out)
             digdonebooks.append(digout)
             
-            if alignParam != "None":
-                # Now run the Perl script to merge the secondary text (right) into the primary text (left) 
-                left = os.path.join(self.tmpdir, out)
-                right = os.path.join(self.tmpdir, digout)
-                tmpFile = os.path.join(self.tmpdir, "primaryText.tmp")
-                logFile = os.path.join(self.tmpdir, "ptxprint-merge.log")
-                copyfile(left, tmpFile)
+            # Now run the Perl script to merge the secondary text (right) into the primary text (left) 
+            left = os.path.join(self.tmpdir, out)
+            right = os.path.join(self.tmpdir, digout)
+            tmpFile = os.path.join(self.tmpdir, "primaryText.tmp")
+            logFile = os.path.join(self.tmpdir, "ptxprint-merge.log")
+            copyfile(left, tmpFile)
 
-                if not self.args.nuseusfmerge:
-                    cmd = [os.path.join(self.scriptsdir, "usfmerge")]
-                    if sys.platform == "win32":
-                        cmd = ["python"] + cmd
-                    cmdparms = ["-o", left, tmpFile, right]
-                else:
-                    # Usage: diglotMerge.exe [-mode|options] LeftFile RightFile
-                    # Read LeftFile and RightFile, merging them according to the selected mode)
-                    # Mode may be any ONE of :
-                    # -l     :Left/Pri master: splitting right column at each left text paragraph
-                    # -r     :Right/Sec master: splitting left column at each right text paragraph
-                    # -v     :matching verses (default)
-                    # -c     :matching chapters
-                    # -p     :matching paragraph breaks (only where they match?)
-                    # Options are:
-                    # -left file        : Log to file
-                    # -right 11:25-25:12   Only ouput specified range
-                    # -s      Split off section headings into a separate chunk (makes verses line up)
-                    # -C      If ?? is used, consider the chapter mark to be a heading
-                    # -o file : Output to file
-                    if sys.platform == "win32":
-                        cmd = [os.path.join(self.scriptsdir, "diglotMerge.exe")]
-                    elif sys.platform == "linux":  # UNTESTED code
-                        p = os.path.join(self.scriptsdir, "diglot_merge.pl")
-                        cmd = ['perl', p]  # need to work out where the .pl file will live)
-                    cmdparms = ['-o', left, alignParam, '-L', logFile, '-s', tmpFile, right] 
+            if not self.args.nuseusfmerge:
+                usfmerge(tmpFile, right, left)
+            else:
+                # Usage: diglotMerge.exe [-mode|options] LeftFile RightFile
+                # Read LeftFile and RightFile, merging them according to the selected mode)
+                # Mode may be any ONE of :
+                # -l     :Left/Pri master: splitting right column at each left text paragraph
+                # -r     :Right/Sec master: splitting left column at each right text paragraph
+                # -v     :matching verses (default)
+                # -c     :matching chapters
+             #>># -p     :matching paragraph breaks (only where they match?)
+                # Options are:
+                # -left file        : Log to file
+                # -right 11:25-25:12   Only ouput specified range
+                # -s      Split off section headings into a separate chunk (makes verses line up)
+                # -C      If ?? is used, consider the chapter mark to be a heading
+                # -o file : Output to file
+                if sys.platform == "win32":
+                    cmd = [os.path.join(self.scriptsdir, "diglotMerge.exe")]
+                elif sys.platform == "linux":  # UNTESTED code
+                    p = os.path.join(self.scriptsdir, "diglot_merge.pl")
+                    cmd = ['perl', p]  # need to work out where the .pl file will live)
+                cmdparms = ['-o', left, '-p', '-L', logFile, '-s', tmpFile, right] 
                 r = checkoutput(cmd + cmdparms)
-                for f in [left, right, tmpFile, logFile]:
-                    texfiles += [os.path.join(self.tmpdir, f)]
+            for f in [left, right, tmpFile, logFile]:
+                texfiles += [os.path.join(self.tmpdir, f)]
 
-                # if r != 0:  # Not sure how to check/interpret the return codes from diglotMerge.exe
-                    # print("Failed to merge the Primary and Secondary files! Result code: {}".format(r))
-                # else:
-                    # print("SUCCESSFULLY merged the Primary and Secondary files!")
-                    # os.remove(tmpFile) # maybe this should only be done at the end when others are also deleted
         info["project/bookids"] = jobs
         info["project/books"] = donebooks
         self.books += digdonebooks
 
-        if alnmnt.startswith("No"):
-            # First create Secondary PDF
-            diginfo["diglot/fzysettings"] = self.generateFzyDiglotSettings(jobs, info, None, primary=False)
-            # print("Sec:", diginfo["diglot/fzysettings"])
-            texfiles += self.sharedjob(jobs, diginfo, prjid=digprjid, prjdir=digprjdir, fzy=True)
-            # Now Primary (along with Secondary merged in with it)
-            info["diglot/fzysettings"] = self.generateFzyDiglotSettings(jobs, info, digprjid, primary=True)
-            # print("Pri:", info["diglot/fzysettings"])
-            texfiles += self.sharedjob(jobs, info)
-        else:
-            # Pass all the needed parameters for the snippet from diginfo to info
-            for k,v in _diglot.items():
-                info[k]=diginfo[v]
-                # print(k, v, diginfo[v])
-            self.tempFiles += info.generateNestedStyles(diglot=True)
-            texfiles += self.sharedjob(jobs, info, logbuffer=logbuffer)
+        # Pass all the needed parameters for the snippet from diginfo to info
+        for k,v in _diglot.items():
+            info[k]=diginfo[v]
+            # print(k, v, diginfo[v])
+        info["document/diglotcfgrpath"] = os.path.relpath(diginfo.printer.configPath(diginfo.printer.configName()), docdir).replace("\\","/")
+        print("diglotcfgrpath = {}".format(info["document/diglotcfgrpath"]))
+        self.tempFiles += info.generateNestedStyles(diglot=True)
+        texfiles += self.sharedjob(jobs, info, logbuffer=logbuffer)
         return texfiles
 
-    def generateFzyDiglotSettings(self, jobs, info, secprjid, primary=True):
-        switchSides = info.asBool("document/diglotswapside")
-        pageWidth = int(re.split("[^0-9]",re.sub(r"^(.*?)\s*,.*$", r"\1", info.dict["paper/pagesize"]))[0]) or 148
-        margin = int(info.dict["paper/margins"])
-        middleGutter = int(info.dict["document/colgutterfactor"])/3
-        bindingGutter = int(info.dict["paper/gutter"])
-        if switchSides: # Primary on RIGHT/OUTER
-            priFraction = float(info.dict["document/diglotprifraction"])
-            priColWidth = (pageWidth  - middleGutter - bindingGutter - (2 * margin)) * priFraction # / 100
-            secColWidth = pageWidth - priColWidth - middleGutter - bindingGutter - (2 * margin)
-            # Calc Pri Settings (right side of page; or outer if mirrored)
-            priSideMarginFactor = 1
-            pribindingGutter = pageWidth - margin - priColWidth - margin
-            # Calc Sec Settings (left side of page; or inner if mirrored)
-            secSideMarginFactor = (priColWidth + margin + middleGutter) / margin
-            secRightMargin = priColWidth + margin + middleGutter
-            secbindingGutter = pageWidth - (2 * secRightMargin) - secColWidth 
-        else: # Primary on LEFT/INNER
-            priFraction = 1 - float(info.dict["document/diglotprifraction"])
-            priColWidth = (pageWidth  - middleGutter - bindingGutter - (2 * margin)) * priFraction # / 100
-            secColWidth = pageWidth - priColWidth - middleGutter - bindingGutter - (2 * margin)
-            # Calc Pri Settings (left side of page; or inner if mirrored)
-            secSideMarginFactor = 1
-            secbindingGutter = pageWidth - margin - priColWidth - margin
-            # Calc Sec Settings (right side of page; or outer if mirrored)
-            priSideMarginFactor = (priColWidth + margin + middleGutter) / margin
-            priRightMargin = priColWidth + margin + middleGutter
-            pribindingGutter = pageWidth - (2 * priRightMargin) - secColWidth 
-        hdr = ""
-        if not primary:
-            if info.asBool("document/diglotnormalhdrs"):
-                if switchSides: # Primary on RIGHT/OUTER
-                    hdr = r"""
-\def\RHoddleft{\rangeref}
-\def\RHoddcenter{\empty}
-\def\RHoddright{\empty}
-\def\RHevenleft{\empty}
-\def\RHevencenter{\empty}
-\def\RHevenright{\rangeref}"""
-                else: # Primary on LEFT/INNER
-                    hdr = r"""
-\def\RHoddright{\rangeref}
-\def\RHoddcenter{\empty}
-\def\RHoddleft{\empty}
-\def\RHevenright{\empty}
-\def\RHevencenter{\empty}
-\def\RHevenleft{\rangeref}"""
-                
-            digFzyCfg = "%% SECONDARY PDF settings"+ \
-                        "\n\MarginUnit={}mm".format(margin)+ \
-                        "\n\BindingGuttertrue"+ \
-                        "\n\BindingGutter={:.2f}mm".format(secbindingGutter)+ \
-                        "\n\def\SideMarginFactor{{{:.2f}}}".format(secSideMarginFactor)+ \
-                        "\n\BodyColumns=1" + hdr
-                        # We also need to be able to overide the page layout values from the PRIMARY project
-                        # (even when creating the Secondary PDF so that the dimensions match).
-        else:
-            # if len(jobs) > 1:
-                # secfname = os.path.join(self.tmpdir, "ptxprint-{}_{}{}.pdf".format(jobs[0], jobs[-1], secprjid)).replace("\\","/")
-            # else:
-                # secfname = os.path.join(self.tmpdir, "ptxprint-{}{}.pdf".format(jobs[0], secprjid)).replace("\\","/")
-            secfname = baseTeXPDFname()+".pdf".replace("\\","/")
-            if info.asBool("document/diglotnormalhdrs"):
-                if switchSides: # Primary on RIGHT/OUTER
-                    hdr = r"""
-\def\RHoddleft{\pagenumber}
-\def\RHoddcenter{\empty}
-\def\RHoddright{\rangeref}
-\def\RHevenleft{\rangeref}
-\def\RHevencenter{\empty}
-\def\RHevenright{\pagenumber}"""
-                else: # Primary on LEFT/INNER
-                    hdr = r"""
-\def\RHoddright{\pagenumber}
-\def\RHoddcenter{\empty}
-\def\RHoddleft{\rangeref}
-\def\RHevenright{\rangeref}
-\def\RHevencenter{\empty}
-\def\RHevenleft{\pagenumber}"""
-            digFzyCfg = "%% PRIMARY (+ SECONDARY) PDF settings"+ \
-                        "\n\MarginUnit={}mm".format(margin)+ \
-                        "\n\BindingGuttertrue"+ \
-                        "\n\BindingGutter={:.2f}mm".format(pribindingGutter)+ \
-                        "\n\def\SideMarginFactor{{{:.2f}}}".format(priSideMarginFactor)+ \
-                        "\n\BodyColumns=1"+ \
-                        "\n\def\MergePDF{" + secfname + "}" + hdr
-        return digFzyCfg
-
-    def sharedjob(self, jobs, info, prjid=None, prjdir=None, fzy=False, logbuffer=None):
+    def sharedjob(self, jobs, info, prjid=None, prjdir=None, logbuffer=None):
         numruns = self.maxRuns
         if prjid is None:
             prjid = self.prjid
@@ -489,10 +372,7 @@ class RunJob:
             outfname = "ptxprint{}-{}_{}{}.tex".format(cfgname, jobs[0], jobs[-1], prjid)
         else:
             outfname = "ptxprint{}-{}{}.tex".format(cfgname, jobs[0], prjid)
-        # MH - What can I pass to make this call work? 
-        # outfname = ViewModel.baseTeXPDFname(???)+".tex"
-        if not fzy:
-            info.update()
+        info.update()
         with open(os.path.join(self.tmpdir, outfname), "w", encoding="utf-8") as texf:
             texf.write(info.asTex(filedir=self.tmpdir, jobname=outfname.replace(".tex", "")))
         os.putenv("hyph_size", "32749")     # always run with maximum hyphenated words size (xetex is still tiny ~200MB resident)
@@ -554,18 +434,24 @@ class RunJob:
 
     def gatherDecorations(self, info):
         if info.asBool("fancy/enableborders"):
+            if info.asBool("fancy/pageborder"):
+                try:
+                    copyfile(info.dict["fancy/pageborderpdf"], os.path.join(self.tmpdir, "pageBorder.pdf"))
+                except FileNotFoundError:
+                    print("Warning: Couldn't locate Page Border Decorator")
             if info.asBool("fancy/sectionheader"):
                 try:
-                    # print("Section Heading source:", info.dict["fancy/sectionheaderpdf"])
-                    # print("Section Heading target:", os.path.join(self.tmpdir, "sectHeadDecorator.pdf"))
                     copyfile(info.dict["fancy/sectionheaderpdf"], os.path.join(self.tmpdir, "sectHeadDecorator.pdf"))
-                    # texfiles += os.path.join(self.tmpdir,"sectHeadDecorator.pdf")
                 except FileNotFoundError:
                     print("Warning: Couldn't locate Section Heading Decorator")
+            if info.asBool("fancy/endofbook"):
+                try:
+                    copyfile(info.dict["fancy/endofbookpdf"], os.path.join(self.tmpdir, "endOfBook.pdf"))
+                except FileNotFoundError:
+                    print("Warning: Couldn't locate End of Book Decorator")
             if info.asBool("fancy/versedecorator"):
                 try:
                     copyfile(info.dict["fancy/versedecoratorpdf"], os.path.join(self.tmpdir, "verseNumDecorator.pdf"))
-                    # texfiles += os.path.join(self.tmpdir,"verseNumDecorator.pdf")
                 except FileNotFoundError:
                     print("Warning: Couldn't locate Verse Number Decorator")
 
@@ -573,7 +459,11 @@ class RunJob:
         pageRatios = self.usablePageRatios(info)
         tmpPicpath = os.path.join(self.printer.working_dir, "tmpPics")
         folderList = ["tmpPics", "tmpPicLists"] 
-        self.removeTmpFolders(self.printer.working_dir, folderList, mkdirs=True)
+        try:
+            self.removeTmpFolders(self.printer.working_dir, folderList, mkdirs=True)
+        except PermissionError:
+            print("Warning: Couldn't Remove Temporary Folders - is a temp file open?")
+            
         def carefulCopy(p, src, tgt):
             ratio = pageRatios[1 if p['size'].startswith("span") else 0]
             return self.carefulCopy(ratio, src, tgt)
@@ -705,7 +595,7 @@ class RunJob:
         pw1 = pageWidth - bindingGutter - (2*(margin*sideMarginFactor))                       # single-col layout
         if info.dict["paper/columns"] == "2":
             pw2 = int(pageWidth - middleGutter - bindingGutter - (2*(margin*sideMarginFactor)))/2 # double-col layout & span images
-        # elif info.asBool("snippets/alignediglot"):
+        # elif info.asBool("snippets/diglot"):
             # pw2 = pw1
         else:
             pw2 = pw1

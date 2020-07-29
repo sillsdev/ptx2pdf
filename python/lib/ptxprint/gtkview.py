@@ -138,9 +138,9 @@ _sensitivities = {
     "c_applyWatermark" :       ["btn_selectWatermarkPDF"],
     "c_linebreakon" :          ["t_linebreaklocale"],
     "c_spacing" :              ["l_minSpace", "s_minSpace", "l_maxSpace", "s_maxSpace"],
-    "c_diglotAutoAligned" :    ["fcb_diglotPicListSources"],
     "c_inclPageBorder" :       ["btn_selectPageBorderPDF"],
     "c_inclSectionHeader" :    ["btn_selectSectionHeaderPDF"],
+    "c_inclEndOfBook" :        ["btn_selectEndOfBookPDF"],
     "c_inclVerseDecorator" :   ["l_verseFont", "bl_verseNumFont", "l_verseSize", "s_verseNumSize", "btn_selectVerseDecorator"],
     "c_fakebold" :             ["s_boldembolden", "s_boldslant"],
     "c_fakeitalic" :           ["s_italicembolden", "s_italicslant"],
@@ -184,7 +184,6 @@ class GtkViewModel(ViewModel):
                     "textDirection", "glossaryMarkupStyle", "fontFaces"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
-        self.addCR("fcb_diglotAlignment", 0)
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
         for a in ("b_print", "b_frefresh"):
             pb = self.builder.get_object(a)
@@ -257,7 +256,8 @@ class GtkViewModel(ViewModel):
         css = """
             .printbutton:active { background-color: chartreuse; background-image: None }
             .fontbutton {font-size: smaller}
-            progress, trough {min-height: 24px}"""
+            progress, trough {min-height: 24px}
+            notebook tab {min-height: 0pt; margin: 0pt; padding-bottom: 15pt} """
         provider = Gtk.CssProvider()
         provider.load_from_data(css.encode("utf-8"))
         Gtk.StyleContext().add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
@@ -480,7 +480,7 @@ class GtkViewModel(ViewModel):
     def onOK(self, btn):
         jobs = self.getBooks()
         # If the viewer/editor is open on an Editable tab, then "autosave" contents
-        if self.builder.get_object("nbk_Main").get_current_page() == 9:
+        if self.builder.get_object("nbk_Main").get_current_page() == 10:
             pgnum = self.builder.get_object("nbk_Viewer").get_current_page()
             if 1 <= pgnum <= 2 or pgnum == 5:
                 self.onSaveEdits(None)
@@ -1009,6 +1009,9 @@ class GtkViewModel(ViewModel):
     def onInclSectionHeaderChanged(self, btn):
         self.sensiVisible("c_inclSectionHeader")
 
+    def onInclEndOfBookChanged(self, btn):
+        self.sensiVisible("c_inclEndOfBook")
+
     def onInclVerseDecoratorChanged(self, btn):
         self.sensiVisible("c_inclVerseDecorator")
     
@@ -1094,7 +1097,7 @@ class GtkViewModel(ViewModel):
     def onKeepTemporaryFilesClicked(self, c_keepTemporaryFiles):
         dir = self.working_dir
         self.builder.get_object("gr_debugTools").set_sensitive(self.get("c_keepTemporaryFiles"))
-        if self.builder.get_object("nbk_Main").get_current_page() == 9:
+        if self.builder.get_object("nbk_Main").get_current_page() == 10:
             if not self.get("c_keepTemporaryFiles"):
                 title = "Remove Intermediate Files and Logs?"
                 question = "Are you sure you want to delete\nALL the temporary PTXprint files?"
@@ -1446,7 +1449,7 @@ class GtkViewModel(ViewModel):
         self.editFile("custom.sty", "prj")
 
     def onEditModsSty(self, btn):
-        self.editFile("PrintDraft-mods.sty", "wrk")
+        self.editFile("ptxprint-mods.tex", "cfg")
 
     def onMainBodyTextChanged(self, btn):
         self.sensiVisible("c_mainBodyText")
@@ -1562,6 +1565,11 @@ class GtkViewModel(ViewModel):
                 os.path.join(os.path.dirname(__file__), "PDFassets", "border-art"),
                 "inclSectionHeader", "sectionheader", btn_selectSectionHeaderPDF)
 
+    def onEndOfBookPDFclicked(self, btn_selectEndOfBookPDF):
+        self._onPDFClicked("Select End of Book PDF file", True,
+                os.path.join(os.path.dirname(__file__), "PDFassets", "border-art"),
+                "inclEndOfBook", "endofbook", btn_selectEndOfBookPDF)
+
     def onVerseDecoratorPDFclicked(self, btn_selectVerseDecoratorPDF):
         self._onPDFClicked("Select Verse Decorator PDF file", True,
                 os.path.join(os.path.dirname(__file__), "PDFassets", "border-art"),
@@ -1569,14 +1577,14 @@ class GtkViewModel(ViewModel):
 
     def onEditAdjListClicked(self, btn_editParaAdjList):
         pgnum = 1
-        self.builder.get_object("nbk_Main").set_current_page(9)
+        self.builder.get_object("nbk_Main").set_current_page(10)
         self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
         self.onViewerChangePage(None,None,pgnum)
 
     def onEditPicListClicked(self, btn_editPicList):
         pgnum = 0
         self.builder.get_object("c_usePicList").set_active(True)
-        self.builder.get_object("nbk_Main").set_current_page(9)
+        self.builder.get_object("nbk_Main").set_current_page(10)
         self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
         self.onViewerChangePage(None,None,pgnum)
     
@@ -1643,16 +1651,12 @@ class GtkViewModel(ViewModel):
         return fcFilepath
 
     def onDiglotOrBorderClicked(self, btn):
-        self.ondiglotAlignmentChanged(None)
         status1 = self.sensiVisible("c_diglot")
         status2 = self.sensiVisible("c_borders")
         if status1 or status2:
             self.builder.get_object("lb_DiglotBorder").set_markup("<span color='#7B90B7'>Diglot+Border</span>")
         else:
             self.builder.get_object("lb_DiglotBorder").set_markup("<span>Diglot+Border</span>")
-
-    def onDiglotAutoAlignedToggled(self, btn):
-        self.sensiVisible("c_diglotAutoAligned")
 
     def ondiglotSecProjectChanged(self, btn):
         self.updateDiglotConfigList()
@@ -1697,12 +1701,6 @@ class GtkViewModel(ViewModel):
         elif response == Gtk.ResponseType.NO:
             return(False)
 
-    def ondiglotAlignmentChanged(self, btn):
-        if self.get("fcb_diglotAlignment").startswith("Align") and self.get("c_diglot"):
-            self.set("c_diglotAutoAligned", True)
-        else:
-            self.set("c_diglotAutoAligned", False)
-
     def onOpenFolderPrjDirClicked(self, btn):
         self.openFolder(os.path.join(self.settings_dir, self.prjid))
         
@@ -1726,6 +1724,6 @@ class GtkViewModel(ViewModel):
             Gtk.main_iteration()
 
     def showLogFile(self):
-        self.builder.get_object("nbk_Main").set_current_page(9)   # Switch to the Viewer tab
+        self.builder.get_object("nbk_Main").set_current_page(10)   # Switch to the Viewer tab
         self.builder.get_object("nbk_Viewer").set_current_page(4) # Display the tab with the .log file
         # self.builder.get_object("scroll_XeTeXlog").scroll_to_mark(self.buf[4].get_insert(), 0.0, True, 0.5, 0.5)

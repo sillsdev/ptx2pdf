@@ -8,8 +8,9 @@ from configparser import NoSectionError, NoOptionError, _UNSET
 from zipfile import ZipFile, ZIP_DEFLATED
 from io import StringIO
 import datetime, time
+from shutil import copyfile, copytree
 
-VersionStr = "0.8.8 beta"
+VersionStr = "0.9.0 beta"
 
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
 
@@ -30,7 +31,6 @@ def newBase(fpath):
 
 def refKey(r, info=""):
     m = re.match(r"^(\D*)\s*(\d*)\.?(\d*)(\S*)$", r)
-    print("r, m", r, m)
     if m:
         return (m.group(1), int(m.group(2) or 0), int(m.group(3) or 0), info, m.group(4))
     else:
@@ -83,6 +83,7 @@ class ViewModel:
         "paper/watermarkpdf":       ("watermarks", False, "lb_applyWatermark"),
         "fancy/pageborderpdf":      ("pageborder", False, "lb_inclPageBorder"),
         "fancy/sectionheaderpdf":   ("sectionheader", False, "lb_inclSectionHeader"),
+        "fancy/endofbookpdf":       ("endofbook", False, "lb_inclEndOfBook"),
         "fancy/versedecoratorpdf":  ("versedecorator", False, "lb_inclVerseDecorator"),
         "document/customfigfolder": ("customFigFolder", False, None),
         "document/customoutputfolder": ("customOutputFolder", False, None)
@@ -106,6 +107,7 @@ class ViewModel:
         self.watermarks = None
         self.pageborder = None
         self.sectionheader = None
+        self.endofbook = None
         self.versedecorator = None
         self.customFigFolder = None
         self.customOutputFolder = None
@@ -263,6 +265,7 @@ class ViewModel:
 
     def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, forceConfig=False):
         currprj = self.prjid
+        currcfg = self.configId
         readConfig = False
         if currprj is None or currprj != prjid:
             if currprj is not None and saveCurrConfig:
@@ -285,6 +288,18 @@ class ViewModel:
                 cachepath(fdir)
             readConfig = True
         if readConfig or self.configId != configName:
+            oldp = self.configPath(prjid=currprj, cfgname=currcfg)
+            newp = self.configPath(cfgname=configName)
+            if not os.path.exists(newp):
+                os.makedirs(newp)
+                for f in ('ptxprint-mods.sty', 'ptxprint-mods.tex', 'PicLists', 'AdjLists'):
+                    srcp = os.path.join(oldp, f)
+                    destp = os.path.join(newp, f)
+                    if os.path.exists(srcp):
+                        if os.path.isdir(srcp):
+                            copytree(srcp, destp)
+                        else:
+                            copyfile(srcp, destp)
             res = self.readConfig(cfgname=configName)
             if res or forceConfig:
                 self.configId = configName
@@ -318,10 +333,12 @@ class ViewModel:
     def configName(self):
         return self.configId or None
 
-    def configPath(self, cfgname=None, makePath=False):
-        if self.settings_dir is None or self.prjid is None:
+    def configPath(self, cfgname=None, prjid=None, makePath=False):
+        if prjid is None:
+            prjid = self.prjid
+        if self.settings_dir is None or prjid is None:
             return None
-        prjdir = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint")
+        prjdir = os.path.join(self.settings_dir, prjid, "shared", "ptxprint")
         if cfgname is not None and len(cfgname):
             prjdir = os.path.join(prjdir, cfgname)
         if makePath:
@@ -490,24 +507,30 @@ class ViewModel:
         srcfkey = 'src path'
         randomizePosn = self.get("c_randomPicPosn")
         diglotPrinter = None
-        if self.get("c_diglotAutoAligned"):
+        if self.get("c_diglot"):
             diglotPrinter = self.createDiglotView()
             diglotPics = {}
         self.setDate()  # update date/time to now
+        if not os.path.exists(outdir):
+            os.makedirs(outdir)
 
         # Assemble a list of figures and their sources
         picinfos = {}
         for bk in bks:
             if diglotPrinter is not None:
-                picinfos.update(((k, bk+"L"), v) for k,v in self.getFigures(bk, sfmonly=sfmonly).items())
-                diglotPics.update(((k, bk+"R"), v) for k,v in diglotPrinter.getFigures(bk, sfmonly=sfmonly).items())
+                if isTemp and not sfmonly:      # only merge if source doesn't have L/R
+                    tmppics = self.getFigures(bk)
+                    if any(x[3] in "LR" for x in tmppics.keys()):
+                        picinfos.update(tmppics)
+                        continue
+                picinfos.update(self.getFigures(bk, suffix="L", sfmonly=sfmonly))
+                diglotPics.update(diglotPrinter.getFigures(bk, suffix="R", sfmonly=sfmonly))
             else:
-                picinfos.update(((k, bk), v) for k,v in self.getFigures(bk, sfmonly=sfmonly).items())
+                picinfos.update(self.getFigures(bk, sfmonly=sfmonly))
         self.getFigureSources(picinfos, key=srcfkey)
         if diglotPrinter is not None:
             diglotPrinter.getFigureSources(diglotPics, key=srcfkey)
             picinfos.update(diglotPics)
-        print(picinfos)
         # Copy them
         missingPics = []
         for k, v in picinfos.items():
@@ -537,8 +560,8 @@ class ViewModel:
                 lines.append("% PicList Generated by PTXprint: {}\n".format(self.get("_date")))
             lines.append('% book ch.vs caption|src="filename.ext" size="col/span" pgpos="t/b/tl/bl/tr/br" ref="ch:vs" alt="description"')
             for k, v in sorted(picinfos.items(),
-                            key=lambda x: refKey(x[0][0], info=x[0][1])):
-                picposn = picposns[k[1][-1] if diglotPrinter is not None else ""]
+                            key=lambda x: refKey(x[0][:3]+x[0][4:], info=x[0][3])):
+                picposn = picposns[k[3] if diglotPrinter is not None else ""]
                 if 'dest file' not in v:
                     missingPics.append(v['src'])
                     continue
@@ -551,7 +574,7 @@ class ViewModel:
                 if 'ref' in v and ishiderefs:
                     del v['ref']
                 v['src'] = os.path.basename(v['dest file'])
-                lines.append("{} {}|".format(k[1]+k[0][3:], v['caption']) + " ".join('{}="{}"'.format(x, v[x]) for x in pos3parms if x in v))
+                lines.append("{} {}|".format(k, v['caption']) + " ".join('{}="{}"'.format(x, v[x]) for x in pos3parms if x in v and v[x]))
             if not isTemp:
                 lines.append("""
 % If illustrations are not appearing in the output PDF, check:
@@ -598,7 +621,7 @@ class ViewModel:
         else:
             return fname + "-draft" + ext
 
-    def getFigures(self, bk, sfmonly=False, media=None):
+    def getFigures(self, bk, suffix="", sfmonly=False, media=None):
         res = {}
         fname = self.getBookFilename(bk, self.prjid)
         usepiclist = not sfmonly and self.get("c_usePicList") and bk not in TexModel._peripheralBooks
@@ -609,7 +632,7 @@ class ViewModel:
                 usepiclist = False
             else:
                 fname = piclstfname
-        if not usepiclist:
+        else:
             fname = os.path.join(self.settings_dir, self.prjid, fname)
         if usepiclist:
             with universalopen(fname) as inf:
@@ -618,13 +641,17 @@ class ViewModel:
                         continue
                     m = l.split("|")
                     r = m[0].split(maxsplit=2)
-                    res[r[1]] = {'caption': r[2]}
+                    if suffix == "":
+                        k = "{} {}".format(r[0], r[1])
+                    else:
+                        k = "{}{} {}".format(r[0][:3], suffix, r[1])
+                    res[k] = {'caption': r[2]}
                     if len(m) > 6:
                         for i, f in enumerate(m[1:]):
-                            res[r[1]][posparms[i+1]] = f
+                            res[k][posparms[i+1]] = f
                     else:
                         for d in re.findall(r'(\S+)\s*=\s*"([^"]+)"', m[-1]):
-                            res[r[1]][d[0]] = d[1]
+                            res[k][d[0]] = d[1]
         else:
             with universalopen(fname) as inf:
                 dat = inf.read()
@@ -633,7 +660,7 @@ class ViewModel:
                     m = re.findall(r"(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+)\\fig\*", t)
                     if len(m):
                         for f in m:     # usfm 2
-                            r = "{} {}.{}".format(bk, c, f[0])
+                            r = "{}{} {}.{}".format(bk, suffix, c, f[0])
                             res[r] = {}
                             res[r] = {'caption':f[8]}
                             res[r]['anchor'] = "{}.{}".format(c, f[0])
@@ -653,7 +680,7 @@ class ViewModel:
                         m = re.findall(r'(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig ([^\\]*?)\|([^\\]+)\\fig\*', t)
                         if len(m):
                             for f in m:     # usfm 3
-                                r = "{} {}.{}".format(bk, c, f[0])
+                                r = "{}{} {}.{}".format(bk, suffix, c, f[0])
                                 res[r] = {'caption':f[3]}
                                 res[r]['anchor'] = "{}.{}".format(c, f[0])
                                 labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f[4])
@@ -730,7 +757,7 @@ class ViewModel:
     def generateAdjList(self):
         existingFilelist = []
         booklist = self.getBooks()
-        diglot  = self.get("c_diglotAutoAligned")
+        diglot  = self.get("c_diglot")
         digmode = self.get("fcb_diglotPicListSources") if diglot else "Primary"
         prjid = self.get("fcb_project")
         secprjid = ""
@@ -935,9 +962,10 @@ class ViewModel:
         pass
 
     def _getArchiveFiles(self, books, prjid=None, cfgid=None):
-        sfiles = {'c_useCustomSty': ("custom.sty", None),
-                  'c_useModsSty': ("PrintDraft/PrintDraft-mods.sty", "PrintDraft"),
-                  'c_usePrintDraftChanges': ("PrintDraftChanges.txt", None)}
+        sfiles = {'c_useCustomSty': ("custom.sty", False),
+                  'c_useModsSty': ("ptxprint-mods.sty", True),
+                  'c_useModsTex': ("ptxprint-mods.tex", True),
+                  'c_usePrintDraftChanges': ("PrintDraftChanges.txt", False)}
         res = {}
         cfgchanges = {}
         pictures = set()
@@ -948,7 +976,7 @@ class ViewModel:
         cfpath = "shared/ptxprint/"
         if cfgid is not None:
             cfpath += cfgid+"/"
-        basecfpath = self.configPath(cfgid, prjid)
+        basecfpath = self.configPath(cfgname=cfgid, prjid=prjid)
 
         # pictures and texts
         picinfos = {}
@@ -956,7 +984,7 @@ class ViewModel:
             fname = self.getBookFilename(bk, prjid)
             fpath = os.path.join(self.settings_dir, prjid)
             res[os.path.join(fpath, fname)] = fname
-            picinfos.update(("{} {}".format(bk, k), v) for k,v in self.getFigures(bk).items())
+            picinfos.update(self.getFigures(bk))
         self.getFigureSources(picinfos)
         pathkey = 'src path'
         for f in (p[pathkey] for p in picinfos.values() if pathkey in p):
@@ -987,20 +1015,23 @@ class ViewModel:
                 res[f.filename] = "Fonts/"+fname
 
         # config files
-        for t,a in sfiles.items():
+        for t, a in sfiles.items():
             if isinstance(t, str) and not self.get(t):
                 continue
-            p = os.path.join(self.settings_dir, prjid, a[0])
+            if a[1]:
+                s = os.path.join(basecfpath, a[0])
+                d = cfpath + a[0]
+            else:
+                s = os.path.join(self.settings_dir, prjid, a[0])
+                d = a[0]
             if os.path.exists(p):
-                res[p] = a[0]
+                res[p] = d
 
         if self.get("c_useModsTex"):
             loaded = False
             if cfgid is not None:
                 p = os.path.join(self.settings_dir, prjid, 'shared', 'ptxprint', cfgid, 'ptxprint-mods.tex')
-                if os.path.exists(p):
-                    res[p] = "shared/ptxprint/" + cfgid + "/ptxprint-mods.tex"
-                    loaded = True
+                loaded = os.path.exists(p)
             if not loaded:
                 p = os.path.join(self.settings_dir, prjid, 'shared', 'ptxprint', 'ptxprint-mods.tex')
                 if os.path.exists(p):
