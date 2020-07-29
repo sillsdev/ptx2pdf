@@ -9,7 +9,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 from io import StringIO
 import datetime, time
 
-VersionStr = "0.8.8 beta"
+VersionStr = "0.9.0 beta"
 
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
 

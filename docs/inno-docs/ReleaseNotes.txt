@@ -1,5 +1,15 @@
-PTXprint 0.8.8 Beta Release Notes
-15th July 2020
+PTXprint 0.9.0 Beta (RC 1.0) Release Notes
+31st July 2020
+
+Bug Fixes and Improvements in: 0.9.0
+
+  * Moved tabs to be vertical
+  
+  * Multiple kinds of diglots (fuzzy/unaligned) have been removed (align on paragraph is now standard)
+  
+  * Several more options for the placement of illustrations are now possible
+  
+  * End of Book decorator is enabled (on Decorative Borders tab)
 
 Bug Fixes and Improvements in: 0.8.8
 

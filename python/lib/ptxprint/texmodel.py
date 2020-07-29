@@ -159,6 +159,7 @@ ModelMap = {
     "document/ifmainbodytext":  ("c_mainBodyText", None),
     "document/glueredupwords":  ("c_glueredupwords", None),
     "document/ifinclfigs":      ("c_includeillustrations", lambda w,v: "true" if v else "false"),
+    "document/ifusepiclist":    ("c_includeillustrations", lambda w,v :"" if v else "%"),
     "document/iffigfrmtext":    ("c_includefigsfromtext", None),
     "document/iffigexclwebapp": ("c_figexclwebapp", None),
     "document/iffigskipmissing": ("c_skipmissingimages", None),
@@ -171,7 +172,6 @@ ModelMap = {
     "document/customfigfolder": ("btn_selectFigureFolder", lambda w,v: w.customFigFolder.as_posix() if w.customFigFolder is not None else ""),
     "document/customoutputfolder": ("btn_selectOutputFolder", lambda w,v: w.customOutputFolder.as_posix() if w.customOutputFolder is not None else ""),
     "document/imagetypepref":   ("t_imageTypeOrder", None),
-    "document/ifusepiclist":    ("c_usePicList", lambda w,v :"" if v else "%"),
     "document/spacecntxtlztn":  ("ecb_spaceCntxtlztn", lambda w,v: "0" if v == "None" or v is None else "1" if v == "Some" else "2"),
     "document/glossarymarkupstyle":  ("fcb_glossaryMarkupStyle", None),
     "document/filterglossary":  ("c_filterGlossary", None),
@@ -763,8 +763,6 @@ class TexModel:
         gloStyle = self._glossarymarkup.get(v, v)
         self.localChanges.append((None, regex.compile(r"\\\+?w (.+?)(\|.+?)?\\\+?w\*", flags=regex.M), gloStyle))
         
-        # Strip out all \figs from the USFM as an internally generated temp PicList will do the same job
-        self.localChanges.append((None, regex.compile(r'\\fig [^\\]+?\\fig\*', flags=regex.M), ""))
         
         # Remember to preserve \figs ... \figs for books that can't have PicLists (due to no ch:vs refs in them)
         if self.asBool("document/ifinclfigs") and (self.asBool("document/iffigfrmtext") or bk in self._peripheralBooks):
@@ -773,31 +771,32 @@ class TexModel:
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig ([^|]*\|){3}([aw]+)\|[^\\]*\\fig\*', flags=regex.M), ''))  # USFM2
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig [^\\]*\bloc="[aw]+"[^\\]*\\fig\*', flags=regex.M), ''))    # USFM3
 
-            figChangeList = self.figNameChanges(printer, bk)
-            if len(figChangeList):
-                # missingPics = []
-                for origfn,tempfn in figChangeList:
-                    origfn = re.escape(origfn)
-                    if tempfn != "":
-                        # print("(?i)(\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), "-->", tempfn)
-                        self.localChanges.append((None, regex.compile(r"(?i)(?<fig>\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), \
-                                                     flags=regex.M), r"\g<fig>{}\2".format(tempfn)))                               #USFM2
-                        self.localChanges.append((None, regex.compile(r'(?i)(?<fig>\\fig .*?src="){}(" .+?\\fig\*)'.format(origfn), \
-                                                     flags=regex.M), r"\g<fig>{}\2".format(tempfn)))                               #USFM3
-                    else:
-                        # missingPics += [origfn]
-                        if self.asBool("document/iffigskipmissing"):
-                            # print("(?i)(\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), "--> Skipped!!!!")
-                            self.localChanges.append((None, regex.compile(r"(?i)\\fig .*?\|{}\|.+?\\fig\*".format(origfn), flags=regex.M), ""))     #USFM2
-                            self.localChanges.append((None, regex.compile(r'(?i)\\fig .*?src=\"{}\" .+?\\fig\*'.format(origfn), flags=regex.M), "")) #USFM3
+            # figChangeList = self.figNameChanges(printer, bk)
+            # if len(figChangeList):
+                ## missingPics = []
+                # for origfn,tempfn in figChangeList:
+                    # origfn = re.escape(origfn)
+                    # if tempfn != "":
+                        ## print("(?i)(\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), "-->", tempfn)
+                        # self.localChanges.append((None, regex.compile(r"(?i)(?<fig>\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), \
+                                                     # flags=regex.M), r"\g<fig>{}\2".format(tempfn)))                               #USFM2
+                        # self.localChanges.append((None, regex.compile(r'(?i)(?<fig>\\fig .*?src="){}(" .+?\\fig\*)'.format(origfn), \
+                                                     # flags=regex.M), r"\g<fig>{}\2".format(tempfn)))                               #USFM3
+                    # else:
+                        ## missingPics += [origfn]
+                        # if self.asBool("document/iffigskipmissing"):
+                            ## print("(?i)(\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), "--> Skipped!!!!")
+                            # self.localChanges.append((None, regex.compile(r"(?i)\\fig .*?\|{}\|.+?\\fig\*".format(origfn), flags=regex.M), ""))     #USFM2
+                            # self.localChanges.append((None, regex.compile(r'(?i)\\fig .*?src=\"{}\" .+?\\fig\*'.format(origfn), flags=regex.M), "")) #USFM3
 
             if self.asBool("document/iffighiderefs"): # del ch:vs from caption 
                 self.localChanges.append((None, regex.compile(r"(\\fig [^\\]+?\|)([0-9:.\-,\u2013\u2014]+?)(\\fig\*)", \
                                           flags=regex.M), r"\1\3"))   # USFM2
                 self.localChanges.append((None, regex.compile(r'(\\fig .+?)(ref=\"\d+[:.]\d+([-,\u2013\u2014]\d+)?\")(.*?\\fig\*)', \
                                           flags=regex.M), r"\1\4"))   # USFM3
-        else: # Drop ALL Figures
-            self.localChanges.append((None, regex.compile(r"\\fig .*?\\fig\*", flags=regex.M), ""))
+        else:
+            # Strip out all \figs from the USFM as an internally generated temp PicList will do the same job
+            self.localChanges.append((None, regex.compile(r'\\fig [^\\]+?\\fig\*', flags=regex.M), ""))
         
         if not self.asBool("document/bookintro"): # Drop Introductory matter
             self.localChanges.append((None, regex.compile(r"\\i(s|m|mi|mt|p|pi|li\d?|pq|mq|pr|b|q\d?) .+?\r?\n", flags=regex.M), "")) 

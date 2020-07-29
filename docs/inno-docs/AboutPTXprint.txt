@@ -1,4 +1,4 @@
-PTXprint 0.8.8 Beta - AboutPTXprint.txt
+PTXprint 0.9.0 Beta (RC 1.0) - AboutPTXprint.txt
 
 "A tool to rapidly and easily create scripture PDFs of adequate quality for trial publications"
 
@@ -8,24 +8,39 @@ Please use "New Issue" button in the GitHub Issue Tracking System (https://githu
 
 Commandline options are also available to run without the UI:
 
-usage: ptxprint [-h] [-c CONFIG] [-p PARATEXT] [-d DIRECTORY] [-P] [-b BOOKS] 
-                [-m MACROS] [-l] [-e] [--timeout TIMEOUT] [-T] [-f FONTPATH] [-S] [pid]
+usage: ptxprint [-h] [-c CONFIG] [-p PARATEXT] [-d DIRECTORY] [-P] [-b BOOKS]
+                [-m MACROS] [-l] [-e] [--timeout TIMEOUT] [-T] [-f FONTPATH]
+                [--nofontcache] [-S] [-A ARCHIVE] [--nuseusfmerge] [--debug]
+                [pid]
+
 positional arguments:
   pid                   Project id
-optional arguments:
-  -h,           --help                 show this help message and exit
-  -c CONFIG     --config CONFIG        Configuration path to load
-  -p PARATEXT   --paratext PARATEXT    Path to Paratext Projects directory
-  -d DIRECTORY  --directory DIRECTORY  Directory to store temporary files in
-  -P            --print                Hits print (Creates PDF without UI showing up)
-  -b BOOKS      --books BOOKS          Space separated bookid list to set
-  -m MACROS     --macros MACROS        Directory containing TeX macros (paratext2.tex)
-  -l            --logging              Output logging to terminal instead of logging window
-  -e            --experimental         Enable experimental features
-                --timeout TIMEOUT      xetex runtime timeout
-  -T            --testing              Run in testing, output xdv
-  -f FONTPATH   --fontpath FONTPATH    Directory of fonts to include (repeatable)
-  -S            --splash               Force splash screen
 
+optional arguments:
+  -h, --help            show this help message and exit
+  -c CONFIG, --config CONFIG
+                        Configuration path to load
+  -p PARATEXT, --paratext PARATEXT
+                        Path to Paratext Projects directory
+  -d DIRECTORY, --directory DIRECTORY
+                        Directory to store temporary files in
+  -P, --print           Hits print
+  -b BOOKS, --books BOOKS
+                        Space separated bookid list to set
+  -m MACROS, --macros MACROS
+                        Directory containing TeX macros (paratext2.tex)
+  -l, --logging         Output logging to terminal instead of logging window
+  -e, --experimental    Enable experimental features
+  --timeout TIMEOUT     xetex runtime timeout
+  -T, --testing         Run in testing, output xdv
+  -f FONTPATH, --fontpath FONTPATH
+                        Directory of fonts to include (repeatable)
+  --nofontcache         Don't use system fonts
+  -S, --splash          Force splash screen
+  -A ARCHIVE, --archive ARCHIVE
+                        Create archive of project
+  --nuseusfmerge        Use a different kind of merge for diglot
+  --debug               Give debug output
+  
 e.g. in Windows:
-"C:\Program Files (x86)\PTXprint\PTXprint.exe" -P -c NTandPsalms MyProj
+"C:\Program Files\PTXprint\PTXprint.exe" -P -c NTandPsalms XYZproj
