@@ -1226,14 +1226,15 @@
   % By default, set the insert width to full span
   \p@cinswid=\textwidth\advance\p@cinswid by -\columnshift
   % make \p@cins point to insertion class for this location
+  \otherinsht=0pt % subtract this from the insert height.
   \ifx\loc@ption\loc@T \let\p@cins=\topins
   \else\ifx\loc@ption\loc@B \let\p@cins=\bottomins
   \else
       \ifnum\c@rrentcols>1
-        \ifx\loc@ption\loc@TL \let\p@cins=\topleftins \p@cinswid=\hsize
-        \else\ifx\loc@ption\loc@TR \let\p@cins=\toprightins \p@cinswid=\hsize
-        \else\ifx\loc@ption\loc@BL \let\p@cins=\bottomleftins \p@cinswid=\hsize
-        \else\ifx\loc@ption\loc@BR \let\p@cins=\bottomrightins \p@cinswid=\hsize
+        \ifx\loc@ption\loc@TL \let\p@cins=\topleftins \otherinsht=\ht\toprightins \p@cinswid=\hsize
+        \else\ifx\loc@ption\loc@TR \let\p@cins=\toprightins \otherinsht=\ht\topleftins \p@cinswid=\hsize
+        \else\ifx\loc@ption\loc@BL \let\p@cins=\bottomleftins \otherinsht=\ht\bottomrightins \p@cinswid=\hsize
+        \else\ifx\loc@ption\loc@BR \let\p@cins=\bottomrightins \otherinsht=\ht\bottomleftins \p@cinswid=\hsize
         \fi\fi\fi\fi
       \else
 	    \ifdiglot\MSG{HOW DID THAT HAPPEN? currentcols=\the\c@rrentcols}\fi
@@ -1249,15 +1250,17 @@
       %\errmessage{Unknown picture location "\loc@ption",
       %  expected one of t,b,tl,tr,bl,br}%
       \ifnum\c@rrentcols>1
-        \iffiglocleft\let\p@cins=\topleftins\figlocleftfalse
-        \else\let\p@cins=\toprightins\figloclefttrue\fi
+        \p@cinswid=\hsize
+        \iffiglocleft\let\p@cins=\topleftins\figlocleftfalse \otherinsht=\ht\toprightins
+        \else\let\p@cins=\toprightins\figloclefttrue \otherinsht=\ht\topleftins\fi
       \else \let\p@cins=\topins\fi
     \fi
   \else
     \p@cinswid=\hsize
   \fi
+  \ifdiglot\else\otherinsht=0pt \fi %Nothing to subtract if not diglot
   \ifdim\p@cinswid<\p@cwidth
-    \message{*** Picture \the\p@cwidth\space wide in  \the\p@cinswid\space space. \ifx\size@ption\size@SPAN Did you mean to use col, instead of span?\fi}%\emspace
+    \message{*** Picture \the\p@cwidth\space wide in  \the\p@cinswid\space space. \ifx\size@ption\size@SPAN Did you mean to use col, instead of span?\fi}%
   \fi
   \global\advance\im@gecount by 1
   % create box to contain picture
@@ -1349,7 +1352,17 @@
   \trace{b}{BALANCE fig: height=\the\ht0: baselineskip=\the\baselineskip}%
   % insert into proper insertion class for this position
   \ifpicUsesIns
-    \trace{g}{Picture goes to insert}%
+    \trace{g}{Picture (\the\ht0,\the\dp0) goes to insert}%
+    \ifdiglot
+      \trace{g}{Other side: \the\otherinsht.}
+      \ifdim\ht0<\otherinsht
+        \ht0=0pt
+      \else
+        \advance\otherinsht by -\ht0 %can't do maths on \ht0, need to calculate backwards
+        \ht0=-\otherinsht
+      \fi
+    \fi
+    \trace{g}{Picture now \the\ht0}%
     \insert\p@cins{\penalty10000 % make sure this picture does not float away to another page
       \splittopskip\z@skip
       \splitmaxdepth\maxdimen \floatingpenalty20000 % was zero
@@ -1495,6 +1508,7 @@
 \newcount\p@ramnumber
 \newdimen\p@cinswid
 \newdimen\p@cwidth
+\newdimen\otherinsht % In a diglot, an insert doesn't affect availht if 
 \newif\ifmorep@rams
 
 \def\includepdf{\@netimesetup % in case \ptxfile hasn't been used yet

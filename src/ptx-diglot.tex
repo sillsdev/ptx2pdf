@@ -1089,7 +1089,7 @@
     \ifdim\availht<-2\baselineskip 
       %Need to drop something. Picture or text, I don't know
       %FIXME This shouldn't happen... 
-      \message{Out of space: av = \the\availht, th=\the\textheight,
+      \message{*** SOMETHING BAD HAPPENED on page \the\pageno. Out of space: av = \the\availht, th=\the\textheight,
       tr=\the\trialheight, part=(\the\ht\partial+\the\dp\partial)}%
     \fi
     %Leave partialR untouched - out of space anyway.
@@ -1820,6 +1820,6 @@
 \def\testmarker{\hbox to 0pt{\vrule height 7pt depth 0pt width 0.5pt \kern-0.5pt}\message{_}}
 %
 \addtoendhooks{\ifdim\cumulativeDelta=0pt\else\message{Overall column delta \the\cumulativeDelta\space(-ve means left longer)}\fi}
-%\addtoinithooks{\let\gridb@x\diglotgr@db@x}
+\addtoinithooks{\let\gridb@x\diglotgr@db@x}
 
 \endinput
