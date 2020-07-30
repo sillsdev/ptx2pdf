@@ -407,6 +407,7 @@
  \def\id{\bgroup\obeylines\unc@tcodespecials \m@kedigitsother
    \catcode32=10 \@id}% \id gets stored and printed in the margin with cropmarks
  \def\@id ##1^^M{\gdef\c@rrID{##1}\uppercase{\@@id##1ZZZ\end}\egroup
+        \csname bookstart-all\endcsname
         \csname bookstart-\id@@@\endcsname}%
  %
  \def\fig{\m@kedigitsother\ptx@fig}% \fig has its own special macro to parse the fields
@@ -544,7 +545,7 @@
  \ifsk@pping\egroup\fi
  \endt@ble
  \ifdiglot\ifdiglotL\norighttext\fi\enddigl@t\fi
- \ifx\b@ok\relax\else\csname bookend-\id@@@\endcsname\fi
+ \ifx\b@ok\relax\else\csname bookend-\id@@@\endcsname\relax\csname bookend-all\endcsname\fi
  \m@kedigitsother
  \catcode`\%=14 % The return of commentary
  \deactiv@tecustomch@rs
