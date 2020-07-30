@@ -954,8 +954,8 @@
 \newdimen\chunkDelta % Difference between the last boxes set on the page (-ve=left longer)
 \newdimen\baselineDelta % semi-constant: difference between the L and R baselines (-ve=left longer)
 \newdimen\thisjointDelta % difference between the L and R boxes (-ve=left longer)
-\newdimen\cumulativeDelta % Sum of \chunkDelta values
-\cumulativeDelta=0pt
+%\newcount\cumulativeDelta % Sum of \chunkDelta values, in points
+%\cumulativeDelta=0
 \newdimen\adjustp@ge %emergency stretch to page
 \adjustp@ge=0pt
 \def\m@rkerL{}
@@ -1398,7 +1398,7 @@
   %Re-use LeftBox for this page chunk
   %
  
-  \traceNum{d}{Adding to page: LB:\the\ht\LeftBox+\the\dp\LeftBox\space RB:\the\ht\RightBox+\the\dp\RightBox\space Last Delta:\the\chunkDelta\space Tot:\the\cumulativeDelta}%
+  \traceNum{d}{Adding to page: LB:\the\ht\LeftBox+\the\dp\LeftBox\space RB:\the\ht\RightBox+\the\dp\RightBox\space Last Delta:\the\chunkDelta}%\space Tot:\the\cumulativeDelta}%
   \ifVisTrace
     \doVisTrace{L}%
   \fi
@@ -1415,7 +1415,15 @@
   \advance\chunkDelta by \dp\RightBox
   \advance\chunkDelta by -\ht\LeftBox
   \global\advance\chunkDelta by -\dp\LeftBox
-  \global\advance\cumulativeDelta by \chunkDelta
+  %\bgroup
+    %\dimen0=\chunkDelta
+    %%\message{c255: \the\dimen0}%
+    %\dimen2=1pt
+    %\divide\dimen0 by \dimen2
+    %\count255=\dimen0
+    %%\message{adding \the\count255 to cumulativeDelta}%
+    %\global\advance\cumulativeDelta by \count255
+  %\egroup
   \global\setbox\LeftBox=\vtop{\ifdim\thisjointDelta>0pt\vskip \thisjointDelta\fi\hbox to \textwidth{\ifVisTrace\llap{\box0}\fi%
   \dimen8=\ht\LeftBox
   \ifdim \dimen8 <\ht\RightBox \dimen8=\ht\RightBox \fi
@@ -1830,7 +1838,7 @@
 }
 \def\testmarker{\hbox to 0pt{\vrule height 7pt depth 0pt width 0.5pt \kern-0.5pt}\message{_}}
 %
-\addtoendhooks{\ifdim\cumulativeDelta=0pt\else\message{Overall column delta \the\cumulativeDelta\space(-ve means left longer)}\fi}
+%\addtoendhooks{\bgroup\count255=\cumulativeDelta sp \divide\count255 by \pageno \ifdiglot\message{Overall column delta \the\cumulativeDelta pt (\the\count255 pt/ pg)\space(-ve means left longer)}\egroup\cumulativeDelta=0pt\fi}
 \addtoinithooks{\let\gridb@x\diglotgr@db@x}
 
 \endinput
