@@ -660,7 +660,7 @@
       \bgroup
         \dimen0=\trialheight
         \advance\dimen0 by -\availht
-        \message{*** SOMETHING BAD, pg. \the\pageno.  A picture or footnote (probable range: \topmark-\botmark) has just taken \the\dimen0 of space. There's no space left for text.}%
+        \message{*** SOMETHING BAD, pg. \the\pageno. A picture or footnote (probable range: \topmark-\botmark) has just taken \the\dimen0 of space. There's no space left for text.}%
       \egroup
      \fi
     \global\trialheight=\availht
@@ -1100,7 +1100,7 @@
     \ifdim\availht<-2\baselineskip 
       %Need to drop something. Picture or text, I don't know
       %FIXME This shouldn't happen... 
-      \message{*** SOMETHING BAD,  pg. \the\pageno. Out of space: av = \the\availht, th=\the\textheight,
+      \message{*** SOMETHING BAD, pg. \the\pageno. Out of space: av = \the\availht, th=\the\textheight,
       tr=\the\trialheight, part=(\the\ht\partial+\the\dp\partial)}%
     \fi
     %Leave partialR untouched - out of space anyway.
