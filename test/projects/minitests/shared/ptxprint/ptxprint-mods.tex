@@ -1,0 +1,14 @@
+% Test the 'hook' code.
+\def\addmtlquteht{2pt}
+\def\addmtlqutewd{1.5pt}
+\def\addmtlqutelw{0.2pt}
+\def\beginadd{\lower 1pt \hbox{\vrule width \addmtlqutelw height \addmtlquteht\vrule width \addmtlqutewd height \addmtlqutelw}\kern -1pt}
+\def\endadd{\kern -1pt \lower 1pt \hbox{\vrule width \addmtlqutewd height \addmtlqutelw\vrule width \addmtlqutelw height \addmtlquteht}}
+\sethook{before}{m}{\dimen1=\prevdepth\MSG{TEST: \the\dimen1}\kern-\dimen1\vbox to 0pt{\vskip 0.5pt\hrule width 10em height 0.0pt depth 0.5pt}\vskip 0pt}
+\sethook{after}{m}{\kern .5pt \hrule width 10em height .2pt \kern 1pt \hrule width 10em height .2pt}
+\sethook{start}{m}{\beginadd\beginadd}
+\sethook{end}{m}{\endadd\endadd}
+\sethook{before}{add}{|}
+\sethook{after}{add}{|}
+\sethook{start}{add}{\beginadd}
+\sethook{end}{add}{\endadd}
