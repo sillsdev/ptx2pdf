@@ -767,7 +767,7 @@ class GtkViewModel(ViewModel):
         if pg == 0: # PicList
             bks2gen = self.getBooks()
             if not self.get('c_multiplebooks') and self.get("ecb_examineBook") != bks2gen[0]: 
-                self.generatePicLists([self.get("ecb_examineBook")])
+                self.generatePicLists([self.get("ecb_examineBook")], priority=self.get("fcb_diglotPicListSources"))
             else:
                 self.generatePicLists(bks2gen)
         elif pg == 1: # AdjList

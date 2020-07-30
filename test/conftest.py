@@ -21,6 +21,7 @@ def pytest_generate_tests(metafunc):
                 jobs.append((b, None))
             elif os.path.exists(os.path.join(bbase, c, "ptxprint.cfg")):
                 jobs.append((b, c))
+    # print("generating tests", basedir, jobs)
     metafunc.parametrize("projectsdir", [basedir], scope="module")
     if len(jobs):
         metafunc.parametrize(("project", "config"), jobs, scope="module")
