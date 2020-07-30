@@ -57,9 +57,18 @@ class TTFontCache:
                     styles = [style]
             except ValueError:
                 raise SyntaxError("Can't parse: {}".format(f).encode("unicode_escape"))
+            styles = self.stylefilter(styles)
             for n in names:
                 for s in styles:
                     self.cache.setdefault(n, {})[s] = path
+
+    def stylefilter(self, styles):
+        currweight = max(styles_order.get(s.title(), 0) for s in styles)
+        if currweight == 0:
+            return styles
+        else:
+            res = [s for s in styles if styles_order.get(s.title(), 10) >= currweight]
+            return res
 
     def runFcCache(self):
         dummy = checkoutput(["fc-cache"], path="xetex")
