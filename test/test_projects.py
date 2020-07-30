@@ -6,6 +6,31 @@ import configparser, os, sys, shutil
 from ptxprint.ptsettings import ParatextSettings
 from collections import namedtuple
 
+if sys.platform == "win32":
+    import winreg
+    def queryvalue(base, value):
+        return winreg.QueryValueEx(base, value)[0]
+
+    ptob = openkey("Paratext/8")
+    pt_settings = "."
+    try:
+        ptv = queryvalue(ptob, "ParatextVersion")
+    except FileNotFoundError:
+        for v in ('9', '8'):
+            path = "C:\\My Paratext {} Projects".format(v)
+            if os.path.exists(path):
+                pt_settings = path
+                pt_bindir = "C:\\Program Files (x86)\\Paratext {}".format(v)
+                break
+    else:
+        if ptv:
+            version = ptv[:ptv.find(".")]
+            pt_bindir = queryvalue(ptob, 'Program_Files_Directory_Ptw'+version)
+        pt_settings = queryvalue(ptob, 'Settings_Directory')
+    pt_bindir += "\\"
+else:
+    pt_bindir = ""
+
 def make_paths(projectsdir, project, config, xdv=False):
     testsdir = os.path.dirname(__file__)
     ptxcmd = [os.path.join(testsdir, "..", "python", "scripts", "ptxprint"),
@@ -51,7 +76,7 @@ def xdv(request, projectsdir, project, config):
 @pytest.mark.usefixtures("xdv")
 class TestXetex:
     def test_pdf(self, xdv):
-        xdvcmd = "xdvipdfmx -q -E -o " + xdv.filebasepath+".pdf " + xdv.filebasepath+".xdv"
+        xdvcmd = pt_bindir+"xdvipdfmx -q -E -o " + xdv.filebasepath+".pdf " + xdv.filebasepath+".xdv"
         assert call(xdvcmd, shell=True) == 0
 
     def test_xdv(self, xdv):
