@@ -468,7 +468,10 @@ class RunJob:
         def carefulCopy(p, src, tgt):
             ratio = pageRatios[1 if p['size'].startswith("span") else 0]
             return self.carefulCopy(ratio, src, tgt)
-        missingPics = self.printer.generateNProcPicLists(jobs, os.path.join(self.printer.working_dir, "tmpPicLists"), carefulCopy, isTemp=True)
+        missingPics = []
+        for j in jobs:
+            missingPics += self.printer.generateNProcPicLists(j, \
+                                os.path.join(self.printer.working_dir, "tmpPicLists"), carefulCopy, isTemp=True)
             
         if len(missingPics):
             missingPicList = ["{}".format(", ".join(list(set(missingPics))))]

@@ -1,6 +1,6 @@
 import pytest
 import unittest
-from subprocess import call, check_output
+import subprocess
 from difflib import context_diff
 import configparser, os, sys, shutil
 from ptxprint.ptsettings import ParatextSettings
@@ -30,6 +30,14 @@ if sys.platform == "win32":
     pt_bindir += "\\"
 else:
     pt_bindir = ""
+
+def call(*a, **kw):
+    print("Calling", a, kw)
+    return subprocess.call(*a, **kw)
+
+def check_output(*a, **kw):
+    print("Capturing", a, kw)
+    return subprocess.check_output(*a, **kw)
 
 def make_paths(projectsdir, project, config, xdv=False):
     testsdir = os.path.dirname(__file__)
@@ -71,21 +79,21 @@ def xdv(request, projectsdir, project, config):
     (stddir, filename, testsdir, ptxcmd) = make_paths(projectsdir, project, config, xdv=True)
     assert call(ptxcmd) == 0
     filebasepath = os.path.join(projectsdir, project, "PrintDraft", "ptxprint-"+filename)
-    yield XdvInfo(projectsdir, project, config, stddir, filename, filebasepath, testsdir)
+    request.cls.xdv = XdvInfo(projectsdir, project, config, stddir, filename, filebasepath, testsdir)
 
 @pytest.mark.usefixtures("xdv")
-class TestXetex:
-    def test_pdf(self, xdv):
-        xdvcmd = pt_bindir+"xdvipdfmx -q -E -o " + xdv.filebasepath+".pdf " + xdv.filebasepath+".xdv"
+class TestXetex: #(unittest.TestCase):
+    def test_pdf(self):
+        xdvcmd = pt_bindir+"xdvipdfmx -q -E -o " + self.xdv.filebasepath+".pdf " + self.xdv.filebasepath+".xdv"
         assert call(xdvcmd, shell=True) == 0
 
-    def test_xdv(self, xdv):
-        xdvcmd = [os.path.join(xdv.testsdir, "..", "python", "scripts", "xdvitype"), "-d"]
+    def test_xdv(self):
+        xdvcmd = [os.path.join(self.xdv.testsdir, "..", "python", "scripts", "xdvitype"), "-d"]
         if sys.platform == "win32":
             xdvcmd.insert(0, "python")
 
-        fromfile = xdv.filebasepath+".xdv"
-        tofile = os.path.join(xdv.stddir, xdv.filename+".xdv")
+        fromfile = self.xdv.filebasepath+".xdv"
+        tofile = os.path.join(self.xdv.stddir, self.xdv.filename+".xdv")
         if not os.path.exists(tofile) and os.path.exists(fromfile):
             shutil.copy(fromfile, tofile)
             pytest.xfail("No regression xdv. Copying...")
