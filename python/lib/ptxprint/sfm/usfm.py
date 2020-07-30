@@ -216,7 +216,7 @@ class parser(sfm.parser):
     
     default_meta = _default_meta
     numeric_re = re.compile(r'\s*(\d+(:?[-\u2010\2011]\d+)?)',re.UNICODE)
-    verse_re = re.compile(r'\s*(\d+(:?[-,\u2010\2011]\d+)?)',re.UNICODE)
+    verse_re = re.compile(r'\s*(\d+[a-z]?(:?[-,\u2010\2011]\d+[a-z]?)?)',re.UNICODE)
     caller_re = re.compile(r'\s*([^\s\\])',re.UNICODE)
     sep_re = re.compile(r'\s|$',re.UNICODE)
     

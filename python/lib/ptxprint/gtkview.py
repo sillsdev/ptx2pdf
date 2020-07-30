@@ -1355,25 +1355,18 @@ class GtkViewModel(ViewModel):
         if self.configNoUpdate:
             return
         self.builder.get_object("c_hideAdvancedSettings").set_sensitive(True)
+        lockBtn = self.builder.get_object("btn_lockunlock")
+        lockBtn.set_label("Lock Config")
+        self.builder.get_object("t_invisiblePassword").set_text("")
+        self.builder.get_object("btn_saveConfig").set_sensitive(True)
+        self.builder.get_object("btn_deleteConfig").set_sensitive(True)
         if len(self.get("ecb_savedConfig")):
-            lockBtn = self.builder.get_object("btn_lockunlock")
-            lockBtn.set_label("Lock Config")
             lockBtn.set_sensitive(True)
-            self.builder.get_object("t_invisiblePassword").set_text("")
-            self.builder.get_object("btn_saveConfig").set_sensitive(True)
-            self.builder.get_object("btn_deleteConfig").set_sensitive(True)
-            if os.path.exists(self.configPath(cfgname=self.get("ecb_savedConfig"))):
-                self.updateProjectSettings(self.prjid, saveCurrConfig=False, configName=self.get("ecb_savedConfig")) # False means DON'T Save!
         else:
-            self.config_dir = self.configPath()
             self.builder.get_object("t_configNotes").set_text("")
-            lockBtn = self.builder.get_object("btn_lockunlock")
-            lockBtn.set_label("Lock Config")
             lockBtn.set_sensitive(False)
-            self.builder.get_object("t_invisiblePassword").set_text("")
-            self.builder.get_object("lb_settings_dir").set_label(self.config_dir or "")
-            self.builder.get_object("btn_saveConfig").set_sensitive(True)
-            self.builder.get_object("btn_deleteConfig").set_sensitive(False)
+        if os.path.exists(self.configPath(cfgname=self.get("ecb_savedConfig"))):
+            self.updateProjectSettings(self.prjid, saveCurrConfig=False, configName=self.get("ecb_savedConfig") or None) # False means DON'T Save!
         self.updateDialogTitle()
 
     def updateFonts(self):
