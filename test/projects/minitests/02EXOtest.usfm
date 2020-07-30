@@ -1,0 +1,10 @@
+\id EXO Footnote Test file
+\h Footnote test file
+\c 1
+\s This is a title
+\p
+\v 1 This is normal text.
+\p That was a new parargaph.\f + \fr 1:1 \ft This is a footnote quoting something \fq hello \ft goodbye\f* It should be OK.
+\v 2 We'll have another note here\f + \fr 1:1 \ft This is a footnote quoting something, this time with speach marks \fq <<hello>> \ft goodbye\f* It should be OK.
+\v 3 We'll yet have another note here\f + \fr 1:1 \ft This is a yet footnote quoting something \fq <<hello\ft >> goodbye\f* If we remove the spaces after fq and ft then it won't be OK.
+

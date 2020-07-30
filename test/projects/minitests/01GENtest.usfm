@@ -1,0 +1,15 @@
+\id GEN Test file
+\h Hook test file
+\c 1
+\s This is a title
+\p
+\v 1 This is normal text. There are 4 hook positions: before, start, end,
+after. I'm putting little NIV-style angle bracket markers around \beginadd T
+and d\endadd\ to show how close they ought to be when they get put in by the hooks.
+The sequence ought to be before..start..text..end..after.
+\p
+And that was a new parargaph. \add This is in an add\add* this isn't.
+\v 2 Here in verse two  we look at hooks on paragraph breaks.
+\m  That's a class m paragraph break. Let's make the line very very very much longer Lorum Ipsum  blah blah blah
+\p And that was a p class paragraph break
+\p As was that.
