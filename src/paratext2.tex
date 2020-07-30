@@ -143,7 +143,7 @@
   % if note omitting caller from note (i.e. all callers are *'s)
   \testomitc@ller{#2}\ifomitc@ller\else
     % save copy of caller in temporary box, if non-empty add a little space
-    \setbox0=\hbox{#3}#3\ifdim\wd0>0pt\kern.2em\fi
+    \setbox0=\hbox{#3}\setbox1=\copy0\unhbox1\ifdim\wd0>0pt\kern.2em\fi
   \fi
   % currently we do not allow footnotes to break to the next page, so this may not be necessary
 %  \splittopskip\ht\f@@tstrut % top baseline for broken footnotes
