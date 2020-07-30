@@ -624,6 +624,18 @@ class ViewModel:
         else:
             return fname + "-draft" + ext
 
+    def _fixPicinfo(self, vals):
+        p = vals['pgpos']
+        if all(x in "apw" for x in p):
+            vals['media'] = p
+            del vals['pgpos']
+        elif re.match(r"^[tbhpc][lrc]?[0-9]?(?:\*\d+\.?\d*)?$", p):
+            vals['media'] = 'p'
+        else:
+            vals['loc'] = p
+            del vals['pgpos']
+        return vals
+
     def getFigures(self, bk, suffix="", sfmonly=False, media=None):
         res = {}
         fname = self.getBookFilename(bk, self.prjid)
@@ -652,6 +664,7 @@ class ViewModel:
                     if len(m) > 6:
                         for i, f in enumerate(m[1:]):
                             res[k][posparms[i+1]] = f
+                        self._fixPicinfo(res[k])
                     else:
                         for d in re.findall(r'(\S+)\s*=\s*"([^"]+)"', m[-1]):
                             res[k][d[0]] = d[1]
@@ -665,31 +678,23 @@ class ViewModel:
                         for f in m:     # usfm 2
                             r = "{}{} {}.{}".format(bk, suffix, c, f[0])
                             res[r] = {}
-                            res[r] = {'caption':f[8]}
+                            res[r] = {'caption':f[8].strip()}
                             res[r]['anchor'] = "{}.{}".format(c, f[0])
                             for i, v in enumerate(f[3:]):
                                 res[r][posparms[i]] = v
-                            # interpret pgpos as possibly other things
-                            p = res[r]['pgpos']
-                            if all(x in "apw" for x in p):
-                                res[r]['media'] = p
-                                del res[r]['pgpos']
-                            elif re.match(r"^[tbhpg][lrc]?(?:\*\d+\.?\d*)?$", p):
-                                res[r]['media'] = 'p'
-                            else:
-                                res[r]['loc'] = p
-                                del res[r]['pgpos']
-                    else:
-                        m = re.findall(r'(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig ([^\\]*?)\|([^\\]+)\\fig\*', t)
-                        if len(m):
-                            for f in m:     # usfm 3
-                                r = "{}{} {}.{}".format(bk, suffix, c, f[0])
-                                res[r] = {'caption':f[3]}
-                                res[r]['anchor'] = "{}.{}".format(c, f[0])
-                                labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f[4])
-                                for l in labelParams:
-                                    k,v = l.split("=")
-                                    res[r][k.strip()] = v.strip('"')
+                            self._fixPicinfo(res[r])
+                    m = re.findall(r'(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig ([^\\]*?)\|([^\\]+)\\fig\*', t)
+                    if len(m):
+                        for f in m:     # usfm 3
+                            if "|" in f[4]:
+                                break
+                            r = "{}{} {}.{}".format(bk, suffix, c, f[0])
+                            res[r] = {'caption':f[3].strip()}
+                            res[r]['anchor'] = "{}.{}".format(c, f[0])
+                            labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f[4])
+                            for l in labelParams:
+                                k,v = l.split("=")
+                                res[r][k.strip()] = v.strip('"')
                     if media is not None and r in res:
                         if 'media' in res[r] and not any(x in media for x in res[r]['media']):
                             del res[r]
@@ -701,10 +706,10 @@ class ViewModel:
     def getFigureSources(self, figinfos, filt=newBase, key='src path'):
         ''' Add source filename information to each figinfo, stored with the key '''
         res = {}
-        if filt is not None:
-            newfigs = {filt(f['src']): k for k,f in figinfos.items()}
-        else:
-            newfigs = {f['src']: k for k,f in figinfos.items()}
+        newfigs = {}
+        for k, f in figinfos.items():
+            newk = filt(f['src']) if filt is not None else f['src']
+            newfigs.setdefault(newk, []).append(k)
         if self.get("c_useCustomFolder"):
             srchlist = [self.customFigFolder]
         else:
@@ -745,17 +750,17 @@ class ViewModel:
                     nB = filt(f) if filt is not None else f
                     if nB not in newfigs:
                         continue
-                    k = newfigs[nB]
-                    if key in figinfos[k]:
-                        old = extensions.get(os.path.splitext(figinfos[k][key])[1].lower(), 10000)
-                        new = extensions.get(os.path.splitext(filepath)[1].lower(), 10000)
-                        if old > new:
+                    for k in newfigs[nB]:
+                        if key in figinfos[k]:
+                            old = extensions.get(os.path.splitext(figinfos[k][key])[1].lower(), 10000)
+                            new = extensions.get(os.path.splitext(filepath)[1].lower(), 10000)
+                            if old > new:
+                                figinfos[k][key] = filepath
+                            elif old == new and (self.get("c_useLowResPics") \
+                                                != bool(os.path.getsize(figinfos[k][key]) < os.path.getsize(filepath))):
+                                figinfos[k][key] = filepath
+                        else:
                             figinfos[k][key] = filepath
-                        elif old == new and (self.get("c_useLowResPics") \
-                                            != bool(os.path.getsize(figinfos[k][key]) < os.path.getsize(filepath))):
-                            figinfos[k][key] = filepath
-                    else:
-                        figinfos[k][key] = filepath
 
     def generateAdjList(self):
         existingFilelist = []
