@@ -1323,6 +1323,7 @@ in the Windows system.</property>
     <property name="type_hint">dialog</property>
     <property name="urgency_hint">True</property>
     <signal name="destroy" handler="onDestroy" swapped="no"/>
+    <signal name="key-press-event" handler="onKeyPress" swapped="no"/>
     <child type="titlebar">
       <placeholder/>
     </child>
