@@ -9,7 +9,7 @@ Bug Fixes and Improvements in: 0.9.0
   
   * Several more options for the placement of illustrations are now possible
   
-  * End of Book decorator is enabled (on Decorative Borders tab)
+  * End of Book decorator is enabled (on Diglot+Borders tab)
 
 Bug Fixes and Improvements in: 0.8.8
 

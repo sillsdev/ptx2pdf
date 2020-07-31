@@ -463,6 +463,12 @@ class GtkViewModel(ViewModel):
     def onDestroy(self, btn):
         Gtk.main_quit()
 
+    def onKeyPress(self, dlg, event):
+        print(event)
+        if event.keyval == Gdk.KEY_Escape:
+            print("Esc pressed, ignoring")
+            return True
+
     def doError(self, txt, secondary=None, title=None):
         dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
                  buttons=Gtk.ButtonsType.OK, text=txt)
@@ -1366,7 +1372,7 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("t_configNotes").set_text("")
             lockBtn.set_sensitive(False)
         if os.path.exists(self.configPath(cfgname=self.get("ecb_savedConfig"))):
-            self.updateProjectSettings(self.prjid, saveCurrConfig=False, configName=self.get("ecb_savedConfig") or None) # False means DON'T Save!
+            self.updateProjectSettings(self.prjid, saveCurrConfig=False, configName=self.get("ecb_savedConfig")) # False means DON'T Save!
         self.updateDialogTitle()
 
     def updateFonts(self):
