@@ -230,7 +230,7 @@
      \setbox0=\hbox{~\lower\dimen2\hbox to \dimen1{\kern\ht0\special{x:gsave}\special{x:rotate 90}%
       \box0\special{x:grestore}\hss}}\ht0=0pt\dp0=0pt\@V\box0\@V*%
     \else
-     \ch@rstyle{v}~\printv@rse\ch@rstyle{v}*% (A) output verse number using saved style. ~ will lowercase to a space
+     \ch@rstylepls{v}~\printv@rse\ch@rstylepls{v}*% (A) output verse number using saved style. ~ will lowercase to a space
     \fi
     \kern\AfterVerseSpaceFactor\FontSizeUnit
    \fi
