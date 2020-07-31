@@ -323,7 +323,8 @@ class RunJob:
                 except SyntaxError as e:
                     self.printer.doError("Failed to merge texts due to a Syntax Error:",        
                     secondary=str(e)+"\n\nIf original USFM text is correct, then check "+ \
-                    "if PrintDraftChanges.txt has caused the error.", title="PTXprint [{}] - Diglot Merge Error!".format(VersionStr))
+                    "if PrintDraftChanges.txt has caused the error.", 
+                    title="PTXprint [{}] - Diglot Merge Error!".format(VersionStr))
             else:
                 # Usage: diglotMerge.exe [-mode|options] LeftFile RightFile
                 # Read LeftFile and RightFile, merging them according to the selected mode)

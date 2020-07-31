@@ -109,7 +109,7 @@ _sensitivities = {
     "c_includeXrefs" :         ["bx_xrOptions"],
     "c_includeillustrations" : ["gr_IllustrationOptions"],
     "c_includefigsfromtext"  : ["c_figexclwebapp"],
-    "c_diglot" :               ["gr_diglot"],
+    "c_diglot" :               ["gr_diglot", "fcb_diglotPicListSources"],
     "c_borders" :              ["gr_borders"],
 
     "c_multiplebooks" :        ["c_combine", "t_booklist"],
@@ -769,13 +769,14 @@ class GtkViewModel(ViewModel):
                 self.builder.get_object("ecb_examineBook").set_active_id(bks[0])
 
     def onGenerateClicked(self, btn):
+        priority=self.get("fcb_diglotPicListSources")[:4]
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
         if pg == 0: # PicList
             bks2gen = self.getBooks()
             if not self.get('c_multiplebooks') and self.get("ecb_examineBook") != bks2gen[0]: 
-                self.generatePicLists([self.get("ecb_examineBook")], priority=self.get("fcb_diglotPicListSources"))
+                self.generatePicLists([self.get("ecb_examineBook")], priority)
             else:
-                self.generatePicLists(bks2gen)
+                self.generatePicLists(bks2gen, priority)
         elif pg == 1: # AdjList
             self.generateAdjList()
         self.onViewerChangePage(None,None,pg)
