@@ -1833,8 +1833,7 @@
   \hss}}
 
 \def\diglotgr@db@x#1{%
- \vbox{\gr@db@@x{#1}\penalty 10000}%
- \penalty 10000
+ \ifdiglot\vbox{\gr@db@@x{#1}\penalty 10000}\penalty10000\else\gr@db@@x{#1}\fi
 }
 \def\testmarker{\hbox to 0pt{\vrule height 7pt depth 0pt width 0.5pt \kern-0.5pt}\message{_}}
 %
