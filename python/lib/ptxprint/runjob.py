@@ -300,10 +300,9 @@ class RunJob:
         diginfo["document/clsinglecol"] = False
         diginfo["snippets/diglot"] = False
         docdir = os.path.join(info["/ptxpath"], info["project/id"], "PrintDraft")
-        # print("_digSecSettings = ", _digSecSettings)
         for k in _digSecSettings:
-            # print("{} = '{}'".format(k, info[k]))
             diginfo[k]=info[k]
+        syntaxErrors = []
         for b in jobs:
             out = info.convertBook(b, self.tmpdir, self.prjdir)
             digout = diginfo.convertBook(b, self.tmpdir, digprjdir)
@@ -321,10 +320,10 @@ class RunJob:
                 try:
                     usfmerge(tmpFile, right, left)
                 except SyntaxError as e:
-                    self.printer.doError("Failed to merge texts due to a Syntax Error:",        
-                    secondary=str(e)+"\n\nIf original USFM text is correct, then check "+ \
-                    "if PrintDraftChanges.txt has caused the error.", 
-                    title="PTXprint [{}] - Diglot Merge Error!".format(VersionStr))
+                    print(self.prjid, b, str(e).split('line', maxsplit=1)[1])
+                    syntaxErrors.append("{} {} line:{}".format(self.prjid, b, str(e).split('line', maxsplit=1)[1]))
+                except IndexError as e:
+                    syntaxErrors.append("{} {} line:{}".format(self.prjid, b, str(e)))
             else:
                 # Usage: diglotMerge.exe [-mode|options] LeftFile RightFile
                 # Read LeftFile and RightFile, merging them according to the selected mode)
@@ -349,6 +348,11 @@ class RunJob:
                 r = checkoutput(cmd + cmdparms)
             for f in [left, right, tmpFile, logFile]:
                 texfiles += [os.path.join(self.tmpdir, f)]
+        if len(syntaxErrors):
+            self.printer.doError("Failed to merge texts due to a Syntax Error:",        
+            secondary="\n".join(syntaxErrors)+"\n\nIf original USFM text is correct, then check "+ \
+            "if PrintDraftChanges.txt has caused the error(s).", 
+            title="PTXprint [{}] - Diglot Merge Error!".format(VersionStr))
 
         info["project/bookids"] = jobs
         info["project/books"] = donebooks
