@@ -57,7 +57,7 @@
 %
 
 \def\ch@rstyle#1{\trace{s}{CH@RSTYLE:#1}%
- \gdef\newch@rstyle{#1}% record the name of the style
+ \gdef\newch@rstyle{\detokenize{#1}}% record the name of the style
  \catcode32=12 % make <space> an "other" character, so it won't be skipped by \futurelet
  \catcode13=12 % ditto for <return>
  \futurelet\n@xt\doch@rstyle % look at following character and call \doch@rstyle
@@ -66,7 +66,7 @@
 %Version of above for plus versions
 \def\ch@rstylepls#1{\leavevmode%Stacking character styles (at least in headers) seem to break paragraph styling if they are invoked before leaving vertical mode. It's something to do with grouping. On the assumption that there will *be* text coming, it ought to be safe to leave vertical mode on meeting a stacking character style
  \trace{s}{CH@RSTYLEPLS:#1}%
- \gdef\newch@rstyle{#1}% record the name of the style
+ \gdef\newch@rstyle{\detokenize{#1}}% record the name of the style
  \catcode32=12 % make <space> an "other" character, so it won't be skipped by \futurelet
  \catcode13=12 % ditto for <return>
  \futurelet\n@xt\doch@rstylepls % look at following character and call \doch@rstylepls
@@ -109,12 +109,12 @@
 \def\endch@rstylen*{%Consume the star..
   \trace{s}{endch@rstylen \newch@rstyle}%
   \def\d@##1+##2\E{\tempfalse\if ##1c\else\if ##1C\else\temptrue\fi\fi}\mctop
-  \iftemp\MSG{Unexpected closing marker \newch@rstyle * on stack \mcstack. Ignoring}\else\endch@rstyle*\fi
+  \iftemp\MSG{Unexpected closing marker for no plus \newch@rstyle * on stack \mcstack. Ignoring}\else\endch@rstyle*\fi
 }
 \def\endch@rstylepls*{%Consume the star..
   \trace{s}{endch@rstylepls \newch@rstyle}%
-  \def\d@##1+##2\E{\def\tmp{##2}\tempfalse\if\tmp\newch@rstyle\else\temptrue\fi}\mctop
-  \iftemp\MSG{Unexpected closing marker +\newch@rstyle * on stack \mcstack. Ignoring}\else\endch@rstyle*\fi
+  \def\d@##1+##2\E{\edef\tmp{\detokenize{##2}}\edef\tmq{\newch@rstyle}\tempfalse\ifx\tmp\tmq\else\temptrue\MSG{\tmp !=\tmq}\fi}\mctop
+  \iftemp\MSG{Unexpected closing marker for plus +\newch@rstyle * on stack \mcstack. Ignoring}\else\endch@rstyle*\fi
 }
 \def\startch@rstyle{\trace{s}{startch@rstyle \newch@rstyle}%
   \mcpush{\ifx\stylet@pe\empty C\else\stylet@pe\fi+\newch@rstyle}%
@@ -144,7 +144,7 @@
 \lccode`\|=`\\ % for printing backslash in error message
 \lowercase{
  \def\endch@rstyle*{\TRACE{endch@rstyle}% consume the * that marked the SFM as ending a style
-   \def\d@##1+##2\E{\edef\thisch@rstyle{##2}}\mctop
+   \def\d@##1+##2\E{\xdef\thisch@rstyle{##2}}\mctop
    \trace{s}{endch@rstyle \thisch@rstyle\space from \newch@rstyle}%
    \ifx\thisch@rstyle\undefined
      \MSG{*** unmatched character style end-marker |\newch@rstyle*}%

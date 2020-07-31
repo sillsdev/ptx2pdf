@@ -169,7 +169,7 @@ class RunJob:
 
         # Work out what the resulting PDF was called
         cfgname = info['config/name']
-        if cfgname is not None:
+        if cfgname is not None and cfgname != "":
             cfgname = "-"+cfgname
         else:
             cfgname = ""
@@ -370,7 +370,7 @@ class RunJob:
         if prjdir is None:
             prjdir = self.prjdir
         cfgname = info['config/name']
-        if cfgname is None:
+        if cfgname is None or cfgname == "":
             cfgname = ""
         else:
             cfgname = "-" + cfgname
