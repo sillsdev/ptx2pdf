@@ -1836,8 +1836,8 @@
  \ifdiglot\vbox{\gr@db@@x{#1}\penalty 10000}\penalty10000\else\gr@db@@x{#1}\fi
 }
 \def\testmarker{\hbox to 0pt{\vrule height 7pt depth 0pt width 0.5pt \kern-0.5pt}\message{_}}
-%
+
+%Reinstate this post v1:
 %\addtoendhooks{\bgroup\count255=\cumulativeDelta sp \divide\count255 by \pageno \ifdiglot\message{Overall column delta \the\cumulativeDelta pt (\the\count255 pt/ pg)\space(-ve means left longer)}\egroup\cumulativeDelta=0pt\fi}
-\addtoinithooks{\let\gridb@x\diglotgr@db@x}
 
 \endinput

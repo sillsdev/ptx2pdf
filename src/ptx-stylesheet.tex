@@ -476,9 +476,6 @@
  \defineheads
  \@ddcvhooks
  \@ddspecialhooks
- \ifdiglot\else
-   \ifsquashgridbox\let\gridb@x\gr@db@@x\else\let\gridb@x\gr@db@x\fi
- \fi
  \global\lastptxfiletrue
  \the\@nithooks
  \let\@netimesetup=\relax}
@@ -491,10 +488,6 @@
 \def\ptxfile#1{
  \saveLRspecificOrig%This becomes a \relax after first use. Always call it.
  \@netimesetup
- %\ifdiglot
-   %\SSsetLRspecific%Use side-specifc versions of the side-specific values. 
-   %\showLRspecific% Debug info, if tracing{S} defined
- %\fi
  \ifdiglot\bgroup%This must be outside of @onetimesetup as there's no guarantee that diglot will be true for all ptxfiles.
    \dimen0=\baselineskip
    \diglotLfalse
@@ -509,8 +502,10 @@
    \global\advance\baselineDelta by -\baselineskip
    \saveLRspecificSide{L}%
    \baselineskip=\dimen0
-   %\global\let\gridb@x\diglotgr@db@x
    \egroup
+   \global\let\gridb@x\diglotgr@db@x
+ \else
+   \ifsquashgridbox\global\let\gridb@x\gr@db@@x\else\global\let\gridb@x\gr@db@x\fi % liberated from onetimesetup, as it might not be one-time.
  \fi
  \gdef\ch@plabel{}
  \gdef\ch@plabelR{}
