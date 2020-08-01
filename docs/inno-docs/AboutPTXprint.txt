@@ -10,8 +10,7 @@ Commandline options are also available to run without the UI:
 
 usage: ptxprint [-h] [-c CONFIG] [-p PARATEXT] [-d DIRECTORY] [-P] [-b BOOKS]
                 [-m MACROS] [-l] [-e] [--timeout TIMEOUT] [-T] [-f FONTPATH]
-                [--nofontcache] [-S] [-A ARCHIVE] [--nuseusfmerge] [--debug]
-                [pid]
+                [--nofontcache] [-S] [-A ARCHIVE] [--nuseusfmerge] [--debug] [pid]
 
 positional arguments:
   pid                   Project id

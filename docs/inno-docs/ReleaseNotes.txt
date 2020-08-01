@@ -1,17 +1,20 @@
 PTXprint 0.9.0 Beta (RC 1.0) Release Notes
-3rd August 2020
+1st August 2020
 
 Bug Fixes and Improvements in: 0.9.0
 
-  * Several improvements to Diglot layout
+  * Several improvements to diglot layout (but diglot illustrations are still fragile/experimental)
 
   * Several more options for the placement of illustrations are now possible
+    (see: https://github.com/sillsdev/ptx2pdf/blob/master/docs/documentation/figures.md for details)
   
-  * Moved tabs to be vertical, and move Notes and Cross-References to its own tab
+  * Moved main tabs to be vertical, and moved Notes and Cross-References to a new tab
   
-  * Multiple kinds of diglots (fuzzy/unaligned) have been removed (align on paragraph is now standard)
+  * Various diglot options (fuzzy/unaligned) have been removed (align on paragraph is now assumed)
   
   * End of Book decorator is enabled (on Diglot+Borders tab)
+  
+  * ESC no longer closes PTXprint
   
 Bug Fixes and Improvements in: 0.8.8
 
@@ -362,7 +365,6 @@ List of improvements: 0.5.0
 
   * An About dialog has been added, with an MIT license and credits
 
-
 Bug fixes:
 
   * Setting the Script for Digits now works as advertised
@@ -377,19 +379,3 @@ Bug fixes:
   * USFM filenames using a Prefix as well as a Suffix weren't being found
 
   * Font features were not being activated
-
-
-Rough edges:
-
-  * Decorative borders, section headings and verse numbers is still a work
-    in progress
-
-  * Helping users understand how to use PicLists and ParaAdjustLists is
-    another area that could do with some help
-
-  * It would be helpful to have a Linux package built for easy installation
-
-
-Known shortcomings - don't report them again:
-
-  * There are still a few known XeTeX issues occuring under rare circumstances
