@@ -464,9 +464,9 @@ class GtkViewModel(ViewModel):
         Gtk.main_quit()
 
     def onKeyPress(self, dlg, event):
-        print(event)
+        # print(event)
         if event.keyval == Gdk.KEY_Escape:
-            print("Esc pressed, ignoring")
+            # print("Esc pressed, ignoring")
             return True
 
     def doError(self, txt, secondary=None, title=None):

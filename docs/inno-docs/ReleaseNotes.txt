@@ -1,16 +1,18 @@
 PTXprint 0.9.0 Beta (RC 1.0) Release Notes
-31st July 2020
+3rd August 2020
 
 Bug Fixes and Improvements in: 0.9.0
 
-  * Moved tabs to be vertical
+  * Several improvements to Diglot layout
+
+  * Several more options for the placement of illustrations are now possible
+  
+  * Moved tabs to be vertical, and move Notes and Cross-References to its own tab
   
   * Multiple kinds of diglots (fuzzy/unaligned) have been removed (align on paragraph is now standard)
   
-  * Several more options for the placement of illustrations are now possible
-  
   * End of Book decorator is enabled (on Diglot+Borders tab)
-
+  
 Bug Fixes and Improvements in: 0.8.8
 
   * Added ability to place figures/illustrations inline with the text (needs testing and documentation)
