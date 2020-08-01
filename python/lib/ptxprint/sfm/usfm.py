@@ -60,18 +60,26 @@ def _cached_stylesheet(path):
     else:
         path = os.path.dirname(cached_path)
         if not os.path.exists(path):
-            os.makedirs(path)
+            try:
+                os.makedirs(path)
+            except PermissionError:
+                return None
     
     import pickletools
-    with contextlib.closing(bz2.BZ2File(cached_path, 'wb')) as zf:
-        zf.write(pickletools.optimize(
-            pickle.dumps(style.parse(open(source_path,'r',encoding="utf-8")))))
+    try:
+        with contextlib.closing(bz2.BZ2File(cached_path, 'wb')) as zf:
+            zf.write(pickletools.optimize(
+                pickle.dumps(style.parse(open(source_path,'r',encoding="utf-8")))))
+    except PermissionError:
+        return None
     return cached_path
 
 
 
 def _load_cached_stylesheet(path):
     cached_path = _cached_stylesheet(path)
+    if cached_path is None:
+        return style.parse(open(path, 'r', encoding="utf-8"))
     try:
         try:
             with contextlib.closing(bz2.BZ2File(cached_path,'rb')) as sf:
