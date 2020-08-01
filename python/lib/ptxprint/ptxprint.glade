@@ -2096,10 +2096,8 @@ Viewer tab.</property>
                     <property name="tooltip_text" translatable="yes">Select the Project and Book(s),
 to be used to create the PDF file.
 
-You can also use Saved/Shared
-Configuration settings, and show
-or hide various tabs to make it
-simpler for others to use.</property>
+You can also Save/Share
+Configuration settings.</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">Basic</property>
                   </object>
@@ -3201,10 +3199,9 @@ should be trimmed to after printing.</property>
                   <object class="GtkLabel" id="lb_Layout">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Page Setup, Font Size and 
-Line Spacing. Columns,
-Chapter and Verse DIgits,
-and advanced Font Options.</property>
+                    <property name="tooltip_text" translatable="yes">Page Setup, Font Size and Line Spacing. 
+Columns and Rules (lines).
+Special books and Other advanced options.</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">Layout</property>
                     <property name="justify">center</property>
@@ -4367,6 +4364,11 @@ to ensure that they are displayed properly.</property>
                   <object class="GtkLabel" id="lb_Font">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Basic Fonts and Advanced Font options.
+Also a range of Advanced typography
+settings to support any Writing System.
+Advanced Spacing Settings. Fallback fonts
+for characters missing in primary font.</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">Font</property>
                   </object>
@@ -6280,6 +6282,8 @@ so that they don't get split across lines.</property>
                   <object class="GtkLabel" id="lb_NotesRefs">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Control how Footnotes and
+Cross-references appear.</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">Notes+Refs</property>
                   </object>
@@ -6850,8 +6854,7 @@ in the header reference.</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Adjust the spacing at the top
 and bottom of the page and
-content of Headers and Footers,
-Footnotes and Cross-references.</property>
+content of Headers and Footers.</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">Head+Foot</property>
                   </object>
@@ -7197,7 +7200,7 @@ TIF  (only use TIFs - ignore all other file types)
 
 NOTE: TIF files are converted internally to JPGs.</property>
                                     <property name="width_chars">15</property>
-                                    <property name="text" translatable="yes">JPG TIF PNG PDF</property>
+                                    <property name="text" translatable="yes">JPG PNG TIF BMP PDF</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">4</property>
@@ -7929,9 +7932,7 @@ PTXprint team for support.</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Pre-process the text prior
 to creating the PDF. Add Front
-and Back Matter PDFs and Watermarks.
-Also a range of Advanced typography
-settings to support any Writing System.</property>
+and Back Matter PDFs and Watermarks.</property>
                     <property name="halign">start</property>
                     <property name="margin_bottom">2</property>
                     <property name="label" translatable="yes">Advanced</property>
@@ -8611,7 +8612,7 @@ to specify the settings for these.</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Create a diglot publication by incorporating 
-a secondary project. And/Or add decorative
+a secondary project. Optionally add decorative
 borders and embelishments to the text.</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">Diglot+Border</property>
@@ -9513,8 +9514,7 @@ troubleshooting use only.</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">The Viewer allows you to view and
-edit various control and log files
-relating to PTXprint.</property>
+edit various control and log files.</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">Viewer</property>
                   </object>
