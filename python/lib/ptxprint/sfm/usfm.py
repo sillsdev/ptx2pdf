@@ -43,7 +43,7 @@ def _is_fresh(cached_path, benchmarks):
     return reduce(operator.and_, 
                   map(partial(_newer, cached_path), benchmarks))
 
-def _cached_stylesheet(path):
+def _load_cached_stylesheet(path):
     package_dir = os.path.dirname(__file__)
     source_path = _check_paths(os.path.exists, 
         [ os.path.join(_PALASO_DATA, path),
@@ -56,43 +56,31 @@ def _cached_stylesheet(path):
         import glob
         if _is_fresh(cached_path, [source_path] 
                 + glob.glob(os.path.join(package_dir, '*.py'))):
-            return cached_path
-    else:
-        path = os.path.dirname(cached_path)
-        if not os.path.exists(path):
             try:
-                os.makedirs(path)
-            except PermissionError:
-                return None
-    
-    import pickletools
-    try:
-        with contextlib.closing(bz2.BZ2File(cached_path, 'wb')) as zf:
-            zf.write(pickletools.optimize(
-                pickle.dumps(style.parse(open(source_path,'r',encoding="utf-8")))))
-    except PermissionError:
-        return None
-    return cached_path
-
-
-
-def _load_cached_stylesheet(path):
-    cached_path = _cached_stylesheet(path)
-    if cached_path is None:
-        return style.parse(open(path, 'r', encoding="utf-8"))
-    try:
+                try:
+                    with contextlib.closing(bz2.BZ2File(cached_path,'rb')) as sf:
+                        return pickle.load(sf)
+                except:
+                    os.unlink(cached_path)
+            except:
+                cached_path = None
+    path = os.path.dirname(cached_path)
+    if not os.path.exists(path):
         try:
-            with contextlib.closing(bz2.BZ2File(cached_path,'rb')) as sf:
-                return pickle.load(sf)
+            os.makedirs(path)
         except:
-            os.unlink(cached_path)
-            cached_path = _cached_stylesheet(path)
-            with contextlib.closing(bz2.BZ2File(cached_path,'rb')) as sf:
-                return pickle.load(sf)
-    except:
-        os.unlink(cached_path)
-        raise
+            cached_path = None
 
+    res = style.parse(open(source_path,'r',encoding="utf-8"))
+    if cached_path:
+        import pickletools
+        try:
+            with contextlib.closing(bz2.BZ2File(cached_path, 'wb')) as zf:
+                zf.write(pickletools.optimize(
+                    pickle.dumps(res)))
+        except:
+            return res
+    return res
 
 
 default_stylesheet=_load_cached_stylesheet('usfm.sty')
