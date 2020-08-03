@@ -1,3 +1,9 @@
+ptxprint (0.9.0.1-1ubuntu1) bionic; urgency=medium
+
+  * Bumped version to 0.9.0.1
+
+ -- Nicolas Spalinger <nicolas.spalinger@sil.org>  Mon, 03 Aug 2020 15:13:31 +0200
+
 ptxprint (0.9.0-1ubuntu1) bionic; urgency=medium
 
   * Bumped version to 0.9.0 
