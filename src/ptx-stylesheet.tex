@@ -265,6 +265,7 @@
   % ## is necessary because this is a nested macro definition
   \def\@c@ ##1 {\ifsk@pping \egroup \fi % if we were skipping, stop it
    \gdef\ch@pter{##1}% remember chapter number
+   \gdef\ch@ptert@xt{##1}% the chapter number we will actually output
    \gdef\v@rse{}% clear verse number
    \m@kedigitsletters
    % If omitting chapter number, skip this. 
@@ -283,6 +284,7 @@
    \fi}
   %
   \def\c{\m@kedigitsother\@c@}
+  \def\cp ##1 {\gdef\ch@ptert@xt{##1}}
   % set default value for drop cap chapter number size if not already set
   \ifdim\dropnumbersize=0pt
     \getp@ram{fontsize}{p}\dimen255=0\p@ram\FontSizeUnit \multiply\dimen255 by 2

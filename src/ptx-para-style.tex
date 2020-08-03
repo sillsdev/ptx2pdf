@@ -412,6 +412,7 @@
 \newif\ifIndentAtChapter
 \newif\ifIndentAfterHeading \IndentAfterHeadingtrue
 \newif\ifOmitVerseNumberOne \OmitVerseNumberOnefalse
+\newif\ifOmitVerses \OmitVersesfalse
 \def\n@wchaptersf{998}
 \let\b@ok\relax
 \let\prevb@ok\relax
@@ -554,7 +555,7 @@
 \def\AfterChapterSpaceFactor{3}
 \def\m@kechapterbox{%
  \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}\XeTeXuseglyphmetrics=3%
- \edef\printchapter{\ch@pter}%
+ \edef\printchapter{\ch@ptert@xt}%
  \csname PrepChapterNumber\endcsname
  \setbox\ch@pterbox=\hbox{\s@tfont{c}\printchapter}%
  \ifrotate
