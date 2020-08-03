@@ -13,7 +13,7 @@ usage: ptxprint [-h] [-c CONFIG] [-p PARATEXT] [-d DIRECTORY] [-P] [-b BOOKS]
                 [--nofontcache] [-S] [-A ARCHIVE] [--nuseusfmerge] [--debug] [pid]
 
 positional arguments:
-  pid                   Project id
+  pid                   Project id   OR  full path to a ptxprint.cfg file
 
 optional arguments:
   -h, --help            show this help message and exit
