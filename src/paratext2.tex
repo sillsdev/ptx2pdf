@@ -708,8 +708,8 @@
   \rebalancefalse
   \trace{o}{first \the\availht . col=\the\ht\colA, \the\colhtA . second col=\the\ht\colB, \the\colhtB . rem=\the\ht0}
   \ifdim\ht\colA<.5\baselineskip\ifdim\ht\colB<.5\baselineskip\MSG{I can't break this page!}
-    \iffitonpage\s@ve@nd % the split failed and there is nothing left!
-    \else\setbox\colA=\box0\setbox\s@vedpage=\box\voidb@x % dump it all in colA and bail
+    \iffitonpage\s@ve@nd \trace{o}{Abandoning ship}% the split failed and there is nothing left!
+    \else\setbox\colA=\box0\setbox\s@vedpage=\box\voidb@x \trace{o}{Everything to colA}% dump it all in colA and bail
   \fi\fi\fi
   \iffitonpage
     \shortavail=\colhtB \advance\shortavail by -\ht\colB
@@ -793,6 +793,7 @@
 }
 
 \def\@mptyinserts{
+  \trace{i}{Emptying Inserts}%
   \global\setbox\topins=\box\voidb@x
   \global\setbox\bottomins=\box\voidb@x
   \global\setbox\topleftins=\box\voidb@x
@@ -880,7 +881,7 @@
      \unvbox\s@vedpage\penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
     \else%
      \trace{i}{Using galley. pen=\the\galleypenalty}%
-     \unvbox\s@vedpage\penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
+     \unvbox\galley\penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
     \fi%
   \fi%
 }
