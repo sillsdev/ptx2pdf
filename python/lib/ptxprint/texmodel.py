@@ -598,7 +598,7 @@ class TexModel:
                             continue
                         res.append("% for defname @active+ @+digit => 0->@, 1->a ... 9->i A->j B->k .. F->o\n")
                         res.append("% 12 (size) comes from \\p size\n")
-                        res.append('\\def\\extraregular{{"{}"}}\n'.format(self.dict["fontextraregular/name"]))
+                        res.append('\\def\\extraregular{{"{}"}}\n'.format(self.dict["fontextraregular"]))
                         res.append("\\catcode`\\@=11\n")
                         res.append("\\def\\do@xtrafont{\\x@\\s@textrafont\\ifx\\thisch@rstyle\\undefined\\m@rker\\else\\thisch@rstyle\\fi}\n")
                         for a,b in c:

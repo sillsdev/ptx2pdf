@@ -1481,7 +1481,8 @@ class GtkViewModel(ViewModel):
         self.sensiVisible("c_useprintdraftfolder")
 
     def onCreateZipArchiveClicked(self, btn_createZipArchive):
-        zfname = self.prjid+"-"+self.configName()+"PTXprintArchive.zip"
+        cfname = self.configName()
+        zfname = self.prjid+("-"+cfname if cfname else "")+"PTXprintArchive.zip"
         archiveZipFile = self.fileChooser("Select the location and name for the Archive file",
                 filters = {"ZIP files": {"pattern": "*.zip", "mime": "application/zip"}},
                 multiple = False, folder = False, save= True, basedir = self.working_dir, defaultSaveName=zfname)
