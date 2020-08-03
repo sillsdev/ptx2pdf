@@ -1372,8 +1372,10 @@ in the Windows system.</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame">
+                        <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">6</property>
@@ -1654,9 +1656,11 @@ PDF file (recommended).</property>
                     </child>
                     <child>
                       <object class="GtkFrame" id="bx_SavedConfigSettings">
+                        <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">3</property>
@@ -3034,8 +3038,10 @@ Special books and Other advanced options.</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame" id="fr_FontConfig">
+                        <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">6</property>
@@ -3101,8 +3107,8 @@ Special books and Other advanced options.</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">If the required font does not have a BOLD typeface, you can use this setting to create a BOLD effect. (For example, setting Embolden to 2.0 would thicken the Regular typeface making it appear as bold).</property>
-                                    <property name="halign">end</property>
-                                    <property name="margin_left">6</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_left">30</property>
                                     <property name="hexpand">True</property>
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="onFakeboldClicked" swapped="no"/>
@@ -3119,8 +3125,8 @@ Special books and Other advanced options.</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">If the required font does not have an ITALIC typeface, you can use this setting to create an ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic).</property>
-                                    <property name="halign">end</property>
-                                    <property name="margin_left">6</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_left">30</property>
                                     <property name="hexpand">True</property>
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="onFakeitalicClicked" swapped="no"/>
@@ -3136,8 +3142,8 @@ Special books and Other advanced options.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="halign">end</property>
-                                    <property name="margin_left">6</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_left">30</property>
                                     <property name="hexpand">True</property>
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="onFakebolditalicClicked" swapped="no"/>
@@ -3329,9 +3335,10 @@ Special books and Other advanced options.</property>
                                     <property name="halign">end</property>
                                     <child>
                                       <object class="GtkLabel">
-                                        <property name="width_request">60</property>
+                                        <property name="width_request">30</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="margin_left">25</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -3372,7 +3379,7 @@ that option - then Refresh Fonts.</property>
                                 <child>
                                   <object class="GtkButton" id="bl_fontR">
                                     <property name="label" translatable="yes">Select font...</property>
-                                    <property name="width_request">150</property>
+                                    <property name="width_request">160</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
@@ -3386,7 +3393,7 @@ that option - then Refresh Fonts.</property>
                                 <child>
                                   <object class="GtkButton" id="bl_fontB">
                                     <property name="label" translatable="yes">Select font...</property>
-                                    <property name="width_request">150</property>
+                                    <property name="width_request">160</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
@@ -3400,7 +3407,7 @@ that option - then Refresh Fonts.</property>
                                 <child>
                                   <object class="GtkButton" id="bl_fontI">
                                     <property name="label" translatable="yes">Select font...</property>
-                                    <property name="width_request">150</property>
+                                    <property name="width_request">160</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
@@ -3414,7 +3421,7 @@ that option - then Refresh Fonts.</property>
                                 <child>
                                   <object class="GtkButton" id="bl_fontBI">
                                     <property name="label" translatable="yes">Select font...</property>
-                                    <property name="width_request">150</property>
+                                    <property name="width_request">160</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
@@ -3799,6 +3806,7 @@ can grow to when necessary.</property>
                                     </child>
                                     <child>
                                       <object class="GtkSpinButton" id="s_minSpace">
+                                        <property name="width_request">120</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="tooltip_text" translatable="yes">When justifying paragraphs, and especially when
@@ -3847,6 +3855,7 @@ can grow to when necessary.</property>
                                     </child>
                                     <child>
                                       <object class="GtkSpinButton" id="s_maxSpace">
+                                        <property name="width_request">120</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="tooltip_text" translatable="yes">When justifying paragraphs, and especially when
@@ -4203,6 +4212,7 @@ for characters missing in primary font.</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame">
+                        <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="margin_top">6</property>
@@ -4563,6 +4573,7 @@ selected books/chapters will show in the glossary.</property>
                     </child>
                     <child>
                       <object class="GtkFrame">
+                        <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="margin_top">6</property>
@@ -4958,6 +4969,7 @@ be turned OFF (to omit the main text).</property>
                         <property name="homogeneous">True</property>
                         <child>
                           <object class="GtkFrame" id="fr_paragraphAdjust">
+                            <property name="width_request">330</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
@@ -5081,9 +5093,11 @@ affects poetry indentation.
                         </child>
                         <child>
                           <object class="GtkFrame" id="fr_hyphenation">
+                            <property name="width_request">330</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
+                            <property name="margin_left">6</property>
                             <property name="margin_top">6</property>
                             <property name="margin_bottom">6</property>
                             <property name="hexpand">False</property>
@@ -5226,6 +5240,7 @@ and Illustrations.</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame">
+                        <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="margin_left">6</property>
@@ -5255,6 +5270,7 @@ and Illustrations.</property>
                                     <property name="column_spacing">6</property>
                                     <child>
                                       <object class="GtkFrame">
+                                        <property name="width_request">334</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">start</property>
@@ -5359,7 +5375,7 @@ or:  †,‡,§,∥,#    or: ✶,☆,✦,✪</property>
                                                     </child>
                                                     <child>
                                                       <object class="GtkEntry" id="t_fncallers">
-                                                        <property name="width_request">140</property>
+                                                        <property name="width_request">150</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="tooltip_text" translatable="yes">These callers should automatically be loaded from
@@ -5392,6 +5408,7 @@ Paratext project settings.
 Note that if the callers have not
 been defined in the Paratext project
 then the default set will be loaded.</property>
+                                                        <property name="margin_left">6</property>
                                                         <signal name="clicked" handler="onResetFNcallersClicked" swapped="no"/>
                                                       </object>
                                                       <packing>
@@ -5481,9 +5498,11 @@ the list of callers specified.</property>
                                     </child>
                                     <child>
                                       <object class="GtkFrame">
+                                        <property name="width_request">334</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">start</property>
+                                        <property name="margin_left">15</property>
                                         <property name="margin_top">6</property>
                                         <property name="label_xalign">0.059999998658895493</property>
                                         <property name="shadow_type">in</property>
@@ -5583,7 +5602,7 @@ or:  †,‡,§,∥,#    or: ✶,☆,✦,✪</property>
                                                     </child>
                                                     <child>
                                                       <object class="GtkEntry" id="t_xrcallers">
-                                                        <property name="width_request">140</property>
+                                                        <property name="width_request">150</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="tooltip_text" translatable="yes">These callers should automatically be loaded from
@@ -5616,6 +5635,7 @@ Paratext project settings.
 Note that if the callers have not
 been defined in the Paratext project
 then the default set will be loaded.</property>
+                                                        <property name="margin_left">6</property>
                                                         <signal name="clicked" handler="onResetXRcallersClicked" swapped="no"/>
                                                       </object>
                                                       <packing>
@@ -6117,6 +6137,7 @@ Cross-references appear.</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame" id="fr_Header">
+                        <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="margin_left">6</property>
@@ -6142,6 +6163,7 @@ Cross-references appear.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>
+                                    <property name="spacing">6</property>
                                     <child>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
@@ -6230,7 +6252,7 @@ Cross-references appear.</property>
 Note that this setting also affects the Diglot settings:
 making the primary text the Inner text, and the
 secondary text as the Outer text.</property>
-                                        <property name="halign">start</property>
+                                        <property name="halign">end</property>
                                         <property name="margin_left">10</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
@@ -6302,7 +6324,7 @@ secondary text as the Outer text.</property>
                                     </child>
                                     <child>
                                       <object class="GtkComboBoxText" id="ecb_hdrcenter">
-                                        <property name="width_request">190</property>
+                                        <property name="width_request">200</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="active">1</property>
@@ -6330,7 +6352,7 @@ secondary text as the Outer text.</property>
                                     </child>
                                     <child>
                                       <object class="GtkComboBoxText" id="ecb_hdrright">
-                                        <property name="width_request">190</property>
+                                        <property name="width_request">200</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="margin_right">6</property>
@@ -6359,7 +6381,7 @@ secondary text as the Outer text.</property>
                                     </child>
                                     <child>
                                       <object class="GtkComboBoxText" id="ecb_hdrleft">
-                                        <property name="width_request">190</property>
+                                        <property name="width_request">200</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="active">0</property>
@@ -6510,6 +6532,7 @@ in the header reference.</property>
                     </child>
                     <child>
                       <object class="GtkFrame" id="fr_Footer">
+                        <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="margin_left">6</property>
@@ -6602,6 +6625,7 @@ in the header reference.</property>
                                 <property name="width_request">340</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="margin_bottom">6</property>
                                 <property name="active">0</property>
                                 <property name="has_entry">True</property>
                                 <items>
@@ -6657,6 +6681,7 @@ in the header reference.</property>
                     </child>
                     <child>
                       <object class="GtkFrame" id="fr_layoutOther">
+                        <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="margin_left">6</property>
@@ -6769,6 +6794,8 @@ the first document ends.</property>
                                   <object class="GtkSeparator">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="margin_left">56</property>
+                                    <property name="margin_right">56</property>
                                     <property name="orientation">vertical</property>
                                   </object>
                                   <packing>
@@ -6884,6 +6911,7 @@ content of Headers and Footers.</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame">
+                        <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="valign">start</property>
@@ -6905,6 +6933,7 @@ content of Headers and Footers.</property>
                                 <property name="halign">start</property>
                                 <property name="valign">start</property>
                                 <property name="row_spacing">6</property>
+                                <property name="column_spacing">4</property>
                                 <child>
                                   <object class="GtkRadioButton" id="c_useLowResPics">
                                     <property name="label" translatable="yes">Prefer Low-Resolution Pictures (smaller file size)</property>
@@ -7208,7 +7237,7 @@ JPG  (only use JPGs - ignore all other file types)
 TIF  (only use TIFs - ignore all other file types)
 
 NOTE: TIF files are converted internally to JPGs.</property>
-                                    <property name="width_chars">15</property>
+                                    <property name="width_chars">16</property>
                                     <property name="text" translatable="yes">JPG PNG TIF BMP PDF</property>
                                   </object>
                                   <packing>
@@ -7328,7 +7357,6 @@ have been enabled.</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="valign">start</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
                         <property name="orientation">vertical</property>
@@ -7336,9 +7364,9 @@ have been enabled.</property>
                           <object class="GtkFrame">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="valign">start</property>
                             <property name="margin_top">6</property>
                             <property name="hexpand">False</property>
+                            <property name="vexpand">True</property>
                             <property name="label_xalign">0.039999999105930328</property>
                             <child>
                               <object class="GtkAlignment">
@@ -7351,6 +7379,8 @@ have been enabled.</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>
                                     <property name="margin_right">6</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="row_spacing">12</property>
                                     <property name="column_spacing">6</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_useModsTex">
@@ -7691,8 +7721,7 @@ PDF (and associated interim files).</property>
                           <object class="GtkFrame">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="margin_right">6</property>
-                            <property name="margin_top">13</property>
+                            <property name="margin_top">12</property>
                             <property name="vexpand">True</property>
                             <property name="label_xalign">0.039999999105930328</property>
                             <child>
@@ -7917,6 +7946,7 @@ file before manually sending it to the
 PTXprint team for support.</property>
                             <property name="halign">end</property>
                             <property name="valign">center</property>
+                            <property name="margin_right">6</property>
                             <property name="margin_top">30</property>
                             <signal name="clicked" handler="onCreateZipArchiveClicked" swapped="no"/>
                           </object>
@@ -8024,6 +8054,7 @@ from XeTeX processing.</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame">
+                        <property name="width_request">560</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
@@ -8262,6 +8293,7 @@ options here to create a Diglot or Didoc.</property>
                     </child>
                     <child>
                       <object class="GtkFrame">
+                        <property name="width_request">560</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
@@ -8925,10 +8957,6 @@ for "col": tl=top left, tr=top right,
                           <object class="GtkScrolledWindow" id="scroll_AdjList">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="margin_left">4</property>
-                            <property name="margin_right">4</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
                             <property name="hexpand">True</property>
                             <property name="vexpand">True</property>
                             <property name="shadow_type">in</property>
@@ -8998,10 +9026,6 @@ are likely to have to re-do it all again.</property>
                           <object class="GtkScrolledWindow" id="scroll_TeXfile">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="margin_left">4</property>
-                            <property name="margin_right">4</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
                             <property name="hexpand">True</property>
                             <property name="vexpand">True</property>
                             <property name="shadow_type">in</property>
@@ -9028,10 +9052,6 @@ are likely to have to re-do it all again.</property>
                           <object class="GtkScrolledWindow" id="scroll_XeTeXlog">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="margin_left">4</property>
-                            <property name="margin_right">4</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
                             <property name="hexpand">True</property>
                             <property name="vexpand">True</property>
                             <property name="shadow_type">in</property>
@@ -9058,10 +9078,6 @@ are likely to have to re-do it all again.</property>
                           <object class="GtkScrolledWindow" id="scroll_Settings">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="margin_left">4</property>
-                            <property name="margin_right">4</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
                             <property name="hexpand">True</property>
                             <property name="vexpand">True</property>
                             <property name="shadow_type">in</property>
@@ -9088,20 +9104,21 @@ are likely to have to re-do it all again.</property>
                           <object class="GtkFrame">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="margin_left">4</property>
-                            <property name="margin_right">4</property>
-                            <property name="margin_top">4</property>
-                            <property name="margin_bottom">4</property>
+                            <property name="margin_left">6</property>
+                            <property name="margin_right">6</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
                             <property name="hexpand">True</property>
                             <property name="vexpand">True</property>
                             <property name="label_xalign">0.0099999997764825821</property>
+                            <property name="shadow_type">none</property>
                             <child>
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
-                                <property name="row_spacing">10</property>
+                                <property name="row_spacing">6</property>
                                 <property name="column_spacing">6</property>
                                 <child>
                                   <object class="GtkLabel">
@@ -9263,6 +9280,7 @@ Videos, FAQs and Latest Updates:</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="opacity">0.80000000000000004</property>
+                                    <property name="hexpand">True</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -9397,7 +9415,10 @@ general users and common solutions.</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Folder Paths &amp; More Info</property>
+                                <property name="label" translatable="yes">Folder Paths &amp; More Info:</property>
+                                <attributes>
+                                  <attribute name="weight" value="bold"/>
+                                </attributes>
                               </object>
                             </child>
                           </object>
@@ -9434,7 +9455,7 @@ general users and common solutions.</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="margin_bottom">2</property>
+                        <property name="margin_top">6</property>
                         <property name="column_homogeneous">True</property>
                         <child>
                           <object class="GtkButton" id="btn_saveEdits">
@@ -9617,37 +9638,28 @@ edit various control and log files.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkCheckButton" id="c_hideAdvancedSettings">
-                <property name="label" translatable="yes">Hide Advanced Settings</property>
+              <object class="GtkSwitch" id="c_hideAdvancedSettings">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
-                <property name="no_show_all">True</property>
-                <property name="tooltip_text" translatable="yes">Many of the settings in this tool only need to be
-set up once, or used on rare occasions. These can
-be hidden away for most of the time if that helps.
+                <property name="tooltip_text" translatable="yes">Hide Advanced Settings:
 
-This setting can be turned off again later, but
-is intentionally almost invisible (though located
-in the same place).</property>
-                <property name="margin_top">3</property>
-                <property name="margin_bottom">3</property>
-                <property name="hexpand">True</property>
-                <property name="resize_mode">immediate</property>
-                <property name="draw_indicator">True</property>
-                <signal name="clicked" handler="onHideAdvancedSettingsClicked" swapped="no"/>
-                <signal name="toggled" handler="onHideAdvancedSettingsClicked" swapped="no"/>
+If the number of options is too overwhelming then use
+this switch to hide the more complex/advanced options.</property>
+                <property name="margin_left">20</property>
+                <property name="margin_right">20</property>
+                <property name="margin_top">7</property>
+                <property name="margin_bottom">7</property>
+                <signal name="state-set" handler="onHideAdvancedSettingsClicked" swapped="no"/>
               </object>
               <packing>
-                <property name="expand">True</property>
-                <property name="fill">False</property>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
                 <property name="position">1</property>
               </packing>
             </child>
             <child>
               <object class="GtkCheckButton" id="c_experimental">
-                <property name="label" translatable="yes">Experimental 
-Features ON!</property>
+                <property name="label" translatable="yes">Experimental Features are ON!</property>
                 <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
