@@ -656,10 +656,16 @@ class GtkViewModel(ViewModel):
             state = not self.get(k)
             for w in v:
                 self.builder.get_object(w).set_sensitive(state)
-        if self.get("c_includeillustrations"):
-            self.builder.get_object("lb_Pictures").set_markup("<span color='#7B90B7'>Pictures</span>")
-        if self.get("c_diglot") or self.get("c_borders"):
-            self.builder.get_object("lb_DiglotBorder").set_markup("<span color='#7B90B7'>Diglot+Border</span>")
+        self.colourTabs()
+
+    def colourTabs(self):
+        col = "#688ACC" #7B90B7
+        ic = " color='"+col+"'" if self.get("c_includeillustrations") else ""
+        self.builder.get_object("lb_Pictures").set_markup("<span{}>Pictures</span>".format(ic))
+
+        dc = " color='"+col+"'" if self.get("c_diglot") else ""
+        bc = " color='"+col+"'" if self.get("c_borders") else ""
+        self.builder.get_object("lb_DiglotBorder").set_markup("<span{}>Diglot</span>+<span{}>Border</span>".format(dc,bc))
 
     def sensiVisible(self, k, focus=False):
         state = self.get(k)
@@ -950,10 +956,7 @@ class GtkViewModel(ViewModel):
         
     def onUseIllustrationsClicked(self, btn):
         status = self.sensiVisible("c_includeillustrations")
-        if status:
-            self.builder.get_object("lb_Pictures").set_markup("<span color='#7B90B7'>Pictures</span>")
-        else:
-            self.builder.get_object("lb_Pictures").set_markup("<span>Pictures</span>")
+        self.colourTabs()
 
     def onUseCustomFolderclicked(self, btn):
         status = self.sensiVisible("c_useCustomFolder")
@@ -1651,13 +1654,10 @@ class GtkViewModel(ViewModel):
         return fcFilepath
 
     def onDiglotOrBorderClicked(self, btn):
-        status1 = self.sensiVisible("c_diglot")
-        status2 = self.sensiVisible("c_borders")
-        if status1 or status2:
-            self.builder.get_object("lb_DiglotBorder").set_markup("<span color='#7B90B7'>Diglot+Border</span>")
-        else:
-            self.builder.get_object("lb_DiglotBorder").set_markup("<span>Diglot+Border</span>")
-
+        self.sensiVisible("c_diglot")
+        self.sensiVisible("c_borders")
+        self.colourTabs()
+        
     def ondiglotSecProjectChanged(self, btn):
         self.updateDiglotConfigList()
         

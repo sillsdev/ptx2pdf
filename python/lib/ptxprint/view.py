@@ -569,7 +569,10 @@ class ViewModel:
                 missingPics.append(v['src'])
                 continue
             if not isdblcol: # Single Column layout so change all tl+tr > t and bl+br > b
-                v['pgpos'] = re.sub(r"([tb])[lr]", r"\1", v['pgpos'])
+                if 'pgpos' in v:
+                    v['pgpos'] = re.sub(r"([tb])[lr]", r"\1", v['pgpos'])
+                else:
+                    v['pgpos'] = "t"
             if not isTemp and randomizePosn:
                 v['pgpos'] = random.choice(picposn.get(v['size'], 'col')) # Randomize location of illustrations on the page (tl,tr,bl,br)
             elif 'pgpos' not in v:
@@ -587,7 +590,8 @@ class ViewModel:
 %      (ii) anchor refs must match the text itself and be in logical ch.vs order
 %      (iii) the same anchor reference cannot be used more than once (except in a L/R diglot)
 %   b) Delete the line to remove an illustration (or prefix with a % to skip over it)
-%   c) To scale an image use the notation: span*.7  or  col*1.3    (for 70% and 130%)
+%   c) In single-column layout no difference will be seen between 'span' and 'col'
+%   d) To scale an image use the notation: size="span*.7" or size="col*1.3" (for 70% and 130%)
 """)
         dat = "\n".join(lines)
         piclstfname = os.path.join(outdir, plfname)
