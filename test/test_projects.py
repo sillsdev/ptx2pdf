@@ -1,6 +1,7 @@
 import pytest
 import unittest
 import subprocess
+import re
 from difflib import context_diff
 import configparser, os, sys, shutil
 from ptxprint.ptsettings import ParatextSettings
@@ -19,6 +20,7 @@ def quote(path):
         return '"' + path.strip('"') + '"'
     else:
         return path
+    
 if sys.platform == "win32":
     import winreg
     def queryvalue(base, value):
@@ -117,6 +119,14 @@ class TestXetex: #(unittest.TestCase):
             pytest.xfail("No regression xdv. Copying...")
         resdat = check_output(xdvcmd + [fromfile]).decode("utf-8")
         stddat = check_output(xdvcmd + [tofile]).decode("utf-8")
+        
+        for attribute in ("CreationDate", "ModDate"): # remove the creation and modification times
+            regexp, replacement = r'/{}\(D:[\d\'+\\]+\)'.format(attribute), r"/{}:REMOVED".format(attribute)
+            resdat = re.sub(regexp, replacement, resdat)
+            stddat = re.sub(regexp, replacement, stddat)
+            
         diff = "\n".join(context_diff(stddat.split("\n"), resdat.split("\n"), fromfile=fromfile, tofile=tofile))
+        
+        print(diff)
         if diff != "":
             pytest.xfail("xdvs are inconsistent")
