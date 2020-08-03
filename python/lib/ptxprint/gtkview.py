@@ -551,6 +551,7 @@ class GtkViewModel(ViewModel):
     def onBookListChanged(self, t_booklist, foo): # called on "focus-out-event"
         bl = self.getBooks()
         self.set('t_booklist', " ".join(bl))
+        self.updateExamineBook()
         self.updateDialogTitle()
 
     def onSaveConfig(self, btn):
@@ -762,6 +763,7 @@ class GtkViewModel(ViewModel):
         self.set("c_prettyIntroOutline", False)
         if status and self.get("t_booklist") == "" and self.prjid is not None:
             self.updateDialogTitle()
+            print("in onBookSelectorChange: UpdateDialogTitle")
             # pass
             # self.onChooseBooksClicked(None)
         else:
@@ -1218,11 +1220,14 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("c_multiplebooks").set_active(not booklist == [])
         self.set("c_prettyIntroOutline", False)
         self.updateDialogTitle()
-        bks = self.getBooks()
-        if len(bks) > 1:
-            self.builder.get_object("ecb_examineBook").set_active_id(bks[0])
+        self.updateExamineBook()
         dialog.set_keep_above(False)
         dialog.hide()
+        
+    def updateExamineBook(self):    
+        bks = self.getBooks()
+        if len(bks):
+            self.builder.get_object("ecb_examineBook").set_active_id(bks[0])
 
     def toggleBooks(self,start,end):
         bp = self.ptsettings['BooksPresent']
@@ -1289,7 +1294,8 @@ class GtkViewModel(ViewModel):
             self.chapto = self.builder.get_object("ls_chapto")
             self._setchap(self.chapto, 1, self.chs)
             self.fcb_chapto.set_active_id(str(self.chs))
-            self.builder.get_object("ecb_examineBook").set_active_id(self.bk)
+            # self.builder.get_object("ecb_examineBook").set_active_id(self.bk)
+            self.updateExamineBook()
         self.updateDialogTitle()
 
     def onChapFrmChg(self, cb_chapfrom):
