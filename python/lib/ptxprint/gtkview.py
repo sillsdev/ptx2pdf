@@ -556,7 +556,7 @@ class GtkViewModel(ViewModel):
     def onSaveConfig(self, btn):
         if self.prjid is None:
             return
-        newconfigId = self.get("ecb_savedConfig")
+        newconfigId = self.configName() # self.get("ecb_savedConfig")
         if newconfigId == self.configId:
             self.writeConfig()
             return
@@ -659,7 +659,7 @@ class GtkViewModel(ViewModel):
         self.colourTabs()
 
     def colourTabs(self):
-        col = "#688ACC" #7B90B7
+        col = "#688ACC"
         ic = " color='"+col+"'" if self.get("c_includeillustrations") else ""
         self.builder.get_object("lb_Pictures").set_markup("<span{}>Pictures</span>".format(ic))
 
@@ -1375,8 +1375,8 @@ class GtkViewModel(ViewModel):
         else:
             self.builder.get_object("t_configNotes").set_text("")
             lockBtn.set_sensitive(False)
-        if os.path.exists(self.configPath(cfgname=self.get("ecb_savedConfig"))):
-            self.updateProjectSettings(self.prjid, saveCurrConfig=False, configName=self.get("ecb_savedConfig")) # False means DON'T Save!
+        if os.path.exists(self.configPath(cfgname=self.configName())):
+            self.updateProjectSettings(self.prjid, saveCurrConfig=False, configName=self.configName()) # False means DON'T Save!
         self.updateDialogTitle()
 
     def updateFonts(self):
