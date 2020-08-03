@@ -593,7 +593,7 @@ class ViewModel:
 %   c) In single-column layout no difference will be seen between 'span' and 'col'
 %   d) To scale an image use the notation: size="span*.7" or size="col*1.3" (for 70% and 130%)
 """)
-        dat = "\n".join(lines)
+        dat = "\n".join(lines)+"\n"
         piclstfname = os.path.join(outdir, plfname)
         with open(piclstfname, "w", encoding="utf-8") as outf:
             outf.write(dat)
