@@ -8,8 +8,11 @@ from collections import namedtuple
 
 def w2u(path, endwithslash=True):
     """Windows to Unix filepath converter"""
-    path = path.replace("\\", "/")
-    return (path + ("/" if endwithslash else "")).replace("//", "/")
+    if path == "":
+        return ""
+    else:
+        path = path.replace("\\", "/")
+        return (path + ("/" if endwithslash else "")).replace("//", "/")
 
 def quote(path):
     if " " in path:
