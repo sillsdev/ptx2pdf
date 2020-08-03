@@ -49,7 +49,7 @@ else:
     if args.paratext.endswith("/"):
         args.paratext = args.paratext[:-1]
 
-if any(x in args.pid for x in "\\/") or args.pid.lower().endswith(".cfg"):
+if args.pid is not None and (any(x in args.pid for x in "\\/") or args.pid.lower().endswith(".cfg")):
     pidpath = os.path.relpath(args.pid, args.paratext).replace("\\", "/")
     if pidpath.startswith("..") or pidpath.startswith("/"):
         pidpath = args.pid.replace("\\", "/")
