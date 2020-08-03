@@ -239,7 +239,7 @@
   \fi
   \resetp@rstyle
   \def\d@##1+##2\E{\edef\tmp{##2}%
-    \ifx\tmp\m@rker\else\MSG{Bad closing marker \tmp\space expected \m@rker}\fi}%
+    \ifx\tmp\m@rker\else\ifx\m@rker\relax\else\MSG{Bad closing "marker" \tmp\space expecting "\m@rker"}\fi\fi}%
   \mctop \mcpop
   \ifdiglot\setsid@ % \MSG{start-\thisch@rstyle\sid@}%
     \csname after-\m@rker\sid@\endcsname\relax% handle side-specific <start> hook
