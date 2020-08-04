@@ -230,12 +230,14 @@
 \noVevenfoot={\rlap{\RFnoVevenleft}\hfil\RFnoVevencenter\hfil\llap{\RFnoVevenright}}
 \titlefoot={\rlap{\RFtitleleft}\hfil\RFtitlecenter\hfil\llap{\RFtitleright}}
 
+
+\def\s@treffont{\ifuseLeftMarks\ifuseRightMarks\else\diglotLtrue\s@tfont{h}\fi\else\ifuseRightMarks\diglotLfalse\s@tfont{h}\fi\fi}
 %
 % user-level macros for use within the running header
 %
-\def\firstref{\ifRTL\beginR\fi\f@rstref{\p@gefirstmark}\ifRTL\endR\fi}
-\def\lastref{\ifRTL\beginR\fi\l@stref{\p@gebotmark}\ifRTL\endR\fi}
-\def\rangeref{\ifRTL\beginR\fi\r@ngerefs{\p@gefirstmark}{\p@gebotmark}\ifRTL\endR\fi}
+\def\firstref{\ifRTL\beginR\fi\bgroup\ifdiglot\s@treffont\fi\f@rstref{\p@gefirstmark}\egroup\ifRTL\endR\fi}
+\def\lastref{\ifRTL\beginR\fi\bgroup\ifdiglot\s@treffont\fi\l@stref{\p@gebotmark}\egroup\ifRTL\endR\fi}
+\def\rangeref{\ifRTL\beginR\fi\bgroup\ifdiglot\s@treffont\fi\r@ngerefs{\p@gefirstmark}{\p@gebotmark}\egroup\ifRTL\endR\fi}
 
 \def\firstrefL{\bgroup\ifRTL\beginR\fi\diglotLtrue\s@tfont{h}\f@rstref{\topLmark}\ifRTL\endR\fi\egroup}
 \def\lastrefL{\bgroup\ifRTL\beginR\fi\diglotLtrue\s@tfont{h}\l@stref{\botLmark}\ifRTL\endR\fi\egroup}
