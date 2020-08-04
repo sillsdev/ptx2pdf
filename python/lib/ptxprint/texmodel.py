@@ -9,6 +9,12 @@ from ptxprint.ptsettings import chaps, books, bookcodes, oneChbooks
 from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders
 from ptxprint.runner import checkoutput
 
+def loosint(x):
+    try:
+        return int(x)
+    except TypeError:
+        return 0
+
 def universalopen(fname, rewrite=False):
     """ Opens a file with the right codec from a small list and perhaps rewrites as utf-8 """
     fh = open(fname, "r", encoding="utf-8")
@@ -173,7 +179,7 @@ ModelMap = {
     "document/customfigfolder": ("btn_selectFigureFolder", lambda w,v: w.customFigFolder.as_posix() if w.customFigFolder is not None else ""),
     "document/customoutputfolder": ("btn_selectOutputFolder", lambda w,v: w.customOutputFolder.as_posix() if w.customOutputFolder is not None else ""),
     "document/imagetypepref":   ("t_imageTypeOrder", None),
-    "document/spacecntxtlztn":  ("ecb_spaceCntxtlztn", lambda w,v: "0" if v == "None" or v is None else "1" if v == "Some" else "2"),
+    "document/spacecntxtlztn":  ("ecb_spaceCntxtlztn", lambda w,v: str({"None": 0, "Some": 1, "Full": 2}.get(v, loosint(v)))),
     "document/glossarymarkupstyle":  ("fcb_glossaryMarkupStyle", None),
     "document/filterglossary":  ("c_filterGlossary", None),
     "document/hangpoetry":      ("c_hangpoetry", lambda w,v: "" if v else "%"),

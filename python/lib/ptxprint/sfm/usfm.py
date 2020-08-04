@@ -212,7 +212,9 @@ class parser(sfm.parser):
     
     default_meta = _default_meta
     numeric_re = re.compile(r'\s*(\d+(:?[-\u2010\2011]\d+)?)',re.UNICODE)
-    verse_re = re.compile(r'\s*(\d+[a-z]?(:?[-,\u2010\2011]\d+[a-z]?)?)',re.UNICODE)
+    # paratext has CVregexp as (?:(\d+)[.:]))?(\d+\w?)(?:-(\d+\w?))
+    # which handily allows RTL ordering marks as part of \w (but you can't then have \v 12a<RTL>-13 but who wants to?
+    verse_re = re.compile(r'\s*(\d+[a-z]?(:?[-,\u200B-\u2011]+\d+[a-z]?)?)',re.UNICODE)
     caller_re = re.compile(r'\s*([^\s\\])',re.UNICODE)
     sep_re = re.compile(r'\s|$',re.UNICODE)
     

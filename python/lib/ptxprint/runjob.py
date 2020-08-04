@@ -209,16 +209,16 @@ class RunJob:
     def parselog(self, fname, rerunp=False, lines=20):
         loglines = []
         rerunres = False
-        with open(fname, "r", encoding="utf-8", errors="ignore") as logfile:
-            try:
+        try:
+            with open(fname, "r", encoding="utf-8", errors="ignore") as logfile:
                 for i, l in enumerate(logfile.readlines()):
                     if rerunp and l.startswith("PARLOC: Rerun."):
                         rerunres = True
                     loglines.append(l)
                     if len(loglines) > lines:
                         loglines.pop(0)
-            except:
-                loglines.append("Logfile missing: "+fname)
+        except:
+            loglines.append("Logfile missing: "+fname)
         return (loglines, rerunres)
 
     def readfile(self, fname):
