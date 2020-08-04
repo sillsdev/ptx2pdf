@@ -1,15 +1,33 @@
 import pytest
 import unittest
 import subprocess
+import re
 from difflib import context_diff
 import configparser, os, sys, shutil
 from ptxprint.ptsettings import ParatextSettings
 from collections import namedtuple
 
+def w2u(path, endwithslash=True):
+    """Windows to Unix filepath converter"""
+    if path == "":
+        return ""
+    else:
+        path = path.replace("\\", "/")
+        return (path + ("/" if endwithslash else "")).replace("//", "/")
+
+def quote(path):
+    if " " in path:
+        return '"' + path.strip('"') + '"'
+    else:
+        return path
+    
 if sys.platform == "win32":
     import winreg
     def queryvalue(base, value):
         return winreg.QueryValueEx(base, value)[0]
+    
+    def openkey(path):
+        return winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\\" + path.replace("/", "\\"))
 
     ptob = openkey("Paratext/8")
     pt_settings = "."
@@ -27,7 +45,9 @@ if sys.platform == "win32":
             version = ptv[:ptv.find(".")]
             pt_bindir = queryvalue(ptob, 'Program_Files_Directory_Ptw'+version)
         pt_settings = queryvalue(ptob, 'Settings_Directory')
-    pt_bindir += "\\"
+    
+    pt_bindir = pt_bindir + ("\\" if pt_bindir[-1] != "\\" else "") + "xetex\\bin\\"
+    
 else:
     pt_bindir = ""
 
@@ -84,7 +104,7 @@ def xdv(request, projectsdir, project, config):
 @pytest.mark.usefixtures("xdv")
 class TestXetex: #(unittest.TestCase):
     def test_pdf(self):
-        xdvcmd = pt_bindir+"xdvipdfmx -q -E -o " + self.xdv.filebasepath+".pdf " + self.xdv.filebasepath+".xdv"
+        xdvcmd = " ".join([quote(w2u(pt_bindir, True)+"xdvipdfmx"),"-q", "-E", "-o", quote(w2u(self.xdv.filebasepath, False)+".pdf") + " " + quote(w2u(self.xdv.filebasepath, False)+".xdv")])
         assert call(xdvcmd, shell=True) == 0
 
     def test_xdv(self):
@@ -99,6 +119,10 @@ class TestXetex: #(unittest.TestCase):
             pytest.xfail("No regression xdv. Copying...")
         resdat = check_output(xdvcmd + [fromfile]).decode("utf-8")
         stddat = check_output(xdvcmd + [tofile]).decode("utf-8")
+        for attribute in ("CreationDate", "ModDate"): # remove the creation and modification times
+            regexp, replacement = r'/{}\(D:[\d\'+\\]+\)'.format(attribute), r"/{}:REMOVED".format(attribute)
+            resdat = re.sub(regexp, replacement, resdat)
+            stddat = re.sub(regexp, replacement, stddat)
         diff = "\n".join(context_diff(stddat.split("\n"), resdat.split("\n"), fromfile=fromfile, tofile=tofile))
         if diff != "":
             pytest.xfail("xdvs are inconsistent")

@@ -1,9 +1,12 @@
 PTXprint 0.9.0 Beta (RC 1.0) Release Notes
-1st August 2020
+3rd August 2020
 
 Bug Fixes and Improvements in: 0.9.0
 
+  * Make main dialog resize-able so that the viewer is easier to use
+
   * Several improvements to diglot layout (but diglot illustrations are still fragile/experimental)
+    KNOWN ISSUE: illustrations in peripheral books are currently broken 
 
   * Several more options for the placement of illustrations are now possible
     (see: https://github.com/sillsdev/ptx2pdf/blob/master/docs/documentation/figures.md for details)
@@ -12,9 +15,22 @@ Bug Fixes and Improvements in: 0.9.0
   
   * Various diglot options (fuzzy/unaligned) have been removed (align on paragraph is now assumed)
   
+  * Command-line options added/enhanced: 
+        pid - Project id    OR   full path to a ptxprint.cfg file
+		-f FONTPATH         Specify directory of fonts to include
+        --nofontcache       Don't use system fonts
+		
   * End of Book decorator is enabled (on Diglot+Borders tab)
   
+  * Hide Advanced Features is more subtle (hiding discreetly next to the About box)
+  
   * ESC no longer closes PTXprint
+  
+  * Show/Hide tabs removed completely (no longer deemed important)
+
+  * Shade of blue (to show feature is active) improved on Picture, Diglot+Border tabs  
+
+  * Bug Fix: Configuration Naming issue resolved
   
 Bug Fixes and Improvements in: 0.8.8
 

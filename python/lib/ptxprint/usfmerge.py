@@ -96,7 +96,7 @@ class Collector:
                         newchunk = True
                         self.currType = None
                 elif self.currType == 'Chap':
-                    if not isSection:
+                    if not isSection and not c.name == "cp":
                         self.currType = None
                 elif isSection:
                     newchunk = True

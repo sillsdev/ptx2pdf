@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="PTXprint",
-    version="0.9.0",
+    version="0.9.0.1",
     description="Typesetting using (Xe)TeX for ParaText",
     url="https://software.sil.org/ptxprint",
     author="SIL International",

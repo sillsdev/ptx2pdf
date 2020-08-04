@@ -686,7 +686,7 @@
     \setbox9=\copy#1
     \setbox\colB=\vsplit#1 to \colhtB \ifnum\badness>999999\setbox#1=\box9\setbox\colB\box\voidb@x\else\setbox\colB=\vbox{\unvbox\colB}\fi
     % swap boxes if either, colA is empty and colB full, or colB is empty and colA is over full.
-    \ifvoid\colA\ifvoid\colB\else\ifdim\colhtB<\colhtA\else\setbox\colA=\box\colB\fi\fi\fi
+    \ifvoid\colA\ifvoid\colB\else\ifdim\colhtA<\ht\colB\else\setbox\colA=\box\colB\fi\fi\fi
     \ifdim\ht\colA>\colhtA\ifdim\ht\colB<1pt\ifdim\ht\colA<\colhtB\setbox\colB=\box\colA\fi\fi\fi
 }
 

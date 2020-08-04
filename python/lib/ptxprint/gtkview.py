@@ -154,16 +154,16 @@ _nonsensitivities = {
     "c_useprintdraftfolder" :  ["btn_selectOutputFolder"]
 }
 # Checkboxes and the Tabs that they make (in)visible
-_visibilities = {
-    "c_showLayoutTab" :        ["tb_Layout"],
-    "c_showFontTab" :          ["tb_Font"],
-    "c_showBodyTab" :          ["tb_Body"],
-    "c_showHeadFootTab" :      ["tb_HeadFoot"],
-    "c_showPicturesTab" :      ["tb_Pictures"],
-    "c_showAdvancedTab" :      ["tb_Advanced"],
-    "c_showDiglotBorderTab" :  ["tb_DiglotBorder"],
-    "c_showViewerTab" :        ["tb_ViewerEditor"]
-}
+# _visibilities = {
+    # "c_showLayoutTab" :        ["tb_Layout"],
+    # "c_showFontTab" :          ["tb_Font"],
+    # "c_showBodyTab" :          ["tb_Body"],
+    # "c_showHeadFootTab" :      ["tb_HeadFoot"],
+    # "c_showPicturesTab" :      ["tb_Pictures"],
+    # "c_showAdvancedTab" :      ["tb_Advanced"],
+    # "c_showDiglotBorderTab" :  ["tb_DiglotBorder"],
+    # "c_showViewerTab" :        ["tb_ViewerEditor"]
+# }
 class GtkViewModel(ViewModel):
 
     def __init__(self, settings_dir, workingdir):
@@ -298,36 +298,32 @@ class GtkViewModel(ViewModel):
         tv.append_column(col)
         ts = self.builder.get_object("t_fontSearch")
         tv.set_search_entry(ts)
-        self.mw.resize(730, 640)
+        self.mw.resize(800, 600)
         self.mw.show_all()
         Gtk.main()
 
-    def onHideAdvancedSettingsClicked(self, c_hideAdvancedSettings):
+    def onHideAdvancedSettingsClicked(self, c_hideAdvancedSettings, foo):
         if self.get("c_hideAdvancedSettings"):
-            # Turn Dangerous Settings OFF  (the commented out ones aren't considered 'dangerous' any more)
-            # "c_preventwidows", "c_PDFx1aOutput", "c_hyphenate", "c_variableLineSpacing", "c_showBodyTab", "c_elipsizeMissingVerses"
-            # "c_prettyIntroOutline", "c_blendfnxr", "c_autoToC", "c_glueredupwords", "c_hangpoetry", 
-            for c in ("c_startOnHalfPage", "c_marginalverses", "c_figplaceholders", "c_showAdvancedTab", "c_showViewerTab"):
+            for c in ("c_startOnHalfPage", "c_marginalverses", "c_figplaceholders"):
                 self.builder.get_object(c).set_active(False)
 
             # Turn Essential Settings ON
             for c in ("c_mainBodyText", "c_skipmissingimages", "c_includefigsfromtext", "c_verseNumbers", "c_firstParaIndent"):
                 self.builder.get_object(c).set_active(True)
-            self.builder.get_object("c_hideAdvancedSettings").set_opacity(0.2)
-            self.builder.get_object("c_hideAdvancedSettings").set_tooltip_text("")
-            
+            self.builder.get_object("c_hideAdvancedSettings").set_opacity(0.5)
+            self.builder.get_object("c_hideAdvancedSettings").set_tooltip_text( \
+                "Show Advanced Settings:\n\n" + \
+                "There are many more complex options\n" + \
+                "available for use within PTXprint.")
         else:
             self.builder.get_object("c_hideAdvancedSettings").set_opacity(1.0)
             self.builder.get_object("c_hideAdvancedSettings").set_tooltip_text( \
-                "Many of the settings in this tool only need to be\n" + \
-                "set up once, or used on rare occasions. These can\n" + \
-                "be hidden away for most of the time if that helps.\n\n" + \
-                "This setting can be toggled off again later, but\n" + \
-                "is intentionally almost invisible (though located\n" + \
-                "in the same place).")
+                "Hide Advanced Settings:\n\n" + \
+                "If the number of options is too overwhelming then use\n" + \
+                "this switch to hide the more complex/advanced options.")
                       
-            for c in ("c_showAdvancedTab", "c_showViewerTab"):
-                self.builder.get_object(c).set_active(True)
+            # for c in ("c_showAdvancedTab", "c_showViewerTab"):
+                # self.builder.get_object(c).set_active(True)
 
         for c in ("tb_Font", "tb_Advanced", "tb_ViewerEditor", "tb_DiglotBorder", "l_missingPictureString", "btn_editPicList", 
                   "l_imageTypeOrder", "t_imageTypeOrder", "fr_layoutSpecialBooks", "fr_layoutOther", "s_colgutteroffset",
@@ -336,7 +332,7 @@ class GtkViewModel(ViewModel):
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
                   "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection", "l_colgutteroffset", "fr_hyphenation",
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "row_ToC", "c_hyphenate",
-                  "c_omitverseone", "c_glueredupwords", "c_firstParaIndent", "c_hangpoetry", "c_preventwidows", "bx_ShowTabs", 
+                  "c_omitverseone", "c_glueredupwords", "c_firstParaIndent", "c_hangpoetry", "c_preventwidows", 
                   "l_sidemarginfactor", "s_sidemarginfactor", "l_min", "s_linespacingmin", "l_max", "s_linespacingmax",
                   "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "fcb_textDirection", "l_digits", "fcb_digits",
                   "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
@@ -346,9 +342,9 @@ class GtkViewModel(ViewModel):
 
         # Resize Main UI Window appropriately
         if self.get("c_hideAdvancedSettings"):
-            self.mw.resize(710, 316)
+            self.mw.resize(800, 300)
         else:
-            self.mw.resize(730, 640)
+            self.mw.resize(800, 600)
 
     def ExperimentalFeatures(self, value):
         self.experimental = value
@@ -551,6 +547,7 @@ class GtkViewModel(ViewModel):
     def onBookListChanged(self, t_booklist, foo): # called on "focus-out-event"
         bl = self.getBooks()
         self.set('t_booklist', " ".join(bl))
+        self.updateExamineBook()
         self.updateDialogTitle()
 
     def onSaveConfig(self, btn):
@@ -677,9 +674,9 @@ class GtkViewModel(ViewModel):
         if k in _nonsensitivities.keys():
             for w in _nonsensitivities[k]:
                 self.builder.get_object(w).set_sensitive(not state)
-        if k in _visibilities.keys():
-            for w in _visibilities[k]:
-                self.builder.get_object(w).set_visible(state)
+        # if k in _visibilities.keys():
+            # for w in _visibilities[k]:
+                # self.builder.get_object(w).set_visible(state)
         if focus:
             self.builder.get_object(_sensitivities[k][0]).grab_focus()
         return state
@@ -762,6 +759,7 @@ class GtkViewModel(ViewModel):
         self.set("c_prettyIntroOutline", False)
         if status and self.get("t_booklist") == "" and self.prjid is not None:
             self.updateDialogTitle()
+            print("in onBookSelectorChange: UpdateDialogTitle")
             # pass
             # self.onChooseBooksClicked(None)
         else:
@@ -1081,28 +1079,36 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("c_prettyIntroOutline").set_active(False)
 
     def onShowLayoutTabClicked(self, btn):
-        self.sensiVisible("c_showLayoutTab")
+        pass
+        # self.sensiVisible("c_showLayoutTab")
 
     def onShowFontTabClicked(self, btn):
-        self.sensiVisible("c_showFontTab")
+        pass
+        # self.sensiVisible("c_showFontTab")
 
     def onShowBodyTabClicked(self, btn):
-        self.sensiVisible("c_showBodyTab")
+        pass
+        # self.sensiVisible("c_showBodyTab")
 
     def onShowHeadFootTabClicked(self, btn):
-        self.sensiVisible("c_showHeadFootTab")
+        pass
+        # self.sensiVisible("c_showHeadFootTab")
 
     def onShowPicturesTabClicked(self, btn):
-        self.sensiVisible("c_showPicturesTab")
+        pass
+        # self.sensiVisible("c_showPicturesTab")
 
     def onShowAdvancedTabClicked(self, btn):
-        self.sensiVisible("c_showAdvancedTab")
+        pass
+        # self.sensiVisible("c_showAdvancedTab")
 
     def onShowViewerTabClicked(self, btn):
-        self.sensiVisible("c_showViewerTab")
+        pass
+        # self.sensiVisible("c_showViewerTab")
 
     def onShowDiglotBorderTabClicked(self, btn):
-        self.sensiVisible("c_showDiglotBorderTab")
+        pass
+        # self.sensiVisible("c_showDiglotBorderTab")
 
     def onKeepTemporaryFilesClicked(self, c_keepTemporaryFiles):
         dir = self.working_dir
@@ -1218,11 +1224,14 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("c_multiplebooks").set_active(not booklist == [])
         self.set("c_prettyIntroOutline", False)
         self.updateDialogTitle()
-        bks = self.getBooks()
-        if len(bks) > 1:
-            self.builder.get_object("ecb_examineBook").set_active_id(bks[0])
+        self.updateExamineBook()
         dialog.set_keep_above(False)
         dialog.hide()
+        
+    def updateExamineBook(self):    
+        bks = self.getBooks()
+        if len(bks):
+            self.builder.get_object("ecb_examineBook").set_active_id(bks[0])
 
     def toggleBooks(self,start,end):
         bp = self.ptsettings['BooksPresent']
@@ -1289,7 +1298,8 @@ class GtkViewModel(ViewModel):
             self.chapto = self.builder.get_object("ls_chapto")
             self._setchap(self.chapto, 1, self.chs)
             self.fcb_chapto.set_active_id(str(self.chs))
-            self.builder.get_object("ecb_examineBook").set_active_id(self.bk)
+            # self.builder.get_object("ecb_examineBook").set_active_id(self.bk)
+            self.updateExamineBook()
         self.updateDialogTitle()
 
     def onChapFrmChg(self, cb_chapfrom):
