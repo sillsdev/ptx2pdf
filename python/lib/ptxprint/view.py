@@ -501,6 +501,7 @@ class ViewModel:
         #    self.fixed_wd = False
 
     def generateNProcPicLists(self, bk, outdir, processor, priority="Both", sfmonly=False, isTemp=False):
+        print("In generateNProcPicLists: bk=", bk)
         picposns = { "L": {"col":  ("tl", "bl"),             "span": ("t")},
                      "R": {"col":  ("tr", "br"),             "span": ("b")},
                      "":  {"col":  ("tl", "tr", "bl", "br"), "span": ("t", "b")}}
@@ -537,7 +538,9 @@ class ViewModel:
             picinfos.update(diglotPics)
         # Copy them
         missingPics = []
+        print("picinfos", picinfos)
         for k, v in picinfos.items():
+            print(k,v)
             nB = newBase(v['src'])
             if srcfkey not in v:
                 missingPics.append(v['src'])
@@ -545,6 +548,7 @@ class ViewModel:
             fpath = v[srcfkey]
             origExt = os.path.splitext(fpath)[1]
             v['dest file'] = processor(v, v[srcfkey], nB+origExt.lower())
+            print(v, v[srcfkey], nB+origExt.lower())
 
         missingPicList = []
         extOrder = self.getExtOrder()
@@ -642,9 +646,10 @@ class ViewModel:
         return vals
 
     def getFigures(self, bk, suffix="", sfmonly=False, media=None):
+        print("In getFigures", bk)
         res = {}
         fname = self.getBookFilename(bk, self.prjid)
-        usepiclist = not sfmonly and self.get("c_usePicList") and bk not in TexModel._peripheralBooks
+        usepiclist = not sfmonly and self.get("c_usePicList") # and bk not in TexModel._peripheralBooks
         if usepiclist:
             plfname = self.getDraftFilename(bk)
             piclstfname = os.path.join(self.configPath(cfgname=self.configName()), "PicLists", plfname)
@@ -654,6 +659,7 @@ class ViewModel:
                 fname = piclstfname
         if not usepiclist:      # since possibly set false in above if
             fname = os.path.join(self.settings_dir, self.prjid, fname)
+            print("fname", fname)
         if usepiclist:
             with universalopen(fname) as inf:
                 for l in (x.strip() for x in inf.readlines()):
