@@ -214,11 +214,23 @@ The following parameters are used to specify the information to include in the r
 
 </a>
 
+### <a name="ptx2pdf-MacroSetupParameters-EvenHeader"></a><a name="ptx2pdf-MacroSetupParameters-TitlepageHeader">Front / back matter Header</a>
+
+<a name="ptx2pdf-MacroSetupParameters-NoVpage">
+
+For a page that has neither verses nor titles, e.g. glossary.
+*   \def\RHnoVoddleft{```\empty```}
+*   \def\RHnoVoddcenter{```\empty```}
+*   \def\RHnoVoddright{```\pagenumber```}
+*   \def\RHnoVevenleft{```\pagenumber```}
+*   \def\RHnoVevencenter{```\empty```}
+*   \def\RHnoVevenright{```\empty```}
+
 ### <a name="ptx2pdf-MacroSetupParameters-TitlepageHeader"></a><a name="ptx2pdf-MacroSetupParameters-Odd,Even,andTitlepageFooter">Odd, Even, and Title-page Footer</a>
 
 <a name="ptx2pdf-MacroSetupParameters-Odd,Even,andTitlepageFooter">
 
-Nine similar \def commands are available, beginning with \RF instead of \RH.
+Fifteen similar \def commands are available, beginning with \RF instead of \RH.
 
 **Header/Footer Content Parameters**
 
@@ -227,6 +239,8 @@ Nine similar \def commands are available, beginning with \RF instead of \RH.
 *   \lastref – reference of the last verse on the page
 *   \pagenumber – the page number
 *   \empty – print nothing in this position
+*   \usdate, \ukdate, \isodate - dates in various formats. (See FAQ for more examples)
+*   \hrsmins - the time of day 
 
 </a>
 

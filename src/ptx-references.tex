@@ -246,6 +246,15 @@
 \def\rangerefR{\bgroup\ifRTL\beginR\fi\diglotLfalse\s@tfont{h}\r@ngerefs{\topRmark}{\botRmark}\ifRTL\endR\fi\egroup}
 
 \let\pagenumber=\folio
+\def\pagenumberL{\bgroup\ifRTL\beginR\fi\diglotLtrue\s@tfont{h}\folio\ifRTL\endR\fi\egroup}
+\def\pagenumberR{\bgroup\ifRTL\beginR\fi\diglotLfalse\s@tfont{h}\folio\ifRTL\endR\fi\egroup}
+
+\def\ROMANnumeral#1{\expandafter\uppercase\expandafter{\romannumeral#1}}
+\def\usdate{\number\month/\number\day/\number\year}
+\def\ukdate{\number\day/\number\month/\number\year}
+\def\isodate{\number\year-\ifnum\month<10 0\fi\number\month-\ifnum\day<10 0\fi\number\day}
+
+
 
 %
 % default settings of the running header components

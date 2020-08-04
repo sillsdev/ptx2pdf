@@ -1,4 +1,4 @@
-# Diglot options and settings
+# Diglot options and settings (XeTeX macros)
 
 ## General overview
 The diglot options allow for typesetting two versions in parallel, aligned by verse or paragraph. If that makes no sense, have a look at the samaple below, where the right hand column's paragraphs are one line shorter, but still the paragraphs in the two columns line up. To do this the two peices of text require an extra pre-processing step and then a number of extra configuration controls to make things really beautiful.
@@ -64,7 +64,7 @@ If a left column footnote steals space from the right column also, and vise-vers
 - ```\useLeftMarkstrue```
 - ```\useRightMarkstrue```
 When you've got just one page and two texts, and one text goes until verse 15  and the other manages to fit verse 16 and 17 on as well, what do you put in the header 15 or 17?
- Intuitively, we'd probably expect the first 'mark'  [i.e. chapter:verse] on the page to be from the left-hand column, and the last  from the right, but this possibly becomes confused with ```\nolefttext```, and even with short sections where the first verse set is actually on the right.  These two options control whether marks from the left-hand column and right-hand column are used in the standard heading macros (```\rangeref```, ```\firstref``` and ```\lastref```). Setting both to true might *normally* work, but sometimes it won't; it is best to pick one side to populate the headers, or use the side-specific variants below. 
+ Intuitively, we'd probably expect the first 'mark'  [i.e. chapter:verse] on the page to be from the left-hand column, and the last  from the right, but this possibly becomes confused with ```\nolefttext```, and even with short sections where the first verse set is actually on the right.  These two options control whether marks from the left-hand column and right-hand column are used in the standard heading macros (```\rangeref```, ```\firstref``` and ```\lastref```). Setting both to true might *normally* work, but sometimes it won't; it is best to pick one side to populate the headers, or use the side-specific variants below. The use of side-specific variants is critical for font-switching to work correctly.
 
 - ```\LeftMarkstrue```
 This used to be the only control that affected what went into the header (defaulting to true). It is now a short-hand for \useLeftMarkstrue\useRightMarksfalse.

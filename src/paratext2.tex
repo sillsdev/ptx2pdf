@@ -65,13 +65,12 @@
   \ifnum\month<10 0\fi \number\month.%
   \ifnum\day<10 0\fi \number\day\space :: }%
 \count255=\time \divide\count255 by 60
-\edef\timestamp{\timestamp
-  \ifnum\count255<10 0\fi \number\count255:}%
+\edef\hrsmins{\ifnum\count255<10 0\fi \number\count255:}%
 \multiply\count255 by 60 \advance\count255 by -\time
 \count255=-\count255
-\edef\timestamp{\timestamp
+\edef\hrsmins{\hrsmins
   \ifnum\count255<10 0\fi \number\count255}%
-
+\edef\timestamp{\timestamp \hrsmins}
 \input ptx-diglot.tex
 \input ptx-tracing.tex
 \input ptx-para-style.tex

@@ -301,3 +301,65 @@ from its anchor?
 
 In some error situations, the picture will not be on the same page as the anchor in a diglot. This is normally because trying to do that would have made the page too big. It is usually accompanied with other errors and possibly the page overflowing.
 
+
+## Headers and footers
+
+###Can I have Roman numerals for preface material and normal (arabic) numerals for the scripture text?
+Certainly!
+In the .tex file, before you include any front-matter, include:
+```
+\pageno=-1
+```
+And before you start with the scripture text, include:
+```
+\pageno=1
+```
+
+###What controls are there (from TeX) over the header and footer? 
+
+There are a series of definable macros that the TeX macros pick from to build the header and footer. These have 
+the form ```\def\RHoddcenter{value}```,  *value* may contain either text, other macros (normally the header/footer macros such as ```\date``` or ```\pagenumber```), or a combination of both.
+
+The name describes the vertical position, the page-type and the position.  The two vertical positions on the page are: RH (running header) and RF (running footer).
+The types of pages are: 
+- title - A page containing the title of a book
+- odd, even - a page containing normal biblical text (critically, numbered verses), with odd and even page numbers respectively.
+- noVodd, noVeven - a page that is neither a title page nor a page with numbered verses, e.g. introductions and glossary pages.
+
+The  three horizontal postions are (left, center, right).
+
+Thus there are *thirty* possible locations that may be defined.
+
+### What are the most common header and footer macros?
+
+You probably need to use at least two of these:
+ - ```\pagenumber``` Page number (in standard -arabic- numerals if ```\pageno``` is positive, in lower-case roman numerals if negative).
+ - ```\pagenumberL``` Page number (in standard -arabic- numerals if ```\pageno``` is positive, in lower-case roman numerals if negative), using font from left diglot column.
+ - ```\pagenumberR``` Page number (in standard -arabic- numerals if ```\pageno``` is positive, in lower-case roman numerals if negative), using font from right diglot column.
+
+ - ```\firstref``` first verse on the page (e.g. Genesis 1:1)
+ - ```\firstrefL``` first verse on the page from the left column of a diglot (e.g. Genesis 1:1)
+ - ```\firstrefR``` first verse on the page from the right column of a diglot (e.g. Genesis 1:1)
+
+ - ```\lastref``` last verse on the page (e.g. John 3:17)
+ - ```\lastrefL``` last verse on the page from the left column of a diglot (e.g. John 3:17)
+ - ```\lastrefR``` last verse on the page from the right column of a diglot (e.g. John 3:17)
+
+ - ```\rangeref``` The range of verses on the page (E.g. Genesis 1:1 - 2:2)
+ - ```\rangerefL``` The range of verses on the page from the left column of a diglot (E.g. Genesis 1:1 - 2:2)
+ - ```\rangerefR``` The range of verses on the page from the right column of a diglot (E.g. Genesis 1:1 - 2:2)
+
+Note that the diglot versions above include side-specific font-switching code appropriate for the data they are presenting.
+The not-diglot ```\firstref```,```\rangeref``` and  ```\lastref```  may include
+references from either side (or both for ```\rangeref```) and should not be
+used in a diglot publication if the two sides use different fonts.
+ 
+### I need to put a date / timestamp in the header / footer
+ - ```\hrsmins``` Time that the XeTeX run started (e.g. 17:35)
+ - ```\usdate``` Ambiguous U.S.-style date (month/day/year)  e.g. "12/24/2020"
+ - ```\ukdate```  Ambiguous U.K.-style date (day/month/year) e.g. "24/12/2020"
+ - ```\isodate``` Unambiguous ISO-style date (year-month-day) e.g. "2020-04-01"
+ - ```\timestamp``` Time code as displayed when  cropmarks are in use. e.g. "2020.12.24 :: 17:37"
+ - ```\number\year.\ROMANnumeral\month.\number\day ``` (Hungarian-style date, upper case roman numerals for month, e.g. 2020.XII.24)
+ - ```Draft: \number\day/\romannumeral\month/\number\year. ``` (Another unusual date format, with prefix "Draft: 24/xii/2020")
+
