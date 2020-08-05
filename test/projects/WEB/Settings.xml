@@ -1,0 +1,34 @@
+﻿<ScriptureText>
+  <StyleSheet>usfm.sty</StyleSheet>
+  <BooksPresent>111111111111111111111111111111111111111111111111111111111111111111111111000011111111000000000000000000000000100100000000000</BooksPresent>
+  <Versification>4</Versification>
+  <LanguageIsoCode>en:::</LanguageIsoCode>
+  <Language>English</Language>
+  <MinParatextVersion>8.0.63.1</MinParatextVersion>
+  <FullName>Eng-WEB (MP's local)</FullName>
+  <Encoding>65001</Encoding>
+  <Editable>T</Editable>
+  <Copyright>The World English Bible is in the Public Domain. That means that it is not copyrighted. However, "World English Bible" is a Trademark of eBible.org.
+
+You may copy, publish, proclaim, distribute, redistribute, sell, give away, quote, memorize, read publicly, broadcast, transmit, share, back up, post on the Internet, print, reproduce, preach, teach from, and use the World English Bible as much as you want, and others may also do so. All we ask is that if you CHANGE the actual text of the World English Bible in any way, you not call the result the World English Bible any more. This is to avoid confusion, not to limit your freedom. The Holy Bible is God's Word. It belongs to God. He gave it to us freely, and we who have worked on this translation freely give it to you by dedicating it to the Public Domain.</Copyright>
+  <NormalizationForm>NFC</NormalizationForm>
+  <Name>WEBlocal</Name>
+  <Guid>9dc0d53e8696ef25c2bf511fdd38b95c6709e518</Guid>
+  <AssociatedLexicalProject />
+  <FileNameBookNameForm>41MAT</FileNameBookNameForm>
+  <FileNamePrePart />
+  <FileNamePostPart>WEBlocal.SFM</FileNamePostPart>
+  <BiblicalTermsListSetting>Major::BiblicalTerms.xml</BiblicalTermsListSetting>
+  <MatchBasedOnStems>F</MatchBasedOnStems>
+  <AllowReadAccess>F</AllowReadAccess>
+  <AllowSharingWithSLDR>F</AllowSharingWithSLDR>
+  <Visibility>Public</Visibility>
+  <TranslationInfo>Standard::</TranslationInfo>
+  <EncodingConverter />
+  <InitialImportBooksDirectory>F:\Downloads\ENG-WEB</InitialImportBooksDirectory>
+  <DefaultFont>Maiandra GD</DefaultFont>
+  <DefaultFontSize>12</DefaultFontSize>
+  <FontFeatures />
+  <HtmlLanguage />
+  <Naming PrePart="" PostPart="WEBlocal.SFM" BookNameForm="41MAT" />
+</ScriptureText>
