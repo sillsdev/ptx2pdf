@@ -481,6 +481,8 @@ class GtkViewModel(ViewModel):
 
     def onOK(self, btn):
         jobs = self.getBooks()
+        if not len(jobs) or jobs[0] == '':
+            return
         # If the viewer/editor is open on an Editable tab, then "autosave" contents
         if self.builder.get_object("nbk_Main").get_current_page() == 10:
             pgnum = self.builder.get_object("nbk_Viewer").get_current_page()
@@ -496,7 +498,6 @@ class GtkViewModel(ViewModel):
             cfgname = ""
         else:
             cfgname = "-" + cfgname
-        print(self.working_dir)
         if not os.path.exists(self.working_dir):
             os.makedirs(self.working_dir)
         if len(jobs) > 1:
@@ -759,7 +760,6 @@ class GtkViewModel(ViewModel):
         self.set("c_prettyIntroOutline", False)
         if status and self.get("t_booklist") == "" and self.prjid is not None:
             self.updateDialogTitle()
-            print("in onBookSelectorChange: UpdateDialogTitle")
             # pass
             # self.onChooseBooksClicked(None)
         else:

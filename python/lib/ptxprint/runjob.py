@@ -10,6 +10,7 @@ from ptxprint.font import getfontcache
 from ptxprint.usfmerge import usfmerge
 
 _errmsghelp = {
+"! Paratext stylesheet":                 "Check if the stylesheet specified on the Advanced tab exists.\n",
 "! Unable to load picture":              "Check if picture file is located in 'Figures', 'local\\figures' or a\n" +\
                                          "specified folder. Also try the option 'Omit Missing Pictures'\n",
 "! Unable to load picture or PDF file":  "Check if image/PDF file is available on the system.\n" +
