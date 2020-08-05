@@ -1,0 +1,34 @@
+﻿<ScriptureText>
+  <StyleSheet>usfm.sty</StyleSheet>
+  <BooksPresent>111111111111111111111111111111111111111111111111111111111111111111111111000011111111000000000000000100000000100100000000000</BooksPresent>
+  <Versification>4</Versification>
+  <LanguageIsoCode>en:::</LanguageIsoCode>
+  <Language>English</Language>
+  <MinParatextVersion>8.0.63.1</MinParatextVersion>
+  <FullName>WEB with notes</FullName>
+  <Encoding>65001</Encoding>
+  <Editable>T</Editable>
+  <Copyright>	</Copyright>
+  <NormalizationForm>NFC</NormalizationForm>
+  <Name>WEBorig</Name>
+  <Guid>f2fa3035ed38dbe51f52e599c12da64d1f073a10</Guid>
+  <DefaultFont>Charis SIL</DefaultFont>
+  <DefaultFontSize>12</DefaultFontSize>
+  <FontFeatures />
+  <HtmlLanguage />
+  <AssociatedLexicalProject />
+  <FileNameBookNameForm>41MAT</FileNameBookNameForm>
+  <FileNamePrePart />
+  <FileNamePostPart>WEBorig.SFM</FileNamePostPart>
+  <BiblicalTermsListSetting>Major::BiblicalTerms.xml</BiblicalTermsListSetting>
+  <MatchBasedOnStems>F</MatchBasedOnStems>
+  <AllowReadAccess>F</AllowReadAccess>
+  <AllowSharingWithSLDR>F</AllowSharingWithSLDR>
+  <Visibility>Public</Visibility>
+  <TranslationInfo>Standard::</TranslationInfo>
+  <EncodingConverter />
+  <UsfmVersion />
+  <ParallelPassagesBooks>000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</ParallelPassagesBooks>
+  <InitialImportBooksDirectory>D:\Downloads\eng-web_usfm</InitialImportBooksDirectory>
+  <Naming PrePart="" PostPart="WEBorig.SFM" BookNameForm="41MAT" />
+</ScriptureText>
