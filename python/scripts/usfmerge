@@ -1,7 +1,6 @@
 #!/usr/bin/python3
-import sys, os
 
-import sys
+import sys, os, argparse
 try:
     from ptxprint.usfmerge import usfmerge
 except ImportError:
@@ -14,6 +13,7 @@ parser.add_argument("infileb", help="Secondary input file")
 parser.add_argument("-o","--outfile",help="output file")
 parser.add_argument("-s","--stylesheet",default=[],action="append",help="add another stylesheet")
 parser.add_argument("--fsecondary",action="store_true",help="Use fig elements from secondary not primary source")
+parser.add_argument("--debug",action="store_true",help="Print out debug statements")
 args = parser.parse_args()
 
-usfmerge(args.infilea, args.infileb, args.outfile, stylesheets=args.stylesheet, fsecondary=args.fsecondary)
+usfmerge(args.infilea, args.infileb, args.outfile, stylesheets=args.stylesheet, fsecondary=args.fsecondary, debug=args.debug)

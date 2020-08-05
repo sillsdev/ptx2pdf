@@ -909,7 +909,7 @@ class TexModel:
         # Change double-spaces to singles
         self.localChanges.append((None, regex.compile(r"  ", flags=regex.M), r" ")) 
         # Escape special codes % and $ that could be in the text itself
-        self.localChanges.append((None, regex.compile(r"([%$])", flags=regex.M), r"\\1")) 
+        self.localChanges.append((None, regex.compile(r"([%$])", flags=regex.M), r"\\\1")) 
 
         if self.printer is not None and self.printer.get("c_tracing"):
             print("List of Local Changes:----------------------------------------------------------")

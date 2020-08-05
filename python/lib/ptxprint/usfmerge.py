@@ -5,6 +5,8 @@ from ptxprint.sfm import usfm
 from ptxprint.sfm import style
 import argparse, difflib, sys
 
+debugPrint = False
+
 class Chunk(list):
     def __init__(self, *a, chap=0, verse=0, end=0, pnum=0):
         super(Chunk, self).__init__(*a)
@@ -146,7 +148,8 @@ def alignChunks(pchunks, schunks, pkeys, skeys, filt=None, fns=[], depth=0):
     diff = difflib.SequenceMatcher(None, pk, sk)
     for op in diff.get_opcodes():
         (action, ab, ae, bb, be) = op
-        #print("    "*depth, op, pk[ab:ae], sk[bb:be])
+        if debugPrint:
+            print("    "*depth, op, pk[ab:ae], sk[bb:be])
         if action == "equal":
             pairs.extend([[pchunks[ab+i], schunks[bb+i]] for i in range(ae-ab)])
         elif action == "delete":
@@ -154,7 +157,7 @@ def alignChunks(pchunks, schunks, pkeys, skeys, filt=None, fns=[], depth=0):
         elif action == "insert":
             pairs.extend([["", schunks[bb+i]] for i in range(be-bb)])
         elif action == "replace":
-            if len(fns):
+            if len(fns):        # chain sub-alignment
                 pairs.extend(fns[0](pchunks[ab:ae], schunks[bb:be], pkeys[ab:ae], skeys[bb:be], fns=fns[1:], depth=depth+1))
             else:
                 for i in range(ae-ab):
@@ -162,6 +165,7 @@ def alignChunks(pchunks, schunks, pkeys, skeys, filt=None, fns=[], depth=0):
     return pairs
 
 def alignFilter(km):
+    """ Returns an alignment function that calls the km filter on each key """
     def g(pchunks, schunks, pkeys, skeys, fns=[], depth=0):
         return alignChunks(pchunks, schunks, pkeys, skeys, filt=km, fns=fns, depth=depth)
     return g
@@ -173,7 +177,8 @@ def pairchunks(pchunks, schunks, pkeys, skeys, starti, i, startj, j, fns=[], dep
     rkeys = skeys[startj:j] if j > startj else []
     if not len(lchunks) and not len(rchunks):
         return []  
-    #print("    "*depth, ("group", starti, i, startj, j), lkeys, rkeys)
+    if debugPrint:
+        print("    "*depth, ("group", starti, i, startj, j), lkeys, rkeys)
     if len(fns):
         return fns[0](lchunks, rchunks, lkeys, rkeys, fns=fns[1:], depth=depth+1)
     else:
@@ -195,7 +200,8 @@ def groupChunks(pchunks, schunks, pkeys, skeys, texttype, fns=[], depth=0):
         (mi, ci, vi, ei, pi) = pkeys[i].split("_")
         (mj, cj, vj, ej, pj) = skeys[j].split("_")
         if (texttype(mi) != currt and currt is not None) or (currt is None and texttype(mi) != texttype(mj)):
-            jt = j
+            # scan for first skeys[j+1:] that matches type with pkeys[i]
+            jt = j + 1
             while jt < maxskey:
                 (mjt, cjt, vjt, ejt, pjt) = skeys[jt].split("_")
                 if texttype(mi) == texttype(mjt):
@@ -205,7 +211,8 @@ def groupChunks(pchunks, schunks, pkeys, skeys, texttype, fns=[], depth=0):
             currt = texttype(mi)
             boundarymerge = True
         elif texttype(mj) != currt and currt is not None:
-            it = i
+            # scan for first pkeys[i+1:] that matches type with skeys[k]
+            it = i + 1
             while it < maxpkey:
                 (mit, cit, cit, eit, pit) = pkeys[it].split("_")
                 if texttype(mj) == texttype(mit):
@@ -215,6 +222,7 @@ def groupChunks(pchunks, schunks, pkeys, skeys, texttype, fns=[], depth=0):
             currt = texttype(mj)
             boundarymerge = True
         elif int(ei) != int(ej):
+            # scan forward until both end verses are the same so long as they have the same texttype
             currm = max(int(ei), int(ej))
             while j < maxskey and i < maxpkey:
                 if int(ej) < currm and j < maxskey-1:
@@ -255,11 +263,14 @@ def groupChunks(pchunks, schunks, pkeys, skeys, texttype, fns=[], depth=0):
     return pairs
 
 def ptypekey(s, styles):
+    """ Create a key that replaces a marker by its TextType """
     p = s[:s.find("_")]
     t = styles.get(p, {'TextType': 'other'}).get('TextType').lower()
     return t + s[s.find("_"):]
 
-def usfmerge(infilea, infileb, outfile, stylesheets=[], fsecondary=False):
+def usfmerge(infilea, infileb, outfile, stylesheets=[], fsecondary=False, debug=False):
+    global debugPrint
+    debugPrint = debug
     stylesheet=usfm._load_cached_stylesheet('usfm.sty')
     for s in stylesheets:
         stylesheet = style.parse(open(s), base=stylesheet)

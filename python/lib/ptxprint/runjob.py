@@ -406,6 +406,8 @@ class RunJob:
         os.putenv('TEXINPUTS', pathjoin(texinputs))
         # print("TEXINPUTS=",os.getenv('TEXINPUTS'))
         miscfonts = getfontcache().fontpaths
+        miscfonts.append(os.path.join(ptxmacrospath, "mappings"))
+        miscfonts.append(os.path.join(prjdir, "shared", "mappings"))
         if len(miscfonts):
             os.putenv("MISCFONTS", pathjoin(miscfonts))
         while numruns > 0:

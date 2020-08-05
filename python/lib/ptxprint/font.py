@@ -86,6 +86,15 @@ class TTFontCache:
                 f.usepath = True
                 self.cache.setdefault(f.family, {})[f.style] = fpath
 
+    def removeFontDir(self, path):
+        self.fontpaths.remove(path)
+        for f, c in self.cache.items():
+            for k, v in c.items():
+                if "/" not in os.path.relpath(v, path).replace("\\", "/"):
+                    del c[k]
+            if not len(c):
+                del self.cache[f]
+
     def fill_liststore(self, ls):
         ls.clear()
         for k, v in sorted(self.cache.items()):
@@ -148,6 +157,11 @@ def cachepath(p, nofclist=False):
     if fontcache is None:
         fontcache = TTFontCache(nofclist=nofclist)
     fontcache.addFontDir(p)
+
+def cacheremovepath(p):
+    global fontcache
+    if fontcache is not None:
+        fontcache.removeFontDir(p)
 
 def fccache():
     global fontcache

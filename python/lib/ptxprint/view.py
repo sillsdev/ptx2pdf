@@ -273,6 +273,9 @@ class ViewModel:
                 self.updateSavedConfigList()
                 self.set("t_savedConfig", "")
                 self.set("t_configNotes", "")
+                fdir = os.path.join(self.settings_dir, currprj, "shared", "fonts")
+                if os.path.exists(fdir):
+                    cacheremovepath(fdir)
             self.ptsettings = None
             self.prjid = self.get("fcb_project") if prjid is None else prjid
             self.configId = None
@@ -283,7 +286,7 @@ class ViewModel:
                 return False
             if not self.fixed_wd:
                 self.working_dir = os.path.join(self.settings_dir, self.prjid, 'PrintDraft')
-            fdir = os.path.join(self.settings_dir, self.prjid, 'Fonts')
+            fdir = os.path.join(self.settings_dir, self.prjid, 'shared', 'fonts')
             if os.path.exists(fdir):
                 cachepath(fdir)
             readConfig = True
@@ -1038,7 +1041,7 @@ class ViewModel:
                 font_info = self.get(v[0])
                 f = TTFont(*font_info)
                 fname = os.path.basename(f.filename)
-                res[f.filename] = "Fonts/"+fname
+                res[f.filename] = "shared/fonts/"+fname
 
         # config files
         for t, a in sfiles.items():
