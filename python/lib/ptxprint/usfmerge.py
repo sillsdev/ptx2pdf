@@ -149,7 +149,7 @@ def alignChunks(pchunks, schunks, pkeys, skeys, filt=None, fns=[], depth=0):
     for op in diff.get_opcodes():
         (action, ab, ae, bb, be) = op
         if debugPrint:
-            print("    "*depth, op, pk[ab:ae], sk[bb:be])
+            print("    "*depth, op, debstr(pk[ab:ae]), debstr(sk[bb:be]))
         if action == "equal":
             pairs.extend([[pchunks[ab+i], schunks[bb+i]] for i in range(ae-ab)])
         elif action == "delete":
@@ -178,7 +178,7 @@ def pairchunks(pchunks, schunks, pkeys, skeys, starti, i, startj, j, fns=[], dep
     if not len(lchunks) and not len(rchunks):
         return []  
     if debugPrint:
-        print("    "*depth, ("group", starti, i, startj, j), lkeys, rkeys)
+        print("    "*depth, ("group", starti, i, startj, j), debstr(lkeys), debstr(rkeys))
     if len(fns):
         return fns[0](lchunks, rchunks, lkeys, rkeys, fns=fns[1:], depth=depth+1)
     else:
@@ -201,7 +201,7 @@ def groupChunks(pchunks, schunks, pkeys, skeys, texttype, fns=[], depth=0):
         (mj, cj, vj, ej, pj) = skeys[j].split("_")
         if (texttype(mi) != currt and currt is not None) or (currt is None and texttype(mi) != texttype(mj)):
             # scan for first skeys[j+1:] that matches type with pkeys[i]
-            jt = j + 1
+            jt = j
             while jt < maxskey:
                 (mjt, cjt, vjt, ejt, pjt) = skeys[jt].split("_")
                 if texttype(mi) == texttype(mjt):
@@ -212,7 +212,7 @@ def groupChunks(pchunks, schunks, pkeys, skeys, texttype, fns=[], depth=0):
             boundarymerge = True
         elif texttype(mj) != currt and currt is not None:
             # scan for first pkeys[i+1:] that matches type with skeys[k]
-            it = i + 1
+            it = i
             while it < maxpkey:
                 (mit, cit, cit, eit, pit) = pkeys[it].split("_")
                 if texttype(mj) == texttype(mit):
@@ -269,14 +269,20 @@ def ptypekey(s, styles):
     return t + s[s.find("_"):]
 
 def usfmerge(infilea, infileb, outfile, stylesheets=[], fsecondary=False, debug=False):
-    global debugPrint
+    global debugPrint, debstr
     debugPrint = debug
     stylesheet=usfm._load_cached_stylesheet('usfm.sty')
     for s in stylesheets:
         stylesheet = style.parse(open(s), base=stylesheet)
 
     def texttype(m):
-        return stylesheet.get(m, {'TextType': 'other'}).get('TextType').lower()
+        res = stylesheet.get(m, {'TextType': 'other'}).get('TextType').lower()
+        if res == 'chapternumber':
+            res = 'versetext'
+        return res
+
+    debstr = lambda s: s
+    #debstr = lambda s: ["{}({})".format(k, texttype(k[:k.find("_")])) for k in s]
 
     def myGroupChunks(*a, **kw):
         return groupChunks(*a, texttype, **kw)
