@@ -490,7 +490,7 @@
   \ifnum\tmppenalty=10000 %
     \tmppenalty=0 %
   \fi
-  \trace{H}{digloleftTrial: b:\botmark, f:\firstmark, tr:\topRmark, br:\botRmark}
+  \trace{H}{diglotleftTrial: b:\botmark, f:\firstmark, tr:\topRmark, br:\botRmark}
   \edef\t@st{\botmark}%
   \ifx\t@st\empty%
     \trace{H}{Bottom mark was empty}%
@@ -498,15 +498,28 @@
     \ifx\topLmark\empty
       \edef\t@st{\firstmark}%
       \ifx\t@st\oldRmark\else %Dont use \firstmark if it's been used by Right!
-        \xdef\topLmark{\firstmark}% remember first, if not already set
+        \ifx\t@st\topmark\else % or it's a carry-over at all.
+          \xdef\topLmark{\firstmark}% remember first, if not already set
+        \fi
       \fi
     \fi
     \xdef\botLmark{\botmark}%
     \ifuseLeftMarks%
       %\ifm@rksonpage
-        \edef\t@st{\p@gefirstmark}%
-        \ifx\t@st\empty%
-          \xdef\p@gefirstmark{\firstmark}%
+      \edef\t@st{\p@gefirstmark}%
+      \ifx\t@st\empty%
+        \edef\t@st{\firstmark}%
+        \ifx\t@st\topmark\else % it's a carry-over. Ignore.
+          \ifuseRightMarks % Don't care which sort of mark it is in this case.
+            \trace{H}{Setting (default) pagefirstmark to \firstmark}%
+            \xdef\p@gefirstmark{\firstmark}%
+          \else 
+            \ifx\t@st\oldRmark\else %Dont use \firstmark if it's been used by Right!
+              \trace{H}{Setting (default) pagefirstmark to \firstmark}%
+              \xdef\p@gefirstmark{\firstmark}%
+            \fi
+          \fi
+        \fi
       \fi%\fi%
       \trace{H}{oldRmark: \oldRmark, firstmark: \firstmark, botmark: \botmark}
       \edef\t@st{\firstmark}
@@ -514,9 +527,9 @@
         \trace{H}{Setting (default) bottom mark to \botmark, may revise later}%
         \xdef\b@xbotmark{\botmark}%
       \fi% remember first, if not already set
-    \fi% botmark empty or not
-    \let\firstmark=\empty
-  \fi% LeftMarks
+    \fi% LeftMarks
+  \fi% botmark empty or not
+  \let\firstmark=\empty
 
   %\TRshipout{\vbox{\hbox{\the\diglotTRcount diglotLeftTrial:}\copy\LeftBox}}%
   \trace{D}{Box=\the\ht\LeftBox+\the\dp\LeftBox}%
@@ -804,7 +817,11 @@
   % tempoarily split and see if there are marks in this text
   \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
    \edef\t@mp{\splitbotmark}
-   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
+   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found marks \splitfirstmark, \splitbotmark}
+     \if\topRmark\empty\else\edef\topRmark{\splitfirstmark}\fi
+     \ifuseRightMarks\ifx\p@gefirstmark\empty
+        \edef\p@gefirstmark{\splitfirstmark}\fi\fi
+   \fi
  \ifnum\outputpenalty=10000 % Nothing wrong with breaking here
    \tmppenalty=0 % and leave Rchunkpenalty alone
  \else%
@@ -857,6 +874,7 @@
      \xdef\b@xbotmark{\botmark}%
      \edef\t@st{\p@gefirstmark}%
      \ifx\t@st\empty
+       \trace{H}{Setting (default) first mark to \firstmark}%
        \xdef\p@gefirstmark{\firstmark}% remember first, if not already set
      \fi
    \fi% useRightMarks
@@ -1155,7 +1173,8 @@
       {\setbox 0=\copy\partialR% Split all of what remains and use that for the next page
       \setbox 1=\vsplit 0 to \ht\partialR
       \ifuseRightMarks
-        \gdef\nextp@gefirstmark{\splitfirstmark}%
+        \trace{H}{Setting (default) first mark to \splitfirstmark}%
+        \xdef\nextp@gefirstmark{\splitfirstmark}%
       \fi
       }%
       \trace{D}{\the\ht\partialR+\the\dp\partialR left over in partialR after split}%
@@ -1524,8 +1543,8 @@
         \ifx\t@st\empty\else
           \xdef\botLmark{\botmark}%
           \ifuseLeftMarks
-            \gdef\nextp@gefirstmark{\splitfirstmark}%
-            \trace{H}{Setting bottom mark to \splitbotmark}%
+            \trace{H}{Setting bottom mark to \splitbotmark, pagefirstmark to \splitfirstmark}%
+            \xdef\p@gefirstmark{\splitfirstmark}%
             \xdef\p@gebotmark{\splitbotmark}%
           \fi
         \fi
@@ -1546,7 +1565,8 @@
           \xdef\topLmark{\splitfirstmark}
           \ifuseLeftMarks
             \ifx\p@gefirstmark\empty%
-              \xdef\p@gefirstmark{\firstmark}%
+              \trace{H}{Setting pagefirstmark to \splitfirstmark}%
+              \xdef\p@gefirstmark{\splitfirstmark}%
             \fi
           \fi
         \else
@@ -1725,6 +1745,7 @@
     \trace{f}{Merged notes}%
   \fi%
   \traceNum{d}{Forming page}%
+  \trace{D}{PFM:\p@gefirstmark\space PBM:\p@gebotmark}%
   %\showbox\galley
   %\showthe\everyhbox
   %\showthe\leftskip
@@ -1792,7 +1813,7 @@
      \unvbox2 % defined by m@kenotebox
    \fi%
   }%
-  \trace{D}{PFM:\p@gefirstmark PBM:\p@gebotmark}%
+  \trace{D}{PFM:\p@gefirstmark\space PBM:\p@gebotmark\space NPFM:\nextp@gefirstmark}%
   \global\adjustp@ge=0pt
   \resetvsize%
   \global\availhtR=\textheight%
@@ -1804,6 +1825,7 @@
   %\ifm@rksonpage
     \xdef\p@gefirstmark{\nextp@gefirstmark}%
   %\fi
+  \let\firstmark=\empty
   \xdef\nextp@gefirstmark{}%
   \edef\botmark{\p@gebotmark}%
   \let\firstmark\empty
