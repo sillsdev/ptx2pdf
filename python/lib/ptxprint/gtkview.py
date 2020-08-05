@@ -486,7 +486,9 @@ class GtkViewModel(ViewModel):
         # If the viewer/editor is open on an Editable tab, then "autosave" contents
         if self.builder.get_object("nbk_Main").get_current_page() == 10:
             pgnum = self.builder.get_object("nbk_Viewer").get_current_page()
+            print("pgnum", pgnum)
             if 1 <= pgnum <= 2 or pgnum == 5:
+                print("Saving edits")
                 self.onSaveEdits(None)
         # If any PicLists are missing, they need to be generated
         if self.get('c_includeillustrations') and self.get("c_usePicList"):
