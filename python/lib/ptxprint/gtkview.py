@@ -1664,7 +1664,20 @@ class GtkViewModel(ViewModel):
         dialog.destroy()
         return fcFilepath
 
-    def onDiglotOrBorderClicked(self, btn):
+    def onDiglotClicked(self, btn):
+        self.sensiVisible("c_diglot")
+        self.sensiVisible("c_borders")
+        headerl = self.get("ecb_hdrleft")
+        headerr = self.get("ecb_hdrright")
+        if btn.get_active() and headerl == "-empty-" and headerr == "Reference Range":
+            self.set("ecb_hdrleft", "Primary Reference Range")
+            self.set("ecb_hdrright", "Secondary Reference Range")
+        elif not btn.get_active() and headerl == "Primary Reference Range" and headerr == "Secondary Reference Range":
+            self.set("ecb_hdrleft", "-empty-")
+            self.set("ecb_hdrright", "Reference Range")
+        self.colourTabs()
+        
+    def onBorderClicked(self, btn):
         self.sensiVisible("c_diglot")
         self.sensiVisible("c_borders")
         self.colourTabs()

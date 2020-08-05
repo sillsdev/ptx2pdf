@@ -302,6 +302,8 @@ class TexModel:
         "Last Reference":   r"\lastref",
         "Page Number":      r"\pagenumber",
         "Reference Range":  r"\rangeref",
+        "Primary Reference Range":  r"\rangerefL",
+        "Secondary Reference Range": r"\rangerefR",
         "-empty-":          r"\empty"
     }
     _swapRL = {'left' : 'right',
