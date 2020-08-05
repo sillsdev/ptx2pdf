@@ -230,7 +230,7 @@ class RunJob:
             return ""
 
     def parseLogLines(self):
-        # it did NOT finish successfully, so help them troubleshoot what went wrong:
+        # it did NOT finish successfully, so help them troubleshoot what might have gone wrong:
         finalLogLines = self.loglines[-30:-10]
         foundmsg = False
         finalLogLines.append("-"*90+"\n")
@@ -260,9 +260,9 @@ class RunJob:
         mrkrs = [x for x in allmrkrs if x not in texmrkrs]
         if 0 < len(mrkrs) < 7:
             if "\ef" in mrkrs or "\ex" in mrkrs:
-                finalLogLines.append("Sorry, but Study Bible Markup (\ef \ex etc.) is not yet supported!")
-            else:
-                finalLogLines.append("\nMarkers to check: {}".format(", ".join(mrkrs)))
+                finalLogLines.append("Sorry, Study Bible Markup (\ef \ex etc.) is not yet supported!")
+            # else:
+                # finalLogLines.append("\nMarkers to check: {}".format(", ".join(mrkrs)))
 
         files = re.findall(r'(?i)([^\\/\n."= ]*?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)', "".join(finalLogLines))
         if len(files):

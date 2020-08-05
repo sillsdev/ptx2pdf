@@ -210,6 +210,7 @@ THE SOFTWARE.
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="a_minSpace">
+    <property name="lower">10</property>
     <property name="upper">200</property>
     <property name="value">50</property>
     <property name="step_increment">1</property>
@@ -290,9 +291,10 @@ If you come across any bugs,
 please create an issue in Github.</property>
     <property name="website">https://software.sil.org/ptxprint/</property>
     <property name="website_label" translatable="yes">Download the latest version</property>
-    <property name="authors">Mark Penny (Project Lead + UI Developer)
-Martin Hosken (System Architect + TeX macros)
-David Gardner (TeX macro hacks, tweaks + bugfixing)
+    <property name="authors">Martin Hosken (Project Lead, System Architect, TeX macros)
+Mark Penny (UI Developer, Testing &amp; Documentation)
+David Gardner (TeX macro hacks, tweaks &amp; bugfixing)
+Nicolas Spalinger (Linux Packaging)
 
 Built on the foundation laid by:
 Jonathan Kew (Author of XeTeX + sfm2pdf)</property>
@@ -8227,8 +8229,8 @@ This is quite likely required for RTL languages.</property>
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="c_diglotAdjCenter">
-                                <property name="label" translatable="yes">Adjust Center Header Position to 
-Match Column Gutter Position</property>
+                                <property name="label" translatable="yes">Adjust Center Header 
+based on Column Widths</property>
                                 <property name="visible">True</property>
                                 <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>

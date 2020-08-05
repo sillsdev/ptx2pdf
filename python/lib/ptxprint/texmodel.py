@@ -510,8 +510,11 @@ class TexModel:
             self.dict['font/texfeatures'] = ""
         badfonts.discard(("", ""))
         if len(badfonts):
-            printer.doError("The following fonts are missing from your system: " \
-                    + ", ".join("{} {}".format(*x) for x in badfonts if len(x[0])))
+            printer.doError("Font(s) missing or incorrectly installed:\n" \
+                    + ", ".join("{} {}".format(*x) for x in badfonts if len(x[0])), \
+                    secondary="If using Windows, please re-install the font as\n" \
+                    + "Administrator, and right-click to 'Install for ALL Users'.", \
+                    title="Error: Missing Font(s)")
         
     def processHdrFtr(self, printer):
         """ Update model headers from model UI read values """
