@@ -146,7 +146,7 @@
     \s@tfont{tr}%
     \global\p@ranesting=1
     \@celltrue}
-\def\dos@vedm@rk{\expandafter\mark\expandafter{\s@vedm@rk}}
+\def\dos@vedm@rk{\expandafter\mark\expandafter{\s@vedm@rk}\ifdiglotL\def\tmp{1}\else\def\tmp{2}\fi\x@\marks\x@\tmp\x@{\s@vedm@rk}}
 
 \def\@ndcell{%
   \if@cell

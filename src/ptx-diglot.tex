@@ -493,35 +493,43 @@
   \trace{H}{diglotleftTrial: b:\botmark, f:\firstmark, tr:\topRmark, br:\botRmark}
   \edef\t@st{\botmark}%
   \ifx\t@st\empty%
-    \trace{H}{Bottom mark was empty}%
+    \trace{H}{Bottom mark was empty}% Presumably others not als
   \else%
-    \ifx\topLmark\empty
-      \edef\t@st{\firstmark}%
-      \ifx\t@st\oldRmark\else %Dont use \firstmark if it's been used by Right!
-        \ifx\t@st\topmark\else % or it's a carry-over at all.
-          \xdef\topLmark{\firstmark}% remember first, if not already set
+    \edef\t@st{\firstmarks1}%
+    \ifx\t@st\oldRmark\else %Dont use \firstmark if it's been used by Right!
+      \ifx\t@st\topmarks1\else % or it's a carry-over,
+        \ifx\topLmark\empty
+          \trace{H}{Setting topLmark to \firstmarks1}%
+          \xdef\topLmark{\firstmarks1}% remember first, if not already set
+        \fi
+        \ifuseLeftMarks%
+          \edef\t@st{\p@gefirstmark}%
+          \ifx\t@st\empty%
+            \trace{H}{Setting (default) pagefirstmark to \firstmarks1}%
+            \xdef\p@gefirstmark{\firstmarks1}%
+          \fi
         \fi
       \fi
     \fi
-    \xdef\botLmark{\botmarks1}%
-    \ifuseLeftMarks%
-      %\ifm@rksonpage
-      \edef\t@st{\p@gefirstmark}%
-      \ifx\t@st\empty%
-        \edef\t@st{\firstmark}%
-        \ifx\t@st\topmark\else % it's a carry-over. Ignore.
-          \ifuseRightMarks % Don't care which sort of mark it is in this case.
-            \trace{H}{Setting (default) pagefirstmark to \firstmark}%
-            \xdef\p@gefirstmark{\firstmark}%
-          \else 
-            \ifx\t@st\oldRmark\else %Dont use \firstmark if it's been used by Right!
-              \trace{H}{Setting (default) pagefirstmark to \firstmark}%
-              \xdef\p@gefirstmark{\firstmark}%
-            \fi
-          \fi
-        \fi
-      \fi%\fi%
-      \trace{H}{oldRmark: \oldRmark, firstmark: \firstmark, botmark: \botmark}
+    %\xdef\botLmark{\botmarks1}%
+      %%\ifm@rksonpage
+      %\edef\t@st{\p@gefirstmark}%
+      %\ifx\t@st\empty%
+        %\edef\t@st{\firstmark}%
+        %\ifx\t@st\topmark\else % it's a carry-over. Ignore.
+          %\ifuseRightMarks % Don't care which sort of mark it is in this case.
+            %\trace{H}{Setting (default) pagefirstmark to \firstmark}%
+            %\xdef\p@gefirstmark{\firstmark}%
+          %\else 
+            %\ifx\t@st\oldRmark\else %Dont use \firstmark if it's been used by Right!
+              %\trace{H}{Setting (default) pagefirstmark to \firstmark}%
+              %\xdef\p@gefirstmark{\firstmark}%
+            %\fi
+          %\fi
+        %\fi
+      %\fi%\fi%
+    \ifuseLeftMarks
+     \trace{H}{oldRmark: \oldRmark, firstmark: \firstmark, botmark: \botmark}
       \edef\t@st{\firstmark}
       \ifx\t@st\oldRmark\else%
         \trace{H}{Setting (default) bottom mark to \botmark, may revise later}%
@@ -691,7 +699,7 @@
   \advance\dimen3 by 3\baselineskip
   \penalty\lastsavedLpenalty
   \ifdim\dimen3>\trialheight %Is this likely to be the last chunk added to the page? 
-    \ifm@rksonpage\else\mark{}\fi
+    \ifm@rksonpage\else\mark{}\marks1{}\fi% FIXME? \marks2 too?
   \fi
   \joinboxes{\LeftBox}{\partialL}{10}{\Lboxpenalty}\endgraf\penalty-10005
 \relax{\aftergroup\relax}%
@@ -823,15 +831,16 @@
   % tempoarily split and see if there are marks in this text
   \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
    \edef\t@mp{\splitbotmark}
-   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found marks \splitfirstmark, \splitbotmark}
+   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found marks \splitfirstmark, \splitbotmark}%
      \if\topRmark\empty
        \xdef\topRmark{\splitfirstmark}%
      \fi
      \xdef\botRmark{\splitbotmark}%
-     \ifuseRightMarks\ifx\p@gefirstmark\empty
-        \xdef\p@gefirstmark{\splitfirstmark}
-      \fi
-      \xdef\p@gebotmark{\splitbotmark}%
+     \ifuseRightMarks
+       \ifx\p@gefirstmark\empty
+         \xdef\p@gefirstmark{\splitfirstmark}%
+       \fi
+       \xdef\p@gebotmark{\splitbotmark}%
      \fi
    \fi
  \ifnum\outputpenalty=10000 % Nothing wrong with breaking here
@@ -881,11 +890,11 @@
    \xdef\oldRmark{\botmarks2}%
 
    \ifuseRightMarks%
-     \trace{H}{Setting (default) bottom mark to \botmark, may revise later}%
+     \trace{H}{Setting (default) bottom mark to \botmarks2, may revise later}%
      \xdef\b@xbotmark{\botmark}%
      \edef\t@st{\p@gefirstmark}%
      \ifx\t@st\empty
-       \trace{H}{Setting (default) first mark to \firstmark}%
+       \trace{H}{Setting (default) first mark to \firstmarks2}%
        \xdef\p@gefirstmark{\firstmark}% remember first, if not already set
      \fi
    \fi% useRightMarks
@@ -1573,7 +1582,7 @@
           \trace{D}{need to split to get marks}%
           \setbox0=\copy\partialL
           \setbox0=\vsplit0 to \maxdimen
-          \xdef\topLmark{\splitfirstmark}
+          \xdef\topLmark{\splitfirstmark}%
           \ifuseLeftMarks
             \ifx\p@gefirstmark\empty%
               \trace{H}{Setting pagefirstmark to \splitfirstmark}%
