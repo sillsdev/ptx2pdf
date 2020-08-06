@@ -503,7 +503,7 @@
         \fi
       \fi
     \fi
-    \xdef\botLmark{\botmark}%
+    \xdef\botLmark{\botmarks1}%
     \ifuseLeftMarks%
       %\ifm@rksonpage
       \edef\t@st{\p@gefirstmark}%
@@ -710,6 +710,12 @@
     \global\savedpenalty=0 %
   \fi%
 %
+  \ifx\nexttopRmark\empty
+     \xdef\nexttopRmark{\firstmarks2}%
+  \fi
+  \ifx\nextbotRmark\empty
+    \xdef\nextbotRmark{\botmarks2}%
+  \fi
   \global\setbox\excessR=\vtop{\joinboxes{\excessR}{255}{3}{\Rchunkpenalty}}%
   \global\Rchunkpenalty=\tmppenalty %
   \ifnum\outputpenalty=-10006%% All OK. drop through to digl@tRight
@@ -818,9 +824,15 @@
   \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
    \edef\t@mp{\splitbotmark}
    \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found marks \splitfirstmark, \splitbotmark}
-     \if\topRmark\empty\else\edef\topRmark{\splitfirstmark}\fi
+     \if\topRmark\empty
+       \xdef\topRmark{\splitfirstmark}%
+     \fi
+     \xdef\botRmark{\splitbotmark}%
      \ifuseRightMarks\ifx\p@gefirstmark\empty
-        \edef\p@gefirstmark{\splitfirstmark}\fi\fi
+        \xdef\p@gefirstmark{\splitfirstmark}
+      \fi
+      \xdef\p@gebotmark{\splitbotmark}%
+     \fi
    \fi
  \ifnum\outputpenalty=10000 % Nothing wrong with breaking here
    \tmppenalty=0 % and leave Rchunkpenalty alone
@@ -858,16 +870,15 @@
  \edef\t@st{\botmark}%
  \ifx\t@st\empty\else
    \trace{H}{digl@tRight: b:\botmark, f:\firstmark, tl:\topLmark}
-   \xdef\oldRmark{\botmark}%
-   \xdef\botRmark{\botmark}%
+   \xdef\botRmark{\botmarks2}%
    \edef\t@st{\topRmark}%
    \ifx\t@st\empty
-     \edef\t@st{\firstmark}%
-     \ifx\t@st\topLmark\else %Dont use \firstmark if it's been used by Left!
-       \xdef\topRmark{\firstmark}% remember first, if not already set
-       %\xdef\oldRmark{\firstmark}% because topRmark gets reset. THis doesn't
+     \edef\t@st{\firstmarks2}%
+     \ifx\oldRmark\t@st\else%Check to see if there's been a change
+       \xdef\topRmark{\firstmarks2}% remember first, if not already set
      \fi
    \fi 
+   \xdef\oldRmark{\botmarks2}%
 
    \ifuseRightMarks%
      \trace{H}{Setting (default) bottom mark to \botmark, may revise later}%
@@ -1181,10 +1192,10 @@
       \edef\t@st{\splitbotmark}%
       \ifx\t@st\empty\else
         \xdef\botRmark{\splitbotmark}%
-        %\edef\t@st{\topRmark}%
-        %\if\t@st\empty
-          %\xdef\topRmark{\firstmark}%
-        %\fi
+        \edef\t@st{\topRmark}%
+        \if\t@st\empty
+          \xdef\topRmark{\splitfirstmark}%
+        \fi
         \ifuseRightMarks
           \traceNum{d}{Setting bottom mark to \splitbotmark}%
           \xdef\p@gebotmark{\splitbotmark}%
@@ -1541,7 +1552,7 @@
         \global\setbox\LeftBox=\vsplit\partialL to \availht
         \edef\t@st{\splitbotmark}%
         \ifx\t@st\empty\else
-          \xdef\botLmark{\botmark}%
+          \xdef\botLmark{\splitbotmark}%
           \ifuseLeftMarks
             \trace{H}{Setting bottom mark to \splitbotmark, pagefirstmark to \splitfirstmark}%
             \xdef\p@gefirstmark{\splitfirstmark}%
