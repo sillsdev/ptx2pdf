@@ -153,9 +153,15 @@ def alignChunks(pchunks, schunks, pkeys, skeys, filt=None, fns=[], depth=0):
         if action == "equal":
             pairs.extend([[pchunks[ab+i], schunks[bb+i]] for i in range(ae-ab)])
         elif action == "delete":
-            pairs.extend([[pchunks[ab+i], ""] for i in range(ae-ab)])
+            if len(pairs):
+                pairs[-1][0].extend(pchunks[ab:ae])
+            else:
+                pairs.extend([[pchunks[ab+i], ""] for i in range(ae-ab)])
         elif action == "insert":
-            pairs.extend([["", schunks[bb+i]] for i in range(be-bb)])
+            if len(pairs):
+                pairs[-1][1].extend(schunks[bb:be])
+            else:
+                pairs.extend([["", schunks[bb+i]] for i in range(be-bb)])
         elif action == "replace":
             if len(fns):        # chain sub-alignment
                 pairs.extend(fns[0](pchunks[ab:ae], schunks[bb:be], pkeys[ab:ae], skeys[bb:be], fns=fns[1:], depth=depth+1))
@@ -224,25 +230,30 @@ def groupChunks(pchunks, schunks, pkeys, skeys, texttype, fns=[], depth=0):
         elif int(ei) != int(ej):
             # scan forward until both end verses are the same so long as they have the same texttype
             currm = max(int(ei), int(ej))
+            lasti, lastj = i, j
+            lastc = int(ci)
             while j < maxskey and i < maxpkey:
                 if int(ej) <= currm and j < maxskey-1:
                     j += 1
+                    laste = int(ej)
                     (mj, cj, vj, ej, pj) = skeys[j].split("_")
-                    if texttype(mj) != texttype(mi) or int(ej) > currm:
+                    if texttype(mj) != texttype(mi) or int(cj) > lastc or (laste == currm and int(ej) > currm):
                         j -= 1
-                        break
+                        ej = laste
                     else:
                         currm = max(int(ei), int(ej))
-                elif int(ei) <= currm and i < maxpkey-1:
+                if int(ei) <= currm and i < maxpkey-1:
                     i += 1
+                    laste = int(ei)
                     (mi, ci, vi, ei, pi) = pkeys[i].split("_")
-                    if texttype(mi) != texttype(mj) or int(ei) > currm:
+                    if texttype(mi) != texttype(mj) or int(ci) > lastc or (laste == currm and int(ei) > currm):
                         i -= 1
-                        break
+                        ei = laste
                     else:
                         currm = max(int(ei), int(ej))
-                else:
+                if lasti == i and lastj == j:
                     break
+                lasti, lastj = i, j
             j += 1
             i += 1
             boundarymerge = True

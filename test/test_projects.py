@@ -115,6 +115,8 @@ class TestXetex: #(unittest.TestCase):
         fromfile = self.xdv.filebasepath+".xdv"
         tofile = os.path.join(self.xdv.stddir, self.xdv.filename+".xdv")
         if not os.path.exists(tofile) and os.path.exists(fromfile):
+            if not os.path.exists(self.xdv.stddir):
+                os.makedirs(self.xdv.stddir)
             shutil.copy(fromfile, tofile)
             pytest.xfail("No regression xdv. Copying...")
         resdat = check_output(xdvcmd + [fromfile]).decode("utf-8")
