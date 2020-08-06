@@ -787,6 +787,10 @@ class GtkViewModel(ViewModel):
             self.generateAdjList()
         self.onViewerChangePage(None,None,pg)
 
+    def onChangedMainTab(self, nbk_Main, scrollObject, pgnum):
+        if pgnum == 10: # Viewer tab
+            self.onRefreshViewerTextClicked(None)
+
     def onRefreshViewerTextClicked(self, btn):
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
         self.onViewerChangePage(None, None, pg)

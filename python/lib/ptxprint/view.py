@@ -560,6 +560,8 @@ class ViewModel:
         isdblcol = self.get("c_doublecolumn")
         ishiderefs = self.get("c_fighiderefs")
         lines = []
+        if not len(picinfos):
+            return []
         if isTemp:
             lines.append("% TEMPORARY PicList: ({}) - DO NOT EDIT\n\n".format(self.get("_date")))
         else:
