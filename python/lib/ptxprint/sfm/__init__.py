@@ -498,11 +498,15 @@ class parser(collections.Iterable):
                 parent = parent.parent
         return tok
     
+
+    def _testmarker(self, tok):
+        return True
+
     
     def _default_(self, parent):
         get_meta = self.__get_style
         for tok in self._tokens:
-            if tok[0] == u'\\':  # Parse markers.
+            if tok[0] == u'\\' and self._testmarker(tok):  # Parse markers.
                 tok  = self._extract_tag(parent, tok)
                 tag = tok[1:]
                 meta = get_meta(tag)

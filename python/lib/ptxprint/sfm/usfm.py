@@ -243,6 +243,10 @@ class parser(sfm.parser):
                 parent.meta['Endmarker'])
         else: super(parser, self)._force_close(parent, tok)                          
     
+
+    def _testmarker(self, tok):
+        return len(tok) > 2 or tok[1] in "abcdefghijklmnopqrstuvwxyz"
+
     
     def _ChapterNumber_(self, chapter_marker):
         tok = next(self._tokens)
