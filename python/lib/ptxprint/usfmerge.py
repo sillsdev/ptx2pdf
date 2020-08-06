@@ -225,18 +225,18 @@ def groupChunks(pchunks, schunks, pkeys, skeys, texttype, fns=[], depth=0):
             # scan forward until both end verses are the same so long as they have the same texttype
             currm = max(int(ei), int(ej))
             while j < maxskey and i < maxpkey:
-                if int(ej) < currm and j < maxskey-1:
+                if int(ej) <= currm and j < maxskey-1:
                     j += 1
                     (mj, cj, vj, ej, pj) = skeys[j].split("_")
-                    if texttype(mj) != texttype(mi):
+                    if texttype(mj) != texttype(mi) or int(ej) > currm:
                         j -= 1
                         break
                     else:
                         currm = max(int(ei), int(ej))
-                elif int(ei) < currm and i < maxpkey-1:
+                elif int(ei) <= currm and i < maxpkey-1:
                     i += 1
                     (mi, ci, vi, ei, pi) = pkeys[i].split("_")
-                    if texttype(mi) != texttype(mj):
+                    if texttype(mi) != texttype(mj) or int(ei) > currm:
                         i -= 1
                         break
                     else:
