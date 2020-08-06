@@ -22,7 +22,7 @@ if sys.platform == "win32":
                      'GObject-2.0', 'fontconfig-2.0', 'win32-1.0', 'GtkSource-3.0')] \
               + [('C:\\msys64\\mingw64\\lib\\python3.7\\site-packages\\cairo\\_cairo-cpython-37m.dll',
                 'cairo/_cairo-cpython-37m.dll')] \
-              + [('C:\\msys64\\mingw64\\bin\\gspawn-win64-helper.exe', 'ptxprint')]
+              + [('C:\\msys64\\mingw64\\bin\\gspawn-win64-helper.exe', '.')]
 else:
     pathex = []
     binaries = []
@@ -40,6 +40,7 @@ a = Analysis(['python/scripts/ptxprint', 'python/scripts/usfmerge'],
                              '5.8x8.7-12mmBorderDraft.pdf', '5.8x8.7-Draft.pdf', 'BSI-12mmBorder.pdf',
                              'A4-12mmBorder.pdf', 'A5-10mmBorder.pdf', 'A4-CopyrightWatermark.pdf', 'A5-CopyrightWatermark.pdf')]
                       + [('python/lib/ptxprint/sfm/*.*y', 'ptxprint/sfm')]
+                      + [('docs/inno-docs/*.txt', 'ptxprint')]
                       + [('src/*.tex', 'ptx2pdf'),
                          ('src/mappings/*.tec', 'ptx2pdf/mappings')]
                       + [('python/lib/ptxprint/Google-Noto-Emoji-Objects-62859-open-book.ico', 'ptxprint')],
