@@ -1,12 +1,11 @@
-PTXprint 0.9.1 Beta (RC 1.0) Release Notes
-6th August 2020
+PTXprint 0.9.1 Beta Release Notes (Release Candidate 1.0) 
+7th August 2020
 
 Bug Fixes and Improvements in: 0.9.1
 
   * Make main dialog resize-able so that the viewer is easier to use
 
   * Several improvements to diglot layout (but diglot illustrations are still fragile/experimental)
-    KNOWN ISSUE: illustrations in peripheral books are currently broken 
 
   * Several more options for the placement of illustrations are now possible
     (see: https://github.com/sillsdev/ptx2pdf/blob/master/docs/documentation/figures.md for details)
@@ -30,7 +29,7 @@ Bug Fixes and Improvements in: 0.9.1
 
   * Shade of blue (to show feature is active) improved on Picture, Diglot+Border tabs  
 
-  * Bug Fix: Configuration Naming issue resolved
+  * Bug Fix: Configuration Naming and path issues resolved
   
 Bug Fixes and Improvements in: 0.8.8
 
