@@ -140,7 +140,7 @@
 }
 
 \newif\ifsquashgridbox\squashgridboxtrue
-\let\gridb@x\gr@db@@x
+\let\gridb@x\gr@db@@x % overridden during \ptxfile setup, depending on \ifdiglot and \ifsquashgridbox 
 
 
 \def\at@ndofthispar{}
@@ -259,8 +259,9 @@
   % \tr is treated as an intro marker if we're already in intro mode
   \if@tablerow\if@ntro\@ntromarkertrue\fi\fi
   \global\he@dingstylefalse
-  \getp@ram{type}{\m@rker}\ifx\p@ram\t@tle \mark{\t@tle}\ifdiglot\ifdiglotL\marks1{\t@tle}\else\marks2{\t@tle}\fi\fi\fi%\mark{::}\fi
+  \getp@ram{type}{\m@rker}%
   \ifx\p@ram\t@tle
+    \mark{\t@tle}\ifdiglot\ifdiglotL\marks1{\t@tle}\else\marks2{\t@tle}\fi\fi
     \ift@tle\else\ifhe@dings\endhe@dings\fi\fi
     \st@rttitle
     \global\he@dingstyletrue 
@@ -278,7 +279,7 @@
   \ifhe@dingstyle\TRACE{headingstyle true}%
     \ifhe@dings\nsp@cebeforetrue\s@tbaseline{\m@rker}%In a heading again, may be different so set a new baseline
       \else
-        \getp@ram{spacebefore}{\m@rker}\ifx\p@ram\relax\xdef\headingtopspace{0}\else\xdef\headingtopspace{\p@ram}\fi
+        \getp@ram{spacebefore}{\m@rker}\ifx\p@ram\relax\xdef\headingtopspace{0}\else\ift@tle\xdef\headingtopspace{0}\else\xdef\headingtopspace{\p@ram}\fi\fi%Headingtopspace gets removed at top of page, preserve for titles.
         \setbox\he@dingbox=\vbox\bgroup\global\he@dingstrue
         \s@tbaseline{\m@rker}% Obey baseline changes for headings
         \linepenalty=1000 % minimize line count

@@ -424,6 +424,7 @@
 \def\doublecolumns{
   \ifnum\c@rrentcols=1
     % make switch from single to double column
+    \vskip-\lastdepth
     \ifhe@dings\endhe@dings\fi % if headings in process, end headings
     \penalty-100\vskip\baselineskip % ensure blank line between single and double column material
     \global\output={\savepartialpage}\eject % save any partially-full page
