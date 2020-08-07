@@ -288,7 +288,7 @@ def usfmerge(infilea, infileb, outfile, stylesheets=[], fsecondary=False, debug=
 
     def texttype(m):
         res = stylesheet.get(m, {'TextType': 'other'}).get('TextType').lower()
-        if res == 'chapternumber':
+        if res in ('chapternumber', 'versenumber'):
             res = 'versetext'
         return res
 

@@ -1,9 +1,13 @@
 
 import pytest, os
 
+@pytest.fixture(scope="session")
+def updatedata(pytestconfig):
+    return pytestconfig.option.update
 
 def pytest_addoption(parser):
     parser.addoption("--dir", help="Project root directory to test")
+    parser.addoption("-U","--update", action="store_true", dest="update", default=False)
 
 def pytest_generate_tests(metafunc):
     jobs = []

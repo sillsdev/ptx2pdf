@@ -107,14 +107,14 @@ class TestXetex: #(unittest.TestCase):
         xdvcmd = " ".join([quote(w2u(pt_bindir, True)+"xdvipdfmx"),"-q", "-E", "-o", quote(w2u(self.xdv.filebasepath, False)+".pdf") + " " + quote(w2u(self.xdv.filebasepath, False)+".xdv")])
         assert call(xdvcmd, shell=True) == 0
 
-    def test_xdv(self):
+    def test_xdv(self, updatedata):
         xdvcmd = [os.path.join(self.xdv.testsdir, "..", "python", "scripts", "xdvitype"), "-d"]
         if sys.platform == "win32":
             xdvcmd.insert(0, "python")
 
         fromfile = self.xdv.filebasepath+".xdv"
         tofile = os.path.join(self.xdv.stddir, self.xdv.filename+".xdv")
-        if not os.path.exists(tofile) and os.path.exists(fromfile):
+        if updatedata or (not os.path.exists(tofile) and os.path.exists(fromfile)):
             if not os.path.exists(self.xdv.stddir):
                 os.makedirs(self.xdv.stddir)
             shutil.copy(fromfile, tofile)
