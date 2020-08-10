@@ -6,6 +6,7 @@ from difflib import context_diff
 import configparser, os, sys, shutil
 from ptxprint.ptsettings import ParatextSettings
 from collections import namedtuple
+from filelock import FileLock
 
 def w2u(path, endwithslash=True):
     """Windows to Unix filepath converter"""
@@ -95,10 +96,17 @@ def make_paths(projectsdir, project, config, xdv=False):
 XdvInfo = namedtuple("XdvInfo", ["projectsdir", "project", "config", "stddir", "filename", "filebasepath", "testsdir"])
 
 @pytest.fixture(scope="class")
-def xdv(request, projectsdir, project, config):
+def xdv(request, projectsdir, project, config, starttime):
     (stddir, filename, testsdir, ptxcmd) = make_paths(projectsdir, project, config, xdv=True)
-    assert call(ptxcmd) == 0
     filebasepath = os.path.join(projectsdir, project, "PrintDraft", "ptxprint-"+filename)
+    lockfile = filebasepath+".lock"
+    with FileLock(lockfile):
+        try:
+            t = os.path.getmtime(filebasepath)
+        except FileNotFoundError:
+            t = 0
+        if t < starttime:
+           assert call(ptxcmd) == 0
     request.cls.xdv = XdvInfo(projectsdir, project, config, stddir, filename, filebasepath, testsdir)
 
 @pytest.mark.usefixtures("xdv")
@@ -107,9 +115,11 @@ class TestXetex: #(unittest.TestCase):
         xdvcmd = " ".join([quote(w2u(pt_bindir, True)+"xdvipdfmx"),"-q", "-E", "-o", quote(w2u(self.xdv.filebasepath, False)+".pdf") + " " + quote(w2u(self.xdv.filebasepath, False)+".xdv")])
         assert call(xdvcmd, shell=True) == 0
 
-    def test_xdv(self, updatedata):
+    def test_xdv(self, updatedata, pypy):
         xdvcmd = [os.path.join(self.xdv.testsdir, "..", "python", "scripts", "xdvitype"), "-d"]
-        if sys.platform == "win32":
+        if pypy is not None:
+            xdvcmd.insert(0, pypy)
+        elif sys.platform == "win32":
             xdvcmd.insert(0, "python")
 
         fromfile = self.xdv.filebasepath+".xdv"
@@ -118,7 +128,8 @@ class TestXetex: #(unittest.TestCase):
             if not os.path.exists(self.xdv.stddir):
                 os.makedirs(self.xdv.stddir)
             shutil.copy(fromfile, tofile)
-            pytest.xfail("No regression xdv. Copying...")
+            # pytest.xfail("No regression xdv. Copying...")
+            return
         resdat = check_output(xdvcmd + [fromfile]).decode("utf-8")
         stddat = check_output(xdvcmd + [tofile]).decode("utf-8")
         for attribute in ("CreationDate", "ModDate"): # remove the creation and modification times

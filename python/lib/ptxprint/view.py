@@ -71,8 +71,8 @@ class Path(pathlib.Path):
         else:
             return self.as_posix()
 
-posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror"]
-pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "mirror", "x-xetex"]
+posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror", "scale"]
+pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "mirror", "x-xetex", "mirror", "scale"]
 
 class ViewModel:
     _attributes = {
@@ -638,11 +638,17 @@ class ViewModel:
         if all(x in "apw" for x in p):
             vals['media'] = p
             del vals['pgpos']
-        elif re.match(r"^[tbhpc][lrc]?[0-9]?(?:\*\d+\.?\d*)?$", p):
+        elif re.match(r"^[tbhpc][lrc]?[0-9]?$", p):
             vals['media'] = 'p'
         else:
             vals['loc'] = p
             del vals['pgpos']
+        p = vals['size']
+        m = re.match(r"(col|span|page|full)(?:\*(\d+\.?\d*))?$", p)
+        if m:
+            vals['size'] = m[0]
+            if len(m[1]):
+                vals['scale'] = m[1]
         return vals
 
     def getFigures(self, bk, suffix="", sfmonly=False, media=None):

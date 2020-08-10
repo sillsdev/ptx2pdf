@@ -154,7 +154,7 @@ images in cutouts.
   mark.
 - hl / hr Handy for a sponsor's or publisher's logo, perhaps?
 
-### span Attribute
+### size Attribute
 
 The `size` attribute has been extended to support scaling. Following the `col`
 or `span` values, there may be an optional `*` followed by scale factor, with
@@ -165,6 +165,14 @@ RUT 4.11 Boaz addresses the crowd|07.jpeg|span*0.6|t|Artist McArty| You are witn
 ```
 The `span*0.6` says the figure should be scaled to span the page and then scaled
 down to 60% of that size.
+
+### scale Attribute
+
+While in USFM2 the `size` attribute position has been extended to support a
+scale factor via `*`. This is not ideal and in USFM3 it is better to separate
+the scale factor into its own `scale` attribute. This value is a multipler that
+scales an image after its size has been established via the `size` attribute. A
+value of `1.0` implies no size change.
 
 ### x-xetex Attribute
 

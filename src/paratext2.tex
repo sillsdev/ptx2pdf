@@ -1094,7 +1094,8 @@
 
 \def\p@rsesize#1*#2*#3\end{%
   \def\size@ption{#1}%
-  \def\sizem@ltiple{#2}% empty if not provided
+  \edef\tmp{#2}
+  \if\tmp\relax\else\def\sizem@ltiple{#2}\MSG{Setting scale to #2}\fi% empty if not provided
 }
 
 %%%%%%%%%%%%%% FIGURES %%%%%%%%%%%%%% 
@@ -1104,7 +1105,8 @@
 % Redefine \p@rams to be rest of list
 \def\stripspace#1 \end/#2\relax#3{\if\relax#2\relax\gdef\p@ram{#3}\else\stripspace#1\end/ \end/\relax{#1}\fi}
 \def\FigP@ramAlt{alt} \def\FigP@ramSrc{src} \def\FigP@ramSize{size} \def\FigP@ramLoc{loc}
-\def\FigP@ramCopy{copy} \def\FigP@ramRef{ref} \def\FigP@ramXtra{x-xetex} \def\FigP@ramPgpos{pgpos} \def\FigP@ramMirror{mirror}
+\def\FigP@ramCopy{copy} \def\FigP@ramRef{ref} \def\FigP@ramXtra{x-xetex} \def\FigP@ramPgpos{pgpos}
+\def\FigP@ramMirror{mirror} \def\FigP@ramScale{scale}
 \newif\ifusfmthree \usfmthreefalse
 \def\getonepairp@ram#1="#2" {\stripspace#1\end/ \end/\relax{#1}\edef\p@ramid{\p@ram}%
   \stripspace#2\end/ \end/\relax{#2}\edef\p@ramval{\p@ram}%
@@ -1119,8 +1121,9 @@
     \ifx\p@ramid\FigP@ramRef\global\p@ramnumber=7\else
     \ifx\p@ramid\FigP@ramXtra\global\p@ramnumber=8\else %experimental extra parameter, post filename e.g. "rotated 90"
     \ifx\p@ramid\FigP@ramMirror\global\p@ramnumber=9\else %experimental mirror parameter.
+    \ifx\p@ramid\FigP@ramScale\global\p@ramnumber=10\else
     \trace{g}{Unrecognised usfm3 parameter \p@ramid}%
-    \fi\fi\fi\fi\fi\fi\fi\fi\fi
+    \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
     \tempfalse
     \ifx\p@ramval\empty\ifusfmthree\else
       \trace{g}{param-\the\p@ramnumber = "\p@ramid" but not "\p@ramval"}%
@@ -1201,7 +1204,7 @@
   \loop
     \x@\gdef\csname param-\the\p@ramnumber\endcsname{}%
     \global\advance\p@ramnumber by 1
-    \ifnum\p@ramnumber<10\repeat
+    \ifnum\p@ramnumber<11\repeat
   \global\p@ramnumber=1
   \loop
     \x@\getonep@ram\p@rams\end
@@ -1209,6 +1212,7 @@
     \ifmorep@rams\repeat
   % get size
   \lowercase{\edef\size@ption{\csname param-3\endcsname}}%
+  \lowercase{\edef\sizem@ltiple{\csname param-10\endcsname}}%
   \expandafter\p@rsesize\size@ption**\end % extract possible multiplier
   % get location
   \lowercase{\edef\loc@ption{\csname param-4\endcsname}}%
@@ -1267,7 +1271,7 @@
   \fi
   \global\advance\im@gecount by 1
   % create box to contain picture
-  \trace{g}{Figure \the\im@gecount\space size=\size@ption, loc=\loc@ption \ifpicUsesIns, picins=\the\p@cins\fi, hsz=\the\hsize}%
+  \trace{g}{Figure \the\im@gecount\space size=\size@ption, scale=\sizem@ltiple, loc=\loc@ption \ifpicUsesIns, picins=\the\p@cins\fi, hsz=\the\hsize}%
   \setbox0=\vbox{
     \ifpicNarrow
       \hsize=\sizem@ltiple\p@cwidth

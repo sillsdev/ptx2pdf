@@ -3,7 +3,7 @@
 import sys, os, re, regex, gi, subprocess
 gi.require_version('Gtk', '3.0')
 from shutil import copyfile, copytree, rmtree
-from gi.repository import Gdk, Gtk, Pango, GObject
+from gi.repository import Gdk, Gtk, Pango, GObject, GLib
 
 if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
     sys.stdout = open(os.devnull, "w")
@@ -168,6 +168,7 @@ class GtkViewModel(ViewModel):
 
     def __init__(self, settings_dir, workingdir):
         self._setup_css()
+        GLib.set_prgname("ptxprint")
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(os.path.dirname(__file__), "ptxprint.glade"))
         self.builder.connect_signals(self)

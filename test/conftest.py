@@ -1,13 +1,22 @@
 
-import pytest, os
+import pytest, os, time
 
 @pytest.fixture(scope="session")
 def updatedata(pytestconfig):
     return pytestconfig.option.update
 
+@pytest.fixture(scope="session")
+def pypy(pytestconfig):
+    return pytestconfig.option.pypy
+
+@pytest.fixture(scope="session")
+def starttime(pytestconfig):
+    return time.time()
+
 def pytest_addoption(parser):
     parser.addoption("--dir", help="Project root directory to test")
-    parser.addoption("-U","--update", action="store_true", dest="update", default=False)
+    parser.addoption("-U","--update", action="store_true", default=False)
+    parser.addoption("-P","--pypy")
 
 def pytest_generate_tests(metafunc):
     jobs = []
