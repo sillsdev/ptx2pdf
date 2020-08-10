@@ -646,9 +646,9 @@ class ViewModel:
         p = vals['size']
         m = re.match(r"(col|span|page|full)(?:\*(\d+\.?\d*))?$", p)
         if m:
-            vals['size'] = m[0]
-            if len(m[1]):
-                vals['scale'] = m[1]
+            vals['size'] = m[1]
+            if m[2] is not None and len(m[2]):
+                vals['scale'] = m[2]
         return vals
 
     def getFigures(self, bk, suffix="", sfmonly=False, media=None):
