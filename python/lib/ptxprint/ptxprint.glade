@@ -2827,7 +2827,7 @@ main body text begins.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_useChapterLabel">
                                     <property name="label" translatable="yes">Special Features
-For These Books:</property>
+for These Books:</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -2901,7 +2901,7 @@ Label:</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_clSingleColLayout">
                                     <property name="label" translatable="yes">Use Single Column
-Layout for these Books</property>
+Layout for These Books</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -2916,7 +2916,7 @@ Layout for these Books</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_showNonScriptureChapters">
-                                    <property name="label" translatable="yes">Show Chapter Nums in non-Scripture books</property>
+                                    <property name="label" translatable="yes">Show Chapter Numbers in non-Scripture Books</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -3383,7 +3383,7 @@ that option - then Refresh Fonts.</property>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="bl_fontR">
-                                    <property name="label" translatable="yes">Select font...</property>
+                                    <property name="label" translatable="yes">Select Font...</property>
                                     <property name="width_request">160</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -3397,7 +3397,7 @@ that option - then Refresh Fonts.</property>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="bl_fontB">
-                                    <property name="label" translatable="yes">Select font...</property>
+                                    <property name="label" translatable="yes">Select Font...</property>
                                     <property name="width_request">160</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -3411,7 +3411,7 @@ that option - then Refresh Fonts.</property>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="bl_fontI">
-                                    <property name="label" translatable="yes">Select font...</property>
+                                    <property name="label" translatable="yes">Select Font...</property>
                                     <property name="width_request">160</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -3425,7 +3425,7 @@ that option - then Refresh Fonts.</property>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="bl_fontBI">
-                                    <property name="label" translatable="yes">Select font...</property>
+                                    <property name="label" translatable="yes">Select Font...</property>
                                     <property name="width_request">160</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -4112,8 +4112,8 @@ have/support all the missing characters
 either - so it is wise to choose another font.</property>
                                             <property name="halign">end</property>
                                             <property name="margin_left">50</property>
-                                            <property name="label" translatable="yes">Show missing
-characters in:</property>
+                                            <property name="label" translatable="yes">Show Missing
+Characters in:</property>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -4123,7 +4123,7 @@ characters in:</property>
                                         </child>
                                         <child>
                                           <object class="GtkButton" id="bl_fontExtraR">
-                                            <property name="label" translatable="yes">Select font...</property>
+                                            <property name="label" translatable="yes">Select Font...</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
@@ -4464,7 +4464,7 @@ appear at the beginning of each book.</property>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_prettyIntroOutline">
-                                        <property name="label" translatable="yes">Right-align \ior with tabbed leaders</property>
+                                        <property name="label" translatable="yes">Right-align \ior With Tabbed Leaders</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -4506,7 +4506,7 @@ etc.
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_startOnHalfPage">
-                                        <property name="label" translatable="yes">Begin next book on last page of previous book</property>
+                                        <property name="label" translatable="yes">Begin Next Book on Last Page of Previous Book</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -4529,7 +4529,7 @@ file as follows (for 75%):
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_filterGlossary">
-                                        <property name="label" translatable="yes">Filter Glossary to only include entries used in the text</property>
+                                        <property name="label" translatable="yes">Filter Glossary to Only Include Entries Used in the Text</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -4764,7 +4764,7 @@ in the printed output.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_marginalverses">
-                                    <property name="label" translatable="yes">Marginal Verses ... Col width (pts):</property>
+                                    <property name="label" translatable="yes">Marginal Verses ... Col Width (pts):</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -4915,7 +4915,7 @@ this option.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_elipsizeMissingVerses">
-                                    <property name="label" translatable="yes">Bridge empty verses &amp; add {...}</property>
+                                    <property name="label" translatable="yes">Bridge Empty Verses &amp; Add {...}</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -5013,8 +5013,8 @@ Note that adjusting paragraphs needs to be done right at the
 end when all other settings have been finalized. Otherwise you
 are likely to have to re-do it all again.</property>
                                         <property name="halign">start</property>
-                                        <property name="label" translatable="yes">Adjust layout by shrinking
-or expanding paragraphs:</property>
+                                        <property name="label" translatable="yes">Adjust Layout by Shrinking
+or Expanding Paragraphs:</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
@@ -5173,7 +5173,7 @@ tab needs to be checked to make us of this.</property>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_omitHyphen">
-                                        <property name="label" translatable="yes">Omit '-'hyphen</property>
+                                        <property name="label" translatable="yes">Omit '-'Hyphen</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -5299,7 +5299,7 @@ and Illustrations.</property>
                                                 <property name="homogeneous">True</property>
                                                 <child>
                                                   <object class="GtkCheckButton" id="c_fnparagraphednotes">
-                                                    <property name="label" translatable="yes">Use paragraphed footnotes (recommended)</property>
+                                                    <property name="label" translatable="yes">Use Paragraphed Footnotes (recommended)</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
@@ -5320,7 +5320,7 @@ to form a paragraph.</property>
                                                 </child>
                                                 <child>
                                                   <object class="GtkCheckButton" id="c_fnOverride">
-                                                    <property name="label" translatable="yes">Override footnote-specific  -/+ settings in text</property>
+                                                    <property name="label" translatable="yes">Override Footnote-specific  -/+ Settings in Text</property>
                                                     <property name="sensitive">False</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
@@ -5350,8 +5350,8 @@ includes a caller symbol.</property>
                                                     <property name="halign">start</property>
                                                     <child>
                                                       <object class="GtkCheckButton" id="c_fnautocallers">
-                                                        <property name="label" translatable="yes">Show callers 
-in the text: </property>
+                                                        <property name="label" translatable="yes">Show Callers 
+in the Text: </property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
@@ -5436,7 +5436,7 @@ then the default set will be loaded.</property>
                                                     <property name="halign">start</property>
                                                     <child>
                                                       <object class="GtkCheckButton" id="c_fnomitcaller">
-                                                        <property name="label" translatable="yes">Show callees in notes area</property>
+                                                        <property name="label" translatable="yes">Show Callees in Notes Area</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
@@ -5455,7 +5455,7 @@ footnote which was marked in the text.</property>
                                                     </child>
                                                     <child>
                                                       <object class="GtkCheckButton" id="c_fnpageresetcallers">
-                                                        <property name="label" translatable="yes">Reset callers on page</property>
+                                                        <property name="label" translatable="yes">Reset Callers on Page</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
@@ -5528,7 +5528,7 @@ the list of callers specified.</property>
                                                 <property name="homogeneous">True</property>
                                                 <child>
                                                   <object class="GtkCheckButton" id="c_paragraphedxrefs">
-                                                    <property name="label" translatable="yes">Use paragraphed cross-references (recommended)</property>
+                                                    <property name="label" translatable="yes">Use Paragraphed Cross-references (recommended)</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
@@ -5548,7 +5548,7 @@ the other (with space between) to form a paragraph.</property>
                                                 </child>
                                                 <child>
                                                   <object class="GtkCheckButton" id="c_xrOverride">
-                                                    <property name="label" translatable="yes">Override xRref-specific  -/+ settings in text</property>
+                                                    <property name="label" translatable="yes">Override xRref-specific  -/+ Settings in Text</property>
                                                     <property name="sensitive">False</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
@@ -5578,8 +5578,8 @@ cross-reference includes a caller symbol.</property>
                                                     <property name="halign">start</property>
                                                     <child>
                                                       <object class="GtkCheckButton" id="c_xrautocallers">
-                                                        <property name="label" translatable="yes">Show callers 
-in the text: </property>
+                                                        <property name="label" translatable="yes">Show Callers 
+in the Text: </property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
@@ -5663,7 +5663,7 @@ then the default set will be loaded.</property>
                                                     <property name="halign">start</property>
                                                     <child>
                                                       <object class="GtkCheckButton" id="c_xromitcaller">
-                                                        <property name="label" translatable="yes">Show callees in notes area</property>
+                                                        <property name="label" translatable="yes">Show Callees in Notes Area</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
@@ -5682,7 +5682,7 @@ cross-reference which was marked in the text.</property>
                                                     </child>
                                                     <child>
                                                       <object class="GtkCheckButton" id="c_xrpageresetcallers">
-                                                        <property name="label" translatable="yes">Reset callers on page</property>
+                                                        <property name="label" translatable="yes">Reset Callers on Page</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
@@ -5750,7 +5750,7 @@ the list of callers specified.</property>
                                         <property name="spacing">4</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_footnoterule">
-                                            <property name="label" translatable="yes">Show Footnote rule</property>
+                                            <property name="label" translatable="yes">Show Footnote Rule</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -5768,7 +5768,7 @@ the body text from the footnote area.</property>
                                         </child>
                                         <child>
                                           <object class="GtkCheckButton" id="c_blendfnxr">
-                                            <property name="label" translatable="yes">Blend Cross-References in with Footnotes</property>
+                                            <property name="label" translatable="yes">Blend Cross-References in With Footnotes</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -5899,7 +5899,7 @@ of the page.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="l_internote">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">If Footnotes and Cross-references are not blended 
@@ -5909,7 +5909,8 @@ another block just below. This option allows you
 to adjust the vertical space between these two sections.</property>
                                         <property name="halign">end</property>
                                         <property name="margin_left">12</property>
-                                        <property name="label" translatable="yes">Inter note space:</property>
+                                        <property name="label" translatable="yes">Vertical Spacing Between
+Notes &amp; Cross-references:</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">2</property>
@@ -5977,7 +5978,7 @@ be achieved manually by adjusting the
 PrintDraft-mods.sty stylesheet.</property>
                                         <property name="halign">end</property>
                                         <property name="margin_left">12</property>
-                                        <property name="label" translatable="yes">Line spacing:</property>
+                                        <property name="label" translatable="yes">Line Spacing:</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">4</property>
@@ -6027,8 +6028,8 @@ need to be checked for understanding).</property>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_firstOccurenceOnly">
-                                        <property name="label" translatable="yes">Only show the
-first occurence</property>
+                                        <property name="label" translatable="yes">Only Show the
+First Occurence</property>
                                         <property name="visible">True</property>
                                         <property name="sensitive">False</property>
                                         <property name="can_focus">True</property>
@@ -6050,8 +6051,8 @@ time that it occurs (in each book).
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_addColon">
-                                        <property name="label" translatable="yes">Add a colon ':'
-after \fq &amp; \xq</property>
+                                        <property name="label" translatable="yes">Add a Colon ':'
+After \fq &amp; \xq</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -6069,8 +6070,8 @@ elements visually distinct.</property>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_keepBookWithRefs">
-                                        <property name="label" translatable="yes">Keep Book names &amp; 
-References together</property>
+                                        <property name="label" translatable="yes">Keep Book Names &amp; 
+References Together</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -6248,7 +6249,7 @@ Cross-references appear.</property>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_mirrorpages">
-                                        <property name="label" translatable="yes">Mirrored layout</property>
+                                        <property name="label" translatable="yes">Mirrored Layout</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -6424,7 +6425,7 @@ secondary text as the Outer text.</property>
                                     <property name="can_focus">False</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_omitrhchapnum">
-                                        <property name="label" translatable="yes">Omit Chapter numbers from header references</property>
+                                        <property name="label" translatable="yes">Omit Chapter Numbers From Header References</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -6442,7 +6443,7 @@ secondary text as the Outer text.</property>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_hdrverses">
-                                        <property name="label" translatable="yes">Include Verse numbers in header references</property>
+                                        <property name="label" translatable="yes">Include Verse numbers in Header References</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -6811,7 +6812,7 @@ the first document ends.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_showHboxErrorBars">
-                                    <property name="label" translatable="yes">Show error bars for overfull hboxes</property>
+                                    <property name="label" translatable="yes">Show Error Bars For Overfull Lines</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -6826,7 +6827,7 @@ the first document ends.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_PDFx1aOutput">
-                                    <property name="label" translatable="yes">Output in PDF/X-1a:2003 format</property>
+                                    <property name="label" translatable="yes">Output in PDF/X-1a:2003 Format</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -7181,7 +7182,7 @@ there is no difference between 'col' and 'span'.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_useCustomFolder">
-                                    <property name="label" translatable="yes">Use Pictures from
+                                    <property name="label" translatable="yes">Use Pictures From
 a Specific Folder: </property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -7389,7 +7390,7 @@ have been enabled.</property>
                                     <property name="column_spacing">6</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_useModsTex">
-                                        <property name="label" translatable="yes">Apply Customized Settings (in ptxprint-mods.tex)</property>
+                                        <property name="label" translatable="yes">Apply Customized Settings  (ptxprint-mods.tex)</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -7415,8 +7416,8 @@ here are not working at all.</property>
                                         <property name="can_focus">False</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_processScript">
-                                            <property name="label" translatable="yes">Process text with 
-custom script at:</property>
+                                            <property name="label" translatable="yes">Process Text With 
+Custom Script at:</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -7501,7 +7502,7 @@ custom script at:</property>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_usePrintDraftChanges">
-                                        <property name="label" translatable="yes">Apply Changes Specified (in PrintDraftChanges.txt)</property>
+                                        <property name="label" translatable="yes">Apply Changes Specified  (PrintDraftChanges.txt)</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -7567,7 +7568,7 @@ can be specified in this file.</property>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_useModsSty">
-                                        <property name="label" translatable="yes">Apply Stylesheet Overrides (in ptxprint-mods.sty)</property>
+                                        <property name="label" translatable="yes">Apply Stylesheet Overrides  (ptxprint-mods.sty)</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -7586,7 +7587,7 @@ this option checked (on).</property>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_useCustomSty">
-                                        <property name="label" translatable="yes">Apply Customized Styles (in custom.sty)</property>
+                                        <property name="label" translatable="yes">Apply Customized Styles  (custom.sty)</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -8233,7 +8234,7 @@ This is quite likely required for RTL languages.</property>
                             <child>
                               <object class="GtkCheckButton" id="c_diglotAdjCenter">
                                 <property name="label" translatable="yes">Adjust Center Header 
-based on Column Widths</property>
+Based on Column Widths</property>
                                 <property name="visible">True</property>
                                 <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
@@ -8254,7 +8255,7 @@ different columns).</property>
                             <child>
                               <object class="GtkCheckButton" id="c_diglotSeparateNotes">
                                 <property name="label" translatable="yes">Separate Notes
-in two Columns</property>
+in Two Columns</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
@@ -8713,7 +8714,7 @@ been enabled.</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">end</property>
                                 <property name="label" translatable="yes">Book in
-focus:</property>
+Focus:</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -8818,7 +8819,7 @@ generated.</property>
                             <child>
                               <object class="GtkCheckButton" id="c_randomPicPosn">
                                 <property name="label" translatable="yes">Random
-position</property>
+Position</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
@@ -9215,8 +9216,8 @@ bugs, annoyances or can't make it work right, please file
 an issue using this link here. The developers work on this
 in their spare time, so please be patient for a response.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">How to report bugs, 
-annoyances or other issues:</property>
+                                    <property name="label" translatable="yes">How to Report Bugs, 
+Annoyances or Other Issues:</property>
                                     <property name="justify">right</property>
                                   </object>
                                   <packing>

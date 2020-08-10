@@ -151,6 +151,7 @@ _sensitivities = {
 _nonsensitivities = {
     "c_omitrhchapnum" :        ["c_hdrverses"],
     "c_multiplebooks" :        ["l_singlebook", "ecb_book", "l_chapfrom", "fcb_chapfrom", "l_chapto", "fcb_chapto"],
+    "c_blendfnxr" :            ["l_internote", "s_internote"],
     "c_useprintdraftfolder" :  ["btn_selectOutputFolder"]
 }
 # Checkboxes and the Tabs that they make (in)visible
