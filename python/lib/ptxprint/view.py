@@ -893,9 +893,18 @@ class ViewModel:
                                 hyphenatedWords.append(l)
             c = len(hyphenatedWords)
             if c >= listlimit:
-                m2b = "\n\nThat is too many for XeTeX! List truncated to longest {} words.".format(listlimit)
-                hyphenatedWords.sort(key=len,reverse=True)
-                shortlist = hyphenatedWords[:listlimit]
+                hyphwords = set([x.replace("-", "") for x in hyphenatedWords])
+                sheets = usfmutils.load_stylesheets(self.getStylesheets())
+                acc = {}
+                for bk in self.getBooks():
+                    f = os.path.join(self.prjdir, self.getBookFilename(bk, self.prjdir))
+                    u = usfmutils.Usfm(f, stylesheets=sheets)
+                    u.getwords(init=acc, constrain=hyphwords)
+                if len(acc) >= listlimit:
+                    shortlist = [k for k, v in sorted(acc.items(), key=lambda x:(-x[1], -len(x[0])))][:listlimit]
+                else:
+                    shortlist = sorted(acc.keys())
+                m2b = "\n\nThat is too many for XeTeX! List truncated to longest {} words found in the active sources.".format(len(shortlist))
                 hyphenatedWords = shortlist
             hyphenatedWords.sort(key = lambda s: s.casefold())
             outlist = '\catcode"200C=11\n\catcode"200D=11\n\hyphenation{' + "\n".join(hyphenatedWords) + "}"
@@ -997,6 +1006,26 @@ class ViewModel:
 
     def incrementProgress(self, val=None):
         pass
+
+    def getStyleSheets(self, generated=False):
+        res = []
+        cpath = self.configPath(cfgname=self.configName())
+        rcpath = self.configPath("")
+        if self.get('c_useCustomSty'):
+            res.append(os.path.join(self.settings_dir, self.prjid, "custom.sty"))
+        if self.get('c_useModsSty'):
+            for p in (cpath, rcpath):
+                fp = os.path.join(p, "ptxprint-mods.sty")
+                if os.path.exists(fp):
+                    res.append(fp)
+                    break
+        if generated:
+            for p in (cpath, rcpath):
+                fp = os.path.join(p, "NestedStyles.sty")
+                if os.path.exists(fp):
+                    res.append(fp)
+                    break
+        return res
 
     def _getArchiveFiles(self, books, prjid=None, cfgid=None):
         sfiles = {'c_useCustomSty': ("custom.sty", False),
