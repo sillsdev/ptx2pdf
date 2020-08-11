@@ -96,10 +96,10 @@
     %%%%% Note the \special line here seems to work but there may be a better location for it
     %%%%% Also, the numbers used are hard coded now but need to be calculated
     \ifCropMarks
-    \pdfcropwidth=\pdfpagewidth\advance\pdfcropwidth by -\dimen0
-    \pdfcropheight=\pdfpageheight\advance\pdfcropheight by -\dimen0
-    \def\tmp{\dimen0}
-    \special {pdf:put @thispage <</MediaBox [0 0 \strip@pt\pdfpagewidth \space
+      \pdfcropwidth=\pdfpagewidth\advance\pdfcropwidth by -\dimen0
+      \pdfcropheight=\pdfpageheight\advance\pdfcropheight by -\dimen0
+      \def\tmp{\dimen0}
+      \special {pdf:put @thispage <</MediaBox [0 0 \strip@pt\pdfpagewidth \space
         \strip@pt\pdfpageheight ] /TrimBox [\strip@pt\tmp \space
         \strip@pt\tmp \space \strip@pt\pdfcropwidth \space
         \strip@pt\pdfcropheight ] /ArtBox [\strip@pt\tmp \space

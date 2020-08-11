@@ -96,10 +96,11 @@ class ViewModel:
         "document/diglotsecprj": "updateDiglotConfigList"
     }
 
-    def __init__(self, settings_dir, workingdir):
+    def __init__(self, settings_dir, workingdir, userconfig):
         self.settings_dir = settings_dir
         self.fixed_wd = workingdir != None
         self.working_dir = workingdir
+        self.userconfig = userconfig
         self.ptsettings = None
         self.customScript = None
         self.FrontPDFs = None
@@ -290,6 +291,7 @@ class ViewModel:
             if os.path.exists(fdir):
                 cachepath(fdir)
             readConfig = True
+        self.userconfig.set("init", "project", self.prjid)
         if readConfig or self.configId != configName:
             oldp = self.configPath(prjid=currprj, cfgname=currcfg)
             newp = self.configPath(cfgname=configName)
@@ -306,6 +308,8 @@ class ViewModel:
             res = self.readConfig(cfgname=configName)
             if res or forceConfig:
                 self.configId = configName
+                if self.configId is not None and len(self.configId):
+                    self.userconfig.set("init", "config", self.configId)
             return res
         else:
             return True

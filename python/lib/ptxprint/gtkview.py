@@ -167,13 +167,13 @@ _nonsensitivities = {
 # }
 class GtkViewModel(ViewModel):
 
-    def __init__(self, settings_dir, workingdir):
+    def __init__(self, settings_dir, workingdir, userconfig):
         self._setup_css()
         GLib.set_prgname("ptxprint")
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(os.path.dirname(__file__), "ptxprint.glade"))
         self.builder.connect_signals(self)
-        super(GtkViewModel, self).__init__(settings_dir, workingdir)
+        super(GtkViewModel, self).__init__(settings_dir, workingdir, userconfig)
         self.isDisplay = True
         self.config_dir = None
         self.initialised = False

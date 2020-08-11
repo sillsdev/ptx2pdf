@@ -416,6 +416,7 @@
 \newif\ifIndentAfterHeading \IndentAfterHeadingtrue
 \newif\ifOmitVerseNumberOne \OmitVerseNumberOnefalse
 \newif\ifOmitVerses \OmitVersesfalse
+\newif\ifDropActions \DropActionsfalse
 \def\n@wchaptersf{998}
 \let\b@ok\relax
 \let\prevb@ok\relax
@@ -426,20 +427,19 @@
 \def\pdfb@@km@rk{\ifx\b@ok\prevb@ok
  \else
   \global\dr@ppednumberfalse
-  \bgroup\liter@lspecials
-   \special{pdf:dest (\id@@@.) [@thispage /Fit]}%
-   \ifx\b@ok\relax \let\t@mp=\id@@@ \else \let\t@mp=\b@ok \fi
-   \special{pdf:outline 0 << /Title (\t@mp)
-            /A << /S /GoTo /D (\id@@@.) >> >>}%
-   \global\let\prevb@ok\b@ok
-  \egroup
+  \ifDropActions\else\bgroup\liter@lspecials
+    \special{pdf:dest (\id@@@.) [@thispage /Fit]}%
+    \ifx\b@ok\relax \let\t@mp=\id@@@ \else \let\t@mp=\b@ok\fi
+    \special{pdf:outline 0 << /Title (\t@mp)
+             /A << /S /GoTo /D (\id@@@.) >> >>}%
+    \global\let\prevb@ok\b@ok\egroup\fi
  \fi}
 
 \def\Alternative{\ /\ }%
 \let\b@okC=\relax
 
 \def\pdfb@@km@rkR{\ifx\b@okR\prevb@okR
- \else
+ \else\ifDropActions\else
   \bgroup\liter@lspecials
    \special{pdf:dest (\id@@@.) [@thispage /Fit]}%
    \ifx\b@ok\relax \let\t@mpL=\relax \else \let\t@mpL=\b@ok \fi
@@ -449,22 +449,22 @@
             /A << /S /GoTo /D (\id@@@.) >> >>}%
    \global\let\prevb@okR\b@okR
   \egroup
- \fi}
+ \fi\fi}
 
 \def\pdfch@ptermark{\ifdiglot\ifdiglotL\pdfch@pterm@rk\else\pdfch@pterm@rkR\fi\else\pdfch@pterm@rk\fi}
-\def\pdfch@pterm@rk{\bgroup\liter@lspecials
+\def\pdfch@pterm@rk{\ifDropActions\else\bgroup\liter@lspecials
   \special{pdf:dest (\id@@@.\ch@pter) [@thispage /Fit]}%
   \ifx\b@ok\relax \let\t@mp=\id@@@ \else \let\t@mp=\b@ok \fi
   \special{pdf:outline 1 << /Title (\t@mp\space\ch@pter)
            /A << /S /GoTo /D (\id@@@.\ch@pter) >> >>}%
-  \egroup}
+  \egroup\fi}
 
-\def\pdfch@pterm@rkR{\bgroup\liter@lspecials
+\def\pdfch@pterm@rkR{\ifDropActions\else\bgroup\liter@lspecials
   \special{pdf:dest (\id@@@.\ch@pter) [@thispage /Fit]}%
   \ifx\b@okR\relax \let\t@mp=\id@@@ \else \let\t@mp=\b@okR \fi
   \special{pdf:outline 1 << /Title (\t@mp\space\ch@pter)
            /A << /S /GoTo /D (\id@@@.\ch@pter) >> >>}%
-  \egroup}
+  \egroup\fi}
 
 \newwrite\p@rlocs
 \newread\readp@rlocs
