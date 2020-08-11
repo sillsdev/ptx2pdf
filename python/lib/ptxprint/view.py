@@ -576,6 +576,8 @@ class ViewModel:
             if 'dest file' not in v:
                 missingPics.append(v['src'])
                 continue
+            if 'media' in v and 'p' not in v['media']:
+                continue
             if not isdblcol: # Single Column layout so change all tl+tr > t and bl+br > b
                 if 'pgpos' in v:
                     v['pgpos'] = re.sub(r"([tb])[lr]", r"\1", v['pgpos'])
