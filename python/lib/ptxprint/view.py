@@ -863,7 +863,7 @@ class ViewModel:
                 outf.write("".join(adjlist))
 
     def generateHyphenationFile(self):
-        listlimit = 32749
+        listlimit = 27836 # 32749
         prjid = self.get("fcb_project") # self.dict['project/id']
         prjdir = os.path.join(self.settings_dir, self.prjid)
         infname = os.path.join(self.ptsettings.basedir, prjid, 'hyphenatedWords.txt')

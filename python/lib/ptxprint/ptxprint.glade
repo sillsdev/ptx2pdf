@@ -2646,9 +2646,7 @@ Width:</property>
                                       <object class="GtkSpinButton" id="s_colgutteroffset">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">This setting can raise (if -ve) or lower (if +ve) the starting point of the vertical rule between columns. (Value is pts).
-The rule can be enabled on the Basic tab under the section
-Double Column Layout.</property>
+                                        <property name="tooltip_text" translatable="yes">This setting can raise (if -ve) or lower (if +ve) the starting point of the vertical rule between columns. (Value is pts).</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
                                         <property name="width_chars">5</property>
@@ -2710,7 +2708,6 @@ Top:</property>
                                 <property name="margin_top">4</property>
                                 <property name="margin_bottom">4</property>
                                 <property name="hexpand">True</property>
-                                <property name="vexpand">True</property>
                                 <property name="label_xalign">0.10000000149011612</property>
                                 <child>
                                   <object class="GtkGrid" id="gr_horizRule">
