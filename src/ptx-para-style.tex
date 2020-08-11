@@ -216,8 +216,8 @@
    \end@llcharstyles % end any character styles in effect
    \beginL\pdfsavepos
    \write\p@rlocs{\noexpand\@parend{\the\pdflastxpos}{\the\pdflastypos}}\endL
-   \ifnum\pagetracing>0\tracingparagraphs=1\ifnum\pagetracing>1\looseness=-1%\emergencystretch=1sp
-     \fi\else\tolerance=10\fi
+   %\ifnum\pagetracing>0\tracingparagraphs=1\ifnum\pagetracing>1\looseness=-1%\emergencystretch=1sp
+   %  \fi\else\tolerance=10\fi
    \par % end the paragraph
    \ifdim\prevdepth>0pt\lastdepth=\prevdepth\else\lastdepth=-1pt\fi
    \ifnum\pagetracing>0\tracingparagraphs=0\fi
