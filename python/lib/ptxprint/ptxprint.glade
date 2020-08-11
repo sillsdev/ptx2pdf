@@ -292,8 +292,8 @@ please create an issue in Github.</property>
     <property name="website">https://software.sil.org/ptxprint/</property>
     <property name="website_label" translatable="yes">Download the latest version</property>
     <property name="authors">Martin Hosken (Project Lead, System Architect, TeX macros)
-Mark Penny (UI Developer, Testing &amp; Documentation)
-David Gardner (TeX macro hacks, tweaks &amp; bugfixing)
+Mark Penny (UI Developer, Testing + Documentation)
+David Gardner (TeX Macro Hacks, Tweaks + Bugfixing)
 Nicolas Spalinger (Linux Packaging)
 
 Built on the foundation laid by:
@@ -2710,6 +2710,7 @@ Top:</property>
                                 <property name="margin_top">4</property>
                                 <property name="margin_bottom">4</property>
                                 <property name="hexpand">True</property>
+                                <property name="vexpand">True</property>
                                 <property name="label_xalign">0.10000000149011612</property>
                                 <child>
                                   <object class="GtkGrid" id="gr_horizRule">
@@ -2809,7 +2810,7 @@ main body text begins.</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">3</property>
                         <property name="margin_bottom">6</property>
-                        <property name="label_xalign">0.0099999997764825821</property>
+                        <property name="label_xalign">0.019999999552965164</property>
                         <child>
                           <object class="GtkAlignment">
                             <property name="visible">True</property>
@@ -2916,7 +2917,7 @@ Layout for These Books</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_showNonScriptureChapters">
-                                    <property name="label" translatable="yes">Show Chapter Numbers in non-Scripture Books</property>
+                                    <property name="label" translatable="yes">Show Chapter Numbers in Non-Scripture Books</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -3051,7 +3052,7 @@ Special books and Other advanced options.</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">6</property>
                         <property name="margin_bottom">6</property>
-                        <property name="label_xalign">0.0099999997764825821</property>
+                        <property name="label_xalign">0.019999999552965164</property>
                         <child>
                           <object class="GtkAlignment">
                             <property name="visible">True</property>
@@ -4220,6 +4221,8 @@ for characters missing in primary font.</property>
                         <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="margin_left">6</property>
                         <property name="margin_top">6</property>
                         <property name="margin_bottom">6</property>
                         <property name="label_xalign">0.019999999552965164</property>
@@ -4581,6 +4584,8 @@ selected books/chapters will show in the glossary.</property>
                         <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="margin_left">6</property>
                         <property name="margin_top">6</property>
                         <property name="margin_bottom">6</property>
                         <property name="label_xalign">0.019999999552965164</property>
@@ -4978,6 +4983,7 @@ be turned OFF (to omit the main text).</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
+                            <property name="margin_left">6</property>
                             <property name="margin_top">6</property>
                             <property name="margin_bottom">6</property>
                             <property name="hexpand">False</property>
@@ -5242,17 +5248,22 @@ and Illustrations.</property>
                   <object class="GtkBox" id="tb_NotesRefs">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="margin_left">6</property>
+                    <property name="margin_right">6</property>
+                    <property name="margin_top">6</property>
+                    <property name="margin_bottom">6</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame">
                         <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">6</property>
                         <property name="margin_bottom">3</property>
-                        <property name="label_xalign">0.0099999997764825821</property>
+                        <property name="label_xalign">0.019999999552965164</property>
                         <child>
                           <object class="GtkAlignment">
                             <property name="visible">True</property>
@@ -5299,7 +5310,7 @@ and Illustrations.</property>
                                                 <property name="homogeneous">True</property>
                                                 <child>
                                                   <object class="GtkCheckButton" id="c_fnparagraphednotes">
-                                                    <property name="label" translatable="yes">Use Paragraphed Footnotes (recommended)</property>
+                                                    <property name="label" translatable="yes">Use Paragraphed Footnotes (Recommended)</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
@@ -5528,7 +5539,7 @@ the list of callers specified.</property>
                                                 <property name="homogeneous">True</property>
                                                 <child>
                                                   <object class="GtkCheckButton" id="c_paragraphedxrefs">
-                                                    <property name="label" translatable="yes">Use Paragraphed Cross-references (recommended)</property>
+                                                    <property name="label" translatable="yes">Use Paragraphed Cross-References (Recommended)</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
@@ -5548,7 +5559,7 @@ the other (with space between) to form a paragraph.</property>
                                                 </child>
                                                 <child>
                                                   <object class="GtkCheckButton" id="c_xrOverride">
-                                                    <property name="label" translatable="yes">Override xRref-specific  -/+ Settings in Text</property>
+                                                    <property name="label" translatable="yes">Override xRref-Specific  -/+ Settings in Text</property>
                                                     <property name="sensitive">False</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
@@ -5747,7 +5758,6 @@ the list of callers specified.</property>
                                         <property name="can_focus">False</property>
                                         <property name="margin_top">6</property>
                                         <property name="margin_bottom">6</property>
-                                        <property name="spacing">4</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_footnoterule">
                                             <property name="label" translatable="yes">Show Footnote Rule</property>
@@ -5781,6 +5791,7 @@ used, the Cross-References can only have
 one type of called (rather than a sequence)
 which must be specified here.</property>
                                             <property name="halign">start</property>
+                                            <property name="margin_left">75</property>
                                             <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="clicked" handler="onBlendedXrsClicked" swapped="no"/>
@@ -5792,7 +5803,16 @@ which must be specified here.</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <placeholder/>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="hexpand">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">2</property>
+                                          </packing>
                                         </child>
                                         <child>
                                           <object class="GtkLabel">
@@ -5807,6 +5827,7 @@ Cross-reference markers in the Stylesheet.
 The PrintDraft-mods.sty stylesheet will
 overide the settings specified here.</property>
                                             <property name="halign">end</property>
+                                            <property name="margin_right">6</property>
                                             <property name="label" translatable="yes">Font Size:</property>
                                           </object>
                                           <packing>
@@ -5824,6 +5845,7 @@ Change to increase or decrease
 space between lines of text.</property>
                                             <property name="halign">end</property>
                                             <property name="valign">center</property>
+                                            <property name="margin_right">6</property>
                                             <property name="text" translatable="yes">10.0</property>
                                             <property name="caps_lock_warning">False</property>
                                             <property name="progress_pulse_step">0</property>
@@ -5855,6 +5877,7 @@ space between lines of text.</property>
                                   <object class="GtkGrid" id="gr_fnSpacingOptions">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
                                     <property name="valign">start</property>
                                     <property name="margin_bottom">6</property>
                                     <property name="row_spacing">6</property>
@@ -5950,6 +5973,7 @@ space between lines of text in
 the notes area.</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
+                                        <property name="margin_right">8</property>
                                         <property name="text" translatable="yes">12.0</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="progress_pulse_step">0</property>
@@ -6102,7 +6126,7 @@ so that they don't get split across lines.</property>
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Footnotes and Cross-references</property>
+                            <property name="label" translatable="yes">Footnotes and Cross-References</property>
                           </object>
                         </child>
                       </object>
@@ -6146,11 +6170,12 @@ Cross-references appear.</property>
                         <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">6</property>
                         <property name="margin_bottom">6</property>
-                        <property name="label_xalign">0.0099999997764825821</property>
+                        <property name="label_xalign">0.019999999552965164</property>
                         <child>
                           <object class="GtkAlignment">
                             <property name="visible">True</property>
@@ -6451,7 +6476,7 @@ secondary text as the Outer text.</property>
 is included in the Header. If you also want to
 include the verse numbers, then check this option.</property>
                                         <property name="halign">start</property>
-                                        <property name="margin_left">10</property>
+                                        <property name="margin_left">20</property>
                                         <property name="margin_top">4</property>
                                         <property name="margin_bottom">4</property>
                                         <property name="draw_indicator">True</property>
@@ -6541,11 +6566,12 @@ in the header reference.</property>
                         <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">6</property>
                         <property name="margin_bottom">6</property>
-                        <property name="label_xalign">0.0099999997764825821</property>
+                        <property name="label_xalign">0.019999999552965164</property>
                         <child>
                           <object class="GtkGrid">
                             <property name="visible">True</property>
@@ -6690,11 +6716,12 @@ in the header reference.</property>
                         <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">6</property>
                         <property name="margin_bottom">6</property>
-                        <property name="label_xalign">0.0099999997764825821</property>
+                        <property name="label_xalign">0.019999999552965164</property>
                         <child>
                           <object class="GtkAlignment">
                             <property name="visible">True</property>
@@ -6920,7 +6947,10 @@ content of Headers and Footers.</property>
                         <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
                         <property name="valign">start</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
                         <property name="margin_top">6</property>
                         <property name="margin_bottom">6</property>
                         <property name="label_xalign">0.019999999552965164</property>
@@ -6942,7 +6972,7 @@ content of Headers and Footers.</property>
                                 <property name="column_spacing">4</property>
                                 <child>
                                   <object class="GtkRadioButton" id="c_useLowResPics">
-                                    <property name="label" translatable="yes">Prefer Low-Resolution Pictures (smaller file size)</property>
+                                    <property name="label" translatable="yes">Prefer Low-Resolution Pictures (Smaller File Size)</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -6967,7 +6997,7 @@ share, but the image quality will be low.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_figplaceholders">
-                                    <property name="label" translatable="yes">Only Use Empty Place-holders (smallest PDF file)</property>
+                                    <property name="label" translatable="yes">Only Use Empty Place-holders (Smallest PDF File)</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -6991,7 +7021,7 @@ without illustrations.</property>
                                 </child>
                                 <child>
                                   <object class="GtkRadioButton" id="c_useHighResPics">
-                                    <property name="label" translatable="yes">Prefer High-Resolution Pictures (larger file size)</property>
+                                    <property name="label" translatable="yes">Prefer High-Resolution Pictures (Larger File Size)</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -7021,7 +7051,7 @@ the image quality will be as good as possible.</property>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="btn_selectFigureFolder">
-                                    <property name="label" translatable="yes">Select folder...</property>
+                                    <property name="label" translatable="yes">Select Folder...</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
@@ -7363,13 +7393,15 @@ have been enabled.</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="margin_left">6</property>
-                        <property name="margin_right">6</property>
                         <property name="orientation">vertical</property>
                         <child>
                           <object class="GtkFrame">
+                            <property name="width_request">380</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="halign">start</property>
+                            <property name="margin_left">6</property>
+                            <property name="margin_right">6</property>
                             <property name="margin_top">6</property>
                             <property name="hexpand">False</property>
                             <property name="vexpand">True</property>
@@ -7725,6 +7757,7 @@ PDF (and associated interim files).</property>
                         </child>
                         <child>
                           <object class="GtkFrame">
+                            <property name="width_request">300</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="margin_top">12</property>
@@ -8101,8 +8134,8 @@ from XeTeX processing.</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Percentage of page width to 
-be used by Primary (Left) Text</property>
+                                <property name="label" translatable="yes">Percentage of Page Width to 
+be Used by Primary (Left) Text</property>
                                 <property name="justify">right</property>
                               </object>
                               <packing>
@@ -8689,10 +8722,9 @@ been enabled.</property>
                   <object class="GtkBox" id="tb_ViewerEditor">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="margin_left">6</property>
-                    <property name="margin_right">6</property>
+                    <property name="margin_left">12</property>
+                    <property name="margin_right">12</property>
                     <property name="margin_top">6</property>
-                    <property name="margin_bottom">6</property>
                     <property name="hexpand">True</property>
                     <property name="vexpand">True</property>
                     <property name="orientation">vertical</property>
@@ -8713,6 +8745,7 @@ been enabled.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">end</property>
+                                <property name="margin_left">6</property>
                                 <property name="label" translatable="yes">Book in
 Focus:</property>
                               </object>
@@ -9189,7 +9222,7 @@ Effective PDF viewer:</property>
                                 </child>
                                 <child>
                                   <object class="GtkLinkButton">
-                                    <property name="label" translatable="yes">Visit SumatraPDF download page</property>
+                                    <property name="label" translatable="yes">Visit SumatraPDF Download Page</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="focus_on_click">False</property>
@@ -9228,7 +9261,7 @@ Annoyances or Other Issues:</property>
                                 </child>
                                 <child>
                                   <object class="GtkLinkButton">
-                                    <property name="label" translatable="yes">Report an issue via GitHub</property>
+                                    <property name="label" translatable="yes">Report an Issue via GitHub</property>
                                     <property name="name">Report an Issue with PTXprint</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -9246,7 +9279,7 @@ Annoyances or Other Issues:</property>
                                 </child>
                                 <child>
                                   <object class="GtkLinkButton">
-                                    <property name="label" translatable="yes">Visit PTXprint's Home Page to download latest version</property>
+                                    <property name="label" translatable="yes">Visit PTXprint's Home Page to Download Latest Version</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="focus_on_click">False</property>
@@ -9302,7 +9335,7 @@ Videos, FAQs and Latest Updates:</property>
 work and how to customize the stylesheets even
 further, this FAQ document is worth visiting.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">FAQs related to 
+                                    <property name="label" translatable="yes">FAQs Related to 
 the PTX2PDF Macros:</property>
                                     <property name="justify">right</property>
                                   </object>
@@ -9461,7 +9494,8 @@ general users and common solutions.</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="margin_top">6</property>
+                        <property name="margin_top">4</property>
+                        <property name="margin_bottom">4</property>
                         <property name="column_homogeneous">True</property>
                         <child>
                           <object class="GtkButton" id="btn_saveEdits">
@@ -9841,7 +9875,7 @@ Shortcut key: &lt;Ctrl-P&gt;</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="margin_right">21</property>
-                <property name="label" translatable="yes">Loading font list...
+                <property name="label" translatable="yes">Loading Font List...
 
 If you have enough time to read this message, 
 then you probably have too many fonts installed!
