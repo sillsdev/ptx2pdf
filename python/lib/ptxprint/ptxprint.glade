@@ -6158,6 +6158,12 @@ Cross-references appear.</property>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
+this setting can be used to increase/decrease the 
+space at the top of the page and determines
+where the main text begins. This setting is a 
+factor (without units) and is multiplied by the
+Margins value on the Layout tab.</property>
                                         <property name="halign">end</property>
                                         <property name="margin_top">6</property>
                                         <property name="margin_bottom">6</property>
@@ -6175,6 +6181,12 @@ Cross-references appear.</property>
                                       <object class="GtkSpinButton" id="s_topmarginfactor">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
+this setting can be used to increase/decrease the 
+space at the top of the page and determines
+where the main text begins. This setting is a 
+factor (without units) and is multiplied by the
+Margins value on the Layout tab.</property>
                                         <property name="halign">start</property>
                                         <property name="width_chars">6</property>
                                         <property name="text" translatable="yes">1.15</property>
@@ -6197,6 +6209,11 @@ Cross-references appear.</property>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
+space at the top of the page and determines the
+vertical positioning of the header line. This setting
+is a factor (without units) and is multiplied by the
+Margins value on the Layout tab.</property>
                                         <property name="halign">end</property>
                                         <property name="margin_left">20</property>
                                         <property name="label" translatable="yes">Header Position:</property>
@@ -6213,6 +6230,11 @@ Cross-references appear.</property>
                                       <object class="GtkSpinButton" id="s_headerposition">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
+space at the top of the page and determines the
+vertical positioning of the header line. This setting
+is a factor (without units) and is multiplied by the
+Margins value on the Layout tab.</property>
                                         <property name="halign">start</property>
                                         <property name="width_chars">6</property>
                                         <property name="text" translatable="yes">0.50</property>
@@ -6317,6 +6339,16 @@ secondary text as the Outer text.</property>
                                         <property name="width_request">200</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">The header line on each page can contain
+the page number, and/or reference(s) in
+various forms. Select a preset option, or
+type in your own TeX key word with additional
+adornments or text as needed. 
+For example:
+[\pagenumber]   places square brackets around the page number
+\rangerefL     places the Left text's reference range in a diglot
+\rangerefR    places the Right text's reference range in a diglot
+-empty-     places nothing in that location</property>
                                         <property name="active">1</property>
                                         <property name="has_entry">True</property>
                                         <items>
@@ -6345,6 +6377,16 @@ secondary text as the Outer text.</property>
                                         <property name="width_request">200</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">The header line on each page can contain
+the page number, and/or reference(s) in
+various forms. Select a preset option, or
+type in your own TeX key word with additional
+adornments or text as needed. 
+For example:
+[\pagenumber]   places square brackets around the page number
+\rangerefL     places the Left text's reference range in a diglot
+\rangerefR    places the Right text's reference range in a diglot
+-empty-     places nothing in that location</property>
                                         <property name="margin_right">6</property>
                                         <property name="active">4</property>
                                         <property name="has_entry">True</property>
@@ -6374,6 +6416,16 @@ secondary text as the Outer text.</property>
                                         <property name="width_request">200</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">The header line on each page can contain
+the page number, and/or reference(s) in
+various forms. Select a preset option, or
+type in your own TeX key word with additional
+adornments or text as needed. 
+For example:
+[\pagenumber]   places square brackets around the page number
+\rangerefL     places the Left text's reference range in a diglot
+\rangerefR    places the Right text's reference range in a diglot
+-empty-     places nothing in that location</property>
                                         <property name="active">0</property>
                                         <property name="has_entry">True</property>
                                         <items>
@@ -6413,6 +6465,10 @@ secondary text as the Outer text.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">By default, the chapter number will be included
+in any references in the header line. If you prefer
+to suppress that (and just show the book name)
+then check this option.</property>
                                         <property name="halign">start</property>
                                         <property name="margin_top">4</property>
                                         <property name="margin_bottom">4</property>
@@ -6433,7 +6489,11 @@ secondary text as the Outer text.</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">By default only the Book and Chapter number
 is included in the Header. If you also want to
-include the verse numbers, then check this option.</property>
+include the verse numbers, then check this option.
+
+Keep in mind that including the verse numbers
+actually makes it harder to read/absorb when
+flicking through pages to find the right chapter.</property>
                                         <property name="halign">start</property>
                                         <property name="margin_left">20</property>
                                         <property name="margin_top">4</property>
@@ -6544,6 +6604,11 @@ in the header reference.</property>
                               <object class="GtkSpinButton" id="s_footerposition">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
+space at the bottom of the page and determines the
+vertical positioning of the footer line. This setting
+is a factor (without units) and is multiplied by the
+Margins value on the Layout tab.</property>
                                 <property name="halign">start</property>
                                 <property name="width_chars">6</property>
                                 <property name="text" translatable="yes">0.50</property>
@@ -6565,6 +6630,11 @@ in the header reference.</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
+space at the bottom of the page and determines the
+vertical positioning of the footer line. This setting
+is a factor (without units) and is multiplied by the
+Margins value on the Layout tab.</property>
                                 <property name="halign">end</property>
                                 <property name="label" translatable="yes">Footer Position:</property>
                                 <property name="justify">right</property>
@@ -6578,6 +6648,13 @@ in the header reference.</property>
                               <object class="GtkSpinButton" id="s_bottommarginfactor">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
+this setting can be used to increase/decrease the 
+space at the bottom of the page and determines
+where the main text and footnotes and 
+cross-references end. This setting is a 
+factor (without units) and is multiplied 
+by the Margins value on the Layout tab.</property>
                                 <property name="halign">start</property>
                                 <property name="width_chars">6</property>
                                 <property name="text" translatable="yes">1.15</property>
@@ -6599,6 +6676,13 @@ in the header reference.</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
+this setting can be used to increase/decrease the 
+space at the bottom of the page and determines
+where the main text and footnotes and 
+cross-references end. This setting is a 
+factor (without units) and is multiplied 
+by the Margins value on the Layout tab.</property>
                                 <property name="halign">start</property>
                                 <property name="margin_left">20</property>
                                 <property name="margin_top">6</property>
@@ -6616,6 +6700,17 @@ in the header reference.</property>
                                 <property name="width_request">340</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">It is not considered best-practice to include 
+information in a footer for scripture publications.
+This is usually better placed in the header. However,
+if there is a need to have the page number at the
+footer for all pages (not just the 1st page of each book)
+then that can be set here. Similarly, you may want to add
+a DRAFT message and/or date to the end of each page.
+Note that you can select a preset option OR type your own
+text as needed.
+Note that if you really must have Inner/Outer Footers,
+these can be set in the ptxprint-mods.tex file.</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="active">0</property>
                                 <property name="has_entry">True</property>
@@ -6644,6 +6739,17 @@ in the header reference.</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">It is not considered best-practice to include 
+information in a footer for scripture publications.
+This is usually better placed in the header. However,
+if there is a need to have the page number at the
+footer for all pages (not just the 1st page of each book)
+then that can be set here. Similarly, you may want to add
+a DRAFT message and/or date to the end of each page.
+Note that you can select a preset option OR type your own
+text as needed.
+Note that if you really must have Inner/Outer Footers,
+these can be set in the ptxprint-mods.tex file.</property>
                                 <property name="halign">end</property>
                                 <property name="label" translatable="yes">Center Footer:</property>
                               </object>
@@ -6884,7 +6990,7 @@ should be trimmed to after printing.</property>
 and bottom of the page and
 content of Headers and Footers.</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">Head+Foot</property>
+                    <property name="label" translatable="yes">Header+Footer</property>
                   </object>
                   <packing>
                     <property name="position">5</property>

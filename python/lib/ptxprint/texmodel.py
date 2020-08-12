@@ -868,7 +868,7 @@ class TexModel:
         # Remove the space after a note caller if the caller is omitted.
         for c in ("fn", "xr"):
             if self.asBool("notes/{}omitcaller".format(c)):
-                self.localChanges.append(None, regex.compile((r"(\\[{}]\*)\s+".format(c[0])), r"\1"))
+                self.localChanges.append((None, regex.compile(r"(\\[{}]\*)\s+".format(c[0])), r"\1"))
         self.localChanges.append((None, regex.compile(r"(\\[fx] - .*?\\[fx]\*)\s+"), r"\1"))
 
         # Paratext marks no-break space as a tilde ~
