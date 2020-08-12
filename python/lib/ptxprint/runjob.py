@@ -481,7 +481,7 @@ class RunJob:
             print("Warning: Couldn't Remove Temporary Folders - is a temp file open?")
             
         def carefulCopy(p, src, tgt):
-            ratio = pageRatios[1 if p['size'].startswith("span") else 0]
+            ratio = pageRatios[0 if p['size'].startswith("span") else 1]
             return self.carefulCopy(ratio, src, tgt)
         missingPics = []
         for j in jobs:
@@ -610,7 +610,7 @@ class RunJob:
         # print("lineSpacingFactor=", lineSpacingFactor)
         # ph = pageheight, pw = pagewidth
         # print("margin={} topMarginFactor={} bottomMarginFactor={}".format(margin, topMarginFactor, bottomMarginFactor))
-        ph = pageHeight - (margin * float(topMarginFactor)) - (margin * float(bottomMarginFactor)) - 22  # 16 # (3 * lineSpacingFactor) (Hack!)
+        ph = pageHeight - (margin * float(topMarginFactor)) - (margin * float(bottomMarginFactor)) - 22
         pw1 = pageWidth - bindingGutter - (2*(margin*sideMarginFactor))                       # single-col layout
         if info.dict["paper/columns"] == "2":
             pw2 = int(pageWidth - middleGutter - bindingGutter - (2*(margin*sideMarginFactor)))/2 # double-col layout & span images

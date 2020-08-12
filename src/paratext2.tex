@@ -868,8 +868,9 @@
     \trace{o}{sppd: Not fit on page}
     \trace{i}{sppd: emptyinserts hIns=\the\holdinginserts, \the\ht\partial, vs:\the\vsize}
     \@mptyinserts
-    \global\advance\vsize by -\baselineskip
-    \global\let\whichtrial=\savepartialpaged
+    %\global\advance\vsize by -\baselineskip
+    %\global\let\whichtrial=\savepartialpaged
+    \global\let\whichtrial=\twocoltrial
     %\global\rerunsavepartialpagedtrue
     \global\output={\backingup}%
     \tempfalse%\ifvoid\partial\else\temptrue\fi%

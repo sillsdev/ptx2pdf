@@ -1,5 +1,27 @@
-PTXprint 0.9.1 Beta Release Notes (Release Candidate 1.0) 
-7th August 2020
+PTXprint 0.9.3 Beta Release Notes (Release Candidate 1.0) 
+12th August 2020
+
+Bug Fixes: 0.9.3
+
+  * Fix Watermark and Border PDFs so that they can both work concurrently
+  
+  * Fix Use Exclusive Pictures Folder
+  
+  * Fix Padding of illustrations when too tall for page
+  
+  * Fix Remove unwanted space before footnote and x-ref callers
+  
+  * Fix Add missing Tooltips and improve layout of Notes + X-ref Tab
+  
+Bug Fixes: 0.9.2
+
+  * Fix loss grid-misalignment from 1-2 cols transition
+  
+  * Support fig scale. Don't remove topspace from title boxes
+  
+  * Reset tolerance and emergencystretch
+  
+  * Minor tweaks to UI wording (Title Case) and positioning
 
 Bug Fixes and Improvements in: 0.9.1
 

@@ -281,7 +281,7 @@ THE SOFTWARE.
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 0.9.1 (Beta)</property>
+    <property name="version">Version 0.9.3 (Beta)</property>
     <property name="copyright" translatable="yes">© 2020, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -5280,10 +5280,9 @@ and Illustrations.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>
-                                    <property name="column_spacing">6</property>
                                     <child>
                                       <object class="GtkFrame">
-                                        <property name="width_request">334</property>
+                                        <property name="width_request">330</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">start</property>
@@ -5328,18 +5327,20 @@ to form a paragraph.</property>
                                                 </child>
                                                 <child>
                                                   <object class="GtkCheckButton" id="c_fnOverride">
-                                                    <property name="label" translatable="yes">Override Footnote-specific  -/+ Settings in Text</property>
+                                                    <property name="label" translatable="yes">Override Footnote-Specific -/+ Settings in Text</property>
+                                                    <property name="visible">True</property>
                                                     <property name="sensitive">False</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
                                                     <property name="no_show_all">True</property>
-                                                    <property name="tooltip_text" translatable="yes">When specifying footnotes in Paratext you can
-use \f - (with a minus) to omit the caller, or \f +
-(with a plus) to include the caller.
+                                                    <property name="tooltip_text" translatable="yes">[NOT YET IMPLEMENTED]
+The footnotes specified in Paratext can
+use \f - (with a minus) to omit the caller, 
+or \f +(with a plus) to include the caller.
 
 If this option is enabled, it will override any 'omit'
 footnote caller settings to ensure that every footnote
-includes a caller symbol.</property>
+includes a caller symbol (if the option below is enabled).</property>
                                                     <property name="halign">start</property>
                                                     <property name="margin_top">2</property>
                                                     <property name="margin_bottom">6</property>
@@ -5444,7 +5445,7 @@ then the default set will be loaded.</property>
                                                     <property name="halign">start</property>
                                                     <child>
                                                       <object class="GtkCheckButton" id="c_fnomitcaller">
-                                                        <property name="label" translatable="yes">Show Callees in Notes Area</property>
+                                                        <property name="label" translatable="yes">Show Callers in Notes Area</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
@@ -5511,11 +5512,12 @@ the list of callers specified.</property>
                                     </child>
                                     <child>
                                       <object class="GtkFrame">
-                                        <property name="width_request">334</property>
+                                        <property name="width_request">330</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">start</property>
-                                        <property name="margin_left">15</property>
+                                        <property name="margin_left">8</property>
+                                        <property name="margin_right">8</property>
                                         <property name="margin_top">6</property>
                                         <property name="label_xalign">0.059999998658895493</property>
                                         <property name="shadow_type">in</property>
@@ -5556,18 +5558,21 @@ the other (with space between) to form a paragraph.</property>
                                                 </child>
                                                 <child>
                                                   <object class="GtkCheckButton" id="c_xrOverride">
-                                                    <property name="label" translatable="yes">Override xRref-Specific  -/+ Settings in Text</property>
+                                                    <property name="label" translatable="yes">Override xRref-Specific -/+ Settings in Text</property>
+                                                    <property name="visible">True</property>
                                                     <property name="sensitive">False</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
                                                     <property name="no_show_all">True</property>
-                                                    <property name="tooltip_text" translatable="yes">When specifying cross-references in Paratext you can
-use \x - (with a minus) to omit the caller, or \x +
-(with a plus) to include the caller.
+                                                    <property name="tooltip_text" translatable="yes">[NOT YET IMPLEMENTED]
+Cross-references specified in Paratext can
+use \x - (with a minus) to omit the caller, 
+or \x +(with a plus) to include the caller.
 
 If this option is enabled, it will override any 'omit'
 cross-reference caller settings to ensure that every 
-cross-reference includes a caller symbol.</property>
+cross-reference includes a caller symbol (if the option
+below is enabled).</property>
                                                     <property name="halign">start</property>
                                                     <property name="margin_top">2</property>
                                                     <property name="margin_bottom">6</property>
@@ -5671,7 +5676,7 @@ then the default set will be loaded.</property>
                                                     <property name="halign">start</property>
                                                     <child>
                                                       <object class="GtkCheckButton" id="c_xromitcaller">
-                                                        <property name="label" translatable="yes">Show Callees in Notes Area</property>
+                                                        <property name="label" translatable="yes">Show Callers in Notes Area</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
@@ -5744,42 +5749,21 @@ the list of callers specified.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkAlignment">
+                                  <object class="GtkGrid" id="gr_fnAdvOptions">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="xscale">0.94999998807907104</property>
-                                    <property name="left_padding">1</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="row_spacing">8</property>
+                                    <property name="column_spacing">4</property>
                                     <child>
-                                      <object class="GtkBox" id="bx_AdvFootnoteConfig">
+                                      <object class="GtkCheckButton" id="c_blendfnxr">
+                                        <property name="label" translatable="yes">Blend Cross-References 
+in With Footnotes</property>
                                         <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="margin_top">6</property>
-                                        <property name="margin_bottom">6</property>
-                                        <child>
-                                          <object class="GtkCheckButton" id="c_footnoterule">
-                                            <property name="label" translatable="yes">Show Footnote Rule</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">This is the horizontal rule separating
-the body text from the footnote area.</property>
-                                            <property name="halign">start</property>
-                                            <property name="active">True</property>
-                                            <property name="draw_indicator">True</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkCheckButton" id="c_blendfnxr">
-                                            <property name="label" translatable="yes">Blend Cross-References in With Footnotes</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">To save space in the footnote area, you can
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">To save space in the footnote area, you can
 combine the  footnotes and cross-references
 as a single paragraph (rather than the cross-
 references appearing in a separate block
@@ -5787,131 +5771,27 @@ underneath the footnotes). If this option is
 used, the Cross-References can only have
 one type of called (rather than a sequence)
 which must be specified here.</property>
-                                            <property name="halign">start</property>
-                                            <property name="margin_left">75</property>
-                                            <property name="active">True</property>
-                                            <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onBlendedXrsClicked" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">1</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="hexpand">True</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="tooltip_text" translatable="yes">The font size for the Footnotes and 
-Cross-references. If changing this value
-appears to have no effect on the output
-then check to see if you have specified
-the FontSize for various Footnote and 
-Cross-reference markers in the Stylesheet.
-The PrintDraft-mods.sty stylesheet will
-overide the settings specified here.</property>
-                                            <property name="halign">end</property>
-                                            <property name="margin_right">6</property>
-                                            <property name="label" translatable="yes">Font Size:</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">3</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkSpinButton" id="s_fnfontsize">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="tooltip_text" translatable="yes">Line spacing in points (pts).
-Change to increase or decrease
-space between lines of text.</property>
-                                            <property name="halign">end</property>
-                                            <property name="valign">center</property>
-                                            <property name="margin_right">6</property>
-                                            <property name="text" translatable="yes">10.0</property>
-                                            <property name="caps_lock_warning">False</property>
-                                            <property name="progress_pulse_step">0</property>
-                                            <property name="placeholder_text" translatable="yes">0.0</property>
-                                            <property name="input_purpose">number</property>
-                                            <property name="adjustment">a_fnfontsize</property>
-                                            <property name="climb_rate">0.10000000000000001</property>
-                                            <property name="digits">1</property>
-                                            <property name="numeric">True</property>
-                                            <property name="update_policy">if-valid</property>
-                                            <property name="value">10</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">4</property>
-                                          </packing>
-                                        </child>
-                                      </object>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkGrid" id="gr_fnSpacingOptions">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">start</property>
-                                    <property name="margin_bottom">6</property>
-                                    <property name="row_spacing">6</property>
-                                    <property name="column_spacing">6</property>
-                                    <child>
-                                      <object class="GtkSpinButton" id="s_abovenotespace">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">Enter the minimum vertical space/gap (in pts) that
-must exist between the main text body and the
-footnote and cross-reference area at the bottom
-of the page.</property>
                                         <property name="halign">start</property>
-                                        <property name="text" translatable="yes">12.0</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_notespace</property>
-                                        <property name="climb_rate">0.5</property>
-                                        <property name="digits">1</property>
-                                        <property name="numeric">True</property>
-                                        <property name="update_policy">if-valid</property>
-                                        <property name="value">10</property>
+                                        <property name="active">True</property>
+                                        <property name="draw_indicator">True</property>
+                                        <signal name="clicked" handler="onBlendedXrsClicked" swapped="no"/>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">0</property>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">1</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkCheckButton" id="c_footnoterule">
+                                        <property name="label" translatable="yes">Show Footnote Rule</property>
                                         <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">Enter the minimum vertical space/gap (in pts) that
-must exist between the main text body and the
-footnote and cross-reference area at the bottom
-of the page.</property>
-                                        <property name="halign">end</property>
-                                        <property name="label" translatable="yes">Space Above:</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">This is the horizontal rule separating
+the body text from the footnote area.</property>
+                                        <property name="halign">start</property>
+                                        <property name="active">True</property>
+                                        <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
@@ -5919,116 +5799,14 @@ of the page.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel" id="l_internote">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">If Footnotes and Cross-references are not blended 
-(using the option just above) then the Footnotes
-appear in one block and the Cross-references in
-another block just below. This option allows you
-to adjust the vertical space between these two sections.</property>
-                                        <property name="halign">end</property>
-                                        <property name="margin_left">12</property>
-                                        <property name="label" translatable="yes">Vertical Spacing Between
-Notes &amp; Cross-references:</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">2</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkSpinButton" id="s_internote">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">If Footnotes and Cross-references are not blended 
-(using the option just above) then the Footnotes
-appear in one block and the Cross-references in
-another block just below. This option allows you
-to adjust the vertical space between these two sections.</property>
-                                        <property name="text" translatable="yes">3.5</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_internote</property>
-                                        <property name="climb_rate">0.10000000000000001</property>
-                                        <property name="digits">1</property>
-                                        <property name="numeric">True</property>
-                                        <property name="update_policy">if-valid</property>
-                                        <property name="value">3.5</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">3</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkSpinButton" id="s_fnlinespacing">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">Line spacing in points (pts).
-Change to increase or decrease
-space between lines of text in
-the notes area.</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="margin_right">8</property>
-                                        <property name="text" translatable="yes">12.0</property>
-                                        <property name="caps_lock_warning">False</property>
-                                        <property name="progress_pulse_step">0</property>
-                                        <property name="placeholder_text" translatable="yes">0.0</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_fnlinespacing</property>
-                                        <property name="climb_rate">0.10000000000000001</property>
-                                        <property name="digits">1</property>
-                                        <property name="numeric">True</property>
-                                        <property name="update_policy">if-valid</property>
-                                        <property name="value">12</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">5</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">The line-spacing (in pts) for the Footnotes
-and Cross-references. If you really need
-different values for each, then this can
-be achieved manually by adjusting the
-PrintDraft-mods.sty stylesheet.</property>
-                                        <property name="halign">end</property>
-                                        <property name="margin_left">12</property>
-                                        <property name="label" translatable="yes">Line Spacing:</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">4</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkGrid" id="gr_fnAdvOptions">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="margin_top">8</property>
-                                    <property name="column_spacing">8</property>
-                                    <property name="column_homogeneous">True</property>
-                                    <child>
                                       <object class="GtkCheckButton" id="c_glossaryFootnotes">
-                                        <property name="label" translatable="yes">Also Show Glossary 
+                                        <property name="label" translatable="yes">Show All Glossary 
 Entries as Footnotes</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Glossary entries for any marked-up
-Biblical Terms on the page can be
+                                        <property name="tooltip_text" translatable="yes">Glossary entries for ALL marked-up
+Biblical Terms on each page can be
 made to appear as footnotes.
 
 Glossary \w markup|mark\w* looks like
@@ -6044,36 +5822,218 @@ need to be checked for understanding).</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
+                                        <property name="top_attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_internote">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">If Footnotes and Cross-references are not blended 
+(using the option just above) then the Footnotes
+appear in one block and the Cross-references in
+another block just below. This setting (pts) allows you
+to adjust the vertical space between these two sections.</property>
+                                        <property name="halign">end</property>
+                                        <property name="margin_left">40</property>
+                                        <property name="label" translatable="yes">Space Separating Footnote 
+and Cross-reference Blocks:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">1</property>
+                                        <property name="width">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSpinButton" id="s_internote">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">If Footnotes and Cross-references are not blended 
+(using the option just above) then the Footnotes
+appear in one block and the Cross-references in
+another block just below. This setting (pts) allows you
+to adjust the vertical space between these two sections.</property>
+                                        <property name="text" translatable="yes">3.5</property>
+                                        <property name="input_purpose">number</property>
+                                        <property name="adjustment">a_internote</property>
+                                        <property name="climb_rate">0.10000000000000001</property>
+                                        <property name="digits">1</property>
+                                        <property name="numeric">True</property>
+                                        <property name="update_policy">if-valid</property>
+                                        <property name="value">3.5</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">3</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">Enter the minimum vertical space/gap (pts) that
+must exist between the main text body and the
+footnote and cross-reference area at the bottom
+of the page.</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Space Separating
+the Text and Notes:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">0</property>
+                                        <property name="width">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSpinButton" id="s_abovenotespace">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">Enter the minimum vertical space/gap (pts) that
+must exist between the main text body and the
+footnote and cross-reference area at the bottom
+of the page.</property>
+                                        <property name="halign">start</property>
+                                        <property name="text" translatable="yes">10.0</property>
+                                        <property name="input_purpose">number</property>
+                                        <property name="adjustment">a_notespace</property>
+                                        <property name="climb_rate">0.5</property>
+                                        <property name="digits">1</property>
+                                        <property name="numeric">True</property>
+                                        <property name="update_policy">if-valid</property>
+                                        <property name="value">10</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">3</property>
                                         <property name="top_attach">0</property>
                                       </packing>
                                     </child>
                                     <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">The font size (pts) for the Footnotes and 
+Cross-references. If changing this value
+appears to have no effect on the output
+then check to see if you have specified
+the FontSize for various Footnote and 
+Cross-reference markers in the Stylesheet.
+The PrintDraft-mods.sty stylesheet will
+overide the settings specified here.</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Font Size:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">4</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSpinButton" id="s_fnfontsize">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">The font size (pts) for the Footnotes and 
+Cross-references. If changing this value
+appears to have no effect on the output
+then check to see if you have specified
+the FontSize for various Footnote and 
+Cross-reference markers in the Stylesheet.
+The PrintDraft-mods.sty stylesheet will
+overide the settings specified here.</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="text" translatable="yes">10.0</property>
+                                        <property name="caps_lock_warning">False</property>
+                                        <property name="progress_pulse_step">0</property>
+                                        <property name="placeholder_text" translatable="yes">0.0</property>
+                                        <property name="input_purpose">number</property>
+                                        <property name="adjustment">a_fnfontsize</property>
+                                        <property name="climb_rate">0.10000000000000001</property>
+                                        <property name="digits">1</property>
+                                        <property name="numeric">True</property>
+                                        <property name="update_policy">if-valid</property>
+                                        <property name="value">10</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">5</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">The line-spacing (pts) for the Footnotes
+and Cross-references. If you really need
+different values for each, then this can
+be achieved manually by adjusting the
+PrintDraft-mods.sty stylesheet.</property>
+                                        <property name="halign">end</property>
+                                        <property name="margin_left">6</property>
+                                        <property name="label" translatable="yes">Line Spacing:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">4</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSpinButton" id="s_fnlinespacing">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">Line spacing in points (pts).
+Change to increase or decrease
+space between lines of text in
+the notes area. This applies to both
+footnotes as well as cross-references.</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="text" translatable="yes">12.0</property>
+                                        <property name="caps_lock_warning">False</property>
+                                        <property name="progress_pulse_step">0</property>
+                                        <property name="placeholder_text" translatable="yes">0.0</property>
+                                        <property name="input_purpose">number</property>
+                                        <property name="adjustment">a_fnlinespacing</property>
+                                        <property name="climb_rate">0.10000000000000001</property>
+                                        <property name="digits">1</property>
+                                        <property name="numeric">True</property>
+                                        <property name="update_policy">if-valid</property>
+                                        <property name="value">12</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">5</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
                                       <object class="GtkCheckButton" id="c_firstOccurenceOnly">
-                                        <property name="label" translatable="yes">Only Show the
-First Occurence</property>
+                                        <property name="label" translatable="yes">Show First Occurence
+for Each Glossary Entry</property>
                                         <property name="visible">True</property>
                                         <property name="sensitive">False</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">If glossary terms have been marked up multiple
+                                        <property name="tooltip_text" translatable="yes">[NOT YET IMPLEMENTED]
+If glossary terms have been marked up multiple
 times, it may be frustrating to see the same
 glossary entry occuring in the footnote area time
 and time again. To prevent this, you can select to
-only show the Glossary entry as a footnote the first
-time that it occurs (in each book).
-  !dea only: NOT YET IMPLEMENTED</property>
+only show the Glossary entry as a footnote the 
+FIRST time that it occurs (in each book).</property>
                                         <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">0</property>
+                                        <property name="top_attach">2</property>
+                                        <property name="width">2</property>
                                       </packing>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_addColon">
                                         <property name="label" translatable="yes">Add a Colon ':'
-After \fq &amp; \xq</property>
+After \fq and \xq</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -6085,13 +6045,13 @@ elements visually distinct.</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">2</property>
-                                        <property name="top_attach">0</property>
+                                        <property name="left_attach">3</property>
+                                        <property name="top_attach">2</property>
                                       </packing>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_keepBookWithRefs">
-                                        <property name="label" translatable="yes">Keep Book Names &amp; 
+                                        <property name="label" translatable="yes">Keep Book Names and 
 References Together</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
@@ -6100,19 +6060,21 @@ References Together</property>
 between the book name and the Ch:Vs refs
 so that they don't get split across lines.</property>
                                         <property name="halign">end</property>
+                                        <property name="margin_right">12</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">3</property>
-                                        <property name="top_attach">0</property>
+                                        <property name="left_attach">4</property>
+                                        <property name="top_attach">2</property>
+                                        <property name="width">2</property>
                                       </packing>
                                     </child>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
-                                    <property name="position">3</property>
+                                    <property name="position">1</property>
                                   </packing>
                                 </child>
                               </object>
@@ -6196,6 +6158,12 @@ Cross-references appear.</property>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
+this setting can be used to increase/decrease the 
+space at the top of the page and determines
+where the main text begins. This setting is a 
+factor (without units) and is multiplied by the
+Margins value on the Layout tab.</property>
                                         <property name="halign">end</property>
                                         <property name="margin_top">6</property>
                                         <property name="margin_bottom">6</property>
@@ -6213,6 +6181,12 @@ Cross-references appear.</property>
                                       <object class="GtkSpinButton" id="s_topmarginfactor">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
+this setting can be used to increase/decrease the 
+space at the top of the page and determines
+where the main text begins. This setting is a 
+factor (without units) and is multiplied by the
+Margins value on the Layout tab.</property>
                                         <property name="halign">start</property>
                                         <property name="width_chars">6</property>
                                         <property name="text" translatable="yes">1.15</property>
@@ -6235,6 +6209,11 @@ Cross-references appear.</property>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
+space at the top of the page and determines the
+vertical positioning of the header line. This setting
+is a factor (without units) and is multiplied by the
+Margins value on the Layout tab.</property>
                                         <property name="halign">end</property>
                                         <property name="margin_left">20</property>
                                         <property name="label" translatable="yes">Header Position:</property>
@@ -6251,6 +6230,11 @@ Cross-references appear.</property>
                                       <object class="GtkSpinButton" id="s_headerposition">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
+space at the top of the page and determines the
+vertical positioning of the header line. This setting
+is a factor (without units) and is multiplied by the
+Margins value on the Layout tab.</property>
                                         <property name="halign">start</property>
                                         <property name="width_chars">6</property>
                                         <property name="text" translatable="yes">0.50</property>
@@ -6355,6 +6339,16 @@ secondary text as the Outer text.</property>
                                         <property name="width_request">200</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">The header line on each page can contain
+the page number, and/or reference(s) in
+various forms. Select a preset option, or
+type in your own TeX key word with additional
+adornments or text as needed. 
+For example:
+[\pagenumber]   places square brackets around the page number
+\rangerefL     places the Left text's reference range in a diglot
+\rangerefR    places the Right text's reference range in a diglot
+-empty-     places nothing in that location</property>
                                         <property name="active">1</property>
                                         <property name="has_entry">True</property>
                                         <items>
@@ -6383,6 +6377,16 @@ secondary text as the Outer text.</property>
                                         <property name="width_request">200</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">The header line on each page can contain
+the page number, and/or reference(s) in
+various forms. Select a preset option, or
+type in your own TeX key word with additional
+adornments or text as needed. 
+For example:
+[\pagenumber]   places square brackets around the page number
+\rangerefL     places the Left text's reference range in a diglot
+\rangerefR    places the Right text's reference range in a diglot
+-empty-     places nothing in that location</property>
                                         <property name="margin_right">6</property>
                                         <property name="active">4</property>
                                         <property name="has_entry">True</property>
@@ -6412,6 +6416,16 @@ secondary text as the Outer text.</property>
                                         <property name="width_request">200</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">The header line on each page can contain
+the page number, and/or reference(s) in
+various forms. Select a preset option, or
+type in your own TeX key word with additional
+adornments or text as needed. 
+For example:
+[\pagenumber]   places square brackets around the page number
+\rangerefL     places the Left text's reference range in a diglot
+\rangerefR    places the Right text's reference range in a diglot
+-empty-     places nothing in that location</property>
                                         <property name="active">0</property>
                                         <property name="has_entry">True</property>
                                         <items>
@@ -6451,6 +6465,10 @@ secondary text as the Outer text.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">By default, the chapter number will be included
+in any references in the header line. If you prefer
+to suppress that (and just show the book name)
+then check this option.</property>
                                         <property name="halign">start</property>
                                         <property name="margin_top">4</property>
                                         <property name="margin_bottom">4</property>
@@ -6471,7 +6489,11 @@ secondary text as the Outer text.</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">By default only the Book and Chapter number
 is included in the Header. If you also want to
-include the verse numbers, then check this option.</property>
+include the verse numbers, then check this option.
+
+Keep in mind that including the verse numbers
+actually makes it harder to read/absorb when
+flicking through pages to find the right chapter.</property>
                                         <property name="halign">start</property>
                                         <property name="margin_left">20</property>
                                         <property name="margin_top">4</property>
@@ -6582,6 +6604,11 @@ in the header reference.</property>
                               <object class="GtkSpinButton" id="s_footerposition">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
+space at the bottom of the page and determines the
+vertical positioning of the footer line. This setting
+is a factor (without units) and is multiplied by the
+Margins value on the Layout tab.</property>
                                 <property name="halign">start</property>
                                 <property name="width_chars">6</property>
                                 <property name="text" translatable="yes">0.50</property>
@@ -6603,6 +6630,11 @@ in the header reference.</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
+space at the bottom of the page and determines the
+vertical positioning of the footer line. This setting
+is a factor (without units) and is multiplied by the
+Margins value on the Layout tab.</property>
                                 <property name="halign">end</property>
                                 <property name="label" translatable="yes">Footer Position:</property>
                                 <property name="justify">right</property>
@@ -6616,6 +6648,13 @@ in the header reference.</property>
                               <object class="GtkSpinButton" id="s_bottommarginfactor">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
+this setting can be used to increase/decrease the 
+space at the bottom of the page and determines
+where the main text and footnotes and 
+cross-references end. This setting is a 
+factor (without units) and is multiplied 
+by the Margins value on the Layout tab.</property>
                                 <property name="halign">start</property>
                                 <property name="width_chars">6</property>
                                 <property name="text" translatable="yes">1.15</property>
@@ -6637,6 +6676,13 @@ in the header reference.</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
+this setting can be used to increase/decrease the 
+space at the bottom of the page and determines
+where the main text and footnotes and 
+cross-references end. This setting is a 
+factor (without units) and is multiplied 
+by the Margins value on the Layout tab.</property>
                                 <property name="halign">start</property>
                                 <property name="margin_left">20</property>
                                 <property name="margin_top">6</property>
@@ -6654,6 +6700,17 @@ in the header reference.</property>
                                 <property name="width_request">340</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">It is not considered best-practice to include 
+information in a footer for scripture publications.
+This is usually better placed in the header. However,
+if there is a need to have the page number at the
+footer for all pages (not just the 1st page of each book)
+then that can be set here. Similarly, you may want to add
+a DRAFT message and/or date to the end of each page.
+Note that you can select a preset option OR type your own
+text as needed.
+Note that if you really must have Inner/Outer Footers,
+these can be set in the ptxprint-mods.tex file.</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="active">0</property>
                                 <property name="has_entry">True</property>
@@ -6682,6 +6739,17 @@ in the header reference.</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">It is not considered best-practice to include 
+information in a footer for scripture publications.
+This is usually better placed in the header. However,
+if there is a need to have the page number at the
+footer for all pages (not just the 1st page of each book)
+then that can be set here. Similarly, you may want to add
+a DRAFT message and/or date to the end of each page.
+Note that you can select a preset option OR type your own
+text as needed.
+Note that if you really must have Inner/Outer Footers,
+these can be set in the ptxprint-mods.tex file.</property>
                                 <property name="halign">end</property>
                                 <property name="label" translatable="yes">Center Footer:</property>
                               </object>
@@ -6922,7 +6990,7 @@ should be trimmed to after printing.</property>
 and bottom of the page and
 content of Headers and Footers.</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">Head+Foot</property>
+                    <property name="label" translatable="yes">Header+Footer</property>
                   </object>
                   <packing>
                     <property name="position">5</property>
