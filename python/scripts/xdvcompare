@@ -428,11 +428,11 @@ parser.add_argument("infile1", help="Input xdvi file1")
 parser.add_argument("infile2", help="Input xdvi file2")
 parser.add_argument("-v","--verbose", action="count", default=0, help="Verbosity: v = basic info, vv = page summary, vvv = specials, vvvv = every operation")
 parser.add_argument("-s", "--superficial", action="store_true", help="Load files but do not compare; check for file intactness")
-parser.add_argument("-n", "--notclever", action="store_true", help="Don't predict failure location")
+parser.add_argument("-c", "--clever", action="store_true", help="Predict failure location")
 parser.add_argument("-p", "--pagemismatch", action="store_true", help="Allow comparison of documents of mismatched length")
 args = parser.parse_args()
 
-comp = Comparator(args.infile1, args.infile2, prediction=not args.notclever, pmm=args.pagemismatch, v=int(args.verbose))
+comp = Comparator(args.infile1, args.infile2, prediction=args.clever, pmm=args.pagemismatch, v=int(args.verbose))
 if not args.superficial:
     errors = comp.compare()
     if errors is not None:
