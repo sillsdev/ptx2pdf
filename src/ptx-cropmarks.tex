@@ -225,7 +225,7 @@
 
 \def\MergePDF{}
 \def\m@rgepdf{\ifx\MergePDF\empty\else
-  \vbox to 0pt{\XeTeXpdffile "\MergePDF" page \pageno media\relax}
+  \vbox to 0pt{\XeTeXpdffile \MergePDF \relax media\relax}
 \fi}
 
 \m@rksonpagefalse
