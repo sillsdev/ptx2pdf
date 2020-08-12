@@ -743,7 +743,6 @@ class ViewModel:
             srchlist = [self.customFigFolder]
         else:
             srchlist = []
-        if not self.get("c_exclusiveFiguresFolder"):
             if sys.platform == "win32":
                 srchlist += [os.path.join(self.settings_dir, self.prjid, "figures")]
                 srchlist += [os.path.join(self.settings_dir, self.prjid, "local", "figures")]
@@ -766,7 +765,7 @@ class ViewModel:
             if srchdir is None or not os.path.exists(srchdir):
                 continue
             if self.get("c_exclusiveFiguresFolder"):
-                search = [srchdir, [], os.listdir(srchdir)]
+                search = [(srchdir, [], os.listdir(srchdir))]
             else:
                 search = os.walk(srchdir)
             for subdir, dirs, files in search:

@@ -329,7 +329,7 @@ class GtkViewModel(ViewModel):
 
         for c in ("tb_Font", "tb_Advanced", "tb_ViewerEditor", "tb_DiglotBorder", "l_missingPictureString", "btn_editPicList", 
                   "l_imageTypeOrder", "t_imageTypeOrder", "fr_layoutSpecialBooks", "fr_layoutOther", "s_colgutteroffset",
-                  "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "bx_AdvFootnoteConfig", "l_colgutteroffset",
+                  "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "l_colgutteroffset",
                   "c_usePicList", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", "c_exclusiveFiguresFolder", 
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
                   "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection", "l_colgutteroffset", "fr_hyphenation",
@@ -339,7 +339,7 @@ class GtkViewModel(ViewModel):
                   "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "fcb_textDirection", "l_digits", "fcb_digits",
                   "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
                   "gr_fnAdvOptions", "c_figexclwebapp", "bx_horizRule", "l_glossaryMarkupStyle"):
-            # print("c in 355", c)
+            # print("c in 342", c)
             self.builder.get_object(c).set_visible(not self.get("c_hideAdvancedSettings"))
 
         # Resize Main UI Window appropriately
@@ -488,9 +488,9 @@ class GtkViewModel(ViewModel):
         # If the viewer/editor is open on an Editable tab, then "autosave" contents
         if self.builder.get_object("nbk_Main").get_current_page() == 10:
             pgnum = self.builder.get_object("nbk_Viewer").get_current_page()
-            print("pgnum", pgnum)
+            # print("pgnum", pgnum)
             if 1 <= pgnum <= 2 or pgnum == 5:
-                print("Saving edits")
+                # print("Saving edits")
                 self.onSaveEdits(None)
         # If any PicLists are missing, they need to be generated
         if self.get('c_includeillustrations') and self.get("c_usePicList"):
