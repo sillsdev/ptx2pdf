@@ -10,7 +10,7 @@ from io import StringIO
 import datetime, time
 from shutil import copyfile, copytree
 
-VersionStr = "0.9.2 beta"
+VersionStr = "0.9.3 beta"
 
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
 

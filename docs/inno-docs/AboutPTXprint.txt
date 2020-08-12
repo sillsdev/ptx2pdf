@@ -1,4 +1,4 @@
-PTXprint 0.9.2 Beta (Release Candidate 1.0) - AboutPTXprint.txt
+PTXprint 0.9.3 Beta (Release Candidate 1.0) - AboutPTXprint.txt
 
 "Bible Layout For Everyone" - A tool to rapidly and easily create scripture PDFs of adequate quality for trial publications
 
