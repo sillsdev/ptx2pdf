@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 """
 Created on Mon Aug 10 10:50:42 2020
@@ -5,7 +6,7 @@ Created on Mon Aug 10 10:50:42 2020
 @author: jakem
 """
 
-import argparse, os
+import argparse, os, sys
 from struct import unpack
 
 opcodes = [("nop", [], i) for i in range(128)]
@@ -385,68 +386,42 @@ class Comparator:
     def introduce(self):
         print("Comparator: glyph positioning tolerance {}mm; Page mismatching is {}allowed; Smart failure prediction: {}".format(self.mmtolerance, "" if self.allowpagemismatch else "not ", "on" if self.pred else "off"))
     
-    def predictfailure(self):
-        locs = [ reader.bops + [reader.postvals["q"]] for reader in self.readers ]
-        assert len(locs[0]) == len(locs[1])
-        lens = [(locs[0][i+1]-locs[0][i]) / (locs[1][i+1]-locs[1][i]) for i in range(len(self.readers[0].bops)) ]
-        av = sum(lens)/len(lens)
-        lens = [val/av for val in lens]
-        for i in range(len(lens)):
-            if i != 0 and (lens[i] < 0.9997 or lens[i] > 1.0003):
-                return i
-        else:
-            return 0
-    
     def getorder(self):
-        def startat(order, n):
-            if type(order) is not list:
-                order = list(order)
-            return order[n:]+order[:n]
-        seq = startat(range(self.numpages), self.predictfailure()) if self.pred else range(self.numpages)
+        if self.pred:
+            locs = [reader.bops + [reader.postvals["q"]] for reader in self.readers]
+            lens = [[l[i+1] - l[i] for i in range(len(l)-1)] for l in locs]
+            av = sum(lens[0])/len(lens[0])
+            pages = [i for i, z in enumerate(zip(*lens)) if any(x == z[0] for x in z[1:])]
+        else:
+            pages = range(self.numpages)
         if self.v > 0:
-            print("Starting at page {}".format(seq[0] + 1))
-        return seq
+            print("Starting at page {}".format(pages[0] + 1))
+        return pages
         
     def compare(self):
         errors = ""
         failedat = None
-        #if True:#
-        try:
-            try:
-                assert self.readers[0].postvals["t"] == self.readers[1].postvals["t"]
-                self.numpages = self.readers[0].postvals["t"]
-            except:
-                errors += "\nMatch failed because input files have different lengths: {} pages vs {} pages".format(self.readers[0].postvals["t"], self.readers[1].postvals["t"])
-                failedat = "postamble"
-                if not self.allowpagemismatch:
-                    raise Exception
-                else:
-                    self.numpages = self.readers[0].postvals["t"]
-            global sqthresh 
-            sqthresh = (self.readers[0].mmtopoints(self.mmtolerance))**2
-            for i in self.getorder():
-                self.pageno[0] = i+1
-                for reader in self.readers:
-                    reader.setpagepos(i)
-                    reader.readpage()
-                    if self.v > 1:
-                        print(reader.page)
-                try:
-                    assert self.readers[0].page == self.readers[1].page
-                except:
-                    errors += "\nGlyphs did not line up closely enough"
-                    failedat = None
-                    if self.v > 0:
-                        errors += "\n{} unmatchable glyphs were found on page {}".format(self.readers[0].page.getdiff(self.readers[1].page), self.pageno[0])
-                    raise Exception
+        if not self.allowpagemismatch and self.readers[0].postvals["t"] != self.readers[1].postvals["t"]:
+            errors += "\nMatch failed because input files have different lengths: {} pages vs {} pages".format(self.readers[0].postvals["t"], self.readers[1].postvals["t"])
+            return errors
+        self.numpages = min(*[r.postvals["t"] for r in self.readers])
+        global sqthresh 
+        sqthresh = (self.readers[0].mmtopoints(self.mmtolerance))**2
+        for i in self.getorder():
+            self.pageno[0] = i+1
+            for reader in self.readers:
+                reader.setpagepos(i)
+                reader.readpage()
+                if self.v > 1:
+                    print(reader.page)
+            if self.readers[0].page != self.readers[1].page:
+                errors += "\nGlyphs did not line up closely enough"
+                if self.v > 0:
+                    errors += "\n{} unmatchable glyphs were found on page {}".format(self.readers[0].page.getdiff(self.readers[1].page), self.pageno[0])
+                return errors
+        if self.v > 0:
             print("Test executed successfully")
-            failedat = "Didn't fail"
-        #if True:#
-        except:
-            if failedat is None:
-                failedat = "page {}".format(self.pageno[0])
-            print("Failure occurred at {}".format(failedat))
-            print(errors)
+        return None
 
 parser = argparse.ArgumentParser()
 parser.add_argument("infile1", help="Input xdvi file1")
@@ -459,4 +434,8 @@ args = parser.parse_args()
 
 comp = Comparator(args.infile1, args.infile2, prediction=not args.notclever, pmm=args.pagemismatch, v=int(args.verbose))
 if not args.superficial:
-    comp.compare()
+    errors = comp.compare()
+    if errors is not None:
+        print("\n".join(errors))
+        sys.exit(1)
+sys.exit(0)
