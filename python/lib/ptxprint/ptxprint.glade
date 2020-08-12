@@ -5280,10 +5280,9 @@ and Illustrations.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>
-                                    <property name="column_spacing">6</property>
                                     <child>
                                       <object class="GtkFrame">
-                                        <property name="width_request">334</property>
+                                        <property name="width_request">330</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">start</property>
@@ -5328,7 +5327,7 @@ to form a paragraph.</property>
                                                 </child>
                                                 <child>
                                                   <object class="GtkCheckButton" id="c_fnOverride">
-                                                    <property name="label" translatable="yes">Override Footnote-specific  -/+ Settings in Text</property>
+                                                    <property name="label" translatable="yes">Override Footnote-Specific -/+ Settings in Text</property>
                                                     <property name="visible">True</property>
                                                     <property name="sensitive">False</property>
                                                     <property name="can_focus">True</property>
@@ -5336,12 +5335,12 @@ to form a paragraph.</property>
                                                     <property name="no_show_all">True</property>
                                                     <property name="tooltip_text" translatable="yes">[NOT YET IMPLEMENTED]
 The footnotes specified in Paratext can
-use \x - (with a minus) to omit the caller, 
-or \x +(with a plus) to include the caller.
+use \f - (with a minus) to omit the caller, 
+or \f +(with a plus) to include the caller.
 
 If this option is enabled, it will override any 'omit'
 footnote caller settings to ensure that every footnote
-includes a caller symbol.</property>
+includes a caller symbol (if the option below is enabled).</property>
                                                     <property name="halign">start</property>
                                                     <property name="margin_top">2</property>
                                                     <property name="margin_bottom">6</property>
@@ -5446,7 +5445,7 @@ then the default set will be loaded.</property>
                                                     <property name="halign">start</property>
                                                     <child>
                                                       <object class="GtkCheckButton" id="c_fnomitcaller">
-                                                        <property name="label" translatable="yes">Show Callees in Notes Area</property>
+                                                        <property name="label" translatable="yes">Show Callers in Notes Area</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
@@ -5513,11 +5512,12 @@ the list of callers specified.</property>
                                     </child>
                                     <child>
                                       <object class="GtkFrame">
-                                        <property name="width_request">334</property>
+                                        <property name="width_request">330</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">start</property>
-                                        <property name="margin_left">15</property>
+                                        <property name="margin_left">8</property>
+                                        <property name="margin_right">8</property>
                                         <property name="margin_top">6</property>
                                         <property name="label_xalign">0.059999998658895493</property>
                                         <property name="shadow_type">in</property>
@@ -5558,7 +5558,7 @@ the other (with space between) to form a paragraph.</property>
                                                 </child>
                                                 <child>
                                                   <object class="GtkCheckButton" id="c_xrOverride">
-                                                    <property name="label" translatable="yes">Override xRref-Specific  -/+ Settings in Text</property>
+                                                    <property name="label" translatable="yes">Override xRref-Specific -/+ Settings in Text</property>
                                                     <property name="visible">True</property>
                                                     <property name="sensitive">False</property>
                                                     <property name="can_focus">True</property>
@@ -5571,7 +5571,8 @@ or \x +(with a plus) to include the caller.
 
 If this option is enabled, it will override any 'omit'
 cross-reference caller settings to ensure that every 
-cross-reference includes a caller symbol.</property>
+cross-reference includes a caller symbol (if the option
+below is enabled).</property>
                                                     <property name="halign">start</property>
                                                     <property name="margin_top">2</property>
                                                     <property name="margin_bottom">6</property>
@@ -5675,7 +5676,7 @@ then the default set will be loaded.</property>
                                                     <property name="halign">start</property>
                                                     <child>
                                                       <object class="GtkCheckButton" id="c_xromitcaller">
-                                                        <property name="label" translatable="yes">Show Callees in Notes Area</property>
+                                                        <property name="label" translatable="yes">Show Callers in Notes Area</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
