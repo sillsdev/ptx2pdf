@@ -237,7 +237,6 @@ class XDviReader:
         if dist is not None:
             self.pos[5] = dist
         self.down(self.pos[5])
-        
     
     def font(self, op, parm, data):
         if parm is not None:
@@ -289,12 +288,10 @@ class XDviReader:
         else:
             pos = [(self.readval(4), 0) for i in range(slen)]
         glyphs = [self.readval(2) for i in range(slen)]
-        
-        dig = 0
         self.page.glyphs += [
             (glyphs[i], 
-             round(pos[i][0]+self.pos[1],dig), 
-             round(pos[i][1]+self.pos[0],dig), 
+             pos[i][0]+self.pos[1], 
+             pos[i][1]+self.pos[0], 
              self.activefont) for i in range(slen)
             ] ########## This needs checking; does xglyphs move the cursor at all?
     
@@ -318,45 +315,25 @@ class Page:
             return False
         if self.glyphs == otherpage.glyphs:
             return True
-        self.sortglyphs()
-        otherpage.sortglyphs()
-        if self.glyphs == otherpage.glyphs:
+        out = [glyphpair for glyphpair in zip(self.glyphs, otherpage.glyphs) if not glyphnear(*glyphpair)]
+        if out == []:
             return True
-        for i in range(len(self.glyphs)):
-            glyph1 = self.glyphs.pop(0)
-            glyph2 = otherpage.glyphs.pop(0)
-            if glyph1 == glyph2:
-                continue
-            elif glyphnear(glyph1, glyph2):
-                print("Nearby")
-                continue
-            else:
-                return False
         else:
-            return True ###### Not 100% sure this is correct
+            return self.getdiff(*zip(*out)) == 0
     
-    def sortglyphs(self):
-        self.glyphs.sort(key=lambda x:(x[1], x[2]))
-    
-    def getdiff(self, otherpage):
-        self.sortglyphs()
-        otherpage.sortglyphs()
-        if self.glyphs == otherpage.glyphs:
-            return 0
-        for i in reversed(range(len(self.glyphs))):
-            if self.glyphs[i] in otherpage.glyphs:
-                otherpage.glyphs.remove(self.glyphs.pop(i))
-        if self.glyphs == otherpage.glyphs:
-            return 0
-        for i in reversed(range(len(self.glyphs))):
-            for j in reversed(range(len(otherpage.glyphs))):
-                if glyphnear(self.glyphs[i], otherpage.glyphs[j]):
-                    self.glyphs.pop(i)
-                    otherpage.glyphs.pop(j)
+    def getdiff(self, gly1, gly2):
+        gly1, gly2 = list(gly1), list(gly2)
+        for i in reversed(range(len(gly1))):
+            for j in reversed(range(len(gly2))):
+                if glyphnear(gly1[i], gly2[j]):
+                    del gly1[i]
+                    del gly2[j]
                     break
-        return max(len(self.glyphs), len(otherpage.glyphs))
+        return max(len(gly1), len(gly2))
 
 def glyphnear(glyph1, glyph2, allowfontmismatch=False):
+    if glyph1 == glyph2:
+        return True
     if glyph1[0] != glyph2[0]:
         return False
     if not allowfontmismatch and glyph1[3] != glyph2[3]:
@@ -364,7 +341,7 @@ def glyphnear(glyph1, glyph2, allowfontmismatch=False):
     return (glyph1[1] - glyph2[1])**2 + (glyph1[2] - glyph2[2])**2 < sqthresh
 
 class Comparator:
-    def __init__(self, filename1, filename2, prediction=True, pmm=False, v=0):
+    def __init__(self, filename1, filename2, prediction=True, pmm=False, v=0, getall=False):
         self.fontdict = {}
         self.pageno = [1] # A list because it's mutable/readable by the XDviReader objects; the update is carried through automatically
         self.v = v
@@ -376,12 +353,13 @@ class Comparator:
             name1, name2 = "Xdv 1", "Xdv 2"
         self.readers = [XDviReader(filename1, self.fontdict, self.pageno, name=name1, verbosity=v),
                         XDviReader(filename2, self.fontdict, self.pageno, name=name2, verbosity=v)]
-        self.mmtolerance = 2.5
+        self.mmtolerance = 1
         self.allowpagemismatch = pmm
+        self.getall = getall
         self.pred = prediction and not pmm
         if self.v > 0:
             self.introduce()
-            [ reader.introduce() for reader in self.readers]
+            [reader.introduce() for reader in self.readers]
     
     def introduce(self):
         print("Comparator: glyph positioning tolerance {}mm; Page mismatching is {}allowed; Smart failure prediction: {}".format(self.mmtolerance, "" if self.allowpagemismatch else "not ", "on" if self.pred else "off"))
@@ -390,8 +368,10 @@ class Comparator:
         if self.pred:
             locs = [reader.bops + [reader.postvals["q"]] for reader in self.readers]
             lens = [[l[i+1] - l[i] for i in range(len(l)-1)] for l in locs]
-            av = sum(lens[0])/len(lens[0])
-            pages = [i for i, z in enumerate(zip(*lens)) if any(x == z[0] for x in z[1:])]
+            p  = list(reversed(sorted(enumerate(zip(*lens)), key=lambda t: (t[1][0]/t[1][1]-1)**2)))
+            firsttup, lasttup = p[0][1], p[-1][1]
+            assert (firsttup[0]/firsttup[1]-1)**2 >= (lasttup[0]/lasttup[1]-1)**2 # assert we're iterating in the right order
+            pages = [t[0] for t in p]
         else:
             pages = range(self.numpages)
         if self.v > 0:
@@ -399,11 +379,12 @@ class Comparator:
         return pages
         
     def compare(self):
-        errors = ""
-        failedat = None
+        errors = []
+        #failedat = None
         if not self.allowpagemismatch and self.readers[0].postvals["t"] != self.readers[1].postvals["t"]:
-            errors += "\nMatch failed because input files have different lengths: {} pages vs {} pages".format(self.readers[0].postvals["t"], self.readers[1].postvals["t"])
-            return errors
+            errors += ["Match failed because input files have different lengths: {} pages vs {} pages".format(self.readers[0].postvals["t"], self.readers[1].postvals["t"])]
+            if not self.getall:
+                return errors
         self.numpages = min(*[r.postvals["t"] for r in self.readers])
         global sqthresh 
         sqthresh = (self.readers[0].mmtopoints(self.mmtolerance))**2
@@ -415,13 +396,14 @@ class Comparator:
                 if self.v > 1:
                     print(reader.page)
             if self.readers[0].page != self.readers[1].page:
-                errors += "\nGlyphs did not line up closely enough"
-                if self.v > 0:
-                    errors += "\n{} unmatchable glyphs were found on page {}".format(self.readers[0].page.getdiff(self.readers[1].page), self.pageno[0])
-                return errors
-        if self.v > 0:
+                errors += ["Glyphs did not line up closely enough"] if "Glyphs did not line up closely enough" not in errors else []
+                if self.v > 0 or self.getall:
+                    errors += ["{} unmatchable glyphs were found on page {}".format(self.readers[0].page.getdiff(*[r.page.glyphs for r in self.readers]), self.pageno[0])]
+                if not self.getall:
+                    return errors
+        if self.v > 0 and errors == []:
             print("Test executed successfully")
-        return None
+        return None if errors == [] else errors
 
 parser = argparse.ArgumentParser()
 parser.add_argument("infile1", help="Input xdvi file1")
@@ -430,9 +412,10 @@ parser.add_argument("-v","--verbose", action="count", default=0, help="Verbosity
 parser.add_argument("-s", "--superficial", action="store_true", help="Load files but do not compare; check for file intactness")
 parser.add_argument("-c", "--clever", action="store_true", help="Predict failure location")
 parser.add_argument("-p", "--pagemismatch", action="store_true", help="Allow comparison of documents of mismatched length")
+parser.add_argument("-g", "--getallerrors", action="store_true", help="Collect all errors (takes longer)") 
 args = parser.parse_args()
 
-comp = Comparator(args.infile1, args.infile2, prediction=args.clever, pmm=args.pagemismatch, v=int(args.verbose))
+comp = Comparator(args.infile1, args.infile2, prediction=args.clever, pmm=args.pagemismatch, v=int(args.verbose), getall=args.getallerrors)
 if not args.superficial:
     errors = comp.compare()
     if errors is not None:
