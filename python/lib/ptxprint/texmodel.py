@@ -14,6 +14,8 @@ def loosint(x):
         return int(x)
     except TypeError:
         return 0
+    except ValueError:
+        return 0
 
 def universalopen(fname, rewrite=False):
     """ Opens a file with the right codec from a small list and perhaps rewrites as utf-8 """

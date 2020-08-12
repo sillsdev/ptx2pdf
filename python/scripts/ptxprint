@@ -104,7 +104,7 @@ if os.path.exists("/usr/share/ptx2pdf") and not os.path.exists(os.path.join(scri
     scriptsdir = "/usr/share/ptx2pdf"
 
 def doit(printer):
-    runjob = RunJob(printer, scriptsdir, args)
+    runjob = RunJob(printer, scriptsdir, config, args)
     runjob.doit()
     return runjob.res
 
