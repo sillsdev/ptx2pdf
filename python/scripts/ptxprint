@@ -1,6 +1,11 @@
 #!/usr/bin/python3
 
 import argparse, sys, os
+import site
+
+if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+    if not site.getuserbase():
+        site.USER_SITE=os.path.join(os.path.expanduser("~"), ".local")
 
 try:
     import ptxprint
