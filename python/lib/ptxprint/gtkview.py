@@ -300,7 +300,7 @@ class GtkViewModel(ViewModel):
         tv.append_column(col)
         ts = self.builder.get_object("t_fontSearch")
         tv.set_search_entry(ts)
-        self.mw.resize(800, 600)
+        self.mw.resize(830, 594)
         self.mw.show_all()
         Gtk.main()
 
@@ -344,9 +344,9 @@ class GtkViewModel(ViewModel):
 
         # Resize Main UI Window appropriately
         if self.get("c_hideAdvancedSettings"):
-            self.mw.resize(800, 300)
+            self.mw.resize(828, 292)
         else:
-            self.mw.resize(800, 600)
+            self.mw.resize(830, 594)
 
     def ExperimentalFeatures(self, value):
         self.experimental = value
