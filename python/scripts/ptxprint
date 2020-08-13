@@ -2,6 +2,10 @@
 
 import argparse, sys, os, configparser
 import appdirs
+import site
+if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+    if not site.getuserbase():
+        site.USER_BASE = os.path.join(os.path.expanduser("~"), ".local")
 
 try:
     import ptxprint
@@ -34,7 +38,7 @@ parser.add_argument('--debug',action="store_true",help="Give debug output")
 # parser.add_argument('-t','--test', action='store_true',help="Quick start for a lazy typist")
 args = parser.parse_args()
 
-if args.logging and getattr(sys, 'frozen') and hasattr(sys, '_MEIPASS'):
+if args.logging and getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     errfile = open("ptxprint.log", "w")
     sys.stdio = errfile
     sys.stderr = errfile
@@ -87,21 +91,24 @@ else:
         os.makedirs(os.path.dirname(conffile))
     config.add_section("init")
 
+scriptsdir = os.path.dirname(__file__)
+if os.path.exists("/usr/share/ptx2pdf") and not os.path.exists(os.path.join(scriptsdir, "..", "..", "src")):
+    scriptsdir = "/usr/share/ptx2pdf"
+    macrosdir = "/usr/share/ptx2pdf/texmacros"
+else:
+    macrosdir = os.path.join(scriptsdir, "..", "..", "src")
+
 if args.print or args.archive is not None:
-    mainw = ViewModel(args.paratext, args.directory, config)
+    mainw = ViewModel(args.paratext, args.directory, config, macrosdir)
 else:
     from ptxprint.gtkview import GtkViewModel
-    mainw = GtkViewModel(args.paratext, args.directory, config)
+    mainw = GtkViewModel(args.paratext, args.directory, config, macrosdir)
     mainw.ExperimentalFeatures(args.experimental)
 
 if args.pid:
     mainw.setPrjid(args.pid)
     if args.config is not None:
         mainw.setConfigId(args.config)
-
-scriptsdir = os.path.dirname(__file__)
-if os.path.exists("/usr/share/ptx2pdf") and not os.path.exists(os.path.join(scriptsdir, "..", "..", "src")):
-    scriptsdir = "/usr/share/ptx2pdf"
 
 def doit(printer):
     runjob = RunJob(printer, scriptsdir, config, args)

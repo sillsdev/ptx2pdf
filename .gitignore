@@ -6,6 +6,7 @@ ptxprint-*
 *.delayed
 *-draft.SFM
 *-draft.txt
+NestedStyles.sty
 __pycache__/
 temp/
 python/dist/

@@ -96,11 +96,12 @@ class ViewModel:
         "document/diglotsecprj": "updateDiglotConfigList"
     }
 
-    def __init__(self, settings_dir, workingdir, userconfig):
+    def __init__(self, settings_dir, workingdir, userconfig, scriptsdir):
         self.settings_dir = settings_dir
         self.fixed_wd = workingdir != None
         self.working_dir = workingdir
         self.userconfig = userconfig
+        self.scriptsdir = scriptsdir
         self.ptsettings = None
         self.customScript = None
         self.FrontPDFs = None
@@ -1016,6 +1017,7 @@ class ViewModel:
         res = []
         cpath = self.configPath(cfgname=self.configName())
         rcpath = self.configPath("")
+        res.append(os.path.join(self.scriptsdir, "ptx2pdf.sty"))
         if self.get('c_useCustomSty'):
             res.append(os.path.join(self.settings_dir, self.prjid, "custom.sty"))
         if self.get('c_useModsSty'):

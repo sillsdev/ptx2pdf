@@ -161,7 +161,7 @@ class RunJob:
             if digprjid is None or not len(digprjid):     # can't print no project
                 return
             digptsettings = ParatextSettings(self.args.paratext, digprjid)
-            digprinter = ViewModel(self.args.paratext, self.printer.working_dir, self.userconfig)
+            digprinter = ViewModel(self.args.paratext, self.printer.working_dir, self.userconfig, self.scriptsdir)
             digprinter.setPrjid(digprjid)
             if digcfg is not None and digcfg != "":
                 digprinter.setConfigId(digcfg)

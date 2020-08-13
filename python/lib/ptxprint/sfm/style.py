@@ -18,12 +18,12 @@ __email__ = "tim_eves@sil.org"
 
 import re
 
-import ptxprint.sfm.records as records
+import palaso.sfm.records as records
 import warnings
 from collections import abc
-from ptxprint.sfm.records import sequence, flag, unique, level
+from ptxprint.sfm.records import sequence, unique, level
 from ptxprint.sfm.records import UnrecoverableError
-from functools import partial
+
 
 class _absent:
     def __init__(self, def_val):
@@ -56,7 +56,6 @@ _fields = {
     # 'RightMargin':     (float, 0),
     # 'Color':           (int,   0),
 }
-    
 _comment = re.compile(r'\s*#.*$')
 _markers = re.compile(r'^\s*\\[^\s\\]+\s')
 
@@ -64,11 +63,6 @@ _markers = re.compile(r'^\s*\\[^\s\\]+\s')
 def _munge_records(rs):
     for r in rs:
         tag = r.pop('Marker').lstrip()
-        ous = r['OccursUnder']
-        if isinstance(ous, set) and 'NEST' in ous:
-            ous.remove('NEST')
-            ntag = f'+{tag}*'
-            yield (ntag[:-1], marker(r, endmarker=ntag, occursunder=r['Occursunder'] | {ntag[:-1]}))
         yield (tag, r)
 
 
@@ -99,7 +93,7 @@ class marker(dict):
         return super().pop(key.casefold(), *args, **kwargs)
 
     def setdefault(self, key, *args, **kwargs):
-        super().setdefault(key, default)
+        super().setdefault(key, *args, **kwargs)
 
     def update(self, iterable=(), **kwarg):
         if isinstance(iterable, abc.Mapping):
@@ -150,38 +144,28 @@ def parse(source, error_level=level.Content, base=None):
     ... \\TextType Other
     ... \\Bold
     ... \\Color 12345""".splitlines(True))
-    >>> pprint((sorted(r.items()), sorted(r['+dummy1']['OccursUnder']),
+    >>> pprint((sorted(r.items()),
     ...         sorted(r['dummy1']['OccursUnder'])))
     ... # doctest: +ELLIPSIS
-    ([('+dummy1',
-       {'bold': '',
-        'color': '12345',
-        'description': 'A marker used for demos',
-        'endmarker': '+dummy1*',
-        'name': 'dummy1 - File - dummy marker definition',
-        'occursunder': {...},
-        'styletype': None,
-        'textproperties': {},
-        'texttype': 'Other'}),
-      ('dummy1',
+    ([('dummy1',
        {'bold': '',
         'color': '12345',
         'description': 'A marker used for demos',
         'endmarker': None,
         'name': 'dummy1 - File - dummy marker definition',
-        'occursunder': {'id'},
+        'occursunder': {...},
         'styletype': None,
         'textproperties': {},
         'texttype': 'Other'})],
-     ['+dummy1', 'id'],
-     ['id'])
+     ['NEST', 'id'])
     ''' # noqa
 
     # strip comments out
-    no_comments = map(partial(_comment.sub, ''), source)
+    no_comments = (_comment.sub('', l) for l in source)
 
     with warnings.catch_warnings():
-        warnings.simplefilter("always" if error_level > level.Content else "ignore")
+        warnings.simplefilter(
+            "always" if error_level > level.Content else "ignore")
         rec_parser = records.parser(
                         no_comments,
                         records.schema('Marker', _fields),
@@ -192,17 +176,21 @@ def parse(source, error_level=level.Content, base=None):
         next(recs, None)
         res = dict(_munge_records(recs))
     if base is not None:
-        base.update({n: (_merge_record(base[n], r) if n in base else r) for n,r in res.items()})
+        base.update({n: (_merge_record(base[n], r) if n in base else r)
+                     for n, r in res.items()})
         res = base
     _reify(res)
     return res
 
+
 def _merge_record(old, new):
-    old.update({f:v for f,v in new.items() if f not in old or not isinstance(v, _absent)})
+    old.update({f: v for f, v in new.items()
+               if f not in old or not isinstance(v, _absent)})
+
 
 def _reify(sheet):
     for r in sheet.values():
-        for f,v in r.items():
+        for f, v in r.items():
             if isinstance(v, _absent):
                 r[f] = v.value
             if isinstance(v, records.sfm.text):
