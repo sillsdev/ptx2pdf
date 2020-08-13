@@ -9222,7 +9222,7 @@ are likely to have to re-do it all again.</property>
                                 <property name="can_focus">False</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
-                                <property name="row_spacing">6</property>
+                                <property name="row_spacing">2</property>
                                 <property name="column_spacing">6</property>
                                 <child>
                                   <object class="GtkLabel">
@@ -9230,18 +9230,6 @@ are likely to have to re-do it all again.</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">end</property>
                                     <property name="label" translatable="yes">Current Project Path:</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Configuration Settings:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -9253,11 +9241,23 @@ are likely to have to re-do it all again.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Output PDF Location:</property>
+                                    <property name="label" translatable="yes">Configuration Settings:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Output PDF Location:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -9281,7 +9281,7 @@ Effective PDF viewer:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">6</property>
+                                    <property name="top_attach">7</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
@@ -9299,7 +9299,7 @@ Effective PDF viewer:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
-                                    <property name="top_attach">6</property>
+                                    <property name="top_attach">7</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -9320,7 +9320,7 @@ Annoyances or Other Issues:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">8</property>
+                                    <property name="top_attach">9</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
@@ -9339,7 +9339,7 @@ Annoyances or Other Issues:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
-                                    <property name="top_attach">8</property>
+                                    <property name="top_attach">9</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -9356,7 +9356,7 @@ Annoyances or Other Issues:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
-                                    <property name="top_attach">4</property>
+                                    <property name="top_attach">5</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -9375,7 +9375,7 @@ Videos, FAQs and Latest Updates:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">4</property>
+                                    <property name="top_attach">5</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
@@ -9384,11 +9384,12 @@ Videos, FAQs and Latest Updates:</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="opacity">0.80000000000000004</property>
+                                    <property name="margin_bottom">6</property>
                                     <property name="hexpand">True</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">3</property>
+                                    <property name="top_attach">4</property>
                                     <property name="width">3</property>
                                   </packing>
                                 </child>
@@ -9400,13 +9401,13 @@ Videos, FAQs and Latest Updates:</property>
 work and how to customize the stylesheets even
 further, this FAQ document is worth visiting.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">FAQs Related to 
-the PTX2PDF Macros:</property>
+                                    <property name="label" translatable="yes">Technical FAQs Related 
+to the PTX2PDF Macros:</property>
                                     <property name="justify">right</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">7</property>
+                                    <property name="top_attach">8</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
@@ -9425,7 +9426,7 @@ the PTX2PDF Macros:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
-                                    <property name="top_attach">7</property>
+                                    <property name="top_attach">8</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -9442,7 +9443,7 @@ the PTX2PDF Macros:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
-                                    <property name="top_attach">0</property>
+                                    <property name="top_attach">1</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
@@ -9459,7 +9460,7 @@ the PTX2PDF Macros:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
-                                    <property name="top_attach">1</property>
+                                    <property name="top_attach">2</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
@@ -9476,7 +9477,7 @@ the PTX2PDF Macros:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
-                                    <property name="top_attach">2</property>
+                                    <property name="top_attach">3</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
@@ -9494,7 +9495,7 @@ the PTX2PDF Macros:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
-                                    <property name="top_attach">5</property>
+                                    <property name="top_attach">6</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -9509,8 +9510,42 @@ general users and common solutions.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">5</property>
+                                    <property name="top_attach">6</property>
                                     <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLinkButton" id="lb_ptxprintdir">
+                                    <property name="label" translatable="yes">prjdir</property>
+                                    <property name="name">Click to open folder</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="relief">none</property>
+                                    <property name="uri">Click to Open folder</property>
+                                    <signal name="clicked" handler="onPTXprintDocsDirClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">0</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">Among other things, this folder contains:
+* ReleaseNotes.txt
+* AboutPTXprint.txt
+* MIT License.txt</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">PTXprint Docs Path:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
                                   </packing>
                                 </child>
                               </object>
