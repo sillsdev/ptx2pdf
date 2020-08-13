@@ -19,10 +19,10 @@ __history__ = '''
     20101109 - tse - Ensure cached usfm.sty is upto date after package code
         changes.
 '''
-from palaso.sfm import level, style
+from ptxprint.sfm import level, style
 from itertools import chain
 from functools import reduce
-import palaso.sfm as sfm
+import ptxprint.sfm as sfm
 import bz2
 import contextlib
 import operator

@@ -18,7 +18,7 @@ __email__ = "tim_eves@sil.org"
 
 import re
 
-import palaso.sfm.records as records
+import ptxprint.sfm.records as records
 import warnings
 from collections import abc
 from ptxprint.sfm.records import sequence, unique, level

@@ -20,7 +20,7 @@ __history__ = '''
         Make the field value parser accept empty field values.
 '''
 import collections
-import palaso.sfm as sfm
+import ptxprint.sfm as sfm
 from functools import partial, reduce
 from itertools import chain
 from ptxprint.sfm import level
