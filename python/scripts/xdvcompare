@@ -80,6 +80,10 @@ opcodes += [
 
 packings = ("bhxi", "BHxI")
 
+quickcodes = opcodes.copy()
+for n, txt in zip(list(range(239, 243))+list(range(252, 255)), [*["xxxquick"]*4, "xfontdefquick", *["xglyphsquick"]*2]):
+    quickcodes[n] = (txt,) + quickcodes[n][1:-1] + (txt,)
+
 class XDviReader:
     def __init__(self, filename, commonfonts, pagecounter, name=None, verbosity=0):
         self.filename = filename
@@ -102,10 +106,13 @@ class XDviReader:
         self.buildpagelist()
     
     def introduce(self):
-        print("XDviReader {}: file size {:,}B; {} pages; {} fonts".format(self.name, self.filesize, self.postvals["t"], len(self.fonts)))
+        print("XDviReader {}: file size {:,}B; {:,} pages; {:,} fonts".format(self.name, self.filesize, self.postvals["t"], len(self.fonts)))
     
     def readbytes(self, num):
         return self.file.read(num)
+    
+    def skip(self, dist):
+        self.file.seek(self.file.tell() + dist)
        
     def readval(self, size, uint=False):
         d = self.readbytes(size)
@@ -131,6 +138,15 @@ class XDviReader:
     def loadop(self):
         op = self.readval(1, True)
         opc = opcodes[op]
+        data = [self.readval((x if x>0 else -x), uint=x>0) for x in opc[1]]
+        lastparm = opc[2]
+        if self.v > 3:
+            print(op, lastparm, data, opc[0])
+        return opc[0], op, lastparm, data
+    
+    def loadopquick(self):
+        op = self.readval(1, True)
+        opc = quickcodes[op]
         data = [self.readval((x if x>0 else -x), uint=x>0) for x in opc[1]]
         lastparm = opc[2]
         if self.v > 3:
@@ -248,6 +264,9 @@ class XDviReader:
         self.page.specials.append(txt)
         if self.v > 2:
             print(txt)
+            
+    def xxxquick(self, opcode, parm, data):
+        self.skip(data[0])
         
     def post(self, opcode, parmname, data):
         self.postvals.update(zip(("p", "num", "den", "mag", "l", "u", "s", "t"), data))
@@ -279,6 +298,19 @@ class XDviReader:
             self.commonfonts[fontparam] = fontid
         if k not in self.fonts:
             self.fonts[k] = self.commonfonts[fontparam]
+
+    def xfontdefquick(self, opcode, parm, data):
+        (k, points, flags) = data
+        self.skip(self.readval(1, uint=True))
+        self.skip(4) if flags & 0x200 else 0xFFFFFFFF
+        skipdist = 0
+        if flags & 0x800:       # variations
+            skipdist += 4 * self.readval(2)
+        skipdist += 4 if flags & 0x1000 else 0
+        skipdist += 4 if flags & 0x2000 else 0
+        skipdist += 4 if flags & 0x4000 else 0
+        skipdist += 4 # ident
+        self.skip(skipdist)
         
     def xglyphs(self, opcode, parm, data):
         width = self.readval(4)
@@ -294,6 +326,15 @@ class XDviReader:
              pos[i][1]+self.pos[0], 
              self.activefont) for i in range(slen)
             ] ########## This needs checking; does xglyphs move the cursor at all?
+
+    def xglyphsquick(self, opcode, parm, data):
+        self.skip(4) # width
+        slen = self.readval(2, uint=True)
+        if parm:
+            return self.readbytes(slen*10)
+        else:
+            return self.readbytes(slen*6)
+
     
     def pointstomm(self, dist):
         return (dist * self.prevals["num"] * self.prevals["mag"]) / (self.prevals["den"] * 10**7)
@@ -341,7 +382,7 @@ def glyphnear(glyph1, glyph2, allowfontmismatch=False):
     return (glyph1[1] - glyph2[1])**2 + (glyph1[2] - glyph2[2])**2 < sqthresh
 
 class Comparator:
-    def __init__(self, filename1, filename2, prediction=True, pmm=False, v=0, getall=False):
+    def __init__(self, filename1, filename2, prediction=True, pmm=False, v=0, getall=False, forceslow=False):
         self.fontdict = {}
         self.pageno = [1] # A list because it's mutable/readable by the XDviReader objects; the update is carried through automatically
         self.v = v
@@ -356,13 +397,14 @@ class Comparator:
         self.mmtolerance = 1
         self.allowpagemismatch = pmm
         self.getall = getall
+        self.forceslow = forceslow
         self.pred = prediction and not pmm
         if self.v > 0:
             self.introduce()
             [reader.introduce() for reader in self.readers]
     
     def introduce(self):
-        print("Comparator: glyph positioning tolerance {}mm; Page mismatching is {}allowed; Smart failure prediction: {}".format(self.mmtolerance, "" if self.allowpagemismatch else "not ", "on" if self.pred else "off"))
+        print("Comparator: glyph positioning tolerance {}mm; Allow page mismatch: {}; Smart failure prediction: {}; quick mode {}".format(self.mmtolerance, *["on" if val else "off" for val in [self.allowpagemismatch, self.pred and not self.allowpagemismatch, not self.forceslow]]))
     
     def getorder(self):
         if self.pred:
@@ -377,33 +419,64 @@ class Comparator:
         if self.v > 0:
             print("Starting at page {}".format(pages[0] + 1))
         return pages
-        
+    
+    def comparepage(self, pagenumber):
+        for reader in self.readers:
+            reader.setpagepos(pagenumber)
+            reader.readpage()
+            if self.v > 1:
+                print(reader.page)
+        if self.readers[0].page != self.readers[1].page:
+            self.errors += ["Glyphs did not line up closely enough"] if "Glyphs did not line up closely enough" not in self.errors else []
+            if self.v > 0 or self.getall:
+                self.errors += ["{} unmatchable glyphs were found on page {}".format(self.readers[0].page.getdiff(*[r.page.glyphs for r in self.readers]), self.pageno[0])]
+    
+    def comparepagequick(self, pagenumber):
+        for reader in self.readers:
+            reader.setpagepos(pagenumber)
+        command = None
+        while command != "eop":
+            ops = [(r, *r.loadopquick()) for r in self.readers]
+            a = [getattr(r, c)(op, l, data) for r, c, op, l, data in ops if c in ["xfontdefquick", "xxxquick", "xglyphsquick", "font"]]
+            command = ops[0][3]
+            match = None
+            if command == "font":
+                match = self.readers[0].activefont == self.readers[1].activefont
+            elif command == "xxxquick":
+                match = ops[0][1:-1] == ops[1][1:-1]
+            elif command == "xglyphsquick":
+                match = a[0] == a[1]
+            elif command == "bop":
+                pass
+            else:
+                match = ops[0][1:] == ops[1][1:]
+            if match is False:
+                if self.v > 0:
+                    print("Page {} xdv match failed".format(pagenumber + 1))
+                return False
+        if self.v > 1:
+            print("Page {} xdv match success".format(pagenumber + 1))
+        return True
+
     def compare(self):
-        errors = []
-        #failedat = None
-        if not self.allowpagemismatch and self.readers[0].postvals["t"] != self.readers[1].postvals["t"]:
-            errors += ["Match failed because input files have different lengths: {} pages vs {} pages".format(self.readers[0].postvals["t"], self.readers[1].postvals["t"])]
+        self.errors = []
+        lens = [r.postvals["t"] for r in self.readers]
+        if not self.allowpagemismatch and lens[0] != lens[1]:
+            self.errors += ["Match failed because input files have different lengths: {} pages vs {} pages".format(self.readers[0].postvals["t"], self.readers[1].postvals["t"])]
             if not self.getall:
-                return errors
-        self.numpages = min(*[r.postvals["t"] for r in self.readers])
+                return self.errors
+        self.numpages = min(*lens)
         global sqthresh 
         sqthresh = (self.readers[0].mmtopoints(self.mmtolerance))**2
         for i in self.getorder():
             self.pageno[0] = i+1
-            for reader in self.readers:
-                reader.setpagepos(i)
-                reader.readpage()
-                if self.v > 1:
-                    print(reader.page)
-            if self.readers[0].page != self.readers[1].page:
-                errors += ["Glyphs did not line up closely enough"] if "Glyphs did not line up closely enough" not in errors else []
-                if self.v > 0 or self.getall:
-                    errors += ["{} unmatchable glyphs were found on page {}".format(self.readers[0].page.getdiff(*[r.page.glyphs for r in self.readers]), self.pageno[0])]
-                if not self.getall:
-                    return errors
-        if self.v > 0 and errors == []:
+            if self.forceslow or not self.comparepagequick(i):
+                self.comparepage(i)
+            if not self.getall and self.errors != []:
+                return self.errors
+        if self.v > 0 and self.errors == []:
             print("Test executed successfully")
-        return None if errors == [] else errors
+        return self.errors
 
 parser = argparse.ArgumentParser()
 parser.add_argument("infile1", help="Input xdvi file1")
@@ -413,12 +486,13 @@ parser.add_argument("-s", "--superficial", action="store_true", help="Load files
 parser.add_argument("-c", "--clever", action="store_true", help="Predict failure location")
 parser.add_argument("-p", "--pagemismatch", action="store_true", help="Allow comparison of documents of mismatched length")
 parser.add_argument("-g", "--getallerrors", action="store_true", help="Collect all errors (takes longer)") 
+parser.add_argument("-f", "--forceslow", action="store_true", help="Don't use binary comparison") 
 args = parser.parse_args()
 
-comp = Comparator(args.infile1, args.infile2, prediction=args.clever, pmm=args.pagemismatch, v=int(args.verbose), getall=args.getallerrors)
+comp = Comparator(args.infile1, args.infile2, prediction=args.clever, pmm=args.pagemismatch, v=int(args.verbose), getall=args.getallerrors, forceslow=args.forceslow)
 if not args.superficial:
     errors = comp.compare()
-    if errors is not None:
+    if errors != []:
         print("\n".join(errors))
         sys.exit(1)
 sys.exit(0)
