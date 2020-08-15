@@ -1,4 +1,4 @@
-%
+%:skip
 % THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
 % EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
 % MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
@@ -13,29 +13,35 @@
 % authorization from SIL International.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% ptx-tracing.tex
-% tracing macros
-% trace identifiers allocated in ptx macros
-% a - all traces
-% b - balancing (info for external page break analysis)
-% d - diglot construction
-% D - Diglot gory details
-% Ds - Diglot stylesheet
-% f - footnotes
-% F - fonts
-% g - figures
-% h - headings
-% H - Headers, marks, etc
-% i - inserts (tracking the value of holdinginserts)
-% j - paragraph adjustments
-% n - notes
-% o - rebalancing
-% p - page output
-% P - Piclists
-% s - stylesheet
-% S - side-dependent swapping 
-% v - marginal verses
+%+tracing-codes
+% There is nothing special that says the tracing code has to be a single character.
+% It is also better to have more identifiers than less to allow for more targetted tracing.
+% Trace identifiers allocated in ptx macros:
+%
+% | Identifier | Trace
+% |------------|------
+% | a | all traces
+% | b | balancing (info for external page break analysis)
+% | d | diglot construction
+% | D | Diglot gory details
+% | Ds | Diglot stylesheet
+% | f | footnotes
+% | F | fonts
+% | g | figures
+% | h | headings
+% | H | Headers, marks, etc
+% | i | inserts (tracking the value of holdinginserts)
+% | j | paragraph adjustments
+% | n | notes
+% | o | rebalancing
+% | p | page output
+% | P | Piclists
+% | s | stylesheet
+% | S | side-dependent swapping 
+% | v | marginal verses
+%-tracing-codes
 
+%+tracing
 % Now modified so that multiple \tracing{} commands can be issued.
 \newcount\TRACEcount %Numbered tracing for is useful for diglot. May be for something else too.
 \def\y@s{y}
@@ -51,8 +57,12 @@
 \def\traceNum#1#2{\global\advance\TRACEcount by 1\trace{#1}{+\the\TRACEcount: #2}}
 \def\notr@ceout#1{\relax}%
 \let\trace=\notr@cer
+%-tracing
+
+%+tracing-support
 \def\pagetracing{0}
 \def\tc@mmands{commands,pages,output,macros,paragraphs,ifs,restores}
 \def\s@vens@ttrace#1{\x@\xdef\csname tracing-#1\endcsname{\csname #1\endcsname}\csname #1\endcsname=1}
 \def\r@storetrace#1{\csname #1\endcsname=\csname tracing-#1\endcsname}
 \def\alltrace#1{\ifnum#1>0\let\wh@t=\s@vens@ttrace\else\let\wh@t=\r@storetrace\fi\x@\pr@cessSp@cific \tc@mmands,\E}
+%-tracing-support

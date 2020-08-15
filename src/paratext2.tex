@@ -1,3 +1,4 @@
+%:skip
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Part of the ptx2pdf macro package for formatting USFM text
 % copyright (c) 2007 by SIL International
@@ -30,36 +31,44 @@
 
 % Paratext formatting macros, spanning footnotes version
 
+%:id intro
+% Here we declare generic useful stuff. Including log output routines.
+\TeXXeTstate=1 % enable the eTeX bidi extensions, in case we need RTL support
 \catcode`\@=11
 \let\x@=\expandafter
-
-\TeXXeTstate=1 % enable the eTeX bidi extensions, in case we need RTL support
+\newif\iftemp \tempfalse
 
 \def\MSG{\immediate\write16 } % shorthand to write a message to the terminal
 \def\TRACE#1{}%\let\TRACE=\MSG % default - consume messages
 \def\wlog{\immediate\write-1 } % write message to log file only
-\newif\iftemp \tempfalse
+
+% This lot has to be early
 \newif\ifinn@te\inn@tefalse
 \newif\ifm@rksonpage % Try to keep track of marks, so we can kill them in end-sections. 
 \m@rksonpagefalse
-% \addtoendhooks collects macros to be executed at the end of the job
+%:end
+
+%:id define-hooks
+% `\addtoendhooks` collects macros to be executed at the end of the job
 \def\addtoendhooks#1{\x@\global\x@\@ndhooks\x@{\the\@ndhooks #1}}
 \newtoks\@ndhooks
 \let\s@ve@nd=\end
 \def\end{\par\vfill\supereject \the\@ndhooks \s@ve@nd}
 
-% \addtoinithooks is for stuff we do during one-time-setup before the first PTX file
+%: `\addtoinithooks` is for stuff we do during one-time-setup before the first PTX file
 \def\addtoinithooks#1{\x@\global\x@\@nithooks\x@{\the\@nithooks #1}}
 \newtoks\@nithooks
 
-% \addtoeveryparhooks is for the start of every paragraph
+%: `\addtoeveryparhooks` is for the start of every paragraph
 \def\addtoeveryparhooks#1{\x@\global\x@\@veryparhooks\x@{\the\@veryparhooks #1}}
 \newtoks\@veryparhooks
 
-% \addtoparstylehooks is for stuff to do at each new parstyle marker
+%: `\addtoparstylehooks` is for stuff to do at each new parstyle marker
 \def\addtoparstylehooks#1{\x@\global\x@\p@rstylehooks\x@{\the\p@rstylehooks #1}}
 \newtoks\p@rstylehooks
+%:end
 
+%:id timestamp
 % initialize a \timestamp macro for the cropmarks etc to use
 \edef\timestamp{\number\year.% print the date and time of the run
   \ifnum\month<10 0\fi \number\month.%
@@ -71,6 +80,9 @@
 \edef\hrsmins{\hrsmins
   \ifnum\count255<10 0\fi \number\count255}%
 \edef\timestamp{\timestamp \hrsmins}
+%:end
+
+%:id imports
 \input ptx-diglot.tex
 \input ptx-tracing.tex
 \input ptx-para-style.tex
@@ -87,24 +99,27 @@
 \input ptx-callers.tex % must come after ptx-note-style.tex
 % Additional modules that are not part of the normal ptx2pdf module
 \input ptxplus-character-kerning.tex
-%\input ptxplus-marginalverses.tex  % This is where we would like
-                                    % load this module but has to
-                                    % be loaded after the stylesheet
-                                    % information is loaded.
-%\input ptxplus-maps.tex            % This still needs development yet
+% We want to import this module here, but it has to come after the stylesheet is loaded.
+%\input ptxplus-marginalverses.tex
+%:end
 
+%:id fonts-basic
 % default font names (override in setup file)
 \ifx\regular\undefined   \def\regular{"Times New Roman"}      \fi
 \ifx\bold\undefined      \def\bold{"Times New Roman/B"}       \fi
 \ifx\italic\undefined    \def\italic{"Times New Roman/I"}     \fi
 \ifx\bolditalic\undefined\def\bolditalic{"Times New Roman/BI"}\fi
+%:end
 
+%:id note-creation
 % footnote macros based on plain.tex \footnote, \vfootnote
 \newbox\he@dingnotes
-\def\m@kenote#1#2#3#4{\let\@sf\empty % #1=class(e.g. f, x);
-  % #2=class of styling
-  % #3=caller + all the macros to setup the styling for the caller
-  % #4=caller + styling in the footnote if there is a notecallerstyle
+%:
+% #1 ~ class to store the note in. E.g. f, x. The results of `\NoteBlendInto`.
+% #2 ~ class to use for styling (what the source had in it)
+% #3 ~ styled text for main text caller
+% #4 ~ styled text for in note caller
+\def\m@kenote#1#2#3#4{\let\@sf\empty
   % text is read later
   \ifhmode\edef\@sf{\spacefactor\the\spacefactor}\/\fi%
   % if footnote is on a chapter number ...
