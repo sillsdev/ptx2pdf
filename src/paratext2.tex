@@ -688,6 +688,7 @@
     % swap boxes if either, colA is empty and colB full, or colB is empty and colA is over full.
     \ifvoid\colA\ifvoid\colB\else\ifdim\colhtA<\ht\colB\else\setbox\colA=\box\colB\fi\fi\fi
     \ifdim\ht\colA>\colhtA\ifdim\ht\colB<1pt\ifdim\ht\colA<\colhtB\setbox\colB=\box\colA\fi\fi\fi
+    \xdef\p@gebotmark{\splitbotmark}
 }
 
 \newdimen\availA \newdimen\availB
