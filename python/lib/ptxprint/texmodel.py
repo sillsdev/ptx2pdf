@@ -536,23 +536,10 @@ class TexModel:
                     t = t+'L'
             
             self.dict['header/odd{}'.format(side)] = t
-            if mirror and side != 'center':
+            if mirror and side != 'center' and (v not in ["First Reference", "Last Reference"]):
                 self.dict['header/even{}'.format(self._swapRL[side])] = t
             else:
                 self.dict['header/even{}'.format(side)] = t
-            # if side == 'left':
-                # if mirror:
-                    # self.dict['header/even{}'.format('right')] = t
-                # else:
-                    # self.dict['header/even{}'.format(side)] = t
-            # elif side == 'right':
-                # if mirror:
-                    # self.dict['header/even{}'.format('left')] = t
-                # else:
-                    # self.dict['header/even{}'.format(side)] = t
-            # else: # centre
-                # self.dict['header/even{}'.format(side)] = t
-            
 
     def texfix(self, path):
         return path.replace(" ", r"\ ")
