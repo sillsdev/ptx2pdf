@@ -342,12 +342,9 @@
   % set font size for \c
   \edef\dr@psize{\strip@pt\dropnumbersize}%
   \def\m@rker{c}\defp@ram{fontsize}{\dr@psize}
-  \ifdiglot%
-  \resetdropc@p%Can't do this here since things get lowercased
-  \fi%
+  \ifdiglot \resetdropc@p\fi%Can't do this here since things get lowercased
  }
 }
-%-c_sty-defcv
 
 \def\resetdropc@p{%The above code is in \lowercase which  breaks L and R
   \message{Setting drop-cap size to \dr@psize}%
@@ -357,6 +354,7 @@
   \x@\let\csname font<cL>\endcsname=\relax %
   \x@\let\csname font<cR>\endcsname=\relax %
 }
+%-c_sty-defcv
 
 %+c_strippt
 %=strippt

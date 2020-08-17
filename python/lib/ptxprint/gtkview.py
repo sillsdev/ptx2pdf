@@ -1393,7 +1393,8 @@ class GtkViewModel(ViewModel):
         else:
             self.builder.get_object("t_configNotes").set_text("")
             lockBtn.set_sensitive(False)
-        if os.path.exists(self.configPath(cfgname=self.configName())):
+        cpath = self.configPath(cfgname=self.configName())
+        if cpath is not None and os.path.exists(cpath):
             self.updateProjectSettings(self.prjid, saveCurrConfig=False, configName=self.configName()) # False means DON'T Save!
         self.updateDialogTitle()
 

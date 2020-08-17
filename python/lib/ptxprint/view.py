@@ -1130,7 +1130,7 @@ class ViewModel:
     def createDiglotView(self):
         prjid = self.get("fcb_diglotSecProject")
         cfgid = self.get("ecb_diglotSecConfig")
-        digview = ViewModel(self.settings_dir, self.working_dir)
+        digview = ViewModel(self.settings_dir, self.working_dir, self.userconfig, self.scriptsdir)
         digview.setPrjid(prjid)
         if cfgid is not None and cfgid != "":
             digview.setConfigId(cfgid)
