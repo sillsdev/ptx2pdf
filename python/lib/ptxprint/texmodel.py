@@ -12,7 +12,7 @@ from ptxprint.runner import checkoutput
 def loosint(x):
     try:
         return int(x)
-    except TypeError:
+    except (ValueError, TypeError):
         return 0
 
 def universalopen(fname, rewrite=False):

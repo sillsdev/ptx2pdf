@@ -56,7 +56,7 @@ else:
 if args.pid is not None and (any(x in args.pid for x in "\\/") or args.pid.lower().endswith(".cfg")):
     pidpath = os.path.relpath(args.pid, args.paratext).replace("\\", "/")
     if pidpath.startswith("..") or pidpath.startswith("/"):
-        pidpath = args.pid.replace("\\", "/")
+        pidpath = os.path.abspath(args.pid).replace("\\", "/")
     pidbits = pidpath.split("/")
     if len(pidbits) > 4 and "ptxprint" in [x.lower() for x in pidbits[-3:-1]]:
         if pidbits[-2].lower() == "ptxprint":

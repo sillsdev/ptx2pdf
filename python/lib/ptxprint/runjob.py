@@ -74,6 +74,7 @@ def newBase(fpath):
         return re.sub('[()&+,. ]', '_', base(fpath).lower())
 
 _diglot = {
+"diglot/ifusecustomsty":    "project/ifusecustomsty",
 "diglot/colorfonts" :       "document/ifcolorfonts",
 "diglot/ifrtl" :            "document/ifrtl",
 "diglot/fontfactor" :       "paper/fontfactor",
