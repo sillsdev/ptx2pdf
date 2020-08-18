@@ -1019,10 +1019,11 @@
  \@@setside%
  %All sorts of things should follow if m@rker is set properly...
  \expandafter\ifx\csname m@rker\endcsname\relax\else%
- \ifdiglotL\let\m@rkerR=\m@rker\let\m@rker=\m@rkerL\relax\else%
- \let\m@rkerL=\m@rker\let\m@rker=\m@rkerR\relax\fi%
- %\message{m@rker now \m@rker}
+  \ifdiglotL\let\m@rkerR=\m@rker\let\m@rker=\m@rkerL\relax\else%
+  \let\m@rkerL=\m@rker\let\m@rker=\m@rkerR\relax\fi%
+  %\message{m@rker now \m@rker}
  \fi%
+ \setLRspecific %ensure that all the units are correct.
  \trace{D}{Leadingunit: \the\le@dingunit}%
  \ifdim\le@dingunit>0pt %
    \s@tbaseline{p}%

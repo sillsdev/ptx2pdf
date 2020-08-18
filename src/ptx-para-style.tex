@@ -323,6 +323,7 @@
    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
    \getp@ram{rightmargin}{\m@rker}%
    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
+   \trace{s}{\m@rker\ifdiglot\ifdiglotL L \else R\fi\fi\space iu=\the\IndentUnit, ls=\the\leftskip, rs=\the\rightskip}%
    %\getp@ram{fontsize}{\m@rker}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%
    \s@tfont{\m@rker}%
    \trace{j}{baselineskip=\the\baselineskip ; UseGlyphMetrics=\the\XeTeXuseglyphmetrics}%
@@ -395,6 +396,7 @@
     \fi
     \ifallowp@rindent % create first-line indent, unless suppressed at dropped chapter number
                       % (note that we don't suppress negative indents, as in \q1 etc)
+     \trace{Ds}{\m@rker\ifdiglot\ifdiglotL L \else R\fi\fi\space  First indent \f@rstindent * \the\IndentUnit}%
      \kern\f@rstindent \IndentUnit
     \fi
    \fi
