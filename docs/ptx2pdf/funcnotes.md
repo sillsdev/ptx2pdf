@@ -88,7 +88,7 @@ verse number text output macro.
 Most chapter numbers are a drop number. What makes scripture typesetting tricky
 is that there are a few drop chapter numbers that occur mid paragraph. Since
 USFM says that paragraphs occur under a chapter marker. There is a special
-paragraph marker for the non paragraph break: `\nd`. To achieve the cutout we
+paragraph marker for the non paragraph break: `\nb`. To achieve the cutout we
 have verious things to set up in the chapter marker itself. Like the verse
 milestone handler, there are two parts of the chapter marker processing. We
 start with the pattern matching chapter that collects the chapter number and

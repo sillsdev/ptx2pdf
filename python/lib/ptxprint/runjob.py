@@ -144,7 +144,7 @@ class RunJob:
         else:
             self.maxRuns = 5
         self.changes = None
-        self.gatherDecorations(info)
+        self.checkForMissingDecorations(info)
         if info.asBool("document/ifinclfigs"):
             self.gatherIllustrations(info, jobs, self.args.paratext)
         
@@ -448,28 +448,21 @@ class RunJob:
         print("Done")
         return [outfname]
 
-    def gatherDecorations(self, info):
+    def checkForMissingDecorations(self, info):
+        deco = {"pageborder" :     "Page Border",
+                "sectionheader" :  "Section Heading",
+                "endofbook" :      "End of Book",
+                "versedecorator" : "Verse Number"}
+        warnings = []
         if info.asBool("fancy/enableborders"):
-            if info.asBool("fancy/pageborder"):
-                try:
-                    copyfile(info.dict["fancy/pageborderpdf"], os.path.join(self.tmpdir, "pageBorder.pdf"))
-                except FileNotFoundError:
-                    print("Warning: Couldn't locate Page Border Decorator")
-            if info.asBool("fancy/sectionheader"):
-                try:
-                    copyfile(info.dict["fancy/sectionheaderpdf"], os.path.join(self.tmpdir, "sectHeadDecorator.pdf"))
-                except FileNotFoundError:
-                    print("Warning: Couldn't locate Section Heading Decorator")
-            if info.asBool("fancy/endofbook"):
-                try:
-                    copyfile(info.dict["fancy/endofbookpdf"], os.path.join(self.tmpdir, "endOfBook.pdf"))
-                except FileNotFoundError:
-                    print("Warning: Couldn't locate End of Book Decorator")
-            if info.asBool("fancy/versedecorator"):
-                try:
-                    copyfile(info.dict["fancy/versedecoratorpdf"], os.path.join(self.tmpdir, "verseNumDecorator.pdf"))
-                except FileNotFoundError:
-                    print("Warning: Couldn't locate Verse Number Decorator")
+            for k,v in deco.items():
+                if info.asBool("fancy/"+k):
+                    f = info.dict["fancy/{}pdf".format(k)] or ""
+                    if not os.path.exists(f):
+                        warnings += ["{} Decorator\n{}\n\n".format(v, f)]
+            if len(warnings):
+                self.printer.doError("Warning: Could not locate decorative PDF(s):",
+                        secondary="\n".join(warnings))
 
     def gatherIllustrations(self, info, jobs, ptfolder):
         pageRatios = self.usablePageRatios(info)
@@ -553,7 +546,7 @@ class RunJob:
 
     def removeTempFiles(self, texfiles):
         notDeleted = []
-        # MH: Should we try to remove the generated Nested files (now that they are stored aloong with the config)?
+        # MH: Should we try to remove the generated Nested files (now that they are stored along with the config)?
         # What impact does that have on Paratext's S/R (cluttering)
         # n = os.path.join(self.tmpdir, "NestedStyles.sty")
         # if os.path.exists(n):
@@ -614,8 +607,6 @@ class RunJob:
         pw1 = pageWidth - bindingGutter - (2*(margin*sideMarginFactor))                       # single-col layout
         if info.dict["paper/columns"] == "2":
             pw2 = int(pageWidth - middleGutter - bindingGutter - (2*(margin*sideMarginFactor)))/2 # double-col layout & span images
-        # elif info.asBool("snippets/diglot"):
-            # pw2 = pw1
         else:
             pw2 = pw1
         # print("Usable ph: {}mm".format(ph), "     Usable 1-col pw1: {}mm   Usable 2-col pw2: {}mm".format(pw2, pw1))
