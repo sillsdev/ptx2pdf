@@ -116,7 +116,7 @@ class TestXetex: #(unittest.TestCase):
         assert call(xdvcmd, shell=True) == 0
 
     def test_xdv(self, updatedata, pypy):
-        xdvcmd = [os.path.join(self.xdv.testsdir, "..", "python", "scripts", "xdvitype"), "-d"]
+        xdvcmd = [os.path.join(self.xdv.testsdir, "..", "python", "scripts", "xdvcompare")]
         if pypy is not None:
             xdvcmd.insert(0, pypy)
         elif sys.platform == "win32":
@@ -130,12 +130,6 @@ class TestXetex: #(unittest.TestCase):
             shutil.copy(fromfile, tofile)
             # pytest.xfail("No regression xdv. Copying...")
             return
-        resdat = check_output(xdvcmd + [fromfile]).decode("utf-8")
-        stddat = check_output(xdvcmd + [tofile]).decode("utf-8")
-        for attribute in ("CreationDate", "ModDate"): # remove the creation and modification times
-            regexp, replacement = r'/{}\(D:[\d\'+\\]+\)'.format(attribute), r"/{}:REMOVED".format(attribute)
-            resdat = re.sub(regexp, replacement, resdat)
-            stddat = re.sub(regexp, replacement, stddat)
-        diff = "\n".join(context_diff(stddat.split("\n"), resdat.split("\n"), fromfile=fromfile, tofile=tofile))
-        if diff != "":
+        xdvcmd += [fromfile, tofile]
+        if call(xdvcmd) != 0:
             pytest.xfail("xdvs are inconsistent")

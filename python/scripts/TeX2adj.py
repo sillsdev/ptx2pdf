@@ -48,11 +48,8 @@ class Document:
         self.resetstates()
         def parseref(line):
             possibleref = reffinder.match(line).groups()
-            if possibleref[3] == "1":
-                possiblerefgood = True
-            else:
-                possiblerefgood = False
-            return possibleref, possiblerefgood
+            #possiblerefgood = possibleref[3] == "1"
+            return possibleref, possibleref[3] == "1"
         self.pageinfo = ""   
         pag = Page()
         for line in self.logfile:
@@ -85,9 +82,7 @@ class Document:
             elif self.state == 1: # we're looking for paragraphing info
                 if line == "@secondpass\n" or line == "@emergencypass\n": # if we find a later pass, we can ditch what we've got so far
                     par.lines = []
-                    self.parfound = False
-                    self.skip = False
-                    #par.minlines = None
+                    self.parfound = self.skip = False
                 else:
                     if self.parfound: # Reached paragraph breaking bit
                         if not self.skip and line.startswith("@@") : # We're interested
@@ -116,7 +111,6 @@ class Paragraph:
     def __init__(self):
         self.lines = []
         self.goodref = False
-        # self.minlines = None can be inferred from the information stored in lines
     def getref(self):
         refline = "\n{} {}.{} 0".format(self.ref[0], self.ref[1], self.ref[2])
         if not self.goodref:
@@ -134,10 +128,8 @@ class Paragraph:
         else:
             lowerbound, upperbound = sizerange
             outputline += " %"
-            if lowerbound != 0:
-                outputline += str(lowerbound)
-            if upperbound != 0:
-                outputline += "+{}".format(upperbound)
+            outputline += str(lowerbound) if lowerbound != 0 else ""
+            outputline += "+{}".format(upperbound) if upperbound != 0 else ""
             return outputline
     def formatoptions(self, normalised=False): # returns minimum number of lines and the demerits associated with the other options
         if normalised:
@@ -150,34 +142,39 @@ class Page:
         self.vals = []
         self.pageinfo = None
 
-#"""
+def log2adj(logfile, outpath=None, stretchcoeff=3.0, writeoutput=True):
+    if outpath is None:
+        outpath = logfile + ".adj"
+    logfile = open(logfile, "r", encoding="utf8")
+    doc = Document(logfile)
+    doc.logparser(stretchcoeff) 
+    logfile.close()
+    if writeoutput:
+        adjfile = None
+        for par in doc.paragraphs:
+            outputline = par.getadjline()
+            if outputline is not None:
+                if adjfile is None:
+                    adjfile = open(outpath, "a", encoding="utf8")
+                    outputline = outputline.strip("\n")
+                adjfile.write(outputline)
+        if adjfile is not None:
+            adjfile.write("\n")
+            adjfile.close()
+    else:
+        adjtext = ""
+        for par in doc.paragraphs:
+            outputline = par.getadjline()
+            if outputline is not None:
+                if adjfile == "":
+                    outputline = outputline.strip("\n")
+                adjtext += outputline
+        return adjtext
+
 parser = argparse.ArgumentParser(description="Takes a TeX .log file and outputs the possible paragraph breaks (up to a badness defined by --stretchcoeff) to an .adj file")
 parser.add_argument("logfile", help="TeX .log file path")
 parser.add_argument("-o", "--outpath", help="Destination filename ([logfile].adj if omitted)")
 parser.add_argument("-s", "--stretchcoeff", type=float, default=3.0, help="The maximum allowed demerits of a paragraph breaking option will be (stretchcoeff) * (demerits of best breaking option)")
 x = parser.parse_args()
-if x.outpath is None:
-    x.outpath = x.logfile + ".adj"  # """
-    
-#"""
-logfile = open(x.logfile, "r", encoding="utf8")
-doc = Document(logfile)
-doc.logparser(x.stretchcoeff) 
-logfile.close() # """
 
-#"""
-adjfile = None
-for par in doc.paragraphs:
-    outputline = par.getadjline()
-    if outputline is not None:
-        if adjfile is None:
-            adjfile = open(x.outpath, "a", encoding="utf8")
-            outputline = outputline.strip("\n")
-        adjfile.write(outputline)
-adjfile.write("\n")
-adjfile.close()  #"""
-#"""#
-#logfile = open(r"C:\Users\jakem\WST\ptxprint-GENWSG_tight.log", "r", encoding="utf8")
-#doc = Document(logfile)
-#doc.logparser(3.0) 
-#logfile.close() # """
+log2adj(x.logfile, x.outpath, x.stretchcoeff, True)

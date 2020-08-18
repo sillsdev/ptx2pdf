@@ -1,0 +1,498 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Aug 10 10:50:42 2020
+
+@author: jakem
+"""
+
+import argparse, os, sys
+from struct import unpack
+
+opcodes = [("nop", [], i) for i in range(128)]
+opcodes += [
+    ("nop", [1], "setcode"),
+    ("nop", [2], "setcode"),
+    ("nop", [3], "setcode"),
+    ("nop", [-4], "setcode"),
+    ("nop", [-4]*2, "setrule"),
+    ("nop", [1], "setcode"),
+    ("nop", [2], "setcode"),
+    ("nop", [3], "setcode"),
+    ("nop", [-4], "setcode"),
+    ("nop", [-4]*2, "setrule"),
+    ("nop", [], "nop"),
+    ("bop", [4]*10 + [-4], "bop"),
+    ("simple", [], "eop"),       # code 140
+    ("simple", [], "push"),
+    ("simple", [], "pop"),
+    ("move", [-1], "right"),
+    ("move", [-2], "right"),
+    ("move", [-3], "right"),
+    ("move", [-4], "right"),
+    ("move", [], "w"),
+    ("move", [-1], "w"),
+    ("move", [-2], "w"),
+    ("move", [-3], "w"),         # code 150
+    ("move", [-4], "w"),
+    ("move", [], "x"),
+    ("move", [-1], "x"),
+    ("move", [-2], "x"),
+    ("move", [-3], "x"),
+    ("move", [-4], "x"),
+    ("move", [-1], "down"),
+    ("move", [-2], "down"),
+    ("move", [-3], "down"),
+    ("move", [-4], "down"),
+    ("move", [], "y"),
+    ("move", [-1], "y"),
+    ("move", [-2], "y"),
+    ("move", [-3], "y"),
+    ("move", [-4], "y"),
+    ("move", [], "z"),
+    ("move", [-1], "z"),
+    ("move", [-2], "z"),
+    ("move", [-3], "z"),
+    ("move", [-4], "z")]         # code 170
+opcodes += [("font", [], i) for i in range(64)]
+opcodes += [
+    ("font", [1], None),
+    ("font", [2], None),
+    ("font", [3], None),
+    ("font", [4], None),
+    ("xxx", [1], "special"),
+    ("xxx", [2], "special"),
+    ("xxx", [3], "special"),
+    ("xxx", [4], "special"),
+    ("fontdef", [1, 4, 4, 4, 1, 1], None),
+    ("fontdef", [2, 4, 4, 4, 1, 1], None),
+    ("fontdef", [3, 4, 4, 4, 1, 1], None),
+    ("fontdef", [4, 4, 4, 4, 1, 1], None),
+    ("pre", [1, 4, 4, 4, 1], "pre"),
+    ("post", [-4] + [4]*5 + [2,2], "post"),
+    ("postpost", [4, 1], "postpost"),
+    ("unknown", [], None),   # code 250
+    ("xpic", [1, 4, 4, 4, 4, 4, 4, 2, 2], None),
+    ("xfontdef", [4, 4, 2], "xfontdef"),
+    ("xglyphs", [], "xglyphs 1"),
+    ("xglyphs", [], "xglyphs 0"),
+    ("parmop", [1], "direction")]
+
+packings = ("bhxi", "BHxI")
+
+quickcodes = opcodes.copy()
+for n, txt in zip(list(range(239, 243))+list(range(252, 255)), [*["xxxquick"]*4, "xfontdefquick", *["xglyphsquick"]*2]):
+    quickcodes[n] = (txt,) + quickcodes[n][1:-1] + (txt,)
+
+class XDviReader:
+    def __init__(self, filename, commonfonts, pagecounter, name=None, verbosity=0):
+        self.filename = filename
+        self.file = open(filename, "rb")
+        self.filesize = os.path.getsize(filename)
+        self.commonfonts = commonfonts # fontparam: common ID
+        self.pageno = pagecounter
+        self.name = name
+        self.v = verbosity
+        self.postvals = {}
+        self.postread = False
+        self.prevals = {}
+        self.preread = False
+        self.stack = []
+        self.pos = [0, 0, 0, 0, 0, 0] # (h,v,w,x,y,z)
+        self.pages = []
+        self.fonts = {} # k: common ID
+        self.readpost() # postvals ("p", "num", "den", "mag", "l", "u", "s", "t"): p = final bop, t = number of bops
+        self.readpre() # prevals ("i", "num", "den", "mag", "comment"): i = version
+        self.buildpagelist()
+    
+    def introduce(self):
+        print("XDviReader {}: file size {:,}B; {:,} pages; {:,} fonts".format(self.name, self.filesize, self.postvals["t"], len(self.fonts)))
+    
+    def readbytes(self, num):
+        return self.file.read(num)
+    
+    def skip(self, dist):
+        self.file.seek(self.file.tell() + dist)
+       
+    def readval(self, size, uint=False):
+        d = self.readbytes(size)
+        if size == 3:
+            if uint:
+                s = unpack(">"+packings[1][1]+packings[1][0], d)
+                res = s[0] * 256 + s[1]
+            else:
+                s = unpack(">"+packings[0][1]+packings[1][0], d)
+                res = s[0] * 256 + (s[1] if s[0] > 0 else -s[1])
+        else:
+            res = unpack(">"+packings[1 if uint else 0][size-1], d)[0]
+        return res
+    
+    def readvalueloc(self, size, byteloc, uint=False):
+        self.setpos(byteloc)
+        return self.readval(size, uint)
+    
+    def setpos(self, location):
+        assert 0 <= location <= self.filesize
+        self.file.seek(location)
+    
+    def loadop(self):
+        op = self.readval(1, True)
+        opc = opcodes[op]
+        data = [self.readval((x if x>0 else -x), uint=x>0) for x in opc[1]]
+        lastparm = opc[2]
+        if self.v > 3:
+            print(op, lastparm, data, opc[0])
+        return opc[0], op, lastparm, data
+    
+    def loadopquick(self):
+        op = self.readval(1, True)
+        opc = quickcodes[op]
+        data = [self.readval((x if x>0 else -x), uint=x>0) for x in opc[1]]
+        lastparm = opc[2]
+        if self.v > 3:
+            print(op, lastparm, data, opc[0])
+        return opc[0], op, lastparm, data
+    
+    def postposition(self):
+        location = self.filesize
+        val = 223
+        while val == 223:
+            location -= 1
+            val = self.readvalueloc(1, location, True)
+        if location == self.filesize - 1:
+            print("File does not end with 223 signature; wrong type of file or file not intact")
+            raise Exception
+        self.setpos(location-5)
+    
+    def readpost(self):
+        self.postposition()
+        while True:
+            command, op, lastparm, data = self.loadop()
+            if lastparm == "postpost" and self.postread:
+                break
+            getattr(self, command)(op, lastparm, data)
+    
+    def readpre(self):
+        self.setpos(0)
+        command, op, lastparm, data = self.loadop()
+        assert op == 247
+        (i, n, d, m, k) = data        
+        self.prevals.update(zip(("i", "num", "den", "mag", "comment"), [i, n, d, m, self.readbytes(k).decode("utf-8")]))
+        self.preread = True
+        
+    def buildpagelist(self):
+        assert self.postread
+        loc = self.file.tell()
+        p = self.postvals["p"]
+        bops = []
+        while p != -1:
+            self.setpos(p)
+            command, op, lastparm, data = self.loadop()
+            assert op == 139
+            bops.append(p)
+            p = data[-1]
+        assert len(bops) == self.postvals["t"]
+        self.bops = list(reversed(bops))
+        self.file.seek(loc)
+    
+    def setpagepos(self, pageindex): # Zero indexed
+        assert 0 <= pageindex <= len(self.bops)
+        self.setpos(self.bops[pageindex])
+
+    def readpage(self):
+        lastparm = None        
+        while lastparm != "eop":
+            command, op, lastparm, data = self.loadop()
+            getattr(self, command)(op, lastparm, data)
+
+    def nop(self, *a):
+        pass
+
+    def bop(self, *a):
+        self.page = Page(self.pageno[0])
+        self.stack = []
+        self.pos = [0, 0, 0, 0, 0, 0]
+    
+    def simple(self, opcode, parm, data):
+        getattr(self, parm)()
+    
+    def eop(self):
+        self.pages.append(self.page)
+        
+    def push(self):
+        self.stack.append(self.pos.copy())
+    
+    def pop(self):
+        self.pos = self.stack.pop(-1)
+
+    def move(self, opcode, parm, data):
+        getattr(self, parm)(data[0] if data != [] else None)
+        
+    def right(self, dist):
+        self.pos[0] += dist
+    
+    def down(self, dist):
+        self.pos[1] += dist
+        
+    def w(self, dist=None):
+        if dist is not None:
+            self.pos[2] = dist
+        self.right(self.pos[2])
+        
+    def x(self, dist=None):
+        if dist is not None:
+            self.pos[3] = dist
+        self.right(self.pos[3])
+
+    def y(self, dist=None):
+        if dist is not None:
+            self.pos[4] = dist
+        self.down(self.pos[4])
+        
+    def z(self, dist=None):
+        if dist is not None:
+            self.pos[5] = dist
+        self.down(self.pos[5])
+    
+    def font(self, op, parm, data):
+        if parm is not None:
+            data = [parm]
+        self.activefont = self.fonts[data[0]]
+    
+    def xxx(self, opcode, parm, data):
+        txt = self.readbytes(data[0])
+        self.page.specials.append(txt)
+        if self.v > 2:
+            print(txt)
+            
+    def xxxquick(self, opcode, parm, data):
+        self.skip(data[0])
+        
+    def post(self, opcode, parmname, data):
+        self.postvals.update(zip(("p", "num", "den", "mag", "l", "u", "s", "t"), data))
+        self.postread = True
+        
+    def postpost(self, opcode, parmname, data):
+        self.postvals["i"] = data[1]
+        self.postvals["q"] = data[0]
+        self.setpos(self.postvals["q"])
+    
+    def xfontdef(self, opcode, parm, data):
+        (k, points, flags) = data
+        plen = self.readval(1, uint=True)
+        font_name = os.path.basename(self.readbytes(plen).decode("utf-8"))
+        color = self.readval(4) if flags & 0x200 else 0xFFFFFFFF
+        if flags & 0x800:       # variations
+            nvars = self.readval(2)
+            variations = [self.readval(4) for i in range(nvars)]
+        else:
+            variations = []
+        ext = self.readval(4) if flags & 0x1000 else 0
+        slant = self.readval(4) if flags & 0x2000 else 0
+        embolden = self.readval(4) if flags & 0x4000 else 0
+        ident = self.readval(4)
+        #flags = 0x1234
+        fontparam = (font_name, points, "{:08X}".format(color), "{:04X}".format(flags), *variations, ext, slant, embolden)
+        if fontparam not in self.commonfonts:
+            fontid = len(self.commonfonts)
+            self.commonfonts[fontparam] = fontid
+        if k not in self.fonts:
+            self.fonts[k] = self.commonfonts[fontparam]
+
+    def xfontdefquick(self, opcode, parm, data):
+        (k, points, flags) = data
+        self.skip(self.readval(1, uint=True))
+        self.skip(4) if flags & 0x200 else 0xFFFFFFFF
+        skipdist = 0
+        if flags & 0x800:       # variations
+            skipdist += 4 * self.readval(2)
+        skipdist += 4 if flags & 0x1000 else 0
+        skipdist += 4 if flags & 0x2000 else 0
+        skipdist += 4 if flags & 0x4000 else 0
+        skipdist += 4 # ident
+        self.skip(skipdist)
+        
+    def xglyphs(self, opcode, parm, data):
+        width = self.readval(4)
+        slen = self.readval(2, uint=True)
+        if parm:
+            pos = [(self.readval(4), self.readval(4)) for i in range(slen)]
+        else:
+            pos = [(self.readval(4), 0) for i in range(slen)]
+        glyphs = [self.readval(2) for i in range(slen)]
+        self.page.glyphs += [
+            (glyphs[i], 
+             pos[i][0]+self.pos[1], 
+             pos[i][1]+self.pos[0], 
+             self.activefont) for i in range(slen)
+            ] ########## This needs checking; does xglyphs move the cursor at all?
+
+    def xglyphsquick(self, opcode, parm, data):
+        self.skip(4) # width
+        slen = self.readval(2, uint=True)
+        if parm:
+            return self.readbytes(slen*10)
+        else:
+            return self.readbytes(slen*6)
+
+    
+    def pointstomm(self, dist):
+        return (dist * self.prevals["num"] * self.prevals["mag"]) / (self.prevals["den"] * 10**7)
+    
+    def mmtopoints(self, mm):
+       return (mm * self.prevals["den"] * 10**7) /(self.prevals["num"] * self.prevals["mag"]) 
+
+class Page:
+    def __init__(self, pageno=None):
+        self.pageno = pageno
+        self.glyphs = []
+        self.specials = []
+    
+    def __repr__(self):
+        return "Page {} with {} glyphs and {} specials".format(self.pageno, len(self.glyphs), len(self.specials))
+    
+    def __eq__(self, otherpage):
+        if len(self.glyphs) != len(otherpage.glyphs):
+            return False
+        if self.glyphs == otherpage.glyphs:
+            return True
+        out = [glyphpair for glyphpair in zip(self.glyphs, otherpage.glyphs) if not glyphnear(*glyphpair)]
+        if out == []:
+            return True
+        else:
+            return self.getdiff(*zip(*out)) == 0
+    
+    def getdiff(self, gly1, gly2):
+        gly1, gly2 = list(gly1), list(gly2)
+        for i in reversed(range(len(gly1))):
+            for j in reversed(range(len(gly2))):
+                if glyphnear(gly1[i], gly2[j]):
+                    del gly1[i]
+                    del gly2[j]
+                    break
+        return max(len(gly1), len(gly2))
+
+def glyphnear(glyph1, glyph2, allowfontmismatch=False):
+    if glyph1 == glyph2:
+        return True
+    if glyph1[0] != glyph2[0]:
+        return False
+    if not allowfontmismatch and glyph1[3] != glyph2[3]:
+        return False
+    return (glyph1[1] - glyph2[1])**2 + (glyph1[2] - glyph2[2])**2 < sqthresh
+
+class Comparator:
+    def __init__(self, filename1, filename2, prediction=True, pmm=False, v=0, getall=False, forceslow=False):
+        self.fontdict = {}
+        self.pageno = [1] # A list because it's mutable/readable by the XDviReader objects; the update is carried through automatically
+        self.v = v
+        if "project" in filename1 and "standard" in filename2:
+            name1, name2 = "Project", "Standard"
+        elif "project" in filename2 and "standard" in filename1:
+            name2, name1 = "Project", "Standard"
+        else:
+            name1, name2 = "Xdv 1", "Xdv 2"
+        self.readers = [XDviReader(filename1, self.fontdict, self.pageno, name=name1, verbosity=v),
+                        XDviReader(filename2, self.fontdict, self.pageno, name=name2, verbosity=v)]
+        self.mmtolerance = 1
+        self.allowpagemismatch = pmm
+        self.getall = getall
+        self.forceslow = forceslow
+        self.pred = prediction and not pmm
+        if self.v > 0:
+            self.introduce()
+            [reader.introduce() for reader in self.readers]
+    
+    def introduce(self):
+        print("Comparator: glyph positioning tolerance {}mm; Allow page mismatch: {}; Smart failure prediction: {}; quick mode {}".format(self.mmtolerance, *["on" if val else "off" for val in [self.allowpagemismatch, self.pred and not self.allowpagemismatch, not self.forceslow]]))
+    
+    def getorder(self):
+        if self.pred:
+            locs = [reader.bops + [reader.postvals["q"]] for reader in self.readers]
+            lens = [[l[i+1] - l[i] for i in range(len(l)-1)] for l in locs]
+            p  = list(reversed(sorted(enumerate(zip(*lens)), key=lambda t: (t[1][0]/t[1][1]-1)**2)))
+            firsttup, lasttup = p[0][1], p[-1][1]
+            assert (firsttup[0]/firsttup[1]-1)**2 >= (lasttup[0]/lasttup[1]-1)**2 # assert we're iterating in the right order
+            pages = [t[0] for t in p]
+        else:
+            pages = range(self.numpages)
+        if self.v > 0:
+            print("Starting at page {}".format(pages[0] + 1))
+        return pages
+    
+    def comparepage(self, pagenumber):
+        for reader in self.readers:
+            reader.setpagepos(pagenumber)
+            reader.readpage()
+            if self.v > 1:
+                print(reader.page)
+        if self.readers[0].page != self.readers[1].page:
+            self.errors += ["Glyphs did not line up closely enough"] if "Glyphs did not line up closely enough" not in self.errors else []
+            if self.v > 0 or self.getall:
+                self.errors += ["{} unmatchable glyphs were found on page {}".format(self.readers[0].page.getdiff(*[r.page.glyphs for r in self.readers]), self.pageno[0])]
+    
+    def comparepagequick(self, pagenumber):
+        for reader in self.readers:
+            reader.setpagepos(pagenumber)
+        command = None
+        while command != "eop":
+            ops = [(r, *r.loadopquick()) for r in self.readers]
+            a = [getattr(r, c)(op, l, data) for r, c, op, l, data in ops if c in ["xfontdefquick", "xxxquick", "xglyphsquick", "font"]]
+            command = ops[0][3]
+            match = None
+            if command == "font":
+                match = self.readers[0].activefont == self.readers[1].activefont
+            elif command == "xxxquick":
+                match = ops[0][1:-1] == ops[1][1:-1]
+            elif command == "xglyphsquick":
+                match = a[0] == a[1]
+            elif command == "bop":
+                pass
+            else:
+                match = ops[0][1:] == ops[1][1:]
+            if match is False:
+                if self.v > 0:
+                    print("Page {} xdv match failed".format(pagenumber + 1))
+                return False
+        if self.v > 1:
+            print("Page {} xdv match success".format(pagenumber + 1))
+        return True
+
+    def compare(self):
+        self.errors = []
+        lens = [r.postvals["t"] for r in self.readers]
+        if not self.allowpagemismatch and lens[0] != lens[1]:
+            self.errors += ["Match failed because input files have different lengths: {} pages vs {} pages".format(self.readers[0].postvals["t"], self.readers[1].postvals["t"])]
+            if not self.getall:
+                return self.errors
+        self.numpages = min(*lens)
+        global sqthresh 
+        sqthresh = (self.readers[0].mmtopoints(self.mmtolerance))**2
+        for i in self.getorder():
+            self.pageno[0] = i+1
+            if self.forceslow or not self.comparepagequick(i):
+                self.comparepage(i)
+            if not self.getall and self.errors != []:
+                return self.errors
+        if self.v > 0 and self.errors == []:
+            print("Test executed successfully")
+        return self.errors
+
+parser = argparse.ArgumentParser()
+parser.add_argument("infile1", help="Input xdvi file1")
+parser.add_argument("infile2", help="Input xdvi file2")
+parser.add_argument("-v","--verbose", action="count", default=0, help="Verbosity: v = basic info, vv = page summary, vvv = specials, vvvv = every operation")
+parser.add_argument("-s", "--superficial", action="store_true", help="Load files but do not compare; check for file intactness")
+parser.add_argument("-c", "--clever", action="store_true", help="Predict failure location")
+parser.add_argument("-p", "--pagemismatch", action="store_true", help="Allow comparison of documents of mismatched length")
+parser.add_argument("-g", "--getallerrors", action="store_true", help="Collect all errors (takes longer)") 
+parser.add_argument("-f", "--forceslow", action="store_true", help="Don't use binary comparison") 
+args = parser.parse_args()
+
+comp = Comparator(args.infile1, args.infile2, prediction=args.clever, pmm=args.pagemismatch, v=int(args.verbose), getall=args.getallerrors, forceslow=args.forceslow)
+if not args.superficial:
+    errors = comp.compare()
+    if errors != []:
+        print("\n".join(errors))
+        sys.exit(1)
+sys.exit(0)

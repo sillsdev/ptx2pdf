@@ -14,6 +14,8 @@ def loosint(x):
         return int(x)
     except (ValueError, TypeError):
         return 0
+    except ValueError:
+        return 0
 
 def universalopen(fname, rewrite=False):
     """ Opens a file with the right codec from a small list and perhaps rewrites as utf-8 """
@@ -346,7 +348,8 @@ class TexModel:
         libpath = os.path.abspath(os.path.dirname(__file__))
         self.dict = {"/ptxpath": path.replace("\\","/"),
                      "/ptxprintlibpath": libpath.replace("\\","/"),
-                     "/iccfpath": os.path.join(libpath, "ps_cmyk.icc").replace("\\","/")}
+                     "/iccfpath": os.path.join(libpath, "ps_cmyk.icc").replace("\\","/"),
+                     "/ptx2pdf": self.printer.scriptsdir.replace("\\", "/")}
         self.prjid = prjid
         if self.prjid is not None:
             self.dict['project/id'] = self.prjid

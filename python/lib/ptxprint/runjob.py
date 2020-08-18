@@ -113,9 +113,10 @@ _diglot = {
 }
 
 class RunJob:
-    def __init__(self, printer, scriptsdir, args):
+    def __init__(self, printer, scriptsdir, userconfig, args):
         self.scriptsdir = scriptsdir
         self.printer = printer
+        self.userconfig = userconfig
         self.tempFiles = []
         self.tmpdir = "."
         self.maxRuns = 1
@@ -161,7 +162,7 @@ class RunJob:
             if digprjid is None or not len(digprjid):     # can't print no project
                 return
             digptsettings = ParatextSettings(self.args.paratext, digprjid)
-            digprinter = ViewModel(self.args.paratext, self.printer.working_dir)
+            digprinter = ViewModel(self.args.paratext, self.printer.working_dir, self.userconfig, self.scriptsdir)
             digprinter.setPrjid(digprjid)
             if digcfg is not None and digcfg != "":
                 digprinter.setConfigId(digcfg)

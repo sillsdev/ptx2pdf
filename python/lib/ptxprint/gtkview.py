@@ -60,7 +60,7 @@ _allscripts = { "Zyyy" : "Default", "Adlm" : "Adlam", "Afak" : "Afaka", "Aghb" :
     "Vaii" : "Vai", "Wara" : "Warang-Citi", "Wole" : "Woleai", "Xpeo" : "Old Persian", "Yiii" : "Yi", "Zzzz" : "Uncoded script"
 }
 # Note that ls_digits (in the glade file) is used to map these "friendly names" to the "mapping table names" (especially the non-standard ones)
-_alldigits = [ "Default", "Adlam", "Ahom", "Arabic-Farsi", "Arabic-Hindi", "Balinese", "Bengali", "Bhaiksuki", "Brahmi", "Burmese", 
+_alldigits = [ "Default", "Adlam", "Ahom", "Arabic-Farsi", "Arabic-Hindi", "Balinese", "Bengali", "Bhaiksuki", "Brahmi",
     "Chakma", "Cham", "Devanagari", "Gujarati", "Gunjala-Gondi", "Gurmukhi", "Hanifi-Rohingya", "Javanese", "Kannada", 
     "Kayah-Li", "Khmer", "Khudawadi", "Lao", "Lepcha", "Limbu", "Malayalam", "Masaram-Gondi", "Meetei-Mayek", "Modi", "Mongolian", 
     "Mro", "Myanmar", "Myanmar-Shan", "Myanmar-Tai-Laing", "New-Tai-Lue", "Newa", "Nko", "Nyiakeng-Puachue-Hmong", "Ol-Chiki", "Oriya", 
@@ -167,13 +167,13 @@ _nonsensitivities = {
 # }
 class GtkViewModel(ViewModel):
 
-    def __init__(self, settings_dir, workingdir):
+    def __init__(self, settings_dir, workingdir, userconfig, scriptsdir):
         self._setup_css()
         GLib.set_prgname("ptxprint")
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(os.path.dirname(__file__), "ptxprint.glade"))
         self.builder.connect_signals(self)
-        super(GtkViewModel, self).__init__(settings_dir, workingdir)
+        super(GtkViewModel, self).__init__(settings_dir, workingdir, userconfig, scriptsdir)
         self.isDisplay = True
         self.config_dir = None
         self.initialised = False
@@ -1394,7 +1394,8 @@ class GtkViewModel(ViewModel):
         else:
             self.builder.get_object("t_configNotes").set_text("")
             lockBtn.set_sensitive(False)
-        if os.path.exists(self.configPath(cfgname=self.configName())):
+        cpath = self.configPath(cfgname=self.configName())
+        if cpath is not None and os.path.exists(cpath):
             self.updateProjectSettings(self.prjid, saveCurrConfig=False, configName=self.configName()) # False means DON'T Save!
         self.updateDialogTitle()
 

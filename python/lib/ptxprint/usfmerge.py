@@ -299,12 +299,12 @@ def usfmerge(infilea, infileb, outfile, stylesheets=[], fsecondary=False, debug=
         return groupChunks(*a, texttype, **kw)
 
     with open(infilea, encoding="utf-8") as inf:
-        doc = list(usfm.parser(inf, stylesheet=stylesheet, purefootnotes=True))
+        doc = list(usfm.parser(inf, stylesheet=stylesheet, canonicalise_footnotes=True))
         pcoll = Collector(doc=doc, fsecondary=fsecondary)
     mainchunks = {c.ident: c for c in pcoll.acc}
 
     with open(infileb, encoding="utf-8") as inf:
-        doc = list(usfm.parser(inf, stylesheet=stylesheet, purefootnotes=True))
+        doc = list(usfm.parser(inf, stylesheet=stylesheet, canonicalise_footnotes=True))
         scoll = Collector(doc=doc, primary=False)
     secondchunks = {c.ident: c for c in scoll.acc}
     mainkeys = ["_".join(str(x) for x in c.ident) for c in pcoll.acc]

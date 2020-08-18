@@ -96,10 +96,12 @@ class ViewModel:
         "document/diglotsecprj": "updateDiglotConfigList"
     }
 
-    def __init__(self, settings_dir, workingdir):
+    def __init__(self, settings_dir, workingdir, userconfig, scriptsdir):
         self.settings_dir = settings_dir
         self.fixed_wd = workingdir != None
         self.working_dir = workingdir
+        self.userconfig = userconfig
+        self.scriptsdir = scriptsdir
         self.ptsettings = None
         self.customScript = None
         self.FrontPDFs = None
@@ -290,6 +292,7 @@ class ViewModel:
             if os.path.exists(fdir):
                 cachepath(fdir)
             readConfig = True
+        self.userconfig.set("init", "project", self.prjid)
         if readConfig or self.configId != configName:
             oldp = self.configPath(prjid=currprj, cfgname=currcfg)
             newp = self.configPath(cfgname=configName)
@@ -306,6 +309,8 @@ class ViewModel:
             res = self.readConfig(cfgname=configName)
             if res or forceConfig:
                 self.configId = configName
+                if self.configId is not None and len(self.configId):
+                    self.userconfig.set("init", "config", self.configId)
             return res
         else:
             return True
@@ -571,6 +576,8 @@ class ViewModel:
             picposn = picposns[k[3] if diglotPrinter is not None else ""]
             if 'dest file' not in v:
                 missingPics.append(v['src'])
+                continue
+            if 'media' in v and 'p' not in v['media']:
                 continue
             if not isdblcol: # Single Column layout so change all tl+tr > t and bl+br > b
                 if 'pgpos' in v:
@@ -892,9 +899,18 @@ class ViewModel:
                                 hyphenatedWords.append(l)
             c = len(hyphenatedWords)
             if c >= listlimit:
-                m2b = "\n\nThat is too many for XeTeX! List truncated to longest {} words.".format(listlimit)
-                hyphenatedWords.sort(key=len,reverse=True)
-                shortlist = hyphenatedWords[:listlimit]
+                hyphwords = set([x.replace("-", "") for x in hyphenatedWords])
+                sheets = usfmutils.load_stylesheets(self.getStylesheets())
+                acc = {}
+                for bk in self.getBooks():
+                    f = os.path.join(self.prjdir, self.getBookFilename(bk, self.prjdir))
+                    u = usfmutils.Usfm(f, stylesheets=sheets)
+                    u.getwords(init=acc, constrain=hyphwords)
+                if len(acc) >= listlimit:
+                    shortlist = [k for k, v in sorted(acc.items(), key=lambda x:(-x[1], -len(x[0])))][:listlimit]
+                else:
+                    shortlist = sorted(acc.keys())
+                m2b = "\n\nThat is too many for XeTeX! List truncated to longest {} words found in the active sources.".format(len(shortlist))
                 hyphenatedWords = shortlist
             hyphenatedWords.sort(key = lambda s: s.casefold())
             outlist = '\catcode"200C=11\n\catcode"200D=11\n\hyphenation{' + "\n".join(hyphenatedWords) + "}"
@@ -997,6 +1013,27 @@ class ViewModel:
     def incrementProgress(self, val=None):
         pass
 
+    def getStyleSheets(self, generated=False):
+        res = []
+        cpath = self.configPath(cfgname=self.configName())
+        rcpath = self.configPath("")
+        res.append(os.path.join(self.scriptsdir, "ptx2pdf.sty"))
+        if self.get('c_useCustomSty'):
+            res.append(os.path.join(self.settings_dir, self.prjid, "custom.sty"))
+        if self.get('c_useModsSty'):
+            for p in (cpath, rcpath):
+                fp = os.path.join(p, "ptxprint-mods.sty")
+                if os.path.exists(fp):
+                    res.append(fp)
+                    break
+        if generated:
+            for p in (cpath, rcpath):
+                fp = os.path.join(p, "NestedStyles.sty")
+                if os.path.exists(fp):
+                    res.append(fp)
+                    break
+        return res
+
     def _getArchiveFiles(self, books, prjid=None, cfgid=None):
         sfiles = {'c_useCustomSty': ("custom.sty", False),
                   'c_useModsSty': ("ptxprint-mods.sty", True),
@@ -1093,7 +1130,7 @@ class ViewModel:
     def createDiglotView(self):
         prjid = self.get("fcb_diglotSecProject")
         cfgid = self.get("ecb_diglotSecConfig")
-        digview = ViewModel(self.settings_dir, self.working_dir)
+        digview = ViewModel(self.settings_dir, self.working_dir, self.userconfig, self.scriptsdir)
         digview.setPrjid(prjid)
         if cfgid is not None and cfgid != "":
             digview.setConfigId(cfgid)

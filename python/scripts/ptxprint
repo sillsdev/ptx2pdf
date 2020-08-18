@@ -1,10 +1,11 @@
 #!/usr/bin/python3
 
-import argparse, sys, os
+import argparse, sys, os, configparser
+import appdirs
 import site
-
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-    site.USER_SITE=os.path.join(os.path.expanduser("~"), ".local")
+    if not site.getuserbase():
+        site.USER_BASE = os.path.join(os.path.expanduser("~"), ".local")
 
 try:
     import ptxprint
@@ -37,7 +38,7 @@ parser.add_argument('--debug',action="store_true",help="Give debug output")
 # parser.add_argument('-t','--test', action='store_true',help="Quick start for a lazy typist")
 args = parser.parse_args()
 
-if args.logging and getattr(sys, 'frozen') and hasattr(sys, '_MEIPASS'):
+if args.logging and getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     errfile = open("ptxprint.log", "w")
     sys.stdio = errfile
     sys.stderr = errfile
@@ -79,11 +80,31 @@ if args.directory is not None:
 # Where to find the default for -p
 # HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Paratext\8:Settings_Directory
 
+conffile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint_user.cfg")
+config = configparser.ConfigParser()
+if os.path.exists(conffile):
+    config.read(conffile, encoding="utf-8")
+    if args.pid is None and config.has_option("init", "project"):
+        args.pid = config.get('init', 'project')
+        if args.config is None and config.has_option("init", "config"):
+            args.config = config.get('init', 'project')
+else:
+    if not os.path.exists(os.path.dirname(conffile)):
+        os.makedirs(os.path.dirname(conffile))
+    config.add_section("init")
+
+scriptsdir = os.path.dirname(__file__)
+if os.path.exists("/usr/share/ptx2pdf") and not os.path.exists(os.path.join(scriptsdir, "..", "..", "src")):
+    scriptsdir = "/usr/share/ptx2pdf"
+    macrosdir = "/usr/share/ptx2pdf/texmacros"
+else:
+    macrosdir = os.path.join(scriptsdir, "..", "..", "src")
+
 if args.print or args.archive is not None:
-    mainw = ViewModel(args.paratext, args.directory)
+    mainw = ViewModel(args.paratext, args.directory, config, macrosdir)
 else:
     from ptxprint.gtkview import GtkViewModel
-    mainw = GtkViewModel(args.paratext, args.directory)
+    mainw = GtkViewModel(args.paratext, args.directory, config, macrosdir)
     mainw.ExperimentalFeatures(args.experimental)
 
 if args.pid:
@@ -91,12 +112,8 @@ if args.pid:
     if args.config is not None:
         mainw.setConfigId(args.config)
 
-scriptsdir = os.path.dirname(__file__)
-if os.path.exists("/usr/share/ptx2pdf") and not os.path.exists(os.path.join(scriptsdir, "..", "..", "src")):
-    scriptsdir = "/usr/share/ptx2pdf"
-
 def doit(printer):
-    runjob = RunJob(printer, scriptsdir, args)
+    runjob = RunJob(printer, scriptsdir, config, args)
     runjob.doit()
     return runjob.res
 
@@ -125,3 +142,5 @@ if args.print or args.archive is not None:
 else:
     splash = args.splash
     mainw.run(doit, splash=splash)
+    with open(conffile, "w", encoding="utf-8") as outf:
+        config.write(outf)
