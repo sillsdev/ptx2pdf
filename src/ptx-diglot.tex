@@ -996,8 +996,8 @@
 \newdimen\chunkDelta % Difference between the last boxes set on the page (-ve=left longer)
 \newdimen\baselineDelta % semi-constant: difference between the L and R baselines (-ve=left longer)
 \newdimen\thisjointDelta % difference between the L and R boxes (-ve=left longer)
-%\newcount\cumulativeDelta % Sum of \chunkDelta values, in points
-%\cumulativeDelta=0
+\newcount\cumulativeDelta % Sum of \chunkDelta values, in points
+\cumulativeDelta=0
 \newdimen\adjustp@ge %emergency stretch to page
 \adjustp@ge=0pt
 \def\m@rkerL{}
@@ -1447,7 +1447,7 @@
     \doVisTrace{L}%
   \fi
   \thisjointDelta=0pt %Do we need extra space
-  \ifdim\dp\LeftBox>0pt \ifdim\chunkDelta<0pt
+  \ifdim\dp\LeftBox>0.3\baselineskip \ifdim\chunkDelta<0pt
     %left are 'touching' and need separating
     \ifdim\baselineDelta<0pt 
       \trace{D}{Separating chunks \the\baselineDelta}%
@@ -1459,30 +1459,35 @@
   \advance\chunkDelta by \dp\RightBox
   \advance\chunkDelta by -\ht\LeftBox
   \global\advance\chunkDelta by -\dp\LeftBox
-  %\bgroup
-    %\dimen0=\chunkDelta
-    %%\message{c255: \the\dimen0}%
-    %\dimen2=1pt
-    %\divide\dimen0 by \dimen2
-    %\count255=\dimen0
-    %%\message{adding \the\count255 to cumulativeDelta}%
-    %\global\advance\cumulativeDelta by \count255
-  %\egroup
-  \global\setbox\LeftBox=\vtop{\ifdim\thisjointDelta>0pt\vskip \thisjointDelta\fi\hbox to \textwidth{\ifVisTrace\llap{\box0}\fi%
-  \dimen8=\ht\LeftBox
-  \ifdim \dimen8 <\ht\RightBox \dimen8=\ht\RightBox \fi
-  \dimen9=\dp\LeftBox
-  \ifdim \dimen9 <\dp\RightBox \dimen9=\dp\RightBox \fi
-  \trace{d}{Gutter \the\dimen8 height, \the\dimen9 deep}%
-  \dimen7=\dimen8%.5\baselineskip
-  \hbox to\columnshift{}%
-  \ifdiglotN@rmal%Are the sides swapped?
-    \hbox to\columnLwidth{\box\LeftBox\hss}\makediglotgutter{\dimen7}{\dimen8}{\dimen9}%
-    \hbox to\columnRwidth{\box\RightBox\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
-  \else%
-    \hbox to\columnRwidth{\box\RightBox\hss}\makediglotgutter{\dimen7}{\dimen8}{\dimen9}%
-    \hbox to\columnLwidth{\box\LeftBox\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
-  \fi
+  \bgroup
+    \dimen0=\chunkDelta
+    %\message{c255: \the\dimen0}%
+    \dimen2=1pt
+    \divide\dimen0 by \dimen2
+    \count255=\dimen0
+    %\message{adding \the\count255 to cumulativeDelta}%
+    \global\advance\cumulativeDelta by \count255
+  \egroup
+  \global\setbox\LeftBox=\vtop{%
+    \dimen8=0pt
+    \ifdim\thisjointDelta>0pt
+      \advance\dimen8 by \thisjointDelta
+    \fi
+    \hbox to \textwidth{\ifVisTrace\llap{\box0}\fi%
+      \advance\dimen8 by \ht\LeftBox
+      \ifdim \dimen8 <\ht\RightBox \dimen8=\ht\RightBox \fi
+      \dimen9=\dp\LeftBox
+      \ifdim \dimen9 <\dp\RightBox \dimen9=\dp\RightBox \fi
+      \trace{d}{Gutter \the\dimen8 height, \the\dimen9 deep}%
+      \dimen7=\dimen8%.5\baselineskip
+      \hbox to\columnshift{}%
+      \ifdiglotN@rmal%Are the sides swapped?
+        \hbox to\columnLwidth{\box\LeftBox\hss}\makediglotgutter{\dimen7}{\dimen8}{\dimen9}%
+        \hbox to\columnRwidth{\box\RightBox\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
+      \else%
+        \hbox to\columnRwidth{\box\RightBox\hss}\makediglotgutter{\dimen7}{\dimen8}{\dimen9}%
+        \hbox to\columnLwidth{\box\LeftBox\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
+      \fi
   }}%
   \trace{D}{adding box to partial (\the\ht\LeftBox)}%
   \global\setbox\partial=\vtop{\joinb@xes{\partial}{\LeftBox}}%
@@ -1868,7 +1873,8 @@
 }
 
 \def\makediglotgutter#1#2#3{\hbox to \gutter{\hss
-  \trace{D}{makediglotgutter \the#1,\the#2,\the#3}%
+%rule is #1 hight, #3 deep, and fits in a box #2 high
+  \trace{D}{makediglotgutter \the #1,\the #2,\the #3}%
   \dimen4=#1\advance \dimen4 by #3
   \ifColumnGutterRule
     \setbox4=\vbox to #2{%
@@ -1885,6 +1891,6 @@
 \def\testmarker{\hbox to 0pt{\vrule height 7pt depth 0pt width 0.5pt \kern-0.5pt}\message{_}}
 
 %Reinstate this post v1:
-%\addtoendhooks{\bgroup\count255=\cumulativeDelta sp \divide\count255 by \pageno \ifdiglot\message{Overall column delta \the\cumulativeDelta pt (\the\count255 pt/ pg)\space(-ve means left longer)}\egroup\cumulativeDelta=0pt\fi}
+\addtoendhooks{\bgroup\count255=\cumulativeDelta sp \divide\count255 by \pageno \ifdiglot\message{Overall column delta \the\cumulativeDelta pt (\the\count255 pt/ pg)\space(-ve means left longer)}\egroup\cumulativeDelta=0pt\fi}
 
 \endinput
