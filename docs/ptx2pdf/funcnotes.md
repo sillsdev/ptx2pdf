@@ -107,17 +107,41 @@ label followed by the chapter label text.
 
 [+d_sty-chap-setup]::
 
-Here we do the onetime setup for drop chapter numbers. The calculation starts
-with the font size specified for the `\c` style. If this is less than twice the
-base paragraph font size, then it probably needs to be made bigger. This is done
-by measuring the maximum height of all the digits. The dropnumbersize is set
-such as to scale the tallest digit to be a full baselineskip plus the x-height
-of the paragraph font.
+Here we do the onetime setup for drop chapter numbers. Calculating the proper
+size of a dropped chapter numbers is tricky. We start by asking the style for
+the size of chapter number. If this is less than twice the main paragraph
+fontsize then we calculate an automatic size.
 
-The calculation is done with scaled integer maths. Dimensions in TeX are stored
-in sp with 2^16 sp to 1pt up to a maximum of 2^15pt. The calculations are such
-that 1pt has a value of 65536, so scaling of multiplication and division needs
-to take the scaled values into account. Count the bits!
+To do this we need to find the ascent of the descent (in box1). We also get the
+vertical metrics of all the digits in the chapter font. Notice that to get the
+font metrics we tell XeTeX to give us those. Then we switch to have XeTeX give
+us true glyph metrics. We clear out the chapter font in anticipation of
+recalculating it with a new size. Then we get the x-height of the paragraph
+text. Now we have all the external numbers needed to calculate the drop number
+size. TeX does fixed point calculations in sp with 1pt having a value of 65536.
+The problem with this is if you divide two dimensions you get an integer
+division, which is often not very useful. To increase accuracy, we multiple up
+by 128 (giving a maximum dimension of 512pt which should be enough for 2 lines
+of text). This means keeping track of when we multiply, values are in effect
+mulitplied by 2^16 and if a number that is multiplied by 2^16 is divided by
+another number multiplied by 2^16 then the result has no multiplier, and so on.
+Multiplying numbers by 128 for extra accuracy can either result in having to
+divide the result by 128 or multiply it by 512 (2^16 / 2^7).
+
+First we calculate X, which is the distance from the baseline of the second
+line to the top of the x-height of the first line. And then we calculate X/C *
+128. We also calculate height T the distance from the second line descender to
+the first line ascender, based on what the font says about ascenders and
+descenders. Next we need CX/T (where C is the point size specified by the
+chapter style). We also calculate the maximum depth of the digits scaled if
+the maximum height was scaled to fit with top x-height.
+
+If CX/T is less than the maximum height of the digits, or if there is
+insufficient room below the baseline for the scaled depth, then use the CX/T to
+scale. Otherwise use the maximum height. This is then scaled such that height
+will stretch from baseline of the second line to the x-height of the first line.
+We know that the whole thing will fit, but we may need to shift the number if
+the descender would clash with the line below. We calculate what the shift is.
 
 The dropnumbersize dimension is converted into a string so that it can be stored
 as the `\c` font size, as if it were specified in the .sty file.

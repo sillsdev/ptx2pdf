@@ -570,7 +570,8 @@
     \box\ch@pterbox\special{x:grestore}\hss}}%
   \ht\ch@pterbox=\wd\ch@pterbox\wd\ch@pterbox=\dimen1
  \else
-  \setbox\ch@pterbox=\hbox{\lower\baselineskip\box\ch@pterbox
+  \dimen0\baselineskip\advance\dimen0 by -\dropnumberraise
+  \setbox\ch@pterbox=\hbox{\lower\dimen0\box\ch@pterbox
     \box\ch@pternote\kern\AfterChapterSpaceFactor\FontSizeUnit}%
  \fi
  \XeTeXuseglyphmetrics=\@seglyphmetrics
