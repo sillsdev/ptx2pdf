@@ -1876,13 +1876,15 @@
 %rule is #1 hight, #3 deep, and fits in a box #2 high
   \trace{D}{makediglotgutter \the #1,\the #2,\the #3}%
   \dimen4=#1\advance \dimen4 by #3
-  \ifColumnGutterRule
-    \setbox4=\vbox to #2{%
-      \hbox to 1pt{\vrule height \the\dimen4 }%\dp5=#3 \box5
+   \setbox4=\vbox to #2{%
+     \hbox to 1pt{
+       \ifColumnGutterRule
+        \vrule height \the\dimen4 
+       \fi
+       \hfil}%\dp5=#3 \box5
       \vss}%
     \dp4=#3
     \box4
-  \fi
   \hss}}
 
 \def\diglotgr@db@x#1{%
