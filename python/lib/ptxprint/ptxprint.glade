@@ -8896,13 +8896,14 @@ of books to be printed.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">This button will (re-)generate the PicList(s)
-or AdjList(s) for the books which have been
-selected for printiing. So if you only want to
-generate a List for a single book, then select
-only that book on the Basic tab. Alternatively
-several books for multiple Pic/Adj Lists to be
-generated.</property>
+                                <property name="tooltip_text" translatable="yes">This button will (re-)generate the PicList(s) or
+AdjList(s) for all/any books which have been
+selected for printing.
+
+If you only want to (re-)generate a List for a 
+single book, then just select that book on the 
+Basic tab. Otherwise it will (re-)generate a Pic/Adj
+list for each of the books listed for printing.</property>
                                 <property name="halign">start</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>

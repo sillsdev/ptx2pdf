@@ -834,15 +834,15 @@ class GtkViewModel(ViewModel):
                 fpath = fpath[:doti] + "-draft" + fpath[doti:] + fndict[pgnum][1]
             if pgnum == 0: # PicList
                 self.builder.get_object("c_randomPicPosn").set_sensitive(True)
-                genTip = "Generate the PicList using\nthe illustrations marked up\n(\\fig ... \\fig*) within the text."
+                # genTip = "Generate the PicList using\nthe illustrations marked up\n(\\fig ... \\fig*) within the text."
                 genBtn.set_sensitive(True)
-                genBtn.set_tooltip_text(genTip)
+                # genBtn.set_tooltip_text(genTip)
             elif pgnum == 1: # AdjList
                 self.builder.get_object("c_randomPicPosn").set_opacity(0.2)
                 self.builder.get_object("fcb_diglotPicListSources").set_opacity(0.2)
-                genTip = "Generate a list of paragraphs\nthat may be adjusted (using\nshrink or expand values)."
+                # genTip = "Generate a list of paragraphs\nthat may be adjusted (using\nshrink or expand values)."
                 genBtn.set_sensitive(True)
-                genBtn.set_tooltip_text(genTip)
+                # genBtn.set_tooltip_text(genTip)
 
         elif 3 <= pgnum <= 4:  # (TeX,Log)
             fpath = self.baseTeXPDFname()+fndict[pgnum][1]
