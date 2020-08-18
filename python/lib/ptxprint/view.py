@@ -10,7 +10,7 @@ from io import StringIO
 import datetime, time
 from shutil import copyfile, copytree
 
-VersionStr = "0.9.3 beta"
+VersionStr = "1.0"
 
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
 
@@ -318,7 +318,7 @@ class ViewModel:
     def getDialogTitle(self):
         prjid = "  -  " + (self.get("fcb_project") or "")
         if prjid == "  -  ":
-            return "PTXprint [{}] - Welcome! Start by selecting a project to work with...".format(VersionStr)
+            return "PTXprint {} - Bible Layout for Everyone!     Start by selecting a project to work with...".format(VersionStr)
         else:
             if self.get('c_multiplebooks'):
                 bks = self.get('t_booklist').split()
@@ -336,7 +336,7 @@ class ViewModel:
                     bks = bks[0]
                 except IndexError:
                     bks = "No book selected!"
-            return "PTXprint [{}] {} ({}) {}".format(VersionStr, prjid, bks, self.get("ecb_savedConfig") or "")
+            return "PTXprint {} {} ({}) {}".format(VersionStr, prjid, bks, self.get("ecb_savedConfig") or "")
 
     def configName(self):
         return self.configId or None

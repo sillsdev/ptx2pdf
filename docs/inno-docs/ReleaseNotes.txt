@@ -1,5 +1,13 @@
-PTXprint 0.9.3 Beta Release Notes (Release Candidate 1.0) 
-12th August 2020
+PTXprint 1.0 Release Notes 
+14th August 2020
+
+First Public Release: 1.0
+
+  * Minor UI adjustments
+  
+  * Add link to ptxprint folder with helpful docs
+  
+  * Enable PTXprint to run directly from .cfg file (if extension has been associated by OS)
 
 Bug Fixes: 0.9.3
 

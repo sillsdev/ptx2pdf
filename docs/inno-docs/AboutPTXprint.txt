@@ -1,9 +1,9 @@
-PTXprint 0.9.3 Beta (Release Candidate 1.0) - AboutPTXprint.txt
+PTXprint 1.0 - AboutPTXprint.txt
 
 "Bible Layout For Everyone" - A tool to rapidly and easily create scripture PDFs of adequate quality for trial publications
 
 PTXprint is a GUI for the extended macros from PTX2PDF which is a XeTeX based macro package for typesetting USFM formatted (Paratext output) scripture files.
-PTXprint is 64-bit software and will not run on 32-bit versions of Windows.
+PTXprint is 64-bit software and will NOT run on 32-bit versions of Windows.
 It requires Paratext 8 (or later) to be installed.
 
 Please use "New Issue" button in the GitHub Issue Tracking System (https://github.com/sillsdev/ptx2pdf/issues) to report any bugs, or suggestions for improvement.

@@ -12,7 +12,7 @@ from ptxprint.runner import checkoutput
 def loosint(x):
     try:
         return int(x)
-    except TypeError:
+    except (ValueError, TypeError):
         return 0
     except ValueError:
         return 0
@@ -43,6 +43,8 @@ ModelMap = {
     "R_":                       ("c_diglot", lambda w,v: "R" if v else ""),
     "date_":                    ("_date", lambda w,v: v),
     "pdfdate_":                 ("_pdfdate", lambda w,v: v),
+    "ifusediglotcustomsty_":    ("_diglotcustomsty", lambda w,v: "%"),
+
     #"config/name":              ("ecb_savedConfig", lambda w,v: v or "default"),
     "config/notes":             ("t_configNotes", lambda w,v: v or ""),
     "config/pwd":               ("t_invisiblePassword", lambda w,v: v or ""),
@@ -539,23 +541,10 @@ class TexModel:
                     t = t+'L'
             
             self.dict['header/odd{}'.format(side)] = t
-            if mirror and side != 'center':
+            if mirror and side != 'center' and (v not in ["First Reference", "Last Reference"]):
                 self.dict['header/even{}'.format(self._swapRL[side])] = t
             else:
                 self.dict['header/even{}'.format(side)] = t
-            # if side == 'left':
-                # if mirror:
-                    # self.dict['header/even{}'.format('right')] = t
-                # else:
-                    # self.dict['header/even{}'.format(side)] = t
-            # elif side == 'right':
-                # if mirror:
-                    # self.dict['header/even{}'.format('left')] = t
-                # else:
-                    # self.dict['header/even{}'.format(side)] = t
-            # else: # centre
-                # self.dict['header/even{}'.format(side)] = t
-            
 
     def texfix(self, path):
         return path.replace(" ", r"\ ")

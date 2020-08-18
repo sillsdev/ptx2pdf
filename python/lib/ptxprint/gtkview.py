@@ -300,7 +300,7 @@ class GtkViewModel(ViewModel):
         tv.append_column(col)
         ts = self.builder.get_object("t_fontSearch")
         tv.set_search_entry(ts)
-        self.mw.resize(800, 600)
+        self.mw.resize(830, 594)
         self.mw.show_all()
         Gtk.main()
 
@@ -344,9 +344,9 @@ class GtkViewModel(ViewModel):
 
         # Resize Main UI Window appropriately
         if self.get("c_hideAdvancedSettings"):
-            self.mw.resize(800, 300)
+            self.mw.resize(828, 292)
         else:
-            self.mw.resize(800, 600)
+            self.mw.resize(830, 594)
 
     def ExperimentalFeatures(self, value):
         self.experimental = value
@@ -1354,8 +1354,9 @@ class GtkViewModel(ViewModel):
 
     def updatePrjLinks(self):
         if self.settings_dir != None and self.prjid != None:
+            self.builder.get_object("lb_ptxprintdir").set_label(os.path.dirname(__file__))
             self.builder.get_object("lb_prjdir").set_label(os.path.join(self.settings_dir, self.prjid))
-            self.builder.get_object("lb_settings_dir").set_label(self.configPath() or "")
+            self.builder.get_object("lb_settings_dir").set_label(self.configPath(cfgname=self.configName()) or "")
             self.builder.get_object("lb_working_dir").set_label(self.working_dir or "")
             
     def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None):
@@ -1734,11 +1735,14 @@ class GtkViewModel(ViewModel):
         elif response == Gtk.ResponseType.NO:
             return(False)
 
+    def onPTXprintDocsDirClicked(self, btn):
+        self.openFolder(os.path.join(os.path.dirname(__file__),''))
+        
     def onOpenFolderPrjDirClicked(self, btn):
         self.openFolder(os.path.join(self.settings_dir, self.prjid))
         
     def onOpenFolderConfClicked(self, btn):
-        self.openFolder(self.configPath())
+        self.openFolder(self.configPath(cfgname=self.configName()))
         
     def onOpenFolderOutputClicked(self, btn):
         self.openFolder(self.working_dir)

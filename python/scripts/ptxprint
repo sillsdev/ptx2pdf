@@ -57,20 +57,22 @@ else:
 if args.pid is not None and (any(x in args.pid for x in "\\/") or args.pid.lower().endswith(".cfg")):
     pidpath = os.path.relpath(args.pid, args.paratext).replace("\\", "/")
     if pidpath.startswith("..") or pidpath.startswith("/"):
-        pidpath = args.pid.replace("\\", "/")
+        pidpath = os.path.abspath(args.pid).replace("\\", "/")
     pidbits = pidpath.split("/")
-    if len(pidbits) > 4 and "ptxprint" in pidbits[-3:-2]:
-        if pidbits[-2] == "ptxprint":
-            args.paratext = "/".join(pidbits[:-4])
+    if len(pidbits) > 4 and "ptxprint" in [x.lower() for x in pidbits[-3:-1]]:
+        if pidbits[-2].lower() == "ptxprint":
+            if len(pidbits) > 4:
+                args.paratext = "/".join(pidbits[:-4])
             pidbits = pidbits[-4:]
-        elif pidbits[-3] == "ptxprint":
-            args.paratext = "/".join(pidbits[:-5])
+        elif pidbits[-3].lower() == "ptxprint":
+            if len(pidbits) > 5:
+                args.paratext = "/".join(pidbits[:-5])
             pidbits = pidbits[-5:]
     if len(pidbits) == 5:
         args.config = pidbits[3]
     if len(pidbits) > 3:
         args.pid = pidbits[0]
-    print(args.pid, args.config)
+    print([args.pid, args.config, args.paratext])
 
 if args.directory is not None:
     args.directory = os.path.abspath(args.directory)
