@@ -443,7 +443,7 @@ class ViewModel:
                 self._configset(config, "document/parallelrefs", not config.getboolean("document", "supressparallels"))
             except:
                 pass
-            config.set("config", "version", "0.9")
+            config.set("config", "version", "1.0")
 
     def loadConfig(self, config):
         def setv(k, v): self.set(k, v, skipmissing=True)
@@ -688,7 +688,7 @@ class ViewModel:
                 dat = inf.read()
                 blocks = ["0"] + re.split(r"\\c\s+(\d+)", dat)
                 for c, t in zip(blocks[0::2], blocks[1::2]):
-                    m = re.findall(r"(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+)\\fig\*", t)
+                    m = re.findall(r"(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+)?\\fig\*", t)
                     if len(m):
                         for f in m:     # usfm 2
                             r = "{}{} {}.{}".format(bk, suffix, c, f[0])
