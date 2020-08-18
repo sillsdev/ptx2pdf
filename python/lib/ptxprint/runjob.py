@@ -74,7 +74,7 @@ def newBase(fpath):
         return re.sub('[()&+,. ]', '_', base(fpath).lower())
 
 _diglot = {
-"diglot/ifusecustomsty":    "project/ifusecustomsty",
+"ifusediglotcustomsty_":    "project/ifusecustomsty",
 "diglot/colorfonts" :       "document/ifcolorfonts",
 "diglot/ifrtl" :            "document/ifrtl",
 "diglot/fontfactor" :       "paper/fontfactor",
@@ -366,7 +366,6 @@ class RunJob:
             info[k]=diginfo[v]
             # print(k, v, diginfo[v])
         info["document/diglotcfgrpath"] = os.path.relpath(diginfo.printer.configPath(diginfo.printer.configName()), docdir).replace("\\","/")
-        print("diglotcfgrpath = {}".format(info["document/diglotcfgrpath"]))
         self.tempFiles += info.generateNestedStyles(diglot=True)
         texfiles += self.sharedjob(jobs, info, logbuffer=logbuffer)
         return texfiles

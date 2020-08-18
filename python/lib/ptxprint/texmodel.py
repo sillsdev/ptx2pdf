@@ -41,6 +41,8 @@ ModelMap = {
     "R_":                       ("c_diglot", lambda w,v: "R" if v else ""),
     "date_":                    ("_date", lambda w,v: v),
     "pdfdate_":                 ("_pdfdate", lambda w,v: v),
+    "ifusediglotcustomsty_":    ("_diglotcustomsty", lambda w,v: "%"),
+
     #"config/name":              ("ecb_savedConfig", lambda w,v: v or "default"),
     "config/notes":             ("t_configNotes", lambda w,v: v or ""),
     "config/pwd":               ("t_invisiblePassword", lambda w,v: v or ""),
