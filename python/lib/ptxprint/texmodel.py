@@ -233,25 +233,27 @@ ModelMap = {
     "footer/ifftrtitlepagenum": ("c_pageNumTitlePage", lambda w,v: "" if v else "%"),
     "footer/ifprintConfigName": ("c_printConfigName", lambda w,v: "" if v else "%"),
 
-    "notes/iffootnoterule":     ("c_footnoterule", lambda w,v: "%" if v else ""),
-    "notes/ifblendfnxr":        ("c_blendfnxr", None),
-
     "notes/includefootnotes":   ("c_includeFootnotes", lambda w,v: "%" if v else ""),
+    "notes/fnparagraphednotes": ("c_fnparagraphednotes", lambda w,v: "" if v else "%"),
+    "notes/fnOverride":         ("c_fnOverride", None),
     "notes/iffnautocallers":    ("c_fnautocallers", lambda w,v :"true" if v else "false"),
     "notes/fncallers":          ("t_fncallers", lambda w,v: v if w.get("c_fnautocallers") else ""),
     "notes/fnresetcallers":     ("c_fnpageresetcallers", lambda w,v: "" if v else "%"),
     "notes/fnomitcaller":       ("c_fnomitcaller", lambda w,v: "%" if v else ""),
-    "notes/fnparagraphednotes": ("c_fnparagraphednotes", lambda w,v: "" if v else "%"),
-    "notes/addcolon":           ("c_addColon", None),
-    "notes/keepbookwithrefs":   ("c_keepBookWithRefs", None),
-    "notes/glossaryfootnotes":  ("c_glossaryFootnotes", None),
 
     "notes/includexrefs":       ("c_includeXrefs", lambda w,v: "%" if v else ""),
+    "notes/xrparagraphednotes": ("c_paragraphedxrefs", lambda w,v: "" if v else "%"),
+    "notes/xrOverride":         ("c_xrOverride", None),
     "notes/ifxrautocallers":    ("c_xrautocallers", lambda w,v :"true" if v else "false"),
     "notes/xrcallers":          ("t_xrcallers", lambda w,v: v if w.get("c_xrautocallers") else ""),
     "notes/xrresetcallers":     ("c_xrpageresetcallers", lambda w,v: "" if v else "%"),
     "notes/xromitcaller":       ("c_xromitcaller", lambda w,v: "%" if v else ""),
-    "notes/xrparagraphednotes": ("c_paragraphedxrefs", lambda w,v: "" if v else "%"),
+
+    "notes/iffootnoterule":     ("c_footnoterule", lambda w,v: "%" if v else ""),
+    "notes/ifblendfnxr":        ("c_blendfnxr", None),
+    "notes/addcolon":           ("c_addColon", None),
+    "notes/keepbookwithrefs":   ("c_keepBookWithRefs", None),
+    "notes/glossaryfootnotes":  ("c_glossaryFootnotes", None),
 
     "notes/abovenotespace":     ("s_abovenotespace", lambda w,v: "{:.3f}".format(float(v))),
     "notes/fnfontsize":         ("s_fnfontsize", lambda w,v: "{:.3f}".format(float(v))),
@@ -857,17 +859,17 @@ class TexModel:
         # keep \xo & \fr refs with whatever follows (i.e the bookname or footnote) so it doesn't break at end of line
         self.localChanges.append((None, regex.compile(r"(\\(xo|fr) (\d+[:.]\d+([-,]\d+)?)) "), r"\1\u2000"))
 
-        # Remove the space after a note caller if the caller is omitted.
         for c in ("fn", "xr"):
+            # Force all footnotes/x-refs to be either '+ ' or '- ' rather than '*/#'
+            if self.asBool("notes/{}Override".format(c)):
+                t = "+" if self.asBool("notes/if{}autocallers".format(c)) else "-"
+                self.localChanges.append((None, regex.compile(r"\\{} .".format(c[0])), r"\\{} {}".format(c[0],t)))
+            # Remove the [spare] space after a note caller if the caller is omitted AND if after a digit (verse number).
             if self.asBool("notes/{}omitcaller".format(c)):
-                self.localChanges.append((None, regex.compile(r"(\\[{}]\*)\s+".format(c[0])), r"\1"))
-        self.localChanges.append((None, regex.compile(r"(\\[fx] - .*?\\[fx]\*)\s+"), r"\1"))
+                self.localChanges.append((None, regex.compile(r"(\d )(\\[{}] - .*?\\[{}]\*)\s+".format(c[0])), r"\1\2"))
 
         # Paratext marks no-break space as a tilde ~
         self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
-
-        # Hack for JraKhmr
-        self.localChanges.append((None, regex.compile(r"\\ft»", flags=regex.M), r"\\ft »")) 
 
         # Remove the + of embedded markup (xetex handles it)
         self.localChanges.append((None, regex.compile(r"\\\+", flags=regex.M), r"\\"))  
@@ -1052,7 +1054,7 @@ class TexModel:
         if os.path.exists(infname):
             with universalopen(infname, rewrite=True) as inf:
                 dat = inf.read()
-                ge = re.findall(r"\\p \\k (.+)\\k\* (.+)\r?\n", dat) # Finds all glossary entries in GLO book
+                ge = re.findall(r"\\p \\k (.+)\\k\* (.+)\r?\n", dat) # Finds all glossary entries in GLO book (may need to add \ili)
                 if ge is not None:
                     for g in ge:
                         gdefn = regex.sub(r"\\xt (.+)\\xt\*", r"\1", g[1])

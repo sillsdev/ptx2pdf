@@ -472,6 +472,8 @@ class GtkViewModel(ViewModel):
                  buttons=Gtk.ButtonsType.OK, text=txt)
         if title is not None:
             dialog.set_title(title)
+        else:
+            dialog.set_title("PTXprint")
         if secondary is not None:
             dialog.format_secondary_text(secondary)
         if sys.platform == "win32":
@@ -1662,7 +1664,7 @@ class GtkViewModel(ViewModel):
                 if deffilter:
                     dialog.set_filter(filter_in)
 
-        dialog.set_keep_above(True)
+        # dialog.set_keep_above(True) # causes problems of confirmation boxes being hidden in windows
         response = dialog.run()
         fcFilepath = None
         if response == Gtk.ResponseType.OK:
@@ -1670,7 +1672,7 @@ class GtkViewModel(ViewModel):
                 fcFilepath = [Path(dialog.get_filename()+"/")]
             else:
                 fcFilepath = [Path(x) for x in dialog.get_filenames()]
-        dialog.set_keep_above(False)
+        # dialog.set_keep_above(False) # matching above
         dialog.destroy()
         return fcFilepath
 

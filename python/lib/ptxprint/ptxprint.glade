@@ -5329,18 +5329,15 @@ to form a paragraph.</property>
                                                   <object class="GtkCheckButton" id="c_fnOverride">
                                                     <property name="label" translatable="yes">Override Footnote-Specific -/+ Settings in Text</property>
                                                     <property name="visible">True</property>
-                                                    <property name="sensitive">False</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
-                                                    <property name="no_show_all">True</property>
-                                                    <property name="tooltip_text" translatable="yes">[NOT YET IMPLEMENTED]
-The footnotes specified in Paratext can
+                                                    <property name="tooltip_text" translatable="yes">The footnotes specified in Paratext can
 use \f - (with a minus) to omit the caller, 
 or \f +(with a plus) to include the caller.
+or \f * where * itself becomes the caller.
 
-If this option is enabled, it will override any 'omit'
-footnote caller settings to ensure that every footnote
-includes a caller symbol (if the option below is enabled).</property>
+If this option is enabled, the settings below
+will determine how the callers will be displayed.</property>
                                                     <property name="halign">start</property>
                                                     <property name="margin_top">2</property>
                                                     <property name="margin_bottom">6</property>
@@ -5364,7 +5361,7 @@ in the Text: </property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
-                                                        <property name="tooltip_text" translatable="yes">A "Caller" is a symbol in the text which
+                                                        <property name="tooltip_text" translatable="yes">A "Caller" is a symbol (in the text) which
 alerts the reader that there is further
 information (in this case a footnote
 at the bottom of the page). Ideally, 
@@ -5375,7 +5372,12 @@ the letters of the alphabet can be used.
 
 Separate callers with a comma (no spaces).
 For example: a,b,c,d,e,f,g,h, etc.
-or:  †,‡,§,∥,#    or: ✶,☆,✦,✪</property>
+or:  †,‡,§,∥,#    or: ✶,☆,✦,✪
+
+If you do not see the callers you are 
+expecting in the PDF, then try using 
+the "Override..." setting above.
+</property>
                                                         <property name="halign">start</property>
                                                         <property name="active">True</property>
                                                         <property name="draw_indicator">True</property>
@@ -5449,9 +5451,9 @@ then the default set will be loaded.</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
-                                                        <property name="tooltip_text" translatable="yes">A "Callee" is a symbol in the notes area
-which helps the reader quickly find the 
-footnote which was marked in the text.</property>
+                                                        <property name="tooltip_text" translatable="yes">Usually the "Caller" symbol is also shown
+in the notes area which helps the reader 
+quickly find the footnote from the text.</property>
                                                         <property name="halign">start</property>
                                                         <property name="active">True</property>
                                                         <property name="draw_indicator">True</property>
@@ -5470,7 +5472,11 @@ footnote which was marked in the text.</property>
                                                         <property name="receives_default">False</property>
                                                         <property name="tooltip_text" translatable="yes">If this is checked, then the sequence of 
 callers starts again from the 1st item in
-the list of callers specified.</property>
+the list of callers specified.
+
+Note that this feature doesn't always take
+effect straight away. You may need to hit
+Print a second time before it applies.</property>
                                                         <property name="halign">start</property>
                                                         <property name="active">True</property>
                                                         <property name="draw_indicator">True</property>
@@ -5560,19 +5566,15 @@ the other (with space between) to form a paragraph.</property>
                                                   <object class="GtkCheckButton" id="c_xrOverride">
                                                     <property name="label" translatable="yes">Override xRref-Specific -/+ Settings in Text</property>
                                                     <property name="visible">True</property>
-                                                    <property name="sensitive">False</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
-                                                    <property name="no_show_all">True</property>
-                                                    <property name="tooltip_text" translatable="yes">[NOT YET IMPLEMENTED]
-Cross-references specified in Paratext can
+                                                    <property name="tooltip_text" translatable="yes">Cross-references specified in Paratext can
 use \x - (with a minus) to omit the caller, 
-or \x +(with a plus) to include the caller.
+or \x +(with a plus) to include the caller,
+or \x # where # itself becomes the caller.
 
-If this option is enabled, it will override any 'omit'
-cross-reference caller settings to ensure that every 
-cross-reference includes a caller symbol (if the option
-below is enabled).</property>
+If this option is enabled, the settings below
+will determine how the callers will be displayed.</property>
                                                     <property name="halign">start</property>
                                                     <property name="margin_top">2</property>
                                                     <property name="margin_bottom">6</property>
@@ -5596,7 +5598,7 @@ in the Text: </property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
-                                                        <property name="tooltip_text" translatable="yes">A "Caller" is a symbol in the text which
+                                                        <property name="tooltip_text" translatable="yes">A "Caller" is a symbol (in the text) which
 alerts the reader that there is further
 information (in this case a cross-reference
 at the bottom of the page). Some people
@@ -5606,7 +5608,11 @@ the bottom of the page.
 
 Separate callers with a comma (no spaces).
 For example: a,b,c,d,e,f,g,h, etc.
-or:  †,‡,§,∥,#    or: ✶,☆,✦,✪</property>
+or:  †,‡,§,∥,#    or: ✶,☆,✦,✪
+
+If you do not see the callers you are 
+expecting in the PDF, then try using 
+the "Override..." setting above.</property>
                                                         <property name="halign">start</property>
                                                         <property name="active">True</property>
                                                         <property name="draw_indicator">True</property>
@@ -5680,9 +5686,9 @@ then the default set will be loaded.</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
-                                                        <property name="tooltip_text" translatable="yes">A "Callee" is a symbol in the notes area
-which helps the reader quickly find the 
-cross-reference which was marked in the text.</property>
+                                                        <property name="tooltip_text" translatable="yes">Usually the "Caller" symbol is also shown
+in the notes area which helps the reader 
+quickly find the cross-reference from the text.</property>
                                                         <property name="halign">start</property>
                                                         <property name="active">True</property>
                                                         <property name="draw_indicator">True</property>
@@ -5701,7 +5707,11 @@ cross-reference which was marked in the text.</property>
                                                         <property name="receives_default">False</property>
                                                         <property name="tooltip_text" translatable="yes">If this is checked, then the sequence of 
 callers starts again from the 1st item in
-the list of callers specified.</property>
+the list of callers specified.
+
+Note that this feature doesn't always take
+effect straight away. You may need to hit
+Print a second time before it applies.</property>
                                                         <property name="halign">start</property>
                                                         <property name="active">True</property>
                                                         <property name="draw_indicator">True</property>
