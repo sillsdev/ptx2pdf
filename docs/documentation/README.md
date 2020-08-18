@@ -24,8 +24,10 @@ A [PDF](../documentation/ptx2pdf-MacroSetupParameters.pdf?attredirects=0/index.h
     -  [**6.2** Odd Header](#ptx2pdf-MacroSetupParameters-OddHeader)
     -  [**6.3** Even Header](#ptx2pdf-MacroSetupParameters-EvenHeader)
     -  [**6.4** Title-page Header](#ptx2pdf-MacroSetupParameters-TitlepageHeader)
-    -  [**6.5** Odd, Even, and Title-page Footer](#ptx2pdf-MacroSetupParameters-Odd,Even,andTitlepageFooter)
-    -  [**6.6** Other Header Setup](#ptx2pdf-MacroSetupParameters-OtherHeaderSetup)
+    -  [**6.5** Front-/Back-matter Header](#ptx2pdf-MacroSetupParameters-NoVpage)
+    -  [**6.6** Odd, Even, and Title-page Footer](#ptx2pdf-MacroSetupParameters-Odd,Even,andTitlepageFooter)
+    -  [**6.8** Header Contents](#ptx2pdf-MacroSetupParameters-HeaderContent)
+    -  [**6.7** Other Header Setup](#ptx2pdf-MacroSetupParameters-OtherHeaderSetup)
 -  [**7** Other](#ptx2pdf-MacroSetupParameters-Other)
 -  [**8** Notes](#ptx2pdf-MacroSetupParameters-Notes)
 -  [**9** Illustrations (Figures)](#ptx2pdf-MacroSetupParameters-Illustrations(Figures))
@@ -150,16 +152,13 @@ You can also specify a font definition like this directly in a stylesheet marker
 
 ## <a name="ptx2pdf-MacroSetupParameters-TextSpacing">Text Spacing</a>
 
-<a name="ptx2pdf-MacroSetupParameters-TextSpacing">
 
 *   \def\LineSpacingFactor{```1```} – Scaling factor used to adjust line spacing (leading); relative to font size (default = 1.2)
 *   \def\VerticalSpaceFactor{```1.0```} – Scaling factor used to adjust amount of vertical spaces applied for usfm.sty SpaceBefore and SpaceAfter values (default = 0.2}
 
 </a>
 
-## <a name="ptx2pdf-MacroSetupParameters-TextSpacing"></a><a name="ptx2pdf-MacroSetupParameters-Chapters&amp;Verses">Chapters & Verses</a>
-
-<a name="ptx2pdf-MacroSetupParameters-Chapters&amp;Verses">
+## <a name="ptx2pdf-MacroSetupParameters-Chapters&amp;Verses">Chapters & Verses</a>
 
 *   \OmitVerseNumberOne```true``` – Omit the first verse number in every chapter? (default = false)
 *   \OmitChapterNumber```true``` – Omit the chapter numbers of the book. (Often used for one-chapter books. (default = false)
@@ -169,13 +168,9 @@ You can also specify a font definition like this directly in a stylesheet marker
 
 </a>
 
-## <a name="ptx2pdf-MacroSetupParameters-Chapters&amp;Verses"></a><a name="ptx2pdf-MacroSetupParameters-RunningHeader/Footer">Running Header/Footer</a>
+## <a name="ptx2pdf-MacroSetupParameters-RunningHeader/Footer">Running Header/Footer</a>
 
-<a name="ptx2pdf-MacroSetupParameters-RunningHeader/Footer"></a>
-
-### <a name="ptx2pdf-MacroSetupParameters-RunningHeader/Footer"></a><a name="ptx2pdf-MacroSetupParameters-Header/FooterPosition">Header/Footer Position</a>
-
-<a name="ptx2pdf-MacroSetupParameters-Header/FooterPosition">
+### <a name="ptx2pdf-MacroSetupParameters-Header/FooterPosition">Header/Footer Position</a>
 
 *   \def\HeaderPosition{```0.7```} – Position of the baseline of the header relative to the top edge of the paper (not the text area) (default = 0.5)
 *   \def\FooterPosition{```0.5```} – Position of the baseline of the footer relative to the bottom edge of the paper (not the text area) (default = 0.5)
@@ -184,29 +179,30 @@ The following parameters are used to specify the information to include in the r
 
 </a>
 
-### <a name="ptx2pdf-MacroSetupParameters-Header/FooterPosition"></a><a name="ptx2pdf-MacroSetupParameters-OddHeader">Odd Header</a>
+### <a name="ptx2pdf-MacroSetupParameters-OddHeader">Odd Header</a>
 
 <a name="ptx2pdf-MacroSetupParameters-OddHeader">
-
+Headers for normal pages with an odd page number, e.g.:
 *   \def\RHoddleft{```\empty```}
 *   \def\RHoddcenter{```\rangeref```}
 *   \def\RHoddright{```\pagenumber```}
 
 </a>
 
-### <a name="ptx2pdf-MacroSetupParameters-OddHeader"></a><a name="ptx2pdf-MacroSetupParameters-EvenHeader">Even Header</a>
+### <a name="ptx2pdf-MacroSetupParameters-EvenHeader">Even Header</a>
 
 <a name="ptx2pdf-MacroSetupParameters-EvenHeader">
-
+Headers for normal pages with an even page number, e.g.:
 *   \def\RHevenleft{```\pagenumber```}
 *   \def\RHevencenter{```\rangeref```}
 *   \def\RHevenright{```\empty```}
 
 </a>
 
-### <a name="ptx2pdf-MacroSetupParameters-EvenHeader"></a><a name="ptx2pdf-MacroSetupParameters-TitlepageHeader">Title-page Header</a>
+### <a name="ptx2pdf-MacroSetupParameters-TitlepageHeader">Title-page Header</a>
 
 <a name="ptx2pdf-MacroSetupParameters-TitlepageHeader">
+Headers for pages that start with the title of a book. e.g.:
 
 *   \def\RHtitleleft{```\empty```}
 *   \def\RHtitlecenter{```\empty```}
@@ -214,11 +210,11 @@ The following parameters are used to specify the information to include in the r
 
 </a>
 
-### <a name="ptx2pdf-MacroSetupParameters-EvenHeader"></a><a name="ptx2pdf-MacroSetupParameters-TitlepageHeader">Front / back matter Header</a>
+### <a name="ptx2pdf-MacroSetupParameters-NoVpage">Front / back matter Header</a>
 
-<a name="ptx2pdf-MacroSetupParameters-NoVpage">
 
-For a page that has neither verses nor titles, e.g. glossary.
+Headers for a page that has neither verses nor titles, e.g. a glossary.
+
 *   \def\RHnoVoddleft{```\empty```}
 *   \def\RHnoVoddcenter{```\empty```}
 *   \def\RHnoVoddright{```\pagenumber```}
@@ -226,29 +222,26 @@ For a page that has neither verses nor titles, e.g. glossary.
 *   \def\RHnoVevencenter{```\empty```}
 *   \def\RHnoVevenright{```\empty```}
 
-### <a name="ptx2pdf-MacroSetupParameters-TitlepageHeader"></a><a name="ptx2pdf-MacroSetupParameters-Odd,Even,andTitlepageFooter">Odd, Even, and Title-page Footer</a>
+### <a name="ptx2pdf-MacroSetupParameters-Odd,Even,andTitlepageFooter">Footers</a>
 
-<a name="ptx2pdf-MacroSetupParameters-Odd,Even,andTitlepageFooter">
+For control over the footer, fifteen similar ```\def``` commands are available, beginning with ```\RF``` instead of ```\RH```.
 
-Fifteen similar \def commands are available, beginning with \RF instead of \RH.
+### <a name="ptx2pdf-MacroSetupParameters-HeaderContent">Header/Footer Content macros</a>
 
-**Header/Footer Content Parameters**
+Any appropriate combination of text and TeX macros may be used in the header or footer slots. The following are provided for 
+convenience.
 
-*   \rangeref – Scripture reference of the range of text on the page
-*   \firstref – reference of the first verse on the page
-*   \lastref – reference of the last verse on the page
-*   \pagenumber – the page number
-*   \empty – print nothing in this position
-*   \usdate, \ukdate, \isodate - dates in various formats. (See FAQ for more examples)
-*   \hrsmins - the time of day 
+*   ```\rangeref``` – Scripture reference of the range of text on the page
+*   ```\firstref``` – reference of the first verse on the page
+*   ```\lastref``` – reference of the last verse on the page
+*   ```\pagenumber``` – the page number
+*   ```\empty``` – print nothing in this position
+*   ```\usdate```, ```\ukdate```, ```\isodate``` - dates in various formats. (See FAQ for more examples)
+*   ```\hrsmins``` - the time of day 
 
-</a>
 
-<div><a name="ptx2pdf-MacroSetupParameters-Odd,Even,andTitlepageFooter">
+Literal text can also be included (e.g., to add dashes around a centered page number, ```\\def\RFtitlecenter{- \pagenumber -}```).
 
-Literal text can also be included (e.g., to add dashes around a centered page number, like ```- \pagenumber -```).
-
-</a>
 
 ### <a name="ptx2pdf-MacroSetupParameters-Odd,Even,andTitlepageFooter"></a><a name="ptx2pdf-MacroSetupParameters-OtherHeaderSetup">Other Header Setup</a>
 

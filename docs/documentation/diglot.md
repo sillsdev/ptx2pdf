@@ -178,12 +178,14 @@ However because the ```\diglottrue``` command wasn't given when the footnote ```
 
 These diglot-specific  commands are only necessary when something's going horribly wrong. They produce a lot of additional output (even more in the log file) and might help to solve mysterious problems. 
 
-- ```\let\TRACEdiglot=\doTRACEdiglot``` 
-Generate hundreds of (numbered) lines of debugging information per chunk.
+- ```\tracing{d}``` 
+Generate 15-20 lines of debugging information per chunk. Most will be numbered.
+- ```\tracing{D}``` 
+Generate large quantities of additional debugging information. Most are not numbered.
 
 - ```\VisTracetrue``` 
-A debugging option to help decipher the information given above. Any time a chunk is added to a page, also put the current debugging number in there.
+A debugging option to help match the numbers from the log file with position in the output. Any time a chunk is added to a page, also put the current debugging number in there.
 
 - ```\diglotDbgJoinboxes=132```
-At various points in the process, boxes (see later) get joined together, by a macro called ```\joinboxes```. This is a debugging option to help check that what's happening there is what ought to be happening.  XeTeX has a debugging command ```\showbox```, which stops processing and writes information about a given box (in the case here, a box is the stack of lines separated by spaceing).  This command fires the ```\showbox```  command if the number given is the current debug message number when joinboxes is called.  If the number is set to 0, and the command ```\let\TRACEdiglot=\doTRACEdiglot``` has not been given, then every single call to joinboxes will result in a ```\showbox```.  **You almost certainly don't want to do this!** 
+At various points in the process, boxes (see later) get joined together, by a macro called ```\joinboxes```. This is a debugging option to help check that what's happening there is what ought to be happening.  XeTeX has a debugging command ```\showbox```, which stops processing and writes information about a given box (in the case here, a box is the stack of lines separated by spaceing).  This command fires the ```\showbox```  command if the number given is the current debug message number when joinboxes is called.  If the number is set to 0, and the command ```\tracing{d}``` has not been given, then every single call to joinboxes will result in a ```\showbox```.  **You almost certainly don't want to do this!** 
 
