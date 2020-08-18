@@ -649,14 +649,18 @@
   %\TRshipout{\vbox{\hbox{\the\diglotTRcount diglotLeftAfterTrial:}\copy\aftertri@lbox}}%
   \ifnum\outputpenalty=-10005\relax%
     \intrialfalse
-    \ifdigl@tL%
-      \global\output={\diglotLeft}\relax%
-    \else%
-      \global\output={\diglotRight}\relax%
-      \global\holdinginserts=0 %
-      \global\diglotRtrue%
-      \calc@vailht%
-    \fi%
+    \ifdigl@tL
+      \global\output={\diglotLeft}\relax
+    \else
+      \global\output={\diglotRight}\relax
+      \global\holdinginserts=0 
+      \global\diglotRtrue
+      \global\hsize=\columnRwidth\relax
+      \calc@vailht
+      \ifVisTrace
+         \doVisTrace{t}\box0
+      \fi
+    \fi
      \n@xtc@mmand%
      \global\def\n@xtc@mmand{}%
   \fi
@@ -1004,31 +1008,31 @@
 \let\diglotRfalse=\diglotLtrue\relax%
 
 \def\swapfonts#1{% Because it might be desirable to set fonts appropriately.
-%Swapping fonts isn't actually needed, but do need to set
-%baselineskip and other things
-\trace{D}{swapfonts #1}%
-\def\@@setside{\global\csname diglot#1true\endcsname}%
-\trace{D}{t@tle is \ift@tle set\else  not set\fi}%
-\trace{D}{he@dingstyle is \ifhe@dingstyle set\else  not set\fi}%
-\trace{D}{he@dings is \ifhe@dings set\else  not set\fi}%
-%\trace{D}{nsp@cebefore is \ifnsp@cebefore set\else  not set\fi}
-\@@setside%
-%All sorts of things should follow if m@rker is set properly...
-\expandafter\ifx\csname m@rker\endcsname\relax\else%
-\ifdiglotL\let\m@rkerR=\m@rker\let\m@rker=\m@rkerL\relax\else%
-\let\m@rkerL=\m@rker\let\m@rker=\m@rkerR\relax\fi%
-%\message{m@rker now \m@rker}
-\fi%
-\trace{D}{Leadingunit: \the\le@dingunit}%
-\ifdim\le@dingunit>0pt %
-  \s@tbaseline{p}%
-\fi%
-\ifdim\baselineskip=0pt %
+ %Swapping fonts isn't actually needed, but do need to set
+ %baselineskip and other things
+ \trace{D}{swapfonts #1}%
+ \def\@@setside{\global\csname diglot#1true\endcsname}%
+ \trace{D}{t@tle is \ift@tle set\else  not set\fi}%
+ \trace{D}{he@dingstyle is \ifhe@dingstyle set\else  not set\fi}%
+ \trace{D}{he@dings is \ifhe@dings set\else  not set\fi}%
+  %\trace{D}{nsp@cebefore is \ifnsp@cebefore set\else  not set\fi}
+ \@@setside%
+ %All sorts of things should follow if m@rker is set properly...
+ \expandafter\ifx\csname m@rker\endcsname\relax\else%
+ \ifdiglotL\let\m@rkerR=\m@rker\let\m@rker=\m@rkerL\relax\else%
+ \let\m@rkerL=\m@rker\let\m@rker=\m@rkerR\relax\fi%
+ %\message{m@rker now \m@rker}
+ \fi%
+ \trace{D}{Leadingunit: \the\le@dingunit}%
+ \ifdim\le@dingunit>0pt %
+   \s@tbaseline{p}%
+ \fi%
+ \ifdim\baselineskip=0pt %
   \message{baseline set to 0pt EEK}%
   \global\baselineskip=12pt
-\fi%
-%Also need to switch hyphenation patterns
-\expandafter\ifx\csname language#1\endcsname\relax\else\uselanguage{\csname language#1\endcsname}\fi}%
+ \fi%
+ %Also need to switch hyphenation patterns
+ \expandafter\ifx\csname language#1\endcsname\relax\else\uselanguage{\csname language#1\endcsname}\fi}%
 
 
 %\output={\diglotLeft}
