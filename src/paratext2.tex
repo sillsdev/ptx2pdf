@@ -685,12 +685,13 @@
 \def\s@tcolhts#1{
     \colhtA=#1 \decr{\colhtA}{\topleftins} \decr{\colhtA}{\bottomleftins}
     \colhtB=#1 \decr{\colhtB}{\toprightins} \decr{\colhtB}{\bottomrightins}
+    \trace{o}{s@tcolhts: colhtA=\the\colhtA, colhtB=\the\colhtB, toprightins=(\the\skip\toprightins, \the\ht\toprightins), bottomrightins=(\the\skip\bottomrightins, \the\ht\bottomrightins)}%
 }
 
 \def\g@tcolhts{
     \colhtA=\ht\colA \incr{\colhtA}{\topleftins} \incr{\colhtA}{\bottomleftins}
     \colhtB=\ht\colB \incr{\colhtB}{\toprightins} \incr{\colhtB}{\bottomrightins}
-    \trace{o}{colhtA=\the\colhtA, colhtB=\the\colhtB}%
+    \trace{o}{g@tcolhts: colhtA=\the\colhtA, colhtB=\the\colhtB}%
 }
 
 \def\spl@tcols#1{
@@ -801,9 +802,8 @@
   \g@tcolhts
   \trace{b}{BALANCE pageout: cols=2: texta=\the\ht\colA , \the\dp\colA : textb=\the\ht\colB , \the\dp\colB : partial=\the\ht\partial, \the\dp\partial : topins=\the\ht\topins+\the\skip\topins, \the\ht\topleftins+\the\skip\topleftins, \the\ht\toprightins+\the\skip\toprightins : bottomins=\the\ht\bottomins+\the\skip\bottomins, \the\ht\bottomleftins+\the\skip\bottomleftins, \the\ht\bottomrightins+\the\skip\bottomrightins}
   \dimen0=\dp\colA \setbox\colA=\vbox to \availht{\unvbox\topleftins\box\colA\vfil\unvbox\bottomleftins}\dp\colA=\dimen0
-  \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\else
-    \ifdim\dimen0<\dp\colB\dimen0=\dp\colB\fi \setbox\colB=\vbox to \availht{\unvbox\toprightins\box\colB\vfil\unvbox\bottomrightins}\dp\colB=\dimen0
-  \fi
+  \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\else\ifdim\dimen0<\dp\colB\dimen0=\dp\colB\fi\fi
+  \setbox\colB=\vbox to \availht{\unvbox\toprightins\box\colB\vfil\unvbox\bottomrightins}\dp\colB=\dimen0
   \ifdim\colhtA>\colhtB \dimen3=\colhtA\dimen0=\dp\colA\dp\colB=\dimen0\else
     \dimen3=\colhtB\dimen0=\dp\colB\dp\colA=\dimen0\fi
   \advance\dimen3 by \dimen0
