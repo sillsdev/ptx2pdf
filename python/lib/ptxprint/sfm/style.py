@@ -169,8 +169,7 @@ def parse(source, error_level=level.Content, base=None):
         rec_parser = records.parser(
                         no_comments,
                         records.schema('Marker', _fields),
-                        error_level=error_level,
-                        base={None: marker()} if base is None else base)
+                        error_level=error_level)
         rec_parser.source = getattr(source, 'name', '<string>')
         recs = iter(rec_parser)
         next(recs, None)

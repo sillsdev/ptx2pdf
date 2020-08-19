@@ -113,8 +113,9 @@ _diglot = {
 }
 
 class RunJob:
-    def __init__(self, printer, scriptsdir, userconfig, args):
+    def __init__(self, printer, scriptsdir, macrosdir, userconfig, args):
         self.scriptsdir = scriptsdir
+        self.macrosdir = macrosdir
         self.printer = printer
         self.userconfig = userconfig
         self.tempFiles = []
@@ -162,7 +163,7 @@ class RunJob:
             if digprjid is None or not len(digprjid):     # can't print no project
                 return
             digptsettings = ParatextSettings(self.args.paratext, digprjid)
-            digprinter = ViewModel(self.args.paratext, self.printer.working_dir, self.userconfig, self.scriptsdir)
+            digprinter = ViewModel(self.args.paratext, self.printer.working_dir, self.userconfig, self.macrosdir)
             digprinter.setPrjid(digprjid)
             if digcfg is not None and digcfg != "":
                 digprinter.setConfigId(digcfg)
@@ -321,8 +322,10 @@ class RunJob:
             copyfile(left, tmpFile)
 
             if not self.args.nuseusfmerge:
+                sheetsa = info.printer.getStyleSheets()
+                sheetsb = diginfo.printer.getStyleSheets()
                 try:
-                    usfmerge(tmpFile, right, left)
+                    usfmerge(tmpFile, right, left, stylesheetsa=sheetsa, stylesheetsb=sheetsb)
                 except SyntaxError as e:
                     print(self.prjid, b, str(e).split('line', maxsplit=1)[1])
                     syntaxErrors.append("{} {} line:{}".format(self.prjid, b, str(e).split('line', maxsplit=1)[1]))

@@ -690,6 +690,7 @@
 \def\g@tcolhts{
     \colhtA=\ht\colA \incr{\colhtA}{\topleftins} \incr{\colhtA}{\bottomleftins}
     \colhtB=\ht\colB \incr{\colhtB}{\toprightins} \incr{\colhtB}{\bottomrightins}
+    \trace{o}{colhtA=\the\colhtA, colhtB=\the\colhtB}%
 }
 
 \def\spl@tcols#1{
@@ -828,7 +829,7 @@
   \ifx\t@st\empty\xdef\p@gebotmark{\botmark}\fi
   %NOT HERE! \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
   \availht=\trialheight % amount of space we think is available
-  \trace{i}{C@lcavailht partial:\the\ht\partial \space av:\the\availht}%
+  \trace{i}{C@lcavailht partial:\the\ht\partial \space available:\the\availht}%
   \f@rstnotetrue
   \let\\=\reduceavailht\the\n@tecl@sses % reduce it by the space needed for each note class
   \trace{i}{after inserts: \the\availht}%

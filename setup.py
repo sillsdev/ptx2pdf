@@ -15,7 +15,7 @@ setup(
     include_package_data=True,  # include everything in MANIFEST.in
     package_data={'ptxprint': ['*.*']},
     scripts=["python/scripts/ptxprint", "python/scripts/xdvitype", "python/scripts/usfmerge"],
-    install_requires=["regex", "pygobject", "fonttools", "pycairo"],
+    install_requires=["regex", "pygobject", "fonttools", "pycairo", "appdirs"],
     zip_safe=False,
     license="MIT",
     classifiers=[

@@ -6,8 +6,8 @@ as context information for structure errors.
 The default marker meta data makes this produce only top-level marker-text
 pairs.
 '''
-__version__ = '20101011'
-__date__ = '11 October 2010'
+__version__ = '20200813'
+__date__ = '13 August 2020'
 __author__ = 'Tim Eves <tim_eves@sil.org>'
 __history__ = '''
     20081210 - djd - Seperated SFM definitions from the module
@@ -52,7 +52,11 @@ class position(NamedTuple):
 
 class element(list):
     """
-    A sequence type that for holding the a marker and it's child nodes
+    An sequence type representing a marker and it's child nodes which may
+    consist of more elements or text nodes. It contains metadata describing how
+    it was parsed and an annotations mapping to allow the parser or further
+    processing steps to attach notes or data to it.
+
     >>> element('marker')
     element('marker')
 
@@ -95,6 +99,13 @@ class element(list):
                  parent=None,
                  meta={},
                  content=[]):
+        """
+        The `name` of the marker, and optionally any marker argments in
+        `args`. If this element is a child of another it `parent` should point
+        back to that element. The position in the source text can be supplied
+        with `pos`, and the marker stylesheet record used to parse it should be
+        passed with meta.
+        """
         super().__init__(content)
         self.name = str(name) if name else None
         self.pos = pos
@@ -198,7 +209,8 @@ class text(str):
         h = next(i)
         return text(''.join(chain([h], i)), h.pos, h.parent)
 
-    def split(self, sep, maxsplit=-1):
+    def split(self, sep=None, maxsplit=-1):
+        sep = sep or ' '
         tail = self
         result = []
         while tail and maxsplit != 0:
@@ -293,18 +305,27 @@ class _put_back_iter(collections.Iterator):
         return self._pbq[-1]
 
 
-_default_meta = {'TextType': 'default',
-                 'OccursUnder': {None},
-                 'Endmarker': None,
-                 'StyleType': None}
+_default_meta = dict(
+    TextType='default',
+    OccursUnder={None},
+    Endmarker=None,
+    StyleType=None)
 
 
 class level(IntEnum):
+    """
+    Error levels used to control what the parser reports as warnings or errors
+    """
     Note = -1
+    'Issues that do not affect the parse, but should be corrected.'
     Marker = 0
+    "Markers that are not in the stylesheet or private namespace."
     Content = 1
+    'Issues with parsing or formating marker arguments or element content.'
     Structure = 2
+    'Issues that result in incorectly parsed document structure, if ignored.'
     Unrecoverable = 100
+    'Always reported as an error, parser cannot make progress past it.'
 
 
 class Tag(NamedTuple):
@@ -321,6 +342,15 @@ class Tag(NamedTuple):
 
 class parser(collections.Iterable):
     '''
+    SFM parser, and base class for more complex parsers such as USFM and the
+    stylesheet parser.  This can be used to parse unstructured SFM files as a
+    sequence of childless elements or text nodes. By supplying a stylesheet
+    structure can be extracted from a source, such as a USFM document.
+
+    Various options allow customisation of the strictness of error checking,
+    private tag space prefix or even what constitutes a marker, beyond just
+    starting with a '\\'.
+
     >>> from pprint import pprint
     >>> import warnings
 
@@ -441,10 +471,6 @@ class parser(collections.Iterable):
 
     default_meta = _default_meta
     _eos = text("end-of-file")
-    _tag_recogniser = r'[^\s\\]+'
-    _tokeniser = re.compile(
-        r'(?<!\\)\\[^\s\\]+|(?:\\\\|[^\\])+',
-        re.DOTALL | re.UNICODE)
 
     @classmethod
     def extend_stylesheet(cls, stylesheet, *names):
@@ -453,7 +479,35 @@ class parser(collections.Iterable):
     def __init__(self, source,
                  stylesheet={},
                  default_meta=_default_meta,
-                 private_prefix=None, error_level=level.Content):
+                 private_prefix=None, error_level=level.Content,
+                 tag_escapes=r'\\'):
+        """
+        Create a SFM parser object. This object is an interator over SFM
+        element trees. For simple unstructured documents this is one element
+        per line, for more complex stylsheet guided parse this can be one or
+        more complete element trees.
+
+        source: An interable sequence of lines, such as a File like object,
+            representing the document.
+        stylesheet: A style sheet dict mapping marker names to metadata, used
+            to guide parsing documet structure. Optional
+        default_meta: Marker metadata to use when a marker cannot be found in
+            the stylesheet or is in the private namespace. If none are supplied
+            the following is used: dict(TextType=default',
+                                        OccursUnder={None},
+                                        Endmarker=None,
+                                        StyleType=None)
+        private_prefix: Prefix identifying the private marker namespace. If a
+            marker begins with this, then it is not an error for it to not
+            appear in the stylesheet and it assigned default metadata.
+            Optional: If not passed there is no private namespace defined.
+        error_level: The level at which or above the parser should report
+            issues as Errors instead of Warnings.
+        tag_escapes: A regular expression which defines the set of marker
+            names that are treated as text instead or parsed as markers. This
+            is matched against the marker name after the initial slash.
+            Optional, defaults to r'\\\\' to allow for escaping the backslash.
+        """
         # Pick the marker lookup failure mode.
         assert default_meta or not private_prefix, 'default_meta must be provided when using private_prefix'  # noqa: E501
         assert error_level <= level.Marker or default_meta, 'default meta must be provided when error_level > level.Marker'  # noqa: E501
@@ -462,7 +516,10 @@ class parser(collections.Iterable):
         self.source = getattr(source, 'name', '<string>')
         self._default_meta = default_meta
         self._pua_prefix = private_prefix
-        self._tokens = _put_back_iter(self._lexer(source))
+        self._tokens = _put_back_iter(self.__lexer(
+            source,
+            re.compile(rf'(?:\\(?:{tag_escapes})|[^\\])+|(?<!\\)\\[^\s\\]+',
+                       re.DOTALL | re.UNICODE)))
         self._error_level = error_level
 
         # Compute end marker stylesheet definitions
@@ -473,6 +530,21 @@ class parser(collections.Iterable):
             for k, m in stylesheet.items() if m['Endmarker'])
 
     def _error(self, severity, msg, ev, *args, **kwds):
+        """
+        Raise a SyntaxError or SyntaxWarning, or skip as appropriate based on
+        the error level in the parser and the severity of the error. The error
+        message will have the source file and line and column of the issue
+        prepended to the caller supplied message.
+
+        severity: The severity or the issue being reported.
+        msg: specific message about the problem, if this includes any of the
+            following format syntax markers they will be filled out:
+                {token}:  The text object ev representing the subject token.
+                {source}: The source name.
+        ev: The text object representing the token at which the issue occured.
+        Any remaining aguments or keyword arguments are used to format the msg
+        string.
+        """
         msg = (f'{self.source}: line {ev.pos.line},{ev.pos.col}: '
                f'{str(msg).format(token=ev,source=self.source, *args,**kwds)}')
         if severity >= 0 and severity >= self._error_level:
@@ -506,22 +578,22 @@ class parser(collections.Iterable):
         return self._default_(None)
 
     @staticmethod
-    def _pp_marker_list(tags):
+    def __pp_marker_list(tags):
         return ', '.join('\\'+c if c else 'toplevel' for c in sorted(tags))
 
     @staticmethod
-    def _lexer(lines):
+    def __lexer(lines, tokeniser):
         """ Return an iterator that returns tokens in a sequence:
             marker, text, marker, text, ...
         """
-        lmss = enumerate(map(parser._tokeniser.finditer, lines))
+        lmss = enumerate(map(tokeniser.finditer, lines))
         fs = (text(m.group(), position(l+1, m.start()+1))
               for l, ms in lmss for m in ms)
         gs = groupby(fs, operator.methodcaller('startswith', '\\'))
         return chain.from_iterable(g if istag else (text.concat(g),)
                                    for istag, g in gs)
 
-    def _get_tag(self, parent: element, tok: str):
+    def __get_tag(self, parent: element, tok: str):
         if tok[0] != '\\':
             return None
 
@@ -548,7 +620,7 @@ class parser(collections.Iterable):
         return tag
 
     @staticmethod
-    def _need_subnode(parent, tag, meta):
+    def __need_subnode(parent, tag, meta):
         occurs = meta['OccursUnder']
         if not occurs:  # No occurs under means it can occur anywhere.
             return True
@@ -564,12 +636,11 @@ class parser(collections.Iterable):
         return parent_tag in occurs
 
     def _default_(self, parent):
-        get_meta = self.__get_style
         for tok in self._tokens:
-            tag = self._get_tag(parent, tok)
+            tag = self.__get_tag(parent, tok)
             if tag:  # Parse markers.
-                meta = get_meta(tag.name)
-                if self._need_subnode(parent, tag, meta):
+                meta = self.__get_style(tag.name)
+                if self.__need_subnode(parent, tag, meta):
                     sub_parser = meta.get('TextType')
                     if not sub_parser:
                         return
@@ -595,7 +666,7 @@ class parser(collections.Iterable):
                         self._error(level.Unrecoverable,
                                     'orphan marker {token}: '
                                     'may only occur under {0}', tok,
-                                    self._pp_marker_list(meta['OccursUnder']))
+                                    self.__pp_marker_list(meta['OccursUnder']))
                 else:
                     tok = text(tag, tok.pos, tok.parent)
                     # Do implicit closure only for non-inline markers or
@@ -627,6 +698,17 @@ class parser(collections.Iterable):
     _other_ = _Other_
 
     def _force_close(self, parent, tok):
+        """
+        Called by the parser when it needs to force an element, which has an
+        Endmarker, closed due to implicit closure, such as an outer inline
+        endmarker or paragraph level marker closing any currently open inline
+        markers.
+        This method should be overridden by subclasses to change default
+        behaviour of treating this as a structural error.
+
+        parent: The element being forced closed.
+        tok: The token causing the implicit closure.
+        """
         self._error(
             level.Structure,
             'invalid end marker {token}: \\{0.name} '
@@ -635,7 +717,39 @@ class parser(collections.Iterable):
             parent.meta['Endmarker'])
 
 
-def sreduce(elementf, textf, trees, initial=None):
+def sreduce(elementf, textf, trees, initial):
+    """
+    Reduce sequence of element trees down to a single object. Used for same
+    tasks a normal reduce but it operates on the element tree structure rather
+    than a linear sequence. As such it takes 2 functions for handling nodes and
+    leaves idependantly.
+
+    elementf: A callable that accepts 3 parameters and returns a new
+        accumulator value.
+        e: The element node under consideration.
+        a: The current accumulator object.
+        body: The elements reduced children.
+    textf: A callable the accepts 2 parameters and returns a new accumulator
+        value.
+        t: The text node under consideration.
+        a: The current accumulator object.
+    trees: An iterable over element trees, generaly the output of parser().
+    initial:  The initial value for the accumulator.
+
+    A crude word count example:
+    >>> doc =r'''\\lonely
+    ... \\sfm text
+    ... bare text
+    ... \\more-sfm more text
+    ... over a line break\\marker'''.splitlines(True)
+    >>> with warnings.catch_warnings():
+    ...     warnings.simplefilter("ignore")
+    ...     sreduce(lambda e, a, b: 1 + len(e.args) + a + b,
+    ...             lambda t, a: a + len(t.split()),
+    ...             parser(doc),
+    ...             0)
+    12
+    """
     def _g(a, e):
         if isinstance(e, str):
             return textf(e, a)
@@ -643,7 +757,40 @@ def sreduce(elementf, textf, trees, initial=None):
     return reduce(_g, trees, initial)
 
 
-def smap(elementf, textf, doc):
+def smap(elementf, textf, trees):
+    """
+    Map sequence of element trees down into another sequence of structurally
+    identical element trees. Used for same tasks a normal map but it operates
+    on the element tree structure rather than a linear sequence. As such it
+    takes 2 functions for handling nodes and leaves idependantly.
+
+    elementf: A callable that accepts 3 parameters and returns a tuple of
+            (name, args, children)      
+        name: The current element name
+        args: The current element argument list
+        body: The elements mapped children.
+    textf: A callable the accepts 1 parameters and returns a new text node
+        t: The text node to be transformed
+    trees: An iterable over element trees, generaly the output of parser().
+
+
+    A crude upper casing example:
+    >>> doc =r'''\\lonely
+    ... \\sfm text
+    ... bare text
+    ... \\more-sfm more text
+    ... over a line break\\marker'''.splitlines(True)
+    >>> with warnings.catch_warnings():
+    ...     warnings.simplefilter("ignore")
+    ...     print(generate(smap(lambda n, a, b: (n.upper(), [x.upper() for x in a], b),
+    ...                         lambda t: t.upper(),
+    ...                         parser(doc))))
+    \\LONELY
+    \\SFM TEXT
+    BARE TEXT
+    \\MORE-SFM MORE TEXT
+    OVER A LINE BREAK\\MARKER
+    """
     def _g(e):
         if isinstance(e, element):
             name, args, cs = elementf(e.name, e.args, map(_g, e))
@@ -653,10 +800,23 @@ def smap(elementf, textf, doc):
         else:
             e_ = textf(e)
             return text(e_, e.pos, e)
-    return map(_g, doc)
+    return map(_g, trees)
 
 
-def sfilter(pred, doc):
+def sfilter(pred, trees):
+    """
+    Filter a sequence of element trees down into another sequence of
+    structurally similar element trees, keeping only nodes and leaves wich
+    return True when passed to a predicate function. Used for same tasks a
+    normal filter but it operates on the element tree structure rather than a
+    linear sequence.
+
+    pred: A callable which takes 1 parameter and return True of False. If this
+        function returns False for an element then it and all it's children
+        will absent from silter()'s output.
+        e: The element or text node under consideration.
+    trees: An iterable over element trees, generaly the output of parser().
+    """
     def _g(a, e):
         if isinstance(e, text):
             if pred(e.parent):
@@ -667,7 +827,7 @@ def sfilter(pred, doc):
         if len(e_) or pred(e):
             a.append(e_)
         return a
-    return reduce(_g, doc, [])
+    return reduce(_g, trees, [])
 
 
 def _path(e):
@@ -680,6 +840,15 @@ def _path(e):
 
 
 def mpath(*path):
+    """
+    Create a predicate function that tests if the path to a node
+    in an element tree is suffixed by the argument list passed to this
+    function.
+    The returned callable can be used as a predicate to the sfilter() function.
+
+    E.g. mpath('c','p','v') produces a predicate that matches all verses in all
+    chapters of a USFM document.
+    """
     path = list(path)
     pr_slice = slice(len(path))
     def _pred(e): return path == _path(e)[pr_slice]
@@ -687,6 +856,11 @@ def mpath(*path):
 
 
 def text_properties(*props):
+    """
+    Create a predicate function that tests if a marker's text properties
+    contain all the properties passed as arguments to this function.
+    The returned callable can be used as a predicate to the sfilter() function.
+    """
     props = set(props)
     def _props(e): return props <= set(e.meta.get('TextProperties', []))
     return _props
@@ -741,7 +915,10 @@ def generate(doc):
     return sreduce(ge, gt, doc, '')
 
 
-def copy(doc):
+def copy(trees):
+    """
+    Deep copy sequence of element trees.
+    """
     def id_element(name, args, children): return (name, args[:], children)
-    def id_text(t): return t
-    return smap(id_element, id_text, doc)
+    def id_text(t): return t[:]
+    return smap(id_element, id_text, trees)

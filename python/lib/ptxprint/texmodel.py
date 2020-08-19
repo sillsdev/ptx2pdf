@@ -505,6 +505,7 @@ class TexModel:
         if featstring is not None and len(featstring):
             if printer is not None:
                 printer.set(ModelMap["font/features"][0], featstring)
+            f = TTFont(self.dict["fontregular/name"], self.dict["fontregular/style"])
             f.features = {}
             for l in re.split(r'\s*[,;:]\s*|\s+', featstring):
                 if '=' in l:

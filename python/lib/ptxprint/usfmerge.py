@@ -4,12 +4,29 @@ import ptxprint.sfm as sfm
 from ptxprint.sfm import usfm
 from ptxprint.sfm import style
 import argparse, difflib, sys
+from enum import Enum
 
 debugPrint = False
 
+class ChunkType(Enum):
+    CHAPTER = 1
+    HEADING = 2
+    TITLE = 3
+    INTRO = 4
+    BODY = 5
+
+_textype_map = {
+    "Chapter":   ChunkType.CHAPTER,
+    "Section":   ChunkType.HEADING,
+    "Title":     ChunkType.TITLE,
+    "Other":     ChunkType.INTRO,
+    "VerseText": ChunkType.BODY
+}
+
 class Chunk(list):
-    def __init__(self, *a, chap=0, verse=0, end=0, pnum=0):
+    def __init__(self, *a, mode=None, chap=0, verse=0, end=0, pnum=0):
         super(Chunk, self).__init__(*a)
+        self.type = mode
         self.chap = chap
         self.verse = verse
         self.end = verse
@@ -30,16 +47,11 @@ class Chunk(list):
     def ident(self):
         if len(self) == 0:
             return ("", 0, 0, 0, 0)
-        return (self[0].name, self.chap, self.verse, self.end, self.pnum)
+        return (self.type.name, self.chap, self.verse, self.end, self.pnum)
 
     def __str__(self):
         return "".join(str(x) for x in self)
 
-    def restructure(self):
-        """ Move \\c after \\s if present. """
-        if len(self) > 1:
-            if self[0].name == "c" and self[1].meta.get('TextType').lower() == "section":
-                self[0:1] = [self[1], self[0]]
 
 nestedparas = set(('io2', 'io3', 'io4', 'toc2', 'toc3', 'ili2', 'cp', 'cl'))
 
@@ -55,11 +67,10 @@ class Collector:
         self.end = 0
         self.counts = {}
         self.currChunk = None
-        self.currType = None
+        self.mode = ChunkType.INTRO
         if doc is not None:
             self.collect(doc, primary=primary)
-            for c in self.acc:
-                c.restructure()
+            self.reorder()
 
     def pnum(self, c):
         if c is None:
@@ -70,9 +81,11 @@ class Collector:
 
     def makeChunk(self, c=None):
         if c is None:
-            currChunk = Chunk()
+            currChunk = Chunk(mode=self.mode)
         else:
-            currChunk = Chunk(chap=self.chap, verse=self.verse, end=self.end, pnum=self.pnum(c))
+            mode = _textype_map.get(c.meta.get('TextType'), self.mode)
+            currChunk = Chunk(mode=mode, chap=self.chap, verse=self.verse, end=self.end, pnum=self.pnum(c))
+            self.mode = mode
         self.acc.append(currChunk)
         self.currChunk = currChunk
         return currChunk
@@ -92,17 +105,11 @@ class Collector:
                     continue
             newchunk = False
             if ispara(c):
-                isSection = c.meta.get('TextType') == 'Section'
-                if self.currType == 'Section':
-                    if not isSection:
-                        newchunk = True
-                        self.currType = None
-                elif self.currType == 'Chap':
-                    if not isSection and not c.name == "cp":
-                        self.currType = None
-                elif isSection:
+                newmode = _textype_map.get(c.meta.get('TextType'), self.mode)
+                if newmode != self.mode:
                     newchunk = True
-                    self.currType = 'Section'
+                elif self.mode == ChunkType.HEADING:
+                    pass
                 elif c.name not in nestedparas:
                     newchunk = True
             if newchunk:
@@ -115,7 +122,6 @@ class Collector:
                 if currChunk is not None:
                     currChunk.chap = self.chap
                     currChunk.verse = 0
-                self.currType = 'Chap'
             elif isverse(c):
                 if "-" in c.args[0]:
                     v, e = map(int, c.args[0].split('-'))
@@ -128,6 +134,12 @@ class Collector:
                 self.currChunk.label(self.chap, self.verse, self.end, 0)
             currChunk = self.collect(c, primary=primary) or currChunk
         return currChunk
+
+    def reorder(self):
+        for i in range(1, len(self.acc)):
+            if self.acc[i-1].type == ChunkType.CHAPTER and self.acc[i].type == ChunkType.HEADING:
+                self.acc[i-1], self.acc[i] = self.acc[i], self.acc[i-1]
+
 
 def merge_stylesheet(base, extras):
     for k, v in extras.items():
@@ -279,12 +291,17 @@ def ptypekey(s, styles):
     t = styles.get(p, {'TextType': 'other'}).get('TextType').lower()
     return t + s[s.find("_"):]
 
-def usfmerge(infilea, infileb, outfile, stylesheets=[], fsecondary=False, debug=False):
+def usfmerge(infilea, infileb, outfile, stylesheetsa=[], stylesheetsb=[], fsecondary=False, debug=False):
     global debugPrint, debstr
-    debugPrint = debug
-    stylesheet=usfm._load_cached_stylesheet('usfm.sty')
-    for s in stylesheets:
-        stylesheet = style.parse(open(s), base=stylesheet)
+    debugPrint = True
+    stylesheeta = usfm._load_cached_stylesheet('usfm.sty')
+    stylesheetb = stylesheeta.copy()
+    if debugPrint:
+        print(stylesheetsa, stylesheetsb)
+    for s in stylesheetsa:
+        stylesheeta = style.parse(open(s), base=stylesheeta)
+    for s in stylesheetsb:
+        stylesheetb = style.parse(open(s), base=stylesheetb)
 
     def texttype(m):
         res = stylesheet.get(m, {'TextType': 'other'}).get('TextType').lower()
@@ -299,12 +316,12 @@ def usfmerge(infilea, infileb, outfile, stylesheets=[], fsecondary=False, debug=
         return groupChunks(*a, texttype, **kw)
 
     with open(infilea, encoding="utf-8") as inf:
-        doc = list(usfm.parser(inf, stylesheet=stylesheet, canonicalise_footnotes=True))
+        doc = list(usfm.parser(inf, stylesheet=stylesheeta, canonicalise_footnotes=True))
         pcoll = Collector(doc=doc, fsecondary=fsecondary)
     mainchunks = {c.ident: c for c in pcoll.acc}
 
     with open(infileb, encoding="utf-8") as inf:
-        doc = list(usfm.parser(inf, stylesheet=stylesheet, canonicalise_footnotes=True))
+        doc = list(usfm.parser(inf, stylesheet=stylesheetb, canonicalise_footnotes=True))
         scoll = Collector(doc=doc, primary=False)
     secondchunks = {c.ident: c for c in scoll.acc}
     mainkeys = ["_".join(str(x) for x in c.ident) for c in pcoll.acc]

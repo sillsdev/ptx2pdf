@@ -112,7 +112,7 @@ if args.pid:
         mainw.setConfigId(args.config)
 
 def doit(printer):
-    runjob = RunJob(printer, scriptsdir, config, args)
+    runjob = RunJob(printer, scriptsdir, macrosdir, config, args)
     runjob.doit()
     return runjob.res
 

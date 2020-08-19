@@ -246,7 +246,7 @@ class TTFont:
             self.feats[num2tag(fid)] = self.names.get(lid, "")
             valdict = {}
             self.featvals[num2tag(fid)] = valdict
-            for j in range(1, nums):
+            for j in range(nums):
                 val, lid = struct.unpack(">HH", data[offset + 4*j:offset + 4*(j+1)])
                 valdict[val] = self.names.get(lid, "")
             
