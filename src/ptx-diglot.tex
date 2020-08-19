@@ -1877,7 +1877,7 @@
   \trace{D}{makediglotgutter \the #1,\the #2,\the #3}%
   \dimen4=#1\advance \dimen4 by #3
    \setbox4=\vbox to #2{%
-     \hbox to 1pt{
+     \hbox to 1pt{%
        \ifColumnGutterRule
         \vrule height \the\dimen4 
        \fi
@@ -1893,6 +1893,6 @@
 \def\testmarker{\hbox to 0pt{\vrule height 7pt depth 0pt width 0.5pt \kern-0.5pt}\message{_}}
 
 %Reinstate this post v1:
-\addtoendhooks{\bgroup\count255=\cumulativeDelta sp \divide\count255 by \pageno \ifdiglot\message{Overall column delta \the\cumulativeDelta pt (\the\count255 pt/ pg)\space(-ve means left longer)}\egroup\cumulativeDelta=0pt\fi}
+\addtoendhooks{\bgroup\count255=\cumulativeDelta \divide\count255 by \pageno \ifdiglot\message{Overall column delta \the\cumulativeDelta pt (\the\count255 pt/ pg)\space(-ve means left longer)}\egroup\cumulativeDelta=0pt\fi}
 
 \endinput
