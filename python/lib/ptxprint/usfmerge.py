@@ -68,6 +68,7 @@ class Collector:
         self.chap = 0
         self.verse = 0
         self.end = 0
+        self.chaplabel = None
         self.counts = {}
         self.currChunk = None
         self.mode = ChunkType.INTRO
@@ -107,6 +108,8 @@ class Collector:
                     root.remove(c)
                     continue
             newchunk = False
+            if c.name == "cl" and self.chap == 0:
+                self.chaplabel = c
             if ispara(c):
                 newmode = _textype_map.get(c.meta.get('TextType'), self.mode)
                 if newmode != self.mode:
@@ -143,6 +146,11 @@ class Collector:
         for i in range(1, len(self.acc)):
             if self.acc[i-1].type == ChunkType.CHAPTER and self.acc[i].type == ChunkType.HEADING:
                 self.acc[i-1], self.acc[i] = self.acc[i], self.acc[i-1]
+        # insert global cl after c in \c
+        if self.chaplabel is not None:
+            for a in self.acc:
+                if a.type == ChunkType.CHAPTER:
+                    a.append(self.chaplabel)
         # merge \c with body chunk following
         for i in range(1, len(self.acc)):
             if self.acc[i-1].type == ChunkType.CHAPTER and self.acc[i].type == ChunkType.BODY:
