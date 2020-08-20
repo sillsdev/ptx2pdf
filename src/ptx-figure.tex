@@ -1,0 +1,522 @@
+%:skip
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Part of the ptx2pdf macro package for formatting USFM text
+% copyright (c) 2007-2020 by SIL International
+% original parts by Johnathan Kew, 
+% split off into separate parts and recent additions by David Gardner
+%
+% Permission is hereby granted, free of charge, to any person obtaining  
+% a copy of this software and associated documentation files (the  
+% "Software"), to deal in the Software without restriction, including  
+% without limitation the rights to use, copy, modify, merge, publish,  
+% distribute, sublicense, and/or sell copies of the Software, and to  
+% permit persons to whom the Software is furnished to do so, subject to  
+% the following conditions:
+%
+% The above copyright notice and this permission notice shall be  
+% included in all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
+% NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
+% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
+% CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+% WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+%
+% Except as contained in this notice, the name of SIL International  
+% shall not be used in advertising or otherwise to promote the sale,  
+% use or other dealings in this Software without prior written  
+% authorization from SIL International.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \fig handling code, originally from paratext2.tex
+
+%:id intro
+% Inserts
+\count\topins=1000 \dimen\topins=\maxdimen \skip\topins=0pt
+\newinsert\bottomins \count\bottomins=1000 \dimen\bottomins=\maxdimen
+\newinsert\topleftins \count\topleftins=1000 \dimen\topleftins=\maxdimen
+\newinsert\toprightins \count\toprightins=1000 \dimen\toprightins=\maxdimen
+\newinsert\bottomleftins \count\bottomleftins=1000 \dimen\bottomleftins=\maxdimen
+\newinsert\bottomrightins\count\bottomrightins=1000 \dimen\bottomrightins=\maxdimen
+ 
+%%%%%%%%%%%%%% FIGURES %%%%%%%%%%%%%% 
+% called from \fig or from figure list
+
+% Place everything up to first | into \param-N.
+% Redefine \p@rams to be rest of list
+\def\stripspace#1 \end/#2\relax#3{\if\relax#2\relax\gdef\p@ram{#3}\else\stripspace#1\end/ \end/\relax{#1}\fi}
+\def\FigP@ramAlt{alt} \def\FigP@ramSrc{src} \def\FigP@ramSize{size} \def\FigP@ramLoc{loc}
+\def\FigP@ramCopy{copy} \def\FigP@ramRef{ref} \def\FigP@ramXtra{x-xetex} \def\FigP@ramPgpos{pgpos}
+\def\FigP@ramMirror{mirror} \def\FigP@ramScale{scale} \def\FigP@ramRot{x-rotate}
+
+\newif\ifusfmthree \usfmthreefalse
+\def\getonepairp@ram#1="#2" {\stripspace#1\end/ \end/\relax{#1}\edef\p@ramid{\p@ram}%
+  \stripspace#2\end/ \end/\relax{#2}\edef\p@ramval{\p@ram}%
+  \trace{g}{getonepairparam: [\p@ramid] = [\p@ramval]}%
+  \ifx\p@ramid\empty\let\next=\relax\else
+    \ifx\p@ramid\FigP@ramSrc\global\p@ramnumber=2\else
+    \ifx\p@ramid\FigP@ramSize\global\p@ramnumber=3 \trace{g}{Got Size}\else
+    \ifx\p@ramid\FigP@ramLoc\global\p@ramnumber=\x@\ifx\csname param-4\endcsname\empty 4\else 5\fi\else
+    \ifx\p@ramid\FigP@ramPgpos\global\p@ramnumber=4\else
+    \ifx\p@ramid\FigP@ramCopy\global\p@ramnumber=5\else
+    \ifx\p@ramid\FigP@ramAlt\global\p@ramnumber=6\else
+    \ifx\p@ramid\FigP@ramRef\global\p@ramnumber=7\else
+    \ifx\p@ramid\FigP@ramXtra\global\p@ramnumber=8\else %experimental extra parameter, post filename e.g. "rotated 90"
+    \ifx\p@ramid\FigP@ramMirror\global\p@ramnumber=9\else %experimental mirror parameter.
+    \ifx\p@ramid\FigP@ramScale\global\p@ramnumber=10\else
+    \trace{g}{Unrecognised usfm3 parameter \p@ramid}%
+    \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
+    \tempfalse
+    \ifx\p@ramval\empty\ifusfmthree\else
+      \trace{g}{param-\the\p@ramnumber = "\p@ramid" but not "\p@ramval"}%
+      \x@\global\x@\edef\csname param-\the\p@ramnumber\endcsname{\p@ramid}%
+      \let\next=\relax
+      \temptrue
+    \fi\fi
+    \iftemp\else
+      \trace{g}{param-\the\p@ramnumber [\p@ramid]  = "#2" from "\p@ramval"}%
+      \x@\gdef\csname param-\the\p@ramnumber\endcsname{#2}%
+      \let\next=\getonepairp@ram \usfmthreetrue
+    \fi
+  \fi\next}
+
+\def\p@rsesize#1*#2*#3\end{%
+  \def\size@ption{#1}%
+  \edef\tmp{#2}
+  \if\tmp\relax\else\def\sizem@ltiple{#2}\MSG{Setting scale to #2}\fi% empty if not provided
+}
+ 
+\def\getonep@ram#1|#2\end{\gdef\p@rams{#2}%
+  \trace{g}{getoneparam: #1 | #2}%
+  \getonepairp@ram#1 ="" \relax%
+  \global\advance\p@ramnumber by 1 }
+
+\newif\iffiglocleft \figloclefttrue
+\newif\ifpicUsesIns \picUsesInstrue
+\newif\ifpicNarrow \picNarrowfalse
+
+\def\p@rsePicXtra#1#2\end{% Parse optional new picture options, and remember them
+  \xdef\t@mpb{#1}%
+  \xdef\t@mpc{#2}%
+}
+\def\p@rsePicUse#1#2\end{% Parse the new picture options, and remember them
+  \picUsesInstrue
+  \picNarrowfalse
+  \gdef\pic@lign{c}%How does the picture align within the box?
+  \gdef\picl@c{}% location code for in-line pictures
+  \edef\t@mp{#1}%
+  \edef\t@mpb{#2}%
+  \ifx\t@mpb\empty\let\t@mpc=\t@mpb\else\x@\p@rsePicXtra\t@mpb\end\fi
+  \trace{g}{p@rsePicUse: #1 \t@mpb \t@mpc}%
+  \ifx\t@mp\loc@Inl
+    \trace{g}{Experimental inline graphic}%
+    \global\let\picl@c\loc@Inl
+    \xdef\pic@lign{\t@mpb}%
+    \global\picUsesInsfalse
+    \ifx\t@mpb\@lignLeft\picNarrowtrue\fi
+    \ifx\t@mpb\@lignRight\picNarrowtrue\fi
+  \fi
+  \ifx\t@mp\loc@Cut
+    \global\let\picl@c\loc@Cut
+    \global\picUsesInsfalse
+    \global\picNarrowtrue
+    \xdef\l@cspec{\t@mpb}%
+    \ifx\t@mpc\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\t@mpc}\fi%
+    \trace{g}{Experimental graphic in cutout, after \c@tskip lines}%
+  \fi
+  \ifx\t@mp\loc@Par
+    \global\let\picl@c=\loc@Par
+    \trace{g}{Experimental after-paragraph graphic}%
+    \xdef\pic@lign{\t@mpb}%
+    \global\picUsesInsfalse
+    \ifx\t@mpb\@lignLeft\picNarrowtrue\fi
+    \ifx\t@mpb\@lignRight\picNarrowtrue\fi
+    \ifx\t@mpc\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\t@mpc}\fi%Borrow cutskip for parskip 
+  \fi
+  }%
+
+\def\d@figure#1{%
+ \ifIncludeFigures
+  \trace{g}{In d@figure #1}\usfmthreefalse
+  \edef\curc@lsz{\the\hsize}% Current col size
+  \gdef\p@rams{#1|}% ensure there is a trailing | separator
+  % place parts of text into \param-1, \param-2, ...
+  \global\p@ramnumber=1
+  \loop
+    \x@\gdef\csname param-\the\p@ramnumber\endcsname{}%
+    \global\advance\p@ramnumber by 1
+    \ifnum\p@ramnumber<11\repeat
+  \global\p@ramnumber=1
+  \loop
+    \x@\getonep@ram\p@rams\end
+    \ifx\p@rams\empty \morep@ramsfalse \else \morep@ramstrue \fi
+    \ifmorep@rams\repeat
+  % get size
+  \lowercase{\edef\size@ption{\csname param-3\endcsname}}%
+  \lowercase{\edef\sizem@ltiple{\csname param-10\endcsname}}%
+  \expandafter\p@rsesize\size@ption**\end % extract possible multiplier
+  % get location
+  \lowercase{\edef\loc@ption{\csname param-4\endcsname}}%
+  % 
+  \ifx\loc@ption\empty % if location empty
+    \ifx\size@ption\size@SPAN%
+	   \def\loc@ption{t}% if size is SPAN default to top
+	\else\def\loc@ption{tl}\fi % else default to top left FIXME? Standard says inline. Could swap to h if that proves stable.
+  \fi
+  % set width to column width or span width
+  \p@cwidth=\ifx\size@ption\size@COL \hsize
+  \else\ifx\size@ption\size@SPAN \textwidth \advance\p@cwidth by -\columnshift
+  \else \textwidth
+    \errmessage{Unknown picture size "\size@ption", expected "col" or "span"}\fi\fi
+  \let\p@cins=\relax
+  % --------- Parse the location option -----------
+  \x@\p@rsePicUse\loc@ption\end
+  % By default, set the insert width to full span
+  \p@cinswid=\textwidth\advance\p@cinswid by -\columnshift
+  % make \p@cins point to insertion class for this location
+  \otherinsht=0pt % subtract this from the insert height.
+  \ifx\loc@ption\loc@T \let\p@cins=\topins
+  \else\ifx\loc@ption\loc@B \let\p@cins=\bottomins
+  \else
+      \ifnum\c@rrentcols>1
+        \ifx\loc@ption\loc@TL \let\p@cins=\topleftins \otherinsht=\ht\toprightins \p@cinswid=\hsize
+        \else\ifx\loc@ption\loc@TR \let\p@cins=\toprightins \otherinsht=\ht\topleftins \p@cinswid=\hsize
+        \else\ifx\loc@ption\loc@BL \let\p@cins=\bottomleftins \otherinsht=\ht\bottomrightins \p@cinswid=\hsize
+        \else\ifx\loc@ption\loc@BR \let\p@cins=\bottomrightins \otherinsht=\ht\bottomleftins \p@cinswid=\hsize
+        \fi\fi\fi\fi
+      \else
+        \ifdiglot\MSG{HOW DID THAT HAPPEN? currentcols=\the\c@rrentcols}\fi
+        \ifx\loc@ption\loc@TL \picw@rning{tl}{t}\let\p@cins=\topins
+        \else\ifx\loc@ption\loc@TR \picw@rning{tr}{t}\let\p@cins=\topins
+        \else\ifx\loc@ption\loc@BL \picw@rning{bl}{b}\let\p@cins=\bottomins
+        \else\ifx\loc@ption\loc@BR \picw@rning{br}{b}\let\p@cins=\bottomins
+        \fi\fi\fi\fi
+      \fi
+  \fi\fi
+  \ifpicUsesIns
+    \ifx\p@cins\relax
+      %\errmessage{Unknown picture location "\loc@ption",
+      %  expected one of t,b,tl,tr,bl,br}%
+      \ifnum\c@rrentcols>1
+        \p@cinswid=\hsize
+        \iffiglocleft\let\p@cins=\topleftins\figlocleftfalse \otherinsht=\ht\toprightins
+        \else\let\p@cins=\toprightins\figloclefttrue \otherinsht=\ht\topleftins\fi
+      \else \let\p@cins=\topins\fi
+    \fi
+  \else
+    \p@cinswid=\hsize
+  \fi
+  \ifdiglot\else\otherinsht=0pt \fi %Nothing to subtract if not diglot
+  \ifdim\p@cinswid<\p@cwidth
+    \message{*** Picture \the\p@cwidth\space wide in  \the\p@cinswid\space space. \ifx\size@ption\size@SPAN Did you mean to use col, instead of span?\fi}%
+  \fi
+  \global\advance\im@gecount by 1
+  % create box to contain picture
+  \trace{g}{Figure \the\im@gecount\space size=\size@ption, scale=\sizem@ltiple, loc=\loc@ption \ifpicUsesIns, picins=\the\p@cins\fi, hsz=\the\hsize}%
+  \setbox0=\vbox{
+    \ifpicNarrow
+      \hsize=\sizem@ltiple\p@cwidth
+      \p@cinswid=\hsize
+    \else
+      \hsize=\p@cinswid
+    \fi
+    \ifx\picl@c\loc@Inl
+       %\vskip0.5\baselineskip
+    \fi
+	% insert picture based on PicPath and file name, scaled to \p@cwidth
+    \let\picfilecomm@nd=\XeTeXpicfile
+    \edef\f@lename{\csname param-2\endcsname}%
+    \edef\mirr@r{\csname param-9\endcsname}%
+    \expandafter\ch@ckpdf\f@lename..\endf@lename
+    \setbox0=\hbox to \sizem@ltiple\p@cwidth{\hss
+      \edef\l@gstring{{\the\im@gecount}{\f@lename}{\csname param-4\endcsname}{\csname param-5\endcsname}{\sizem@ltiple x\the\p@cwidth}}% Fully expand figure parameters, but leave page no. to be expanded later.
+      \x@\writefigp@gelog\x@{\l@gstring}%
+      \picfilecomm@nd "\the\PicPath\csname param-2\endcsname"
+                     width \sizem@ltiple\p@cwidth \csname param-8\endcsname\hss}%
+    \ifFigurePlaceholders % replace graphic with a frame and the file name
+      \setbox0=\vbox to \ht0{\offinterlineskip
+        \hrule height .2pt \kern-.2pt
+        \hbox to \wd0{\vrule height \ht0 width .2pt \hfil \vrule width .2pt}%
+        \vbox to 0pt{\kern-\ht0 \vss \hbox to \wd0{\hss\idf@nt
+          \csname param-2\endcsname\hss}\vss}%
+        \kern-.2pt \hrule height .2pt}%
+    \fi
+    % FIXME: Something like this?
+    \tempfalse
+    \def\pr@pic{}\def\p@stpic{}%
+    \x@\let\x@\pgn@\csname fig\the\im@gecount p@ge\endcsname
+    \ifx\mirr@r\empty\else
+      \ifx\pgn@\relax
+        \whichp@ge=\pageno
+        \trace{g}{Picture \the\im@gecount may not be mirrored properly}%
+      \else
+        \whichp@ge=\pgn@
+        \trace{g}{Picture \the\im@gecount was on page \pgn@ last time. [\the\pageno]}%
+      \fi
+      \trace{g}{Mirror: \mirr@r, \the\pageno}%
+      %THIS LOGIC is also non-effective. Need to re-write to use an aux file, probably.
+      \global\def\pr@pic{
+         \trace{g}{prepic: Mirror: \mirr@r, \the\pageno}%
+         \ifx\mirr@r\@dd\ifodd\whichp@ge\temptrue\fi\fi %Page number is frequently low by one or 2 when image is read. Needs external toc-style file.
+         \ifx\mirr@r\@ven\ifodd\whichp@ge\else\temptrue\fi\fi
+         \ifx\mirr@r\b@th\temptrue\fi
+         \iftemp\trace{g}{Mirrored image requested}%
+           \dimen0=\wd0\kern\dimen0\special{pdf:  begintransform}\special{x:scale -1 1}\fi
+      }%
+      \global\def\p@stpic{\iftemp\special{pdf: endtransform}\kern-\dimen0\fi
+      }%
+      \setbox0\hbox{\pr@pic\box0\p@stpic}%
+    \fi
+    \trace{g}{Picture height=\the\ht0, vs:\the\vsize, \the\partialLpenalty,  pg:\the\pagegoal, pt:\the\pagetotal, av:\the\availht}%
+    \ifpicNarrow
+      \ifx\pic@line\@lignRight
+        \hbox to \p@cinswid{\hss\box0}%
+      \else\ifx\pic@lign\@lignLeft
+          \hbox to \p@cinswid{\box0\hss}%
+        \else
+          \hbox to \p@cinswid{\hss\box0\hss}%
+        \fi
+      \fi
+    \else
+      \hbox to \p@cinswid{\hss\box0\hss}%
+    \fi
+    \xdef\r@f{\csname param-7\endcsname}% get reference
+    \stripspace\r@f\end/ \end/\relax\r@f \edef\r@f{\p@ram}% strip space
+    \edef\c@ption{\ifusfmthree\csname param-1\endcsname\else\csname param-6\endcsname\fi}% get caption
+    \trace{g}{Fig caption: [\c@ption] \ifx\r@f\relax\else(\r@f)\fi}%
+    \ifx\c@ption\empty\else
+      \everypar={}\let\par\endgraf
+      \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
+      \linepenalty=1000
+      \s@tbaseline{fig}%
+      % insert caption box
+      \noindent\leavevmode
+        \s@tfont{fig}\c@ption\unskip
+        \ifx\r@f\empty\else\nobreak\ (\r@f\unskip)\fi
+      \par
+    \fi
+    \vskip.5\baselineskip
+  }%
+  \trace{b}{BALANCE fig: height=\the\ht0: baselineskip=\the\baselineskip}%
+  % insert into proper insertion class for this position
+  \ifpicUsesIns
+    \trace{g}{Picture (\the\ht0,\the\dp0) goes to insert}%
+    \ifdiglot
+      \trace{g}{Other side: \the\otherinsht.}
+      \ifdim\ht0<\otherinsht
+        \ht0=0pt
+      \else
+        \advance\otherinsht by -\ht0 %can't do maths on \ht0, need to calculate backwards
+        \ht0=-\otherinsht
+      \fi
+    \fi
+    \trace{g}{Picture now \the\ht0}%
+    \insert\p@cins{\penalty10000 % make sure this picture does not float away to another page
+      \splittopskip\z@skip
+      \splitmaxdepth\maxdimen \floatingpenalty20000 % was zero
+      \gridp@ctrue\gridb@x0\gridp@cfalse% make sure we align to the page grid
+    }%
+  \else
+    % Calculate lines used for the picture
+    \dimen0=\ht0
+    \advance\dimen0 by \dp0
+    \advance\dimen0 by 0.5\baselineskip % Rounding correction
+    \divide\dimen0 by \baselineskip
+    \count255=\dimen0
+    \trace{g}{Inline picture takes \the\count255 lines}%
+    \ifx\picl@c\loc@Inl
+      \trace{g}{Picture is inline \ifhmode in HMODE\fi}%
+      \penalty10 % Allow the page to break
+      \ifpicNarrow
+        \ifx\pic@lign\@lignLeft
+          \setbox0\hbox to \colwidth{\box0\hss}\else\setbox0\hbox to \colwidth{\hss\box0}%
+        \fi
+      \fi
+      %\splittopskip\baselineskip
+      \vadjust pre {
+      \gridp@cfalse% Not true! It's not floating. 
+        \gridb@x0
+        \dimen9=\lastdepth
+        \kern\dimen9
+        \trace{g}{gridbox dp=\the\dimen9}%There's a skip at the bottom of the box, but somehow the depth is kept. Need to kill it.
+      \gridp@cfalse% make sure we align to the page grid
+      %\squashgridboxtrue
+      \penalty10}%
+    \fi
+    \ifx\picl@c\loc@Par
+      \trace{g}{Picture is post-paragraph}%
+      \global\setbox\picb@x\box0
+      \ifpicNarrow
+        \ifx\pic@lign\@lignLeft
+          \global\setbox\picb@x\hbox to \colwidth{\box\picb@x\hss}\trace{g}{Pic aligned left}%
+        \else
+          \global\setbox\picb@x\hbox to \colwidth{\hss\box\picb@x}\trace{g}{Pic aligned right}%
+        \fi
+      \fi
+      \edef\eotpn@me{at@ndofthispar\ifdiglot\ifdiglotL L\else R\fi\fi}% Which endofthispar macro?\emspace
+      \trace{g}{\eotpn@me\space defined}%
+      \x@\gdef\csname \eotpn@me\endcsname{
+        \relax
+        \penalty10 % Allow the page to break
+        %\gridp@cfalse% Not true. Not a floating image.
+           \gridb@x\picb@x
+           %\vskip-\prevdepth
+        %\gridp@cfalse % make sure we align to the page grid
+        \penalty10
+       }%
+       \def\temp{}%
+       \ifnum\c@tskip>1
+         \count255=\c@tskip
+         \loop\ifnum\count255>1
+          \edef\temp{D|\temp}%
+          \advance\count255 by -1
+         \repeat
+       \fi
+       \trace{g}{Delay for \eotpn@me set to \temp}%
+       \x@\xdef\csname \eotpn@me Delay\endcsname{\temp}%
+       \relax\relax
+    \fi
+    \ifx\picl@c\loc@Cut
+        \ifhmode
+           \ifx\prev@rsemode\empty
+             \trace{g}{Cutout in horizontal mode. forcing \m@rker}%
+             \csname\m@rker\endcsname
+           \else
+             \trace{g}{Cutout now in horizontal mode, but before this verse was started it was in vertical mode. Using \prev@rsemode and negative lineskip}%
+             \csname\prev@rsemode\endcsname
+             \vskip -\baselineskip
+           \fi
+        \fi 
+      \trace{g}{Picture is cutout}%
+      \dimen1=\baselineskip
+      \advance\count255 by 1
+      \multiply\dimen1 by \count255
+      \advance\dimen1 by \c@tskip\baselineskip
+      \dimen2=\wd0
+      \advance\dimen2 by 10pt
+      \dimen3=\curc@lsz
+      \advance\dimen3 by -\dimen2
+      \ifdim\dimen3<5em\message{*** Picture specification of \size@ption \sizem@ltiple (at \ch@pter:\v@rse) leaves \the\dimen3 \space for text. That's probably not enough.}\fi
+      \ifx\l@cspec\@lignLeft
+        \setbox\picb@x\hbox to 0pt {\lower\dimen1\box0\hss}%
+        \ht\picb@x=0pt 
+         \dp\picb@x=0pt
+        \vskip-\baselineskip  %Yuck
+        \box\picb@x %FIXME? Box here Adds vertical space
+        \trace{g}{leftcutout \the\dimen2, \c@tskip, \the\count255}%
+        \leftcutout{\the\dimen2}{\c@tskip}{\the\count255}%
+      \else
+        \ifx\l@cspec\@lignRight
+          \setbox\picb@x\hbox to \hsize{\hss\lower\dimen1\box0}%
+          \ht\picb@x=0pt 
+          \dp\picb@x=0pt
+          \vskip-\baselineskip %Yuck
+          \box\picb@x% FIXME? Box here adds vertical space
+          \trace{g}{rightcutout \the\dimen2, \c@tskip, \the\count255}%\
+          %\edef\t@mpd{\the\dimen2}%
+          \rightcutout{\the\dimen2}{\c@tskip}{\the\count255}%\emspace
+        \else
+          \message{*** Unknown cutout position \l@cspec, picture misplaced}%
+          \box0
+        \fi
+        \unskip
+      \fi
+    \fi
+   \fi
+ \fi% end \ifIncludeFigures
+}
+\newtoks\PicPath % directory containing picture files
+\newif\ifIncludeFigures \IncludeFigurestrue
+\newif\ifFigurePlaceholders
+
+\def\ch@ckpdf#1.#2.#3\endf@lename{\lowercase{\edef\@xt{#2}}%
+  \ifx\@xt\@pdf \let\picfilecomm@nd\XeTeXpdffile \fi}
+\def\@pdf{pdf}
+
+\def\picw@rning#1#2{\msg{converted picture placement "#1" to "#2" in single-column layout}}
+
+\def\size@COL{col}
+\def\size@SPAN{span}
+\def\loc@T{t}
+\def\loc@B{b}
+\def\loc@TL{tl}
+\def\loc@TR{tr}
+\def\loc@BL{bl}
+\def\loc@BR{br}
+\def\loc@Inl{h}% In-line graphic, not a float.
+\def\loc@Cut{c}% cutout
+\def\loc@Par{p}% post-paragrpah
+\def\@lignLeft{l}
+\def\@lignRight{r}
+\def\@dd{odd}
+\def\@ven{even}
+\def\b@th{both}
+
+\newbox\picb@x
+\newcount\p@ramnumber
+\newdimen\p@cinswid
+\newdimen\p@cwidth
+\newdimen\otherinsht % In a diglot, an insert doesn't affect availht if 
+
+\newif\ifmorep@rams
+\newif\ifpicp@gefile \picp@gefilefalse
+\newread\picl@ctest
+\newwrite\picp@ges
+
+\def\inputpicp@ges "#1"{%read picpages file.
+    \openin\picl@ctest="#1" % test to see if the file exists before reading it.
+    \ifeof\picl@ctest \let\n@xt=\relax
+    \else \def\n@xt{\input "#1"}%
+    \fi
+    \closein\picl@ctest
+    \n@xt
+}
+
+\def\openpicpages "#1"{%set up a .picpages file, and check for changes at the end od the run.
+  \ifpicp@gefile\else
+    \inputpicp@ges "#1"
+    \picp@gefiletrue
+    \addtoendhooks{\finishpicp@ges "#1"}
+    \openout\picp@ges="#1" % test to see if the file exists
+  \fi
+}
+\def\l@stfignum{0}
+\def\finishpicp@ges "#1"{\immediate\closeout\picp@ges % close the picpages file, then re-read it and check for changes
+   \tempfalse
+   \trace{g}{lastfignum was \l@stfignum, \the\im@gecount}%
+   \ifnum\im@gecount=\l@stfignum\else
+     \temptrue
+     \trace{g}{Number of images has changed}%
+   \fi
+   \let\figonpage=\checkfigpage
+   \inputpicp@ges "#1"
+   \iftemp\message{}\message{*** Figures have changed. It may be necessary to re-run the job}\fi% 
+}
+
+\def\writefigp@gelog#1{
+  \write\picp@ges{\string\figonpage{\the\pageno}#1}%
+}
+
+%: `\figonpage` gets written to the picpages auxiliary file at insert use. 
+% #1 ~ Page number
+% #2 ~ Figure number
+% #3 ~ File name
+% #4 ~ pgpos parameter
+% #5 ~ Copyright info from \fig line
+% #6 ~ Anything else that might affect page breaking or alignment (e.g. size, rotation)
+\def\figonpage#1#2#3#4#5#6{\x@\gdef\csname fig#2p@ge\endcsname{#1}%Page number
+\x@\gdef\csname fig#2p@ram\endcsname{#3#4#6}% Any other parameters that might affect page-breaking.
+  \xdef\l@stfignum{#2}%
+%\trace{P}{Picture "#3" turned up on page #1}%
+}%
+\def\checkfigpage#1#2#3#4#5#6{
+  \edef\ch@ck{#3#4#6}%
+  \trace{g}{Comparing "\ch@ck" with "\csname fig#2p@ram\endcsname"}%
+  \x@\ifx\csname fig#2p@ram\endcsname\ch@ck\else\trace{g}{Figure #2 parameters changed}
+   %\temptrue %Probably don't matter on their own, but could change pagination. Significant pagination changes should be caught by other tests.
+  \fi
+  \edef\ch@ck{#1}
+  \x@\ifx\csname fig#2p@ge\endcsname\ch@ck\else\trace{g}{Figure #2 page changed from \ch@ck \space to \csname fig#2p@ge\endcsname}\temptrue\fi
+}

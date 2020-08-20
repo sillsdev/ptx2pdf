@@ -208,7 +208,7 @@ to mirror the picture. The possible values are:
 - `odd` Mirror on odd pages
 - `even` Mirror on even pages
 - `both` Mirror on all pages 
-NB: the odd/even behaviour is not reliable at the moment..
+NB: the odd/even behaviour requires a second XeTeX run to get things right.
 
 ## Piclist files
 
