@@ -1122,6 +1122,7 @@ class GtkViewModel(ViewModel):
 
     def onKeepTemporaryFilesClicked(self, c_keepTemporaryFiles):
         dir = self.working_dir
+        warnings = []
         self.builder.get_object("gr_debugTools").set_sensitive(self.get("c_keepTemporaryFiles"))
         if self.builder.get_object("nbk_Main").get_current_page() == 10:
             if not self.get("c_keepTemporaryFiles"):
@@ -1141,16 +1142,19 @@ class GtkViewModel(ViewModel):
                             if re.search(pattern, f):
                                 try:
                                     os.remove(os.path.join(dir, f))
-                                except OSError:
-                                    self.doError("Warning: Could not delete temporary file.", secondary = "File: " + delfname)
-                    for p in ["tmpPics", "tmpPicLists", "PicLists", "AdjLists"]: # The last 2 can be removed from the code before v1.0 is released.
+                                except (OSError, PermissionError):
+                                    warnings += [f]
+                    for p in ["tmpPics", "tmpPicLists"]:
                         path2del = os.path.join(dir, p)
                         # Make sure we're not deleting something closer to Root!
                         if len(path2del) > 30 and os.path.exists(path2del):
                             try:
                                 rmtree(path2del)
-                            except OSError:
-                                print("Error Deleting temporary folder: {}".format(path2del))
+                            except (OSError, PermissionError):
+                                warnings += [path2del]
+                    if len(warnings):
+                        self.printer.doError("Warning: Could not delete some file(s) or folders(s):",
+                                secondary="\n".join(warnings))
 
     def onRefreshFontsclicked(self, btn):
         fc = fccache()

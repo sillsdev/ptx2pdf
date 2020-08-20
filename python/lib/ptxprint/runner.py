@@ -113,7 +113,22 @@ elif sys.platform == "win32":
         return True
 
     def openkey(path):
-        return winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\\" + path.replace("/", "\\"))
+        try:
+            k = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\\" + path.replace("/", "\\"))
+        except FileNotFoundError:
+            txt1 = "Unable to locate Registry Key for Paratext installation"
+            txt2 = "Sorry - PTXprint cannot work unless Paratext 8 (or later) is installed"
+            print("Fatal Error: {}\n{}".format(txt1, txt2))
+            dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
+                     buttons=Gtk.ButtonsType.OK, text=txt1)
+            dialog.set_title("PTXprint: Fatal Error")
+            dialog.format_secondary_text(txt2)
+            dialog.set_keep_above(True)
+            dialog.run()
+            dialog.set_keep_above(False)
+            dialog.destroy()
+            exit(1)
+        return k
 
     def queryvalue(base, value):
         return winreg.QueryValueEx(base, value)[0]

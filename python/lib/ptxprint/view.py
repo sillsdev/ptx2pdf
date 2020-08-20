@@ -577,7 +577,7 @@ class ViewModel:
             if 'dest file' not in v:
                 missingPics.append(v['src'])
                 continue
-            if 'media' in v and 'p' not in v['media']:
+            if 'media' in v and len(v['media']) and 'p' not in v['media']:
                 continue
             if not isdblcol: # Single Column layout so change all tl+tr > t and bl+br > b
                 if 'pgpos' in v:
@@ -695,7 +695,7 @@ class ViewModel:
                 dat = inf.read()
                 blocks = ["0"] + re.split(r"\\c\s+(\d+)", dat)
                 for c, t in zip(blocks[0::2], blocks[1::2]):
-                    m = re.findall(r"(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+)?\\fig\*", t)
+                    m = re.findall(r"(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\\fig\*", t)
                     if len(m):
                         for f in m:     # usfm 2
                             r = "{}{} {}.{}".format(bk, suffix, c, f[0])
@@ -1167,4 +1167,3 @@ class ViewModel:
         configstr.close()
         for k, v in tmpcfg.items():
             self.set(k, v)
-
