@@ -8,7 +8,7 @@ __author__ = 'Tim Eves <tim_eves@sil.org>'
 __history__ = '''
     20101026 - tse - rewrote to use new palaso.sfm module
 '''
-import ptxprint.sfm as sfm
+from . import sfm
 import warnings
 from functools import reduce
 

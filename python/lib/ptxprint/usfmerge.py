@@ -5,6 +5,7 @@ from ptxprint.sfm import usfm
 from ptxprint.sfm import style
 import argparse, difflib, sys
 from enum import Enum
+from itertools import groupby
 
 debugPrint = False
 
@@ -16,7 +17,7 @@ class ChunkType(Enum):
     BODY = 5
 
 _textype_map = {
-    "Chapter":   ChunkType.CHAPTER,
+    "ChapterNumber":   ChunkType.CHAPTER,
     "Section":   ChunkType.HEADING,
     "Title":     ChunkType.TITLE,
     "Other":     ChunkType.INTRO,
@@ -46,11 +47,13 @@ class Chunk(list):
     @property
     def ident(self):
         if len(self) == 0:
-            return ("", 0, 0, 0, 0)
-        return (self.type.name, self.chap, self.verse, self.end, self.pnum)
+            return ("", 0, 0) # , 0, 0)
+        return (self.type.name, self.chap, self.verse) # , self.end, self.pnum)
 
     def __str__(self):
-        return "".join(str(x) for x in self)
+        #return "".join(repr(x) for x in self)
+        #return "".join(sfm.generate(x) for x in self)
+        return sfm.generate(self)
 
 
 nestedparas = set(('io2', 'io3', 'io4', 'toc2', 'toc3', 'ili2', 'cp', 'cl'))
@@ -136,172 +139,122 @@ class Collector:
         return currChunk
 
     def reorder(self):
+        # move \c \s to \s \c
         for i in range(1, len(self.acc)):
             if self.acc[i-1].type == ChunkType.CHAPTER and self.acc[i].type == ChunkType.HEADING:
                 self.acc[i-1], self.acc[i] = self.acc[i], self.acc[i-1]
+        # merge \c with body chunk following
+        for i in range(1, len(self.acc)):
+            if self.acc[i-1].type == ChunkType.CHAPTER and self.acc[i].type == ChunkType.BODY:
+                self.acc[i-1].extend(self.acc[i])
+                self.acc[i-1].type = self.acc[i].type
+                self.acc[i].deleteme = True
+                if self.acc[i][0].name == "nb" and i > 1:
+                    self.acc[i-2].extend(self.acc[i-1])
+                    self.acc[i-1].deleteme = True
+        self.acc = [x for x in self.acc if not getattr(x, 'deleteme', False)]
 
 
-def merge_stylesheet(base, extras):
-    for k, v in extras.items():
-        if k in base:
-            base[k].update(v)
-        else:
-            base[k] = v
-    return base
-
-def alignChunks(pchunks, schunks, pkeys, skeys, filt=None, fns=[], depth=0):
-    pairs = []
-    if filt is not None:
-        pk = [filt(x) for x in pkeys]
-        sk = [filt(x) for x in skeys]
+def appendpair(pairs, ind, chunks):
+    if len(pairs) and pairs[-1][ind] is not None:
+        lastp = pairs[-1][ind]
+        lastt = lastp.type
+        end = None
+        found = False
+        for i, c in enumerate(chunks):
+            if c.type == lastt:
+                found = True
+                end = i
+            elif found:
+                break
+        if end is not None:
+            for c in chunks[:end+1]:
+                lastp.extend(c)
+            chunks = chunks[end+1:]
+    if ind == 1:
+        pairs.extend([[None, c] for c in chunks])
     else:
-        pk = pkeys
-        sk = skeys
-    diff = difflib.SequenceMatcher(None, pk, sk)
+        pairs.extend([[c, None] for c in chunks])
+
+def appendpairs(pairs, pchunks, schunks):
+    if len(pairs) and pairs[-1][0] is not None and pairs[-1][1] is not None:
+        lastp = pairs[-1][0]
+        lasts = pairs[-1][1]
+        lastt = lastp.type
+        if lasts.type == lastt:
+            while len(pchunks) and pchunks[0].type == lastt:
+                lastp.extend(pchunks.pop(0))
+            while len(schunks) and schunks[0].type == lastt:
+                lasts.extend(schunks.pop(0))
+    if len(pchunks):
+        pc = pchunks[0]
+        for c in pchunks[1:]:
+            pc.extend(c)
+    else:
+        pc = None
+    if len(schunks):
+        sc = schunks[0]
+        for c in schunks[1:]:
+            sc.extend(c)
+    else:
+        sc = None
+    pairs.append([pc, sc])
+
+def alignChunks(pchunks, schunks, pkeys, skeys):
+    pairs = []
+    diff = difflib.SequenceMatcher(None, pkeys, skeys)
     for op in diff.get_opcodes():
         (action, ab, ae, bb, be) = op
         if debugPrint:
-            print("    "*depth, op, debstr(pk[ab:ae]), debstr(sk[bb:be]))
+            print(op, debstr(pkeys[ab:ae]), debstr(skeys[bb:be]))
         if action == "equal":
             pairs.extend([[pchunks[ab+i], schunks[bb+i]] for i in range(ae-ab)])
         elif action == "delete":
-            if len(pairs):
-                pairs[-1][0].extend(pchunks[ab:ae])
-            else:
-                pairs.extend([[pchunks[ab+i], ""] for i in range(ae-ab)])
+            appendpair(pairs, 0, pchunks[ab:ae])
         elif action == "insert":
-            if len(pairs):
-                pairs[-1][1].extend(schunks[bb:be])
-            else:
-                pairs.extend([["", schunks[bb+i]] for i in range(be-bb)])
+            appendpair(pairs, 1, schunks[bb:be])
         elif action == "replace":
-            if len(fns):        # chain sub-alignment
-                pairs.extend(fns[0](pchunks[ab:ae], schunks[bb:be], pkeys[ab:ae], skeys[bb:be], fns=fns[1:], depth=depth+1))
-            else:
-                for i in range(ae-ab):
-                    pairs += [[pchunks[ab+i], ""]] + [["", schunks[bb+i]]]
+            pgk, pgg = zip(*[(k, list(g)) for k, g in groupby(pchunks[ab:ae], key=lambda c:c.type)])
+            sgk, sgg = zip(*[(k, list(g)) for k, g in groupby(schunks[bb:be], key=lambda c:c.type)])
+            diffg = difflib.SequenceMatcher(a=pgk, b=sgk)
+            for opg in diffg.get_opcodes():
+                (actiong, abg, aeg, bbg, beg) = opg
+                if debugPrint:
+                    print("--- ", opg, debstr(pgk[abg:aeg]), debstr(sgk[bbg:beg]))
+                if actiong == "equal":
+                    appendpairs(pairs, sum(pgg[abg:aeg], []), sum(sgg[bbg:beg], []))
+                elif action == "delete":
+                    appendpair(pairs, 0, sum(pgg[abg:aeg], []))
+                elif action == "insert":
+                    appendpair(pairs, 0, sum(sgg[bbg:beg], []))
+                elif action == "replace":
+                    for zp in zip(range(abg, aeg), range(bbg, beg)):
+                        appendpairs(pairs, pgg[zp[0]], sgg[zp[1]])
+                    sg = bbg + aeg - abg
+                    if sg < beg:
+                        appendpair(pairs, 1, sum(sgg[sg:beg], []))
+                    sg = abg + beg - bbg
+                    if sg < aeg:
+                        appendpair(pairs, 0, sum(pgg[sg:aeg], []))
     return pairs
 
-def alignFilter(km):
-    """ Returns an alignment function that calls the km filter on each key """
-    def g(pchunks, schunks, pkeys, skeys, fns=[], depth=0):
-        return alignChunks(pchunks, schunks, pkeys, skeys, filt=km, fns=fns, depth=depth)
-    return g
-
-def pairchunks(pchunks, schunks, pkeys, skeys, starti, i, startj, j, fns=[], depth=0):
-    lchunks = pchunks[starti:i] if i > starti else []
-    lkeys = pkeys[starti:i] if i > starti else []
-    rchunks = schunks[startj:j] if j > startj else []
-    rkeys = skeys[startj:j] if j > startj else []
-    if not len(lchunks) and not len(rchunks):
-        return []  
-    if debugPrint:
-        print("    "*depth, ("group", starti, i, startj, j), debstr(lkeys), debstr(rkeys))
-    if len(fns):
-        return fns[0](lchunks, rchunks, lkeys, rkeys, fns=fns[1:], depth=depth+1)
-    else:
-        return [["".join(str(x) for x in lchunks), "".join(str(x) for x in rchunks)]]
-
-def groupChunks(pchunks, schunks, pkeys, skeys, texttype, fns=[], depth=0):
-    pairs = []
-    i = 0
-    starti = 0
-    j = 0
-    startj = 0
-    currt = None
-    maxpkey = len(pkeys)
-    maxskey = len(skeys)
-    while i < len(pkeys) and j < len(skeys):
-        curri = i
-        currj = j
-        boundarymerge = False
-        (mi, ci, vi, ei, pi) = pkeys[i].split("_")
-        (mj, cj, vj, ej, pj) = skeys[j].split("_")
-        if (texttype(mi) != currt and currt is not None) or (currt is None and texttype(mi) != texttype(mj)):
-            # scan for first skeys[j+1:] that matches type with pkeys[i]
-            jt = j
-            while jt < maxskey:
-                (mjt, cjt, vjt, ejt, pjt) = skeys[jt].split("_")
-                if texttype(mi) == texttype(mjt):
-                    break
-                jt += 1
-            j = jt
-            currt = texttype(mi)
-            boundarymerge = True
-        elif texttype(mj) != currt and currt is not None:
-            # scan for first pkeys[i+1:] that matches type with skeys[k]
-            it = i
-            while it < maxpkey:
-                (mit, cit, cit, eit, pit) = pkeys[it].split("_")
-                if texttype(mj) == texttype(mit):
-                    break
-                it += 1
-            i = it
-            currt = texttype(mj)
-            boundarymerge = True
-        elif int(ei) != int(ej):
-            # scan forward until both end verses are the same so long as they have the same texttype
-            currm = max(int(ei), int(ej))
-            lasti, lastj = i, j
-            lastc = int(ci)
-            while j < maxskey and i < maxpkey:
-                if int(ej) <= currm and j < maxskey-1:
-                    j += 1
-                    laste = int(ej)
-                    (mj, cj, vj, ej, pj) = skeys[j].split("_")
-                    if texttype(mj) != texttype(mi) or int(cj) > lastc or (laste == currm and int(ej) > currm):
-                        j -= 1
-                        ej = laste
-                    else:
-                        currm = max(int(ei), int(ej))
-                if int(ei) <= currm and i < maxpkey-1:
-                    i += 1
-                    laste = int(ei)
-                    (mi, ci, vi, ei, pi) = pkeys[i].split("_")
-                    if texttype(mi) != texttype(mj) or int(ci) > lastc or (laste == currm and int(ei) > currm):
-                        i -= 1
-                        ei = laste
-                    else:
-                        currm = max(int(ei), int(ej))
-                if lasti == i and lastj == j:
-                    break
-                lasti, lastj = i, j
-            j += 1
-            i += 1
-            boundarymerge = True
-
-        if boundarymerge:
-            pairs.extend(pairchunks(pchunks, schunks, pkeys, skeys, starti, i, startj, j, fns=[], depth=depth))
-            if i > starti:
-                starti = i
-            if j > startj:
-                startj = j
-        if i <= curri and j <= currj:
-            i = curri + 1
-        if currt is None:
-            currt = texttype(mi)
-
-    if starti < len(pkeys) or startj < len(skeys):
-        pairs.extend(pairchunks(pchunks, schunks, pkeys, skeys, starti, len(pkeys), startj, len(skeys), fns=fns, depth=depth))
-    return pairs
-
-def ptypekey(s, styles):
-    """ Create a key that replaces a marker by its TextType """
-    p = s[:s.find("_")]
-    t = styles.get(p, {'TextType': 'other'}).get('TextType').lower()
-    return t + s[s.find("_"):]
+def appendsheet(fname, sheet):
+    if os.path.exists(fname):
+        with open(fname) as s:
+            sheet = style.update_sheet(sheet, style.parse(s))
+    return sheet
 
 def usfmerge(infilea, infileb, outfile, stylesheetsa=[], stylesheetsb=[], fsecondary=False, debug=False):
     global debugPrint, debstr
-    debugPrint = True
+    debugPrint = debug
     stylesheeta = usfm._load_cached_stylesheet('usfm.sty')
-    stylesheetb = stylesheeta.copy()
+    stylesheetb = {k: v.copy() for k, v in stylesheeta.items()}
     if debugPrint:
         print(stylesheetsa, stylesheetsb)
     for s in stylesheetsa:
-        stylesheeta = style.parse(open(s), base=stylesheeta)
+        stylesheeta = appendsheet(s, stylesheeta)
     for s in stylesheetsb:
-        stylesheetb = style.parse(open(s), base=stylesheetb)
+        stylesheetb = appendsheet(s, stylesheetb)
 
     def texttype(m):
         res = stylesheet.get(m, {'TextType': 'other'}).get('TextType').lower()
@@ -310,7 +263,6 @@ def usfmerge(infilea, infileb, outfile, stylesheetsa=[], stylesheetsb=[], fsecon
         return res
 
     debstr = lambda s: s
-    #debstr = lambda s: ["{}({})".format(k, texttype(k[:k.find("_")])) for k in s]
 
     def myGroupChunks(*a, **kw):
         return groupChunks(*a, texttype, **kw)
@@ -326,22 +278,29 @@ def usfmerge(infilea, infileb, outfile, stylesheetsa=[], stylesheetsb=[], fsecon
     secondchunks = {c.ident: c for c in scoll.acc}
     mainkeys = ["_".join(str(x) for x in c.ident) for c in pcoll.acc]
     secondkeys = ["_".join(str(x) for x in c.ident) for c in scoll.acc]
-    pairs = alignChunks(pcoll.acc, scoll.acc, mainkeys, secondkeys,
-        fns=[myGroupChunks, alignFilter(lambda s:ptypekey(s, stylesheet)),
-             alignFilter(lambda s:s[:s.find("_")])])
+    pairs = alignChunks(pcoll.acc, scoll.acc, mainkeys, secondkeys)
 
     if outfile is not None:
         outf = open(outfile, "w", encoding="utf-8")
     else:
         outf = sys.stdout
 
-    for p in pairs:
-        if not len(p[0]) and not len(p[1]):
-            continue
-        outf.write("\\lefttext\n")
-        outf.write(str(p[0]))
-        outf.write("\\p\n")
-        outf.write("\\righttext\n")
-        outf.write(str(p[1]))
-        outf.write("\\p\n")
+    isright = True
+    for i, p in enumerate(pairs):
+        if p[0] is not None and len(p[0]):
+            if isright:
+                outf.write("\\lefttext\n")
+                isright = False
+            outf.write(str(p[0]))
+            outf.write("\\p\n")
+        elif i != 0 and isright:
+            outf.write("\\nolefttext\n")
+        if p[1] is not None and len(p[1]):
+            if not isright:
+                outf.write("\\righttext\n")
+                isright = True
+            outf.write(str(p[1]))
+            outf.write("\\p\n")
+        elif not isright:
+            outf.write("\\norighttext\n")
 

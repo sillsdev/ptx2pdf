@@ -19,15 +19,16 @@ __history__ = '''
         boolean false descriptions 'off','no' etc.
         Make the field value parser accept empty field values.
 '''
-import collections
-import ptxprint.sfm as sfm
+from .. import sfm
 from functools import partial, reduce
 from itertools import chain
-from ptxprint.sfm import level
+from . import level
+from typing import NamedTuple, Mapping
 
 
-class schema(collections.namedtuple('schema', 'start fields')):
-    pass
+class schema(NamedTuple):
+    start: str
+    fields: Mapping
 
 
 _schema = schema
@@ -149,11 +150,10 @@ class parser(sfm.parser):
     ...
     SyntaxError: <string>: line 1,1: Marker toc1 defintion missing: Name
     '''
-    def __init__(self, source, schema, error_level=level.Content, base=None):
+    def __init__(self, source, schema, error_level=level.Content):
         if not isinstance(schema, _schema):
             raise TypeError(f"arg 2 must a \'schema\' not {schema!r}")
-        self._base = {None: {}} if base is None else base
-        self._mapping_type = type(next(iter(self._base.values()), {}))
+        self._mapping_type = type(schema.fields)
         self._schema = schema
         default_meta = self._mapping_type(super().default_meta)
         metas = self._mapping_type({k: default_meta for k in schema.fields})
@@ -167,8 +167,6 @@ class parser(sfm.parser):
         def record(e):
             rec = self._mapping_type(e)
             rec_ = proto.copy()
-            if self._base is not None:
-                rec_ = self._base.get(rec[start], rec_)
             rec_.update(rec)
             for field, err in filter(lambda i: isinstance(i[1], ErrorLevel),
                                      rec_.items()):

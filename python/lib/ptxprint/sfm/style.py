@@ -18,52 +18,19 @@ __email__ = "tim_eves@sil.org"
 
 import re
 
-import ptxprint.sfm.records as records
+from . import records
 import warnings
 from collections import abc
-from ptxprint.sfm.records import sequence, unique, level
-from ptxprint.sfm.records import UnrecoverableError
+from .records import sequence, unique, level
+from .records import UnrecoverableError
 
 
-class _absent:
-    def __init__(self, def_val):
-        self.value = def_val
-
-
-_fields = {
-    'Marker': (str, UnrecoverableError(
-                        'Start of record marker: {0} missing')),
-    'Endmarker':      (str, _absent(None)),
-    'Name':            (str,   _absent(None)),
-    'Description':     (str,   _absent(None)),
-    'OccursUnder':     (unique(sequence(str)), _absent({None})),
-    # 'Rank':            (int,   None),
-    'TextProperties':  (unique(sequence(str)), _absent({})),
-    'TextType':        (str,   _absent('Unspecified')),
-    'StyleType':       (str,   _absent(None)),
-    # 'FontSize':        (int,   None),
-    # 'Regular':         (flag,  False),
-    # 'Bold':            (flag,  False),
-    # 'Italic':          (flag,  False),
-    # 'Underline':       (flag,  False),
-    # 'Superscript':     (flag,  False),
-    # 'Smallcaps':       (flag,  False),
-    # 'Justification':   (str,   'Left'),
-    # 'SpaceBefore':     (int,   0),
-    # 'SpaceAfter':      (int,   0),
-    # 'FirstLineIndent': (float, 0),
-    # 'LeftMargin':      (float, 0),
-    # 'RightMargin':     (float, 0),
-    # 'Color':           (int,   0),
-}
 _comment = re.compile(r'\s*#.*$')
 _markers = re.compile(r'^\s*\\[^\s\\]+\s')
 
 
 def _munge_records(rs):
-    for r in rs:
-        tag = r.pop('Marker').lstrip()
-        yield (tag, r)
+    yield from ((r.pop('Marker').lstrip(), r) for r in rs)
 
 
 class marker(dict):
@@ -102,7 +69,35 @@ class marker(dict):
         super().update({k.casefold(): v for k, v in kwarg.items()})
 
 
-def parse(source, error_level=level.Content, base=None):
+_fields = marker({
+    'Marker': (str, UnrecoverableError(
+                        'Start of record marker: {0} missing')),
+    'Endmarker':      (str, None),
+    'Name':            (str,   None),
+    'Description':     (str,   None),
+    'OccursUnder':     (unique(sequence(str)), {None}),
+    # 'Rank':            (int,   None),
+    'TextProperties':  (unique(sequence(str)), {}),
+    'TextType':        (str,   'Unspecified'),
+    'StyleType':       (str,   None),
+    # 'FontSize':        (int,   None),
+    # 'Regular':         (flag,  False),
+    # 'Bold':            (flag,  False),
+    # 'Italic':          (flag,  False),
+    # 'Underline':       (flag,  False),
+    # 'Superscript':     (flag,  False),
+    # 'Smallcaps':       (flag,  False),
+    # 'Justification':   (str,   'Left'),
+    # 'SpaceBefore':     (int,   0),
+    # 'SpaceAfter':      (int,   0),
+    # 'FirstLineIndent': (float, 0),
+    # 'LeftMargin':      (float, 0),
+    # 'RightMargin':     (float, 0),
+    # 'Color':           (int,   0),
+})
+
+
+def parse(source, error_level=level.Content):
     '''
     >>> from pprint import pprint
     >>> r = parse(r"""
@@ -174,23 +169,85 @@ def parse(source, error_level=level.Content, base=None):
         recs = iter(rec_parser)
         next(recs, None)
         res = dict(_munge_records(recs))
-    if base is not None:
-        base.update({n: (_merge_record(base[n], r) if n in base else r)
-                     for n, r in res.items()})
-        res = base
     _reify(res)
     return res
-
-
-def _merge_record(old, new):
-    old.update({f: v for f, v in new.items()
-               if f not in old or not isinstance(v, _absent)})
 
 
 def _reify(sheet):
     for r in sheet.values():
         for f, v in r.items():
-            if isinstance(v, _absent):
-                r[f] = v.value
             if isinstance(v, records.sfm.text):
                 r[f] = str(v)
+
+
+def update_sheet(sheet, ammendments={}, **kwds):
+    """
+    Merge update an existing sheet with records from a supplied dictionary and
+    any keyword arguments as well. Only non defaulted fields for each record
+    in ammendments or keyword args will overrite the fields in any marker
+    records with matching marker names.
+    This updated sheet is also returned.
+
+    sheet: The sheet to be updated.
+    ammendments: A Mapping from marker names to marker records continaing
+        the fields to be updated.
+    **kwds: marker id keywords assigned to marker records continaing
+        the fields to be updated.
+    >>> from pprint import pprint
+    >>> base = parse(r'''
+    ...              \\Marker test
+    ...              \\Name test - A test'''.splitlines(True))
+    >>> pprint(base)
+    {'test': {'description': None,
+              'endmarker': None,
+              'name': 'test - A test',
+              'occursunder': {None},
+              'styletype': None,
+              'textproperties': {},
+              'texttype': 'Unspecified'}}
+    >>> pprint(update_sheet(base,
+    ...        test={'OccursUnder': {'p'}, 'FontSize': '12'},
+    ...        test2={'Name': 'test2 - new marker'}))
+    {'test': {'description': None,
+              'endmarker': None,
+              'fontsize': '12',
+              'name': 'test - A test',
+              'occursunder': {'p'},
+              'styletype': None,
+              'textproperties': {},
+              'texttype': 'Unspecified'},
+     'test2': {'Name': 'test2 - new marker'}}
+    >>> update = parse(r'''
+    ...                \\Marker test
+    ...                \\Name test - A test
+    ...                \\TextType Note'''.splitlines(True))
+    >>> pprint(update)
+    {'test': {'description': None,
+              'endmarker': None,
+              'name': 'test - A test',
+              'occursunder': {None},
+              'styletype': None,
+              'textproperties': {},
+              'texttype': 'Note'}}
+    >>> pprint(update_sheet(base, update))
+    {'test': {'description': None,
+              'endmarker': None,
+              'fontsize': '12',
+              'name': 'test - A test',
+              'occursunder': {'p'},
+              'styletype': None,
+              'textproperties': {},
+              'texttype': 'Note'},
+     'test2': {'Name': 'test2 - new marker'}}
+    """
+    ammendments.update(**kwds)
+    for marker, new_meta in ammendments.items():
+        try:
+            meta = sheet[marker]
+            meta.update(
+                fv for fv in new_meta.items()
+                if fv[0] not in _fields or fv[1] != _fields[fv[0]][1])
+        except KeyError:
+            sheet[marker] = new_meta
+
+    return sheet

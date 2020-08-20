@@ -125,9 +125,7 @@ class element(list):
             return False
         return (self.name == rhs.name
                 and self.args == rhs.args
-                and (not self.meta or not rhs.meta or self.meta == rhs.meta)
-                and (not self.annotations or not rhs.annotations
-                     or self.meta == rhs.meta)
+                and (not (self.meta and rhs.meta) or self.meta == rhs.meta)
                 and super().__eq__(rhs))
 
     def __str__(self):
@@ -466,7 +464,7 @@ class parser(collections.Iterable):
     ...     pprint(list(parser(doc.splitlines(True), tss)))
     Traceback (most recent call last):
     ...
-    SyntaxWarning: <string>: line 7,2: unknown marker \\mt1: not in styesheet
+    SyntaxWarning: <string>: line 7,2: unknown marker \\mt1: not in stylesheet
     '''
 
     default_meta = _default_meta
@@ -568,7 +566,7 @@ class parser(collections.Iterable):
             else:
                 self._error(
                     level.Marker,
-                    'unknown marker \\{token}: not in styesheet',
+                    'unknown marker \\{token}: not in stylesheet',
                     tag)
             return self._default_meta
 
@@ -765,7 +763,7 @@ def smap(elementf, textf, trees):
     takes 2 functions for handling nodes and leaves idependantly.
 
     elementf: A callable that accepts 3 parameters and returns a tuple of
-            (name, args, children)      
+            (name, args, children)
         name: The current element name
         args: The current element argument list
         body: The elements mapped children.
@@ -782,9 +780,10 @@ def smap(elementf, textf, trees):
     ... over a line break\\marker'''.splitlines(True)
     >>> with warnings.catch_warnings():
     ...     warnings.simplefilter("ignore")
-    ...     print(generate(smap(lambda n, a, b: (n.upper(), [x.upper() for x in a], b),
-    ...                         lambda t: t.upper(),
-    ...                         parser(doc))))
+    ...     print(generate(smap(
+    ...         lambda n, a, b: (n.upper(), [x.upper() for x in a], b),
+    ...         lambda t: t.upper(),
+    ...         parser(doc))))
     \\LONELY
     \\SFM TEXT
     BARE TEXT
@@ -870,8 +869,12 @@ def generate(doc):
     """
     Format a document inserting line separtors after paragraph markers where
     the first element has children.
-    >>> doc = '\\\\id TEST\\n\\\\mt \\\\p A paragraph' \\
-    ...       ' \\\\qt A \\\\+qt quote\\\\+qt*\\\\qt*'
+
+    trees: An iterable over element trees, such as the output of parser().
+
+    >>> doc = r'\\id TEST' '\\n' \\
+    ...       r'\\mt \\p A paragraph' \\
+    ...       r' \\qt A \\+qt quote\\+qt*\\qt*'
     >>> tss = parser.extend_stylesheet({}, 'id', 'mt', 'p', 'qt')
     >>> tss['mt'].update(OccursUnder={'id'},StyleType='Paragraph')
     >>> tss['p'].update(OccursUnder={'mt'}, StyleType='Paragraph')
@@ -889,10 +892,12 @@ def generate(doc):
     """
 
     def ge(e, a, body):
-        styletype = e.meta.get('StyleType')
+        styletype = e.meta['StyleType']
         sep = ''
         if len(e) > 0:
-            if styletype == 'Paragraph' and isinstance(e[0], element):
+            if styletype == 'Paragraph' \
+                    and isinstance(e[0], element) \
+                    and e[0].meta['StyleType'] == 'Paragraph':
                 sep = os.linesep
             elif not body.startswith(('\r\n', '\n')):
                 sep = ' '
@@ -901,9 +906,9 @@ def generate(doc):
         elif styletype == 'Paragraph':
             body = os.linesep
         nested = '+' if 'nested' in e.annotations else ''
-        end = 'implicit-closed' in e.annotations    \
-              or e.meta.get('Endmarker', '')        \
-              or ''
+        end = ''
+        if 'implicit-closed' not in e.annotations:
+            end = e.meta.get('Endmarker', '') or ''
         end = end and f"\\{nested}{end}"
 
         return f"{a}\\{nested}{' '.join([e.name] + e.args)}{sep}{body}{end}" \

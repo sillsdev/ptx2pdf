@@ -19,10 +19,10 @@ __history__ = '''
     20101109 - tse - Ensure cached usfm.sty is upto date after package code
         changes.
 '''
-from ptxprint.sfm import level, style
+from . import level, style
 from itertools import chain
 from functools import reduce
-import ptxprint.sfm as sfm
+from .. import sfm
 import bz2
 import contextlib
 import operator
@@ -32,12 +32,19 @@ import re
 import site
 
 _PALASO_DATA = os.path.join(
-        os.path.expanduser(os.path.dirname(os.path.normpath(site.USER_SITE))),
-        'palaso-python', 'sfm')
+    site.getuserbase(),
+    'palaso-python', 'sfm')
+_package_dir = os.path.dirname(__file__)
 
 
 def _check_paths(pred, paths):
     return next(filter(pred, map(os.path.normpath, paths)), None)
+
+
+def _source_path(path):
+    return _check_paths(os.path.exists,
+                        [os.path.join(_PALASO_DATA, path),
+                         os.path.join(_package_dir, path)])
 
 
 def _newer(cache, benchmark):
@@ -49,18 +56,14 @@ def _is_fresh(cached_path, benchmarks):
 
 
 def _cached_stylesheet(path):
-    package_dir = os.path.dirname(__file__)
-    source_path = _check_paths(os.path.exists,
-                               [os.path.join(_PALASO_DATA, path),
-                                os.path.join(package_dir, path)])
-
     cached_path = os.path.normpath(os.path.join(
                         _PALASO_DATA,
                         path+os.extsep+'cz'))
+    source_path = _source_path(path)
     if os.path.exists(cached_path):
         import glob
         if _is_fresh(cached_path, [source_path]
-                     + glob.glob(os.path.join(package_dir, '*.py'))):
+                     + glob.glob(os.path.join(_package_dir, '*.py'))):
             return cached_path
     else:
         path = os.path.dirname(cached_path)
@@ -75,19 +78,24 @@ def _cached_stylesheet(path):
 
 
 def _load_cached_stylesheet(path):
-    cached_path = _cached_stylesheet(path)
     try:
+        if not site.getuserbase():
+            raise FileNotFoundError
+        cached_path = _cached_stylesheet(path)
         try:
-            with contextlib.closing(bz2.BZ2File(cached_path, 'rb')) as sf:
-                return pickle.load(sf)
+            try:
+                with contextlib.closing(bz2.BZ2File(cached_path, 'rb')) as sf:
+                    return pickle.load(sf)
+            except (OSError, pickle.UnpicklingError):
+                os.unlink(cached_path)
+                cached_path = _cached_stylesheet(path)
+                with contextlib.closing(bz2.BZ2File(cached_path, 'rb')) as sf:
+                    return pickle.load(sf)
         except (OSError, pickle.UnpicklingError):
             os.unlink(cached_path)
-            cached_path = _cached_stylesheet(path)
-            with contextlib.closing(bz2.BZ2File(cached_path, 'rb')) as sf:
-                return pickle.load(sf)
-    except (OSError, pickle.UnpicklingError):
-        os.unlink(cached_path)
-        raise
+            raise
+    except OSError:
+        return style.parse(open(_source_path(path), 'r'))
 
 
 default_stylesheet = _load_cached_stylesheet('usfm.sty')
@@ -217,14 +225,14 @@ class parser(sfm.parser):
     ...     list(parser([r'\\id TEST\\mt \\whoops']))
     Traceback (most recent call last):
     ...
-    SyntaxWarning: <string>: line 1,14: unknown marker \whoops: not in styesheet
+    SyntaxWarning: <string>: line 1,14: unknown marker \whoops: not in stylesheet
     >>> with warnings.catch_warnings():
     ...     warnings.simplefilter("error", SyntaxWarning)
     ...     list(parser([r'\\id TEST\\mt \\whoops'],
     ...                 error_level=sfm.level.Marker))
     Traceback (most recent call last):
     ...
-    SyntaxError: <string>: line 1,14: unknown marker \whoops: not in styesheet
+    SyntaxError: <string>: line 1,14: unknown marker \whoops: not in stylesheet
     >>> with warnings.catch_warnings():
     ...     warnings.simplefilter("error", SyntaxWarning)
     ...     list(parser([r'\\id TEST\\mt \\zwhoops'],
@@ -322,7 +330,7 @@ class parser(sfm.parser):
             self._error(level.Content,
                         'missing space after verse number \'{verse}\'',
                         tok, verse=verse_marker.args[0])
-        tok = tok.lstrip()
+        tok = tok[1:]
 
         if tok:
             self._tokens.put_back(tok)
@@ -334,6 +342,10 @@ class parser(sfm.parser):
         def g(e):
             if getattr(e, 'name', None) == 'ft':
                 e.parent.annotations['content-promoted'] = True
+                if len(e.parent) > 0:
+                    prev = e.parent[-1]
+                    if prev.meta['StyleType'] == 'Character':
+                        del prev.annotations['implicit-closed']
                 return e
             else:
                 return [e]

@@ -169,7 +169,7 @@
 \def\getmcfonts@ze{\getp@ram{p}{fontsize}\ifx\p@ram\relax\edef\ps@ze{12}\else\edef\ps@ze{\p@ram}\fi
   \def\d@##1+##2\E{\edef\tmp{##2}\ifx\tmp\empty\else
       \dimen0=\c@rrfontsize pt\ifnum\if##1P 1\else\if##1N 1\else0\fi\fi =1
-        \getp@ram{fontsize}{##2}\ifx\p@ram\relax\s@{12}\else\dimen0=\p@ram pt\fi%
+        \getp@ram{fontsize}{##2}\dimen0=\ifx\p@ram\relax 12\else\p@ram\fi pt%
       \else\getp@ram{fontscale}{##2}\edef\sc@le{\p@ram}%
         \ifx\p@ram\relax\edef\sc@le{1}\getp@ram{fontsize}{##2}%
           \ifnum\ifx\p@ram\relax 1\else\ifx\p@ram\ps@ze 1\else 0\fi\fi =1
