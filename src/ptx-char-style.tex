@@ -132,8 +132,8 @@
     \s@tfont{\thisch@rstyle}% set up font attributes
     \ifnum\n@tenesting>0 \global\advance\n@tenesting by 1 % record nesting level in para or note
     \else \global\advance\p@ranesting by 1 \fi
-    \getmcp@ram{superscript}%
-    \ifx\p@ram\tru@ \setbox0=\hbox\bgroup \fi
+    \getmcp@ram{raise}%
+    \ifx\p@ram\relax\else \setbox0=\hbox\bgroup \fi
     \csname start-\thisch@rstyle\endcsname % execute any <start> hook
     \ifdiglot\setsid@ % \MSG{start-\thisch@rstyle\sid@}%
       \csname start-\thisch@rstyle\sid@\endcsname\relax % handle side-specific <start> hook
@@ -154,8 +154,8 @@
        \csname end-\thisch@rstyle\sid@\endcsname % handle side-specific <start> hook
      \fi
      \csname end-\thisch@rstyle\endcsname % execute any <end> hook
-     \getmcp@ramR{superscript}%
-     \ifx\p@ram\tru@ \egroup \raise\SuperscriptRaise\box0 \fi
+     \getmcp@ramR{raise}%
+     \ifx\p@ram\relax\else \egroup \raise\p@ram\box0 \fi
      \x@\global\x@\let\x@\n@xt % remember the <after> hook, if any, beyond the current group
      \csname after-\thisch@rstyle\endcsname
      \global\let\n@xtt=\relax%
@@ -251,8 +251,8 @@
     \ParseColor\p@ram\end\edef\typef@ce{\typef@ce :color=\r@s}%
   \fi\fi%
   \dimen0=\c@rrfontsize\FontSizeUnit
-  \getFp@ramR{superscript}{#1}% scale down by \SuperscriptFactor if superscripted style
-  \ifx\p@ram\tru@ \dimen0=\SuperscriptFactor\dimen0\fi
+  \getFp@ramR{fontfactor}{#1}% scale down by \SuperscriptFactor if superscripted style
+  \ifx\p@ram\relax\else \dimen0=\p@ram\dimen0\fi
   %\edef\f@ntstyle{\f@ntstyle-\c@rrfontsize}%
   % create the font identifier for this style
   \trace{F}{font<\f@ntstyle>=\typef@ce\space at \the\dimen0}%
@@ -278,8 +278,8 @@
     \let\typef@ce=\extraregular
     \getmcfonts@ze
     \dimen0=\c@rrfontsize\FontSizeUnit
-    \getmcp@ramR{superscript}% scale down by \SuperscriptFactor if superscripted style
-    \ifx\p@ram\tru@ \multiply\dimen0 by \SuperscriptFactor\fi
+    \getmcp@ramR{fontfactor}% scale down by \SuperscriptFactor if superscripted style
+    \ifx\p@ram\relax\else \multiply\dimen0 by \p@ram\fi
     \x@\global\x@\font\csname extrafont<#1>\endcsname=\typef@ce\space at \dimen0
     \trace{s}{define extrafont<#1> \typef@ce\space at \the\dimen0}%
   \fi
