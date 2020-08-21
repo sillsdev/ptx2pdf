@@ -235,6 +235,28 @@
 
 \def\DecorateRef#1{(#1)}
 
+
+\def\d@caption{
+  \xdef\r@f{\csname param-7\endcsname}% get reference
+  \stripspace\r@f\end/ \end/\relax\r@f \edef\r@f{\p@ram}% strip space
+  \edef\c@ption{\ifusfmthree\csname param-1\endcsname\else\csname param-6\endcsname\fi}% get caption
+  \trace{g}{Fig caption: [\c@ption] \ifx\r@f\relax\else(\r@f)\fi}%
+  \ifx\c@ption\empty\else
+    \everypar={}\let\par\endgraf
+    \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
+    \linepenalty=1000
+    \s@tbaseline{fig}%
+    % insert caption box
+    \edef\@r@f{\ifx\r@f\empty\else\DecorateRef{\r@f\unskip}\fi}
+    \noindent\leavevmode
+      \ifCaptionRefFirst\@r@f\nobreak\ \fi
+      \s@tfont{fig}\c@ption\unskip
+      \ifCaptionRefFirst\else\nobreak\ \@r@f\fi
+    \par
+  \fi
+  \vskip.5\baselineskip
+}
+
 \def\d@figure#1{%
  \ifIncludeFigures
   \trace{g}{In d@figure #1}\usfmthreefalse
@@ -338,6 +360,7 @@
     \ifx\picl@c\loc@Inl
        %\vskip0.5\baselineskip
     \fi
+    \ifCaptionFirst\d@caption\fi
 	% insert picture based on PicPath and file name, scaled to \p@cwidth
     \let\picfilecomm@nd=\XeTeXpicfile
     \edef\f@lename{\csname param-2\endcsname}%
@@ -403,7 +426,7 @@
     \fi
     \trace{g}{Picture height=\the\ht0, vs:\the\vsize, \the\partialLpenalty,  pg:\the\pagegoal, pt:\the\pagetotal, av:\the\availht}%
     \ifpicNarrow
-      \ifx\pic@line\@lignRight
+      \ifx\pic@lgn\@lignRight
         \hbox to \p@cinswid{\hss\box0}%
       \else\ifx\pic@lign\@lignLeft
           \hbox to \p@cinswid{\box0\hss}%
@@ -414,24 +437,7 @@
     \else
       \hbox to \p@cinswid{\hss\box0\hss}%
     \fi
-    \xdef\r@f{\csname param-7\endcsname}% get reference
-    \stripspace\r@f\end/ \end/\relax\r@f \edef\r@f{\p@ram}% strip space
-    \edef\c@ption{\ifusfmthree\csname param-1\endcsname\else\csname param-6\endcsname\fi}% get caption
-    \trace{g}{Fig caption: [\c@ption] \ifx\r@f\relax\else(\r@f)\fi}%
-    \ifx\c@ption\empty\else
-      \everypar={}\let\par\endgraf
-      \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
-      \linepenalty=1000
-      \s@tbaseline{fig}%
-      % insert caption box
-      \edef\@r@f{\ifx\r@f\empty\else\DecorateRef{\r@f\unskip}\fi}
-      \noindent\leavevmode
-        \ifCaptionRefFirst\@r@f\nobreak\ \fi
-        \s@tfont{fig}\c@ption\unskip
-        \ifCaptionRefFirst\else\nobreak\ \@r@f\fi
-      \par
-    \fi
-    \vskip.5\baselineskip
+    \ifCaptionFirst\vskip 0.5\baselineskip\else\d@caption\fi
   }%
   \trace{b}{BALANCE fig: height=\the\ht0: baselineskip=\the\baselineskip}%
   % insert into proper insertion class for this position
@@ -574,6 +580,8 @@
 \newif\ifFigurePlaceholders
 \newif\ifCaptionRefFirst % Does the reference come before or after the caption text?
 \CaptionRefFirstfalse
+\newif\ifCaptionFirst % Does the caption come before the image or after?
+\CaptionFirstfalse
 
 \def\ch@ckpdf#1.#2.#3\endf@lename{\lowercase{\edef\@xt{#2}}%
   \ifx\@xt\@pdf \let\picfilecomm@nd\XeTeXpdffile \fi}

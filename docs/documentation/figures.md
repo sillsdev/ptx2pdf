@@ -253,11 +253,18 @@ A piclist file has a strict format:
 
 ## Captions
 
+### Caption before the image
+To position captions above the image rather than below, add this line to the .tex file:
+```
+\CaptionFirsttrue
+```
+
 ### Reference before the caption text
-To postion the reference before the caption text, add this line to the .tex file:
+To position the reference before the caption text, add this line to the .tex file:
 ```
 \CaptionRefFirsttrue
 ```
+
 ### Decoration of the reference
  By default the reference (if present) folows the catption and is in (rounded) brackets. The code for this is:
 ```
@@ -267,5 +274,10 @@ To postion the reference before the caption text, add this line to the .tex file
 An alternative definition of ```\DecorateRef``` could be given, in the .tex file, e.g.:
 `\def\DecorateRef#1{#1}`
 would give no decoration, and 
-`\def\DecorateRef#1{\char"2014 \space #1}`
-would put an em-dash (unicode U-2014) and a space before the reference.
+```
+\def\DecorateRef#1{\emdash\NBSP #1}
+```
+would put an em-dash (unicode U-2014) and a non-breaking space before the reference. (`\emdash`, `\endash`, and various types of 
+spaces such as `\NBSP`, `\EMSPACE`, `\THINSPACE`  are defined in the macros).
+
+
