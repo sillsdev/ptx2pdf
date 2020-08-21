@@ -40,6 +40,7 @@
 \newinsert\toprightins \count\toprightins=1000 \dimen\toprightins=\maxdimen
 \newinsert\bottomleftins \count\bottomleftins=1000 \dimen\bottomleftins=\maxdimen
 \newinsert\bottomrightins\count\bottomrightins=1000 \dimen\bottomrightins=\maxdimen
+\newbox\wholepagepic
  
 %%%%%%%%%%%%%% FIGURES %%%%%%%%%%%%%% 
 % called from \fig or from figure list
@@ -49,7 +50,7 @@
 \def\stripspace#1 \end/#2\relax#3{\if\relax#2\relax\gdef\p@ram{#3}\else\stripspace#1\end/ \end/\relax{#1}\fi}
 \def\FigP@ramAlt{alt} \def\FigP@ramSrc{src} \def\FigP@ramSize{size} \def\FigP@ramLoc{loc}
 \def\FigP@ramCopy{copy} \def\FigP@ramRef{ref} \def\FigP@ramXtra{x-xetex} \def\FigP@ramPgpos{pgpos}
-\def\FigP@ramMirror{mirror} \def\FigP@ramScale{scale} \def\FigP@ramRot{x-rotate}
+\def\FigP@ramMirror{mirror} \def\FigP@ramScale{scale} 
 
 \newif\ifusfmthree \usfmthreefalse
 \def\getonepairp@ram#1="#2" {\stripspace#1\end/ \end/\relax{#1}\edef\p@ramid{\p@ram}%
@@ -85,9 +86,86 @@
 \def\p@rsesize#1*#2*#3\end{%
   \def\size@ption{#1}%
   \edef\tmp{#2}
-  \if\tmp\relax\else\def\sizem@ltiple{#2}\MSG{Setting scale to #2}\fi% empty if not provided
+  \if\tmp\relax\else\def\sizem@ltiple{#2}\trace{g}{Setting scale to #2}\fi% empty if not provided
 }
+\def\getnum#1=#2\end{#1}%
  
+% These three macros split up x-xetex="foo" parameter, stripping out any key=val formated parameters and leaving the rest.
+% 
+\def\p@rs@xtr@#1=#2=#3\end{
+  \edef\t{#2}%
+  \ifx\t\empty
+    \edef\t{#1}
+    \ifx\t\empty\else
+      \edef\xtraremains{\xtraremains#1\space}%
+      \trace{g}{Passing #1 directly to xetex}%
+      %\show\t%
+    \fi
+  \else 
+    \trace{g}{Found "#1=#2"}%
+    \def\key{#1}\def\val{#2}%
+    \edef\t{\x@\catcode\val}%
+    \trace{g}{catode of val is \t}%
+    \ifx\key\keyR@TATE
+      \rotimagetrue
+      \ifx\val\val@BIND
+        \ifodd\whichp@ge\def\xtra{rotated 90}\else\def\xtra{rotated -90}\fi
+      \else 
+        \ifx\val\val@EDGE
+          \ifodd\whichp@ge\def\xtra{rotated -90}\else\def\xtra{rotated 90}\fi
+        \else
+          \tempfalse
+          \t@mpfalse
+          \ifx\val\val@dd
+             \t@mptrue
+             \ifodd\whichp@ge\temptrue\fi
+          \fi
+          \ifx\val\val@ven
+             \t@mptrue
+             \ifodd\whichp@ge\else
+               \temptrue 
+             \fi
+          \fi
+          \iftemp
+            \edef\angle{\getnum#3==\end}%
+            \ifx\empty\angle
+              \message{Expected rotated=\val=42 or similar in definition of picture \f@lename}%
+            \else
+              \xdef\xtra{rotated \angle}%
+            \fi
+          \fi
+          \ift@mp\else
+            \message{Unexpected value rotate=#2. Expected values "edge", "binding", "odd", or "even"}%
+          \fi
+        \fi
+      \fi
+    \else
+      \message{Unexpected key #1=#2. Expected key "rotate"}%
+    \fi
+  \fi
+}
+\def\p@rsextr@#1 #2\relax{
+  \trace{g}{processing #1}%
+  \edef\t{#2}%
+  \ifx\t\empty\let\n@xt=\relax\fi
+  \edef\t{#1}%
+  \ifx\t\empty\let\n@xt=\relax
+  \else 
+    \x@\p@rs@xtr@\t==\end
+  \fi
+  \n@xt#2 \relax\relax
+}
+\def\p@rsextra#1{
+  \trace{g}{Parsing #1}%
+  \def\xtraremains{}
+  \let\n@xt=\p@rsextr@
+  \edef\t{#1}%
+  \ifx\t\empty\let\n@xt=\relax\fi
+  \x@\n@xt\t \relax
+  %\message{extra:\xtraremains}
+}
+
+
 \def\getonep@ram#1|#2\end{\gdef\p@rams{#2}%
   \trace{g}{getoneparam: #1 | #2}%
   \getonepairp@ram#1 ="" \relax%
@@ -96,16 +174,14 @@
 \newif\iffiglocleft \figloclefttrue
 \newif\ifpicUsesIns \picUsesInstrue
 \newif\ifpicNarrow \picNarrowfalse
+\newif\ifrotimage 
+\newif\ift@mp %because just one temp isn't enough
 
 \def\p@rsePicXtra#1#2\end{% Parse optional new picture options, and remember them
   \xdef\t@mpb{#1}%
   \xdef\t@mpc{#2}%
 }
 \def\p@rsePicUse#1#2\end{% Parse the new picture options, and remember them
-  \picUsesInstrue
-  \picNarrowfalse
-  \gdef\pic@lign{c}%How does the picture align within the box?
-  \gdef\picl@c{}% location code for in-line pictures
   \edef\t@mp{#1}%
   \edef\t@mpb{#2}%
   \ifx\t@mpb\empty\let\t@mpc=\t@mpb\else\x@\p@rsePicXtra\t@mpb\end\fi
@@ -115,6 +191,7 @@
     \global\let\picl@c\loc@Inl
     \xdef\pic@lign{\t@mpb}%
     \global\picUsesInsfalse
+    \p@cinswid=\hsize
     \ifx\t@mpb\@lignLeft\picNarrowtrue\fi
     \ifx\t@mpb\@lignRight\picNarrowtrue\fi
   \fi
@@ -122,12 +199,14 @@
     \global\let\picl@c\loc@Cut
     \global\picUsesInsfalse
     \global\picNarrowtrue
+    \p@cinswid=\hsize
     \xdef\l@cspec{\t@mpb}%
     \ifx\t@mpc\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\t@mpc}\fi%
     \trace{g}{Experimental graphic in cutout, after \c@tskip lines}%
   \fi
   \ifx\t@mp\loc@Par
     \global\let\picl@c=\loc@Par
+    \p@cinswid=\hsize
     \trace{g}{Experimental after-paragraph graphic}%
     \xdef\pic@lign{\t@mpb}%
     \global\picUsesInsfalse
@@ -135,11 +214,31 @@
     \ifx\t@mpb\@lignRight\picNarrowtrue\fi
     \ifx\t@mpc\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\t@mpc}\fi%Borrow cutskip for parskip 
   \fi
+  \tempfalse
+  \ifx\t@mp\loc@Page
+    \global\let\picl@c=\loc@Pag
+    \global\picUsesInsfalse
+    \p@cinswid=\PaperWidth
+    \temptrue
+  \fi
+  \ifx\t@mp\loc@Full
+    \global\let\picl@c=\loc@Full
+    \global\picUsesInsfalse
+    \temptrue
+  \fi
+  \iftemp
+    \trace{g}{Experimental page / full-page graphic}%
+    \xdef\pic@lign{\t@mpb}%
+    \xdef\picV@lign{\t@mpc}%
+  \fi
   }%
+
+\def\DecorateRef#1{(#1)}
 
 \def\d@figure#1{%
  \ifIncludeFigures
   \trace{g}{In d@figure #1}\usfmthreefalse
+  \rotimagefalse
   \edef\curc@lsz{\the\hsize}% Current col size
   \gdef\p@rams{#1|}% ensure there is a trailing | separator
   % place parts of text into \param-1, \param-2, ...
@@ -165,16 +264,32 @@
 	   \def\loc@ption{t}% if size is SPAN default to top
 	\else\def\loc@ption{tl}\fi % else default to top left FIXME? Standard says inline. Could swap to h if that proves stable.
   \fi
-  % set width to column width or span width
-  \p@cwidth=\ifx\size@ption\size@COL \hsize
-  \else\ifx\size@ption\size@SPAN \textwidth \advance\p@cwidth by -\columnshift
-  \else \textwidth
-    \errmessage{Unknown picture size "\size@ption", expected "col" or "span"}\fi\fi
+  % set width to column width or span width and other default parameters
+  \p@cwidth=\textwidth \advance\p@cwidth by -\columnshift 
+  \p@cheight=0.7\textheight % there should be text on the page too!
+  \picUsesInstrue
+  \picNarrowfalse
+  \gdef\pic@lign{c}%How does the picture align within the box?
+  \gdef\picV@lign{c}%How does the picture align vertically on the page (Page/Full only)
+  \gdef\picl@c{}% location code for in-line (non-insert) pictures 
+  % By default, set the insert width to full span
+  \p@cinswid=\textwidth\advance\p@cinswid by -\columnshift
+  \ifx\size@ption\size@COL \p@cwidth=\hsize
+  \else\ifx\size@ption\size@SPAN
+    \else\ifx\size@ption\size@PAGE 
+        \global\let\picl@c=\loc@Page
+        \picUsesInsfalse
+        \p@cheight=\textheight % no text
+        \advance\p@cheight by -2\baselineskip
+      \else\ifx\size@ption\size@FULL
+          \global\let\picl@c=\loc@Full
+          \picUsesInsfalse
+          \p@cwidth=\PaperWidth\p@cheight=\PaperHeight
+        \else 
+           \errmessage{Unknown picture size "\size@ption", expected "col", "span", "page" or "full"}\fi\fi\fi\fi
   \let\p@cins=\relax
   % --------- Parse the location option -----------
   \x@\p@rsePicUse\loc@ption\end
-  % By default, set the insert width to full span
-  \p@cinswid=\textwidth\advance\p@cinswid by -\columnshift
   % make \p@cins point to insertion class for this location
   \otherinsht=0pt % subtract this from the insert height.
   \ifx\loc@ption\loc@T \let\p@cins=\topins
@@ -205,8 +320,6 @@
         \else\let\p@cins=\toprightins\figloclefttrue \otherinsht=\ht\topleftins\fi
       \else \let\p@cins=\topins\fi
     \fi
-  \else
-    \p@cinswid=\hsize
   \fi
   \ifdiglot\else\otherinsht=0pt \fi %Nothing to subtract if not diglot
   \ifdim\p@cinswid<\p@cwidth
@@ -229,12 +342,39 @@
     \let\picfilecomm@nd=\XeTeXpicfile
     \edef\f@lename{\csname param-2\endcsname}%
     \edef\mirr@r{\csname param-9\endcsname}%
+    \x@\let\x@\pgn@\csname fig\the\im@gecount p@ge\endcsname
+    \ifx\pgn@\relax
+      \whichp@ge=\pageno
+      \trace{g}{Picture \the\im@gecount may not be mirrored properly}%
+    \else
+      \whichp@ge=\pgn@
+      \trace{g}{Picture \the\im@gecount was on page \pgn@ last time. [\the\pageno]}%
+    \fi
+    \def\xtra{}\def\xtraremains{}%
+    \x@\p@rsextra{\csname param-8\endcsname}%See if there are any key=val parameters in the x-xetex parameter
     \expandafter\ch@ckpdf\f@lename..\endf@lename
+    %what are we scaling on the image? Width or height?
+    \ifrotimage
+      %If there's rotation, fit the image height to width instead of the normal way:
+      \def\picdim@n{height}\def\picaltdim@n{width}%
+    \else
+      \def\picdim@n{width}\def\picaltdim@n{height}%Normal
+    \fi
+    % First, try to set it at the requested dimension:
+    \setbox1=\hbox{
+      \picfilecomm@nd "\the\PicPath\csname param-2\endcsname"
+                     \picdim@n \sizem@ltiple\p@cwidth \xtra \xtraremains}%
+    \ifdim\ht1>\p@cheight
+      %It doesn't fit. Scale to other dimension:
+      \trace{g}{Picture too big set with \picdim@n=\sizem@ltiple\the\p@cwidth}%
+      \setbox1=\hbox{
+        \picfilecomm@nd "\the\PicPath\csname param-2\endcsname"
+                     \picaltdim@n \p@cheight \xtra \xtraremains}%
+    \fi
     \setbox0=\hbox to \sizem@ltiple\p@cwidth{\hss
       \edef\l@gstring{{\the\im@gecount}{\f@lename}{\csname param-4\endcsname}{\csname param-5\endcsname}{\sizem@ltiple x\the\p@cwidth}}% Fully expand figure parameters, but leave page no. to be expanded later.
       \x@\writefigp@gelog\x@{\l@gstring}%
-      \picfilecomm@nd "\the\PicPath\csname param-2\endcsname"
-                     width \sizem@ltiple\p@cwidth \csname param-8\endcsname\hss}%
+      \box1\hss}%
     \ifFigurePlaceholders % replace graphic with a frame and the file name
       \setbox0=\vbox to \ht0{\offinterlineskip
         \hrule height .2pt \kern-.2pt
@@ -246,22 +386,14 @@
     % FIXME: Something like this?
     \tempfalse
     \def\pr@pic{}\def\p@stpic{}%
-    \x@\let\x@\pgn@\csname fig\the\im@gecount p@ge\endcsname
     \ifx\mirr@r\empty\else
-      \ifx\pgn@\relax
-        \whichp@ge=\pageno
-        \trace{g}{Picture \the\im@gecount may not be mirrored properly}%
-      \else
-        \whichp@ge=\pgn@
-        \trace{g}{Picture \the\im@gecount was on page \pgn@ last time. [\the\pageno]}%
-      \fi
       \trace{g}{Mirror: \mirr@r, \the\pageno}%
       %THIS LOGIC is also non-effective. Need to re-write to use an aux file, probably.
       \global\def\pr@pic{
          \trace{g}{prepic: Mirror: \mirr@r, \the\pageno}%
-         \ifx\mirr@r\@dd\ifodd\whichp@ge\temptrue\fi\fi %Page number is frequently low by one or 2 when image is read. Needs external toc-style file.
-         \ifx\mirr@r\@ven\ifodd\whichp@ge\else\temptrue\fi\fi
-         \ifx\mirr@r\b@th\temptrue\fi
+         \ifx\mirr@r\val@dd\ifodd\whichp@ge\temptrue\fi\fi %Page number is frequently low by one or 2 when image is read. Needs external toc-style file.
+         \ifx\mirr@r\val@ven\ifodd\whichp@ge\else\temptrue\fi\fi
+         \ifx\mirr@r\valb@th\temptrue\fi
          \iftemp\trace{g}{Mirrored image requested}%
            \dimen0=\wd0\kern\dimen0\special{pdf:  begintransform}\special{x:scale -1 1}\fi
       }%
@@ -292,9 +424,11 @@
       \linepenalty=1000
       \s@tbaseline{fig}%
       % insert caption box
+      \edef\@r@f{\ifx\r@f\empty\else\DecorateRef{\r@f\unskip}\fi}
       \noindent\leavevmode
+        \ifCaptionRefFirst\@r@f\nobreak\ \fi
         \s@tfont{fig}\c@ption\unskip
-        \ifx\r@f\empty\else\nobreak\ (\r@f\unskip)\fi
+        \ifCaptionRefFirst\else\nobreak\ \@r@f\fi
       \par
     \fi
     \vskip.5\baselineskip
@@ -336,7 +470,7 @@
       \fi
       %\splittopskip\baselineskip
       \vadjust pre {
-      \gridp@cfalse% Not true! It's not floating. 
+        \gridp@cfalse% Not true! It's not floating. 
         \gridb@x0
         \dimen9=\lastdepth
         \kern\dimen9
@@ -377,6 +511,14 @@
        \trace{g}{Delay for \eotpn@me set to \temp}%
        \x@\xdef\csname \eotpn@me Delay\endcsname{\temp}%
        \relax\relax
+    \fi
+    \ifx\picl@c\loc@Page
+      \trace{g}{Picture is page, \the\ht0, \the\wd0}%
+        \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic\box0\penalty11}% magic number
+    \fi
+    \ifx\picl@c\loc@Full
+      \trace{g}{Picture is full-page, \the\ht0, \the\wd0}%
+      \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic\box0\penalty9}% magic number
     \fi
     \ifx\picl@c\loc@Cut
         \ifhmode
@@ -430,15 +572,19 @@
 \newtoks\PicPath % directory containing picture files
 \newif\ifIncludeFigures \IncludeFigurestrue
 \newif\ifFigurePlaceholders
+\newif\ifCaptionRefFirst % Does the reference come before or after the caption text?
+\CaptionRefFirstfalse
 
 \def\ch@ckpdf#1.#2.#3\endf@lename{\lowercase{\edef\@xt{#2}}%
   \ifx\@xt\@pdf \let\picfilecomm@nd\XeTeXpdffile \fi}
-\def\@pdf{pdf}
+%\def\@pdf{pdf}
 
 \def\picw@rning#1#2{\msg{converted picture placement "#1" to "#2" in single-column layout}}
 
 \def\size@COL{col}
 \def\size@SPAN{span}
+\def\size@PAGE{page}% a page, within the margins
+\def\size@FULL{full}% the paper size
 \def\loc@T{t}
 \def\loc@B{b}
 \def\loc@TL{tl}
@@ -448,17 +594,23 @@
 \def\loc@Inl{h}% In-line graphic, not a float.
 \def\loc@Cut{c}% cutout
 \def\loc@Par{p}% post-paragrpah
+\def\loc@Page{P}% Page (with headers/footers)
+\def\loc@Page{F}% FullPage (no headers/footers)
 \def\@lignLeft{l}
 \def\@lignRight{r}
-\def\@dd{odd}
-\def\@ven{even}
-\def\b@th{both}
+\def\keyR@TATE{rotate}
+\def\val@dd{odd}
+\def\val@ven{even}
+\def\valb@th{both}
+\def\val@BIND{binding}
+\def\val@EDGE{edge}
 
 \newbox\picb@x
 \newcount\p@ramnumber
 \newdimen\p@cinswid
 \newdimen\p@cwidth
-\newdimen\otherinsht % In a diglot, an insert doesn't affect availht if 
+\newdimen\p@cheight
+\newdimen\otherinsht % In a diglot, an insert doesn't affect availht if it's smaller
 
 \newif\ifmorep@rams
 \newif\ifpicp@gefile \picp@gefilefalse
@@ -520,3 +672,25 @@
   \edef\ch@ck{#1}
   \x@\ifx\csname fig#2p@ge\endcsname\ch@ck\else\trace{g}{Figure #2 page changed from \ch@ck \space to \csname fig#2p@ge\endcsname}\temptrue\fi
 }
+
+\def\dofigp@ge{
+  \ifvoid\wholepagepic\else
+    \trace{g}{wholepagepic is \the\ht\wholepagepic high}%
+    \setbox0=\vsplit\wholepagepic to \PaperHeight
+    \setbox0=\vbox{\unvbox 0\global\count254=\lastpenalty}%
+    \trace{g}{lp:\t box0 is \the\ht0\space high, th:\the\textheight}%
+    \ifnum\count254=9
+      \dimen9=\pdfpagewidth \dimen8=\pdfpageheight
+      \shipwithcr@pmarks{\vbox{\box0}}%
+      \pdfpagewidth=\dimen9 \pdfpageheight=\dimen8
+      \advancepageno
+    \else
+      \def\pagecontents{
+        \trace{g}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins}%
+        \box0%
+        }%
+      \plainoutput
+    \fi
+  \fi
+}
+\let\nextshipout=\dofigp@ge

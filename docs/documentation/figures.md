@@ -32,7 +32,8 @@ the `loc` attribute it says "a list of verses where it might be inserted", and
 for size it offers only 'span' and 'col'. The ptx2pdf XeTeX macros give better
 control on both of these, offering multiple positioning options and if you want
 a smaller image than full-page or column-width you can say, e.g. `span*0.6` (see
-a later discusion also).
+a later discusion also). They also add the extra sizes 'page' and 'full'. 
+'Full' suppresses headers and footers.
 
 ## Attributes
 
@@ -108,6 +109,8 @@ cl   | 'Cutout Left'          | In the top-left corner of this paragraph [3]    
 cr   | 'Cutout Right'         | In the top-right corner of this paragraph [3]                   | Centred below image, and the same width
 cl#  | 'Cutout Left'          | In a notch # lines[6] below the top of this paragraph [3]       | Centred below image, and the same width
 cr#  | 'Cutout Right'         | In a notch # lines[6] below the top of this paragraph [3]       | Centred below image, and the same width
+P    | 'Page'                 | An image that replaces the normal text on the page              | Centred below image
+F    | 'Full page'            | The entirety of the paper                                       | Centred below image, and thus normally off the page.
 
 Notes:
 [1] If two columns are in use.
@@ -174,19 +177,23 @@ the scale factor into its own `scale` attribute. This value is a multipler that
 scales an image after its size has been established via the `size` attribute. A
 value of `1.0` implies no size change.
 
-### x-xetex Attribute
+### x-xetex Attribute - Rotation control
 
 To allow further transforming of images when inserting into the publication,
-ptxprint and the ptx macros support an optional extra column in a USFM2 `\fig`
+ptxprint and the ptx macros support an optional 7th column in a USFM2 `\fig`
 element, which corresponds to the `x-xetex` USFM3 attribute. It consists of a
-space separated list of image specifications:
+space separated list of items. If the item is of the form key=value, it is interpreted, 
+otherwise it is passed on to the ```\XeTeXpicFile``` or ```\XeTeXpdfFile```  
 
 - `rotated` _degrees_ Rotates the image anticlockwise the given number of degrees.
+- `rotate=edge` Rotates the image so the top is at the outside  edge of the page.
+- `rotate=binding` Rotates the image so the top is at the binding edge.
+- `rotate=odd=_degrees_` Rotates the image anticlockwise by the given number of degrees on odd pages.
+- `rotate=even=_degrees_` Rotates the image anticlockwise by the given number of degrees on even pages.
 
-For example, in the piclist entry from the previous section, the image is
-rotated anticlockwise by 3 degrees.
+For example, in the piclist entry from the previous section, the image is rotated anticlockwise by 3 degrees.
 
-There is no mechanism to rotate the caption with the picture.
+As yet, there is no mechanism to rotate the caption with the picture.
 
 ### media Attribute
 
@@ -244,4 +251,21 @@ A piclist file has a strict format:
   while processing either column, and the user has no preference about
   which font, etc. are used (normally `L` will match it first, but this is not guaranteed).
 
+## Captions
 
+### Reference before the caption text
+To postion the reference before the caption text, add this line to the .tex file:
+```
+\CaptionRefFirsttrue
+```
+### Decoration of the reference
+ By default the reference (if present) folows the catption and is in (rounded) brackets. The code for this is:
+```
+\def\DecorateRef#1{(#1)}
+```
+
+An alternative definition of ```\DecorateRef``` could be given, in the .tex file, e.g.:
+`\def\DecorateRef#1{#1}`
+would give no decoration, and 
+`\def\DecorateRef#1{\char"2014 \space #1}`
+would put an em-dash (unicode U-2014) and a space before the reference.

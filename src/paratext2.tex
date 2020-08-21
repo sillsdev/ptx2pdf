@@ -398,6 +398,7 @@
     \resetvsize
     \ifdim\ht\colA>\baselineskip\plainoutput\trace{p}{plainoutput from onecoltrial}%
       \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
+      \nextshipout
     \else\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
     \global\holdinginserts=1
     \ifrerunsavepartialpaged\trace{o}{onecoltrial: rerunsavepartialpage}\global\output={\savepartialpage}\global\rerunsavepartialpagedfalse
@@ -522,6 +523,7 @@
     \ifdim\ht\colA>\baselineskip\plainoutput
     \xdef\p@gefirstmark{}
     \xdef\p@gebotmark{}
+    \nextshipout
     \else\trace{o}{Page empty cols=\the\ht\colA, \the\ht\colB, partial=\the\ht\partial}\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
     \tempfalse%
     \ifdim\ht\partial>\PageFullFactor\textheight \temptrue\fi%
@@ -529,6 +531,7 @@
     \iftemp\def\pagecontents{\box\partial}\plainoutput 
     \xdef\p@gefirstmark{}
     \xdef\p@gebotmark{}
+    \nextshipout
     \fi
     \global\holdinginserts=1
   \else % the contents of the "galley" didn't fit into the actual page,
@@ -930,7 +933,7 @@
   \rem@indertrue\balanced
   \dimen5=\baselineskip
   \iffitonpage\ifvoid\s@vedpage\else\fitonpagefalse\fi
-  \else\ifnum\vsize<0 \fitonpagetrue\fi % no fit so dump the page we have now and try again with a new one.
+  \else\ifnum\vsize<0 \fitonpagtrue\fi % no fit so dump the page we have now and try again with a new one.
   \fi% \dimen5=\ht\s@vedpage\fi\fi
   \iffitonpage
     \c@lcboxheights
@@ -958,6 +961,7 @@
     \plainoutput 
     \xdef\p@gefirstmark{}%
     \xdef\p@gebotmark{}%
+    \nextshipout
     \global\holdinginserts=1
     \ifrerunsavepartialpaged
       \global\output={\savepartialpaged}\unvbox\s@vedpage\global\rerunsavepartialpagedfalse
@@ -1076,6 +1080,7 @@
     \unvbox2
     }}\plainoutput
     \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
+    \nextshipout
 }%
 
 % to switch back to single column, we reset the page size parameters
