@@ -974,6 +974,7 @@ class TexModel:
         else:
             pfx = "notes"
             sfx = ".sty"
+        rtl = self['document/ifrtl'] == "true"
         cfgname = self.printer.configName()
         nstyfname = os.path.join(self.printer.configPath(cfgname), "NestedStyles"+sfx)
         nstylist = []
@@ -984,7 +985,7 @@ class TexModel:
             nstylist.append("##### Set Footnote Size and Line Spacing\n")
             nstylist.append("\\Marker {}\n\\FontSize {}\n".format("f", self.dict[pfx+'/fnfontsize']))
             nstylist.append("\\BaseLine {}pt plus 2pt\n".format(self.dict[pfx+'/fnlinespacing']))
-            nstylist.append("\\Justification Left\n\n")
+            nstylist.append("\\Justification {}\n\n".format("Right" if rtl else "Left"))
         else:
             nstylist.append("##### Remove all footnotes\n\\Marker f\n\\TextProperties nonpublishable\n\n")
 
@@ -992,7 +993,7 @@ class TexModel:
             nstylist.append("##### Set Cross-reference Size and Line Spacing\n")
             nstylist.append("\\Marker {}\n\\FontSize {}\n".format("x", self.dict[pfx+'/fnfontsize']))
             nstylist.append("\\BaseLine {}pt plus 2pt\n".format(self.dict[pfx+'/fnlinespacing']))
-            nstylist.append("\\Justification Left\n\n")
+            nstylist.append("\\Justification {}\n\n".format("Right" if rtl else "Left"))
         else:
             nstylist.append("##### Remove all cross-references\n\\Marker x\n\\TextProperties nonpublishable\n\n")
 
@@ -1017,7 +1018,7 @@ class TexModel:
         for mkr in r:
             for l in range(0,3):
                 nstylist.append("{} {}\n".format(mkr[l][0],mkr[l][1]))
-            nstylist.append("\\Justification Left\n\n")
+            nstylist.append("\\Justification {}\n\n".format("Right" if rtl else "Left"))
 
         if True: # Hack! We need to qualify this (look in USFM for a \cl and if it exists, then don't do this)
             nstylist.append("# The descriptive heading is typically considered VerseText, but then often formatted as a heading.\n")
