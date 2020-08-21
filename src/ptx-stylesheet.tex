@@ -87,7 +87,6 @@
 \def \Bold           #1\relax{\defbinp@ram{bold}{#1}}
 \def \Superscript    #1\relax{\condp@ram{#1}{\defp@ram{raise}{\SuperscriptRaise}\defp@ram{fontfactor}{\SuperscriptFactor}}{\defp@ram{raise}{0pt}\defp@ram{fontfactor}{1}}}
 \def \Raise          #1\relax{\defp@ram{raise}{#1}}
-\def \FontExpand     #1\relax{\defp@ram{fontfactor}{#1}}
 \def \Regular        {\defp@ram{regular}{true}\defp@ram{italic}{false}\defp@ram{bold}{false}\defp@ram{superscript}{false}\defp@ram{smallcaps}{false}}
 \let \superscript\Superscript
 \def \SpaceBefore    #1\relax{\defp@ram{spacebefore}{#1}}

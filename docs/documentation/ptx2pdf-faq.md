@@ -111,7 +111,8 @@ Notice that markers are case dependent.
 \\RightMargin | Right margin * \\IndentUnit
 \\Italic      | blank enables, "-" disables
 \\Bold        | blank enables, "-" disables
-\\Superscript | blank enables, "-" disables
+\\Superscript | blank enables, "-" disables. Equivalent to \FontExpand \SuperscriptFactor, \Raise \SuperscriptRaise.
+\\Raise       | specifies a dimension to raise the text by. Be careful, this can't handle whole paragraphs and will not allow line breaking within the text so marked.
 \\Regular     | Disables italic, bold, superscript
 \\SpaceBefore | Space before paragraph * \\VerticalSpaceFactor * \\LineSpacingFactor * \\FontSizeUnit
 \\SpaceAfter  | Space after paragraph * \\VerticalSpaceFactor * \\LineSpacingFactor * \\FontSizeUnit
