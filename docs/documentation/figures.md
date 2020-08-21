@@ -280,4 +280,22 @@ would give no decoration, and
 would put an em-dash (unicode U-2014) and a non-breaking space before the reference. (`\emdash`, `\endash`, and various types of 
 spaces such as `\NBSP`, `\EMSPACE`, `\THINSPACE`  are defined in the macros).
 
+### Caption Alignment 
+Captions are normally centred. If for some reason left-justified or right-justified captions are required, this can be controled 
+in the normal manner in the style sheet, via the `fig` marker, even though officially the marker is officially a character style, not a paragraph style:
+
+```
+\Marker fig
+\Justification left
+\LeftMargin 0.125
+
+```
+The text will align to the standard page edge, unless the margins are modified as above. There is no support for controlling indentation of the first line or
+other paragraphing style elements.
+
+### Caption font and size
+
+As noted above, caption styling is controled via the `fig` marker in the stylesheet. Font-related styles can be selected in the normal manner.
+For multi-line captions, the line spacing may be controlled by modification of `\LineSpacing` (in the same scaleable units as parameter `\FontSize`) or 
+`\BaseLine` (units must be supplied).
 

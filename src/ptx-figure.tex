@@ -244,6 +244,13 @@
   \ifx\c@ption\empty\else
     \everypar={}\let\par\endgraf
     \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
+    \getp@ram{justification}{fig}%
+    \ifx\p@ram\r@ght\rightskip=0pt\fi
+    \ifx\p@ram\l@ft\leftskip=0pt\fi
+    \getp@ram{leftmargin}{fig}%
+    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
+    \getp@ram{rightmargin}{fig}%
+    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
     \linepenalty=1000
     \s@tbaseline{fig}%
     % insert caption box
