@@ -5,6 +5,8 @@ import appdirs
 import site
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     site.USER_BASE = os.path.join(os.path.expanduser("~"), ".local")
+    if not hasattr(site, 'getuserbase'):
+        site.getuserbase = lambda : site.USER_BASE
 
 try:
     import ptxprint
