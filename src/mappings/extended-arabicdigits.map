@@ -1,6 +1,6 @@
 ; FC ... 
 LHSName	"Digits"
-RHSName	"ExtendedArabicIndicDigits"
+RHSName	"ExtendedArabicDigits"
 
 pass(Unicode)
 U+0030 <> U+06F0 ;
