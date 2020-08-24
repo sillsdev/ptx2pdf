@@ -25,9 +25,16 @@ function whose job is to iterate the pagesize down until the text just fits on
 the page. If there are no marks on the page then clear the first page mark for
 the page. We tell the page breaker to extract the inserts from the copy of the
 page we are going to reprocess. Then we reprocess the page and add on the
-penalty we just copied. But if the penalty was a forced page break we reduce it
-to 0 so that only a full page is processed. This is why at the end of a book we
-do a double eject. _Not sure about this_
+penalty we just copied.
+
+The TeXbook describes how an output routine is called. If there is a penalty at
+the page break point, that is stored in `\outputpenalty` and a penalty in the
+actual list is set to 10000. On the other hand, if there is no penalty, then the
+`\outputpenalty` is set to 10000. Our aim to set the end of the contributions
+list to be the same as it was in the main contribution list, i.e. with 0 or a
+penalty. This also deals with the issue of not wanting to break pages mid
+paragraph, at least for the output routines. This also explains why this has to
+be done every time we use the contribution list to trigger a new output routine.
 
 [=c_onecol]::
 
@@ -238,7 +245,7 @@ Inside the loop we advance the loop counter and reduce the test height by a
 line. We copy the box of text and we adjust the actualy height by the depths of
 the current columns. Not ideal, but better than nothing. Then we set up for this
 new trial height and split to the column boxes again at this new height.
-`rem@inder` is always true, but if false indicates that if the page is not
+`rem@inder` if false, indicates that if the page is not
 consumed at this height then we should backup and break out of the loop by
 setting `\rebalancefalse`. We use the `rebalance` flag to tell us if we are
 bailing from the loop and so not to do other tests. The next test is whether
@@ -305,6 +312,82 @@ set the output routine to `\backingup` and put everything back for reprocessing
 at this new shorter height.
 
 [=c_twocoltrial]::
+
+#### Partial Two Column Pages
+
+When the macros transition from two columns to one column, then the two column
+material needs to be collected into a `partial` box for later output when the
+page ends. 
+
+The entry routine for saving the partial page when in two columns is
+`\savepartialpagedbounce` which prepares the way for calling `\savepartialpage`
+by setting the stage in such a way as if a previous page had just been output by
+`\twocoltrial`. It sets up the trial height and calculates an `availht`. It sets
+the page length to double that size (for two columns) but reduces that by one
+line. _why?_ It then sets the output routine to `\savepartialpaged` to do the
+actual page processing. It collects the output text into a galley box and
+reboxes it at its natural height, in case it has been forced to a height. It then splits
+the box to infinity to get the bottom mark. It turns of holdinginserts so that
+the inserts get pulled out into boxes and reprocesses the main text passed in
+and forces a page break. No need for subtleties here since we are wanting to
+force output.
+
+_The reason for the bounce is to do with holdinginserts=0 when we need 1_
+
+[=c_savepartialpagedbounce]::
+
+Now we come to the actual saving of the partial page. This is much like the two
+column trial. We start by calculating the trial and available heights. We
+collect the saved page at a natural height (no stretch of shrink). The natural
+height is probably only useful for debug.
+
+If there is no room on the page, we still balance because it sets things up for
+us, even when there is no space. But normally we balance the columns. If
+everything fits on the page then we have all we need to collect the partial box.
+We calculate the two column boxes and their heights and we collect the
+depth of the previous partial box. In creating a new partial box we include the
+previous partial box and then undo the vertical space added for the depth of the
+box. This is doubled because it was added when the partial box was created and
+it was added in the unvboxing (_this is probably nonsense_) The we add the top
+insert. Then we calculate the width of the two columns and the gutter and create
+a box that horizontally has the first column, the guttern, the second column and
+any `ExtraRMargin`. The order is reversed for right to left layout.
+
+[=c_savepartialpaged_intro]::
+
+The column gutter is not the simplest thing to create and so we have a macro for
+it. This is given the height of the column boxes to calculate the height of the
+vertical column gutter rule, the height of the column boxes again to give the
+height of the box that is to be returned and the maximum depth of the two
+columns, which is a side effect of running `\c@lcboxheights`. From these we
+assemble a box that is centred. If there is a ColumnGutterRule then we create a
+vertical rule of an appropriate heigh inside an hbox which is shifted down by
+the ColumnGutterRuleSkip. This whole box is given an appropriate depth as passed
+in and then centred with a right hand column shift. This is passed back for
+inclusion in the horizontal list of boxes. 
+
+[=c_makecolumngutter]::
+
+The resulting horizontal list, for left to right is: colA, hfil,
+vbox(hbox(vrule) vrule) hfil columnshift colB ExtraRMargin.
+
+Having created the partial box, we reset ready to resume text collection. Then,
+now that we have a new partial box, we calculate the space left on the page. If
+it's less than 2 lines, we ship out a completed page and then put all remaining
+text (of which there should be none) back onto the contributions list, with a
+reset penalty.
+
+But, if the text does not fit on a page, then we need to output a page to use up
+the text and try again. To do that we empty the insert boxes and set up the
+backingup to use `\twocoltrial` which we also set up to call us back when it is
+done. If the galley is empty then use whatever was passed to us, now in
+`s@vedpage`, otherwise use the galley.
+
+[=c_savepartialpaged]::
+
+### Switching Column Layouts
+
+### Shipping Out The Page
 
 [-d_output]::
 
