@@ -1,0 +1,289 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Aug 19 15:47:39 2020
+
+@author: jakem
+"""
+
+import argparse
+from enum import Enum
+
+class M(Enum):
+    Vanilla = 0
+    TeX = 1
+    Skip = 2
+    Text = 3
+    Notes = 4
+    
+class Lines(list):
+    def __init__(self, flavour=M.Vanilla, startline=0, notes=None):
+        self.flavour = flavour
+        self.startline = startline
+        self.notes = notes
+
+    def __repr__(self):
+        if verbose:
+            return f"Lines object ({self.flavour.name}) with {len(self)} lines\n" + shift("\n".join([str(x) for x in self]))
+        else:
+            return f"Lines object ({self.flavour.name}) with {len(self)} lines\n" + shift("\n".join([str(self[0])] + ["..."]) if not self.isempty() else "(Empty)")
+        
+    def isempty(self):
+        return [x for x in self if x != ""] == []
+    
+    def output(self):
+        self.strip()
+        if self.flavour == M.TeX:
+            return ["```{.latex .numberLines startFrom=\"" + str(self.startline) + "\"}"] + self + ["```"]
+        elif self.flavour == M.Text:
+            return self
+        elif self.flavour == M.Skip:
+            return [] #[f"Skipped {len(self)} lines"]
+        elif self.flavour == M.Notes:
+            output = []
+            for x in self:
+                if output != [] and type(output[-1]) != type(x):
+                    output.append("")
+                if type(x) is str:
+                    output += [x]
+                else:
+                    output += x.output()
+            return output
+    
+    def add(self, x):
+        if self.flavour == M.Text:
+            self.append(x.lstrip("% ").replace("\\", "\\\\"))
+        else:
+            self.append(x)
+    
+    def strip(self):
+        while self != [] and type(self[0]) is str and self[0].strip() in ("", "%"):
+            del self[0]
+            self.startline += 1
+        while self != [] and type(self[-1]) is str and self[-1].strip() in ("", "%"):
+            del self[-1]
+        #### Removing blank lines before and after Links goes here
+            
+            
+    def gettag(self):
+        output = []
+        for x in self:
+            if type(x) is Link:
+                output += x.gettag()
+        return output
+    
+class Link:
+    def __init__(self, tag, notes):
+        self.tag = tag
+        self.notes = notes
+    
+    def __repr__(self):
+        return f"Link to {self.tag}"
+    
+    def output(self):
+        try:
+            return [f"### Linked note *{self.tag}*", ""] + self.notes[self.tag].output()
+        except:
+            return [f"### Linked note *{self.tag}* failed"]
+    
+    def gettag(self):
+        return [self.tag] + self.notes[self.tag].gettag()
+    
+
+def shift(string):
+    return "\n".join(["-> " + l for l in string.splitlines()])
+
+
+class Item(list):
+    def __init__(self, tag, notes):
+        self.tag = tag
+        self.mode = M.TeX
+        self.notes = notes
+    
+    def __repr__(self):
+        return f"Item object {self.tag} with {len(self)} sub\n" + shift(self.listrep())
+    
+    def add(self, x, lineno=0):
+        if type(x) is str:
+            if self == [] or type(self[-1]) is not Lines or self[-1].flavour != self.mode:
+                self.append(Lines(self.mode, lineno))
+            self[-1].add(x)
+        else:
+            self.append(x)
+
+    def listrep(self):
+        return str("\n".join(self.list()))
+    
+    def list(self):
+        return [str(x) for x in self]
+    
+    def clean(self):
+        for x in self:
+            if type(x) is Item:
+                x.clean()
+            elif type(x) is Lines:
+                if x.isempty():
+                    self.remove(x)
+    
+    def output(self):
+        output = [f"## Section {self.tag}"]
+        for x in self:
+            output += [""]
+            output += x.output()
+        return output
+    
+    def gettag(self):
+        output = []
+        for x in self:
+            output += [*x.gettag()]
+        return output
+    
+class TeXparser:
+    def __init__(self, filename, notes):
+        self.stack = []
+        self.item = None
+        self.filename = filename
+        self.notes = notes
+        self.file = open(filename)
+        self.parse()
+        self.file.close()
+    
+    def __repr__(self):
+        return str(self.item)
+    
+    def startitem(self, tag):
+        if self.item is not None:
+            self.item.add(Link(tag, notes=self.notes))
+            self.stack.append(self.item.tag)
+        self.notes[tag] = self.item = Item(tag, notes=self.notes)    
+    
+    def enditem(self, tag=None):
+        if self.stack != []:
+            self.item = self.notes[self.stack.pop(-1)]
+        else:
+            print("Reached the end of the document, probably")
+        
+    def linegen(self):
+        self.lineno = 0
+        yield f"%+{self.filename}"
+        for l in self.file.readlines():
+            self.lineno += 1
+            yield l.strip("\n")
+        self.lineno += 1
+        yield f"%-{self.filename}"
+    
+    def parse(self):
+        for line in self.linegen():
+            sline = line.lstrip()
+            #print(sline)
+            if verbose:
+                print(line)
+            if sline.startswith("%+"):
+                self.startitem(sline[2:])
+            elif sline.startswith("%-"):
+                self.enditem(sline[2:])
+            elif sline.startswith("%="):
+                self.item.add(Link(sline[2:], notes=self.notes))
+            elif sline.startswith("%:strip") or sline.startswith("%:skip"):
+                self.item.mode = M.Skip
+            elif sline.startswith("%:"):
+                self.item.mode = M.Text
+            else:
+                #print(self.item.mode, line)
+                if self.item.mode is M.Skip and not sline.startswith("%"):
+                    self.item.mode = M.TeX
+                elif self.item.mode is M.Text and not (sline.startswith("%") or sline == ""): 
+                    self.item.mode = M.TeX
+                self.item.add(line, self.lineno)
+        self.item.clean()
+        
+    def output(self):
+        return self.item.output()
+
+class Noteparser:
+    def __init__(self, filename, notes):
+        self.filename = filename
+        self.note = None
+        self.notes = notes
+        self.file = open(filename)
+        self.parse()
+        self.file.close()
+    
+    def startnote(self, tag):
+        self.note = self.notes[tag] = Lines(M.Notes, notes=self.notes)
+    
+    def endnote(self, tag):
+        pass
+    
+    def linegen(self):
+        for l in self.file.readlines():
+            yield l.strip("\n")
+    
+    def parse(self):
+        for line in self.linegen():
+            sline = line.strip()
+            if sline.startswith("[+"):
+                self.startnote(sline.lstrip("[+").rstrip("]:"))
+            elif sline.startswith("[-"):
+                self.endnote(sline.lstrip("[-").rstrip("]:"))
+            elif sline.startswith("[="):
+                self.note.append(Link(sline.lstrip("[=").rstrip("]:"), notes=self.notes))
+            else:
+                if self.note is not None:
+                    self.note.append(line)
+
+parser = argparse.ArgumentParser()
+parser.add_argument("infiles",nargs="+", help="Input source/markdown files")
+parser.add_argument("-v", "--verbose", action="store_true", help="Verbose (show all output and full tree)")
+parser.add_argument("-o","--output",required=True, help="Output file")
+parser.add_argument("-t","--tree", help="Tree file")
+parser.add_argument("-m","--map", action="store_true", help="Show document map")
+args = parser.parse_args()
+verbose = args.verbose
+
+notes1 = {}
+
+def createmd(notesdict, infilenames, outputfilename, treefile=None, map=False):
+    for f in infilenames:
+        if f.endswith(".md"):
+            Noteparser(f, notesdict)
+        elif f.endswith(".tex"):
+            TeXparser(f, notesdict)
+    if treefile is not None:
+        Noteparser(args.tree, notesdict)
+    else:
+        keys = list(notesdict.keys())
+        for k in notesdict:
+            if k in keys:
+                for j in notesdict[k].gettag():
+                    if j in keys:
+                        keys.remove(j)
+        notesdict["main"] = Lines(M.Notes)
+        for k in keys:
+            notesdict["main"].add(Link(k, notes=notesdict))
+    texsetup = """---
+documentclass: extarticle
+fontsize: 9pt
+margin: 40pt
+papersize: A4
+geometry:
+  - bindingoffset=0.2in
+  - left=0.5in
+  - right=0.8in
+  - top=0.8in
+  - bottom=0.8in
+listings:
+
+---
+
+"""
+    if args.map:
+        for k in notesdict:
+            print(f"Note: {k}\n{notesdict[k]}")
+    else:
+        print(notesdict["main"])
+        outputfile = open(outputfilename, "w")
+        outputfile.write(texsetup)
+        outputfile.write("\n".join(notesdict["main"].output()))
+        outputfile.close()
+
+createmd(notes1, args.infiles, args.output, args.tree, args.map)
