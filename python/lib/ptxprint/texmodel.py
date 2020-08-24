@@ -304,16 +304,23 @@ class TexModel:
         "versenumfont":             ("bl_verseNumFont", "c_inclVerseDecorator", None, None, None)
     }
     _hdrmappings = {
-        "First Reference":  r"\firstref",
-        "Last Reference":   r"\lastref",
-        "Page Number":      r"\pagenumber",
-        "Reference Range":  r"\rangeref",
-        "Primary Reference Range":  r"\rangerefL",
+        "First Reference":           r"\firstref",
+        "Last Reference":            r"\lastref",
+        "Page Number":               r"\pagenumber",
+        "Reference Range":           r"\rangeref",
+        "Primary Reference Range":   r"\rangerefL",
         "Secondary Reference Range": r"\rangerefR",
-        "-empty-":          r"\empty"
+        "-empty-":                   r"\empty"
     }
-    _swapRL = {'left' : 'right',
-               'right' : 'left'
+    _mirrorRL = {r'\lastref':    r'\firstref',
+                 r'\firstref':   r'\lastref',
+                 r'\pagenumber': r'\pagenumber',
+                 r'\rangeref':   r'\rangeref',
+                 r'\empty':      r'\empty'
+    }
+    _swapRL = {'left':   'right',
+               'center': 'center',
+               'right':  'left'
     }
     _glossarymarkup = {
         "None":                    r"\1",
@@ -531,10 +538,11 @@ class TexModel:
         v = self.dict["footer/ftrcenter"]
         self.dict['footer/oddcenter'] = self._hdrmappings.get(v,v)
         mirror = self.asBool("header/mirrorlayout")
+        diglot = True if self.dict["document/ifdiglot"] == "" else False
         for side in ('left', 'center', 'right'):
             v = self.dict["header/hdr"+side]
             t = self._hdrmappings.get(v, v)
-            if self.dict["document/ifdiglot"] == "":
+            if diglot:
                 if t.endswith("ref"):
                     if side == 'right':
                         t = t+'R'
@@ -542,13 +550,25 @@ class TexModel:
                         t = t+'L'
                 elif t.endswith("number"):
                     t = t+'L'
-            
             self.dict['header/odd{}'.format(side)] = t
-            if mirror and side != 'center' and (v not in ["First Reference", "Last Reference"]):
-                self.dict['header/even{}'.format(self._swapRL[side])] = t
+            if mirror:
+                self.dict['header/even{}'.format(self._swapRL[side])] = self.mirrorHeaders(t, diglot)
             else:
                 self.dict['header/even{}'.format(side)] = t
 
+            # if mirror:
+                # print('even{}   odd{}'.format(self._swapRL[side], side))
+                # print(self.dict['header/even{}'.format(self._swapRL[side])], self.dict['header/odd{}'.format(side)])
+            # else:
+                # print('even{}   odd{}'.format(side, side))
+                # print(self.dict['header/even{}'.format(side)], self.dict['header/odd{}'.format(side)])
+
+    def mirrorHeaders(self, h, dig=False):
+        if dig and h.endswith(("L", "R")):
+            return self._mirrorRL[h[:-1]]+h[-1:]
+        else:
+            return self._mirrorRL[h]
+        
     def texfix(self, path):
         return path.replace(" ", r"\ ")
 

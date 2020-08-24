@@ -1,5 +1,19 @@
-PTXprint 1.0 Release Notes 
-14th August 2020
+PTXprint 1.1 Release Notes 
+24th August 2020
+
+Bug Fixes and Improvements in: 1.1
+
+  * Last-used Project name and Config settings are preserved
+  
+  * Fix chapter numbers were interfering with ascenders in line of text below
+  
+  * Fix multiple issues with end of book decoration, verse number decoration, borders and related PDFs
+  
+  * Fix RTL text not right-aligned in poetry
+  
+  * Fix non-Roman digits for Extended-Arabic (Persian)
+
+  * Several improvements to diglot layout (but diglot illustrations are still fragile/experimental)
 
 First Public Release: 1.0
 
