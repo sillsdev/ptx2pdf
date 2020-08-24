@@ -41,7 +41,7 @@ a = Analysis(['python/scripts/ptxprint', 'python/scripts/usfmerge'],
                              'A4-12mmBorder.pdf', 'A5-10mmBorder.pdf', 'A4-CopyrightWatermark.pdf', 'A5-CopyrightWatermark.pdf')]
                       + [('python/lib/ptxprint/sfm/*.*y', 'ptxprint/sfm')]
                       + [('docs/inno-docs/*.txt', 'ptxprint')]
-                      + [('src/*.tex', 'ptx2pdf'),
+                      + [('src/*.tex', 'ptx2pdf'), ('src/ptx2pdf.sty', 'ptx2pdf'),
                          ('src/mappings/*.tec', 'ptx2pdf/mappings')]
                       + [('python/lib/ptxprint/Google-Noto-Emoji-Objects-62859-open-book.ico', 'ptxprint')],
              hiddenimports = ['_winreg'],
