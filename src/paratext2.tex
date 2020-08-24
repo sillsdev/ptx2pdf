@@ -335,6 +335,7 @@
 
 %%%%%%%%%%%%%% OUTPUT ROUTINES %%%%%%%%%%%%%% 
 % default output routine is single-column, somewhat based on Plain TeX output routine (see TeXbook)
+%+c_onecol
 \global\output={\onecol}
 \global\holdinginserts=1
 \def\onecol{%
@@ -353,6 +354,8 @@
   \unvbox255
   \penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
 }
+%-c_onecol
+%+c_onecoltrial_intro
 \def\onecoltrial{% single-column version of \twocoltrial (see below)
   \tracingparagraphs=0
   %\tracingall=1\tracingoutput=0\tracingpages=0\tracingparagraphs=0\tracingassigns=0\tracingscantokens=0
@@ -374,6 +377,8 @@
   %\setbox\colA=\vbox{\unvbox\colA}
   % and check if it all fit; if not, we'll have to back up and try again
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
+%-c_onecoltrial_intro
+%+c_onecoltrail_pagecontents
   \iffitonpage
     \trace{i}{1 SUCCEEDED, shipping page hIns=\the\holdinginserts}
 % at this point:
@@ -384,7 +389,7 @@
       \dimen1=\textwidth \advance\dimen1 -\ExtraRMargin
       \trace{b}{BALANCE pangeoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins}
       \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}} \fi
-      \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
+      \ifvoid\topins\else \vbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
       \dimen0=\dp\colA
       \hbox to \dimen1{\hbox to \columnshift{}%
         \box\colA\hbox to \ExtraRMargin{}\hfil}
@@ -395,6 +400,8 @@
       \ifdim\ht2<0pt\trace{b}{Strange notes height}\fi
       \unvbox2
     }
+%-c_onecoltrial_pagecontents
+%+c_onecoltrail_pagefit
     \resetvsize
     \ifdim\ht\colA>\baselineskip\plainoutput\trace{p}{plainoutput from onecoltrial}%
       \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
@@ -403,6 +410,8 @@
     \global\holdinginserts=1
     \ifrerunsavepartialpaged\trace{o}{onecoltrial: rerunsavepartialpage}\global\output={\savepartialpage}\global\rerunsavepartialpagedfalse
     \else\global\output={\onecol}\fi
+%-c_onecoltrial_pagefit
+%+c_onecoltrial_fail
   \else % the contents of the "galley" didn't fit into the actual page,
         % so reduce \vsize and try again with an earlier break
     \trace{i}{1c REDUCING VSIZE hIns=\the\holdinginserts}
@@ -417,6 +426,7 @@
     \unvbox\galley \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
   \fi
 }
+%-c_onecoltrial_fail
 
 \def\pagebody{\vbox to\textheight{\boxmaxdepth\maxdepth \pagecontents}}
 \def\makeheadline{%
@@ -490,10 +500,13 @@
   \global\count\th@cl@ss=\ifp@ranotes \ifdiglot 500\else 0\fi \else \count255 \fi
   \global\skip\th@cl@ss=\AboveNoteSpace }
 
+%+c_resetvsize
 \def\resetvsize{\trace{o}{resetvsize}\global\vsize=\textheight} 
+%-c_resetvsize
 
 \def\msg#1{\immediate\write16{#1}}
 
+%+c_savepartialpage
 \def\savepartialpage{% save a partially-full page when switching to 2-column format,
   \xdef\p@gebotmark{\botmark}
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
@@ -521,17 +534,13 @@
     }
     \resetvsize%
     \ifdim\ht\colA>\baselineskip\plainoutput
-    \xdef\p@gefirstmark{}
-    \xdef\p@gebotmark{}
-    \nextshipout
+      \xdef\p@gefirstmark{}\xdef\p@gebotmark{} \nextshipout
     \else\trace{o}{Page empty cols=\the\ht\colA, \the\ht\colB, partial=\the\ht\partial}\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
-    \tempfalse%
-    \ifdim\ht\partial>\PageFullFactor\textheight \temptrue\fi%
-    \ifnum\outputpenalty<-10000 \temptrue\fi%
-    \iftemp\def\pagecontents{\box\partial}\plainoutput 
-    \xdef\p@gefirstmark{}
-    \xdef\p@gebotmark{}
-    \nextshipout
+      \tempfalse%
+      \ifdim\ht\partial>\PageFullFactor\textheight \temptrue\fi%
+      \ifnum\outputpenalty<-10000 \temptrue\fi%
+      \iftemp\def\pagecontents{\box\partial}\plainoutput 
+      \xdef\p@gefirstmark{}\xdef\p@gebotmark{}\nextshipout
     \fi
     \global\holdinginserts=1
   \else % the contents of the "galley" didn't fit into the actual page,
@@ -548,15 +557,17 @@
   \fi}
   % save 1 column material since we are switching to 2 columns
 \newbox\partial
+%-c_savepartialpage
 
+%+c_twocols
 \def\twocols{% primary output routine in 2-col mode
   \trace{i}{TWOCOLS @ \ch@pter:\v@rse, txtht=\the\textheight, partial=\the\ht\partial, hIns=\the\holdinginserts}
   % save copy of current page so we can retry with different heights
   \trace{b}{BALANCE pagebuild: cols=2: textheight=\the\textheight}
   \global\setbox\galley=\copy255
   \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
-   \edef\t@mp{\splitbotmark}
-   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
+  \edef\t@mp{\splitbotmark}
+  \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
   \global\galleypenalty=\outputpenalty % save current penalty so we can restore it at (A)
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
   \global\output={\twocoltrial}
@@ -567,6 +578,7 @@
 \newbox\galley
 \newcount\galleypenalty
 \newdimen\trialheight
+%-c_twocols
 
 % for measuring the space needed for each class of notes;
 % this will decrease \availht by the space needed for the given class
@@ -672,8 +684,10 @@
 
 % increment or decrement a given \dimen by the height of a given \box, unless void
 % round to baselineskip assuming 0.5\baselineskip already added
+%+c_incrdecr
 \def\incr#1#2{\ifvoid#2\else\advance#1 by \skip#2\advance#1 by \ht#2\fi}
 \def\decr#1#2{\ifvoid#2\else\advance#1 by -\skip#2\advance#1 by -\ht#2\fi}
+%-c_incrdecr
 
 % allocate some named registers for the \trial routine to use
 \newbox\s@vedpage % to save the page contents for re-splitting columns
@@ -686,18 +700,23 @@
 \newif\ifunbalanced \unbalancedfalse% \unbalancedtrue
 \newif\ifnoteseen \noteseenfalse% A trigger to help alert user that note might have gone missing
 
+%+c_setcolhts
 \def\s@tcolhts#1{
     \colhtA=#1 \decr{\colhtA}{\topleftins} \decr{\colhtA}{\bottomleftins}
     \colhtB=#1 \decr{\colhtB}{\toprightins} \decr{\colhtB}{\bottomrightins}
     \trace{o}{s@tcolhts: colhtA=\the\colhtA, colhtB=\the\colhtB, toprightins=(\the\skip\toprightins, \the\ht\toprightins), bottomrightins=(\the\skip\bottomrightins, \the\ht\bottomrightins)}%
 }
+%-c_setcolhts
 
+%+c_getcolhts
 \def\g@tcolhts{
     \colhtA=\ht\colA \incr{\colhtA}{\topleftins} \incr{\colhtA}{\bottomleftins}
     \colhtB=\ht\colB \incr{\colhtB}{\toprightins} \incr{\colhtB}{\bottomrightins}
     \trace{o}{g@tcolhts: colhtA=\the\colhtA, colhtB=\the\colhtB}%
 }
+%-c_getcolhts
 
+%+c_splitcols
 \def\spl@tcols#1{
     % even if \vsplit to 0pt, TeX will always pull one line from the input box over
     %\trace{o}{split params maxdepth=\the\splitmaxdepth, topskip=\the\splittopskip, colhtA=\the\colhtA, colhtB=\the\colhtB}
@@ -711,7 +730,9 @@
     \ifdim\ht\colA>\colhtA\ifdim\ht\colB<1pt\ifdim\ht\colA<\colhtB\setbox\colB=\box\colA\fi\fi\fi
     \xdef\p@gebotmark{\splitbotmark}
 }
+%-c_splitcols
 
+%+c_balanced_intro
 \newdimen\availA \newdimen\availB
 \def\BalanceThreshold{0}
 
@@ -753,10 +774,12 @@
     \ifunbalanced\shortavail=\availht\else\ifdim\colhtB<\colhtA \rebalancetrue \shortavail=\colhtA\fi\fi
     \advance\colhtA -\baselineskip\ifdim\colhtA<\colhtB \rebalancetrue \shortavail=\colhtB\fi
     \advance\shortavail \baselineskip
+%-c_balanced_intro
+%+c_balanced_loop
     \loopcount=0
     \ifrebalance
+      \vfuzz=\maxdimen
       \loop
-        \vfuzz=\maxdimen
         \advance\loopcount by 1
         \advance\shortavail by -\baselineskip
         \setbox0=\copy\s@vedpage
@@ -801,7 +824,9 @@
     \trace{o}{A = \the\colhtA , B = \the\colhtB , remaining = \the\ht\s@vedpage}%
   \fi
 }
+%-c_balanced_loop
 
+%+c_calcboxheights
 \def\c@lcboxheights{
   \g@tcolhts
   \trace{b}{BALANCE pageout: cols=2: texta=\the\ht\colA , \the\dp\colA : textb=\the\ht\colB , \the\dp\colB : partial=\the\ht\partial, \the\dp\partial : topins=\the\ht\topins+\the\skip\topins, \the\ht\topleftins+\the\skip\topleftins, \the\ht\toprightins+\the\skip\toprightins : bottomins=\the\ht\bottomins+\the\skip\bottomins, \the\ht\bottomleftins+\the\skip\bottomleftins, \the\ht\bottomrightins+\the\skip\bottomrightins}
@@ -812,6 +837,7 @@
     \dimen3=\colhtB\dimen0=\dp\colB\dp\colA=\dimen0\fi
   \advance\dimen3 by \dimen0
 }
+%-c_calcboxheights
 
 \def\@mptyinserts{
   \trace{i}{Emptying Inserts}%
@@ -825,6 +851,7 @@
   \global\holdinginserts=1
 }
 
+%+c_calcavailht
 \xdef\p@gebotmark{}% No guarantee this will be universally set
 \def\c@lcavailht{
   \edef\t@st{\p@gefirstmark}%
@@ -848,6 +875,7 @@
   \trace{o}{new availht=\the\availht, topins=\the\ht\topins, bottomins=\the\ht\bottomins, baselineskip=\the\baselineskip}%
   \splittopskip=\topskip
 }
+%-c_calcavailht
 
 \newif\ifrerunsavepartialpaged
 \def\savepartialpaged{%
@@ -908,6 +936,7 @@
   \fi%
 }
 
+%+c_makenotebox
 \def\m@kenotebox{
   \setbox2=\vbox{
   \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % output all note classes
@@ -920,7 +949,9 @@
     \trace{i}{Inserted notes, ht \the\ht0\space dp \the\dimen0}
     \dimen0=\dp0 \box0 \kern-\dimen0
   \fi}}
+%-c_makenotebox
 
+%+c_twocoltrial_intro
 \def\twocoltrial{% trial formatting to see if current contents will fit on the page
   \tracingparagraphs=0
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
@@ -931,10 +962,11 @@
   \setbox\s@vedpage=\copy255
   \trace{o}{balance from twocoltrial height \the\ht\s@vedpage}
   \rem@indertrue\balanced
-  \dimen5=\baselineskip
   \iffitonpage\ifvoid\s@vedpage\else\fitonpagefalse\fi
   \else\ifnum\vsize<0 \fitonpagtrue\fi % no fit so dump the page we have now and try again with a new one.
-  \fi% \dimen5=\ht\s@vedpage\fi\fi
+  \fi
+%-c_twocoltrial_intro
+%+c_twocoltrial
   \iffitonpage
     \c@lcboxheights
     \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\fi
@@ -968,8 +1000,8 @@
     \else\global\output={\twocols}\unvbox\s@vedpage\fi
   \else % the contents of the "galley" didn't fit into the columns,
         % so reduce \vsize and try again with an earlier break
-    \trace{o}{Reducing vsize \the\vsize, by \the\dimen5}
-    \global\advance\vsize by -\dimen5
+    \trace{o}{Reducing vsize \the\vsize, by \the\baselineskip}
+    \global\advance\vsize by -\baselineskip
 	% clear insertions
     \trace{i}{2coltrial: emptyinserts hIns=\the\holdinginserts}
     \@mptyinserts
@@ -981,6 +1013,7 @@
   \fi}
 \newif\iffitonpage
 \newif\ifrebalance
+%-c_twocoltrial
 
 \newdimen\columnshift \columnshift=0pt
 \newdimen\ColumnGutterRuleSkip \ColumnGutterRuleSkip=0pt
@@ -999,6 +1032,7 @@
   \hbox to \columnshift{}}
 \newif\ifColumnGutterRule
 
+%+c_backingup
 \def\backingup{% this output routine is used when we reduce \vsize;
                % it will cause a new page break to be found, and then the \trial routine is called again
   \trace{o}{backingup hIns=\the\holdinginserts(==1)}
@@ -1010,6 +1044,7 @@
   \unvbox255% eject
   \penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
 }
+%-c_backingup
 
 \xdef\p@gefirstmark{}
 
@@ -1083,6 +1118,7 @@
     \nextshipout
 }%
 
+%+c_singlecolumn
 % to switch back to single column, we reset the page size parameters
 \def\singlecolumn{%
   \trace{o}{singlecolumn hIns=\the\holdinginserts}%\tracingmacros=1
@@ -1108,7 +1144,7 @@
       \ifendbooknoeject\ifx\p@gefirstmark\t@tle \else\vskip\baselineskip\hskip-\columnshift\hrule\vskip2\baselineskip\fi\fi
     \fi
   \fi}%
-
+%-c_singlecolumn
 
 
 \def\includepdf{\@netimesetup % in case \ptxfile hasn't been used yet
