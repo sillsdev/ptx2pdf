@@ -23,10 +23,10 @@
 \useLeftMarkstrue
 \useRightMarkstrue
 
-\def\topLmark{}
-\def\botLmark{}
-\def\topRmark{}
-\def\botRmark{}
+\def\firstLmark{} % First mark in left column
+\def\botLmark{} % last mark in left column
+\def\firstRmark{} % First mark in right column
+\def\botRmark{} % last mark in right column
 \def\nextp@gefirstmark{}
 \def\LeftMarkstrue{\useLeftMarkstrue\useRigthMarksfalse}
 \def\LeftMarksfalse{\useLeftMarkstrue\useRigthMarkstrue}
@@ -34,6 +34,7 @@
 \newif\ifVisTrace% Show lines where boxes are joined. 
 \VisTracefalse%
 \def\oldRmark{}
+\def\oldLmark{}
 \def\p@gebotmark{}
 %\def\doTRACEdiglot#1{\global\advance\diglotTRcount by 1 \MSG{\the\diglotTRcount: #1}}%
 %\def\noTRACEdiglot#1{\relax}%
@@ -490,52 +491,34 @@
   \ifnum\tmppenalty=10000 %
     \tmppenalty=0 %
   \fi
-  \trace{H}{diglotleftTrial: b:\botmark, f:\firstmark, tr:\topRmark, br:\botRmark}
-  \edef\t@st{\botmark}%
+  \trace{H}{diglotleftTrial: b:\botmark/\botmarks1/\botmarks2, t:\topmark/\topmarks1/\topmarks2, f:\firstmark/\firstmarks1/\firstmarks2, fr:\firstRmark, br:\botRmark ol:\oldLmark}
+  \edef\t@st{\firstmarks1}%
   \ifx\t@st\empty%
-    \trace{H}{Bottom mark was empty}% Presumably others not als
+    \trace{H}{dlt: First mark was empty}% Presumably others not als
   \else%
-    \edef\t@st{\firstmarks1}%
-    \ifx\t@st\oldRmark\else %Dont use \firstmark if it's been used by Right!
-      \ifx\t@st\topmarks1\else % or it's a carry-over,
-        \ifx\topLmark\empty
-          \trace{H}{Setting topLmark to \firstmarks1}%
-          \xdef\topLmark{\firstmarks1}% remember first, if not already set
-        \fi
-        \ifuseLeftMarks%
-          \edef\t@st{\p@gefirstmark}%
-          \ifx\t@st\empty%
-            \trace{H}{Setting (default) pagefirstmark to \firstmarks1}%
-            \xdef\p@gefirstmark{\firstmarks1}%
-          \fi
-        \fi
+    \edef\t@@st{\oldLmark}%
+    \ifx\t@st\t@@st\else % do not use if \firstmark,bormark are a carry-over,
+      \trace{H}{dlt1: Setting botLmark to \botmarks1}%
+      \xdef\botLmark{\botmarks1}%
+      \xdef\oldLmark{\botmarks1}%
+      \ifx\firstLmark\empty
+        \trace{H}{dlt1: Setting firstLmark to \firstmarks1}%
+        \xdef\firstLmark{\firstmarks1}% remember first, if not already set
       \fi
-    \fi
-    %\xdef\botLmark{\botmarks1}%
-      %%\ifm@rksonpage
-      %\edef\t@st{\p@gefirstmark}%
-      %\ifx\t@st\empty%
-        %\edef\t@st{\firstmark}%
-        %\ifx\t@st\topmark\else % it's a carry-over. Ignore.
-          %\ifuseRightMarks % Don't care which sort of mark it is in this case.
-            %\trace{H}{Setting (default) pagefirstmark to \firstmark}%
-            %\xdef\p@gefirstmark{\firstmark}%
-          %\else 
-            %\ifx\t@st\oldRmark\else %Dont use \firstmark if it's been used by Right!
-              %\trace{H}{Setting (default) pagefirstmark to \firstmark}%
-              %\xdef\p@gefirstmark{\firstmark}%
-            %\fi
-          %\fi
-        %\fi
-      %\fi%\fi%
-    \ifuseLeftMarks
-     \trace{H}{oldRmark: \oldRmark, firstmark: \firstmark, botmark: \botmark}
-      \edef\t@st{\firstmark}
-      \ifx\t@st\oldRmark\else%
-        \trace{H}{Setting (default) bottom mark to \botmark, may revise later}%
-        \xdef\b@xbotmark{\botmark}%
-      \fi% remember first, if not already set
-    \fi% LeftMarks
+      \ifuseLeftMarks%
+        \edef\t@st{\p@gefirstmark}%
+        \ifx\t@st\empty%
+          \trace{H}{dlt2: Setting (default) pagefirstmark to \firstmarks1}%
+          \xdef\p@gefirstmark{\firstmarks1}%
+        \fi
+        \trace{H}{dlt3: oldRmark: \oldRmark, firstmark: \firstmark, botmark: \botmark}
+        \edef\t@st{\firstmark}
+        \ifx\t@st\oldRmark\else%
+          \trace{H}{dlt4: Setting (default) bottom mark to \botmark, may revise later}%
+          \xdef\b@xbotmark{\botmark}%
+        \fi% remember first, if not already set
+      \fi% LeftMarks
+    \fi% Not Cary over
   \fi% botmark empty or not
   \let\firstmark=\empty
 
@@ -722,8 +705,8 @@
     \global\savedpenalty=0 %
   \fi%
 %
-  \ifx\nexttopRmark\empty
-     \xdef\nexttopRmark{\firstmarks2}%
+  \ifx\nextfirstRmark\empty
+     \xdef\nextfirstRmark{\firstmarks2}%
   \fi
   \ifx\nextbotRmark\empty
     \xdef\nextbotRmark{\botmarks2}%
@@ -836,8 +819,8 @@
   \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
    \edef\t@mp{\splitbotmark}
    \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found marks \splitfirstmark, \splitbotmark}%
-     \if\topRmark\empty
-       \xdef\topRmark{\splitfirstmark}%
+     \if\firstRmark\empty
+       \xdef\firstRmark{\splitfirstmark}%
      \fi
      \xdef\botRmark{\splitbotmark}%
      \ifuseRightMarks
@@ -882,26 +865,26 @@
  \traceNum{D}{digl@tRight: \the\pagegoal, \the\tmppenalty}
  \edef\t@st{\botmark}%
  \ifx\t@st\empty\else
-   \trace{H}{digl@tRight: b:\botmark, f:\firstmark, tl:\topLmark}
+   \trace{H}{digl@tRight: b:\botmark/\botmarks1/\botmarks2, f:\firstmark/\firstmarks1/\firstmarks2, fl:\firstLmark}
    \xdef\botRmark{\botmarks2}%
-   \edef\t@st{\topRmark}%
+   \edef\t@st{\firstRmark}%
    \ifx\t@st\empty
      \edef\t@st{\firstmarks2}%
      \ifx\oldRmark\t@st\else%Check to see if there's been a change
-       \xdef\topRmark{\firstmarks2}% remember first, if not already set
+       \xdef\firstRmark{\firstmarks2}% remember first, if not already set
+       \ifuseRightMarks%
+         \trace{H}{Setting (default) bottom mark to \botmarks2, may revise later}%
+         \xdef\b@xbotmark{\botmark}%
+         \edef\t@st{\p@gefirstmark}%
+         \ifx\t@st\empty
+           \trace{H}{Setting (default) first mark to \firstmarks2}%
+           \xdef\p@gefirstmark{\firstmark}% remember first, if not already set
+         \fi
+       \fi% useRightMarks
      \fi
    \fi 
    \xdef\oldRmark{\botmarks2}%
 
-   \ifuseRightMarks%
-     \trace{H}{Setting (default) bottom mark to \botmarks2, may revise later}%
-     \xdef\b@xbotmark{\botmark}%
-     \edef\t@st{\p@gefirstmark}%
-     \ifx\t@st\empty
-       \trace{H}{Setting (default) first mark to \firstmarks2}%
-       \xdef\p@gefirstmark{\firstmark}% remember first, if not already set
-     \fi
-   \fi% useRightMarks
  \fi
  \hsize=\columnRwidth\relax%
  \makevtop{255}%
@@ -1206,9 +1189,9 @@
       \edef\t@st{\splitbotmark}%
       \ifx\t@st\empty\else
         \xdef\botRmark{\splitbotmark}%
-        \edef\t@st{\topRmark}%
+        \edef\t@st{\firstRmark}%
         \if\t@st\empty
-          \xdef\topRmark{\splitfirstmark}%
+          \xdef\firstRmark{\splitfirstmark}%
         \fi
         \ifuseRightMarks
           \traceNum{d}{Setting bottom mark to \splitbotmark}%
@@ -1436,13 +1419,13 @@
   \hsize=\textwidth%
   \edef\t@st{\p@gebotmark}%
   \ifx\t@st\empty%
-    \trace{H}{Setting bottom mark to \b@xbotmark, since it's empty }%
+    \trace{H}{updp1: Setting bottom mark to \b@xbotmark, since it's empty }%
     \xdef\p@gebotmark{\b@xbotmark}%
   \fi%
   %Re-use LeftBox for this page chunk
   %
  
-  \traceNum{d}{Adding to page: LB:\the\ht\LeftBox+\the\dp\LeftBox\space RB:\the\ht\RightBox+\the\dp\RightBox\space Last Delta:\the\chunkDelta}%\space Tot:\the\cumulativeDelta}%
+  \traceNum{d}{Adding to page: LB:\the\ht\LeftBox+\the\dp\LeftBox\space RB:\the\ht\RightBox+\the\dp\RightBox\space Last Delta:\the\chunkDelta}%\space Tot:\the\cumulativeDelta%
   \ifVisTrace
     \doVisTrace{L}%
   \fi
@@ -1573,7 +1556,7 @@
         \ifx\t@st\empty\else
           \xdef\botLmark{\splitbotmark}%
           \ifuseLeftMarks
-            \trace{H}{Setting bottom mark to \splitbotmark, pagefirstmark to \splitfirstmark}%
+            \trace{H}{updp2: Setting bottom mark to \splitbotmark, pagefirstmark to \splitfirstmark}%
             \xdef\p@gefirstmark{\splitfirstmark}%
             \xdef\p@gebotmark{\splitbotmark}%
           \fi
@@ -1588,14 +1571,14 @@
         \global\setbox\excessL=\box\partialL\relax%
         \global\setbox\partialL=\box\LeftBox\relax%
       \else%
-        \ifx\topLmark\empty
+        \ifx\firstLmark\empty
           \trace{D}{need to split to get marks}%
           \setbox0=\copy\partialL
           \setbox0=\vsplit0 to \maxdimen
-          \xdef\topLmark{\splitfirstmark}%
+          \xdef\firstLmark{\splitfirstmark}%
           \ifuseLeftMarks
             \ifx\p@gefirstmark\empty%
-              \trace{H}{Setting pagefirstmark to \splitfirstmark}%
+              \trace{H}{updp3: Setting pagefirstmark to \splitfirstmark}%
               \xdef\p@gefirstmark{\splitfirstmark}%
             \fi
           \fi
@@ -1861,9 +1844,9 @@
   \let\firstmark\empty
   \ifdigl@tL\diglotLtrue\else\diglotLfalse\fi
   \xdef\p@gebotmark{}%
-  \xdef\topLmark{}
+  \xdef\firstLmark{}
   \xdef\botLmark{}
-  \xdef\topRmark{}
+  \xdef\firstRmark{}
   \xdef\botRmark{}
   \global\setbox\RightBox=\box\voidb@x%
   \global\setbox\LeftBox=\box\voidb@x%
