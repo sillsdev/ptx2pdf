@@ -16,11 +16,12 @@ class M(Enum):
     Notes = 4
     
 class Lines(list):
-    def __init__(self, flavour=M.Vanilla, startline=0, notes=None):
+    def __init__(self, flavour=M.Vanilla, startline=0, notes=None, filename=None):
         self.flavour = flavour
         self.startline = startline
         self.notes = notes
-
+        self.filename = filename
+        
     def __repr__(self):
         if verbose:
             return f"Lines object ({self.flavour.name}) with {len(self)} lines\n" + shift("\n".join([str(x) for x in self]))
@@ -33,7 +34,7 @@ class Lines(list):
     def output(self):
         self.strip()
         if self.flavour == M.TeX:
-            return ["```{.latex .numberLines startFrom=\"" + str(self.startline) + "\"}"] + self + ["```"]
+            return ([] if self.filename is None else [f"\\fileheader{{{self.filename}}}"]) + ["```{.latex .numberLines startFrom=\"" + str(self.startline) + "\"}"] + self + ["```"]
         elif self.flavour == M.Text:
             return self
         elif self.flavour == M.Skip:
@@ -41,7 +42,7 @@ class Lines(list):
         elif self.flavour == M.Notes:
             output = []
             for x in self:
-                if output != [] and type(output[-1]) != type(x):
+                if output != [] and type(output[-1]) != type(x) and not output[-1] == "":
                     output.append("")
                 if type(x) is str:
                     output += [x]
@@ -57,12 +58,10 @@ class Lines(list):
     
     def strip(self):
         while self != [] and type(self[0]) is str and self[0].strip() in ("", "%"):
-            del self[0]
+            self.pop(0)
             self.startline += 1
         while self != [] and type(self[-1]) is str and self[-1].strip() in ("", "%"):
-            del self[-1]
-        #### Removing blank lines before and after Links goes here
-            
+            self.pop(-1)
             
     def gettag(self):
         output = []
@@ -81,9 +80,9 @@ class Link:
     
     def output(self):
         try:
-            return [f"### Linked note *{self.tag}*", ""] + self.notes[self.tag].output()
+            return self.notes[self.tag].output()
         except:
-            return [f"### Linked note *{self.tag}* failed"]
+            return [f"### Link *{self.tag}* failed"]
     
     def gettag(self):
         return [self.tag] + self.notes[self.tag].gettag()
@@ -94,18 +93,19 @@ def shift(string):
 
 
 class Item(list):
-    def __init__(self, tag, notes):
+    def __init__(self, tag, notes, filename):
         self.tag = tag
         self.mode = M.TeX
         self.notes = notes
-    
+        self.filename = filename
+        
     def __repr__(self):
         return f"Item object {self.tag} with {len(self)} sub\n" + shift(self.listrep())
     
     def add(self, x, lineno=0):
         if type(x) is str:
             if self == [] or type(self[-1]) is not Lines or self[-1].flavour != self.mode:
-                self.append(Lines(self.mode, lineno))
+                self.append(Lines(self.mode, lineno, filename=self.filename))
             self[-1].add(x)
         else:
             self.append(x)
@@ -125,9 +125,9 @@ class Item(list):
                     self.remove(x)
     
     def output(self):
-        output = [f"## Section {self.tag}"]
+        output = []#[f"## Section {self.tag}"]
         for x in self:
-            output += [""]
+            output += [""] if output != [] else []
             output += x.output()
         return output
     
@@ -154,13 +154,13 @@ class TeXparser:
         if self.item is not None:
             self.item.add(Link(tag, notes=self.notes))
             self.stack.append(self.item.tag)
-        self.notes[tag] = self.item = Item(tag, notes=self.notes)    
+        self.notes[tag] = self.item = Item(tag, notes=self.notes, filename=self.filename)    
     
     def enditem(self, tag=None):
         if self.stack != []:
             self.item = self.notes[self.stack.pop(-1)]
-        else:
-            print("Reached the end of the document, probably")
+        #else:
+        #    print("Reached the end of the document, probably")
         
     def linegen(self):
         self.lineno = 0
@@ -230,6 +230,7 @@ class Noteparser:
             else:
                 if self.note is not None:
                     self.note.append(line)
+        
 
 parser = argparse.ArgumentParser()
 parser.add_argument("infiles",nargs="+", help="Input source/markdown files")
@@ -280,7 +281,7 @@ listings:
         for k in notesdict:
             print(f"Note: {k}\n{notesdict[k]}")
     else:
-        print(notesdict["main"])
+        #print(notesdict["main"])
         outputfile = open(outputfilename, "w")
         outputfile.write(texsetup)
         outputfile.write("\n".join(notesdict["main"].output()))
