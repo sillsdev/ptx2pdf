@@ -140,15 +140,25 @@
 \def\RangeSeparator{{\kern.1em\char"2013\kern.1em}} % what to put between first - last of a reference range
 \def\ChapterVerseSeparator{{\kern.02em{header/chvseparator}\kern.02em}} % what to put between chapter:verse
 
+%% Even Header
+\def\RHevenleft{{{header/evenleft}}}
+\def\RHevencenter{{{header/evencenter}}}
+\def\RHevenright{{{header/evenright}}}
+
 %% Odd Header
 \def\RHoddleft{{{header/oddleft}}}
 \def\RHoddcenter{{{header/oddcenter}}}
 \def\RHoddright{{{header/oddright}}}
 
-%% Even Header
-\def\RHevenleft{{{header/evenleft}}}
-\def\RHevencenter{{{header/evencenter}}}
-\def\RHevenright{{{header/evenright}}}
+%% Extra Books Even Header
+\def\RHnoVevenleft{{{header/noVevenleft}}}
+\def\RHnoVevencenter{{{header/noVevencenter}}}
+\def\RHnoVevenright{{{header/noVevenright}}}
+
+%% Extra Books Odd Header
+\def\RHnoVoddleft{{{header/noVoddleft}}}
+\def\RHnoVoddcenter{{{header/noVoddcenter}}}
+\def\RHnoVoddright{{{header/noVoddright}}}
 
 \VerseRefs{header/ifverses}                  % Include verses in reference text?
 \OmitChapterNumberRH{header/ifomitrhchapnum} % Omit the chapter numbers in the running header (RH)

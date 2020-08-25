@@ -304,18 +304,42 @@ class TexModel:
         "versenumfont":             ("bl_verseNumFont", "c_inclVerseDecorator", None, None, None)
     }
     _hdrmappings = {
-        "First Reference":           r"\firstref",
-        "Last Reference":            r"\lastref",
-        "Page Number":               r"\pagenumber",
-        "Reference Range":           r"\rangeref",
-        "Primary Reference Range":   r"\rangerefL",
+        "First Reference":     r"\firstref",
+        "Pri.First Reference": r"\firstrefL",
+        "Primary First Reference": r"\firstrefL",
+        "Sec.First Reference": r"\firstrefR",
+        "Secondary First Reference": r"\firstrefR",
+
+        "Last Reference":      r"\lastref",
+        "Pri.Last Reference":  r"\lastrefL",
+        "Primary Last Reference":  r"\lastrefL",
+        "Sec.Last Reference":  r"\lastrefR",
+        "Secondary Last Reference":  r"\lastrefR",
+
+        "Reference Range":     r"\rangeref",
+        "Pri.Reference Range": r"\rangerefL",
+        "Primary Reference Range": r"\rangerefL",
+        "Sec.Reference Range": r"\rangerefR",
         "Secondary Reference Range": r"\rangerefR",
-        "-empty-":                   r"\empty"
+
+        "Page Number":         r"\pagenumber",
+        "Pri.Page Number":     r"\pagenumberL",
+        "Primary Page Number":     r"\pagenumberL",
+        "Sec.Page Number":     r"\pagenumberR",
+        "Secondary Page Number":     r"\pagenumberR",
+
+        "Time (HH:MM)":        r"\hrsmins",
+        "Date (YYYY-MM-DD)":   r"\isodate",
+        "-empty-":             r"\empty"
     }
     _mirrorRL = {r'\lastref':    r'\firstref',
                  r'\firstref':   r'\lastref',
-                 r'\pagenumber': r'\pagenumber',
                  r'\rangeref':   r'\rangeref',
+
+                 r'\pagenumber': r'\pagenumber',
+
+                 r'\hrsmins':    r'\hrsmins',
+                 r'\isodate':    r'\isodate',
                  r'\empty':      r'\empty'
     }
     _swapRL = {'left':   'right',
@@ -555,13 +579,21 @@ class TexModel:
                 self.dict['header/even{}'.format(self._swapRL[side])] = self.mirrorHeaders(t, diglot)
             else:
                 self.dict['header/even{}'.format(side)] = t
-
-            # if mirror:
-                # print('even{}   odd{}'.format(self._swapRL[side], side))
-                # print(self.dict['header/even{}'.format(self._swapRL[side])], self.dict['header/odd{}'.format(side)])
-            # else:
-                # print('even{}   odd{}'.format(side, side))
-                # print(self.dict['header/even{}'.format(side)], self.dict['header/odd{}'.format(side)])
+                
+            if t.startswith((r'\first', r'\last', r'\range')): # ensure noVodd + noVeven is \empty
+                self.dict['header/noVodd{}'.format(side)] = r'\empty'
+            else:
+                self.dict['header/noVodd{}'.format(side)] = t  # copy the other header as is
+            if mirror:
+                if t.startswith((r'\first', r'\last', r'\range')):
+                    self.dict['header/noVeven{}'.format(self._swapRL[side])] = r'\empty'
+                else:
+                    self.dict['header/noVeven{}'.format(self._swapRL[side])] = self.mirrorHeaders(t, diglot)
+            else:
+                if t.startswith((r'\first', r'\last', r'\range')): # ensure noVodd + noVeven is \empty
+                    self.dict['header/noVeven{}'.format(side)] = r'\empty'
+                else:
+                    self.dict['header/noVeven{}'.format(side)] = t 
 
     def mirrorHeaders(self, h, dig=False):
         if dig and h.endswith(("L", "R")):
@@ -585,19 +617,19 @@ class TexModel:
                     res.append("\\PtxFilePath={"+os.path.relpath(filedir, docdir).replace("\\","/")+"/}\n")
                     for i, f in enumerate(self.dict['project/bookids']):
                         fname = self.dict['project/books'][i]
-                        if f in ["XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG",
-                                "GLO", "TDX", "NDX", "CNC", "OTH", "BAK"]:
-                            mirror = self.asBool("header/mirrorlayout")
-                            for toe in ['title', 'noVodd', 'noVeven']:
-                                for side in ('left', 'center', 'right'):
-                                    v = self.dict["header/hdr"+side]
-                                    t = self._hdrmappings.get(v, v)
-                                    if not t.endswith("ref"):
-                                        if mirror and side != 'center' and toe == 'noVeven': 
-                                            res.append("\\def\RH{}{}{{{}}}\n".format(toe, self._swapRL[side], t))
-                                        else:
-                                            res.append("\\def\RH{}{}{{{}}}\n".format(toe, side, t))
-                                res.append("\n")
+                        # if f in ["XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG",
+                                # "GLO", "TDX", "NDX", "CNC", "OTH", "BAK"]:
+                            # mirror = self.asBool("header/mirrorlayout")
+                            # for toe in ['title', 'noVodd', 'noVeven']:
+                                # for side in ('left', 'center', 'right'):
+                                    # v = self.dict["header/hdr"+side]
+                                    # t = self._hdrmappings.get(v, v)
+                                    # if not t.endswith("ref"):
+                                        # if mirror and side != 'center' and toe == 'noVeven': 
+                                            # res.append("\\def\RH{}{}{{{}}}\n".format(toe, self._swapRL[side], t))
+                                        # else:
+                                            # res.append("\\def\RH{}{}{{{}}}\n".format(toe, side, t))
+                                # res.append("\n")
                         if self.asBool('document/ifomitsinglechnum') and \
                            self.asBool('document/showchapternums') and \
                            f in oneChbooks:
