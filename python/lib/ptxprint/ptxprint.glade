@@ -6345,7 +6345,7 @@ secondary text as the Outer text.</property>
                                     </child>
                                     <child>
                                       <object class="GtkComboBoxText" id="ecb_hdrcenter">
-                                        <property name="width_request">170</property>
+                                        <property name="width_request">165</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">The header line on each page can contain
@@ -6355,8 +6355,7 @@ type in your own TeX key word with additional
 adornments or text as needed. 
 For example:
 [\pagenumber]   places square brackets around the page number
-\rangerefL     places the Left text's reference range in a diglot
-\rangerefR    places the Right text's reference range in a diglot
+DRAFT\ \isodate\ \hrsmins   would give "DRAFT YYYY-MM-YY HH:MM"
 -empty-     places nothing in that location</property>
                                         <property name="margin_top">4</property>
                                         <property name="margin_bottom">4</property>
@@ -6386,7 +6385,7 @@ For example:
                                     </child>
                                     <child>
                                       <object class="GtkComboBoxText" id="ecb_hdrright">
-                                        <property name="width_request">170</property>
+                                        <property name="width_request">165</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">The header line on each page can contain
@@ -6396,8 +6395,7 @@ type in your own TeX key word with additional
 adornments or text as needed. 
 For example:
 [\pagenumber]   places square brackets around the page number
-\rangerefL     places the Left text's reference range in a diglot
-\rangerefR    places the Right text's reference range in a diglot
+DRAFT\ \isodate\ \hrsmins   would give "DRAFT YYYY-MM-YY HH:MM"
 -empty-     places nothing in that location</property>
                                         <property name="margin_right">6</property>
                                         <property name="margin_top">4</property>
@@ -6428,7 +6426,7 @@ For example:
                                     </child>
                                     <child>
                                       <object class="GtkComboBoxText" id="ecb_hdrleft">
-                                        <property name="width_request">170</property>
+                                        <property name="width_request">165</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">The header line on each page can contain
@@ -6438,8 +6436,7 @@ type in your own TeX key word with additional
 adornments or text as needed. 
 For example:
 [\pagenumber]   places square brackets around the page number
-\rangerefL     places the Left text's reference range in a diglot
-\rangerefR    places the Right text's reference range in a diglot
+DRAFT\ \isodate\ \hrsmins   would give "DRAFT YYYY-MM-YY HH:MM"
 -empty-     places nothing in that location</property>
                                         <property name="margin_top">4</property>
                                         <property name="margin_bottom">4</property>
@@ -6472,6 +6469,11 @@ For example:
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">If setting the header for a diglot
+you will need to specify whether
+the Primary (Left) text's formatting
+should be used for this part of the
+header, or the Secondary format.</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">c_hdrLeftSec</property>
@@ -6487,6 +6489,11 @@ For example:
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">If setting the header for a diglot
+you will need to specify whether
+the Primary (Left) text's formatting
+should be used for this part of the
+header, or the Secondary format.</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
@@ -6501,7 +6508,12 @@ For example:
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="margin_left">8</property>
+                                        <property name="tooltip_text" translatable="yes">If setting the header for a diglot
+you will need to specify whether
+the Primary (Left) text's formatting
+should be used for this part of the
+header, or the Secondary format.</property>
+                                        <property name="margin_left">10</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">c_hdrCenterSec</property>
@@ -6517,7 +6529,12 @@ For example:
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="margin_left">8</property>
+                                        <property name="tooltip_text" translatable="yes">If setting the header for a diglot
+you will need to specify whether
+the Primary (Left) text's formatting
+should be used for this part of the
+header, or the Secondary format.</property>
+                                        <property name="margin_left">10</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">c_hdrRightSec</property>
@@ -6533,7 +6550,12 @@ For example:
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="margin_left">8</property>
+                                        <property name="tooltip_text" translatable="yes">If setting the header for a diglot
+you will need to specify whether
+the Primary (Left) text's formatting
+should be used for this part of the
+header, or the Secondary format.</property>
+                                        <property name="margin_left">10</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
@@ -6548,7 +6570,12 @@ For example:
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="margin_left">8</property>
+                                        <property name="tooltip_text" translatable="yes">If setting the header for a diglot
+you will need to specify whether
+the Primary (Left) text's formatting
+should be used for this part of the
+header, or the Secondary format.</property>
+                                        <property name="margin_left">10</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
@@ -6828,6 +6855,12 @@ then that can be set here. Similarly, you may want to add
 a DRAFT message and/or date to the end of each page.
 Note that you can select a preset option OR type your own
 text as needed.
+
+For example:
+[\pagenumber]   places square brackets around the page number
+DRAFT\ \isodate\ \hrsmins   would give "DRAFT YYYY-MM-YY HH:MM"
+-empty-     places nothing in that location
+
 Note that if you really must have Inner/Outer Footers,
 these can be set in the ptxprint-mods.tex file.</property>
                                 <property name="margin_top">6</property>
@@ -6886,6 +6919,11 @@ these can be set in the ptxprint-mods.tex file.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">If setting the footer for a diglot
+you will need to specify whether
+the Primary (Left) text's formatting
+should be used for this part of the
+header, or the Secondary format.</property>
                                 <property name="margin_left">8</property>
                                 <property name="draw_indicator">True</property>
                                 <property name="group">c_ftrCenterSec</property>
@@ -6901,6 +6939,11 @@ these can be set in the ptxprint-mods.tex file.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">If setting the footer for a diglot
+you will need to specify whether
+the Primary (Left) text's formatting
+should be used for this part of the
+header, or the Secondary format.</property>
                                 <property name="margin_left">8</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>

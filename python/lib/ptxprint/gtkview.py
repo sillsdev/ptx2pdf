@@ -109,7 +109,8 @@ _sensitivities = {
     "c_includeXrefs" :         ["bx_xrOptions"],
     "c_includeillustrations" : ["gr_IllustrationOptions"],
     "c_includefigsfromtext"  : ["c_figexclwebapp"],
-    "c_diglot" :               ["gr_diglot", "fcb_diglotPicListSources"],
+    "c_diglot" :               ["gr_diglot", "fcb_diglotPicListSources", "c_hdrLeftPri", "c_hdrCenterPri", "c_hdrRightPri",
+                                "c_ftrCenterPri", "c_hdrLeftSec", "c_hdrCenterSec", "c_hdrRightSec", "c_ftrCenterSec"],
     "c_borders" :              ["gr_borders"],
 
     "c_multiplebooks" :        ["c_combine", "t_booklist"],
