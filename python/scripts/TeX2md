@@ -6,7 +6,7 @@ Created on Wed Aug 19 15:47:39 2020
 @author: jakem
 """
 
-import argparse, os, re
+import argparse, os, re, difflib
 from enum import Enum
 
 circled = "".join(chr(x) for x in range(0x2460, 0x2474))
@@ -105,7 +105,8 @@ class Link:
     def output(self):
         try:
             return self.notes[self.tag].output()
-        except:
+        except KeyError:
+            print(f"Link {self.tag} failed; maybe you meant {' or '.join(difflib.get_close_matches(self.tag, self.notes))}?")
             return [f"### Link *{self.tag}* failed"]
     
     def gettag(self):
@@ -176,15 +177,14 @@ class TeXparser:
     
     def startitem(self, tag):
         if self.item is not None:
-            # self.item.add(Link(tag, notes=self.notes))
             self.stack.append(self.item.tag)
         self.notes[tag] = self.item = Item(tag, notes=self.notes, filename=self.filename)    
     
     def enditem(self, tag=None):
         if self.stack != []:
+            if tag is not None and self.item.tag != tag:
+                print(f"Unexpected closing tag %-{tag}; expected %-{self.item.tag} to come first")
             self.item = self.notes[self.stack.pop(-1)]
-        #else:
-        #    print("Reached the end of the document, probably")
         
     def linegen(self):
         self.lineno = 0
@@ -198,7 +198,6 @@ class TeXparser:
     def parse(self):
         for line in self.linegen():
             sline = line.lstrip()
-            #print(sline)
             if verbose:
                 print(line)
             if sline.startswith("%+"):
@@ -218,7 +217,10 @@ class TeXparser:
                 elif self.item.mode is M.Text and not (sline.startswith("%") or sline == ""): 
                     self.item.mode = M.TeX
                 self.item.add(nummatch(line, prefix="%") , self.lineno)
+        if self.stack != []:
+            print(f"You missed one or more closing tags: {' and '.join(['%-' + x for x in self.stack])}")
         self.item.clean()
+
         
     def output(self):
         return self.item.output()
@@ -228,15 +230,21 @@ class Noteparser:
         self.filename = os.path.basename(filename)
         self.note = None
         self.notes = notes
+        self.stack = []
         self.file = open(filename)
         self.parse()
         self.file.close()
     
     def startnote(self, tag):
+        if self.note is not None:
+            self.stack.append(tag)
         self.note = self.notes[tag] = Lines(M.Notes, notes=self.notes)
     
     def endnote(self, tag):
-        pass
+        if self.stack != []:
+            if tag is not None and self.stack[-1] != tag:
+                print(f"Unexpected closing tag [-{tag}]::; expected [-{self.stack[-1]}]:: to come first")
+            self.stack.pop(-1)
     
     def linegen(self):
         for l in self.file.readlines():
@@ -245,6 +253,7 @@ class Noteparser:
     def parse(self):
         for line in self.linegen():
             sline = line.strip()
+            # could put an if sline.endswith("]::") here and indent until else:
             if sline.startswith("[+"):
                 self.startnote(sline.lstrip("[+").rstrip("]:"))
             elif sline.startswith("[-"):
@@ -254,6 +263,8 @@ class Noteparser:
             else:
                 if self.note is not None:
                     self.note.append(nummatch(line, invert=True))
+        if self.stack != []:
+            print(f"You missed one or more closing tags: {' and '.join(['[-' + x + ']::' for x in self.stack])}")
         
 class Outputter:
     def __init__(self):
@@ -316,11 +327,14 @@ def createmd(notesdict, infilenames, outputfilename, treenode=None, map=False):
         for k in keys:
             notesdict["main"].add(Link(k, notes=notesdict))
         treenode = "main"
+    else:
+        Noteparser(treenode, notesdict)
+        treenode = "main"
     if args.map:
         for k in notesdict:
             print(f"Note: {k}\n{notesdict[k]}")
     outer = Outputter()
-    outputfile = open(outputfilename, "w")
+    outputfile = open(outputfilename, "w", encoding="utf-8")
     outputfile.write("\n".join(outer(s) for s in notesdict[treenode].output()))
     outputfile.close()
 
