@@ -443,7 +443,91 @@ it.
 
 ## Shipping Out The Page
 
+The driving routine for shipping out a page is `\plainoutput`. The routine
+conserves the pdf page dimensions, which the `shipwithcr@pmarks` may modify.
+Then it passes a box for the page to the routine that adds any cropmarks. The
+contents of that page are the head line the page body and the foot line. After
+that we restore the pdf page dimensions and advance the page number. There is
+check that the document is not stupidly long. The value of `@MM` is 20000 and is
+only emmitted in a supereject. Thus we are merely passing the supereject along.
+Otherwise clear various flags.
 
+[=c_plainoutput]::
+
+The routines for creating the components of a page are not too complex. The
+`\pagebody` routine just makes a box of the pagecontents. `\makeheadline` does a
+bit more work in creating a box that is of the right height and shifted
+appropriately for the head line. First it sets up to use the `\h` styling
+information. Then it creates a vbox that looks to be 0 size, but is in fact
+shifted up by the `topm@rgin` so that it touches the top of the paper. Then it
+contains a vbox which is shifted down by the `\HeaderPosition` multiplier of
+`\MarginUnit`. Then we create a box of the headline. The box is set to be 0.7
+times the ascender of the `\h` font, and the headline box is added to the top
+box we are creating. If there needs to be a heading rule, then this is
+positioned and added. The inner box has infinite stretch and shrink added so
+that it's size can be 0.
+
+The footline is much simpler. It is merely a 0 height box containing a shift to
+the bottom of the paper and then back up to the `FooterPosition`, where an hbox
+of the correct width is added containing the footline macro expansion. Again
+infinite vertical shrink and stretch is added to keep the box 0 height.
+
+Details of the `\headline` and `\footline` may be found in the References
+section.
+
+[=c_pagebody]::
+
+We are slowly following the path to the actual `\shipout` command that is found in
+this routine. First we grow the pdf page if there crop marks are being added,
+otherwise not. We undo TeX's default of shifting the page by 1in and then we
+shipout the vbox for the page. Inside the vbox we insert special PDF structures
+to store details about the page size. This is primarily towards providing
+PDF/X1-A support. Next we decide which side any gutter margin goes on. Then we
+do some magic for a certain class of document. Such documents achieve vertical
+text through:
+
+- Rotating the page so that left to right text is rendered vertically from top to
+  bottom.
+- Instructing TeX to assemble lines from the bottom of the page to the top.
+
+`\ifrotate` is set in the first case. To ensure consistent results, we turn of
+the uer's assembly issues. Also turn of rendering paragraphs from bottom to top.
+We achieve the rotation by inserting a special to tell the xdvi converter to
+rotate the page for us. After this we merge in any page specific underlays. The
+`\m@rgepdf` is for watermarks. `\pl@ceborder` is for bringing in special page
+borders. `\offinterlineskip` tells TeX not to output any inter line
+space which might follow the `\special` or images. At last we come to the actual box that
+is set to the PDF page height, but can stretch or shrink either way to keep its
+contents in the centre vertically. Likewise it contains an hbox corresponding to
+the page width containing the contents of whatever is being shipped out. Again
+this is centred horizontally, even if it is wider than the box. Finally we do
+any cropmarks.
+
+[=c_shipwithcropmarks]::
+
+Actually outputting any cropmarks is done by `\docr@pmarks`. If no crop marks
+are to be output, this routine does nothing. If the two boxes for the top and
+bottom crop marks don't yet exist, then make them. Then we create a 0 size vbox
+containing the top and bottom crop marks carefully positioned. Also in the
+bottom crop marks we output whatever is in `\c@rrID`, again into a 0 height box
+with whatever shrink or stretch glue is needed after it.
+
+[=c_docropmarks]::
+
+Making the crop marks boxes is all about rules and kerns in the right place. The
+top cropmarks box contains a horizontal line 25pt long starting 30pt to the left
+of the page. Then a vertical line that is 25pt but is 5pt away from the other
+line. So the lines would join, if extended, at the corner of the main page box.
+But they are given a 5pt margin. Another line that is slightly shorter at 15pt
+is output in line with the top margin down within the page. As text, across the
+top between the crop marks, is output the jobname and timestamp. Then the
+corresponding lines are drawn on the right hand side.
+
+The same happens for the bottom box except the text along the bottom is
+generated per page instead of per job and the margin lines correspond to the
+bottom margin.
+
+[=c_makecropmarks]::
 
 [-d_output]::
 

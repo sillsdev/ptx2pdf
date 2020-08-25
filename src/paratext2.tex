@@ -428,6 +428,7 @@
 }
 %-c_onecoltrial_fail
 
+%+c_pagebody
 \def\pagebody{\vbox to\textheight{\boxmaxdepth\maxdepth \pagecontents}}
 \def\makeheadline{%
   \g@tfontname{h}%
@@ -446,6 +447,7 @@
     \kern-\FooterPosition\MarginUnit
      \hbox to \textwidth{\the\footline}\vss}}
 \newdimen\RHruleposition \RHruleposition=\maxdimen
+%-c_pagebody
 
 %+c_doublecolumns
 \def\PageFullFactor{0.9}
