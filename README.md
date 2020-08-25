@@ -19,3 +19,5 @@ The [user support area](docs/home/README.md) provides the following information:
  * a cookbook section answering frequently asked questions with real life examples
 
 [This page](http://www.tug.org/xetex/) has an additional list of links related specifically to XeTeX.
+
+The released package and further documentation are available here: [http://software.sil.org/ptxprint/](http://software.sil.org/ptxprint/)
