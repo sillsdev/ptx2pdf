@@ -102,10 +102,8 @@
       %\show\t%
     \fi
   \else 
-    \trace{g}{Found "#1=#2"}%
+    \trace{g}{Found k=#1,v=#2 (x=#3)}%
     \def\key{#1}\def\val{#2}%
-    \edef\t{\x@\catcode\val}%
-    \trace{g}{catode of val is \t}%
     \ifx\key\keyR@TATE
       \rotimagetrue
       \ifx\val\val@BIND
@@ -129,7 +127,7 @@
           \iftemp
             \edef\angle{\getnum#3==\end}%
             \ifx\empty\angle
-              \message{Expected rotated=\val=42 or similar in definition of picture \f@lename}%
+              \message{Expected rotate=\val=42 or similar in definition of picture \f@lename}%
             \else
               \xdef\xtra{rotated \angle}%
             \fi
@@ -153,7 +151,7 @@
   \else 
     \x@\p@rs@xtr@\t==\end
   \fi
-  \n@xt#2 \relax\relax
+  \x@\n@xt#2 \relax
 }
 \def\p@rsextra#1{
   \trace{g}{Parsing #1}%
@@ -161,8 +159,7 @@
   \let\n@xt=\p@rsextr@
   \edef\t{#1}%
   \ifx\t\empty\let\n@xt=\relax\fi
-  \x@\n@xt\t \relax
-  %\message{extra:\xtraremains}
+  \x@\n@xt#1 \relax
 }
 
 
@@ -295,7 +292,8 @@
   \fi
   % set width to column width or span width and other default parameters
   \p@cwidth=\textwidth \advance\p@cwidth by -\columnshift 
-  \p@cheight=0.7\textheight % there should be text on the page too!
+  \p@cheight=\textheight
+  \advance\p@cheight by -4\baselineskip % there should be text on the page too - allow for caption+space+2 lines of text!
   \picUsesInstrue
   \picNarrowfalse
   \gdef\pic@lign{c}%How does the picture align within the box?
