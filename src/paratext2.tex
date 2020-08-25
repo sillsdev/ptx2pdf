@@ -378,7 +378,7 @@
   % and check if it all fit; if not, we'll have to back up and try again
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
 %-c_onecoltrial_intro
-%+c_onecoltrail_pagecontents
+%+c_onecoltrial_pagecontents
   \iffitonpage
     \trace{i}{1 SUCCEEDED, shipping page hIns=\the\holdinginserts}
 % at this point:
@@ -401,7 +401,7 @@
       \unvbox2
     }
 %-c_onecoltrial_pagecontents
-%+c_onecoltrail_pagefit
+%+c_onecoltrial_pagefit
     \resetvsize
     \ifdim\ht\colA>\baselineskip\plainoutput\trace{p}{plainoutput from onecoltrial}%
       \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
@@ -447,6 +447,7 @@
      \hbox to \textwidth{\the\footline}\vss}}
 \newdimen\RHruleposition \RHruleposition=\maxdimen
 
+%+c_doublecolumns
 \def\PageFullFactor{0.9}
 \def\doublecolumns{
   \ifnum\c@rrentcols=1
@@ -461,7 +462,7 @@
 %%%      \msg{Output full page from 1 to 2 columns}%
       \global\output={\onecol} % but output it immediately if 75% full
       \loop\ifdim\dimen0>\textheight\advance\dimen0-\textheight\repeat
-     %\vbox{\hskip-\columnshift\box\partial}
+      %\vbox{\hskip-\columnshift\box\partial}
       \unvbox\partial
       \ifdim\dimen0>\PageFullFactor\textheight\vfill\eject
         \else\global\output={\savepartialpage}\eject
@@ -489,7 +490,9 @@
     \global\holdinginserts=1 % don't pull out inserts yet, we are still adjusting page
     %\msg{Starting 2col partial: \the\ht\partial, pagetotal: \the\pagetotal, vsize: \the\vsize}
   \fi}
+%-c_doublecolumns
 
+%+c_setnotecount
 % iterate over note classes, set \count for each class  
 \def\s@tn@tec@unt#1{%
   \x@\let\x@\th@cl@ss\csname note-#1\endcsname
@@ -499,6 +502,7 @@
   % Diglot prefers to get things closer 1st time round...
   \global\count\th@cl@ss=\ifp@ranotes \ifdiglot 500\else 0\fi \else \count255 \fi
   \global\skip\th@cl@ss=\AboveNoteSpace }
+%-c_setnotecount
 
 %+c_resetvsize
 \def\resetvsize{\trace{o}{resetvsize}\global\vsize=\textheight} 

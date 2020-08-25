@@ -8,7 +8,7 @@ to `\onecol`. TeX collects paragraphs into the main page builder. Once the page 
 more than a page full of text, the `\output` routine is called with the contents
 of the main page in box255.
 
-### Single Column Output
+## Single Column Output
 
 The onecol macro takes this box and processes it by storing it in the `\galley`
 box. This allows us to reprocess it as often as is needed during output. Next we
@@ -104,7 +104,7 @@ set the output routine to the backingup macro and rerun with the same galley we
 started with.
 [=c_onecoltrial_fail]::
 
-#### Backing up
+### Backing up
 
 The backing up macro is a shared macro for all page layouts. This is the main
 iteration routine for when the trial routine needs to reduce the page size and
@@ -118,7 +118,7 @@ the text, but with the new `vsize` so the cut will be in a different place.
 Again we set the penalty.
 [=c_backingup]::
 
-#### Partial Pages
+### Partial Pages
 
 The third component to a layout is the partial page macro that collects the end
 of some text in that layout into the `partial` box ready to switch layout. The
@@ -153,7 +153,7 @@ the insert and note boxes, telling backingup what to call and then calling
 `backingup`.
 [=c_savepartialpage]::
 
-### Two Column Page Output
+## Two Column Page Output
 
 Two column output follows the same overall structure as single column output,
 but it is more complicated. The `\twocols` macro is the output routine that is
@@ -170,7 +170,7 @@ to create two vboxes, containing the text for the two columns: `colA` and
 specific images, they are not the same size. To do this we use the `\balanced`
 macro.
 
-#### Balanced
+### Balanced
 
 The task of `\balanced` is to answer whether we need to go around again with a
 smaller page size. It starts by setting up the intended column heights based on
@@ -234,7 +234,7 @@ rebalance and we use colhtB for our test height. Then we advance the test height
 by a line to make sure that the first time we go round the loop we process the
 currently calculated heights.
 
-[=c_balancd_intro]::
+[=c_balanced_intro]::
 
 Now for the main rebalancing loop. We initialise it by keeping track of how many
 times we have been around the loop. We also turn off overfull box warnings,
@@ -270,7 +270,7 @@ actual s@vedpage we were tasked with splitting.
 
 [=c_balanced_loop]::
 
-#### Two Column Trial
+### Two Column Trial
 
 Returning to the two column trial routine, we have set up the trial height and
 run `balanced` to try to balance the columns. We test to see if everything did fit
@@ -313,7 +313,7 @@ at this new shorter height.
 
 [=c_twocoltrial]::
 
-#### Partial Two Column Pages
+### Partial Two Column Pages
 
 When the macros transition from two columns to one column, then the two column
 material needs to be collected into a `partial` box for later output when the
@@ -385,9 +385,65 @@ done. If the galley is empty then use whatever was passed to us, now in
 
 [=c_savepartialpaged]::
 
-### Switching Column Layouts
+## Switching Column Layouts
 
-### Shipping Out The Page
+There are two macros that switch between the two layouts. The first is triggered
+when switching from single column to double column, for examples between
+introductory material and the main text of a book. We start by undoing the
+last depth to bring the baseline back to the baseline and then close of any
+headings. Between layouts is a pretty good place to break and if there is no
+break here, insert a line's worth of gap. Now collect the current contributions
+into a single column partial. We measure the partial to see if it is larger than
+the specified PageFullFactor of a page. If it is then set up to output as a full
+single column page. Since there may actually be a number of pages worth, which
+will all be output, we reduce the measurement to modulo a page size. Then unbox
+the partial back into the contributions and if we still are over the
+PageFullFactor then fill up the rest of the page and force the page break.
+Otherwise switch to collecting into partial and force the page break to collect
+it.
+
+Now set up for 2 column mode. Set the `hsize` and `vsize` taking into account
+partials and that we double the `vsize` since we need to fill two column's worth
+of text before page breaking. We redefine `\resetvsize` so that it does that
+appropriately for 2 columns. Then set the appropriate output routine for page
+breaking and we are now in 2 column mode. Top and bottom inserts basically cost
+double because they take up space in both columns. We reset the count for each
+note class, described below.
+
+[=c_doublecolumns]::
+
+Each not class, since it is associated with an insert, has a count associated
+with it. This count is a multiplier of the size of the insert against the
+overall height of the page. The routine to clear the count for a particular note
+class finds the particular note class for a note type. It is then checked for
+whether it is paragraphed notes (those that run on into one paragraph total for
+all notes). Then the count for the insert is set based on paragraphed notes
+costing 0, diglot notes costing half and full width notes costing whatever a
+span insert costs, which for double column is 2. In addition every note has an
+`AboveNoteSpace` fixed cost as well.
+
+[=c_setnotecount]::
+
+Switching to single column mode is somewhat simpler than switching to double
+column mode since there is no worry about the grid. We close any headings and
+set up to capture the current content into a 2 column partial. Then we simply
+eject twice to really ensure everything is output. Then we set up for single
+column working with `hsize` and `vsize. If the partial page is enough to trigger
+a complete page, we output that. Then we reset to single columns and change the
+output routine to single column layout. As per the other we set the cost of a
+span to 1 and set the costs of notes accordingly.
+
+If the partial is not empty, we reset it to its natural height and then consider
+what to do because we are basically between books. If we are not to eject
+between books then we need to set the first mark for the new book otherwise we
+insert a line gap and then insert a rule across the page with a 2 line gap under
+it.
+
+[=c_singlecolumn]::
+
+## Shipping Out The Page
+
+
 
 [-d_output]::
 
