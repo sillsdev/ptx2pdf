@@ -304,33 +304,39 @@ class TexModel:
         "versenumfont":             ("bl_verseNumFont", "c_inclVerseDecorator", None, None, None)
     }
     _hdrmappings = {
-        "First Reference":     r"\firstref",
-        "Pri.First Reference": r"\firstrefL",
-        "Primary First Reference": r"\firstrefL",
-        "Sec.First Reference": r"\firstrefR",
+        "First Reference":           r"\firstref",
+        "Pri.First Reference":       r"\firstrefL",
+        "Primary First Reference":   r"\firstrefL",
+        "Sec.First Reference":       r"\firstrefR",
         "Secondary First Reference": r"\firstrefR",
 
-        "Last Reference":      r"\lastref",
-        "Pri.Last Reference":  r"\lastrefL",
-        "Primary Last Reference":  r"\lastrefL",
-        "Sec.Last Reference":  r"\lastrefR",
+        "Last Reference":            r"\lastref",
+        "Pri.Last Reference":        r"\lastrefL",
+        "Primary Last Reference":    r"\lastrefL",
+        "Sec.Last Reference":        r"\lastrefR",
         "Secondary Last Reference":  r"\lastrefR",
 
-        "Reference Range":     r"\rangeref",
-        "Pri.Reference Range": r"\rangerefL",
-        "Primary Reference Range": r"\rangerefL",
-        "Sec.Reference Range": r"\rangerefR",
+        "Reference Range":           r"\rangeref",
+        "Pri.Reference Range":       r"\rangerefL",
+        "Primary Reference Range":   r"\rangerefL",
+        "Sec.Reference Range":       r"\rangerefR",
         "Secondary Reference Range": r"\rangerefR",
 
-        "Page Number":         r"\pagenumber",
-        "Pri.Page Number":     r"\pagenumberL",
-        "Primary Page Number":     r"\pagenumberL",
-        "Sec.Page Number":     r"\pagenumberR",
+        "Page Number":               r"\pagenumber",
+        "Pri.Page Number":           r"\pagenumberL",
+        "Primary Page Number":       r"\pagenumberL",
+        "Sec.Page Number":           r"\pagenumberR",
         "Secondary Page Number":     r"\pagenumberR",
 
-        "Time (HH:MM)":        r"\hrsmins",
-        "Date (YYYY-MM-DD)":   r"\isodate",
-        "-empty-":             r"\empty"
+        "Time (HH:MM)":              r"\hrsmins",
+        "Pri.Time (HH:MM)":          r"\hrsminsL",
+        "Sec.Time (HH:MM)":          r"\hrsminsR",
+        
+        "Date (YYYY-MM-DD)":         r"\isodate",
+        "Pri.Date (YYYY-MM-DD)":     r"\isodateL",
+        "Sec.Date (YYYY-MM-DD)":     r"\isodateR",
+        
+        "-empty-":                   r"\empty"
     }
     _mirrorRL = {r'\lastref':    r'\firstref',
                  r'\firstref':   r'\lastref',
@@ -597,9 +603,15 @@ class TexModel:
 
     def mirrorHeaders(self, h, dig=False):
         if dig and h.endswith(("L", "R")):
-            return self._mirrorRL[h[:-1]]+h[-1:]
+            try:
+                return self._mirrorRL[h[:-1]]+h[-1:]
+            except KeyError:
+                return h
         else:
-            return self._mirrorRL[h]
+            try:
+                return self._mirrorRL[h]
+            except KeyError:
+                return h
         
     def texfix(self, path):
         return path.replace(" ", r"\ ")
