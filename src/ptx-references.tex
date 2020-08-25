@@ -148,8 +148,8 @@
 % define \headline for use by the output routine
 \headline={\hbox to \textwidth{%
  \s@tfont{h}%
+ \ifm@rksonpage\trace{H}{marks on page pfm:\p@gefirstmark}\else\trace{H}{No marks on page. old pfm:\p@gefirstmark}\gdef\p@gefirstmark{}\fi
  \edef\t@st{\p@gefirstmark}% check first mark on page to see if this is a "title" page
- \ifm@rksonpage\trace{H}{marks on page}\else\trace{H}{No marks on page}\fi
  \global\rhr@letrue
  \ifx\t@st\empty
   \trace{h}{no p@gefirstmark} 
@@ -232,6 +232,8 @@
 
 
 \def\s@treffont{\ifuseLeftMarks\ifuseRightMarks\else\diglotLtrue\s@tfont{h}\fi\else\ifuseRightMarks\diglotLfalse\s@tfont{h}\fi\fi}
+\def\headfootL#1{\bgroup\ifRTL\beginR\fi\diglotLtrue\s@tfont{h}#1\ifRTL\endR\fi\egroup}
+\def\headfootR#1{\bgroup\ifRTL\beginR\fi\diglotLfalse\s@tfont{h}#1\ifRTL\endR\fi\egroup}
 %
 % user-level macros for use within the running header
 %
@@ -239,22 +241,31 @@
 \def\lastref{\ifRTL\beginR\fi\bgroup\ifdiglot\s@treffont\fi\l@stref{\p@gebotmark}\egroup\ifRTL\endR\fi}
 \def\rangeref{\ifRTL\beginR\fi\bgroup\ifdiglot\s@treffont\fi\r@ngerefs{\p@gefirstmark}{\p@gebotmark}\egroup\ifRTL\endR\fi}
 
-\def\firstrefL{\bgroup\ifRTL\beginR\fi\diglotLtrue\s@tfont{h}\f@rstref{\firstLmark}\ifRTL\endR\fi\egroup}
-\def\lastrefL{\bgroup\ifRTL\beginR\fi\diglotLtrue\s@tfont{h}\l@stref{\botLmark}\ifRTL\endR\fi\egroup}
-\def\rangerefL{\bgroup\ifRTL\beginR\fi\diglotLtrue\s@tfont{h}\r@ngerefs{\firstLmark}{\botLmark}\ifRTL\endR\fi\egroup}
+\def\firstrefL{\headfootL{\f@rstref{\firstLmark}}}
+\def\lastrefL{\headfootL{\l@stref{\botLmark}}}
+\def\rangerefL{\headfootL{\r@ngerefs{\firstLmark}{\botLmark}}}
 
-\def\firstrefR{\bgroup\ifRTL\beginR\fi\diglotLfalse\s@tfont{h}\f@rstref{\firstRmark}\ifRTL\endR\fi\egroup}
-\def\lastrefR{\bgroup\ifRTL\beginR\fi\diglotLfalse\s@tfont{h}\l@stref{\botRmark}\ifRTL\endR\fi\egroup}
-\def\rangerefR{\bgroup\ifRTL\beginR\fi\diglotLfalse\s@tfont{h}\r@ngerefs{\firstRmark}{\botRmark}\ifRTL\endR\fi\egroup}
+\def\firstrefR{\headfootR{\f@rstref{\firstRmark}}}
+\def\lastrefR{\headfootR{\l@stref{\botRmark}}}
+\def\rangerefR{\headfootR{\r@ngerefs{\firstRmark}{\botRmark}}}
 
 \let\pagenumber=\folio
-\def\pagenumberL{\bgroup\ifRTL\beginR\fi\diglotLtrue\s@tfont{h}\folio\ifRTL\endR\fi\egroup}
-\def\pagenumberR{\bgroup\ifRTL\beginR\fi\diglotLfalse\s@tfont{h}\folio\ifRTL\endR\fi\egroup}
+\def\pagenumberL{\headfootL{\folio}}
+\def\pagenumberR{\headfootR{\folio}}
 
 \def\ROMANnumeral#1{\expandafter\uppercase\expandafter{\romannumeral#1}}
 \def\usdate{\number\month/\number\day/\number\year}
+\def\usdateL{\headfootL{\usdate}}
+\def\usdateR{\headfootR{\usdate}}
 \def\ukdate{\number\day/\number\month/\number\year}
+\def\ukdateL{\headfootL{\ukdate}}
+\def\ukdateR{\headfootR{\ukdate}}
 \def\isodate{\number\year-\ifnum\month<10 0\fi\number\month-\ifnum\day<10 0\fi\number\day}
+\def\isodateL{\headfootL{\isodate}}
+\def\isodateR{\headfootR{\isodate}}
+
+\def\hrsminsL{\headfootL{\hrsmins}}
+\def\hrsminsR{\headfootR{\hrsmins}}
 
 
 
