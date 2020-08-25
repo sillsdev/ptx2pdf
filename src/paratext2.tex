@@ -340,19 +340,19 @@
 \global\holdinginserts=1
 \def\onecol{%
   \trace{b}{BALANCE pagebuild: cols=1: textheight=\the\textheight}
-  \global\setbox\galley=\copy255
+  \global\setbox\galley=\copy255                                        %(1)
   % tempoarily split and see if there are marks in this text
-  \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
+  \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup        %(+)
   \edef\t@mp{\splitbotmark}
   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
-  \global\galleypenalty=\outputpenalty
+  \global\galleypenalty=\outputpenalty                                  %(+)
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
   \global\output={\onecoltrial}
   % No marks on the page, and it didn't fit, so add a blank mark
   \ifm@rksonpage\else\gdef\p@gefirstmark{}\trace{H}{No marks found. Setting empty mark}\fi
   \global\holdinginserts=0
   \unvbox255
-  \penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
+  \penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi         %(+)
 }
 %-c_onecol
 %+c_onecoltrial_intro

@@ -6,8 +6,31 @@ Created on Wed Aug 19 15:47:39 2020
 @author: jakem
 """
 
-import argparse, os
+import argparse, os, re
 from enum import Enum
+
+circled = "".join(chr(x) for x in range(0x2460, 0x2474))
+invcircled = "".join(chr(x) for x in list(range(0x2776, 0x2780)) + list(range(0x24EB, 0x24F5)))
+
+def _matchcircle(m, base="\u25CF", prefix=None):
+    if m.group(1) == '+': return base
+    try:
+        v = int(m.group(1))
+    except (TypeError, ValueError):
+        v = -1
+    if 0 < v < 21:
+        if base == "\u25CF":
+            return invcircled[v-1]
+        else:
+            return circled[v-1]
+    else:
+        return prefix + "(" + m.group(1) + ")"
+
+def nummatch(txt, prefix="", invert=False):
+    def _matchrep(m):
+        return _matchcircle(m, base="\u25CF" if invert else "\u25CB", prefix=prefix)
+    return re.sub(prefix+r"\(([\+0-9]+)\)", _matchrep, txt)
+
 
 class M(Enum):
     Vanilla = 0
@@ -194,7 +217,7 @@ class TeXparser:
                     self.item.mode = M.TeX
                 elif self.item.mode is M.Text and not (sline.startswith("%") or sline == ""): 
                     self.item.mode = M.TeX
-                self.item.add(line, self.lineno)
+                self.item.add(nummatch(line, prefix="%") , self.lineno)
         self.item.clean()
         
     def output(self):
@@ -230,8 +253,40 @@ class Noteparser:
                 self.note.append(Link(sline.lstrip("[=").rstrip("]:"), notes=self.notes))
             else:
                 if self.note is not None:
-                    self.note.append(line)
+                    self.note.append(nummatch(line))
         
+class Outputter:
+    def __init__(self):
+        self.count = 1
+        self.invcount = 1
+
+    def docircled(self, m):
+        i = circled.find(m.group(0)) + 1
+        if i <= 0:
+            i = self.count
+            res = circled[i-1]
+        else:
+            res = m.group(0)
+        self.count = i + 1
+        if self.count > 20:
+            self.count = 1
+        return res
+
+    def doinvcircled(self, m):
+        i = invcircled.find(m.group(0)) + 1
+        if i <= 0:
+            i = self.invcount
+            res = invcircled[i-1]
+        else:
+            res = m.group(0)
+        self.invcount = i + 1
+        if self.invcount > 20:
+            self.invcount = 1
+        return res
+
+    def __call__(self, txt):
+        return re.sub("[\u25CF\u2776-\u277F\u24EB-\u24F4]", self.doinvcircled,
+                      re.sub("[\u25CB\u2460-\u2473]", self.docircled, txt)) 
 
 parser = argparse.ArgumentParser()
 parser.add_argument("infiles",nargs="+", help="Input source/markdown files")
@@ -264,8 +319,9 @@ def createmd(notesdict, infilenames, outputfilename, treenode=None, map=False):
     if args.map:
         for k in notesdict:
             print(f"Note: {k}\n{notesdict[k]}")
+    outer = Outputter()
     outputfile = open(outputfilename, "w")
-    outputfile.write("\n".join(notesdict[treenode].output()))
+    outputfile.write("\n".join(outer(s) for s in notesdict[treenode].output()))
     outputfile.close()
 
 createmd(notes1, args.infiles, args.output, args.tree, args.map)

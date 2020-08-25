@@ -2,8 +2,8 @@
 ---
 title: Paratext Macros
 documentclass: book
-mainfont: Gentium Basic
-monofont: Bitstream Vera Sans Mono
+mainfont: Lato
+monofont: Noto Sans Mono CJK HK
 fontsize: 12pt
 papersize: A4
 geometry:

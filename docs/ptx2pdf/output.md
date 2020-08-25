@@ -10,11 +10,11 @@ of the main page in box255.
 
 ## Single Column Output
 
-The onecol macro takes this box and processes it by storing it in the `\galley`
-box. This allows us to reprocess it as often as is needed during output. Next we
+(1) The onecol macro takes this box and processes it by storing it in the `\galley`
+box. This allows us to reprocess it as often as is needed during output. (+) Next we
 do a noddy vsplit (to the maximum dimension so that everything goes in the first
-box). This is just collect any final mark on the page so far. And we set a flag
-to say whether there are marks on this page. We collect the `\outputpenalty`
+box). This is just to collect any final mark on the page so far. And we set a flag
+to say whether there are marks on this page. (+) We collect the `\outputpenalty`
 which is the cost of the page break that caused the output to run. We will need
 this to add it back when we put the excess back into the page builder to start
 the next page. The page height used for testing for the best page break is
@@ -27,7 +27,7 @@ the page. We tell the page breaker to extract the inserts from the copy of the
 page we are going to reprocess. Then we reprocess the page and add on the
 penalty we just copied.
 
-The TeXbook describes how an output routine is called. If there is a penalty at
+(+) The TeXbook describes how an output routine is called. If there is a penalty at
 the page break point, that is stored in `\outputpenalty` and a penalty in the
 actual list is set to 10000. On the other hand, if there is no penalty, then the
 `\outputpenalty` is set to 10000. Our aim to set the end of the contributions
