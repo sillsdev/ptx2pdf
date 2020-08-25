@@ -6,7 +6,7 @@ Created on Wed Aug 19 15:47:39 2020
 @author: jakem
 """
 
-import argparse
+import argparse, os
 from enum import Enum
 
 class M(Enum):
@@ -142,7 +142,7 @@ class TeXparser:
     def __init__(self, filename, notes):
         self.stack = []
         self.item = None
-        self.filename = filename
+        self.filename = os.path.basename(filename)
         self.notes = notes
         self.file = open(filename)
         self.parse()
@@ -202,7 +202,7 @@ class TeXparser:
 
 class Noteparser:
     def __init__(self, filename, notes):
-        self.filename = filename
+        self.filename = os.path.basename(filename)
         self.note = None
         self.notes = notes
         self.file = open(filename)
@@ -264,10 +264,8 @@ def createmd(notesdict, infilenames, outputfilename, treenode=None, map=False):
     if args.map:
         for k in notesdict:
             print(f"Note: {k}\n{notesdict[k]}")
-    else:
-        #print(notesdict["main"])
-        outputfile = open(outputfilename, "w")
-        outputfile.write("\n".join(notesdict[treenode].output()))
-        outputfile.close()
+    outputfile = open(outputfilename, "w")
+    outputfile.write("\n".join(notesdict[treenode].output()))
+    outputfile.close()
 
 createmd(notes1, args.infiles, args.output, args.tree, args.map)

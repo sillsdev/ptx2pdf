@@ -1,8 +1,9 @@
 [+main]::
 ---
 title: Paratext Macros
-documentclass: extarticle
+documentclass: book
 mainfont: Gentium Basic
+monofont: Bitstream Vera Sans Mono
 fontsize: 12pt
 papersize: A4
 geometry:
