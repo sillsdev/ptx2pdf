@@ -98,6 +98,8 @@ scriptsdir = os.path.abspath(os.path.dirname(__file__))
 if os.path.exists("/usr/share/ptx2pdf") and not os.path.exists(os.path.join(scriptsdir, "..", "..", "src")):
     scriptsdir = "/usr/share/ptx2pdf"
     macrosdir = "/usr/share/ptx2pdf/texmacros"
+elif getattr(sys, 'frozen', False):
+    macrosdir = os.path.join(scriptsdir, "ptx2pdf")
 else:
     macrosdir = os.path.join(scriptsdir, "..", "..", "src")
 
