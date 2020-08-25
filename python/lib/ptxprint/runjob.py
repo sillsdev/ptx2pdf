@@ -314,45 +314,22 @@ class RunJob:
             donebooks.append(out)
             digdonebooks.append(digout)
             
-            # Now run the Perl script to merge the secondary text (right) into the primary text (left) 
+            # Now merge the secondary text (right) into the primary text (left) 
             left = os.path.join(self.tmpdir, out)
             right = os.path.join(self.tmpdir, digout)
             tmpFile = os.path.join(self.tmpdir, "primaryText.tmp")
             logFile = os.path.join(self.tmpdir, "ptxprint-merge.log")
             copyfile(left, tmpFile)
 
-            if not self.args.nuseusfmerge:
-                sheetsa = info.printer.getStyleSheets()
-                sheetsb = diginfo.printer.getStyleSheets()
-                try:
-                    usfmerge(tmpFile, right, left, stylesheetsa=sheetsa, stylesheetsb=sheetsb)
-                except SyntaxError as e:
-                    print(self.prjid, b, str(e).split('line', maxsplit=1)[1])
-                    syntaxErrors.append("{} {} line:{}".format(self.prjid, b, str(e).split('line', maxsplit=1)[1]))
-                except IndexError as e:
-                    syntaxErrors.append("{} {} line:{}".format(self.prjid, b, str(e)))
-            else:
-                # Usage: diglotMerge.exe [-mode|options] LeftFile RightFile
-                # Read LeftFile and RightFile, merging them according to the selected mode)
-                # Mode may be any ONE of :
-                # -l     :Left/Pri master: splitting right column at each left text paragraph
-                # -r     :Right/Sec master: splitting left column at each right text paragraph
-                # -v     :matching verses (default)
-                # -c     :matching chapters
-             #>># -p     :matching paragraph breaks (only where they match?)
-                # Options are:
-                # -left file        : Log to file
-                # -right 11:25-25:12   Only ouput specified range
-                # -s      Split off section headings into a separate chunk (makes verses line up)
-                # -C      If ?? is used, consider the chapter mark to be a heading
-                # -o file : Output to file
-                if sys.platform == "win32":
-                    cmd = [os.path.join(self.scriptsdir, "diglotMerge.exe")]
-                elif sys.platform == "linux":  # UNTESTED code
-                    p = os.path.join(self.scriptsdir, "diglot_merge.pl")
-                    cmd = ['perl', p]  # need to work out where the .pl file will live)
-                cmdparms = ['-o', left, '-p', '-L', logFile, '-s', tmpFile, right] 
-                r = checkoutput(cmd + cmdparms)
+            sheetsa = info.printer.getStyleSheets()
+            sheetsb = diginfo.printer.getStyleSheets()
+            try:
+                usfmerge(tmpFile, right, left, stylesheetsa=sheetsa, stylesheetsb=sheetsb)
+            except SyntaxError as e:
+                print(self.prjid, b, str(e).split('line', maxsplit=1)[1])
+                syntaxErrors.append("{} {} line:{}".format(self.prjid, b, str(e).split('line', maxsplit=1)[1]))
+            except IndexError as e:
+                syntaxErrors.append("{} {} line:{}".format(self.prjid, b, str(e)))
             for f in [left, right, tmpFile, logFile]:
                 texfiles += [os.path.join(self.tmpdir, f)]
         if len(syntaxErrors):

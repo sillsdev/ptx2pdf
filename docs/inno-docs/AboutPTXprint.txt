@@ -12,7 +12,7 @@ Commandline options are also available to run without the UI:
 
 usage: ptxprint [-h] [-c CONFIG] [-p PARATEXT] [-d DIRECTORY] [-P] [-b BOOKS]
                 [-m MACROS] [-l] [-e] [--timeout TIMEOUT] [-T] [-f FONTPATH]
-                [--nofontcache] [-S] [-A ARCHIVE] [--nuseusfmerge] [--debug] [pid]
+                [--nofontcache] [-S] [-A ARCHIVE] [--debug] [pid]
 
 positional arguments:
   pid                   Project id   OR  full path to a ptxprint.cfg file
@@ -40,7 +40,6 @@ optional arguments:
   -S, --splash          Force splash screen
   -A ARCHIVE, --archive ARCHIVE
                         Create archive of project
-  --nuseusfmerge        Use a different kind of merge for diglot
   --debug               Give debug output
   
 e.g. in Windows:

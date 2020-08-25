@@ -1,9 +1,9 @@
 PTXprint 1.1 Release Notes 
-25th August 2020
+26th August 2020
 
 Bug Fixes and Improvements in: 1.1
 
-  * Last-used Project name and Config settings are preserved
+  * Last-used Project name and Config settings are now preserved between sessions
   
   * Several improvements to diglot layout (but diglot illustrations are still fragile/experimental)
   
@@ -15,7 +15,7 @@ Bug Fixes and Improvements in: 1.1
   
   * Fix Header and Footer for non-scripture books (GLO, BAK etc.)
   
-  * Fix chapter numbers were interfering with ascenders in line of text below
+  * Fix chapter numbers which were interfering with ascenders in line of text below
   
   * Fix multiple issues with end of book decoration, verse number decoration, borders and related PDFs
   
