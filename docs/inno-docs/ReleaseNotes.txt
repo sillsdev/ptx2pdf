@@ -1,9 +1,19 @@
 PTXprint 1.1 Release Notes 
-24th August 2020
+25th August 2020
 
 Bug Fixes and Improvements in: 1.1
 
   * Last-used Project name and Config settings are preserved
+  
+  * Several improvements to diglot layout (but diglot illustrations are still fragile/experimental)
+  
+  * Better handling of Headers/Footer - especially for Diglots (specify Pri or Sec formatting)
+  
+  * Added options to allow PTXprint to override Paratext's Footnote and Cross-Reference settings
+  
+  * Added picture size options of "page" (fits within margins) and "full" (cover entire page)
+  
+  * Fix Header and Footer for non-scripture books (GLO, BAK etc.)
   
   * Fix chapter numbers were interfering with ascenders in line of text below
   
@@ -12,8 +22,8 @@ Bug Fixes and Improvements in: 1.1
   * Fix RTL text not right-aligned in poetry
   
   * Fix non-Roman digits for Extended-Arabic (Persian)
-
-  * Several improvements to diglot layout (but diglot illustrations are still fragile/experimental)
+  
+  * Fix installer certificate
 
 First Public Release: 1.0
 

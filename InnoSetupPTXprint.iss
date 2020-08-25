@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "PTXprint"
-#define MyAppVersion "1.0"
+#define MyAppVersion "1.1"
 #define MyAppPublisher "SIL International"
 #define MyAppURL "http://software.sil.org/"
 #define MyAppExeName "PTXprint.exe"
@@ -28,7 +28,7 @@ DisableProgramGroupPage=yes
 LicenseFile=docs\inno-docs\MIT License.txt
 InfoBeforeFile=docs\inno-docs\AboutPTXprint.txt
 InfoAfterFile=docs\inno-docs\ReleaseNotes.txt
-OutputBaseFilename=SetupPTXprint(1.0)
+OutputBaseFilename=SetupPTXprint(1.1)
 SetupIconFile=icon\Google-Noto-Emoji-Objects-62859-open-book.ico
 Compression=lzma
 SolidCompression=yes

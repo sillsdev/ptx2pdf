@@ -10,7 +10,7 @@ from io import StringIO
 import datetime, time
 from shutil import copyfile, copytree
 
-VersionStr = "1.0"
+VersionStr = "1.1"
 
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
 
@@ -448,7 +448,7 @@ class ViewModel:
                 self._configset(config, "document/parallelrefs", not config.getboolean("document", "supressparallels"))
             except:
                 pass
-            config.set("config", "version", "1.0")
+            config.set("config", "version", "1.1")
 
     def loadConfig(self, config):
         def setv(k, v): self.set(k, v, skipmissing=True)
