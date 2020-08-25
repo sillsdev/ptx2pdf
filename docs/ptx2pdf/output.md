@@ -38,13 +38,15 @@ be done every time we use the contribution list to trigger a new output routine.
 
 [=c_onecol]::
 
-The next macro is what does the work of assessing and assembling the page. We
-collect the marks for this page. We collect the height that is available for
+The next macro `\onecoltrial` is what does the work of assessing and assembling the page. We
+collect the marks for this page. (1) We calculate the height that is available for
 this page, and will reduce it by the height of the notes and the top and bottom
 inserts. For this we use the `\decr` macro that simply reduces by the skip and
 height of the insert:
+
 [=c_incrdecr]
-At this point we test to see if there is any space left on the page for any
+
+At this point (2) we test to see if there is any space left on the page for any
 text. If not then complain, but keep going because if we reduce the original
 pagesize perhaps one of the footnotes or a picture will not be on this page.
 Continuing, we take a copy of the reduced page that we are seeing will fit on
@@ -57,7 +59,7 @@ But we examine what happens if it does completely fit on the page. If it does,
 then it is the largest amount of text that does otherwise a previous round would
 have fit.
 
-The macro we create here returns a list of vboxes to be output as the main body
+The macro we create here (3) returns a list of vboxes to be output as the main body
 of the page, excluding headers.
 We calculate the width of the page being the textwidth minus the ExtraRMargin
 that allows for unbalanced pages. The side margins are set together to be the
@@ -77,20 +79,22 @@ empty filler that expands to take up the rest of the page. Notice we have to
 undo the initial note spacing kern. On the other hand if there are notes then we
 take off the last box from the list, measure its depth, put it back and then
 kern upwards to ignore the depth.
+
 [=c_onecoltrial_pagecontents]::
 
 Having created the pagecontent macro, we reset the vertical page size back to
 full size:
 [=c_resetvsize]::
-Then, if there is actually some text to output we run the `\plainoutput` to ship
+Then, (+) if there is actually some text to output we run the `\plainoutput` to ship
 out the pagecontents. We also reset the page marks and if there are figure pages
 to output, ship those out too. Otherwise there is no contents on this page so
 dump anything that is left from splitting off this page (which should be
 nothing). Now we prepare to return to main text processing. We start capturing
 inserts again. But we may have been executed from a previous output routine that
 found it had more than a page full while trying to collect for a partial page.
-In which case we need to go back to where we came from and clear the flag.
+In which case (+) we need to go back to where we came from and clear the flag.
 Otherwise just set the output routine back to normal single column processing.
+
 [=c_onecoltrial_pagefit]::
 
 But what if the contents overfilled the page. We need to reduce the textheight
@@ -194,25 +198,25 @@ also collect the bottom mark based on what was split.
 
 [=c_splitcols]::
 
-Returning to balanced, we have done an initial split into two columns. It's
+Returning to balanced, we have done an initial split into two columns (1). It's
 possible to specify a threshold as a number of baselines, that specifies if a
 column is less than the threshold then shorten the page and go again. If there
 is no more text left from the columns split then the text `fitonpage`. The
 rebalance flag says whether to keep trying (with shorter pages). The basic loop
-we will enter is measuring what if we were to shorten the page, with just the
-text we have for this page, would we get a better balance between columns. For
+we will enter (5) is measuring what if we were to shorten the page, with just the
+text we have for this page, would we get a better balance between columns? For
 example if the page is too long, then more text will end up in colA, whereas if
 we were to shorten it, more would end up in colB until either we can't get all
 the text in, or the columns balance.
 
-Before that loop, we see if we haven't actually got any text onto the page. If
+Before that loop, (2) we see if we haven't actually got any text onto the page. If
 so then complain and put everything into colA and bail out. If the odd case
 occurs that nothing was put on the page, but we consider the page full, then we
 are totally confused and we bail the whole job! But enough of edge cases. If the
 text all fits on the page, then we want to try to get a good balance. Otherwise
 we are done and the calling routine can go around again.
 
-We set up for the loop by calculating a `shortavail` variable which gets used to
+We set up for the loop (3) by calculating a `shortavail` variable which gets used to
 decide how out of balance we are. It is the sum of the amount of space left in
 each column after the split. If the difference is really bad then to save time,
 we take the average of the two column spaces and reduce both columns by that
@@ -221,7 +225,7 @@ into the page. If not, increase the allocation for each column by a baseline and
 try again. We try keep trying until we find a pair of column allocations that
 will consume all the text (given even our starting values achieved that).
 
-Since we are after a new overall available height, we need to think in terms of
+(4) Since we are after a new overall available height, we need to think in terms of
 the original `availht` that would result in the colhts we have. To do this we call
 `\g@tcolhts`. This does the opposite from `\s@tcolhts` in that it adds back the
 heights of the inserts:
@@ -239,31 +243,31 @@ currently calculated heights.
 Now for the main rebalancing loop. We initialise it by keeping track of how many
 times we have been around the loop. We also turn off overfull box warnings,
 which have already happened for the boxes we are involved in. We don't need the
-same warning 20 times. We enter the loop.
+same warning 20 times. We enter the loop. (5)
 
 Inside the loop we advance the loop counter and reduce the test height by a
-line. We copy the box of text and we adjust the actualy height by the depths of
+line. We copy the box of text and we adjust the actual height by the depths of
 the current columns. Not ideal, but better than nothing. Then we set up for this
 new trial height and split to the column boxes again at this new height.
 `rem@inder` if false, indicates that if the page is not
 consumed at this height then we should backup and break out of the loop by
 setting `\rebalancefalse`. We use the `rebalance` flag to tell us if we are
-bailing from the loop and so not to do other tests. The next test is whether
+bailing from the loop and so not to do other tests. The next test (6) is whether
 either column is too short according to our threshold (as in really short as in
 0 lines long). If it is then back up to the previous test height and stop
 looping.
 
-The next test tests the difference in full column beights (including the column
+The next test (7) tests the difference in full column beights (including the column
 inserts). If the difference in heights is within a line of each other, we have
 won. We calculate the resulting winning height as the greater of the two column
 heights and then set the flag to say we are done.
 
-The next two tests are boundary conditions. If the we are down to less than 2
+The next two tests (8) are boundary conditions. If the we are down to less than 2
 lines or we've been around 20 times, then either reset the test height to the
 starting value or just back up one line and stop looping. Otherwise go round
 again and try a new shorter test height.
 
-After finishing the loop, assuming we ran it and even if not, update the test
+After finishing the loop, assuming we ran it and even if not, (9) update the test
 height with the greater of the depths of the two columns, set the official
 returned requested column heights to the test height and resplit finally on the
 actual s@vedpage we were tasked with splitting.

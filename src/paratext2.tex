@@ -363,12 +363,12 @@
   \edef\p@gebotmark{\botmark}% remember last \mark for running header
   \edef\t@st{\p@gefirstmark}%
   \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi % remember first, if not already set
-  \availht=\trialheight % amount of space we think is available
+  \availht=\trialheight % amount of space we think is available             %(1)
   \f@rstnotetrue
   \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
   \decr{\availht}{\topins}% and by the space needed for spanning pictures
   \decr{\availht}{\bottomins}
-  \ifdim\availht<0pt
+  \ifdim\availht<0pt                                                        %(2)
     \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}
   \fi
   \setbox\s@vedpage=\copy255
@@ -384,7 +384,7 @@
 % at this point:
 %   \box\colA is the page content
 %   \availht is ht that definitely works
-    \def\pagecontents{%
+    \def\pagecontents{%                                                     %(3)
 %      \msg{upwards mode = \the\XeTeXupwardsmode}
       \dimen1=\textwidth \advance\dimen1 -\ExtraRMargin
       \trace{b}{BALANCE pangeoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins}
@@ -403,12 +403,13 @@
 %-c_onecoltrial_pagecontents
 %+c_onecoltrial_pagefit
     \resetvsize
-    \ifdim\ht\colA>\baselineskip\plainoutput\trace{p}{plainoutput from onecoltrial}%
+    \ifdim\ht\colA>\baselineskip\plainoutput\trace{p}{plainoutput from onecoltrial}%    %(+)
       \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
       \nextshipout
     \else\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
     \global\holdinginserts=1
-    \ifrerunsavepartialpaged\trace{o}{onecoltrial: rerunsavepartialpage}\global\output={\savepartialpage}\global\rerunsavepartialpagedfalse
+    \ifrerunsavepartialpaged\trace{o}{onecoltrial: rerunsavepartialpage}%
+      \global\output={\savepartialpage}\global\rerunsavepartialpagedfalse               %(+)
     \else\global\output={\onecol}\fi
 %-c_onecoltrial_pagefit
 %+c_onecoltrial_fail
@@ -744,7 +745,7 @@
 
 \def\balanced{
   \setbox0=\copy\s@vedpage
-  \s@tcolhts{\availht}\spl@tcols0
+  \s@tcolhts{\availht}\spl@tcols0                                               %(1)
   \ifnum\BalanceThreshold>0
     \availA=\colhtA \availB=\colhtB
     \advance\availA by -\BalanceThreshold\baselineskip
@@ -756,12 +757,12 @@
   \ifvoid0 \fitonpagetrue \else \fitonpagefalse \fi
   \rebalancefalse
   \trace{o}{first \the\availht . col=\the\ht\colA, \the\colhtA . second col=\the\ht\colB, \the\colhtB . rem=\the\ht0}
-  \ifdim\ht\colA<.5\baselineskip\ifdim\ht\colB<.5\baselineskip\MSG{I can't break this page!}
+  \ifdim\ht\colA<.5\baselineskip\ifdim\ht\colB<.5\baselineskip\MSG{I can't break this page!}    %(2)
     \iffitonpage\s@ve@nd \trace{o}{Abandoning ship}% the split failed and there is nothing left!
     \else\setbox\colA=\box0\setbox\s@vedpage=\box\voidb@x \trace{o}{Everything to colA}% dump it all in colA and bail
   \fi\fi\fi
   \iffitonpage
-    \shortavail=\colhtB \advance\shortavail by -\ht\colB
+    \shortavail=\colhtB \advance\shortavail by -\ht\colB                        %(3)
     \advance\shortavail by -\colhtA \advance\shortavail by \ht\colA
     \ifdim\shortavail>5\baselineskip
       \trace{o}{Rebalance trying from average \the\shortavail of \the\colhtA =\the\ht\colA, \the\colhtB =\the\ht\colB}
@@ -776,7 +777,7 @@
         \ifnum\loopcount=10\repeat % so ugly you can't \else\repeat
       \trace{o}{Rebalance starting with \the\colhtA, \the\colhtB}
     \fi
-    \g@tcolhts
+    \g@tcolhts                                                                  %(4)
     \ifunbalanced\shortavail=\availht\else\ifdim\colhtB<\colhtA \rebalancetrue \shortavail=\colhtA\fi\fi
     \advance\colhtA -\baselineskip\ifdim\colhtA<\colhtB \rebalancetrue \shortavail=\colhtB\fi
     \advance\shortavail \baselineskip
@@ -785,7 +786,7 @@
     \loopcount=0
     \ifrebalance
       \vfuzz=\maxdimen
-      \loop
+      \loop                                                                     %(5)
         \advance\loopcount by 1
         \advance\shortavail by -\baselineskip
         \setbox0=\copy\s@vedpage
@@ -800,7 +801,7 @@
           \setbox0=\copy\s@vedpage
           \s@tcolhts{\shortavail}\spl@tcols0
         \fi\fi
-        % if either column height ends up negative, rollback and bail
+        % if either column height ends up negative, rollback and bail           %(6)
         \ifrebalance\ifnum\ifdim\colhtA<\availA 1\else\ifdim\colhtB<\availB 1\else 0\fi\fi =1
           \advance\shortavail by \baselineskip
           \trace{o}{rebalance found column height < 0, back to \the\shortavail}\rebalancefalse
@@ -811,21 +812,21 @@
         \colhtA=\ht\colA \colhtB=\ht\colB
         \dimen0=\colhtB \incr{\dimen0}{\toprightins} \incr{\dimen0}{\bottomrightins}%
         \advance\dimen0 by -\colhtA \decr{\dimen0}{\topleftins} \decr{\dimen0}{\bottomleftins}%
-        \ifdim\dimen0<.95\baselineskip\ifdim\dimen0>-.95\baselineskip
+        \ifdim\dimen0<.95\baselineskip\ifdim\dimen0>-.95\baselineskip           %(7)
           \shortavail=\colhtB\incr{\shortavail}{\toprightins}\incr{\shortavail}{\bottomrightins}%
           \ifdim\dimen0>0pt\else\advance\shortavail by -\dimen0\fi
           \advance\shortavail by \ifdim\dp\colA>\dp\colB \dp\colA\else\dp\colB\fi
           \trace{o}{Best height \the\shortavail}\rebalancefalse
         \fi\fi
 		% give up if target size less than 2 lines (should not happen)
-        \ifdim\shortavail<\baselineskip \MSG{Rebalancing bailed for short block}%
+        \ifdim\shortavail<\baselineskip \MSG{Rebalancing bailed for short block}%   %(8)
           \shortavail=\availht \rebalancefalse\fi
         \ifnum\loopcount>20 
           \advance\shortavail by \baselineskip
           \rebalancefalse\MSG{Rebalancing loop count bail}\fi
         \ifrebalance\repeat
     \fi
-    \advance\shortavail by \ifdim\dp\colA>\dp\colB \dp\colA\else\dp\colB\fi
+    \advance\shortavail by \ifdim\dp\colA>\dp\colB \dp\colA\else\dp\colB\fi     %(9)
     \s@tcolhts{\shortavail}\spl@tcols\s@vedpage
     \trace{o}{A = \the\colhtA , B = \the\colhtB , remaining = \the\ht\s@vedpage}%
   \fi

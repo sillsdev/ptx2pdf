@@ -253,7 +253,7 @@ class Noteparser:
                 self.note.append(Link(sline.lstrip("[=").rstrip("]:"), notes=self.notes))
             else:
                 if self.note is not None:
-                    self.note.append(nummatch(line))
+                    self.note.append(nummatch(line, invert=True))
         
 class Outputter:
     def __init__(self):
