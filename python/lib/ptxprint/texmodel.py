@@ -232,7 +232,7 @@ ModelMap = {
     "header/hdrright":          ("ecb_hdrright", lambda w,v: v or "-empty-"),
     "header/mirrorlayout":      ("c_mirrorpages", lambda w,v: "true" if v else "false"),
     
-    "header/ftrcenterpri":      ("c_ftrCenterPri", None),
+    "footer/ftrcenterpri":      ("c_ftrCenterPri", None),
     "footer/ftrcenter":         ("ecb_ftrcenter", lambda w,v: v or "-empty-"),
     "footer/ifftrtitlepagenum": ("c_pageNumTitlePage", lambda w,v: "" if v else "%"),
     "footer/ifprintConfigName": ("c_printConfigName", lambda w,v: "" if v else "%"),
@@ -536,27 +536,21 @@ class TexModel:
         
     def processHdrFtr(self, printer):
         """ Update model headers from model UI read values """
-        v = self.dict["footer/ftrcenter"]
-        self.dict['footer/oddcenter'] = self._hdrmappings.get(v,v)
-        mirror = self.asBool("header/mirrorlayout")
         diglot = True if self.dict["document/ifdiglot"] == "" else False
+        v = self.dict["footer/ftrcenter"]
+        pri = self.dict["footer/ftrcenterpri"] # boolean
+        t = self._hdrmappings.get(v, v)
+        if diglot:
+            t = self._addLR(t, pri)
+        self.dict['footer/oddcenter'] = t
+
+        mirror = self.asBool("header/mirrorlayout")
         for side in ('left', 'center', 'right'):
             v = self.dict["header/hdr"+side]
             pri = self.dict["header/hdr"+side+"pri"] # boolean
             t = self._hdrmappings.get(v, v)
             if diglot:
-                if t in [r"\firstref", r"\lastref", r"\rangeref", r"\pagenumber", r"\hrsmins", r"\isodate"]:                
-                    if pri:
-                        t = t+'L'
-                    else:
-                        t = t+'R'
-                elif t == r"\empty":
-                    pass
-                else:
-                    if pri:
-                        t = "\headfootL{{{}}}".format(t)
-                    else:
-                        t = "\headfootR{{{}}}".format(t)
+                t = self._addLR(t, pri)
                     
             self.dict['header/odd{}'.format(side)] = t
             if mirror:
@@ -578,6 +572,21 @@ class TexModel:
                     self.dict['header/noVeven{}'.format(side)] = r'\empty'
                 else:
                     self.dict['header/noVeven{}'.format(side)] = t 
+
+    def _addLR(self, t, pri):
+        if t in [r"\firstref", r"\lastref", r"\rangeref", r"\pagenumber", r"\hrsmins", r"\isodate"]:                
+            if pri:
+                t = t+'L'
+            else:
+                t = t+'R'
+        elif t == r"\empty":
+            pass
+        else:
+            if pri:
+                t = "\headfootL{{{}}}".format(t)
+            else:
+                t = "\headfootR{{{}}}".format(t)
+        return t
 
     def mirrorHeaders(self, h, dig=False):
         if dig and h.endswith(("L", "R")):
