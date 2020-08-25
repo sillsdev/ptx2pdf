@@ -6298,7 +6298,6 @@ secondary text as the Outer text.</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>
                                     <property name="row_spacing">4</property>
-                                    <property name="column_spacing">20</property>
                                     <child>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
@@ -6310,7 +6309,7 @@ secondary text as the Outer text.</property>
                                         </attributes>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">0</property>
+                                        <property name="left_attach">1</property>
                                         <property name="top_attach">0</property>
                                       </packing>
                                     </child>
@@ -6325,7 +6324,7 @@ secondary text as the Outer text.</property>
                                         </attributes>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">1</property>
+                                        <property name="left_attach">3</property>
                                         <property name="top_attach">0</property>
                                       </packing>
                                     </child>
@@ -6340,13 +6339,13 @@ secondary text as the Outer text.</property>
                                         </attributes>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">2</property>
+                                        <property name="left_attach">5</property>
                                         <property name="top_attach">0</property>
                                       </packing>
                                     </child>
                                     <child>
                                       <object class="GtkComboBoxText" id="ecb_hdrcenter">
-                                        <property name="width_request">200</property>
+                                        <property name="width_request">170</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">The header line on each page can contain
@@ -6359,6 +6358,8 @@ For example:
 \rangerefL     places the Left text's reference range in a diglot
 \rangerefR    places the Right text's reference range in a diglot
 -empty-     places nothing in that location</property>
+                                        <property name="margin_top">4</property>
+                                        <property name="margin_bottom">4</property>
                                         <property name="active">1</property>
                                         <property name="has_entry">True</property>
                                         <items>
@@ -6378,13 +6379,14 @@ For example:
                                         </child>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">1</property>
+                                        <property name="left_attach">3</property>
                                         <property name="top_attach">1</property>
+                                        <property name="height">2</property>
                                       </packing>
                                     </child>
                                     <child>
                                       <object class="GtkComboBoxText" id="ecb_hdrright">
-                                        <property name="width_request">200</property>
+                                        <property name="width_request">170</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">The header line on each page can contain
@@ -6398,6 +6400,8 @@ For example:
 \rangerefR    places the Right text's reference range in a diglot
 -empty-     places nothing in that location</property>
                                         <property name="margin_right">6</property>
+                                        <property name="margin_top">4</property>
+                                        <property name="margin_bottom">4</property>
                                         <property name="active">4</property>
                                         <property name="has_entry">True</property>
                                         <items>
@@ -6417,13 +6421,14 @@ For example:
                                         </child>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">2</property>
+                                        <property name="left_attach">5</property>
                                         <property name="top_attach">1</property>
+                                        <property name="height">2</property>
                                       </packing>
                                     </child>
                                     <child>
                                       <object class="GtkComboBoxText" id="ecb_hdrleft">
-                                        <property name="width_request">200</property>
+                                        <property name="width_request">170</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">The header line on each page can contain
@@ -6436,6 +6441,8 @@ For example:
 \rangerefL     places the Left text's reference range in a diglot
 \rangerefR    places the Right text's reference range in a diglot
 -empty-     places nothing in that location</property>
+                                        <property name="margin_top">4</property>
+                                        <property name="margin_bottom">4</property>
                                         <property name="active">0</property>
                                         <property name="has_entry">True</property>
                                         <items>
@@ -6454,9 +6461,110 @@ For example:
                                         </child>
                                       </object>
                                       <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">1</property>
+                                        <property name="height">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkRadioButton" id="c_hdrLeftPri">
+                                        <property name="label" translatable="yes">Pri</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="active">True</property>
+                                        <property name="draw_indicator">True</property>
+                                        <property name="group">c_hdrLeftSec</property>
+                                      </object>
+                                      <packing>
                                         <property name="left_attach">0</property>
                                         <property name="top_attach">1</property>
                                       </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkRadioButton" id="c_hdrLeftSec">
+                                        <property name="label" translatable="yes">Sec</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="active">True</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkRadioButton" id="c_hdrCenterPri">
+                                        <property name="label" translatable="yes">Pri</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="margin_left">8</property>
+                                        <property name="active">True</property>
+                                        <property name="draw_indicator">True</property>
+                                        <property name="group">c_hdrCenterSec</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">2</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkRadioButton" id="c_hdrRightPri">
+                                        <property name="label" translatable="yes">Pri</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="margin_left">8</property>
+                                        <property name="active">True</property>
+                                        <property name="draw_indicator">True</property>
+                                        <property name="group">c_hdrRightSec</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">4</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkRadioButton" id="c_hdrCenterSec">
+                                        <property name="label" translatable="yes">Sec</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="margin_left">8</property>
+                                        <property name="active">True</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">2</property>
+                                        <property name="top_attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkRadioButton" id="c_hdrRightSec">
+                                        <property name="label" translatable="yes">Sec</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="margin_left">8</property>
+                                        <property name="active">True</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">4</property>
+                                        <property name="top_attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
                                     </child>
                                   </object>
                                   <packing>
@@ -6609,7 +6717,7 @@ in the header reference.</property>
                             <property name="margin_right">6</property>
                             <property name="margin_bottom">6</property>
                             <property name="row_spacing">7</property>
-                            <property name="column_spacing">6</property>
+                            <property name="column_spacing">3</property>
                             <child>
                               <object class="GtkSpinButton" id="s_footerposition">
                                 <property name="visible">True</property>
@@ -6632,7 +6740,7 @@ Margins value on the Layout tab.</property>
                                 <property name="value">0.80000000000000004</property>
                               </object>
                               <packing>
-                                <property name="left_attach">3</property>
+                                <property name="left_attach">4</property>
                                 <property name="top_attach">0</property>
                               </packing>
                             </child>
@@ -6650,7 +6758,7 @@ Margins value on the Layout tab.</property>
                                 <property name="justify">right</property>
                               </object>
                               <packing>
-                                <property name="left_attach">2</property>
+                                <property name="left_attach">3</property>
                                 <property name="top_attach">0</property>
                               </packing>
                             </child>
@@ -6680,6 +6788,7 @@ by the Margins value on the Layout tab.</property>
                               <packing>
                                 <property name="left_attach">1</property>
                                 <property name="top_attach">0</property>
+                                <property name="width">2</property>
                               </packing>
                             </child>
                             <child>
@@ -6721,6 +6830,7 @@ Note that you can select a preset option OR type your own
 text as needed.
 Note that if you really must have Inner/Outer Footers,
 these can be set in the ptxprint-mods.tex file.</property>
+                                <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="active">0</property>
                                 <property name="has_entry">True</property>
@@ -6740,9 +6850,10 @@ these can be set in the ptxprint-mods.tex file.</property>
                                 </child>
                               </object>
                               <packing>
-                                <property name="left_attach">1</property>
+                                <property name="left_attach">2</property>
                                 <property name="top_attach">1</property>
                                 <property name="width">3</property>
+                                <property name="height">2</property>
                               </packing>
                             </child>
                             <child>
@@ -6766,6 +6877,37 @@ these can be set in the ptxprint-mods.tex file.</property>
                               <packing>
                                 <property name="left_attach">0</property>
                                 <property name="top_attach">1</property>
+                                <property name="height">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkRadioButton" id="c_ftrCenterPri">
+                                <property name="label" translatable="yes">Pri</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="margin_left">8</property>
+                                <property name="draw_indicator">True</property>
+                                <property name="group">c_ftrCenterSec</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkRadioButton" id="c_ftrCenterSec">
+                                <property name="label" translatable="yes">Sec</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="margin_left">8</property>
+                                <property name="active">True</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">2</property>
                               </packing>
                             </child>
                           </object>

@@ -224,11 +224,15 @@ ModelMap = {
     "header/chvseparator":      ("c_sepColon", lambda w,v : ":" if v else "."),
     "header/ifrhrule":          ("c_rhrule", lambda w,v: "" if v else "%"),
     "header/ruleposition":      ("s_rhruleposition", lambda w,v: v or "10"),
+    "header/hdrleftpri":        ("c_hdrLeftPri", None),
     "header/hdrleft":           ("ecb_hdrleft", lambda w,v: v or "-empty-"),
+    "header/hdrcenterpri":      ("c_hdrCenterPri", None),
     "header/hdrcenter":         ("ecb_hdrcenter", lambda w,v: v or "-empty-"),
+    "header/hdrrightpri":       ("c_hdrRightPri", None),
     "header/hdrright":          ("ecb_hdrright", lambda w,v: v or "-empty-"),
     "header/mirrorlayout":      ("c_mirrorpages", lambda w,v: "true" if v else "false"),
     
+    "header/ftrcenterpri":      ("c_ftrCenterPri", None),
     "footer/ftrcenter":         ("ecb_ftrcenter", lambda w,v: v or "-empty-"),
     "footer/ifftrtitlepagenum": ("c_pageNumTitlePage", lambda w,v: "" if v else "%"),
     "footer/ifprintConfigName": ("c_printConfigName", lambda w,v: "" if v else "%"),
@@ -305,48 +309,15 @@ class TexModel:
     }
     _hdrmappings = {
         "First Reference":           r"\firstref",
-        "Pri.First Reference":       r"\firstrefL",
-        "Primary First Reference":   r"\firstrefL",
-        "Sec.First Reference":       r"\firstrefR",
-        "Secondary First Reference": r"\firstrefR",
-
         "Last Reference":            r"\lastref",
-        "Pri.Last Reference":        r"\lastrefL",
-        "Primary Last Reference":    r"\lastrefL",
-        "Sec.Last Reference":        r"\lastrefR",
-        "Secondary Last Reference":  r"\lastrefR",
-
         "Reference Range":           r"\rangeref",
-        "Pri.Reference Range":       r"\rangerefL",
-        "Primary Reference Range":   r"\rangerefL",
-        "Sec.Reference Range":       r"\rangerefR",
-        "Secondary Reference Range": r"\rangerefR",
-
         "Page Number":               r"\pagenumber",
-        "Pri.Page Number":           r"\pagenumberL",
-        "Primary Page Number":       r"\pagenumberL",
-        "Sec.Page Number":           r"\pagenumberR",
-        "Secondary Page Number":     r"\pagenumberR",
-
         "Time (HH:MM)":              r"\hrsmins",
-        "Pri.Time (HH:MM)":          r"\hrsminsL",
-        "Sec.Time (HH:MM)":          r"\hrsminsR",
-        
         "Date (YYYY-MM-DD)":         r"\isodate",
-        "Pri.Date (YYYY-MM-DD)":     r"\isodateL",
-        "Sec.Date (YYYY-MM-DD)":     r"\isodateR",
-        
         "-empty-":                   r"\empty"
     }
     _mirrorRL = {r'\lastref':    r'\firstref',
-                 r'\firstref':   r'\lastref',
-                 r'\rangeref':   r'\rangeref',
-
-                 r'\pagenumber': r'\pagenumber',
-
-                 r'\hrsmins':    r'\hrsmins',
-                 r'\isodate':    r'\isodate',
-                 r'\empty':      r'\empty'
+                 r'\firstref':   r'\lastref'
     }
     _swapRL = {'left':   'right',
                'center': 'center',
@@ -571,15 +542,22 @@ class TexModel:
         diglot = True if self.dict["document/ifdiglot"] == "" else False
         for side in ('left', 'center', 'right'):
             v = self.dict["header/hdr"+side]
+            pri = self.dict["header/hdr"+side+"pri"] # boolean
             t = self._hdrmappings.get(v, v)
             if diglot:
-                if t.endswith("ref"):
-                    if side == 'right':
-                        t = t+'R'
-                    else:
+                if t in [r"\firstref", r"\lastref", r"\rangeref", r"\pagenumber", r"\hrsmins", r"\isodate"]:                
+                    if pri:
                         t = t+'L'
-                elif t.endswith("number"):
-                    t = t+'L'
+                    else:
+                        t = t+'R'
+                elif t == r"\empty":
+                    pass
+                else:
+                    if pri:
+                        t = "\headfootL{{{}}}".format(t)
+                    else:
+                        t = "\headfootR{{{}}}".format(t)
+                    
             self.dict['header/odd{}'.format(side)] = t
             if mirror:
                 self.dict['header/even{}'.format(self._swapRL[side])] = self.mirrorHeaders(t, diglot)

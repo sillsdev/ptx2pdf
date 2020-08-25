@@ -1691,44 +1691,45 @@ class GtkViewModel(ViewModel):
         l = ["First Reference", "Last Reference", "Reference Range", "Page Number",
              "Time (HH:MM)", "Date (YYYY-MM-DD)", "DRAFT", "-empty-"]
         # Handle the three different Header settings
-        headerl = self.get("ecb_hdrleft")
-        headerc = self.get("ecb_hdrcenter")
-        headerr = self.get("ecb_hdrright")
+        # headerl = self.get("ecb_hdrleft")
+        # headerc = self.get("ecb_hdrcenter")
+        # headerr = self.get("ecb_hdrright")
         for side in ["left", "center", "right"]:
-            oldHeader = self.get("ecb_hdr"+side)
+            # oldHeader = self.get("ecb_hdr"+side)
             self.builder.get_object("ecb_hdr"+side).remove_all()
             for i, v in enumerate(l):
-                # self.builder.get_object("ecb_hdr"+side).append_text(v)
-                if diglot and i < 6:
-                    self.builder.get_object("ecb_hdr"+side).append_text("Pri."+v)
-                    self.builder.get_object("ecb_hdr"+side).append_text("Sec."+v)
-                else:
-                    self.builder.get_object("ecb_hdr"+side).append_text(v)
-            if diglot and not oldHeader.startswith(("Pri.", "Sec.")) and oldHeader in l[:6]:
-                self.set("ecb_hdr"+side, "Pri."+oldHeader)
-            elif not diglot and oldHeader.startswith(("Pri.", "Sec.")):
-                self.set("ecb_hdr"+side, oldHeader[4:])
-        if diglot and headerl == "-empty-" and headerr == "Reference Range":
-            self.set("ecb_hdrleft", "Pri.Reference Range")
-            self.set("ecb_hdrright", "Sec.Reference Range")
-        elif not diglot and headerl[4:] == headerr[4:]:
-            self.set("ecb_hdrleft", "-empty-")
+                self.builder.get_object("ecb_hdr"+side).append_text(v)
+                # if diglot and i < 6:
+                    # self.builder.get_object("ecb_hdr"+side).append_text("Pri."+v)
+                    # self.builder.get_object("ecb_hdr"+side).append_text("Sec."+v)
+                # else:
+                    # self.builder.get_object("ecb_hdr"+side).append_text(v)
+            # if diglot and not oldHeader.startswith(("Pri.", "Sec.")) and oldHeader in l[:6]:
+                # self.set("ecb_hdr"+side, "Pri."+oldHeader)
+            # elif not diglot and oldHeader.startswith(("Pri.", "Sec.")):
+                # self.set("ecb_hdr"+side, oldHeader[4:])
+        # if diglot and headerl == "-empty-" and headerr == "Reference Range":
+            # self.set("ecb_hdrleft", "Pri.Reference Range")
+            # self.set("ecb_hdrright", "Sec.Reference Range")
+        # elif not diglot and headerl[4:] == headerr[4:]:
+            # self.set("ecb_hdrleft", "-empty-")
 
         # Now also handle the (single/Center) Footer (which has 2 less options)
-        oldFooter = self.get("ecb_ftrcenter")
+        # oldFooter = self.get("ecb_ftrcenter")
         self.builder.get_object("ecb_ftrcenter").remove_all()
         for i, v in enumerate(l[2:]):
-            if diglot and i < 4:
-                self.builder.get_object("ecb_ftrcenter").append_text("Pri."+v)
-                self.builder.get_object("ecb_ftrcenter").append_text("Sec."+v)
-            else:
-                self.builder.get_object("ecb_ftrcenter").append_text(v)
-                if oldFooter.startswith(("Pri.", "Sec.")):
-                    self.set("ecb_ftrcenter", oldFooter[4:])
-        if diglot and not oldFooter.startswith(("Pri.", "Sec.")) and oldFooter in l[2:6]:
-            self.set("ecb_ftrcenter", "Pri."+oldFooter)
-        elif not diglot and oldFooter.startswith(("Pri.", "Sec.")):
-            self.set("ecb_ftrcenter", oldFooter[4:])
+            self.builder.get_object("ecb_ftrcenter").append_text(v)
+            # if diglot and i < 4:
+                # self.builder.get_object("ecb_ftrcenter").append_text("Pri."+v)
+                # self.builder.get_object("ecb_ftrcenter").append_text("Sec."+v)
+            # else:
+                # self.builder.get_object("ecb_ftrcenter").append_text(v)
+                # if oldFooter.startswith(("Pri.", "Sec.")):
+                    # self.set("ecb_ftrcenter", oldFooter[4:])
+        # if diglot and not oldFooter.startswith(("Pri.", "Sec.")) and oldFooter in l[2:6]:
+            # self.set("ecb_ftrcenter", "Pri."+oldFooter)
+        # elif not diglot and oldFooter.startswith(("Pri.", "Sec.")):
+            # self.set("ecb_ftrcenter", oldFooter[4:])
 
     def onBorderClicked(self, btn):
         self.sensiVisible("c_diglot")
