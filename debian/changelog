@@ -1,3 +1,10 @@
+ptxprint (1.1-1ubuntu1) bionic; urgency=medium
+
+  * Bumped version to 1.1
+  * Added appdirs as a dependency. 
+
+ -- Nicolas Spalinger <nicolas.spalinger@sil.org>  Tue, 25 Aug 2020 15:59:37 +0200
+
 ptxprint (1.0-1ubuntu1) bionic; urgency=medium
 
   * Bumped version to 1.0
