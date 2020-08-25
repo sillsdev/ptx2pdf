@@ -364,3 +364,8 @@ used in a diglot publication if the two sides use different fonts.
  - ```\number\year.\ROMANnumeral\month.\number\day ``` (Hungarian-style date, upper case roman numerals for month, e.g. 2020.XII.24)
  - ```Draft: \number\day/\romannumeral\month/\number\year. ``` (Another unusual date format, with prefix "Draft: 24/xii/2020")
 
+
+### I'm setting a diglot and the fonts switch around 
+To ensure a particular font, use the ```\headfootL{}``` and ```\headfootR{}``` macros, putting the text inside the curly-brackets. e.g.: ```\headfootL{Draft: \isodate}```. Simlarly to the verse reference macros above, ```\hrsmins```, ```\timestamp```  and the date macros now have ....L and ...R variants as a convenience. 
+
+
