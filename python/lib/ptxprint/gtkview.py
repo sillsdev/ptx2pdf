@@ -603,7 +603,7 @@ class GtkViewModel(ViewModel):
             bp = self.ptsettings['BooksPresent']
             for b in allbooks:
                 ind = books.get(b, 0)-1
-                if 0 <= ind <= len(bp) and bp[ind - 1 if ind > 40 else ind] == "1":
+                if 0 <= ind <= len(bp) and bp[ind - 1 if ind > 39 else ind] == "1":
                     lsbooks.append([b])
         cbbook.set_model(lsbooks)
         self.bookNoUpdate = False
