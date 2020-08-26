@@ -38,6 +38,7 @@ class M(Enum):
     Skip = 2
     Text = 3
     Notes = 4
+    Python = 5
     
 class Lines(list):
     def __init__(self, flavour=M.Vanilla, startline=0, notes=None, filename=None):
@@ -59,6 +60,8 @@ class Lines(list):
         self.strip()
         if self.flavour == M.TeX:
             return ([] if self.filename is None else [f"\\fileheader{{{self.filename}}}"]) + ["```{.latex .numberLines startFrom=\"" + str(self.startline) + "\"}"] + self + ["```"]
+        elif self.flavour == M.Python:
+            return ([] if self.filename is None else [f"\\fileheader{{{self.filename}}}"]) + ["```{.python .numberLines startFrom=\"" + str(self.startline) + "\"}"] + self + ["```"]
         elif self.flavour == M.Text:
             return self
         elif self.flavour == M.Skip:
@@ -110,7 +113,11 @@ class Link:
             return [f"### Link *{self.tag}* failed"]
     
     def gettag(self):
-        return [self.tag] + self.notes[self.tag].gettag()
+        try:
+            return [self.tag] + self.notes[self.tag].gettag()
+        except KeyError:
+            print(f"Link {self.tag} failed; maybe you meant {' or '.join(difflib.get_close_matches(self.tag, self.notes))}?")
+            return []
     
 
 def shift(string):
@@ -162,12 +169,14 @@ class Item(list):
             output += [*x.gettag()]
         return output
     
-class TeXparser:
-    def __init__(self, filename, notes):
+class Codeparser:
+    def __init__(self, filename, notes, codeflavour, commentchar):
         self.stack = []
         self.item = None
         self.filename = os.path.basename(filename)
         self.notes = notes
+        self.codeflavour = codeflavour
+        self.commentchar = commentchar
         self.file = open(filename)
         self.parse()
         self.file.close()
@@ -183,47 +192,56 @@ class TeXparser:
     def enditem(self, tag=None):
         if self.stack != []:
             if tag is not None and self.item.tag != tag:
-                print(f"Unexpected closing tag %-{tag}; expected %-{self.item.tag} to come first")
+                print(f"Unexpected closing tag {self.commentchar}-{tag}; expected {self.commentchar}-{self.item.tag} to come first")
             self.item = self.notes[self.stack.pop(-1)]
         
     def linegen(self):
         self.lineno = 0
-        yield f"%+{self.filename}"
+        yield f"{self.commentchar}+{self.filename}"
         for l in self.file.readlines():
             self.lineno += 1
             yield l.strip("\n")
         self.lineno += 1
-        yield f"%-{self.filename}"
+        yield f"{self.commentchar}-{self.filename}"
     
     def parse(self):
         for line in self.linegen():
             sline = line.lstrip()
             if verbose:
                 print(line)
-            if sline.startswith("%+"):
+            if sline.startswith(self.commentchar + "+"):
                 self.startitem(sline[2:])
-            elif sline.startswith("%-"):
+            elif sline.startswith(self.commentchar + "-"):
                 self.enditem(sline[2:])
-            elif sline.startswith("%="):
+            elif sline.startswith(self.commentchar + "="):
                 self.item.add(Link(sline[2:], notes=self.notes))
-            elif sline.startswith("%:strip") or sline.startswith("%:skip"):
+            elif sline.startswith(self.commentchar + ":strip") or sline.startswith(self.commentchar + ":skip"):
                 self.item.mode = M.Skip
-            elif sline.startswith("%:"):
+            elif sline.startswith(self.commentchar + ":"):
                 self.item.mode = M.Text
             else:
                 #print(self.item.mode, line)
-                if self.item.mode is M.Skip and not sline.startswith("%"):
-                    self.item.mode = M.TeX
-                elif self.item.mode is M.Text and not (sline.startswith("%") or sline == ""): 
-                    self.item.mode = M.TeX
-                self.item.add(nummatch(line, prefix="%") , self.lineno)
+                if self.item.mode is M.Skip and not sline.startswith(self.commentchar):
+                    self.item.mode = self.codeflavour
+                elif self.item.mode is M.Text and not (sline.startswith(self.commentchar) or sline == ""): 
+                    self.item.mode = self.codeflavour
+                self.item.add(nummatch(line, prefix=self.commentchar) , self.lineno)
+                #self.item.add(nummatch(line, prefix="%") , self.lineno)
         if self.stack != []:
-            print(f"You missed one or more closing tags: {' and '.join(['%-' + x for x in self.stack])}")
+            print(f"You missed one or more closing tags: {' and '.join([f'{self.commentchar}-' + x for x in self.stack])}")
         self.item.clean()
 
         
     def output(self):
         return self.item.output()
+
+class TeXparser(Codeparser):
+    def __init__(self, filename, notes):
+        super().__init__(filename=filename, notes=notes, codeflavour=M.TeX, commentchar="%")
+        
+class Pythonparser(Codeparser):
+    def __init__(self, filename, notes):
+        super().__init__(filename=filename, notes=notes, codeflavour=M.Python, commentchar="#")
 
 class Noteparser:
     def __init__(self, filename, notes):
