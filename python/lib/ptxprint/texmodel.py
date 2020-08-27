@@ -10,6 +10,7 @@ from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders
 from ptxprint.runner import checkoutput
 from ptxprint import sfm
 from ptxprint.sfm import usfm, style
+from ptxprint.usfmutils import Usfm, Sheets
 
 def loosint(x):
     try:
@@ -369,6 +370,7 @@ class TexModel:
         if self.prjid is not None:
             self.dict['project/id'] = self.prjid
         if self.printer is not None:
+            self.sheets = Sheets(self.printer.getStyleSheets())
             self.update()
 
     def docdir(self):
@@ -712,12 +714,6 @@ class TexModel:
                 dat = "".join(newdat)
         return dat
 
-    def _appendsheet(self, fname, sheet):
-        if os.path.exists(fname):
-            with open(fname) as s:
-                sheet = style.update_sheet(sheet, style.parse(s))
-        return sheet
-
     def convertBook(self, bk, outdir, prjdir):
         if self.changes is None:
             if self.asBool('project/usechangesfile'):
@@ -752,13 +748,10 @@ class TexModel:
                 dat = self.runChanges(self.changes, dat)
 
             if self.dict['project/canonicalise']:
-                sheetfiles = self.printer.getStyleSheets()
-                sheets = usfm.default_stylesheet.copy()
-                for s in sheetfiles:
-                    sheets = self._appendsheet(s, sheets)
                 syntaxErrors = []
                 try:
-                    doc = list(usfm.parser([dat], stylesheet=sheets, canonicalise_footnotes=False))
+                    doc = Usfm([dat], self.sheets)
+                    doc.normalise()
                 except SyntaxError as e:
                     print(self.prjid, bk, str(e).split('line', maxsplit=1)[1])
                     syntaxErrors.append("{} {} line:{}".format(self.prjid, bk, str(e).split('line', maxsplit=1)[1]))
@@ -770,7 +763,7 @@ class TexModel:
                     "if PrintDraftChanges.txt has caused the error(s).", 
                     title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr))
                 else:
-                    dat = sfm.generate(doc)
+                    dat = str(doc)
 
             if self.localChanges is not None:
                 dat = self.runChanges(self.localChanges, dat)

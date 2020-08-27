@@ -1,29 +1,28 @@
-from ptxprint.sfm import usfm
+from ptxprint.sfm import usfm, style
 from ptxprint import sfm
-import re
+import re, os
 from collections import namedtuple
 
 RefRange = namedtuple("RefRange", ["fromc", "fromv", "toc", "tov"])
 
-def load_stylesheets(sheets):
-    stylesheet=usfm._load_cached_stylesheet('usfm.sty')
-    for s in stylesheets:
-        if s is not None:
-            stylesheet = style.parse(open(s), base=stylesheet)
-    return stylesheet
+class Sheets:
+    def __init__(self, init=[]):
+        self.sheet = usfm.default_stylesheet.copy()
+        for s in init:
+            self.append(s)
 
+    def append(self, sf):
+        if os.path.exists(sf):
+            with open(sf) as s:
+                self.sheet = style.update_sheet(self.sheet, style.parse(s))
 
 class Usfm:
-    def __init__(fnameordoc, stylesheet=None):
-        if isinstance(fnameordoc, str):
-            with open(fnameordoc, encoding="utf-8") as inf:
-                self.doc = list(usfm.parser(inf, stylesheet=stylesheet, canonicalise_footnotes=False))
-        else:
-            self.doc = fnameordoc
+    def __init__(self, iterable, sheets):
+        self.doc = list(usfm.parser(iterable, stylesheet=sheets.sheet, canonicalise_footnotes=False))
         self.cvaddorned = False
 
     def __str__(self):
-        return "".join(sfm.generate(s) for s in self.doc)
+        return sfm.generate(self.doc)
 
     def getwords(self, init=None, constrain=None):
         ''' Counts words found in the document. If constrain then is a set or
@@ -72,3 +71,30 @@ class Usfm:
             return False
         return self.doc.sfilter(filt, self.doc)
 
+    def normalise(self):
+        ''' Normalise USFM in place '''
+        ispara = sfm.text_properties("paragraph")
+        def ensurenl(i, e):
+            if isinstance(e, sfm.element):
+                if len(e):
+                    ensurenl(len(e)-1, e[-1])
+                else:
+                    e.append(sfm.text("\n", e.pos, e.parent))
+                    return True
+            elif not e.endswith("\n"):
+                e.parent.insert(i+1, sfm.text("\n", e.pos, e.parent))
+                return True
+            return False
+        def ge(i, e):
+            res = False
+            if isinstance(e, sfm.element):
+                if ispara(e) or e.name == "v":
+                    if i > 0:
+                        res = ensurenl(i-1, e.parent[i-1])
+                j = 0
+                while j < len(e):
+                    if ge(j, e[j]):
+                        j += 1
+                    j += 1
+            return res
+        ge(0, self.doc[0])
