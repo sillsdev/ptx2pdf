@@ -42,10 +42,13 @@
 \newif\ifdiglot %If there is diglot material
 \newif\ifp@gestart % temporary hold while things get going.
 \def\setsid@{\ifdiglotL\xdef\sid@{L}\else\xdef\sid@{R}\fi}
+
+%+cdig_define-hooks
 \newtoks\leftho@ks
 \newtoks\rightho@ks
 \def\addToLeftHooks#1{\x@\global\x@\leftho@ks\x@{\the\leftho@ks #1}}
 \def\addToRightHooks#1{\x@\global\x@\rightho@ks\x@{\the\rightho@ks #1}}
+%-cdig_define-hooks
 
 \def\stylesheetL#1{\gdef\ds@ffix{L}\stylesheet{#1}\gdef\ds@ffix{}}%Need to reset ds@ffix to {}, so that side-specific settings can be applied.
 \def\stylesheetR#1{\gdef\ds@ffix{R}\stylesheet{#1}\gdef\ds@ffix{}}

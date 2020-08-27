@@ -36,7 +36,7 @@
 % Macros to process each marker used in a Paratext stylesheet,
 % either ignoring it or saving the parameter as appropriate
 %
-%+c_sty-definitions
+%+csty_definition_setup
 \def\h@phen{-} % for matching
 \def\ds@ffix{} % diglot suffix (L/R)
 \def\m@rker{} % The currently being defined \Marker
@@ -45,7 +45,9 @@
 \def \Marker         #1\relax{\def\m@rker{#1} % store name of marker currently being defined
                               \expandafter\let\csname font<#1>\endcsname\relax}
                               %\expandafter\let\csname extrafont<#1>\endcsname\relax}
+%-csty_definition_setup
 
+%+csty_definitions
 % Make sure we list everything that can occur in a .sty file. If a .sty file contains a
 % missing sfm marker, then processing for that and all subsequent stylesheets will stop
 % at that point.
@@ -105,7 +107,7 @@
 \def \BaseLine       #1\relax{\defp@ram{baseline}{#1}}
 \def \LineSpacing    #1\relax{\defp@ram{baseline}{#1\FontSizeUnit}}
 % Make a TeX macro based on the StyleType
-\def \StyleType      #1\relax{\lowercase{\def\styl@type{#1}}\m@kestyle}
+\def \StyleType      #1\relax{\lowercase{\def\styl@type{#1}}\m@kestyle}     %(1)
 \let \Styletype=\StyleType
 % New extras that PTX supports
 \def \XMLTag         #1\relax{}
@@ -114,11 +116,12 @@
 \def \TEStyleName    #1\relax{}
 \def \NotRepeatble   #1\relax{}
 \def \Attributes     #1\relax{}
-%-c_sty-definitions
+%-csty_definitions
 
-%+c_sty-defgetparam
+%+csty_defparam
 %:
 % \defp@ram: store the value of a parameter from the .sty file
+%
 % -- ------
 % #1 name of parameter to store
 % #2 value
@@ -126,12 +129,16 @@
 % Constructs a macro name \_<marker>_:_<parameter>_ to hold the value.
 % `csname` is required here in order to build a macro name containing a colon and possibly a number.
 %
+\def\defp@ram#1#2{\x@\def\csname\m@rker\ds@ffix:#1\endcsname{#2}}
 \def\condp@ram#1#2#3{\edef\t@mp{#1}\ifx\t@mp\h@phen\relax\def\t@mp{#3}\else\def\t@mp{#2}\fi\t@mp}
 \def\defbinp@ram#1#2{\edef\t@mp{#2}\ifx\t@mp\h@phen\defp@ram{#1}{false}\else\defp@ram{#1}{true}\fi}
-\def\defp@ram#1#2{\x@\def\csname\m@rker\ds@ffix:#1\endcsname{#2}}
 \def\setp@ram#1#2#3{\x@\xdef\csname#2\ds@ffix:#1\endcsname{#3}} % expand now, not later 
+%-csty_defparam
+
+%+csty_getparam
 %:
 % \getp@aram: fetch the value of a style parameter into \p@ram
+%
 % -- ------
 % #1 name of parameter to fetch
 % #2 name of marker
@@ -141,45 +148,30 @@
 % default. (e.g when asked for paramter for v, check for vL|vR, default to v)
 %
 \def\getp@r@m#1#2{\x@\let\x@\p@ram\csname#2:#1\endcsname}
-\def\getp@ram#1#2{%
-\trace{Ds}{getp@ram #2:#1}%
-\ifdiglot%
-  \ifdiglotL\getp@r@m{#1}{#2L}\else\getp@r@m{#1}{#2R}\fi%
-  \ifx\p@ram\relax%
-    \getp@r@m{#1}{#2}%
-    \trace{Ds}{...default -> \p@ram}%
-  \else%
-    \trace{Ds}{...side-specfic -> \p@ram}%
-  \fi%
-\else%
-  \getp@r@m{#1}{#2}%
-\fi%
+\def\getp@ram#1#2{\trace{Ds}{getp@ram #2:#1}%
+\ifdiglot
+  \ifdiglotL\getp@r@m{#1}{#2L}\else\getp@r@m{#1}{#2R}\fi
+  \ifx\p@ram\relax
+    \getp@r@m{#1}{#2}\trace{Ds}{...default -> \p@ram}%
+  \else\trace{Ds}{...side-specfic -> \p@ram}%
+  \fi
+\else\getp@r@m{#1}{#2}%
+\fi
 \trace{s}{\space\space #2:#1 is \p@ram}%
 }
-%-c_sty-defgetparam
+%-csty_getparam
 
-%+c_sty-getmcparam
+%+csty_getmcparam
 %Main utility function for font parameters, stacking-styles aware
 \def\getmcp@ram#1{\let\r@s=\relax
   \def\d@##1+##2\E{\edef\tmp{##2}\ifx\tmp\empty\else\if##1P\global\let\r@s\relax\else\if##1N\global\let\r@s\relax\fi\fi
     \getp@ram{#1}{##2}\ifx\p@ram\relax\else\global\let\r@s\p@ram\fi\fi}%
-  \mcup\global\let\p@ram\r@s\traceNum{s}{param #1 for \mcstack\space is \p@ram}}
+  \mcup\global\let\p@ram\r@s\traceNum{s}{param #1 for \mcstack\space is \p@ram}}    %(1)
 \def\getmcp@ramR#1{\let\r@s\relax
   \def\d@##1+##2\E{\edef\tmp{##2}\ifx\tmp\empty\else\if##1P\global\let\r@s\relax\else\if##1N\global\let\r@s\relax\fi\fi
     \getp@ram{regular}{##2}\ifx\p@ram\relax\getp@ram{#1}{##2}\ifx\p@ram\relax\else\global\let\r@s\p@ram\fi
                            \else\global\let\r@s\relax\fi\fi}%
   \mcup\global\let\p@ram\r@s\traceNum{s}{paramR #1 for \mcstack\space is \p@ram}}
-\def\getmcfonts@ze{\getp@ram{p}{fontsize}\ifx\p@ram\relax\edef\ps@ze{12}\else\edef\ps@ze{\p@ram}\fi
-  \def\d@##1+##2\E{\edef\tmp{##2}\ifx\tmp\empty\else
-      \dimen0=\c@rrfontsize pt\ifnum\if##1P 1\else\if##1N 1\else0\fi\fi =1
-        \getp@ram{fontsize}{##2}\dimen0=\ifx\p@ram\relax 12\else\p@ram\fi pt%
-      \else\getp@ram{fontscale}{##2}\edef\sc@le{\p@ram}%
-        \ifx\p@ram\relax\edef\sc@le{1}\getp@ram{fontsize}{##2}%
-          \ifnum\ifx\p@ram\relax 1\else\ifx\p@ram\ps@ze 1\else 0\fi\fi =1
-            \dimen0=\sc@le\dimen0\else\dimen0=\p@ram pt\fi
-        \else\dimen0=\sc@le\dimen0
-    \fi\fi\xdef\c@rrfontsize{\strip@pt{\dimen0}}\trace{s}{\space working c@rrfontsize from ##2 is \c@rrfontsize}\fi}%
-  \mcup\trace{s}{set c@rrfontsize for \mcstack\space is \c@rrfontsize}}
  
 \def\getFp@ram#1#2{%
   \def\d@##1+##2\E{\edef\tmp{##2}\edef\tmpa{#2}\ifx\tmp\tmpa\getmcp@ram{#1}\else\getp@ram{#1}{#2}\fi}%
@@ -187,9 +179,23 @@
 \def\getFp@ramR#1#2{%
   \def\d@##1+##2\E{\edef\tmp{##2}\edef\tmpa{#2}\ifx\tmp\tmpa\getmcp@ramR{#1}\else\getp@ram{#1}{#2}\fi}%
   \mctop}
-%-c_sty-getmcparam
+%-csty_getmcparam
 
-%+c_sty-makestyle
+%+csty_getmcfontsize
+\def\getmcfonts@ze{\getp@ram{p}{fontsize}\ifx\p@ram\relax\edef\ps@ze{12}\else\edef\ps@ze{\p@ram}\fi
+  \def\d@##1+##2\E{\edef\tmp{##2}\ifx\tmp\empty\else
+      \dimen0=\c@rrfontsize pt\ifnum\if##1P 1\else\if##1N 1\else0\fi\fi =1
+        \getp@ram{fontsize}{##2}\dimen0=\ifx\p@ram\relax 12\else\p@ram\fi pt%
+      \else\getp@ram{fontscale}{##2}\edef\sc@le{\p@ram}%                            %(1)
+        \ifx\p@ram\relax\edef\sc@le{1}\getp@ram{fontsize}{##2}%
+          \ifnum\ifx\p@ram\relax 1\else\ifx\p@ram\ps@ze 1\else 0\fi\fi =1
+            \dimen0=\sc@le\dimen0\else\dimen0=\p@ram pt\fi
+        \else\dimen0=\sc@le\dimen0                                                  %(2)
+    \fi\fi\xdef\c@rrfontsize{\strip@pt{\dimen0}}\trace{s}{\space working c@rrfontsize from ##2 is \c@rrfontsize}\fi}%
+  \mcup\trace{s}{set c@rrfontsize for \mcstack\space is \c@rrfontsize}}             %(3)
+%-csty_getmcfontsize
+
+%+csty_makestyle
 \def\m@kestyle{{\uccode`\|=`\\\uppercase{\message{|\m@rker}}}
  \x@\let\csname font<\m@rker>\endcsname=\relax 
  \ifx\styl@type\P@ra \x@\defp@rstyle\x@{\m@rker}
@@ -214,16 +220,16 @@
 \def\defch@rstyle#1{\x@\def\csname#1\endcsname{\ch@rstyle{#1}}\x@\def\csname +#1\endcsname{\ch@rstylepls{#1}}}
 \catcode`+=\pl@scatcode
 \def\defn@testyle#1{\x@\def\csname#1\endcsname{\n@testyle{#1}}\m@ken@tecl@ss{#1}}
-%-c_sty-makestyle
+%-csty_makestyle
 
-%+c_sty-sethook
+%+csty_sethook
 % Allow "hooking" custom TeX code at the beginning or ending of specific styles.
 % e.g. `\sethook{start}{s1}{-}` put a hyphen at the start of every section heading
 \def\sethook#1#2#3{\x@\def\csname #1-#2\endcsname{#3}}
 \def\setbookhook#1#2#3{\x@\def\csname book#1-#2\endcsname{#3}}
-%-c_sty-sethook
+%-csty_sethook
 
-%+c_sty-testpublishability
+%+csty_testpublishability
 % All types of marker use this to check for the "nonpublishable" property
 \def\t@stpublishability#1{\n@npublishablefalse % check if "nonpublishable" occurred in the marker's \Properties
  \getp@ram{properties}{#1}%
@@ -231,7 +237,7 @@
 \def\t@stnonpub #1nonpublishable#2!{%
  \def\t@st{#2}\ifx\t@st\empty\else\n@npublishabletrue\fi}
 \newif\ifn@npublishable
-%-c_sty-testpublishability
+%-csty_testpublishability
 
 %+c_sty-defcv
 % Patch in special handling for \c and \v.
@@ -407,14 +413,17 @@
 \newdimen\dropnumbersize
 \newdimen\dropnumberraise
 
+%+csty_define-hooks
 % other modules can use \addtoversehooks to insert macros that will be executed at each verse
 \def\addtoversehooks#1{\x@\global\x@\v@rsehooks\x@{\the\v@rsehooks #1}}
 \def\addtopreversehooks#1{\x@\global\x@\prev@rsehooks\x@{\the\prev@rsehooks #1}}
 \newtoks\v@rsehooks
 \newtoks\prev@rsehooks
+% A CV hook is executed only for a particular CV when the verse milestone occurs.
 \def\setcvhook#1#2{\x@\gdef\csname cv-#1\endcsname{#2}}
 \def\docvhook{\edef\c@rref{\id@@@\ch@pter.\v@rse}\csname cv-\c@rref\endcsname}
 \addtoversehooks{\docvhook}
+%-csty_define-hooks
 
 \newif\ifch@pter \def\ch@plabel{}
 
@@ -466,15 +475,19 @@
 \def\@@id#1#2#3#4\end{\gdef\id@@@{#1#2#3}} % get first 3 chars of the \id
 \def\ptx@fig #1\fig*{\d@figure{#1}\m@kedigitsletters}
 
+%+csty_stack
 % marker stack operations (mcst@ck)
 \def\E{}
 \def\cstackpop#1,#2\E{#2}
 \def\cstackpush#1#2{#2,#1}
 \def\cstackpeek#1,#2\E{#1}
-\def\cstackup#1,#2\E{\edef\tmp{#2}\ifx\tmp\empty\let\n@x=\relax\else\let\n@x=\cstackup\fi\n@x #2\E\edef\tmp{#1}\ifx\tmp\empty\else\d@ #1\E\fi}
+\def\cstackup#1,#2\E{\edef\tmp{#2}\ifx\tmp\empty\let\n@x=\relax\else\let\n@x=\cstackup\fi\n@x #2\E\edef\tmp{#1}\ifx\tmp\empty\else\d@ #1\E\fi}                  %(1)
 \def\cstackdown#1,#2\E{\edef\tmp{#1}\ifx\tmp\empty\else\d@ #1\E\fi\edef\tmp{#2}\ifx\tmp\empty\let\n@x=\relax\else\let\n@x=\cstackdown\fi\n@x #2\E}
 \def\cstacktop#1,#2\E{\edef\temp{#1}\ifx\temp\empty\else\d@ #1\E\fi}
 \def\cstackrelax#1\E{}
+%-csty_stack
+
+%+csty_mstack
 \gdef\mcstack{+,}
 \def\cstackempty{,}
 \def\mcpop{\traceNum{s}{pop stack: \mcstack}\xdef\mcstack{\x@\cstackpop\mcstack\E}\ifx\mcstack\empty\xdef\mcstack{+,}\fi}
@@ -482,8 +495,9 @@
 \def\mcup{\x@\cstackup\mcstack\E}
 \def\mcdown{\x@\cstackdown\mcstack\E}
 \def\mctop{\x@\cstacktop\mcstack\E}
+%-csty_mstack
 
-%
+%+csty_stylesheet
 % \stylesheet{...} reads a Paratext stylesheet line by line
 %
 \newif\ifc@ntinue
@@ -493,13 +507,13 @@
  \let\save@regular=\regular \let\regular=\Regular
  \let\save@bold=\bold \let\bold=\Bold
  \let\save@italic=\italic \let\italic=\Italic
- \openin\styl@sheet="#1" \c@ntinuetrue
+ \openin\styl@sheet="#1" \c@ntinuetrue                      %(1)
  \ifeof\styl@sheet\errmessage{Paratext stylesheet "#1" not found}\else
    \message{Reading Paratext stylesheet "#1"...}%
    \endlinechar=-1
    \catcode`\#=5 % paratext comment char
    \loop
-    \read\styl@sheet to \th@line
+    \read\styl@sheet to \th@line                            %(2)
     \th@line \relax
     \ifeof\styl@sheet \c@ntinuefalse \fi
     \ifc@ntinue\repeat
@@ -511,6 +525,7 @@
  \let\bold=\save@bold
  \let\italic=\save@italic
 }
+%-csty_stylesheet
 
 \newif\iflastptxfile
 \newdimen\origb@selineskip %Save the initial baselineskip here

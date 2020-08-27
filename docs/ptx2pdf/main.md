@@ -15,8 +15,22 @@ geometry:
 listings:
 ---
 
+<!-- # Introduction -->
+
+# Setup
+
+[=d_setup]::
+
+# Styles
+
+[=d_styles]::
+
 # Output Routines
 
 [=d_output]::
+
+<!-- # References -->
+
+<!-- # Diglot -->
 
 [-main]::

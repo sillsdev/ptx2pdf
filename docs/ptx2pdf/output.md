@@ -293,7 +293,7 @@ tallest column including its depth as dimen3.
 [=c_calcboxheights]::
 
 As we output the page, the column boxes contain their column inserts. If the
-right column is empty then make it empty, but not void. Set both boxes heights
+right column is empty then make it empty, but not void. (1) Set both boxes heights
 to be the height allocated for them. We are ready now to create the pagecontents
 macro that fills the core of the page. We start by calculating a width for the
 contents. We output the previous partial content. Then we output any top insert
@@ -301,7 +301,7 @@ content. Then we output the column boxes. Note for right to left text, left is
 right and right is left. I.e. really left is first and right is second. Then we
 append any bottom inserts. Finally we output the notes as a single column.
 
-To output the page, we clear the box we were passed and reset vsize. Then we
+(+) To output the page, we clear the box we were passed and reset vsize. Then we
 call the `\plainoutput` routine to ship out the page. We will examine that
 later. We clear the page reference marks and shipout any extra pages for full
 page figures, etc. We reset holdinginserts back to what needs to happen for
@@ -309,9 +309,9 @@ normal page building. If we were called by a partial page builder, then we need
 to call it back, otherwise reset ready the output routine for normal two column
 page building and put back any unused content.
 
-If not everything fit on the page, then we need to reduce the page size a bit
+(+) If not everything fit on the page, then we need to reduce the page size a bit
 and try again with a shorter page until it does all fit. To do that we have to
-clear the various inserts and notes boxes, setup `backingup` to call us back and
+clear the various inserts and notes boxes, (+) setup `backingup` to call us back and
 set the output routine to `\backingup` and put everything back for reprocessing
 at this new shorter height.
 

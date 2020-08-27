@@ -2,7 +2,7 @@
 import configparser, os, re, regex, random, collections
 from .texmodel import ModelMap, TexModel, universalopen
 from .ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
-from .font import TTFont, cachepath
+from .font import TTFont, cachepath, cacheremovepath
 import pathlib, os, sys
 from configparser import NoSectionError, NoOptionError, _UNSET
 from zipfile import ZipFile, ZIP_DEFLATED

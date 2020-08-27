@@ -88,8 +88,10 @@ class TTFontCache:
 
     def removeFontDir(self, path):
         self.fontpaths.remove(path)
-        for f, c in self.cache.items():
-            for k, v in c.items():
+        allitems = list(self.cache.items())
+        for f, c in allitems:
+            theseitems = list(c.items())
+            for k, v in theseitems:
                 if "/" not in os.path.relpath(v, path).replace("\\", "/"):
                     del c[k]
             if not len(c):

@@ -8,6 +8,8 @@ from ptxprint.font import TTFont
 from ptxprint.ptsettings import chaps, books, bookcodes, oneChbooks
 from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders
 from ptxprint.runner import checkoutput
+from ptxprint import sfm
+from ptxprint.sfm import usfm, style
 
 def loosint(x):
     try:
@@ -84,6 +86,7 @@ ModelMap = {
     "project/ifstarthalfpage":  ("c_startOnHalfPage", lambda w,v :"true" if v else "false"),
     "project/randompicposn":    ("c_randomPicPosn", None),
     "project/showlinenumbers":  ("c_showLineNumbers", None),
+    "project/canonicalise":     ("c_canonicalise", None),
 
     "paper/height":             ("ecb_pagesize", lambda w,v: re.sub(r"^.*?,\s*(.+?)\s*(?:\(.*|$)", r"\1", v) or "210mm"),
     "paper/width":              ("ecb_pagesize", lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", v) or "148mm"),
@@ -350,6 +353,8 @@ class TexModel:
     }
 
     def __init__(self, printer, path, ptsettings, prjid=None):
+        from ptxprint.view import VersionStr
+        self.VersionStr = VersionStr
         self.printer = printer
         self.ptsettings = ptsettings
         self.changes = None
@@ -695,6 +700,24 @@ class TexModel:
             checkoutput(cmd) # dont't pass cmd as list when shell=True
         return outfpath
 
+    def runChanges(self, changes, dat):
+        for c in changes:
+            if self.debug: print(c)
+            if c[0] is None:
+                dat = c[1].sub(c[2], dat)
+            else:
+                newdat = c[0].split(dat)
+                for i in range(1, len(newdat), 2):
+                    newdat[i] = c[1].sub(c[2], newdat[i])
+                dat = "".join(newdat)
+        return dat
+
+    def _appendsheet(self, fname, sheet):
+        if os.path.exists(fname):
+            with open(fname) as s:
+                sheet = style.update_sheet(sheet, style.parse(s))
+        return sheet
+
     def convertBook(self, bk, outdir, prjdir):
         if self.changes is None:
             if self.asBool('project/usechangesfile'):
@@ -725,16 +748,32 @@ class TexModel:
         outfpath = os.path.join(outdir, outfname)
         with universalopen(infpath) as inf:
             dat = inf.read()
-            if self.changes is not None or self.localChanges is not None:
-                for c in (self.changes or []) + (self.localChanges or []):
-                    if self.debug: print(c)
-                    if c[0] is None:
-                        dat = c[1].sub(c[2], dat)
-                    else:
-                        newdat = c[0].split(dat)
-                        for i in range(1, len(newdat), 2):
-                            newdat[i] = c[1].sub(c[2], newdat[i])
-                        dat = "".join(newdat)
+            if self.changes is not None:
+                dat = self.runChanges(self.changes, dat)
+
+            if self.dict['project/canonicalise']:
+                sheetfiles = self.printer.getStyleSheets()
+                sheets = usfm.default_stylesheet.copy()
+                for s in sheetfiles:
+                    sheets = self._appendsheet(s, sheets)
+                syntaxErrors = []
+                try:
+                    doc = list(usfm.parser([dat], stylesheet=sheets, canonicalise_footnotes=False))
+                except SyntaxError as e:
+                    print(self.prjid, bk, str(e).split('line', maxsplit=1)[1])
+                    syntaxErrors.append("{} {} line:{}".format(self.prjid, bk, str(e).split('line', maxsplit=1)[1]))
+                except IndexError as e:
+                    syntaxErrors.append("{} {} line:{}".format(self.prjid, bk, str(e)))
+                if len(syntaxErrors):
+                    self.printer.doError("Failed to canonicalise texts due to a Syntax Error:",        
+                    secondary="\n".join(syntaxErrors)+"\n\nIf original USFM text is correct, then check "+ \
+                    "if PrintDraftChanges.txt has caused the error(s).", 
+                    title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr))
+                else:
+                    dat = sfm.generate(doc)
+
+            if self.localChanges is not None:
+                dat = self.runChanges(self.localChanges, dat)
         with open(outfpath, "w", encoding="utf-8") as outf:
             outf.write(dat)
         if self.dict['project/runscriptafter']:
@@ -794,6 +833,8 @@ class TexModel:
         first = int(self.dict["document/chapfrom"])
         last = int(self.dict["document/chapto"])
         
+        # Fix things that other parsers accept and we don't
+        self.localChanges.append((None, regex.compile(r"(\\[cv] [^ \\\n]+)(\\)", flags=regex.S), r"\1 \2"))
         # This section handles PARTIAL books (from chapter X to chapter Y)
         if self.asBool("document/ifchaplabels", true="%"):
             clabel = self.dict["document/clabel"]

@@ -1,4 +1,5 @@
 from ptxprint.sfm import usfm
+from ptxprint import sfm
 import re
 from collections import namedtuple
 
@@ -16,10 +17,13 @@ class Usfm:
     def __init__(fnameordoc, stylesheet=None):
         if isinstance(fnameordoc, str):
             with open(fnameordoc, encoding="utf-8") as inf:
-                self.doc = list(usfm.parser(inf, stylesheet=stylesheet, purefootnotes=True))
+                self.doc = list(usfm.parser(inf, stylesheet=stylesheet, canonicalise_footnotes=False))
         else:
             self.doc = fnameordoc
         self.cvaddorned = False
+
+    def __str__(self):
+        return "".join(sfm.generate(s) for s in self.doc)
 
     def getwords(self, init=None, constrain=None):
         ''' Counts words found in the document. If constrain then is a set or
