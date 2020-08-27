@@ -4,7 +4,7 @@ ptx2pdf.pdf : ptx2pdf.mdt layout.tex
 	pandoc -o $@ -H layout.tex --toc --pdf-engine=xelatex $<
 
 ptx2pdf.mdt : *.md ../../src/*.tex
-	../../python/scripts/TeX2md -o $@ -t main $^
+	../../python/scripts/src2md -o $@ -t main $^
 
 clean:
 	rm -f ptx2pdf.mdt
