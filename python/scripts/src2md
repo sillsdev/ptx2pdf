@@ -125,9 +125,9 @@ def shift(string):
 
 
 class Item(list):
-    def __init__(self, tag, notes, filename):
+    def __init__(self, tag, notes, filename, mode):
         self.tag = tag
-        self.mode = M.TeX
+        self.mode = mode
         self.notes = notes
         self.filename = filename
         
@@ -177,9 +177,13 @@ class Codeparser:
         self.notes = notes
         self.codeflavour = codeflavour
         self.commentchar = commentchar
-        self.file = open(filename, encoding="utf-8")
-        self.parse()
-        self.file.close()
+        try:
+            self.file = open(filename, encoding="utf-8")
+        except PermissionError:
+            print(f"Encountered PermissionError with file {self.filename}")
+        else:
+            self.parse()
+            self.file.close()
     
     def __repr__(self):
         return str(self.item)
@@ -187,7 +191,7 @@ class Codeparser:
     def startitem(self, tag):
         if self.item is not None:
             self.stack.append(self.item.tag)
-        self.notes[tag] = self.item = Item(tag, notes=self.notes, filename=self.filename)    
+        self.notes[tag] = self.item = Item(tag, notes=self.notes, filename=self.filename, mode=self.codeflavour)  
     
     def enditem(self, tag=None):
         if self.stack != []:
@@ -317,7 +321,8 @@ class Outputter:
                       re.sub("[\u25CB\u2460-\u2473]", self.docircled, txt)) 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("infiles",nargs="+", help="Input source/markdown files")
+parser.add_argument("infiles",nargs="+", help="Input TeX/markdown files")
+parser.add_argument("--pythonfiles",nargs="+", help="Input Python source code")
 parser.add_argument("-v", "--verbose", action="store_true", help="Verbose (show all output and full tree)")
 parser.add_argument("-o","--output",required=True, help="Output file")
 parser.add_argument("-t","--tree", default="main", help="Name of tree node [main]")
@@ -327,20 +332,32 @@ verbose = args.verbose
 
 notes1 = {}
 
-def createmd(notesdict, infilenames, outputfilename, treenode=None, givemap=False):
-    for f in infilenames:
-        if f.endswith(".md"):
-            Noteparser(f, notesdict)
-        elif f.endswith(".tex"):
-            TeXparser(f, notesdict)
+def triage(infiles, pyfiles):
+    if pyfiles is not None:
+        for f in pyfiles:
+            yield f, Pythonparser
+    if infiles is not None:
+        for f in infiles:
+            if f.endswith(".md"):
+                yield f, Noteparser
+            elif f.endswith(".tex"):
+                yield f, TeXparser
+    
+
+def createmd(notesdict, infilenames, pythonfilenames, outputfilename, treenode=None, givemap=False):
+    for f, parser in triage(infilenames, pythonfilenames):
+        parser(f, notesdict)
     if givemap:
         for k in notesdict:
-            print(f"Note: {k}\n{notesdict[k]}")
+            try:
+                print(f"Note: {k}\n{notesdict[k]}")
+            except UnicodeEncodeError:
+                print(f"Encountered UnicodeEncodeError when trying to print note {k}")
     outer = Outputter()
     outputfile = open(outputfilename, "w", encoding="utf-8")
     outputfile.write("\n".join(outer(s) for s in notesdict[treenode].output()))
     outputfile.close()
 
-createmd(notes1, args.infiles, args.output, args.tree, args.map)
+createmd(notes1, args.infiles, args.pythonfiles, args.output, args.tree, args.map)
 
 # jobs = [(f, Pythonparser) for f in args.python] + [(f, TeXparser) for f in args.tex] + [(f, analyse(f) for args.files)]
