@@ -31,7 +31,6 @@ def nummatch(txt, prefix="", invert=False):
         return _matchcircle(m, base="\u25CF" if invert else "\u25CB", prefix=prefix)
     return re.sub(prefix+r"\(([\+0-9]+)\)", _matchrep, txt)
 
-
 class M(Enum):
     Vanilla = 0
     TeX = 1
@@ -39,6 +38,7 @@ class M(Enum):
     Text = 3
     Notes = 4
     Python = 5
+    
     
 class Lines(list):
     def __init__(self, flavour=M.Vanilla, startline=0, notes=None, filename=None):
@@ -96,6 +96,7 @@ class Lines(list):
             if type(x) is Link:
                 output += x.gettag()
         return output
+    
     
 class Link:
     def __init__(self, tag, notes):
@@ -333,16 +334,15 @@ verbose = args.verbose
 notes1 = {}
 
 def triage(infiles, pyfiles):
-    if pyfiles is not None:
-        for f in pyfiles:
-            yield f, Pythonparser
     if infiles is not None:
         for f in infiles:
             if f.endswith(".md"):
                 yield f, Noteparser
             elif f.endswith(".tex"):
                 yield f, TeXparser
-    
+    if pyfiles is not None:
+        for f in pyfiles:
+            yield f, Pythonparser
 
 def createmd(notesdict, infilenames, pythonfilenames, outputfilename, treenode=None, givemap=False):
     for f, parser in triage(infilenames, pythonfilenames):
