@@ -177,7 +177,7 @@ class Codeparser:
         self.notes = notes
         self.codeflavour = codeflavour
         self.commentchar = commentchar
-        self.file = open(filename)
+        self.file = open(filename, encoding="utf-8")
         self.parse()
         self.file.close()
     
@@ -230,7 +230,6 @@ class Codeparser:
         if self.stack != []:
             print(f"You missed one or more closing tags: {' and '.join([f'{self.commentchar}-' + x for x in self.stack])}")
         self.item.clean()
-
         
     def output(self):
         return self.item.output()
@@ -249,7 +248,7 @@ class Noteparser:
         self.note = None
         self.notes = notes
         self.stack = []
-        self.file = open(filename)
+        self.file = open(filename, encoding="utf-8")
         self.parse()
         self.file.close()
     
@@ -321,34 +320,20 @@ parser = argparse.ArgumentParser()
 parser.add_argument("infiles",nargs="+", help="Input source/markdown files")
 parser.add_argument("-v", "--verbose", action="store_true", help="Verbose (show all output and full tree)")
 parser.add_argument("-o","--output",required=True, help="Output file")
-parser.add_argument("-t","--tree", help="Tree file")
+parser.add_argument("-t","--tree", default="main", help="Name of tree node [main]")
 parser.add_argument("-m","--map", action="store_true", help="Show document map")
 args = parser.parse_args()
 verbose = args.verbose
 
 notes1 = {}
 
-def createmd(notesdict, infilenames, outputfilename, treenode=None, map=False):
+def createmd(notesdict, infilenames, outputfilename, treenode=None, givemap=False):
     for f in infilenames:
         if f.endswith(".md"):
             Noteparser(f, notesdict)
         elif f.endswith(".tex"):
             TeXparser(f, notesdict)
-    if treenode is None:
-        keys = list(notesdict.keys())
-        for k in notesdict:
-            if k in keys:
-                for j in notesdict[k].gettag():
-                    if j in keys:
-                        keys.remove(j)
-        notesdict["main"] = Lines(M.Notes)
-        for k in keys:
-            notesdict["main"].add(Link(k, notes=notesdict))
-        treenode = "main"
-    else:
-        Noteparser(treenode, notesdict)
-        treenode = "main"
-    if args.map:
+    if givemap:
         for k in notesdict:
             print(f"Note: {k}\n{notesdict[k]}")
     outer = Outputter()
@@ -357,3 +342,5 @@ def createmd(notesdict, infilenames, outputfilename, treenode=None, map=False):
     outputfile.close()
 
 createmd(notes1, args.infiles, args.output, args.tree, args.map)
+
+# jobs = [(f, Pythonparser) for f in args.python] + [(f, TeXparser) for f in args.tex] + [(f, analyse(f) for args.files)]
