@@ -140,6 +140,17 @@ Assuming your copy is more recent than this, please report any recurrance.
   this has now been solved.
 - h and p :  Following text may have problems with grid alignment, but this is hopefully solved.
 
+
+#### Restrictions on certain picture positions
+- p : The delayed picture is saved until the end of the Nth paragraph in a
+  certain 'box'. There is no code to have either an adjustable stack of boxes 
+  or multiple images in the box. (But diglots have a second box for the
+  right/outer text).  If an attempt is made to put a second picture into the
+  box while it still contains the first, the first picture will be lost.
+- c : If a cutout picture occurs in the same pargraph as a 'drop-caps' chapter
+  number or another cutout picture, then an error is triggered and a horrible mess 
+  occurs.
+
 #### Do the new picture positions conform to examples in the USFM specification?
 In some ways, they conform better than the previously available options. USFM
 specification indicates that a picture can occur immediately after text, ending

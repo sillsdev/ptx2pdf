@@ -164,10 +164,11 @@
  \do@ndofthispar
 }
 \def\do@ndofthispar{
+ %run code to insert picb@x / picb@xR at the right time.
  \edef\eotpn@me{at@ndofthispar\ifdiglot\ifdiglotL L\else R\fi\fi}% Which endofthispar macro?
  \x@\let\x@\pn@xt\csname \eotpn@me\endcsname
  \trace{g}{doendofthispar \ch@pter:\v@rse\ifdiglot\ifdiglotL L \else R \fi\fi\space \the\pagetotal, \the\holdinginserts, page/chunk-\ifp@gestart start\else -middle\fi}%
- \temptrue
+ \temptrue %If iftemp stays true, then it's a valid insertion point.
  \ifx\pn@xt\empty\tempfalse\fi
  \ifinn@te\tempfalse\fi %No pictures in notes!
  \ifdiglot
@@ -177,6 +178,7 @@
  \fi
  \ifx\pn@xt\empty\else
    \iftemp
+     %Potential inclusion location. Check delay.
      \edef\temp{\csname\eotpn@me Delay\endcsname}%
      \ifx\temp\empty\else
        \let\pn@xt=\empty
@@ -193,11 +195,13 @@
    \fi
  \fi
  \ifx\pn@xt\empty\else
-   \trace{g}{\eotpn@me\space used (\the\holdinginserts)\the\ht\picb@x}%
+   % Time to acually include the picture
+   \trace{g}{\eotpn@me\space used (\the\holdinginserts)\the\ht\picb@x / \the\ht\picb@xR}%
    %\nonstopmode
    %\show\pn@xt
    %\edef\pn@xt{\hbox{x}}% test code
-   \x@\global\x@\let\csname\eotpn@me\endcsname=\empty\pn@xt\relax
+   \x@\global\x@\let\csname\eotpn@me\endcsname=\empty 
+   \pn@xt\relax 
  \fi
 }
 

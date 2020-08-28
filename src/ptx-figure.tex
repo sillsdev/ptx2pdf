@@ -492,21 +492,25 @@
     \fi
     \ifx\picl@c\loc@Par
       \trace{g}{Picture is post-paragraph}%
-      \global\setbox\picb@x\box0
+      \let\picb@@x=\picb@x
+      \ifdiglot\ifdiglotL\else\let\picb@@x=\picb@xR\fi\fi
+      \global\setbox\picb@@x\box0
       \ifpicNarrow
         \ifx\pic@lign\@lignLeft
-          \global\setbox\picb@x\hbox to \colwidth{\box\picb@x\hss}\trace{g}{Pic aligned left}%
+          \global\setbox\picb@@x\hbox to \colwidth{\box\picb@@x\hss}\trace{g}{Pic aligned left}%
         \else
-          \global\setbox\picb@x\hbox to \colwidth{\hss\box\picb@x}\trace{g}{Pic aligned right}%
+          \global\setbox\picb@@x\hbox to \colwidth{\hss\box\picb@@x}\trace{g}{Pic aligned right}%
         \fi
       \fi
       \edef\eotpn@me{at@ndofthispar\ifdiglot\ifdiglotL L\else R\fi\fi}% Which endofthispar macro?\emspace
       \trace{g}{\eotpn@me\space defined}%
       \x@\gdef\csname \eotpn@me\endcsname{
         \relax
+        \let\picb@@x=\picb@x
+        \ifdiglot\ifdiglotL\else\let\picb@@x=\picb@xR\fi\fi
         \penalty10 % Allow the page to break
         %\gridp@cfalse% Not true. Not a floating image.
-           \gridb@x\picb@x
+           \gridb@x\picb@@x
            %\vskip-\prevdepth
         %\gridp@cfalse % make sure we align to the page grid
         \penalty10
@@ -553,20 +557,20 @@
       \advance\dimen3 by -\dimen2
       \ifdim\dimen3<5em\message{*** Picture specification of \size@ption \sizem@ltiple (at \ch@pter:\v@rse) leaves \the\dimen3 \space for text. That's probably not enough.}\fi
       \ifx\l@cspec\@lignLeft
-        \setbox\picb@x\hbox to 0pt {\lower\dimen1\box0\hss}%
-        \ht\picb@x=0pt 
-         \dp\picb@x=0pt
+        \setbox0\hbox to 0pt {\lower\dimen1\box0\hss}%
+        \ht0=0pt 
+         \dp0=0pt
         \vskip-\baselineskip  %Yuck
-        \box\picb@x %FIXME? Box here Adds vertical space
+        \box0 %FIXME? Box here Adds vertical space
         \trace{g}{leftcutout \the\dimen2, \c@tskip, \the\count255}%
         \leftcutout{\the\dimen2}{\c@tskip}{\the\count255}%
       \else
         \ifx\l@cspec\@lignRight
-          \setbox\picb@x\hbox to \hsize{\hss\lower\dimen1\box0}%
-          \ht\picb@x=0pt 
-          \dp\picb@x=0pt
+          \setbox0\hbox to \hsize{\hss\lower\dimen1\box0}%
+          \ht0=0pt 
+          \dp0=0pt
           \vskip-\baselineskip %Yuck
-          \box\picb@x% FIXME? Box here adds vertical space
+          \box0% FIXME? Box here adds vertical space
           \trace{g}{rightcutout \the\dimen2, \c@tskip, \the\count255}%\
           %\edef\t@mpd{\the\dimen2}%
           \rightcutout{\the\dimen2}{\c@tskip}{\the\count255}%\emspace
@@ -618,7 +622,8 @@
 \def\val@BIND{binding}
 \def\val@EDGE{edge}
 
-\newbox\picb@x
+\newbox\picb@x % Delayed picture
+\newbox\picb@xR % (diglot, right-hand) delayed picture.
 \newcount\p@ramnumber
 \newdimen\p@cinswid
 \newdimen\p@cwidth
