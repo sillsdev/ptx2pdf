@@ -1,4 +1,5 @@
 import regex
+from .texmodel import universalopen
 
 class PDFx1aOutput():
     regexes = []
@@ -281,3 +282,56 @@ class FancyBorders():
 \sethook{start}{gref}{\catcode`\:=12}
 \sethook{end}{gref}{\catcode`\:=\active}
 """
+
+class ImgCredits():
+    regexes = None
+    styleInfo = None
+    processTex = False
+    texCode = ""
+
+def generateCredits(picpagesFile, sensitive=False):
+    with universalopen(picpagesFile) as inf:
+        dat = inf.read()
+
+    artpgs = {}
+    m = re.findall(r"\\figonpage\{(\d+)\}\{\d+\}\{.*?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..)\d{5}.+?", dat)
+    if len(m):
+        for f in m:
+            artpgs.setdefault(f[1], []).append(int(f[0]))
+
+    artstr = {
+    "cn" : ("© 1996 David C. Cook.", "© DCC."),
+    "co" : ("© 1996 David C. Cook.", "© DCC."),
+    "hk" : ("by Horace Knowles\n© The British & Foreign Bible Society, 1954, 1967, 1972, 1995.", "© BFBS, 1995."),
+    "lb" : ("by Louise Bass\n© The British & Foreign Bible Society, 1994.", "© BFBS, 1994."),
+    "bk" : ("by Horace Knowles revised by Louise Bass\n©The British & Foreign Bible Society, 1994.", "© BFBS, 1994."),
+    "ba" : ("used by permission of Louise Bass.", ""),
+    "dy" : ("by Carolyn Dyk, © 2001 Wycliffe Bible Translators, Inc.\nand licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.", ""),
+    "gt" : ("by Gordon Thompson © 2012 Wycliffe Bible Translators Inc.\nand licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.", ""),
+    "dh" : ("by David Healey © 2012 Wycliffe Bible Translators Inc.\nand licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.", ""),
+    "mh" : ("by Michael Harrar © 2012 Wycliffe Bible Translators Inc.\nand licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.", ""),
+    "mn" : ("used by permission of Muze Tshilombo.", ""),
+    "wa" : ("by Graham Wade, © United Bible Societies, 1989.", ""),
+    "dn" : ("by Darwin Dunham, © United Bible Societies, 1989.", ""),
+    "ib" : ("Illustrations by Farid Faadil. Copyright © by Biblica, Inc.\nUsed by permission. All rights reserved worldwide.", "")
+    }
+    crdts = []
+    for art, pgs in artpgs.items():
+        if len(pgs):
+            pgs = sorted(set(pgs))
+            if len(pgs) == 1:
+                pl = ""
+                pgstr = "on page {} ".format(str(pgs[0]))
+            else:
+                pl = "s"
+                pgstr = "on pages {} and {} ".format(", ".join(str(p) for p in pgs[:-1]), str(pgs[-1]))
+            
+            if art in artstr.keys():
+                if sensitive and len(artstr[art][1]):
+                    cpystr = artstr[art][1]
+                else:
+                    cpystr = artstr[art][0]
+                crdts += ["\\pc Illustration{} {}{}\n".format(pl, pgstr, cpystr)]
+            else:
+                crdts += ["\\rem Warning: No copyright statement found for: {} image{} {}\n".format(art.upper(), pl, pgstr)]
+    return "\n".join(crdts) if len(crdts) else ""

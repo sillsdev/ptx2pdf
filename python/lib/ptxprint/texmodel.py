@@ -289,6 +289,7 @@ ModelMap = {
     "snippets/pdfx1aoutput":    ("c_PDFx1aOutput", None),
     "snippets/diglot":          ("c_diglot", lambda w,v: True if v else False),
     "snippets/fancyborders":    ("c_borders", None),
+    "snippets/imgcredits":      ("c_imgCredits", None),
 }
 
 _fontstylemap = {
@@ -346,7 +347,8 @@ class TexModel:
         "snippets/fancyintro":            ("c_prettyIntroOutline", FancyIntro),
         "snippets/pdfx1aoutput":          ("c_PDFx1aOutput", PDFx1aOutput),
         "snippets/diglot":                ("c_diglot", Diglot),
-        "snippets/fancyborders":          ("c_borders", FancyBorders)
+        "snippets/fancyborders":          ("c_borders", FancyBorders),
+        "snippets/imgcredits":            ("c_imgCredits", ImgCredits)
     }
     _settingmappings = {
         "notes/xrcallers": "crossrefs",

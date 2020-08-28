@@ -73,7 +73,6 @@ if args.pid is not None and (any(x in args.pid for x in "\\/") or args.pid.lower
         args.config = pidbits[3]
     if len(pidbits) > 3:
         args.pid = pidbits[0]
-    print([args.pid, args.config, args.paratext])
 
 if args.directory is not None:
     args.directory = os.path.abspath(args.directory)
@@ -94,7 +93,8 @@ else:
         os.makedirs(os.path.dirname(conffile))
     config.add_section("init")
 
-scriptsdir = os.path.abspath(os.path.dirname(__file__))
+# scriptsdir = os.path.abspath(os.path.dirname(__file__))
+scriptsdir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
 if os.path.exists("/usr/share/ptx2pdf") and not os.path.exists(os.path.join(scriptsdir, "..", "..", "src")):
     scriptsdir = "/usr/share/ptx2pdf"
     macrosdir = "/usr/share/ptx2pdf/texmacros"
