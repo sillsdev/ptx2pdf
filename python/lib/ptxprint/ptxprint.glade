@@ -8048,7 +8048,7 @@ the w/a/p notation, then it is easy to exclude
 any illustrations that do not have the 'p'
 attribute.  Note: w= web, a=app, p=print.</property>
                                     <property name="halign">start</property>
-                                    <property name="margin_left">20</property>
+                                    <property name="margin_left">10</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -8065,7 +8065,7 @@ attribute.  Note: w= web, a=app, p=print.</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="halign">start</property>
-                                    <property name="margin_left">20</property>
+                                    <property name="margin_left">10</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -8087,7 +8087,7 @@ are not found in the specified location of image files.
 A list of missing pictures should appear below AFTER
 creating the publication.</property>
                                     <property name="halign">start</property>
-                                    <property name="margin_left">20</property>
+                                    <property name="margin_left">10</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -8221,13 +8221,19 @@ illustrations used in the publication.
 
 If you enable this option and insert 
 this code (in Paratext's USFM text):
-\zImageCopyrights
+      \zImageCopyrights
 then PTXprint will generate the
 copyright statement(s) for each
-known artist along with page number.</property>
+artist (with page numbers).
+
+Note that in order for this feature
+to work, you will need to print
+more than once (to update the
+list of page numbers). </property>
                                     <property name="halign">start</property>
-                                    <property name="margin_left">20</property>
+                                    <property name="margin_left">10</property>
                                     <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onImgCreditsChanged" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -8245,6 +8251,7 @@ which enables more precise control over the sizing and
 positioning of illustrations.
 </property>
                                     <property name="halign">start</property>
+                                    <property name="margin_left">10</property>
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="onUsePicListChanged" swapped="no"/>
                                   </object>
@@ -8936,6 +8943,17 @@ to show gridlines for finetuning settings.</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
+                            <property name="tooltip_text" translatable="yes">PTXprint can analyze the USFM files
+and automatically correct some
+common errors in syntax. It will
+also notify you of errors which are
+likely to cause the print process to
+fail - giving you helpful feedback
+about how to fix the issue before
+re-trying to print.</property>
+                            <property name="halign">start</property>
+                            <property name="margin_left">6</property>
+                            <property name="margin_top">6</property>
                             <property name="active">True</property>
                             <property name="draw_indicator">True</property>
                           </object>

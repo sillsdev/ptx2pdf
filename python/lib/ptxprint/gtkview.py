@@ -1011,8 +1011,8 @@ class GtkViewModel(ViewModel):
     def onUsePicListChanged(self, btn):
         self.sensiVisible("c_usePicList")
 
-    # def onFigsChanged(self, btn):
-        # self.sensiVisible("c_includefigsfromtext")
+    def onImgCreditsChanged(self, btn):
+        self.sensiVisible("c_imgCredits")
 
     def onInclFrontMatterChanged(self, btn):
         self.sensiVisible("c_inclFrontMatter")
