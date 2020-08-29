@@ -335,7 +335,7 @@ class RunJob:
         if len(syntaxErrors):
             self.printer.doError("Failed to merge texts due to a Syntax Error:",        
             secondary="\n".join(syntaxErrors)+"\n\nIf original USFM text is correct, then check "+ \
-            "if PrintDraftChanges.txt has caused the error(s).", 
+                                                  "if PrintDraftChanges.txt has caused the error(s).", 
             title="PTXprint [{}] - Diglot Merge Error!".format(VersionStr))
 
         info["project/bookids"] = jobs

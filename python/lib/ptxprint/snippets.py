@@ -30,8 +30,9 @@ class PDFx1aOutput():
 /OutputConditionIdentifier (Custom)
 /DestOutputProfile @OBJCVR
 /RegistryName (http://www.color.og)
->> ] >>}} 
-    """
+>> ] >>}}
+
+"""
     
 class FancyIntro():
     _regexbits = [(r'\\io2 ', r'\\io1 \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0'), # Temporary fix for \io2 and \io3 so table doesn't break!
@@ -56,6 +57,7 @@ class FancyIntro():
 \LeftMargin 0
 \RightMargin .5
 \FirstLineIndent .5
+
 """
 # Indent is in inches
 
@@ -67,6 +69,7 @@ class FancyIntro():
 \def\makedigitsletters{\m@kedigitsletters}
 \catcode `@=12
 \def\iotableleader#1#2{#1\leaders\hbox to 0.8em{\hss.\hss}\hfill#2\par}%
+
 """
 
 class Diglot():
@@ -148,6 +151,7 @@ class FancyBorders():
 
 # \Marker ft
 # \FontSize 9
+
 """
 
     processTex = True
@@ -216,6 +220,7 @@ class FancyBorders():
 {fancy/versedecorator}    \kern-0.08em \digitthree
 {fancy/versedecorator}  \fi
 {fancy/versedecorator}  \endL}}
+
 """
 
     unusedStuff = r"""
