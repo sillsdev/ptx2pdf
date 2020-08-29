@@ -290,20 +290,20 @@ class FancyBorders():
 """
 
 artstr = {
-"cn" : ("© 1996 David C. Cook.", "© DCC."),
-"co" : ("© 1996 David C. Cook.", "© DCC."),
-"hk" : ("by Horace Knowles\n© The British \\& Foreign Bible Society, 1954, 1967, 1972, 1995.", "© BFBS, 1995."),
-"lb" : ("by Louise Bass\n© The British \\& Foreign Bible Society, 1994.", "© BFBS, 1994."),
-"bk" : ("by Horace Knowles revised by Louise Bass\n©The British \\& Foreign Bible Society, 1994.", "© BFBS, 1994."),
-"ba" : ("used by permission of Louise Bass.", ""),
-"dy" : ("by Carolyn Dyk, © 2001 Wycliffe Bible Translators, Inc.\nand licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.", ""),
-"gt" : ("by Gordon Thompson © 2012 Wycliffe Bible Translators Inc.\nand licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.", ""),
-"dh" : ("by David Healey © 2012 Wycliffe Bible Translators Inc.\nand licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.", ""),
-"mh" : ("by Michael Harrar © 2012 Wycliffe Bible Translators Inc.\nand licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.", ""),
-"mn" : ("used by permission of Muze Tshilombo.", ""),
-"wa" : ("by Graham Wade, © United Bible Societies, 1989.", ""),
-"dn" : ("by Darwin Dunham, © United Bible Societies, 1989.", ""),
-"ib" : ("Illustrations by Farid Faadil. Copyright © by Biblica, Inc.\nUsed by permission. All rights reserved worldwide.", "")
+"cn" : ("©_1996_David_C._Cook.", "©_DCC."),
+"co" : ("©_1996_David_C._Cook.", "©_DCC."),
+"hk" : ("by_Horace_Knowles\n©_The_British \\& Foreign Bible Society, 1954, 1967, 1972, 1995.", "©_BFBS,_1995."),
+"lb" : ("by_Louise_Bass\n©_The_British \\& Foreign Bible Society, 1994.", "©_BFBS,_1994."),
+"bk" : ("by_Horace_Knowles revised by_Louise_Bass\n©_The_British \\& Foreign Bible Society, 1994.", "©_BFBS,_1994."),
+"ba" : ("used by_permission of_Louise_Bass.", ""),
+"dy" : ("by_Carolyn_Dyk, ©_2001_Wycliffe Bible Translators Inc.\nand licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.", ""),
+"gt" : ("by_Gordon_Thompson ©_2012_Wycliffe Bible Translators Inc.\nand licensed under_the Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.", ""),
+"dh" : ("by_David_Healey ©_2012_Wycliffe Bible Translators Inc.\nand licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.", ""),
+"mh" : ("by_Michael_Harrar ©_2012_Wycliffe Bible Translators Inc.\nand licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.", ""),
+"mn" : ("used by_permission_of_Muze_Tshilombo.", ""),
+"wa" : ("by_Graham_Wade, ©_United Bible Societies, 1989.", ""),
+"dn" : ("by_Darwin_Dunham, ©_United Bible Societies, 1989.", ""),
+"ib" : ("by_Farid_Faadil. Copyright ©_by_Biblica, Inc.\nUsed_by_permission. All_rights_reserved_worldwide.", "")
 }
 
 class ImgCredits():
@@ -316,38 +316,66 @@ class ImgCredits():
     processTex = False
     texCode = ""
 
-    def generateTex(self, texmodel, sensitive=False):
+    def generateTex(self, texmodel, sensitive=False, mkr='pc'):
         artpgs = {}
         picpagesfile = os.path.join(texmodel.docdir()[0], texmodel['jobname'] + ".picpages")
-        print(picpagesfile)
+        crdts = ["\\def\\zImageCopyrights{%"]
         if os.path.exists(picpagesfile):
             with universalopen(picpagesfile) as inf:
                 dat = inf.read()
 
-            m = re.findall(r"\\figonpage\{(\d+)\}\{\d+\}\{.*?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..)\d{5}.+?", dat)
+            allPgs = re.findall(r"\\figonpage\{(\d+)\}", dat)
+            matchedPgs = re.findall(r"\\figonpage\{(\d+)\}\{\d+\}\{.*?(?=cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5}.+?", dat)
+            msngPgs = [int(i) for i in list(set(allPgs) - set(matchedPgs))] 
+            
+            m = re.findall(r"\\figonpage\{(\d+)\}\{\d+\}\{.*?((?=cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..)\d{5}.+?", dat)
+            
             if len(m):
                 for f in m:
-                    artpgs.setdefault(f[1], []).append(int(f[0]))
+                    a = 'co' if f[1] == 'cn' else f[1] # merge Cook's OT & NT illustrations together
+                    artpgs.setdefault(a, []).append(int(f[0]))
+                    
+            if len(artpgs):
+                artistWithMost = max(artpgs, key= lambda x: len(set(artpgs[x])))
+            else:
+                artistWithMost = ""
+        
+            for art, pgs in artpgs.items():
+                if art != artistWithMost:
+                    if len(pgs):
+                        pgs = sorted(set(pgs))
+                        if len(pgs) == 1:
+                            pl = ""
+                            pgstr = "on page {} ".format(str(pgs[0]))
+                        else:
+                            pl = "s"
+                            pgstr = "on pages {} and {} ".format(", ".join(str(p) for p in pgs[:-1]), str(pgs[-1]))
+                        
+                        if art in artstr.keys():
+                            if sensitive and len(artstr[art][1]):
+                                cpystr = re.sub('_', '\u00A0', artstr[art][1])
+                            else:
+                                cpystr = re.sub('_', '\u00A0', artstr[art][0])
+                            crdts += ["\\{} Illustration{} {}{}\n".format(mkr, pl, pgstr, cpystr)]
+                        else:
+                            crdts += ["\\rem Warning: No copyright statement found for: {} image{} {}".format(art.upper(), pl, pgstr)]
+            if len(msngPgs):
+                if len(msngPgs) == 1:
+                    exceptpgs = "(except on page {}) ".format(msngPgs[0].strip("'"))
+                else:
+                    exceptpgs = "(except on pages {} and {}) ".format(", ".join(str(p) for p in msngPgs[:-1]), str(msngPgs[-1]))
+            else:
+                exceptpgs = ""
 
-        crdts = ["\\def\\zImageCopyrights{%"]
-        for art, pgs in artpgs.items():
-            if len(pgs):
-                pgs = sorted(set(pgs))
-                if len(pgs) == 1:
-                    pl = ""
-                    pgstr = "on page {} ".format(str(pgs[0]))
+            if artistWithMost != "":
+                if sensitive and len(artstr[artistWithMost][1]):
+                    cpystr = re.sub('_', '\u00A0', artstr[artistWithMost][1])
                 else:
-                    pl = "s"
-                    pgstr = "on pages {} and {} ".format(", ".join(str(p) for p in pgs[:-1]), str(pgs[-1]))
-                
-                if art in artstr.keys():
-                    if sensitive and len(artstr[art][1]):
-                        cpystr = artstr[art][1]
-                    else:
-                        cpystr = artstr[art][0]
-                    crdts += ["\\pc Illustration{} {}{}".format(pl, pgstr, cpystr)]
-                else:
-                    crdts += ["\\rem Warning: No copyright statement found for: {} image{} {}".format(art.upper(), pl, pgstr)]
+                    cpystr = re.sub('_', '\u00A0', artstr[artistWithMost][0])
+                if len(crdts) == 1:
+                    crdts += ["\\{} All illustrations {}{}\n".format(mkr, exceptpgs, cpystr)]
+                elif len(crdts) > 1:
+                    crdts += ["\\{} All other illustrations {}{}\n".format(mkr, exceptpgs, cpystr)]
+            
         crdts += ["}"]
         return "\n".join(crdts)
-
