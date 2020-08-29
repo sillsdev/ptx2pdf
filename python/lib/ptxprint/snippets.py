@@ -316,8 +316,11 @@ class ImgCredits():
     processTex = False
     texCode = ""
 
-    def generateTex(self, texmodel, sensitive=False, mkr='pc'):
+    def generateTex(self, texmodel):
         artpgs = {}
+        mkr='pc'
+        sensitive = texmodel['snippets/creditsensitive']
+        print("sensitive:", sensitive)
         picpagesfile = os.path.join(texmodel.docdir()[0], texmodel['jobname'] + ".picpages")
         crdts = ["\\def\\zImageCopyrights{%"]
         if os.path.exists(picpagesfile):

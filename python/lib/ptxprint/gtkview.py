@@ -108,7 +108,7 @@ _sensitivities = {
     "c_includeFootnotes" :     ["bx_fnOptions"],
     "c_includeXrefs" :         ["bx_xrOptions"],
     "c_includeillustrations" : ["gr_IllustrationOptions"],
-    "c_includefigsfromtext"  : ["c_figexclwebapp"],
+    "c_imgCredits" :           ["c_creditSensitive"],
     "c_diglot" :               ["gr_diglot", "fcb_diglotPicListSources", "c_hdrLeftPri", "c_hdrCenterPri", "c_hdrRightPri",
                                 "c_ftrCenterPri", "c_hdrLeftSec", "c_hdrCenterSec", "c_hdrRightSec", "c_ftrCenterSec"],
     "c_borders" :              ["gr_borders"],
@@ -153,6 +153,7 @@ _nonsensitivities = {
     "c_omitrhchapnum" :        ["c_hdrverses"],
     "c_multiplebooks" :        ["l_singlebook", "ecb_book", "l_chapfrom", "fcb_chapfrom", "l_chapto", "fcb_chapto"],
     "c_blendfnxr" :            ["l_internote", "s_internote"],
+    "c_usePicList" :           ["c_figexclwebapp"],
     "c_useprintdraftfolder" :  ["btn_selectOutputFolder"]
 }
 # Checkboxes and the Tabs that they make (in)visible
@@ -311,7 +312,7 @@ class GtkViewModel(ViewModel):
                 self.builder.get_object(c).set_active(False)
 
             # Turn Essential Settings ON
-            for c in ("c_mainBodyText", "c_skipmissingimages", "c_includefigsfromtext", "c_verseNumbers", "c_firstParaIndent"):
+            for c in ("c_mainBodyText", "c_skipmissingimages"):
                 self.builder.get_object(c).set_active(True)
             self.builder.get_object("c_hideAdvancedSettings").set_opacity(0.5)
             self.builder.get_object("c_hideAdvancedSettings").set_tooltip_text( \
@@ -1010,8 +1011,8 @@ class GtkViewModel(ViewModel):
     def onUsePicListChanged(self, btn):
         self.sensiVisible("c_usePicList")
 
-    def onFigsChanged(self, btn):
-        self.sensiVisible("c_includefigsfromtext")
+    # def onFigsChanged(self, btn):
+        # self.sensiVisible("c_includefigsfromtext")
 
     def onInclFrontMatterChanged(self, btn):
         self.sensiVisible("c_inclFrontMatter")

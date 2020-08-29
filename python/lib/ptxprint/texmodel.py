@@ -176,7 +176,6 @@ ModelMap = {
     "document/glueredupwords":  ("c_glueredupwords", None),
     "document/ifinclfigs":      ("c_includeillustrations", lambda w,v: "true" if v else "false"),
     "document/ifusepiclist":    ("c_includeillustrations", lambda w,v :"" if v else "%"),
-    "document/iffigfrmtext":    ("c_includefigsfromtext", None),
     "document/iffigfrmpiclist": ("c_usePicList", None),
     "document/iffigexclwebapp": ("c_figexclwebapp", None),
     "document/iffigskipmissing": ("c_skipmissingimages", None),
@@ -292,6 +291,7 @@ ModelMap = {
     "snippets/diglot":          ("c_diglot", lambda w,v: True if v else False),
     "snippets/fancyborders":    ("c_borders", None),
     "snippets/imgcredits":      ("c_imgCredits", None),
+    "snippets/creditsensitive": ("c_creditSensitive", None),
 }
 
 _fontstylemap = {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -8054,7 +8054,7 @@ attribute.  Note: w= web, a=app, p=print.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">3</property>
+                                    <property name="top_attach">2</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
@@ -8070,7 +8070,7 @@ attribute.  Note: w= web, a=app, p=print.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">2</property>
+                                    <property name="top_attach">1</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
@@ -8088,13 +8088,12 @@ A list of missing pictures should appear below AFTER
 creating the publication.</property>
                                     <property name="halign">start</property>
                                     <property name="margin_left">20</property>
-                                    <property name="margin_bottom">6</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">4</property>
+                                    <property name="top_attach">3</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
@@ -8112,60 +8111,6 @@ file(s) in the Viewer tab.</property>
                                   <packing>
                                     <property name="left_attach">1</property>
                                     <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkRadioButton" id="c_usePicList">
-                                    <property name="label" translatable="yes">Use PicLists for Maximum Control</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">The Viewer tab has a button to Generate a PicList file
-which enables more precise control over the sizing and
-positioning of illustrations.
-
-Pictures can be added to or removed from the
-publication without affecting the USFM text.</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin_left">20</property>
-                                    <property name="draw_indicator">True</property>
-                                    <property name="group">c_includefigsfromtext</property>
-                                    <signal name="clicked" handler="onUsePicListChanged" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkRadioButton" id="c_includefigsfromtext">
-                                    <property name="label" translatable="yes">Use Pictures Marked in the Text (\fig...\fig*)</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">This is the simplest way of using pictures
-but you have no control at all about where
-the picture will be positioned on the page.
-
-Most illustrations end up in the top left corner
-of the page. You can control whether it appears
-single column size (col) or spans the whole page
-(span) but these options have to be edited in the
-USFM file(s) in Paratext.
-
-Keep in mind that  for single column publications, 
-there is no difference between 'col' and 'span'.</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin_left">20</property>
-                                    <property name="margin_top">3</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onFigsChanged" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">1</property>
-                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -8266,29 +8211,65 @@ then enable this option).</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_imgCredits">
-                                    <property name="label" translatable="yes">Generate copyrights statement</property>
+                                    <property name="label" translatable="yes">Generate Copyrights Statement</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">It is important to provide proper
+copyright attribution for all the
+illustrations used in the publication.
+
+If you enable this option and insert 
+this code (in Paratext's USFM text):
+\zImageCopyrights
+then PTXprint will generate the
+copyright statement(s) for each
+known artist along with page number.</property>
                                     <property name="halign">start</property>
                                     <property name="margin_left">20</property>
-                                    <property name="margin_bottom">6</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">5</property>
-                                    <property name="width">2</property>
+                                    <property name="top_attach">4</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkCheckButton" id="c_usePicList">
+                                    <property name="label" translatable="yes">Use PicLists for Maximum Control</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">The Viewer tab has a button to Generate a PicList file
+which enables more precise control over the sizing and
+positioning of illustrations.
+</property>
+                                    <property name="halign">start</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onUsePicListChanged" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
+                                  <object class="GtkCheckButton" id="c_creditSensitive">
+                                    <property name="label" translatable="yes">Sensitive</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">In sensitive locations the copyright
+statement should only contain the
+acronym (e.g. BFBS or DCC). Selecting
+this option will use acronyms for
+statements where this is permitted. </property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">4</property>
+                                  </packing>
                                 </child>
                               </object>
                             </child>
