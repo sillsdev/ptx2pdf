@@ -38,8 +38,11 @@
 \def\initp@rastyles{\@ntrofalse \t@tlefalse \b@dyfalse \def\m@rker{}}
 
 % test if a marker is an "introduction" style (name begins with "i")
+%+cpar_testintro
 \def\t@stintro#1#2\relax{\if#1i\global\@ntromarkertrue\else\global\@ntromarkerfalse\fi}
+%-cpar_testintro
 
+%+cpar_starttypes
 % start title/intro/body, if not already in that mode, switching columns if needed
 \def\st@rtintro{\TRACE{st@rtintro}\if@ntro\else
   \ifdiglot\else
@@ -70,10 +73,12 @@
   \global\b@dytrue\global\@ntrofalse\global\t@tlefalse\fi}
 
 \newcount\c@rrentcols \global\c@rrentcols=1
+%-cpar_starttypes
 
 %
 % Headings are set into a box, so that they can be measured and adjusted for the grid
 %
+%+cpar_endheadings
 \newif\ifhe@dings
 \newbox\he@dingbox
 \def\endhe@dings{\ifhe@dings\TRACE{endhe@dings}%
@@ -87,16 +92,20 @@
  \fi
 }
 \newif\iffirst@fterheading
+%-cpar_endheadings
 
+%+cpar_killdescenders
 \def\killd@scenders#1{%
   \vbox{\unvbox#1 \skip0=\lastskip\unskip \count255=\lastpenalty\unpenalty
     \setbox0=\lastbox\dimen4=\dp0  % Remember last box's depth
     \ifvoid0\else\dp0=0pt \box0 \fi
     \ifdim\skip0>0pt \penalty\count255 \vskip\skip0 \fi}}
+%-cpar_killdescenders
 
 %
 % Given a box of headings, output it but ensure we use an integral number of lines altogether
 %
+%+cpar_gridbox1
 \def\gr@db@x#1{%
 % \setbox0=\vbox{\kern-#1pt\vrule\kern#1pt\kern-.4pt\box#1\kern-.4pt\vrule}%
 \setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders#1\fi%
@@ -109,7 +118,7 @@
  \ifgridp@c\line{}\nobreak\fi % otherwise first \line in loop won't get any baselineskip
                               % when doing a picture box, because it's not part of the
                               % current page
- \loop \ifdim\dimen0<\dimen2
+ \loop \ifdim\dimen0<\dimen2                                                    %(1)
    \advance\dimen0 by \baselineskip
    \line{}\nobreak \repeat
  \setbox0=\vbox to 0pt{\kern-\ht0\unvbox0}%
@@ -117,7 +126,9 @@
  \unvbox0 \nobreak
 }
 \newif\ifgridp@c % if applying \gridb@x to a picture box rather than headings
+%-cpar_gridbox1
 
+%+cpar_gridbox2
 % returns in \dimen0 how much to advance \dimen1 to be an integral multiple of \dimen0
 \def\m@d{\dimen3=\dimen1\divide\dimen1\dimen0\multiply\dimen1\dimen0\advance\dimen3 by -\dimen1\advance\dimen0 by -\dimen3}
 
@@ -129,7 +140,7 @@
   \s@tbaseline{p}\dimen1=\ht0 \dimen0=\baselineskip \m@d \dimen2=\dimen0 % dimen2 is grid space
   \dimen1=\ht0 \advance\dimen1 by -\headingtopspace \verticalsp@ceunit
   \dimen0=\baselineskip \m@d \advance\dimen2 by -\dimen0
-  \advance\dimen2 by \headingtopspace\verticalsp@ceunit
+  \advance\dimen2 by \headingtopspace\verticalsp@ceunit                         %(1)
   \ifgridp@c\else
     \ifdim\lastdepth>0pt\advance\dimen2 by -\lastdepth\fi
   \fi
@@ -139,9 +150,9 @@
     \unvbox0}\nobreak
 }
 
-\newif\ifsquashgridbox\squashgridboxtrue
+\newif\ifsquashgridbox\squashgridboxtrue                                        %(2)
 \let\gridb@x\gr@db@@x % overridden during \ptxfile setup, depending on \ifdiglot and \ifsquashgridbox 
-
+%-cpar_gridbox2
 
 \def\at@ndofthispar{}
 \def\at@ndofthisparR{}
@@ -150,8 +161,9 @@
 \def\at@ndofthisparRDelay{}
 \def\at@ndofthisparLDelay{}
 
+%+cpar_par
 % end a paragraph, handling cutouts (shaping around drop-cap) if any, and the <end> hook
-\def\par{\ifhmode 
+\def\par{\ifhmode
    \makecutouts
    \ifdiglot\setsid@%\MSG{end-\m@rker\sid@}%
      \csname end-\m@rker\sid@\endcsname % handle side-specific <end> hook
@@ -163,6 +175,9 @@
  \fi
  \do@ndofthispar
 }
+%-cpar_par
+
+%+cpar_doendofthispar
 \def\do@ndofthispar{
  %run code to insert picb@x / picb@xR at the right time.
  \edef\eotpn@me{at@ndofthispar\ifdiglot\ifdiglotL L\else R\fi\fi}% Which endofthispar macro?
@@ -206,9 +221,12 @@
 }
 
 \def\shrinkdel@y#1|#2\EDLY{\trace{g}{shrint {#1}{#2}}\xdef\temp{#2}}
+%-cpar_doendofthispar
+
 %
 % Handle a paragraph style marker (parameter is the marker name)
 %
+%+cpar_parstyle_intro
 \newif\ifhe@dingstyle
 \newif\ifnsp@cebefore
 \newif\ifJustifyPars \JustifyParstrue
@@ -219,18 +237,20 @@
  \ifhmode\unskip % remove any trailing space
    \end@llcharstyles % end any character styles in effect
    \beginL\pdfsavepos
-   \write\p@rlocs{\noexpand\@parend{\the\pdflastxpos}{\the\pdflastypos}}\endL
+   \write\p@rlocs{\noexpand\@parend{\the\pdflastxpos}{\the\pdflastypos}}\endL       %(1)
    %\ifnum\pagetracing>0\tracingparagraphs=1\ifnum\pagetracing>1\looseness=-1%\emergencystretch=1sp
    %  \fi\else\tolerance=10\fi
    \par % end the paragraph
    \ifdim\prevdepth>0pt\lastdepth=\prevdepth\else\lastdepth=-1pt\fi
    \ifnum\pagetracing>0\tracingparagraphs=0\fi
-   \ifdr@ppednumber % the preceding par had a dropped number;
+   \ifdr@ppednumber % the preceding par had a dropped number;                       %(2)
                     % add \nobreak if it was a single line, else clear the flag
      \x@\write\x@\p@rlocs\x@{\x@\noexpand\x@\@parlines\x@{\the\prevgraf}}%
      \ifnum\prevgraf=1 \nobreak \else \dr@ppednumberfalse \fi
    \fi
  \fi
+%-cpar_parstyle_intro
+%+cpar_parstyle_after
  \t@stpublishability{#1}% test if the new marker is nonpublishable
  \ifn@npublishable
   \par % End the present paragaph, to make sure that cutouts, etc. are handled properly
@@ -239,12 +259,12 @@
   \getp@ram{spaceafter}{\m@rker}% output any <spaceafter> for the previous style
   \ifx\p@ram\relax \else
     \ifhe@dings\nobreak\fi
-    \vskip\p@ram\verticalsp@ceunit
+    \vskip\p@ram\verticalsp@ceunit                                              %(1)
   \fi
   \resetp@rstyle
   \def\d@##1+##2\E{\edef\tmp{##2}%
     \ifx\tmp\m@rker\else\ifx\m@rker\relax\else\MSG{Bad closing "marker" \tmp\space expecting "\m@rker"}\fi\fi}%
-  \mctop \mcpop
+  \mctop \mcpop                                                                 %(2)
   \ifdiglot\setsid@ % \MSG{start-\thisch@rstyle\sid@}%
     \csname after-\m@rker\sid@\endcsname\relax% handle side-specific <start> hook
   \fi
@@ -255,10 +275,12 @@
   \ifdiglot
     \csname before-\m@rker\sid@\endcsname\relax % handle side-specific <start> hook
   \fi
+%-cpar_parstyle_after
   %
   % now we check what kind of marker this is: intro? title? section? other?
   % and switch to the appropriate mode
   %
+%+cpar_parstyle_transition
   \x@\t@stintro\m@rker\relax
   % \tr is treated as an intro marker if we're already in intro mode
   \if@tablerow\if@ntro\@ntromarkertrue\fi\fi
@@ -269,7 +291,7 @@
     \ift@tle\else\ifhe@dings\endhe@dings\fi\fi
     \st@rttitle
     \global\he@dingstyletrue 
-  \else\ifx\p@ram\s@ction
+  \else\ifx\p@ram\s@ction                                                       %(1)
     \ift@tle\ifhe@dings\endhe@dings\fi\fi
     \if@ntromarker\st@rtintro\else\st@rtbody\fi
     \global\he@dingstyletrue
@@ -279,7 +301,7 @@
     \if@ntromarker\else\global\he@dingstyletrue\fi
   \else
     \if@ntromarker\st@rtintro\else\st@rtbody\fi
-  \fi\fi\fi
+  \fi\fi\fi                                                                     %(2)
   \ifhe@dingstyle\TRACE{headingstyle true}%
     \ifhe@dings\nsp@cebeforetrue\s@tbaseline{\m@rker}%In a heading again, may be different so set a new baseline
       \else
@@ -305,6 +327,8 @@
     \else\vskip\p@ram\verticalsp@ceunit\fi
   \fi
   \global\startparatrue
+%-cpar_parstyle_transition
+%+cpar_parstyle_start
   \everypar={%
    %
    % \everypar will be triggered when the paragraph actually starts (normally at the first character of text,
@@ -323,7 +347,7 @@
    \else\ifx\p@ram\r@ght
     \leftskip=0pt plus .25\hsize \ifRTL\else\parfillskip=0pt\fi
    \fi\fi\fi
-   \getp@ram{leftmargin}{\m@rker}%
+   \getp@ram{leftmargin}{\m@rker}%                                              %(1)
    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
    \getp@ram{rightmargin}{\m@rker}%
    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
@@ -335,10 +359,12 @@
    %
    % Generate top-level PDF bookmark if the \h book name has changed
    \pdfb@@kmark
+   \getp@ram{firstindent}{\m@rker}\let\f@rstindent=\p@ram
+%-cpar_parstyle_start
    %
    % handle drop-cap style chapter number, if this is the beginning of a chapter
    %
-   \getp@ram{firstindent}{\m@rker}\let\f@rstindent=\p@ram
+%+cpar_parstyle_chapter
    \ifch@pter
     \getp@ram{type}{\m@rker}%
     \ifx\p@ram\v@rsetext
@@ -392,6 +418,8 @@
      \spacefactor=\n@wchaptersf % prevent hanging verse number here
     \fi
    \fi
+%-cpar_parstyle_chapter
+%+cpar_parstyle_final
    \ifx\f@rstindent\relax \else
     \x@\ifdim\f@rstindent pt<0pt
      \allowp@rindenttrue % redundant
@@ -401,7 +429,7 @@
     \ifallowp@rindent % create first-line indent, unless suppressed at dropped chapter number
                       % (note that we don't suppress negative indents, as in \q1 etc)
      \trace{Ds}{\m@rker\ifdiglot\ifdiglotL L \else R\fi\fi\space  First indent \f@rstindent * \the\IndentUnit}%
-     \kern\f@rstindent \IndentUnit
+     \kern\f@rstindent \IndentUnit                                              %(1)
     \fi
    \fi
    \ifvoid\ch@pterbox\else \kern-\wd\ch@pterbox \box\ch@pterbox \fi
@@ -415,6 +443,8 @@
    % set special \spacefactor if we're at a chapter number, so \v 1 can omit the verse number here
   }% end everypar
  \fi}
+%-cpar_parstyle_final
+
 \newif\ifRTL
 \newif\ifallowp@rindent
 \newif\ifdr@ppednumber
@@ -634,11 +664,13 @@
 \def\s@ction{section}
 \def\oth@r{other}
 
+%+cpar_resetparstyle
 \def\resetp@rstyle{%
  \leftskip=0pt \rightskip=\leftskip
 % \dimen0=\hsize \advance\dimen0 by -4em \parfillskip=2em plus \dimen0 minus 1em
  \parfillskip=0pt plus 1fil
  %\emergencystretch=11in
  \parindent=0pt }
+%-cpar_resetparstyle
 
 \endinput

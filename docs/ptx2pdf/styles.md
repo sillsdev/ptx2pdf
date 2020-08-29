@@ -174,7 +174,7 @@ macros (1) are for iterating through the stack either from bottom to top (up) or
 top to bottom (down). They each call a predefined `\d@` macro. The top macro
 calls `\d@` for just the item on the top of the stack. Notice that we don't use
 `\n@xt` because too many other macros do and we don't want to clash with them.
-The '\cstackrelax` is a macro that `\d@` can be set to to quit out of a stack
+The `\cstackrelax` is a macro that `\d@` can be set to to quit out of a stack
 iteration early.
 
 [=csty_stack]::
@@ -196,6 +196,24 @@ with no further reference to the stack itself. Note also the use of
 iteration of the stack and potentially closing styles that should not be closed.
 
 [=cchar_endallcharstyles]::
+
+As an example of scanning a stack, `end@allcharstyles` is a good first example
+and worth analysing. The `\mcdown`, `\mctop` and `\mcup` macros all use the
+`\d@` macro to do their per item work. The use, therefore of the macros is one
+of setting the `\d@` macro and calling the appropriate routine. The `\d@` is
+then called with each item in turn. Since the style stack structures each item
+as type `+` tag, we can use parameter pattern matching to break apart the
+structure. When `\d@` is called, the stack macros append the item with `\E` as a
+delimiting token to aid in pattern matching. Inside the macro we store the type
+in a temporary macro to make testing it easier. String matching in TeX is a pain
+and just deciding whether the value is empty (which happens with the bottom of
+the stack which has an empty sentinal item) involves storing the value. We test
+if it is empty, and ignore the item. If the type is `c` (for embedded character
+style) then simply close the character style. We do the same for a normal type
+`C` character style as well (since we are closing all character styles). If the
+type is anything else, then we want to stop any further processing. We do this
+be resetting the `\d@` macro to the `\cstackrelax` macro that simply does
+nothing with the item.
 
 The other key macros involving the stack are those for getting the current value
 of a parameter. `getmcp@ram` and its corresponding `R` specific version for
@@ -372,9 +390,396 @@ description.
 
 [=cchar_extrafont]::
 
+## Paragraph Styles
+
+One of the characteristics of Bible typesetting is that the resulting book is
+long and so is often printed on thin paper. This results in visual bleed through
+of text from one side of the paper to the other. To maximise contrast, it is
+best if text on one side is in the same place as text on the other side of the
+page. Thus between line space on each side aligns and remains white rather than
+turning grey. To achieve this _backing up_, text is typeset on a grid. The PTX
+macros work hard to maintain this grid wherever possible.
+
+Paragraphs in the PTX macros are grouped into a title block, headings blocks,
+intro paragraphs and
+body paragraphs. The blocks are groups of paragraphs that are then spaced in
+order to keep the following body paragraphs on the grid.
+
+Starting at the top, a paragraph style marker calls the `\p@rstyle` routine with
+the marker tag. The start of a new paragraph implicitly ends a previous
+paragraph. The first part of handling a paragraph marker, therefore, is closing
+the previous paragraph. As with character styles, a marker may be marked
+`nonpublishable` and the contents will be grouped into a box and dumped. If the
+user has specified any parstylehooks, these are executed here just before the
+end of the paragraph. Only empty paragraphs do not finish in horizontal mode. We
+undo any paragraph final space and then close off all open character styles.
+
+(1) We write out the current position on the page to a `.parlocs` file. This
+file is used to work out whether the layout has changed significantly between
+runs. Notice that the position is not written immediately. A `\write` command
+actually stores a _whatsit_ in the page. This zero sized item is generally
+ignored until the page containing it is shipped out. When the item reachs the
+point of being written to the output file, it is executed. At that point the
+`\pdflastposx`, etc. are expanded (and known) and the actual position on the
+page is output to the `.parlocs` file.
+
+Now we finish the paragraph. Calling `\par` involves more than having TeX finish
+the paragraph. We will examine that in a moment. After closing the paragraph, we
+look at the depth of the last line. If it is above 0pt, we collect it, else we
+set the collection to an impossible value.
+
+(2) If we are in a paragraph that includes a dropped chapter number in the
+middle (from `\nb`) then we need to store the number of lines in the paragraph.
+We do that in `.parlocs` file using a `\write` as in (1). But we need to expand
+the `\prevgraf` at this point and not have its expansion delayed until shipping
+time. This is done by a chain of expandafter commands. Each expandafter first
+expands another expandafter all the way to the `\the\prevgraf` which gets
+expanded, and then the rest of the tokens are unwound and the `write` executed.
+
+If there is only one line in the paragraph, that isn't enough to hold a dropped
+chapter number, which needs 2 lines and so we inhibit any page break at this
+point and tell the next paragraph it has a dropped chapter number to include.
+Otherwise we clear the flag.
+
+[=cpar_parstyle_intro]::
+
+What happens when `\par` is executed? Before we actually close the paragraph, we
+adjust its parshape to include any cutouts. How cutouts work is delayed to
+(here)[#cutouts]. We then call any `end` hooks for the marker, be they for the
+diglot side or more generally. Now we can finally close off the paragraph.
+
+The first thing we need to do in the next paragraph is carry over any remaining
+cutout from the previous paragraph. For example, if the just closed paragraph
+was only one line long, then we need to carry over one line of cutout to the
+next paragraph. Finally if there are any post paragraph pictures, we should
+output those. See (Figures)[#figures] for more details.
+
+[=cpar_par]::
+
+Meanwhile, back in `\p@rstyle` we are ready to start the new paragraph. We first
+need to find out whether text in this style is publishable. If it is not then we
+break the paragraph now, because it will be empty when the next paragraph starts
+and so will not be in horizontal mode and so will not close the paragraph
+normally. Then we start a new box to place the contents of the paragraph. The
+minimum needed is to set the current paragraph marker and indicate that we are
+skipping.
+
+The rest of this massive routine is treated as the else to this question of
+publishability. If the text is publishable, then we have a lot of work to do.
+While the paragraph has been closed by TeX, we are still processing the old
+paragraph. We first need to see if there is any space to insert below the
+previous paragraph. If so, then if we are in a heading block then do not allow a
+page break at this point. Headings stick together and to their following
+paragraph. (1) Then we insert the space.
+
+Next we reset the paragraph style to its defaults. This is a relatively
+straightforward routine. It resets the left and right and parfill skips and the
+paragraph indent, ready for being set for the new paragraph.
+
+[=cpar_resetparstyle]::
+
+The next step is to pop the style stack ready to start the new paragraph. But
+first we check that the top of stack does indeed correspond to the paragraph we
+are closing. Then we pop the stack (2). Next we run any `after` hooks for the
+marker we are closing. And finally we are done with the old paragraph.
+
+We store the new marker as the current paragraph marker and we push it onto the
+style stack. Then we run any `before` hooks for this new marker.
+
+[=cpar_parstyle_after]::
+
+But we are not done with the old paragraph quite yet. We need to work out if
+there is a transition between blocks. E.g. from a heading block to normal body
+text paragraphs. We start by testing to see if we are starting an intro
+paragraph.
+
+[=cpar_testintro]::
+
+Also if we are in a table and that table is in the context of an introduction
+then we are also an intro paragraph. The next step is to use the `type`
+parameter of our marker to work out what type of paragraph we are. We clear the
+`he@dingstyle` flag to its default and look up the type of the paragraph and for
+each type we do what needs to be done. If it is `title` then set the reference
+mark to the sentinal `title` to indicate that we are on a title page and not to
+output headers and footers. This also applies to diglot marks. If we are not in
+a title block already but we are in a headings block, then finish the headings
+block. Now start a title block (which does nothing if we are already in a title
+block) and set that we are in a title block.
+
+(1) If, on the other hand, this is a `section` type headings paragraph then if
+we are in a title headings block then we need to close that to start a new
+headings block. If we are an introductory text marker as well as being a
+heading, then perhaps start the introductory text (from the title block),
+otherwise we are a body text heading and so we may need to start body text. Then
+we set the flag to say we are in a heading style. For body text type markers, we
+treat paragraphs of type `other` as headings. In introductory text they are
+normal introductory text markers. If the paragraph type is anything else then if
+it is an introductory marker then make sure we are introductory text else make
+sure we are in body text.
+
+(2) Now that we have set the major mode of text we are in (title, intro, body),
+we can deal with headings. If we are starting a heading style paragraph then are
+we already in a headings block. If so, set the baselineskip for the new style,
+but other than that do nothing. Just keep going. On the other hand, if we are
+not in headings block, we better start one.
+
+At the start of a new headings block, we collect the space before the first
+paragraph (this paragraph) so that we can make sure the space is removed at the
+top of a column. Although in titles we don't remove any space at the top of a
+page because titles always come at the top of a page and we want all that lovely
+whitespace to make the title heading stand out. Then we start a new headings box
+to collect the paragraphs in. Then we set the baselineskip for the marker and
+make it impossible to break a page inside a headings block. We also turn off
+line breaking at hyphens. People should not be writing books in heading blocks!
+Finally we say "no page break here".
+
+If, though, this is not a heading style paragraph and we are in a headings block
+then we need to end the headings block. We cover this in (Gridding)[#gridding].
+
+Now we can insert the before space for a paragraph. If there is before space
+then if we are in a heading then don't break. If we are not the first paragraph
+in a headings block then `nsp@cebefore` will be true. In this case we don't want
+to add any extra space to pull such paragraphs apart. The space above in this
+context is implicitly saying: only space above for the first heading in a block.
+Unless the space above is negative. Then the implicit assumption is that we only
+want the space above to act if the the paragraph is not the first, because we
+want to pull lines closer together when grouped. Mind you since we are using the
+default here, we do allow initial paragraphs to have negative space before, just like
+we do for non heading styles.
+
+And so we come to the start of the paragraph. Finally!
+
+[=cpar_parstyle_transition]::
+
+There are a number of routines, referenced above, to describe before we continue.
+Each of the paragraph modes needs to siwtch to the appropriate number of
+columns. For each mode start we first test to see if we are already in that
+mode. If we are not, then if we are not creating a diglot, we test to see if twe
+have to change the number of columns and if so we call the appropriate column
+switching routine. These are described in the Output Routines chapter. Then we
+set the flag for the mode. In the case of starting the body text then we also
+suggest that this is a good place to break a page and we insert a blank line
+before the main body text starts.
+
+[=cpar_starttypes]::
 
 
+### Gridding
 
+Heading blocks often involve text of different sizes and baselines and so takes
+the text off grid. We group all this off grid text into a block and then insert
+space above the block to ensure that body text following the block is back on
+grid.
 
+Following closing any paragraph, ending headings may involve cutouts (_why?!_)
+Thus we make any needed and close the paragraph and close the box containing the
+headings. Next we reset line spacing to that for the default `\p` styling and
+then call the routine to expand the box to be an integral number of lines tall.
+The resulting box is output and we reset the various flags associated with
+headings.
+
+[=cpar_endheadings]::
+
+There are two `gridb@x` routines. The first is the earliest gridding function
+and does not remove space at the top of a page. Both functions use the
+`\killd@scenders` routine. This removes any depth from the last line in the box.
+This is a bit of an undertaking. We unpack the box and get hold of any final
+skip and the final penalty so that we can put them back afterwards. Then we get
+the lastbox and its depth. We then clear the depth of that box and reassemble
+the box by putting back the adapted box, any penalty and final skip. All this is
+bundled into the returned vbox.
+
+[=cpar_killdescenders]::
+
+The first gridbox routine works by inserting just enough blank lines to cover
+the box and then overlays the headings box over that, thus extending the box
+upwards by enough space to get the next paragraph back on the grid. We start by
+collecting the box. If this is a picture box then we insert a little extra
+border space. Next we measure the box for its height and
+depth and start another dimension that will increase until it surpasses the
+measurement. If this is a picture we insert an extra blank line. This is because
+by default the starting point of the cursor is one line below the bottom of the
+previous paragraph due to the start of a new paragraph and its baselineskip. But
+a picture is not in the main text and so the cursor starts one line up and we
+need to insert a line to compensate.
+
+(1) Now we start the main loop and while our increasing dimension is smaller
+than the box size we insert lines. Each time we insert line, we also insert a
+penalty to stop any page breaking. Once we have enough lines inserted, we create
+a box that first inserts
+a kern to shift us back up to the top of the headings box (which isn't back to
+where we started) and then expand the headings box. Finally we insert that box
+and stop any page break after it.
+
+[=cpar_gridbox1]::
+
+The second gridbox routine is the default routine (2) and there is a control
+that is used once to set the gridbox routine.
+
+There is a mathematical macro whose job is to calculate how much space we would
+need to add to a dimension to give a result that is an integral number of
+another dimension. The macro relies on integer mathematics to do its job. Thus
+we divide the input by the gridsize and then multiply it again to bring it down
+to a integral number of gridlines. Then we subtract that result from the
+original value. Finally we add that to the gridsize and return the result.
+
+The approach this gridding box uses to have a different amount of space at the
+top of a page than within the page is to remember that TeX removes any initial
+vskip at the start of a page. Thus we want to have an initial vskip which is the
+difference between the gridded height of the box at the top of a page and the
+gridded height of a box within a page.
+
+TeX remembers the depth of the previous box output and sets the inter line
+spacing based on that and the baselineskip. But we don't want to set the space
+to the baseline of the first line after the headings box based on that. We the
+adjustment set to 0. But we have captured the depth of the last line of the
+previous paragraph in `\lastdepth` so we can use it later. Here we tell TeX to
+pretend that the last paragraph had a depth of 0.
+
+Next we set a box to either the box or the box without
+descenders. Then we set the baseline for the default paragraph style. We now
+take the height of the box and the baseline for the grid size and calculate how
+much to add to its height and store that (in `dimen2`). This is the space to
+allocate when not at the top of a page. Now we do the same thing again but
+this time we reduce the height of the box by the headingtopspace. I.e. we want
+the space to allocate at the top of a page. We subtract the adjustment from the
+main box adjustment. Now `dimen2` holds the main box adjustment minus the top of
+page adjustment. We now add the headingtopspace to that and that gives us how
+much space we want when not at the top of a page, and so in out initial vksip.
+We also have the grid adjustment for within the page, in `dimen0`. (1)
+If we are not a picture box, we also need to remove any depth from the text
+above. Since we are only interested in this mid page we want that adjustment to
+disappear at the top of a page so we reduce the space by that depth.
+
+Now we output the calculated values. If we are in a diglot, we don't want the
+top space skipped, so we use a kern rather than a skip for the initial space.
+Then we kern by the mid page grid adjustment. Since we have added the
+headingtopspace to the initial space, we need to remove it from the contents of
+the box, we undo the skip by skipping by its negative and then comes the heading
+box, in which the first item will be the headingtopspace (net result 0). Finally
+we inhibit page breaking after the heading box, and we are done.
+
+[=cpar_gridbox2]::
+
+### Every Paragraph
+
+The next part of the paragraph style routine is to specify what will happen when
+the first characters appear in the paragraph. We delay because we want all the
+character styling setup to be done, etc. So we declare a routine at this point
+that TeX will call when switching into horizontal mode.
+
+If there are any `\addtoeveryparhooks` and there are some core ones (See
+adjustments and table of contents), run those hooks now. `\pdfsavepos` tells
+XeTeX to save the current position (the start of the paragraph) so that it can
+be accessed later via `\pdflastposx`, etc. And we also write out the position we
+just saved, when the paragraph is finally shipped out. The next step is to work
+out what the right and left skips are. These are the skips that are inserted at
+the left and right of each line when the paragraph is completed. For right to
+left text, everything is swapped. The default is 0pt on either side to give
+fully justified text. If the user has chosen ragged right (or non justified
+paragraphs) then the appropriate end line skip is set to allow up to $1/4$ of a
+column width of rag.
+
+Based on the `justification` parameter for the paragraph style we now set the,
+in effect, start and end of line skips. For centered text we set both skips to
+be stretchy glue up to a column width each. For left justified we set the right
+skip to stretch up to $1/4$ column. And if this is right to left then do not add
+any extra stretch to after the end of a paragraph. Likewise the opposite for
+right justified text.
+
+Now we get the margins for the paragraph (1). They are used to increase the
+appropriate side skips by a fixed amount. We also set up some of the basic
+character styling by setting the font for this marker. We assume this is a
+normal paragraph and we allow normal paragraph indentation. That may not hold to
+the end of the setting up this paragraph. More setting up calls for a PDF
+outline bookmark if we have changed book (which is unlikely), and getting 
+the first line indent for the paragraph.
+
+[=cpar_parstyle_start]::
+
+Reading the code linearly, the next part of thie paragraph style routine is
+concerned with drop chapter number support. We will discuss that as part of
+(Milestones)[#milestones].
+
+The last part of the `everypar` routine sets up the initial indentation. If
+there is a first line indent we need to analyse whether we still do actually
+allow first line indentation. If the indentation is negative, then yes.
+Otherwise we don't allow first line indentation if IndentAfterHeading is not
+true. If we are actually going to do the indentation, we manually insert the
+indentation (1). If there is a chapter number box, then we shift backwards by
+its width and insert it. We set the flag to say we are in a paragraph and then
+run any `start` hook for the paragraph marker. This also applies to diglot side
+specific `start` hooks. If there is a chapter number in this paragraph we
+disable marginal verses around the drop chap. Finally we say we are no longer
+starting up the paragraph. That brings us to the end of the macro that is run
+when the paragraph text starts. And that brings us to the end of a very long
+`\if` that started way back whether this parargraph is publishable or not.
+
+[=cpar_parstyle_final]::
+
+## Note Styles
+
+Dealing with note styles starts long before a note is encountered. When a style
+marker is identified as a note style marker, we need to create an insert for
+that kind of note. We start by setting a flag to say that as far as we know, we
+are a new class. We also store the identifier (marker) for the class so that the
+checking process can test against it.
+Then we iterate through all the existing classes to see if any of them are the
+same as the marker. If not, then we allocate the class.
+
+For each class we call the `\ch@ckifcl@ss` which tests to see if the class
+identifier in question is the same as the marker we are making a class for. If
+it is then we indicate that this is not a new class.
+
+Allocating a class is where the note class is actually made. We add the
+execution `\\<marker>` to the list of note class tokens for rapid iterating
+through all the note classes, just as we did for `\ch@ckifcl@ss`. Then we create
+an insert for the note (or two in the case of diglot). Creating a new note is
+simply a matter of creating a `newinsert` for the class. The problem is that
+`newinsert` cannot be called from inside a macro. So we have to `\let` another
+token be the content of `\newinsert` and call that instead. Sigh.
+
+[=cnote_makenote]::
+
+When a note style marker is encountered we call `\n@testyle`. Note styles are
+closed just like character styles. In this routine we analyse the character
+after the marker to test for `*` or anything else (including space). Although
+what follows a start marker is expected to be only a space. On entry to the
+routine, we capture the marker and set up space as a normal character and then
+use `\futurelet` to grab the next token (read character) after the marker. This
+then calls into `\don@tstyle` which analyses the grabbed token. If it is a `*`
+then we call the `\endn@testyle` else we call `\startn@testyle`.
+
+[=cnote_notestyle]::
+
+We use the lowercase trick on `\startn@testyle` to handle the space following
+the marker. This has an unfortunate side effect that we can't use capital
+letters for anything important in the macro. So we get around this by creating a
+macro for our uppercase string, and since the definition is outside
+`\lowercase`, no lowercasing happens.
+
+We start the note style, like so many others, by testing to see if the text in
+the note is publishable. If it is not then we open a whole nest of groups that
+correspond to the groups that get created for a publishable marker. The first
+group encapsulates resettting paragraph controls, via `\resetp@rstyle` (1) (In
+the next code fragment). Then
+we clear the tokens to execute after the note. Then if we are inside a heading,
+we create a new group to correspond to the box that is created to delay the
+output of notes. Then we create a box to capture the notes contents and turn on
+note skipping. We are inside a note and we set a flag to say whether there was
+space before this note.
+
+[=cnote_startnote_start]::
+
+Otherwise this note is publishable and we have to do something about it. The
+first step is that, because of the caller, we need to be in horizontal mode.
+Then we get the `notebase` parameter of the note. This allows someone to specify
+that a different note class will receive the contents of notes of this marker.
+For example if they want to merge `\f` footnotes and `\x` cross references. If
+nothing is specified, then use this marker as the note class.
+
+If there is a `before` hook to run, then run it. Now capture the function's
+parameter which is the caller character for this note. If the caller is a `+`
+then we need to auto generate the caller. We do this by 
 
 [-d_styles]::

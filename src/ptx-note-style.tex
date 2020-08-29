@@ -30,6 +30,7 @@
 
 % Note style macros
 
+%+cnote_makenote
 % We keep a list of all the note classes in \n@tecl@sses, each prefixed with \\ and enclosed in braces.
 % Then we can define \\ on the fly, and execute the \n@tecl@sses list to apply it to all classes.
 \newtoks\n@tecl@sses
@@ -61,34 +62,32 @@
 	\x@\n@winsert\csname note-#1\endcsname
 }
 \let\n@winsert=\newinsert % work around the \outer nature of \newinsert
+%-cnote_makenote
 
+%+cnote_initnotes
 % set default insert parameters for a note class (updated if we switch to double-column)
 \def\initn@testyles{\let\\=\s@tn@tep@rams \the\n@tecl@sses}
 \def\s@tn@tep@rams#1{%
   \checkp@ranotes{#1}%
-  \ifdiglot%
-    \ifdiglotSepNotes%
-       \s@tn@tep@r@ms{#1}%
-       \s@tn@tep@r@ms{#1R}%
-    \else%
-       \s@tn@tep@r@ms{#1}%
-    \fi%
-  \else%
-    \s@tn@tep@r@ms{#1}%
-  \fi%
+  \ifdiglot
+    \ifdiglotSepNotes\s@tn@tep@r@ms{#1}\s@tn@tep@r@ms{#1R}\else\s@tn@tep@r@ms{#1}\fi
+  \else\s@tn@tep@r@ms{#1}\fi
 }
 
 \def\s@tn@tep@r@ms#1{%
-  \x@\count\csname note-#1\endcsname=\ifdiglot 1000 \else \ifp@ranotes 500 \else 1000 \fi\fi %% !!!FIXME!!! This guesses p@ranotes take half a line each. There are better ways. 
+  %% !!!FIXME!!! This guesses p@ranotes take half a line each. There are better ways. 
+  \x@\count\csname note-#1\endcsname=\ifdiglot 1000 \else \ifp@ranotes 500 \else 1000 \fi\fi 
   \x@\skip\csname note-#1\endcsname=\AboveNoteSpace %Skip before footntoes
   \x@\dimen\csname note-#1\endcsname=\maxdimen %Max note skip
 }
 \newdimen\AboveNoteSpace \AboveNoteSpace=\medskipamount
 \newdimen\InterNoteSpace \InterNoteSpace=3.5pt
+%-cnote_initnotes
 
 %
 % Each USFM note marker is defined to call \n@testyle, with the marker name as parameter
 %
+%+cnote_notestyle
 \def\n@testyle#1{\TRACE{n@testyle:#1}%
  \def\newn@testyle{#1}%
  \catcode32=12\relax % look ahead to see if space or * follows (like char styles)
@@ -96,7 +95,9 @@
 \def\don@testyle{\catcode32=10\relax 
  \if\n@xt*\let\n@xt\endn@testyle\else\let\n@xt\startn@testyle\fi
  \n@xt}
+%-cnote_notestyle
 
+%+cnote_startnote_start
 \def\b@lance{BALANCE}
 \lowercase{
  \def\startn@testyle~#1 {% get the caller code as a space-delimited parameter
@@ -108,6 +109,8 @@
     \setbox0=\hbox\bgroup \skipn@testyletrue
     \global\n@tenesting=1\relax
     \ifdim\lastskip>0pt \sp@cebeforetrue \else \sp@cebeforefalse \fi % was there a preceding space?
+%-cnote_startnote_start
+%+cnote_startnote_setup
   \else
     \leavevmode
     \getp@ram{notebase}{\newn@testyle}\edef\n@tebase{\ifx\p@ram\relax\newn@testyle\else\p@ram\fi}%
@@ -122,7 +125,8 @@
     \begingroup
     \x@\let\x@\aftern@te\csname after-\newn@testyle\endcsname
     \ifdim\lastskip>0pt \sp@cebeforetrue \else \sp@cebeforefalse \fi % was there a preceding space?
-    \resetp@rstyle
+    \resetp@rstyle                                                              %(1)
+%-cnote_startnote_setup
     \m@kenote{\n@tebase}{\newn@testyle}{%
         \everypar={}\cancelcutouts % begin a note insertion in the given style
         \getp@ram{callerstyle}{\newn@testyle}% see if a caller style was defined
@@ -168,6 +172,7 @@
 \newif\ifsp@cebefore
 \newif\ifskipn@testyle
 
+%+cnote_autonum
 \def\inc@utonum#1{\count255=0\csname autonum #1\endcsname % increment note counter for class #1
  \advance\count255 by 1 \x@\xdef\csname autonum #1\endcsname{\number\count255}}
 
@@ -178,6 +183,7 @@
   \loop \ifnum\count255>26 \advance\count255 by -26 \repeat
   \advance\count255 by 96 \edef\them@rk{\char\count255}}
 \fi
+%-cnote_autonum
 
 \edef\pl@scatcode{\the\catcode`+}
 \catcode`+=11

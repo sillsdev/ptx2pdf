@@ -6,19 +6,10 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from ptxprint.font import TTFont
 from ptxprint.ptsettings import chaps, books, bookcodes, oneChbooks
-from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders
 from ptxprint.runner import checkoutput
 from ptxprint import sfm
 from ptxprint.sfm import usfm, style
 from ptxprint.usfmutils import Usfm, Sheets
-
-def loosint(x):
-    try:
-        return int(x)
-    except (ValueError, TypeError):
-        return 0
-    except ValueError:
-        return 0
 
 def universalopen(fname, rewrite=False):
     """ Opens a file with the right codec from a small list and perhaps rewrites as utf-8 """
@@ -40,6 +31,17 @@ def universalopen(fname, rewrite=False):
                 fh.write(d)
         fh = open(fname, "r", encoding="utf-8", errors="ignore")
     return fh
+
+# After universalopen to resolve circular import. Kludge
+from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ImgCredits
+
+def loosint(x):
+    try:
+        return int(x)
+    except (ValueError, TypeError):
+        return 0
+    except ValueError:
+        return 0
 
 ModelMap = {
     "L_":                       ("c_diglot", lambda w,v: "L" if v else ""),
@@ -685,7 +687,10 @@ class TexModel:
                     for k, c in self._snippets.items():
                         v = self.asBool(k)
                         if v:
-                            if c[1].processTex:
+                            fn = getattr(c[1], 'generateTex', None)
+                            if fn is not None:
+                                res.append(fn(v, self))
+                            elif c[1].processTex:
                                 res.append(c[1].texCode.format(**self.dict))
                             else:
                                 res.append(c[1].texCode)

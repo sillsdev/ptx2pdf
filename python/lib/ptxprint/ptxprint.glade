@@ -1440,7 +1440,7 @@ in the Windows system.</property>
   <object class="GtkDialog" id="dlg_picListEditor">
     <property name="can_focus">False</property>
     <property name="type_hint">dialog</property>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child internal-child="vbox">
@@ -8263,6 +8263,32 @@ then enable this option).</property>
                                     <property name="left_attach">4</property>
                                     <property name="top_attach">3</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_imgCredits">
+                                    <property name="label" translatable="yes">Generate copyrights statement</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_left">20</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">5</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                               </object>
                             </child>
