@@ -780,6 +780,99 @@ nothing is specified, then use this marker as the note class.
 
 If there is a `before` hook to run, then run it. Now capture the function's
 parameter which is the caller character for this note. If the caller is a `+`
-then we need to auto generate the caller. We do this by 
+then we need to auto generate the caller. We do this by incrementing the caller
+index and inserting the caller at that index. Otherwise if the caller is a `-`
+then no caller is output, otherwise use the caller character itself.
+
+We start a group for the note and its caller. We collect any `after` hook for
+the note. Was there some space before the note, then flag the need later. Then
+we reset the paragrph style within the note group for the note text itself. (1)
+
+The core of note handling is a call to `\m@kenote`. The parameters to that macro
+are themselves token sequences. Notice that the sequences are not expanded until
+inside that macro. The first parameter is the note class into which the note
+will go. The second is the note marker. The third is the code to insert the
+caller into the main text. This code also sets up the paragraph for the note
+text. The default style for the caller is `\v` unless specified for the note.
+The caller is then created in a box, which might be empty if the caller content
+is empty. The content of the box is character styled by the callerstyle.
+In addition to the superscript of the callerstyle, there is the callerraise. If
+set then raise the box by that amount.
+
+The fourth parameter contains the code to insert the note's caller as a box. If
+there is a notecaller style then use that to style the mark. In addition use the
+notecallerraise to raise the box.
+
+Calling `\m@kenote` is the same as starting a footnote in plain TeX. The macro
+returns with us inside the note insert. So we begin a new group and flag that we
+are inside a note now. If there is a `start` hook for the note, we execute that
+here and skip any following spaces.
+
+[=cnote_startnote]::
+
+The `\m@kenote` macro parallels the footnote moacro in plain TeX. It's job is to
+output the caller into the main text. If we are at the start of a paragraph (why
+should we) then use the default space width otherwise continue with the existing
+space glue. If we are in a heading then output the caller in that place in the
+heading, but append the actual insert to the end of the headings. This reduces
+any pressure to break a page within a headings bloxk by placing all the page
+length cost at the end of the headings block. If we are in a chapter box then
+append the ntoe to the chapternote. Otherwise just output the caller as normal.
+Now set the spacefactor for the text inside the footnote and call to setup the
+note insert, which may get wrapped. Notice that if there is no notecallerstyle
+then simply use the same caller as in the main text.
+
+[=c_makenote]::
+
+This is where we actually start making the note itself. We are passed the target
+note class, the note marker and the code for the caller box. To set up, we set
+the flag to say we are in a note and we clear the `next` token ready for the end
+of the routine. We capture the note class into which the note is going, with
+appropriate diglot adaptation. Then we start the insert. An insert is a vbox
+that is inserted into the main contribution list before the main text line it is
+part of. The insert starts a vbox and we start a group for it.
+
+There are two kinds of notes: paragraphed notes are grouped into a single
+paragraph while separate notes are output one per paragraph. We test to see
+which kind of note class this is. Setting paragraphed notes is a user option for
+a class.
+
+[=c_paragraphedNotes]
+
+We set up the text width for the note. For paragraphed notes, we set the text
+width to infinite otherwise we use the current textwidth. Then we reduce the
+width by the column shift (since notes are shifted by the column shift, for
+marginal verse numbers). The linepenalty says how hard we do not want footnotes
+to split across a page boundary. This is a plain TeX parameter which defaults to
+100. The `\floatingpenalty` is set to the maximum of 10000, saying we do not
+want notes spread across pages. We reset all the side and space skips. We set
+the baseline based on the target note, not the marker, since all notes in a
+class should have the same baselineskip.
+
+If these are separate notes, then create full height strutbox and if the height
+of that box is less than the baselineskip then skip by the difference between
+that height and the baselineskip. Now we start the paragraph in the note. In a
+diglot we insert any side hooks. If we are right to left then insert right to
+left start before whatever is already output.
+
+We now test to see if we want callers in this note type. If so then create a box
+from the note caller and output it. If it has width then add a small kern of
+.2em after it. This is not user configurable.
+
+Now we push this note type onto the style stack and set the font. Finally we
+collect the bgroup that follows the call and call plain TeX's footnote handling
+routine. 
+
+[=c_vmakenote]::
+
+`\fo@t` is a plain TeX macro and is described in the TeXbook, but in summary, in
+our context, it calls `\@foot` after then end of the note style. Our `\@foot`
+first ensures no skip at the end of paragraphed notes. This is because we are
+merely collecting the note into an hbox inside a vbox. For separate notes, we
+include a strut to ensure an appropriate size for the last line. Then we close
+of the horizontal mode and close the styling group we started for the note. Next
+we check that the style stack is in good order and then pop it.
+
+[=c_foot]::
 
 [-d_styles]::

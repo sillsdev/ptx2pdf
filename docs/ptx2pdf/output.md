@@ -391,7 +391,11 @@ done. If the galley is empty then use whatever was passed to us, now in
 
 ## Switching Column Layouts
 
-There are two macros that switch between the two layouts. The first is triggered
+There are two macros that switch between the two layouts.
+
+### Switching to Double Columns
+
+The first is triggered
 when switching from single column to double column, for examples between
 introductory material and the main text of a book. We start by undoing the
 last depth to bring the baseline back to the baseline and then close of any
@@ -416,7 +420,7 @@ note class, described below.
 
 [=c_doublecolumns]::
 
-Each not class, since it is associated with an insert, has a count associated
+Each note class, since it is associated with an insert, has a count associated
 with it. This count is a multiplier of the size of the insert against the
 overall height of the page. The routine to clear the count for a particular note
 class finds the particular note class for a note type. It is then checked for
@@ -427,6 +431,8 @@ span insert costs, which for double column is 2. In addition every note has an
 `AboveNoteSpace` fixed cost as well.
 
 [=c_setnotecount]::
+
+### Switching to Single Columns
 
 Switching to single column mode is somewhat simpler than switching to double
 column mode since there is no worry about the grid. We close any headings and
@@ -509,6 +515,8 @@ any cropmarks.
 
 [=c_shipwithcropmarks]::
 
+### Cropmarks
+
 Actually outputting any cropmarks is done by `\docr@pmarks`. If no crop marks
 are to be output, this routine does nothing. If the two boxes for the top and
 bottom crop marks don't yet exist, then make them. Then we create a 0 size vbox
@@ -532,6 +540,71 @@ generated per page instead of per job and the margin lines correspond to the
 bottom margin.
 
 [=c_makecropmarks]::
+
+## Processing Notes
+
+There are a number of routines that run against all the notes. Usually they then
+differentiate between paragraphed and separate notes.
+
+For paragraphed notes, the core action is to turn the collection of notes into a
+single paragraph. We start by setting the width of the paragraph we are making.
+This depends on diglot side, etc.
+
+[=c_setnotewidth]::
+
+Making the paragraphed notes, we are passed the box containing the notes and the
+marker for the class. We set the width to the width we just calculated.
+We simplify the `\par` to just closing the paragraph and clear any chapter
+dropped numbers, and clear any paragraph initial tokens. We are in an output
+routine, if pretty deep, so there is no harm clearing these things. Then we
+unpack the box of boxes, putting them back on the contributions list. And then
+we call the routine that will walk back through the boxes, recollecting them.
+
+A short excursus into converting a list of hboxes into one long hbox. We start
+with an empty box and then loop back through the contributions list, which only
+contains the hboxes we just unpacked. Each box is prepended to the list of
+boxes, in effect reversing the list.
+
+In addition we then need to assemble the paragraph by going through a list of
+hboxes unpacking them and inserting `\internotespace` between each one. The
+recursion means we start from the front of the list.
+
+[=c_makehboxofhboxes]::
+
+Returning to `\maken@tepara` (1) We create a single line of all the notes
+together. Then we set the baselineskip to use for the paragraph and also any
+other paragraph settings. We also set the side skips for the paragraph based on
+the `justification` parameter for the marker. We also adjust the width if there
+is a columnshift for marginal verses. Then we start a new paragraph and set the
+appropriate bidirectional direction. Then we unbox the hbox and stream the text
+in. We remove any final penalty and skips, e.g. the final internoteskip. We
+discourage line breaks, but not too much and break the paragraph into lines. And
+the after clearing any leftskip, we are done.
+
+[=c_makenotepara]::
+
+### Measuring used space
+
+The routine is called for each note class. WIthin that it analyses the note
+class to call the appropriate routine for the note type. We also set a flag to
+say whether any notes have been seen.
+
+[=c_reduceavailht]::
+
+#### Paragraphed notes
+
+For paragraphed notes, we store the appropriate class (including diglot side)
+and then we collect the insert (vbox) number. We test to see if there is
+anything in the box. If there is, then we copy the box and turn it into a single
+paragraph. With that paragraphed box, we simply reduce the available height by
+the height and depth of the box. If we are the first note, then we reduce by
+the `AboveNoteSpace` and clear the flag, otherwise we reduce by the `InterNoteSpace`
+(which is different casing from the `internotespace` horizontal space between notes being
+paragraphed).
+
+[=c_reduceavailht_para]::
+
+
 
 [-d_output]::
 

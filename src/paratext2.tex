@@ -132,6 +132,7 @@
   \@sf \@wrap\vm@kenote{#1}{#2}{\getp@ram{notecallerstyle}{#2}\ifx\p@ram\relax #3\else #4\fi}}
 %-c_makenote
 
+%+c_vmakenote
 \def\vm@kenote#1#2#3{%
   \inn@tetrue%
   \let\next\relax%
@@ -167,6 +168,7 @@
   %\getp@ram{fontsize}{#2}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%
   \s@tfont{#2}%
   \futurelet\next\fo@t}% use plain.tex footnote processor
+%-c_vmakenote
 
 % use \OmitCallerInNote{f} to omit callers from the note at foot of page
 % but leave them in the body text (e.g. all the callers are *'s)
@@ -191,12 +193,14 @@
   \setbox\f@@tstrut=\hbox{}\ht\f@@tstrut=\dimen0 \dp\f@@tstrut=\dimen2
   \copy\f@@tstrut}
 
+%+c_foot
 \def\@foot{\ifp@ranotes \parfillskip=0pt \else\strut\fi
   \par\egroup\ifRTL\endR\fi\end@llcharstyles
   \def\d@##1+##2\E{\if ##1N\else\MSG{Bad marker ##2\space but expected a closing note marker}\fi}\mctop
   \mcpop}
 \newbox\f@@tstrut
 \def\n@teglue{2em plus 1em minus .5em\relax} % glue to be used between paragraphed notes
+%-c_foot
 
 % set baseline appropriately for the given style (may be using much smaller font than body)
 % baselineskip = leading
@@ -258,13 +262,16 @@
 \everypar=\toks0}
 
 % determine if a given note class is to be paragraphed
+%+c_paragraphedNotes
 \def\ParagraphedNotes#1{\Par@gr@phedNotes{#1}\ifdiglot\ifdiglotSepNotes\Par@gr@phedNotes{#1R}\fi\fi}
 \def\Par@gr@phedNotes#1{\TRACE{Par@gr@phedNotes #1}\x@\let\csname paranotes-#1\endcsname=1}
 \newif\ifp@ranotes
 \def\checkp@ranotes#1{\x@\ifx\csname paranotes-#1\endcsname\relax
   \p@ranotesfalse\else\p@ranotestrue\fi}
+%-c_paragraphedNotes
 
 % Notewidth for diglots depends on settings and column. 
+%+c_setnotewidth
 \newdimen\n@tewidth
 \def\setn@tewidth{%
   \ifdiglot
@@ -273,10 +280,13 @@
     \else\n@tewidth=\textwidth\fi
   \else\n@tewidth=\textwidth\fi
 }
+%-c_setnotewidth
+
 % reformat the contents of a note class insertion into a single paragraph.
 % this is usually done for \x. It is sometimes done for \f.
 % (based on code from the TeXbook, appendix D)
 % #1 is vbox containing notes as individual paragraphs.
+%+c_makenotepara
 \newif\ifNoteTracing \NoteTracingfalse
 \newskip\intern@teskip \intern@teskip=15pt plus 3pt minus 5pt
 \newskip\noteRag\noteRag=0pt plus 18pt
@@ -287,7 +297,7 @@
   \everypar={}% don't do body text formatting
   \unvbox#1 % open up the vbox of notes to get at the list of individual note boxes
   \makehboxofhboxes % make a single hbox for all notes of this class
-  \setbox0=\hbox{\unhbox0 \removehboxes}% add internote space
+  \setbox0=\hbox{\unhbox0 \removehboxes}% add internote space                   %(1)
   \getp@ram{baseline}{#2}\ifx\p@ram\relax\else\baselineskip=\p@ram\fi
 % Enable justification according to marker.
   \lineskiplimit=-10pt\leftskip=0pt\rightskip=0pt\parskip=0pt\parfillskip=0pt plus 1fil%\lineskip=10pt
@@ -313,8 +323,9 @@
   \linepenalty50
   \trace{f}{Note #2 baselineskip=\the\baselineskip}
   \par\leftskip=0pt\ifNoteTracing\tracingparagraphs=0\fi}
-%
+%-c_makenotepara
 % make box0 = an hbox contining all the contents of this class
+%+c_makehboxofhboxes
 \def\makehboxofhboxes{%
   \setbox0=\hbox{}%
   \loop\setbox2=\lastbox \ifhbox2 \setbox0=\hbox{\box2\unhbox0}\repeat} 
@@ -330,6 +341,7 @@
 %\def\internotespace{\hfil\hskip\intern@teskip\penalty\internotepenalty\hfilneg}
 \def\internotespace{\hskip\intern@teskip\kern 0pt\penalty\internotepenalty}
 %\def\internotespace{\hfil\hskip\intern@teskip\penalty-10\hfilneg}
+%-c_makehboxofhboxes
 
 % don't allow stretching between notes.
 
@@ -589,6 +601,7 @@
 
 % for measuring the space needed for each class of notes;
 % this will decrease \availht by the space needed for the given class
+%+c_reduceavailht
 \def\reduceavailht#1{%
   \checkp@ranotes{#1}%
   %\TRACE{av: \the\availht =>}
@@ -598,7 +611,9 @@
     \ifdiglot\ifdiglotSepNotes\ifdiglotBalNotes\let\n@xt=\reduceavailht@sep@bal\fi\fi\fi
   \fi
   \iff@rstnote\else\global\noteseentrue\fi\n@xt{#1}}
+%-c_reduceavailht
 
+%+c_reduceavailht_para
 \def\reduceavailht@para#1{
   \def\cl@sss{#1}%
   \ifdiglot\ifdiglotSepNotes\ifdiglotL\def\cl@sss{#1}\else\def\cl@sss{#1R}\fi\fi\fi%
@@ -613,6 +628,7 @@
     \else \advance\availht by -\InterNoteSpace\fi
     %\getp@ram{baseline}{#1}\ifx\p@ram\relax\else\advance\availht-\p@ram\fi
   \fi}
+%-c_reduceavailht_para
 
 \def\reduceavailht@para@bal#1{%
   \TRACE{reduceavailht@para@bal #1}%

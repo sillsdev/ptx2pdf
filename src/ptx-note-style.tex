@@ -110,7 +110,7 @@
     \global\n@tenesting=1\relax
     \ifdim\lastskip>0pt \sp@cebeforetrue \else \sp@cebeforefalse \fi % was there a preceding space?
 %-cnote_startnote_start
-%+cnote_startnote_setup
+%+cnote_startnote
   \else
     \leavevmode
     \getp@ram{notebase}{\newn@testyle}\edef\n@tebase{\ifx\p@ram\relax\newn@testyle\else\p@ram\fi}%
@@ -126,7 +126,6 @@
     \x@\let\x@\aftern@te\csname after-\newn@testyle\endcsname
     \ifdim\lastskip>0pt \sp@cebeforetrue \else \sp@cebeforefalse \fi % was there a preceding space?
     \resetp@rstyle                                                              %(1)
-%-cnote_startnote_setup
     \m@kenote{\n@tebase}{\newn@testyle}{%
         \everypar={}\cancelcutouts % begin a note insertion in the given style
         \getp@ram{callerstyle}{\newn@testyle}% see if a caller style was defined
@@ -155,6 +154,7 @@
   \fi
  }
 }
+%-cnote_startnote
 
 \def\endn@testyle*{\TRACE{endn@testyle}%
  \trace{f}{endn@testyle}%
