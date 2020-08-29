@@ -374,7 +374,7 @@ class TexModel:
         if self.prjid is not None:
             self.dict['project/id'] = self.prjid
         if self.printer is not None:
-            self.sheets = Sheets(self.printer.getStyleSheets())
+            self.sheets = Sheets(self.printer.getStyleSheets(generated=True))
             self.update()
 
     def docdir(self):

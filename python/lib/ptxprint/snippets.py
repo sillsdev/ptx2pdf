@@ -287,9 +287,9 @@ class FancyBorders():
 artstr = {
 "cn" : ("© 1996 David C. Cook.", "© DCC."),
 "co" : ("© 1996 David C. Cook.", "© DCC."),
-"hk" : ("by Horace Knowles\n© The British & Foreign Bible Society, 1954, 1967, 1972, 1995.", "© BFBS, 1995."),
-"lb" : ("by Louise Bass\n© The British & Foreign Bible Society, 1994.", "© BFBS, 1994."),
-"bk" : ("by Horace Knowles revised by Louise Bass\n©The British & Foreign Bible Society, 1994.", "© BFBS, 1994."),
+"hk" : ("by Horace Knowles\n© The British \\& Foreign Bible Society, 1954, 1967, 1972, 1995.", "© BFBS, 1995."),
+"lb" : ("by Louise Bass\n© The British \\& Foreign Bible Society, 1994.", "© BFBS, 1994."),
+"bk" : ("by Horace Knowles revised by Louise Bass\n©The British \\& Foreign Bible Society, 1994.", "© BFBS, 1994."),
 "ba" : ("used by permission of Louise Bass.", ""),
 "dy" : ("by Carolyn Dyk, © 2001 Wycliffe Bible Translators, Inc.\nand licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.", ""),
 "gt" : ("by Gordon Thompson © 2012 Wycliffe Bible Translators Inc.\nand licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.", ""),
@@ -303,7 +303,11 @@ artstr = {
 
 class ImgCredits():
     regexes = []
-    styleInfo = ""
+    styleInfo = """
+\Marker zImageCopyrights
+\StyleType Paragraph
+\TextProperties paragraph publishable
+"""
     processTex = False
     texCode = ""
 
@@ -320,7 +324,7 @@ class ImgCredits():
                 for f in m:
                     artpgs.setdefault(f[1], []).append(int(f[0]))
 
-        crdts = ["\\def\\imageCopyrights{%"]
+        crdts = ["\\def\\zImageCopyrights{%"]
         for art, pgs in artpgs.items():
             if len(pgs):
                 pgs = sorted(set(pgs))
