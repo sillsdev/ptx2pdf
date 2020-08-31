@@ -25,11 +25,17 @@ listings:
 
 [=d_styles]::
 
+# Milestones
+
+[=d_milestones]::
+
 # Output Routines
 
 [=d_output]::
 
 <!-- # References -->
+
+<!-- # Pictures -->
 
 <!-- # Diglot -->
 

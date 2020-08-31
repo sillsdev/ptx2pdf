@@ -717,6 +717,18 @@ when the paragraph text starts. And that brings us to the end of a very long
 
 [=cpar_parstyle_final]::
 
+### PDF Bookmark
+
+At various points in the code, a call is made to `\pdfb@@kmark` to possibly
+insert an outline entry for the start of a book. The choice of which routine to
+use is diglot governed. We examine only the monoglot version, with the right
+diglot alternative being nearly identical apart from which variable is used. If
+the book is the same the previous book, then there is no book transition and no
+output is needed. OTherwise we stop any drop number for this paragraph (_why?_)
+and create a PDF outline entry for the book.
+
+[=cpar_pdfbookmark]::
+
 ## Note Styles
 
 Dealing with note styles starts long before a note is encountered. When a style
@@ -740,6 +752,8 @@ simply a matter of creating a `newinsert` for the class. The problem is that
 token be the content of `\newinsert` and call that instead. Sigh.
 
 [=cnote_makenote]::
+
+### Note markers
 
 When a note style marker is encountered we call `\n@testyle`. Note styles are
 closed just like character styles. In this routine we analyse the character
@@ -832,12 +846,14 @@ appropriate diglot adaptation. Then we start the insert. An insert is a vbox
 that is inserted into the main contribution list before the main text line it is
 part of. The insert starts a vbox and we start a group for it.
 
+### Paragraphed Notes
+
 There are two kinds of notes: paragraphed notes are grouped into a single
 paragraph while separate notes are output one per paragraph. We test to see
 which kind of note class this is. Setting paragraphed notes is a user option for
 a class.
 
-[=c_paragraphedNotes]
+[=c_paragraphedNotes]::
 
 We set up the text width for the note. For paragraphed notes, we set the text
 width to infinite otherwise we use the current textwidth. Then we reduce the
@@ -848,6 +864,8 @@ to split across a page boundary. This is a plain TeX parameter which defaults to
 want notes spread across pages. We reset all the side and space skips. We set
 the baseline based on the target note, not the marker, since all notes in a
 class should have the same baselineskip.
+
+### Separate Notes
 
 If these are separate notes, then create full height strutbox and if the height
 of that box is less than the baselineskip then skip by the difference between

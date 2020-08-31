@@ -36,6 +36,7 @@
 %   #2 -> begin after this many lines of the paragraph (0 for start of par)
 %   #3 -> number of lines to cut
 %
+%+ccut_cutout
 \def\leftcutout{\@cutout{L}}
 \def\rightcutout{\@cutout{R}}
 
@@ -51,12 +52,14 @@
 
 % Forget any current cutouts
 \def\cancelcutouts{\ifnum\@numcuts>0 \trace{C}{Cancelled \the\@numcuts\space cutout(s)}\fi\@numcuts=0 }
+%-ccut_cutout
 
 %
 % This must be called after each paragraph to carry-over any residual amout of cutout
 % (e.g., if you ask for a 10-line cutout, but the paragraph only has 6 lines;
 % the remaining 4 lines will be cut in the next paragraph)
 %
+%+ccut_carryover
 \def\cutoutcarryover{%
   \ifnum\@numcuts>0
     \count@=\@numcuts \@numcuts=0
@@ -76,11 +79,13 @@
     \repeat
   \fi
 }
+%-ccut_carryover
 
 %
 % This must be called at the end of each paragraph (e.g., by redefining \par)
 % so as to calculate and apply the shape, given all current cutout specifications
 %
+%+ccut_makecutouts
 \def\makecutouts{%
   \ifnum\hangafter<0 \@parshapelines=-\hangafter
   \else \@parshapelines=\hangafter \fi
@@ -91,7 +96,7 @@
     \ifnum\count@>\@parshapelines \@parshapelines=\count@ \fi
   \repeat
   \advance\@parshapelines by 1
-  \def\@shape{}%
+  \def\@shape{}%                                                                %(1)
   \@line=0
   \loop \ifnum\@line<\@parshapelines \advance\@line by 1
     \global\@hsize=\hsize
@@ -102,12 +107,14 @@
       \ifnum\@line>\hangafter \global\@indent=\hangindent \fi
     \fi
     \ifdim\@indent<0pt \global\advance\@hsize by \@indent \global\@indent=0pt
-    \else \global\advance\@hsize by -\@indent \fi
+    \else \global\advance\@hsize by -\@indent \fi                               %(2)
     \@cutthisline
     \edef\@shape{\@shape\space\the\@indent\space\the\@hsize}%
   \repeat
   \parshape=\number\@parshapelines \@shape
 }
+%-ccut_makecutouts
+%+ccut_cutthisline
 \def\@cutthisline{%
   \@index=0
   {\loop \ifnum\@index<\@numcuts
@@ -129,5 +136,5 @@
 \newcount\@parshapelines
 \newcount\@index \newcount\@line \newcount\@after \newcount\@until
 \newdimen\@width \newdimen\@indent \newdimen\@hsize
-
+%-ccut_cutthisline
 \endinput

@@ -375,7 +375,7 @@
       \getp@ram{leftmargin}{\m@rker}%
       \ifx\p@ram\relax % simple case - no left indent
         \x@\c@tcmd\x@{\the\ch@pterwd}{0}{2}%
-      \else % probably \q or something like that;
+      \else % probably \q or something like that;                               %(1)
             % need to compare cutout width with leftindent
         \dimen0=\p@ram\IndentUnit \dimen2=\dimen0
         \ifx\f@rstindent\relax \else \advance\dimen0 by \f@rstindent\IndentUnit \fi
@@ -396,6 +396,8 @@
      % generate second-level PDF bookmark for the chapter
      \pdfch@ptermark
     \fi
+%-cpar_parstyle_chapter
+%+cpar_parstyle_drop
    \else
     \ifdr@ppednumber % second line of chapter number, need to check indent/cutout
      \cancelcutouts % forget existing cutout, we're re-doing it
@@ -418,7 +420,7 @@
      \spacefactor=\n@wchaptersf % prevent hanging verse number here
     \fi
    \fi
-%-cpar_parstyle_chapter
+%-cpar_parstyle_drop
 %+cpar_parstyle_final
    \ifx\f@rstindent\relax \else
     \x@\ifdim\f@rstindent pt<0pt
@@ -445,6 +447,7 @@
  \fi}
 %-cpar_parstyle_final
 
+%+cpar_pdfbookmark
 \newif\ifRTL
 \newif\ifallowp@rindent
 \newif\ifdr@ppednumber
@@ -486,7 +489,9 @@
    \global\let\prevb@okR\b@okR
   \egroup
  \fi\fi}
+%-cpar_pdfbookmark
 
+%+cpar_pdfchaptermark
 \def\pdfch@ptermark{\ifdiglot\ifdiglotL\pdfch@pterm@rk\else\pdfch@pterm@rkR\fi\else\pdfch@pterm@rk\fi}
 \def\pdfch@pterm@rk{\ifDropActions\else\bgroup\liter@lspecials
   \special{pdf:dest (\id@@@.\ch@pter) [@thispage /Fit]}%
@@ -501,7 +506,9 @@
   \special{pdf:outline 1 << /Title (\t@mp\space\ch@pter)
            /A << /S /GoTo /D (\id@@@.\ch@pter) >> >>}%
   \egroup\fi}
+%-cpar_pdfchaptermark
 
+%+cpar_initparlocs
 \newwrite\p@rlocs
 \newread\readp@rlocs
 \def\initp@rlocs{%
@@ -516,7 +523,9 @@
   \immediate\openout\p@rlocs="\jobname.parlocs"
 }
 \addtoinithooks{\initp@rlocs}
+%-cpar_initparlocs
 
+%+cpar_finishparlocs
 \def\finishp@rlocs{%
   \immediate\closeout\p@rlocs
   \catcode`\{=1 \catcode`\}=2 \m@kedigitsother \catcode`\@=11
@@ -527,8 +536,11 @@
 \newif\ifdelay@pen
 \let\delayf@le=\p@rlocs % we write the delay file while reading the finished parlocs, so we can re-use the write stream
 \addtoendhooks{\finishp@rlocs}
+%-cpar_finishparlocs
+
 
 % commands that get written to the parlocs file to record locations
+%+cpar_parloccmds
 \let\pendingch@pter=\empty
 \newcount\prev@y \newcount\this@y \newcount\chap@y
 
@@ -552,7 +564,9 @@
 %  \MSG{* calculated \string\DelayedChapter{\pendingb@@k}{\pendingch@pter}{\the\this@y}}%
   \wr@teDelayedChapter{\pendingb@@k}{\pendingch@pter}{\the\this@y}%
   \let\pendingch@pter\empty\let\pendingb@@k\empty\fi}
+%-cpar_parloccmds
 
+%+cpar_delayedchap
 \def\@delayedchapter#1#2#3#4{\chap@y=#4\relax
   \ifnum\prev@y<\chap@y % para start was lower than chapter number, must have passed a col/page break
     \def\pendingb@@k{#1}%
@@ -563,7 +577,9 @@
     \MSG{* calculated \string\DelayedChapter{#1}{#2}{\the\prev@y}}%
     \wr@teDelayedChapter{#1}{#2}{\the\prev@y}%
   \fi}
+%-cpar_delayedchap
 
+%+cpar_writedelayed
 \def\wr@teDelayedChapter#1#2#3{%
   \x@\let\x@\t@st\csname delay-#1.#2\endcsname
   \ifx\t@st\relax \pr@vdelay=-2 % ensure undefined value will not match 0
@@ -586,8 +602,10 @@
 }
 \newcount\pr@vdelay \newcount\th@sdelay
 \newif\ifsk@pping \newbox\j@nkbox
+%-cpar_writedelayed
 
 % Create the drop-cap in \ch@pterbox
+%+cpar_makechapterbox
 \newdimen\ch@pterwd
 \newbox\ch@pterbox
 \newbox\ch@pternote
@@ -614,7 +632,9 @@
  \ch@pterwd=\wd\ch@pterbox
  \dp\ch@pterbox=0pt
 }
+%-cpar_makechapterbox
 
+%+cpar_ptxnb
 % Used to delay a cutout until later in the paragraph, for no-break chapter numbers
 \def\DelayedChapter#1#2#3{\uppercase{\def\ucb@@k{#1}}%
   \x@\edef\csname delay-\ucb@@k.#2\endcsname{#3}}
@@ -628,7 +648,7 @@
     \x@\let\x@\t@st\csname delay-\id@@@.\ch@pter\endcsname
     \ifx\t@st\relax \MSG{*** no-break at \id@@@\space\ch@pter, re-run to generate \string\DelayedChapter\space setting}%
     \else \MSG{* no-break at \id@@@\space\ch@pter}\fi
-    \leavevmode\str@t
+    \leavevmode\str@t                                                           %(1)
     \global\ch@pterfalse
     \t@stpublishability{c}\ifn@npublishable
      \setbox\ch@pterbox=\box\voidb@x
@@ -639,21 +659,22 @@
      \ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
      \x@\let\x@\d@lay\csname delay-\id@@@.\ch@pter\endcsname
      \x@\c@tcmd\x@{\the\ch@pterwd}{0\d@lay}{2}%
-     \vadjust{\vbox to 0pt{\kern-\dp\str@tbox \kern-\ht\ch@pterbox
+     \vadjust{\vbox to 0pt{\kern-\dp\str@tbox \kern-\ht\ch@pterbox              %(2)
       \x@\let\x@\t@st\csname raise-\id@@@.\ch@pter\endcsname
       \ifx\t@st\relax \else \kern-\baselineskip \fi
       \ifRTL\let\n@xt\rightline\else\let\n@xt\leftline\fi
       \n@xt{\ifRTL\beginR\fi\box\ch@pterbox\ifRTL\endR\fi}\vss}%
       \pdfb@@kmark\pdfch@ptermark\nobreak}%
-     \beginL\pdfsavepos
+     \beginL\pdfsavepos                                                         %(3)
      \edef\dc@ref@rgs{\string\@delayedchapter\string{\id@@@\string}\string{\ch@pter\string}}%
      \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}\endL
      \dr@ppednumbertrue
     \fi
   \fi}
 \newbox\str@tbox
-\def\str@t{\setbox\str@tbox=\hbox to 0pt{\XeTeXuseglyphmetrics=0 
+\def\str@t{\setbox\str@tbox=\hbox to 0pt{\XeTeXuseglyphmetrics=0                %(4)
   \char32 \hss}\copy\str@tbox}
+%-cpar_ptxnb
 
 % strings for testing against stylesheet parameters
 \def\v@rsetext{versetext}
