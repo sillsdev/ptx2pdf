@@ -320,23 +320,29 @@ class ImgCredits():
         artpgs = {}
         mkr='pc'
         sensitive = texmodel['snippets/creditsensitive']
-        picpagesfile = os.path.join(texmodel.docdir()[0], texmodel['jobname'] + ".picpages")
+        # picpagesfile = os.path.join(texmodel.docdir()[0], texmodel['jobname'] + ".picpages")
+        picpagesfile = r"C:\My Paratext 9 Projects\WSGlatin\PrintDraft\temp4testing.picpages"
         crdts = ["\\def\\zImageCopyrights{%"]
         if os.path.exists(picpagesfile):
             with universalopen(picpagesfile) as inf:
                 dat = inf.read()
 
-            allPgs = re.findall(r"\\figonpage\{(\d+)\}", dat)
-            matchedPgs = re.findall(r"\\figonpage\{(\d+)\}\{\d+\}\{.*?(?=cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5}.+?", dat)
-            msngPgs = [int(i) for i in list(set(allPgs) - set(matchedPgs))] 
-            
-            m = re.findall(r"\\figonpage\{(\d+)\}\{\d+\}\{.*?((?=cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..)\d{5}.+?", dat)
-            
+            # \figonpage{304}{56}{cn01617.jpg}{tl}{© David C. Cook Publishing Co, 1978.}{x170.90504pt}
+            m = re.findall(r"\\figonpage\{(\d+)\}\{\d+\}\{.*?(((?=cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..)\d{5})?.+?\}\{.+?\}\{(.*?)?\}\{x.+?\}", dat)
+            msngPgs = []
+            customStmt = []
             if len(m):
                 for f in m:
-                    a = 'co' if f[1] == 'cn' else f[1] # merge Cook's OT & NT illustrations together
-                    artpgs.setdefault(a, []).append(int(f[0]))
-                    
+                    a = 'co' if f[2] == 'cn' else f[2] # merge Cook's OT & NT illustrations together
+                    if a == '' and f[3] != '':
+                        customStmt += [f[0]]
+                        artpgs.setdefault(f[3], []).append(int(f[0]))
+                    elif a == '':
+                        msngPgs += [f[0]] 
+                        artpgs.setdefault('zz', []).append(int(f[0]))
+                    else:
+                        artpgs.setdefault(a, []).append(int(f[0]))
+
             if len(artpgs):
                 artistWithMost = max(artpgs, key= lambda x: len(set(artpgs[x])))
             else:
@@ -360,10 +366,13 @@ class ImgCredits():
                                 cpystr = re.sub('_', '\u00A0', artstr[art][0])
                             crdts += ["\\{} Illustration{} {}{}\n".format(mkr, pl, pgstr, cpystr)]
                         else:
-                            crdts += ["\\rem Warning: No copyright statement found for: {} image{} {}".format(art.upper(), pl, pgstr)]
+                            if len(art) > 2:
+                                crdts += ["\\{} Illustration{} {}{}\n".format(mkr, pl, pgstr, re.sub('© ', '©\u00A0', art))]
+                            else:
+                                crdts += ["\\rem Warning: No copyright statement found for: {} image{} {}".format(art.upper(), pl, pgstr)]
             if len(msngPgs):
                 if len(msngPgs) == 1:
-                    exceptpgs = "(except on page {}) ".format(msngPgs[0].strip("'"))
+                    exceptpgs = "(except on page {}) ".format(str(msngPgs[0]).strip("'"))
                 else:
                     exceptpgs = "(except on pages {} and {}) ".format(", ".join(str(p) for p in msngPgs[:-1]), str(msngPgs[-1]))
             else:
