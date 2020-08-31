@@ -320,8 +320,8 @@ class ImgCredits():
         artpgs = {}
         mkr='pc'
         sensitive = texmodel['snippets/creditsensitive']
-        # picpagesfile = os.path.join(texmodel.docdir()[0], texmodel['jobname'] + ".picpages")
-        picpagesfile = r"C:\My Paratext 9 Projects\WSGlatin\PrintDraft\temp4testing.picpages"
+        picpagesfile = os.path.join(texmodel.docdir()[0], texmodel['jobname'] + ".picpages")
+        # picpagesfile = r"C:\My Paratext 9 Projects\WSGlatin\PrintDraft\temp4testing.picpages"
         crdts = ["\\def\\zImageCopyrights{%"]
         if os.path.exists(picpagesfile):
             with universalopen(picpagesfile) as inf:
