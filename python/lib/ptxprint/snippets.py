@@ -319,7 +319,7 @@ class ImgCredits():
     def generateTex(self, texmodel):
         artpgs = {}
         mkr='pc'
-        sensitive = texmodel['snippets/creditsensitive']
+        sensitive = texmodel['document/sensitive']
         picpagesfile = os.path.join(texmodel.docdir()[0], texmodel['jobname'] + ".picpages")
         # picpagesfile = r"C:\My Paratext 9 Projects\WSGlatin\PrintDraft\temp4testing.picpages"
         crdts = ["\\def\\zImageCopyrights{%"]

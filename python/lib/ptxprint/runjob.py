@@ -58,7 +58,6 @@ def base(fpath):
     return os.path.basename(fpath[:doti])
 
 # https://sites.google.com/a/lci-india.org/typesetting/home/illustrations/where-to-find-illustrations
-# We could build the credit text too if we wanted to (and perhaps a list of pg numbers on which the pictures were found)
 def codeLower(fpath):
     cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?$", base(fpath))
     if cl:

@@ -144,6 +144,7 @@ ModelMap = {
     "paragraph/ifusefallback":  ("c_useFallbackFont", None),
     "paragraph/missingchars":   ("t_missingChars", lambda w,v: v or ""),
 
+    "document/sensitive":       ("c_sensitive", None),
     "document/title":           (None, lambda w,v: w.ptsettings.get('FullName', "")),
     "document/subject":         ("t_booklist", lambda w,v: v if w.get("c_multiplebooks") else w.get("ecb_book")),
     "document/author":          (None, lambda w,v: w.ptsettings.get('Copyright', "")),
@@ -290,8 +291,7 @@ ModelMap = {
     "snippets/pdfx1aoutput":    ("c_PDFx1aOutput", None),
     "snippets/diglot":          ("c_diglot", lambda w,v: True if v else False),
     "snippets/fancyborders":    ("c_borders", None),
-    "snippets/imgcredits":      ("c_imgCredits", None),
-    "snippets/creditsensitive": ("c_creditSensitive", None),
+    "snippets/imgcredits":      ("c_includeillustrations", None),
 }
 
 _fontstylemap = {
@@ -350,7 +350,7 @@ class TexModel:
         "snippets/pdfx1aoutput":          ("c_PDFx1aOutput", PDFx1aOutput),
         "snippets/diglot":                ("c_diglot", Diglot),
         "snippets/fancyborders":          ("c_borders", FancyBorders),
-        "snippets/imgcredits":            ("c_imgCredits", ImgCredits)
+        "snippets/imgcredits":            ("c_includeillustrations", ImgCredits)
     }
     _settingmappings = {
         "notes/xrcallers": "crossrefs",

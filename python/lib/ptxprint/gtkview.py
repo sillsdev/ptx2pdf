@@ -108,7 +108,6 @@ _sensitivities = {
     "c_includeFootnotes" :     ["bx_fnOptions"],
     "c_includeXrefs" :         ["bx_xrOptions"],
     "c_includeillustrations" : ["gr_IllustrationOptions"],
-    "c_imgCredits" :           ["c_creditSensitive"],
     "c_diglot" :               ["gr_diglot", "fcb_diglotPicListSources", "c_hdrLeftPri", "c_hdrCenterPri", "c_hdrRightPri",
                                 "c_ftrCenterPri", "c_hdrLeftSec", "c_hdrCenterSec", "c_hdrRightSec", "c_ftrCenterSec"],
     "c_borders" :              ["gr_borders"],
@@ -127,7 +126,7 @@ _sensitivities = {
     "c_fnautocallers" :        ["t_fncallers", "btn_resetFNcallers"],
     "c_xrautocallers" :        ["t_xrcallers", "btn_resetXRcallers"],
     "c_glossaryFootnotes" :    ["c_firstOccurenceOnly"],
-    "c_usePicList" :           ["btn_editPicList"],
+    # "c_usePicList" :           ["bx_picList"],
     "c_useCustomFolder" :      ["btn_selectFigureFolder", "c_exclusiveFiguresFolder"],
     "c_processScript" :        ["c_processScriptBefore", "c_processScriptAfter", "btn_selectScript", "btn_editScript"],
     "c_usePrintDraftChanges" : ["btn_editChangesFile"],
@@ -1009,10 +1008,7 @@ class GtkViewModel(ViewModel):
         self.sensiVisible("c_useFallbackFont")
 
     def onUsePicListChanged(self, btn):
-        self.sensiVisible("c_usePicList")
-
-    def onImgCreditsChanged(self, btn):
-        self.sensiVisible("c_imgCredits")
+        self.builder.get_object("bx_picList").set_visible(self.get("c_usePicList"))
 
     def onInclFrontMatterChanged(self, btn):
         self.sensiVisible("c_inclFrontMatter")
@@ -1614,13 +1610,6 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
         self.onViewerChangePage(None,None,pgnum)
 
-    def onEditPicListClicked(self, btn_editPicList):
-        pgnum = 0
-        self.builder.get_object("c_usePicList").set_active(True)
-        self.builder.get_object("nbk_Main").set_current_page(10)
-        self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
-        self.onViewerChangePage(None,None,pgnum)
-    
     def ontv_sizeallocate(self, atv, dummy):
         b = atv.get_buffer()
         it = b.get_iter_at_offset(-1)
