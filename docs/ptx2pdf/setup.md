@@ -60,8 +60,11 @@ points in style processing: before, start, end, after.
 
 [=csty_sethook]::
 
+## Declarations
 
+Various useful declarations. The parargraph types and positions:
 
+[=cpar_strings]::
 
 
 

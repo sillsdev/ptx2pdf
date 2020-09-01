@@ -2,6 +2,7 @@
 % Caution, it is still under heave development
 
 
+%+cmargin_verse
 \catcode`\@=11
 %\let\myoldv=\v
 %\newif\multipleverses
@@ -26,20 +27,22 @@
           \kern\AfterVerseSpaceFactor\FontSizeUnit}}%
         \ht1=\dimen0\dp1=0pt\tracingparagraphs=0
         \trace{v}{\reference - tolerance=\the\tolerance}\box1}\nobreak
-    \m@rkverse % generate a milestone for running headers
+    %\m@rkverse % generate a milestone for running headers
     % run the hooks for picture insertion, paragraph adjustments, etc.
     % these hooks were added via \addtoversehooks
-    \the\v@rsehooks
+    %\the\v@rsehooks
     % remember current chapter:verse, not currently used. Could potentially be used
     % to insert chapter:verse in footnotes.
-    \gdef\reference{\ch@pter:\v@rse}%
+    %\gdef\reference{\ch@pter:\v@rse}%
     \nobreak\hskip 1sp% *%
     \everypar=\myeverypar}}}
 
 \gdef\marginremovehboxes{%
   \setbox0=\lastbox 
   \ifhbox0{\removehboxes}\unhbox0\fi}
+%-cmargin_verse
 
+%+cmargin_init
 \def\myv{%
     \ifvmode\xdef\prev@rsemode{\m@rker}\else\global\let\prev@rsemode\empty\fi
     \leavevmode\c@ncelfirstversefalse
@@ -50,4 +53,5 @@
 %\def\initmyverse{\let\v=\myv}
 \addtoinithooks{\initmyverse}%
 \let\printv@rse=\hangprintv@rse
+%-cmargin_init
 \endinput

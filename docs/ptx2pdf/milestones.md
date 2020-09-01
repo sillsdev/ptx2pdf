@@ -310,6 +310,82 @@ verse number text output macro.
 
 [=csty_verse]::
 
+### Hanging Verses
+
+Hanging verses are for indented paragraphs and hange the verse as if the
+paragraph had no indent. A typical use is with poetry where the verse numbers
+hang left for indented poetry. There are various user controls here. The
+starting point for this code is `\printv@rse` (1) which is executed to make a
+printable verse number. The usual case is to use `\simpleprintv@rse` (2). This
+prepares the from verse number using `\AdornVerseNumber` (3) which allows for
+any modification of the verse number. If there is a bridge verse range then
+`\simpleprintv@rse` inserts the emdash and the adorned final verse of the range.
+The result is therefore a simple string.
+
+For hanging verses we use `\hangprintv@rse`. This does not actually hang the
+verse left, that is done higher up, but it prepares the verse number or bridge
+for hanging. For a normal, non-bridge verse we simply adorn it and return. But
+for bridged verses we want to stack the bridge. We calculate twice the
+superscript factor of the baselineskip and we set the baselineskip to the
+baseline of `\v` if set. We also calculate the space between the two lines as
+the superscript minus the baseline (which is negative).
+Then we create a box containing a dash and the final
+verse number of a bridge. Then we build a top hanging vbox containing two boxes
+on top of each other, the first is the adorned initial verse number, right
+aligned. Then we insert the calculated gap between lines and the second box is
+the final verse box we just created.
+
+[=csty_hangverse]::
+
+The actual hanging of the verse is done in the definition of `\v` with a `\llap`
+prefix that puts the box to the left of the start of the line after the indent.
+
+### Marginal Verses
+
+Marginal verses, on the other hand, are a very different animal. They are set
+into the margin of the text. Or in our case a `\columnshift` space that is
+inserted at the start of the column. Thus the verse numbers are removed from the
+text and then pulled out for easy visual identification. They also limit the
+breakup in the flow of the text. Marginal verses are enabled by including the
+file `ptxplus-marginalverses.tex` after `paratext2.tex` in a driving .tex file.
+
+First we see how the new code will be integrated into the main macros. We
+replace the re-directed `\v` by ptx-stylesheet to our new `\myv`. This much
+simpler verse handler copies some of the `\v` in terms of ensuring we are in
+horizontal mode and clears cancelling the first verse. If we are at the start of
+a chapter then insert the special kern to help `\x`. If we omit verse one then
+cancel the first verse. Then we start the group for the verse and set digits
+back to digits and call our `\marginverse`.
+
+To hook this in we set up our `\initmyverse` which moves '\@V` away so that we
+can use it later and sets `\v` to `\myv` to hook in. This then gets added as an
+initialisation hook that executes after ptx-stylesheet cv hook. And we also set
+up to use hangprintv@rse to handle verses and bridge verses.
+
+[=cmargin_init]::
+
+The `marginverse` macro is inside a `\lowercase` with handling for space and
+`*`. It collects the verse number text and calls any preverse hooks. It then
+splits the verse text into from and to verse components. Then it sets the verse
+in the styling for the verse. Then it measures the height of the box plus the
+descent of the font. It now redirects `\everypar` since we intend to create a
+paragraph. It now does much of the work of `\v` in setting the marks
+for the verse and running any verse hooks. It also defines the current
+reference. Now it inserts the verse box is a `\vadjust`. Inside the box it sets
+the baseline to that of `\v` or the current baselineskip. It now moves the box
+up by the height + depth we just calculated and creates a box that is the left
+aligned box while removing the boxes to get back to the basic structure of the
+two boxes. Then it adds space for the `\AfterVerseSpaceFactor`. It sets the
+height of this box to the height + depth calculated. It now says not to insert a
+line break and puts the magic space in the text and resets `\everypar`
+
+One macro it does use is a `\marginremovehboxes` which unpacks all the `\hboxes`
+in the box.
+
+_This does seem a rather long winded way of doing this_
+
+[=cmargin_verse]::
+
 ## Cutouts
 
 The whole handling of delayed cutouts gets involved in various parts of

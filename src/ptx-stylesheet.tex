@@ -292,7 +292,7 @@
    \ll@p\bgroup\m@kedigitsother\@v@}%
   % remember chapter macro for later
 %-csty_verse
-  %+csty_chapdef
+%+csty_chapdef
   \let\@C=\c
   % Define a macro to process space delimited chapter number
   % ## is necessary because this is a nested macro definition
@@ -318,9 +318,9 @@
   %
   \def\c{\m@kedigitsother\@c@}
   \def\cp ##1 {\gdef\ch@ptert@xt{##1}}
-  %-csty_chapdef
+%-csty_chapdef
   % set default value for drop cap chapter number size if not already set
-  %+csty_dropchap
+%+csty_dropchap
   \ifdim\dropnumbersize=0pt
     \getp@ram{fontsize}{p}\dimen255=0\p@ram\FontSizeUnit \multiply\dimen255 by 2
     \ifdim\dimen255=0pt \dimen255=24\FontSizeUnit \fi % just in case \FontSize was missing
@@ -389,10 +389,11 @@
 \def\strip@pt#1{\x@\x@\x@\@strip@pt\x@\the\x@ #1\@pt\E}
 %-csty_strippt
 
+%+csty_hangverse
 \def\AfterVerseSpaceFactor{2}
 \newif\ifOmitChapterNumber
 \newif\ifc@ncelfirstverse
-\def\simpleprintv@rse{\AdornVerseNumber{\v@rsefrom}\ifx\v@rsefrom\v@rseto
+\def\simpleprintv@rse{\AdornVerseNumber{\v@rsefrom}\ifx\v@rsefrom\v@rseto       %(2)
                  \else\endash\AdornVerseNumber{\v@rseto}\fi}
 \def\hangprintv@rse{\ifx\v@rsefrom\v@rseto\relax\AdornVerseNumber{\v@rsefrom}%
     \else
@@ -404,13 +405,14 @@
                         \kern\dimen0\box1}%
          \ht0=0.5\dimen1 \dp0=0pt
          \hbox{\box0}\fi}
-\let\printv@rse=\simpleprintv@rse
+\let\printv@rse=\simpleprintv@rse                                               %(1)
 \def\@ne{1}
-\def\AdornVerseNumber#1{#1}
+\def\AdornVerseNumber#1{#1}                                                     %(3)
 
 % put \hangversenumber into the <start> hook for a style such as \q1
 % in order to 'hang' verse numbers into the paragraph indent of the style
 \def\hangversenumber{\kern-1sp\relax}
+%-csty_hangverse
 
 % size to use for drop-cap style numbers; automatically calculated if not set
 \newdimen\dropnumbersize
