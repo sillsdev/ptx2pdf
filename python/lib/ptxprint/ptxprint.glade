@@ -9578,7 +9578,7 @@ a good way to easily remove a whole bunch of unwanted files.</property>
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkNotebook">
+                              <object class="GtkNotebook" id="pl_Viewer">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="vexpand">True</property>
