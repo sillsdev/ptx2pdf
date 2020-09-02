@@ -211,7 +211,8 @@ ModelMap = {
     "document/ifchaplabels":    ("c_useChapterLabel", lambda w,v: "%" if v else ""),
     "document/clabelbooks":     ("t_clBookList", lambda w,v: v.upper()),
     "document/clabel":          ("t_clHeading", None),
-    "document/clsinglecol":     ("c_clSingleColLayout", None),
+    "document/clsinglecol":     ("c_singleColLayout", None),
+    "document/clsinglecolbooks":("t_singleColBookList", None),
     "document/cloptimizepoetry": ("c_optimizePoetryLayout", None),
 
     "document/ifdiglot":        ("c_diglot", lambda w,v : "" if v else "%"),

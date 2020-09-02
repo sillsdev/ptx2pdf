@@ -103,7 +103,7 @@ class Splash(Thread):
 # Order is important, as the 1st object can be told to "grab_focus"
 _sensitivities = {
     "c_mainBodyText" :         ["gr_mainBodyText"],
-    "c_doublecolumn" :         ["gr_doubleColumn", "c_clSingleColLayout"],
+    "c_doublecolumn" :         ["gr_doubleColumn", "c_singleColLayout", "t_singleColBookList"],
     "c_useFallbackFont" :      ["btn_findMissingChars", "t_missingChars", "l_fallbackFont", "bl_fontExtraR"],
     "c_includeFootnotes" :     ["bx_fnOptions"],
     "c_includeXrefs" :         ["bx_xrOptions"],
@@ -119,7 +119,8 @@ _sensitivities = {
     "c_rhrule" :               ["s_rhruleposition", "gr_horizRule"],
     "c_introOutline" :         ["c_prettyIntroOutline"],
     "c_sectionHeads" :         ["c_parallelRefs"],
-    "c_useChapterLabel" :      ["t_clBookList", "l_clHeading", "t_clHeading", "c_clSingleColLayout", "c_optimizePoetryLayout"],
+    "c_useChapterLabel" :      ["t_clBookList", "l_clHeading", "t_clHeading", "c_optimizePoetryLayout"],
+    "c_singleColLayout" :      ["t_singleColBookList"],
     "c_autoToC" :              ["t_tocTitle", "gr_toc", "l_toc"],
     "c_marginalverses" :       ["s_columnShift"],
     "c_hdrverses" :            ["c_sepPeriod", "c_sepColon"],
@@ -978,6 +979,9 @@ class GtkViewModel(ViewModel):
     def onUseChapterLabelclicked(self, btn):
         self.sensiVisible("c_useChapterLabel")
         
+    def onUseSingleColLayoutclicked(self, btn):
+        self.sensiVisible("c_singleColLayout")
+        
     def onClickedIncludeFootnotes(self, btn):
         self.sensiVisible("c_includeFootnotes")
         
@@ -1610,6 +1614,13 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
         self.onViewerChangePage(None,None,pgnum)
 
+    def onEditPicListClicked(self, btn_editPicList):
+        pgnum = 0
+        self.builder.get_object("c_usePicList").set_active(True)
+        self.builder.get_object("nbk_Main").set_current_page(10)
+        self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
+        self.onViewerChangePage(None,None,pgnum)
+        
     def ontv_sizeallocate(self, atv, dummy):
         b = atv.get_buffer()
         it = b.get_iter_at_offset(-1)
