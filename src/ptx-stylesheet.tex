@@ -434,6 +434,7 @@
 
 % macros to switch digits between "letter" and "other" category; must be "letter" when reading USFM data,
 % but "other" when we want to read numeric values
+%+csty_fndigits
 \def\m@kedigitsletters{\catcode`0=\el@ven \catcode`1=\el@ven \catcode`2=\el@ven \catcode`3=\el@ven
  \catcode`4=\el@ven \catcode`5=\el@ven \catcode`6=\el@ven \catcode`7=\el@ven
  \catcode`8=\el@ven \catcode`9=\el@ven \relax}
@@ -442,6 +443,7 @@
  \catcode`8=\tw@lve \catcode`9=\tw@lve \relax}
 \def\el@ven{11}
 \def\tw@lve{12}
+%-csty_fndigits
 
 \let\b@ok\relax
 \def\ch@pter{}
@@ -450,6 +452,7 @@
 \def\m@rkverseL{\mark{\b@ok:\ch@pter:\v@rse}\marks1{\b@ok:\ch@pter:\v@rse}}
 \def\m@rkverseR{\mark{\b@okR:\ch@pter:\v@rse}\marks2{\b@okR:\ch@pter:\v@rse}}
 
+%+csty_addspecialhooks
 \begingroup
 \obeylines%
 \gdef\@ddspecialhooks{% there are a few special USFM markers that we give "magic" properties
@@ -476,9 +479,11 @@
  \let\nb=\ptx@nb% \nb is a special code that suppresses a paragraph break across \c
 }%
 \endgroup
-\def\unc@tcodespecials{\def\do##1{\catcode`##1=12 }\dospecials}
+
+def\unc@tcodespecials{\def\do##1{\catcode`##1=12 }\dospecials}
 \def\@@id#1#2#3#4\end{\gdef\id@@@{#1#2#3}} % get first 3 chars of the \id
-\def\ptx@fig #1\fig*{\d@figure{#1}\m@kedigitsletters}
+\def\ptx@fig #1\fig*{\d@figure{#1}\m@kedigitsletters}                           %(1)
+%-csty_addspecialhooks
 
 %+csty_stack
 % marker stack operations (mcst@ck)
@@ -536,6 +541,7 @@
 \newdimen\origb@selineskip %Save the initial baselineskip here
 
 
+%+csty_onetime
 \def\@netimesetup{
  % stuff to execute after loading all stylesheets but before processing the first USFM file
  \origb@selineskip=\baselineskip
@@ -545,8 +551,8 @@
  \@ddspecialhooks
  \global\lastptxfiletrue
  \the\@nithooks
- \let\@netimesetup=\relax}
-
+ \let\@netimesetup=\relax}                                                      %(1)
+%-csty_onetime
 
 \newif\iftildenbsp
 \tildenbsptrue
@@ -687,6 +693,7 @@
 \newif\ifDoubleSided \DoubleSidedtrue % binding gutter on alternate sides; use odd/even headers
 \def\debugBL{\MSG{\f@ntstyle, Baseline: \the\baselineskip}} % for scattering in usfm as desired.
 % calculate various dimensions based on the factors, units, etc that have been defined
+%+csty_setupsizes
 \def\s@tb@dyb@seline#1{%Parameter is {} for monoglot, L / R for diglot.
  \baselineskip=\origb@selineskip
  \le@dingunit=\LineSpacingFactor\FontSizeUnit
@@ -695,7 +702,8 @@
                                                            % set it will remain. Otherwise, the default
                                                            % of 14 will be applied here and set text will
                                                            % hold to the grid.
- \getp@ram{baseline}{p#1}\ifx\p@ram\relax\setp@ram{baseline}{p#1}{\the\baselineskip}\MSG{Baselineskip for p#1 undefined, set to \the\baselineskip}\fi
+ \getp@ram{baseline}{p#1}\ifx\p@ram\relax\setp@ram{baseline}{p#1}{\the\baselineskip}%
+ \MSG{Baselineskip for p#1 undefined, set to \the\baselineskip}\fi
 }
 \def\s@tupsizes{
  \s@tb@dyb@seline{}%
@@ -729,6 +737,7 @@
  \trace{p}{setupsizes: \the\pdfpagewidth, \the\pdfpageheight}
  \resetvsize
 }
+%-csty_setupsizes
 \newdimen\le@dingunit
 \newdimen\verticalsp@ceunit
 \newdimen\topm@rgin

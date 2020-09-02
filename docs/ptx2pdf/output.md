@@ -389,6 +389,9 @@ done. If the galley is empty then use whatever was passed to us, now in
 
 [=c_savepartialpaged]::
 
+The routine that implements the shipping out of a completed page in two columns
+
+
 ## Switching Column Layouts
 
 There are two macros that switch between the two layouts.
@@ -541,6 +544,20 @@ bottom margin.
 
 [=c_makecropmarks]::
 
+### Borders and Watermarks
+
+There are two kinds of overlays: borders and watermarks. They are in fact
+underlays in that they are output before the page's main content. A page border
+differs from a watermark in that it is positioned and scaled to fit the page and
+then are shifted according to the binding gutter. The box containing the border
+is created once and then copied into each page. This means that only one
+instance of the border image is actually loaded into the PDF.
+
+The watermark PDF file is simply underlaid on the output page and is scaled to
+fit the page edge (the `media` box).
+
+[=c_pageborders]::
+
 ## Processing Notes
 
 There are a number of routines that run against all the notes. Usually they then
@@ -591,8 +608,6 @@ say whether any notes have been seen.
 
 [=c_reduceavailht]::
 
-#### Paragraphed notes
-
 For paragraphed notes, we store the appropriate class (including diglot side)
 and then we collect the insert (vbox) number. We test to see if there is
 anything in the box. If there is, then we copy the box and turn it into a single
@@ -604,7 +619,17 @@ paragraphed).
 
 [=c_reduceavailht_para]::
 
+For separate notes, measuring their height is just a matter of adding the height
+and depth of the class vbox and adding an AboveNoteSpace.
 
+[=c_reduceavailhtsep]::
+
+### Clearing Notes
+
+At its core, clearing a note class is simply setting its box to empty. There is
+the added layer of perhaps needing to clear two classes for diglots.
+
+[=c_clearnoteclass]::
 
 [-d_output]::
 

@@ -661,6 +661,7 @@
     \message{p@ram=\p@ram}%
   \fi\egroup}
 
+%+c_reduceavailhtsep
 \def\reduceavailht@sep#1{
   \def\cl@sss{#1}%
   \ifdiglot\ifdiglotSepNotes\ifdiglotL\def\cl@sss{#1}\else\def\cl@sss{#1R}\fi\fi\fi
@@ -673,6 +674,7 @@
     \advance\availht by -\AboveNoteSpace
 %FIXME?: Shouldn't the above be using InterNoteSpace? 
   \fi}
+%-c_reduceavailhtsep
 
 \def\reduceavailht@sep@bal#1{%
   \TRACE{reduceavailht@sep@bal}%
@@ -692,6 +694,7 @@
     \advance\availht by -\AboveNoteSpace
   \fi}
 
+%+c_clearnoteclass
 \def\cle@rn@tecl@ss#1{%
   \ifdiglot
     \ifdiglotSepNotes
@@ -704,6 +707,7 @@
 \def\cle@rn@t@cl@ss#1{%
   \x@\let\x@\th@cl@ss\csname note-#1\endcsname
   \global\setbox\th@cl@ss=\box\voidb@x}
+%-c_clearnoteclass
 
 % increment or decrement a given \dimen by the height of a given \box, unless void
 % round to baselineskip assuming 0.5\baselineskip already added
@@ -1042,10 +1046,10 @@
 \newif\ifrebalance
 %-c_twocoltrial
 
+%+c_makecolumngutter
 \newdimen\columnshift \columnshift=0pt
 \newdimen\ColumnGutterRuleSkip \ColumnGutterRuleSkip=0pt
 
-%+c_makecolumngutter
 %makecolumngutter{rule height}{vbox height}{depth}
 \def\makecolumngutter#1#2#3{\hfil
   \dimen4=#1\advance\dimen4-\ColumnGutterRuleSkip%\advance\dimen4 by #3
@@ -1131,6 +1135,7 @@
   %\msg{Starting diglot partial: \the\ht\partial, pagetotal: \the\pagetotal, vsize: \the\vsize}
 } 
 
+%+c_twocolpageout
 \def\twocolp@geout{%This gets used a few times
   \trace{o}{twocolp@geout cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins}
   \def\pagecontents{
@@ -1146,7 +1151,8 @@
     }}\plainoutput
     \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
     \nextshipout
-}%
+}
+%-c_twocolpageout
 
 %+c_singlecolumn
 % to switch back to single column, we reset the page size parameters

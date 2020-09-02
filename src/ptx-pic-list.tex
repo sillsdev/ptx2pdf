@@ -40,15 +40,10 @@
 
 % Compare ptx-adj-list.tex for comments on the code.
 
+%+cpic_parse
 \def\parsep@cline #1 #2.#3 #4\end{%
   \uppercase{\def\piclstb@@kref{#1}}%
   \xdef\p@cref{\piclstb@@kref#2.#3}\gdef\p@cspec{#4}%
-}
-
-\def\dop@c{%
-  \x@\d@figure\x@{\p@cspec}%
-  \readnextp@c
-  \ch@ckpiclist%Repeat?
 }
 
 \def\readnextp@c{%
@@ -71,7 +66,9 @@
   \fi
 }
 \def\P@R{\par}
+%-cpic_parse
 
+%+cpic_read
 \newread\p@clist
 \def\openpiclist "#1" {%
   \closein\p@clist
@@ -85,6 +82,14 @@
 \def\closepiclist{%
   \ifeof\p@clist\else \errmessage{Did not use all pictures in list. Waiting for \p@cref}\fi
   \closein\p@clist
+}
+%-cpic_read
+
+%+cpic_check
+\def\dop@c{%
+  \x@\d@figure\x@{\p@cspec}%
+  \readnextp@c
+  \ch@ckpiclist%Repeat?
 }
 
 \def\ch@ckpiclist{%
@@ -101,6 +106,7 @@
   \trace{P}{End of checkpic}%
 }
 
-\addtopreversehooks{\ch@ckpiclist}
+\addtopreversehooks{\ch@ckpiclist}                                              %(1)
+%-cpic_check
 
 \endinput

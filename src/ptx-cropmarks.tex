@@ -113,16 +113,10 @@
     \let\g@tterside=0 % figure out if we're adding a binding gutter, and which side
     \ifBindingGutter
       \ifDoubleSided
-        \ifodd\pageno
-          \ifRTL \let\g@tterside=R %
-          \else  \let\g@tterside=L \fi
-        \else
-          \ifRTL \let\g@tterside=L %
-          \else  \let\g@tterside=R \fi
+        \ifodd\pageno\ifRTL\let\g@tterside=R \else\let\g@tterside=L\fi
+        \else\ifRTL\let\g@tterside=L \else\let\g@tterside=R\fi
         \fi
-      \else
-        \ifRTL \let\g@tterside=R %
-        \else  \let\g@tterside=L \fi
+      \else\ifRTL\let\g@tterside=R\else\let\g@tterside=L\fi
       \fi
     \fi
     \edef\oldup{\the\XeTeXupwardsmode}
@@ -153,6 +147,7 @@
 }
 %-c_shipwithcropmarks
 
+%+c_shipcomplete
 \def\shipcompletep@gewithcr@pmarks#1{% \shipout box #1, adding cropmarks if required
                                      % but without adding margins, borders, etc
                                      % (used for \includepdf)
@@ -181,7 +176,7 @@
     \fi
     \trace{p}{Pagesize \the\pdfpagewidth, \the\pdfpageheight}
     % End inserted \special line
-    \offinterlineskip
+    \offinterlineskip                                                           %(1)
     \vbox to \pdfpageheight{\vss
       \hbox to \pdfpagewidth{\hss#1\hss}
       \vss}
@@ -189,6 +184,7 @@
     \docr@pmarks
   }%
 }
+%-c_shipcomplete
 
 %+c_docropmarks
 \def\docr@pmarks{%
@@ -210,6 +206,7 @@
     \fi}
 %-c_docropmarks
 
+%+c_pageborders
 \def\PageBorder{}
 \newbox\b@rder
 \def\pl@ceborder{\ifx\PageBorder\empty\else % if \PageBorder is empty, this does nothing
@@ -231,6 +228,7 @@
 \def\m@rgepdf{\ifx\MergePDF\empty\else
   \vbox to 0pt{\XeTeXpdffile \MergePDF \relax media\relax}
 \fi}
+%-c_pageborders
 
 %+c_plainoutput
 \m@rksonpagefalse

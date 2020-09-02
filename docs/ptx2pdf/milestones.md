@@ -365,7 +365,7 @@ up to use hangprintv@rse to handle verses and bridge verses.
 [=cmargin_init]::
 
 The `marginverse` macro is inside a `\lowercase` with handling for space and
-`*`. It collects the verse number text and calls any preverse hooks. It then
+`\*`. It collects the verse number text and calls any preverse hooks. It then
 splits the verse text into from and to verse components. Then it sets the verse
 in the styling for the verse. Then it measures the height of the box plus the
 descent of the font. It now redirects `\everypar` since we intend to create a

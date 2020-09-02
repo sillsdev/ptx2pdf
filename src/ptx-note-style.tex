@@ -156,6 +156,7 @@
 }
 %-cnote_startnote
 
+%+cnote_endnote
 \def\endn@testyle*{\TRACE{endn@testyle}%
  \trace{f}{endn@testyle}%
  \end@llcharstyles % end any character styles within the note
@@ -171,6 +172,7 @@
  \endgroup\n@xt}
 \newif\ifsp@cebefore
 \newif\ifskipn@testyle
+%-cnote_endnote
 
 %+cnote_autonum
 \def\inc@utonum#1{\count255=0\csname autonum #1\endcsname % increment note counter for class #1
@@ -185,10 +187,11 @@
 \fi
 %-cnote_autonum
 
+%+cnote_declare
 \edef\pl@scatcode{\the\catcode`+}
 \catcode`+=11
 \edef\pl@s{+}
 \catcode`+=\pl@scatcode
 \def\min@s{-}
-
+%-cnote_declare
 \endinput

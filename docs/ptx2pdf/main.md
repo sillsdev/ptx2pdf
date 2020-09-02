@@ -35,7 +35,9 @@ listings:
 
 <!-- # References -->
 
-<!-- # Pictures -->
+# Pictures
+
+[=d_figures]::
 
 <!-- # Diglot -->
 

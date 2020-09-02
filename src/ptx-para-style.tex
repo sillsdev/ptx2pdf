@@ -182,7 +182,8 @@
  %run code to insert picb@x / picb@xR at the right time.
  \edef\eotpn@me{at@ndofthispar\ifdiglot\ifdiglotL L\else R\fi\fi}% Which endofthispar macro?
  \x@\let\x@\pn@xt\csname \eotpn@me\endcsname
- \trace{g}{doendofthispar \ch@pter:\v@rse\ifdiglot\ifdiglotL L \else R \fi\fi\space \the\pagetotal, \the\holdinginserts, page/chunk-\ifp@gestart start\else -middle\fi}%
+ \trace{g}{doendofthispar \ch@pter:\v@rse\ifdiglot\ifdiglotL L \else R \fi\fi\space \the\pagetotal,
+           \the\holdinginserts, page/chunk-\ifp@gestart start\else -middle\fi}%
  \temptrue %If iftemp stays true, then it's a valid insertion point.
  \ifx\pn@xt\empty\tempfalse\fi
  \ifinn@te\tempfalse\fi %No pictures in notes!

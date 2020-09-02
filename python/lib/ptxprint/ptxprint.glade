@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 
+<!-- Generated with glade 3.22.2 
 
 The MIT License (MIT)
 
@@ -807,9 +807,9 @@ saved configuration.</property>
         <col id="3" translatable="yes">col</col>
         <col id="4">100</col>
         <col id="5" translatable="yes">bl</col>
-        <col id="6" translatable="yes"/>
+        <col id="6" translatable="yes">None</col>
         <col id="7" translatable="yes">1:16</col>
-        <col id="8" translatable="yes"/>
+        <col id="8" translatable="yes">None</col>
       </row>
       <row>
         <col id="0" translatable="yes">JHN 3:16-17</col>
@@ -820,7 +820,7 @@ saved configuration.</property>
         <col id="5" translatable="yes">t</col>
         <col id="6" translatable="yes">Image of a group of people</col>
         <col id="7" translatable="yes">3:16</col>
-        <col id="8" translatable="yes"/>
+        <col id="8" translatable="yes">None</col>
       </row>
       <row>
         <col id="0" translatable="yes">LUK 15:8</col>
@@ -831,7 +831,7 @@ saved configuration.</property>
         <col id="5" translatable="yes">t</col>
         <col id="6" translatable="yes">12 men listening to Jesus</col>
         <col id="7" translatable="yes">15:8</col>
-        <col id="8" translatable="yes"/>
+        <col id="8" translatable="yes">None</col>
       </row>
       <row>
         <col id="0" translatable="yes">ACT 18:27</col>
@@ -842,7 +842,7 @@ saved configuration.</property>
         <col id="5" translatable="yes">b</col>
         <col id="6" translatable="yes">Map Creator map</col>
         <col id="7" translatable="yes">18:27</col>
-        <col id="8" translatable="yes"/>
+        <col id="8" translatable="yes">None</col>
       </row>
       <row>
         <col id="0" translatable="yes">ROM 8:28</col>
@@ -851,7 +851,7 @@ saved configuration.</property>
         <col id="3" translatable="yes">col</col>
         <col id="4">30</col>
         <col id="5" translatable="yes">cr</col>
-        <col id="6" translatable="yes"/>
+        <col id="6" translatable="yes">None</col>
         <col id="7" translatable="yes">8:28</col>
         <col id="8" translatable="yes">Gordon Thompson and friends.</col>
       </row>
@@ -862,9 +862,9 @@ saved configuration.</property>
         <col id="3" translatable="yes">col</col>
         <col id="4">100</col>
         <col id="5" translatable="yes">p</col>
-        <col id="6" translatable="yes"/>
+        <col id="6" translatable="yes">None</col>
         <col id="7" translatable="yes">3:16-19</col>
-        <col id="8" translatable="yes"/>
+        <col id="8" translatable="yes">None</col>
       </row>
       <row>
         <col id="0" translatable="yes">REV 3:20</col>
@@ -873,9 +873,9 @@ saved configuration.</property>
         <col id="3" translatable="yes">col</col>
         <col id="4">80</col>
         <col id="5" translatable="yes">tr</col>
-        <col id="6" translatable="yes"/>
+        <col id="6" translatable="yes">None</col>
         <col id="7" translatable="yes">3:20</col>
-        <col id="8" translatable="yes"/>
+        <col id="8" translatable="yes">None</col>
       </row>
       <row>
         <col id="0" translatable="yes">GLO 1:0</col>
@@ -918,6 +918,11 @@ saved configuration.</property>
       <!-- column-name book -->
       <column type="gchararray"/>
     </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">NONE</col>
+      </row>
+    </data>
   </object>
   <object class="GtkListStore" id="ls_chapfrom">
     <columns>
@@ -998,7 +1003,7 @@ saved configuration.</property>
     <data>
       <row>
         <col id="0" translatable="yes">Default</col>
-        <col id="1" translatable="yes"/>
+        <col id="1" translatable="yes">None</col>
       </row>
       <row>
         <col id="0" translatable="yes">Arabic-Hindi</col>
@@ -1425,10 +1430,6 @@ in the Windows system.</property>
         <col id="0" translatable="yes">Right</col>
         <col id="1" translatable="yes">r</col>
       </row>
-      <row>
-        <col id="0" translatable="yes">N/A</col>
-        <col id="1" translatable="yes"/>
-      </row>
     </data>
   </object>
   <object class="GtkListStore" id="ls_plMirror">
@@ -1536,6 +1537,7 @@ in the Windows system.</property>
     <data>
       <row>
         <col id="0">Latn</col>
+        <col id="1">Latn</col>
       </row>
     </data>
   </object>
@@ -2014,6 +2016,9 @@ of the same Paratext project.</property>
                                         <property name="active">0</property>
                                         <property name="has_entry">True</property>
                                         <property name="active_id">0</property>
+                                        <items>
+                                          <item translatable="yes">(None)</item>
+                                        </items>
                                         <signal name="changed" handler="onConfigNameChanged" swapped="no"/>
                                         <child internal-child="entry">
                                           <object class="GtkEntry" id="t_savedConfig">
@@ -2524,7 +2529,7 @@ page for binding (millimeters).</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">end</property>
-                                        <property name="label" translatable="yes">      </property>
+                                        <property name="label" translatable="yes"> </property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">2</property>
@@ -8795,6 +8800,9 @@ settings for the project)</property>
                                 <property name="halign">start</property>
                                 <property name="active">0</property>
                                 <property name="active_id">0</property>
+                                <items>
+                                  <item translatable="yes">(None)</item>
+                                </items>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>

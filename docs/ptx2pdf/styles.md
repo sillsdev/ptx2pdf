@@ -753,7 +753,7 @@ token be the content of `\newinsert` and call that instead. Sigh.
 
 [=cnote_makenote]::
 
-### Note markers
+### Start Notes
 
 When a note style marker is encountered we call `\n@testyle`. Note styles are
 closed just like character styles. In this routine we analyse the character
@@ -845,6 +845,23 @@ of the routine. We capture the note class into which the note is going, with
 appropriate diglot adaptation. Then we start the insert. An insert is a vbox
 that is inserted into the main contribution list before the main text line it is
 part of. The insert starts a vbox and we start a group for it.
+
+### Ending Notes
+
+When we come to close off a note we need to end all the active character styles.
+Then if we are skipping this note, then don't run any `end` hook. Then we close
+off the note group, which closes the footnote and executes any `aftergroup` code
+it has. Then if we are in a heading, there is an extra level of grouping to
+collect all the notes in a heading block at the end. We clear some flags.
+
+Very often users in effect type a space both before a note marker and also after
+the end of the closing note marker. We only want one of those spaces, so if
+there was a space before the starting marker, skip any space following the
+closing note marker. The `after` hooks were collected when the note started and
+are executed here. Finally we end the whole group that was created when we
+started this note and perhaps skip any following spaces.
+
+[=cnote_endnote]::
 
 ### Paragraphed Notes
 

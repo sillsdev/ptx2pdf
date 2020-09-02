@@ -1,5 +1,7 @@
 [+d_setup]::
 
+## Initialising
+
 The first file to be loaded is `paratext2.tex` and it has some initial
 definitions and set up that it does. The macros make extensive use of
 bidirectional controls and for this we need ETeX and its extensions. This is a
@@ -60,11 +62,116 @@ points in style processing: before, start, end, after.
 
 [=csty_sethook]::
 
-## Declarations
+### Declarations
 
 Various useful declarations. The parargraph types and positions:
 
 [=cpar_strings]::
+
+From notes we declare `+` and `-` letters:
+
+[=cnote_declare]::
+
+For figures we declare various strings to compare against:
+
+[=cfig_declare]::
+
+### Utility Functions
+
+There are numerous utility functions spread around the code.
+
+When processing USFM text we treat numbers as letters. This protects us from
+accidental calculations, etc. We have macros for switching the interpretation of
+digits.
+
+[=csty_fndigits]::
+
+
+### Tracing
+
+The PTX macros have a tracing mechanism by which tracing can be added to any
+job. There are various different log traces that are available and a job may
+enable as many as it wants. Each trace has an identifier.
+
+[=tracing-codes]::
+
+Within the code, text may be output to a trace using the `\trace` macro that
+takes an identifier and the text to output. A user configuration may use the
+`tracing` macro with an identifier as its parameter to enable that trace. Each
+trace state is held in a token and when `\trace` runs it tests the token for its
+identifier to see whether to write out the text or not. If no tracing is enabled
+then the whole mechanism is short circuited.
+
+[=tracing]::
+
+## Running
+
+Here we examine the processing of a USFM file. The first step in loading a USFM
+file is to do any one time setup. Such setup occurs before the first file is
+processed but is also blocked from executing again before any other files in the
+job.
+
+### One Time Setup
+
+This code is run once, since the definition is overwritten at the end (1). It
+calls various other setup macros which we will examine here. We capture the
+current baselineskip as being the default baselineskip for the document. Then we
+call the various setup macros and also various hook setup routines. Then we set
+a flag to say that we are inside a USFM file. Now we can call the job `init`
+hooks.
+
+[=csty_onetime]::
+
+First we set up various sizes. Setting the body baseline involves setting the
+baselineskip and the `\le@dingunit` and the vertical space unit. If the
+baselineskip is too small then set it to $14 x LineSpaceFactor x FontSizeUnit$.
+The LineSpaceFactor is usually 1.0 which given the fontsize for `\p` is
+typically 12 in the stylesheet, gives us a text size to leading of 12 units on
+14 units where units are the FontSizeUnit. If the `baseline` parameter for `\p`
+is not set, then set it. This applies to diglot sided versions too.
+
+So to set up sizes we set up the baselineskip and set `lineskiplimit` to
+something pretty hugely negative which means that `lineskip` will not kick in
+unless someone asks for that. We set the baselineskip from the `\p` style, even
+if we've just set it. We set the amount of space to add to the top of a column
+to be a baseline. We calculate the gutter width and the total textwidth
+available to us. We also calculate the width of a double column column. We do
+the same for the diglot column widths. We set the actual textwidth (`hsize`) to
+be the single column width minus 2 columnshifts. `columnshift` is usually 0 for
+single column text, so this is merely calculating how much text width we have
+for 2 columns or 1 single column. We calculate the real margin dimensions and
+from that the textheight, which we then set as the page breaking page height. We
+set up the physical page size for the PDF file and then reset the vsize to
+textheight.
+
+[=csty_setupsizes]::
+
+There are a number of special case USFM markers that do more than simply switch
+styles and style types. These often need special handling. We declare them here.
+
+The whole definition is grouped in a group with `\obeylines` to enable us to
+access `^^M` end of line character. `\h` is used to indicate the book name as
+printed in headings and elsewhere. Since we are collecting a string, we turn off
+all the active characters and then use pattern matching to capture the rest of
+the line as the book name. Which variable is set depends on diglot sides.
+
+The `\cl` chapter label has two modes of usage. If it occurs anywhere than
+between a `\c` and the following paragraph start, it is treated as a global
+setting. Otherwise it is simply a paragraph style that clears any drop chapter
+number. Collecting the chapter label globally is almost identical to processing
+`\h`.
+
+The `\id` line is generaly useful to collect, particularly to output as part of
+any cropmarks. In addition we collect the first up to 3 characters as the book
+id. Again we do the same trick for handling the id line. In addition we convert
+space back to its normal interpretation and so any initial or final space will
+be ignored.
+
+`\fig` simply captures its contents and then calls `\d@figure` with that
+contents (1). `\nb` is a special non-breaking paragraph marker and needs special
+handling which we redirect to here.
+
+[=csty_addspecialhooks]::
 
 
 

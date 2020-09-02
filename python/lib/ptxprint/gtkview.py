@@ -167,6 +167,12 @@ _nonsensitivities = {
     # "c_showDiglotBorderTab" :  ["tb_DiglotBorder"],
     # "c_showViewerTab" :        ["tb_ViewerEditor"]
 # }
+_object_classes = {
+    "printbutton": ("b_print", "b_frefresh"),
+    "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
+    "mainnb":      ("nbk_Main", ),
+    "viewernb":    ("nbk_Viewer", ),
+}
 class GtkViewModel(ViewModel):
 
     def __init__(self, settings_dir, workingdir, userconfig, scriptsdir):
@@ -189,15 +195,9 @@ class GtkViewModel(ViewModel):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
-        for a in ("b_print", "b_frefresh"):
-            pb = self.builder.get_object(a)
-            pbc = pb.get_style_context()
-            pbc.add_class("printbutton")
-        for a in ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"):
-            b = self.builder.get_object(a)
-            # b.get_child().set_justify(Gtk.Justification.CENTER)
-            c = b.get_style_context()
-            c.add_class("fontbutton")
+        for k, v in _object_classes.items():
+            for a in v:
+                self.builder.get_object(a).get_style_context().add_class(k)
 
         scripts = self.builder.get_object("ls_scripts")
         scripts.clear()
@@ -261,7 +261,8 @@ class GtkViewModel(ViewModel):
             .printbutton:active { background-color: chartreuse; background-image: None }
             .fontbutton {font-size: smaller}
             progress, trough {min-height: 24px}
-            notebook tab {min-height: 0pt; margin: 0pt; padding-top: 3pt; padding-bottom: 3pt} """
+            .mainnb tab {min-height: 0pt; margin: 0pt; padding-bottom: 15pt}
+            .viewernb tab {min-height: 0pt; margin: 0pt; padding-bottom: 3pt} """
         provider = Gtk.CssProvider()
         provider.load_from_data(css.encode("utf-8"))
         Gtk.StyleContext().add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
