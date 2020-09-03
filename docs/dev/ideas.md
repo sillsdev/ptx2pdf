@@ -60,4 +60,10 @@ One method of using these might be to apply hooks based on milestones.
 blocks of extended study material.
 \cat may  appear within footnotes too. There should be some (pseudo stylesheet?) method of applying styling to elements in a given category.
 
+What sort of things could a \cat alter / impose?
+* Font, fontsize, justification, baseline etc, potentially for all elements
+* Background colour, default foreground colour
+* Watermark / cutout image.
+
+
 

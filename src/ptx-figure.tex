@@ -657,17 +657,17 @@
     \setbox0=\vsplit\wholepagepic to \PaperHeight
     \setbox0=\vbox{\unvbox 0\global\count254=\lastpenalty}%
     \trace{g}{lp:\t box0 is \the\ht0\space high, th:\the\textheight}%
-    \ifnum\count254=9
-      \dimen9=\pdfpagewidth \dimen8=\pdfpageheight
-      \shipwithcr@pmarks{\vbox{\box0}}%
-      \pdfpagewidth=\dimen9 \pdfpageheight=\dimen8
-      \advancepageno
-    \else
+    \ifnum\count254=11
       \def\pagecontents{
         \trace{g}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins}%
         \box0%
         }%
       \plainoutput
+    \else% expected values: 9 (full page) or 10000 (too big)
+      \dimen9=\pdfpagewidth \dimen8=\pdfpageheight
+      \shipwithcr@pmarks{\vbox{\box0}}%
+      \pdfpagewidth=\dimen9 \pdfpageheight=\dimen8
+      \advancepageno
     \fi
   \fi
 }
