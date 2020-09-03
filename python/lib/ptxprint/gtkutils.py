@@ -60,10 +60,14 @@ def setWidgetVal(wid, w, value):
     elif wid.startswith("btn_"):
         w.set_tooltip_text(value)
     elif wid.startswith("bl_"):
-        self.setFontButton(w, *value)
+        setFontButton(w, *value)
     elif wid.startswith("lb_"):
         w.set_label(value)
     elif wid.startswith("l_"):
         w.set_text(value)
+
+def setFontButton(btn, name, style):
+    btn.font_info = (name, style)
+    btn.set_label("{}\n{}".format(name, style))
 
 

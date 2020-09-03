@@ -1,5 +1,4 @@
 
-from collections import namedtuple
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.view import refKey
 from gi.repository import Gtk
@@ -19,10 +18,7 @@ _form_structure = {
     'hpos':     'fcb_plHoriz',
     'nlines':   's_plLines',
 }
-
 _comblist = ['pgpos', 'hpos', 'nlines']
-
-#PicListItem = namedtuple("PicListItem", _piclistfields)
 
 class PicList:
     def __init__(self, view, listview,builder):

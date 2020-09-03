@@ -16,7 +16,7 @@ from gi.repository import GtkSource
 import xml.etree.ElementTree as et
 from ptxprint.font import TTFont, initFontCache, fccache
 from ptxprint.view import ViewModel, Path
-from ptxprint.gtkutils import getWidgetVal, setWidgetVal
+from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton
 from ptxprint.runner import StreamTextBuffer
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from ptxprint.piclist import PicList
@@ -393,10 +393,6 @@ class GtkViewModel(ViewModel):
             return super(GtkViewModel, self).get(wid)
         return getWidgetVal(wid, w, default=default, asstr=asstr, sub=sub)
 
-    def setFontButton(self, btn, name, style):
-        btn.font_info = (name, style)
-        btn.set_label("{}\n{}".format(name, style))
-
     def set(self, wid, value, skipmissing=False):
         w = self.builder.get_object(wid)
         if w is None:
@@ -404,6 +400,7 @@ class GtkViewModel(ViewModel):
                 print("Can't find {} in the model".format(wid))
             super(GtkViewModel, self).set(wid, value)
             return
+        setWidgetVal(wid, w, value)
 
     def onDestroy(self, btn):
         Gtk.main_quit()
@@ -1174,7 +1171,7 @@ class GtkViewModel(ViewModel):
             style = cb.get_model()[cb.get_active()][0]
             if style == "Regular":
                 style = ""
-            self.setFontButton(btn, name, style)
+            setFontButton(btn, name, style)
         elif response == Gtk.ResponseType.CANCEL:
             pass
         dialog.set_keep_above(False)
@@ -1384,7 +1381,7 @@ class GtkViewModel(ViewModel):
             fblabel = self.builder.get_object(fb).get_label()
             if fblabel == "Select font...":
                 w = self.builder.get_object(fb)
-                self.setFontButton(w, ptfont, "")
+                setFontButton(w, ptfont, "")
                 self.onFontChanged(w)
 
     def updateDialogTitle(self):
