@@ -845,7 +845,7 @@ class GtkViewModel(ViewModel):
 
     def onSaveEdits(self, btn):
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
-        buf = self.fileViews[pg][0]
+        buf = self.fileViews[pg-1][0]
         fpath = self.builder.get_object("l_{}".format(pg)).get_tooltip_text()
         text2save = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
         openfile = open(fpath,"w", encoding="utf-8")
@@ -1415,9 +1415,9 @@ class GtkViewModel(ViewModel):
                 txt = inf.read()
                 # if len(txt) > 32000:
                     # txt = txt[:32000]+"\n\n etc...\n\n"
-            self.fileViews[pgnum][0].set_text(txt)
+            self.fileViews[pgnum-1][0].set_text(txt)
         else:
-            self.fileViews[pgnum][0].set_text("\nThis file doesn't exist yet!\n\nEdit here and Click 'Save' to create it.")
+            self.fileViews[pgnum-1][0].set_text("\nThis file doesn't exist yet!\n\nEdit here and Click 'Save' to create it.")
 
     def onEditScriptFile(self, btn):
         # Ask MH how to do this properly (in one line!?) with Path from pathlib

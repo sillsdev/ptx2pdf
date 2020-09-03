@@ -566,7 +566,7 @@ class ViewModel:
         ishiderefs = self.get("c_fighiderefs")
         lines = []
         if not len(picinfos):
-            return []
+            return ({}, [])
         if isTemp:
             lines.append("% TEMPORARY PicList: ({}) - DO NOT EDIT\n\n".format(self.get("_date")))
         else:
@@ -615,7 +615,7 @@ class ViewModel:
         xl = []
         outdir = self.configPath(cfgname=self.configName())
         if outdir is None:
-            return
+            return {}
         outdir = os.path.join(outdir, "PicLists")
         existingList = []
         existingFilelist = []
