@@ -16,8 +16,10 @@ from gi.repository import GtkSource
 import xml.etree.ElementTree as et
 from ptxprint.font import TTFont, initFontCache, fccache
 from ptxprint.view import ViewModel, Path
+from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.runner import StreamTextBuffer
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
+from ptxprint.piclist import PicList
 import configparser
 import traceback
 from threading import Thread
@@ -173,6 +175,7 @@ _object_classes = {
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", ),
 }
+
 class GtkViewModel(ViewModel):
 
     def __init__(self, settings_dir, workingdir, userconfig, scriptsdir):
@@ -220,17 +223,19 @@ class GtkViewModel(ViewModel):
                 Gtk.STOCK_OK, Gtk.ResponseType.OK)
 
         self.fileViews = []
-        self.buf = {}
-        for i,k in enumerate(["PicList", "AdjList", "FinalSFM", "TeXfile", "XeTeXlog", "Settings"]):
-            self.buf[i] = GtkSource.Buffer()
+        self.buf = []
+        for i,k in enumerate(["AdjList", "FinalSFM", "TeXfile", "XeTeXlog", "Settings"]):
+            self.buf.append(GtkSource.Buffer())
             view = GtkSource.View.new_with_buffer(self.buf[i])
             scroll = self.builder.get_object("scroll_" + k)
             scroll.add(view)
             self.fileViews.append((self.buf[i], view))
-            if i > 2:
+            if i > 1:
                 view.set_show_line_numbers(True)  # Turn these ON
             else:
                 view.set_show_line_numbers(False)  # Turn these OFF
+        self.picListView = PicList(self.builder.get_object('tv_picListEdit'),
+                                   self.builder.get_object('tv_picList'), self.builder)
 
         self.logbuffer = StreamTextBuffer()
         self.builder.get_object("tv_logging").set_buffer(self.logbuffer)
@@ -386,39 +391,7 @@ class GtkViewModel(ViewModel):
             if not skipmissing and not wid.startswith("_"):
                 print("Can't find {} in the model".format(wid))
             return super(GtkViewModel, self).get(wid)
-        v = None
-        if wid.startswith("ecb_"):
-            model = w.get_model()
-            i = w.get_active()
-            if i < 0:
-                e = w.get_child()
-                if e is not None and isinstance(e, Gtk.Entry):
-                    v = e.get_text()
-            elif model is not None:
-                v = model[i][sub]
-        elif wid.startswith("fcb_"):
-            return w.get_active_id()
-        elif wid.startswith("t_"):
-            v = w.get_text()
-        # elif wid.startswith("f_"):
-            # v = w.get_font_name()
-        elif wid.startswith("c_"):
-            v = w.get_active()
-        elif wid.startswith("s_"):
-            v = "{:.3f}".format(w.get_value())
-        elif wid.startswith("btn_"):
-            v = w.get_tooltip_text()
-        elif wid.startswith("bl_"):
-            v = getattr(w, 'font_info', (None, None))
-            if asstr:
-                v = "\n".join(v)
-        elif wid.startswith("lb_"):
-            v = w.get_label()
-        elif wid.startswith("l_"):
-            v = w.get_text()
-        if v is None:
-            return default
-        return v
+        return getWidgetVal(wid, w, default=default, asstr=asstr, sub=sub)
 
     def setFontButton(self, btn, name, style):
         btn.font_info = (name, style)
@@ -431,35 +404,6 @@ class GtkViewModel(ViewModel):
                 print("Can't find {} in the model".format(wid))
             super(GtkViewModel, self).set(wid, value)
             return
-        if wid.startswith("ecb_"):
-            model = w.get_model()
-            e = w.get_child()
-            for i, v in enumerate(model):
-                if v[w.get_entry_text_column()] == value:
-                    w.set_active(i)
-                    break
-            else:
-                if e is not None and isinstance(e, Gtk.Entry):
-                    e.set_text(value)
-        elif wid.startswith("fcb_"):
-            w.set_active_id(value)
-        elif wid.startswith("t_"):
-            w.set_text(value)
-        elif wid.startswith("f_"):
-            w.set_font_name(value)
-            # w.emit("font-set")
-        elif wid.startswith("c_"):
-            w.set_active(value)
-        elif wid.startswith("s_"):
-            w.set_value(float(value))
-        elif wid.startswith("btn_"):
-            w.set_tooltip_text(value)
-        elif wid.startswith("bl_"):
-            self.setFontButton(w, *value)
-        elif wid.startswith("lb_"):
-            w.set_label(value)
-        elif wid.startswith("l_"):
-            w.set_text(value)
 
     def onDestroy(self, btn):
         Gtk.main_quit()
@@ -769,8 +713,6 @@ class GtkViewModel(ViewModel):
         self.set("c_prettyIntroOutline", False)
         if status and self.get("t_booklist") == "" and self.prjid is not None:
             self.updateDialogTitle()
-            # pass
-            # self.onChooseBooksClicked(None)
         else:
             toc = self.builder.get_object("c_autoToC") # Ensure that we're not trying to build a ToC for a single book!
             toc.set_sensitive(status)
@@ -780,16 +722,31 @@ class GtkViewModel(ViewModel):
             bks = self.getBooks()
             if len(bks) > 1:
                 self.builder.get_object("ecb_examineBook").set_active_id(bks[0])
+        self.updatePicList()
+
+    def getFigures(self, bk, suffix="", sfmonly=False, media=None, usepiclists=False):
+        if self.picListView.isEmpty():
+            return super().getFigures(bk, suffix=suffix, sfmonly=sfmonly, media=media,
+                                      usepiclists=usepiclists)
+        return self.picListView.getinfo()
+
+    def updatePicList(self, bks=None, priority="Both", output=False):
+        self.picListView.clear()
+        if bks is None:
+            bks = self.getBooks()
+        if len(bks) and len(bks[0]) and bks[0] != 'NONE':
+            picinfos = self.generatePicLists(bks, priority, output=output)
+            self.picListView.load(picinfos)
 
     def onGenerateClicked(self, btn):
         priority=self.get("fcb_diglotPicListSources")[:4]
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
+        bks2gen = self.getBooks()
         if pg == 0: # PicList
-            bks2gen = self.getBooks()
             if not self.get('c_multiplebooks') and self.get("ecb_examineBook") != bks2gen[0]: 
-                self.generatePicLists([self.get("ecb_examineBook")], priority)
+                self.updatePicList(bks=[self.get("ecb_examineBook")], priority=priority, output=True)
             else:
-                self.generatePicLists(bks2gen, priority)
+                self.updatePicList(bks=bks2gen, priority=priority, output=True)
         elif pg == 1: # AdjList
             self.generateAdjList()
         self.onViewerChangePage(None,None,pg)
@@ -826,7 +783,11 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("btn_NextBook").set_sensitive(False)
         fndict = {0 : ("PicLists", ".piclist"), 1 : ("AdjLists", ".adj"), 2 : ("", ""), \
                   3 : ("", ".tex"), 4 : ("", ".log")}
-        if pgnum <= 2:  # (PicList,AdjList,SFM)
+
+        if pgnum < 1:   # PicList
+            return
+
+        elif pgnum <= 2:  # (AdjList,SFM)
             fname = self.getBookFilename(bk, prjid)
             if pgnum == 2:
                 fpath = os.path.join(self.working_dir, fndict[pgnum][0], fname)
@@ -849,21 +810,23 @@ class GtkViewModel(ViewModel):
                 genBtn.set_sensitive(True)
                 # genBtn.set_tooltip_text(genTip)
 
-        elif 3 <= pgnum <= 4:  # (TeX,Log)
+        elif pgnum <= 4:  # (TeX,Log)
             fpath = self.baseTeXPDFname()+fndict[pgnum][1]
 
         elif pgnum == 5: # View/Edit one of the 4 Settings files or scripts
             fpath = self.builder.get_object("l_{}".format(pgnum)).get_tooltip_text()
             if fpath == None:
-                self.fileViews[pgnum][0].set_text("\n Use the 'Advanced' tab to select which settings you want to view or edit.")
+                self.fileViews[pgnum-1][0].set_text("\n Use the 'Advanced' tab to select which settings you want to view or edit.")
                 self.builder.get_object("l_{}".format(pgnum)).set_text("Settings")
                 return
 
         elif pgnum == 6: # Just show the Folders & Links page
             self.builder.get_object("l_{}".format(pgnum)).set_text("Folders & Links")
             return
+
         else:
             return
+
         if os.path.exists(fpath):
             if 0 <= pgnum <= 1 or pgnum == 5:
                 self.builder.get_object("gr_editableButtons").set_sensitive(True)
@@ -874,10 +837,10 @@ class GtkViewModel(ViewModel):
                     txt = txt[:60000]+"\n\n------------------------------------- \
                                           \n[File has been truncated for display] \
                                           \nClick on View/Edit... button to see more."
-            self.fileViews[pgnum][0].set_text(txt)
+            self.fileViews[pgnum-1][0].set_text(txt)
         else:
             self.builder.get_object("l_{}".format(pgnum)).set_tooltip_text(None)
-            self.fileViews[pgnum][0].set_text("\nThis file doesn't exist yet.\n\nTry... \
+            self.fileViews[pgnum-1][0].set_text("\nThis file doesn't exist yet.\n\nTry... \
                                                \n   * Check option (above) to 'Preserve Intermediate Files and Logs' \
                                                \n   * Generate the PiCList or AdjList \
                                                \n   * Click 'Print' to create the PDF")
@@ -1242,6 +1205,7 @@ class GtkViewModel(ViewModel):
         self.set("c_prettyIntroOutline", False)
         self.updateDialogTitle()
         self.updateExamineBook()
+        self.updatePicList()
         dialog.set_keep_above(False)
         dialog.hide()
         
@@ -1263,6 +1227,7 @@ class GtkViewModel(ViewModel):
         for b in self.alltoggles:
             if b.get_label() in allbooks[start:end]:
                 b.set_active(toggle)
+        self.updatePicList()
 
     def onClickmbs_all(self, btn):
         self.toggleBooks(0,124)
@@ -1318,6 +1283,7 @@ class GtkViewModel(ViewModel):
             # self.builder.get_object("ecb_examineBook").set_active_id(self.bk)
             self.updateExamineBook()
         self.updateDialogTitle()
+        self.updatePicList()
 
     def onChapFrmChg(self, cb_chapfrom):
         if self.chapNoUpdate == True:
@@ -1388,6 +1354,7 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("l_{}".format(i)).set_tooltip_text(None)
         self.updatePrjLinks()
         self.setEntryBoxFont()
+        self.updatePicList()
         self.updateDialogTitle()
 
     def onConfigNameChanged(self, cb_savedConfig):

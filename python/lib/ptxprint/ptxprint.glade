@@ -798,6 +798,8 @@ saved configuration.</property>
       <column type="gchararray"/>
       <!-- column-name Copyright -->
       <column type="gchararray"/>
+      <!-- column-name Mirror -->
+      <column type="gchararray"/>
     </columns>
     <data>
       <row>
@@ -810,6 +812,7 @@ saved configuration.</property>
         <col id="6" translatable="yes">None</col>
         <col id="7" translatable="yes">1:16</col>
         <col id="8" translatable="yes">None</col>
+        <col id="9" translatable="yes">N</col>
       </row>
       <row>
         <col id="0" translatable="yes">JHN 3:16-17</col>
@@ -821,6 +824,7 @@ saved configuration.</property>
         <col id="6" translatable="yes">Image of a group of people</col>
         <col id="7" translatable="yes">3:16</col>
         <col id="8" translatable="yes">None</col>
+        <col id="9" translatable="yes">N</col>
       </row>
       <row>
         <col id="0" translatable="yes">LUK 15:8</col>
@@ -832,6 +836,7 @@ saved configuration.</property>
         <col id="6" translatable="yes">12 men listening to Jesus</col>
         <col id="7" translatable="yes">15:8</col>
         <col id="8" translatable="yes">None</col>
+        <col id="9" translatable="yes">N</col>
       </row>
       <row>
         <col id="0" translatable="yes">ACT 18:27</col>
@@ -843,6 +848,7 @@ saved configuration.</property>
         <col id="6" translatable="yes">Map Creator map</col>
         <col id="7" translatable="yes">18:27</col>
         <col id="8" translatable="yes">None</col>
+        <col id="9" translatable="yes">N</col>
       </row>
       <row>
         <col id="0" translatable="yes">ROM 8:28</col>
@@ -854,6 +860,7 @@ saved configuration.</property>
         <col id="6" translatable="yes">None</col>
         <col id="7" translatable="yes">8:28</col>
         <col id="8" translatable="yes">Gordon Thompson and friends.</col>
+        <col id="9" translatable="yes">N</col>
       </row>
       <row>
         <col id="0" translatable="yes">1CO 3:16</col>
@@ -865,6 +872,7 @@ saved configuration.</property>
         <col id="6" translatable="yes">None</col>
         <col id="7" translatable="yes">3:16-19</col>
         <col id="8" translatable="yes">None</col>
+        <col id="9" translatable="yes">N</col>
       </row>
       <row>
         <col id="0" translatable="yes">REV 3:20</col>
@@ -876,6 +884,7 @@ saved configuration.</property>
         <col id="6" translatable="yes">None</col>
         <col id="7" translatable="yes">3:20</col>
         <col id="8" translatable="yes">None</col>
+        <col id="9" translatable="yes">N</col>
       </row>
       <row>
         <col id="0" translatable="yes">GLO 1:0</col>
@@ -887,6 +896,7 @@ saved configuration.</property>
         <col id="6" translatable="yes">unrotated map</col>
         <col id="7" translatable="yes">1:0</col>
         <col id="8" translatable="yes">Map Creator</col>
+        <col id="9" translatable="yes">N</col>
       </row>
     </data>
   </object>
@@ -10172,7 +10182,7 @@ on Page:</property>
                                             <property name="wrap_width">1</property>
                                             <property name="has_entry">True</property>
                                             <property name="entry_text_column">0</property>
-                                            <property name="id_column">0</property>
+                                            <property name="id_column">1</property>
                                             <child internal-child="entry">
                                               <object class="GtkEntry">
                                                 <property name="visible">True</property>
@@ -10357,13 +10367,13 @@ lines:</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkEntry" id="t_plNumLines">
+                                          <object class="GtkSpinButton" id="s_plLines">
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
-                                            <property name="halign">start</property>
-                                            <property name="max_length">3</property>
-                                            <property name="width_chars">4</property>
-                                            <property name="input_purpose">number</property>
+                                            <property name="max_length">1</property>
+                                            <property name="width_chars">2</property>
+                                            <property name="climb_rate">1</property>
+                                            <property name="digits">1</property>
                                           </object>
                                           <packing>
                                             <property name="left_attach">5</property>

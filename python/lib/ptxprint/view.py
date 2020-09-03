@@ -508,7 +508,7 @@ class ViewModel:
         #    self.working_dir = os.path.join(self.settings_dir, self.prjid, "PrintDraft")
         #    self.fixed_wd = False
 
-    def generateNProcPicLists(self, bk, outdir, processor, priority="Both", sfmonly=False, isTemp=False):
+    def generateNProcPicLists(self, bk, outdir, processor, priority="Both", sfmonly=False, isTemp=False, output=True):
         picposns = { "L": {"col":  ("tl", "bl"),             "span": ("t")},
                      "R": {"col":  ("tr", "br"),             "span": ("b")},
                      "":  {"col":  ("tl", "tr", "bl", "br"), "span": ("t", "b")}}
@@ -532,11 +532,11 @@ class ViewModel:
                     picinfos = tmppics
             if picinfos is None:
                 if priority == "Both" or priority =="Pri ":
-                    picinfos = self.getFigures(bk, suffix="L", sfmonly=sfmonly)
+                    picinfos = self.getFigures(bk, suffix="L", sfmonly=sfmonly, usepiclists=not output)
                 if priority == "Sec ":
-                    picinfos = diglotPrinter.getFigures(bk, suffix="R", sfmonly=sfmonly)
+                    picinfos = diglotPrinter.getFigures(bk, suffix="R", sfmonly=sfmonly, usepiclists=not output)
                 if priority == "Both":
-                    diglotPics = diglotPrinter.getFigures(bk, suffix="R", sfmonly=sfmonly)
+                    diglotPics = diglotPrinter.getFigures(bk, suffix="R", sfmonly=sfmonly, usepiclists=not output)
         else:
             picinfos = self.getFigures(bk, sfmonly=sfmonly)
         self.getFigureSources(picinfos, key=srcfkey)
@@ -592,8 +592,9 @@ class ViewModel:
                 del v['ref']
             v['src'] = os.path.basename(v['dest file'])
             lines.append("{} {}|".format(k, v['caption']) + " ".join('{}="{}"'.format(x, v[x]) for x in pos3parms if x in v and v[x]))
-        if not isTemp:
-            lines.append("""
+        if output:
+            if not isTemp:
+                lines.append("""
             
 % Tips for PicLists:
 %   a) If illustrations don't appear in PDF, check the anchor reference (start of each line):
@@ -604,33 +605,41 @@ class ViewModel:
 %   c) In single-column layout no difference will be seen between 'span' and 'col'
 %   d) To scale an image use the notation: size="span*.7" or size="col*1.3" (for 70% and 130%)
 """)
-        dat = "\n".join(lines)+"\n"
-        piclstfname = os.path.join(outdir, plfname)
-        with open(piclstfname, "w", encoding="utf-8") as outf:
-            outf.write(dat)
-        return missingPics
+            dat = "\n".join(lines)+"\n"
+            piclstfname = os.path.join(outdir, plfname)
+            with open(piclstfname, "w", encoding="utf-8") as outf:
+                outf.write(dat)
+        return (picinfos, missingPics)
 
-    def generatePicLists(self, booklist, priority="Both", generateMissingLists=False):
+    def generatePicLists(self, booklist, priority="Both", generateMissingLists=False, output=True):
         xl = []
-        outdir = os.path.join(self.configPath(cfgname=self.configName()), "PicLists")
+        outdir = self.configPath(cfgname=self.configName())
+        if outdir is None:
+            return
+        outdir = os.path.join(outdir, "PicLists")
         existingList = []
         existingFilelist = []
-        for bk in booklist:
-            outfname = os.path.join(outdir, self.getDraftFilename(bk))
-            if os.path.exists(outfname) and os.path.getsize(outfname) != 0:
-                existingFilelist.append(os.path.basename(outfname))
-                existingList.append(bk)
-        if len(existingFilelist) and not generateMissingLists:
-            q1 = "One or more PicList file(s) already exist!"
-            q2 = "\n".join(existingFilelist)+"\n\nDo you want to OVERWRITE the above-listed file(s)?"
-            if self.msgQuestion(q1, q2):
-                existingList = []
+        if output:
+            for bk in booklist:
+                outfname = os.path.join(outdir, self.getDraftFilename(bk))
+                if os.path.exists(outfname) and os.path.getsize(outfname) != 0:
+                    existingFilelist.append(os.path.basename(outfname))
+                    existingList.append(bk)
+            if len(existingFilelist) and not generateMissingLists:
+                q1 = "One or more PicList file(s) already exist!"
+                q2 = "\n".join(existingFilelist)+"\n\nDo you want to OVERWRITE the above-listed file(s)?"
+                if self.msgQuestion(q1, q2):
+                    existingList = []
         bks = list(set(booklist) - set(existingList))
         def procbk(pic, src, tgt):
             return pic['src']
         missingPics = []
+        picinfos = {}
         for bk in bks:
-            missingPics = self.generateNProcPicLists(bk, outdir, procbk, priority=priority, sfmonly=True)
+            (pi, mps) = self.generateNProcPicLists(bk, outdir, procbk, priority=priority, sfmonly=True, output=output)
+            missingPics.extend(mps)
+            picinfos.update(pi) # ({"{} {}".format(bk, k): v for k,v in pi.items()})
+        return picinfos
 
     def getDraftFilename(self, bk, ext=".piclist"):
         fname = self.getBookFilename(bk, self.prjid)
@@ -658,10 +667,10 @@ class ViewModel:
                 vals['scale'] = m[2]
         return vals
 
-    def getFigures(self, bk, suffix="", sfmonly=False, media=None):
+    def getFigures(self, bk, suffix="", sfmonly=False, media=None, usepiclists=False):
         res = {}
         fname = self.getBookFilename(bk, self.prjid)
-        usepiclist = not sfmonly and self.get("c_usePicList") # and bk not in TexModel._peripheralBooks
+        usepiclist = usepiclists or (not sfmonly and self.get("c_usePicList")) # and bk not in TexModel._peripheralBooks
         if usepiclist:
             plfname = self.getDraftFilename(bk)
             piclstfname = os.path.join(self.configPath(cfgname=self.configName()), "PicLists", plfname)
