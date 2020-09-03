@@ -163,6 +163,22 @@
   \edef\t@mp{#1}\edef\t@mpb{#2}%
   \ifx\t@mpb\empty\let\t@mpc=\t@mpb\else\x@\p@rsePicXtra\t@mpb\end\fi
   \trace{g}{p@rsePicUse: #1 \t@mpb \t@mpc}%
+  % inner/outer support for everything
+  \tempfalse
+  %Switch relative (inner/outer) to absolute (left/right) depending on page number for this image.
+  \ifx\t@mpb\@lignOuter\temptrue\ifodd\whichp@ge\let\t@mpb=\@lignRight\else\let\t@mpb=\@lignLeft\fi\fi
+  \ifx\t@mpb\@lignInner\temptrue\ifodd\whichp@ge\let\t@mpb=\@lignLeft\else\let\t@mpb=\@lignRight\fi\fi
+  \iftemp
+    % inner/outer support for inserts
+    \trace{g}{Page \the\whichp@ge, defined #2 to \t@mpb}%
+    \tempfalse
+    \ifx\t@mp\loc@T\temptrue\fi
+    \ifx\t@mp\loc@B\temptrue\fi
+    \iftemp
+      %redefine loc@option
+      \xdef\loc@ption{\t@mp\t@mpb}%
+  \fi\fi
+  % new options 
   \ifx\t@mp\loc@Inl
     \trace{g}{Experimental inline graphic}%
     \global\let\picl@c\loc@Inl\xdef\pic@lign{\t@mpb}\global\picUsesInsfalse\p@cinswid=\hsize
@@ -182,6 +198,7 @@
     \ifx\t@mpb\@lignRight\picNarrowtrue\fi
     \ifx\t@mpc\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\t@mpc}\fi%Borrow cutskip for parskip 
   \fi
+  % full-page options
   \tempfalse
   \ifx\t@mp\loc@Page\global\let\picl@c=\loc@Pag\global\picUsesInsfalse\p@cinswid=\PaperWidth\temptrue\fi
   \ifx\t@mp\loc@Full\global\let\picl@c=\loc@Full\global\picUsesInsfalse\temptrue\fi
@@ -283,7 +300,16 @@
 %-cfig_dofigure_1
   % --------- Parse the location option -----------
 %+cfig_dofigure_2
-  \x@\p@rsePicUse\loc@ption\end
+  \global\advance\im@gecount by 1
+  \x@\let\x@\pgn@\csname fig\the\im@gecount p@ge\endcsname                    %(1)
+  \ifx\pgn@\relax
+    \whichp@ge=\pageno
+    \trace{g}{Picture \the\im@gecount may not be mirrored/rotated/aligned properly}%
+  \else
+    \whichp@ge=\pgn@
+    \trace{g}{Picture \the\im@gecount was on page \pgn@ last time. [\the\pageno]}%
+  \fi
+  \x@\p@rsePicUse\loc@ption\end                                               %(2)
   % make \p@cins point to insertion class for this location
   \otherinsht=0pt % subtract this from the insert height.
   \ifx\loc@ption\loc@T \let\p@cins=\topins
@@ -319,7 +345,6 @@
   \ifdim\p@cinswid<\p@cwidth
     \message{*** Picture \the\p@cwidth\space wide in  \the\p@cinswid\space space. \ifx\size@ption\size@SPAN Did you mean to use col, instead of span?\fi}%
   \fi
-  \global\advance\im@gecount by 1
 %-cfig_dofigure_2
   % create box to contain picture
 %+cfig_dofigure_3
@@ -339,14 +364,6 @@
     \let\picfilecomm@nd=\XeTeXpicfile
     \edef\f@lename{\csname param-2\endcsname}%
     \edef\mirr@r{\csname param-9\endcsname}%
-    \x@\let\x@\pgn@\csname fig\the\im@gecount p@ge\endcsname                    %(1)
-    \ifx\pgn@\relax
-      \whichp@ge=\pageno
-      \trace{g}{Picture \the\im@gecount may not be mirrored properly}%
-    \else
-      \whichp@ge=\pgn@
-      \trace{g}{Picture \the\im@gecount was on page \pgn@ last time. [\the\pageno]}%
-    \fi
     \def\xtra{}\def\xtraremains{}%
     \x@\p@rsextra{\csname param-8\endcsname}%See if there are any key=val parameters in the x-xetex parameter
     \expandafter\ch@ckpdf\f@lename..\endf@lename
@@ -387,7 +404,6 @@
     \def\pr@pic{}\def\p@stpic{}%
     \ifx\mirr@r\empty\else
       \trace{g}{Mirror: \mirr@r, \the\pageno}%
-      %THIS LOGIC is also non-effective. Need to re-write to use an aux file, probably.
       \global\def\pr@pic{
          \trace{g}{prepic: Mirror: \mirr@r, \the\pageno}%
          \ifx\mirr@r\val@dd\ifodd\whichp@ge\temptrue\fi\fi %Page number is frequently low by one or 2 when image is read. Needs external toc-style file.
@@ -400,17 +416,15 @@
       }%
       \setbox0\hbox{\pr@pic\box0\p@stpic}%
     \fi
-    \trace{g}{Picture height=\the\ht0, vs:\the\vsize, \the\partialLpenalty,  pg:\the\pagegoal, pt:\the\pagetotal, av:\the\availht}%
-    \ifpicNarrow
-      \ifx\pic@lgn\@lignRight\hbox to \p@cinswid{\hss\box0}%
-      \else
-        \ifx\pic@lign\@lignLeft \hbox to \p@cinswid{\box0\hss}%
-        \else\hbox to \p@cinswid{\hss\box0\hss}\fi
-      \fi
-    \else\hbox to \p@cinswid{\hss\box0\hss}%
+    \trace{g}{Picture height=\the\ht0, vs:\the\vsize, \the\partialLpenalty,  pg:\the\pagegoal, pt:\the\pagetotal, av:\the\availht, aligned:\pic@lign}%
+    %Align image left/right or centre
+    \ifx\pic@lign\@lignRight\hbox to \p@cinswid{\hss\box0}%
+    \else
+      \ifx\pic@lign\@lignLeft \hbox to \p@cinswid{\box0\hss}%
+      \else\hbox to \p@cinswid{\hss\box0\hss}\fi
     \fi
     \ifCaptionFirst\vskip 0.5\baselineskip\else\d@caption\fi
-  }%
+  }% END of box0
 %-cfig_dofigure_4
 %+cfig_dofigure_5
   \trace{b}{BALANCE fig: height=\the\ht0: baselineskip=\the\baselineskip}%
@@ -439,6 +453,7 @@
     \dimen0=\ht0 \advance\dimen0 by \dp0 \advance\dimen0 by 0.5\baselineskip % Rounding correction
     \divide\dimen0 by \baselineskip \count255=\dimen0
     \trace{g}{Inline picture takes \the\count255 lines}%
+    %
     \ifx\picl@c\loc@Inl
       \trace{g}{Picture is inline \ifhmode in HMODE\fi}%
       \penalty10 % Allow the page to break
@@ -454,6 +469,7 @@
         \trace{g}{gridbox dp=\the\dimen9}%There's a skip at the bottom of the box, but somehow the depth is kept. Need to kill it.
       \penalty10}%
     \fi
+    %
     \ifx\picl@c\loc@Par
       \trace{g}{Picture is post-paragraph}%
       \let\picb@@x=\picb@x
@@ -484,14 +500,23 @@
        \x@\xdef\csname \eotpn@me Delay\endcsname{\temp}%
        \relax\relax
     \fi
+    %
 %-cfig_dofigure_6
 %+cfig_dofigure_7
     \ifx\picl@c\loc@Page
       \trace{g}{Picture is page, \the\ht0, \the\wd0}%
+      \ifx\picV@lign\@lignTop \setbox0\vtop to \textheight{\box0\vskip 0pt plus 1fill}\fi%CHECKME
+      \ifx\picV@lign\@lignBot \setbox0\vbox to \textheight{\vskip 0pt plus 1fill \box0}\fi%CHECKME
       \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic\box0\penalty11}% magic number
     \fi
     \ifx\picl@c\loc@Full
-      \trace{g}{Picture is full-page, \the\ht0, \the\wd0}%
+      \trace{g}{Picture is full-page, \the\ht0, \the\wd0,}%
+      %Page is not positioned absolutely. Calculate offset
+      \dimen0=\bottomm@rgin\advance\dimen0 by -\topm@rgin
+      \divide\dimen0 by 2
+      \advance\dimen0 by \FullPageFudgeFactor % apply user-tweakable Fudge factor (-2pt)
+      \ifx\picV@lign\@lignTop \setbox0\vtop to \PaperHeight{\kern\dimen0\box0\vss}\fi%CHECKME
+      \ifx\picV@lign\@lignBot \setbox0\vbox to \PaperHeight{\vss\box0}\fi%CHECKME
       \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic\box0\penalty9}% magic number
     \fi
     \ifx\picl@c\loc@Cut
@@ -513,6 +538,7 @@
       \dimen3=\curc@lsz \advance\dimen3 by -\dimen2
       \ifdim\dimen3<5em\message{*** Picture specification of \size@ption \sizem@ltiple (at \ch@pter:\v@rse)
                                 leaves \the\dimen3 \space for text. That's probably not enough.}\fi
+      %Switch relative (inner/outer) to absolute (left/right) depending on page number for this image.
       \ifx\l@cspec\@lignLeft
         \setbox0\hbox to 0pt {\lower\dimen1\box0\hss}%
         \ht0=0pt \dp0=0pt \vskip-\baselineskip  %Yuck
@@ -544,7 +570,7 @@
 \CaptionRefFirstfalse
 \newif\ifCaptionFirst % Does the caption come before the image or after?
 \CaptionFirstfalse
-
+\def\FullPageFudgeFactor{-2pt} % How much does a full page top-aligned picture miss the top of the page by? 
 %+cfig_checkpdf
 \def\ch@ckpdf#1.#2.#3\endf@lename{\lowercase{\edef\@xt{#2}}%
   \ifx\@xt\@pdf \let\picfilecomm@nd\XeTeXpdffile \fi}
@@ -569,8 +595,12 @@
 \def\loc@Par{p}% post-paragrpah
 \def\loc@Page{P}% Page (with headers/footers)
 \def\loc@Page{F}% FullPage (no headers/footers)
+\def\@lignInner{i}
+\def\@lignOuter{o}
 \def\@lignLeft{l}
 \def\@lignRight{r}
+\def\@lignTop{t}
+\def\@lignBot{b}
 \def\keyR@TATE{rotate}
 \def\val@dd{odd}
 \def\val@ven{even}
@@ -665,7 +695,7 @@
       \plainoutput
     \else% expected values: 9 (full page) or 10000 (too big)
       \dimen9=\pdfpagewidth \dimen8=\pdfpageheight
-      \shipwithcr@pmarks{\vbox{\box0}}%
+      \shipwithcr@pmarks{\box0}%
       \pdfpagewidth=\dimen9 \pdfpageheight=\dimen8
       \advancepageno
     \fi
