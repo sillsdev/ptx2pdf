@@ -131,6 +131,7 @@
     \offinterlineskip
     \vbox to \ifrotate\pdfpagewidth\else\pdfpageheight\fi{\vss
       \kern\topm@rgin
+      %\trace{g}{\the\topm@rgin - \the\bottomm@rgin}%
       \vbox{\hbox to \ifrotate\pdfpageheight\else\pdfpagewidth\fi{\hss\hbox{%
         \if\g@tterside L\kern\BindingGutter\fi
         \XeTeXupwardsmode=\oldup

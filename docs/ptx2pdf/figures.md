@@ -100,30 +100,43 @@ bounded by `\end`. If there is a second parameter then we subparse that. The
 second parameter may itself be 1 or more characters with the secondary position
 as the first character and the tertiary position as the rest.
 
+Initially, we check to see if the second (alignment) parameter is page-number
+dependant (`i` or `o` for inner or outer). We then convert that to the relevant 
+absolute alignment (`l` or `r`). If the location is `t` or `b`,  an
+image that will be in an insert, then we regenerate the relevant code.
+
 If the location is `h`, meaning an inline graphic, then capture the main
-location and the second parameter is the alignment: `l`, `r` or `c`. Since we are
+location and the second parameter is the absoulute alignment (`l`, `r` or `c`
+for left, right or central).
+Since we are
 inline, clear the flag to store the picture box in an insert. If the alignment
-is `l` or `r` then narrow the picture.
+is not central, then narrow the picture (and caption).
 
 If the location is `c` for a cutout, then again we capture the main location and
 clear the inserts flag. Pictures need to be narrowed and the space available is
 the column width. We also collect any cut skip which says how many lines down
 the cutout starts.
 
-If the location is `p` for pictures that are placed in line after the paragraph.
-The width is the column width and the alignment the second character: `l`, `r`
-or `c`. There is no insertion. If the alignment is `l` or `r` then set the
-narrow picture flag.
+If the location is `p` for pictures that are placed in line after the current
+paragraph.  The width is the column width and the alignment 
+the second character: `l`, `r`, `c`, `i` or `o` as before. There is no
+insertion. If the alignment is not central, then set the narrow picture flag.
 
 If the location is `P` for page then set the picture width to the page width.
 Likewise if the location is `F` for full (page to edge), then don't set a width.
 In either case warn the user we are entering experimental waters and set the
-alignment to be the second character and the vertical alignment the third.
+alignment to be the second character (the familar `l`, `r`, `c`, `i`, or `o`) 
+and the vertical alignment the third.
 
 [=cfig_parsepicuse]::
 
 Returning to `\d@figure` we are still processing parameters and setting
-defaults. We parse the location. For `t` and `b` type locations, set appropriate
+defaults. 
+But first (1) we collect which page this picture occurred in a previous run. We
+need this to decide how to interpret the mirroring attribute, rotation options
+and page-number dependent positions or alignments.
+
+(2) We parse the location. For `t` and `b` type locations, set appropriate
 defaults depending on the number of columns and also set the insert to use. We
 also collect the current height of that insert to subtract from the insert
 height later.
@@ -132,7 +145,9 @@ If we are using inserts for this picture, then if we still haven't decided on an
 insert to use then work out some defaults. If we are not in a diglot then we
 don't need to worry about the current height of the insert. If there is
 insufficient horizontal space for our intended picture width then complain to
-the user. Count the number of pictures in our document.
+the user. Count the number of pictures in our document. This allows the next 
+line to retrieve the information we need. 
+
 
 [=cfig_dofigure_2]::
 
@@ -143,17 +158,16 @@ may have called for the caption to come above the picture, if so, insert it
 here.
 
 Now we start building up the command to insert the picture. We start by choosing
-the command to use, the filename and any mirror attribute value. (1) We also collect
-on which page this picture occurred in a previous run. We need this to decide
-how to interpret the mirroring attribute. We also parse any `x-xetex`
-attribute value. We will return to this later. Next we test to see if the
-filename is a .pdf file. If it is, then change the command used to open the
-file.
+the command to use, the filename and any mirror attribute value.
+
+We also parse any `x-xetex` attribute value. We will return to this later. Next
+we test to see if the filename is a .pdf file. If it is, then change the
+command used to open the file.
 
 [=cfig_checkpdf]::
 
 If the image is to be rotated, then fit the image based
-on its height rather than width.
+on its (pre-rotation) height rather than width.
 
 We insert the picture, scaling it according to its width. But if it turns out
 that results in something too high, then we try again but scale it according to
@@ -177,10 +191,13 @@ first word as `key=value=angle`. Alternatively the angle may be missing as in
 
 We grab the value. If there is no key, simply pass the value to XeTeX as part of
 the remainder. Otherwise we need to analyse the key and value. The only
-recognised key is `rotate`. `\whichp@ge` is the target page and we use that to
-decide which way to rotate an image for the key values of `bind` and `edge`. For
-values of `odd` or `even` then also collect the angle which will be used if the
-page constraint is met.
+recognised key so-far is `rotate`. `\whichp@ge` is the target page and we use that to
+decide which way to rotate an image for the key values of `binding` (top of the image 
+close to the binding) and `edge` (top of the image close to the edge of the paper). 
+`binding` and `edge` are great if 90° rotation is desired, additional control (e.g. 
+for an image of a spear that would make better use of space if shown at an angle) is 
+available using values of `odd` or `even` then also collect the angle which
+will be used if the page constraint is met.
 
 [=cfig_parsextra]::
 
@@ -208,9 +225,9 @@ from the figure and strip its space. We also collect the caption text. The
 location is different for USFM3 from USFM2. If there is no caption then we don't
 use the reference either and we simply insert a small post caption gap.
 
-We set up for creating a paragraph based on the `fig` style.
-We set the appropriate justification for
-that paragraph. We also do not allow page breaks in this text (because it is
+We set up for creating a paragraph based on the `fig` style. While `fig` is officially 
+a character style, we select the appropriate justification for
+it as if it were a paragraph. We also do not allow page breaks in this text (because it is
 being processed into a separate box). We then set the baseline for this
 paragraph. Then we prepare the reference, if there is one. The user can change
 the `\DecorateRef` macro to change how references will be add to the caption (to
@@ -256,15 +273,20 @@ macro gets hold of the diglot side appropriate picture box we just allocated and
 grids it at that point as if it were a headings block and outputs it into the
 main text flow. It also allows a page break after the image.
 
-Next we count the number of lines we want to skip this image and make a string
-of `D`s of that many and store that for the post paragraph figure handler to
-make use of.
+Next we count the number of paragraphs we want to skip before inserting this
+image and make a string of `D`s (delay) of that many and store that for the
+post paragraph figure handler to make use of.
 
 [=cfig_dofigure_6]::
 
 Page and full pictures are treated the same except that they are given a
 different magic penalty number after each one. Again this is stored ready for
 shipping out at the right time with the appropriate shipout routine.
+
+Placing of full pictures all the way to the paper edges is complicated by the
+page-shipping  routine's use of `\vss` (vertical stretch or shrink) above and
+below the image, and the `\topm@rgin` and `\bottomm@rgin` that are added above
+and below the image before this 'centering' occurs. 
 
 Cutout pictures really do not like occuring mid paragraph. Ideally they occur at
 the start of a paragraph before the first text. But if they do occur mid
@@ -308,7 +330,7 @@ If there is a page picture to output, then we want to ship it out after the
 current page. Each page output routine calls `\nextshipout` after shipping out a
 page which hooks us in.
 
-If there is a picture waiting to be output we split the vbox to the page size
+If there is one or more pictures waiting to be output we split the vbox to the page size
 and we rebox the result, leaving the remainder back in the `wholepagepic`. We
 also capture the final penalty, which uses a protocol of special numbers to
 communicate whether this image is a full page within margins or full page to the
@@ -335,7 +357,7 @@ in. Finally it adds any actual cropmarks.
 
 The `.picpages` file has a number of roles. It contains information about each
 figure in the document including it's page number, the filename of the figure,
-its `pgpos` the copyright information and anything else that may affect its
+its `pgpos`, the copyright information and anything else that may affect its
 position and size. The `.picpages` file gets used by ptxprint to autogenerate
 the copyright statement for the verso pages, for example. Within the ptx macros
 the information is used to test whether figures have moved around or not. This

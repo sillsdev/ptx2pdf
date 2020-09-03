@@ -83,34 +83,37 @@ picture half a column wide and the text a little distance away.  This may
 In the table below, 'left-aligned' means that the left hand edge of the image is
 lined up with the left-hand image of (unindented) paragraph text.
 
-The following page positions are now available:
+The page positions listed below are now available. For each position code given
+with `l` (Left), you may also specify: `r` (Right), `i` (Inner) and `o` (Outer).
+`i` is replaced with `l` on odd-numbered pages, and `r` on even numbered pages. In a 
+diglot when the `mirrored` columns are in use ('left' text is always inner, the
+'right' text outer), you probably don't want to use `ti` or `to` for picture placement.
 
-Code | Mnemnonic              | Position                                                      | Caption position / width 
+
+Code | Mnemnonic              | Position                                                      | Max. caption width 
 ---- | -----------------------|-----------------------------------------------------------|-----------------------------------------------
-t    | 'Top'                  | Above everything except the header line.                        | Centred across both columns 
-b    | 'Bottom'               | Below all verse text and footnotes.                             | Centred across both columns 
-tl   | 'Top-Left' [1]         | At the top of the left-hand [2] column                          | Centred within column 
-tr   | 'Top-Right' [1]        | At the top of the right-hand [2] column                         | Centred within column 
-bl   | 'Bottom-Left' [1]      | At the bottom of the left-hand [2] column                       | Centred within column 
-br   | 'Bottom-Right' [1]     | At the bottom of the right-hand [2] column                      | Centred within column 
+t    | 'Top'                  | Above everything except the header line.                        | across both columns 
+b    | 'Bottom'               | Below all verse text and footnotes.                             | across both columns 
+tl   | 'Top-Left'    [1]      | At the top of the left-hand [2] column                          | width of column 
+bl   | 'Top-Left'    [1]      | At the top of the left-hand [2] column                          | width of column 
 -----|------------------------|       ***Experimental Additions***                              |----------------------------
-h    | 'Here'                 | Where defined / before the verse in piclist[3,4], centred       | Centred within column
-hc   | 'Here',centred         | Where defined / before the verse in piclist[3,4], centred       | Centred within column
-hl   | 'Here',Left            | Where defined / before the verse in piclist[3,4], left-aligned  | Centred below image, and the same width
-hr   | 'Here',Right           | Where defined / before the verse in piclist[3,4], right-aligned | Centred below image, and the same width
-p    | 'Post-paragraph'       | After this paragraph[4,7], centred                              | Centred within column
-pc   | 'Post-paragraph', centred  | After this paragraph[4], centred                            | Centred within column
-pr   | 'Post-paragraph, Right'| After this paragraph[4], right-aligned                          | Centred below image, and the same width
-pl   | 'Post-paragraph, Left' | After this paragraph[4], left-aligned                           | Centred below image, and the same width
-pc#  | 'Post-paragraph'       | After # paragraphs[4,5], centred                                | Centred within column
-pr#  | 'Post-paragraph, Right'| After # paragraphs[4,5], right-aligned                          | Centred below image, and the same width
-pl#  | 'Post-paragraph, Left' | After # paragraphs[4,5], left-aligned                           | Centred below image, and the same width
-cl   | 'Cutout Left'          | In the top-left corner of this paragraph [3]                    | Centred below image, and the same width
-cr   | 'Cutout Right'         | In the top-right corner of this paragraph [3]                   | Centred below image, and the same width
-cl#  | 'Cutout Left'          | In a notch # lines[6] below the top of this paragraph [3]       | Centred below image, and the same width
-cr#  | 'Cutout Right'         | In a notch # lines[6] below the top of this paragraph [3]       | Centred below image, and the same width
-P    | 'Page'                 | An image that replaces the normal text on the page              | Centred below image
-F    | 'Full page'            | The entirety of the paper                                       | Centred below image, and thus normally off the page.
+h    | 'Here'                 | Where defined / before the verse in piclist[3,4], centred       | width of column
+hc   | 'Here',centred         | Where defined / before the verse in piclist[3,4], centred       | width of column
+hl   | 'Here',Left            | Where defined / before the verse in piclist[3,4], left-aligned  | same width as image
+p    | 'Post-paragraph'       | After this paragraph[4,7], centred                              | width of column
+pc   | 'Post-paragraph', centred  | After this paragraph[4], centred                            | width of column
+pl   | 'Post-paragraph, Left' | After this paragraph[4], left-aligned                           | same width as image
+pc#  | 'Post-paragraph'       | After # paragraphs[4,5], centred                                | width of column
+pl#  | 'Post-paragraph, Left' | After # paragraphs[4,5], left-aligned                           | width of column
+cl   | 'Cutout Left'          | In the top-left corner of this paragraph [3]                    | same width as image
+cl#  | 'Cutout Left'          | In a notch # lines[6] below the top of this paragraph [3]       | same width as image
+P    | 'Page'                 | An image that replaces the normal text on the page              | width of page
+Pc   | 'Page', centred        | An image that replaces the normal text on the page              | width of page
+Pct  | 'Page', centred, top[8] | An image that replaces the normal text on the page              | width of page
+Pl   | 'Page', left           | An image that replaces the normal text on the page, left-aligned | width of page
+Plt  | 'Page', left, top[8]   | An image that replaces the normal text on the page, left-aligned | width of page
+F    | 'Full page'            | The entirety of the paper [9]                                    | width of paper, may be off the page.
+F... | 'Full page', as above  | The entirety of the paper [9] pushed to whatever edge is indicated   | width of paper, may be off the page.
 
 Notes:
 [1] If two columns are in use.
@@ -128,18 +131,16 @@ Notes:
     bottom), even if the notch is partly or fully on the next. A negative number
     (e.g. cr-1) will raise the image and shorten the cut-out, but will not make
     space above.
-[7] Since `p` is also interprettable as a media target, `pc` should always be
+[7] Since `p` is also interpretable as a media target, `pc` should always be
     used in SFM2 instead.
-
-
-At the time of writing (15 Jul 2020), there are some very recently-fixed bugs.
-Assuming your copy is more recent than this, please report any recurrance.
-- p  : The post-paragraph code seems to function well as long as the paragraph
-  does not cross a page boundary. If it did in diglot, then the picture was
-  always set at the top of the left-hand text of the follow-on page.  Hopefully
-  this has now been solved.
-- h and p :  Following text may have problems with grid alignment, but this is hopefully solved.
-
+[8] Use `b` for bottom alignment, or `c` for explicit central vertical alignment. 
+[9] If the image is not the same aspect ratio as the page, or a scaling factor is used, 
+    there may be some space. For this reason, the alignment options are available.
+    Full page images have no header or footer, there is no attempt made to keep
+    the caption on the page.  Alignment actively attempts to get the picture to the
+    specified edge of the page. ```\FullPageFudgeFactor``` (normally defined to
+    be -2pt) is available for tweaking if top alignment does not actually coincide 
+    with the image. 
 
 #### Restrictions on certain picture positions
 - p : The delayed picture is saved until the end of the Nth paragraph in a
@@ -147,9 +148,15 @@ Assuming your copy is more recent than this, please report any recurrance.
   or multiple images in the box. (But diglots have a second box for the
   right/outer text).  If an attempt is made to put a second picture into the
   box while it still contains the first, the first picture will be lost.
-- c : If a cutout picture occurs in the same pargraph as a 'drop-caps' chapter
+- c : If a cutout picture occurs in the same paragraph as a 'drop-caps' chapter
   number or another cutout picture, then an error is triggered and a horrible mess 
   occurs.
+- F : 
+  -  If a caption is used, this will normally be off the page. It may,
+     however, still affect the alignment of the image, preventing top / bottom alignment from 
+     functioning correctly. Thus captions should *not* be used in connection with full-page 
+     images that approach the page edges.
+     
 
 #### Do the new picture positions conform to examples in the USFM specification?
 In some ways, they conform better than the previously available options. USFM
