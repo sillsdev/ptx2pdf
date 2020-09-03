@@ -129,7 +129,7 @@ _sensitivities = {
     "c_fnautocallers" :        ["t_fncallers", "btn_resetFNcallers"],
     "c_xrautocallers" :        ["t_xrcallers", "btn_resetXRcallers"],
     "c_glossaryFootnotes" :    ["c_firstOccurenceOnly"],
-    # "c_usePicList" :           ["bx_picList"],
+    "c_usePicList" :           ["btn_editPicList"],
     "c_useCustomFolder" :      ["btn_selectFigureFolder", "c_exclusiveFiguresFolder"],
     "c_processScript" :        ["c_processScriptBefore", "c_processScriptAfter", "btn_selectScript", "btn_editScript"],
     "c_usePrintDraftChanges" : ["btn_editChangesFile"],
@@ -973,7 +973,7 @@ class GtkViewModel(ViewModel):
         self.sensiVisible("c_useFallbackFont")
 
     def onUsePicListChanged(self, btn):
-        self.builder.get_object("bx_picList").set_visible(self.get("c_usePicList"))
+        self.sensiVisible("c_usePicList")
 
     def onInclFrontMatterChanged(self, btn):
         self.sensiVisible("c_inclFrontMatter")
