@@ -21,7 +21,7 @@ _form_structure = {
 _comblist = ['pgpos', 'hpos', 'nlines']
 
 class PicList:
-    def __init__(self, view, listview,builder):
+    def __init__(self, view, listview, builder):
         self.view = view
         self.model = view.get_model()
         self.listview = listview
@@ -31,7 +31,11 @@ class PicList:
         self.selection.connect("changed", self.row_select)
         for k, v in _form_structure.items():
             w = builder.get_object(v)
-            w.connect("value-changed" if v[0].startswith("s_") else "changed", self.item_changed, k)
+            print("k,v,w:", k, v, w)
+            try:
+                w.connect("value-changed" if v[0].startswith("s_") else "changed", self.item_changed, k)
+            except AttributeError:
+                print("AttributeError for:", k, v)
         pass
 
     def isEmpty(self):
@@ -98,5 +102,3 @@ class PicList:
         else:
             val = self.get(key)
         self.model[self.selection.get_selected()[1]][_piclistfields.index(key)] = val
-
-        

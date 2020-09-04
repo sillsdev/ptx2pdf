@@ -104,6 +104,10 @@ class Splash(Thread):
 # Checkboxes and the different objects they make (in)sensitive when toggled
 # Order is important, as the 1st object can be told to "grab_focus"
 _sensitivities = {
+    "c_singlebook" :           ["ecb_book", "l_chapfrom", "fcb_chapfrom", "l_chapto", "fcb_chapto"],
+    "c_multiplebooks" :        ["btn_chooseBooks", "t_booklist", "c_combine"],
+    "c_biblemodule" :          ["ecb_biblemodule"],
+    "c_dblbundle" :            ["btn_chooseDBLbundle", "l_dblBundle"],
     "c_mainBodyText" :         ["gr_mainBodyText"],
     "c_doublecolumn" :         ["gr_doubleColumn", "c_singleColLayout", "t_singleColBookList"],
     "c_useFallbackFont" :      ["btn_findMissingChars", "t_missingChars", "l_fallbackFont", "bl_fontExtraR"],
@@ -153,7 +157,6 @@ _sensitivities = {
 # These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
 _nonsensitivities = {
     "c_omitrhchapnum" :        ["c_hdrverses"],
-    "c_multiplebooks" :        ["l_singlebook", "ecb_book", "l_chapfrom", "fcb_chapfrom", "l_chapto", "fcb_chapto"],
     "c_blendfnxr" :            ["l_internote", "s_internote"],
     "c_usePicList" :           ["c_figexclwebapp"],
     "c_useprintdraftfolder" :  ["btn_selectOutputFolder"]
@@ -885,6 +888,11 @@ class GtkViewModel(ViewModel):
         for w in ("t_clHeading", "t_tocTitle", "t_configNotes", "scroll_FinalSFM", "scroll_PicList", \
                   "ecb_ftrcenter", "ecb_hdrleft", "ecb_hdrcenter", "ecb_hdrright", "t_fncallers", "t_xrcallers"):
             self.builder.get_object(w).modify_font(p)
+
+    def onScopeOptClicked(self, btn):
+        pass
+        # print(btn)
+        # self.sensiVisible(btn)   # wondering if there is a way to pass the ID of the btn along generically
 
     def updateFakeLabels(self):
         status = self.get("c_fakebold") or self.get("c_fakeitalic") or self.get("c_fakebolditalic")

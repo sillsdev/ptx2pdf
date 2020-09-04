@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -242,6 +242,12 @@ THE SOFTWARE.
   </object>
   <object class="GtkAdjustment" id="a_picListadjustment2">
     <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="a_plLines">
+    <property name="lower">-24</property>
+    <property name="upper">24</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
@@ -1835,11 +1841,10 @@ if need be.</property>
                             <child>
                               <object class="GtkRadioButton" id="c_dblbundle">
                                 <property name="label" translatable="yes">DBL Bundle</property>
-                                <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
+                                <property name="no_show_all">True</property>
                                 <property name="margin_left">12</property>
-                                <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
                                 <property name="group">c_singlebook</property>
                               </object>
@@ -1858,6 +1863,7 @@ if need be.</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
                                 <property name="group">c_singlebook</property>
+                                <signal name="clicked" handler="onScopeOptClicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -1952,9 +1958,9 @@ The list is based on any available
                             <child>
                               <object class="GtkButton" id="btn_chooseDBLbundle">
                                 <property name="label" translatable="yes">Ch_oose...</property>
-                                <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
+                                <property name="no_show_all">True</property>
                                 <property name="use_underline">True</property>
                                 <accelerator key="o" signal="activate" modifiers="GDK_MOD1_MASK"/>
                               </object>
@@ -2000,8 +2006,8 @@ of the book. Similar to a "biblio-page" or a
                             </child>
                             <child>
                               <object class="GtkLabel" id="l_dblBundle">
-                                <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="no_show_all">True</property>
                                 <property name="halign">start</property>
                                 <property name="margin_left">20</property>
                                 <property name="label" translatable="yes">DBL Bundle Name/Description</property>
@@ -2160,7 +2166,7 @@ of the same Paratext project.</property>
                                         <property name="has_entry">True</property>
                                         <property name="active_id">0</property>
                                         <items>
-                                          <item translatable="yes">Default</item>
+                                          <item translatable="yes">(None)</item>
                                         </items>
                                         <signal name="changed" handler="onConfigNameChanged" swapped="no"/>
                                         <child internal-child="entry">
@@ -9112,7 +9118,8 @@ options here to create a Diglot or Didoc.</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
-                            <property name="fill">True</property>
+                            <property name="fill">False</property>
+                            <property name="pack_type">end</property>
                             <property name="position">2</property>
                           </packing>
                         </child>
@@ -10120,6 +10127,7 @@ a good way to easily remove a whole bunch of unwanted files.</property>
                                         <property name="can_focus">False</property>
                                         <child>
                                           <object class="GtkScrolledWindow">
+                                            <property name="height_request">240</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="hexpand">True</property>
