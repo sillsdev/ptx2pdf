@@ -1825,6 +1825,7 @@ if need be.</property>
                                 <property name="margin_left">12</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
+                                <property name="group">c_singlebook</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -1840,6 +1841,7 @@ if need be.</property>
                                 <property name="margin_left">12</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
+                                <property name="group">c_singlebook</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -1855,6 +1857,7 @@ if need be.</property>
                                 <property name="margin_left">12</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
+                                <property name="group">c_singlebook</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -1870,6 +1873,7 @@ if need be.</property>
                                 <property name="margin_left">12</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
+                                <property name="group">c_multiplebooks</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
