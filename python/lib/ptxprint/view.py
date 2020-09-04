@@ -8,7 +8,7 @@ from configparser import NoSectionError, NoOptionError, _UNSET
 from zipfile import ZipFile, ZIP_DEFLATED
 from io import StringIO
 import datetime, time
-from shutil import copyfile, copytree
+from shutil import copyfile, copytree, move
 
 VersionStr = "1.1"
 
@@ -260,10 +260,26 @@ class ViewModel:
         pass
 
     def setPrjid(self, prjid, saveCurrConfig=False):
-        return self.updateProjectSettings(prjid, saveCurrConfig=saveCurrConfig)
+        return self.updateProjectSettings(prjid, configName="Default", saveCurrConfig=saveCurrConfig)
 
     def setConfigId(self, configid, saveCurrConfig=False, force=False):
         return self.updateProjectSettings(self.prjid, saveCurrConfig=saveCurrConfig, configName=configid, forceConfig=force)
+
+    def _copyConfig(self, oldcfg, newcfg, moving=False):
+        oldp = self.configPath(cfgname=oldcfg)
+        newp = self.configPath(cfgname=newcfg)
+        if not os.path.exists(newp):
+            os.makedirs(newp)
+            for f in ('ptxprint-mods.sty', 'ptxprint-mods.tex', 'ptxprint.cfg', 'PicLists', 'AdjLists'):
+                srcp = os.path.join(oldp, f)
+                destp = os.path.join(newp, f)
+                if os.path.exists(srcp):
+                    if moving:
+                        move(srcp, destp)
+                    elif os.path.isdir(srcp):
+                        copytree(srcp, destp)
+                    else:
+                        copyfile(srcp, destp)
 
     def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, forceConfig=False):
         currprj = self.prjid
@@ -294,18 +310,12 @@ class ViewModel:
             readConfig = True
         self.userconfig.set("init", "project", self.prjid)
         if readConfig or self.configId != configName:
-            oldp = self.configPath(prjid=currprj, cfgname=currcfg)
-            newp = self.configPath(cfgname=configName)
-            if not os.path.exists(newp):
-                os.makedirs(newp)
-                for f in ('ptxprint-mods.sty', 'ptxprint-mods.tex', 'PicLists', 'AdjLists'):
-                    srcp = os.path.join(oldp, f)
-                    destp = os.path.join(newp, f)
-                    if os.path.exists(srcp):
-                        if os.path.isdir(srcp):
-                            copytree(srcp, destp)
-                        else:
-                            copyfile(srcp, destp)
+            if configName == "Default":
+                self._copyConfig(None, configName, moving=True)
+            if currprj != self.prjid:
+                self._copyConfig("Default", configName)
+            else:
+                self._copyConfig(self.configId, configName)
             res = self.readConfig(cfgname=configName)
             if res or forceConfig:
                 self.configId = configName
@@ -316,8 +326,8 @@ class ViewModel:
             return True
 
     def getDialogTitle(self):
-        prjid = "  -  " + (self.get("fcb_project") or "")
-        if prjid == "  -  ":
+        prjid = self.get("fcb_project")
+        if prjid is None:
             return "PTXprint {} - Bible Layout for Everyone!     Start by selecting a project to work with...".format(VersionStr)
         else:
             if self.get('c_multiplebooks'):
@@ -336,7 +346,7 @@ class ViewModel:
                     bks = bks[0]
                 except IndexError:
                     bks = "No book selected!"
-            return "PTXprint {} {} ({}) {}".format(VersionStr, prjid, bks, self.get("ecb_savedConfig") or "")
+            return "PTXprint {}   -  {} ({}) {}".format(VersionStr, prjid, bks, self.get("ecb_savedConfig") or "")
 
     def configName(self):
         return self.configId or None
@@ -680,7 +690,9 @@ class ViewModel:
                 fname = piclstfname
         if not usepiclist:      # since possibly set false in above if
             fname = os.path.join(self.settings_dir, self.prjid, fname)
-        if usepiclist:
+        if not os.path.exists(fname):
+            return res
+        elif usepiclist:
             with universalopen(fname) as inf:
                 for l in (x.strip() for x in inf.readlines()):
                     if not len(l) or l.startswith("%"):

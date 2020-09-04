@@ -111,8 +111,7 @@ else:
 
 if args.pid:
     mainw.setPrjid(args.pid)
-    if args.config is not None:
-        mainw.setConfigId(args.config)
+    mainw.setConfigId(args.config or "Default")
 
 def doit(printer):
     runjob = RunJob(printer, scriptsdir, macrosdir, config, args)

@@ -50,7 +50,7 @@ class PicList:
             row = [k] + [v[e] if e in v else (1 if e == "scale" else "") for e in _piclistfields[1:]]
             try:
                 row[4] = int(row[4]) * 100
-            except ValueError, TypeError:
+            except (ValueError, TypeError):
                 row[4] = 100
             self.model.append(row)
         self.view.set_model(self.model)

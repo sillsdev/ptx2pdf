@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 
+<!-- Generated with glade 3.22.2 
 
 The MIT License (MIT)
 
@@ -2027,7 +2027,7 @@ of the same Paratext project.</property>
                                         <property name="has_entry">True</property>
                                         <property name="active_id">0</property>
                                         <items>
-                                          <item translatable="yes">(None)</item>
+                                          <item translatable="yes">Default</item>
                                         </items>
                                         <signal name="changed" handler="onConfigNameChanged" swapped="no"/>
                                         <child internal-child="entry">
@@ -8539,7 +8539,7 @@ should be trimmed to after printing.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_creditSensitive">
+                                  <object class="GtkCheckButton" id="c_sensitive">
                                     <property name="label" translatable="yes">Sensitive Project</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>

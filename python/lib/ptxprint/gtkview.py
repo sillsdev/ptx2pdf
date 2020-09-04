@@ -552,7 +552,7 @@ class GtkViewModel(ViewModel):
         self.bookNoUpdate = False
 
     def getConfigList(self, prjid):
-        res = [""]
+        res = []
         if self.prjid is None:
             return res
         root = os.path.join(self.settings_dir, prjid, "shared", "ptxprint")
@@ -560,20 +560,22 @@ class GtkViewModel(ViewModel):
             for s in os.scandir(root):
                 if s.is_dir and os.path.exists(os.path.join(root, s.name, "ptxprint.cfg")):
                     res.append(s.name)
+        if 'Default' not in res:
+            res.append('Default')   # it's only going to get sorted
         return res
 
     def updateSavedConfigList(self):
         self.configNoUpdate = True
-        currConf = self.builder.get_object("t_savedConfig").get_text()
+        currConf = self.get("ecb_savedConfig")
         self.cb_savedConfig.remove_all()
         savedConfigs = self.getConfigList(self.prjid)
         if len(savedConfigs):
             for cfgName in sorted(savedConfigs):
                 self.cb_savedConfig.append_text(cfgName)
-            try:
-                self.builder.get_object("t_savedConfig").set_text(currConf)
-            except:
-                self.cb_savedConfig.set_active(0)
+            if currConf in savedConfigs:
+                self.set("ecb_savedConfig", currConf)
+            else:
+                self.set("ecb_savedConfig", "Default")
         else:
             self.configNoUpdate = False
             self.builder.get_object("t_savedConfig").set_text("")
@@ -1305,6 +1307,8 @@ class GtkViewModel(ViewModel):
             self.set("fcb_project", prjid)
 
     def setConfigId(self, configid, saveCurrConfig=False):
+        if not configid:
+            configid="Default"
         if not self.initialised:
             self.pendingConfig = configid
         else:
@@ -1317,7 +1321,7 @@ class GtkViewModel(ViewModel):
         lockBtn = self.builder.get_object("btn_lockunlock")
         lockBtn.set_label("Lock Config")
         lockBtn.set_sensitive(False)
-        self.updateProjectSettings(None, saveCurrConfig=True)
+        self.updateProjectSettings(None, saveCurrConfig=True, configName="Default")
         self.updateSavedConfigList()
         for o in ["b_print", "bx_SavedConfigSettings", "tb_Font", "tb_Layout", "tb_Body", "tb_HeadFoot", "tb_Pictures",
                   "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_DiglotBorder"]:
