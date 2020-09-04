@@ -350,7 +350,6 @@ class GtkViewModel(ViewModel):
                   "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "fcb_textDirection", "l_digits", "fcb_digits",
                   "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
                   "gr_fnAdvOptions", "c_figexclwebapp", "bx_horizRule", "l_glossaryMarkupStyle"):
-            # print("c in 342", c)
             self.builder.get_object(c).set_visible(not self.get("c_hideAdvancedSettings"))
 
         # Resize Main UI Window appropriately
@@ -889,10 +888,11 @@ class GtkViewModel(ViewModel):
                   "ecb_ftrcenter", "ecb_hdrleft", "ecb_hdrcenter", "ecb_hdrright", "t_fncallers", "t_xrcallers"):
             self.builder.get_object(w).modify_font(p)
 
-    def onScopeOptClicked(self, btn):
-        pass
-        # print(btn)
-        # self.sensiVisible(btn)   # wondering if there is a way to pass the ID of the btn along generically
+    def onScopeChanged(self, btn):
+        self.sensiVisible("c_singlebook")
+        self.sensiVisible("c_multiplebooks")
+        self.sensiVisible("c_biblemodule")
+        # self.sensiVisible("c_dblbundle")
 
     def updateFakeLabels(self):
         status = self.get("c_fakebold") or self.get("c_fakeitalic") or self.get("c_fakebolditalic")
@@ -1357,8 +1357,8 @@ class GtkViewModel(ViewModel):
         toc.set_sensitive(status)
         if not status:
             toc.set_active(False)
-        for c in ("l_singlebook", "ecb_book", "l_chapfrom", "fcb_chapfrom", "l_chapto", "fcb_chapto"):
-            self.builder.get_object(c).set_sensitive(not status)
+        # for c in ("c_singlebook", "ecb_book", "l_chapfrom", "fcb_chapfrom", "l_chapto", "fcb_chapto"):
+            # self.builder.get_object(c).set_sensitive(not status)
         for i in range(0,6):
             self.builder.get_object("l_{}".format(i)).set_tooltip_text(None)
         self.updatePrjLinks()

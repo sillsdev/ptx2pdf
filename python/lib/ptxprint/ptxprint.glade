@@ -1826,12 +1826,14 @@ if need be.</property>
                               <object class="GtkRadioButton" id="c_biblemodule">
                                 <property name="label" translatable="yes">Bible Module</property>
                                 <property name="visible">True</property>
+                                <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
                                 <property name="margin_left">12</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
                                 <property name="group">c_singlebook</property>
+                                <signal name="clicked" handler="onScopeChanged" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -1847,6 +1849,7 @@ if need be.</property>
                                 <property name="margin_left">12</property>
                                 <property name="draw_indicator">True</property>
                                 <property name="group">c_singlebook</property>
+                                <signal name="clicked" handler="onScopeChanged" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -1863,7 +1866,7 @@ if need be.</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
                                 <property name="group">c_singlebook</property>
-                                <signal name="clicked" handler="onScopeOptClicked" swapped="no"/>
+                                <signal name="clicked" handler="onScopeChanged" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -1880,6 +1883,7 @@ if need be.</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
                                 <property name="group">c_multiplebooks</property>
+                                <signal name="clicked" handler="onScopeChanged" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -1911,6 +1915,7 @@ PDF files - one for each book.</property>
                             <child>
                               <object class="GtkComboBoxText" id="ecb_biblemodule">
                                 <property name="visible">True</property>
+                                <property name="sensitive">False</property>
                                 <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">A Bible module brings together text
 selections from a Paratext project.
@@ -10121,19 +10126,22 @@ a good way to easily remove a whole bunch of unwanted files.</property>
                                       <object class="GtkBox">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="vexpand">True</property>
                                         <child>
                                           <object class="GtkScrolledWindow">
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="hexpand">True</property>
+                                            <property name="vexpand">True</property>
                                             <property name="hscrollbar_policy">never</property>
                                             <property name="shadow_type">in</property>
-                                            <property name="min_content_height">170</property>
-                                            <property name="max_content_height">250</property>
+                                            <property name="min_content_height">128</property>
+                                            <property name="max_content_height">300</property>
                                             <child>
                                               <object class="GtkViewport">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
+                                                <property name="vexpand">True</property>
                                                 <child>
                                                   <object class="GtkBox">
                                                     <property name="visible">True</property>
@@ -10144,11 +10152,12 @@ a good way to easily remove a whole bunch of unwanted files.</property>
                                                       <object class="GtkGrid">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">False</property>
-                                                        <property name="valign">end</property>
+                                                        <property name="margin_left">6</property>
+                                                        <property name="margin_right">15</property>
                                                         <property name="margin_top">6</property>
                                                         <property name="margin_bottom">6</property>
                                                         <property name="hexpand">True</property>
-                                                        <property name="vexpand">False</property>
+                                                        <property name="vexpand">True</property>
                                                         <property name="row_spacing">6</property>
                                                         <property name="column_spacing">4</property>
                                                         <child>
@@ -10220,7 +10229,6 @@ Ref:</property>
                                                             <property name="width_request">80</property>
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
-                                                            <property name="halign">center</property>
                                                             <property name="width_chars">10</property>
                                                           </object>
                                                           <packing>
@@ -10507,6 +10515,7 @@ lines:</property>
                                                         </child>
                                                         <child>
                                                           <object class="GtkSpinButton" id="s_plLines">
+                                                            <property name="width_request">135</property>
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="max_length">3</property>
@@ -10552,6 +10561,7 @@ lines:</property>
                                           <object class="GtkBox">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
+                                            <property name="hexpand">True</property>
                                             <property name="orientation">vertical</property>
                                             <child>
                                               <object class="GtkLabel">
@@ -10559,7 +10569,6 @@ lines:</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="halign">center</property>
                                                 <property name="valign">end</property>
-                                                <property name="hexpand">True</property>
                                                 <property name="label" translatable="yes">Preview</property>
                                                 <property name="justify">center</property>
                                               </object>
@@ -10573,11 +10582,11 @@ lines:</property>
                                               <object class="GtkImage">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
-                                                <property name="hexpand">False</property>
+                                                <property name="hexpand">True</property>
                                                 <property name="pixbuf">splash_small.png</property>
                                               </object>
                                               <packing>
-                                                <property name="expand">False</property>
+                                                <property name="expand">True</property>
                                                 <property name="fill">True</property>
                                                 <property name="position">1</property>
                                               </packing>
@@ -10586,6 +10595,7 @@ lines:</property>
                                               <object class="GtkBox">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
+                                                <property name="halign">center</property>
                                                 <child>
                                                   <object class="GtkRadioButton" id="c_previewImage">
                                                     <property name="label" translatable="yes">Image</property>
@@ -10621,20 +10631,20 @@ lines:</property>
                                               </object>
                                               <packing>
                                                 <property name="expand">False</property>
-                                                <property name="fill">True</property>
+                                                <property name="fill">False</property>
                                                 <property name="position">2</property>
                                               </packing>
                                             </child>
                                           </object>
                                           <packing>
-                                            <property name="expand">False</property>
+                                            <property name="expand">True</property>
                                             <property name="fill">True</property>
                                             <property name="position">1</property>
                                           </packing>
                                         </child>
                                       </object>
                                       <packing>
-                                        <property name="expand">False</property>
+                                        <property name="expand">True</property>
                                         <property name="fill">True</property>
                                         <property name="position">2</property>
                                       </packing>

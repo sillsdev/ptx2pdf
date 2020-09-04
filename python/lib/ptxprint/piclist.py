@@ -31,11 +31,7 @@ class PicList:
         self.selection.connect("changed", self.row_select)
         for k, v in _form_structure.items():
             w = builder.get_object(v)
-            print("k,v,w:", k, v, w)
-            try:
-                w.connect("value-changed" if v[0].startswith("s_") else "changed", self.item_changed, k)
-            except AttributeError:
-                print("AttributeError for:", k, v)
+            w.connect("value-changed" if v[0].startswith("s_") else "changed", self.item_changed, k)
         pass
 
     def isEmpty(self):
