@@ -457,8 +457,9 @@ class RunJob:
             return self.carefulCopy(ratio, src, tgt)
         missingPics = []
         for j in jobs:
-            missingPics += self.printer.generateNProcPicLists(j, \
+            pi, mp = self.printer.generateNProcPicLists(j, \
                                 os.path.join(self.printer.working_dir, "tmpPicLists"), carefulCopy, isTemp=True)
+            missingPics += mp
             
         if len(missingPics):
             missingPicList = ["{}".format(", ".join(list(set(missingPics))))]

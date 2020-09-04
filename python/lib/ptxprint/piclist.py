@@ -48,7 +48,10 @@ class PicList:
         self.model.clear()
         for k, v in sorted(picinfo.items(), key=lambda x:(refKey(x[0]), x[1])):
             row = [k] + [v[e] if e in v else (1 if e == "scale" else "") for e in _piclistfields[1:]]
-            row[4] = int(row[4]) * 100
+            try:
+                row[4] = int(row[4]) * 100
+            except ValueError, TypeError:
+                row[4] = 100
             self.model.append(row)
         self.view.set_model(self.model)
         self.listview.set_model(self.model)
