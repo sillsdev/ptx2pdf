@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import sys, os
+import sys, os, re
 import ptxprint.sfm as sfm
 from ptxprint.sfm import usfm
 from ptxprint.sfm import style
@@ -124,16 +124,25 @@ class Collector:
                 currChunk.append(c)
                 root.remove(c)
             if ischap(c):
-                self.chap = int(c.args[0])
+                vc = re.sub(r"[^0-9\-]", c.args[0], "")
+                try:
+                    self.chap = int(vc)
+                except (ValueError, TypeError):
+                    self.chap = 0
                 if currChunk is not None:
                     currChunk.chap = self.chap
                     currChunk.verse = 0
             elif isverse(c):
-                if "-" in c.args[0]:
-                    v, e = map(int, c.args[0].split('-'))
-                else:
-                    v = int(c.args[0])
-                    e = v
+                vc = re.sub(r"[^0-9\-]", c.args[0], "")
+                try:
+                    if "-" in c.args[0]:
+                        v, e = map(int, vc.split('-'))
+                    else:
+                        v = int(vc)
+                        e = v
+                except (ValueError, TypeError):
+                    v = 0
+                    e = 0
                 self.verse = v
                 self.end = e
                 self.counts = {}
