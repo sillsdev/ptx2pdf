@@ -1979,6 +1979,7 @@ The list is based on any available
                                 <property name="label" translatable="yes">Include
 Colophon</property>
                                 <property name="visible">True</property>
+                                <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
                                 <property name="tooltip_text" translatable="yes">A brief statement containing information
@@ -7590,6 +7591,7 @@ content of Headers and Footers.</property>
                                 <property name="margin_top">6</property>
                                 <property name="row_spacing">6</property>
                                 <property name="column_spacing">4</property>
+                                <property name="row_homogeneous">True</property>
                                 <child>
                                   <object class="GtkRadioButton" id="c_useLowResPics">
                                     <property name="label" translatable="yes">Low (Smaller File)</property>
@@ -7721,7 +7723,6 @@ attribute.  Note: w= web, a=app, p=print.</property>
                                     <property name="receives_default">False</property>
                                     <property name="halign">start</property>
                                     <property name="margin_left">10</property>
-                                    <property name="margin_bottom">2</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -7732,7 +7733,7 @@ attribute.  Note: w= web, a=app, p=print.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_skipmissingimages">
-                                    <property name="label" translatable="yes">Omit Missing Pictures</property>
+                                    <property name="label" translatable="yes">Omit Missing Pictures           ...</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -7740,11 +7741,11 @@ attribute.  Note: w= web, a=app, p=print.</property>
 the list of illustrations and skip/ignore/remove any which
 are not found in the specified location of image files.
 
-A list of missing pictures should appear below AFTER
-creating the publication.</property>
+If Pictures are missing after preparing a PDF, then
+they will be listed as a tooltip along with the number
+missing (right).</property>
                                     <property name="halign">start</property>
                                     <property name="margin_left">10</property>
-                                    <property name="margin_bottom">6</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -7883,16 +7884,11 @@ positioning of illustrations.
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel" id="l_missingPictureString">
+                                  <object class="GtkLabel" id="l_missingPictureCount">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>
-                                    <property name="valign">start</property>
-                                    <property name="margin_top">6</property>
-                                    <property name="margin_bottom">6</property>
-                                    <property name="vexpand">False</property>
-                                    <property name="label" translatable="yes">(# Missing)</property>
-                                    <property name="selectable">True</property>
+                                    <property name="label" translatable="yes">(0 Missing)</property>
                                     <property name="single_line_mode">True</property>
                                     <property name="track_visited_links">False</property>
                                   </object>
@@ -7947,7 +7943,22 @@ more than once (to update the list of page numbers).</property>
                       </packing>
                     </child>
                     <child>
-                      <placeholder/>
+                      <object class="GtkLabel" id="l_missingPictureString">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="valign">start</property>
+                        <property name="margin_left">40</property>
+                        <property name="margin_right">40</property>
+                        <property name="margin_top">6</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="wrap">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
                     </child>
                   </object>
                   <packing>

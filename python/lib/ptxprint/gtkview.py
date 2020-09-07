@@ -1274,8 +1274,9 @@ class GtkViewModel(ViewModel):
         self.chapNoUpdate = False
 
     def onBookChange(self, cb_book):
-        if self.bookNoUpdate == True:
-            return
+        # print("self.bookNoUpdate:", self.bookNoUpdate)
+        # if self.bookNoUpdate == True:
+            # return
         self.bk = self.get("ecb_book")
         self.set("c_prettyIntroOutline", False)
         if self.bk != "":

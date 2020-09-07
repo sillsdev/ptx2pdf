@@ -463,9 +463,11 @@ class RunJob:
             
         if len(missingPics):
             missingPicList = ["{}".format(", ".join(list(set(missingPics))))]
-            self.printer.set("l_missingPictureString", "Missing Pictures:\n"+"{}".format("\n".join(missingPicList)))
+            self.printer.set("l_missingPictureCount", "({} Missing)".format(len(set(missingPics))))
+            self.printer.set("l_missingPictureString", "Missing Pictures: {}".format("\n".join(missingPicList)))
         else:
-            self.printer.set("l_missingPictureString", "No Missing Pictures")
+            self.printer.set("l_missingPictureCount", "(0 Missing)")
+            self.printer.set("l_missingPictureString", "")
 
     def convertToJPGandResize(self, ratio, infile, outfile):
         white = (255, 255, 255, 255)
