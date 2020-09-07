@@ -887,7 +887,9 @@ class GtkViewModel(ViewModel):
         for w in ("t_clHeading", "t_tocTitle", "t_configNotes", "scroll_FinalSFM", "scroll_PicList", \
                   "ecb_ftrcenter", "ecb_hdrleft", "ecb_hdrcenter", "ecb_hdrright", "t_fncallers", "t_xrcallers", \
                   "l_projectFullName", "t_plCaption", "t_plRef", "t_plAltText", "t_plCopyright"):
+                  # "col_caption", "col_caption1"):
             self.builder.get_object(w).modify_font(p)
+        # TO DO: Also need to handle TWO fallback fonts in the picList for Diglots (otherwise one script will end up as Tofu)
 
     def onScopeChanged(self, btn):
         self.sensiVisible("c_singlebook")
@@ -1331,11 +1333,6 @@ class GtkViewModel(ViewModel):
         lockBtn = self.builder.get_object("btn_lockunlock")
         lockBtn.set_label("Lock Config")
         lockBtn.set_sensitive(False)
-        # MP asks: Why doesn't this work any more?
-        print(self.ptsettings.get('FullName', ""))
-        print(self.ptsettings.get('Copyright', ""))
-        self.builder.get_object("l_projectFullName").set_label(self.ptsettings.get('FullName', ""))
-        self.builder.get_object("l_projectFullName").set_tooltip_text(self.ptsettings.get('Copyright', ""))
         self.updateProjectSettings(None, saveCurrConfig=True, configName="Default")
         self.updateSavedConfigList()
         for o in ["b_print", "bx_SavedConfigSettings", "tb_Font", "tb_Layout", "tb_Body", "tb_HeadFoot", "tb_Pictures",
@@ -1343,6 +1340,12 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(o).set_sensitive(True)
         self.updateFonts()
         self.updateHdrFtrOptions(self.get("c_diglot"))
+        if self.ptsettings is not None:
+            self.builder.get_object("l_projectFullName").set_label(self.ptsettings.get('FullName', ""))
+            self.builder.get_object("l_projectFullName").set_tooltip_text(self.ptsettings.get('Copyright', ""))
+        else:
+            self.builder.get_object("l_projectFullName").set_label("")
+            self.builder.get_object("l_projectFullName").set_tooltip_text("")
 
     def updatePrjLinks(self):
         if self.settings_dir != None and self.prjid != None:

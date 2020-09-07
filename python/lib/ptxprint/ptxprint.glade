@@ -1832,11 +1832,12 @@ if need be.</property>
                             </child>
                             <child>
                               <object class="GtkRadioButton" id="c_biblemodule">
-                                <property name="label" translatable="yes">Bible Module</property>
+                                <property name="label" translatable="yes">Bible Module:</property>
                                 <property name="visible">True</property>
                                 <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
+                                <property name="halign">start</property>
                                 <property name="margin_left">12</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
@@ -1850,10 +1851,11 @@ if need be.</property>
                             </child>
                             <child>
                               <object class="GtkRadioButton" id="c_dblbundle">
-                                <property name="label" translatable="yes">DBL Bundle</property>
+                                <property name="label" translatable="yes">DBL Bundle:</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
                                 <property name="no_show_all">True</property>
+                                <property name="halign">start</property>
                                 <property name="margin_left">12</property>
                                 <property name="draw_indicator">True</property>
                                 <property name="group">c_singlebook</property>
@@ -1870,6 +1872,7 @@ if need be.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
+                                <property name="halign">start</property>
                                 <property name="margin_left">12</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
@@ -1887,6 +1890,7 @@ if need be.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
+                                <property name="halign">start</property>
                                 <property name="margin_left">12</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
@@ -2009,7 +2013,9 @@ of the book. Similar to a "biblio-page" or a
                               <object class="GtkLabel" id="l_projectFullName">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="opacity">0.69999999999999996</property>
                                 <property name="halign">start</property>
+                                <property name="valign">center</property>
                                 <property name="label" translatable="yes">Paratext Project Name</property>
                               </object>
                               <packing>
@@ -2022,6 +2028,7 @@ of the book. Similar to a "biblio-page" or a
                               <object class="GtkLabel" id="l_dblBundle">
                                 <property name="can_focus">False</property>
                                 <property name="no_show_all">True</property>
+                                <property name="opacity">0.69999999999999996</property>
                                 <property name="halign">start</property>
                                 <property name="margin_left">20</property>
                                 <property name="label" translatable="yes">DBL Bundle Name/Description</property>
@@ -9844,7 +9851,7 @@ a good way to easily remove a whole bunch of unwanted files.</property>
                                               </object>
                                             </child>
                                             <child>
-                                              <object class="GtkTreeViewColumn">
+                                              <object class="GtkTreeViewColumn" id="col_caption">
                                                 <property name="resizable">True</property>
                                                 <property name="spacing">4</property>
                                                 <property name="sizing">fixed</property>
@@ -10036,7 +10043,7 @@ a good way to easily remove a whole bunch of unwanted files.</property>
                                                   </object>
                                                 </child>
                                                 <child>
-                                                  <object class="GtkTreeViewColumn">
+                                                  <object class="GtkTreeViewColumn" id="col_caption1">
                                                     <property name="resizable">True</property>
                                                     <property name="spacing">4</property>
                                                     <property name="sizing">fixed</property>

@@ -3,7 +3,7 @@ from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.view import refKey
 from gi.repository import Gtk
 
-_piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "alt", "ref", "copyright", "mirror"]
+_piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copyright", "mirror"]
 _form_structure = {
     'anchor':   't_plAnchor',
     'caption':  't_plCaption',
@@ -11,8 +11,8 @@ _form_structure = {
     'size':     'fcb_plSize',
     'scale':    's_plScale',
     'pgpos':    'fcb_plPgPos',
-    'alt':      't_plAltText',
     'ref':      't_plRef',
+    'alt':      't_plAltText',
     'copyright':    't_plCopyright',
     'mirror':   'fcb_plMirror',
     'hpos':     'fcb_plHoriz',
