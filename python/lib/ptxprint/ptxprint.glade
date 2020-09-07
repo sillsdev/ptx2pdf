@@ -1446,6 +1446,14 @@ in the Windows system.</property>
         <col id="0" translatable="yes">Right</col>
         <col id="1" translatable="yes">r</col>
       </row>
+      <row>
+        <col id="0" translatable="yes">Inner</col>
+        <col id="1" translatable="yes">i</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Outer</col>
+        <col id="1" translatable="yes">o</col>
+      </row>
     </data>
   </object>
   <object class="GtkListStore" id="ls_plMirror">
@@ -1998,7 +2006,7 @@ of the book. Similar to a "biblio-page" or a
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel">
+                              <object class="GtkLabel" id="l_projectFullName">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">start</property>
@@ -9840,7 +9848,7 @@ a good way to easily remove a whole bunch of unwanted files.</property>
                                                 <property name="resizable">True</property>
                                                 <property name="spacing">4</property>
                                                 <property name="sizing">fixed</property>
-                                                <property name="fixed_width">290</property>
+                                                <property name="fixed_width">320</property>
                                                 <property name="title" translatable="yes">Caption</property>
                                                 <child>
                                                   <object class="GtkCellRendererText" id="cr_caption"/>
@@ -9915,7 +9923,7 @@ a good way to easily remove a whole bunch of unwanted files.</property>
                                                 <child>
                                                   <object class="GtkCellRendererText" id="cr_ref"/>
                                                   <attributes>
-                                                    <attribute name="text">7</attribute>
+                                                    <attribute name="text">6</attribute>
                                                   </attributes>
                                                 </child>
                                               </object>
@@ -9930,7 +9938,7 @@ a good way to easily remove a whole bunch of unwanted files.</property>
                                                 <child>
                                                   <object class="GtkCellRendererText" id="cr_alt"/>
                                                   <attributes>
-                                                    <attribute name="text">6</attribute>
+                                                    <attribute name="text">7</attribute>
                                                   </attributes>
                                                 </child>
                                               </object>
@@ -10032,7 +10040,7 @@ a good way to easily remove a whole bunch of unwanted files.</property>
                                                     <property name="resizable">True</property>
                                                     <property name="spacing">4</property>
                                                     <property name="sizing">fixed</property>
-                                                    <property name="fixed_width">290</property>
+                                                    <property name="fixed_width">320</property>
                                                     <property name="title" translatable="yes">Caption</property>
                                                     <child>
                                                       <object class="GtkCellRendererText" id="cr_caption1"/>

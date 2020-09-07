@@ -145,10 +145,9 @@ ModelMap = {
     "paragraph/missingchars":   ("t_missingChars", lambda w,v: v or ""),
 
     "document/sensitive":       ("c_sensitive", None),
-    "document/title":           (None, lambda w,v: w.ptsettings.get('FullName', "")),
+    "document/title":           (None, lambda w,v: "" if w.get("c_sensitive") else w.ptsettings.get('FullName', "")),
     "document/subject":         ("t_booklist", lambda w,v: v if w.get("c_multiplebooks") else w.get("ecb_book")),
-    "document/author":          (None, lambda w,v: w.ptsettings.get('Copyright', "")),
-    # "document/author":          (None, lambda w,v: re.sub('"?</?p>"?','',w.ptsettings.get('Copyright', "")).strip('"')),
+    "document/author":          (None, lambda w,v: "" if w.get("c_sensitive") else w.ptsettings.get('Copyright', "")),
 
     "document/startpagenum":    ("s_startPageNum", lambda w,v: int(float(v)) or "1"),
     "document/toc":             ("c_autoToC", lambda w,v: "" if v else "%"),

@@ -885,7 +885,8 @@ class GtkViewModel(ViewModel):
         pangostr = '{}{} {} {}'.format(name, fallback, style, fsize)
         p = Pango.FontDescription(pangostr)
         for w in ("t_clHeading", "t_tocTitle", "t_configNotes", "scroll_FinalSFM", "scroll_PicList", \
-                  "ecb_ftrcenter", "ecb_hdrleft", "ecb_hdrcenter", "ecb_hdrright", "t_fncallers", "t_xrcallers"):
+                  "ecb_ftrcenter", "ecb_hdrleft", "ecb_hdrcenter", "ecb_hdrright", "t_fncallers", "t_xrcallers", \
+                  "l_projectFullName", "t_plCaption", "t_plRef", "t_plAltText", "t_plCopyright"):
             self.builder.get_object(w).modify_font(p)
 
     def onScopeChanged(self, btn):
@@ -1330,6 +1331,11 @@ class GtkViewModel(ViewModel):
         lockBtn = self.builder.get_object("btn_lockunlock")
         lockBtn.set_label("Lock Config")
         lockBtn.set_sensitive(False)
+        # MP asks: Why doesn't this work any more?
+        print(self.ptsettings.get('FullName', ""))
+        print(self.ptsettings.get('Copyright', ""))
+        self.builder.get_object("l_projectFullName").set_label(self.ptsettings.get('FullName', ""))
+        self.builder.get_object("l_projectFullName").set_tooltip_text(self.ptsettings.get('Copyright', ""))
         self.updateProjectSettings(None, saveCurrConfig=True, configName="Default")
         self.updateSavedConfigList()
         for o in ["b_print", "bx_SavedConfigSettings", "tb_Font", "tb_Layout", "tb_Body", "tb_HeadFoot", "tb_Pictures",
