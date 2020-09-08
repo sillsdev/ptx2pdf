@@ -14,7 +14,7 @@ it, e.g. `fontsize` which the macros can then query when they need to set such
 things in the typesetting process.
 
 There is also a fourth category of marker in USFM: a milestone. While milestones
-may take parameters following them in text, they have are not opened and closed,
+may take parameters following them in text, they are not opened and closed,
 they simply do their thing when they occur and life continues after them. The
 world may be a different place, but they do not create a new style environment
 for anything to embed in, for example. Typical examples are `\c` and `\v`.
@@ -167,7 +167,7 @@ at the bottom of the stack to make processing easier.
 We define quite a few macros to handle all this. First there are the generic
 stack handling macros that work with any kind of stack and then there are the
 macros we use specifically for working with the `mcstack` which contains the
-style stack we are interested in. The good news is that TeX's parameter matchin
+style stack we are interested in. The good news is that TeX's parameter matching
 capabilities make handling a stack relatively straightforward. The first three
 macros are the core definition for a stack: pop, push, peek. The up and down
 macros (1) are for iterating through the stack either from bottom to top (up) or
@@ -263,7 +263,7 @@ in it, then that first nonpublishable will match the `nonpublishable` in the
 macro parameter match and there will be something after that (at least the
 `nonpublishable` we appended to the parameter) in `#2` and so the parameter
 contained `nonpublishable` and we can set the flag, else there is nothing and we
-don't se the flag. Phew!
+don't set the flag. Phew!
 
 [=csty_testpublishability]::
 
@@ -445,14 +445,14 @@ Otherwise we clear the flag.
 
 What happens when `\par` is executed? Before we actually close the paragraph, we
 adjust its parshape to include any cutouts. How cutouts work is delayed to
-(here)[#cutouts]. We then call any `end` hooks for the marker, be they for the
+[here](#cutouts). We then call any `end` hooks for the marker, be they for the
 diglot side or more generally. Now we can finally close off the paragraph.
 
 The first thing we need to do in the next paragraph is carry over any remaining
 cutout from the previous paragraph. For example, if the just closed paragraph
 was only one line long, then we need to carry over one line of cutout to the
 next paragraph. Finally if there are any post paragraph pictures, we should
-output those. See (Figures)[#figures] for more details.
+output those. See [Figures](#figures) for more details.
 
 [=cpar_par]::
 
@@ -534,7 +534,7 @@ line breaking at hyphens. People should not be writing books in heading blocks!
 Finally we say "no page break here".
 
 If, though, this is not a heading style paragraph and we are in a headings block
-then we need to end the headings block. We cover this in (Gridding)[#gridding].
+then we need to end the headings block. We cover this in [Gridding](#gridding).
 
 Now we can insert the before space for a paragraph. If there is before space
 then if we are in a heading then don't break. If we are not the first paragraph
@@ -699,7 +699,7 @@ the first line indent for the paragraph.
 
 Reading the code linearly, the next part of thie paragraph style routine is
 concerned with drop chapter number support. We will discuss that as part of
-(Milestones)[#milestones].
+[Milestones](#milestones).
 
 The last part of the `everypar` routine sets up the initial indentation. If
 there is a first line indent we need to analyse whether we still do actually
