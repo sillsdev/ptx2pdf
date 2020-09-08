@@ -38,12 +38,19 @@ capture the chapter number as the chapter number text.
 
 Drop chapter numbers need to be of the right size and users almost never get the
 number right. It is better to calculate it. But calculating the proper
-size of a dropped chapter numbers is tricky. We start by asking the style for
-the size of chapter number. If this is less than twice the main paragraph
-fontsize then we calculate an automatic size.
+size of a dropped chapter numbers is tricky. The aim is to have a chapter number
+that stretches from the baseline on the second line to the top of the x-height
+of the first line. But if the digits have descenders then we need to test
+whether the descenders will go below the descender of the second line. If so
+then we calculate the drop chapter to fit into the space range from the
+descender of the 2nd line to the ascender of the 1st line, and then shift them
+to fit.
 
-To do this we need to find the ascent and the descent (in box1) (1). We also get the
-vertical metrics of all the digits in the chapter font. Notice that to get the
+We start by getting the currently specified fontsize for dropped chapter
+numbers. Then we find the ascent and the descent of the main paragraph font
+(in box1) (1). We also get the
+vertical metrics of all the digits in the chapter font at the fontsize for the
+chapter marker. Notice that to get the
 font metrics we tell XeTeX to give us those. Then we switch to have XeTeX give
 us true glyph metrics. We clear out the chapter font in anticipation of
 recalculating it with a new size. Then we get the x-height of the paragraph
@@ -60,17 +67,28 @@ another number multiplied by $2^{16}$ then the result has no multiplier, and so 
 Multiplying numbers by 128 for extra accuracy can either result in having to
 divide the result by 128 or multiply it by $512 = (2^{16} / 2^7)$.
 
+The calculation is in 3 sections. The second section does a default calculation
+of the new chapter size needed to get the height of the digits to fit from the
+baseline of the second line to the x-height of the first. The first section
+calculates a notional height to pass into that scaling. In the normal case where
+there is no depth to speak off, this value is the height of the digits. But if
+there is a problem, then we scaled the height of the digits such that the final
+result comes out being the total height from the descender of the second line to
+the ascent of the first. The final section calculates any shift needed for
+digits with large depths.
+
 (2) First we calculate X, which is the distance from the baseline of the second
 line to the top of the x-height of the first line. And then we calculate X/C *
-128. We also calculate height T the distance from the second line descender to
+128. We also calculate height T, the distance from the second line descender to
 the first line ascender, based on what the font says about ascenders and
 descenders. Next we need CX/T (where C is the point size specified by the
-chapter style). We also calculate the maximum depth of the digits scaled if
+chapter style). This is the height the digits would have to be to fit into T
+rather than X. We also calculate the maximum depth of the digits scaled if
 the maximum height was scaled to fit with top x-height.
 
 If CX/T is less than the maximum height of the digits, or if there is
 insufficient room below the baseline for the scaled depth, then use the CX/T to
-scale. Otherwise use the maximum height. (3) This is then scaled such that height
+scale. Otherwise use the digits height. (3) This is then scaled such that height
 will stretch from the baseline of the second line to the x-height of the first line.
 We know that the whole thing will fit, but we may need to shift the number if
 the descender would clash with the line below (4). We calculate what the shift is.
