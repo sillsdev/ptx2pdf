@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 
+<!-- Generated with glade 3.22.2 
 
 The MIT License (MIT)
 
@@ -9142,6 +9142,7 @@ options here to create a Diglot or Didoc.</property>
                             <property name="receives_default">True</property>
                             <property name="halign">end</property>
                             <property name="margin_right">6</property>
+                            <signal name="clicked" handler="onDiglotSwitchClicked" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">False</property>

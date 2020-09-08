@@ -196,6 +196,7 @@ class GtkViewModel(ViewModel):
         self.bookNoUpdate = False
         self.pendingPid = None
         self.pendingConfig = None
+        self.otherDiglot = None
         for fcb in ("digits", "script", "chapfrom", "chapto", "diglotPicListSources",
                     "textDirection", "glossaryMarkupStyle", "fontFaces"):
             self.addCR("fcb_"+fcb, 0)
@@ -1675,6 +1676,23 @@ class GtkViewModel(ViewModel):
         self.sensiVisible("c_borders")
         self.updateHdrFtrOptions(btn.get_active())
         self.colourTabs()
+
+    def onDiglotSwitchClicked(self, btn):
+        oprjid = None
+        oconfig = None
+        if self.otherDiglot is not None:
+            oprjid, oconfig = self.otherDiglot
+            self.otherDiglot = None
+            btn.set_label("Switch to Other\nDiglot Project")
+        elif self.get("c_diglot"):
+            oprjid = self.get("fcb_diglotSecProject")
+            oconfig = self.get("ecb_diglotSecConfig")
+            if oprjid is not None and oconfig is not None:
+                self.otherDiglot = (self.prjid, self.configName())
+                btn.set_label("Return to\nDiglot Project")
+        if oprjid is not None and oconfig is not None:
+            self.set("fcb_project", oprjid)
+            self.set("ecb_savedConfig", oconfig)
         
     def updateHdrFtrOptions(self, diglot=False):
         l = ["First Reference", "Last Reference", "Reference Range", "Page Number",

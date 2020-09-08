@@ -124,7 +124,7 @@ class Collector:
                 currChunk.append(c)
                 root.remove(c)
             if ischap(c):
-                vc = re.sub(r"[^0-9\-]", c.args[0], "")
+                vc = re.sub(r"[^0-9\-]", "", c.args[0])
                 try:
                     self.chap = int(vc)
                 except (ValueError, TypeError):
@@ -133,7 +133,7 @@ class Collector:
                     currChunk.chap = self.chap
                     currChunk.verse = 0
             elif isverse(c):
-                vc = re.sub(r"[^0-9\-]", c.args[0], "")
+                vc = re.sub(r"[^0-9\-]", "", c.args[0])
                 try:
                     if "-" in c.args[0]:
                         v, e = map(int, vc.split('-'))
