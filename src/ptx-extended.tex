@@ -1,0 +1,89 @@
+%:skip
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Part of the ptx2pdf macro package for formatting USFM text
+% copyright (c) 2007 by SIL International
+% written by Jonathan Kew
+%
+% Permission is hereby granted, free of charge, to any person obtaining  
+% a copy of this software and associated documentation files (the  
+% "Software"), to deal in the Software without restriction, including  
+% without limitation the rights to use, copy, modify, merge, publish,  
+% distribute, sublicense, and/or sell copies of the Software, and to  
+% permit persons to whom the Software is furnished to do so, subject to  
+% the following conditions:
+%
+% The above copyright notice and this permission notice shall be  
+% included in all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
+% NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
+% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
+% CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+% WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+%
+% Except as contained in this notice, the name of SIL International  
+% shall not be used in advertising or otherwise to promote the sale,  
+% use or other dealings in this Software without prior written  
+% authorization from SIL International.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%+c_ext_intro
+% Declare things we need.
+
+\newbox\extb@x % Box in which extended study matter is placed
+\newinsert\extended
+\newif\ifinextended \inextendedfalse
+\newtoks\old@bx %store old definition of \everyhbox
+\def\c@tegory{}
+
+
+\def\setcatp@ram#1#2{\x@\xdef\csname c@tegory-\c@tegory-#1\endcsname{#2}}
+\def\getcatp@ram#1{\x@\let\x@\cp@ram\csname c@tegory-\c@tegory-#1\endcsname}
+\setcatp@ram{colour}{0 1 0}
+\setcatp@ram{alpha}{0.2}
+\setcatp@ram{posn}{b}
+\setcatp@ram{wid}{\colwidth}
+\setcatp@ram{figspec}{}%Normally 
+\def\fb@hpadding{1pt}%Added left and right of feintbox content
+\def\fb@vpadding{1pt}%added above and below feintbox content
+
+
+\addtoendhooks{\ifinextended\errmessage{Reached end of book without finding \\esbe.}\fi}
+\def\feintb@x#1#2#3#4#5{%
+  % 1 - alpha
+  % 2 - colour (r g b)
+  % 3 4 5 height, depth, width of colour block
+  \bgroup
+  \hbox to 0pt{%
+    \dimen0=#3\advance\dimen0 by \fb@vpadding
+    \dimen1=#4\advance\dimen1 by \fb@vpadding
+    \dimen3=\fb@hpadding
+    \dimen2=#5\advance\dimen2 by 2\dimen3
+    \hskip -\dimen3 % Backup so the expanded box is centred properly
+    \special{pdf:put @resources << /ExtGState << /GS01 << /Type /ExtGState /CA #1 /ca #1 /AIS false >>  >> >>}%
+     \special{pdf:code q /GS01 gs #2 rg}%
+     \vrule height \dimen0 depth \dimen1  width \dimen2 %should be possible to get this working in pdf code, but this works.
+     \special{pdf:code Q}%
+     \hss
+  }%
+  \egroup}
+\def\feintbox#1#2#3{% Set a (transparent) coloured box as background for box given in #3. #1: alpha, #2: {r g b}  (all numbers in range 0-1.0)
+  \setbox0#3\hbox{\feintb@x{#1}{#2}{\ht0}{\dp0}{\wd0}\box0}}
+\def\esb{\setbox\extb@x\vbox\bgroup\inextendedtrue\old@bx{\the\everyhbox}\everyhbox{\startesb}}
+
+\def\startesb{%
+ \everyhbox{\old@bx}%
+ \getcatp@ram{wid}\hsize=\cp@ram
+ \getcatp@ram{figspec}\ifx\cp@ram\empty\else\fig \cp@ram\fig*\fi
+}
+
+\def\esbe{\ifinextended\egroup\else\message{\\ebse called without \\esb}\fi
+  \inextendedfalse
+  \getcatp@ram{alpha}\let\pdf@lpha=\cp@ram
+  \getcatp@ram{colour}\let\pdfBGc@l=\cp@ram
+  \getcatp@ram{pos}\let\esbpos\cp@ram
+  \insert\bottomleftins{\vskip\baselineskip\feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extb@x}}}
+
+
