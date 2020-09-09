@@ -1459,11 +1459,20 @@
     \ifdim\thisjointDelta>0pt
       \advance\dimen8 by \thisjointDelta
     \fi
+    \advance\dimen8 by \ht\LeftBox
+    \ifdim \dimen8 <\ht\RightBox \dimen8=\ht\RightBox \fi
+    \dimen9=\dp\LeftBox
+    \ifdim \dimen9 <\dp\RightBox \dimen9=\dp\RightBox \fi
+    % apply columngutterruleskip?
+    \ifdim\ht\partial=0pt\ifdim\dp\partial=0pt
+      \advance\dimen8 by -\ColumnGutterRuleSkip
+      \ifdim\ColumnGutterRuleSkip < 0pt
+       \ifColumnGutterRule
+        \vskip\ColumnGutterRuleSkip
+       \fi
+      \fi
+    \fi\fi
     \hbox to \textwidth{\ifVisTrace\llap{\box0}\fi%
-      \advance\dimen8 by \ht\LeftBox
-      \ifdim \dimen8 <\ht\RightBox \dimen8=\ht\RightBox \fi
-      \dimen9=\dp\LeftBox
-      \ifdim \dimen9 <\dp\RightBox \dimen9=\dp\RightBox \fi
       \trace{d}{Gutter \the\dimen8 height, \the\dimen9 deep}%
       \dimen7=\dimen8%.5\baselineskip
       \hbox to\columnshift{}%
