@@ -1,6 +1,5 @@
 % ptx-diglot.tex: Diglot processing for xetex paratext2.tex
 %
-\newcount\diglotTRcount%
 \newcount\diglotDbgJoinboxes%
 \diglotDbgJoinboxes=-1% Set to the debug message of a joinboxes to execute showbox on that join
 
@@ -759,6 +758,7 @@
     \global\advance\TempDim by -\dp1}%
     \ifdim\TempDim>-1\baselineskip% All OK. drop through to digl@tRight
      \global\holdinginserts=1 % inserts inactive again
+     \traceNum{D}{Dropping through}%
      \let\eotri@l=\digl@tRight
     \else% Not a nice choice by output routine...
      \traceNum{d}{Shrinking trialsize and trying again}%
@@ -802,7 +802,18 @@
   \global\holdinginserts=0 %
   \global\savedpenalty=\tmppenalty %
   %\bgroup
-  \joinboxes{\partialR}{255}{12}{\partialRpenalty}%
+  \endgraf
+  \ifvoid\partialR
+    \ifVisTrace
+      \setbox0\vtop{\hbox to 0pt{\hss\doVisTrace{r}\box0}}%
+      \nointerlineskip
+      \ht0=0pt\dp0=0pt{\baselineskip=0pt\box0}%
+      \kern -\baselineskip
+    \fi
+    \unvbox255
+  \else
+    \joinboxes{\partialR}{255}{12}{\partialRpenalty}%
+  \fi
   \endgraf\penalty-10006
   %\egroup%
   \relax{\aftergroup\relax}%
@@ -864,7 +875,7 @@
  %Sets partialRpenalty, and some provisional page marking
  %
  % Do marking stuff...
- \traceNum{D}{digl@tRight: \the\pagegoal, \the\tmppenalty}
+ \traceNum{D}{digl@tRight: \the\pagegoal, \the\tmppenalty,\the\outputpenalty}
  \edef\t@st{\botmark}%
  \ifx\t@st\empty\else
    \trace{H}{digl@tRight: b:\botmark/\botmarks1/\botmarks2, f:\firstmark/\firstmarks1/\firstmarks2, fl:\firstLmark}
@@ -892,8 +903,12 @@
  \makevtop{255}%
  % put collected following material into partialR, adding to existing if
  % necessary
+ \ifnum\TRACEcount=\diglotDbgJoinboxes
+   \showbox255
+ \fi
  \ifvoid\partialR%
    \global\setbox\partialR=\vtop{\unvbox255}%
+   \partialRpenalty=\the\outputpenalty
  \else%
    \global\setbox\partialR=\vtop{\joinboxes{\partialR}{255}{11}{\partialRpenalty}}\relax%
  \fi%
@@ -907,6 +922,7 @@
    \calc@vailht
    \ifdim\availhtR>\baselineskip\tempfalse\fi
  \fi
+ \trace{D}{pRp:\the\partialRpenalty, \iftemp true\else false\fi}%
  \iftemp
    %\Rboxpenalty=\tmppenalty %
    \setboth%
@@ -1084,7 +1100,11 @@
   \ifdiglotL
     \redocolokfalse
   % I don't understand why this next bit causes problems...
-  %\else%  We're in right column mode..
+  \else%  We're in right column mode..
+    \trace{D}{pRp:\the\partialRpenalty, op:\the\outputpenalty}%
+    \ifnum\outputpenalty=-10006 % final penalty
+      \redocolokfalse
+    \fi
     %\ifnum\outputpenalty>-10000 % and a normal page break
       %\ifvoid\partialR\else%and there's material left to set in the right hand column
         %\repeatpermittedtrue % let this setboth be called again
