@@ -210,8 +210,9 @@
 \newif\ifrepeatok  % Signal that an unusual calling sequence has happend
 \newif\ifearlyLrefill % In some circumstances partialL is empty deliberatly, other times it isn't
 \repeatoktrue
-\newif\ifuseRightTrial % righttrials have given problems 
-\useRightTrialfalse 
+\newif\ifuseRightTrial % righttrials have give problems 
+\useRightTrialfalse %DO NOT SET TO TRUE except in testing!
+
 % The \lastpenalty before a \lefttext or \righttext issues a fake one,
 % or similarly penalty to apply at end of trial text, and scratch space
 \newcount\savedpenalty
@@ -967,7 +968,7 @@
   \ifhe@dings\endhe@dings\fi\endgraf\penalty-10001
   \calc@vailht\global\digl@tLfalse\global\diglotRtrue\calc@vailht
   \global\vsize=\availht\relax\output={\diglotRight}\the\rightho@ks\relax\swapfonts{R}%
-  \global\hsize=\columnRwidth\relax\global\holdinginserts=\ifuseRightTrial 1\else 0\fi}
+  \global\hsize=\columnRwidth\relax\global\holdinginserts=\ifuseRightTrial 1 \message{Someone set useRightTrial true. MISTAKE!}\else 0\fi}
 %
 % When there's a header on the left but not the right, but we want the verses
 % to line up nicely...
