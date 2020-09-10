@@ -10,6 +10,7 @@ from ptxprint.runner import checkoutput
 from ptxprint import sfm
 from ptxprint.sfm import usfm, style
 from ptxprint.usfmutils import Usfm, Sheets
+from ptxprint.utils import _
 
 def universalopen(fname, rewrite=False):
     """ Opens a file with the right codec from a small list and perhaps rewrites as utf-8 """
@@ -319,13 +320,13 @@ class TexModel:
         "versenumfont":             ("bl_verseNumFont", "c_inclVerseDecorator", None, None, None)
     }
     _hdrmappings = {
-        "First Reference":           r"\firstref",
-        "Last Reference":            r"\lastref",
-        "Reference Range":           r"\rangeref",
-        "Page Number":               r"\pagenumber",
-        "Time (HH:MM)":              r"\hrsmins",
-        "Date (YYYY-MM-DD)":         r"\isodate",
-        "-empty-":                   r"\empty"
+        _("First Reference"):           r"\firstref",
+        _("Last Reference"):            r"\lastref",
+        _("Reference Range"):           r"\rangeref",
+        _("Page Number"):               r"\pagenumber",
+        _("Time (HH:MM)"):              r"\hrsmins",
+        _("Date (YYYY-MM-DD)"):         r"\isodate",
+        _("-empty-"):                   r"\empty"
     }
     _mirrorRL = {r'\lastref':    r'\firstref',
                  r'\firstref':   r'\lastref'

@@ -305,7 +305,7 @@ THE SOFTWARE.
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
     <property name="version">Version 1.1</property>
-    <property name="copyright" translatable="yes">© 2020, SIL International</property>
+    <property name="copyright">© 2020, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
 XeTeX macros (PTX2PDF) with a long and reliable history.
@@ -809,100 +809,100 @@ saved configuration.</property>
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">MRK 1:16</col>
-        <col id="1" translatable="yes">Jesus walking to Jersusalem</col>
-        <col id="2" translatable="yes">HK000123c.tif</col>
-        <col id="3" translatable="yes">col</col>
+        <col id="0">MRK 1:16</col>
+        <col id="1">Jesus walking to Jersusalem</col>
+        <col id="2">HK000123c.tif</col>
+        <col id="3">col</col>
         <col id="4">100</col>
-        <col id="5" translatable="yes">bl</col>
-        <col id="6" translatable="yes">None</col>
-        <col id="7" translatable="yes">1:16</col>
-        <col id="8" translatable="yes">None</col>
-        <col id="9" translatable="yes">N</col>
+        <col id="5">bl</col>
+        <col id="6">None</col>
+        <col id="7">1:16</col>
+        <col id="8">None</col>
+        <col id="9">N</col>
       </row>
       <row>
-        <col id="0" translatable="yes">JHN 3:16-17</col>
-        <col id="1" translatable="yes">The people of the world</col>
-        <col id="2" translatable="yes">LB000316b.jpg</col>
-        <col id="3" translatable="yes">span</col>
+        <col id="0">JHN 3:16-17</col>
+        <col id="1">The people of the world</col>
+        <col id="2">LB000316b.jpg</col>
+        <col id="3">span</col>
         <col id="4">75</col>
-        <col id="5" translatable="yes">t</col>
-        <col id="6" translatable="yes">Image of a group of people</col>
-        <col id="7" translatable="yes">3:16</col>
-        <col id="8" translatable="yes">None</col>
-        <col id="9" translatable="yes">N</col>
+        <col id="5">t</col>
+        <col id="6">Image of a group of people</col>
+        <col id="7">3:16</col>
+        <col id="8">None</col>
+        <col id="9">N</col>
       </row>
       <row>
-        <col id="0" translatable="yes">LUK 15:8</col>
-        <col id="1" translatable="yes">The disciples listening to Jesus</col>
-        <col id="2" translatable="yes">CN00077b.tif</col>
-        <col id="3" translatable="yes">page</col>
+        <col id="0">LUK 15:8</col>
+        <col id="1">The disciples listening to Jesus</col>
+        <col id="2">CN00077b.tif</col>
+        <col id="3">page</col>
         <col id="4">100</col>
-        <col id="5" translatable="yes">t</col>
-        <col id="6" translatable="yes">12 men listening to Jesus</col>
-        <col id="7" translatable="yes">15:8</col>
-        <col id="8" translatable="yes">None</col>
-        <col id="9" translatable="yes">N</col>
+        <col id="5">t</col>
+        <col id="6">12 men listening to Jesus</col>
+        <col id="7">15:8</col>
+        <col id="8">None</col>
+        <col id="9">N</col>
       </row>
       <row>
-        <col id="0" translatable="yes">ACT 18:27</col>
-        <col id="1" translatable="yes">Paul's Journeys</col>
-        <col id="2" translatable="yes">Paul's_3_JourneysBW.pdf</col>
-        <col id="3" translatable="yes">full</col>
+        <col id="0">ACT 18:27</col>
+        <col id="1">Paul's Journeys</col>
+        <col id="2">Paul's_3_JourneysBW.pdf</col>
+        <col id="3">full</col>
         <col id="4">67</col>
-        <col id="5" translatable="yes">b</col>
-        <col id="6" translatable="yes">Map Creator map</col>
-        <col id="7" translatable="yes">18:27</col>
-        <col id="8" translatable="yes">None</col>
-        <col id="9" translatable="yes">N</col>
+        <col id="5">b</col>
+        <col id="6">Map Creator map</col>
+        <col id="7">18:27</col>
+        <col id="8">None</col>
+        <col id="9">N</col>
       </row>
       <row>
-        <col id="0" translatable="yes">ROM 8:28</col>
-        <col id="1" translatable="yes">Everything working out</col>
-        <col id="2" translatable="yes">gt12345.tif</col>
-        <col id="3" translatable="yes">col</col>
+        <col id="0">ROM 8:28</col>
+        <col id="1">Everything working out</col>
+        <col id="2">gt12345.tif</col>
+        <col id="3">col</col>
         <col id="4">30</col>
-        <col id="5" translatable="yes">cr</col>
-        <col id="6" translatable="yes">None</col>
-        <col id="7" translatable="yes">8:28</col>
-        <col id="8" translatable="yes">Gordon Thompson and friends.</col>
-        <col id="9" translatable="yes">N</col>
+        <col id="5">cr</col>
+        <col id="6">None</col>
+        <col id="7">8:28</col>
+        <col id="8">Gordon Thompson and friends.</col>
+        <col id="9">N</col>
       </row>
       <row>
-        <col id="0" translatable="yes">1CO 3:16</col>
-        <col id="1" translatable="yes">Some other caption that is rather long and complicated</col>
-        <col id="2" translatable="yes">unknownpic.pdf</col>
-        <col id="3" translatable="yes">col</col>
+        <col id="0">1CO 3:16</col>
+        <col id="1">Some other caption that is rather long and complicated</col>
+        <col id="2">unknownpic.pdf</col>
+        <col id="3">col</col>
         <col id="4">100</col>
-        <col id="5" translatable="yes">p</col>
-        <col id="6" translatable="yes">None</col>
-        <col id="7" translatable="yes">3:16-19</col>
-        <col id="8" translatable="yes">None</col>
-        <col id="9" translatable="yes">N</col>
+        <col id="5">p</col>
+        <col id="6">None</col>
+        <col id="7">3:16-19</col>
+        <col id="8">None</col>
+        <col id="9">N</col>
       </row>
       <row>
-        <col id="0" translatable="yes">REV 3:20</col>
-        <col id="1" translatable="yes">Behold I stand and the door and knock</col>
-        <col id="2" translatable="yes">CN01012.jpg</col>
-        <col id="3" translatable="yes">col</col>
+        <col id="0">REV 3:20</col>
+        <col id="1">Behold I stand and the door and knock</col>
+        <col id="2">CN01012.jpg</col>
+        <col id="3">col</col>
         <col id="4">80</col>
-        <col id="5" translatable="yes">tr</col>
-        <col id="6" translatable="yes">None</col>
-        <col id="7" translatable="yes">3:20</col>
-        <col id="8" translatable="yes">None</col>
-        <col id="9" translatable="yes">N</col>
+        <col id="5">tr</col>
+        <col id="6">None</col>
+        <col id="7">3:20</col>
+        <col id="8">None</col>
+        <col id="9">N</col>
       </row>
       <row>
-        <col id="0" translatable="yes">GLO 1:0</col>
-        <col id="1" translatable="yes">Palestine at the time of Jesus</col>
-        <col id="2" translatable="yes">mapcreatorPalestine.png</col>
-        <col id="3" translatable="yes">full</col>
+        <col id="0">GLO 1:0</col>
+        <col id="1">Palestine at the time of Jesus</col>
+        <col id="2">mapcreatorPalestine.png</col>
+        <col id="3">full</col>
         <col id="4">100</col>
-        <col id="5" translatable="yes">F</col>
-        <col id="6" translatable="yes">unrotated map</col>
-        <col id="7" translatable="yes">1:0</col>
-        <col id="8" translatable="yes">Map Creator</col>
-        <col id="9" translatable="yes">N</col>
+        <col id="5">F</col>
+        <col id="6">unrotated map</col>
+        <col id="7">1:0</col>
+        <col id="8">Map Creator</col>
+        <col id="9">N</col>
       </row>
     </data>
   </object>
@@ -913,19 +913,19 @@ saved configuration.</property>
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">†</col>
+        <col id="0">†</col>
       </row>
       <row>
-        <col id="0" translatable="yes">‡</col>
+        <col id="0">‡</col>
       </row>
       <row>
-        <col id="0" translatable="yes">-</col>
+        <col id="0">-</col>
       </row>
       <row>
-        <col id="0" translatable="yes">+</col>
+        <col id="0">+</col>
       </row>
       <row>
-        <col id="0" translatable="yes">#</col>
+        <col id="0">#</col>
       </row>
     </data>
   </object>
@@ -947,16 +947,16 @@ saved configuration.</property>
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">1</col>
+        <col id="0">1</col>
       </row>
       <row>
-        <col id="0" translatable="yes">2</col>
+        <col id="0">2</col>
       </row>
       <row>
-        <col id="0" translatable="yes">3</col>
+        <col id="0">3</col>
       </row>
       <row>
-        <col id="0" translatable="yes">4</col>
+        <col id="0">4</col>
       </row>
     </data>
   </object>
@@ -967,16 +967,16 @@ saved configuration.</property>
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">5</col>
+        <col id="0">5</col>
       </row>
       <row>
-        <col id="0" translatable="yes">6</col>
+        <col id="0">6</col>
       </row>
       <row>
-        <col id="0" translatable="yes">7</col>
+        <col id="0">7</col>
       </row>
       <row>
-        <col id="0" translatable="yes">8</col>
+        <col id="0">8</col>
       </row>
     </data>
   </object>
@@ -990,11 +990,11 @@ saved configuration.</property>
     <data>
       <row>
         <col id="0" translatable="yes">Single</col>
-        <col id="1" translatable="yes">1</col>
+        <col id="1">1</col>
       </row>
       <row>
         <col id="0" translatable="yes">Double</col>
-        <col id="1" translatable="yes">2</col>
+        <col id="1">2</col>
       </row>
     </data>
   </object>
@@ -1019,79 +1019,79 @@ saved configuration.</property>
     <data>
       <row>
         <col id="0" translatable="yes">Default</col>
-        <col id="1" translatable="yes">None</col>
+        <col id="1">None</col>
       </row>
       <row>
         <col id="0" translatable="yes">Arabic-Hindi</col>
-        <col id="1" translatable="yes">arabic-indic</col>
+        <col id="1">arabic-indic</col>
       </row>
       <row>
         <col id="0" translatable="yes">Arabic-Farsi</col>
-        <col id="1" translatable="yes">extended-arabic-indic</col>
+        <col id="1">extended-arabic-indic</col>
       </row>
       <row>
         <col id="0" translatable="yes">Bengali</col>
-        <col id="1" translatable="yes">bengali</col>
+        <col id="1">bengali</col>
       </row>
       <row>
         <col id="0" translatable="yes">Burmese</col>
-        <col id="1" translatable="yes">myanmar</col>
+        <col id="1">myanmar</col>
       </row>
       <row>
         <col id="0" translatable="yes">Devanagari</col>
-        <col id="1" translatable="yes">devanagari</col>
+        <col id="1">devanagari</col>
       </row>
       <row>
         <col id="0" translatable="yes">Ethiopic</col>
-        <col id="1" translatable="yes">ethiopic</col>
+        <col id="1">ethiopic</col>
       </row>
       <row>
         <col id="0" translatable="yes">Gondi (Gunjala)</col>
-        <col id="1" translatable="yes">gunjala-gondi</col>
+        <col id="1">gunjala-gondi</col>
       </row>
       <row>
         <col id="0" translatable="yes">Gujarati</col>
-        <col id="1" translatable="yes">gujarati</col>
+        <col id="1">gujarati</col>
       </row>
       <row>
         <col id="0" translatable="yes">Gurmukhi</col>
-        <col id="1" translatable="yes">gurmukhi</col>
+        <col id="1">gurmukhi</col>
       </row>
       <row>
         <col id="0" translatable="yes">Kannada</col>
-        <col id="1" translatable="yes">kannada</col>
+        <col id="1">kannada</col>
       </row>
       <row>
         <col id="0" translatable="yes">Khmer</col>
-        <col id="1" translatable="yes">khmer</col>
+        <col id="1">khmer</col>
       </row>
       <row>
         <col id="0" translatable="yes">Lao</col>
-        <col id="1" translatable="yes">lao</col>
+        <col id="1">lao</col>
       </row>
       <row>
         <col id="0" translatable="yes">Malayalam</col>
-        <col id="1" translatable="yes">malayalam</col>
+        <col id="1">malayalam</col>
       </row>
       <row>
         <col id="0" translatable="yes">Oriya</col>
-        <col id="1" translatable="yes">oriya</col>
+        <col id="1">oriya</col>
       </row>
       <row>
         <col id="0" translatable="yes">Tamil</col>
-        <col id="1" translatable="yes">tamil</col>
+        <col id="1">tamil</col>
       </row>
       <row>
         <col id="0" translatable="yes">Telugu</col>
-        <col id="1" translatable="yes">telugu</col>
+        <col id="1">telugu</col>
       </row>
       <row>
         <col id="0" translatable="yes">Thai</col>
-        <col id="1" translatable="yes">thai</col>
+        <col id="1">thai</col>
       </row>
       <row>
         <col id="0" translatable="yes">Tibetan</col>
-        <col id="1" translatable="yes">tibetan</col>
+        <col id="1">tibetan</col>
       </row>
     </data>
   </object>
@@ -1152,31 +1152,31 @@ saved configuration.</property>
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">Times New Roman</col>
+        <col id="0">Times New Roman</col>
         <col id="1">0</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Charis SIL</col>
+        <col id="0">Charis SIL</col>
         <col id="1">0</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Gentium Basic</col>
+        <col id="0">Gentium Basic</col>
         <col id="1">0</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Gentium Book Basic</col>
+        <col id="0">Gentium Book Basic</col>
         <col id="1">0</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Suranna</col>
+        <col id="0">Suranna</col>
         <col id="1">0</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Suranna UI</col>
+        <col id="0">Suranna UI</col>
         <col id="1">0</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Annapurna SIL</col>
+        <col id="0">Annapurna SIL</col>
         <col id="1">0</col>
       </row>
     </data>
@@ -1363,22 +1363,22 @@ in the Windows system.</property>
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">Sans Normal</col>
+        <col id="0">Sans Normal</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Annapurna SIL</col>
+        <col id="0">Annapurna SIL</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Suranna UI</col>
+        <col id="0">Suranna UI</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Ponnala</col>
+        <col id="0">Ponnala</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Times New Roman</col>
+        <col id="0">Times New Roman</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Annapurna SIL Bold</col>
+        <col id="0">Annapurna SIL Bold</col>
       </row>
     </data>
   </object>
@@ -1436,23 +1436,23 @@ in the Windows system.</property>
     <data>
       <row>
         <col id="0" translatable="yes">Left</col>
-        <col id="1" translatable="yes">l</col>
+        <col id="1">l</col>
       </row>
       <row>
         <col id="0" translatable="yes">Center</col>
-        <col id="1" translatable="yes">c</col>
+        <col id="1">c</col>
       </row>
       <row>
         <col id="0" translatable="yes">Right</col>
-        <col id="1" translatable="yes">r</col>
+        <col id="1">r</col>
       </row>
       <row>
         <col id="0" translatable="yes">Inner</col>
-        <col id="1" translatable="yes">i</col>
+        <col id="1">i</col>
       </row>
       <row>
         <col id="0" translatable="yes">Outer</col>
-        <col id="1" translatable="yes">o</col>
+        <col id="1">o</col>
       </row>
     </data>
   </object>
@@ -1486,31 +1486,31 @@ in the Windows system.</property>
     <data>
       <row>
         <col id="0" translatable="yes">Top</col>
-        <col id="1" translatable="yes">t</col>
+        <col id="1">t</col>
       </row>
       <row>
         <col id="0" translatable="yes">Bottom</col>
-        <col id="1" translatable="yes">b</col>
+        <col id="1">b</col>
       </row>
       <row>
         <col id="0" translatable="yes">Before Verse</col>
-        <col id="1" translatable="yes">h</col>
+        <col id="1">h</col>
       </row>
       <row>
         <col id="0" translatable="yes">After Paragraph</col>
-        <col id="1" translatable="yes">p</col>
+        <col id="1">p</col>
       </row>
       <row>
         <col id="0" translatable="yes">Cutout</col>
-        <col id="1" translatable="yes">c</col>
+        <col id="1">c</col>
       </row>
       <row>
         <col id="0" translatable="yes">Page (in Margins)</col>
-        <col id="1" translatable="yes">P</col>
+        <col id="1">P</col>
       </row>
       <row>
         <col id="0" translatable="yes">Page (to Edge)</col>
-        <col id="1" translatable="yes">F</col>
+        <col id="1">F</col>
       </row>
     </data>
   </object>
@@ -1524,19 +1524,19 @@ in the Windows system.</property>
     <data>
       <row>
         <col id="0" translatable="yes">Column Width</col>
-        <col id="1" translatable="yes">col</col>
+        <col id="1">col</col>
       </row>
       <row>
         <col id="0" translatable="yes">Span Width</col>
-        <col id="1" translatable="yes">span</col>
+        <col id="1">span</col>
       </row>
       <row>
         <col id="0" translatable="yes">Page (to Margins)</col>
-        <col id="1" translatable="yes">page</col>
+        <col id="1">page</col>
       </row>
       <row>
         <col id="0" translatable="yes">Page (to Edge)</col>
-        <col id="1" translatable="yes">full</col>
+        <col id="1">full</col>
       </row>
     </data>
   </object>
@@ -2631,7 +2631,7 @@ page for binding.</property>
 in millimeters (mm).</property>
                                         <property name="halign">start</property>
                                         <property name="width_chars">5</property>
-                                        <property name="text" translatable="yes">14</property>
+                                        <property name="text">14</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="progress_pulse_step">0</property>
                                         <property name="placeholder_text" translatable="yes">0.0</property>
@@ -2653,9 +2653,9 @@ in millimeters (mm).</property>
                                         <property name="can_focus">True</property>
                                         <property name="halign">start</property>
                                         <property name="width_chars">5</property>
-                                        <property name="text" translatable="yes">1.00</property>
+                                        <property name="text">1.00</property>
                                         <property name="caps_lock_warning">False</property>
-                                        <property name="placeholder_text" translatable="yes">0.0</property>
+                                        <property name="placeholder_text">0.0</property>
                                         <property name="input_purpose">number</property>
                                         <property name="adjustment">a_sidemarginfactor</property>
                                         <property name="digits">1</property>
@@ -2677,10 +2677,10 @@ given on the inner edge of each
 page for binding (millimeters).</property>
                                         <property name="halign">start</property>
                                         <property name="width_chars">4</property>
-                                        <property name="text" translatable="yes">5</property>
+                                        <property name="text">5</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="progress_pulse_step">0</property>
-                                        <property name="placeholder_text" translatable="yes">0.0</property>
+                                        <property name="placeholder_text">0.0</property>
                                         <property name="input_purpose">number</property>
                                         <property name="adjustment">a_bindinggutter</property>
                                         <property name="climb_rate">1</property>
@@ -2699,7 +2699,7 @@ page for binding (millimeters).</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">end</property>
-                                        <property name="label" translatable="yes"> </property>
+                                        <property name="label"> </property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">2</property>
@@ -2717,10 +2717,10 @@ space between lines of text.</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
                                         <property name="width_chars">4</property>
-                                        <property name="text" translatable="yes">14.0</property>
+                                        <property name="text">14.0</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="progress_pulse_step">0</property>
-                                        <property name="placeholder_text" translatable="yes">0.0</property>
+                                        <property name="placeholder_text">0.0</property>
                                         <property name="input_purpose">number</property>
                                         <property name="adjustment">a_linespacingmin</property>
                                         <property name="climb_rate">0.10000000000000001</property>
@@ -2745,10 +2745,10 @@ space between lines of text.</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
                                         <property name="width_chars">4</property>
-                                        <property name="text" translatable="yes">16.0</property>
+                                        <property name="text">16.0</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="progress_pulse_step">0</property>
-                                        <property name="placeholder_text" translatable="yes">0.0</property>
+                                        <property name="placeholder_text">0.0</property>
                                         <property name="input_purpose">number</property>
                                         <property name="adjustment">a_linespacingmax</property>
                                         <property name="climb_rate">0.10000000000000001</property>
@@ -2772,10 +2772,10 @@ space between lines of text.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="width_chars">8</property>
-                                        <property name="text" translatable="yes">15.0</property>
+                                        <property name="text">15.0</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="progress_pulse_step">0</property>
-                                        <property name="placeholder_text" translatable="yes">0.0</property>
+                                        <property name="placeholder_text">0.0</property>
                                         <property name="input_purpose">number</property>
                                         <property name="adjustment">a_linespacing</property>
                                         <property name="climb_rate">0.10000000000000001</property>
@@ -2887,7 +2887,7 @@ main body text (pts).</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="width_chars">8</property>
-                                        <property name="text" translatable="yes">12.0</property>
+                                        <property name="text">12.0</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="adjustment">a_fontsize</property>
                                         <property name="climb_rate">0.10000000000000001</property>
@@ -3000,7 +3000,7 @@ the text of the two columns
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
                                         <property name="width_chars">5</property>
-                                        <property name="text" translatable="yes">15</property>
+                                        <property name="text">15</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="input_purpose">number</property>
                                         <property name="adjustment">a_colgutterwidth</property>
@@ -3064,7 +3064,7 @@ Width:</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
                                         <property name="width_chars">5</property>
-                                        <property name="text" translatable="yes">-2.0</property>
+                                        <property name="text">-2.0</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="input_purpose">number</property>
                                         <property name="adjustment">a_columngutteroffset</property>
@@ -3158,10 +3158,10 @@ Offset:</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
                                         <property name="width_chars">4</property>
-                                        <property name="text" translatable="yes">12</property>
+                                        <property name="text">12</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="progress_pulse_step">0</property>
-                                        <property name="placeholder_text" translatable="yes">0.0</property>
+                                        <property name="placeholder_text">0.0</property>
                                         <property name="input_purpose">number</property>
                                         <property name="adjustment">a_ruleposition</property>
                                         <property name="climb_rate">1</property>
@@ -3268,7 +3268,7 @@ this "Chapter Label" setting should be applied to.
 
 Note: If this list of books is left empty, then this
 setting will be applied to ALL books</property>
-                                    <property name="text" translatable="yes">PSA PRO</property>
+                                    <property name="text">PSA PRO</property>
                                     <property name="caps_lock_warning">False</property>
                                   </object>
                                   <packing>
@@ -3402,7 +3402,7 @@ poetry to improve the overall look.</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">Add the 3-letter book codes for any books 
 that should be typeset as a single column.</property>
-                                    <property name="text" translatable="yes">FRT INT PSA PRO BAK GLO</property>
+                                    <property name="text">FRT INT PSA PRO BAK GLO</property>
                                     <property name="caps_lock_warning">False</property>
                                   </object>
                                   <packing>
@@ -3623,7 +3623,7 @@ Special books and Other advanced options.</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">If the required font does not have a BOLD typeface, you can use this setting to create a BOLD effect. (For example, setting Embolden to 2.0 would thicken the Regular typeface making it appear as bold).</property>
                                     <property name="width_chars">5</property>
-                                    <property name="text" translatable="yes">1.6</property>
+                                    <property name="text">1.6</property>
                                     <property name="caps_lock_warning">False</property>
                                     <property name="input_purpose">number</property>
                                     <property name="adjustment">a_bolde</property>
@@ -3645,7 +3645,7 @@ Special books and Other advanced options.</property>
                                     <property name="tooltip_text" translatable="yes">This setting would not normally be used, but is included just in case the Typeface Slant factor needs to be changed for Bold.</property>
                                     <property name="opacity">0.40000000000000002</property>
                                     <property name="width_chars">5</property>
-                                    <property name="text" translatable="yes">0.00</property>
+                                    <property name="text">0.00</property>
                                     <property name="caps_lock_warning">False</property>
                                     <property name="input_purpose">number</property>
                                     <property name="adjustment">a_bolds</property>
@@ -3666,7 +3666,7 @@ Special books and Other advanced options.</property>
                                     <property name="tooltip_text" translatable="yes">This setting would not normally be used, but is included in case the thickness of the Typeface also needs to be changed for Italics. Note that a negative value can also be applied to make it appear less thick.</property>
                                     <property name="opacity">0.40000000000000002</property>
                                     <property name="width_chars">5</property>
-                                    <property name="text" translatable="yes">0.0</property>
+                                    <property name="text">0.0</property>
                                     <property name="caps_lock_warning">False</property>
                                     <property name="input_purpose">number</property>
                                     <property name="adjustment">a_italice</property>
@@ -3686,7 +3686,7 @@ Special books and Other advanced options.</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">If the required font does not have an ITALIC typeface, you can use this setting to create an ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic).</property>
                                     <property name="width_chars">5</property>
-                                    <property name="text" translatable="yes">0.15</property>
+                                    <property name="text">0.15</property>
                                     <property name="caps_lock_warning">False</property>
                                     <property name="input_purpose">number</property>
                                     <property name="adjustment">a_italics</property>
@@ -3707,7 +3707,7 @@ Special books and Other advanced options.</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">If the required font does not have a BOLD-ITALIC typeface, you can use this setting to create the BOLD effect. (For example, setting Embolden to 2.0 would thicken the Regular typeface making it appear as bold), and use the Slant settings for the ITALIC effect.</property>
                                     <property name="width_chars">5</property>
-                                    <property name="text" translatable="yes">1.6</property>
+                                    <property name="text">1.6</property>
                                     <property name="caps_lock_warning">False</property>
                                     <property name="input_purpose">number</property>
                                     <property name="adjustment">a_bolditalice</property>
@@ -3728,7 +3728,7 @@ Special books and Other advanced options.</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">If the required font does not have a BOLD-ITALIC typeface, you can use this setting to create the ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic), and use the Embolden settings for the BOLD effect.</property>
                                     <property name="width_chars">5</property>
-                                    <property name="text" translatable="yes">0.15</property>
+                                    <property name="text">0.15</property>
                                     <property name="caps_lock_warning">False</property>
                                     <property name="input_purpose">number</property>
                                     <property name="adjustment">a_bolditalics</property>
@@ -4267,7 +4267,7 @@ space width.</property>
                                         <property name="halign">start</property>
                                         <property name="max_length">3</property>
                                         <property name="width_chars">3</property>
-                                        <property name="text" translatable="yes">50</property>
+                                        <property name="text">50</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="input_purpose">number</property>
                                         <property name="adjustment">a_minSpace</property>
@@ -4316,7 +4316,7 @@ space width.</property>
                                         <property name="halign">start</property>
                                         <property name="max_length">4</property>
                                         <property name="width_chars">2</property>
-                                        <property name="text" translatable="yes">200</property>
+                                        <property name="text">200</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="input_purpose">number</property>
                                         <property name="adjustment">a_maxSpace</property>
@@ -4759,7 +4759,7 @@ generated Table of Contents.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="margin_bottom">3</property>
-                                            <property name="label" translatable="yes">\toc1</property>
+                                            <property name="label">\toc1</property>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>
@@ -4771,7 +4771,7 @@ generated Table of Contents.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="margin_bottom">3</property>
-                                            <property name="label" translatable="yes">\toc2</property>
+                                            <property name="label">\toc2</property>
                                           </object>
                                           <packing>
                                             <property name="left_attach">1</property>
@@ -4783,7 +4783,7 @@ generated Table of Contents.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="margin_bottom">3</property>
-                                            <property name="label" translatable="yes">\toc3</property>
+                                            <property name="label">\toc3</property>
                                           </object>
                                           <packing>
                                             <property name="left_attach">2</property>
@@ -5260,10 +5260,10 @@ marginal verse numbers. (pts)</property>
                                         <property name="valign">center</property>
                                         <property name="hexpand">True</property>
                                         <property name="width_chars">4</property>
-                                        <property name="text" translatable="yes">15.0</property>
+                                        <property name="text">15.0</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="progress_pulse_step">0</property>
-                                        <property name="placeholder_text" translatable="yes">0.0</property>
+                                        <property name="placeholder_text">0.0</property>
                                         <property name="input_purpose">number</property>
                                         <property name="adjustment">c_columnShift</property>
                                         <property name="climb_rate">0.10000000000000001</property>
@@ -5508,7 +5508,7 @@ affects poetry indentation.
                                         <property name="halign">start</property>
                                         <property name="max_length">4</property>
                                         <property name="width_chars">4</property>
-                                        <property name="text" translatable="yes">2.0</property>
+                                        <property name="text">2.0</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="input_purpose">number</property>
                                         <property name="adjustment">a_indentUnit</property>
@@ -5855,7 +5855,7 @@ or:  †,‡,§,∥,#    or: ✶,☆,✦,✪</property>
                                                     </child>
                                                     <child>
                                                       <object class="GtkButton" id="btn_resetFNcallers">
-                                                        <property name="label" translatable="yes">↺</property>
+                                                        <property name="label">↺</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">True</property>
@@ -6090,7 +6090,7 @@ or:  †,‡,§,∥,#    or: ✶,☆,✦,✪</property>
                                                     </child>
                                                     <child>
                                                       <object class="GtkButton" id="btn_resetXRcallers">
-                                                        <property name="label" translatable="yes">↺</property>
+                                                        <property name="label">↺</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">True</property>
@@ -6306,7 +6306,7 @@ and Cross-reference Blocks:</property>
 appear in one block and the Cross-references in
 another block just below. This setting (pts) allows you
 to adjust the vertical space between these two sections.</property>
-                                        <property name="text" translatable="yes">3.5</property>
+                                        <property name="text">3.5</property>
                                         <property name="input_purpose">number</property>
                                         <property name="adjustment">a_internote</property>
                                         <property name="climb_rate">0.10000000000000001</property>
@@ -6347,7 +6347,7 @@ must exist between the main text body and the
 footnote and cross-reference area at the bottom
 of the page.</property>
                                         <property name="halign">start</property>
-                                        <property name="text" translatable="yes">10.0</property>
+                                        <property name="text">10.0</property>
                                         <property name="input_purpose">number</property>
                                         <property name="adjustment">a_notespace</property>
                                         <property name="climb_rate">0.5</property>
@@ -6395,10 +6395,10 @@ The PrintDraft-mods.sty stylesheet will
 overide the settings specified here.</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
-                                        <property name="text" translatable="yes">10.0</property>
+                                        <property name="text">10.0</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="progress_pulse_step">0</property>
-                                        <property name="placeholder_text" translatable="yes">0.0</property>
+                                        <property name="placeholder_text">0.0</property>
                                         <property name="input_purpose">number</property>
                                         <property name="adjustment">a_fnfontsize</property>
                                         <property name="climb_rate">0.10000000000000001</property>
@@ -6441,10 +6441,10 @@ the notes area. This applies to both
 footnotes as well as cross-references.</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
-                                        <property name="text" translatable="yes">12.0</property>
+                                        <property name="text">12.0</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="progress_pulse_step">0</property>
-                                        <property name="placeholder_text" translatable="yes">0.0</property>
+                                        <property name="placeholder_text">0.0</property>
                                         <property name="input_purpose">number</property>
                                         <property name="adjustment">a_fnlinespacing</property>
                                         <property name="climb_rate">0.10000000000000001</property>
@@ -6641,9 +6641,9 @@ factor (without units) and is multiplied by the
 Margins value on the Layout tab.</property>
                                         <property name="halign">start</property>
                                         <property name="width_chars">6</property>
-                                        <property name="text" translatable="yes">1.15</property>
+                                        <property name="text">1.15</property>
                                         <property name="caps_lock_warning">False</property>
-                                        <property name="placeholder_text" translatable="yes">0.0</property>
+                                        <property name="placeholder_text">0.0</property>
                                         <property name="input_purpose">number</property>
                                         <property name="adjustment">a_topmarginfactor</property>
                                         <property name="digits">2</property>
@@ -6689,9 +6689,9 @@ is a factor (without units) and is multiplied by the
 Margins value on the Layout tab.</property>
                                         <property name="halign">start</property>
                                         <property name="width_chars">6</property>
-                                        <property name="text" translatable="yes">0.50</property>
+                                        <property name="text">0.50</property>
                                         <property name="caps_lock_warning">False</property>
-                                        <property name="placeholder_text" translatable="yes">0.0</property>
+                                        <property name="placeholder_text">0.0</property>
                                         <property name="input_purpose">number</property>
                                         <property name="adjustment">a_hdrposition</property>
                                         <property name="digits">2</property>
@@ -7198,9 +7198,9 @@ is a factor (without units) and is multiplied by the
 Margins value on the Layout tab.</property>
                                 <property name="halign">start</property>
                                 <property name="width_chars">6</property>
-                                <property name="text" translatable="yes">0.50</property>
+                                <property name="text">0.50</property>
                                 <property name="caps_lock_warning">False</property>
-                                <property name="placeholder_text" translatable="yes">0.0</property>
+                                <property name="placeholder_text">0.0</property>
                                 <property name="input_purpose">number</property>
                                 <property name="adjustment">a_ftrposition</property>
                                 <property name="digits">2</property>
@@ -7244,9 +7244,9 @@ factor (without units) and is multiplied
 by the Margins value on the Layout tab.</property>
                                 <property name="halign">start</property>
                                 <property name="width_chars">6</property>
-                                <property name="text" translatable="yes">1.15</property>
+                                <property name="text">1.15</property>
                                 <property name="caps_lock_warning">False</property>
-                                <property name="placeholder_text" translatable="yes">0.0</property>
+                                <property name="placeholder_text">0.0</property>
                                 <property name="input_purpose">number</property>
                                 <property name="adjustment">a_bottommarginfactor</property>
                                 <property name="digits">2</property>
@@ -7466,7 +7466,7 @@ the first document ends.</property>
                                     <property name="halign">start</property>
                                     <property name="max_length">4</property>
                                     <property name="width_chars">4</property>
-                                    <property name="text" translatable="yes">1</property>
+                                    <property name="text">1</property>
                                     <property name="caps_lock_warning">False</property>
                                     <property name="input_purpose">number</property>
                                     <property name="adjustment">a_startPageNum</property>
@@ -7833,7 +7833,7 @@ TIF  (only use TIFs - ignore all other file types)
 
 NOTE: TIF files are converted internally to JPGs.</property>
                                     <property name="width_chars">16</property>
-                                    <property name="text" translatable="yes">JPG PNG TIF BMP PDF</property>
+                                    <property name="text">JPG PNG TIF BMP PDF</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">4</property>
@@ -9396,7 +9396,7 @@ decorator set that here.</property>
                                 <property name="margin_bottom">7</property>
                                 <property name="hexpand">True</property>
                                 <property name="width_chars">6</property>
-                                <property name="text" translatable="yes">11.0</property>
+                                <property name="text">11.0</property>
                                 <property name="caps_lock_warning">False</property>
                                 <property name="adjustment">a_versefontsize</property>
                                 <property name="climb_rate">0.10000000000000001</property>
@@ -9615,7 +9615,7 @@ in the list to be printed.)</property>
                             </child>
                             <child>
                               <object class="GtkButton" id="btn_PrevBook">
-                                <property name="label" translatable="yes">&lt;&lt;</property>
+                                <property name="label">&lt;&lt;</property>
                                 <property name="width_request">-1</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -9636,7 +9636,7 @@ list of books to be printed.</property>
                             </child>
                             <child>
                               <object class="GtkButton" id="btn_NextBook">
-                                <property name="label" translatable="yes">&gt;&gt;</property>
+                                <property name="label">&gt;&gt;</property>
                                 <property name="width_request">-1</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -10391,7 +10391,7 @@ on Page:</property>
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="halign">start</property>
-                                                            <property name="text" translatable="yes">100</property>
+                                                            <property name="text">100</property>
                                                             <property name="adjustment">a_plScale</property>
                                                             <property name="value">100</property>
                                                           </object>
@@ -10550,7 +10550,7 @@ lines:</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="max_length">3</property>
                                                             <property name="width_chars">3</property>
-                                                            <property name="text" translatable="yes">0</property>
+                                                            <property name="text">0</property>
                                                             <property name="adjustment">a_plLines</property>
                                                             <property name="climb_rate">1</property>
                                                           </object>
@@ -11517,7 +11517,7 @@ using the -e flag on the command line.</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="hexpand">True</property>
-                <property name="label" translatable="yes"> </property>
+                <property name="label"> </property>
                 <property name="justify">fill</property>
                 <property name="single_line_mode">True</property>
               </object>
