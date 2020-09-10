@@ -1031,6 +1031,9 @@ class ViewModel:
                 extOrder = ["pdf", "bmp", "tiff", "tif", "png", "jpeg", "jpg"] # reverse order
         return extOrder
 
+    def finished(self):
+        pass
+
     def incrementProgress(self, val=None):
         pass
 

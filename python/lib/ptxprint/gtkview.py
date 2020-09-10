@@ -20,6 +20,7 @@ from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton
 from ptxprint.runner import StreamTextBuffer
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from ptxprint.piclist import PicList
+from ptxprint.runjob import isLocked
 import configparser
 import traceback
 from threading import Thread
@@ -431,6 +432,8 @@ class GtkViewModel(ViewModel):
         dialog.destroy()
 
     def onOK(self, btn):
+        if isLocked():
+            return
         jobs = self.getBooks()
         if not len(jobs) or jobs[0] == '':
             return
@@ -484,9 +487,8 @@ class GtkViewModel(ViewModel):
         # else:
             # print("Current Config is Locked, so changes have NOT been saved")
 
-        self.incrementProgress(val=0.)
+        self._incrementProgress(val=0.)
         self.callback(self)
-        self.incrementProgress(val=0.)
 
     def onCancel(self, btn):
         self.onDestroy(btn)
@@ -1771,14 +1773,18 @@ class GtkViewModel(ViewModel):
         path = os.path.realpath(fldrpath)
         os.startfile(fldrpath)
 
-    def incrementProgress(self, val=None):
+    def finished(self):
+        self._incrementProgress(val=0.)
+
+    def _incrementProgress(self, val=None):
         wid = self.builder.get_object("pr_runs")
         if val is None:
             val = wid.get_fraction()
             val = 0.5 if val < 0.1 else 1. - (1. - val) * 0.5
         wid.set_fraction(val)
-        while Gtk.events_pending():
-            Gtk.main_iteration()
+
+    def incrementProgress(self):
+        GLib.idle_add(self._incrementProgress)
 
     def showLogFile(self):
         self.builder.get_object("nbk_Main").set_current_page(10)   # Switch to the Viewer tab

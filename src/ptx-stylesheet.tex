@@ -75,8 +75,9 @@
 \let \Textproperties\TextProperties
 \def \FontSize       #1\relax{\defp@ram{fontsize}{#1}}
 \let \Fontsize\FontSize
-\def \FontScale       #1\relax{\defp@ram{fontscale}{#1}}
+\def \FontScale      #1\relax{\defp@ram{fontscale}{#1}}
 \let \Fontscale\FontScale
+\def \FontFactor     #1\relax{\defp@ram{fontfactor}{#1}}
 \def \FontName       #1\relax{\defp@ram{fontname}{#1}}
 \let \Fontname\FontName
 \def \FirstLineIndent #1\relax{\defp@ram{firstindent}{#1}}
@@ -380,14 +381,16 @@
   \message{Setting L drop-cap size to \dr@psize}%
   \setp@ram{fontsize}{cL}{\dr@psize}%
   \getp@ram{raise}{c}\ifx\p@ram\relax\else\setp@ram{raise}{cL}{\p@ram}\fi
+  \g@tfontname{c}\x@\let\csname font<\f@ntstyle>\endcsname=\relax
   \diglotLfalse
   \calcdr@psize
+  \g@tfontname{c}\x@\let\csname font<\f@ntstyle>\endcsname=\relax
   \diglotLtrue
   \message{ Setting R drop-cap size to \dr@psize}%
   \setp@ram{fontsize}{cR}{\dr@psize}%
   \getp@ram{raise}{c}\ifx\p@ram\relax\else\setp@ram{raise}{cR}{\p@ram}\fi
-  \x@\let\csname font<cL>\endcsname=\relax %
-  \x@\let\csname font<cR>\endcsname=\relax %
+  %\x@\let\csname font<cL>\endcsname=\relax %
+  %\x@\let\csname font<cR>\endcsname=\relax %
 }
 %-csty_dropchap
 
@@ -566,6 +569,7 @@
 \tildenbsptrue
 
 % Read the files associated with this book: usfm, adjustment list, picture list
+%+csty_ptxfile_intro
 \def\ptxfile#1{
  \saveLRspecificOrig%This becomes a \relax after first use. Always call it.
  \@netimesetup
@@ -593,6 +597,8 @@
  \gdef\mcstack{,}
  \initp@rastyles
  \initn@testyles
+%-csty_ptxfile_intro
+%+csty_ptxfile_start
  \openadjlist "\the\AdjListPath#1.adj"
  \openpiclist "\the\PicListPath#1.piclist"
  \openpicpages "\jobname.picpages"
@@ -618,6 +624,8 @@
    \ifeof\t@stread \def\n@xt{\MSG{USFM file "\the\PtxFilePath#1" not found -- ignored}}
    \else \closein\t@stread \def\n@xt{\input "\the\PtxFilePath#1"\relax}\fi
  \n@xt
+%-csty_ptxfile_start
+%+csty_ptxfile_end
  \ifhmode \unskip\end@llcharstyles \par \fi
  \ifsk@pping\egroup\fi
  \endt@ble
@@ -637,7 +645,8 @@
  %\ifendbooknoeject\else\global\output={\global\setbox255=\box\voidb@x}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
  \ifendbooknoeject\else\global\output={\shipout\vbox{\box\partial\box255}}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
  \global\output={\onecol}
- }
+}
+%-csty_ptxfile_end
 \newread\t@stread
 \newtoks\AdjListPath % path to look for adjustment files
 \newtoks\PicListPath % path to look for picture list files
@@ -668,12 +677,14 @@
 \DefineActiveChar{[}{\openbracket} % make these skip following spaces
 \DefineActiveChar{(}{\openparen}   % (useful at end-of-line before new verse)
 
+%+csty_slash
 \catcode`\/=\active
 \def/{\futurelet\n@xt\sl@sh}
 \def\sl@sh{\ifx\n@xt/\let\n@xt\sl@shbreak\else\let\n@xt\sl@shprint\fi\n@xt}
 \def\sl@shbreak/{\unskip\penalty-250{} \ignorespaces}
 \def\sl@shprint{\char`\/}
 \catcode`\/=12
+%-csty_slash
 
 % Create registers to hold configuration information, set defaults
 \newdimen\FontSizeUnit		\FontSizeUnit=1bp % units for font sizes in Paratext stylesheet

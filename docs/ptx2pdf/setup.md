@@ -124,7 +124,7 @@ hooks.
 
 First we set up various sizes. Setting the body baseline involves setting the
 baselineskip and the `\le@dingunit` and the vertical space unit. If the
-baselineskip is too small then set it to $14 x LineSpaceFactor x FontSizeUnit$.
+baselineskip is too small then set it to $14 * {\rm LineSpaceFactor} * {\rm FontSizeUnit}$.
 The LineSpaceFactor is usually 1.0 which given the fontsize for `\p` is
 typically 12 in the stylesheet, gives us a text size to leading of 12 units on
 14 units where units are the FontSizeUnit. If the `baseline` parameter for `\p`
@@ -173,6 +173,65 @@ handling which we redirect to here.
 
 [=csty_addspecialhooks]::
 
+### Processing USFM
+
+Reading a USFM file involves setting up for a new book. We start by ensuring
+that one time setup code is run and if creating a diglot we set up the various
+baselines for the left and right text.
+
+Which routine to use for gridding a box. There is a diglot specific one and one
+for when we want to lose extra space at the top of a column and one for when we
+want to keep it. The user can set `squashgridboxfalse` to keep the extra space.
+
+We then clear the chapter labels and clear the style stack. Initialising the
+paragraph styles involves clearing all the flags for which type of paragraph we
+are in now:
+
+[=cpar_init]::
+
+And initialising the notes involves clearing all the note boxes and supporting
+skips, etc.
+
+[=csty_ptxfile_intro]::
+
+Now we can load the file. But with each usfm file there may be associated
+supporting files. There is the paragraph adjustments file and the pictures list
+file that a user may create. Also there is the picture pages file that says
+where every picture is in the job and we reload that for each file.
+
+A USFM file is not a TeX file and so many of the characters do not have the same
+interpretation in a USFM file as they do in a TeX file. Most characters are
+treated as `other` meaning that they are just treated as text with no special
+interpretation. `~` is treated as active since it usually means a non-breaking
+space. `_` is treated as a letter so that it may occur in SFM markers. `/` is
+active in that a double slash is treated as a line break while a single slash is
+just that.
+
+[=csty_slash]::
+
+We also turn on all the active characters because we want to process them in the
+text. Digits become letters (since we don't want to do any maths with them). Now
+we open the file. If it is at the end of file, i.e. it failed to open, then our
+action is to report the fault. Otherwise our action is to have TeX interpret the
+file. OK do the action!
+
+[=csty_ptxfile_start]::
+
+Once the file is processed we need to tidy up. We close any open character
+styles and stop skipping any text. We finish any open tables and close off the
+diglot. We run any `bookend` hooks. And then we undo all our character setup for
+reading the file. We make digits digits again. We get back our comment character
+and turn off special characters. We give back characters their normal TeX
+interpretation. If we processing the last file in a job then we close the
+piclist, otherwise we keep it open until the next job starts. We close the
+adjustments list file and reset more characters. We go to single column and
+force a page break. This page break may not actually result in a page break if
+we are running books together. If we are forcing a true break, then we shipout
+any partial box remaining and clear up from that. Finally we simply say: we are
+in single column normal text mode now. And with that we return to the driving
+.tex file.
+
+[=csty_ptxfile_end]::
 
 
 [-d_setup]::

@@ -2,6 +2,7 @@ import os, sys, re, subprocess
 from PIL import Image
 from io import BytesIO as cStringIO
 from shutil import copyfile, rmtree
+from threading import Thread
 from ptxprint.runner import call, checkoutput
 from ptxprint.texmodel import TexModel, universalopen
 from ptxprint.ptsettings import ParatextSettings
@@ -111,6 +112,22 @@ _diglot = {
 "diglot/ifblendfnxr" :      "notes/ifblendfnxr"
 }
 
+_joblock = None
+def lockme(job):
+    global _joblock
+    if _joblock is not None:
+        return False
+    _joblock = job
+    return True
+
+def unlockme():
+    global _joblock
+    _joblock = None
+
+def isLocked():
+    global _joblock
+    return _joblock is not None
+
 class RunJob:
     def __init__(self, printer, scriptsdir, macrosdir, userconfig, args):
         self.scriptsdir = scriptsdir
@@ -123,8 +140,12 @@ class RunJob:
         self.changes = None
         self.args = args
         self.res = 0
+        self.thread = None
+        self.busy = False
 
     def doit(self):
+        if not lockme(self):
+            return False
         info = TexModel(self.printer, self.args.paratext, self.printer.ptsettings, self.printer.prjid)
         info.debug = self.args.debug
         self.tempFiles = []
@@ -171,17 +192,20 @@ class RunJob:
         else: # Normal (non-diglot)
             texfiles = sum((self.dojob(j, info) for j in joblist), [])
 
+    def done_job(self, outfname, info):
         # Work out what the resulting PDF was called
         cfgname = info['config/name']
         if cfgname is not None and cfgname != "":
             cfgname = "-"+cfgname
         else:
             cfgname = ""
-        if len(jobs) > 1 and info.asBool("project/combinebooks"):
-            pdfname = os.path.join(self.tmpdir, "ptxprint{}-{}_{}{}.pdf".format(cfgname, jobs[0], jobs[-1], self.prjid))
-        else:
-            pdfname = os.path.join(self.tmpdir, "ptxprint{}-{}{}.pdf".format(cfgname, jobs[0], self.prjid))
+        pdfname = os.path.join(self.tmpdir, outfname.replace(".tex", ".pdf"))
+#        if len(jobs) > 1 and info.asBool("project/combinebooks"):
+#            pdfname = os.path.join(self.tmpdir, "ptxprint{}-{}_{}{}.pdf".format(cfgname, jobs[0], jobs[-1], self.prjid))
+#        else:
+#            pdfname = os.path.join(self.tmpdir, "ptxprint{}-{}{}.pdf".format(cfgname, jobs[0], self.prjid))
         # Check the return code to see if generating the PDF was successful before opening the PDF
+        print(pdfname)
         if self.res == 0:
             if self.printer.isDisplay and os.path.exists(pdfname):
                 if sys.platform == "win32":
@@ -209,6 +233,9 @@ class RunJob:
             self.printer.doError("Failed to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname),
                     secondary="".join(finalLogLines[-20:]), title="PTXprint [{}] - Error!".format(VersionStr))
             self.printer.showLogFile()
+        self.printer.finished()
+        self.busy = False
+        unlockme()
 
     def parselog(self, fname, rerunp=False, lines=20):
         loglines = []
@@ -324,11 +351,11 @@ class RunJob:
             sheetsb = diginfo.printer.getStyleSheets()
             try:
                 usfmerge(tmpFile, right, left, stylesheetsa=sheetsa, stylesheetsb=sheetsb)
-            except SyntaxError as e:
-                print(self.prjid, b, str(e).split('line', maxsplit=1)[1])
-                syntaxErrors.append("{} {} line:{}".format(self.prjid, b, str(e).split('line', maxsplit=1)[1]))
             except IndexError as e:
                 syntaxErrors.append("{} {} line:{}".format(self.prjid, b, str(e)))
+            except Exception as e:
+                print(self.prjid, b, str(e).split('line', maxsplit=1)[1])
+                syntaxErrors.append("{} {} line:{}".format(self.prjid, b, str(e).split('line', maxsplit=1)[1]))
             for f in [left, right, tmpFile, logFile]:
                 texfiles += [os.path.join(self.tmpdir, f)]
         if len(syntaxErrors):
@@ -351,7 +378,6 @@ class RunJob:
         return texfiles
 
     def sharedjob(self, jobs, info, prjid=None, prjdir=None, logbuffer=None):
-        numruns = self.maxRuns
         if prjid is None:
             prjid = self.prjid
         if prjdir is None:
@@ -392,6 +418,18 @@ class RunJob:
         miscfonts.append(os.path.join(prjdir, "shared"))
         if len(miscfonts):
             os.putenv("MISCFONTS", pathjoin(miscfonts))
+        self.thread = Thread(target=self.run_xetex, args=(outfname, info, logbuffer))
+        self.busy = True
+        self.thread.start()
+        return [outfname]
+
+    def wait(self):
+        if self.busy:
+            self.thread.join()
+        return self.res
+
+    def run_xetex(self, outfname, info, logbuffer):
+        numruns = self.maxRuns
         while numruns > 0:
             self.printer.incrementProgress()
             if info["document/toc"] != "%":
@@ -425,7 +463,7 @@ class RunJob:
                 break
             numruns -= 1
         print("Done")
-        return [outfname]
+        self.done_job(outfname, info)
 
     def checkForMissingDecorations(self, info):
         deco = {"pageborder" :     "Page Border",

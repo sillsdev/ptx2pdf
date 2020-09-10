@@ -15,7 +15,7 @@ except ImportError:
     import ptxprint
 from ptxprint.view import ViewModel, VersionStr
 from ptxprint.font import initFontCache, cachepath
-from ptxprint.runjob import RunJob
+from ptxprint.runjob import RunJob, isLocked
 
 parser = argparse.ArgumentParser()
 # parser.add_argument('-h','--help', help="show this help message and exit")
@@ -114,9 +114,13 @@ if args.pid:
     mainw.setConfigId(args.config or "Default")
 
 def doit(printer):
-    runjob = RunJob(printer, scriptsdir, macrosdir, config, args)
-    runjob.doit()
-    return runjob.res
+    if not isLocked():
+        runjob = RunJob(printer, scriptsdir, macrosdir, config, args)
+        runjob.doit()
+        return runjob
+    else:
+        return None
+        
 
 if args.fontpath is not None:
     for p in args.fontpath:
@@ -136,7 +140,11 @@ if args.print or args.archive is not None:
             elif len(bl) > 1:
                 mainw.set("t_booklist", args.books)
                 mainw.set("c_multiplebooks", True)
-        res = doit(mainw)
+        job = doit(mainw)
+        if job is not None:
+            res = job.wait()
+        else:
+            res = False
     if args.archive:
         mainw.createArchive(args.archive)
     sys.exit(res)

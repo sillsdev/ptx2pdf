@@ -2,6 +2,7 @@ from ptxprint.runner import fclist, checkoutput
 import struct, re, os
 from gi.repository import Pango
 from pathlib import Path
+from threading import Thread
 
 pango_styles = {Pango.Style.ITALIC: "italic",
     Pango.Style.NORMAL: "",
@@ -33,7 +34,9 @@ class TTFontCache:
         self.fontpaths = []
         if nofclist:
             return
-        self.loadFcList()
+        self.busy = True
+        self.thread = Thread(target=self.loadFcList)
+        self.thread.start()
 
     def loadFcList(self):
         files = checkoutput(["fc-list", ":file"], path="xetex")
@@ -61,6 +64,7 @@ class TTFontCache:
             for n in names:
                 for s in styles:
                     self.cache.setdefault(n, {})[s] = path
+        self.busy = False
 
     def stylefilter(self, styles):
         currweight = max(styles_order.get(s.title(), 0) for s in styles)
@@ -71,6 +75,8 @@ class TTFontCache:
             return res
 
     def runFcCache(self):
+        if self.busy:
+            self.thread.join()
         dummy = checkoutput(["fc-cache"], path="xetex")
         self.cache = {}
         self.loadFcList()
@@ -78,6 +84,8 @@ class TTFontCache:
             self.addFontDir(p)
         
     def addFontDir(self, path):
+        if self.busy:
+            self.thread.join()
         self.fontpaths.append(path)
         for fname in os.listdir(path):
             if fname.lower().endswith(".ttf"):
@@ -87,6 +95,8 @@ class TTFontCache:
                 self.cache.setdefault(f.family, {})[f.style] = fpath
 
     def removeFontDir(self, path):
+        if self.busy:
+            self.thread.join()
         self.fontpaths.remove(path)
         allitems = list(self.cache.items())
         for f, c in allitems:
@@ -98,12 +108,16 @@ class TTFontCache:
                 del self.cache[f]
 
     def fill_liststore(self, ls):
+        if self.busy:
+            self.thread.join()
         ls.clear()
         for k, v in sorted(self.cache.items()):
             score = sum(1 for j in ("Regular", "Bold", "Italic", "Bold Italic") if j in v)
             ls.append([k, 700 if score == 4 else 400])
 
     def fill_cbstore(self, name, cbs):
+        if self.busy:
+            self.thread.join()
         cbs.clear()
         v = self.cache.get(name, None)
         if v is None:
@@ -136,6 +150,8 @@ class TTFontCache:
         return (res, name, style)
 
     def get(self, name, style=None):
+        if self.busy:
+            self.thread.join()
         f = self.cache.get(name, None)
         if f is None:
             return f

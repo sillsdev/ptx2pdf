@@ -757,7 +757,7 @@ class TexModel:
             if self.dict['project/canonicalise']:
                 syntaxErrors = []
                 try:
-                    doc = Usfm([dat], self.sheets)
+                    doc = Usfm(dat.splitlines(True), self.sheets)
                     doc.normalise()
                 except SyntaxError as e:
                     print(self.prjid, bk, str(e).split('line', maxsplit=1)[1])
