@@ -178,7 +178,7 @@
    \trace{D}{after notes:\the\availht}%
    \decr{\availht}{\topins}%pictures
    \setbox1\copy\topleftins\setbox1\vbox{\unvbox1}%
-   \setbox2\copy\topleftins\setbox2\vbox{\unvbox2}%
+   \setbox2\copy\toprightins\setbox2\vbox{\unvbox2}%
    \trace{D}{\the\ht1=\the\ht\topleftins? \the\ht2=\the\ht\toprightins?}%
    \ifdim\ht1>\ht\topleftins
      \trace{D}{Box was shrunk: \the\ht1 > \the\ht\topleftins}%
@@ -211,7 +211,8 @@
 \newif\ifrepeatok  % Signal that an unusual calling sequence has happend
 \newif\ifearlyLrefill % In some circumstances partialL is empty deliberatly, other times it isn't
 \repeatoktrue
-
+\newif\ifuseRightTrial % righttrials have given problems 
+\useRightTrialfalse 
 % The \lastpenalty before a \lefttext or \righttext issues a fake one,
 % or similarly penalty to apply at end of trial text, and scratch space
 \newcount\savedpenalty
@@ -750,7 +751,7 @@
     \tmppenalty=\savedpenalty
     \global\savedpenalty=0 %
   \fi%
- %\bgroup%
+ \let\eotri@l=\relax
  \ifnum\outputpenalty=-10006 %
     \trace{D}{Final penalty found \the\outputpenalty}%
     \global\TempDim=\the\availht
@@ -758,7 +759,7 @@
     \global\advance\TempDim by -\dp1}%
     \ifdim\TempDim>-1\baselineskip% All OK. drop through to digl@tRight
      \global\holdinginserts=1 % inserts inactive again
-     \aftergroup\digl@tRight
+     \let\eotri@l=\digl@tRight
     \else% Not a nice choice by output routine...
      \traceNum{d}{Shrinking trialsize and trying again}%
      \global\advance\trialheight-\baselineskip
@@ -766,7 +767,6 @@
      \global\savedpenalty=\tmppenalty %
      \unvbox255%
      \penalty-10006%
-     \aftergroup\relax%
     \fi%
   \else%
     \trace{D}{Remembering right hand data, but final penalty not found}%
@@ -774,8 +774,8 @@
     \global\partialRpenalty=\tmppenalty %
     \global\holdinginserts=1 % inserts inactive again
     \setbox\partialR=\box255%
-    \global\output={\diglotRightExtra}\relax\aftergroup\relax%
-  \fi%\egroup%
+    \global\output={\diglotRightExtra}\relax
+  \fi\eotri@l%
 }
 
 \def\doDiglotRightTrial{%
@@ -851,8 +851,7 @@
  \ifnum\holdinginserts=0 %Inserts not held, continue
          \digl@tRight%
  \else%
-        %\doDiglotRightTrial% FIXME - still broken?
-        \digl@tRight%
+        \doDiglotRightTrial% FIXME - still broken?
  \fi%
 }
 
@@ -952,7 +951,7 @@
   \ifhe@dings\endhe@dings\fi\endgraf\penalty-10001
   \calc@vailht\global\digl@tLfalse\global\diglotRtrue\calc@vailht
   \global\vsize=\availht\relax\output={\diglotRight}\the\rightho@ks\relax\swapfonts{R}%
-  \global\hsize=\columnRwidth\relax\global\holdinginserts=0}
+  \global\hsize=\columnRwidth\relax\global\holdinginserts=\ifuseRightTrial 1\else 0\fi}
 %
 % When there's a header on the left but not the right, but we want the verses
 % to line up nicely...
@@ -970,7 +969,7 @@
   \endgraf\penalty-10001
   \global\diglotLtrue\calc@vailht\global\digl@tLfalse\global\diglotRtrue\calc@vailht
   \global\vsize=\availht\output={\diglotRight}\swapfonts{R}%
-  \global\hsize=\columnRwidth\relax\global\holdinginserts=0}
+  \global\hsize=\columnRwidth\relax\global\holdinginserts=\ifuseRightTrial 1\else 0\fi}
 
 \def\pagenumberL{\bgroup\diglotLtrue\s@tfont{h}\pagenumber\egroup}
 \def\pagenumberR{\bgroup\diglotLfalse\s@tfont{h}\pagenumber\egroup}
