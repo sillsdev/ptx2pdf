@@ -82,24 +82,6 @@ _allbooks = ["FRT", "INT",
             "GLO", "TDX", "NDX", "CNC", "OTH", "BAK"]
 _allbkmap = {k: i for i, k in enumerate(_allbooks)} 
 
-class Splash(Thread):
-    def __init__(self, window):
-        super(Splash, self).__init__()
-        self.window = window
-        self.window.set_position(Gtk.WindowPosition.CENTER)
-        self.window.set_default_size(400, 250)
-        self.window.connect('destroy', Gtk.main_quit)
-
-    def run(self):
-        GObject.threads_init()
-        self.window.set_auto_startup_notification(False)
-        self.window.show_all()
-        self.window.set_auto_startup_notification(True)
-        Gtk.main()
-
-    def destroy(self):
-        self.window.destroy()
-
 # The 3 dicts below are used by method: sensiVisible() to toggle object states
 
 # Checkboxes and the different objects they make (in)sensitive when toggled
@@ -277,17 +259,10 @@ class GtkViewModel(ViewModel):
         provider.load_from_data(css.encode("utf-8"))
         Gtk.StyleContext().add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
-    def run(self, callback, splash=True):
+    def run(self, callback):
         self.callback = callback
-        if splash:
-            splashw = self.builder.get_object("w_splash")
-            self.splash = Splash(splashw)   # threads don't like being gced?
-            self.splash.start()
-
-        # do slow stuff here
         fc = initFontCache()
         lsfonts = self.builder.get_object("ls_font")
-        # sleep(1)  # Until we want people to see the splash screen
 
         olst = ["b_print", "bx_SavedConfigSettings", "tb_Font", "tb_Layout", "tb_Body", "tb_HeadFoot", "tb_Pictures",
                 "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_DiglotBorder"]
@@ -300,12 +275,6 @@ class GtkViewModel(ViewModel):
         if self.pendingConfig is not None:
             self.set("ecb_savedConfig", self.pendingConfig)
             self.pendingConfig = None
-        if splash:
-            self.splash.destroy()
-            try:
-                self.splash.join()
-            except RuntimeError:
-                pass        
         fc.fill_liststore(lsfonts)
         tv = self.builder.get_object("tv_fontFamily")
         cr = Gtk.CellRendererText()

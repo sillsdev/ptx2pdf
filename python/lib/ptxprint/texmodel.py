@@ -68,9 +68,13 @@ ModelMap = {
     "project/keeptempfiles":    ("c_keepTemporaryFiles", None),
     "project/pdfx1acompliant":  ("c_PDFx1aOutput", None),
     "project/blockexperimental": ("c_experimental", lambda w,v: "" if v else "%"),
+    "project/singlebook":       ("c_singlebook", None),
     "project/multiplebooks":    ("c_multiplebooks", None),
+    "project/biblemodule":      ("c_biblemodule", None),
+    "project/dblbundle":        ("c_dblbundle", None),
     "project/combinebooks":     ("c_combine", None),
     "project/book":             ("ecb_book", None),
+    "project/module":           ("ecb_biblemodule", None),
     "project/booklist":         ("t_booklist", lambda w,v: v or ""),
     "project/ifinclfrontpdf":   ("c_inclFrontMatter", None),
     "project/frontincludes":    ("btn_selectFrontPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s.as_posix()) \

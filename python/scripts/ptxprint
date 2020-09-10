@@ -32,7 +32,6 @@ parser.add_argument('--timeout',default=200,type=int,help='xetex runtime timeout
 parser.add_argument('-T','--testing',action='store_true',help="Run in testing, output xdv")
 parser.add_argument('-f','--fontpath',action='append',help="Directory of fonts to include (repeatable)")
 parser.add_argument('--nofontcache',action="store_true",help="Don't use system fonts")
-parser.add_argument('-S','--splash',action="store_true",help="Force splash screen")
 parser.add_argument('-A','--archive',help="Create archive of project")
 parser.add_argument('--nuseusfmerge',action="store_true",help="Use a different kind of merge for diglot")
 parser.add_argument('--debug',action="store_true",help="Give debug output")
@@ -149,7 +148,6 @@ if args.print or args.archive is not None:
         mainw.createArchive(args.archive)
     sys.exit(res)
 else:
-    splash = args.splash
-    mainw.run(doit, splash=splash)
+    mainw.run(doit)
     with open(conffile, "w", encoding="utf-8") as outf:
         config.write(outf)
