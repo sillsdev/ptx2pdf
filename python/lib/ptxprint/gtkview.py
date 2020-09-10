@@ -21,6 +21,7 @@ from ptxprint.runner import StreamTextBuffer
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from ptxprint.piclist import PicList
 from ptxprint.runjob import isLocked
+from ptxprint.utils import _
 import configparser
 import traceback
 from threading import Thread
@@ -168,6 +169,7 @@ class GtkViewModel(ViewModel):
         self._setup_css()
         GLib.set_prgname("ptxprint")
         self.builder = Gtk.Builder()
+        self.builder.set_translation_domain("ptxprint")
         self.builder.add_from_file(os.path.join(os.path.dirname(__file__), "ptxprint.glade"))
         self.builder.connect_signals(self)
         super(GtkViewModel, self).__init__(settings_dir, workingdir, userconfig, scriptsdir)
@@ -296,15 +298,15 @@ class GtkViewModel(ViewModel):
                 self.builder.get_object(c).set_active(True)
             self.builder.get_object("c_hideAdvancedSettings").set_opacity(0.5)
             self.builder.get_object("c_hideAdvancedSettings").set_tooltip_text( \
-                "Show Advanced Settings:\n\n" + \
+                _("Show Advanced Settings:\n\n" + \
                 "There are many more complex options\n" + \
-                "available for use within PTXprint.")
+                "available for use within PTXprint."))
         else:
             self.builder.get_object("c_hideAdvancedSettings").set_opacity(1.0)
             self.builder.get_object("c_hideAdvancedSettings").set_tooltip_text( \
-                "Hide Advanced Settings:\n\n" + \
+                _("Hide Advanced Settings:\n\n" + \
                 "If the number of options is too overwhelming then use\n" + \
-                "this switch to hide the more complex/advanced options.")
+                "this switch to hide the more complex/advanced options."))
                       
             # for c in ("c_showAdvancedTab", "c_showViewerTab"):
                 # self.builder.get_object(c).set_active(True)
@@ -362,7 +364,7 @@ class GtkViewModel(ViewModel):
         w = self.builder.get_object(wid)
         if w is None:
             if not skipmissing and not wid.startswith("_"):
-                print("Can't find {} in the model".format(wid))
+                print(_("Can't find {} in the model").format(wid))
             return super(GtkViewModel, self).get(wid)
         return getWidgetVal(wid, w, default=default, asstr=asstr, sub=sub)
 
@@ -370,7 +372,7 @@ class GtkViewModel(ViewModel):
         w = self.builder.get_object(wid)
         if w is None:
             if not skipmissing and not wid.startswith("_"):
-                print("Can't find {} in the model".format(wid))
+                print(_("Can't find {} in the model").format(wid))
             super(GtkViewModel, self).set(wid, value)
             return
         setWidgetVal(wid, w, value)
@@ -439,12 +441,12 @@ class GtkViewModel(ViewModel):
                     with open(pdfname, "wb+") as outf:
                         outf.close()
                 except PermissionError:
-                    question = "                   >>> PLEASE CLOSE the PDF <<<\
+                    question = _("                   >>> PLEASE CLOSE the PDF <<<\
                      \n\n{}\n\n Or use a different PDF viewer which will \
                              \n allow updates even while the PDF is open. \
                              \n See 'Links' on Viewer tab for more details. \
-                           \n\n                        Do you want to try again?".format(pdfname)
-                    if self.msgQuestion("The old PDF file is open!", question):
+                           \n\n                        Do you want to try again?").format(pdfname)
+                    if self.msgQuestion(_("The old PDF file is open!"), question):
                         continue
                     else:
                         return
@@ -499,12 +501,12 @@ class GtkViewModel(ViewModel):
     def onDeleteConfig(self, btn):
         delCfgPath = self.configPath(cfgname=self.get("t_savedConfig"))
         if not os.path.exists(os.path.join(delCfgPath, "ptxprint.cfg")):
-            self.doError("Internal error occurred, trying to delete a directory tree", secondary="Folder: "+delCfgPath)
+            self.doError(_("Internal error occurred, trying to delete a directory tree"), secondary=_("Folder: ")+delCfgPath)
             return
         try: # Delete the entire folder
             rmtree(delCfgPath)
         except OSError:
-            self.doError("Can't delete that configuration from disk", secondary="Folder: " + delCfgPath)
+            self.doError(_("Can't delete that configuration from disk"), secondary=_("Folder: ") + delCfgPath)
         self.updateSavedConfigList()
         self.set("t_savedConfig", "")
         self.set("t_configNotes", "")
@@ -638,10 +640,10 @@ class GtkViewModel(ViewModel):
         lockBtn = self.builder.get_object("btn_lockunlock")
         if self.get("t_invisiblePassword") == "":
             status = True
-            lockBtn.set_label("Lock Config")
+            lockBtn.set_label(_("Lock Config"))
         else:
             status = False
-            lockBtn.set_label("Unlock Config")
+            lockBtn.set_label(_("Unlock Config"))
         for c in ["btn_saveConfig", "btn_deleteConfig", "t_configNotes", "c_hideAdvancedSettings"]:
             self.builder.get_object(c).set_sensitive(status)
         
@@ -789,7 +791,7 @@ class GtkViewModel(ViewModel):
         elif pgnum == 5: # View/Edit one of the 4 Settings files or scripts
             fpath = self.builder.get_object("l_{}".format(pgnum)).get_tooltip_text()
             if fpath == None:
-                self.fileViews[pgnum-1][0].set_text("\n Use the 'Advanced' tab to select which settings you want to view or edit.")
+                self.fileViews[pgnum-1][0].set_text("\n"+_(" Use the 'Advanced' tab to select which settings you want to view or edit."))
                 self.builder.get_object("l_{}".format(pgnum)).set_text("Settings")
                 return
 
@@ -807,16 +809,16 @@ class GtkViewModel(ViewModel):
             with open(fpath, "r", encoding="utf-8", errors="ignore") as inf:
                 txt = inf.read()
                 if len(txt) > 60000:
-                    txt = txt[:60000]+"\n\n------------------------------------- \
-                                          \n[File has been truncated for display] \
-                                          \nClick on View/Edit... button to see more."
+                    txt = txt[:60000]+_("\n\n------------------------------------- \
+                                           \n[File has been truncated for display] \
+                                           \nClick on View/Edit... button to see more.")
             self.fileViews[pgnum-1][0].set_text(txt)
         else:
             self.builder.get_object("l_{}".format(pgnum)).set_tooltip_text(None)
-            self.fileViews[pgnum-1][0].set_text("\nThis file doesn't exist yet.\n\nTry... \
+            self.fileViews[pgnum-1][0].set_text(_("\nThis file doesn't exist yet.\n\nTry... \
                                                \n   * Check option (above) to 'Preserve Intermediate Files and Logs' \
                                                \n   * Generate the PiCList or AdjList \
-                                               \n   * Click 'Print' to create the PDF")
+                                               \n   * Click 'Print' to create the PDF"))
         self.bookNoUpdate = False
 
     def onSaveEdits(self, btn):
@@ -1074,8 +1076,8 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("gr_debugTools").set_sensitive(self.get("c_keepTemporaryFiles"))
         if self.builder.get_object("nbk_Main").get_current_page() == 10:
             if not self.get("c_keepTemporaryFiles"):
-                title = "Remove Intermediate Files and Logs?"
-                question = "Are you sure you want to delete\nALL the temporary PTXprint files?"
+                title = _("Remove Intermediate Files and Logs?")
+                question = _("Are you sure you want to delete\nALL the temporary PTXprint files?")
                 if self.msgQuestion(title, question):
                     patterns = []
                     for extn in ('delayed','parlocs','notepages', 'log'):
@@ -1101,7 +1103,7 @@ class GtkViewModel(ViewModel):
                             except (OSError, PermissionError):
                                 warnings += [path2del]
                     if len(warnings):
-                        self.printer.doError("Warning: Could not delete some file(s) or folders(s):",
+                        self.printer.doError(_("Warning: Could not delete some file(s) or folders(s):"),
                                 secondary="\n".join(warnings))
 
     def onRefreshFontsclicked(self, btn):
@@ -1373,7 +1375,7 @@ class GtkViewModel(ViewModel):
         ptfont = self.ptsettings.get("DefaultFont", "Arial")
         for fb in ['bl_fontR', 'bl_verseNumFont']:  # 'bl_fontB', 'bl_fontI', 'bl_fontBI', 'bl_fontExtraR'
             fblabel = self.builder.get_object(fb).get_label()
-            if fblabel == "Select font...":
+            if fblabel == _("Select font..."):
                 w = self.builder.get_object(fb)
                 setFontButton(w, ptfont, "")
                 self.onFontChanged(w)
@@ -1411,7 +1413,7 @@ class GtkViewModel(ViewModel):
                     # txt = txt[:32000]+"\n\n etc...\n\n"
             self.fileViews[pgnum-1][0].set_text(txt)
         else:
-            self.fileViews[pgnum-1][0].set_text("\nThis file doesn't exist yet!\n\nEdit here and Click 'Save' to create it.")
+            self.fileViews[pgnum-1][0].set_text(_("\nThis file doesn't exist yet!\n\nEdit here and Click 'Save' to create it."))
 
     def onEditScriptFile(self, btn):
         # Ask MH how to do this properly (in one line!?) with Path from pathlib
@@ -1430,9 +1432,9 @@ class GtkViewModel(ViewModel):
         fpath = os.path.join(self.configPath(cfgname), "ptxprint-mods.tex")
         if not os.path.exists(fpath):
             openfile = open(fpath,"w", encoding="utf-8")
-            openfile.write("% This is the .tex file specific for the {} project used by PTXprint.\n".format(self.prjid))
+            openfile.write(_("% This is the .tex file specific for the {} project used by PTXprint.\n").format(self.prjid))
             if cfgname != "":
-                openfile.write("% Saved Configuration name: {}\n".format(cfgname))
+                openfile.write(_("% Saved Configuration name: {}\n").format(cfgname))
             openfile.close()
         self.editFile("ptxprint-mods.tex", "cfg")
 
@@ -1471,7 +1473,7 @@ class GtkViewModel(ViewModel):
     def onCreateZipArchiveClicked(self, btn_createZipArchive):
         cfname = self.configName()
         zfname = self.prjid+("-"+cfname if cfname else "")+"PTXprintArchive.zip"
-        archiveZipFile = self.fileChooser("Select the location and name for the Archive file",
+        archiveZipFile = self.fileChooser(_("Select the location and name for the Archive file"),
                 filters = {"ZIP files": {"pattern": "*.zip", "mime": "application/zip"}},
                 multiple = False, folder = False, save= True, basedir = self.working_dir, defaultSaveName=zfname)
         if archiveZipFile is not None:
@@ -1501,7 +1503,7 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("btn_selectOutputFolder").set_sensitive(False)
 
     def onSelectFigureFolderClicked(self, btn_selectFigureFolder):
-        customFigFolder = self.fileChooser("Select the folder containing image files", 
+        customFigFolder = self.fileChooser(_("Select the folder containing image files"),
                 filters = None, multiple = False, folder = True)
         if len(customFigFolder):
             self.customFigFolder = customFigFolder[0]
@@ -1535,35 +1537,35 @@ class GtkViewModel(ViewModel):
             self.set("lb_"+ident, "")
 
     def onFrontPDFsClicked(self, btn_selectFrontPDFs):
-        self._onPDFClicked("Select one or more PDF(s) for FRONT matter", 
+        self._onPDFClicked(_("Select one or more PDF(s) for FRONT matter"),
                 False, self.working_dir, "inclFrontMatter", "FrontPDFs", btn_selectFrontPDFs)
 
     def onBackPDFsClicked(self, btn_selectBackPDFs):
-        self._onPDFClicked("Select one or more PDF(s) for BACK matter", 
+        self._onPDFClicked(_("Select one or more PDF(s) for BACK matter"),
                 False, self.working_dir, "inclBackMatter", "BackPDFs", btn_selectBackPDFs)
 
     def onWatermarkPDFclicked(self, btn_selectWatermarkPDF):
-        self._onPDFClicked("Select Watermark PDF file", True,
+        self._onPDFClicked(_("Select Watermark PDF file"), True,
                 os.path.join(os.path.dirname(__file__), "PDFassets", "watermarks"),
                 "applyWatermark", "watermarks", btn_selectWatermarkPDF)
 
     def onPageBorderPDFclicked(self, btn_selectPageBorderPDF):
-        self._onPDFClicked("Select Page Border PDF file", True,
+        self._onPDFClicked(_("Select Page Border PDF file"), True,
                 os.path.join(os.path.dirname(__file__), "PDFassets", "border-art"),
                 "inclPageBorder", "pageborder", btn_selectPageBorderPDF)
 
     def onSectionHeaderPDFclicked(self, btn_selectSectionHeaderPDF):
-        self._onPDFClicked("Select Section Header PDF file", True,
+        self._onPDFClicked(_("Select Section Header PDF file"), True,
                 os.path.join(os.path.dirname(__file__), "PDFassets", "border-art"),
                 "inclSectionHeader", "sectionheader", btn_selectSectionHeaderPDF)
 
     def onEndOfBookPDFclicked(self, btn_selectEndOfBookPDF):
-        self._onPDFClicked("Select End of Book PDF file", True,
+        self._onPDFClicked(_("Select End of Book PDF file"), True,
                 os.path.join(os.path.dirname(__file__), "PDFassets", "border-art"),
                 "inclEndOfBook", "endofbook", btn_selectEndOfBookPDF)
 
     def onVerseDecoratorPDFclicked(self, btn_selectVerseDecoratorPDF):
-        self._onPDFClicked("Select Verse Decorator PDF file", True,
+        self._onPDFClicked(_("Select Verse Decorator PDF file"), True,
                 os.path.join(os.path.dirname(__file__), "PDFassets", "border-art"),
                 "inclVerseDecorator", "versedecorator", btn_selectVerseDecoratorPDF)
 
@@ -1654,13 +1656,13 @@ class GtkViewModel(ViewModel):
         if self.otherDiglot is not None:
             oprjid, oconfig = self.otherDiglot
             self.otherDiglot = None
-            btn.set_label("Switch to Other\nDiglot Project")
+            btn.set_label(_("Switch to Other\nDiglot Project"))
         elif self.get("c_diglot"):
             oprjid = self.get("fcb_diglotSecProject")
             oconfig = self.get("ecb_diglotSecConfig")
             if oprjid is not None and oconfig is not None:
                 self.otherDiglot = (self.prjid, self.configName())
-                btn.set_label("Return to\nDiglot Project")
+                btn.set_label(_("Return to\nDiglot Project"))
         if oprjid is not None and oconfig is not None:
             self.set("fcb_project", oprjid)
             self.set("ecb_savedConfig", oconfig)
@@ -1694,11 +1696,11 @@ class GtkViewModel(ViewModel):
             badbks = self.checkSFMforFancyIntroMarkers()
             if len(badbks):
                 self.set("c_prettyIntroOutline", False)
-                m1 = "Invalid Option for Selected Books"
-                m2 = "The book(s) listed below do not have the" + \
+                m1 = _("Invalid Option for Selected Books")
+                m2 = _("The book(s) listed below do not have the" + \
                    "\nrequired markup for this feature to be enabled." + \
                    "\n(Refer to Tooltip for further details.)" + \
-                   "\n\n{}".format(", ".join(badbks))
+                   "\n\n{}").format(", ".join(badbks))
                 self.doError(m1, m2)
 
     def onFindMissingCharsClicked(self, btn_findMissingChars):
@@ -1709,8 +1711,8 @@ class GtkViewModel(ViewModel):
             self.set("c_useFallbackFont", True)
         else:
             self.set("c_useFallbackFont", False)
-            self.doError("FYI: The Regular font already supports all the characters in the text.",
-                    "A fallback font is not required so\nthe 'Use Fallback Font' option will be disabled.")
+            self.doError(_("FYI: The Regular font already supports all the characters in the text."),
+                    _("A fallback font is not required so\nthe 'Use Fallback Font' option will be disabled."))
         self.sensiVisible("c_useFallbackFont")
         
     def msgQuestion(self, title, question):

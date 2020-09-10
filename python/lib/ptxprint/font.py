@@ -32,6 +32,7 @@ class TTFontCache:
     def __init__(self, nofclist=False):
         self.cache = {}
         self.fontpaths = []
+        self.busy = False
         if nofclist:
             return
         self.busy = True

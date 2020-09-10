@@ -9,6 +9,7 @@ from ptxprint.ptsettings import ParatextSettings
 from ptxprint.view import ViewModel, VersionStr, refKey
 from ptxprint.font import getfontcache
 from ptxprint.usfmerge import usfmerge
+from ptxprint.utils import _
 
 _errmsghelp = {
 "! TeX capacity exceeded, sorry":        "Uh oh! You've pushed TeX too far! Try turning Hyphenation off, or contact support.\n",
@@ -222,15 +223,15 @@ class RunJob:
                     log = logfile.read() # unlike other places, we *do* want the entire log file
                 badpgs = re.findall(r'(?i)SOMETHING BAD HAPPENED on page (\d+)\.', "".join(log))
                 if len(badpgs):
-                    print("Layout problems were encountered on page(s): " + ", ".join(badpgs))
-                    self.printer.doError("PDF was created BUT...",
-                        secondary="Layout problems were encountered on page(s): " + ",".join(badpgs) + \
-                              "\n\nTry changing the PicList and/or AdjList settings to solve issues.", \
-                              title="PTXprint [{}] - Warning!".format(VersionStr))
+                    print(_("Layout problems were encountered on page(s): ") + ", ".join(badpgs))
+                    self.printer.doError(_("PDF was created BUT..."),
+                        secondary=_("Layout problems were encountered on page(s): ") + ",".join(badpgs) + \
+                              _("\n\nTry changing the PicList and/or AdjList settings to solve issues."), \
+                              title=_("PTXprint [{}] - Warning!").format(VersionStr))
 
         elif not self.args.print: # We don't want pop-up messages if running in command-line mode
             finalLogLines = self.parseLogLines()
-            self.printer.doError("Failed to create: "+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname),
+            self.printer.doError(_("Failed to create: ")+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname),
                     secondary="".join(finalLogLines[-20:]), title="PTXprint [{}] - Error!".format(VersionStr))
             self.printer.showLogFile()
         self.printer.finished()
@@ -359,10 +360,10 @@ class RunJob:
             for f in [left, right, tmpFile, logFile]:
                 texfiles += [os.path.join(self.tmpdir, f)]
         if len(syntaxErrors):
-            self.printer.doError("Failed to merge texts due to a Syntax Error:",        
-            secondary="\n".join(syntaxErrors)+"\n\nIf original USFM text is correct, then check "+ \
-                                                  "if PrintDraftChanges.txt has caused the error(s).", 
-            title="PTXprint [{}] - Diglot Merge Error!".format(VersionStr))
+            self.printer.doError(_("Failed to merge texts due to a Syntax Error:"),
+            secondary="\n".join(syntaxErrors)+_("\n\nIf original USFM text is correct, then check "+ \
+                                                    "if PrintDraftChanges.txt has caused the error(s)."),
+            title=_("PTXprint [{}] - Diglot Merge Error!").format(VersionStr))
 
         info["project/bookids"] = jobs
         info["project/books"] = donebooks
@@ -454,11 +455,11 @@ class RunJob:
                 tocndata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".toc")))
                 rerun = tocdata != tocndata
                 if rerun:
-                    print("Rerunning because the Table of Contents was updated")
+                    print(_("Rerunning because the Table of Contents was updated"))
                 else:
                     break
             elif rerun:
-                print("Rerunning because inline chapter numbers moved")
+                print(_("Rerunning because inline chapter numbers moved"))
             else:
                 break
             numruns -= 1
@@ -478,7 +479,7 @@ class RunJob:
                     if not os.path.exists(f):
                         warnings += ["{} Decorator\n{}\n\n".format(v, f)]
             if len(warnings):
-                self.printer.doError("Warning: Could not locate decorative PDF(s):",
+                self.printer.doError(_("Warning: Could not locate decorative PDF(s):"),
                         secondary="\n".join(warnings))
 
     def gatherIllustrations(self, info, jobs, ptfolder):
@@ -519,7 +520,7 @@ class RunJob:
             iw = im.size[0]
             ih = im.size[1]
         except OSError:
-            print("Failed to convert (image) file:", srcpath)
+            print(_("Failed to convert (image) file:"), srcpath)
             return
         # print("Orig ih={} iw={}".format(ih, iw))
         # print("iw/ih = ", iw/ih)
@@ -545,7 +546,7 @@ class RunJob:
             iw = im.size[0]
             ih = im.size[1]
         except OSError:
-            print("Failed to get size of (image) file:", srcpath)
+            print(("Failed to get size of (image) file:"), srcpath)
             return srcpath
         # If either the source image is a TIF (or) the proportions aren't right for page dimensions 
         # then we first need to convert to a JPG and/or pad with which space on either side
@@ -554,13 +555,13 @@ class RunJob:
             try:
                 self.convertToJPGandResize(ratio, srcpath, tgtpath)
             except: # MH: Which exception should I try to catch?
-                print("Error: Unable to convert/resize image!\nImage skipped:", srcpath)
+                print(_("Error: Unable to convert/resize image!\nImage skipped:"), srcpath)
                 return srcpath
         else:
             try:
                 copyfile(srcpath, tgtpath)
             except OSError:
-                print("Error: Unable to copy {}\n       image to {} in tmpPics folder", srcpath, tgtpath)
+                print(_("Error: Unable to copy {}\n       image to {} in tmpPics folder"), srcpath, tgtpath)
                 return srcpath
         return tgtpath
 
@@ -592,7 +593,7 @@ class RunJob:
         folderList = ["tmpPics", "tmpPicLists"] 
         notDeleted += self.removeTmpFolders(self.tmpdir, folderList)
         if len(notDeleted):
-            self.printer.doError("Warning: Could not delete\ntemporary file(s) or folder(s):",
+            self.printer.doError(_("Warning: Could not delete\ntemporary file(s) or folder(s):"),
                     secondary="\n".join(set(notDeleted)))
 
     def removeTmpFolders(self, base, delFolders, mkdirs=False):

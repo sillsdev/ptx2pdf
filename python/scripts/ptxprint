@@ -16,6 +16,7 @@ except ImportError:
 from ptxprint.view import ViewModel, VersionStr
 from ptxprint.font import initFontCache, cachepath
 from ptxprint.runjob import RunJob, isLocked
+from ptxprint.utils import _, setup_i18n
 
 parser = argparse.ArgumentParser()
 # parser.add_argument('-h','--help', help="show this help message and exit")
@@ -37,6 +38,8 @@ parser.add_argument('--nuseusfmerge',action="store_true",help="Use a different k
 parser.add_argument('--debug',action="store_true",help="Give debug output")
 # parser.add_argument('-t','--test', action='store_true',help="Quick start for a lazy typist")
 args = parser.parse_args()
+
+setup_i18n()
 
 if args.logging and getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     errfile = open("ptxprint.log", "w")
