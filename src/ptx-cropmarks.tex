@@ -85,7 +85,59 @@
 \newif\ifrotate\rotatefalse
 \newdimen\pdfcropwidth
 \newdimen\pdfcropheight
+\newdimen\tabheight %
+\newdimen\tabwidth %
+\newdimen\TabsStart %Vertical offset to margins for start of thumb tabs
+\newdimen\TabsEnd %Vertical offset to margins for end of thumb tabs 
+\newcount\NumTabs %How many tabs to be set?
+\NumTabs=0
+\tabheight=50pt
+\tabwidth=10pt
+\TabsStart=0pt %First Tab starts at the margin
+\TabsEnd=0pt %LastTab ends at the margin
+% Thumb-tabs codes assume  setup in the form \settumbtab{Gen}{1}, 
+% where Gen exactly matches the \toc3 entry for the book.
+\def\tabBoxCol{0 0 0}
+\def\tabFontCol{1 1 1}
 
+\def\t@bname#1{t@b-#1}
+\def\setthumbtab#1#2{\x@\xdef\x@\csname\t@bname{#1}\endcsname{#2}\ifnum\NumTabs<#2 \NumTabs=#2}
+
+\def\colourbox#1#2#3#4#5{%1 - box colour, 2 - text colour 3- boxwidth 4- boxdepth 5- text
+  \dimen0=\baselineskip\advance\dimen0 by -.2ex\setbox0\hbox to #3 {\hss#5\hss}\setbox0\hbox{\hbox to 0pt{\special{color push rgb #1}\vrule depth #4 height\dimen0 width #3 \hss}\special{color pop}\special{color push rgb #2}\box0}\ht0=\dimen0\dp0=#4\box0\special{color pop}
+}
+
+\def\rotatebz{\dimen0=\ht0 \advance\dimen0 by \dp0\kern-0.5\dp0\hbox to \dimen0{\hss\vbox to 0pt{\vss\hbox to 0pt{\kern .5\wd0\special{x:gsave}\special{x:rotate 90}\hss}\kern0.3\ht0}\box0\special{x:grestore}\hss}}
+
+\def\t@bbox{%
+ \s@tfont{h}%
+ \setbox1\hbox{\colorb@x{\tabBoxCol}{\tabFontCol}{\tabwidth}{\tabwidth}{\b@okShort}}%
+ \hbox to 0pt{%
+  \ifodd\pageno\hss\fi
+  \special{x:gsave}\special{x:rotate -90}%
+  \box\1
+  \special{x:grestore}%
+  \ifeven\pageno\hss\fi
+
+\def\putthumbtab{
+ \ifnum\NumTabs=0 \else
+   \x@\let\x@\tabnum\csname\t@bname{\b@okShort}\endcsname
+   \ifx\tabnum\relax\else
+      {%Protect temporary dimensions and box
+        \dimen0=\textheight
+        \advance\dimen0 by -\TabsStart
+        \advance\dimen0 by -\TabsEnd
+        \advance\dimen0 by -\tabheight
+        \divide\dimen0 by\NumTabs
+        \count255=\tabnum
+        \advance\count255 by -1
+        \multiply\dimen0 by \count255
+        \advance\dimen0 by \TabStart
+        \vbox to 0pt[
+      }%
+   \fi
+ \fi
+}
 \def\shipwithcr@pmarks#1{% \shipout box #1, adding cropmarks if required
   \dimen0=0\ifCropMarks .5\fi in
   \advance\pdfpagewidth by 2\dimen0 % increase PDF media size
