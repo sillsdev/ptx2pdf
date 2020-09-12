@@ -713,6 +713,12 @@ class GtkViewModel(ViewModel):
             picinfos = self.generatePicLists(bks, priority, output=output)
             self.picListView.load(picinfos)
 
+    def onPlAddClicked(self, btn):
+        self.picListView.add_row()
+
+    def onPlDelClicked(self, btn):
+        self.picListView.del_row()
+
     def onGenerateClicked(self, btn):
         priority=self.get("fcb_diglotPicListSources")[:4]
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
@@ -747,7 +753,7 @@ class GtkViewModel(ViewModel):
         genBtn = self.builder.get_object("btn_Generate")
         genBtn.set_sensitive(False)
         self.builder.get_object("c_randomPicPosn").set_sensitive(False)
-        if bk == None or bk == "":
+        if bk == None or bk == "" and len(bks):
             bk = bks[0]
             self.builder.get_object("ecb_examineBook").set_active_id(bk)
         for o in ("l_examineBook", "btn_PrevBook", "ecb_examineBook", "btn_NextBook", "fcb_diglotPicListSources", "btn_Generate"):
@@ -759,8 +765,8 @@ class GtkViewModel(ViewModel):
         fndict = {0 : ("PicLists", ".piclist"), 1 : ("AdjLists", ".adj"), 2 : ("", ""), \
                   3 : ("", ".tex"), 4 : ("", ".log")}
 
-        if pgnum < 1:   # PicList
-            return
+        if pgnum == 0:   # PicList
+            fpath = None
 
         elif pgnum <= 2:  # (AdjList,SFM)
             fname = self.getBookFilename(bk, prjid)
@@ -802,9 +808,11 @@ class GtkViewModel(ViewModel):
         else:
             return
 
+        if 0 <= pgnum <= 1 or pgnum == 5:
+            self.builder.get_object("gr_editableButtons").set_sensitive(True)
+        if fpath is None:
+            return
         if os.path.exists(fpath):
-            if 0 <= pgnum <= 1 or pgnum == 5:
-                self.builder.get_object("gr_editableButtons").set_sensitive(True)
             self.builder.get_object("l_{}".format(pgnum)).set_tooltip_text(fpath)
             with open(fpath, "r", encoding="utf-8", errors="ignore") as inf:
                 txt = inf.read()
@@ -823,6 +831,9 @@ class GtkViewModel(ViewModel):
 
     def onSaveEdits(self, btn):
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
+        if pg == 0:
+            self.savePicLists(self.picListView.getinfo())
+            return
         buf = self.fileViews[pg-1][0]
         fpath = self.builder.get_object("l_{}".format(pg)).get_tooltip_text()
         text2save = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)

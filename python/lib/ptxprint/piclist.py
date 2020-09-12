@@ -41,18 +41,17 @@ class PicList:
         self.model.clear()
 
     def load(self, picinfo):
-        if picinfo is None:
-            return
         self.view.set_model(None)
         self.listview.set_model(None)
         self.model.clear()
-        for k, v in sorted(picinfo.items(), key=lambda x:(refKey(x[0]), x[1])):
-            row = [k] + [v[e] if e in v else (1 if e == "scale" else "") for e in _piclistfields[1:]]
-            try:
-                row[4] = int(row[4]) * 100
-            except (ValueError, TypeError):
-                row[4] = 100
-            self.model.append(row)
+        if picinfo is not None:
+            for k, v in sorted(picinfo.items(), key=lambda x:(refKey(x[0]), x[1])):
+                row = [k] + [v[e] if e in v else (1 if e == "scale" else "") for e in _piclistfields[1:]]
+                try:
+                    row[4] = int(row[4]) * 100
+                except (ValueError, TypeError):
+                    row[4] = 100
+                self.model.append(row)
         self.view.set_model(self.model)
         self.listview.set_model(self.model)
 
@@ -60,8 +59,8 @@ class PicList:
         wid = _form_structure.get(wid, wid)
         w = self.builder.get_object(wid)
         res = getWidgetVal(wid, w, default=default)
-        if wid.startswith("s_") and res.find(".") >= 0:
-            res = res[:res.find(".")]
+        if wid.startswith("s_"):
+            res = int(res[:res.find(".")]) if res.find(".") >= 0 else int(res)
         return res
 
     def getinfo(self):
@@ -76,10 +75,12 @@ class PicList:
         if selection.count_selected_rows() != 1:
             return
         model, i = selection.get_selected()
+        if i.stamp >= len(self.model):
+            return
         row = self.model[i]
-        for i, (k, v) in enumerate(_form_structure.items()): # relies on ordered dict
+        for j, (k, v) in enumerate(_form_structure.items()): # relies on ordered dict
             if k == 'pgpos':
-                val = row[i][0]
+                val = row[j][0]
             elif k == 'hpos':
                 val = row[5]
                 val = val[1] if len(val) > 1 else ""
@@ -87,14 +88,47 @@ class PicList:
                 val = row[5]
                 val = int(val[2]) if len(val) > 2 else 0
             else:
-                val = row[i]
+                val = row[j]
             w = self.builder.get_object(v)
             setWidgetVal(v, w, val)
 
+    def select_row(self, i):
+        if i >= len(self.model):
+            i = len(self.model) - 1
+        treeiter = self.model.get_iter_from_string(str(i))
+        self.selection.select_iter(treeiter)
+
+    def get_pgpos(self):
+        res = "".join(self.get(k, default="") for k in _comblist[:-1])
+        if res.startswith("c"):
+            res += str(self.get(_comblist[-1]))
+        return res
+
     def item_changed(self, w, key):
         if key in _comblist:
-            val = "".join(self.get(k, default="") for k in _comblist)
+            val = self.get_pgpos()
             key = "pgpos"
         else:
             val = self.get(key)
-        self.model[self.selection.get_selected()[1]][_piclistfields.index(key)] = val
+        if self.model is not None and len(self.model):
+            self.model[self.selection.get_selected()[1]][_piclistfields.index(key)] = val
+
+    def get_row_from_items(self):
+        row = [self.get(k, default="") for k in _piclistfields]
+        row[_piclistfields.index('pgpos')] = self.get_pgpos()
+        return row
+
+    def add_row(self):
+        if len(self.model) > 0:
+            row = self.model[self.selection.get_selected()[1]][:]
+            row[0] = ""
+        else:
+            row = self.get_row_from_items()
+        self.model.append(row)
+        self.select_row(len(self.model)-1)
+
+    def del_row(self):
+        model, i = selection.get_selected()
+        del self.model[i]
+        self.select_row(i)
+

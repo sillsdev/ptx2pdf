@@ -261,11 +261,11 @@
     \nastyboxtrue
   \fi
  \fi
-  % tempoarily split and see if there are marks in this text
-  \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
-  \edef\t@mp{\splitbotmark}
-  \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
-  \makevtop{255}%
+ % tempoarily split and see if there are marks in this text
+ \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
+ \edef\t@mp{\splitbotmark}
+ \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
+ \makevtop{255}%
  \tmppenalty=\outputpenalty %
  \ifnum\outputpenalty=10000% Nothing wrong with breaking here
    \tmppenalty=0\relax%
