@@ -69,10 +69,7 @@ ModelMap = {
     "project/keeptempfiles":    ("c_keepTemporaryFiles", None),
     "project/pdfx1acompliant":  ("c_PDFx1aOutput", None),
     "project/blockexperimental": ("c_experimental", lambda w,v: "" if v else "%"),
-    "project/singlebook":       ("c_singlebook", None),
-    "project/multiplebooks":    ("c_multiplebooks", None),
-    "project/biblemodule":      ("c_biblemodule", None),
-    "project/dblbundle":        ("c_dblbundle", None),
+    "project/bookscope":        ("r_book", None),
     "project/combinebooks":     ("c_combine", None),
     "project/book":             ("ecb_book", None),
     "project/module":           ("ecb_biblemodule", None),
@@ -151,7 +148,7 @@ ModelMap = {
 
     "document/sensitive":       ("c_sensitive", None),
     "document/title":           (None, lambda w,v: "" if w.get("c_sensitive") else w.ptsettings.get('FullName', "")),
-    "document/subject":         ("t_booklist", lambda w,v: v if w.get("c_multiplebooks") else w.get("ecb_book")),
+    "document/subject":         ("t_booklist", lambda w,v: v if w.get("r_book") == "multiple" else w.get("ecb_book")),
     "document/author":          (None, lambda w,v: "" if w.get("c_sensitive") else w.ptsettings.get('Copyright', "")),
 
     "document/startpagenum":    ("s_startPageNum", lambda w,v: int(float(v)) or "1"),

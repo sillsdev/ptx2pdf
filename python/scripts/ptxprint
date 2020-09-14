@@ -138,10 +138,10 @@ if args.print or args.archive is not None:
             bl = args.books.split(" ")
             if len(bl) == 1:
                 mainw.set("cb_book", bl[0])
-                mainw.set("c_multiplebooks", False)
+                mainw.set("r_book", "single")
             elif len(bl) > 1:
                 mainw.set("t_booklist", args.books)
-                mainw.set("c_multiplebooks", True)
+                mainw.set("r_booK", "multiple")
         job = doit(mainw)
         if job is not None:
             res = job.wait()

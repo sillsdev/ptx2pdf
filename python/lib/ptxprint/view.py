@@ -184,7 +184,7 @@ class ViewModel:
         
     def getBooks(self):
         bl = self.get("t_booklist", "").split()
-        if not self.get('c_multiplebooks'):
+        if self.get("r_book") == "single":
             return [self.get("ecb_book")]
         elif len(bl):
             blst = []
@@ -331,7 +331,7 @@ class ViewModel:
         if prjid is None:
             return _("PTXprint {} - Bible Layout for Everyone!     Start by selecting a project to work with...").format(VersionStr)
         else:
-            if self.get('c_multiplebooks'):
+            if self.get('r_book') == "multiple":
                 bks = self.get('t_booklist').split()
             else:
                 bks = [self.get('ecb_book')]
@@ -448,7 +448,8 @@ class ViewModel:
     def versionFwdConfig(self, config):
         version = self._config_get(config, "config", "version", conv=float, fallback=0.0)
         # print("version=",version)
-        if float(version) < 0.9:
+        v = float(version)
+        if v < 0.9:
             try:
                 self._configset(config, "document/ifshowchapternums", not config.getboolean("document", "ifomitchapternum"))
                 self._configset(config, "document/ifshowversenums", not config.getboolean("document", "ifomitallverses"))
@@ -459,7 +460,10 @@ class ViewModel:
                 self._configset(config, "document/parallelrefs", not config.getboolean("document", "supressparallels"))
             except:
                 pass
-            config.set("config", "version", "1.1")
+        if v < 1.2:
+            bl = self._config_get(config, "project", "booklist")
+            self._configset(config, "project/bookscope", "multiple" if len(bl) else "single")
+            config.set("config", "version", "1.2")
 
     def loadConfig(self, config):
         def setv(k, v): self.set(k, v, skipmissing=True)

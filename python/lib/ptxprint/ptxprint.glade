@@ -1831,7 +1831,7 @@ if need be.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkRadioButton" id="c_biblemodule">
+                              <object class="GtkRadioButton" id="r_book_module">
                                 <property name="label" translatable="yes">Bible Module:</property>
                                 <property name="visible">True</property>
                                 <property name="sensitive">False</property>
@@ -1841,7 +1841,7 @@ if need be.</property>
                                 <property name="margin_left">12</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
-                                <property name="group">c_singlebook</property>
+                                <property name="group">r_book_single</property>
                                 <signal name="clicked" handler="onScopeChanged" swapped="no"/>
                               </object>
                               <packing>
@@ -1850,7 +1850,7 @@ if need be.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkRadioButton" id="c_dblbundle">
+                              <object class="GtkRadioButton" id="r_book_dbl">
                                 <property name="label" translatable="yes">DBL Bundle:</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
@@ -1858,7 +1858,7 @@ if need be.</property>
                                 <property name="halign">start</property>
                                 <property name="margin_left">12</property>
                                 <property name="draw_indicator">True</property>
-                                <property name="group">c_singlebook</property>
+                                <property name="group">r_book_single</property>
                                 <signal name="clicked" handler="onScopeChanged" swapped="no"/>
                               </object>
                               <packing>
@@ -1867,7 +1867,7 @@ if need be.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkRadioButton" id="c_multiplebooks">
+                              <object class="GtkRadioButton" id="r_book_multiple">
                                 <property name="label" translatable="yes">Multiple Books:</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -1876,7 +1876,7 @@ if need be.</property>
                                 <property name="margin_left">12</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
-                                <property name="group">c_singlebook</property>
+                                <property name="group">r_book_single</property>
                                 <signal name="clicked" handler="onScopeChanged" swapped="no"/>
                               </object>
                               <packing>
@@ -1885,7 +1885,7 @@ if need be.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkRadioButton" id="c_singlebook">
+                              <object class="GtkRadioButton" id="r_book_single">
                                 <property name="label" translatable="yes">Single Book:</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -1894,7 +1894,7 @@ if need be.</property>
                                 <property name="margin_left">12</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
-                                <property name="group">c_multiplebooks</property>
+                                <property name="group">r_book_multiple</property>
                                 <signal name="clicked" handler="onScopeChanged" swapped="no"/>
                               </object>
                               <packing>
@@ -2337,8 +2337,8 @@ Layout tab.</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onShowLayoutTabClicked" swapped="no"/>
-                                    <signal name="toggled" handler="onShowLayoutTabClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                    <signal name="toggled" handler="onSimpleClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -2357,8 +2357,8 @@ Font tab.</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onShowFontTabClicked" swapped="no"/>
-                                    <signal name="toggled" handler="onShowFontTabClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                    <signal name="toggled" handler="onSimpleClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -2377,8 +2377,8 @@ Font tab.</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onShowBodyTabClicked" swapped="no"/>
-                                    <signal name="toggled" handler="onShowBodyTabClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                    <signal name="toggled" handler="onSimpleClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -2397,8 +2397,8 @@ Header+Footer tab.</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onShowHeadFootTabClicked" swapped="no"/>
-                                    <signal name="toggled" handler="onShowHeadFootTabClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                    <signal name="toggled" handler="onSimpleClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -2417,8 +2417,8 @@ Pictures tab.</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onShowPicturesTabClicked" swapped="no"/>
-                                    <signal name="toggled" handler="onShowPicturesTabClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                    <signal name="toggled" handler="onSimpleClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -2437,8 +2437,8 @@ Advanced tab.</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onShowAdvancedTabClicked" swapped="no"/>
-                                    <signal name="toggled" handler="onShowAdvancedTabClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                    <signal name="toggled" handler="onSimpleClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -2457,8 +2457,8 @@ Diglot+Border tab.</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onShowDiglotBorderTabClicked" swapped="no"/>
-                                    <signal name="toggled" handler="onShowDiglotBorderTabClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                    <signal name="toggled" handler="onSimpleClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -2477,8 +2477,8 @@ Viewer tab.</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onShowViewerTabClicked" swapped="no"/>
-                                    <signal name="toggled" handler="onShowViewerTabClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                    <signal name="toggled" handler="onSimpleClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -2616,7 +2616,7 @@ given on the inner edge of each
 page for binding.</property>
                                         <property name="halign">end</property>
                                         <property name="draw_indicator">True</property>
-                                        <signal name="clicked" handler="onPageGutterChanged" swapped="no"/>
+                                        <signal name="clicked" handler="onSimpleFocusChanged" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
@@ -3029,7 +3029,7 @@ between the two columns.</property>
                                         <property name="margin_bottom">6</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
-                                        <signal name="clicked" handler="onVerticalRuleClicked" swapped="no"/>
+                                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
@@ -3105,7 +3105,7 @@ Top:</property>
                                     <property name="margin_left">2</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onDoubleColumnChanged" swapped="no"/>
+                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                   </object>
                                 </child>
                               </object>
@@ -3189,7 +3189,7 @@ main body text begins.</property>
                                     <property name="margin_left">2</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onRHruleChanged" swapped="no"/>
+                                    <signal name="clicked" handler="onSimpleFocusClicked" swapped="no"/>
                                   </object>
                                 </child>
                               </object>
@@ -3252,7 +3252,7 @@ Note: If the text already has one or more \cl markers, then
 these settings will overrirde what has been set in the text.</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onUseChapterLabelclicked" swapped="no"/>
+                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -3328,7 +3328,7 @@ column, even though most of the books are typeset
 in two column layout.</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onUseSingleColLayoutclicked" swapped="no"/>
+                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -3556,7 +3556,7 @@ Special books and Other advanced options.</property>
                                     <property name="margin_left">30</property>
                                     <property name="hexpand">True</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onFakeboldClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onFakeClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
@@ -3591,7 +3591,7 @@ Special books and Other advanced options.</property>
                                     <property name="margin_left">30</property>
                                     <property name="hexpand">True</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onFakebolditalicClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onFakeClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
@@ -4225,7 +4225,7 @@ grow paragrahs when balancing pages.</property>
                                         <property name="halign">end</property>
                                         <property name="image_position">right</property>
                                         <property name="draw_indicator">True</property>
-                                        <signal name="clicked" handler="onSpacingClicked" swapped="no"/>
+                                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -4405,7 +4405,7 @@ Break Locale:</property>
                                         <property name="receives_default">False</property>
                                         <property name="halign">end</property>
                                         <property name="draw_indicator">True</property>
-                                        <signal name="clicked" handler="onLineBreakChanged" swapped="no"/>
+                                        <signal name="clicked" handler="onSimpleFocusClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -4603,7 +4603,7 @@ then an alternative "fallback" font can be used
 to ensure that they are displayed properly.</property>
                                 <property name="halign">start</property>
                                 <property name="draw_indicator">True</property>
-                                <signal name="toggled" handler="onUseFallbackFontchanged" swapped="no"/>
+                                <signal name="toggled" handler="onSimpleClicked" swapped="no"/>
                               </object>
                             </child>
                           </object>
@@ -4703,7 +4703,7 @@ is only possible when multiple books have
 been selected on the Basic tab.]</property>
                                         <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
-                                        <signal name="clicked" handler="onAutoTocChanged" swapped="no"/>
+                                        <signal name="clicked" handler="onSimpleFocusChanged" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -5221,7 +5221,7 @@ and also adjust the width of that
 column to fit the verse numbers.</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onMarginalVersesClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -5823,7 +5823,7 @@ the "Override..." setting above.
                                                         <property name="halign">start</property>
                                                         <property name="active">True</property>
                                                         <property name="draw_indicator">True</property>
-                                                        <signal name="clicked" handler="onFnCallersChanged" swapped="no"/>
+                                                        <signal name="clicked" handler="onSimpleFocusClicked" swapped="no"/>
                                                       </object>
                                                       <packing>
                                                         <property name="expand">False</property>
@@ -5949,7 +5949,7 @@ Print a second time before it applies.</property>
                                             <property name="halign">start</property>
                                             <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onClickedIncludeFootnotes" swapped="no"/>
+                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                           </object>
                                         </child>
                                       </object>
@@ -6058,7 +6058,7 @@ the "Override..." setting above.</property>
                                                         <property name="halign">start</property>
                                                         <property name="active">True</property>
                                                         <property name="draw_indicator">True</property>
-                                                        <signal name="clicked" handler="onXrCallersChanged" swapped="no"/>
+                                                        <signal name="clicked" handler="onSimpleFocusChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
                                                         <property name="expand">False</property>
@@ -6184,7 +6184,7 @@ Print a second time before it applies.</property>
                                             <property name="halign">start</property>
                                             <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onClickedIncludeXrefs" swapped="no"/>
+                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                           </object>
                                         </child>
                                       </object>
@@ -6226,7 +6226,7 @@ which must be specified here.</property>
                                         <property name="halign">start</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
-                                        <signal name="clicked" handler="onBlendedXrsClicked" swapped="no"/>
+                                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
@@ -7060,7 +7060,7 @@ then check this option.</property>
                                         <property name="margin_top">4</property>
                                         <property name="margin_bottom">4</property>
                                         <property name="draw_indicator">True</property>
-                                        <signal name="clicked" handler="onOmitrhchapnumClicked" swapped="no"/>
+                                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
@@ -7086,7 +7086,7 @@ flicking through pages to find the right chapter.</property>
                                         <property name="margin_top">4</property>
                                         <property name="margin_bottom">4</property>
                                         <property name="draw_indicator">True</property>
-                                        <signal name="clicked" handler="onHdrVersesClicked" swapped="no"/>
+                                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">2</property>
@@ -7878,7 +7878,7 @@ positioning of illustrations.
                                     <property name="halign">start</property>
                                     <property name="margin_left">10</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onUsePicListChanged" swapped="no"/>
+                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -8063,7 +8063,7 @@ here are not working at all.</property>
                                             <property name="halign">start</property>
                                             <property name="margin_top">6</property>
                                             <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onUseModsTexClicked" swapped="no"/>
+                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>
@@ -8174,7 +8174,7 @@ can be specified in this file.</property>
                                             <property name="halign">start</property>
                                             <property name="margin_top">6</property>
                                             <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onUsePrintDraftChangesClicked" swapped="no"/>
+                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>
@@ -8238,7 +8238,7 @@ this option checked (on).</property>
                                             <property name="halign">start</property>
                                             <property name="margin_top">6</property>
                                             <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onUseModsStyClicked" swapped="no"/>
+                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>
@@ -8258,7 +8258,7 @@ this option checked (on).</property>
                                             <property name="margin_top">6</property>
                                             <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onUseCustomStyClicked" swapped="no"/>
+                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>
@@ -8362,7 +8362,7 @@ file is selected, then these will appear in alphabetical order.</property>
                                             <property name="halign">start</property>
                                             <property name="margin_top">4</property>
                                             <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onInclFrontMatterChanged" swapped="no"/>
+                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>
@@ -8416,7 +8416,7 @@ file is selected, then these will appear in alphabetical order.</property>
                                             <property name="halign">start</property>
                                             <property name="margin_top">4</property>
                                             <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onInclBackMatterChanged" swapped="no"/>
+                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>
@@ -8455,7 +8455,7 @@ to show gridlines for finetuning settings.</property>
                                             <property name="halign">start</property>
                                             <property name="margin_top">4</property>
                                             <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onApplyWatermarkChanged" swapped="no"/>
+                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>
@@ -9192,7 +9192,7 @@ to make it fit. </property>
                                 <property name="halign">start</property>
                                 <property name="margin_top">4</property>
                                 <property name="draw_indicator">True</property>
-                                <signal name="clicked" handler="onInclPageBorderChanged" swapped="no"/>
+                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -9281,7 +9281,7 @@ font and size to ensure verses fit well.</property>
                                 <property name="margin_left">40</property>
                                 <property name="margin_top">4</property>
                                 <property name="draw_indicator">True</property>
-                                <signal name="clicked" handler="onInclVerseDecoratorChanged" swapped="no"/>
+                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">3</property>
@@ -9424,7 +9424,7 @@ as vertical to make sure all headings fit.</property>
                                 <property name="halign">start</property>
                                 <property name="margin_top">4</property>
                                 <property name="draw_indicator">True</property>
-                                <signal name="clicked" handler="onInclSectionHeaderChanged" swapped="no"/>
+                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -9444,7 +9444,7 @@ as vertical to make sure all headings fit.</property>
                                 <property name="halign">start</property>
                                 <property name="margin_top">4</property>
                                 <property name="draw_indicator">True</property>
-                                <signal name="clicked" handler="onInclEndOfBookChanged" swapped="no"/>
+                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>

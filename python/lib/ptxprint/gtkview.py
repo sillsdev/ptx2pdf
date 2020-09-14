@@ -88,10 +88,11 @@ _allbkmap = {k: i for i, k in enumerate(_allbooks)}
 # Checkboxes and the different objects they make (in)sensitive when toggled
 # Order is important, as the 1st object can be told to "grab_focus"
 _sensitivities = {
-    "c_singlebook" :           ["ecb_book", "l_chapfrom", "fcb_chapfrom", "l_chapto", "fcb_chapto"],
-    "c_multiplebooks" :        ["btn_chooseBooks", "t_booklist", "c_combine"],
-    "c_biblemodule" :          ["ecb_biblemodule"],
-    "c_dblbundle" :            ["btn_chooseDBLbundle", "l_dblBundle"],
+    "r_book": {
+        "r_book_single":       ["ecb_book", "l_chapfrom", "fcb_chapfrom", "l_chapto", "fcb_chapto"],
+        "r_book_multiple":     ["btn_chooseBooks", "t_booklist", "c_combine"],
+        "r_book_module":       ["ecb_biblemodule"],
+        "r_book_dbl":          ["btn_chooseDBLbundle", "l_dblBundle"]},
     "c_mainBodyText" :         ["gr_mainBodyText"],
     "c_doublecolumn" :         ["gr_doubleColumn", "c_singleColLayout", "t_singleColBookList"],
     "c_useFallbackFont" :      ["btn_findMissingChars", "t_missingChars", "l_fallbackFont", "bl_fontExtraR"],
@@ -102,7 +103,6 @@ _sensitivities = {
                                 "c_ftrCenterPri", "c_hdrLeftSec", "c_hdrCenterSec", "c_hdrRightSec", "c_ftrCenterSec"],
     "c_borders" :              ["gr_borders"],
 
-    "c_multiplebooks" :        ["c_combine", "t_booklist"],
     "c_pagegutter" :           ["s_pagegutter"],
     "c_variableLineSpacing" :  ["s_linespacingmin", "s_linespacingmax", "l_min", "l_max"],
     "c_verticalrule" :         ["l_colgutteroffset", "s_colgutteroffset"],
@@ -363,17 +363,35 @@ class GtkViewModel(ViewModel):
     def get(self, wid, default=None, sub=0, asstr=False, skipmissing=False):
         w = self.builder.get_object(wid)
         if w is None:
-            if not skipmissing and not wid.startswith("_"):
+            if not skipmissing and not (wid.startswith("_") or wid.startswith("r_")):
                 print(_("Can't find {} in the model").format(wid))
-            return super(GtkViewModel, self).get(wid)
+            return super().get(wid)
+        if wid.startswith("r_"):
+            bits = wid.split("_")[1:]
+            if len(bits) > 1:
+                return w.get_active()
+            return super().get(wid)
         return getWidgetVal(wid, w, default=default, asstr=asstr, sub=sub)
 
     def set(self, wid, value, skipmissing=False):
         w = self.builder.get_object(wid)
-        if w is None:
+        if w is None and not wid.startswith("r_"):
             if not skipmissing and not wid.startswith("_"):
                 print(_("Can't find {} in the model").format(wid))
             super(GtkViewModel, self).set(wid, value)
+            return
+        if wid.startswith("r_"):
+            bits = wid.split("_")[1:]
+            if len(bits) > 1:
+                if value:
+                    value = bits[1]
+                else:
+                    return
+            super().set("r_"+bits[0], value)
+            wid = "r_" + "_".join([bits[0], value])
+            w = self.builder.get_object(wid)
+            if w is not None:
+                w.set_active(True)
             return
         setWidgetVal(wid, w, value)
 
@@ -593,22 +611,36 @@ class GtkViewModel(ViewModel):
         bc = " color='"+col+"'" if self.get("c_borders") else ""
         self.builder.get_object("lb_DiglotBorder").set_markup("<span{}>Diglot</span>+<span{}>Border</span>".format(dc,bc))
 
-    def sensiVisible(self, k, focus=False):
-        state = self.get(k)
-        try:
-            for w in _sensitivities[k]:
-                self.builder.get_object(w).set_sensitive(state)
-        except KeyError:
-            pass
-        if k in _nonsensitivities.keys():
-            for w in _nonsensitivities[k]:
-                self.builder.get_object(w).set_sensitive(not state)
-        # if k in _visibilities.keys():
-            # for w in _visibilities[k]:
-                # self.builder.get_object(w).set_visible(state)
-        if focus:
+    def sensiVisible(self, k, focus=False, state=None):
+        if state is None:
+            state = self.get(k)
+        for d, l in [(_sensitivities, lambda x: x), (_nonsensitivities, lambda x: not x)]:
+            if k not in d:
+                continue
+            if k.startswith("r_"):
+                anyset = False
+                for a, v in d[k].items():
+                    s = self.get(a)
+                    if s:
+                        anyset = s
+                    for w in v:
+                        self.builder.get_object(w).set_sensitive(l(s))
+                if not anyset:
+                    v = d[d[k].keys()[0]]
+                    for w in v:
+                        self.builder.get_object(w).set_sensitive(l(s))
+            else:
+                for w in d[k]:
+                    self.builder.get_object(w).set_sensitive(l(state))
+        if focus and k in _sensitivities:
             self.builder.get_object(_sensitivities[k][0]).grab_focus()
         return state
+
+    def onSimpleClicked(self, btn):
+        self.sensiVisible(Gtk.Buildable.get_name(btn))
+
+    def onSimpleFocusClicked(self, btn):
+        self.sensiVisible(Gtk.Buildable.get_name(btn), focus=True)
 
     def onLockUnlockSavedConfig(self, btn):
         lockBtn = self.builder.get_object("btn_lockunlock")
@@ -724,7 +756,7 @@ class GtkViewModel(ViewModel):
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
         bks2gen = self.getBooks()
         if pg == 0: # PicList
-            if not self.get('c_multiplebooks') and self.get("ecb_examineBook") != bks2gen[0]: 
+            if not self.get('r_book') == "multiple" and self.get("ecb_examineBook") != bks2gen[0]: 
                 self.updatePicList(bks=[self.get("ecb_examineBook")], priority=priority, output=True)
             else:
                 self.updatePicList(bks=bks2gen, priority=priority, output=True)
@@ -877,9 +909,14 @@ class GtkViewModel(ViewModel):
         # TO DO: Also need to handle TWO fallback fonts in the picList for Diglots (otherwise one script will end up as Tofu)
 
     def onScopeChanged(self, btn):
-        self.sensiVisible("c_singlebook")
-        self.sensiVisible("c_multiplebooks")
-        self.sensiVisible("c_biblemodule")
+        n = Gtk.Buildable.get_name(btn)
+        if btn.get_active():
+            bits = n.split("_")[1:]
+            self.set("r_"+bits[0], bits[1])
+        self.sensiVisible("r_book")
+        #self.sensiVisible("c_singlebook")
+        #self.sensiVisible("c_multiplebooks")
+        #self.sensiVisible("c_biblemodule")
         # self.sensiVisible("c_dblbundle")
 
     def updateFakeLabels(self):
@@ -887,18 +924,10 @@ class GtkViewModel(ViewModel):
         for c in ("l_embolden", "l_slant"):
             self.builder.get_object(c).set_sensitive(status)
 
-    def onFakeboldClicked(self, btn):
-        self.sensiVisible("c_fakebold")
+    def onFakeClicked(self, btn):
+        self.onSimpleClicked(btn)
         self.updateFakeLabels()
         
-    def onFakeitalicClicked(self, btn):
-        self.sensiVisible("c_fakeitalic")
-        self.updateFakeLabels()
-
-    def onFakebolditalicClicked(self, btn):
-        self.sensiVisible("c_fakebolditalic")
-        self.updateFakeLabels()
-
     def onVariableLineSpacingClicked(self, btn):
         self.sensiVisible("c_variableLineSpacing")
         lnspVal = round(float(self.get("s_linespacing")), 1)
@@ -909,14 +938,8 @@ class GtkViewModel(ViewModel):
             self.set("s_linespacingmin", lnspVal - 1)
             self.set("s_linespacingmax", lnspVal + 2)
 
-    def onVerticalRuleClicked(self, btn):
-        self.sensiVisible("c_verticalrule")
-
-    def onMarginalVersesClicked(self, btn):
-        self.sensiVisible("c_marginalverses")
-
     def onSectionHeadsClicked(self, btn):
-        status = self.sensiVisible("c_sectionHeads")
+        self.onSimpleClicked()
         self.builder.get_object("c_parallelRefs").set_active(status)
 
     def onHyphenateClicked(self, btn):
@@ -924,28 +947,13 @@ class GtkViewModel(ViewModel):
             fname = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint", 'hyphen-{}.tex'.format(self.prjid))
         
     def onUseIllustrationsClicked(self, btn):
-        status = self.sensiVisible("c_includeillustrations")
+        self.onSimpleClicked()
         self.colourTabs()
 
     def onUseCustomFolderclicked(self, btn):
-        status = self.sensiVisible("c_useCustomFolder")
+        self.onSimpleClicked()
         if not status:
             self.builder.get_object("c_exclusiveFiguresFolder").set_active(status)
-
-    def onBlendedXrsClicked(self, btn):
-        self.sensiVisible("c_blendfnxr")
-    
-    def onUseChapterLabelclicked(self, btn):
-        self.sensiVisible("c_useChapterLabel")
-        
-    def onUseSingleColLayoutclicked(self, btn):
-        self.sensiVisible("c_singleColLayout")
-        
-    def onClickedIncludeFootnotes(self, btn):
-        self.sensiVisible("c_includeFootnotes")
-        
-    def onClickedIncludeXrefs(self, btn):
-        self.sensiVisible("c_includeXrefs")
 
     def onPageNumTitlePageChanged(self, btn):
         if self.get("c_pageNumTitlePage"):
@@ -955,57 +963,6 @@ class GtkViewModel(ViewModel):
         if self.get("c_printConfigName"):
             self.builder.get_object("c_pageNumTitlePage").set_active(False)
 
-    def onPageGutterChanged(self, btn):
-        self.sensiVisible("c_pagegutter", focus=True)
-
-    def onDoubleColumnChanged(self, btn):
-        self.sensiVisible("c_doublecolumn")
-
-    def onOmitrhchapnumClicked(self, btn):
-        self.sensiVisible("c_omitrhchapnum")
-
-    def onHdrVersesClicked(self, btn):
-        self.sensiVisible("c_hdrverses")
-
-    def onUseFallbackFontchanged(self, btn):
-        self.sensiVisible("c_useFallbackFont")
-
-    def onUsePicListChanged(self, btn):
-        self.sensiVisible("c_usePicList")
-
-    def onInclFrontMatterChanged(self, btn):
-        self.sensiVisible("c_inclFrontMatter")
-
-    def onInclBackMatterChanged(self, btn):
-        self.sensiVisible("c_inclBackMatter")
-
-    def onApplyWatermarkChanged(self, btn):
-        self.sensiVisible("c_applyWatermark")
-    
-    def onInclPageBorderChanged(self, btn):
-        self.sensiVisible("c_inclPageBorder")
-
-    def onInclSectionHeaderChanged(self, btn):
-        self.sensiVisible("c_inclSectionHeader")
-
-    def onInclEndOfBookChanged(self, btn):
-        self.sensiVisible("c_inclEndOfBook")
-
-    def onInclVerseDecoratorChanged(self, btn):
-        self.sensiVisible("c_inclVerseDecorator")
-    
-    def onAutoTocChanged(self, btn):
-        self.sensiVisible("c_autoToC", focus=True)
-
-    def onSpacingClicked(self, btn):
-        self.sensiVisible("c_spacing")
-
-    def onLineBreakChanged(self, btn):
-        self.sensiVisible("c_linebreakon", focus=True)
-            
-    def onFnCallersChanged(self, btn):
-        self.sensiVisible("c_fnautocallers", focus=True)
-            
     def onResetFNcallersClicked(self, btn_resetFNcallers):
         w = self.builder.get_object("t_fncallers")
         w.set_text(re.sub(" ", ",", self.ptsettings.get('footnotes', "")))
@@ -1018,12 +975,6 @@ class GtkViewModel(ViewModel):
         if w.get_text() == "":
             w.set_text("†,‡,§,∥,#")
         
-    def onXrCallersChanged(self, btn):
-        self.sensiVisible("c_xrautocallers", focus=True)
-
-    def onRHruleChanged(self, btn):
-        self.sensiVisible("c_rhrule", focus=True)
-
     def onProcessScriptClicked(self, btn):
         status = self.sensiVisible("c_processScript")
         if not status:
@@ -1032,54 +983,10 @@ class GtkViewModel(ViewModel):
             if self.get("btn_selectScript") != None:
                 self.builder.get_object("btn_editScript").set_sensitive(True)
 
-    def onUsePrintDraftChangesClicked(self, btn):
-        self.sensiVisible("c_usePrintDraftChanges")
-        
-    def onUseModsTexClicked(self, btn):
-        self.sensiVisible("c_useModsTex")
-        
-    def onUseCustomStyClicked(self, btn):
-        self.sensiVisible("c_useCustomSty")
-        
-    def onUseModsStyClicked(self, btn):
-        self.sensiVisible("c_useModsSty")
-        
     def onIntroOutlineClicked(self, btn):
         status = self.sensiVisible("c_introOutline")
         if not status:
             self.builder.get_object("c_prettyIntroOutline").set_active(False)
-
-    def onShowLayoutTabClicked(self, btn):
-        pass
-        # self.sensiVisible("c_showLayoutTab")
-
-    def onShowFontTabClicked(self, btn):
-        pass
-        # self.sensiVisible("c_showFontTab")
-
-    def onShowBodyTabClicked(self, btn):
-        pass
-        # self.sensiVisible("c_showBodyTab")
-
-    def onShowHeadFootTabClicked(self, btn):
-        pass
-        # self.sensiVisible("c_showHeadFootTab")
-
-    def onShowPicturesTabClicked(self, btn):
-        pass
-        # self.sensiVisible("c_showPicturesTab")
-
-    def onShowAdvancedTabClicked(self, btn):
-        pass
-        # self.sensiVisible("c_showAdvancedTab")
-
-    def onShowViewerTabClicked(self, btn):
-        pass
-        # self.sensiVisible("c_showViewerTab")
-
-    def onShowDiglotBorderTabClicked(self, btn):
-        pass
-        # self.sensiVisible("c_showDiglotBorderTab")
 
     def onKeepTemporaryFilesClicked(self, c_keepTemporaryFiles):
         dir = self.working_dir
@@ -1196,7 +1103,8 @@ class GtkViewModel(ViewModel):
             booklist = sorted((b.get_label() for b in self.alltoggles if b.get_active()), \
                                     key=lambda x:_allbkmap.get(x, len(_allbkmap)))
             bl.set_text(" ".join(b for b in booklist))
-        self.builder.get_object("c_multiplebooks").set_active(not booklist == [])
+        if self.get("r_book") in ("single", "multiple"):
+            self.set("r_book") == "multiple" if len(booklist) else "single"
         self.set("c_prettyIntroOutline", False)
         self.updateDialogTitle()
         self.updateExamineBook()
@@ -1345,7 +1253,7 @@ class GtkViewModel(ViewModel):
                 fblabel = self.builder.get_object(fb).set_label("Select font...")
         if self.prjid:
             self.updatePrjLinks()
-        status = self.get("c_multiplebooks")
+        status = self.get("r_book") == "multiple"
         for c in ("c_combine", "t_booklist"):
             self.builder.get_object(c).set_sensitive(status)
         toc = self.builder.get_object("c_autoToC") # Ensure that we're not trying to build a ToC for a single book!
