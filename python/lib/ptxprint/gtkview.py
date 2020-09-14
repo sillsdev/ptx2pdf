@@ -1680,3 +1680,6 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("nbk_Main").set_current_page(10)   # Switch to the Viewer tab
         self.builder.get_object("nbk_Viewer").set_current_page(4) # Display the tab with the .log file
         # self.builder.get_object("scroll_XeTeXlog").scroll_to_mark(self.buf[4].get_insert(), 0.0, True, 0.5, 0.5)
+
+    def onArchTempClicked(self, btn):
+        print(self.tempFiles)

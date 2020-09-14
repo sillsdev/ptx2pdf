@@ -1199,6 +1199,11 @@ class ViewModel:
         if self.get("c_diglot"):
             digview = self.createDiglotView()
             digview._archiveAdd(zf, self.getBooks())
+        if self.get("c_archiveTemps"):
+            prjdir = os.path.join(self.settings_dir, self.prjid)
+            for f in self.tempFiles:
+                outfname = os.path.relpath(f, prjdir)
+                zf.write(f, outfname)
         zf.close()
 
     def _archiveAdd(self, zf, books):

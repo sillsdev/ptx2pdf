@@ -2616,7 +2616,7 @@ given on the inner edge of each
 page for binding.</property>
                                         <property name="halign">end</property>
                                         <property name="draw_indicator">True</property>
-                                        <signal name="clicked" handler="onSimpleFocusChanged" swapped="no"/>
+                                        <signal name="clicked" handler="onSimpleFocusClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
@@ -3574,7 +3574,7 @@ Special books and Other advanced options.</property>
                                     <property name="margin_left">30</property>
                                     <property name="hexpand">True</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onFakeitalicClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onFakeClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
@@ -4703,7 +4703,7 @@ is only possible when multiple books have
 been selected on the Basic tab.]</property>
                                         <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
-                                        <signal name="clicked" handler="onSimpleFocusChanged" swapped="no"/>
+                                        <signal name="clicked" handler="onSimpleFocusClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -6058,7 +6058,7 @@ the "Override..." setting above.</property>
                                                         <property name="halign">start</property>
                                                         <property name="active">True</property>
                                                         <property name="draw_indicator">True</property>
-                                                        <signal name="clicked" handler="onSimpleFocusChanged" swapped="no"/>
+                                                        <signal name="clicked" handler="onSimpleFocusClicked" swapped="no"/>
                                                       </object>
                                                       <packing>
                                                         <property name="expand">False</property>
@@ -8617,11 +8617,15 @@ PTXprint team for support.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel">
+                                  <object class="GtkCheckButton" id="c_archiveTemps">
+                                    <property name="label" translatable="yes">Archive temporary
+files, for debugging</property>
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">Troubleshooting
-and Archiving:</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Add all the files needed for TeX to run this job without ptxprint. Only enable this if directed to do so.</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onArchTempClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>

@@ -147,6 +147,7 @@ class RunJob:
     def doit(self):
         if not lockme(self):
             return False
+        self.texfiles = []
         info = TexModel(self.printer, self.args.paratext, self.printer.ptsettings, self.printer.prjid)
         info.debug = self.args.debug
         self.tempFiles = []
@@ -154,7 +155,7 @@ class RunJob:
         self.prjdir = os.path.join(self.args.paratext, self.prjid)
         if self.prjid is None or not len(self.prjid):     # can't print no project
             return
-        self.tempFiles += info.generateNestedStyles()
+        self.texfiles += info.generateNestedStyles()
         self.tmpdir = os.path.join(self.prjdir, 'PrintDraft') if info.asBool("project/useprintdraftfolder") \
                                                                  or self.args.directory is None else self.args.directory
         os.makedirs(self.tmpdir, exist_ok=True)
@@ -168,7 +169,7 @@ class RunJob:
         self.changes = None
         self.checkForMissingDecorations(info)
         if info.asBool("document/ifinclfigs"):
-            self.gatherIllustrations(info, jobs, self.args.paratext)
+            self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
         
         if info.asBool("project/combinebooks"):
             joblist = [jobs]
@@ -189,9 +190,9 @@ class RunJob:
             if digcfg is not None and digcfg != "":
                 digprinter.setConfigId(digcfg)
             diginfo = TexModel(digprinter, self.args.paratext, digptsettings, digprjid)
-            self.texfiles = sum((self.digdojob(j, info, diginfo, digprjid, digprjdir) for j in joblist), [])
+            self.texfiles += sum((self.digdojob(j, info, diginfo, digprjid, digprjdir) for j in joblist), [])
         else: # Normal (non-diglot)
-            self.texfiles = sum((self.dojob(j, info) for j in joblist), [])
+            self.texfiles += sum((self.dojob(j, info) for j in joblist), [])
 
     def done_job(self, outfname, info):
         # Work out what the resulting PDF was called
@@ -311,7 +312,7 @@ class RunJob:
         self.books += donebooks
         info["project/bookids"] = jobs
         info["project/books"] = donebooks
-        return [out] + self.sharedjob(jobs, info, logbuffer=logbuffer)
+        return [os.path.join(self.tmpdir, out)] + self.sharedjob(jobs, info, logbuffer=logbuffer)
 
     def digdojob(self, jobs, info, diginfo, digprjid, digprjdir, logbuffer=None):
         texfiles = []
@@ -375,7 +376,7 @@ class RunJob:
             info[k]=diginfo[v]
             # print(k, v, diginfo[v])
         info["document/diglotcfgrpath"] = os.path.relpath(diginfo.printer.configPath(diginfo.printer.configName()), docdir).replace("\\","/")
-        self.tempFiles += info.generateNestedStyles(diglot=True)
+        texfiles += info.generateNestedStyles(diglot=True)
         texfiles += self.sharedjob(jobs, info, logbuffer=logbuffer, extra="-diglot")
         return texfiles
 
@@ -423,7 +424,7 @@ class RunJob:
         self.thread = Thread(target=self.run_xetex, args=(outfname, info, logbuffer))
         self.busy = True
         self.thread.start()
-        return [outfname]
+        return [os.path.join(self.tmpdir, outfname)]
 
     def wait(self):
         if self.busy:
@@ -496,10 +497,12 @@ class RunJob:
             ratio = pageRatios[0 if p['size'].startswith("span") else 1]
             return self.carefulCopy(ratio, src, tgt)
         missingPics = []
+        res = []
         for j in jobs:
             pi, mp = self.printer.generateNProcPicLists(j, \
                                 os.path.join(self.printer.working_dir, "tmpPicLists"), carefulCopy, isTemp=True)
             missingPics += mp
+            res += [v['dest file'] for v in pi.values() if 'dest file' in v]
             
         if len(missingPics):
             missingPicList = ["{}".format(", ".join(list(set(missingPics))))]
@@ -508,6 +511,7 @@ class RunJob:
         else:
             self.printer.set("l_missingPictureCount", "(0 Missing)")
             self.printer.set("l_missingPictureString", "")
+        return res
 
     def convertToJPGandResize(self, ratio, infile, outfile):
         white = (255, 255, 255, 255)
