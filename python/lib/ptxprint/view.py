@@ -117,6 +117,7 @@ class ViewModel:
         self.prjid = None
         self.configId = None
         self.isDisplay = False
+        self.tempFiles = []
 
         # private to this implementation
         self.dict = {}
@@ -197,13 +198,23 @@ class ViewModel:
             # return self.booklist
             return []
 
-    def getBookFilename(self, bk, prjid):
-        if self.ptsettings is None or self.prjid != prjid:
-            self.ptsettings = ParatextSettings(self.settings_dir, prjid)
-        fbkfm = self.ptsettings['FileNameBookNameForm']
-        bknamefmt = (self.ptsettings['FileNamePrePart'] or "") + \
+    def _getPtSettings(self, prjid):
+        if self.ptsettings is None:
+            self.ptsettings = ParatextSettings(self.settings_dir, self.prjid)
+        if prjid is None:
+            prjid = self.prjid
+        if prjid != self.prjid:
+            ptsettings = ParatextSettings(self.settings_dir, prjid)
+        else:
+            ptsettings = self.ptsettings
+        return ptsettings
+
+    def getBookFilename(self, bk, prjid=None):
+        ptsettings = self._getPtSettings(prjid)
+        fbkfm = ptsettings['FileNameBookNameForm']
+        bknamefmt = (ptsettings['FileNamePrePart'] or "") + \
                     fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + \
-                    (self.ptsettings['FileNamePostPart'] or "")
+                    (ptsettings['FileNamePostPart'] or "")
         fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
         return fname
 
@@ -571,10 +582,7 @@ class ViewModel:
 
         missingPicList = []
         extOrder = self.getExtOrder()
-        fname = self.getBookFilename(bk, self.prjid)
-        doti = fname.rfind(".")
-        if doti > 0:
-            plfname = fname[:doti] + "-draft" + fname[doti:] + ".piclist"
+        plfname = self.getDraftFilename(bk)
         # Now write out the new PicList to a temp folder
         piclstfname = os.path.join(self.configPath(cfgname=self.configId, makePath=False), "PicLists", plfname)
         isdblcol = self.get("c_doublecolumn")
@@ -677,11 +685,12 @@ class ViewModel:
 
     def getDraftFilename(self, bk, ext=".piclist"):
         fname = self.getBookFilename(bk, self.prjid)
+        cname = "-" + (self.configName() or "draft")
         doti = fname.rfind(".")
         if doti > 0:
-            return fname[:doti] + "-draft" + fname[doti:] + ext
+            return fname[:doti] + cname + fname[doti:] + ext
         else:
-            return fname + "-draft" + ext
+            return fname + cname + ext
 
     def _fixPicinfo(self, vals):
         p = vals['pgpos']
@@ -860,11 +869,8 @@ class ViewModel:
                 return
         prjdir = os.path.join(self.settings_dir, self.prjid)
         for bk in booklist:
-            fname = self.getBookFilename(bk, prjid)
+            fname = self.getDraftFilename(bk, ext=".adj")
             outfname = os.path.join(self.configPath(self.configName()), "AdjLists", fname)
-            doti = outfname.rfind(".")
-            if doti > 0:
-                outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".adj"
             if os.path.exists(outfname):
                 existingFilelist.append(re.split(r"\\|/",outfname)[-1])
         if len(existingFilelist):
@@ -874,11 +880,8 @@ class ViewModel:
                 return
         for bk in booklist:
             tmplist = []
-            fname = self.getBookFilename(bk, prjid)
+            fname = self.getDraftFilename(bk, ext=".adj")
             outfname = os.path.join(self.configPath(self.configName()), "AdjLists", fname)
-            doti = outfname.rfind(".")
-            if doti > 0:
-                outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".adj"
             adjlist = []
             flist = [os.path.join(prjdir, fname)]
             if diglot: 

@@ -616,7 +616,7 @@ class TexModel:
     def texfix(self, path):
         return path.replace(" ", r"\ ")
 
-    def asTex(self, template="template.tex", filedir=".", jobname="Unknown"):
+    def asTex(self, template="template.tex", filedir=".", jobname="Unknown", extra=""):
         for k, v in self._settingmappings.items():
             if self.dict[k] == "":
                 self.dict[k] = self.ptsettings.dict.get(v, "a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z")
@@ -629,6 +629,8 @@ class TexModel:
                     res.append("\\PtxFilePath={"+os.path.relpath(filedir, docdir).replace("\\","/")+"/}\n")
                     for i, f in enumerate(self.dict['project/bookids']):
                         fname = self.dict['project/books'][i]
+                        if extra != "":
+                            fname = re.sub(r"^([^.]*).(.*)$", r"\1"+extra+r".\2", fname)
                         # if f in ["XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG",
                                 # "GLO", "TDX", "NDX", "CNC", "OTH", "BAK"]:
                             # mirror = self.asBool("header/mirrorlayout")
@@ -731,6 +733,7 @@ class TexModel:
             else:
                 self.changes = []
         printer = self.printer
+        draft = "-" + (self.printer.configName() or "draft")
         self.makelocalChanges(printer, bk)
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
@@ -749,7 +752,7 @@ class TexModel:
         # outfname = fname
         doti = outfname.rfind(".")
         if doti > 0:
-            outfname = outfname[:doti] + "-draft" + outfname[doti:]
+            outfname = outfname[:doti] + draft + outfname[doti:]
         outfpath = os.path.join(outdir, outfname)
         with universalopen(infpath) as inf:
             dat = inf.read()
@@ -784,7 +787,7 @@ class TexModel:
             bn = os.path.basename(outfpath)
 
         if '-conv' in bn:
-            newname = re.sub("(\-draft\-conv|\-conv\-draft|\-conv)", "-draft", bn)
+            newname = re.sub(r"(\{}\-conv|\-conv\{}|\-conv)".format(draft, draft), draft, bn)
             copyfile(os.path.join(outdir, bn), os.path.join(outdir, newname))
             os.remove(os.path.join(outdir, bn))
             return newname

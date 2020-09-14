@@ -189,9 +189,9 @@ class RunJob:
             if digcfg is not None and digcfg != "":
                 digprinter.setConfigId(digcfg)
             diginfo = TexModel(digprinter, self.args.paratext, digptsettings, digprjid)
-            texfiles = sum((self.digdojob(j, info, diginfo, digprjid, digprjdir) for j in joblist), [])
+            self.texfiles = sum((self.digdojob(j, info, diginfo, digprjid, digprjdir) for j in joblist), [])
         else: # Normal (non-diglot)
-            texfiles = sum((self.dojob(j, info) for j in joblist), [])
+            self.texfiles = sum((self.dojob(j, info) for j in joblist), [])
 
     def done_job(self, outfname, info):
         # Work out what the resulting PDF was called
@@ -215,7 +215,9 @@ class RunJob:
                     subprocess.call(('xdg-open', pdfname))
                 # Only delete the temp files if the PDF was created AND the user did NOT select to keep them
             if not info.asBool("project/keeptempfiles"):
-                self.removeTempFiles(texfiles)
+                self.removeTempFiles(self.texfiles)
+            else:
+                self.printer.tempFiles = self.texfiles
 
             if not self.args.print: # We don't want pop-up messages if running in command-line mode
                 fname = os.path.join(self.tmpdir, pdfname.replace(".pdf", ".log"))
@@ -309,7 +311,7 @@ class RunJob:
         self.books += donebooks
         info["project/bookids"] = jobs
         info["project/books"] = donebooks
-        return self.sharedjob(jobs, info, logbuffer=logbuffer)
+        return [out] + self.sharedjob(jobs, info, logbuffer=logbuffer)
 
     def digdojob(self, jobs, info, diginfo, digprjid, digprjdir, logbuffer=None):
         texfiles = []
@@ -344,20 +346,19 @@ class RunJob:
             # Now merge the secondary text (right) into the primary text (left) 
             left = os.path.join(self.tmpdir, out)
             right = os.path.join(self.tmpdir, digout)
-            tmpFile = os.path.join(self.tmpdir, "primaryText.tmp")
+            outFile = re.sub(r"^([^.]*).(.*)$", r"\1-diglot.\2", left)
             logFile = os.path.join(self.tmpdir, "ptxprint-merge.log")
-            copyfile(left, tmpFile)
 
             sheetsa = info.printer.getStyleSheets()
             sheetsb = diginfo.printer.getStyleSheets()
             try:
-                usfmerge(tmpFile, right, left, stylesheetsa=sheetsa, stylesheetsb=sheetsb)
+                usfmerge(left, right, outFile, stylesheetsa=sheetsa, stylesheetsb=sheetsb)
             except IndexError as e:
                 syntaxErrors.append("{} {} line:{}".format(self.prjid, b, str(e)))
             except Exception as e:
                 print(self.prjid, b, str(e).split('line', maxsplit=1)[1])
                 syntaxErrors.append("{} {} line:{}".format(self.prjid, b, str(e).split('line', maxsplit=1)[1]))
-            for f in [left, right, tmpFile, logFile]:
+            for f in [left, right, outFile, logFile]:
                 texfiles += [os.path.join(self.tmpdir, f)]
         if len(syntaxErrors):
             self.printer.doError(_("Failed to merge texts due to a Syntax Error:"),
@@ -375,10 +376,10 @@ class RunJob:
             # print(k, v, diginfo[v])
         info["document/diglotcfgrpath"] = os.path.relpath(diginfo.printer.configPath(diginfo.printer.configName()), docdir).replace("\\","/")
         self.tempFiles += info.generateNestedStyles(diglot=True)
-        texfiles += self.sharedjob(jobs, info, logbuffer=logbuffer)
+        texfiles += self.sharedjob(jobs, info, logbuffer=logbuffer, extra="-diglot")
         return texfiles
 
-    def sharedjob(self, jobs, info, prjid=None, prjdir=None, logbuffer=None):
+    def sharedjob(self, jobs, info, prjid=None, prjdir=None, logbuffer=None, extra=""):
         if prjid is None:
             prjid = self.prjid
         if prjdir is None:
@@ -394,7 +395,7 @@ class RunJob:
             outfname = "ptxprint{}-{}{}.tex".format(cfgname, jobs[0], prjid)
         info.update()
         with open(os.path.join(self.tmpdir, outfname), "w", encoding="utf-8") as texf:
-            texf.write(info.asTex(filedir=self.tmpdir, jobname=outfname.replace(".tex", "")))
+            texf.write(info.asTex(filedir=self.tmpdir, jobname=outfname.replace(".tex", ""), extra=extra))
         os.putenv("hyph_size", "32749")     # always run with maximum hyphenated words size (xetex is still tiny ~200MB resident)
         os.putenv("stack_size", "32768")    # extra input stack space (up from 5000)
         ptxmacrospath = os.path.abspath(os.path.join(self.scriptsdir, "..", "..", "src"))
