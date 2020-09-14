@@ -242,7 +242,7 @@
  \trace{D}{diglotLeft O:\the\outputpenalty, P:\the\savedpenalty, LP:\the\lastsavedLpenalty, vs:\the\vsize,
     pg:\the\pagegoal, pt:\the\pagetotal, bs:\the\baselineskip, ilp:\the\interlinepenalty, \ifintrial INTRIAL\fi}% 
  \p@gestarttrue % or at least, this isn't the right place to place things that go after a paragraph
- \ifnum\outputpenalty=-10005%Why are we here after a trial?
+ \ifnum\outputpenalty=-10005 %Why are we here after a trial?
    \ifintrial\diglotLeftTrial\fi
    %\tmppenalty=\savedpenalty\relax%
    %\Lneedsemptyingtrue%
@@ -267,11 +267,11 @@
  \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
  \makevtop{255}%
  \tmppenalty=\outputpenalty %
- \ifnum\outputpenalty=10000% Nothing wrong with breaking here
+ \ifnum\outputpenalty=10000 % Nothing wrong with breaking here
    \tmppenalty=0\relax%
    \Lneedsemptyingfalse%
  \else%
-   \ifnum\outputpenalty=-10001%Got to the end of the \lefttext
+   \ifnum\outputpenalty=-10001 %Got to the end of the \lefttext
      \tmppenalty=\savedpenalty\relax%
      \Lneedsemptyingtrue%
    \fi%
@@ -717,7 +717,7 @@
   \fi
   \global\setbox\excessR=\vtop{\joinboxes{\excessR}{255}{3}{\Rchunkpenalty}}%
   \global\Rchunkpenalty=\tmppenalty %
-  \ifnum\outputpenalty=-10006%% All OK. drop through to digl@tRight
+  \ifnum\outputpenalty=-10006 %% All OK. drop through to digl@tRight
     \intrialfalse
     %digl@tRight will reset \output
     \setbox255=\box\partialR% digl@tright expects this
@@ -766,17 +766,17 @@
      \global\advance\trialheight-\baselineskip
      \global\vsize=\trialheight
      \global\savedpenalty=\tmppenalty %
-     \unvbox255%
-     \penalty-10006%
+     \unvbox255
+     \penalty-10006 
     \fi%
   \else%
     \trace{D}{Remembering right hand data, but final penalty not found}%
     \global\deadcycles=0
     \global\partialRpenalty=\tmppenalty %
     \global\holdinginserts=1 % inserts inactive again
-    \setbox\partialR=\box255%
+    \setbox\partialR=\box255
     \global\output={\diglotRightExtra}\relax
-  \fi\eotri@l%
+  \fi\eotri@l
 }
 
 \def\doDiglotRightTrial{%
@@ -830,8 +830,8 @@
  \traceNum{d}{diglotRight \the\outputpenalty, \the\savedpenalty, \the\Rchunkpenalty, (\ifnum\holdinginserts=0 Not\fi holding) pg:\the\pagegoal}%
  \p@gestarttrue % or at least, this isn't the right place to place things that go after a paragraph
  \tmppenalty=\outputpenalty %
-  % tempoarily split and see if there are marks in this text
-  \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
+ % tempoarily split and see if there are marks in this text
+ \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
    \edef\t@mp{\splitbotmark}
    \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found marks \splitfirstmark, \splitbotmark}%
      \if\firstRmark\empty
@@ -944,7 +944,7 @@
   \Lneedsemptyingtrue%
   \calc@vailht%
   \n@xtc@mmand%
-  \endgraf\penalty-10001%
+  \endgraf\penalty-10001
   \relax%
   \global\digl@tLtrue%
   \global\diglotLtrue%
@@ -1358,12 +1358,12 @@
  \ifdim\ht#1=0pt \ifdim\dp#1=0pt \ifdim\wd0=0pt \setbox0=\box#1\fi\fi\fi
  \ifvoid#1\else%
    \s@tbaseline{p}%
-   \unvbox#1%
+   \unvbox#1
    %\showlists
    \dimen4=\lastkern%
   % \unkern
    \setbox0=\lastbox%
-   \copy0%
+   \copy0
    \traceNum{d}{lk: \the\dimen4, final bit of deconstructed first box \the\ht0+\the\dp0}%
    \ifdim\dp0=0pt
 %     \kern \lastkern
@@ -1385,12 +1385,12 @@
    \fi
  \fi%
  %
- \ifvoid#2\else%
-   \penalty#4%put the appropriate penalty back 
+ \ifvoid#2\else
+   \penalty#4 %put the appropriate penalty back 
    %\setbox0=\copy#2
    %\setbox1=\vsplit0 to \baselineskip
    %\trace{D}{Next box, h:\the\ht1, d:\the\dp1}
-   \unvbox#2%
+   \unvbox#2 %
  \fi%
 }
 
