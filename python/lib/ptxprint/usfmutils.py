@@ -18,7 +18,7 @@ class Sheets:
 
 class Usfm:
     def __init__(self, iterable, sheets):
-        tag_escapes = r"[\#%$]"
+        tag_escapes = r"[^0-9A-Za-z]"
         self.doc = list(usfm.parser(iterable, stylesheet=sheets.sheet,
                                     canonicalise_footnotes=False,
                                     tag_escapes=tag_escapes))

@@ -240,6 +240,29 @@ class parser(sfm.parser):
     Traceback (most recent call last):
     ...
     SyntaxWarning: <string>: line 1,14: unknown private marker \zwhoops: not it stylesheet using default marker definition
+    >>> with warnings.catch_warnings():
+    ...     warnings.simplefilter("error", SyntaxWarning)
+    ...     list(parser([r'\\id TEST\\c 1\\p a \\png b \\+w c \\+nd d \\png e \\png*']))
+    ... # doctest: +NORMALIZE_WHITESPACE
+    [element('id',
+        content=[text('TEST'),
+                 element('c', args=['1'],
+                    content=[element('p',
+                        content=[text('a '),
+                                 element('png',
+                                    content=[text('b '),
+                                             element('w',
+                                                content=[text('c '),
+                                                         element('nd',
+                                                            content=[text('d ')])])]),
+                                 element('png',
+                                    content=[text('e ')])])])])]
+    >>> with warnings.catch_warnings():
+    ...     warnings.simplefilter("error", SyntaxWarning)
+    ...     list(parser([r'\\id TEST\\c 1\\p a \\f + \\fr 1:1 \\ft a \\png b\\png*']))
+    Traceback (most recent call last):
+    ...
+    SyntaxError: <string>: line 1,1: invalid end marker end-of-file: \\f (line 1,18) can only be closed with \\f*
     '''  # noqa: E501
 
     default_meta = _default_meta
@@ -272,7 +295,8 @@ class parser(sfm.parser):
 
     def _force_close(self, parent, tok):
         if tok is not sfm.parser._eos \
-                and 'NoteText' in parent.meta.get('TextType', []):
+                and ('NoteText' in parent.meta.get('TextType', [])
+                     or parent.meta.get('StyleType', None) == 'Character'):
             self._error(level.Note,
                         'implicit end marker before {token}: \\{0.name} '
                         '(line {0.pos.line},{0.pos.col}) '
@@ -344,7 +368,7 @@ class parser(sfm.parser):
                 e.parent.annotations['content-promoted'] = True
                 if len(e.parent) > 0:
                     prev = e.parent[-1]
-                    if isinstance(prev, sfm.element) and prev.meta['StyleType'] == 'Character':
+                    if prev.meta['StyleType'] == 'Character':
                         del prev.annotations['implicit-closed']
                 return e
             else:
