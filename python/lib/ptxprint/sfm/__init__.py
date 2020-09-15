@@ -373,13 +373,32 @@ class parser(collections.Iterable):
      element('more-sfm', content=[text('more text\\nover a line break')]),
      element('marker')]
 
-    Backslash handling
+    Default Backslash handling (just '\\')
     >>> with warnings.catch_warnings():
     ...     warnings.simplefilter("ignore")
-    ...     pprint(list(parser([r"\\marker text",
-    ...                         r"\\escaped backslash\\\\character"])))
+    ...     pprint(list(parser([
+    ...         r"\\marker text",
+    ...         r"\\escaped backslash\\\\character",
+    ...         r"\\t1 \\t2 \\\\backslash \\^hat \\%\\t3\\\\\\^"])))
     [element('marker', content=[text('text')]),
-     element('escaped', content=[text('backslash\\\\\\\\character')])]
+     element('escaped', content=[text('backslash\\\\\\\\character')]),
+     element('t1'),
+     element('t2', content=[text('\\\\\\\\backslash ')]),
+     element('^hat'),
+     element('%'),
+     element('t3', content=[text('\\\\\\\\')]),
+     element('^')]
+    
+    Specify extra escapable characters or tokens
+    >>> with warnings.catch_warnings():
+    ...     warnings.simplefilter("ignore")
+    ...     pprint(list(parser([
+    ...         r"\\t1 \\t2 \\\\backslash \\^hat \\%\\t3\\\\\\^"],
+    ...         tag_escapes=r"[\\\\^%]")))
+    [element('t1'),
+     element('t2', content=[text('\\\\\\\\backslash \\\\^hat \\\\%')]),
+     element('t3', content=[text('\\\\\\\\\\\^')])]
+
 
     >>> doc=r"""
     ... \\id MAT EN
@@ -516,9 +535,11 @@ class parser(collections.Iterable):
         self._pua_prefix = private_prefix
         self._tokens = _put_back_iter(self.__lexer(
             source,
-            re.compile(rf'(?:\\(?:{tag_escapes})|[^\\])+|(?<!\\)\\[^\s\\]+',
+            re.compile(rf'(?:\\(?:{tag_escapes})|[^\\])+|\\[^\s\\]+',
                        re.DOTALL | re.UNICODE)))
         self._error_level = error_level
+        self._escaped_tag = re.compile(rf'^\\{tag_escapes}',
+                                       re.DOTALL | re.UNICODE)
 
         # Compute end marker stylesheet definitions
         em_def = {'TextType': None, 'Endmarker': None}
@@ -592,7 +613,7 @@ class parser(collections.Iterable):
                                    for istag, g in gs)
 
     def __get_tag(self, parent: element, tok: str):
-        if tok[0] != '\\':
+        if tok[0] != '\\' or self._escaped_tag.match(tok):
             return None
 
         tok = tok[1:]
@@ -677,7 +698,7 @@ class parser(collections.Iterable):
             else:   # Pass non marker data through with a litte fix-up
                 if parent is not None \
                         and len(parent) == 0 \
-                        and not tok.startswith(('\r\n', '\n')):
+                        and not tok.startswith(('\r\n', '\n', '\\')):
                     tok = tok[1:]
                 if tok:
                     tok.parent = parent

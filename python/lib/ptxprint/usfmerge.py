@@ -266,6 +266,7 @@ def usfmerge(infilea, infileb, outfile, stylesheetsa=[], stylesheetsb=[], fsecon
     debugPrint = debug
     stylesheeta = usfm._load_cached_stylesheet('usfm.sty')
     stylesheetb = {k: v.copy() for k, v in stylesheeta.items()}
+    tag_escapes = r"[^a-zA-Z0-9]"
     if debugPrint:
         print(stylesheetsa, stylesheetsb)
     for s in stylesheetsa:
@@ -285,12 +286,14 @@ def usfmerge(infilea, infileb, outfile, stylesheetsa=[], stylesheetsb=[], fsecon
         return groupChunks(*a, texttype, **kw)
 
     with open(infilea, encoding="utf-8") as inf:
-        doc = list(usfm.parser(inf, stylesheet=stylesheeta, canonicalise_footnotes=True))
+        doc = list(usfm.parser(inf, stylesheet=stylesheeta,
+                               canonicalise_footnotes=True, tag_escapes=tag_escapes))
         pcoll = Collector(doc=doc, fsecondary=fsecondary)
     mainchunks = {c.ident: c for c in pcoll.acc}
 
     with open(infileb, encoding="utf-8") as inf:
-        doc = list(usfm.parser(inf, stylesheet=stylesheetb, canonicalise_footnotes=True))
+        doc = list(usfm.parser(inf, stylesheet=stylesheetb,
+                               canonicalise_footnotes=True, tag_escapes=tag_escapes))
         scoll = Collector(doc=doc, primary=False)
     secondchunks = {c.ident: c for c in scoll.acc}
     mainkeys = ["_".join(str(x) for x in c.ident) for c in pcoll.acc]

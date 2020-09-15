@@ -145,14 +145,15 @@
 % Running headers/footers that may use the references defined above
 %
 
+
 % define \headline for use by the output routine
 \headline={\hbox to \textwidth{%
  \s@tfont{h}%
  \ifm@rksonpage\trace{H}{marks on page pfm:\p@gefirstmark}\else\trace{H}{No marks on page. old pfm:\p@gefirstmark}\gdef\p@gefirstmark{}\fi
  \edef\t@st{\p@gefirstmark}% check first mark on page to see if this is a "title" page
  \global\rhr@letrue
- \ifx\t@st\empty
-  \trace{h}{no p@gefirstmark} 
+ \ifnum\ifx\t@st\empty\ifp@geone 0\else 1\fi\else 0\fi =1
+  \trace{h}{no p@gefirstmark. Page 1 is \ifp@geone True\else False\fi} 
     \ifodd\pageno
       \the\noVoddhead
       \trace{h}{using noVoddhead} 
@@ -170,7 +171,7 @@
     \fi
   \else
     \trace{h}{Testing for \t@tle\space in \t@st}%
-    \ifx\t@st\t@tle
+    \ifnum\ifx\t@st\t@tle 1\else\ifp@geone 1\else 0\fi\fi =1
       \the\titlehead \global\rhr@lefalse
     \else\ifx\t@st\n@thing
       \the\titlehead \global\rhr@lefalse
@@ -210,15 +211,15 @@
 % \footline is similar except it doesn't have to place a border graphic
 \footline={{%
  \s@tfont{h}%
- \edef\t@st{\p@gefirstmark}%
- \ifx\t@st\empty 
- \ifodd\pageno \the\noVoddfoot \else 
-   \ifDoubleSided \the\noVevenfoot \else \the\noVoddfoot \fi\fi
+ \edef\t@st{\p@gefirstmark}% check first mark on page to see if this is a "title" page
+ \ifnum\ifx\t@st\empty\ifp@geone 0\else 1\fi\else 0\fi =1
+   \ifodd\pageno \the\noVoddfoot \else 
+     \ifDoubleSided \the\noVevenfoot \else \the\noVoddfoot \fi\fi
  \else
-  \ifx\t@st\t@tle \the\titlefoot \else
-  \ifodd\pageno \the\oddfoot \else 
-    \ifDoubleSided \the\evenfoot \else \the\oddfoot \fi
-  \fi\fi\fi}}
+   \ifnum\ifx\t@st\t@tle 1\else\ifp@geone 1\else 0\fi\fi =1 \the\titlefoot \else
+     \ifodd\pageno \the\oddfoot \else
+       \ifDoubleSided \the\evenfoot \else \the\oddfoot \fi
+ \fi\fi\fi}}
 \newtoks\oddfoot
 \newtoks\evenfoot
 \newtoks\titlefoot

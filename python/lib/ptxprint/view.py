@@ -117,6 +117,7 @@ class ViewModel:
         self.prjid = None
         self.configId = None
         self.isDisplay = False
+        self.tempFiles = []
 
         # private to this implementation
         self.dict = {}
@@ -184,7 +185,7 @@ class ViewModel:
         
     def getBooks(self):
         bl = self.get("t_booklist", "").split()
-        if not self.get('c_multiplebooks'):
+        if self.get("r_book") == "single":
             return [self.get("ecb_book")]
         elif len(bl):
             blst = []
@@ -197,13 +198,23 @@ class ViewModel:
             # return self.booklist
             return []
 
-    def getBookFilename(self, bk, prjid):
-        if self.ptsettings is None or self.prjid != prjid:
-            self.ptsettings = ParatextSettings(self.settings_dir, prjid)
-        fbkfm = self.ptsettings['FileNameBookNameForm']
-        bknamefmt = (self.ptsettings['FileNamePrePart'] or "") + \
+    def _getPtSettings(self, prjid):
+        if self.ptsettings is None:
+            self.ptsettings = ParatextSettings(self.settings_dir, self.prjid)
+        if prjid is None:
+            prjid = self.prjid
+        if prjid != self.prjid:
+            ptsettings = ParatextSettings(self.settings_dir, prjid)
+        else:
+            ptsettings = self.ptsettings
+        return ptsettings
+
+    def getBookFilename(self, bk, prjid=None):
+        ptsettings = self._getPtSettings(prjid)
+        fbkfm = ptsettings['FileNameBookNameForm']
+        bknamefmt = (ptsettings['FileNamePrePart'] or "") + \
                     fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + \
-                    (self.ptsettings['FileNamePostPart'] or "")
+                    (ptsettings['FileNamePostPart'] or "")
         fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
         return fname
 
@@ -331,7 +342,7 @@ class ViewModel:
         if prjid is None:
             return _("PTXprint {} - Bible Layout for Everyone!     Start by selecting a project to work with...").format(VersionStr)
         else:
-            if self.get('c_multiplebooks'):
+            if self.get('r_book') == "multiple":
                 bks = self.get('t_booklist').split()
             else:
                 bks = [self.get('ecb_book')]
@@ -448,7 +459,8 @@ class ViewModel:
     def versionFwdConfig(self, config):
         version = self._config_get(config, "config", "version", conv=float, fallback=0.0)
         # print("version=",version)
-        if float(version) < 0.9:
+        v = float(version)
+        if v < 0.9:
             try:
                 self._configset(config, "document/ifshowchapternums", not config.getboolean("document", "ifomitchapternum"))
                 self._configset(config, "document/ifshowversenums", not config.getboolean("document", "ifomitallverses"))
@@ -459,7 +471,10 @@ class ViewModel:
                 self._configset(config, "document/parallelrefs", not config.getboolean("document", "supressparallels"))
             except:
                 pass
-            config.set("config", "version", "1.1")
+        if v < 1.2:
+            bl = self._config_get(config, "project", "booklist")
+            self._configset(config, "project/bookscope", "multiple" if len(bl) else "single")
+            config.set("config", "version", "1.2")
 
     def loadConfig(self, config):
         def setv(k, v): self.set(k, v, skipmissing=True)
@@ -519,7 +534,7 @@ class ViewModel:
         #    self.working_dir = os.path.join(self.settings_dir, self.prjid, "PrintDraft")
         #    self.fixed_wd = False
 
-    def generateNProcPicLists(self, bk, outdir, processor, priority="Both", sfmonly=False, isTemp=False, output=True):
+    def generateNProcPicLists(self, bk, outdir, processor, priority="Both", sfmonly="piclist", isTemp=False, output=True):
         picposns = { "L": {"col":  ("tl", "bl"),             "span": ("t")},
                      "R": {"col":  ("tr", "br"),             "span": ("b")},
                      "":  {"col":  ("tl", "tr", "bl", "br"), "span": ("t", "b")}}
@@ -537,7 +552,7 @@ class ViewModel:
         picinfos = None
         if diglotPrinter is not None:
             diglotPics = None
-            if isTemp and not sfmonly:      # only merge if source doesn't have L/R
+            if isTemp and sfmonly != "sfm":      # only merge if source doesn't have L/R
                 tmppics = self.getFigures(bk)
                 if any(x[3] in "LR" for x in tmppics.keys()):
                     picinfos = tmppics
@@ -567,10 +582,7 @@ class ViewModel:
 
         missingPicList = []
         extOrder = self.getExtOrder()
-        fname = self.getBookFilename(bk, self.prjid)
-        doti = fname.rfind(".")
-        if doti > 0:
-            plfname = fname[:doti] + "-draft" + fname[doti:] + ".piclist"
+        plfname = self.getDraftFilename(bk)
         # Now write out the new PicList to a temp folder
         piclstfname = os.path.join(self.configPath(cfgname=self.configId, makePath=False), "PicLists", plfname)
         isdblcol = self.get("c_doublecolumn")
@@ -583,7 +595,7 @@ class ViewModel:
         else:
             lines.append(_("% PicList Generated by PTXprint: {}\n\n").format(self.get("_date")))
         for k, v in sorted(picinfos.items(),
-                        key=lambda x: refKey(x[0][:3]+x[0][4:], info=x[0][3])):
+                           key=lambda x: refKey(x[0][:3]+x[0][4:], info=x[0][3])):
             picposn = picposns[k[3] if diglotPrinter is not None else ""]
             if 'dest file' not in v:
                 missingPics.append(v['src'])
@@ -602,8 +614,16 @@ class ViewModel:
             if 'ref' in v and ishiderefs:
                 del v['ref']
             v['src'] = os.path.basename(v['dest file'])
-            lines.append("{} {}|".format(k, v['caption']) + " ".join('{}="{}"'.format(x, v[x]) for x in pos3parms if x in v and v[x]))
         if output:
+            piclstfname = os.path.join(outdir, plfname)
+            self.outPicInfo(picinfos, piclstfname, isTemp=isTemp)
+        return (picinfos, missingPics)
+
+    def outPicInfo(self, picinfo, fpath, isTemp=True):
+        lines = []
+        for k, v in sorted(picinfo.items(),
+                           key=lambda x: refKey(x[0][:3]+x[0][4:], info=x[0][3])):
+            lines.append("{} {}|".format(k, v['caption']) + " ".join('{}="{}"'.format(x, v[x]) for x in pos3parms if x in v and v[x]))
             if not isTemp:
                 lines.append(_("""
             
@@ -617,10 +637,8 @@ class ViewModel:
 %   d) To scale an image use the notation: size="span*.7" or size="col*1.3" (for 70% and 130%)
 """))
             dat = "\n".join(lines)+"\n"
-            piclstfname = os.path.join(outdir, plfname)
-            with open(piclstfname, "w", encoding="utf-8") as outf:
+            with open(fpath, "w", encoding="utf-8") as outf:
                 outf.write(dat)
-        return (picinfos, missingPics)
 
     def generatePicLists(self, booklist, priority="Both", generateMissingLists=False, output=True):
         xl = []
@@ -647,18 +665,32 @@ class ViewModel:
         missingPics = []
         picinfos = {}
         for bk in bks:
-            (pi, mps) = self.generateNProcPicLists(bk, outdir, procbk, priority=priority, sfmonly=True, output=output)
+            (pi, mps) = self.generateNProcPicLists(bk, outdir, procbk, sfmonly=("sfm" if output else "piclist"), priority=priority, output=output)
             missingPics.extend(mps)
             picinfos.update(pi) # ({"{} {}".format(bk, k): v for k,v in pi.items()})
         return picinfos
 
+    def savePicLists(self, picinfo):
+        bks = self.getBooks()
+        for bk in bks:
+            picitems = {k: v for k, v in picinfo.items() if k.startswith(bk + " ")}
+            if not len(picitems):
+                continue
+            fname = self.getDraftFilename(bk)
+            fdir = os.path.join(self.configPath(cfgname=self.configName()), "PicLists")
+            if not os.path.exists(fdir):
+                os.makedirs(fdir)
+            fpath = os.path.join(fdir, fname)
+            self.outPicInfo(picitems, fpath, isTemp=False)
+
     def getDraftFilename(self, bk, ext=".piclist"):
         fname = self.getBookFilename(bk, self.prjid)
+        cname = "-" + (self.configName() or "draft")
         doti = fname.rfind(".")
         if doti > 0:
-            return fname[:doti] + "-draft" + fname[doti:] + ext
+            return fname[:doti] + cname + fname[doti:] + ext
         else:
-            return fname + "-draft" + ext
+            return fname + cname + ext
 
     def _fixPicinfo(self, vals):
         p = vals['pgpos']
@@ -678,14 +710,15 @@ class ViewModel:
                 vals['scale'] = m[2]
         return vals
 
-    def getFigures(self, bk, suffix="", sfmonly=False, media=None, usepiclists=False):
+    def getFigures(self, bk, suffix="", sfmonly="piclist", media=None, usepiclists=False):
         res = {}
         fname = self.getBookFilename(bk, self.prjid)
-        usepiclist = usepiclists or (not sfmonly and self.get("c_usePicList")) # and bk not in TexModel._peripheralBooks
+        usepiclist = usepiclists or (sfmonly != "sfm" and self.get("c_usePicList")) # and bk not in TexModel._peripheralBooks
         if usepiclist:
             plfname = self.getDraftFilename(bk)
             piclstfname = os.path.join(self.configPath(cfgname=self.configName()), "PicLists", plfname)
             if not os.path.exists(piclstfname):
+                print("Can't find {}".format(piclstfname))
                 usepiclist = False
             else:
                 fname = piclstfname
@@ -712,7 +745,7 @@ class ViewModel:
                     else:
                         for d in re.findall(r'(\S+)\s*=\s*"([^"]+)"', m[-1]):
                             res[k][d[0]] = d[1]
-        else:
+        elif sfmonly != "piclist":
             with universalopen(fname) as inf:
                 dat = inf.read()
                 blocks = ["0"] + re.split(r"\\c\s+(\d+)", dat)
@@ -836,11 +869,8 @@ class ViewModel:
                 return
         prjdir = os.path.join(self.settings_dir, self.prjid)
         for bk in booklist:
-            fname = self.getBookFilename(bk, prjid)
+            fname = self.getDraftFilename(bk, ext=".adj")
             outfname = os.path.join(self.configPath(self.configName()), "AdjLists", fname)
-            doti = outfname.rfind(".")
-            if doti > 0:
-                outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".adj"
             if os.path.exists(outfname):
                 existingFilelist.append(re.split(r"\\|/",outfname)[-1])
         if len(existingFilelist):
@@ -850,11 +880,8 @@ class ViewModel:
                 return
         for bk in booklist:
             tmplist = []
-            fname = self.getBookFilename(bk, prjid)
+            fname = self.getDraftFilename(bk, ext=".adj")
             outfname = os.path.join(self.configPath(self.configName()), "AdjLists", fname)
-            doti = outfname.rfind(".")
-            if doti > 0:
-                outfname = outfname[:doti] + "-draft" + outfname[doti:] + ".adj"
             adjlist = []
             flist = [os.path.join(prjdir, fname)]
             if diglot: 
@@ -964,7 +991,7 @@ class ViewModel:
                         sfmtxt = inf.read()
                     # Put strict conditions on the format (including only valid \ior using 0-9, not \d digits from any script)
                     # This was probably too restrictive, but is a great RegEx: \\ior ([0-9]+(:[0-9]+)?[-\u2013][0-9]+(:[0-9]+)?) ?\\ior\*
-                    if regex.search(r"\\iot .+\r?\n(\\io\d .+\\ior [0-9\-:.,\u2013\u2014 ]+\\ior\* ?\r?\n)+\\c 1", sfmtxt, flags=regex.MULTILINE) \
+                    if regex.search(r"\\iot .+\r?\n(\\io\d .+?\\ior [()0-9\-:.,\u2013\u2014 ]+?\\ior\* ?\r?\n)+\\c 1", sfmtxt, flags=regex.MULTILINE) \
                        and len(regex.findall(r"\\iot",sfmtxt)) == 1: # Must have exactly 1 \iot per book 
                         pass
                     else:
@@ -1172,6 +1199,11 @@ class ViewModel:
         if self.get("c_diglot"):
             digview = self.createDiglotView()
             digview._archiveAdd(zf, self.getBooks())
+        if self.get("c_archiveTemps"):
+            prjdir = os.path.join(self.settings_dir, self.prjid)
+            for f in self.tempFiles:
+                outfname = os.path.relpath(f, prjdir)
+                zf.write(f, outfname)
         zf.close()
 
     def _archiveAdd(self, zf, books):

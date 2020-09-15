@@ -35,7 +35,7 @@ def getWidgetVal(wid, w, default=None, asstr=False, sub=0):
         return default
     return v
 
-def setWidgetVal(wid, w, value):
+def setWidgetVal(wid, w, value, noui=False):
     if wid.startswith("ecb_"):
         model = w.get_model()
         e = w.get_child()

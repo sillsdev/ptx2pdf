@@ -81,7 +81,11 @@ def make_paths(projectsdir, project, config, xdv=False):
         cfgname = ""
     cfg.read(configpath, encoding="utf-8")
     ptsettings = ParatextSettings(projectsdir, project)
-    if cfg.getboolean("project", "multiplebooks"):
+    try:
+        ismult = cfg.get("project", "bookscope") == "multiple"
+    except configparser.NoOptionError:
+        ismult = cfg.getboolean("project", "multiplebooks")
+    if ismult:
         bks = [x for x in cfg.get("project", "booklist").split() \
             if os.path.exists(os.path.join(projectsdir, project, ptsettings.getBookFilename(x)))]
     else:

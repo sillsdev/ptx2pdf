@@ -320,6 +320,7 @@
 
 %+c_plainoutput
 \m@rksonpagefalse
+\newif\ifp@geone\p@geonetrue
 % redefine plain TeX's output routine to add the cropmarks
 \def\plainoutput{%
   \ifm@rksonpage\else\trace{m}{No marks on page \the\pageno}\fi
@@ -327,6 +328,7 @@
   \shipwithcr@pmarks{\vbox{\makeheadline\pagebody\makefootline}}%
   \pdfpagewidth=\dimen9 \pdfpageheight=\dimen8
   \advancepageno
+  \global\p@geonefalse
   \ifnum\pageno>10000\MSG{Error: Runaway page output}\s@ve@nd\fi
   \ifnum\outputpenalty>-\@MM \else\dosupereject\fi\global\m@rksonpagefalse\global\noteseenfalse
   }
