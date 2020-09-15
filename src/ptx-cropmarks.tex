@@ -128,15 +128,27 @@
  \x@\let\x@\t@bFontCol\csname\t@bname -col\endcsname
  \ifx\t@bBoxCol\relax\let\t@bBoxCol\tabBoxCol\fi
  \ifx\t@bFontCol\relax\let\t@bFontCol\tabFontCol\fi
- \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabheight}{.2\tabwidth}{\tabwidth}{-2pt}{\b@okShort}}% Bleed of 0.2 \tabwidth
- \ht0=\tabwidth
- \hbox to 0pt{%
-  \ifodd\pageno\kern -\tabwidth\else\hss\fi
-  %\setbox2\hbox{\vrule height 0.5\wd0 depth 0.5\wd0 width 1pt}%
-  %\copy2 \rot@tebz \box2
-  \rot@tebz 
-  \ifodd\pageno\hss\else \kern-1\tabwidth\fi
- }%
+ \ifdim\tabheight>\tabwidth
+   \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabheight}{.2\tabwidth}{\tabwidth}{-2pt}{\b@okShort}}% Bleed of 0.2 \tabwidth
+   \ht0=\tabwidth
+   \hbox to 0pt{%
+    \ifodd\pageno\kern -\tabwidth\else\hss\fi
+     %\setbox2\hbox{\vrule height 0.5\wd0 depth 0.5\wd0 width 1pt}%
+     %\copy2 \rot@tebz \box2
+     \rot@tebz 
+     \ifodd\pageno\hss\else \kern-1\tabwidth\fi
+   }%
+ \else
+   \hbox to 0pt{%
+    \ifodd\pageno\hss\else\kern -1pt\fi% Bleed of 1pt
+    \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabwidth}{0.3\tabheight}{0.7\tabheight}{0pt}{\b@okShort}}%
+   % \setbox2\hbox{\vrule height \ht0 depth \dp0 width 1pt}%
+   % \copy2 
+    \box0
+   % \box2 
+    \ifodd\pageno\kern -1pt \else\hss\fi%bleed of 1pt.
+    }%
+ \fi
 }
 \def\putthumbtab{%Using the current book ID, and the book's short name complete and position a thumbtab mark
  \trace{pt}{PTT nt:\the\NumTabs, bk:\b@okShort}%
