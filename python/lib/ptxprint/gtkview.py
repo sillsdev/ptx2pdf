@@ -939,7 +939,7 @@ class GtkViewModel(ViewModel):
             self.set("s_linespacingmax", lnspVal + 2)
 
     def onSectionHeadsClicked(self, btn):
-        self.onSimpleClicked()
+        self.onSimpleClicked(btn)
         self.builder.get_object("c_parallelRefs").set_active(status)
 
     def onHyphenateClicked(self, btn):
@@ -947,11 +947,11 @@ class GtkViewModel(ViewModel):
             fname = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint", 'hyphen-{}.tex'.format(self.prjid))
         
     def onUseIllustrationsClicked(self, btn):
-        self.onSimpleClicked()
+        self.onSimpleClicked(btn)
         self.colourTabs()
 
     def onUseCustomFolderclicked(self, btn):
-        self.onSimpleClicked()
+        self.onSimpleClicked(btn)
         if not status:
             self.builder.get_object("c_exclusiveFiguresFolder").set_active(status)
 
