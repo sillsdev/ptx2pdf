@@ -718,7 +718,7 @@ class ViewModel:
             plfname = self.getDraftFilename(bk)
             piclstfname = os.path.join(self.configPath(cfgname=self.configName()), "PicLists", plfname)
             if not os.path.exists(piclstfname):
-                print("Can't find {}".format(piclstfname))
+                # print("Can't find {}".format(piclstfname))
                 usepiclist = False
             else:
                 fname = piclstfname

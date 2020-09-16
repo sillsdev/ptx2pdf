@@ -1104,7 +1104,7 @@ class GtkViewModel(ViewModel):
                                     key=lambda x:_allbkmap.get(x, len(_allbkmap)))
             bl.set_text(" ".join(b for b in booklist))
         if self.get("r_book") in ("single", "multiple"):
-            self.set("r_book") == "multiple" if len(booklist) else "single"
+            self.set("r_book", "multiple" if len(booklist) else "single")
         self.set("c_prettyIntroOutline", False)
         self.updateDialogTitle()
         self.updateExamineBook()
