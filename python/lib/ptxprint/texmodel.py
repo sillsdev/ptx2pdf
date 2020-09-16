@@ -847,7 +847,7 @@ class TexModel:
             # print("Chapter label: '{}' for '{}' with {}".format(clabel, " ".join(clbooks), bk))
             if len(clabel) and (not len(clbooks) or bk in clbooks):
                 self.localChanges.append((None, regex.compile(r"(\\c 1)(?=\s*\r?\n|\s)", flags=regex.S), r"\\cl {}\n\1".format(clabel)))
-        if not self.asBool("project/multiplebooks"):
+        if self.dict["project/bookscope"] == "single":
             if first > 1:
                 self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+(?=\\c {} ?\r?\n)".format(first), flags=regex.S), ""))
             if last < int(chaps.get(bk)):
