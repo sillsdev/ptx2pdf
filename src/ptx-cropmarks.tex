@@ -97,40 +97,56 @@
 \TabsEnd=10pt %LastTab ends 10 from the vertical margin
 % Thumb-tabs codes assume  setup in the form \settumbtab{Gen}{1}, 
 % where Gen exactly matches the \toc3 entry for the book.
-\def\tabBoxCol{0 0 0}
-\def\tabFontCol{1 1 0.8}
+\def\ThumbTabStyle{h}%Which style defines the font? 
+\def\tabBoxCol{0 0 0}%Bacground as r g b 
+\def\tabFontCol{1 1 1}%Foregreound as r g b
 
 \def\sett@bname#1{\xdef\t@bname{t@b-#1}}
 \def\setthumbtab#1#2{\sett@bname{#1}\x@\xdef\csname\t@bname -num\endcsname{#2}\if#2\relax\else\ifnum\NumTabs<#2 \global\NumTabs=#2 \fi\fi}
 \def\setthumbtabBg#1#2{\sett@bname{#1}\x@\xdef\csname\t@bname -boxcol\endcsname{#2}}
 \def\setthumbtabFg#1#2{\sett@bname{#1}\x@\xdef\csname\t@bname -col\endcsname{#2}}
 
-\def\colourbox#1#2#3#4#5#6#7{%1 - box colour, 2 - text colour 3- boxwidth 4- box depth 
+\def\colourbox#1#2#3#4#5#6#7{%1 - box colour, 2 - text colour 
+  % 3- boxwidth 
+  % 4- box depth 
   % 5 - box height
-  % 6 - >=0, raise box by this.  <0pt separation from top of box to top of text.  Never lowers box if box is too short.
-  % 7 - text
+  % 6 - >=0, raise box by this. =1sp, centre text.  <0pt separation from top of box to top of text ( Never lowers box if box is too short.
+  % 7 - text (should include glue to align / centre e.g. \hss)
   %\dimen2=\baselineskip\advance\dimen2 by -.2ex
   % Box height is set by \tabwidth, text is set 2pt below top 
   \dimen2=#6
+  \setbox0\hbox to #3{#7}%
   \ifdim\dimen2<0pt
-   \setbox1\hbox{#7}%
    \advance\dimen2 by #5
-   \advance\dimen2 by -\ht1
+   \advance\dimen2 by -\ht0
    \ifdim\dimen2<0pt\dimen2=0pt\fi
   \fi
-  \setbox0\hbox to #3{\hss#7\hss}\setbox0\hbox{\hbox to 0pt{\special{color push rgb #1}\vrule depth #4 height #5 width #3 \hss}\special{color pop}\special{color push rgb #2}\raise \dimen2\box0}\ht0=#5\dp0=#4\box0\special{color pop}}
+  \ifdim\dimen2=1sp %Magic number to indicate vertical centering.
+   %To centre text, it goes UP by ((#5-ht0)-(#4-dp0))/2
+   %can't use -#4 because #4 may be -ve already.
+   \dimen2=#4\multiply\dimen2 by -1
+   \advance\dimen2 by #5
+   \advance\dimen2 by -\ht0
+   \advance\dimen2 by \dp0
+   \divide\dimen2 by 2
+  \fi
+  \setbox0\hbox{\hbox to 0pt{\special{color push rgb #1}\vrule depth #4 height #5 width #3 \hss}\special{color pop}\special{color push rgb #2}\raise \dimen2\box0}\ht0=#5\dp0=#4\box0\special{color pop}}
 
 %Rotate box0 about a point on it's baseline, half way along its width. Adjust size so that height/depth and width are correct for rotated box. box height/depth becomes left-most edge.
 \def\rot@tebz{\dimen1=\wd0\dimen2=\ht0\advance\dimen2 by \dp0\hbox to \dimen2{\kern -0.5\wd0\ifodd\pageno \kern\ht0\else\kern\dp0\fi\vbox to 0pt{\vss\hbox to 0pt{\kern 0.5\wd0\special{x:gsave}\special{x:rotate \ifodd\pageno 90\else -90\fi}\hss}\vss}\ht0=0.5\dimen1\dp0=0.5\dimen1\box0\special{x:grestore}\hss}}
 
+
+\def\horizThumbtabContents#1{\ifodd\pageno \kern 2pt\else\hss\fi #1\ifodd\pageno \hss\else\kern 2pt\fi}% How should the thumbtab be positioned when horizontal?
+\def\vertThumbtabContents#1{\hss #1\hss}% How should the thumbtab be positioned when vertical?
+
 \def\t@bbox{%
- \s@tfont{p}%
+ \s@tfont{\ThumbTabStyle}%
  \x@\let\x@\t@bBoxCol\csname\t@bname -boxcol\endcsname
  \x@\let\x@\t@bFontCol\csname\t@bname -col\endcsname
  \ifx\t@bBoxCol\relax\let\t@bBoxCol\tabBoxCol\fi
  \ifx\t@bFontCol\relax\let\t@bFontCol\tabFontCol\fi
  \ifdim\tabheight>\tabwidth
-   \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabheight}{.2\tabwidth}{\tabwidth}{-2pt}{\b@okShort}}% Bleed of 0.2 \tabwidth
+   \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabheight}{.2\tabwidth}{\tabwidth}{-2pt}{\vertThumbtabContents{\b@okShort}}}% Bleed of 0.2 \tabwidth, 2pt from top of box
    \ht0=\tabwidth
    \hbox to 0pt{%
     \ifodd\pageno\kern -\tabwidth\else\hss\fi
@@ -142,7 +158,7 @@
  \else
    \hbox to 0pt{%
     \ifodd\pageno\hss\else\kern -1pt\fi% Bleed of 1pt
-    \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabwidth}{0.3\tabheight}{0.7\tabheight}{0pt}{\b@okShort}}%
+    \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabwidth}{0.3\tabheight}{0.7\tabheight}{1sp}{\horizThumbtabContents{\b@okShort}}}%
    % \setbox2\hbox{\vrule height \ht0 depth \dp0 width 1pt}%
    % \copy2 
     \box0
@@ -153,6 +169,8 @@
 }
 \def\putthumbtab{%Using the current book ID, and the book's short name complete and position a thumbtab mark
  \trace{pt}{PTT nt:\the\NumTabs, bk:\b@okShort}%
+ \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
+ \XeTeXuseglyphmetrics=3
  \ifnum\NumTabs=0 \else
    \sett@bname{\id@@@}\x@\let\x@\tabnum\csname\t@bname -num\endcsname
   \trace{pt}{\t@bname, Tabnum: \tabnum}%
@@ -184,6 +202,7 @@
       }%
    \fi
  \fi %ifnum
+ \XeTeXuseglyphmetrics=\@seglyphmetrics% Restore to normal value.
 }
 \def\shipwithcr@pmarks#1{% \shipout box #1, adding cropmarks if required
   \dimen0=0\ifCropMarks .5\fi in
