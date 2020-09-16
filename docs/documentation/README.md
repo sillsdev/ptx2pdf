@@ -31,7 +31,8 @@ A [PDF](../documentation/ptx2pdf-MacroSetupParameters.pdf?attredirects=0/index.h
 -  [**7** Other](#ptx2pdf-MacroSetupParameters-Other)
 -  [**8** Notes](#ptx2pdf-MacroSetupParameters-Notes)
 -  [**9** Illustrations (Figures)](#ptx2pdf-MacroSetupParameters-Illustrations(Figures))
--  [**10** Hooks](#ptx2pdf-MacroSetupParameters-Hooks)
+-  [**10** Thumb Tabs](#ptx2pdf-MacroSetupParameters-Tabs)
+-  [**11** Hooks](#ptx2pdf-MacroSetupParameters-Hooks)
     -  [**10.1** Appendix: Common OpenType script tags](#ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags)
 
 Text in ```gray``` represents the portion of the setup parameter syntax which can be configured by the typesetter. Where applicable, default values are indicated in parentheses at the end of the definition.
@@ -289,6 +290,37 @@ _For now_, if you want to change the appearance of (or remove) the footnote rule
 *   \FigurePlaceholders```false``` – Operate in "figure placeholders" mode? If true, the macros will read your picture definitions, but only render a rectangular frame containing the text of the filename, rather than the actual graphic. (default = false)
 
 </a>
+
+## <a name="ptx2pdf-MacroSetupParameters-Tabs">Table of Contents control </a>
+* \GenerateTOC[title]{filename} - where [title] is optional, default is "Table of Contents"
+ Writes TOC entries from \toc1, \toc2, \toc3 markers to the given file, which can be used directly with \ptxfile{...}
+ or renamed and edited as needed to customize the TOC.
+* \useTOCone```true``` - Include parameter of `\toc1` (Full name) in above table of contents file. (default = true)
+* \useTOtwo```true``` - Include  `\toc2` (Short name) in from above table of contents file. (default = true)
+* \useTOCthree```true``` - Include `\toc3` (Abbreviation) in from above table of contents file. (default = true)
+
+
+## <a name="ptx2pdf-MacroSetupParameters-Tabs">Thumb tabs</a>
+
+See <a href="thumbtabs.md">the feature-specific documentation</a> for a more extensive discussion.
+ 
+* \setthumbtab{`GEN`}{`1`} - generate a page-edge thumb-tab for all pages in the book of Genesis. The code (```GEN``` in the example) must be an exact match of the code used in the USFM `\id` marker.  All `\setthumbtab` commands should be complete before the first `\ptxfile` is loaded. The number (```1``` in the example), is termed `index number` in this documentation and (together with parameters below) controls the vertical position of the tabs for the given book, with 1 being nearest the top of the page.  
+* \def\tabBoxCol{```0.2 0.3 0.2```} colour definition for the thumb-tab, the 3 numbers representing red, green and blue in the range of 0 (black), 0.5 (half)  to 1 (fully lit). (Default ```0 0 0```).
+* \def\tabFontCol{```0.5 1 0.5```} colour definition for the thumb-tab, the 3 numbers representing red, green and blue in the range of 0 (black), 0.5 (half)  to 1 (fully lit). (Default ```1 1 1```).
+* \tabheight=```50pt``` Vertical dimension of the thumbtab. (default 50pt).
+* \tabwidth=```25pt``` Vertical dimension of the thumbtab. (default 15pt).
+* \TabRotationNormal```true``` When this is true, then when the ```\tabheight``` > ```\tabwidth``` the text on the tab will be rotated, and otherwise it will be horizontal. If false, the logic is inverted. This may be useful to force horizontal text in tall tabs, or if the assumption that the text is wider than it is tall is incorrect.
+
+* \setthumbtab{`PSA`}{\relax} - Undo an earlier \setthumbtab command. 
+* \setthumbtabFg{`PSA`}{0 1 0.8} - Override the default foreground colour `\tabFontCol` for the given book.
+* \setthumbtabBg{`REV`}{0.3 0.3 0} - Override the default background colour `\tabBoxCol` for the given book.
+
+* \TOCthreetab```true``` - if false, then thumb-tabs will not have their content from  the `\toc3` entry. This will leave the tab blank unless set via the custom USFM marker ```\zthumbtab```. (default = true)
+* \def\ThumbTabStyle{```toc3```} - use specified marker for selecting the font, size, weight, etc.  (default = toc3)
+* \NumTabs=```5``` - Pre-set / reset the number of tabs between which the available space will be divided. Normally there is no need to set this number, as ```\setthumbtab{ZEC}{39}``` will set it to 39 unless it is already larger than that.  
+* \TabsStart=```10pt``` Distance between the upper edge of the topmost thumb-tab and the top margin of the page (text area). Negative values may be given to extend tabs into the upper margin.
+* \TabsEnd=```10pt``` Distance between the lower edge of the lowermost thumb-tab and the bottom page margin (text area). Negative values may be given to extend tabs into the lower margins.
+
 
 ## <a name="ptx2pdf-MacroSetupParameters-Illustrations(Figures)"></a><a name="ptx2pdf-MacroSetupParameters-Hooks">Hooks</a>
 

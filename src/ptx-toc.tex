@@ -50,6 +50,11 @@
 
 \addtoinithooks{\set@ptocmarkers}
 \addtoendhooks{\closet@cfile}
+\newif\ifuseTOCthree\useTOCthreetrue
+\newif\ifTOCthreetab\TOCthreetabtrue
+\newif\ifuseTOCtwo\useTOCtwotrue
+\newif\ifuseTOCone\useTOConetrue
+
 
 \def\closet@cfile{\immediate\closeout\t@cfile}
 
@@ -67,9 +72,9 @@
 \m@kedigitsother
 
 {\obeylines%
- \gdef\t@cA #1^^M{\gdef\toc@A{#1}\egroup}%
- \gdef\t@cB #1^^M{\gdef\toc@B{#1}\egroup}%
- \gdef\t@cC #1^^M{\gdef\toc@C{#1}\gdef\b@okShort{#1}\egroup}%
+ \gdef\t@cA #1^^M{\ifuseTOCone\gdef\toc@A{#1}\fi\egroup}%
+ \gdef\t@cB #1^^M{\ifuseTOCtwo\gdef\toc@B{#1}\fi\egroup}%
+ \gdef\t@cC #1^^M{\ifuseTOCthree\gdef\toc@C{#1}\fi\ifTOCthreetab\ifx\b@okShort\empty\gdef\b@okShort{#1}\fi\fi\egroup}%
 }
 
 {\catcode`\#=12

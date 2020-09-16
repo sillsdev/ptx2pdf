@@ -91,6 +91,13 @@
 \newdimen\TabsEnd %Vertical offset to margins for end of thumb tabs 
 \newcount\NumTabs %How many tabs to be set?
 \newif\ifTabRotationNormal \TabRotationNormaltrue %RotationNormalfalse means that the \toc3 entries should be assumed to be narrower than they are tall.
+
+\def\zthumbtab{\bgroup\obeylines\th@mt@b} %Manual control of thumbtab text, from usfm file.
+
+{\obeylines
+ \gdef\th@mt@b #1^^M{\gdef\b@okShort{#1}\ifx\b@okShort\empty\gdef\b@okShort{\relax}\fi\egroup}%
+}
+
 \NumTabs=2
 \tabheight=50pt
 \tabwidth=15pt
@@ -98,7 +105,7 @@
 \TabsEnd=10pt %LastTab ends 10 from the vertical margin
 % Thumb-tabs codes assume  setup in the form \settumbtab{Gen}{1}, 
 % where Gen exactly matches the \toc3 entry for the book.
-\def\ThumbTabStyle{h}%Which style defines the font? 
+\def\ThumbTabStyle{toc3}%Which style defines the font? Default is toc3
 \def\tabBoxCol{0 0 0}%Bacground as r g b 
 \def\tabFontCol{1 1 1}%Foregreound as r g b
 
@@ -136,9 +143,13 @@
 %Rotate box0 about a point on it's baseline, half way along its width. Adjust size so that height/depth and width are correct for rotated box. box height/depth becomes left-most edge.
 \def\rot@tebz{\dimen1=\wd0\dimen2=\ht0\advance\dimen2 by \dp0\hbox to \dimen2{\kern -0.5\wd0\ifodd\pageno \kern\ht0\else\kern\dp0\fi\vbox to 0pt{\vss\hbox to 0pt{\kern 0.5\wd0\special{x:gsave}\special{x:rotate \ifodd\pageno 90\else -90\fi}\hss}\vss}\ht0=0.5\dimen1\dp0=0.5\dimen1\box0\special{x:grestore}\hss}}
 
-
-\def\horizThumbtabContents#1{\if\st@rtatedge F\kern 2pt\else\hss\fi #1\if\st@rtatedge F\hss\else\kern 2pt\fi}% How should the thumbtab be positioned when horizontal?
-\def\vertThumbtabContents#1{\hss #1\hss}% How should the thumbtab be positioned when vertical?
+\def\TabTxtFarFromEdge#1{\if\st@rtatedge F\kern 2pt\else\hss\fi #1\if\st@rtatedge F\hss\else\kern 2pt\fi}% Normal position for horizontal text - left-aligned on odd pages / bottom when rotated
+\def\TabTxtCloseToEdge#1{\if\st@rtatedge T\kern 2pt\else\hss\fi #1\if\st@rtatedge T\hss\else\kern 2pt\fi}% Right-aligned on odd-pages / Top when rotated
+\def\TabTxtCentred#1{\hss #1\hss}% 
+\let\horizThumbtabContents=\TabTxtFarFromEdge% How should the thumbtab be positioned when horizontal?
+\let\vertThumbtabContents=\TabTxtCentred% How should the thumbtab be positioned when vertical?
+\def\vertThumbtabVadj{-2pt}%2pt below top.
+\def\horizThumbtabVadj{1sp}%vertically centred.
 
 \def\lastw@rning{}
 \def\t@bbox{%
@@ -160,7 +171,7 @@
  \setbox0\hbox{\b@okShort}%
  \iftemp
    \ifdim\wd0>\tabheight\ifx\lastw@rning\b@okShort\else\xdef\lastw@rning{\b@okShort}\message{Thumb tab contents "\b@okShort" too wide for tab height}\fi\fi
-   \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabheight}{3pt}{\tabwidth}{-2pt}{\vertThumbtabContents{\b@okShort}}}% Bleed of 3pt , 2pt from top of box
+   \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabheight}{3pt}{\tabwidth}{\vertThumbtabVadj}{\vertThumbtabContents{\b@okShort}}}% Bleed of 3pt , 2pt from top of box
 
    \ht0=\tabwidth
    \hbox to 0pt{%
@@ -174,7 +185,7 @@
    \ifdim\wd0>\tabwidth\ifx\lastw@rning\b@okShort\else\xdef\lastw@rning{\b@okShort}\message{Thumb tab contents "\b@okShort" too wide for tab width}\fi\fi
    \hbox to 0pt{%
     \if\st@rtatedge F\hss\else\kern -1pt\fi% Bleed of 1pt
-    \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabwidth}{0.3\tabheight}{0.7\tabheight}{1sp}{\horizThumbtabContents{\b@okShort}}}%
+    \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabwidth}{0.1\tabheight}{0.9\tabheight}{\horizThumbtabVadj}{\horizThumbtabContents{\b@okShort}}}%
    % \setbox2\hbox{\vrule height \ht0 depth \dp0 width 1pt}%
    % \copy2 
     \box0
