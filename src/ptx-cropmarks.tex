@@ -90,6 +90,7 @@
 \newdimen\TabsStart %Vertical offset to margins for start of thumb tabs
 \newdimen\TabsEnd %Vertical offset to margins for end of thumb tabs 
 \newcount\NumTabs %How many tabs to be set?
+\newif\ifTabRotationNormal \TabRotationNormaltrue %RotationNormalfalse means that the \toc3 entries should be assumed to be narrower than they are tall.
 \NumTabs=2
 \tabheight=50pt
 \tabwidth=15pt
@@ -136,39 +137,60 @@
 \def\rot@tebz{\dimen1=\wd0\dimen2=\ht0\advance\dimen2 by \dp0\hbox to \dimen2{\kern -0.5\wd0\ifodd\pageno \kern\ht0\else\kern\dp0\fi\vbox to 0pt{\vss\hbox to 0pt{\kern 0.5\wd0\special{x:gsave}\special{x:rotate \ifodd\pageno 90\else -90\fi}\hss}\vss}\ht0=0.5\dimen1\dp0=0.5\dimen1\box0\special{x:grestore}\hss}}
 
 
-\def\horizThumbtabContents#1{\ifodd\pageno \kern 2pt\else\hss\fi #1\ifodd\pageno \hss\else\kern 2pt\fi}% How should the thumbtab be positioned when horizontal?
+\def\horizThumbtabContents#1{\if\st@rtatedge F\kern 2pt\else\hss\fi #1\if\st@rtatedge F\hss\else\kern 2pt\fi}% How should the thumbtab be positioned when horizontal?
 \def\vertThumbtabContents#1{\hss #1\hss}% How should the thumbtab be positioned when vertical?
 
+\def\lastw@rning{}
 \def\t@bbox{%
  \s@tfont{\ThumbTabStyle}%
  \x@\let\x@\t@bBoxCol\csname\t@bname -boxcol\endcsname
  \x@\let\x@\t@bFontCol\csname\t@bname -col\endcsname
  \ifx\t@bBoxCol\relax\let\t@bBoxCol\tabBoxCol\fi
  \ifx\t@bFontCol\relax\let\t@bFontCol\tabFontCol\fi
+ \tempfalse
  \ifdim\tabheight>\tabwidth
-   \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabheight}{.2\tabwidth}{\tabwidth}{-2pt}{\vertThumbtabContents{\b@okShort}}}% Bleed of 0.2 \tabwidth, 2pt from top of box
+   \ifTabRotationNormal
+     \temptrue
+   \fi
+ \else
+   \ifTabRotationNormal\else
+     \temptrue
+   \fi
+ \fi
+ \setbox0\hbox{\b@okShort}%
+ \iftemp
+   \ifdim\wd0>\tabheight\ifx\lastw@rning\b@okShort\else\xdef\lastw@rning{\b@okShort}\message{Thumb tab contents "\b@okShort" too wide for tab height}\fi\fi
+   \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabheight}{3pt}{\tabwidth}{-2pt}{\vertThumbtabContents{\b@okShort}}}% Bleed of 3pt , 2pt from top of box
+
    \ht0=\tabwidth
    \hbox to 0pt{%
-    \ifodd\pageno\kern -\tabwidth\else\hss\fi
+    \if\st@rtatedge F\kern -\tabwidth\else\hss\fi
      %\setbox2\hbox{\vrule height 0.5\wd0 depth 0.5\wd0 width 1pt}%
      %\copy2 \rot@tebz \box2
      \rot@tebz 
-     \ifodd\pageno\hss\else \kern-1\tabwidth\fi
+     \if\st@rtatedge F\hss\else \kern-1\tabwidth\fi
    }%
  \else
+   \ifdim\wd0>\tabwidth\ifx\lastw@rning\b@okShort\else\xdef\lastw@rning{\b@okShort}\message{Thumb tab contents "\b@okShort" too wide for tab width}\fi\fi
    \hbox to 0pt{%
-    \ifodd\pageno\hss\else\kern -1pt\fi% Bleed of 1pt
+    \if\st@rtatedge F\hss\else\kern -1pt\fi% Bleed of 1pt
     \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabwidth}{0.3\tabheight}{0.7\tabheight}{1sp}{\horizThumbtabContents{\b@okShort}}}%
    % \setbox2\hbox{\vrule height \ht0 depth \dp0 width 1pt}%
    % \copy2 
     \box0
    % \box2 
-    \ifodd\pageno\kern -1pt \else\hss\fi%bleed of 1pt.
+    \if\st@rtatedge F\kern -1pt \else\hss\fi%bleed of 1pt.
     }%
  \fi
 }
 \def\putthumbtab{%Using the current book ID, and the book's short name complete and position a thumbtab mark
- \trace{pt}{PTT nt:\the\NumTabs, bk:\b@okShort}%
+  \let\st@rtatedge=T% Does a horizontal chunk of text in a box  start nearest to the page edge away from the binding (False for English on odd-numbered pages) (LTR/RTL sensitive)
+  \ifodd\pageno
+    \ifRTL\else\let\st@rtatedge=F\fi
+  \else
+    \ifRTL\let\st@rtatedge=F\fi
+  \fi
+ \trace{pt}{PTT nt:\the\NumTabs, bk:\b@okShort, pg:\the\pageno}%
  \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
  \XeTeXuseglyphmetrics=3
  \ifnum\NumTabs=0 \else
