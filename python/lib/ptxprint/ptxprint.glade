@@ -8973,6 +8973,7 @@ Margin Factor:</property>
                                 <property name="can_focus">True</property>
                                 <property name="halign">start</property>
                                 <property name="margin_right">6</property>
+                                <property name="width_chars">5</property>
                                 <property name="secondary_icon_tooltip_text" translatable="yes">Specifies the height of the tab in FontUnits. This value should be greater than the Font Size.</property>
                                 <property name="adjustment">a_thumbheight</property>
                                 <property name="climb_rate">1</property>
@@ -9006,6 +9007,7 @@ Margin Factor:</property>
                                 <property name="halign">start</property>
                                 <property name="margin_right">6</property>
                                 <property name="margin_bottom">6</property>
+                                <property name="width_chars">5</property>
                                 <property name="text" translatable="yes">12</property>
                                 <property name="secondary_icon_tooltip_text" translatable="yes">Font size of text in the thumb tab. Specify this as you would the font size in a stylesheet. Thus the value is multiplied by the FontUnits. The main body text size is usually 12.</property>
                                 <property name="adjustment">a_thumbfont</property>
@@ -9193,7 +9195,7 @@ MAT</property>
                                 <property name="halign">start</property>
                                 <property name="margin_right">6</property>
                                 <property name="margin_top">6</property>
-                                <property name="width_chars">3</property>
+                                <property name="width_chars">5</property>
                                 <property name="secondary_icon_tooltip_text" translatable="yes">Width of the tab in margin units. Best to be less than the Side margins factor in the Layout tab.</property>
                                 <property name="adjustment">a_thumbwidth</property>
                                 <property name="climb_rate">1</property>

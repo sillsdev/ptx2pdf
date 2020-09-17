@@ -1249,5 +1249,4 @@ class ViewModel:
         else:
             tabheight = float(self.get("s_thumbheight")) * float(self.get("s_fontsize")) * 25.4 / 72.27 / 12.
         newnum = int(tabsheight / tabheight)
-        print([tabsheight, tabheight, newnum, pageheight, tfactor, bfactor, munits])
         self.set("s_thumbtabs", newnum)

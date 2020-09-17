@@ -1695,6 +1695,5 @@ class GtkViewModel(ViewModel):
         self.onNumTabsChanged()
 
     def onNumTabsChanged(self, *a):
-        print(self.get("c_thumbtabs"))
         if self.get("c_thumbtabs"):
             self.updateThumbLines()
