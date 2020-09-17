@@ -311,7 +311,7 @@ See <a href="thumbtabs.md">the feature-specific documentation</a> for a more ext
 * \tabwidth=```25pt``` Vertical dimension of the thumbtab. (default 15pt).
 * \TabRotationNormal```true``` When this is true, then when the ```\tabheight``` > ```\tabwidth``` the text on the tab will be rotated, and otherwise it will be horizontal. If false, the logic is inverted. This may be useful to force horizontal text in tall tabs, or if the assumption that the text is wider than it is tall is incorrect.
 
-* \setthumbtab{`PSA`}{\relax} - Undo an earlier \setthumbtab command. 
+* \setthumbtab{`PSA`}{} - Undo an earlier \setthumbtab command. 
 * \setthumbtabFg{`PSA`}{0 1 0.8} - Override the default foreground colour `\tabFontCol` for the given book.
 * \setthumbtabBg{`REV`}{0.3 0.3 0} - Override the default background colour `\tabBoxCol` for the given book.
 

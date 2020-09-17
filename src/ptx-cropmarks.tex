@@ -110,7 +110,7 @@
 \def\tabFontCol{1 1 1}%Foregreound as r g b
 
 \def\sett@bname#1{\xdef\t@bname{t@b-#1}}
-\def\setthumbtab#1#2{\sett@bname{#1}\x@\xdef\csname\t@bname -num\endcsname{#2}\edef\t@mp{#2}\ifx\t@mp\relax\else\ifnum\NumTabs<#2 \global\NumTabs=#2 \fi\fi}
+\def\setthumbtab#1#2{\sett@bname{#1}\edef\t@mp{#2}\ifx\t@mp\empty\x@\let\csname\t@bname -num\endcsname\relax\else\x@\xdef\csname\t@bname -num\endcsname{#2}\ifnum\NumTabs<#2 \global\NumTabs=#2 \fi\fi}
 \def\setthumbtabBg#1#2{\sett@bname{#1}\x@\xdef\csname\t@bname -boxcol\endcsname{#2}}
 \def\setthumbtabFg#1#2{\sett@bname{#1}\x@\xdef\csname\t@bname -col\endcsname{#2}}
 
