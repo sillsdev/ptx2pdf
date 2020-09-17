@@ -434,8 +434,8 @@ class ThumbTabs(Snippet):
             texlines.append(f"\\setthumbtab{{{b}}}{{{index}}}")
         bcol = parsecol(model["thumbtabs/background"])
         fcol = parsecol(model["thumbtabs/foreground"])
-        texlines.append("\\tabBoxCol{{{}}}".format(bcol))
-        texlines.append("\\tabFontCol{{{}}}".format(fcol))
+        texlines.append("\\def\\tabBoxCol{{{}}}".format(bcol))
+        texlines.append("\\def\\tabFontCol{{{}}}".format(fcol))
         try:
             height = float(model["thumbtabs/height"]) * float(model["paper/fontfactor"])    # in pt
         except (ValueError, TypeError):
