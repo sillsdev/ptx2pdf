@@ -1,10 +1,15 @@
 import re, os
 import regex
 from .texmodel import universalopen
+from .ptsettings import bookcodes
 
-class PDFx1aOutput():
+class Snippet:
     regexes = []
     styleInfo = ""
+    processTex = False
+    texCode = ""
+
+class PDFx1aOutput(Snippet):
     processTex = True
     texCode = r"""
 \special{{pdf:docinfo<<
@@ -34,7 +39,7 @@ class PDFx1aOutput():
 
 """
     
-class FancyIntro():
+class FancyIntro(Snippet):
     _regexbits = [(r'\\io2 ', r'\\io1 \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0'), # Temporary fix for \io2 and \io3 so table doesn't break!
                (r'\\io3 ', r'\\io1 \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0'),
                (r'(\\iot .+?)\r?\n', r'\1\r\n\iotable\r\n\makedigitsother\r\n\catcode`{=1\r\n\catcode`}=2\r\n'),
@@ -61,7 +66,6 @@ class FancyIntro():
 """
 # Indent is in inches
 
-    processTex = False
     texCode = r"""
 % Enable commands with digits in them to be processed
 \catcode`@=11
@@ -72,9 +76,7 @@ class FancyIntro():
 
 """
 
-class Diglot():
-    regexes = []
-    styleInfo = ""
+class Diglot(Snippet):
     processTex = True
     texCode = r"""
 \def\regularR{{"{diglot/fontregular}{diglot/fontregeng}{diglot/texfeatures}{diglot/docscript}{diglot/docdigitmapping}"}}
@@ -99,9 +101,9 @@ class Diglot():
 
 """
 
-class FancyBorders():
-    regexes = []
-    styleInfo = lambda m: (r"""
+class FancyBorders(Snippet):
+    def styleInfo(self, m):
+        return (r"""
 # need a smaller verse number to fit in the stars
 \Marker v
 \FontSize {fancy/versenumsize}
@@ -306,15 +308,12 @@ artstr = {
 "ib" : ("by_Farid_Faadil. Copyright ©_by_Biblica, Inc.\nUsed_by_permission. All_rights_reserved_worldwide.", "")
 }
 
-class ImgCredits():
-    regexes = []
+class ImgCredits(Snippet):
     styleInfo = """
 \Marker zImageCopyrights
 \StyleType Paragraph
 \TextProperties paragraph publishable
 """
-    processTex = False
-    texCode = ""
 
     def generateTex(self, texmodel):
         artpgs = {}
@@ -390,3 +389,75 @@ class ImgCredits():
             
         crdts += ["}"]
         return "\n".join(crdts)
+
+def parsecol(s):
+    vals = s[s.find("(")+1:-1].split(",")
+    return " ".join("{:.3f}".format(float(v)/255) for v in vals)
+
+class ThumbTabs(Snippet):
+    def generateTex(self, model):
+        numtabs = int(float(model["thumbtabs/numtabs"]))
+        texlines = ["\\NumTabs={}".format(numtabs)]
+
+        # Analyse grouped tabs
+        groups = model["thumbtabs/groups"].split(";")
+        allgroupbks = {}
+        grouplists = []
+        for i, g in enumerate(groups):
+            a = g.strip().split()
+            grouplists.append(a)
+            for b in a:
+                allgroupbks[b] = i
+        groups = [g.strip().split() for g in groups]
+
+        # calculate book index
+        restartmat = model["thumbtabs/restart"]
+        books = {}
+        start = 1
+        for b in model.printer.getBooks(scope="multiple"):
+            c = bookcodes.get(b, "C0")
+            if c[0] not in "0123456789" or int(c) > 85:
+                continue
+            bkdone = False
+            if b in allgroupbks:
+                for a in grouplists[allgroupbks[b]]:
+                    if a in books:
+                        index = books[a]
+                        bkdone = True
+                        break
+            if not bkdone:
+                if start > numtabs or (b == "MAT" and restartmat):
+                    start = 1
+                index = start
+                start += 1
+            books[b] = index
+            texlines.append(f"\\setthumbtab{{{b}}}{{{index}}}")
+        bcol = parsecol(model["thumbtabs/background"])
+        fcol = parsecol(model["thumbtabs/foreground"])
+        texlines.append("\\tabBoxCol{{{}}}".format(bcol))
+        texlines.append("\\tabFontCol{{{}}}".format(fcol))
+        try:
+            height = float(model["thumbtabs/height"]) * float(model["paper/fontfactor"])    # in pt
+        except (ValueError, TypeError):
+            height = 15.
+
+        try:
+            width = float(model["thumbtabs/widthfactor"]) * float(model["paper/sidemarginfactor"]) \
+                    * float(model["paper/margins"])                                         # in mm
+        except (ValueError, TypeError):
+            width = 16.
+        rotate = model["thumbtabs/rotate"]
+        texlines.append("\\tab{}={:.2f}pt".format("height" if not rotate else "width", height))
+        texlines.append("\\tab{}={:.2f}mm".format("height" if rotate else "width", width))
+        return "\n".join(texlines)
+
+    def styleInfo(self, model):
+        fcol = "x"+"".join("{:02X}".format(int(float(c.strip())*255)) for c in parsecol(model["thumbtabs/foreground"]).split())
+        fsize = int(float(model["thumbtabs/fontsize"]))
+        res = ["\\Marker toc3"]
+        res.append(f"\\color {fcol}")
+        res.append(f"\\FontSize {fsize}")
+        res.append("\\Italic " + ("-" if not model["thumbtabs/italic"] else ""))
+        res.append("\\Bold " + ("-" if not model["thumbtabs/bold"] else ""))
+        return "\n".join(res)
+

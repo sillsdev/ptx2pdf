@@ -110,7 +110,7 @@
 \def\tabFontCol{1 1 1}%Foregreound as r g b
 
 \def\sett@bname#1{\xdef\t@bname{t@b-#1}}
-\def\setthumbtab#1#2{\sett@bname{#1}\x@\xdef\csname\t@bname -num\endcsname{#2}\if#2\relax\else\ifnum\NumTabs<#2 \global\NumTabs=#2 \fi\fi}
+\def\setthumbtab#1#2{\sett@bname{#1}\x@\xdef\csname\t@bname -num\endcsname{#2}\edef\t@mp{#2}\ifx\t@mp\relax\else\ifnum\NumTabs<#2 \global\NumTabs=#2 \fi\fi}
 \def\setthumbtabBg#1#2{\sett@bname{#1}\x@\xdef\csname\t@bname -boxcol\endcsname{#2}}
 \def\setthumbtabFg#1#2{\sett@bname{#1}\x@\xdef\csname\t@bname -col\endcsname{#2}}
 
@@ -207,7 +207,7 @@
  \ifnum\NumTabs=0 \else
    \sett@bname{\id@@@}\x@\let\x@\tabnum\csname\t@bname -num\endcsname
   \trace{pt}{\t@bname, Tabnum: \tabnum}%
-   \if\tabnum\relax\else %NOT ifx..  This allows setting the number to \relax and it'll disable it.
+   \ifx\tabnum\relax\else %NOT ifx..  This allows setting the number to \relax and it'll disable it.
       {%Protect temporary dimensions and box
         \dimen1=\textheight
         \advance\dimen1 by -\TabsStart

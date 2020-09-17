@@ -135,7 +135,9 @@ _sensitivities = {
     "c_inclVerseDecorator" :   ["l_verseFont", "bl_verseNumFont", "l_verseSize", "s_verseNumSize", "btn_selectVerseDecorator"],
     "c_fakebold" :             ["s_boldembolden", "s_boldslant"],
     "c_fakeitalic" :           ["s_italicembolden", "s_italicslant"],
-    "c_fakebolditalic" :       ["s_bolditalicembolden", "s_bolditalicslant"]
+    "c_fakebolditalic" :       ["s_bolditalicembolden", "s_bolditalicslant"],
+    "c_thumbtabs":             ["s_thumbwidth", "s_thumbheight", "s_thumbfont", "c_thumbrotate", "c_thumbitalic",
+                                "c_thumbbold", "t_thumbgroups", "col_thumbback", "col_thumbtext", "s_thumbtabs", "c_thumbrestart"],
 }
 # Checkboxes and the different objects they make (in)sensitive when toggled
 # These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
@@ -610,6 +612,9 @@ class GtkViewModel(ViewModel):
         dc = " color='"+col+"'" if self.get("c_diglot") else ""
         bc = " color='"+col+"'" if self.get("c_borders") else ""
         self.builder.get_object("lb_DiglotBorder").set_markup("<span{}>Diglot</span>+<span{}>Border</span>".format(dc,bc))
+
+        tc = " color='"+col+"'" if self.get("c_thumbtabs") else ""
+        self.builder.get_object("lb_Tabs").set_markup("<span{}>Tabs</span>".format(tc))
 
     def sensiVisible(self, k, focus=False, state=None):
         if state is None:
@@ -1683,3 +1688,13 @@ class GtkViewModel(ViewModel):
 
     def onArchTempClicked(self, btn):
         print(self.tempFiles)
+
+    def onTabsClicked(self, btn):
+        self.onSimpleClicked(btn)
+        self.colourTabs()
+        self.onNumTabsChanged()
+
+    def onNumTabsChanged(self, *a):
+        print(self.get("c_thumbtabs"))
+        if self.get("c_thumbtabs"):
+            self.updateThumbLines()

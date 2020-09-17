@@ -183,17 +183,21 @@ class ViewModel:
             os.makedirs(self.working_dir)
         return os.path.join(self.working_dir, fname)
         
-    def getBooks(self):
+    def getBooks(self, scope=None):
         bl = self.get("t_booklist", "").split()
-        if self.get("r_book") == "single":
+        if scope is None:
+            scope = self.get("r_book")
+        if scope == "single":
             return [self.get("ecb_book")]
-        elif len(bl):
+        elif scope == "multiple" and len(bl):
             blst = []
             for b in bl:
                 bname = self.getBookFilename(b, self.prjid)
                 if os.path.exists(os.path.join(self.settings_dir, self.prjid, bname)):
                     blst.append(b)
             return blst
+        elif scope == "module":
+            return [self.get("ecb_biblemodule")]
         else:
             # return self.booklist
             return []
@@ -526,6 +530,8 @@ class ViewModel:
                 val = config.get(sect, name)
             except configparser.NoOptionError:
                 setv(ModelMap[k][0], self.ptsettings.dict.get(v, ""))
+        if self.get("c_thumbtabs"):
+            self.updateThumbLines()
         #self.customFolder = self.get("btn_selectOutputFolder")
         #if not self.get("c_useprintdraftfolder") and self.customFolder is not None and len(self.customFolder):
         #    self.working_dir = self.customFolder
@@ -1224,3 +1230,24 @@ class ViewModel:
         configstr.close()
         for k, v in tmpcfg.items():
             self.set(k, v)
+
+    def updateThumbLines(self):
+        munits = float(self.get("s_margins"))
+        unitConv = {'mm':1, 'cm':10, 'in':25.4, '"':25.4}
+        m = re.match(r"^.*?,\s*([\d.]+)(\S+)\s*(?:.*|$)", self.get("ecb_pagesize"))
+        if m:
+            pageheight = float(m.group(1)) * unitConv.get(m.group(2), 1)
+        else:
+            pageheight = 210
+        tfactor = float(self.get("s_topmarginfactor"))
+        bfactor = float(self.get("s_bottommarginfactor"))
+        tabsheight = pageheight - munits * (tfactor + bfactor)   # in mm
+        tabsheight -= 20 * 25.4 / 72.27                          # from default \TabsStart + \TabsEnd (in pt)
+        if self.get("c_thumbrotate"):
+            tabheight = float(self.get("s_thumbwidth")) * float(self.get("s_sidemarginfactor")) \
+                        * float(self.get("s_margins"))
+        else:
+            tabheight = float(self.get("s_thumbheight")) * float(self.get("s_fontsize")) * 25.4 / 72.27 / 12.
+        newnum = int(tabsheight / tabheight)
+        print([tabsheight, tabheight, newnum, pageheight, tfactor, bfactor, munits])
+        self.set("s_thumbtabs", newnum)

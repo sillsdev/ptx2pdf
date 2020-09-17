@@ -34,7 +34,7 @@ def universalopen(fname, rewrite=False):
     return fh
 
 # After universalopen to resolve circular import. Kludge
-from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ImgCredits
+from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ImgCredits, ThumbTabs
 
 def loosint(x):
     try:
@@ -294,6 +294,18 @@ ModelMap = {
     "snippets/diglot":          ("c_diglot", lambda w,v: True if v else False),
     "snippets/fancyborders":    ("c_borders", None),
     "snippets/imgcredits":      ("c_includeillustrations", None),
+    "thumbtabs/ifthumbtabs":    ("c_thumbtabs", None),
+    "thumbtabs/numtabs":        ("s_thumbtabs", None),
+    "thumbtabs/widthfactor":    ("s_thumbwidth", None),
+    "thumbtabs/height":         ("s_thumbheight", None),
+    "thumbtabs/fontsize":       ("s_thumbfont", None),
+    "thumbtabs/italic":         ("c_thumbitalic", None),
+    "thumbtabs/bold":           ("c_thumbbold", None),
+    "thumbtabs/rotate":         ("c_thumbrotate", None),
+    "thumbtabs/background":     ("col_thumbback", None),
+    "thumbtabs/foreground":     ("col_thumbtext", None),
+    "thumbtabs/restart":        ("c_thumbrestart", None),
+    "thumbtabs/groups":         ("t_thumbgroups", None),
 }
 
 _fontstylemap = {
@@ -352,7 +364,8 @@ class TexModel:
         "snippets/pdfx1aoutput":          ("c_PDFx1aOutput", PDFx1aOutput),
         "snippets/diglot":                ("c_diglot", Diglot),
         "snippets/fancyborders":          ("c_borders", FancyBorders),
-        "snippets/imgcredits":            ("c_includeillustrations", ImgCredits)
+        "snippets/imgcredits":            ("c_includeillustrations", ImgCredits),
+        "snippets/thumbtabs":             ("c_thumbtabs", ThumbTabs)
     }
     _settingmappings = {
         "notes/xrcallers": "crossrefs",
@@ -973,7 +986,8 @@ class TexModel:
         self.localChanges.append((None, regex.compile(r"\\\+", flags=regex.M), r"\\"))  
             
         for c in range(1,4): # Remove any \toc lines that we don't want appearing in the Table of Contents
-            if not self.asBool("document/usetoc{}".format(c)):
+            if not self.asBool("document/usetoc{}".format(c)) and (c != 3 or self.asBool("thumbtabs/ifthumbtab")):
+                print("Deleting toc{} with thumbtabs/ifthumbtab of {}".format(c, self.get("thumbtabs/ifthumbtab")))
                 self.localChanges.append((None, regex.compile(r"(\\toc{} .+)".format(c), flags=regex.M), ""))
 
         # Add End of Book decoration PDF to Scripture books only if FancyBorders is enabled and .PDF defined
@@ -1132,7 +1146,7 @@ class TexModel:
                 if isinstance(c[1].styleInfo, str):
                     nstylist.append(c[1].styleInfo+"\n")
                 else:
-                    nstylist.append(c[1].styleInfo(self)+"\n")
+                    nstylist.append(c[1].styleInfo(c[1], self)+"\n")
 
         if nstylist == []:
             if os.path.exists(nstyfname):

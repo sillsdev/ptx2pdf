@@ -5,6 +5,14 @@ from collections import namedtuple
 
 RefRange = namedtuple("RefRange", ["fromc", "fromv", "toc", "tov"])
 
+class _Reference(sfm.position):
+    def __new__(cls, pos, ref):
+        p = super().__new__(cls, *pos)
+        p.book = ref[0]
+        p.chapter = ref[1]
+        p.verse = ref[2]
+        return p
+
 class Sheets:
     def __init__(self, init=[]):
         self.sheet = usfm.default_stylesheet.copy()
@@ -26,6 +34,23 @@ class Usfm:
 
     def __str__(self):
         return sfm.generate(self.doc)
+
+    def addorncv(self):
+        if self.cvaddorned:
+            return
+        ref = [None] * 3
+        def _g(_, e):
+            if isinstance(e, sfm.element):
+                if e.name == 'id':
+                    ref[0] = str(e[0]).split()[0]
+                elif e.name == 'c':
+                    ref[1] = e.args[0]
+                elif e.name == 'v':
+                    ref[2] = e.args[0]
+                return reduce(_g, e, None)
+            e.pos = _Reference(e.pos, ref)
+        reduce(_g, self.doc, None)
+        self.cvaddorned = True
 
     def getwords(self, init=None, constrain=None):
         ''' Counts words found in the document. If constrain then is a set or
@@ -78,6 +103,8 @@ class Usfm:
         ''' Normalise USFM in place '''
         ispara = sfm.text_properties("paragraph")
         def ensurenl(i, e):
+            ''' Ensure element ends with a newline, if not already present.
+                Passed index in parent and element. '''
             if isinstance(e, sfm.element):
                 if len(e):
                     ensurenl(len(e)-1, e[-1])
@@ -89,6 +116,7 @@ class Usfm:
                 return True
             return False
         def ge(i, e):
+            ''' Iterate document allowing in place editing '''
             res = False
             if isinstance(e, sfm.element):
                 if ispara(e) or e.name == "v":

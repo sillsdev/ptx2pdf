@@ -1,4 +1,4 @@
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
 
 def getWidgetVal(wid, w, default=None, asstr=False, sub=0):
     v = None
@@ -31,6 +31,8 @@ def getWidgetVal(wid, w, default=None, asstr=False, sub=0):
         v = w.get_label()
     elif wid.startswith("l_"):
         v = w.get_text()
+    elif wid.startswith("col_"):
+        v = w.get_rgba().to_string()
     if v is None:
         return default
     return v
@@ -65,6 +67,10 @@ def setWidgetVal(wid, w, value, noui=False):
         w.set_label(value)
     elif wid.startswith("l_"):
         w.set_text(value)
+    elif wid.startswith("col_"):
+        c = Gdk.RGBA()
+        c.parse(value)
+        w.set_rgba(c)
 
 def setFontButton(btn, name, style):
     btn.font_info = (name, style)
