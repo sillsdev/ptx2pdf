@@ -125,16 +125,14 @@
   \dimen2=#6
   \setbox0\hbox to #3{#7}%
   \ifdim\dimen2<0pt
-   \advance\dimen2 by #5
-   \advance\dimen2 by -\ht0
+   \advance\dimen2 by #5\advance\dimen2 by -\ht0
    \ifdim\dimen2<0pt\dimen2=0pt\fi
   \fi
-  \ifdim\dimen2=1sp %Magic number to indicate vertical centering.
+  \ifdim\dimen2=1sp%Magic number to indicate vertical centering.
    %To centre text, it goes UP by ((#5-ht0)-(#4-dp0))/2
    %can't use -#4 because #4 may be -ve already.
    \dimen2=#4\multiply\dimen2 by -1
-   \advance\dimen2 by #5
-   \advance\dimen2 by -\ht0
+   \advance\dimen2 by #5\advance\dimen2 by -\ht0
    \advance\dimen2 by \dp0
    \divide\dimen2 by 2
   \fi
@@ -172,7 +170,6 @@
  \iftemp
    \ifdim\wd0>\tabheight\ifx\lastw@rning\b@okShort\else\xdef\lastw@rning{\b@okShort}\message{Thumb tab contents "\b@okShort" too wide for tab height}\fi\fi
    \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabheight}{3pt}{\tabwidth}{\vertThumbtabVadj}{\vertThumbtabContents{\b@okShort}}}% Bleed of 3pt , 2pt from top of box
-
    \ht0=\tabwidth
    \hbox to 0pt{%
     \if\st@rtatedge F\kern -\tabwidth\else\hss\fi
@@ -188,6 +185,7 @@
     \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabwidth}{0.1\tabheight}{0.9\tabheight}{\horizThumbtabVadj}{\horizThumbtabContents{\b@okShort}}}%
    % \setbox2\hbox{\vrule height \ht0 depth \dp0 width 1pt}%
    % \copy2 
+   %\ifodd\pageno\else\showbox0\fi
     \box0
    % \box2 
     \if\st@rtatedge F\kern -1pt \else\hss\fi%bleed of 1pt.
@@ -228,6 +226,8 @@
           \setbox0\hbox to \PaperWidth{%
              \ifodd\pageno\hss\fi\t@bbox\ifodd\pageno\else\hss\fi}%
           \moveright\dimen0\box0
+          %\setbox0\hbox to \PaperWidth{\kern -0.5pt\vrule width 1pt height 5pt\hss\vrule width 1pt height 5pt\kern -0.5pt}%
+          %\moveright\dimen0\box0
           %\kern\textheight
           \vss
           %\hrule
