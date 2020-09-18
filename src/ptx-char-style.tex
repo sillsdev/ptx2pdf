@@ -265,7 +265,7 @@
   \fi
   \getFp@ram{color}{#1}%                                                %(+)
   \ifColorFonts\ifx\p@ram\relax\else
-    \ParseColor\p@ram\end\ifx\r@s\z@ros\else\edef\typef@ce{\typef@ce :color=\r@s}\fi%
+    \x@\ParseColor\p@ram\end\ifx\r@s\z@ros\else\edef\typef@ce{\typef@ce :color=\r@s}\fi%
   \fi\fi%
   \dimen0=\c@rrfontsize\FontSizeUnit                                    %(+)
   \getFp@ramR{fontfactor}{#1}% scale down by \SuperscriptFactor if superscripted style
