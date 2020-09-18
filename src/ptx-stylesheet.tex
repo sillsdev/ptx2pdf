@@ -272,24 +272,37 @@
    % remember current chapter:verse, not currently used. Could potentially be used
    % to insert chapter:verse in footnotes.
    \gdef\reference{\ch@pter:\v@rse}%
+   \ifhangingverse
+     \trace{hv}{Hanging verse \reference}%
+     \hangingversefalse
+   \fi
    \nobreak\hskip0.5sp % let \x detect that there's "space" (or maybe drop-chapter) here
   }
 %-csty_defv
   % define handling for usfm \v marker
 %+csty_verse
   \def\v{%
-   \ifvmode\xdef\prev@rsemode{\m@rker}\else\global\let\prev@rsemode\empty\fi
+   \ifvmode\xdef\prev@rsemode{\m@rker}\else
+     \ifhangingverse 
+       \trace{hv}{Horiz Mode:cancel hangingverse}%
+       \hangingversefalse % Cancel
+     \fi
+   \global\let\prev@rsemode\empty\fi
    \leavevmode % ensure we are in horizontal mode to build paragraph
    % set c@ncelfirstversetrue if we are immediately following a drop cap chapter number
    % and the user has requested omission of the first verse number in a chapter
    \c@ncelfirstversefalse
+   \dimen0=\lastkern
    \ifnum\spacefactor=\n@wchaptersf \kern0sp % override \hangversenumber here
     \ifOmitVerseNumberOne \c@ncelfirstversetrue \fi \fi
-   % -1sp indicates that a hanging verse number has been requested here.
+   % -1sp indicates that a hanging verse number has been requested here. But that does not seem as reliable as \ifhangingverse
    % When this happens we make ll@p use llap to right justify the verse number at the current position.
    % Otherwise make ll@p do nothing.
-   \ifdim\lastkern=-1sp \let\ll@p=\llap\hangingversetrue
-   \else \let\ll@p=\relax\hangingversefalse \fi % hanging verse number?
+   \ifdim\lastkern=-1sp \hangingversetrue\fi
+   \ifhangingverse \let\ll@p=\llap
+   \else \let\ll@p=\relax
+   \fi % hanging verse number?
+   %\trace{hv}{lastkern \the\dimen0}%
    \ll@p\bgroup\m@kedigitsother\@v@}%
   % remember chapter macro for later
 %-csty_verse
@@ -422,7 +435,7 @@
 
 % put \hangversenumber into the <start> hook for a style such as \q1
 % in order to 'hang' verse numbers into the paragraph indent of the style
-\def\hangversenumber{\kern-1sp\relax}
+\def\hangversenumber{\hangingversetrue\kern-1sp\relax}
 %-csty_hangverse
 
 % size to use for drop-cap style numbers; automatically calculated if not set
