@@ -12,6 +12,7 @@ def setup_i18n():
         if os.getenv('LANG') is None:
             lang, enc = locale.getdefaultlocale()
             os.environ['LANG'] = lang
+    else:
+        locale.bindtextdomain(APP, MODIR)
     locale.setlocale(locale.LC_ALL, '')
-    locale.bindtextdomain(APP, MODIR)
     gettext.bindtextdomain(APP, MODIR)

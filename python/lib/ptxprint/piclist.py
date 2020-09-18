@@ -75,9 +75,10 @@ class PicList:
         if selection.count_selected_rows() != 1:
             return
         model, i = selection.get_selected()
-        if i.stamp >= len(self.model):
+        if self.model.get_path(i).get_indices()[0] >= len(self.model):
             return
         row = self.model[i]
+        print(row, [r for r in row])
         for j, (k, v) in enumerate(_form_structure.items()): # relies on ordered dict
             if k == 'pgpos':
                 val = row[j][0]
@@ -130,5 +131,5 @@ class PicList:
     def del_row(self):
         model, i = selection.get_selected()
         del self.model[i]
-        self.select_row(i)
+        self.select_row(model.get_path(i).get_indices()[0])
 

@@ -753,11 +753,7 @@ class TexModel:
             self.dict["/nocustomsty"] = "%"
         else:
             self.dict["/nocustomsty"] = ""
-        fbkfm = self.ptsettings['FileNameBookNameForm']
-        fprfx = self.ptsettings['FileNamePrePart'] or ""
-        fpost = self.ptsettings['FileNamePostPart'] or ""
-        bknamefmt = fprfx + fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + fpost
-        fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
+        fname = printer.getBookFilename(bk)
         infpath = os.path.join(prjdir, fname)
         if not self.dict['project/runscriptafter']:
             infpath = self.runConversion(infpath, outdir)

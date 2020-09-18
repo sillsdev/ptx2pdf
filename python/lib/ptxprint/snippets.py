@@ -447,6 +447,7 @@ class ThumbTabs(Snippet):
         except (ValueError, TypeError):
             width = 16.
         rotate = model["thumbtabs/rotate"]
+        texlines.append("\\TabRotationNormal{}".format("false" if rotate else "true"))
         texlines.append("\\tab{}={:.2f}pt".format("height" if not rotate else "width", height))
         texlines.append("\\tab{}={:.2f}mm".format("height" if rotate else "width", width))
         return "\n".join(texlines)
