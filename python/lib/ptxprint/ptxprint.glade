@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -1449,6 +1449,26 @@ in the Windows system.</property>
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="ls_pic_accept">
+    <columns>
+      <!-- column-name pic_accept -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Unknown</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Culturally Appropriate</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Alien but Acceptable</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Inappropriate</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="ls_plHoriz">
     <columns>
       <!-- column-name HorizPosn -->
@@ -1571,6 +1591,26 @@ in the Windows system.</property>
     <data>
       <row>
         <col id="0">Unknown</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="ls_pub_usage">
+    <columns>
+      <!-- column-name pub_usage -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Unknown</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Clarification</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Story Enhancement</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Space Filler</col>
       </row>
     </data>
   </object>
@@ -10361,6 +10401,7 @@ a good way to easily remove a whole bunch of unwanted files.</property>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">Overview of the Pictures used in the publication.</property>
                                     <property name="label" translatable="yes">View List</property>
                                   </object>
                                   <packing>
@@ -10368,11 +10409,11 @@ a good way to easily remove a whole bunch of unwanted files.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkBox" id="bx_picList1">
+                                  <object class="GtkPaned">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="vexpand">True</property>
+                                    <property name="can_focus">True</property>
                                     <property name="orientation">vertical</property>
+                                    <property name="wide_handle">True</property>
                                     <child>
                                       <object class="GtkBox">
                                         <property name="visible">True</property>
@@ -10467,8 +10508,6 @@ a good way to easily remove a whole bunch of unwanted files.</property>
                                           <object class="GtkGrid">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="margin_left">12</property>
-                                            <property name="margin_right">12</property>
                                             <property name="margin_top">6</property>
                                             <property name="margin_bottom">6</property>
                                             <property name="row_spacing">6</property>
@@ -10518,20 +10557,8 @@ a good way to easily remove a whole bunch of unwanted files.</property>
                                         </child>
                                       </object>
                                       <packing>
-                                        <property name="expand">True</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkSeparator">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">1</property>
+                                        <property name="resize">False</property>
+                                        <property name="shrink">True</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -10566,7 +10593,7 @@ a good way to easily remove a whole bunch of unwanted files.</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">False</property>
                                                         <property name="margin_left">6</property>
-                                                        <property name="margin_right">15</property>
+                                                        <property name="margin_right">6</property>
                                                         <property name="margin_top">6</property>
                                                         <property name="margin_bottom">6</property>
                                                         <property name="hexpand">True</property>
@@ -10933,9 +10960,10 @@ lines:</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="max_length">3</property>
                                                             <property name="width_chars">3</property>
-                                                            <property name="text">0</property>
+                                                            <property name="text">-24</property>
                                                             <property name="adjustment">a_plLines</property>
                                                             <property name="climb_rate">1</property>
+                                                            <property name="value">-24</property>
                                                           </object>
                                                           <packing>
                                                             <property name="left_attach">5</property>
@@ -11015,7 +11043,6 @@ lines:</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
-                                                    <property name="active">True</property>
                                                     <property name="draw_indicator">True</property>
                                                     <property name="group">c_previewLocn</property>
                                                   </object>
@@ -11031,7 +11058,6 @@ lines:</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
-                                                    <property name="active">True</property>
                                                     <property name="draw_indicator">True</property>
                                                     <property name="group">c_previewImage</property>
                                                   </object>
@@ -11057,13 +11083,9 @@ lines:</property>
                                         </child>
                                       </object>
                                       <packing>
-                                        <property name="expand">True</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">2</property>
+                                        <property name="resize">True</property>
+                                        <property name="shrink">True</property>
                                       </packing>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
                                     </child>
                                   </object>
                                   <packing>
@@ -11074,10 +11096,733 @@ lines:</property>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">Use this tab to change the position, size or orientation
+of the images.</property>
                                     <property name="label" translatable="yes">Edit Details</property>
                                   </object>
                                   <packing>
                                     <property name="position">1</property>
+                                    <property name="tab_fill">False</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkPaned">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="orientation">vertical</property>
+                                    <property name="wide_handle">True</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="vexpand">True</property>
+                                        <property name="baseline_position">top</property>
+                                        <child>
+                                          <object class="GtkScrolledWindow">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="margin_bottom">6</property>
+                                            <property name="hexpand">True</property>
+                                            <property name="vexpand">True</property>
+                                            <property name="shadow_type">in</property>
+                                            <property name="propagate_natural_height">True</property>
+                                            <child>
+                                              <object class="GtkTreeView" id="tv_picListEdit1">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="halign">start</property>
+                                                <property name="vexpand">True</property>
+                                                <property name="hadjustment">a_picListadjustment1</property>
+                                                <property name="hscroll_policy">natural</property>
+                                                <property name="vadjustment">a_picListadjustment2</property>
+                                                <property name="vscroll_policy">natural</property>
+                                                <property name="model">ls_PicList</property>
+                                                <property name="reorderable">True</property>
+                                                <property name="rules_hint">True</property>
+                                                <property name="enable_search">False</property>
+                                                <property name="search_column">0</property>
+                                                <property name="fixed_height_mode">True</property>
+                                                <property name="activate_on_single_click">True</property>
+                                                <child internal-child="selection">
+                                                  <object class="GtkTreeSelection"/>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkTreeViewColumn">
+                                                    <property name="spacing">4</property>
+                                                    <property name="sizing">fixed</property>
+                                                    <property name="title" translatable="yes">Anchor Ref</property>
+                                                    <property name="clickable">True</property>
+                                                    <property name="reorderable">True</property>
+                                                    <property name="sort_indicator">True</property>
+                                                    <child>
+                                                      <object class="GtkCellRendererText" id="cr_anchor2"/>
+                                                      <attributes>
+                                                        <attribute name="text">0</attribute>
+                                                      </attributes>
+                                                    </child>
+                                                  </object>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkTreeViewColumn" id="col_caption2">
+                                                    <property name="resizable">True</property>
+                                                    <property name="spacing">4</property>
+                                                    <property name="sizing">fixed</property>
+                                                    <property name="fixed_width">320</property>
+                                                    <property name="title" translatable="yes">Caption</property>
+                                                    <child>
+                                                      <object class="GtkCellRendererText" id="cr_caption2"/>
+                                                      <attributes>
+                                                        <attribute name="text">1</attribute>
+                                                      </attributes>
+                                                    </child>
+                                                  </object>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkTreeViewColumn">
+                                                    <property name="resizable">True</property>
+                                                    <property name="spacing">4</property>
+                                                    <property name="sizing">fixed</property>
+                                                    <property name="fixed_width">100</property>
+                                                    <property name="title" translatable="yes">File</property>
+                                                    <child>
+                                                      <object class="GtkCellRendererText" id="cr_filename2"/>
+                                                      <attributes>
+                                                        <attribute name="text">2</attribute>
+                                                      </attributes>
+                                                    </child>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkGrid">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="margin_top">6</property>
+                                            <property name="margin_bottom">6</property>
+                                            <property name="row_spacing">6</property>
+                                            <property name="column_spacing">3</property>
+                                            <child>
+                                              <object class="GtkButton" id="btn_plAdd1">
+                                                <property name="label" translatable="yes">Add Picture...</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="receives_default">True</property>
+                                                <property name="valign">center</property>
+                                                <property name="vexpand">False</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">1</property>
+                                                <property name="top_attach">0</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkButton" id="btn_plDel1">
+                                                <property name="label" translatable="yes">Delete Picture</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="receives_default">True</property>
+                                                <property name="valign">center</property>
+                                                <property name="vexpand">False</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">1</property>
+                                                <property name="top_attach">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="resize">False</property>
+                                        <property name="shrink">True</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="vexpand">True</property>
+                                        <property name="baseline_position">bottom</property>
+                                        <child>
+                                          <object class="GtkScrolledWindow">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="hexpand">True</property>
+                                            <property name="vexpand">True</property>
+                                            <property name="hscrollbar_policy">never</property>
+                                            <property name="shadow_type">in</property>
+                                            <property name="min_content_height">128</property>
+                                            <property name="max_content_height">300</property>
+                                            <child>
+                                              <object class="GtkViewport">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="vexpand">True</property>
+                                                <child>
+                                                  <object class="GtkFrame">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="margin_left">6</property>
+                                                    <property name="margin_right">6</property>
+                                                    <property name="margin_top">6</property>
+                                                    <property name="margin_bottom">6</property>
+                                                    <property name="label_xalign">0.019999999552965164</property>
+                                                    <child>
+                                                      <object class="GtkAlignment">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="left_padding">12</property>
+                                                        <child>
+                                                          <object class="GtkGrid">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="margin_left">6</property>
+                                                            <property name="margin_right">6</property>
+                                                            <property name="margin_top">6</property>
+                                                            <property name="margin_bottom">6</property>
+                                                            <property name="row_spacing">6</property>
+                                                            <property name="column_spacing">3</property>
+                                                            <child>
+                                                            <object class="GtkLabel" id="l_pic_clear">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="tooltip_text" translatable="yes">Is there anything confusing or misleading in this image that the reader might misunderstand if they look at this picture apart from the text? Yes and no are both appropriate answers as some images may need to be seen alongside text in order to be understood.</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="label" translatable="yes">On its own, is it clear what is happening in this image?</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="left_attach">1</property>
+                                                            <property name="top_attach">1</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkLabel">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="tooltip_text" translatable="yes">First consider whether this picture is appropriate and culturally acceptable in any publications for this project.</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="label" translatable="yes">Across Various Publications:</property>
+                                                            <attributes>
+                                                            <attribute name="weight" value="bold"/>
+                                                            <attribute name="foreground" value="#72729f9fcfcf"/>
+                                                            </attributes>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="left_attach">0</property>
+                                                            <property name="top_attach">0</property>
+                                                            <property name="width">2</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkRadioButton" id="r_picclear_yes">
+                                                            <property name="label" translatable="yes">Yes</property>
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">True</property>
+                                                            <property name="receives_default">False</property>
+                                                            <property name="active">True</property>
+                                                            <property name="draw_indicator">True</property>
+                                                            <property name="group">r_picclear_no</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="left_attach">2</property>
+                                                            <property name="top_attach">1</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkRadioButton" id="r_picclear_no">
+                                                            <property name="label" translatable="yes">No</property>
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">True</property>
+                                                            <property name="receives_default">False</property>
+                                                            <property name="active">True</property>
+                                                            <property name="draw_indicator">True</property>
+                                                            <property name="group">r_picclear_yes</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="left_attach">3</property>
+                                                            <property name="top_attach">1</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkRadioButton" id="r_picclear_unknown">
+                                                            <property name="label" translatable="yes">Unknown</property>
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">True</property>
+                                                            <property name="receives_default">False</property>
+                                                            <property name="halign">end</property>
+                                                            <property name="active">True</property>
+                                                            <property name="draw_indicator">True</property>
+                                                            <property name="group">r_picclear_yes</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="left_attach">4</property>
+                                                            <property name="top_attach">1</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkLabel">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="tooltip_text" translatable="yes">Be sure that there is nothing offensive or inappropriate in this image. This could be the way people are clothed, what actions they are doing, how they are depicted, etc. “Culturally Appropriate” means this image is in a style from this culture or a related one, “Acceptable” means this picture might be from a different culture or in a different style, but there are no issues using it. “Inappropriate” means there are issues that should prevent this image from being used. Answering “Inappropriate” will help avoid this image being used in other publications.</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="label" translatable="yes">Is this image acceptable in your culture?</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="left_attach">1</property>
+                                                            <property name="top_attach">2</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkLabel">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="tooltip_text" translatable="yes">Sometimes reversing an image makes it acceptable since a left hand becomes a right hand, etc.</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="label" translatable="yes">Would the image be culturally acceptable if 
+the image was reversed (left becomes right)?</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="left_attach">1</property>
+                                                            <property name="top_attach">3</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkLabel">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="tooltip_text" translatable="yes">Now consider whether there are any issues with using this picture in this particular publication (config-specific).</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="label" translatable="yes">In This Publication:</property>
+                                                            <attributes>
+                                                            <attribute name="weight" value="bold"/>
+                                                            <attribute name="foreground" value="#72729f9fcfcf"/>
+                                                            </attributes>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="left_attach">0</property>
+                                                            <property name="top_attach">4</property>
+                                                            <property name="width">2</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkLabel">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="tooltip_text" translatable="yes">Consider how this image is used alongside the text and what function it serves. Maybe it depicts a building or item from a biblical culture, or a scene from a story.</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="label" translatable="yes">Is this picture intended for: clarification,
+story enhancement, filler, unknown?</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="left_attach">1</property>
+                                                            <property name="top_attach">5</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkLabel">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="tooltip_text" translatable="yes">Does the image support what the text is saying? As they read the passage does the image help in their understanding?</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="label" translatable="yes">In the context of this passage, is it clear 
+what is happening in this image?</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="left_attach">1</property>
+                                                            <property name="top_attach">6</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkLabel">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="tooltip_text" translatable="yes">For example, do the colors have the same meaning in the local culture? Is there anything in the background that is distracting from the story? Are there any objects, gestures, or other things that imply something unintended or that isn’t in the passage? Are there any anachronisms in the picture (a minaret in Bethlehem)?</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="label" translatable="yes">Is the image communicating anything that isn’t in the text?</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="left_attach">1</property>
+                                                            <property name="top_attach">7</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkLabel">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="tooltip_text" translatable="yes">Do the images and their style fit with the type of publication, i.e. Scripture, children’s materials, lectionary, etc.? Are people and actions depicted in acceptable ways?</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="label" translatable="yes">Is this image culturally appropriate in this publication?</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="left_attach">1</property>
+                                                            <property name="top_attach">8</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkComboBox" id="fcb_pic_accept">
+                                                            <property name="width_request">180</property>
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="tooltip_text" translatable="yes">Glossary words are marked up with
+special \w glossary\w* tags. Specify
+how these words should be highlighted
+in the printed output.</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">center</property>
+                                                            <property name="model">ls_pic_accept</property>
+                                                            <property name="active">0</property>
+                                                            <property name="id_column">0</property>
+                                                            <property name="active_id">1</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="left_attach">2</property>
+                                                            <property name="top_attach">2</property>
+                                                            <property name="width">3</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkRadioButton" id="r_picreverse_yes">
+                                                            <property name="label" translatable="yes">Yes</property>
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">True</property>
+                                                            <property name="receives_default">False</property>
+                                                            <property name="active">True</property>
+                                                            <property name="draw_indicator">True</property>
+                                                            <property name="group">r_picreverse_no</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="left_attach">2</property>
+                                                            <property name="top_attach">3</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkRadioButton" id="r_picreverse_no">
+                                                            <property name="label" translatable="yes">No</property>
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">True</property>
+                                                            <property name="receives_default">False</property>
+                                                            <property name="active">True</property>
+                                                            <property name="draw_indicator">True</property>
+                                                            <property name="group">r_picreverse_yes</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="left_attach">3</property>
+                                                            <property name="top_attach">3</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkRadioButton" id="r_picreverse_unknown">
+                                                            <property name="label" translatable="yes">Unknown</property>
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">True</property>
+                                                            <property name="receives_default">False</property>
+                                                            <property name="halign">end</property>
+                                                            <property name="active">True</property>
+                                                            <property name="draw_indicator">True</property>
+                                                            <property name="group">r_picreverse_yes</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="left_attach">4</property>
+                                                            <property name="top_attach">3</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkComboBox" id="fcb_pub_usage">
+                                                            <property name="width_request">180</property>
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="tooltip_text" translatable="yes">Glossary words are marked up with
+special \w glossary\w* tags. Specify
+how these words should be highlighted
+in the printed output.</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">center</property>
+                                                            <property name="model">ls_pub_usage</property>
+                                                            <property name="active">0</property>
+                                                            <property name="id_column">0</property>
+                                                            <property name="active_id">1</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="left_attach">2</property>
+                                                            <property name="top_attach">5</property>
+                                                            <property name="width">3</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkRadioButton" id="r_pubclear_yes">
+                                                            <property name="label" translatable="yes">Yes</property>
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">True</property>
+                                                            <property name="receives_default">False</property>
+                                                            <property name="active">True</property>
+                                                            <property name="draw_indicator">True</property>
+                                                            <property name="group">r_pubclear_no</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="left_attach">2</property>
+                                                            <property name="top_attach">6</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkRadioButton" id="r_pubclear_no">
+                                                            <property name="label" translatable="yes">No</property>
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">True</property>
+                                                            <property name="receives_default">False</property>
+                                                            <property name="active">True</property>
+                                                            <property name="draw_indicator">True</property>
+                                                            <property name="group">r_pubclear_yes</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="left_attach">3</property>
+                                                            <property name="top_attach">6</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkRadioButton" id="r_pubclear_unchecked">
+                                                            <property name="label" translatable="yes">Unchecked</property>
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">True</property>
+                                                            <property name="receives_default">False</property>
+                                                            <property name="halign">end</property>
+                                                            <property name="active">True</property>
+                                                            <property name="draw_indicator">True</property>
+                                                            <property name="group">r_pubclear_yes</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="left_attach">4</property>
+                                                            <property name="top_attach">6</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkRadioButton" id="r_pubnoise_yes">
+                                                            <property name="label" translatable="yes">Yes</property>
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">True</property>
+                                                            <property name="receives_default">False</property>
+                                                            <property name="active">True</property>
+                                                            <property name="draw_indicator">True</property>
+                                                            <property name="group">r_pubnoise_no</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="left_attach">2</property>
+                                                            <property name="top_attach">7</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkRadioButton" id="r_pubnoise_no">
+                                                            <property name="label" translatable="yes">No</property>
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">True</property>
+                                                            <property name="receives_default">False</property>
+                                                            <property name="active">True</property>
+                                                            <property name="draw_indicator">True</property>
+                                                            <property name="group">r_pubnoise_yes</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="left_attach">3</property>
+                                                            <property name="top_attach">7</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkComboBox" id="fcb_pub_accept">
+                                                            <property name="width_request">180</property>
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="tooltip_text" translatable="yes">Glossary words are marked up with
+special \w glossary\w* tags. Specify
+how these words should be highlighted
+in the printed output.</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">center</property>
+                                                            <property name="model">ls_pic_accept</property>
+                                                            <property name="active">0</property>
+                                                            <property name="id_column">0</property>
+                                                            <property name="active_id">1</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="left_attach">2</property>
+                                                            <property name="top_attach">8</property>
+                                                            <property name="width">3</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkLabel">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="width_chars">6</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="left_attach">0</property>
+                                                            <property name="top_attach">1</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkRadioButton" id="r_pubnoise_unchecked">
+                                                            <property name="label" translatable="yes">Unchecked</property>
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">True</property>
+                                                            <property name="receives_default">False</property>
+                                                            <property name="halign">end</property>
+                                                            <property name="draw_indicator">True</property>
+                                                            <property name="group">r_pubnoise_yes</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="left_attach">4</property>
+                                                            <property name="top_attach">7</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <placeholder/>
+                                                            </child>
+                                                            <child>
+                                                            <placeholder/>
+                                                            </child>
+                                                            <child>
+                                                            <placeholder/>
+                                                            </child>
+                                                            <child>
+                                                            <placeholder/>
+                                                            </child>
+                                                            <child>
+                                                            <placeholder/>
+                                                            </child>
+                                                            <child>
+                                                            <placeholder/>
+                                                            </child>
+                                                            <child>
+                                                            <placeholder/>
+                                                            </child>
+                                                            <child>
+                                                            <placeholder/>
+                                                            </child>
+                                                            <child>
+                                                            <placeholder/>
+                                                            </child>
+                                                            <child>
+                                                            <placeholder/>
+                                                            </child>
+                                                            <child>
+                                                            <placeholder/>
+                                                            </child>
+                                                            <child>
+                                                            <placeholder/>
+                                                            </child>
+                                                          </object>
+                                                        </child>
+                                                      </object>
+                                                    </child>
+                                                    <child type="label">
+                                                      <object class="GtkLabel">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="tooltip_text" translatable="yes">Pictures are best used in situations where:
+1. The physical situation is not understood, or not common in the target culture.
+2. Where the physical situation is important to understanding the meaning of the passage (e.g., the type of clothing is often not important, but in some passages it might be).
+3. Where they help the reader to understand the passage.
+4. Where it entices the reader to read the passage.</property>
+                                                        <property name="label" translatable="yes">Questions to Consider</property>
+                                                        <attributes>
+                                                          <attribute name="weight" value="bold"/>
+                                                        </attributes>
+                                                      </object>
+                                                    </child>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">True</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="hexpand">True</property>
+                                            <property name="orientation">vertical</property>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="halign">center</property>
+                                                <property name="valign">end</property>
+                                                <property name="label" translatable="yes">Preview</property>
+                                                <property name="justify">center</property>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">True</property>
+                                                <property name="position">0</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkImage">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="hexpand">True</property>
+                                                <property name="pixbuf">splash_small.png</property>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">True</property>
+                                                <property name="fill">True</property>
+                                                <property name="position">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">True</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="resize">True</property>
+                                        <property name="shrink">True</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="position">2</property>
+                                  </packing>
+                                </child>
+                                <child type="tab">
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">This tab encourages you to think through
+the appropriateness of the pictures used
+in this publication, and also in other contexts.</property>
+                                    <property name="label" translatable="yes">Checklist</property>
+                                  </object>
+                                  <packing>
+                                    <property name="position">2</property>
                                     <property name="tab_fill">False</property>
                                   </packing>
                                 </child>
@@ -11093,17 +11838,19 @@ lines:</property>
                                     </child>
                                   </object>
                                   <packing>
-                                    <property name="position">2</property>
+                                    <property name="position">3</property>
                                   </packing>
                                 </child>
                                 <child type="tab">
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">If you would rather edit the raw PicList text
+then you may find this view helpful.</property>
                                     <property name="label" translatable="yes">Plain Text</property>
                                   </object>
                                   <packing>
-                                    <property name="position">2</property>
+                                    <property name="position">3</property>
                                     <property name="tab_fill">False</property>
                                   </packing>
                                 </child>
