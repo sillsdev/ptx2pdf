@@ -21,6 +21,7 @@ from ptxprint.runner import StreamTextBuffer
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from ptxprint.piclist import PicList
 from ptxprint.runjob import isLocked
+from ptxprint.texmodel import TexModel
 from ptxprint.utils import _
 import configparser
 import traceback
@@ -769,15 +770,22 @@ class GtkViewModel(ViewModel):
 
     def onGenerateClicked(self, btn):
         priority=self.get("fcb_diglotPicListSources")[:4]
-        pg = self.builder.get_object("nbk_Viewer").get_current_page()
+        pg = self.get("nbk_Viewer")
+        pgid = self.notebooks['Viewer'][pg]
         bks2gen = self.getBooks()
-        if pg == 0: # PicList
+        bk = self.get("ecb_examineBook")
+        bk = bk if bk in bks2gen else None
+        if pgid == "tb_PicList": # PicList
             if not self.get('r_book') == "multiple" and self.get("ecb_examineBook") != bks2gen[0]: 
                 self.updatePicList(bks=[self.get("ecb_examineBook")], priority=priority, output=True)
             else:
                 self.updatePicList(bks=bks2gen, priority=priority, output=True)
-        elif pg == 1: # AdjList
+        elif pgid == "scroll_AdjList": # AdjList
             self.generateAdjList()
+        elif pgid == "scroll_FinalSFM" and bk is not None: # FinalSFM
+            tmodel = TexModel(self, self.settings_dir, self.ptsettings, self.prjid)
+            out = tmodel.convertBook(bk, self.working_dir, os.path.join(self.settings_dir, self.prjid))
+            self.editFile(out, loc="wrk", pgid=pgid)
         self.onViewerChangePage(None,None,pg)
 
     def onChangedMainTab(self, nbk_Main, scrollObject, pgnum):
@@ -790,6 +798,8 @@ class GtkViewModel(ViewModel):
         self.onViewerChangePage(None, None, pg)
 
     def onViewerChangePage(self, nbk_Viewer, scrollObject, pgnum):
+        allpgids = ("tb_PicList", "scroll_Adjust", "scroll_FinalSFM", "scroll_TeXFile",
+                    "scroll_XeTeXlog", "scroll_Settings", "tb_Links")
         if nbk_Viewer is None:
             nbk_Viewer = self.builder.get_object("nbk_Viewer")
         page = nbk_Viewer.get_nth_page(pgnum)
@@ -802,7 +812,7 @@ class GtkViewModel(ViewModel):
         prjdir = os.path.join(self.settings_dir, prjid)
         bks = self.getBooks()
         bk = self.get("ecb_examineBook")
-        opa = 1.0 if pgnum < 2 else 0.1  # (Visible for PicList and AdjList, but very hidden for the rest)
+        opa = 1.0 if pgid in allpgids[:3] else 0.1  # (Visible for PicList and AdjList, but very hidden for the rest)
         for w in ["fcb_diglotPicListSources", "btn_Generate", "c_randomPicPosn"]:
             self.builder.get_object(w).set_opacity(opa)
         genBtn = self.builder.get_object("btn_Generate")
@@ -812,7 +822,7 @@ class GtkViewModel(ViewModel):
             bk = bks[0]
             self.builder.get_object("ecb_examineBook").set_active_id(bk)
         for o in ("l_examineBook", "btn_PrevBook", "ecb_examineBook", "btn_NextBook", "fcb_diglotPicListSources", "btn_Generate"):
-            self.builder.get_object(o).set_sensitive( 0 <= pgnum <= 2)
+            self.builder.get_object(o).set_sensitive(pgid in allpgids[:3])
 
         if len(bks) == 1:
             self.builder.get_object("btn_PrevBook").set_sensitive(False)
@@ -829,7 +839,7 @@ class GtkViewModel(ViewModel):
             fname = self.getBookFilename(bk, prjid)
             if pgid == "scroll_FinalSFM":
                 fpath = os.path.join(self.working_dir, fndict[pgid][0], fname)
-                self.builder.get_object("btn_Generate").set_sensitive(False)
+                # self.builder.get_object("btn_Generate").set_sensitive(False)
                 self.builder.get_object("fcb_diglotPicListSources").set_sensitive(False)
             else:
                 fpath = os.path.join(self.configPath(cfgname=self.configId, makePath=False), fndict[pgid][0], fname)
@@ -891,9 +901,7 @@ class GtkViewModel(ViewModel):
         buf = self.fileViews[pg][0]
         fpath = self.builder.get_object("l_{1}".format(*pgid.split("_"))).get_tooltip_text()
         titer = buf.get_iter_at_mark(buf.get_insert())
-        print(pg, self.cursors)
         self.cursors[pg] = (titer.get_line(), titer.get_line_offset())
-        print(pg, self.cursors)
         text2save = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
         openfile = open(fpath,"w", encoding="utf-8")
         openfile.write(text2save)
@@ -1355,11 +1363,11 @@ class GtkViewModel(ViewModel):
             fpath = os.path.join(loc, file2edit)
         else:
             return
+        label = self.builder.get_object("l_{1}".format(*pgid.split("_")))
+        label.set_tooltip_text(fpath)
         if pgid == "scroll_Settings":
             self.builder.get_object("gr_editableButtons").set_sensitive(True)
-            label = self.builder.get_object("l_{1}".format(*pgid.split("_")))
             label.set_text(file2edit)
-            label.set_tooltip_text(fpath)
         if os.path.exists(fpath):
             with open(fpath, "r", encoding="utf-8") as inf:
                 txt = inf.read()
