@@ -78,7 +78,6 @@ class PicList:
         if self.model.get_path(i).get_indices()[0] >= len(self.model):
             return
         row = self.model[i]
-        print(row, [r for r in row])
         for j, (k, v) in enumerate(_form_structure.items()): # relies on ordered dict
             if k == 'pgpos':
                 val = row[j][0]

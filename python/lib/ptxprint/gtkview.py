@@ -1332,11 +1332,14 @@ class GtkViewModel(ViewModel):
         titleStr = super(GtkViewModel, self).getDialogTitle()
         self.builder.get_object("ptxprint").set_title(titleStr)
 
-    def editFile(self, file2edit, loc="wrk", pgid="scroll_Settings"):
+    def editFile(self, file2edit, loc="wrk", pgid="scroll_Settings", switch=None): # keep param order
+        if switch is None:
+            switch = pgid == "scroll_Settings"
         pgnum = self.notebooks["Viewer"].index(pgid)
         mpgnum = self.notebooks["Main"].index("tb_ViewerEditor")
-        self.builder.get_object("nbk_Main").set_current_page(mpgnum)
-        self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
+        if switch:
+            self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+            self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
         self.prjid = self.get("fcb_project")
         self.prjdir = os.path.join(self.settings_dir, self.prjid)
         if loc == "wrk":
@@ -1352,10 +1355,11 @@ class GtkViewModel(ViewModel):
             fpath = os.path.join(loc, file2edit)
         else:
             return
-        self.builder.get_object("gr_editableButtons").set_sensitive(True)
-        label = self.builder.get_object("l_{1}".format(*pgid.split("_")))
-        label.set_text(file2edit)
-        label.set_tooltip_text(fpath)
+        if pgid == "scroll_Settings":
+            self.builder.get_object("gr_editableButtons").set_sensitive(True)
+            label = self.builder.get_object("l_{1}".format(*pgid.split("_")))
+            label.set_text(file2edit)
+            label.set_tooltip_text(fpath)
         if os.path.exists(fpath):
             with open(fpath, "r", encoding="utf-8") as inf:
                 txt = inf.read()
@@ -1365,6 +1369,9 @@ class GtkViewModel(ViewModel):
             self.onViewerFocus(self.fileViews[pgnum][1], None)
         else:
             self.fileViews[pgnum][0].set_text(_("\nThis file doesn't exist yet!\n\nEdit here and Click 'Save' to create it."))
+
+    def editFile_delayed(self, *a):
+        GLib.idle_add(self.editFile, *a)
 
     def onViewerLostFocus(self, widget, event):
         pgnum = self.notebooks['Viewer'].index(widget.pageid)

@@ -540,6 +540,9 @@ class ViewModel:
         #    self.working_dir = os.path.join(self.settings_dir, self.prjid, "PrintDraft")
         #    self.fixed_wd = False
 
+    def editFile_delayed(self, *a):
+        pass
+
     def generateNProcPicLists(self, bk, outdir, processor, priority="Both", sfmonly="piclist", isTemp=False, output=True):
         picposns = { "L": {"col":  ("tl", "bl"),             "span": ("t")},
                      "R": {"col":  ("tr", "br"),             "span": ("b")},

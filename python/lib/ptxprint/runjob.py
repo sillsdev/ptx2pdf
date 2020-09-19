@@ -450,7 +450,9 @@ class RunJob:
             else:
                 self.res = runner
             print("cd {}; xetex {} -> {}".format(self.tmpdir, outfname, self.res))
-            (self.loglines, rerun) = self.parselog(os.path.join(self.tmpdir, outfname.replace(".tex", ".log")), rerunp=True, lines=300)
+            logfname = outfname.replace(".tex", ".log")
+            (self.loglines, rerun) = self.parselog(os.path.join(self.tmpdir, logfname), rerunp=True, lines=300)
+            info.printer.editFile_delayed(logfname, "wrk", "scroll_XeTeXlog", False)
             if self.res:
                 break
             elif info["document/toc"] != "%" and not rerun:
