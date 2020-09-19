@@ -33,6 +33,8 @@ def getWidgetVal(wid, w, default=None, asstr=False, sub=0):
         v = w.get_text()
     elif wid.startswith("col_"):
         v = w.get_rgba().to_string()
+    elif wid.startswith("nbk_"):
+        v = w.get_current_page()
     if v is None:
         return default
     return v
@@ -71,6 +73,8 @@ def setWidgetVal(wid, w, value, noui=False):
         c = Gdk.RGBA()
         c.parse(value)
         w.set_rgba(c)
+    elif wid.startswith("nbk_"):
+        w.set_current_page(value)
 
 def setFontButton(btn, name, style):
     btn.font_info = (name, style)

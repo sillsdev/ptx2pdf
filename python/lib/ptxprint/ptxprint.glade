@@ -10212,13 +10212,13 @@ a good way to easily remove a whole bunch of unwanted files.</property>
                         <signal name="select-page" handler="onViewerChangePage" swapped="no"/>
                         <signal name="switch-page" handler="onViewerChangePage" swapped="no"/>
                         <child>
-                          <object class="GtkBox">
+                          <object class="GtkBox" id="tb_PicList">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="vexpand">True</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkNotebook" id="pl_Viewer">
+                              <object class="GtkNotebook" id="nbk_PicList">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="vexpand">True</property>
@@ -11864,7 +11864,7 @@ then you may find this view helpful.</property>
                           </object>
                         </child>
                         <child type="tab">
-                          <object class="GtkLabel" id="l_0">
+                          <object class="GtkLabel" id="l_PicList">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="tooltip_text" translatable="yes">A PicList is used to specify the 
@@ -11895,7 +11895,7 @@ for "col": tl=top left, tr=top right,
                           </packing>
                         </child>
                         <child type="tab">
-                          <object class="GtkLabel" id="l_1">
+                          <object class="GtkLabel" id="l_AdjList">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="tooltip_text" translatable="yes">To balance columns of text on a page it is possible
@@ -11938,7 +11938,7 @@ are likely to have to re-do it all again.</property>
                           </packing>
                         </child>
                         <child type="tab">
-                          <object class="GtkLabel" id="l_2">
+                          <object class="GtkLabel" id="l_FinalSFM">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">Final SFM</property>
@@ -11964,7 +11964,7 @@ are likely to have to re-do it all again.</property>
                           </packing>
                         </child>
                         <child type="tab">
-                          <object class="GtkLabel" id="l_3">
+                          <object class="GtkLabel" id="l_TeXFile">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">.tex file</property>
@@ -11990,7 +11990,7 @@ are likely to have to re-do it all again.</property>
                           </packing>
                         </child>
                         <child type="tab">
-                          <object class="GtkLabel" id="l_4">
+                          <object class="GtkLabel" id="l_XeTeXlog">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">XeTeX Log</property>
@@ -12016,7 +12016,7 @@ are likely to have to re-do it all again.</property>
                           </packing>
                         </child>
                         <child type="tab">
-                          <object class="GtkLabel" id="l_5">
+                          <object class="GtkLabel" id="l_Settings">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">Settings</property>
@@ -12027,7 +12027,7 @@ are likely to have to re-do it all again.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkFrame">
+                          <object class="GtkFrame" id="tb_Links">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="margin_left">6</property>
@@ -12388,7 +12388,7 @@ general users and common solutions.</property>
                           </packing>
                         </child>
                         <child type="tab">
-                          <object class="GtkLabel" id="l_6">
+                          <object class="GtkLabel" id="l_Links">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">Folders &amp; Links</property>

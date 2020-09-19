@@ -162,8 +162,10 @@ _object_classes = {
     "printbutton": ("b_print", "b_frefresh"),
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
-    "viewernb":    ("nbk_Viewer", ),
+    "viewernb":    ("nbk_Viewer", "nbk_PicList"),
 }
+
+_notebooks = ("Main", "Viewer", "PicList")
 
 class GtkViewModel(ViewModel):
 
@@ -184,6 +186,10 @@ class GtkViewModel(ViewModel):
         self.pendingPid = None
         self.pendingConfig = None
         self.otherDiglot = None
+        self.notebooks = {}
+        for n in _notebooks:
+            nbk = self.builder.get_object("nbk_"+n)
+            self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
         for fcb in ("digits", "script", "chapfrom", "chapto", "diglotPicListSources",
                     "textDirection", "glossaryMarkupStyle", "fontFaces"):
             self.addCR("fcb_"+fcb, 0)
@@ -215,16 +221,21 @@ class GtkViewModel(ViewModel):
 
         self.fileViews = []
         self.buf = []
-        for i,k in enumerate(["AdjList", "FinalSFM", "TeXfile", "XeTeXlog", "Settings"]):
+        self.cursors = []
+        for i,k in enumerate(["PicList", "AdjList", "FinalSFM", "TeXfile", "XeTeXlog", "Settings"]):
             self.buf.append(GtkSource.Buffer())
+            self.cursors.append((0,0))
             view = GtkSource.View.new_with_buffer(self.buf[i])
             scroll = self.builder.get_object("scroll_" + k)
             scroll.add(view)
             self.fileViews.append((self.buf[i], view))
-            if i > 1:
+            if i > 2:
                 view.set_show_line_numbers(True)  # Turn these ON
             else:
                 view.set_show_line_numbers(False)  # Turn these OFF
+            view.pageid = "scroll_"+k
+            view.connect("focus-out-event", self.onViewerLostFocus)
+            view.connect("focus-in-event", self.onViewerFocus)
         self.picListView = PicList(self.builder.get_object('tv_picListEdit'),
                                    self.builder.get_object('tv_picList'), self.builder)
 
@@ -257,7 +268,9 @@ class GtkViewModel(ViewModel):
             .printbutton:active { background-color: chartreuse; background-image: None }
             .fontbutton {font-size: smaller}
             progress, trough {min-height: 24px}
+            .mainnb {background-color: #F0F0F0}
             .mainnb tab {min-height: 0pt; margin: 0pt; padding-bottom: 15pt}
+            .viewernb {background-color: #F0F0F0}
             .viewernb tab {min-height: 0pt; margin: 0pt; padding-bottom: 3pt} """
         provider = Gtk.CssProvider()
         provider.load_from_data(css.encode("utf-8"))
@@ -429,11 +442,9 @@ class GtkViewModel(ViewModel):
         if not len(jobs) or jobs[0] == '':
             return
         # If the viewer/editor is open on an Editable tab, then "autosave" contents
-        if self.builder.get_object("nbk_Main").get_current_page() == 10:
-            pgnum = self.builder.get_object("nbk_Viewer").get_current_page()
-            # print("pgnum", pgnum)
-            if 1 <= pgnum <= 2 or pgnum == 5:
-                # print("Saving edits")
+        if Gtk.Buildable.get_name(self.builder.get_object("nbk_Main").get_nth_page(self.get("nbk_Main"))) == "tb_ViewerEditor":
+            pgnum = self.get("nbk_Viewer")
+            if self.notebooks["Viewer"][pgnum] in ("scroll_Adjust", "scroll_FinalSFM", "scroll_Settings"):
                 self.onSaveEdits(None)
         # If any PicLists are missing, they need to be generated
         if self.get('c_includeillustrations') and self.get("c_usePicList"):
@@ -770,14 +781,21 @@ class GtkViewModel(ViewModel):
         self.onViewerChangePage(None,None,pg)
 
     def onChangedMainTab(self, nbk_Main, scrollObject, pgnum):
-        if pgnum == 10: # Viewer tab
+        pgid = Gtk.Buildable.get_name(nbk_Main.get_nth_page(pgnum))
+        if pgid == "tb_ViewerEditor": # Viewer tab
             self.onRefreshViewerTextClicked(None)
 
     def onRefreshViewerTextClicked(self, btn):
-        pg = self.builder.get_object("nbk_Viewer").get_current_page()
+        pg = self.get("nbk_Viewer")
         self.onViewerChangePage(None, None, pg)
 
     def onViewerChangePage(self, nbk_Viewer, scrollObject, pgnum):
+        if nbk_Viewer is None:
+            nbk_Viewer = self.builder.get_object("nbk_Viewer")
+        page = nbk_Viewer.get_nth_page(pgnum)
+        if page == None:
+            return
+        pgid = Gtk.Buildable.get_name(page)
         self.bookNoUpdate = True
         self.builder.get_object("gr_editableButtons").set_sensitive(False)
         prjid = self.get("fcb_project")
@@ -799,68 +817,66 @@ class GtkViewModel(ViewModel):
         if len(bks) == 1:
             self.builder.get_object("btn_PrevBook").set_sensitive(False)
             self.builder.get_object("btn_NextBook").set_sensitive(False)
-        fndict = {0 : ("PicLists", ".piclist"), 1 : ("AdjLists", ".adj"), 2 : ("", ""), \
-                  3 : ("", ".tex"), 4 : ("", ".log")}
+        fndict = {"tb_PicList" : ("PicLists", ".piclist"), "scroll_AdjList" : ("AdjLists", ".adj"), "scroll_FinalSFM" : ("", ""),
+                  "scroll_TeXFile" : ("", ".tex"), "scroll_XeTeXlog" : ("", ".log"), "scroll_Settings": ("", ""), "tb_Links": ("", "")}
 
-        if pgnum == 0:   # PicList
+        if pgid == "tb_PicList":   # PicList
+            self.builder.get_object("c_randomPicPosn").set_sensitive(True)
+            genBtn.set_sensitive(True)
             fpath = None
 
-        elif pgnum <= 2:  # (AdjList,SFM)
+        elif pgid in ("scroll_AdjList", "scroll_FinalSFM"):  # (AdjList,SFM)
             fname = self.getBookFilename(bk, prjid)
-            if pgnum == 2:
-                fpath = os.path.join(self.working_dir, fndict[pgnum][0], fname)
+            if pgid == "scroll_FinalSFM":
+                fpath = os.path.join(self.working_dir, fndict[pgid][0], fname)
                 self.builder.get_object("btn_Generate").set_sensitive(False)
                 self.builder.get_object("fcb_diglotPicListSources").set_sensitive(False)
             else:
-                fpath = os.path.join(self.configPath(cfgname=self.configId, makePath=False), fndict[pgnum][0], fname)
+                fpath = os.path.join(self.configPath(cfgname=self.configId, makePath=False), fndict[pgid][0], fname)
             doti = fpath.rfind(".")
             if doti > 0:
-                fpath = fpath[:doti] + "-draft" + fpath[doti:] + fndict[pgnum][1]
-            if pgnum == 0: # PicList
-                self.builder.get_object("c_randomPicPosn").set_sensitive(True)
-                # genTip = "Generate the PicList using\nthe illustrations marked up\n(\\fig ... \\fig*) within the text."
-                genBtn.set_sensitive(True)
-                # genBtn.set_tooltip_text(genTip)
-            elif pgnum == 1: # AdjList
+                fpath = fpath[:doti] + "-draft" + fpath[doti:] + fndict[pgid][1]
+            if pgnum == 1: # AdjList
                 self.builder.get_object("c_randomPicPosn").set_opacity(0.2)
                 self.builder.get_object("fcb_diglotPicListSources").set_opacity(0.2)
-                # genTip = "Generate a list of paragraphs\nthat may be adjusted (using\nshrink or expand values)."
                 genBtn.set_sensitive(True)
-                # genBtn.set_tooltip_text(genTip)
 
-        elif pgnum <= 4:  # (TeX,Log)
-            fpath = self.baseTeXPDFname()+fndict[pgnum][1]
+        elif pgid in ("scroll_TeXFile", "scroll_XeTeXlog"): # (TeX,Log)
+            fpath = self.baseTeXPDFname()+fndict[pgid][1]
 
-        elif pgnum == 5: # View/Edit one of the 4 Settings files or scripts
-            fpath = self.builder.get_object("l_{}".format(pgnum)).get_tooltip_text()
+        elif pgid == "scroll_Settings": # View/Edit one of the 4 Settings files or scripts
+            fpath = self.builder.get_object("l_Settings").get_tooltip_text()
             if fpath == None:
-                self.fileViews[pgnum-1][0].set_text("\n"+_(" Use the 'Advanced' tab to select which settings you want to view or edit."))
-                self.builder.get_object("l_{}".format(pgnum)).set_text("Settings")
+                self.fileViews[pgnum][0].set_text("\n"+_(" Use the 'Advanced' tab to select which settings you want to view or edit."))
+                self.builder.get_object("l_Settings").set_text("Settings")
                 return
 
-        elif pgnum == 6: # Just show the Folders & Links page
-            self.builder.get_object("l_{}".format(pgnum)).set_text("Folders & Links")
+        elif pgid == "tb_Links": # Just show the Folders & Links page
+            # self.builder.get_object("l_Links").set_text("Folders & Links")
             return
 
         else:
             return
 
-        if 0 <= pgnum <= 1 or pgnum == 5:
+        if pgid in ("tb_PicList", "scroll_AdjList", "scroll_Settings"):
             self.builder.get_object("gr_editableButtons").set_sensitive(True)
         if fpath is None:
             return
+        set_tooltip = self.builder.get_object("l_{1}".format(*pgid.split("_"))).set_tooltip_text
         if os.path.exists(fpath):
-            self.builder.get_object("l_{}".format(pgnum)).set_tooltip_text(fpath)
+            set_tooltip(fpath)
             with open(fpath, "r", encoding="utf-8", errors="ignore") as inf:
                 txt = inf.read()
                 if len(txt) > 60000:
                     txt = txt[:60000]+_("\n\n------------------------------------- \
                                            \n[File has been truncated for display] \
                                            \nClick on View/Edit... button to see more.")
-            self.fileViews[pgnum-1][0].set_text(txt)
+            self.fileViews[pgnum][0].set_text(txt)
+            self.onViewerFocus(self.fileViews[pgnum][1], None)
+            # self.fileViews[pgnum][1].grab_focus()
         else:
-            self.builder.get_object("l_{}".format(pgnum)).set_tooltip_text(None)
-            self.fileViews[pgnum-1][0].set_text(_("\nThis file doesn't exist yet.\n\nTry... \
+            set_tooltip(None)
+            self.fileViews[pgnum][0].set_text(_("\nThis file doesn't exist yet.\n\nTry... \
                                                \n   * Check option (above) to 'Preserve Intermediate Files and Logs' \
                                                \n   * Generate the PiCList or AdjList \
                                                \n   * Click 'Print' to create the PDF"))
@@ -868,11 +884,16 @@ class GtkViewModel(ViewModel):
 
     def onSaveEdits(self, btn):
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
+        pgid = self.notebooks["Viewer"][pg]
         if pg == 0:
             self.savePicLists(self.picListView.getinfo())
             return
-        buf = self.fileViews[pg-1][0]
-        fpath = self.builder.get_object("l_{}".format(pg)).get_tooltip_text()
+        buf = self.fileViews[pg][0]
+        fpath = self.builder.get_object("l_{1}".format(*pgid.split("_"))).get_tooltip_text()
+        titer = buf.get_iter_at_mark(buf.get_insert())
+        print(pg, self.cursors)
+        self.cursors[pg] = (titer.get_line(), titer.get_line_offset())
+        print(pg, self.cursors)
         text2save = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
         openfile = open(fpath,"w", encoding="utf-8")
         openfile.write(text2save)
@@ -880,7 +901,8 @@ class GtkViewModel(ViewModel):
 
     def onOpenInSystemEditor(self, btn):
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
-        fpath = self.builder.get_object("l_{}".format(pg)).get_tooltip_text() or ""
+        pgid = self.notebooks["Viewer"][pg]
+        fpath = self.builder.get_object("l_{1}".format(*pgid.split("_"))).get_tooltip_text() or ""
         if os.path.exists(fpath):
             if sys.platform == "win32":
                 os.startfile(fpath)
@@ -1267,8 +1289,10 @@ class GtkViewModel(ViewModel):
             toc.set_active(False)
         # for c in ("c_singlebook", "ecb_book", "l_chapfrom", "fcb_chapfrom", "l_chapto", "fcb_chapto"):
             # self.builder.get_object(c).set_sensitive(not status)
-        for i in range(0,6):
-            self.builder.get_object("l_{}".format(i)).set_tooltip_text(None)
+        for i in self.notebooks['Viewer']:
+            obj = self.builder.get_object("l_{1}".format(*i.split("_")))
+            if obj is not None:
+                obj.set_tooltip_text(None)
         self.updatePrjLinks()
         self.setEntryBoxFont()
         self.updatePicList()
@@ -1308,9 +1332,10 @@ class GtkViewModel(ViewModel):
         titleStr = super(GtkViewModel, self).getDialogTitle()
         self.builder.get_object("ptxprint").set_title(titleStr)
 
-    def editFile(self, file2edit, loc="wrk"):
-        pgnum = 5
-        self.builder.get_object("nbk_Main").set_current_page(10)
+    def editFile(self, file2edit, loc="wrk", pgid="scroll_Settings"):
+        pgnum = self.notebooks["Viewer"].index(pgid)
+        mpgnum = self.notebooks["Main"].index("tb_ViewerEditor")
+        self.builder.get_object("nbk_Main").set_current_page(mpgnum)
         self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
         self.prjid = self.get("fcb_project")
         self.prjdir = os.path.join(self.settings_dir, self.prjid)
@@ -1328,16 +1353,34 @@ class GtkViewModel(ViewModel):
         else:
             return
         self.builder.get_object("gr_editableButtons").set_sensitive(True)
-        self.builder.get_object("l_{}".format(pgnum)).set_text(file2edit)
-        self.builder.get_object("l_{}".format(pgnum)).set_tooltip_text(fpath)
+        label = self.builder.get_object("l_{1}".format(*pgid.split("_")))
+        label.set_text(file2edit)
+        label.set_tooltip_text(fpath)
         if os.path.exists(fpath):
             with open(fpath, "r", encoding="utf-8") as inf:
                 txt = inf.read()
                 # if len(txt) > 32000:
                     # txt = txt[:32000]+"\n\n etc...\n\n"
-            self.fileViews[pgnum-1][0].set_text(txt)
+            self.fileViews[pgnum][0].set_text(txt)
+            self.onViewerFocus(self.fileViews[pgnum][1], None)
         else:
-            self.fileViews[pgnum-1][0].set_text(_("\nThis file doesn't exist yet!\n\nEdit here and Click 'Save' to create it."))
+            self.fileViews[pgnum][0].set_text(_("\nThis file doesn't exist yet!\n\nEdit here and Click 'Save' to create it."))
+
+    def onViewerLostFocus(self, widget, event):
+        pgnum = self.notebooks['Viewer'].index(widget.pageid)
+        t = self.fileViews[pgnum][0].get_iter_at_mark(self.fileViews[pgnum][0].get_insert())
+        self.cursors[pgnum] = (t.get_line(), t.get_line_offset())
+
+    def onViewerFocus(self, widget, event):
+        pgnum = self.notebooks['Viewer'].index(widget.pageid)
+        tbuf = self.fileViews[pgnum][0]
+        tmark = tbuf.get_insert()
+        titer = tbuf.get_iter_at_mark(tmark)
+        titer.set_line(self.cursors[pgnum][0])
+        titer.set_line_offset(self.cursors[pgnum][1])
+        tbuf.move_mark(tmark, titer)
+        tbuf.place_cursor(titer)
+        GLib.idle_add(self.fileViews[pgnum][1].scroll_mark_onscreen, tmark)
 
     def onEditScriptFile(self, btn):
         # Ask MH how to do this properly (in one line!?) with Path from pathlib
@@ -1495,15 +1538,16 @@ class GtkViewModel(ViewModel):
 
     def onEditAdjListClicked(self, btn_editParaAdjList):
         pgnum = 1
-        self.builder.get_object("nbk_Main").set_current_page(10)
-        self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
+        mpgnum = self.notebooks["Main"].index("tb_ViewerEditor")
+        self.set("nbk_Main", mpgnum)
+        self.set("nbk_Viewer", pgnum)
         self.onViewerChangePage(None,None,pgnum)
 
     def onEditPicListClicked(self, btn_editPicList):
         pgnum = 0
-        self.builder.get_object("c_usePicList").set_active(True)
-        self.builder.get_object("nbk_Main").set_current_page(10)
-        self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
+        mpgnum = self.notebooks["Main"].index("tb_ViewerEditor")
+        self.set("nbk_Main", mpgnum)
+        self.set("nbk_Viewer", pgnum)
         self.onViewerChangePage(None,None,pgnum)
         
     def ontv_sizeallocate(self, atv, dummy):
