@@ -845,7 +845,7 @@ class GtkViewModel(ViewModel):
                 fpath = os.path.join(self.configPath(cfgname=self.configId, makePath=False), fndict[pgid][0], fname)
             doti = fpath.rfind(".")
             if doti > 0:
-                fpath = fpath[:doti] + "-draft" + fpath[doti:] + fndict[pgid][1]
+                fpath = fpath[:doti] + "-" + self.configName() + fpath[doti:] + fndict[pgid][1]
             if pgnum == 1: # AdjList
                 self.builder.get_object("c_randomPicPosn").set_opacity(0.2)
                 self.builder.get_object("fcb_diglotPicListSources").set_opacity(0.2)
