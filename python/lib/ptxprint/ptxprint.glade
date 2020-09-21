@@ -1594,6 +1594,46 @@ in the Windows system.</property>
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="ls_pub_accept">
+    <columns>
+      <!-- column-name pub_accept -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Unknown</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Culturally Appropriate</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Alien but Acceptable</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Inappropriate</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="ls_pub_usag">
+    <columns>
+      <!-- column-name pub_accept -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Unknown</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Clarification</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Story Enhancement</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Filler</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="ls_pub_usage">
     <columns>
       <!-- column-name pub_usage -->
@@ -1905,7 +1945,7 @@ if need be.</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
                                 <property name="group">r_book_single</property>
-                                <signal name="clicked" handler="onScopeChanged" swapped="no"/>
+                                <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -1922,7 +1962,7 @@ if need be.</property>
                                 <property name="margin_left">12</property>
                                 <property name="draw_indicator">True</property>
                                 <property name="group">r_book_single</property>
-                                <signal name="clicked" handler="onScopeChanged" swapped="no"/>
+                                <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -1940,7 +1980,7 @@ if need be.</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
                                 <property name="group">r_book_single</property>
-                                <signal name="clicked" handler="onScopeChanged" swapped="no"/>
+                                <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -1958,7 +1998,7 @@ if need be.</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
                                 <property name="group">r_book_multiple</property>
-                                <signal name="clicked" handler="onScopeChanged" swapped="no"/>
+                                <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -11079,7 +11119,7 @@ lines:</property>
                                                 </child>
                                               </object>
                                               <packing>
-                                                <property name="expand">True</property>
+                                                <property name="expand">False</property>
                                                 <property name="fill">True</property>
                                                 <property name="position">0</property>
                                               </packing>
@@ -11351,6 +11391,7 @@ of the images.</property>
                                                             <property name="active">True</property>
                                                             <property name="draw_indicator">True</property>
                                                             <property name="group">r_picclear_no</property>
+                                                            <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                             </object>
                                                             <packing>
                                                             <property name="left_attach">2</property>
@@ -11366,6 +11407,7 @@ of the images.</property>
                                                             <property name="active">True</property>
                                                             <property name="draw_indicator">True</property>
                                                             <property name="group">r_picclear_yes</property>
+                                                            <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                             </object>
                                                             <packing>
                                                             <property name="left_attach">3</property>
@@ -11488,7 +11530,7 @@ what is happening in this image?</property>
                                                             </packing>
                                                             </child>
                                                             <child>
-                                                            <object class="GtkComboBox" id="fcb_pic_accept">
+                                                            <object class="GtkComboBox" id="fcb_picaccept">
                                                             <property name="width_request">180</property>
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
@@ -11501,7 +11543,7 @@ in the printed output.</property>
                                                             <property name="model">ls_pic_accept</property>
                                                             <property name="active">0</property>
                                                             <property name="id_column">0</property>
-                                                            <property name="active_id">1</property>
+                                                            <property name="active_id">-1</property>
                                                             </object>
                                                             <packing>
                                                             <property name="left_attach">2</property>
@@ -11533,6 +11575,7 @@ in the printed output.</property>
                                                             <property name="active">True</property>
                                                             <property name="draw_indicator">True</property>
                                                             <property name="group">r_picreverse_yes</property>
+                                                            <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                             </object>
                                                             <packing>
                                                             <property name="left_attach">3</property>
@@ -11549,6 +11592,7 @@ in the printed output.</property>
                                                             <property name="active">True</property>
                                                             <property name="draw_indicator">True</property>
                                                             <property name="group">r_picreverse_yes</property>
+                                                            <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                             </object>
                                                             <packing>
                                                             <property name="left_attach">4</property>
@@ -11556,7 +11600,7 @@ in the printed output.</property>
                                                             </packing>
                                                             </child>
                                                             <child>
-                                                            <object class="GtkComboBox" id="fcb_pub_usage">
+                                                            <object class="GtkComboBox" id="fcb_pubusage">
                                                             <property name="width_request">180</property>
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
@@ -11569,7 +11613,7 @@ in the printed output.</property>
                                                             <property name="model">ls_pub_usage</property>
                                                             <property name="active">0</property>
                                                             <property name="id_column">0</property>
-                                                            <property name="active_id">1</property>
+                                                            <property name="active_id">-1</property>
                                                             </object>
                                                             <packing>
                                                             <property name="left_attach">2</property>
@@ -11586,6 +11630,7 @@ in the printed output.</property>
                                                             <property name="active">True</property>
                                                             <property name="draw_indicator">True</property>
                                                             <property name="group">r_pubclear_no</property>
+                                                            <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                             </object>
                                                             <packing>
                                                             <property name="left_attach">2</property>
@@ -11601,6 +11646,7 @@ in the printed output.</property>
                                                             <property name="active">True</property>
                                                             <property name="draw_indicator">True</property>
                                                             <property name="group">r_pubclear_yes</property>
+                                                            <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                             </object>
                                                             <packing>
                                                             <property name="left_attach">3</property>
@@ -11617,6 +11663,7 @@ in the printed output.</property>
                                                             <property name="active">True</property>
                                                             <property name="draw_indicator">True</property>
                                                             <property name="group">r_pubclear_yes</property>
+                                                            <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                             </object>
                                                             <packing>
                                                             <property name="left_attach">4</property>
@@ -11632,6 +11679,7 @@ in the printed output.</property>
                                                             <property name="active">True</property>
                                                             <property name="draw_indicator">True</property>
                                                             <property name="group">r_pubnoise_no</property>
+                                                            <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                             </object>
                                                             <packing>
                                                             <property name="left_attach">2</property>
@@ -11647,6 +11695,7 @@ in the printed output.</property>
                                                             <property name="active">True</property>
                                                             <property name="draw_indicator">True</property>
                                                             <property name="group">r_pubnoise_yes</property>
+                                                            <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                             </object>
                                                             <packing>
                                                             <property name="left_attach">3</property>
@@ -11654,7 +11703,7 @@ in the printed output.</property>
                                                             </packing>
                                                             </child>
                                                             <child>
-                                                            <object class="GtkComboBox" id="fcb_pub_accept">
+                                                            <object class="GtkComboBox" id="fcb_pubaccept">
                                                             <property name="width_request">180</property>
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
@@ -11664,7 +11713,7 @@ how these words should be highlighted
 in the printed output.</property>
                                                             <property name="halign">start</property>
                                                             <property name="valign">center</property>
-                                                            <property name="model">ls_pic_accept</property>
+                                                            <property name="model">ls_pub_accept</property>
                                                             <property name="active">0</property>
                                                             <property name="id_column">0</property>
                                                             <property name="active_id">1</property>
@@ -11695,6 +11744,7 @@ in the printed output.</property>
                                                             <property name="halign">end</property>
                                                             <property name="draw_indicator">True</property>
                                                             <property name="group">r_pubnoise_yes</property>
+                                                            <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                             </object>
                                                             <packing>
                                                             <property name="left_attach">4</property>
@@ -11774,7 +11824,7 @@ in the printed output.</property>
                                             <property name="hexpand">True</property>
                                             <property name="orientation">vertical</property>
                                             <child>
-                                              <object class="GtkImage">
+                                              <object class="GtkImage" id="img_piccheckPreview">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="hexpand">True</property>

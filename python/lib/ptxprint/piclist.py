@@ -2,6 +2,7 @@
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.view import refKey
 from gi.repository import Gtk, GdkPixbuf
+from configparser import ConfigParser
 
 _piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copyright", "mirror"]
 _form_structure = {
@@ -28,8 +29,11 @@ class PicList:
         self.builder = builder
         self.parent = parent
         self.selection = view.get_selection()
-        self.selection.set_mode=Gtk.SelectionMode.SINGLE
-        self.selection.connect("changed", self.row_select)
+        for w in ("tv_picList", "tv_picListEdit", "tv_picListEdit1"):
+            wid = self.builder.get_object(w)
+            sel = wid.get_selection()
+            sel.set_mode=Gtk.SelectionMode.SINGLE
+            sel.connect("changed", self.row_select)
         for k, v in _form_structure.items():
             w = builder.get_object(v)
             w.connect("value-changed" if v[0].startswith("s_") else "changed", self.item_changed, k)
@@ -79,6 +83,9 @@ class PicList:
         if selection.count_selected_rows() != 1:
             return
         model, i = selection.get_selected()
+        if selection != self.selection:
+            self.selection.select_iter(i)
+            return
         if self.model.get_path(i).get_indices()[0] >= len(self.model):
             return
         row = self.model[i]
@@ -123,13 +130,17 @@ class PicList:
                 tempinfo[row[0]] = e
                 self.parent.getFigureSources(tempinfo)
                 pic = self.builder.get_object("img_picPreview")
+                picc = self.builder.get_object("img_piccheckPreview")
                 if 'src path' in e:
+                    self.parent.updatePicChecks(val)       # only update checks if src exists
                     picframe = self.builder.get_object("fr_picPreview")
                     rect = picframe.get_allocation()
                     pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(e['src path'], rect.width, rect.height)
                     pic.set_from_pixbuf(pixbuf)
+                    picc.set_from_pixbuf(pixbuf)
                 else:
                     pic.clear()
+                    picc.clear()
 
     def get_row_from_items(self):
         row = [self.get(k, default="") for k in _piclistfields]
@@ -149,4 +160,68 @@ class PicList:
         model, i = self.selection.get_selected()
         del self.model[i]
         self.select_row(model.get_path(i).get_indices()[0])
+
+_checks = {
+    "r_picclear":       "unknown",
+    "fcb_picaccept":    "Unknown",
+    "r_picreverse":     "unknown",
+    "fcb_pubusage":     "Unknown",
+    "r_pubclear":       "unchecked",
+    "r_pubnoise":       "unchecked",
+    "fcb_pubaccept":    "Unknown"
+}
+
+class PicChecks:
+
+    fname = "picChecks.cfg"
+
+    def __init__(self, parent):
+        self.cfgShared = ConfigParser()
+        self.cfgProject = ConfigParser()
+        self.parent = parent
+        self.src = None
+
+    def _init_default(self, cfg, prefix):
+        if not cfg.has_section('DEFAULT'):
+            for k, v in _checks.items():
+                t, n = k.split("_")
+                if n.startswith(prefix):
+                    cfg.set('DEFAULT', n, v)
+
+    def init(self, basepath, configid):
+        self.cfgShared.read(os.path.join(basepath, self.fname), encoding="utf-8")
+        self._init_default(self.cfgShared, "pic")
+        self.cfgProject.read(os.path.join(basepath, configid, self.fname), encoding="utf-8")
+        self._init_default(self.cfgProject, "pub")
+
+    def writeCfg(self, basepath, configid):
+        if not self.cfgShared.has_section("DEFAULT") or configid is None:
+            return
+        with open(os.path.join(basepath, self.fname)) as outf:
+            self.cfgShared.write(outf)
+        with open(os.path.join(basepath, configid, self.fname)) as outf:
+            self.cfgProject.write(outf)
+
+    def loadpic(self, src):
+        if self.src == src:
+            return
+        self.src = src
+        for k, v in _checks.items():
+            t, n = k.split("_")
+            cfg = self.cfgShared if n.startswith("pic") else self.cfgProject
+            val = cfg.get(src, n, fallback=v)
+            self.parent.set(k, val)
+
+    def savepic(self):
+        if self.src is None:
+            return
+        if not self.cfgShared.has_section(self.src):
+            self.cfgShared.add_section(self.src)
+            self.cfgProject.add_section(self.src)
+        for k, v in _checks.items():
+            val = self.parent.get(k)
+            print(self.src, k, val)
+            t, n = k.split("_")
+            cfg = self.cfgShared if n.startswith("pic") else self.cfgProject
+            cfg.set(self.src, n, val)
 

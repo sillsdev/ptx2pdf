@@ -19,7 +19,7 @@ from ptxprint.view import ViewModel, Path
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton
 from ptxprint.runner import StreamTextBuffer
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
-from ptxprint.piclist import PicList
+from ptxprint.piclist import PicList, PicChecks
 from ptxprint.runjob import isLocked
 from ptxprint.texmodel import TexModel
 from ptxprint.utils import _
@@ -192,7 +192,8 @@ class GtkViewModel(ViewModel):
             nbk = self.builder.get_object("nbk_"+n)
             self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
         for fcb in ("digits", "script", "chapfrom", "chapto", "diglotPicListSources",
-                    "textDirection", "glossaryMarkupStyle", "fontFaces"):
+                    "textDirection", "glossaryMarkupStyle", "fontFaces",
+                    "picaccept", "pubusage", "pubaccept"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
@@ -239,6 +240,7 @@ class GtkViewModel(ViewModel):
             view.connect("focus-in-event", self.onViewerFocus)
         self.picListView = PicList(self.builder.get_object('tv_picListEdit'),
                                    self.builder.get_object('tv_picList'), self.builder, self)
+        self.picChecksView = PicChecks(self)
 
         self.logbuffer = StreamTextBuffer()
         self.builder.get_object("tv_logging").set_buffer(self.logbuffer)
@@ -530,6 +532,11 @@ class GtkViewModel(ViewModel):
         self.set("lb_settings_dir", configpath)
         self.updateDialogTitle()
 
+    def writeConfig(self, cfgname=None):
+        if self.prjid is not None:
+            self.picChecksView.writeCfg(os.path.join(self.settings_dir, self.prjid), self.configId)
+        super().writeConfig(cfgname=cfgname)
+
     def onDeleteConfig(self, btn):
         delCfgPath = self.configPath(cfgname=self.get("t_savedConfig"))
         if not os.path.exists(os.path.join(delCfgPath, "ptxprint.cfg")):
@@ -762,6 +769,10 @@ class GtkViewModel(ViewModel):
             picinfos = self.generatePicLists(bks, priority, output=output)
             self.picListView.load(picinfos)
 
+    def updatePicChecks(self, src):
+        self.picChecksView.savepic()
+        self.picChecksView.loadpic(src)
+
     def onPlAddClicked(self, btn):
         self.picListView.add_row()
 
@@ -943,12 +954,12 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(w).modify_font(p)
         # TO DO: Also need to handle TWO fallback fonts in the picList for Diglots (otherwise one script will end up as Tofu)
 
-    def onScopeChanged(self, btn):
+    def onRadioChanged(self, btn):
         n = Gtk.Buildable.get_name(btn)
+        bits = n.split("_")[1:]
         if btn.get_active():
-            bits = n.split("_")[1:]
             self.set("r_"+bits[0], bits[1])
-        self.sensiVisible("r_book")
+        self.sensiVisible("r_"+bits[0])
         #self.sensiVisible("c_singlebook")
         #self.sensiVisible("c_multiplebooks")
         #self.sensiVisible("c_biblemodule")
