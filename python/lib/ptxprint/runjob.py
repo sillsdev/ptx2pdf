@@ -72,7 +72,7 @@ def newBase(fpath):
     if len(clwr):
         return clwr
     else:
-        return re.sub('[()&+,. ]', '_', base(fpath).lower())
+        return re.sub('[()&+,.;: ]', '_', base(fpath).lower())
 
 _diglot = {
 "ifusediglotcustomsty_":    "project/ifusecustomsty",

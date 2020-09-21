@@ -1073,7 +1073,7 @@ class TexModel:
         if len(clwr):
             return clwr
         else:
-            return re.sub('[()&+,. ]', '_', self.base(fpath).lower())
+            return re.sub('[()&+,.;: ]', '_', self.base(fpath).lower())
 
     def generateNestedStyles(self, diglot=False):
         if diglot:

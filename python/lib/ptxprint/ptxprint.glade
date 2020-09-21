@@ -9303,6 +9303,38 @@ MAT</property>
                               </packing>
                             </child>
                             <child>
+                              <object class="GtkLabel">
+                                <property name="can_focus">False</property>
+                                <property name="halign">end</property>
+                                <property name="margin_right">6</property>
+                                <property name="label" translatable="yes">Vertical</property>
+                                <property name="angle">90</property>
+                                <attributes>
+                                  <attribute name="weight" value="bold"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="left_attach">7</property>
+                                <property name="top_attach">1</property>
+                                <property name="height">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="can_focus">False</property>
+                                <property name="margin_left">6</property>
+                                <property name="margin_right">6</property>
+                                <property name="label" translatable="yes">Horizontal</property>
+                                <attributes>
+                                  <attribute name="weight" value="bold"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="left_attach">7</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
                               <placeholder/>
                             </child>
                           </object>

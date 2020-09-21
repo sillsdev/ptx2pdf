@@ -28,7 +28,7 @@ def newBase(fpath):
     if cl:
         return cl[0].lower()
     else:
-        return re.sub('[()&+,. ]', '_', f.lower())
+        return re.sub('[()&+,.;: ]', '_', f.lower())
 
 def refKey(r, info=""):
     m = re.match(r"^(\D*)\s*(\d*)\.?(\d*)(\S*?)$", r)
