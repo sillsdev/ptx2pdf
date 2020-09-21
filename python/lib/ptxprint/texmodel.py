@@ -665,8 +665,8 @@ class TexModel:
                             res.append("\\ptxfile{{{}}}\n".format(fname))
                             res.append("\\OmitChapterNumberfalse\n")
                         elif self.dict['paper/columns'] == '2' and \
-                             self.dict['document/clsinglecol'] and \
-                             f in self.dict['document/clabelbooks']:
+                             self.dict['document/clsinglecolbooks'] and \
+                             f in self.dict['document/clsinglecolbooks']:
                             res.append("\\BodyColumns=1\n")
                             res.append("\\ptxfile{{{}}}\n".format(fname))
                             res.append("\\BodyColumns=2\n")
