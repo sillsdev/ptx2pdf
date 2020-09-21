@@ -1561,7 +1561,7 @@ in the Windows system.</property>
     <columns>
       <!-- column-name Size -->
       <column type="gchararray"/>
-      <!-- column-name sz -->
+      <!-- column-name size -->
       <column type="gchararray"/>
     </columns>
     <data>
@@ -9063,6 +9063,8 @@ Margin Factor:</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">By default the Tabs will be white text on a black
+background, but you can change these settings.</property>
                                 <property name="halign">end</property>
                                 <property name="label" translatable="yes">Background Colour:</property>
                               </object>
@@ -9075,6 +9077,7 @@ Margin Factor:</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">Overrides the colour in the stylesheet for toc3</property>
                                 <property name="halign">end</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="label" translatable="yes">Text Colour:</property>
@@ -9090,6 +9093,8 @@ Margin Factor:</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">By default the Tabs will be white text on a black
+background, but you can change these settings.</property>
                                 <property name="title" translatable="yes">Thumb Tab Background Colour</property>
                                 <property name="rgba">rgb(0,0,0)</property>
                               </object>
@@ -9135,6 +9140,7 @@ Margin Factor:</property>
                                 <property name="can_focus">True</property>
                                 <property name="tooltip_text" translatable="yes">List book ids with spaces between. Use ; to separate groups. For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                                 <property name="margin_top">6</property>
+                                <property name="placeholder_text" translatable="yes">PHM TIT; 1JN 2JN 3JN JUD</property>
                               </object>
                               <packing>
                                 <property name="left_attach">4</property>
@@ -9166,6 +9172,7 @@ Margin Factor:</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
                                 <property name="tooltip_text" translatable="yes">Sets bold font. Often useful for white text on a black background. Overrides the default style setting for toc3.</property>
+                                <property name="halign">start</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="draw_indicator">True</property>
                               </object>
@@ -9181,6 +9188,7 @@ Margin Factor:</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
                                 <property name="tooltip_text" translatable="yes">Italicise the font. Overrides default style settings of toc3</property>
+                                <property name="halign">start</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
@@ -9194,7 +9202,8 @@ Margin Factor:</property>
                                 <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">How many tabs can there be down a page. This is automatically calculated from the Width, Height, Page size and Margins. If any of these change then this value will be updated. Increasing it, makes tabs overlap. Reducing it spreads them apart.</property>
                                 <property name="halign">end</property>
-                                <property name="label" translatable="yes">Tabs per Page:</property>
+                                <property name="label" translatable="yes">Number of
+Tab Positions:</property>
                                 <property name="justify">right</property>
                               </object>
                               <packing>
@@ -9220,7 +9229,8 @@ MAT</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">Normally books will follow sequentially and if the next tab would be off the bottom of the page, then it will be set to the top for a new cycle of tabs. Setting this starts a new cycle at the start of the New Testament.</property>
+                                <property name="tooltip_text" translatable="yes">Normally books will follow sequentially and if the next tab would be off the bottom of the page, then it will be set to the top for a new cycle of tabs. Setting this starts a new cycle at the start of the New Testament (Matthew).</property>
+                                <property name="halign">start</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
@@ -9236,6 +9246,7 @@ MAT</property>
                                 <property name="margin_right">6</property>
                                 <property name="margin_top">6</property>
                                 <property name="width_chars">5</property>
+                                <property name="progress_pulse_step">0</property>
                                 <property name="secondary_icon_tooltip_text" translatable="yes">Width of the tab in margin units. Best to be less than the Side margins factor in the Layout tab.</property>
                                 <property name="adjustment">a_thumbwidth</property>
                                 <property name="climb_rate">1</property>
@@ -9259,7 +9270,7 @@ MAT</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="tooltip_text" translatable="yes">Thumb tabs use the \toc3 element in a USFM file to provide the text for the tab. If you have no \toc3 elements, there is no point in enabling Thumb Tabs.</property>
+                            <property name="tooltip_text" translatable="yes">Thumb tabs can be used in longer publications to help the user find a scripture book easier. These use the \toc3 element in a USFM file to provide the text for the tab. If you have no \toc3 elements, there is no point in enabling Thumb Tabs.</property>
                             <property name="draw_indicator">True</property>
                             <signal name="clicked" handler="onTabsClicked" swapped="no"/>
                           </object>
@@ -10555,6 +10566,7 @@ a good way to easily remove a whole bunch of unwanted files.</property>
                                                 <property name="receives_default">False</property>
                                                 <property name="valign">end</property>
                                                 <property name="vexpand">True</property>
+                                                <property name="active">True</property>
                                                 <property name="draw_indicator">True</property>
                                                 <property name="group">c_previewLocn</property>
                                               </object>
@@ -10572,8 +10584,8 @@ a good way to easily remove a whole bunch of unwanted files.</property>
                                                 <property name="receives_default">False</property>
                                                 <property name="valign">end</property>
                                                 <property name="vexpand">True</property>
-                                                <property name="active">True</property>
                                                 <property name="draw_indicator">True</property>
+                                                <property name="group">c_previewImage</property>
                                               </object>
                                               <packing>
                                                 <property name="left_attach">1</property>
@@ -10880,7 +10892,7 @@ on Page:</property>
                                                             <property name="wrap_width">1</property>
                                                             <property name="has_entry">True</property>
                                                             <property name="entry_text_column">0</property>
-                                                            <property name="id_column">0</property>
+                                                            <property name="id_column">1</property>
                                                             <child internal-child="entry">
                                                             <object class="GtkEntry">
                                                             <property name="visible">True</property>
