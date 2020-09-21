@@ -1,8 +1,8 @@
 
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
-from ptxprint.view import refKey
+from ptxprint.view import refKey, newBase
 from gi.repository import Gtk, GdkPixbuf
-from configparser import ConfigParser
+import configparser
 import os
 
 
@@ -183,8 +183,8 @@ class PicChecks:
     fname = "picChecks.txt"
 
     def __init__(self, parent):
-        self.cfgShared = ConfigParser()
-        self.cfgProject = ConfigParser()
+        self.cfgShared = configparser.ConfigParser()
+        self.cfgProject = configparser.ConfigParser()
         self.parent = parent
         self.src = None
 
@@ -214,23 +214,24 @@ class PicChecks:
             self.cfgProject.write(outf)
 
     def loadpic(self, src):
-        if self.src == src:
+        if self.src == newBase(src):
             return
-        self.src = src
+        self.src = newBase(src)
         for k, v in _checks.items():
             t, n = k.split("_")
             cfg = self.cfgShared if n.startswith("pic") else self.cfgProject
-            val = cfg.get(src, n, fallback=v)
+            val = cfg.get(self.src, n, fallback=v)
             self.parent.set(k, val)
 
     def savepic(self):
         if self.src is None:
             return
-        if not self.cfgShared.has_section(self.src):
-            self.cfgShared.add_section(self.src)
-            self.cfgProject.add_section(self.src)
         for k, v in _checks.items():
             val = self.parent.get(k)
             t, n = k.split("_")
             cfg = self.cfgShared if n.startswith("pic") else self.cfgProject
-            cfg[self.src][n] = val
+            try:
+                cfg.set(self.src, n, val)
+            except configparser.NoSectionError:
+                cfg.add_section(self.src)
+                cfg.set(self.src, n, val)
