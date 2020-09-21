@@ -11888,8 +11888,9 @@ in this publication, and also in other contexts.</property>
                                 </child>
                                 <child type="tab">
                                   <object class="GtkLabel">
-                                    <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
                                     <property name="can_focus">False</property>
+                                    <property name="no_show_all">True</property>
                                     <property name="tooltip_text" translatable="yes">If you would rather edit the raw PicList text
 then you may find this view helpful.</property>
                                     <property name="label" translatable="yes">Plain Text</property>

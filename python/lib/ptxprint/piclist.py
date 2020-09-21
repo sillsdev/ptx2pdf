@@ -233,5 +233,4 @@ class PicChecks:
             val = self.parent.get(k)
             t, n = k.split("_")
             cfg = self.cfgShared if n.startswith("pic") else self.cfgProject
-            cfg.set(self.src, n, val)
-
+            cfg[self.src][n] = val

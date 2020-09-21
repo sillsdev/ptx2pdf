@@ -55,7 +55,7 @@ ModelMap = {
     #"config/name":              ("ecb_savedConfig", lambda w,v: v or "default"),
     "config/notes":             ("t_configNotes", lambda w,v: v or ""),
     "config/pwd":               ("t_invisiblePassword", lambda w,v: v or ""),
-    "config/version":           ("_version", lambda w,v: "0.9"),
+    "config/version":           ("_version", lambda w,v: "1.1.8"),
 
     # "project/id":               ("fcb_project", None),
     "project/hideadvsettings":  ("c_hideAdvancedSettings", None),
