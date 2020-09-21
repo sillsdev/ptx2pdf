@@ -50,6 +50,7 @@ ModelMap = {
     "date_":                    ("_date", lambda w,v: v),
     "pdfdate_":                 ("_pdfdate", lambda w,v: v),
     "ifusediglotcustomsty_":    ("_diglotcustomsty", lambda w,v: "%"),
+    "ifusediglotmodsty_":       ("_diglotmodsty", lambda w,v: "%"),
 
     #"config/name":              ("ecb_savedConfig", lambda w,v: v or "default"),
     "config/notes":             ("t_configNotes", lambda w,v: v or ""),

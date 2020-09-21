@@ -1,5 +1,19 @@
-PTXprint 1.1 Release Notes 
-26th August 2020
+PTXprint 1.1.8 Release Notes 
+21st September 2020
+
+Bug Fixes and Enchancements in: 1.1.8
+
+  * Fix installer certificate (again!)
+  
+  * PicList editor should make it easier to edit parameters
+  
+  * Picture Checking questions to encourage thought about illustrations being used (only minimally tested)
+  
+  * Tabs for booknames on outer edge of page
+  
+  * Added button to Switch to Other Diglot project
+  
+  * 
 
 Bug Fixes and Improvements in: 1.1
 

@@ -76,6 +76,7 @@ def newBase(fpath):
 
 _diglot = {
 "ifusediglotcustomsty_":    "project/ifusecustomsty",
+"ifusediglotmodsty_":       "project/ifusemodssty",
 "diglot/colorfonts" :       "document/ifcolorfonts",
 "diglot/ifrtl" :            "document/ifrtl",
 "diglot/fontfactor" :       "paper/fontfactor",

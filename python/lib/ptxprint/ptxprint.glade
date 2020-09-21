@@ -327,7 +327,7 @@ THE SOFTWARE.
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 1.1</property>
+    <property name="version">Version 1.1.8</property>
     <property name="copyright">© 2020, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -1936,10 +1936,9 @@ if need be.</property>
                             <child>
                               <object class="GtkRadioButton" id="r_book_module">
                                 <property name="label" translatable="yes">Bible Module:</property>
-                                <property name="visible">True</property>
-                                <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
+                                <property name="no_show_all">True</property>
                                 <property name="halign">start</property>
                                 <property name="margin_left">12</property>
                                 <property name="active">True</property>
@@ -2029,9 +2028,8 @@ PDF files - one for each book.</property>
                             </child>
                             <child>
                               <object class="GtkComboBoxText" id="ecb_biblemodule">
-                                <property name="visible">True</property>
-                                <property name="sensitive">False</property>
                                 <property name="can_focus">False</property>
+                                <property name="no_show_all">True</property>
                                 <property name="tooltip_text" translatable="yes">A Bible module brings together text
 selections from a Paratext project.
 Normally, you would just select the
@@ -2114,12 +2112,17 @@ of the book. Similar to a "biblio-page" or a
                             </child>
                             <child>
                               <object class="GtkLabel" id="l_projectFullName">
+                                <property name="width_request">300</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="opacity">0.69999999999999996</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
+                                <property name="margin_left">6</property>
                                 <property name="label" translatable="yes">Paratext Project Name</property>
+                                <property name="ellipsize">end</property>
+                                <property name="width_chars">30</property>
+                                <property name="max_width_chars">30</property>
                               </object>
                               <packing>
                                 <property name="left_attach">3</property>
@@ -12006,7 +12009,7 @@ are likely to have to re-do it all again.</property>
                           </packing>
                         </child>
                         <child type="tab">
-                          <object class="GtkLabel" id="l_TeXFile">
+                          <object class="GtkLabel" id="l_TeXfile">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">.tex file</property>

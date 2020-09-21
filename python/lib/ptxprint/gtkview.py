@@ -809,7 +809,7 @@ class GtkViewModel(ViewModel):
         self.onViewerChangePage(None, None, pg)
 
     def onViewerChangePage(self, nbk_Viewer, scrollObject, pgnum):
-        allpgids = ("tb_PicList", "scroll_Adjust", "scroll_FinalSFM", "scroll_TeXFile",
+        allpgids = ("tb_PicList", "scroll_Adjust", "scroll_FinalSFM", "scroll_TeXfile",
                     "scroll_XeTeXlog", "scroll_Settings", "tb_Links")
         if nbk_Viewer is None:
             nbk_Viewer = self.builder.get_object("nbk_Viewer")
@@ -839,7 +839,7 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("btn_PrevBook").set_sensitive(False)
             self.builder.get_object("btn_NextBook").set_sensitive(False)
         fndict = {"tb_PicList" : ("PicLists", ".piclist"), "scroll_AdjList" : ("AdjLists", ".adj"), "scroll_FinalSFM" : ("", ""),
-                  "scroll_TeXFile" : ("", ".tex"), "scroll_XeTeXlog" : ("", ".log"), "scroll_Settings": ("", ""), "tb_Links": ("", "")}
+                  "scroll_TeXfile" : ("", ".tex"), "scroll_XeTeXlog" : ("", ".log"), "scroll_Settings": ("", ""), "tb_Links": ("", "")}
 
         if pgid == "tb_PicList":   # PicList
             self.builder.get_object("c_randomPicPosn").set_sensitive(True)
@@ -862,8 +862,9 @@ class GtkViewModel(ViewModel):
                 self.builder.get_object("fcb_diglotPicListSources").set_opacity(0.2)
                 genBtn.set_sensitive(True)
 
-        elif pgid in ("scroll_TeXFile", "scroll_XeTeXlog"): # (TeX,Log)
+        elif pgid in ("scroll_TeXfile", "scroll_XeTeXlog"): # (TeX,Log)
             fpath = self.baseTeXPDFname()+fndict[pgid][1]
+            print(fpath)
 
         elif pgid == "scroll_Settings": # View/Edit one of the 4 Settings files or scripts
             fpath = self.builder.get_object("l_Settings").get_tooltip_text()

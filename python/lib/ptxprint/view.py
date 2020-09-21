@@ -11,7 +11,7 @@ from io import StringIO
 import datetime, time
 from shutil import copyfile, copytree, move
 
-VersionStr = "1.1"
+VersionStr = "1.1.8"
 
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
 
@@ -640,7 +640,6 @@ class ViewModel:
 %   a) If illustrations don't appear in PDF, check the anchor reference (start of each line):
 %      (i) only use '.' as the ch.vs separator
 %      (ii) anchor refs must match the text itself and be in logical ch.vs order
-%      (iii) the same anchor reference cannot be used more than once (except in a L/R diglot)
 %   b) Delete the line to remove an illustration (or prefix with a % to skip over it)
 %   c) In single-column layout no difference will be seen between 'span' and 'col'
 %   d) To scale an image use the notation: size="span*.7" or size="col*1.3" (for 70% and 130%)
