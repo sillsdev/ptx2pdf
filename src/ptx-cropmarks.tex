@@ -219,19 +219,21 @@
    \fi
    \trace{pt}{pg \the\pageno, Top to \iftemp edge \else page\fi}%
    \iftemp %Rotated text has its top at the edge of the page (decenders to text)
-     \edef\bxht{3pt}%
+     \edef\bxht{2pt}% Bleed distance
      \edef\bxdp{\the\tabwidth}%
      \bgroup
        \dimen1=\vertThumbtabVadj%
-       \multiply\dimen1 by -1%
+       \ifdim\dimen1=1sp\else %Don't mess with special value!
+         \multiply\dimen1 by -1%
+       \fi
        \xdef\V@dj{\the\dimen1}%
      \egroup
    \else %Rotated text has its bottom at the edge of the page (descenders to edge)
      \edef\bxht{\the\tabwidth}%
-     \edef\bxdp{3pt}%
+     \edef\bxdp{2pt}% Bleed distance
      \edef\V@dj{\vertThumbtabVadj}%
    \fi
-   \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabheight}{\bxdp}{\bxht}{\V@dj}{\vertThumbtabContents{\b@okShort}}}% Bleed of 3pt , 2pt from top of box
+   \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabheight}{\bxdp}{\bxht}{\V@dj}{\vertThumbtabContents{\b@okShort}}}%
    \ht0=\tabwidth
    \hbox to 0pt{%
     \if\st@rtatedge F\kern -\tabwidth\else\hss\fi

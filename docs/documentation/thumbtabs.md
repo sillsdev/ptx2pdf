@@ -39,6 +39,7 @@ The second parameter is a number (```1``` in the example) or empty (i.e. ...{GEN
 * \setthumbtab{`PSA`}{} - The empty value for the index-number will unset the thumb-tab for the given id (Psalms in this example), set by an earlier \setthumbtab command. To create blank thumb tabs, see below, this control entirely disables the tab, as if no `\setthumbtab` command had been given. It is intended for when a standard thumbtab file is used but there is no desire for a tab for a certain book in a speecific publication. E.g. In a publication of Psalms+NT, when the NT resets counting, it may be felt unnecessary or confusing to have a thumb-tab for the book of Psalms.
 
 * \TOCthreetab```true``` - if false, then thumb-tabs will not have their content from  the `\toc3` entry. This will leave the tab blank unless set via the custom USFM marker ```\zthumbtab```. (default = true)
+* \TabTopToEdgeOdd```true``` and \TabTopToEdgeEven```true```  - if false, rotated tabs on Odd or Even pages  respectively have their descenders towards the edge of the page, if true the text rotates in the opposite direction, so that the top of the text within the tab is beside the edge of the page. (default=false)
 
 
 ### Advanced use
@@ -59,6 +60,7 @@ Setting \NumTabs artificially high will mean that tabs are pushed to the upper p
 * \setthumbtabBg{`REV`}{0.3 0.3 0} - Override the default background colour `\tabBoxCol` for the given book.
 
 
+
 #### Control over position of text within the box
 The box position is controlled as described as above. The controls below position the text within the box.
 
@@ -68,6 +70,9 @@ The box position is controlled as described as above. The controls below positio
 
 * \def\vertThumbtabVadj{```-3pt```} (default `-2pt`).
 * \def\horizThumbtabVadj{```1sp```} (default `1sp`).
- Adjust the text 'vertically' (relative to normal text orientation) in a horizontally and  vertically aligned thumbtab. The value ```1sp``` is a special value instructing the code to centre the text vertically in the box (taking into account descenders and risers).  If the value is positive, this is the distance to raise the text above the box's baseline. If the value is negative, it indicates the distance from the top of the box to the top of the text. 
+ Adjust the text 'vertically' (relative to normal text orientation) in a horizontally and vertically oriented (rotated) thumbtabs. The value ```1sp``` is a special value instructing the code to centre the text vertically in the box (taking into account descenders and risers).  If the value is positive, this is the distance to raise the of the text above the box's bottom (i.e. the descenders will be this far from the box's depth). If the value is negative, it indicates the distance from the top of the box to the top of the text's risers.  (If the value is ```0pt```, then the text remains on its baseline, which is normally a mistake: in horizontal boxes, \tabheight is split 90% above the baseline, 10% below, but 
+for rotated boxes, the baseline of the box is positioned on the page-edge, the height of the box is \tabwidth, and the depth is 2pt). Thus a value of `5pt` should indicate that the lowest point of the text should be 3pt from the edge of the cropped paper, assuming perfect cropping. (If TabTopToEdgeOdd / Even is true, the box's height is 2pt, and \tabwidth is the box's depth).
 
+If \TabTopToEdgeOdd (or Even) is set true, then on odd (or even) pages the value of \vertThumbtabVadj is negated (unless it is `1sp`). This means that the position of the text in the box *relative to the page edge* is preserved, and the default value of -2pt always means that the top or bottom of the is set 2pt from the innermost edge of the box, with extra space towards the page edge. Setting \vertThumbtabVadj to `0pt` if \TabTopToEdgeOdd (or even) is true means only 
+decenders will be inside the page area.
 
