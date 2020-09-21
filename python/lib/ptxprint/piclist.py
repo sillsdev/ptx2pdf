@@ -83,7 +83,6 @@ class PicList:
             return
         row = self.model[i]
         for j, (k, v) in enumerate(_form_structure.items()): # relies on ordered dict
-            print(j, k, v)
             if k == 'pgpos':
                 val = row[j][0]
             elif k == 'hpos':
