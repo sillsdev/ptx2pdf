@@ -29,17 +29,20 @@ The second parameter is a number (```1``` in the example) or empty (i.e. ...{GEN
 
 ### Set up parameters
 * \TabsStart=```10pt``` Distance between the upper edge of the topmost thumb-tab and the top margin of the page (text area). Negative values may be given to extend tabs into the upper margin.
-* \TabsEnd=```10pt``` Distance between the lower edge of the lowermost thumb-tab and the bottom page margin (text area). Negative values may be given to extend tabs into the lower margins.
-* \tabheight=```50pt``` Vertical dimension of the thumbtab. (default 50pt).
-* \tabwidth=```25pt``` Vertical dimension of the thumbtab. (default 15pt).
+* \TabsEnd=```10pt``` Distance between the lower edge of the lowermost thumb-tab and the bottom page margin (text area). Negative values may be given to extend tabs into the lower margin.
+* \tabheight=```50pt``` Vertical dimension of the thumbtab. (default 50pt). Measurement is absolute (i.e. normal up/down on the page)
+* \tabwidth=```25pt``` Horizontal dimension of the thumbtab. (default 15pt). Measurement is absolute (i.e. normal left/right on the page)
 * \def\tabBoxCol{```0.2 0.3 0.2```} colour definition for the thumb-tab, the 3 numbers representing red, green and blue in the range of 0 (black), 0.5 (half)  to 1 (fully lit). (Default ```0 0 0```).
 * \def\tabFontCol{```0.5 1 0.5```} colour definition for the thumb-tab, the 3 numbers representing red, green and blue in the range of 0 (black), 0.5 (half)  to 1 (fully lit). (Default ```1 1 1```).
-* \TabRotationNormal```true``` When this is true, then when the ```\tabheight``` > ```\tabwidth``` the text on the tab will be rotated, and otherwise it will be horizontal. If false, the logic is inverted. This may be useful to force horizontal text in tall tabs, or if the assumption that the text is wider than it is tall is incorrect.
+* \TabAutoRotate```true``` When this is true, then when the ```\tabheight``` > ```\tabwidth``` the text of tab will be rotated, and otherwise it will be horizontal (unless \TabRotationNormal```false``` is selected, in which case 
+the rotation occurs when \tabwidth > \tabheight, for short and tall text). Auto-rotation ONLY applies to the dimensions of the tab, not the dimensions of the text. (default=true)
+* \TabRotationNormal```true``` When  \TabAutoRotate```false``` is selected, then  seting this to false causes rotation of the text. Otherwise it inverts the auto-rotation. (default=true)
 
 * \setthumbtab{`PSA`}{} - The empty value for the index-number will unset the thumb-tab for the given id (Psalms in this example), set by an earlier \setthumbtab command. To create blank thumb tabs, see below, this control entirely disables the tab, as if no `\setthumbtab` command had been given. It is intended for when a standard thumbtab file is used but there is no desire for a tab for a certain book in a speecific publication. E.g. In a publication of Psalms+NT, when the NT resets counting, it may be felt unnecessary or confusing to have a thumb-tab for the book of Psalms.
 
 * \TOCthreetab```true``` - if false, then thumb-tabs will not have their content from  the `\toc3` entry. This will leave the tab blank unless set via the custom USFM marker ```\zthumbtab```. (default = true)
-* \TabTopToEdgeOdd```true``` and \TabTopToEdgeEven```true```  - if false, rotated tabs on Odd or Even pages  respectively have their descenders towards the edge of the page, if true the text rotates in the opposite direction, so that the top of the text within the tab is beside the edge of the page. (default=false)
+
+* \TabTopToEdgeOdd```true``` and \TabTopToEdgeEven```true```  - if false, rotated tabs on Odd or Even pages  respectively have their descenders towards the edge of the page, if true the text rotates in the opposite direction, so that the top of the text within the tab is beside the edge of the page. (default=false). 
 
 
 ### Advanced use
@@ -58,7 +61,6 @@ Setting \NumTabs artificially high will mean that tabs are pushed to the upper p
 #### Individual tab settings
 * \setthumbtabFg{`PSA`}{0 1 0.8} - Override the default foreground colour `\tabFontCol` for the given book.
 * \setthumbtabBg{`REV`}{0.3 0.3 0} - Override the default background colour `\tabBoxCol` for the given book.
-
 
 
 #### Control over position of text within the box
