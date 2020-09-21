@@ -86,8 +86,8 @@
 \newif\ifrotate\rotatefalse
 \newdimen\pdfcropwidth
 \newdimen\pdfcropheight
-\newdimen\tabheight %
-\newdimen\tabwidth %
+\newdimen\tabheight % In page-orientation
+\newdimen\tabwidth % In page-orientation
 \newdimen\TabsStart %Vertical offset to margins for start of thumb tabs
 \newdimen\TabsEnd %Vertical offset to margins for end of thumb tabs 
 \newcount\NumTabs %How many tabs to be set?
@@ -96,7 +96,8 @@
 \TabTopToEdgeEvenfalse
 \TabTopToEdgeOddfalse
 
-\newif\ifTabRotationNormal \TabRotationNormaltrue %RotationNormalfalse means that the \toc3 entries should be assumed to be narrower than they are tall.
+\newif\ifTabAutoRotate \TabAutoRotatetrue % Does autorotation of text occur?
+\newif\ifTabRotationNormal \TabRotationNormaltrue % TabRotationNormalfalse==rotate text (if auto-rotate off). (If auto-rotate on: invert autorotate logic, i.e. assume the \toc3 are narrower than they are tall).
 
 \def\zthumbtab{\bgroup\obeylines\th@mt@b} %Manual control of thumbtab text, from usfm file.
 
@@ -198,14 +199,20 @@
  \x@\let\x@\t@bFontCol\csname\t@bname -col\endcsname
  \ifx\t@bBoxCol\relax\let\t@bBoxCol\tabBoxCol\fi
  \ifx\t@bFontCol\relax\let\t@bFontCol\tabFontCol\fi
- \tempfalse
- \ifdim\tabheight>\tabwidth
-   \ifTabRotationNormal
-     \temptrue
+ \tempfalse% Don't rotate
+ \ifTabAutoRotate 
+   \ifdim\tabheight>\tabwidth% Normally rotate
+     \ifTabRotationNormal
+       \temptrue% DO  rotate
+     \fi
+   \else%widith>height, don't normally rotate
+     \ifTabRotationNormal\else
+       \temptrue %Do rotate
+     \fi
    \fi
  \else
    \ifTabRotationNormal\else
-     \temptrue
+     \temptrue %Do rotate
    \fi
  \fi
  \setbox0\hbox{\b@okShort}%
