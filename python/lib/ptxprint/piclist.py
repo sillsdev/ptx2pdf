@@ -1,7 +1,7 @@
 
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.view import refKey
-from gi.repository import Gtk
+from gi.repository import Gtk, GdkPixbuf
 
 _piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copyright", "mirror"]
 _form_structure = {
@@ -21,11 +21,12 @@ _form_structure = {
 _comblist = ['pgpos', 'hpos', 'nlines']
 
 class PicList:
-    def __init__(self, view, listview, builder):
+    def __init__(self, view, listview, builder, parent):
         self.view = view
         self.model = view.get_model()
         self.listview = listview
         self.builder = builder
+        self.parent = parent
         self.selection = view.get_selection()
         self.selection.set_mode=Gtk.SelectionMode.SINGLE
         self.selection.connect("changed", self.row_select)
@@ -63,12 +64,15 @@ class PicList:
             res = int(res[:res.find(".")]) if res.find(".") >= 0 else int(res)
         return res
 
+    def getrowinfo(self, row):
+        e = {k: row[i+1] for i, k in enumerate(_piclistfields[1:])}
+        e['scale'] = e['scale'] / 100. if e['scale'] != 100 else None
+        return e
+
     def getinfo(self):
         res = {}
         for row in self.model:
-            e = {k: row[i+1] for i, k in enumerate(_piclistfields[1:])}
-            e['scale'] = e['scale'] / 100. if e['scale'] != 100 else None
-            res[row[0]] = e
+            res[row[0]] = self.getrowinfo(row)
         return res
 
     def row_select(self, selection):
@@ -111,7 +115,21 @@ class PicList:
         else:
             val = self.get(key)
         if self.model is not None and len(self.model):
-            self.model[self.selection.get_selected()[1]][_piclistfields.index(key)] = val
+            row = self.model[self.selection.get_selected()[1]]
+            row[_piclistfields.index(key)] = val
+            if key == "src":
+                tempinfo = {}
+                e = self.getrowinfo(row)
+                tempinfo[row[0]] = e
+                self.parent.getFigureSources(tempinfo)
+                pic = self.builder.get_object("img_picPreview")
+                if 'src path' in e:
+                    picframe = self.builder.get_object("fr_picPreview")
+                    rect = picframe.get_allocation()
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(e['src path'], rect.width, rect.height)
+                    pic.set_from_pixbuf(pixbuf)
+                else:
+                    pic.clear()
 
     def get_row_from_items(self):
         row = [self.get(k, default="") for k in _piclistfields]

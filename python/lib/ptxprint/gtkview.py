@@ -238,7 +238,7 @@ class GtkViewModel(ViewModel):
             view.connect("focus-out-event", self.onViewerLostFocus)
             view.connect("focus-in-event", self.onViewerFocus)
         self.picListView = PicList(self.builder.get_object('tv_picListEdit'),
-                                   self.builder.get_object('tv_picList'), self.builder)
+                                   self.builder.get_object('tv_picList'), self.builder, self)
 
         self.logbuffer = StreamTextBuffer()
         self.builder.get_object("tv_logging").set_buffer(self.logbuffer)

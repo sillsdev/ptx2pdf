@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 
+<!-- Generated with glade 3.22.2 
 
 The MIT License (MIT)
 
@@ -11020,11 +11020,33 @@ lines:</property>
                                               </packing>
                                             </child>
                                             <child>
-                                              <object class="GtkImage">
+                                              <object class="GtkFrame" id="fr_picPreview">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
-                                                <property name="hexpand">True</property>
-                                                <property name="pixbuf">splash_small.png</property>
+                                                <property name="label_xalign">0</property>
+                                                <property name="label_yalign">0</property>
+                                                <property name="shadow_type">none</property>
+                                                <child>
+                                                  <object class="GtkAlignment">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="left_padding">12</property>
+                                                    <child>
+                                                      <object class="GtkImage" id="img_picPreview">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="hexpand">True</property>
+                                                        <property name="pixbuf">splash_small.png</property>
+                                                      </object>
+                                                    </child>
+                                                  </object>
+                                                </child>
+                                                <child type="label">
+                                                  <object class="GtkLabel">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                  </object>
+                                                </child>
                                               </object>
                                               <packing>
                                                 <property name="expand">True</property>

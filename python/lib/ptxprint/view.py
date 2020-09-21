@@ -31,7 +31,7 @@ def newBase(fpath):
         return re.sub('[()&+,. ]', '_', f.lower())
 
 def refKey(r, info=""):
-    m = re.match(r"^(\D*)\s*(\d*)\.?(\d*)(\S*)$", r)
+    m = re.match(r"^(\D*)\s*(\d*)\.?(\d*)(\S*?)$", r)
     if m:
         return (m.group(1), int(m.group(2) or 0), int(m.group(3) or 0), info, m.group(4))
     else:
@@ -147,7 +147,7 @@ class ViewModel:
         return False
 
     def parse_fontname(self, font):
-        m = re.match(r"^(.*?)(\d+(?:\.\d+)?)$", font)
+        m = re.match(r"^(.*?)(\d+(?:\.\d+?)?)$", font)
         if m:
             return [m.group(1), int(m.group(2))]
         else:
@@ -712,7 +712,7 @@ class ViewModel:
             vals['loc'] = p
             del vals['pgpos']
         p = vals['size']
-        m = re.match(r"(col|span|page|full)(?:\*(\d+\.?\d*))?$", p)
+        m = re.match(r"(col|span|page|full)(?:\*(\d+(?:\.\d*)))?$", p)
         if m:
             vals['size'] = m[1]
             if m[2] is not None and len(m[2]):
@@ -912,7 +912,7 @@ class ViewModel:
                         prv = 0
                         ch = 1
                         for v in m:
-                            iv = int(re.sub(r"^(\d+).*$", r"\1", v), 10)
+                            iv = int(re.sub(r"^(\d+).*?$", r"\1", v), 10)
                             if iv < prv:
                                 ch = ch + 1
                             srtchvs = "{:0>3}{:0>3}{}".format(ch,v,sfx)
@@ -950,7 +950,7 @@ class ViewModel:
                     if "-" in l:
                         if "\u200C" in l or "\u200D" in l or "'" in l: # Temporary workaround until we can figure out how
                             z += 1                                     # to allow ZWNJ and ZWJ to be included as letters.
-                        elif re.search('\d', l):
+                        elif re.search(r'\d', l):
                             pass
                         else:
                             if l[0] != "-":
@@ -971,7 +971,7 @@ class ViewModel:
                 m2b = "\n\nThat is too many for XeTeX! List truncated to longest {} words found in the active sources.".format(len(shortlist))
                 hyphenatedWords = shortlist
             hyphenatedWords.sort(key = lambda s: s.casefold())
-            outlist = '\catcode"200C=11\n\catcode"200D=11\n\hyphenation{' + "\n".join(hyphenatedWords) + "}"
+            outlist = '\\catcode"200C=11\n\\catcode"200D=11\n\\hyphenation{' + "\n".join(hyphenatedWords) + "}"
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write(outlist)
             if len(hyphenatedWords) > 1:
@@ -1024,7 +1024,7 @@ class ViewModel:
                     # throw out illustration markup, BUT keep the caption text (USFM2 + USFM3)
                     sfmtxt = regex.sub(r'\\fig (.*\|){5}([^\\]+)?\|[^\\]+\\fig\*', '\2', sfmtxt) 
                     sfmtxt = regex.sub(r'\\fig ([^\\]+)?\|.*src=[^\\]+\\fig\*', '\1', sfmtxt) 
-                    sfmtxt = regex.sub(r'\\[a-z]+\d?\*? ?', '', sfmtxt) # remove all \sfm codes
+                    sfmtxt = regex.sub(r'\\[+a-z]+\d?\*? ?', '', sfmtxt) # remove all \sfm codes
                     sfmtxt = regex.sub(r'[0-9]', '', sfmtxt) # remove all digits
                     bkcntr = collections.Counter(sfmtxt)
                     count += bkcntr
