@@ -146,7 +146,7 @@ class PicList:
         self.select_row(len(self.model)-1)
 
     def del_row(self):
-        model, i = selection.get_selected()
+        model, i = self.selection.get_selected()
         del self.model[i]
         self.select_row(model.get_path(i).get_indices()[0])
 
