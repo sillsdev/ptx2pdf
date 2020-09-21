@@ -3,6 +3,8 @@ from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.view import refKey
 from gi.repository import Gtk, GdkPixbuf
 from configparser import ConfigParser
+import os
+
 
 _piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copyright", "mirror"]
 _form_structure = {
@@ -83,8 +85,13 @@ class PicList:
         if selection.count_selected_rows() != 1:
             return
         model, i = selection.get_selected()
+        for w in (self.builder.get_object(x) for x in ("tv_picList", "tv_picListEdit", "tv_picListEdit1")):
+            s = w.get_selection()
+            if s != selection:
+                s.select_iter(i)
+                p = w.get_model().get_path(i)
+                w.scroll_to_cell(p)
         if selection != self.selection:
-            self.selection.select_iter(i)
             return
         if self.model.get_path(i).get_indices()[0] >= len(self.model):
             return
@@ -173,7 +180,7 @@ _checks = {
 
 class PicChecks:
 
-    fname = "picChecks.cfg"
+    fname = "picChecks.txt"
 
     def __init__(self, parent):
         self.cfgShared = ConfigParser()
@@ -186,20 +193,24 @@ class PicChecks:
             for k, v in _checks.items():
                 t, n = k.split("_")
                 if n.startswith(prefix):
-                    cfg.set('DEFAULT', n, v)
+                    cfg['DEFAULT'][n] = v
 
     def init(self, basepath, configid):
+        if basepath is None or configid is None:
+            return
+        print(basepath, configid)
         self.cfgShared.read(os.path.join(basepath, self.fname), encoding="utf-8")
         self._init_default(self.cfgShared, "pic")
         self.cfgProject.read(os.path.join(basepath, configid, self.fname), encoding="utf-8")
         self._init_default(self.cfgProject, "pub")
 
     def writeCfg(self, basepath, configid):
-        if not self.cfgShared.has_section("DEFAULT") or configid is None:
+        if not len(self.cfgShared) or configid is None:
             return
-        with open(os.path.join(basepath, self.fname)) as outf:
+        self.savepic()
+        with open(os.path.join(basepath, "shared", "ptxprint", self.fname), "w", encoding="utf-8") as outf:
             self.cfgShared.write(outf)
-        with open(os.path.join(basepath, configid, self.fname)) as outf:
+        with open(os.path.join(basepath, "shared", "ptxprint", configid, self.fname), "w", encoding="utf-8") as outf:
             self.cfgProject.write(outf)
 
     def loadpic(self, src):
@@ -220,7 +231,6 @@ class PicChecks:
             self.cfgProject.add_section(self.src)
         for k, v in _checks.items():
             val = self.parent.get(k)
-            print(self.src, k, val)
             t, n = k.split("_")
             cfg = self.cfgShared if n.startswith("pic") else self.cfgProject
             cfg.set(self.src, n, val)

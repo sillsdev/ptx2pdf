@@ -1317,6 +1317,7 @@ class GtkViewModel(ViewModel):
         self.setEntryBoxFont()
         self.updatePicList()
         self.updateDialogTitle()
+        self.picChecksView.init(basepath=self.configPath(cfgname=None), configid=self.configId)
 
     def onConfigNameChanged(self, cb_savedConfig):
         if self.configNoUpdate:
