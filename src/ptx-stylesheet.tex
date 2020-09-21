@@ -569,6 +569,11 @@
 %+csty_onetime
 \def\@netimesetup{
  % stuff to execute after loading all stylesheets but before processing the first USFM file
+ \ifdiglot\else
+   \ifRTL
+     \OpenLefttrue
+   \fi
+ \fi
  \origb@selineskip=\baselineskip
  \s@tupsizes
  \defineheads

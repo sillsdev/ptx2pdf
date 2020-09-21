@@ -31,6 +31,7 @@
 % cropmark support for the ptx2pdf package
 
 %+c_makecropmarks
+\newif\ifBookOpenLeft\BookOpenLeftfalse % The friend of RTL. In monoglot these two typically go together, in diglot they may not. ifOpenLeft controls where binding gutter goes, etc.
 \newif\ifCropMarks
 \font\idf@nt=cmtt10 scaled 700 % font for the marginal job information
 \newbox\topcr@p \newbox\bottomcr@p
@@ -90,6 +91,11 @@
 \newdimen\TabsStart %Vertical offset to margins for start of thumb tabs
 \newdimen\TabsEnd %Vertical offset to margins for end of thumb tabs 
 \newcount\NumTabs %How many tabs to be set?
+\newif\ifTabTopToEdgeEven %Is the top of the text at the pageedge on even pages
+\newif\ifTabTopToEdgeOdd %Is the top of the text at the pageedge on odd pages
+\TabTopToEdgeEvenfalse
+\TabTopToEdgeOddfalse
+
 \newif\ifTabRotationNormal \TabRotationNormaltrue %RotationNormalfalse means that the \toc3 entries should be assumed to be narrower than they are tall.
 
 \def\zthumbtab{\bgroup\obeylines\th@mt@b} %Manual control of thumbtab text, from usfm file.
@@ -118,28 +124,54 @@
   % 3- boxwidth 
   % 4- box depth 
   % 5 - box height
-  % 6 - >=0, raise box by this. =1sp, centre text.  <0pt separation from top of box to top of text ( Never lowers box if box is too short.
+  % 6 - =0, no movement >0pt  separation of text from bottom =1sp, centre text.  < 0pt separation from top of box to top of text 
   % 7 - text (should include glue to align / centre e.g. \hss)
   %\dimen2=\baselineskip\advance\dimen2 by -.2ex
   % Box height is set by \tabwidth, text is set 2pt below top 
+  \trace{pt}{(#1) (#2) #3 #4 #5 #6 #7}%
   \dimen2=#6
   \setbox0\hbox to #3{#7}%
   \ifdim\dimen2<0pt
    \advance\dimen2 by #5\advance\dimen2 by -\ht0
    \ifdim\dimen2<0pt\dimen2=0pt\fi
-  \fi
-  \ifdim\dimen2=1sp%Magic number to indicate vertical centering.
-   %To centre text, it goes UP by ((#5-ht0)-(#4-dp0))/2
-   %can't use -#4 because #4 may be -ve already.
-   \dimen2=#4\multiply\dimen2 by -1
-   \advance\dimen2 by #5\advance\dimen2 by -\ht0
-   \advance\dimen2 by \dp0
-   \divide\dimen2 by 2
+  \else 
+    \ifdim\dimen2=1sp%Magic number to indicate vertical centering.
+     %To centre text, it goes UP by ((#5-ht0)-(#4-dp0))/2
+     %can't use -#4 because #4 may be -ve already.
+     \dimen2=#4\multiply\dimen2 by -1
+     \advance\dimen2 by #5\advance\dimen2 by -\ht0
+     \advance\dimen2 by \dp0
+     \divide\dimen2 by 2
+    \else
+      \ifdim\dimen2=0pt\else
+        %Distance from bottom  shift=#6+dp0 -#4
+        %can't use -#4 because #4 may be -ve already.
+        \dimen2=#4\multiply\dimen2 by -1
+        \advance\dimen2 by #6
+        \advance\dimen2 by \dp0
+      \fi
+    \fi
   \fi
   \setbox0\hbox{\hbox to 0pt{\special{color push rgb #1}\vrule depth #4 height #5 width #3 \hss}\special{color pop}\special{color push rgb #2}\raise \dimen2\box0}\ht0=#5\dp0=#4\box0\special{color pop}}
 
 %Rotate box0 about a point on it's baseline, half way along its width. Adjust size so that height/depth and width are correct for rotated box. box height/depth becomes left-most edge.
-\def\rot@tebz{\dimen1=\wd0\dimen2=\ht0\advance\dimen2 by \dp0\hbox to \dimen2{\kern -0.5\wd0\ifodd\pageno \kern\ht0\else\kern\dp0\fi\vbox to 0pt{\vss\hbox to 0pt{\kern 0.5\wd0\special{x:gsave}\special{x:rotate \ifodd\pageno 90\else -90\fi}\hss}\vss}\ht0=0.5\dimen1\dp0=0.5\dimen1\box0\special{x:grestore}\hss}}
+\def\rot@tebz{\dimen1=\wd0\dimen2=\ht0
+  \advance\dimen2 by \dp0%
+  \hbox to \dimen2{\kern -0.5\wd0%
+    %kern so that the correct edge of the box is at the centrepoint location, and set rotation
+    %\ifodd\pageno \kern\ht0\else\kern\dp0\fi %Old-style
+    \def\r@acwSet{\edef\@ngle{90}\kern\ht0}% anticlockwise
+    \def\r@cwSet{\edef\@ngle{-90}\kern\dp0}%clockwise.
+    \let\r@tSet\r@cwSet 
+    \ifodd\pageno
+      \ifTabTopToEdgeOdd\else\let\r@tSet\r@acwSet\fi
+    \else
+      \ifTabTopToEdgeEven\let\r@tSet\r@acwSet\fi
+    \fi
+    \r@tSet
+    \trace{pt}{Rotating tab \@ngle (+ is anticlockwise)}%
+    \vbox to 0pt{\vss\hbox to 0pt{\kern 0.5\wd0\special{x:gsave}\special{x:rotate \@ngle}\hss}\vss}%
+    \ht0=0.5\dimen1\dp0=0.5\dimen1\box0\special{x:grestore}\hss}}
 
 \def\TabTxtFarFromEdge#1{\if\st@rtatedge F\kern 2pt\else\hss\fi #1\if\st@rtatedge F\hss\else\kern 2pt\fi}% Normal position for horizontal text - left-aligned on odd pages / bottom when rotated
 \def\TabTxtCloseToEdge#1{\if\st@rtatedge T\kern 2pt\else\hss\fi #1\if\st@rtatedge T\hss\else\kern 2pt\fi}% Right-aligned on odd-pages / Top when rotated
@@ -148,8 +180,18 @@
 \let\vertThumbtabContents=\TabTxtCentred% How should the thumbtab be positioned when vertical?
 \def\vertThumbtabVadj{-2pt}%2pt below top.
 \def\horizThumbtabVadj{1sp}%vertically centred.
-
 \def\lastw@rning{}
+
+\def\in@tThumbT@bs{%Thumb-tab setup code goes here.
+  \let\initThumbT@bs\relax
+}
+
+\def\reinitThumbTabs{%Function for users to call if they've altered something that affects initialisation
+  \let\initThumbT@bs\in@tThumbT@bs
+}
+     
+\reinitThumbTabs
+
 \def\t@bbox{%
  \s@tfont{\ThumbTabStyle}%
  \x@\let\x@\t@bBoxCol\csname\t@bname -boxcol\endcsname
@@ -167,9 +209,29 @@
    \fi
  \fi
  \setbox0\hbox{\b@okShort}%
- \iftemp
+ \iftemp%Rotated tabs
    \ifdim\wd0>\tabheight\ifx\lastw@rning\b@okShort\else\xdef\lastw@rning{\b@okShort}\message{Thumb tab contents "\b@okShort" too wide for tab height}\fi\fi
-   \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabheight}{3pt}{\tabwidth}{\vertThumbtabVadj}{\vertThumbtabContents{\b@okShort}}}% Bleed of 3pt , 2pt from top of box
+   \tempfalse
+   \ifodd\pageno
+     \ifTabTopToEdgeOdd\temptrue\fi
+   \else
+     \ifTabTopToEdgeEven\temptrue\fi
+   \fi
+   \trace{pt}{pg \the\pageno, Top to \iftemp edge \else page\fi}%
+   \iftemp %Rotated text has its top at the edge of the page (decenders to text)
+     \edef\bxht{3pt}%
+     \edef\bxdp{\the\tabwidth}%
+     \bgroup
+       \dimen1=\vertThumbtabVadj%
+       \multiply\dimen1 by -1%
+       \xdef\V@dj{\the\dimen1}%
+     \egroup
+   \else %Rotated text has its bottom at the edge of the page (descenders to edge)
+     \edef\bxht{\the\tabwidth}%
+     \edef\bxdp{3pt}%
+     \edef\V@dj{\vertThumbtabVadj}%
+   \fi
+   \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabheight}{\bxdp}{\bxht}{\V@dj}{\vertThumbtabContents{\b@okShort}}}% Bleed of 3pt , 2pt from top of box
    \ht0=\tabwidth
    \hbox to 0pt{%
     \if\st@rtatedge F\kern -\tabwidth\else\hss\fi
@@ -178,7 +240,7 @@
      \rot@tebz 
      \if\st@rtatedge F\hss\else \kern-1\tabwidth\fi
    }%
- \else
+ \else%Unrotated tabs
    \ifdim\wd0>\tabwidth\ifx\lastw@rning\b@okShort\else\xdef\lastw@rning{\b@okShort}\message{Thumb tab contents "\b@okShort" too wide for tab width}\fi\fi
    \hbox to 0pt{%
     \if\st@rtatedge F\hss\else\kern -1pt\fi% Bleed of 1pt
@@ -192,12 +254,22 @@
     }%
  \fi
 }
+
 \def\putthumbtab{%Using the current book ID, and the book's short name complete and position a thumbtab mark
-  \let\st@rtatedge=T% Does a horizontal chunk of text in a box  start nearest to the page edge away from the binding (False for English on odd-numbered pages) (LTR/RTL sensitive)
+  \initThumbT@bs%becomes \relax after 1st run, unless reset
+  \let\st@rtatedge=T% Does a horizontal chunk of text in a box  start nearest to the page edge away from the binding (False for English on odd-numbered pages) (depends on page sequence, matching LTR/RTL)
   \ifodd\pageno
-    \ifRTL\else\let\st@rtatedge=F\fi
+    \ifRTL
+      \ifBookOpenLeft\let\st@rtatedge=F\fi
+    \else
+      \ifBookOpenLeft\else\let\st@rtatedge=F\fi
+    \fi
   \else
-    \ifRTL\let\st@rtatedge=F\fi
+    \ifRTL
+      \ifBookOpenLeft\else\let\st@rtatedge=F\fi
+    \else
+      \ifBookOpenLeft\let\st@rtatedge=F\fi
+    \fi
   \fi
  \trace{pt}{PTT nt:\the\NumTabs, bk:\b@okShort, pg:\the\pageno}%
  \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
@@ -264,10 +336,10 @@
     \let\g@tterside=0 % figure out if we're adding a binding gutter, and which side
     \ifBindingGutter
       \ifDoubleSided
-        \ifodd\pageno\ifRTL\let\g@tterside=R \else\let\g@tterside=L\fi
-        \else\ifRTL\let\g@tterside=L \else\let\g@tterside=R\fi
+        \ifodd\pageno\ifBookOpenLeft\let\g@tterside=R \else\let\g@tterside=L\fi
+        \else\ifBookOpenLeft\let\g@tterside=L \else\let\g@tterside=R\fi
         \fi
-      \else\ifRTL\let\g@tterside=R\else\let\g@tterside=L\fi
+      \else\ifBookOpenLeft\let\g@tterside=R\else\let\g@tterside=L\fi
       \fi
     \fi
     \edef\oldup{\the\XeTeXupwardsmode}
