@@ -93,9 +93,9 @@ diglot when the `mirrored` columns are in use ('left' text is always inner, the
 Code | Mnemnonic              | Position                                                      | Max. caption width 
 ---- | -----------------------|-----------------------------------------------------------|-----------------------------------------------
 t    | 'Top'                  | Above everything except the header line.                        | across both columns 
-b    | 'Bottom'               | Below all verse text and footnotes.                             | across both columns 
+b    | 'Bottom'               | Below all verse text (and footnotes in diglot).                 | across both columns 
 tl   | 'Top-Left'    [1]      | At the top of the left-hand [2] column                          | width of column 
-bl   | 'Top-Left'    [1]      | At the top of the left-hand [2] column                          | width of column 
+bl   | 'Bottoom-Left'    [1]  | At the bottom of the left-hand [2] column                          | width of column 
 -----|------------------------|       ***Experimental Additions***                              |----------------------------
 h    | 'Here'                 | Where defined / before the verse in piclist[3,4], centred       | width of column
 hc   | 'Here',centred         | Where defined / before the verse in piclist[3,4], centred       | width of column
@@ -251,6 +251,19 @@ A piclist file takes the same filename as the USFM file being processed by the
 ptx macros but with an added extension of `.piclist` and in the Piclist folder,
 specified to the macros. Ptxprint handles all this for the user.
 
+There are two methods to read a piclist, in 'slurp' mode (`\picslurptrue`, the
+new default) where the entire file is read at once or the traditional mode
+(`\picslurpfalse`) where the specification for only one picture is held in
+memory at a time.  The traditional mode requires that pictures occur in the correct 
+order (difficult in diglots, where the sequence of verses is not always
+obvious) and errors in the reference (e.g. 'NUM 11.2' instead of 'NUM 11.2-3') 
+are fairly easily identified because no pictures will be read after an unmatched
+reference.
+
+In 'slurp' mode, the there is no requirement that pictures occur in order. 
+The code will count images defined vs images used, and give a list of unused
+references if all are not used.
+
 A piclist file has a strict format:
 
 - Each entry is on a single line.
@@ -259,15 +272,21 @@ A piclist file has a strict format:
   ignored.
 - A piclist entry consists of an anchor reference followed by the contents of a
   `\fig` element (without the `\fig` markers) USFM2 or USFM3 format may be used.
-- Piclist entries must be in reference order. The ptx macros will read the next
+- If processed with `\picslurpfalse` (see above), piclist entries must be in the  order they 
+  will be met in reading the input. The ptx macros will read the next
   entry and if the anchor reference entry is before or equal to the anchor reference entry
   of the previous entry, it and all future piclist entries will be ignored.
 - The anchor reference is of the form _bk_ _C_._V_, where _bk_ is the 3 letter
-  (all-caps) book identifier. The _C_ and _V_ are chapter and verse references.
+  (all-caps) book identifier. The _C_ and _V_ are chapter and verse references. The verse reference must 
+  exactly match what comes after the `\v` tag. 
   The _bk_ may also have a 4th letter of `R` or `L` to indicate which side in a
   diglot is being referenced. Lack of a 4th letter implies it may be matched
   while processing either column, and the user has no preference about
   which font, etc. are used (normally `L` will match it first, but this is not guaranteed).
+
+Multiple lines *may* reference the same reference. In this case they will be
+processed in strict order of definition. It is up to the user to ensure that
+the combinations do not trigger an unprintable page.
 
 ## Captions
 

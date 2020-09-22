@@ -41,12 +41,49 @@
 % Compare ptx-adj-list.tex for comments on the code.
 
 %+cpic_parse
-\def\parsep@cline #1 #2.#3 #4\end{%
+\newcount\p@clistsuff \p@clistsuff=1
+\newcount\p@clistentries \p@clistentries=0 % Count of how many entries defined
+\newcount\p@clistused \p@clistused=0 %Count of how many entries USED.
+\newtoks\p@cusecheck % Make a list of defined pictures, then empty their contents as they are used.
+\xdef\l@stpicref{}
+\def\picchecklist{}
+\def\updatep@cusecheck#1{\x@\global\x@\p@cusecheck\x@{\the\p@cusecheck #1}}
+
+\def\mkp@cid{\xdef\p@cid{piclist-\p@cref|\the\p@clistsuff}}
+
+\def\parsep@cline #1 #2.#3 #4\endpicline{%
   \uppercase{\def\piclstb@@kref{#1}}%
   \xdef\p@cref{\piclstb@@kref#2.#3}\gdef\p@cspec{#4}%
+  \ifpicslurp
+    \ifx\l@stpicref\p@cref\else\p@clistsuff=1\fi
+    \loop
+      \mkp@cid
+      \x@\let\x@\t@st\csname \p@cid\endcsname
+        \ifx\t@st\relax 
+        \tempfalse
+      \else 
+        %\message{picid:\p@cid already exists}%
+        \advance\p@clistsuff by 1\temptrue
+      \fi
+      \iftemp\repeat
+    \x@\global\x@\let\csname \p@cid\endcsname\p@cspec
+    % Track defined pictures, so we can make a list of unused ones for error reporting
+    \edef\humanp@cref{\p@cref\ifnum\p@clistsuff>1 (\the\p@clistsuff)\fi, }%
+    %\tracingassigns=1
+    \x@\global\x@\let\csname used\p@cid\endcsname\humanp@cref
+    \gdef\picchecklist{\csname used\p@cid\endcsname\picchecklist}%
+    \x@\updatep@cusecheck\x@{\csname used\p@cid\endcsname}%
+    %\tracingassigns=0
+    % Keep track of how many used.
+    \global\advance\p@clistentries by 1
+    \trace{P}{defined picid:\p@cid}%
+  \fi
 }
 
+\newif\ifpicslurp \picslurptrue %If true, this uses some extra memory (remembering the entire piclist) for the benefit of the piclist no longer needing to be sorted. 
+
 \def\readnextp@c{%
+  \let\r@peat\relax
   \ifeof\p@clist
     \global\let\p@cref\empty
   \else
@@ -59,11 +96,15 @@
       \ifx\p@cline\P@R\readnextp@c\else
         \ifx\p@cline\empty\readnextp@c\else
           \trace{P}{Read piclist line: \p@cline}%
-          \expandafter\parsep@cline\p@cline\end
+          \expandafter\parsep@cline\p@cline\endpicline
         \fi
       \fi
     \endgroup
+    \ifpicslurp
+      \let\r@peat\readnextp@c
+    \fi
   \fi
+  \r@peat
 }
 \def\P@R{\par}
 %-cpic_parse
@@ -86,27 +127,64 @@
 %-cpic_read
 
 %+cpic_check
-\def\dop@c{%
+\def\dop@c{%Traditional found-a-match piclist processing
   \x@\d@figure\x@{\p@cspec}%
   \readnextp@c
   \ch@ckpiclist%Repeat?
 }
+\def\ch@ckN@xtPicid{%Check to see if there's one or more pictures for this verse.
+  \mkp@cid
+  \x@\let\x@\t@st\csname \p@cid\endcsname
+  \ifx\t@st\relax
+    \let\r@pe@t\relax
+    \trace{P}{No piclist entry found for \p@cid}%
+  \else
+    \global\advance\p@clistused by 1
+    \x@\global\x@\let\csname used\p@cid\endcsname\empty% mark picture as done
+    \trace{P}{Piclist entry found for \p@cid (\the\p@clistused/\the\p@clistentries)}%
+    \let\p@cspec\t@st
+    \x@\d@figure\x@{\p@cspec}%
+    \advance\p@clistsuff by 1
+    \let\r@pe@t\ch@ckN@xtPicid
+  \fi
+  \r@pe@t
+}
 
 \def\ch@ckpiclist{%
   \edef\c@rref{\id@@@\ch@pter.\v@rse}%
-  \trace{P}{\p@cref =\c@rref?}%
-  \ifx\c@rref\p@cref \dop@c
-  \else
+  \ifpicslurp
+    \let\p@cref=\c@rref
+    \p@clistsuff=1
+    \ch@ckN@xtPicid
     \ifdiglot
       \edef\dc@rref{\id@@@\ifdiglotL L\else R\fi\ch@pter.\v@rse}%
-      \trace{P}{\p@cref =\dc@rref?}%
-      \ifx\dc@rref\p@cref \dop@c\fi
+      \let\p@cref=\dc@rref
+      \p@clistsuff=1
+      \ch@ckN@xtPicid
+    \fi
+  \else
+    \trace{P}{\p@cref =\c@rref?}%
+    \ifx\c@rref\p@cref \dop@c
+    \else
+      \ifdiglot
+        \trace{P}{\p@cref =\dc@rref?}%
+        \ifx\dc@rref\p@cref \dop@c\fi
+      \fi
     \fi
   \fi
   \trace{P}{End of checkpic}%
 }
 
+\def\endpiclistch@ck{
+  \ifpicslurp 
+    \edef\unus@d{\the\p@cusecheck}%
+    \ifnum\p@clistentries>\p@clistused
+      \message{** Only \the\p@clistused\space pictures were used out of \the\p@clistentries\space defined. Piclist may have errors or perhaps contain references for other books. Unused references: \unus@d}%
+    \fi
+  \fi
+}
 \addtopreversehooks{\ch@ckpiclist}                                              %(1)
+\addtoendhooks{\endpiclistch@ck}
 %-cpic_check
 
 \endinput
