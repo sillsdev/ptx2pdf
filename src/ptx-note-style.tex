@@ -82,6 +82,7 @@
 }
 \newdimen\AboveNoteSpace \AboveNoteSpace=\medskipamount
 \newdimen\InterNoteSpace \InterNoteSpace=3.5pt
+\newdimen\NoteCallerWidth \NoteCallerWidth=1ex %Minimum width for callers/callees, helps alignment.
 %-cnote_initnotes
 
 %
@@ -132,7 +133,11 @@
         \ifx\p@ram\relax\edef\c@llerstyle{v}\else\edef\c@llerstyle{\p@ram}\fi % if not, treat it like "v"
         \ifx\them@rk\empty \setbox0=\box\voidb@x \else
           \trace{s}{Note main caller}%
-          \setbox0=\hbox to 1ex{\hss\x@\ch@rstylepls\x@{\c@llerstyle}~\them@rk\x@\ch@rstylepls\x@{\c@llerstyle}*\hss}\ht0=0pt
+          \setbox0=\hbox{\x@\ch@rstylepls\x@{\c@llerstyle}~\them@rk\x@\ch@rstylepls\x@{\c@llerstyle}*}%
+          \ifdim\wd0<\NoteCallerWidth% Allow for wide callers, but standardise normal callers to \NoteCallerWidth
+            \setbox0=\hbox to \NoteCallerWidth{\hfil\box0\hfil}%
+          \fi
+          \ht0=0pt
         \fi
         \getp@ram{callerraise}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi % suppress height of caller
         \ifnum\pagetracing>0
@@ -143,7 +148,11 @@
           \edef\c@llerstyle{\p@ram}%
           \ifx\them@rk\empty \setbox0=\box\voidb@x \else
             \trace{s}{Note caller}%
-            \setbox0=\hbox to 1ex{\hss\x@\ch@rstylepls\x@{\c@llerstyle}~\them@rk\x@\ch@rstylepls\x@{\c@llerstyle}*\hss}\ht0=0pt
+            \setbox0=\hbox{\hss\x@\ch@rstylepls\x@{\c@llerstyle}~\them@rk\x@\ch@rstylepls\x@{\c@llerstyle}*\hss}%
+            \ifdim\wd0<\NoteCallerWidth% Allow for wide callers, but standardise normal callers to \NoteCallerWidth
+              \setbox0=\hbox to \NoteCallerWidth{\hfil\box0\hfil}%
+            \fi
+            \ht0=0pt
           \fi
           \getp@ram{notecallerraise}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi
         \fi}\bgroup

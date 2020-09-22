@@ -274,6 +274,7 @@ Literal text can also be included (e.g., to add dashes around a centered page nu
 *   \PageResetCallers{```f```} – Restart numbering for the notes class on each page (specify f _or_ x)
 *   \OmitCallerInNote{```x```} – To omit callers from the note class at the bottom of the page (specify f _or_ x)
 *   \ParagraphedNotes{```x```} – Format the note class as a single paragraph, with larger space between note items (specify f _or_ x)
+*   \NoteCallerWidth=```1.2ex``` - Adjust 'standard' width of a footnote-caller. A small amount of space is added to narrow callers, padding them to this width, so that they align nicely in the footer. Wider callers take their natural size, without any padding. (default ```1ex```) (Control added 22 Sept. 2020)
 
 _For now_, if you want to change the appearance of (or remove) the footnote rule, redefine \def\footnoterule
 
@@ -668,4 +669,5 @@ This allows a verse number at the beginning of a paragraph to be typeset "hangin
 
 <div class="hentry attachment" id="https://sites.google.com/feeds/content/icapmail.org/ptx2pdf/4849046698044518104"><a name="ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags"></a>
 
-[ptx2pdf-MacroSetupParameters.pdf](ptx2pdf-MacroSetupParameters.pdf) - on <abbr class="updated" title="2011-05-17T19:48:01.362Z">May 17, 2011</abbr> by <span class="author"><span class="vcard">Jeff Klassen</span> </span>(Version <span class="sites:revision">1</span>)</div>
+[ptx2pdf-MacroSetupParameters.pdf](ptx2pdf-MacroSetupParameters.pdf) - on <abbr class="updated" title="2011-05-17T19:48:01.362Z">May 17, 2011</abbr> by <span class="author"><span class="vcard">Jeff Klassen</span> </span>(Version <span class="sites:revision">1</span>)
+</div>
