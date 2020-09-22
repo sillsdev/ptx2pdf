@@ -1665,19 +1665,19 @@ in the Windows system.</property>
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">Mirror: Bottom of text to edge</col>
+        <col id="0" translatable="yes">Mirror: Outward</col>
         <col id="1" translatable="yes">1</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Mirror: Top of text to edge</col>
+        <col id="0" translatable="yes">Mirror: Inward</col>
         <col id="1" translatable="yes">2</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Match: Bottom to Top</col>
+        <col id="0" translatable="yes">Same: Bottom to Top</col>
         <col id="1" translatable="yes">3</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Match: Top to Bottom</col>
+        <col id="0" translatable="yes">Same: Top to Bottom</col>
         <col id="1" translatable="yes">4</col>
       </row>
     </data>
@@ -9050,6 +9050,7 @@ from XeTeX processing.</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
+                            <property name="margin_bottom">6</property>
                             <property name="row_spacing">6</property>
                             <property name="column_spacing">6</property>
                             <child>
@@ -9058,8 +9059,6 @@ from XeTeX processing.</property>
                                 <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">The length of the Thumb Tab measured in millimeters (mm).</property>
                                 <property name="halign">end</property>
-                                <property name="margin_left">6</property>
-                                <property name="margin_top">6</property>
                                 <property name="label" translatable="yes">Length:</property>
                                 <property name="justify">right</property>
                               </object>
@@ -9107,8 +9106,6 @@ from XeTeX processing.</property>
                                 <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">Size of the text inside the Thumb Tab in points (pts).</property>
                                 <property name="halign">end</property>
-                                <property name="margin_left">6</property>
-                                <property name="margin_bottom">6</property>
                                 <property name="label" translatable="yes">Font Size:</property>
                                 <property name="justify">right</property>
                               </object>
@@ -9188,6 +9185,7 @@ from XeTeX processing.</property>
                                 <property name="halign">start</property>
                                 <property name="title" translatable="yes">Thumb Tab Text Colour</property>
                                 <property name="rgba">rgb(255,255,255)</property>
+                                <signal name="color-set" handler="onThumbColourChange" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">6</property>
@@ -9203,6 +9201,7 @@ from XeTeX processing.</property>
                                 <property name="tooltip_text" translatable="yes">Rotates the tabs so that the text runs along the edge of the page. This works well for narrow margins, but may result in fewer tab positions per page.</property>
                                 <property name="halign">start</property>
                                 <property name="draw_indicator">True</property>
+                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                 <signal name="toggled" handler="onNumTabsChanged" swapped="no"/>
                               </object>
                               <packing>
@@ -9251,7 +9250,7 @@ Tab Positions:</property>
                                 <property name="justify">right</property>
                               </object>
                               <packing>
-                                <property name="left_attach">4</property>
+                                <property name="left_attach">3</property>
                                 <property name="top_attach">1</property>
                               </packing>
                             </child>
@@ -9262,7 +9261,7 @@ Tab Positions:</property>
                                 <property name="adjustment">a_thumbtabs</property>
                               </object>
                               <packing>
-                                <property name="left_attach">5</property>
+                                <property name="left_attach">4</property>
                                 <property name="top_attach">1</property>
                                 <property name="width">2</property>
                               </packing>
@@ -9308,42 +9307,43 @@ at MAT</property>
                                 <property name="can_focus">False</property>
                                 <property name="no_show_all">True</property>
                                 <property name="halign">start</property>
+                                <property name="valign">start</property>
                                 <property name="margin_left">6</property>
-                                <property name="label" translatable="yes">   Vertical   </property>
+                                <property name="label" translatable="yes">  Vertical  </property>
                                 <property name="justify">right</property>
                                 <property name="angle">90</property>
                                 <attributes>
                                   <attribute name="weight" value="bold"/>
-                                  <attribute name="scale" value="1.3999999999999999"/>
+                                  <attribute name="scale" value="1.2"/>
                                   <attribute name="foreground" value="#ffffffffffff"/>
                                   <attribute name="background" value="#000000000000"/>
                                 </attributes>
                               </object>
                               <packing>
-                                <property name="left_attach">7</property>
-                                <property name="top_attach">1</property>
-                                <property name="height">3</property>
+                                <property name="left_attach">6</property>
+                                <property name="top_attach">0</property>
+                                <property name="height">2</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel" id="l_thumbHorizontal">
+                              <object class="GtkLabel" id="l_thumbHorizontalR">
                                 <property name="can_focus">False</property>
                                 <property name="no_show_all">True</property>
                                 <property name="halign">end</property>
                                 <property name="margin_left">6</property>
-                                <property name="label" translatable="yes">  Horizontal  </property>
+                                <property name="label" translatable="yes"> Horizontal </property>
                                 <property name="justify">right</property>
                                 <attributes>
                                   <attribute name="weight" value="bold"/>
-                                  <attribute name="scale" value="1.3999999999999999"/>
+                                  <attribute name="scale" value="1.2"/>
                                   <attribute name="foreground" value="#ffffffffffff"/>
                                   <attribute name="background" value="#2e2e34343636"/>
                                 </attributes>
                               </object>
                               <packing>
-                                <property name="left_attach">7</property>
-                                <property name="top_attach">0</property>
-                                <property name="width">3</property>
+                                <property name="left_attach">5</property>
+                                <property name="top_attach">1</property>
+                                <property name="width">5</property>
                               </packing>
                             </child>
                             <child>
@@ -9352,7 +9352,7 @@ at MAT</property>
                                 <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">Groups adjacent books together into the same tab.</property>
                                 <property name="halign">end</property>
-                                <property name="margin_top">6</property>
+                                <property name="margin_left">6</property>
                                 <property name="label" translatable="yes">Grouped Tabs:</property>
                                 <property name="justify">right</property>
                               </object>
@@ -9366,8 +9366,6 @@ at MAT</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="tooltip_text" translatable="yes">List book ids with spaces between. Use ; to separate groups. For example: PHM TIT; 1JN 2JN 3JN JUD</property>
-                                <property name="margin_top">6</property>
-                                <property name="margin_bottom">6</property>
                                 <property name="placeholder_text" translatable="yes">PHM TIT; 1JN 2JN 3JN JUD</property>
                               </object>
                               <packing>
@@ -9378,17 +9376,18 @@ at MAT</property>
                             </child>
                             <child>
                               <object class="GtkComboBox" id="fcb_rotateTabs">
-                                <property name="width_request">280</property>
+                                <property name="width_request">200</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="can_default">True</property>
+                                <property name="tooltip_text" translatable="yes">If you choose to Rotate the tabs, there are various options as to how these should be oriented. The preview (right) will show how these will appear on facing pages.</property>
                                 <property name="halign">start</property>
                                 <property name="model">ls_rotateTabs</property>
                                 <property name="wrap_width">1</property>
-                                <property name="active">0</property>
                                 <property name="has_entry">True</property>
                                 <property name="entry_text_column">0</property>
                                 <property name="id_column">1</property>
+                                <signal name="changed" handler="onRotateTabsChanged" swapped="no"/>
                                 <child internal-child="entry">
                                   <object class="GtkEntry">
                                     <property name="visible">True</property>
@@ -9400,7 +9399,7 @@ at MAT</property>
                               <packing>
                                 <property name="left_attach">3</property>
                                 <property name="top_attach">0</property>
-                                <property name="width">4</property>
+                                <property name="width">3</property>
                               </packing>
                             </child>
                             <child>
@@ -9408,32 +9407,75 @@ at MAT</property>
                                 <property name="can_focus">False</property>
                                 <property name="no_show_all">True</property>
                                 <property name="halign">end</property>
-                                <property name="label" translatable="yes">   Vertical   </property>
+                                <property name="valign">start</property>
+                                <property name="label" translatable="yes">  Vertical  </property>
                                 <property name="justify">right</property>
                                 <property name="angle">90</property>
                                 <attributes>
                                   <attribute name="weight" value="bold"/>
-                                  <attribute name="scale" value="1.3999999999999999"/>
+                                  <attribute name="scale" value="1.2"/>
                                   <attribute name="foreground" value="#ffffffffffff"/>
                                   <attribute name="background" value="#000000000000"/>
                                 </attributes>
                               </object>
                               <packing>
                                 <property name="left_attach">9</property>
-                                <property name="top_attach">1</property>
-                                <property name="height">3</property>
+                                <property name="top_attach">0</property>
+                                <property name="height">2</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkLabel">
+                                <property name="width_request">43</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="hexpand">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">8</property>
-                                <property name="top_attach">2</property>
+                                <property name="top_attach">0</property>
+                                <property name="height">2</property>
                               </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="l_thumbHorizontalL">
+                                <property name="can_focus">False</property>
+                                <property name="no_show_all">True</property>
+                                <property name="halign">start</property>
+                                <property name="label" translatable="yes"> Horizontal </property>
+                                <property name="justify">right</property>
+                                <attributes>
+                                  <attribute name="weight" value="bold"/>
+                                  <attribute name="scale" value="1.2"/>
+                                  <attribute name="foreground" value="#ffffffffffff"/>
+                                  <attribute name="background" value="#2e2e34343636"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="left_attach">6</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSeparator">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="orientation">vertical</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">7</property>
+                                <property name="top_attach">0</property>
+                                <property name="height">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
                             </child>
                             <child>
                               <placeholder/>

@@ -170,6 +170,14 @@ _object_classes = {
 
 _notebooks = ("Main", "Viewer", "PicList")
 
+# Vertical Thumb Tab Orientation options L+R
+_vertical_thumb = {
+    "1" : (270,  90),
+    "2" : (90,  270),
+    "3" : (90,   90),
+    "4" : (270, 270),
+}
+
 class GtkViewModel(ViewModel):
 
     def __init__(self, settings_dir, workingdir, userconfig, scriptsdir):
@@ -195,7 +203,7 @@ class GtkViewModel(ViewModel):
             self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
         for fcb in ("digits", "script", "chapfrom", "chapto", "diglotPicListSources",
                     "textDirection", "glossaryMarkupStyle", "fontFaces",
-                    "picaccept", "pubusage", "pubaccept"):
+                    "picaccept", "pubusage", "pubaccept", "rotateTabs"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
@@ -1775,4 +1783,13 @@ class GtkViewModel(ViewModel):
             self.updateThumbLines()
         self.builder.get_object("l_thumbVerticalL").set_visible(self.get("c_thumbrotate"))
         self.builder.get_object("l_thumbVerticalR").set_visible(self.get("c_thumbrotate"))
-        self.builder.get_object("l_thumbHorizontal").set_visible(not self.get("c_thumbrotate"))
+        self.builder.get_object("l_thumbHorizontalL").set_visible(not self.get("c_thumbrotate"))
+        self.builder.get_object("l_thumbHorizontalR").set_visible(not self.get("c_thumbrotate"))
+        
+    def onThumbColourChange(self, *a):
+        print("Background colour is:")
+        
+    def onRotateTabsChanged(self, *a):
+        orientation = self.get("fcb_rotateTabs")
+        self.builder.get_object("l_thumbVerticalL").set_angle(_vertical_thumb[orientation][0])
+        self.builder.get_object("l_thumbVerticalR").set_angle(_vertical_thumb[orientation][1])
