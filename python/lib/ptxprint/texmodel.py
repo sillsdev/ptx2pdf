@@ -297,7 +297,7 @@ ModelMap = {
     "snippets/imgcredits":      ("c_includeillustrations", None),
     "thumbtabs/ifthumbtabs":    ("c_thumbtabs", None),
     "thumbtabs/numtabs":        ("s_thumbtabs", None),
-    "thumbtabs/widthfactor":    ("s_thumbwidth", None),
+    "thumbtabs/widthfactor":    ("s_thumblength", None),
     "thumbtabs/height":         ("s_thumbheight", None),
     "thumbtabs/fontsize":       ("s_thumbfont", None),
     "thumbtabs/italic":         ("c_thumbitalic", None),

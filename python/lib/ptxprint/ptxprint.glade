@@ -284,21 +284,23 @@ THE SOFTWARE.
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="a_thumbheight">
-    <property name="upper">100</property>
-    <property name="value">12</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
+    <property name="lower">3</property>
+    <property name="upper">20</property>
+    <property name="value">8</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="a_thumblength">
+    <property name="lower">3</property>
+    <property name="upper">40</property>
+    <property name="value">15</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">0.5</property>
   </object>
   <object class="GtkAdjustment" id="a_thumbtabs">
     <property name="upper">100</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="a_thumbwidth">
-    <property name="upper">2</property>
-    <property name="value">0.80000000000000004</property>
-    <property name="step_increment">0.050000000000000003</property>
-    <property name="page_increment">0.5</property>
   </object>
   <object class="GtkAdjustment" id="a_topmarginfactor">
     <property name="upper">5</property>
@@ -1654,6 +1656,32 @@ in the Windows system.</property>
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="ls_rotateTabs">
+    <columns>
+      <!-- column-name OrientationDesc -->
+      <column type="gchararray"/>
+      <!-- column-name ndx -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Mirror: Bottom of text to edge</col>
+        <col id="1" translatable="yes">1</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Mirror: Top of text to edge</col>
+        <col id="1" translatable="yes">2</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Match: Bottom to Top</col>
+        <col id="1" translatable="yes">3</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Match: Top to Bottom</col>
+        <col id="1" translatable="yes">4</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="ls_scripts">
     <columns>
       <!-- column-name name -->
@@ -2689,7 +2717,7 @@ Configuration settings.</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">This is the overall margin setting. 
 Changing this will alter all others
-according to the factors set.</property>
+according to the factors set. (mm)</property>
                                         <property name="halign">end</property>
                                         <property name="label" translatable="yes">Margins:</property>
                                       </object>
@@ -9008,15 +9036,17 @@ from XeTeX processing.</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame">
+                        <property name="width_request">670</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">6</property>
                         <property name="margin_bottom">6</property>
                         <property name="label_xalign">0.019999999552965164</property>
                         <child>
-                          <object class="GtkGrid">
+                          <object class="GtkGrid" id="gr_thumbs">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
@@ -9026,11 +9056,11 @@ from XeTeX processing.</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">The length of the Thumb Tab measured in millimeters (mm).</property>
                                 <property name="halign">end</property>
                                 <property name="margin_left">6</property>
                                 <property name="margin_top">6</property>
-                                <property name="label" translatable="yes">Width
-Margin Factor:</property>
+                                <property name="label" translatable="yes">Length:</property>
                                 <property name="justify">right</property>
                               </object>
                               <packing>
@@ -9042,6 +9072,7 @@ Margin Factor:</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">The height of the Thumb Tab measured in millimeters (mm).</property>
                                 <property name="halign">end</property>
                                 <property name="label" translatable="yes">Height:</property>
                                 <property name="justify">right</property>
@@ -9055,13 +9086,14 @@ Margin Factor:</property>
                               <object class="GtkSpinButton" id="s_thumbheight">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="tooltip_text" translatable="yes">The height of the Thumb Tab measured in millimeters (mm).</property>
                                 <property name="halign">start</property>
-                                <property name="margin_right">6</property>
                                 <property name="width_chars">5</property>
                                 <property name="secondary_icon_tooltip_text" translatable="yes">Specifies the height of the tab in FontUnits. This value should be greater than the Font Size.</property>
                                 <property name="adjustment">a_thumbheight</property>
-                                <property name="climb_rate">1</property>
-                                <property name="value">14</property>
+                                <property name="climb_rate">0.10000000000000001</property>
+                                <property name="digits">1</property>
+                                <property name="value">6</property>
                                 <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                               </object>
                               <packing>
@@ -9073,6 +9105,7 @@ Margin Factor:</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">Size of the text inside the Thumb Tab in points (pts).</property>
                                 <property name="halign">end</property>
                                 <property name="margin_left">6</property>
                                 <property name="margin_bottom">6</property>
@@ -9088,9 +9121,8 @@ Margin Factor:</property>
                               <object class="GtkSpinButton" id="s_thumbfont">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="tooltip_text" translatable="yes">Size of the text inside the Thumb Tab in points (pts).</property>
                                 <property name="halign">start</property>
-                                <property name="margin_right">6</property>
-                                <property name="margin_bottom">6</property>
                                 <property name="width_chars">5</property>
                                 <property name="text" translatable="yes">12</property>
                                 <property name="secondary_icon_tooltip_text" translatable="yes">Font size of text in the thumb tab. Specify this as you would the font size in a stylesheet. Thus the value is multiplied by the FontUnits. The main body text size is usually 12.</property>
@@ -9107,14 +9139,13 @@ Margin Factor:</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">By default the Tabs will be white text on a black
-background, but you can change these settings.</property>
+                                <property name="tooltip_text" translatable="yes">Thumb Tabs usually use a dark colour for the Tab with a light (or white) text.</property>
                                 <property name="halign">end</property>
-                                <property name="label" translatable="yes">Background Colour:</property>
+                                <property name="label" translatable="yes">Tab Colour:</property>
                               </object>
                               <packing>
                                 <property name="left_attach">3</property>
-                                <property name="top_attach">1</property>
+                                <property name="top_attach">2</property>
                               </packing>
                             </child>
                             <child>
@@ -9123,39 +9154,24 @@ background, but you can change these settings.</property>
                                 <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">Overrides the colour in the stylesheet for toc3</property>
                                 <property name="halign">end</property>
-                                <property name="margin_bottom">6</property>
                                 <property name="label" translatable="yes">Text Colour:</property>
                                 <property name="justify">right</property>
                               </object>
                               <packing>
-                                <property name="left_attach">3</property>
+                                <property name="left_attach">5</property>
                                 <property name="top_attach">2</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkColorButton" id="col_thumbback">
+                                <property name="width_request">40</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">By default the Tabs will be white text on a black
-background, but you can change these settings.</property>
+                                <property name="tooltip_text" translatable="yes">Thumb Tabs usually use a dark colour for the Tab with a light (or white) text.</property>
+                                <property name="halign">start</property>
                                 <property name="title" translatable="yes">Thumb Tab Background Colour</property>
                                 <property name="rgba">rgb(0,0,0)</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">4</property>
-                                <property name="top_attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkColorButton" id="col_thumbtext">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">Overrides the colour in the stylesheet for toc3</property>
-                                <property name="margin_bottom">6</property>
-                                <property name="title" translatable="yes">Thumb Tab Text Colour</property>
-                                <property name="rgba">rgb(255,255,255)</property>
                               </object>
                               <packing>
                                 <property name="left_attach">4</property>
@@ -9163,44 +9179,29 @@ background, but you can change these settings.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">Groups adjacent books together into the same tab.</property>
-                                <property name="halign">end</property>
-                                <property name="margin_left">6</property>
-                                <property name="margin_top">6</property>
-                                <property name="label" translatable="yes">Grouped Tabs:</property>
-                                <property name="justify">right</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">3</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkEntry" id="t_thumbgroups">
+                              <object class="GtkColorButton" id="col_thumbtext">
+                                <property name="width_request">40</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="tooltip_text" translatable="yes">List book ids with spaces between. Use ; to separate groups. For example: PHM TIT; 1JN 2JN 3JN JUD</property>
-                                <property name="margin_top">6</property>
-                                <property name="placeholder_text" translatable="yes">PHM TIT; 1JN 2JN 3JN JUD</property>
+                                <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Overrides the colour in the stylesheet for toc3</property>
+                                <property name="halign">start</property>
+                                <property name="title" translatable="yes">Thumb Tab Text Colour</property>
+                                <property name="rgba">rgb(255,255,255)</property>
                               </object>
                               <packing>
-                                <property name="left_attach">4</property>
-                                <property name="top_attach">0</property>
-                                <property name="width">3</property>
+                                <property name="left_attach">6</property>
+                                <property name="top_attach">2</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="c_thumbrotate">
-                                <property name="label" translatable="yes">Rotate Tabs</property>
+                                <property name="label" translatable="yes">Rotate Tabs:</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">Rotates the tabs so that the text runs along the edge of the page. This works well for narrow margins, but may result in fewer tab positions per page. The Width becomes the height and the Height the width.</property>
+                                <property name="tooltip_text" translatable="yes">Rotates the tabs so that the text runs along the edge of the page. This works well for narrow margins, but may result in fewer tab positions per page.</property>
                                 <property name="halign">start</property>
-                                <property name="margin_top">6</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="toggled" handler="onNumTabsChanged" swapped="no"/>
                               </object>
@@ -9217,7 +9218,6 @@ background, but you can change these settings.</property>
                                 <property name="receives_default">False</property>
                                 <property name="tooltip_text" translatable="yes">Sets bold font. Often useful for white text on a black background. Overrides the default style setting for toc3.</property>
                                 <property name="halign">start</property>
-                                <property name="margin_bottom">6</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
@@ -9251,7 +9251,7 @@ Tab Positions:</property>
                                 <property name="justify">right</property>
                               </object>
                               <packing>
-                                <property name="left_attach">5</property>
+                                <property name="left_attach">4</property>
                                 <property name="top_attach">1</property>
                               </packing>
                             </child>
@@ -9262,14 +9262,15 @@ Tab Positions:</property>
                                 <property name="adjustment">a_thumbtabs</property>
                               </object>
                               <packing>
-                                <property name="left_attach">6</property>
+                                <property name="left_attach">5</property>
                                 <property name="top_attach">1</property>
+                                <property name="width">2</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="c_thumbrestart">
-                                <property name="label" translatable="yes">Restart at
-MAT</property>
+                                <property name="label" translatable="yes">Restart
+at MAT</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
@@ -9279,23 +9280,22 @@ MAT</property>
                               </object>
                               <packing>
                                 <property name="left_attach">6</property>
-                                <property name="top_attach">2</property>
+                                <property name="top_attach">3</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkSpinButton" id="s_thumbwidth">
+                              <object class="GtkSpinButton" id="s_thumblength">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="tooltip_text" translatable="yes">The length of the Thumb Tab measured in millimeters (mm).</property>
                                 <property name="halign">start</property>
-                                <property name="margin_right">6</property>
-                                <property name="margin_top">6</property>
                                 <property name="width_chars">5</property>
                                 <property name="progress_pulse_step">0</property>
                                 <property name="secondary_icon_tooltip_text" translatable="yes">Width of the tab in margin units. Best to be less than the Side margins factor in the Layout tab.</property>
-                                <property name="adjustment">a_thumbwidth</property>
-                                <property name="climb_rate">1</property>
-                                <property name="digits">2</property>
-                                <property name="value">0.80000000000000004</property>
+                                <property name="adjustment">a_thumblength</property>
+                                <property name="climb_rate">0.10000000000000001</property>
+                                <property name="digits">1</property>
+                                <property name="value">15</property>
                                 <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                               </object>
                               <packing>
@@ -9304,42 +9304,142 @@ MAT</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel">
+                              <object class="GtkLabel" id="l_thumbVerticalL">
                                 <property name="can_focus">False</property>
                                 <property name="no_show_all">True</property>
-                                <property name="halign">end</property>
+                                <property name="halign">start</property>
                                 <property name="margin_left">6</property>
-                                <property name="margin_right">6</property>
                                 <property name="label" translatable="yes">   Vertical   </property>
-                                <property name="angle">270</property>
+                                <property name="justify">right</property>
+                                <property name="angle">90</property>
                                 <attributes>
                                   <attribute name="weight" value="bold"/>
                                   <attribute name="scale" value="1.3999999999999999"/>
-                                  <attribute name="foreground" value="#fcfce9e94f4f"/>
-                                  <attribute name="background" value="#20204a4a8787"/>
+                                  <attribute name="foreground" value="#ffffffffffff"/>
+                                  <attribute name="background" value="#000000000000"/>
                                 </attributes>
                               </object>
                               <packing>
                                 <property name="left_attach">7</property>
                                 <property name="top_attach">1</property>
-                                <property name="height">2</property>
+                                <property name="height">3</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel">
+                              <object class="GtkLabel" id="l_thumbHorizontal">
                                 <property name="can_focus">False</property>
                                 <property name="no_show_all">True</property>
+                                <property name="halign">end</property>
                                 <property name="margin_left">6</property>
-                                <property name="margin_right">6</property>
-                                <property name="label" translatable="yes">Horizontal</property>
+                                <property name="label" translatable="yes">  Horizontal  </property>
+                                <property name="justify">right</property>
                                 <attributes>
                                   <attribute name="weight" value="bold"/>
+                                  <attribute name="scale" value="1.3999999999999999"/>
+                                  <attribute name="foreground" value="#ffffffffffff"/>
+                                  <attribute name="background" value="#2e2e34343636"/>
                                 </attributes>
                               </object>
                               <packing>
                                 <property name="left_attach">7</property>
                                 <property name="top_attach">0</property>
+                                <property name="width">3</property>
                               </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">Groups adjacent books together into the same tab.</property>
+                                <property name="halign">end</property>
+                                <property name="margin_top">6</property>
+                                <property name="label" translatable="yes">Grouped Tabs:</property>
+                                <property name="justify">right</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="t_thumbgroups">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="tooltip_text" translatable="yes">List book ids with spaces between. Use ; to separate groups. For example: PHM TIT; 1JN 2JN 3JN JUD</property>
+                                <property name="margin_top">6</property>
+                                <property name="margin_bottom">6</property>
+                                <property name="placeholder_text" translatable="yes">PHM TIT; 1JN 2JN 3JN JUD</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">3</property>
+                                <property name="width">5</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkComboBox" id="fcb_rotateTabs">
+                                <property name="width_request">280</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="can_default">True</property>
+                                <property name="halign">start</property>
+                                <property name="model">ls_rotateTabs</property>
+                                <property name="wrap_width">1</property>
+                                <property name="active">0</property>
+                                <property name="has_entry">True</property>
+                                <property name="entry_text_column">0</property>
+                                <property name="id_column">1</property>
+                                <child internal-child="entry">
+                                  <object class="GtkEntry">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="width_chars">15</property>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">0</property>
+                                <property name="width">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="l_thumbVerticalR">
+                                <property name="can_focus">False</property>
+                                <property name="no_show_all">True</property>
+                                <property name="halign">end</property>
+                                <property name="label" translatable="yes">   Vertical   </property>
+                                <property name="justify">right</property>
+                                <property name="angle">90</property>
+                                <attributes>
+                                  <attribute name="weight" value="bold"/>
+                                  <attribute name="scale" value="1.3999999999999999"/>
+                                  <attribute name="foreground" value="#ffffffffffff"/>
+                                  <attribute name="background" value="#000000000000"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="left_attach">9</property>
+                                <property name="top_attach">1</property>
+                                <property name="height">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="hexpand">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">8</property>
+                                <property name="top_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
                             </child>
                             <child>
                               <placeholder/>
@@ -9352,7 +9452,7 @@ MAT</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="tooltip_text" translatable="yes">Thumb tabs can be used in longer publications to help the user find a scripture book easier. These use the \toc3 element in a USFM file to provide the text for the tab. If you have no \toc3 elements, there is no point in enabling Thumb Tabs.</property>
+                            <property name="tooltip_text" translatable="yes">Thumb Tabs are sometimes used in longer publications to help the user find a scripture book easier. These use the \toc3 element in a USFM file to provide the text for the tab. If you have no \toc3 elements, there is no point in enabling Thumb Tabs.</property>
                             <property name="draw_indicator">True</property>
                             <signal name="clicked" handler="onTabsClicked" swapped="no"/>
                           </object>

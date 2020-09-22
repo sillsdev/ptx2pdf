@@ -137,8 +137,10 @@ _sensitivities = {
     "c_fakebold" :             ["s_boldembolden", "s_boldslant"],
     "c_fakeitalic" :           ["s_italicembolden", "s_italicslant"],
     "c_fakebolditalic" :       ["s_bolditalicembolden", "s_bolditalicslant"],
-    "c_thumbtabs":             ["s_thumbwidth", "s_thumbheight", "s_thumbfont", "c_thumbrotate", "c_thumbitalic",
-                                "c_thumbbold", "t_thumbgroups", "col_thumbback", "col_thumbtext", "s_thumbtabs", "c_thumbrestart"],
+    "c_thumbtabs":             ["gr_thumbs"],
+    "c_thumbrotate":           ["fcb_rotateTabs"],
+    # "c_thumbtabs":             ["s_thumblength", "s_thumbheight", "s_thumbfont", "c_thumbrotate", "c_thumbitalic",
+                                # "c_thumbbold", "t_thumbgroups", "col_thumbback", "col_thumbtext", "s_thumbtabs", "c_thumbrestart"],
 }
 # Checkboxes and the different objects they make (in)sensitive when toggled
 # These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
@@ -1771,3 +1773,6 @@ class GtkViewModel(ViewModel):
     def onNumTabsChanged(self, *a):
         if self.get("c_thumbtabs"):
             self.updateThumbLines()
+        self.builder.get_object("l_thumbVerticalL").set_visible(self.get("c_thumbrotate"))
+        self.builder.get_object("l_thumbVerticalR").set_visible(self.get("c_thumbrotate"))
+        self.builder.get_object("l_thumbHorizontal").set_visible(not self.get("c_thumbrotate"))

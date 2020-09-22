@@ -142,7 +142,7 @@ class PicList:
                     self.parent.updatePicChecks(val)       # only update checks if src exists
                     picframe = self.builder.get_object("fr_picPreview")
                     rect = picframe.get_allocation()
-                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(e['src path'], rect.width, rect.height)
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(e['src path'], rect.width - 6, rect.height - 6)
                     pic.set_from_pixbuf(pixbuf)
                     picc.set_from_pixbuf(pixbuf)
                 else:
