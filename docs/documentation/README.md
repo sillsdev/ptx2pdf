@@ -274,7 +274,7 @@ Literal text can also be included (e.g., to add dashes around a centered page nu
 *   \PageResetCallers{```f```} – Restart numbering for the notes class on each page (specify f _or_ x)
 *   \OmitCallerInNote{```x```} – To omit callers from the note class at the bottom of the page (specify f _or_ x)
 *   \ParagraphedNotes{```x```} – Format the note class as a single paragraph, with larger space between note items (specify f _or_ x)
-*   \NoteCallerWidth=```1.2ex``` - Adjust 'standard' width of a footnote-caller. A small amount of space is added to narrow callers, padding them to this width, so that they align nicely in the footer. Wider callers take their natural size, without any padding. (default ```1ex```) (Control added 22 Sept. 2020)
+*   \NoteCallerWidth=```1.2ex``` - Adjust 'standard' width of a footnote-caller in notes area. A small amount of space is added to narrow callers, padding them to a centered space of this width, so that they and their note text align nicely in the footer. Wider callers take their natural size, without any padding. (default ```1ex```) (Control added 22 Sept. 2020)
 
 _For now_, if you want to change the appearance of (or remove) the footnote rule, redefine \def\footnoterule
 
