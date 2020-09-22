@@ -1499,6 +1499,10 @@ in the Windows system.</property>
         <col id="0" translatable="yes">Outer</col>
         <col id="1">o</col>
       </row>
+      <row>
+        <col id="0" translatable="yes">-</col>
+        <col id="1" translatable="yes"/>
+      </row>
     </data>
   </object>
   <object class="GtkListStore" id="ls_plMirror">
@@ -1576,7 +1580,7 @@ in the Windows system.</property>
         <col id="1">span</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Page (to Margins)</col>
+        <col id="0" translatable="yes">Page (in Margins)</col>
         <col id="1">page</col>
       </row>
       <row>
@@ -9494,7 +9498,8 @@ at MAT</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="tooltip_text" translatable="yes">Thumb Tabs are sometimes used in longer publications to help the user find a scripture book easier. These use the \toc3 element in a USFM file to provide the text for the tab. If you have no \toc3 elements, there is no point in enabling Thumb Tabs.</property>
+                            <property name="tooltip_text" translatable="yes">Thumb Tabs are sometimes used in longer publications to help the user find a scripture book easier. These use the \toc3 element in a USFM file to provide the text for the tab. If you have no \toc3 elements, there is no point in enabling Thumb Tabs.
+Note: If only a single book is currently selected, it will place the Thumb Tab relative to ALL the books listed in the multiple book list.</property>
                             <property name="draw_indicator">True</property>
                             <signal name="clicked" handler="onTabsClicked" swapped="no"/>
                           </object>
@@ -10935,10 +10940,11 @@ Ref:</property>
                                                         </child>
                                                         <child>
                                                           <object class="GtkEntry" id="t_plRef">
-                                                            <property name="width_request">80</property>
+                                                            <property name="width_request">91</property>
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
-                                                            <property name="width_chars">10</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="width_chars">8</property>
                                                           </object>
                                                           <packing>
                                                             <property name="left_attach">6</property>
@@ -10981,7 +10987,7 @@ Ref:</property>
                                                           <packing>
                                                             <property name="left_attach">3</property>
                                                             <property name="top_attach">0</property>
-                                                            <property name="width">2</property>
+                                                            <property name="width">3</property>
                                                           </packing>
                                                         </child>
                                                         <child>
@@ -11056,8 +11062,8 @@ Attribution:</property>
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
                                                             <property name="halign">end</property>
-                                                            <property name="label" translatable="yes">Position
-on Page:</property>
+                                                            <property name="label" translatable="yes">Vertical
+Position:</property>
                                                             <property name="justify">right</property>
                                                           </object>
                                                           <packing>
@@ -11071,6 +11077,7 @@ on Page:</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="halign">start</property>
                                                             <property name="text">100</property>
+                                                            <property name="progress_pulse_step">0</property>
                                                             <property name="adjustment">a_plScale</property>
                                                             <property name="value">100</property>
                                                           </object>
@@ -11091,11 +11098,11 @@ on Page:</property>
                                                             <property name="has_entry">True</property>
                                                             <property name="entry_text_column">0</property>
                                                             <property name="id_column">1</property>
+                                                            <signal name="changed" handler="onPLpgPosChanged" swapped="no"/>
                                                             <child internal-child="entry">
                                                             <object class="GtkEntry">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
-                                                            <property name="halign">start</property>
                                                             <property name="width_chars">15</property>
                                                             </object>
                                                             </child>
@@ -11117,11 +11124,11 @@ on Page:</property>
                                                             <property name="has_entry">True</property>
                                                             <property name="entry_text_column">0</property>
                                                             <property name="id_column">1</property>
+                                                            <signal name="changed" handler="onPLsizeChanged" swapped="no"/>
                                                             <child internal-child="entry">
                                                             <object class="GtkEntry">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
-                                                            <property name="halign">start</property>
                                                             <property name="width_chars">15</property>
                                                             </object>
                                                             </child>
@@ -11160,7 +11167,6 @@ Position:</property>
                                                             <object class="GtkEntry">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
-                                                            <property name="halign">start</property>
                                                             <property name="width_chars">6</property>
                                                             </object>
                                                             </child>
@@ -11198,7 +11204,6 @@ Position:</property>
                                                             <object class="GtkEntry">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
-                                                            <property name="halign">start</property>
                                                             <property name="width_chars">6</property>
                                                             </object>
                                                             </child>
@@ -11206,39 +11211,51 @@ Position:</property>
                                                           <packing>
                                                             <property name="left_attach">6</property>
                                                             <property name="top_attach">1</property>
+                                                            <property name="width">2</property>
                                                           </packing>
                                                         </child>
                                                         <child>
-                                                          <object class="GtkLabel">
+                                                          <object class="GtkLabel" id="l_plOffsetNum">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
                                                             <property name="halign">end</property>
-                                                            <property name="label" translatable="yes"># of
-lines:</property>
+                                                            <property name="label" translatable="yes">Number of
+Lines:</property>
                                                             <property name="justify">right</property>
                                                           </object>
                                                           <packing>
                                                             <property name="left_attach">4</property>
                                                             <property name="top_attach">2</property>
+                                                            <property name="width">2</property>
                                                           </packing>
                                                         </child>
                                                         <child>
                                                           <object class="GtkSpinButton" id="s_plLines">
-                                                            <property name="width_request">135</property>
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
+                                                            <property name="halign">start</property>
                                                             <property name="max_length">3</property>
                                                             <property name="width_chars">3</property>
-                                                            <property name="text">-24</property>
+                                                            <property name="text">3</property>
+                                                            <property name="progress_pulse_step">0</property>
                                                             <property name="adjustment">a_plLines</property>
                                                             <property name="climb_rate">1</property>
                                                             <property name="value">-24</property>
                                                           </object>
                                                           <packing>
-                                                            <property name="left_attach">5</property>
+                                                            <property name="left_attach">6</property>
                                                             <property name="top_attach">2</property>
                                                             <property name="width">2</property>
                                                           </packing>
+                                                        </child>
+                                                        <child>
+                                                          <placeholder/>
+                                                        </child>
+                                                        <child>
+                                                          <placeholder/>
+                                                        </child>
+                                                        <child>
+                                                          <placeholder/>
                                                         </child>
                                                         <child>
                                                           <placeholder/>

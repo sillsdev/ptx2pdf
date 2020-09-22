@@ -166,6 +166,16 @@ _object_classes = {
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
+    "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
+}
+
+    # "Center": "c", 
+_pgpos = {
+    "Top": "t", 
+    "Bottom": "b", 
+    "Before Verse": "h",
+    "After Paragraph": "p",
+    "Cutout": "c"
 }
 
 _notebooks = ("Main", "Viewer", "PicList")
@@ -284,7 +294,8 @@ class GtkViewModel(ViewModel):
             .mainnb {background-color: #F0F0F0}
             .mainnb tab {min-height: 0pt; margin: 0pt; padding-bottom: 15pt}
             .viewernb {background-color: #F0F0F0}
-            .viewernb tab {min-height: 0pt; margin: 0pt; padding-bottom: 3pt} """
+            .viewernb tab {min-height: 0pt; margin: 0pt; padding-bottom: 3pt}
+            .thumbtabs {background-color: #F0F0F0} """
         provider = Gtk.CssProvider()
         provider.load_from_data(css.encode("utf-8"))
         Gtk.StyleContext().add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
@@ -1788,8 +1799,52 @@ class GtkViewModel(ViewModel):
         
     def onThumbColourChange(self, *a):
         print("Background colour is:")
-        
+        # makeITred = """
+# <attributes>
+# <attribute name="weight" value="PANGO_WEIGHT_BOLD"/>
+# <attribute name="background" value="red"/>
+# </attributes>
+# """
+        # self.builder.get_object("l_thumbVerticalL").set_markup(makeITred)        
+
     def onRotateTabsChanged(self, *a):
         orientation = self.get("fcb_rotateTabs")
         self.builder.get_object("l_thumbVerticalL").set_angle(_vertical_thumb[orientation][0])
         self.builder.get_object("l_thumbVerticalR").set_angle(_vertical_thumb[orientation][1])
+
+    def onPLsizeChanged(self, *a):
+        size = self.get("fcb_plSize")
+        if size in ["col", "span"]:
+            self._updatePgPosOptions()
+            # if self.get("fcb_plPgPos") in ["P", "F"]:
+                # self.builder.get_object("fcb_plPgPos").set_active_id("t")
+            # for w in ["fcb_plPgPos", "fcb_plHoriz", "s_plLines"]:
+                # self.builder.get_object(w).set_sensitive(True)
+        elif size in ["page", "full"]:
+            self._updatePgPosOptions(fullpage=size)
+            # for w in ["fcb_plPgPos", "fcb_plHoriz", "s_plLines"]:
+                # self.builder.get_object(w).set_sensitive(False)
+
+    def onPLpgPosChanged(self, *a):
+        pgpos = self.get("fcb_plPgPos")
+        self.builder.get_object("l_plOffsetNum").set_label("Number of\nlines:")
+        # if pgpos == "P":
+            # self.builder.get_object("fcb_plSize").set_active_id("page")
+        # elif pgpos == "F":
+            # self.builder.get_object("fcb_plSize").set_active_id("full")
+        if pgpos == "p":
+            self.builder.get_object("l_plOffsetNum").set_label("Number of\nparagraphs:")
+
+    def _updatePgPosOptions(self, fullpage=""):
+        lsp = self.builder.get_object("ls_plPgPos")
+        fcb = self.builder.get_object("fcb_plPgPos")
+        lsp.clear()
+        if len(fullpage):
+            for posn in ["Top", "Center", "Bottom"]:
+                lsp.append([posn, "{}{}".format(fullpage[:1].upper(), posn[:1].lower())])
+            fcb.set_active(1)
+        else:
+            for posn in _pgpos.keys():
+                lsp.append([posn, _pgpos[posn]])
+            fcb.set_active(0)
+ 

@@ -3,7 +3,7 @@ from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.view import refKey, newBase
 from gi.repository import Gtk, GdkPixbuf
 import configparser
-import os
+import os, regex
 
 
 _piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copyright", "mirror"]
@@ -120,6 +120,7 @@ class PicList:
         res = "".join(self.get(k, default="") for k in _comblist[:-1])
         if res.startswith("c"):
             res += str(self.get(_comblist[-1]))
+        res = regex.sub(r'([PF])([tcb])([lcr])', r'\1\3\2', res).strip("c") 
         return res
 
     def item_changed(self, w, key):
@@ -142,7 +143,7 @@ class PicList:
                     self.parent.updatePicChecks(val)       # only update checks if src exists
                     picframe = self.builder.get_object("fr_picPreview")
                     rect = picframe.get_allocation()
-                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(e['src path'], rect.width - 6, rect.height - 6)
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(e['src path'], rect.width - 12, rect.height)
                     pic.set_from_pixbuf(pixbuf)
                     picc.set_from_pixbuf(pixbuf)
                 else:
