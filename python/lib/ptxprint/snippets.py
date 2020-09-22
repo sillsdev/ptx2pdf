@@ -437,21 +437,22 @@ class ThumbTabs(Snippet):
         texlines.append("\\def\\tabBoxCol{{{}}}".format(bcol))
         texlines.append("\\def\\tabFontCol{{{}}}".format(fcol))
         try:
-            height = float(model["thumbtabs/height"]) * float(model["paper/fontfactor"])    # in pt
+            height = float(model["thumbtabs/height"])
         except (ValueError, TypeError):
-            height = 15.
+            height = 8.
 
         try:
-            width = float(model["thumbtabs/widthfactor"]) * float(model["paper/sidemarginfactor"]) \
-                    * float(model["paper/margins"])                                         # in mm
+            width = float(model["thumbtabs/length"])
         except (ValueError, TypeError):
-            width = 16.
+            width = 15.
         rotate = model["thumbtabs/rotate"]
         texlines.append("\\TabAutoRotatefalse")
         texlines.append("\\TabRotationNormal{}".format("false" if rotate else "true"))
         if rotate:
-            texlines.append("\\TabTopToEdgeOddtrue\\TabTopToEdgeEventrue")
-        texlines.append("\\tab{}={:.2f}pt".format("width" if rotate else "height", height))
+            rottype = int(model["thumbtabs/rotatetype"]) - 1
+            texlines.append("\\TabTopToEdgeOdd{}".format("true" if rottype & 1 else "false"))
+            texlines.append("\\TabTopToEdgeEven{}".format("true" if 0 < rottype < 3 else "false"))
+        texlines.append("\\tab{}={:.2f}mm".format("width" if rotate else "height", height))
         texlines.append("\\tab{}={:.2f}mm".format("height" if rotate else "width", width))
         return "\n".join(texlines)
 
