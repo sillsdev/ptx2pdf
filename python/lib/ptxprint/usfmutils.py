@@ -5,7 +5,7 @@ from collections import namedtuple
 
 RefRange = namedtuple("RefRange", ["fromc", "fromv", "toc", "tov"])
 
-class _Reference(sfm.position):
+class _Reference(sfm.Position):
     def __new__(cls, pos, ref):
         p = super().__new__(cls, *pos)
         p.book = ref[0]
@@ -40,7 +40,7 @@ class Usfm:
             return
         ref = [None] * 3
         def _g(_, e):
-            if isinstance(e, sfm.element):
+            if isinstance(e, sfm.Element):
                 if e.name == 'id':
                     ref[0] = str(e[0]).split()[0]
                 elif e.name == 'c':
@@ -105,20 +105,20 @@ class Usfm:
         def ensurenl(i, e):
             ''' Ensure element ends with a newline, if not already present.
                 Passed index in parent and element. '''
-            if isinstance(e, sfm.element):
+            if isinstance(e, sfm.Element):
                 if len(e):
                     ensurenl(len(e)-1, e[-1])
                 else:
-                    e.append(sfm.text("\n", e.pos, e.parent))
+                    e.append(sfm.Text("\n", e.pos, e.parent))
                     return True
             elif not e.endswith("\n"):
-                e.parent.insert(i+1, sfm.text("\n", e.pos, e.parent))
+                e.parent.insert(i+1, sfm.Text("\n", e.pos, e.parent))
                 return True
             return False
         def ge(i, e):
             ''' Iterate document allowing in place editing '''
             res = False
-            if isinstance(e, sfm.element):
+            if isinstance(e, sfm.Element):
                 if ispara(e) or e.name == "v":
                     if i > 0:
                         res = ensurenl(i-1, e.parent[i-1])

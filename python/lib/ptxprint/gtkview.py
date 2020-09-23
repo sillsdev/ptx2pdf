@@ -1798,14 +1798,18 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("l_thumbHorizontalR").set_visible(not self.get("c_thumbrotate"))
         
     def onThumbColourChange(self, *a):
-        print("Background colour is:")
-        # makeITred = """
-# <attributes>
-# <attribute name="weight" value="PANGO_WEIGHT_BOLD"/>
-# <attribute name="background" value="red"/>
-# </attributes>
-# """
-        # self.builder.get_object("l_thumbVerticalL").set_markup(makeITred)        
+        def coltohex(s):
+            vals = s[s.find("(")+1:-1].split(",")
+            h = "#"+"".join("{:02x}".format(int(x)) for x in vals)
+            return h
+
+        bcol = coltohex(self.get("col_thumbback"))
+        fcol = coltohex(self.get("col_thumbtext"))
+        markup = '<span background="{}" foreground="{}" font-weight="bold">  {{}}  </span>'.format(bcol, fcol)
+        for w in ("VerticalL", "VerticalR", "HorizontalL", "HorizontalR"):
+            wid = self.builder.get_object("l_thumb"+w)
+            wid.set_text(markup.format(w[:-1]))
+            wid.set_use_markup(True)
 
     def onRotateTabsChanged(self, *a):
         orientation = self.get("fcb_rotateTabs")

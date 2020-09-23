@@ -22,16 +22,15 @@ __history__ = '''
 from .. import sfm
 from functools import partial, reduce
 from itertools import chain
-from . import level
 from typing import NamedTuple, Mapping
 
 
-class schema(NamedTuple):
+class Schema(NamedTuple):
     start: str
     fields: Mapping
 
 
-_schema = schema
+_schema = Schema
 
 
 def flag(v):
@@ -75,11 +74,11 @@ class ErrorLevel(object):
         return el
 
 
-NoteError = partial(ErrorLevel, level.Note)
-MarkerError = partial(ErrorLevel, level.Marker)
-ContentError = partial(ErrorLevel, level.Content)
-StructureError = partial(ErrorLevel, level.Structure)
-UnrecoverableError = partial(ErrorLevel, level.Unrecoverable)
+NoteError = partial(ErrorLevel, sfm.ErrorLevel.Note)
+MarkerError = partial(ErrorLevel, sfm.ErrorLevel.Marker)
+ContentError = partial(ErrorLevel, sfm.ErrorLevel.Content)
+StructureError = partial(ErrorLevel, sfm.ErrorLevel.Structure)
+UnrecoverableError = partial(ErrorLevel, sfm.ErrorLevel.Unrecoverable)
 
 
 class parser(sfm.parser):
@@ -93,14 +92,14 @@ class parser(sfm.parser):
     ...          \\Bold"""
     >>> with warnings.catch_warnings():
     ...     warnings.simplefilter("ignore")
-    ...     pprint(list(parser(doc.splitlines(True), schema('Marker',{}))))
+    ...     pprint(list(parser(doc.splitlines(True), Schema('Marker',{}))))
     [{},
      {'Bold': '',
-      'FontSize': text('12'),
-      'Marker': text('toc1'),
-      'Name': text('toc1 - File - Long Table of Contents Text'),
-      'OccursUnder': text('h h1 h2 h3')}]
-    >>> demo_schema = schema('Marker',
+      'FontSize': Text('12'),
+      'Marker': Text('toc1'),
+      'Name': Text('toc1 - File - Long Table of Contents Text'),
+      'OccursUnder': Text('h h1 h2 h3')}]
+    >>> demo_schema = Schema('Marker',
     ...     {'Marker' : (str, UnrecoverableError(
     ...                         'Start of record marker: {0} missing')),
     ...      'Name'   : (str, StructureError(
@@ -150,9 +149,9 @@ class parser(sfm.parser):
     ...
     SyntaxError: <string>: line 1,1: Marker toc1 defintion missing: Name
     '''
-    def __init__(self, source, schema, error_level=level.Content):
+    def __init__(self, source, schema, error_level=sfm.ErrorLevel.Content):
         if not isinstance(schema, _schema):
-            raise TypeError(f"arg 2 must a \'schema\' not {schema!r}")
+            raise TypeError(f"arg 2 must a \'Schema\' not {schema!r}")
         self._mapping_type = type(schema.fields)
         self._schema = schema
         default_meta = self._mapping_type(super().default_meta)
@@ -180,19 +179,20 @@ class parser(sfm.parser):
             try:
                 field = (m.name, valuator[0](m[0].rstrip() if m else ''))
             except Exception as err:
-                self._error(level.Content, str(getattr(err, 'msg', err)), m)
+                self._error(sfm.ErrorLevel.Content,
+                            str(getattr(err, 'msg', err)), m)
                 field = (m.name, valuator[1])
             if m.name == start:
                 val = field[1]
                 if isinstance(val, ErrorLevel):
                     self._error(val.level, val.msg, m, m.name)
                     field = (m.name, '')
-                db.append(sfm.element(field[1], m.pos, content=[field]))
+                db.append(sfm.Element(field[1], m.pos, content=[field]))
             else:
                 db[-1].append(field)
             return db
 
         es = super().__iter__()
-        fs = filter(lambda v: isinstance(v, sfm.element), es)
-        fgs = reduce(accum, fs, [sfm.element('header')])
+        fs = filter(lambda v: isinstance(v, sfm.Element), es)
+        fgs = reduce(accum, fs, [sfm.Element('header')])
         return chain((dict(fgs[0]),), map(record, fgs[1:]))

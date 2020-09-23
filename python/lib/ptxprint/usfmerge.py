@@ -101,7 +101,7 @@ class Collector:
         if len(self.acc) == 0:
             currChunk = self.makeChunk()
         for c in root[:]:
-            if not isinstance(c, sfm.element):
+            if not isinstance(c, sfm.Element):
                 continue
             if c.name == "fig":
                 if self.fsecondary == primary:

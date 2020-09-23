@@ -18,10 +18,10 @@ __email__ = "tim_eves@sil.org"
 
 import re
 
-from . import records
+from . import records, ErrorLevel
 import warnings
 from collections import abc
-from .records import sequence, unique, level
+from .records import sequence, unique
 from .records import UnrecoverableError
 
 
@@ -97,7 +97,7 @@ _fields = marker({
 })
 
 
-def parse(source, error_level=level.Content):
+def parse(source, error_level=ErrorLevel.Content):
     '''
     >>> from pprint import pprint
     >>> r = parse(r"""
@@ -160,10 +160,10 @@ def parse(source, error_level=level.Content):
 
     with warnings.catch_warnings():
         warnings.simplefilter(
-            "always" if error_level > level.Content else "ignore")
+            "always" if error_level > ErrorLevel.Content else "ignore")
         rec_parser = records.parser(
                         no_comments,
-                        records.schema('Marker', _fields),
+                        records.Schema('Marker', _fields),
                         error_level=error_level)
         rec_parser.source = getattr(source, 'name', '<string>')
         recs = iter(rec_parser)
@@ -176,7 +176,7 @@ def parse(source, error_level=level.Content):
 def _reify(sheet):
     for r in sheet.values():
         for f, v in r.items():
-            if isinstance(v, records.sfm.text):
+            if isinstance(v, records.sfm.Text):
                 r[f] = str(v)
 
 

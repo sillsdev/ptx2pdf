@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 
+<!-- Generated with glade 3.22.2 
 
 The MIT License (MIT)
 
@@ -9173,6 +9173,7 @@ from XeTeX processing.</property>
                                 <property name="halign">start</property>
                                 <property name="title" translatable="yes">Thumb Tab Background Colour</property>
                                 <property name="rgba">rgb(0,0,0)</property>
+                                <signal name="color-set" handler="onThumbColourChange" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">4</property>
@@ -9313,15 +9314,10 @@ at MAT</property>
                                 <property name="halign">start</property>
                                 <property name="valign">start</property>
                                 <property name="margin_left">6</property>
-                                <property name="label" translatable="yes">  Vertical  </property>
+                                <property name="label" translatable="yes">&lt;span background="black" foreground="white" font-weight="bold"&gt;  Vertical  &lt;/span&gt;</property>
+                                <property name="use_markup">True</property>
                                 <property name="justify">right</property>
                                 <property name="angle">90</property>
-                                <attributes>
-                                  <attribute name="weight" value="bold"/>
-                                  <attribute name="scale" value="1.2"/>
-                                  <attribute name="foreground" value="#ffffffffffff"/>
-                                  <attribute name="background" value="#000000000000"/>
-                                </attributes>
                               </object>
                               <packing>
                                 <property name="left_attach">6</property>
@@ -9335,14 +9331,9 @@ at MAT</property>
                                 <property name="no_show_all">True</property>
                                 <property name="halign">end</property>
                                 <property name="margin_left">6</property>
-                                <property name="label" translatable="yes"> Horizontal </property>
+                                <property name="label" translatable="yes">&lt;span background="black" foreground="white" font-weight="bold"&gt;  Horizontal  &lt;/span&gt;</property>
+                                <property name="use_markup">True</property>
                                 <property name="justify">right</property>
-                                <attributes>
-                                  <attribute name="weight" value="bold"/>
-                                  <attribute name="scale" value="1.2"/>
-                                  <attribute name="foreground" value="#ffffffffffff"/>
-                                  <attribute name="background" value="#2e2e34343636"/>
-                                </attributes>
                               </object>
                               <packing>
                                 <property name="left_attach">5</property>
@@ -9412,15 +9403,10 @@ at MAT</property>
                                 <property name="no_show_all">True</property>
                                 <property name="halign">end</property>
                                 <property name="valign">start</property>
-                                <property name="label" translatable="yes">  Vertical  </property>
+                                <property name="label" translatable="yes">&lt;span background="black" foreground="white" font-weight="bold"&gt;  Vertical  &lt;/span&gt;</property>
+                                <property name="use_markup">True</property>
                                 <property name="justify">right</property>
                                 <property name="angle">90</property>
-                                <attributes>
-                                  <attribute name="weight" value="bold"/>
-                                  <attribute name="scale" value="1.2"/>
-                                  <attribute name="foreground" value="#ffffffffffff"/>
-                                  <attribute name="background" value="#000000000000"/>
-                                </attributes>
                               </object>
                               <packing>
                                 <property name="left_attach">9</property>
@@ -9434,6 +9420,7 @@ at MAT</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="hexpand">True</property>
+                                <property name="use_markup">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">8</property>
@@ -9446,14 +9433,9 @@ at MAT</property>
                                 <property name="can_focus">False</property>
                                 <property name="no_show_all">True</property>
                                 <property name="halign">start</property>
-                                <property name="label" translatable="yes"> Horizontal </property>
+                                <property name="label" translatable="yes">&lt;span background="black" foreground="white" font-weight="bold"&gt;  Horizontal  &lt;/span&gt;</property>
+                                <property name="use_markup">True</property>
                                 <property name="justify">right</property>
-                                <attributes>
-                                  <attribute name="weight" value="bold"/>
-                                  <attribute name="scale" value="1.2"/>
-                                  <attribute name="foreground" value="#ffffffffffff"/>
-                                  <attribute name="background" value="#2e2e34343636"/>
-                                </attributes>
                               </object>
                               <packing>
                                 <property name="left_attach">6</property>

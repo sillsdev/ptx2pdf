@@ -13,7 +13,7 @@ import warnings
 from functools import reduce
 
 
-class handler(object):
+class Handler(object):
     def __init__(self):
         self.errors = []
 

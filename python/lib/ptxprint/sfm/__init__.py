@@ -36,12 +36,12 @@ from functools import reduce
 from typing import NamedTuple
 
 __all__ = ('usfm',                                            # Sub modules
-           'position', 'element', 'text', 'level', 'parser',  # data types
+           'Position', 'Element', 'Text', 'ErrorLevel', 'parser',  # data types
            'sreduce', 'smap', 'sfilter', 'mpath',
            'text_properties', 'format', 'copy')               # functions
 
 
-class position(NamedTuple):
+class Position(NamedTuple):
     line: int
     col: int
 
@@ -50,35 +50,35 @@ class position(NamedTuple):
         return f'line {self.line},{self.col}'
 
 
-class element(list):
+class Element(list):
     """
     An sequence type representing a marker and it's child nodes which may
     consist of more elements or text nodes. It contains metadata describing how
     it was parsed and an annotations mapping to allow the parser or further
     processing steps to attach notes or data to it.
 
-    >>> element('marker')
-    element('marker')
+    >>> Element('marker')
+    Element('marker')
 
-    >>> str(element('marker'))
+    >>> str(Element('marker'))
     '\\\\marker'
 
-    >>> str(element('marker', args=['1','2']))
+    >>> str(Element('marker', args=['1','2']))
     '\\\\marker 1 2'
 
-    >>> e = element('marker', args=['1'],
-    ...             content=[text('some text '),
-    ...                      element('marker2',
-    ...                              content=[text('more text\\n')]),
-    ...                      element('blah',content=[text('\\n')]),
-    ...                      element('blah',content=[text('\\n')]),
-    ...                      element('yak', args=['yak'])])
+    >>> e = Element('marker', args=['1'],
+    ...             content=[Text('some text '),
+    ...                      Element('marker2',
+    ...                              content=[Text('more text\\n')]),
+    ...                      Element('blah',content=[Text('\\n')]),
+    ...                      Element('blah',content=[Text('\\n')]),
+    ...                      Element('yak', args=['yak'])])
     >>> len(e)
     5
     >>> e.name
     'marker'
     >>> e.pos
-    position(line=1, col=1)
+    Position(line=1, col=1)
     >>> e.meta
     {}
     >>> print(str(e))
@@ -86,15 +86,15 @@ class element(list):
     \\blah
     \\blah
     \\yak yak
-    >>> element('marker') == element('marker')
+    >>> Element('marker') == Element('marker')
     True
-    >>> element('marker') == element('different')
+    >>> Element('marker') == Element('different')
     False
     """
     # __slots__ = ('pos', 'name', 'args', 'parent', 'meta', 'annotations')
 
     def __init__(self, name,
-                 pos=position(1, 1),
+                 pos=Position(1, 1),
                  args=[],
                  parent=None,
                  meta={},
@@ -118,10 +118,10 @@ class element(list):
         args = [repr(self.name)] \
             + (self.args and [f'args={self.args!r}']) \
             + (self and [f'content={super().__repr__()}'])
-        return f"element({', '.join(args)!s})"
+        return f"Element({', '.join(args)!s})"
 
     def __eq__(self, rhs):
-        if not isinstance(rhs, element):
+        if not isinstance(rhs, Element):
             return False
         return (self.name == rhs.name
                 and self.args == rhs.args
@@ -147,57 +147,57 @@ class element(list):
         return sep.join([marker, body])
 
 
-class text(str):
+class Text(str):
     '''
     An extended string type that tracks position and
     parent/child relationship.
 
     >>> from pprint import pprint
-    >>> text('a test')
-    text('a test')
+    >>> Text('a test')
+    Text('a test')
 
-    >>> text('prefix ',position(3,10)).pos, text('suffix',position(1,6)).pos
-    (position(line=3, col=10), position(line=1, col=6))
+    >>> Text('prefix ',Position(3,10)).pos, Text('suffix',Position(1,6)).pos
+    (Position(line=3, col=10), Position(line=1, col=6))
 
-    >>> t = text('prefix ',position(3,10)) + text('suffix',position(1,6))
+    >>> t = Text('prefix ',Position(3,10)) + Text('suffix',Position(1,6))
     >>> t, t.pos
-    (text('prefix suffix'), position(line=3, col=10))
+    (Text('prefix suffix'), Position(line=3, col=10))
 
-    >>> t = text('a few short words')[12:]
+    >>> t = Text('a few short words')[12:]
     >>> t, t.pos
-    (text('words'), position(line=1, col=13))
+    (Text('words'), Position(line=1, col=13))
 
-    >>> t = text('   yuk spaces   ').lstrip()
+    >>> t = Text('   yuk spaces   ').lstrip()
     >>> t, t.pos
-    (text('yuk spaces   '), position(line=1, col=4))
+    (Text('yuk spaces   '), Position(line=1, col=4))
 
-    >>> t = text('   yuk spaces   ').rstrip()
+    >>> t = Text('   yuk spaces   ').rstrip()
     >>> t, t.pos
-    (text('   yuk spaces'), position(line=1, col=1))
+    (Text('   yuk spaces'), Position(line=1, col=1))
 
-    >>> text('   yuk spaces   ').strip()
-    text('yuk spaces')
+    >>> Text('   yuk spaces   ').strip()
+    Text('yuk spaces')
 
-    >>> pprint([(t,t.pos) for t in text('a few short words').split(' ')])
-    [(text('a'), position(line=1, col=1)),
-     (text('few'), position(line=1, col=3)),
-     (text('short'), position(line=1, col=7)),
-     (text('words'), position(line=1, col=13))]
+    >>> pprint([(t,t.pos) for t in Text('a few short words').split(' ')])
+    [(Text('a'), Position(line=1, col=1)),
+     (Text('few'), Position(line=1, col=3)),
+     (Text('short'), Position(line=1, col=7)),
+     (Text('words'), Position(line=1, col=13))]
 
-    >>> list(map(str, text('a few short words').split(' ')))
+    >>> list(map(str, Text('a few short words').split(' ')))
     ['a', 'few', 'short', 'words']
 
-    >>> t=text.concat([text('a ', pos=position(line=1, col=1)),
-    ...                text('few ', pos=position(line=1, col=3)),
-    ...                text('short ', pos=position(line=1, col=7)),
-    ...                text('words', pos=position(line=1, col=13))])
+    >>> t=Text.concat([Text('a ', pos=Position(line=1, col=1)),
+    ...                Text('few ', pos=Position(line=1, col=3)),
+    ...                Text('short ', pos=Position(line=1, col=7)),
+    ...                Text('words', pos=Position(line=1, col=13))])
     >>> t, t.pos
-    (text('a few short words'), position(line=1, col=1))
+    (Text('a few short words'), Position(line=1, col=1))
     '''
-    def __new__(cls, content, pos=position(1, 1), parent=None):
+    def __new__(cls, content, pos=Position(1, 1), parent=None):
         return super().__new__(cls, content)
 
-    def __init__(self, content, pos=position(1, 1), parent=None):
+    def __init__(self, content, pos=Position(1, 1), parent=None):
         self.pos = pos
         self.parent = parent
 
@@ -205,7 +205,7 @@ class text(str):
     def concat(iterable):
         i = iter(iterable)
         h = next(i)
-        return text(''.join(chain([h], i)), h.pos, h.parent)
+        return Text(''.join(chain([h], i)), h.pos, h.parent)
 
     def split(self, sep=None, maxsplit=-1):
         sep = sep or ' '
@@ -215,8 +215,8 @@ class text(str):
             e = tail.find(sep)
             if e == -1:
                 result.append(tail)
-                tail = text('',
-                            position(self.pos.line, self.pos.col+len(tail)),
+                tail = Text('',
+                            Position(self.pos.line, self.pos.col+len(tail)),
                             self.parent)
                 break
             result.append(tail[:e])
@@ -229,28 +229,28 @@ class text(str):
     def lstrip(self, *args, **kwds):
         n = len(self)
         s_ = super().lstrip(*args, **kwds)
-        return text(s_,
-                    position(self.pos.line, self.pos.col + n-len(s_)),
+        return Text(s_,
+                    Position(self.pos.line, self.pos.col + n-len(s_)),
                     self.parent)
 
     def rstrip(self, *args, **kwds):
         s_ = super().rstrip(*args, **kwds)
-        return text(s_, self.pos, self.parent)
+        return Text(s_, self.pos, self.parent)
 
     def strip(self, *args, **kwds):
         return self.lstrip(*args, **kwds).rstrip(*args, **kwds)
 
     def __repr__(self):
-        return f'text({super().__repr__()!s})'
+        return f'Text({super().__repr__()!s})'
 
     def __add__(self, rhs):
-        return text(super().__add__(rhs), self.pos, self.parent)
+        return Text(super().__add__(rhs), self.pos, self.parent)
 
     def __getslice__(self, i, j): return self.__getitem__(slice(i, j))
 
     def __getitem__(self, i):
-        return text(super().__getitem__(i),
-                    position(self.pos.line,
+        return Text(super().__getitem__(i),
+                    Position(self.pos.line,
                              self.pos.col
                              + (i.start or 0 if isinstance(i, slice) else i)),
                     self.parent)
@@ -310,7 +310,7 @@ _default_meta = dict(
     StyleType=None)
 
 
-class level(IntEnum):
+class ErrorLevel(IntEnum):
     """
     Error levels used to control what the parser reports as warnings or errors
     """
@@ -358,7 +358,7 @@ class parser(collections.Iterable):
     ...     list(parser([])); list(parser([''])); list(parser('plain text'))
     []
     []
-    [text('plain text')]
+    [Text('plain text')]
 
     Test mixed marker and text and cross line coalescing
     >>> with warnings.catch_warnings():
@@ -368,10 +368,10 @@ class parser(collections.Iterable):
     ... bare text
     ... \\more-sfm more text
     ... over a line break\\marker""".splitlines(True))))
-    [element('lonely', content=[text('\\n')]),
-     element('sfm', content=[text('text\\nbare text\\n')]),
-     element('more-sfm', content=[text('more text\\nover a line break')]),
-     element('marker')]
+    [Element('lonely', content=[Text('\\n')]),
+     Element('sfm', content=[Text('text\\nbare text\\n')]),
+     Element('more-sfm', content=[Text('more text\\nover a line break')]),
+     Element('marker')]
 
     Default Backslash handling (just '\\')
     >>> with warnings.catch_warnings():
@@ -380,24 +380,25 @@ class parser(collections.Iterable):
     ...         r"\\marker text",
     ...         r"\\escaped backslash\\\\character",
     ...         r"\\t1 \\t2 \\\\backslash \\^hat \\%\\t3\\\\\\^"])))
-    [element('marker', content=[text('text')]),
-     element('escaped', content=[text('backslash\\\\\\\\character')]),
-     element('t1'),
-     element('t2', content=[text('\\\\\\\\backslash ')]),
-     element('^hat'),
-     element('%'),
-     element('t3', content=[text('\\\\\\\\')]),
-     element('^')]
-    
-    Specify extra escapable characters or tokens
+    [Element('marker', content=[Text('text')]),
+     Element('escaped', content=[Text('backslash\\\\\\\\character')]),
+     Element('t1'),
+     Element('t2', content=[Text('\\\\\\\\backslash ')]),
+     Element('^hat'),
+     Element('%'),
+     Element('t3', content=[Text('\\\\\\\\')]),
+     Element('^')]
+
+    Specify extra escapable characters or tokens, in this case everything that
+    doesn't start with a number or letter isn't a tag.
     >>> with warnings.catch_warnings():
     ...     warnings.simplefilter("ignore")
     ...     pprint(list(parser([
     ...         r"\\t1 \\t2 \\\\backslash \\^hat \\%\\t3\\\\\\^"],
-    ...         tag_escapes=r"[\\\\^%]")))
-    [element('t1'),
-     element('t2', content=[text('\\\\\\\\backslash \\\\^hat \\\\%')]),
-     element('t3', content=[text('\\\\\\\\\\\^')])]
+    ...         tag_escapes=r"[^0-9a-zA-Z]")))
+    [Element('t1'),
+     Element('t2', content=[Text('\\\\\\\\backslash \\\\^hat \\\\%')]),
+     Element('t3', content=[Text('\\\\\\\\\\\\^')])]
 
 
     >>> doc=r"""
@@ -411,14 +412,14 @@ class parser(collections.Iterable):
     >>> with warnings.catch_warnings():
     ...     warnings.simplefilter("ignore")
     ...     pprint(list(parser(doc.splitlines(True))))
-    [text('\\n'),
-     element('id', content=[text('MAT EN\\n')]),
-     element('ide', content=[text('UTF-8\\n')]),
-     element('rem', content=[text('from MATTHEW\\n')]),
-     element('h', content=[text('Mathew\\n')]),
-     element('toc1', content=[text('Mathew\\n')]),
-     element('mt1', content=[text('Mathew\\n')]),
-     element('mt2', content=[text('Gospel Of Matthew')])]
+    [Text('\\n'),
+     Element('id', content=[Text('MAT EN\\n')]),
+     Element('ide', content=[Text('UTF-8\\n')]),
+     Element('rem', content=[Text('from MATTHEW\\n')]),
+     Element('h', content=[Text('Mathew\\n')]),
+     Element('toc1', content=[Text('Mathew\\n')]),
+     Element('mt1', content=[Text('Mathew\\n')]),
+     Element('mt2', content=[Text('Gospel Of Matthew')])]
 
     >>> tss = parser.extend_stylesheet({},'id','ide','rem','h','toc1',
     ...                                'mt1','mt2')
@@ -455,28 +456,28 @@ class parser(collections.Iterable):
     >>> with warnings.catch_warnings():
     ...     warnings.simplefilter("error")
     ...     pprint(list(parser(doc.splitlines(True), tss)))
-    [text('\\n'),
-     element('id', content=[text('MAT EN\\n')]),
-     element('ide', content=[text('UTF-8\\n')]),
-     element('rem', content=[text('from MATTHEW\\n')]),
-     element('h', content=[text('Mathew\\n')]),
-     element('toc1', content=[text('Mathew\\n')]),
-     element('mt1', content=[text('Mathew\\n')]),
-     element('mt2', content=[text('Gospel Of Matthew')])]
+    [Text('\\n'),
+     Element('id', content=[Text('MAT EN\\n')]),
+     Element('ide', content=[Text('UTF-8\\n')]),
+     Element('rem', content=[Text('from MATTHEW\\n')]),
+     Element('h', content=[Text('Mathew\\n')]),
+     Element('toc1', content=[Text('Mathew\\n')]),
+     Element('mt1', content=[Text('Mathew\\n')]),
+     Element('mt2', content=[Text('Gospel Of Matthew')])]
     >>> tss['rem'].update(OccursUnder={'ide'})
     >>> with warnings.catch_warnings():
     ...     warnings.simplefilter("error")
     ...     pprint(list(parser(doc.splitlines(True), tss)))
     ... # doctest: +NORMALIZE_WHITESPACE
-    [text('\\n'),
-     element('id', content=[text('MAT EN\\n')]),
-     element('ide',
-             content=[text('UTF-8\\n'),
-                      element('rem', content=[text('from MATTHEW\\n')])]),
-     element('h', content=[text('Mathew\\n')]),
-     element('toc1', content=[text('Mathew\\n')]),
-     element('mt1', content=[text('Mathew\\n')]),
-     element('mt2', content=[text('Gospel Of Matthew')])]
+    [Text('\\n'),
+     Element('id', content=[Text('MAT EN\\n')]),
+     Element('ide',
+             content=[Text('UTF-8\\n'),
+                      Element('rem', content=[Text('from MATTHEW\\n')])]),
+     Element('h', content=[Text('Mathew\\n')]),
+     Element('toc1', content=[Text('Mathew\\n')]),
+     Element('mt1', content=[Text('Mathew\\n')]),
+     Element('mt2', content=[Text('Gospel Of Matthew')])]
     >>> del tss['mt1']
     >>> with warnings.catch_warnings():
     ...     warnings.simplefilter("error")
@@ -487,7 +488,7 @@ class parser(collections.Iterable):
     '''
 
     default_meta = _default_meta
-    _eos = text("end-of-file")
+    _eos = Text("end-of-file")
 
     @classmethod
     def extend_stylesheet(cls, stylesheet, *names):
@@ -496,11 +497,11 @@ class parser(collections.Iterable):
     def __init__(self, source,
                  stylesheet={},
                  default_meta=_default_meta,
-                 private_prefix=None, error_level=level.Content,
+                 private_prefix=None, error_level=ErrorLevel.Content,
                  tag_escapes=r'\\'):
         """
         Create a SFM parser object. This object is an interator over SFM
-        element trees. For simple unstructured documents this is one element
+        Element trees. For simple unstructured documents this is one element
         per line, for more complex stylsheet guided parse this can be one or
         more complete element trees.
 
@@ -518,7 +519,7 @@ class parser(collections.Iterable):
             marker begins with this, then it is not an error for it to not
             appear in the stylesheet and it assigned default metadata.
             Optional: If not passed there is no private namespace defined.
-        error_level: The level at which or above the parser should report
+        error_level: The ErrorLevel at which or above the parser should report
             issues as Errors instead of Warnings.
         tag_escapes: A regular expression which defines the set of marker
             names that are treated as text instead or parsed as markers. This
@@ -527,7 +528,7 @@ class parser(collections.Iterable):
         """
         # Pick the marker lookup failure mode.
         assert default_meta or not private_prefix, 'default_meta must be provided when using private_prefix'  # noqa: E501
-        assert error_level <= level.Marker or default_meta, 'default meta must be provided when error_level > level.Marker'  # noqa: E501
+        assert error_level <= ErrorLevel.Marker or default_meta, 'default meta must be provided when error_level > ErrorLevel.Marker'  # noqa: E501
 
         # Set simple attributes
         self.source = getattr(source, 'name', '<string>')
@@ -558,9 +559,9 @@ class parser(collections.Iterable):
         severity: The severity or the issue being reported.
         msg: specific message about the problem, if this includes any of the
             following format syntax markers they will be filled out:
-                {token}:  The text object ev representing the subject token.
+                {token}:  The Text object ev representing the subject token.
                 {source}: The source name.
-        ev: The text object representing the token at which the issue occured.
+        ev: The Text object representing the token at which the issue occured.
         Any remaining aguments or keyword arguments are used to format the msg
         string.
         """
@@ -580,13 +581,13 @@ class parser(collections.Iterable):
         if not meta:
             if self._pua_prefix and tag.startswith(self._pua_prefix):
                 self._error(
-                    level.Note,
+                    ErrorLevel.Note,
                     'unknown private marker \\{token}: '
                     'not it stylesheet using default marker definition',
                     tag)
             else:
                 self._error(
-                    level.Marker,
+                    ErrorLevel.Marker,
                     'unknown marker \\{token}: not in stylesheet',
                     tag)
             return self._default_meta
@@ -606,13 +607,13 @@ class parser(collections.Iterable):
             marker, text, marker, text, ...
         """
         lmss = enumerate(map(tokeniser.finditer, lines))
-        fs = (text(m.group(), position(l+1, m.start()+1))
+        fs = (Text(m.group(), Position(l+1, m.start()+1))
               for l, ms in lmss for m in ms)
         gs = groupby(fs, operator.methodcaller('startswith', '\\'))
-        return chain.from_iterable(g if istag else (text.concat(g),)
+        return chain.from_iterable(g if istag else (Text.concat(g),)
                                    for istag, g in gs)
 
-    def __get_tag(self, parent: element, tok: str):
+    def __get_tag(self, parent: Element, tok: str):
         if tok[0] != '\\' or self._escaped_tag.match(tok):
             return None
 
@@ -666,28 +667,28 @@ class parser(collections.Iterable):
                     sub_parser = getattr(self, '_'+sub_parser+'_',
                                          self._default_)
                     # Spawn a sub-node
-                    e = element(tag.name, tok.pos, parent=parent, meta=meta)
+                    e = Element(tag.name, tok.pos, parent=parent, meta=meta)
                     # and recurse
                     if tag.nested:
                         e.annotations['nested'] = True
                     e.extend(sub_parser(e))
                     yield e
                 elif parent is None:
-                    tok = text(tag, tok.pos, tok.parent)
+                    tok = Text(tag, tok.pos, tok.parent)
                     # We've failed to find a home for marker tag, poor thing.
                     if not meta['TextType']:
                         assert len(meta['OccursUnder']) == 1
-                        self._error(level.Unrecoverable,
+                        self._error(ErrorLevel.Unrecoverable,
                                     'orphan end marker {token}: '
                                     'no matching opening marker \\{0}',
                                     tok, list(meta['OccursUnder'])[0])
                     else:
-                        self._error(level.Unrecoverable,
+                        self._error(ErrorLevel.Unrecoverable,
                                     'orphan marker {token}: '
                                     'may only occur under {0}', tok,
                                     self.__pp_marker_list(meta['OccursUnder']))
                 else:
-                    tok = text(tag, tok.pos, tok.parent)
+                    tok = Text(tag, tok.pos, tok.parent)
                     # Do implicit closure only for non-inline markers or
                     # markers inside NoteText type markers'.
                     if parent.meta['Endmarker']:
@@ -725,11 +726,11 @@ class parser(collections.Iterable):
         This method should be overridden by subclasses to change default
         behaviour of treating this as a structural error.
 
-        parent: The element being forced closed.
+        parent: The Element being forced closed.
         tok: The token causing the implicit closure.
         """
         self._error(
-            level.Structure,
+            ErrorLevel.Structure,
             'invalid end marker {token}: \\{0.name} '
             '(line {0.pos.line},{0.pos.col}) can only be closed with \\{1}',
             tok, parent,
@@ -745,14 +746,14 @@ def sreduce(elementf, textf, trees, initial):
 
     elementf: A callable that accepts 3 parameters and returns a new
         accumulator value.
-        e: The element node under consideration.
+        e: The Element node under consideration.
         a: The current accumulator object.
         body: The elements reduced children.
     textf: A callable the accepts 2 parameters and returns a new accumulator
         value.
-        t: The text node under consideration.
+        t: The Text node under consideration.
         a: The current accumulator object.
-    trees: An iterable over element trees, generaly the output of parser().
+    trees: An iterable over Element trees, generaly the output of parser().
     initial:  The initial value for the accumulator.
 
     A crude word count example:
@@ -788,9 +789,9 @@ def smap(elementf, textf, trees):
         name: The current element name
         args: The current element argument list
         body: The elements mapped children.
-    textf: A callable the accepts 1 parameters and returns a new text node
-        t: The text node to be transformed
-    trees: An iterable over element trees, generaly the output of parser().
+    textf: A callable the accepts 1 parameters and returns a new Text node
+        t: The Text node to be transformed
+    trees: An iterable over Element trees, generaly the output of parser().
 
 
     A crude upper casing example:
@@ -812,14 +813,14 @@ def smap(elementf, textf, trees):
     OVER A LINE BREAK\\MARKER
     """
     def _g(e):
-        if isinstance(e, element):
+        if isinstance(e, Element):
             name, args, cs = elementf(e.name, e.args, map(_g, e))
-            e = element(name, e.pos, args, content=cs, meta=e.meta)
+            e = Element(name, e.pos, args, content=cs, meta=e.meta)
             reduce(lambda _, e_: setattr(e_, 'parent', e), e, None)
             return e
         else:
             e_ = textf(e)
-            return text(e_, e.pos, e)
+            return Text(e_, e.pos, e)
     return map(_g, trees)
 
 
@@ -834,15 +835,15 @@ def sfilter(pred, trees):
     pred: A callable which takes 1 parameter and return True of False. If this
         function returns False for an element then it and all it's children
         will absent from silter()'s output.
-        e: The element or text node under consideration.
-    trees: An iterable over element trees, generaly the output of parser().
+        e: The Element or Text node under consideration.
+    trees: An iterable over Element trees, generaly the output of parser().
     """
     def _g(a, e):
-        if isinstance(e, text):
+        if isinstance(e, Text):
             if pred(e.parent):
-                a.append(text(e, e.pos, a or None))
+                a.append(Text(e, e.pos, a or None))
             return a
-        e_ = element(e.name, e.pos, e.args, parent=a or None, meta=e.meta)
+        e_ = Element(e.name, e.pos, e.args, parent=a or None, meta=e.meta)
         reduce(_g, e, e_)
         if len(e_) or pred(e):
             a.append(e_)
@@ -862,7 +863,7 @@ def _path(e):
 def mpath(*path):
     """
     Create a predicate function that tests if the path to a node
-    in an element tree is suffixed by the argument list passed to this
+    in an Element tree is suffixed by the argument list passed to this
     function.
     The returned callable can be used as a predicate to the sfilter() function.
 
@@ -891,7 +892,7 @@ def generate(doc):
     Format a document inserting line separtors after paragraph markers where
     the first element has children.
 
-    trees: An iterable over element trees, such as the output of parser().
+    trees: An iterable over Element trees, such as the output of parser().
 
     >>> doc = r'\\id TEST' '\\n' \\
     ...       r'\\mt \\p A paragraph' \\
@@ -917,7 +918,7 @@ def generate(doc):
         sep = ''
         if len(e) > 0:
             if styletype == 'Paragraph' \
-                    and isinstance(e[0], element) \
+                    and isinstance(e[0], Element) \
                     and e[0].meta['StyleType'] == 'Paragraph':
                 sep = os.linesep
             elif not body.startswith(('\r\n', '\n')):
@@ -943,7 +944,7 @@ def generate(doc):
 
 def copy(trees):
     """
-    Deep copy sequence of element trees.
+    Deep copy sequence of Element trees.
     """
     def id_element(name, args, children): return (name, args[:], children)
     def id_text(t): return t[:]

@@ -19,7 +19,7 @@ __history__ = '''
     20101109 - tse - Ensure cached usfm.sty is upto date after package code
         changes.
 '''
-from . import level, style
+from . import ErrorLevel, style
 from itertools import chain
 from functools import reduce
 from .. import sfm
@@ -114,15 +114,15 @@ class parser(sfm.parser):
 
     Tests for inline markers
     >>> list(parser([r'\\test'], parser.extend_stylesheet('test')))
-    [element('test')]
+    [Element('test')]
     >>> list(parser([r'\\test text'], parser.extend_stylesheet('test')))
-    [element('test'), text(' text')]
+    [Element('test'), Text(' text')]
     >>> list(parser([r'\\id JHN\\ior text\\ior*']))
-    [element('id', content=[text('JHN'), element('ior', content=[text('text')])])]
+    [Element('id', content=[Text('JHN'), Element('ior', content=[Text('text')])])]
     >>> list(parser([r'\\id MAT\\mt Text \\f + \\fk deep\\fk*\\f*more text.']))
-    [element('id', content=[text('MAT'), element('mt', content=[text('Text '), element('f', args=['+'], content=[element('fk', content=[text('deep')])]), text('more text.')])])]
+    [Element('id', content=[Text('MAT'), Element('mt', content=[Text('Text '), Element('f', args=['+'], content=[Element('fk', content=[Text('deep')])]), Text('more text.')])])]
     >>> list(parser([r'\\id MAT\\mt Text \\f + \\fk deep \\+qt A quote \\+qt*more\\fk*\\f*more text.']))
-    [element('id', content=[text('MAT'), element('mt', content=[text('Text '), element('f', args=['+'], content=[element('fk', content=[text('deep '), element('qt', content=[text('A quote ')]), text('more')])]), text('more text.')])])]
+    [Element('id', content=[Text('MAT'), Element('mt', content=[Text('Text '), Element('f', args=['+'], content=[Element('fk', content=[Text('deep '), Element('qt', content=[Text('A quote ')]), Text('more')])]), Text('more text.')])])]
 
     Test end marker recognition when it's a prefix
     >>> with warnings.catch_warnings():
@@ -130,8 +130,8 @@ class parser(sfm.parser):
     ...     list(parser([r'\\id TEST\\mt \\f + text\\f*suffixed text']))
     ...     list(parser([r'\\id TEST\\mt '
     ...                  r'\\f + \\fr ref \\ft text\\f*suffixed text']))
-    [element('id', content=[text('TEST'), element('mt', content=[element('f', args=['+'], content=[text('text')]), text('suffixed text')])])]
-    [element('id', content=[text('TEST'), element('mt', content=[element('f', args=['+'], content=[element('fr', content=[text('ref ')]), text('text')]), text('suffixed text')])])]
+    [Element('id', content=[Text('TEST'), Element('mt', content=[Element('f', args=['+'], content=[Text('text')]), Text('suffixed text')])])]
+    [Element('id', content=[Text('TEST'), Element('mt', content=[Element('f', args=['+'], content=[Element('fr', content=[Text('ref ')]), Text('text')]), Text('suffixed text')])])]
 
     Test footnote canonicalisation flag
     >>> with warnings.catch_warnings():
@@ -141,22 +141,22 @@ class parser(sfm.parser):
     ...     list(parser([r'\\id TEST\\mt '
     ...                  r'\\f + \\fr ref \\ft text\\f*suffixed text'],
     ...                 canonicalise_footnotes=False))
-    [element('id', content=[text('TEST'), element('mt', content=[element('f', args=['+'], content=[text('text')]), text('suffixed text')])])]
-    [element('id', content=[text('TEST'), element('mt', content=[element('f', args=['+'], content=[element('fr', content=[text('ref ')]), element('ft', content=[text('text')])]), text('suffixed text')])])]
+    [Element('id', content=[Text('TEST'), Element('mt', content=[Element('f', args=['+'], content=[Text('text')]), Text('suffixed text')])])]
+    [Element('id', content=[Text('TEST'), Element('mt', content=[Element('f', args=['+'], content=[Element('fr', content=[Text('ref ')]), Element('ft', content=[Text('text')])]), Text('suffixed text')])])]
 
     Test marker parameters, particularly chapter and verse markers
     >>> list(parser([r'\\id TEST'         r'\\c 1']))
-    [element('id', content=[text('TEST'), element('c', args=['1'])])]
+    [Element('id', content=[Text('TEST'), Element('c', args=['1'])])]
     >>> list(parser([r'\\id TEST'         r'\\c 2 \\s text']))
-    [element('id', content=[text('TEST'), element('c', args=['2'], content=[element('s', content=[text('text')])])])]
+    [Element('id', content=[Text('TEST'), Element('c', args=['2'], content=[Element('s', content=[Text('text')])])])]
     >>> list(parser([r'\\id TEST\\c 0\\p' r'\\v 1']))
-    [element('id', content=[text('TEST'), element('c', args=['0'], content=[element('p', content=[element('v', args=['1'])])])])]
+    [Element('id', content=[Text('TEST'), Element('c', args=['0'], content=[Element('p', content=[Element('v', args=['1'])])])])]
     >>> list(parser([r'\\id TEST\\c 0\\p' r'\\v 1-3']))
-    [element('id', content=[text('TEST'), element('c', args=['0'], content=[element('p', content=[element('v', args=['1-3'])])])])]
+    [Element('id', content=[Text('TEST'), Element('c', args=['0'], content=[Element('p', content=[Element('v', args=['1-3'])])])])]
     >>> list(parser([r'\\id TEST\\c 0\\p' r'\\v 2 text']))
-    [element('id', content=[text('TEST'), element('c', args=['0'], content=[element('p', content=[element('v', args=['2']), text('text')])])])]
+    [Element('id', content=[Text('TEST'), Element('c', args=['0'], content=[Element('p', content=[Element('v', args=['2']), Text('text')])])])]
     >>> list(parser([r'\\id TEST'         r'\\c 2 \\p \\v 3 text\\v 4 verse']))
-    [element('id', content=[text('TEST'), element('c', args=['2'], content=[element('p', content=[element('v', args=['3']), text('text'), element('v', args=['4']), text('verse')])])])]
+    [Element('id', content=[Text('TEST'), Element('c', args=['2'], content=[Element('p', content=[Element('v', args=['3']), Text('text'), Element('v', args=['4']), Text('verse')])])])]
 
     Test for error detection and reporting for structure
     >>> list(parser([r'\\id TEST\\mt text\\f*']))
@@ -229,14 +229,14 @@ class parser(sfm.parser):
     >>> with warnings.catch_warnings():
     ...     warnings.simplefilter("error", SyntaxWarning)
     ...     list(parser([r'\\id TEST\\mt \\whoops'],
-    ...                 error_level=sfm.level.Marker))
+    ...                 error_level=sfm.ErrorLevel.Marker))
     Traceback (most recent call last):
     ...
     SyntaxError: <string>: line 1,14: unknown marker \whoops: not in stylesheet
     >>> with warnings.catch_warnings():
     ...     warnings.simplefilter("error", SyntaxWarning)
     ...     list(parser([r'\\id TEST\\mt \\zwhoops'],
-    ...                 error_level=sfm.level.Note))
+    ...                 error_level=sfm.ErrorLevel.Note))
     Traceback (most recent call last):
     ...
     SyntaxWarning: <string>: line 1,14: unknown private marker \zwhoops: not it stylesheet using default marker definition
@@ -244,19 +244,19 @@ class parser(sfm.parser):
     ...     warnings.simplefilter("error", SyntaxWarning)
     ...     list(parser([r'\\id TEST\\c 1\\p a \\png b \\+w c \\+nd d \\png e \\png*']))
     ... # doctest: +NORMALIZE_WHITESPACE
-    [element('id',
-        content=[text('TEST'),
-                 element('c', args=['1'],
-                    content=[element('p',
-                        content=[text('a '),
-                                 element('png',
-                                    content=[text('b '),
-                                             element('w',
-                                                content=[text('c '),
-                                                         element('nd',
-                                                            content=[text('d ')])])]),
-                                 element('png',
-                                    content=[text('e ')])])])])]
+    [Element('id',
+        content=[Text('TEST'),
+                 Element('c', args=['1'],
+                    content=[Element('p',
+                        content=[Text('a '),
+                                 Element('png',
+                                    content=[Text('b '),
+                                             Element('w',
+                                                content=[Text('c '),
+                                                         Element('nd',
+                                                            content=[Text('d ')])])]),
+                                 Element('png',
+                                    content=[Text('e ')])])])])]
     >>> with warnings.catch_warnings():
     ...     warnings.simplefilter("error", SyntaxWarning)
     ...     list(parser([r'\\id TEST\\c 1\\p a \\f + \\fr 1:1 \\ft a \\png b\\png*']))
@@ -297,7 +297,7 @@ class parser(sfm.parser):
         if tok is not sfm.parser._eos \
                 and ('NoteText' in parent.meta.get('TextType', [])
                      or parent.meta.get('StyleType', None) == 'Character'):
-            self._error(level.Note,
+            self._error(ErrorLevel.Note,
                         'implicit end marker before {token}: \\{0.name} '
                         '(line {0.pos.line},{0.pos.col}) '
                         'should be closed with \\{1}', tok, parent,
@@ -309,7 +309,7 @@ class parser(sfm.parser):
         tok = next(self._tokens)
         chapter = self.numeric_re.match(tok)
         if not chapter:
-            self._error(level.Content,
+            self._error(ErrorLevel.Content,
                         'missing chapter number after \\c',
                         chapter_marker)
             chapter_marker.args = ['\uFFFD']
@@ -317,7 +317,7 @@ class parser(sfm.parser):
             chapter_marker.args = [str(tok[chapter.start(1):chapter.end(1)])]
             tok = tok[chapter.end():]
         if tok and not self.sep_re.match(tok):
-            self._error(level.Content,
+            self._error(ErrorLevel.Content,
                         'missing space after chapter number \'{chapter}\'',
                         tok, chapter=chapter_marker.args[0])
         tok = tok.lstrip()
@@ -325,10 +325,10 @@ class parser(sfm.parser):
             if tok[0] == '\\':
                 self._tokens.put_back(tok)
             else:
-                self._error(level.Structure,
+                self._error(ErrorLevel.Structure,
                             'text cannot follow chapter marker \'{0}\'',
                             tok, chapter_marker)
-                chapter_marker.append(sfm.element(None,
+                chapter_marker.append(sfm.Element(None,
                                                   meta=self.default_meta,
                                                   content=[tok]))
                 tok = None
@@ -342,7 +342,7 @@ class parser(sfm.parser):
         tok = next(self._tokens)
         verse = self.verse_re.match(tok)
         if not verse:
-            self._error(level.Content,
+            self._error(ErrorLevel.Content,
                         'missing verse number after \\v',
                         verse_marker)
             verse_marker.args = ['\uFFFD']
@@ -351,7 +351,7 @@ class parser(sfm.parser):
             tok = tok[verse.end():]
 
         if not self.sep_re.match(tok):
-            self._error(level.Content,
+            self._error(ErrorLevel.Content,
                         'missing space after verse number \'{verse}\'',
                         tok, verse=verse_marker.args[0])
         tok = tok[1:]
@@ -382,7 +382,7 @@ class parser(sfm.parser):
         tok = next(self._tokens)
         caller = self.caller_re.match(tok)
         if not caller:
-            self._error(level.Content,
+            self._error(ErrorLevel.Content,
                         'missing caller parameter after \\{token.name}',
                         parent)
             parent.args = ['\uFFFD']
@@ -391,7 +391,7 @@ class parser(sfm.parser):
             tok = tok[caller.end():]
 
         if not self.sep_re.match(tok):
-            self._error(level.Content,
+            self._error(ErrorLevel.Content,
                         'missing space after caller parameter \'{caller}\'',
                         tok, caller=parent.args[0])
 
@@ -413,7 +413,7 @@ class parser(sfm.parser):
     _unspecified_ = _Unspecified_
 
 
-class reference(sfm.position):
+class Reference(sfm.Position):
     def __new__(cls, pos, ref):
         p = super().__new__(cls, *pos)
         p.book = ref[0]
@@ -426,7 +426,7 @@ def decorate_references(source):
     ref = [None, None, None]
 
     def _g(_, e):
-        if isinstance(e, sfm.element):
+        if isinstance(e, sfm.Element):
             if e.name == 'id':
                 ref[0] = str(e[0]).split()[0]
             elif e.name == 'c':
@@ -434,7 +434,7 @@ def decorate_references(source):
             elif e.name == 'v':
                 ref[2] = e.args[0]
             return reduce(_g, e, None)
-        e.pos = reference(e.pos, ref)
+        e.pos = Reference(e.pos, ref)
     source = list(source)
     reduce(_g, source, None)
     return source
