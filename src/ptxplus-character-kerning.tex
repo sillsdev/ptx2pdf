@@ -29,17 +29,18 @@
 \def\scqnokern{\scq}
 \def\dcqnokern{\dcq}
 % Activate the search characters
+\let\knext\relax
 \catcode"2018=\active
-\def^^^^2018{\futurelet\next\soqtest}
+\def^^^^2018{\futurelet\knext\soqtest}
 \catcode"201C=\active
-\def^^^^201c{\futurelet\next\doqtest}
+\def^^^^201c{\futurelet\knext\doqtest}
 \catcode"2019=\active
-\def^^^^2019{\futurelet\next\scqtest}
+\def^^^^2019{\futurelet\knext\scqtest}
 \catcode"201D=\active
-\def^^^^201d{\futurelet\next\dcqtest}
+\def^^^^201d{\futurelet\knext\dcqtest}
 % Insert the kerned version
-\def\soqtest{\ifx\next^^^^201c\let\next=\soqkern\else\let\next=\soqnokern\fi\next}
-\def\doqtest{\ifx\next^^^^2018\let\next=\doqkern\else\let\next=\doqnokern\fi\next}
-\def\scqtest{\ifx\next^^^^201d\let\next=\scqkern\else\let\next=\scqnokern\fi\next}
-\def\dcqtest{\ifx\next^^^^2019\let\next=\dcqkern\else\let\next=\dcqnokern\fi\next}
+\def\soqtest{\ifx\knext^^^^201c\let\knext=\soqkern\else\let\knext=\soqnokern\fi\knext\let\knext\relax}
+\def\doqtest{\ifx\knext^^^^2018\let\knext=\doqkern\else\let\knext=\doqnokern\fi\knext\let\knext\relax}
+\def\scqtest{\ifx\knext^^^^201d\let\knext=\scqkern\else\let\knext=\scqnokern\fi\knext\let\knext\relax}
+\def\dcqtest{\ifx\knext^^^^2019\let\knext=\dcqkern\else\let\knext=\dcqnokern\fi\knext\let\knext\relax}
 \def\liter@lkerns{\edef^^^^2018{\soq}\edef^^^^201c{\doq}\edef^^^^2019{\scq}\edef^^^^201d{\dcq}}
