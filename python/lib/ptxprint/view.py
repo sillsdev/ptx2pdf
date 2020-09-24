@@ -28,7 +28,7 @@ def newBase(fpath):
     if cl:
         return cl[0].lower()
     else:
-        return re.sub('[()&+,.;: ]', '_', f.lower())
+        return re.sub('[()&+,.;: \-]', '_', f.lower())
 
 def refKey(r, info=""):
     m = re.match(r"^(\D*)\s*(\d*)\.?(\d*)(\S*?)$", r)
@@ -293,7 +293,10 @@ class ViewModel:
                     if moving:
                         move(srcp, destp)
                     elif os.path.isdir(srcp):
-                        copytree(srcp, destp)
+                        os.makedirs(destp, exist_ok=True)
+                        for p in os.listdir(srcp):
+                            op = re.sub(r"-[^-]+\.", "-"+newcfg+".", p)
+                            copyfile(os.path.join(srcp, p), os.path.join(destp, op))
                     else:
                         copyfile(srcp, destp)
 
