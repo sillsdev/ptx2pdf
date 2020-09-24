@@ -891,8 +891,9 @@ class ViewModel:
                 return
         for bk in booklist:
             tmplist = []
-            fname = self.getDraftFilename(bk, ext=".adj")
-            outfname = os.path.join(self.configPath(self.configName()), "AdjLists", fname)
+            fname = self.getBookFilename(bk)
+            outfname = os.path.join(self.configPath(self.configName()),
+                                    "AdjLists", self.getDraftFilename(bk, ext=".adj"))
             adjlist = []
             flist = [os.path.join(prjdir, fname)]
             if diglot: 
@@ -918,7 +919,7 @@ class ViewModel:
                             if iv < prv:
                                 ch = ch + 1
                             srtchvs = "{:0>3}{:0>3}{}".format(ch,v,sfx)
-                            tmplist.append(srtchvs+"\u0009"+bk+sfx+" "+str(ch)+"."+v+" +0\n")
+                            tmplist.append(srtchvs+"\u0009"+bk+sfx+" "+str(ch)+"."+v+" +0")
                             prv = iv
             if len(tmplist):
                 for al in sorted(tmplist):

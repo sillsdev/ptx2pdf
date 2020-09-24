@@ -91,7 +91,7 @@ _allbkmap = {k: i for i, k in enumerate(_allbooks)}
 _sensitivities = {
     "r_book": {
         "r_book_single":       ["ecb_book", "l_chapfrom", "fcb_chapfrom", "l_chapto", "fcb_chapto"],
-        "r_book_multiple":     ["btn_chooseBooks", "t_booklist", "c_combine"],
+        "r_book_multiple":     ["btn_chooseBooks", "t_booklist", "c_combine", "c_autoToC"],
         "r_book_module":       ["ecb_biblemodule"],
         "r_book_dbl":          ["btn_chooseDBLbundle", "l_dblBundle"]},
     "c_mainBodyText" :         ["gr_mainBodyText"],
@@ -831,7 +831,7 @@ class GtkViewModel(ViewModel):
         self.onViewerChangePage(None, None, pg)
 
     def onViewerChangePage(self, nbk_Viewer, scrollObject, pgnum):
-        allpgids = ("tb_PicList", "scroll_Adjust", "scroll_FinalSFM", "scroll_TeXfile",
+        allpgids = ("tb_PicList", "scroll_AdjList", "scroll_FinalSFM", "scroll_TeXfile",
                     "scroll_XeTeXlog", "scroll_Settings", "tb_Links")
         if nbk_Viewer is None:
             nbk_Viewer = self.builder.get_object("nbk_Viewer")
@@ -886,7 +886,6 @@ class GtkViewModel(ViewModel):
 
         elif pgid in ("scroll_TeXfile", "scroll_XeTeXlog"): # (TeX,Log)
             fpath = self.baseTeXPDFname()+fndict[pgid][1]
-            print(fpath)
 
         elif pgid == "scroll_Settings": # View/Edit one of the 4 Settings files or scripts
             fpath = self.builder.get_object("l_Settings").get_tooltip_text()
@@ -1781,7 +1780,7 @@ class GtkViewModel(ViewModel):
         # self.builder.get_object("scroll_XeTeXlog").scroll_to_mark(self.buf[4].get_insert(), 0.0, True, 0.5, 0.5)
 
     def onArchTempClicked(self, btn):
-        print(self.tempFiles)
+        # print(self.tempFiles)
 
     def onTabsClicked(self, btn):
         self.onSimpleClicked(btn)
