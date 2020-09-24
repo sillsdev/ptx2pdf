@@ -294,8 +294,7 @@ class GtkViewModel(ViewModel):
             .mainnb {background-color: #F0F0F0}
             .mainnb tab {min-height: 0pt; margin: 0pt; padding-bottom: 15pt}
             .viewernb {background-color: #F0F0F0}
-            .viewernb tab {min-height: 0pt; margin: 0pt; padding-bottom: 3pt}
-            .thumbtabs {background-color: #F0F0F0} """
+            .viewernb tab {min-height: 0pt; margin: 0pt; padding-bottom: 3pt} """
         provider = Gtk.CssProvider()
         provider.load_from_data(css.encode("utf-8"))
         Gtk.StyleContext().add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
@@ -1792,11 +1791,12 @@ class GtkViewModel(ViewModel):
     def onNumTabsChanged(self, *a):
         if self.get("c_thumbtabs"):
             self.updateThumbLines()
+            self.onThumbColourChange()
         self.builder.get_object("l_thumbVerticalL").set_visible(self.get("c_thumbrotate"))
         self.builder.get_object("l_thumbVerticalR").set_visible(self.get("c_thumbrotate"))
         self.builder.get_object("l_thumbHorizontalL").set_visible(not self.get("c_thumbrotate"))
         self.builder.get_object("l_thumbHorizontalR").set_visible(not self.get("c_thumbrotate"))
-        
+
     def onThumbColourChange(self, *a):
         def coltohex(s):
             vals = s[s.find("(")+1:-1].split(",")
@@ -1805,11 +1805,14 @@ class GtkViewModel(ViewModel):
 
         bcol = coltohex(self.get("col_thumbback"))
         fcol = coltohex(self.get("col_thumbtext"))
-        markup = '<span background="{}" foreground="{}" font-weight="bold">  {{}}  </span>'.format(bcol, fcol)
+        bold = "bold" if self.get("c_thumbbold") else "normal"
+        ital = "italic" if self.get("c_thumbitalic") else "normal"
+        markup = '<span background="{}" foreground="{}" font-weight="{}" font-style="{}">  {{}}  </span>'.format(bcol, fcol, bold, ital)
         for w in ("VerticalL", "VerticalR", "HorizontalL", "HorizontalR"):
             wid = self.builder.get_object("l_thumb"+w)
             wid.set_text(markup.format(w[:-1]))
             wid.set_use_markup(True)
+
 
     def onRotateTabsChanged(self, *a):
         orientation = self.get("fcb_rotateTabs")

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -1669,19 +1669,19 @@ in the Windows system.</property>
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">Mirror: Outward</col>
+        <col id="0" translatable="yes">Each Facing Outward</col>
         <col id="1" translatable="yes">1</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Mirror: Inward</col>
+        <col id="0" translatable="yes">Each Facing Inward</col>
         <col id="1" translatable="yes">2</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Same: Bottom to Top</col>
+        <col id="0" translatable="yes">Rotate Both Anticlockwise</col>
         <col id="1" translatable="yes">3</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Same: Top to Bottom</col>
+        <col id="0" translatable="yes">Rotate Both Clockwise</col>
         <col id="1" translatable="yes">4</col>
       </row>
     </data>
@@ -9223,6 +9223,7 @@ from XeTeX processing.</property>
                                 <property name="tooltip_text" translatable="yes">Sets bold font. Often useful for white text on a black background. Overrides the default style setting for toc3.</property>
                                 <property name="halign">start</property>
                                 <property name="draw_indicator">True</property>
+                                <signal name="clicked" handler="onThumbColourChange" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">2</property>
@@ -9238,6 +9239,7 @@ from XeTeX processing.</property>
                                 <property name="tooltip_text" translatable="yes">Italicise the font. Overrides default style settings of toc3</property>
                                 <property name="halign">start</property>
                                 <property name="draw_indicator">True</property>
+                                <signal name="clicked" handler="onThumbColourChange" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">2</property>
@@ -9379,9 +9381,11 @@ at MAT</property>
                                 <property name="halign">start</property>
                                 <property name="model">ls_rotateTabs</property>
                                 <property name="wrap_width">1</property>
+                                <property name="active">1</property>
                                 <property name="has_entry">True</property>
                                 <property name="entry_text_column">0</property>
                                 <property name="id_column">1</property>
+                                <property name="active_id">1</property>
                                 <signal name="changed" handler="onRotateTabsChanged" swapped="no"/>
                                 <child internal-child="entry">
                                   <object class="GtkEntry">
