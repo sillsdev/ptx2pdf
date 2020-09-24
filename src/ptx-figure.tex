@@ -59,7 +59,7 @@
 \def\getonepairp@ram#1="#2" {\stripspace#1\end/ \end/\relax{#1}\edef\p@ramid{\p@ram}%
   \stripspace#2\end/ \end/\relax{#2}\edef\p@ramval{\p@ram}%
   \trace{g}{getonepairparam: [\p@ramid] = [\p@ramval]}%
-  \ifx\p@ramid\empty\let\next=\relax\else
+  \ifx\p@ramid\empty\let\fnext=\relax\else
     \ifx\p@ramid\FigP@ramSrc\global\p@ramnumber=2\else
     \ifx\p@ramid\FigP@ramSize\global\p@ramnumber=3 \trace{g}{Got Size}\else
     \ifx\p@ramid\FigP@ramLoc\global\p@ramnumber=\x@\ifx\csname param-4\endcsname\empty 4\else 5\fi\else
@@ -76,15 +76,15 @@
     \ifx\p@ramval\empty\ifusfmthree\else
       \trace{g}{param-\the\p@ramnumber = "\p@ramid" but not "\p@ramval"}%
       \x@\global\x@\edef\csname param-\the\p@ramnumber\endcsname{\p@ramid}%
-      \let\next=\relax
+      \let\fnext=\relax
       \temptrue
     \fi\fi
     \iftemp\else
       \trace{g}{param-\the\p@ramnumber [\p@ramid]  = "#2" from "\p@ramval"}%
       \x@\gdef\csname param-\the\p@ramnumber\endcsname{#2}%
-      \let\next=\getonepairp@ram \usfmthreetrue
+      \let\fnext=\getonepairp@ram \usfmthreetrue
     \fi
-  \fi\next}
+  \fi\fnext}
 %-cfig_getonepair
 
 %+cfig_parsesize

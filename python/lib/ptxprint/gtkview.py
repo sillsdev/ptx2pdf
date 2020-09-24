@@ -1780,6 +1780,7 @@ class GtkViewModel(ViewModel):
         # self.builder.get_object("scroll_XeTeXlog").scroll_to_mark(self.buf[4].get_insert(), 0.0, True, 0.5, 0.5)
 
     def onArchTempClicked(self, btn):
+        pass
         # print(self.tempFiles)
 
     def onTabsClicked(self, btn):
