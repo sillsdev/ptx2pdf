@@ -3,7 +3,7 @@ from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.view import refKey, newBase
 from gi.repository import Gtk, GdkPixbuf
 import configparser
-import os, regex
+import os, re
 
 
 _piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copyright", "mirror"]
@@ -55,10 +55,11 @@ class PicList:
             for k, v in sorted(picinfo.items(), key=lambda x:(refKey(x[0]), x[1])):
                 row = [k] + [v[e] if e in v else (1 if e == "scale" else "") for e in _piclistfields[1:]]
                 try:
-                    row[4] = int(row[4]) * 100
+                    row[4] = float(row[4]) * 100
                 except (ValueError, TypeError):
                     row[4] = 100
                 self.model.append(row)
+                # print(v, [x for x in row])
         self.view.set_model(self.model)
         self.listview.set_model(self.model)
 
@@ -96,15 +97,19 @@ class PicList:
         if self.model.get_path(i).get_indices()[0] >= len(self.model):
             return
         row = self.model[i]
+        pgpos = re.sub(r'([PF])([lcr])([tb])', r'\1\3\2', row[5])
         for j, (k, v) in enumerate(_form_structure.items()): # relies on ordered dict
             if k == 'pgpos':
-                val = row[j][0]
+                val = pgpos[:2] if pgpos[0] in "PF" else pgpos[0]
             elif k == 'hpos':
-                val = row[5]
-                val = val[1] if len(val) > 1 else ""
+                val = pgpos[2:] if pgpos[0] in "PF" else pgpos[1:]
+                val = val[0] if len(val) > 0 else ""
+                val = "c" if pgpos[0] in "PF" and not len(val) else val
             elif k == 'nlines':
-                val = row[5]
-                val = int(val[2]) if len(val) > 2 else 0
+                val = re.sub(r'^\D*', "", pgpos)
+                val = int(val) if len(val) > 0 else 0
+            elif k == 'mirror':
+                val = row[j] or "None"
             else:
                 val = row[j]
             w = self.builder.get_object(v)
@@ -120,7 +125,7 @@ class PicList:
         res = "".join(self.get(k, default="") for k in _comblist[:-1])
         if res.startswith("c"):
             res += str(self.get(_comblist[-1]))
-        res = regex.sub(r'([PF])([tcb])([lcr])', r'\1\3\2', res).strip("c") 
+        res = re.sub(r'([PF])([tcb])([lcr])', r'\1\3\2', res).strip("c") 
         return res
 
     def item_changed(self, w, key):
@@ -149,9 +154,13 @@ class PicList:
                 else:
                     pic.clear()
                     picc.clear()
+            elif key == "mirror" and val == "None":
+                row[_piclistfields.index(key)] = ""
 
     def get_row_from_items(self):
         row = [self.get(k, default="") for k in _piclistfields]
+        if row[9] == "None":
+            row[9] = ""
         row[_piclistfields.index('pgpos')] = self.get_pgpos()
         return row
 

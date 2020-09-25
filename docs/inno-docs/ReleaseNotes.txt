@@ -1,5 +1,25 @@
-PTXprint 1.1.8 Release Notes 
-22nd September 2020
+PTXprint 1.1.9 Release Notes 
+25th September 2020
+
+Bug Fixes and Enchancements in: 1.1.9
+
+  * Fixed Thumb Tabs and improved UI
+  
+  * Added hanging verses to most poetry markers
+  
+  * Fixed PicList Editor and loading PicList files
+  
+  * Fixed wide Footnote/X-ref callers
+  
+  * Copying Config files
+  
+  * Fixed Fancy Intro Outline right-leaders (and removed 
+  
+  * Fixed Smart Quotes occuring in picture captions
+  
+  * Fixed threads from crashing
+  
+  * Fixed Repeated values in the Thumb Tabs
 
 Bug Fixes and Enchancements in: 1.1.8
 

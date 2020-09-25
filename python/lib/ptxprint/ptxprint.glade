@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -1671,19 +1671,19 @@ in the Windows system.</property>
     <data>
       <row>
         <col id="0" translatable="yes">Each Facing Outward</col>
-        <col id="1" translatable="yes">1</col>
+        <col id="1">1</col>
       </row>
       <row>
         <col id="0" translatable="yes">Each Facing Inward</col>
-        <col id="1" translatable="yes">2</col>
+        <col id="1">2</col>
       </row>
       <row>
         <col id="0" translatable="yes">Rotate Both Anticlockwise</col>
-        <col id="1" translatable="yes">3</col>
+        <col id="1">3</col>
       </row>
       <row>
         <col id="0" translatable="yes">Rotate Both Clockwise</col>
-        <col id="1" translatable="yes">4</col>
+        <col id="1">4</col>
       </row>
     </data>
   </object>
@@ -12088,8 +12088,9 @@ in this publication, and also in other contexts.</property>
                                 </child>
                                 <child>
                                   <object class="GtkScrolledWindow" id="scroll_PicList">
-                                    <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
                                     <property name="can_focus">True</property>
+                                    <property name="no_show_all">True</property>
                                     <property name="hexpand">True</property>
                                     <property name="vexpand">True</property>
                                     <property name="shadow_type">in</property>

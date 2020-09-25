@@ -73,7 +73,7 @@ class Path(pathlib.Path):
             return self.as_posix()
 
 posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror", "scale"]
-pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "mirror", "x-xetex", "mirror", "scale"]
+pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale"]
 
 class ViewModel:
     _attributes = {
@@ -615,10 +615,11 @@ class ViewModel:
                     v['pgpos'] = re.sub(r"([tb])[lr]", r"\1", v['pgpos'])
                 else:
                     v['pgpos'] = "t"
-            if not isTemp and randomizePosn:
-                v['pgpos'] = random.choice(picposn.get(v['size'], 'col')) # Randomize location of illustrations on the page (tl,tr,bl,br)
-            elif 'pgpos' not in v:
-                v['pgpos'] = picposn.get(v['size'], 'col')[0]
+            if 'pgpos' not in v:
+                if not isTemp and randomizePosn:
+                    v['pgpos'] = random.choice(picposn.get(v['size'], 'col')) # Randomize location of illustrations on the page (tl,tr,bl,br)
+                else:
+                    v['pgpos'] = picposn.get(v['size'], 'col')[0]
             if 'ref' in v and ishiderefs:
                 del v['ref']
             v['src'] = os.path.basename(v['dest file'])
@@ -754,6 +755,7 @@ class ViewModel:
                     else:
                         for d in re.findall(r'(\S+)\s*=\s*"([^"]+)"', m[-1]):
                             res[k][d[0]] = d[1]
+                    # print(res[k])
         elif sfmonly != "piclist":
             with universalopen(fname) as inf:
                 dat = inf.read()
