@@ -446,11 +446,11 @@ class GtkViewModel(ViewModel):
 
     def doError(self, txt, secondary=None, title=None, threaded=True):
         if threaded:
-            GLib.add_idle(self._doError(txt, secondary=secondary, title=title))
+            GLib.add_idle(self._doError, txt, secondary, title)
         else:
-            self._doError(txt, secondary=secondary, title=title)
+            self._doError(txt, secondary, title)
 
-    def _doError(self, text, secondary=None, title=None):
+    def _doError(self, text, secondary, title):
         dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
                  buttons=Gtk.ButtonsType.OK, text=txt)
         if title is not None:
