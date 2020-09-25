@@ -444,7 +444,13 @@ class GtkViewModel(ViewModel):
             # print("Esc pressed, ignoring")
             return True
 
-    def doError(self, txt, secondary=None, title=None):
+    def doError(self, txt, secondary=None, title=None, threaded=True):
+        if threaded:
+            GLib.add_idle(self._doError(txt, secondary=secondary, title=title))
+        else:
+            self._doError(txt, secondary=secondary, title=title)
+
+    def _doError(self, text, secondary=None, title=None):
         dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
                  buttons=Gtk.ButtonsType.OK, text=txt)
         if title is not None:

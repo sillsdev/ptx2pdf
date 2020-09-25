@@ -232,7 +232,8 @@ class RunJob:
                         self.printer.doError(_("PDF was created BUT..."),
                             secondary=_("Layout problems were encountered on page(s): ") + ",".join(badpgs) + \
                                   _("\n\nTry changing the PicList and/or AdjList settings to solve issues."), \
-                                  title=_("PTXprint [{}] - Warning!").format(VersionStr))
+                                  title=_("PTXprint [{}] - Warning!").format(VersionStr),
+                            threaded=True)
 
         elif not self.args.print: # We don't want pop-up messages if running in command-line mode
             finalLogLines = self.parseLogLines()
