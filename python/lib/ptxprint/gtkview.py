@@ -1007,8 +1007,7 @@ class GtkViewModel(ViewModel):
         lnspVal = round(float(self.get("s_linespacing")), 1)
         minVal = round(float(self.get("s_linespacingmin")), 1)
         maxVal = round(float(self.get("s_linespacingmax")), 1)
-        status = self.get("c_variableLineSpacing")
-        if status and lnspVal == minVal and lnspVal == maxVal:
+        if self.get("c_variableLineSpacing") and lnspVal == minVal and lnspVal == maxVal:
             self.set("s_linespacingmin", lnspVal - 1)
             self.set("s_linespacingmax", lnspVal + 2)
 
@@ -1025,7 +1024,7 @@ class GtkViewModel(ViewModel):
         self.colourTabs()
 
     def onUseCustomFolderclicked(self, btn):
-        self.onSimpleClicked(btn)
+        status = self.sensiVisible("c_useCustomFolder")
         if not status:
             self.builder.get_object("c_exclusiveFiguresFolder").set_active(status)
 
@@ -1050,16 +1049,14 @@ class GtkViewModel(ViewModel):
             w.set_text("†,‡,§,∥,#")
         
     def onProcessScriptClicked(self, btn):
-        status = self.sensiVisible("c_processScript")
-        if not status:
+        if not self.sensiVisible("c_processScript"):
             self.builder.get_object("btn_editScript").set_sensitive(False)
         else:
             if self.get("btn_selectScript") != None:
                 self.builder.get_object("btn_editScript").set_sensitive(True)
 
     def onIntroOutlineClicked(self, btn):
-        status = self.sensiVisible("c_introOutline")
-        if not status:
+        if not self.sensiVisible("c_introOutline"):
             self.builder.get_object("c_prettyIntroOutline").set_active(False)
 
     def onKeepTemporaryFilesClicked(self, c_keepTemporaryFiles):

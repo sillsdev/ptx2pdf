@@ -5057,21 +5057,9 @@ appear at the beginning of each book.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">This option is rather sensitive and will cause the PDF
-production to fail if everything isn't set exactly right.
-That option is problematic as it needs several different pieces in
-place to work well. All these pieces need to be in place (\iot, \io1
-or \io2, and \ior refs \ior* followed by \c 1) as shown here:
-
-\iot Intro Outline Title
-\io1 Some text \ior 1:1-3:4\ior*
-\io1 Some more text \ior 3:5-3:20\ior*
-etc.
-\io1 Last line of outline text \ior 6:1-6:16\ior*
-\c 1</property>
+                                        <property name="tooltip_text" translatable="yes">This will right-align and add leader tabs (. . . .) before the \ior numbers for a pretty Intro Outline Table.</property>
                                         <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
-                                        <signal name="clicked" handler="onPrettyIntroOutlineClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
