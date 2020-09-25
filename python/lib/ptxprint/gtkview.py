@@ -446,7 +446,7 @@ class GtkViewModel(ViewModel):
 
     def doError(self, txt, secondary=None, title=None, threaded=True):
         if threaded:
-            GLib.idle_add(self._doError, txt, secondary, title)
+            GLib.idle_add(GObject.timeout_add, 1000, self._doError, txt, secondary, title))
         else:
             self._doError(txt, secondary, title)
 
