@@ -989,7 +989,7 @@ class TexModel:
             
         for c in range(1,4): # Remove any \toc lines that we don't want appearing in the Table of Contents
             if not self.asBool("document/usetoc{}".format(c)) and (c != 3 or self.asBool("thumbtabs/ifthumbtab")):
-                print("Deleting toc{} with thumbtabs/ifthumbtab of {}".format(c, self.get("thumbtabs/ifthumbtab")))
+                # print("Deleting toc{} with thumbtabs/ifthumbtab of {}".format(c, self.printer.get("thumbtabs/ifthumbtab")))
                 self.localChanges.append((None, regex.compile(r"(\\toc{} .+)".format(c), flags=regex.M), ""))
 
         # Add End of Book decoration PDF to Scripture books only if FancyBorders is enabled and .PDF defined

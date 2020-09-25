@@ -1250,8 +1250,8 @@ class ViewModel:
         tabsheight = pageheight - munits * (tfactor + bfactor)   # in mm
         tabsheight -= 20 * 25.4 / 72.27                          # from default \TabsStart + \TabsEnd (in pt)
         if self.get("c_thumbrotate"):
-            tabheight = float(self.get("s_thumblength"))
+            tabheight = float(self.get("s_thumblength") or 10)
         else:
-            tabheight = float(self.get("s_thumbheight"))
+            tabheight = float(self.get("s_thumbheight") or 4)
         newnum = int(tabsheight / tabheight)
         self.set("s_thumbtabs", newnum)
