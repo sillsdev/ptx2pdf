@@ -142,6 +142,7 @@
     \global\advance\p@clistused by 1
     \x@\global\x@\let\csname used\p@cid\endcsname\empty% mark picture as done
     \trace{P}{Piclist entry found for \p@cid (\the\p@clistused/\the\p@clistentries)}%
+    \x@\global\x@\let\csname\p@cid\endcsname\relax% Undefine pics on use
     \let\p@cspec\t@st
     \x@\d@figure\x@{\p@cspec}%
     \advance\p@clistsuff by 1

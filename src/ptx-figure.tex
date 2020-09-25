@@ -459,7 +459,7 @@
       \penalty10 % Allow the page to break
       \ifpicNarrow
         \ifx\pic@lign\@lignLeft
-          \setbox0\hbox to \colwidth{\box0\hss}\else\setbox0\hbox to \colwidth{\hss\box0}%
+          \setbox0\vbox{\hbox to \colwidth{\box0\hss}}\else\setbox0\vbox{\hbox to \colwidth{\hss\box0}}%
         \fi
       \fi
       %\splittopskip\baselineskip
@@ -476,8 +476,8 @@
       \ifdiglot\ifdiglotL\else\let\picb@@x=\picb@xR\fi\fi
       \global\setbox\picb@@x\box0
       \ifpicNarrow
-        \ifx\pic@lign\@lignLeft \global\setbox\picb@@x\hbox to \colwidth{\box\picb@@x\hss}\trace{g}{Pic aligned left}%
-        \else \global\setbox\picb@@x\hbox to \colwidth{\hss\box\picb@@x}\trace{g}{Pic aligned right}%
+        \ifx\pic@lign\@lignLeft \global\setbox\picb@@x\vbox{\hbox to \colwidth{\box\picb@@x\hss}}\trace{g}{Pic aligned left}%
+        \else \global\setbox\picb@@x\vbox{\hbox to \colwidth{\hss\box\picb@@x}}\trace{g}{Pic aligned right}%
         \fi
       \fi
       \edef\eotpn@me{at@ndofthispar\ifdiglot\ifdiglotL L\else R\fi\fi}% Which endofthispar macro?\emspace
