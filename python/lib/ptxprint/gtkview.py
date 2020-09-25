@@ -769,7 +769,7 @@ class GtkViewModel(ViewModel):
 
     def onBookSelectorChange(self, btn):
         status = self.sensiVisible("c_multiplebooks")
-        self.set("c_prettyIntroOutline", False)
+        # self.set("c_prettyIntroOutline", False)
         if status and self.get("t_booklist") == "" and self.prjid is not None:
             self.updateDialogTitle()
         else:
@@ -1179,7 +1179,7 @@ class GtkViewModel(ViewModel):
             bl.set_text(" ".join(b for b in booklist))
         if self.get("r_book") in ("single", "multiple"):
             self.set("r_book", "multiple" if len(booklist) else "single")
-        self.set("c_prettyIntroOutline", False)
+        # self.set("c_prettyIntroOutline", False)
         self.updateDialogTitle()
         self.updateExamineBook()
         self.updatePicList()
@@ -1248,7 +1248,7 @@ class GtkViewModel(ViewModel):
         # if self.bookNoUpdate == True:
             # return
         self.bk = self.get("ecb_book")
-        self.set("c_prettyIntroOutline", False)
+        # self.set("c_prettyIntroOutline", False)
         if self.bk != "":
             self.chs = int(chaps.get(str(self.bk)))
             self.chapfrom = self.builder.get_object("ls_chapfrom")
@@ -1718,17 +1718,17 @@ class GtkViewModel(ViewModel):
     def onGenerateHyphenationListClicked(self, btn):
         self.generateHyphenationFile()
 
-    def onPrettyIntroOutlineClicked(self, btn):
-        if self.get("c_prettyIntroOutline"): # if turned on...
-            badbks = self.checkSFMforFancyIntroMarkers()
-            if len(badbks):
-                self.set("c_prettyIntroOutline", False)
-                m1 = _("Invalid Option for Selected Books")
-                m2 = _("The book(s) listed below do not have the" + \
-                   "\nrequired markup for this feature to be enabled." + \
-                   "\n(Refer to Tooltip for further details.)" + \
-                   "\n\n{}").format(", ".join(badbks))
-                self.doError(m1, m2)
+    # def onPrettyIntroOutlineClicked(self, btn):
+        # if self.get("c_prettyIntroOutline"): # if turned on...
+            # badbks = self.checkSFMforFancyIntroMarkers()
+            # if len(badbks):
+                # self.set("c_prettyIntroOutline", False)
+                # m1 = _("Invalid Option for Selected Books")
+                # m2 = _("The book(s) listed below do not have the" + \
+                   # "\nrequired markup for this feature to be enabled." + \
+                   # "\n(Refer to Tooltip for further details.)" + \
+                   # "\n\n{}").format(", ".join(badbks))
+                # self.doError(m1, m2)
 
     def onFindMissingCharsClicked(self, btn_findMissingChars):
         missing = super(GtkViewModel, self).onFindMissingCharsClicked(btn_findMissingChars)

@@ -1172,7 +1172,7 @@ class TexModel:
                 ge = re.findall(r"\\p \\k (.+)\\k\* (.+)\r?\n", dat) # Finds all glossary entries in GLO book (may need to add \ili)
                 if ge is not None:
                     for g in ge:
-                        gdefn = regex.sub(r"\\xt (.+)\\xt\*", r"\1", g[1])
+                        gdefn = re.sub(r"\\xt (.+)\\xt\*", r"\1", g[1])
                         self.localChanges.append((None, regex.compile(r"(\\w (.+\|)?{} ?\\w\*)".format(g[0]), flags=regex.M), \
                                                                      r"\1\\f + \\fq {}: \\ft {}\\f* ".format(g[0],gdefn)))
 
