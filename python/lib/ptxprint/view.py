@@ -565,18 +565,18 @@ class ViewModel:
         if diglotPrinter is not None:
             diglotPics = None
             if isTemp and sfmonly != "sfm":      # only merge if source doesn't have L/R
-                tmppics = self.getFigures(bk)
+                tmppics = self._getFigures(bk)
                 if any(x[3] in "LR" for x in tmppics.keys()):
                     picinfos = tmppics
             if picinfos is None:
                 if priority == "Both" or priority =="Pri ":
-                    picinfos = self.getFigures(bk, suffix="L", sfmonly=sfmonly, usepiclists=not output)
+                    picinfos = self._getFigures(bk, suffix="L", sfmonly=sfmonly, usepiclists=not output)
                 if priority == "Sec ":
-                    picinfos = diglotPrinter.getFigures(bk, suffix="R", sfmonly=sfmonly, usepiclists=not output)
+                    picinfos = diglotPrinter._getFigures(bk, suffix="R", sfmonly=sfmonly, usepiclists=not output)
                 if priority == "Both":
-                    diglotPics = diglotPrinter.getFigures(bk, suffix="R", sfmonly=sfmonly, usepiclists=not output)
+                    diglotPics = diglotPrinter._getFigures(bk, suffix="R", sfmonly=sfmonly, usepiclists=not output)
         else:
-            picinfos = self.getFigures(bk, sfmonly=sfmonly)
+            picinfos = self._getFigures(bk, sfmonly=sfmonly)
         self.getFigureSources(picinfos, key=srcfkey)
         if diglotPrinter is not None and diglotPics is not None:
             diglotPrinter.getFigureSources(diglotPics, key=srcfkey)
@@ -624,10 +624,10 @@ class ViewModel:
             v['src'] = os.path.basename(v['dest file'])
         if output:
             piclstfname = os.path.join(outdir, plfname)
-            self.outPicInfo(picinfos, piclstfname, isTemp=isTemp)
+            self._outPicInfo(picinfos, piclstfname, isTemp=isTemp)
         return (picinfos, missingPics)
 
-    def outPicInfo(self, picinfo, fpath, isTemp=True):
+    def _outPicInfo(self, picinfo, fpath, isTemp=True):
         lines = []
         if isTemp:
             lines.append(_("% TEMPORARY PicList: ({}) - DO NOT EDIT\n\n").format(self.get("_date")))
@@ -692,7 +692,7 @@ class ViewModel:
             if not os.path.exists(fdir):
                 os.makedirs(fdir)
             fpath = os.path.join(fdir, fname)
-            self.outPicInfo(picitems, fpath, isTemp=False)
+            self._outPicInfo(picitems, fpath, isTemp=False)
 
     def getDraftFilename(self, bk, ext=".piclist"):
         fname = self.getBookFilename(bk, self.prjid)
@@ -719,7 +719,7 @@ class ViewModel:
                 vals['scale'] = m[2]
         return vals
 
-    def getFigures(self, bk, suffix="", sfmonly="piclist", media=None, usepiclists=False):
+    def _getFigures(self, bk, suffix="", sfmonly="piclist", media=None, usepiclists=False):
         res = {}
         fname = self.getBookFilename(bk, self.prjid)
         usepiclist = usepiclists or (sfmonly != "sfm" and self.get("c_usePicList")) # and bk not in TexModel._peripheralBooks

@@ -9872,7 +9872,7 @@ to make it fit. </property>
                               </object>
                               <packing>
                                 <property name="left_attach">2</property>
-                                <property name="top_attach">2</property>
+                                <property name="top_attach">3</property>
                                 <property name="height">2</property>
                               </packing>
                             </child>
@@ -9906,7 +9906,7 @@ to make it fit. </property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
-                                <property name="top_attach">3</property>
+                                <property name="top_attach">4</property>
                                 <property name="width">2</property>
                               </packing>
                             </child>
@@ -9981,7 +9981,7 @@ Verse Numbers:</property>
                               </object>
                               <packing>
                                 <property name="left_attach">3</property>
-                                <property name="top_attach">2</property>
+                                <property name="top_attach">3</property>
                                 <property name="height">2</property>
                               </packing>
                             </child>
@@ -10002,7 +10002,7 @@ then select the font here.</property>
                               </object>
                               <packing>
                                 <property name="left_attach">4</property>
-                                <property name="top_attach">2</property>
+                                <property name="top_attach">3</property>
                                 <property name="width">2</property>
                                 <property name="height">2</property>
                               </packing>
@@ -10020,7 +10020,7 @@ decorator set that here.</property>
                               </object>
                               <packing>
                                 <property name="left_attach">3</property>
-                                <property name="top_attach">4</property>
+                                <property name="top_attach">5</property>
                                 <property name="height">2</property>
                               </packing>
                             </child>
@@ -10048,7 +10048,7 @@ decorator set that here.</property>
                               </object>
                               <packing>
                                 <property name="left_attach">4</property>
-                                <property name="top_attach">4</property>
+                                <property name="top_attach">5</property>
                                 <property name="width">2</property>
                                 <property name="height">2</property>
                               </packing>
@@ -10070,7 +10070,7 @@ as vertical to make sure all headings fit.</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
-                                <property name="top_attach">2</property>
+                                <property name="top_attach">3</property>
                               </packing>
                             </child>
                             <child>
@@ -10090,7 +10090,7 @@ as vertical to make sure all headings fit.</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
-                                <property name="top_attach">4</property>
+                                <property name="top_attach">5</property>
                               </packing>
                             </child>
                             <child>
@@ -10106,7 +10106,7 @@ as vertical to make sure all headings fit.</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
-                                <property name="top_attach">5</property>
+                                <property name="top_attach">6</property>
                                 <property name="width">2</property>
                               </packing>
                             </child>
@@ -10124,9 +10124,39 @@ as vertical to make sure all headings fit.</property>
                               </object>
                               <packing>
                                 <property name="left_attach">2</property>
-                                <property name="top_attach">4</property>
+                                <property name="top_attach">5</property>
                                 <property name="height">2</property>
                               </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_borderPageWide">
+                                <property name="label" translatable="yes">Full page</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">If set, the border is expanded to the full page. Otherwise it is expanded only to the gutter margins.</property>
+                                <property name="halign">end</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
                             </child>
                             <child>
                               <placeholder/>

@@ -115,6 +115,8 @@ ModelMap = {
 
     "fancy/enableborders":      ("c_borders", lambda w,v: "" if v else "%"),
     "fancy/pageborder":         ("c_inclPageBorder", lambda w,v: "" if v else "%"),
+    "fancy/pageborderfullpage": ("c_borderPageWide", lambda w,v: "" if v else "%"),
+    "fancy/pagebordernfullpage_": ("c_borderPageWide", lambda w,v: "%" if v else ""),
     "fancy/pageborderpdf":      ("btn_selectPageBorderPDF", lambda w,v: w.pageborder.as_posix() \
                                             if (w.pageborder is not None and w.pageborder != 'None') \
                                             else get("/ptxprintlibpath")+"/A5 page border.pdf"),
@@ -456,6 +458,8 @@ class TexModel:
                 spath = os.path.join(docdir, "PrintDraft-mods.sty")
                 if os.path.exists(spath):
                     copyfile(spath, modspath)
+        self.dict["paper/pagegutter"] = float(re.sub(r"^([\d.]+).*?$", r"\1", self.dict["paper/width"])) \
+                        - (self.dict["paper/gutter"] if self.dict["paper/ifaddgutter"] == "true" else 0.)
 
     def updatefields(self, a):
         global get

@@ -223,15 +223,16 @@ class RunJob:
 
             if not self.args.print: # We don't want pop-up messages if running in command-line mode
                 fname = os.path.join(self.tmpdir, pdfname.replace(".pdf", ".log"))
-                with open(fname, "r", encoding="utf-8", errors="ignore") as logfile:
-                    log = logfile.read() # unlike other places, we *do* want the entire log file
-                badpgs = re.findall(r'(?i)SOMETHING BAD HAPPENED on page (\d+)\.', "".join(log))
-                if len(badpgs):
-                    print(_("Layout problems were encountered on page(s): ") + ", ".join(badpgs))
-                    self.printer.doError(_("PDF was created BUT..."),
-                        secondary=_("Layout problems were encountered on page(s): ") + ",".join(badpgs) + \
-                              _("\n\nTry changing the PicList and/or AdjList settings to solve issues."), \
-                              title=_("PTXprint [{}] - Warning!").format(VersionStr))
+                if os.path.exists(fname):
+                    with open(fname, "r", encoding="utf-8", errors="ignore") as logfile:
+                        log = logfile.read() # unlike other places, we *do* want the entire log file
+                    badpgs = re.findall(r'(?i)SOMETHING BAD HAPPENED on page (\d+)\.', "".join(log))
+                    if len(badpgs):
+                        print(_("Layout problems were encountered on page(s): ") + ", ".join(badpgs))
+                        self.printer.doError(_("PDF was created BUT..."),
+                            secondary=_("Layout problems were encountered on page(s): ") + ",".join(badpgs) + \
+                                  _("\n\nTry changing the PicList and/or AdjList settings to solve issues."), \
+                                  title=_("PTXprint [{}] - Warning!").format(VersionStr))
 
         elif not self.args.print: # We don't want pop-up messages if running in command-line mode
             finalLogLines = self.parseLogLines()
