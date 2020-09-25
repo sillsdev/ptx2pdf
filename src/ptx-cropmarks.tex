@@ -335,12 +335,10 @@
       \special {pdf:put @thispage <</MediaBox [0 0 \strip@pt\pdfpagewidth \space
         \strip@pt\pdfpageheight ] /TrimBox [\strip@pt\tmp \space
         \strip@pt\tmp \space \strip@pt\pdfcropwidth \space
-        \strip@pt\pdfcropheight ] /ArtBox [\strip@pt\tmp \space
-        \strip@pt\tmp \space \strip@pt\pdfcropwidth \space \strip@pt\pdfcropheight ]>>}
+        \strip@pt\pdfcropheight ] >>}
     \else\trace{s}{pdfpagewidth=\the\pdfpagewidth}\special {pdf:put @thispage <</MediaBox [0 0 \strip@pt{\pdfpagewidth} \space
         \strip@pt{\pdfpageheight} ] /TrimBox [0 0 \strip@pt{\pdfpagewidth} \space
-        \strip@pt{\pdfpageheight} ] /ArtBox [0 0 \strip@pt{\pdfpagewidth} \space
-        \strip@pt{\pdfpageheight} ]>>}\fi
+        \strip@pt{\pdfpageheight} ]>> }\fi
     % End inserted \special line
     \let\g@tterside=0 % figure out if we're adding a binding gutter, and which side
     \ifBindingGutter
