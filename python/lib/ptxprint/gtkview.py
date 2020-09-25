@@ -446,13 +446,13 @@ class GtkViewModel(ViewModel):
 
     def doError(self, txt, secondary=None, title=None, threaded=True):
         if threaded:
-            GLib.add_idle(self._doError, txt, secondary, title)
+            GLib.idle_add(self._doError, txt, secondary, title)
         else:
             self._doError(txt, secondary, title)
 
     def _doError(self, text, secondary, title):
         dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
-                 buttons=Gtk.ButtonsType.OK, text=txt)
+                 buttons=Gtk.ButtonsType.OK, text=text)
         if title is not None:
             dialog.set_title(title)
         else:
@@ -1782,7 +1782,7 @@ class GtkViewModel(ViewModel):
         GLib.idle_add(self._incrementProgress)
 
     def showLogFile(self):
-        self.builder.get_object("nbk_Main").set_current_page(10)   # Switch to the Viewer tab
+        self.builder.get_object("nbk_Main").set_current_page(11)   # Switch to the Viewer tab
         self.builder.get_object("nbk_Viewer").set_current_page(4) # Display the tab with the .log file
         # self.builder.get_object("scroll_XeTeXlog").scroll_to_mark(self.buf[4].get_insert(), 0.0, True, 0.5, 0.5)
 
