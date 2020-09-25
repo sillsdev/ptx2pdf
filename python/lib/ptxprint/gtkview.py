@@ -208,6 +208,7 @@ class GtkViewModel(ViewModel):
         self.pendingConfig = None
         self.otherDiglot = None
         self.notebooks = {}
+        self.pendingerror = None
         for n in _notebooks:
             nbk = self.builder.get_object("nbk_"+n)
             self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
@@ -324,7 +325,14 @@ class GtkViewModel(ViewModel):
         tv.set_search_entry(ts)
         self.mw.resize(830, 594)
         self.mw.show_all()
+        GObject.timeout_add(1000, self.monitor)
         Gtk.main()
+
+    def monitor(self):
+        if self.pendingerror is not None:
+            self._doError(*self.pendingerror)
+            self.pendingerror = None
+        return True
 
     def onHideAdvancedSettingsClicked(self, c_hideAdvancedSettings, foo):
         if self.get("c_hideAdvancedSettings"):
@@ -446,7 +454,7 @@ class GtkViewModel(ViewModel):
 
     def doError(self, txt, secondary=None, title=None, threaded=True):
         if threaded:
-            GLib.idle_add(GObject.timeout_add, 1000, self._doError, txt, secondary, title))
+            self.pendingerror=(txt, secondary, title)
         else:
             self._doError(txt, secondary, title)
 
