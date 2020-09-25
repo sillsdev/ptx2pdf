@@ -13,7 +13,7 @@ Bug Fixes and Enchancements in: 1.1.9
   
   * Copying Config files
   
-  * Fixed Fancy Intro Outline right-leaders (and removed 
+  * Fixed Fancy Intro Outline right-leaders (and removed validation of SFM before enabling option)
   
   * Fixed Smart Quotes occuring in picture captions
   

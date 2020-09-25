@@ -55,7 +55,7 @@ ModelMap = {
     #"config/name":              ("ecb_savedConfig", lambda w,v: v or "default"),
     "config/notes":             ("t_configNotes", lambda w,v: v or ""),
     "config/pwd":               ("t_invisiblePassword", lambda w,v: v or ""),
-    "config/version":           ("_version", lambda w,v: "1.1.8"),
+    "config/version":           ("_version", lambda w,v: "1.1.9"),
 
     # "project/id":               ("fcb_project", None),
     "project/hideadvsettings":  ("c_hideAdvancedSettings", None),
@@ -989,7 +989,7 @@ class TexModel:
             
         for c in range(1,4): # Remove any \toc lines that we don't want appearing in the Table of Contents
             if not self.asBool("document/usetoc{}".format(c)) and (c != 3 or self.asBool("thumbtabs/ifthumbtab")):
-                print("Deleting toc{} with thumbtabs/ifthumbtab of {}".format(c, self.get("thumbtabs/ifthumbtab")))
+                # print("Deleting toc{} with thumbtabs/ifthumbtab of {}".format(c, self.printer.get("thumbtabs/ifthumbtab")))
                 self.localChanges.append((None, regex.compile(r"(\\toc{} .+)".format(c), flags=regex.M), ""))
 
         # Add End of Book decoration PDF to Scripture books only if FancyBorders is enabled and .PDF defined
@@ -1172,7 +1172,7 @@ class TexModel:
                 ge = re.findall(r"\\p \\k (.+)\\k\* (.+)\r?\n", dat) # Finds all glossary entries in GLO book (may need to add \ili)
                 if ge is not None:
                     for g in ge:
-                        gdefn = regex.sub(r"\\xt (.+)\\xt\*", r"\1", g[1])
+                        gdefn = re.sub(r"\\xt (.+)\\xt\*", r"\1", g[1])
                         self.localChanges.append((None, regex.compile(r"(\\w (.+\|)?{} ?\\w\*)".format(g[0]), flags=regex.M), \
                                                                      r"\1\\f + \\fq {}: \\ft {}\\f* ".format(g[0],gdefn)))
 

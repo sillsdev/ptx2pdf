@@ -49,7 +49,7 @@ class ParatextSettings:
             self.read_ldml()
 
     def read_ldml(self):
-        self.langid = regex.sub('-(?=-|$)', '', self.dict['LanguageIsoCode'].replace(":", "-"))
+        self.langid = re.sub('-(?=-|$)', '', self.dict['LanguageIsoCode'].replace(":", "-"))
         fname = os.path.join(self.basedir, self.prjid, self.langid+".ldml")
         silns = "{urn://www.sil.org/ldml/0.1}"
         if os.path.exists(fname):
@@ -57,7 +57,7 @@ class ParatextSettings:
             for k in ['footnotes', 'crossrefs']:
                 d = self.ldml.find('.//characters/special/{1}exemplarCharacters[@type="{0}"]'.format(k, silns))
                 if d is not None:
-                    self.dict[k] = ",".join(regex.sub(r'^\[\s*(.*?)\s*\]', r'\1', d.text).split())
+                    self.dict[k] = ",".join(re.sub(r'^\[\s*(.*?)\s*\]', r'\1', d.text).split())
                     # print(k, self.dict[k].encode("unicode_escape"))
             fonts = self.ldml.findall('.//special/{0}external-resources/{0}font'.format(silns))
             for t in (None, "default"):
