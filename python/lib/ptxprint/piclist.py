@@ -125,7 +125,9 @@ class PicList:
         res = "".join(self.get(k, default="") for k in _comblist[:-1])
         if res.startswith("c"):
             res += str(self.get(_comblist[-1]))
-        res = re.sub(r'([PF])([tcb])([lcr])', r'\1\3\2', res).strip("c") 
+        res = re.sub(r'([PF])([tcb])([lcr])', r'\1\3\2', res)
+        if len(res) and res[0] in "PF":
+            res = res.strip("c")
         return res
 
     def item_changed(self, w, key):

@@ -11,7 +11,7 @@ from io import StringIO
 import datetime, time
 from shutil import copyfile, copytree, move
 
-VersionStr = "1.1.8"
+VersionStr = "1.1.9"
 
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
 
