@@ -33,8 +33,8 @@
 %+c_makecropmarks
 \newif\ifBookOpenLeft\BookOpenLeftfalse % The friend of RTL. In monoglot these two typically go together, in diglot they may not. ifOpenLeft controls where binding gutter goes, etc.
 \newif\ifCropMarks
-%\font\idf@nt=cmtt10 scaled 700 % font for the marginal job information
-\font\idf@nt="Courier" at 10pt
+\font\idf@nt=cmtt10 scaled 700 % font for the marginal job information
+%\font\idf@nt="Courier" at 10pt % Use something not bitmap?
 \newbox\topcr@p \newbox\bottomcr@p
 \def\makecr@ps{% construct the cropmark boxes for top and bottom of page
   \global\setbox\topcr@p=\vbox to 0pt{\vss
