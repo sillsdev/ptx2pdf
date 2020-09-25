@@ -152,7 +152,7 @@
       \ifdim\dimen0<\baselineskip
         \dimen1=\baselineskip\advance\dimen1 by -\dimen0
         \vskip\dimen1
-		\trace{f}{\reference : Footnote vskip=\the\dimen1 baselineskip=\the\baselineskip strut height=\the\dimen0}
+		\trace{f}{\reference : Footnote vskip=\the\dimen1 baselineskip=\the\baselineskip strut height=\the\dimen0}%
 	  \fi\fi
   \leavevmode % begin paragraph
   \ifdiglot\ifdiglotL\the\leftho@ks\else\the\rightho@ks\fi\fi%
@@ -326,7 +326,7 @@
   % set penalty which allows breaking between notes unless this would cause
   % an extra line to be created.
   \linepenalty50
-  \trace{f}{Note #2 baselineskip=\the\baselineskip}
+  \trace{f}{Note #2 baselineskip=\the\baselineskip}%
   \par\leftskip=0pt\ifNoteTracing\tracingparagraphs=0\fi}
 %-c_makenotepara
 % make box0 = an hbox contining all the contents of this class
@@ -356,15 +356,15 @@
 \global\output={\onecol}
 \global\holdinginserts=1
 \def\onecol{%
-  \trace{b}{BALANCE pagebuild: cols=1: textheight=\the\textheight}
+  \trace{b}{BALANCE pagebuild: cols=1: textheight=\the\textheight}%
   \global\setbox\galley=\copy255                                        %(1)
   % tempoarily split and see if there are marks in this text
   \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup        %(+)
-  \edef\t@mp{\splitbotmark}
+  \edef\t@mp{\splitbotmark}%
   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
   \global\galleypenalty=\outputpenalty                                  %(+)
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
-  \global\output={\onecoltrial}
+  \global\output={\onecoltrial}%
   % No marks on the page, and it didn't fit, so add a blank mark
   \ifm@rksonpage\else\gdef\p@gefirstmark{}\trace{H}{No marks found. Setting empty mark}\fi
   \global\holdinginserts=0
@@ -409,11 +409,11 @@
       \ifvoid\topins\else \vbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
       \dimen0=\dp\colA
       \hbox to \dimen1{\hbox to \columnshift{}%
-        \box\colA\hbox to \ExtraRMargin{}\hfil}
+        \box\colA\hbox to \ExtraRMargin{}\hfil}%
       \ifvoid\bottomins\else \vfil\kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\box\bottomins} \fi % ouput bottom spanning pictures
       \f@rstnotetrue%
       \m@kenotebox
-      \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2 \space Leaving \the\ht255, \the\dp255}
+      \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2 \space Leaving \the\ht255, \the\dp255}%
       \ifdim\ht2<0pt\trace{b}{Strange notes height}\fi
       \unvbox2
     }
@@ -432,7 +432,7 @@
 %+c_onecoltrial_fail
   \else % the contents of the "galley" didn't fit into the actual page,
         % so reduce \vsize and try again with an earlier break
-    \trace{i}{1c REDUCING VSIZE hIns=\the\holdinginserts}
+    \trace{i}{1c REDUCING VSIZE hIns=\the\holdinginserts}%
     \global\advance\vsize by -\baselineskip
     \global\setbox\topins=\box\voidb@x
     \global\setbox\bottomins=\box\voidb@x
@@ -440,7 +440,7 @@
     \global\setbox255=\box\voidb@x
     \global\holdinginserts=1
     \global\let\whichtrial=\onecoltrial
-    \global\output={\backingup}
+    \global\output={\backingup}%
     \unvbox\galley \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
   \fi
 }
