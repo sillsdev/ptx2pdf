@@ -696,12 +696,10 @@ class ViewModel:
 
     def getDraftFilename(self, bk, ext=".piclist"):
         fname = self.getBookFilename(bk, self.prjid)
-        cname = "-" + (self.configName() or "draft")
+        cname = "-" + (self.configName() or "Default")
         doti = fname.rfind(".")
-        if doti > 0:
-            return fname[:doti] + cname + fname[doti:] + ext
-        else:
-            return fname + cname + ext
+        res = fname[:doti] + cname + fname[doti:] + ext if doti > 0 else fname + cname + ext
+        return res
 
     def _fixPicinfo(self, vals):
         p = vals['pgpos']

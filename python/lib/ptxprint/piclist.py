@@ -199,7 +199,6 @@ class PicChecks:
     def init(self, basepath, configid):
         if basepath is None or configid is None:
             return
-        print(basepath, configid)
         self.cfgShared.read(os.path.join(basepath, self.fname), encoding="utf-8")
         self._init_default(self.cfgShared, "pic")
         self.cfgProject.read(os.path.join(basepath, configid, self.fname), encoding="utf-8")
