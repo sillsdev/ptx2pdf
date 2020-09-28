@@ -1,29 +1,16 @@
 %PDF-1.4
-%¬ÈÓ°
-3 0 obj
-<<
-  /Type /Catalog
-  /Pages 2 0 R
->>
+%‚„œ”
+1 0 obj<</Author(jheath)/CreationDate(D:20080123214416Z)/Creator(www.inkscape.org)/Producer(Inkscape 0.45.1)/Title(A5 section head border.pdf)>>
 endobj
-4 0 obj
-<<
-  /Type /Page
-  /Parent 2 0 R
-  /MediaBox [ 0 0 311.81100464 25.5118103 ]
-  /Resources 5 0 R
-  /Contents 6 0 R
-  /Group
-  << /Type /Group
-     /S /Transparency
-     /CS /DeviceRGB
-  >>
->>
+2 0 obj<</Type/Pages/Count 1/Kids[ 4 0 R]>>
 endobj
-6 0 obj
-<<
-  /Length 7 0 R
->>
+3 0 obj<</Type/Catalog/Pages 2 0 R>>
+endobj
+4 0 obj<</Type/Page/Contents 6 0 R/Group<</Type/Group/CS/DeviceRGB/S/Transparency>>/MediaBox[ 0 0 311.811005 25.51181]/Parent 2 0 R/Resources 5 0 R>>
+endobj
+5 0 obj<</ProcSet[/PDF/Text/ImageB/ImageC/ImageI]>>
+endobj
+6 0 obj<</Length 2987>>
 stream
 0.8 0 0 -0.8 0 26 cm
 q
@@ -252,50 +239,23 @@ S
 Q
 Q
 Q
+
 endstream
 endobj
-7 0 obj
-2987
-endobj
-5 0 obj
-<<
-  /ProcSet [/PDF /Text /ImageB /ImageC /ImageI]
->>
-endobj
-1 0 obj
-<<
-  /Title(A5 section head border.pdf)
-  /Author(jheath)
-  /Creator(www.inkscape.org)
-  /Producer(Inkscape 0.45.1)
-  /CreationDate(D:20080123214416Z)
->>
-endobj
-2 0 obj
-<<
-  /Type /Pages
-  /Count 1
-  /Kids [
-    4 0 R
-  ]
->>
+7 0 obj 2987
 endobj
 xref
 0 8
 0000000000 65535 f 
-0000003404 00000 n 
-0000003573 00000 n 
 0000000015 00000 n 
-0000000068 00000 n 
-0000003335 00000 n 
-0000000274 00000 n 
-0000003315 00000 n 
+0000000167 00000 n 
+0000000218 00000 n 
+0000000262 00000 n 
+0000000419 00000 n 
+0000000478 00000 n 
+0000003514 00000 n 
 trailer
-<<
-  /Size 7
-  /Root 3 0 R
-  /Info 1 0 R
->>
+<</ID[<764843FF962ACC3FBE742BC14663A2E2><764843FF962ACC3FBE742BC14663A2E2>]/Info 1 0 R/Root 3 0 R/Size 8>>
 startxref
-3644
+3534
 %%EOF
