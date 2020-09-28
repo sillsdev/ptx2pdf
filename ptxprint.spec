@@ -36,14 +36,15 @@ a = Analysis(['python/scripts/ptxprint', 'python/scripts/usfmerge'],
                       + [('python/lib/ptxprint/PDFassets/watermarks/'+z, 'ptxprint/PDFassets/watermarks') for z in 
                             ('A4-Grid.pdf', 'A4-Draft.pdf', 'A5-Grid.pdf', 'A5-Draft.pdf',
                              '5.8x8.7-12mmBorderDraft.pdf', '5.8x8.7-Draft.pdf', 'BSI-12mmBorder.pdf',
-                             'A4-12mmBorder.pdf', 'A5-10mmBorder.pdf', 'A4-CopyrightWatermark.pdf', 'A5-CopyrightWatermark.pdf')],
+                             'A4-12mmBorder.pdf', 'A5-10mmBorder.pdf', 'A4-CopyrightWatermark.pdf', 'A5-CopyrightWatermark.pdf')]
+                      + [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
+                            ('Google-Noto-Emoji-Objects-62859-open-book.ico', '62859-open-book-icon(128).png', 'ps_cmyk.icc')]
+                      + [('src/mappings/*.tec', 'ptx2pdf/mappings')],
              datas =    [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
-                            ('ptxprint.glade', 'template.tex', 'ps_cmyk.icc', '62859-open-book-icon(128).png')]
+                            ('ptxprint.glade', 'template.tex')]
                       + [('python/lib/ptxprint/sfm/*.*y', 'ptxprint/sfm')]
                       + [('docs/inno-docs/*.txt', 'ptxprint')]
-                      + [('src/*.tex', 'ptx2pdf'), ('src/ptx2pdf.sty', 'ptx2pdf'),
-                         ('src/mappings/*.tec', 'ptx2pdf/mappings')]
-                      + [('python/lib/ptxprint/Google-Noto-Emoji-Objects-62859-open-book.ico', 'ptxprint')],
+                      + [('src/*.tex', 'ptx2pdf'), ('src/ptx2pdf.sty', 'ptx2pdf')],
              hiddenimports = ['_winreg'],
              hookspath = [],
              runtime_hooks = [],
