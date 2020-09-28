@@ -58,6 +58,13 @@ being prepared at the moment.  However, in the case it might still be better to 
 **Warning** If this number is set below the index number for a given book, then that tab will go beyond the limits set for them or even off the page. 
 Setting \NumTabs artificially high will mean that tabs are pushed to the upper portion of the page. If this is desired, however, it is normally more appropriate to alter `\TabsEnd`.
 
+#### Grouped tab settings
+* \setthumbtabgroup{`Wisdom`}{`PRO,JOB,ECC`}  - Add books to a group (a book will only be in a single group). The list of books is is comma separated and should not include any spaces.
+* \settabgroupBg{`Wisdom`}{.5 .5 .1} - Define the default foreground colour for a given group of books (instead of `\tabFontCol`).
+* \settabgroupFg{`Wisdom`}{1 1 1} - Define the default  foreground colour for a given group of books (instead of `\tabFontCol`).
+
+This should reduce the amount of typing and opportinities for errors, compared to the individual settings below. Individual settings will, however, take precedence.
+
 #### Individual tab settings
 * \setthumbtabFg{`PSA`}{0 1 0.8} - Override the default foreground colour `\tabFontCol` for the given book.
 * \setthumbtabBg{`REV`}{0.3 0.3 0} - Override the default background colour `\tabBoxCol` for the given book.

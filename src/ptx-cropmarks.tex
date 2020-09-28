@@ -119,9 +119,25 @@
 \def\tabFontCol{1 1 1}%Foregreound as r g b
 
 \def\sett@bname#1{\xdef\t@bname{t@b-#1}}
+\def\sett@bgrpnam#1{\xdef\t@bgrp{t@bg-#1}}
 \def\setthumbtab#1#2{\sett@bname{#1}\edef\t@mp{#2}\ifx\t@mp\empty\x@\let\csname\t@bname -num\endcsname\relax\else\x@\xdef\csname\t@bname -num\endcsname{#2}\ifnum\NumTabs<#2 \global\NumTabs=#2 \fi\fi}
 \def\setthumbtabBg#1#2{\sett@bname{#1}\x@\xdef\csname\t@bname -boxcol\endcsname{#2}}
 \def\setthumbtabFg#1#2{\sett@bname{#1}\x@\xdef\csname\t@bname -col\endcsname{#2}}
+% Tab groups
+\def\settabgroupFg#1#2{\sett@bgrpnam{#1}\x@\xdef\csname\t@bgrp -col\endcsname{#2}}
+\def\settabgroupBg#1#2{\sett@bgrpnam{#1}\x@\xdef\csname\t@bgrp -boxcol\endcsname{#2}}
+\def\gett@bgroup{\x@\let\x@\t@bgrp\csname\t@bname-grp\endcsname}
+
+\def\setthumbtabgroup#1#2{% #1 - Name e.g. Pent, #2 list of book IDs e.g GEN,EXO,NUM,DEU,JOS
+ \sett@bgrpnam{#1}\let\n@xtcmd\s@tt@bgroup \n@xtcmd #2,,\endtab}
+\def\l@stcmd#1,\endtab{}
+
+\def\s@tt@bgroup#1,#2,\endtab{%Iterate through comma separated list, setting group name
+  \edef\tmp{#2}%
+  \ifx\tmp\empty\let\n@xtcmd\l@stcmd\fi
+  \sett@bname{#1}\x@\xdef\csname \t@bname-grp\endcsname{\t@bgrp}%
+  \n@xtcmd #2,\endtab}
+
 
 \def\colourbox#1#2#3#4#5#6#7{%1 - box colour, 2 - text colour 
   % 3- boxwidth 
@@ -199,9 +215,18 @@
  \s@tfont{\ThumbTabStyle}%
  \x@\let\x@\t@bBoxCol\csname\t@bname -boxcol\endcsname
  \x@\let\x@\t@bFontCol\csname\t@bname -col\endcsname
- \ifx\t@bBoxCol\relax\let\t@bBoxCol\tabBoxCol\fi
- \ifx\t@bFontCol\relax\let\t@bFontCol\tabFontCol\fi
+ \ifx\t@bgrp\relax
+   \let\t@bgFontCol\relax
+   \let\t@bgBoxCol\relax
+ \else
+   \x@\let\x@\t@bgBoxCol\csname\t@bgrp -boxcol\endcsname
+   \x@\let\x@\t@bgFontCol\csname\t@bgrp -col\endcsname
+ \fi
+ \ifx\t@bBoxCol\relax\ifx\t@bgBoxCol\relax\let\t@bBoxCol\tabBoxCol\else\let\t@bBoxCol\t@bgBoxCol\fi\fi
+ \ifx\t@bFontCol\relax\ifx\t@bgFontCol\relax\let\t@bFontCol\tabFontCol\else\let\t@bFontCol\t@bgFontCol\fi\fi
  \tempfalse% Don't rotate
+ \tracingmacros=0
+ \tracingassigns=0
  \ifTabAutoRotate 
    \ifdim\tabheight>\tabwidth% Normally rotate
      \ifTabRotationNormal
@@ -286,7 +311,9 @@
  \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
  \XeTeXuseglyphmetrics=3
  \ifnum\NumTabs=0 \else
-   \sett@bname{\id@@@}\x@\let\x@\tabnum\csname\t@bname -num\endcsname
+   \tracingmacros=1
+   \tracingassigns=1
+   \sett@bname{\id@@@}\gett@bgroup\x@\let\x@\tabnum\csname\t@bname -num\endcsname
   \trace{pt}{\t@bname, Tabnum: \tabnum}%
    \ifx\tabnum\relax\else %NOT ifx..  This allows setting the number to \relax and it'll disable it.
       {%Protect temporary dimensions and box
