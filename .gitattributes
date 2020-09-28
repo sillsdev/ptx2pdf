@@ -13,14 +13,14 @@
 *.usfm   text
 *.md     text
 *.txt    text
-*.pdf    -text
-*.exe    -text
-*.ttf    -text
-*.jpg    -text
-*.png    -text
-*.tec    -text
-*.xdv    -text
-*.ico    -text
-*.zip    -text
-*.ods    -text
+*.pdf    binary
+*.exe    binary
+*.ttf    binary
+*.jpg    binary
+*.png    binary
+*.tec    binary
+*.xdv    binary
+*.ico    binary
+*.zip    binary
+*.ods    binary
 
