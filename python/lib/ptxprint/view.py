@@ -481,7 +481,16 @@ class ViewModel:
         if v < 1.2:
             bl = self._config_get(config, "project", "booklist")
             self._configset(config, "project/bookscope", "multiple" if len(bl) else "single")
-            config.set("config", "version", "1.2")
+        if v < 1.201:
+            cnfname = self.configName()
+            for d in ('PicLists', 'AdjLists'):
+                p = os.path.join(self.configPath(cnfname), d)
+                for f in os.listdir(p):
+                    if "-draft" in f:
+                        newf = os.path.join(f.replace("-draft", "-"+cnfname))
+                        if not os.path.exists(newf):
+                            move(os.path.join(p, f), newf)
+            config.set("config", "version", "1.201")
 
     def loadConfig(self, config):
         def setv(k, v): self.set(k, v, skipmissing=True)
