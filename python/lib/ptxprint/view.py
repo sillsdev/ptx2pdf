@@ -482,9 +482,11 @@ class ViewModel:
             bl = self._config_get(config, "project", "booklist")
             self._configset(config, "project/bookscope", "multiple" if len(bl) else "single")
         if v < 1.201:
-            cnfname = self.configName()
+            cnfname = self.configName() or "Default"
             for d in ('PicLists', 'AdjLists'):
                 p = os.path.join(self.configPath(cnfname), d)
+                if not os.path.exists(p):
+                    continue
                 for f in os.listdir(p):
                     if "-draft" in f:
                         newf = os.path.join(f.replace("-draft", "-"+cnfname))
