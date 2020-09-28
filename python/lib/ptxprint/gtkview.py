@@ -1789,6 +1789,9 @@ class GtkViewModel(ViewModel):
     def incrementProgress(self):
         GLib.idle_add(self._incrementProgress)
 
+    def onIdle(self, fn, *args):
+        GLib.idle_add(fn, *args)
+
     def showLogFile(self):
         self.builder.get_object("nbk_Main").set_current_page(11)   # Switch to the Viewer tab
         self.builder.get_object("nbk_Viewer").set_current_page(4) # Display the tab with the .log file

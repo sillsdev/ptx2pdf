@@ -239,7 +239,7 @@ class RunJob:
             finalLogLines = self.parseLogLines()
             self.printer.doError(_("Failed to create: ")+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname),
                     secondary="".join(finalLogLines[-20:]), title="PTXprint [{}] - Error!".format(VersionStr))
-            self.printer.showLogFile()
+            self.printer.onIdle(self.printer.showLogFile)
         self.printer.finished()
         self.busy = False
         unlockme()
@@ -247,6 +247,8 @@ class RunJob:
     def parselog(self, fname, rerunp=False, lines=20):
         loglines = []
         rerunres = False
+        if not os.path.exists(fname):
+            return (loglines, rerunres)
         try:
             with open(fname, "r", encoding="utf-8", errors="ignore") as logfile:
                 for i, l in enumerate(logfile.readlines()):
