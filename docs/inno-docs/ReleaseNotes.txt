@@ -1,6 +1,14 @@
-PTXprint 1.1.9 Release Notes 
-25th September 2020
+PTXprint 1.1.9.2 Release Notes 
+28th September 2020
 
+Bug Fixes and Enchancements in: 1.1.9.2
+
+  * Get Decorative PDFs to work reliably
+  
+  * Auto-update PicList and other config filenames based on new naming standard
+  
+  * Updated Localization .pot file
+  
 Bug Fixes and Enchancements in: 1.1.9
 
   * Fixed Thumb Tabs and improved UI
