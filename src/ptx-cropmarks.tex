@@ -445,7 +445,7 @@
 \newbox\b@rder
 \def\pl@ceborder{\ifx\PageBorder\empty\else % if \PageBorder is empty, this does nothing
   \ifvoid\b@rder % set up the \b@rder box the first time it's needed
-    \global\setbox\b@rder=\hbox{\XeTeXpdffile \PageBorder \relax}%
+    \global\setbox\b@rder=\hbox{\XeTeXpdffile "\PageBorder" \relax}%
     \global\setbox\b@rder=\vbox to \pdfpageheight{\vss
       \hbox to \pdfpagewidth{\hss\box\b@rder\hss}\vss}%
   \fi
