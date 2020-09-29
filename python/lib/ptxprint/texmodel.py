@@ -11,6 +11,7 @@ from ptxprint import sfm
 from ptxprint.sfm import usfm, style
 from ptxprint.usfmutils import Usfm, Sheets
 from ptxprint.utils import _
+from ptxprint.dimension import Dimension
 
 def universalopen(fname, rewrite=False):
     """ Opens a file with the right codec from a small list and perhaps rewrites as utf-8 """
@@ -458,8 +459,8 @@ class TexModel:
                 spath = os.path.join(docdir, "PrintDraft-mods.sty")
                 if os.path.exists(spath):
                     copyfile(spath, modspath)
-        self.dict["paper/pagegutter"] = float(re.sub(r"^([\d.]+).*?$", r"\1", self.dict["paper/width"])) \
-                        - (self.dict["paper/gutter"] if self.dict["paper/ifaddgutter"] == "true" else 0.)
+        self.dict["paper/pagegutter"] = "{:.2f}mm".format(Dimension(self.dict["paper/width"]).asunits("mm") \
+                        - (self.dict["paper/gutter"] if self.dict["paper/ifaddgutter"] == "true" else 0.))
 
     def updatefields(self, a):
         global get

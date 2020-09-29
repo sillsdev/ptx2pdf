@@ -131,7 +131,7 @@ class FancyBorders(Snippet):
 % Can also use "xscaled 850 yscaled 950" to scale separately in each direction,
 %   or "width 5.5in height 8in" to scale to a known size
 {fancy/pageborder}{fancy/pageborderfullpage}\def\PageBorder{{"{fancy/pageborderpdf}" width {paper/width} height {paper/height}}}
-{fancy/pageborder}{fancy/pagebordernfullpage_}\def\PageBorder{{"{fancy/pageborderpdf}" width {paper/pagegutter}mm height {paper/height}}}
+{fancy/pageborder}{fancy/pagebordernfullpage_}\def\PageBorder{{"{fancy/pageborderpdf}" width {paper/pagegutter} height {paper/height}}}
 
 {fancy/endofbook}\newbox\decorationbox
 {fancy/endofbook}\setbox\decorationbox=\hbox{{\XeTeXpdffile "{fancy/endofbookpdf}"\relax}}
