@@ -56,7 +56,7 @@ ModelMap = {
     #"config/name":              ("ecb_savedConfig", lambda w,v: v or "default"),
     "config/notes":             ("t_configNotes", lambda w,v: v or ""),
     "config/pwd":               ("t_invisiblePassword", lambda w,v: v or ""),
-    "config/version":           ("_version", lambda w,v: "1.1.9.2"),
+    "config/version":           ("_version", lambda w,v: "1.1.9.3"),
 
     # "project/id":               ("fcb_project", None),
     "project/hideadvsettings":  ("c_hideAdvancedSettings", None),
@@ -870,7 +870,7 @@ class TexModel:
                 self.localChanges.append((None, regex.compile(r"\\c {} ?\r?\n.+".format(last+1), flags=regex.S), ""))
 
         # Throw out the known "nonpublishable" markers and their text (if any)
-        self.localChanges.append((None, regex.compile(r"\\(usfm|ide|rem|sts|restore|pubinfo)( .*?)?\r?\n(?=\\)", flags=regex.M), ""))
+        self.localChanges.append((None, regex.compile(r"\\(usfm|ide|rem|sts|restore|pubinfo)( .*?)?\n(?=\\)", flags=regex.M), ""))
 
         # If a printout of JUST the book introductions is needed (i.e. no scripture text) then this option is very handy
         if not self.asBool("document/ifmainbodytext"):
