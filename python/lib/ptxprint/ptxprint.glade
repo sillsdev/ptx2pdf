@@ -9254,6 +9254,7 @@ Tab Positions:</property>
                               <object class="GtkSpinButton" id="s_thumbtabs">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="width_chars">5</property>
                                 <property name="adjustment">a_thumbtabs</property>
                               </object>
                               <packing>

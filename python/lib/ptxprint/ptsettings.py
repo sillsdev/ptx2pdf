@@ -49,7 +49,7 @@ class ParatextSettings:
             self.read_ldml()
 
     def read_ldml(self):
-        self.langid = re.sub('-(?=-|$)', '', self.dict['LanguageIsoCode'].replace(":", "-"))
+        self.langid = re.sub('-(?=-|$)', '', self.get('LanguageIsoCode', "unk").replace(":", "-"))
         fname = os.path.join(self.basedir, self.prjid, self.langid+".ldml")
         silns = "{urn://www.sil.org/ldml/0.1}"
         if os.path.exists(fname):
@@ -106,9 +106,9 @@ class ParatextSettings:
         self.dict['DefaultFont'] = ""
         
         fbkfm = self.dict['FileNameBookNameForm']
-        bknamefmt = (self.dict['FileNamePrePart'] or "") + \
+        bknamefmt = self.get('FileNamePrePart', "") + \
                     fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + \
-                    (self.dict['FileNamePostPart'] or "")
+                    self.get('FileNamePostPart', "")
         bookspresent = [0] * len(allbooks)
         for k, v in books.items():
             if os.path.exists(os.path.join(path, bknamefmt.format(bkid=k, bkcode=v))):
@@ -116,10 +116,10 @@ class ParatextSettings:
         self.dict['BooksPresent'] = "".join(str(x) for x in bookspresent)
 
     def getBookFilename(self, bk):
-        fbkfm = self['FileNameBookNameForm']
-        bknamefmt = (self['FileNamePrePart'] or "") + \
+        fbkfm = self.get('FileNameBookNameForm', "")
+        bknamefmt = self.get('FileNamePrePart', "") + \
                     fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + \
-                    (self['FileNamePostPart'] or "")
+                    self.get('FileNamePostPart', "")
         fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
         return fname
 

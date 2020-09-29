@@ -609,7 +609,7 @@ class GtkViewModel(ViewModel):
         root = os.path.join(self.settings_dir, prjid, "shared", "ptxprint")
         if os.path.exists(root):
             for s in os.scandir(root):
-                if s.is_dir and os.path.exists(os.path.join(root, s.name, "ptxprint.cfg")):
+                if s.is_dir() and os.path.exists(os.path.join(root, s.name, "ptxprint.cfg")):
                     res.append(s.name)
         if 'Default' not in res:
             res.append('Default')   # it's only going to get sorted
