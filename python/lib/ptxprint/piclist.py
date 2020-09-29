@@ -39,7 +39,11 @@ class PicList:
         for k, v in _form_structure.items():
             w = builder.get_object(v)
             w.connect("value-changed" if v[0].startswith("s_") else "changed", self.item_changed, k)
-        pass
+
+    def modify_font(self, p):
+        for a in ("", "1", "2"):
+            w = self.builder.get_object("cr_caption"+a)
+            w.set_property("font", p)
 
     def isEmpty(self):
         return len(self.model) == 0
