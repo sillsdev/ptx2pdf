@@ -489,7 +489,7 @@ class ViewModel:
                     continue
                 for f in os.listdir(p):
                     if "-draft" in f:
-                        newf = os.path.join(f.replace("-draft", "-"+cnfname))
+                        newf = os.path.join(p, f.replace("-draft", "-"+cnfname))
                         if not os.path.exists(newf):
                             move(os.path.join(p, f), newf)
             config.set("config", "version", "1.201")
