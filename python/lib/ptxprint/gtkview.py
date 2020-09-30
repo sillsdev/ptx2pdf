@@ -981,12 +981,15 @@ class GtkViewModel(ViewModel):
         fsize = self.get("s_fontsize")
         (name, style) = self.get("bl_fontR")
         fallback = ',Sans'
+        if self.get("c_diglot"):
+            digview = self.createDiglotView()
+            (digname, digstyle) = digview.get("bl_fontR")
+            fallback = "," + digname + fallback
         pangostr = '{}{} {} {}'.format(name, fallback, style, fsize)
         p = Pango.FontDescription(pangostr)
         for w in ("t_clHeading", "t_tocTitle", "t_configNotes", "scroll_FinalSFM", "scroll_PicList", \
                   "ecb_ftrcenter", "ecb_hdrleft", "ecb_hdrcenter", "ecb_hdrright", "t_fncallers", "t_xrcallers", \
                   "l_projectFullName", "t_plCaption", "t_plRef", "t_plAltText", "t_plCopyright"):
-                  # "col_caption", "col_caption1"):
             self.builder.get_object(w).modify_font(p)
         self.picListView.modify_font(p)
         # TO DO: Also need to handle TWO fallback fonts in the picList for Diglots (otherwise one script will end up as Tofu)
