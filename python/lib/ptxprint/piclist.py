@@ -43,7 +43,7 @@ class PicList:
     def modify_font(self, p):
         for a in ("", "1", "2"):
             w = self.builder.get_object("cr_caption"+a)
-            w.set_property("font", p)
+            w.set_property("font-desc", p)
 
     def isEmpty(self):
         return len(self.model) == 0
