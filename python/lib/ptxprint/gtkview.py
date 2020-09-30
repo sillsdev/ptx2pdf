@@ -988,6 +988,7 @@ class GtkViewModel(ViewModel):
                   "l_projectFullName", "t_plCaption", "t_plRef", "t_plAltText", "t_plCopyright"):
                   # "col_caption", "col_caption1"):
             self.builder.get_object(w).modify_font(p)
+        self.picListView.modify_font(p)
         # TO DO: Also need to handle TWO fallback fonts in the picList for Diglots (otherwise one script will end up as Tofu)
 
     def onRadioChanged(self, btn):
