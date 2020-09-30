@@ -791,9 +791,9 @@ class GtkViewModel(ViewModel):
                 self.builder.get_object("ecb_examineBook").set_active_id(bks[0])
         self.updatePicList()
 
-    def getFigures(self, bk, suffix="", sfmonly=False, media=None, usepiclists=False):
+    def _getFigures(self, bk, suffix="", sfmonly=False, media=None, usepiclists=False):
         if self.picListView.isEmpty():
-            return super().getFigures(bk, suffix=suffix, sfmonly=sfmonly, media=media,
+            return super()._getFigures(bk, suffix=suffix, sfmonly=sfmonly, media=media,
                                       usepiclists=usepiclists)
         return self.picListView.getinfo()
 
@@ -1521,7 +1521,6 @@ class GtkViewModel(ViewModel):
             btn_createZipArchive.set_tooltip_text("No Archive File Created")
 
     def onSelectOutputFolderClicked(self, btn_selectOutputFolder):
-        # MH: This needs some work - especially if the commandline option sets the output path
         customOutputFolder = self.fileChooser("Select the output folder", 
                 filters = None, multiple = False, folder = True)
         if customOutputFolder is not None and len(customOutputFolder):
@@ -1536,6 +1535,15 @@ class GtkViewModel(ViewModel):
             btn_selectOutputFolder.set_tooltip_text("")
             self.builder.get_object("c_useprintdraftfolder").set_active(True)
             self.builder.get_object("btn_selectOutputFolder").set_sensitive(False)
+
+    def onUsePiclistsToggle(self, btn):
+        if btn.get_active():
+            picinfos = {}
+            for bk in self.getBooks():
+                picinfos.update(self._getFigures(bk))
+            self.picListView.load(picinfos)
+        else:
+            self.picListView.clear()
 
     def onSelectFigureFolderClicked(self, btn_selectFigureFolder):
         customFigFolder = self.fileChooser(_("Select the folder containing image files"),
