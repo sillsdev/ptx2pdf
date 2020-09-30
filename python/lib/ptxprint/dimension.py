@@ -6,7 +6,7 @@ _units = {'pt': 1, 'in': 72.27, 'mm': 72.27/25.4}
 class Dimension:
     def __init__(self, val="0", units=None):
         s = str(val)
-        print(s)
+        # print(s)
         m = re.match(r"^(-?\d+(?:\.\d+)?)\s*(\S*)$", s)
         if m:
             val = float(m.group(1))
