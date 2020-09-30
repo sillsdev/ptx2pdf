@@ -330,7 +330,7 @@ THE SOFTWARE.
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 1.1.9.5</property>
+    <property name="version">Version 1.1.9.6</property>
     <property name="copyright">© 2020, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 

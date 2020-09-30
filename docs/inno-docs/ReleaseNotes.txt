@@ -1,5 +1,9 @@
-PTXprint 1.1.9.5 Release Notes 
+PTXprint 1.1.9.6 Release Notes 
 30th September 2020
+
+Bug Fixes in: 1.1.9.6
+
+  * Fix a bug to cope with incomplete settings in settings.xml
 
 Bug Fixes and Enchancements in: 1.1.9.5
 
