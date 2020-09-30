@@ -980,7 +980,7 @@ class TexModel:
                 self.localChanges.append((None, regex.compile(r"\\{} .".format(c[0])), r"\\{} {}".format(c[0],t)))
             # Remove the [spare] space after a note caller if the caller is omitted AND if after a digit (verse number).
             if self.asBool("notes/{}omitcaller".format(c)):
-                self.localChanges.append((None, regex.compile(r"(\d )(\\[{}] - .*?\\[{}]\*)\s+".format(c[0])), r"\1\2"))
+                self.localChanges.append((None, regex.compile(r"(\d )(\\[{0}] - .*?\\[{0}]\*)\s+".format(c[0])), r"\1\2"))
 
         # Paratext marks no-break space as a tilde ~
         self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 

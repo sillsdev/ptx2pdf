@@ -1,13 +1,17 @@
-PTXprint 1.1.9.3 Release Notes 
-29th September 2020
+PTXprint 1.1.9.4 Release Notes 
+30th September 2020
 
+Bug Fixes and Enchancements in: 1.1.9.4
+
+  * Ensure pictures show up even when no PicList is being used
+
+  * Ensure captions in PicList display in the right font for the project
+  
 Bug Fixes and Enchancements in: 1.1.9.3
 
   * Fix nasty bug of Configs (and everything else) being inaccessible on startup!
   
   * Address issues with page dimensions and border size
-  
-  * Ensure captions in PicList display in the right font for the project (or projects if Diglot)
   
 Bug Fixes and Enchancements in: 1.1.9.2
 
