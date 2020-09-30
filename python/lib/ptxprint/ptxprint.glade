@@ -8017,6 +8017,7 @@ positioning of illustrations.
                                     <property name="margin_left">10</property>
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                    <signal name="toggled" handler="onUsePiclistsToggle" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
