@@ -507,7 +507,8 @@ class RunJob:
         res = []
         for j in jobs:
             pi, mp = self.printer.generateNProcPicLists(j, \
-                                os.path.join(self.printer.working_dir, "tmpPicLists"), carefulCopy, isTemp=True)
+                                os.path.join(self.printer.working_dir, "tmpPicLists"),
+                                carefulCopy, sfmonly="both", isTemp=True)
             missingPics += mp
             res += [v['dest file'] for v in pi.values() if 'dest file' in v]
             
