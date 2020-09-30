@@ -505,6 +505,10 @@ class RunJob:
             return self.carefulCopy(ratio, src, tgt)
         missingPics = []
         res = []
+        print("document/ifinclfigs {}".format(info['document/ifinclfigs']))
+        if info['document/ifinclfigs'] == 'false':
+            print("NoFigs")
+            return res
         for j in jobs:
             pi, mp = self.printer.generateNProcPicLists(j, \
                                 os.path.join(self.printer.working_dir, "tmpPicLists"),
