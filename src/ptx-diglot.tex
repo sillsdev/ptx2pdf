@@ -1253,13 +1253,13 @@
   \advance\TempDim by -\dp\LeftBox
   %\message{TempDim is \the\TempDim}
   \ifdim \TempDim>0pt %Right box is longest
-    \dimen0=\dp\LeftBox\relax%
+    \lastd@pth=\dp\LeftBox\relax%
     %\advance\TempDim by -\dp\LeftBox
     \global\setbox\LeftBox=\vtop{\unvbox\LeftBox}%
   \fi%
   \ifdim \TempDim<0pt %Left box is longest
     %\advance\TempDim by \dp\RightBox
-    \dimen0=\dp\RightBox\relax%
+    \lastd@pth=\dp\RightBox\relax%
     \ifredocolok%
       \ifpagefull%
         %\makevtop{\RightBox}%
@@ -1661,7 +1661,7 @@
     \LRf@@tnotesfalse%
     \f@rstnotetrue%
     \diglotLtrue%
-    \dimen0=0pt 
+    \lastd@pth=0pt 
     %Arrange Left and Right footnotes
     \global\setbox\LeftBox=\vbox{\the\leftho@ks\let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}%
     \iff@rstnote%
@@ -1670,7 +1670,7 @@
       \LRf@@tnotestrue%
       \f@rstnotetrue%
     \fi%
-    \dimen0=0pt 
+    \lastd@pth=0pt 
     \diglotLfalse%
     \global\setbox\RightBox=\vbox{\the\rightho@ks\let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}%
     \iff@rstnote%
@@ -1685,7 +1685,7 @@
     \ifdiglotBalNotes%
       \trace{f}{Balanced notes}%
       \ifLRf@@tnotes%
-        \kern\dimen0%
+        \kern\lastd@pth%
         \trace{f}{Footnotes}%
         \ifdim\ht\LeftBox>\ht\RightBox%
           \setbox\RightBox=\vbox to \ht\LeftBox{\box\RightBox\vss}%
@@ -1821,7 +1821,7 @@
        \hbox to\columnLwidth{\box\topleftins\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
      \fi%
    }%
-   \dimen0=\dp\galley\relax%
+   \lastd@pth=\dp\galley\relax%
    \unvbox\galley%
    \ifdim\ht\bottomleftins>\ht\bottomrightins%
       \setbox\bottomrightins=\vbox to \ht\bottomleftins{\box\bottomrightins\vss}%
@@ -1845,7 +1845,7 @@
        \hbox to\columnLwidth{\box\bottomleftins\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
      \fi%
    }%
-   \ifvoid\bottomins\else%\kern-\dimen0 \dimen0=0pt 
+   \ifvoid\bottomins\else%\kern-\lastd@pth \dimen0=0pt 
      \vskip\skip\bottomins \unvbox\bottomins \fi%
    \ifdiglotSepNotes%
    \else%

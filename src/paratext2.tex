@@ -233,7 +233,7 @@
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\TRACE{no note}\else%
-    \iff@rstnote\kern-\dimen0\vfil\fi % ignore depth of body text; fill space
+    \iff@rstnote\kern-\lastd@pth\vfil\fi % ignore depth of body text; fill space
     \vskip\AboveNoteSpace % output above note class space
     \iff@rstnote\footnoterule\global\f@rstnotefalse\fi % output rule before first note
     \hbox{\hskip\columnshift \vbox{\unvbox\th@cl@ss}}\fi}% output notes
@@ -245,7 +245,7 @@
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\else
-    \iff@rstnote\kern-\dimen0\vfil % ignore depth of body text; fill space
+    \iff@rstnote\kern-\lastd@pth\vfil % ignore depth of body text; fill space
       \vskip\AboveNoteSpace\else\vskip\InterNoteSpace\fi
     \iff@rstnote{\footnoterule}\global\f@rstnotefalse\fi % output rule before first note
     {\maken@tepara{\th@cl@ss}{#1}}%
@@ -407,11 +407,11 @@
       \trace{b}{BALANCE pangeoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins}
       \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}} \fi
       \ifvoid\topins\else \vbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
-      \dimen0=\dp\colA
+      \lastd@pth=\dp\colA
       \hbox to \dimen1{\hbox to \columnshift{}%
         \box\colA\hbox to \ExtraRMargin{}\hfil}%
-      \ifvoid\bottomins\else \vfil% \kern-\dimen0
-        \dimen0=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\box\bottomins} \fi % ouput bottom spanning pictures
+      \ifvoid\bottomins\else \vfil\kern-\lastd@pth
+        \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\box\bottomins} \fi % ouput bottom spanning pictures
       \f@rstnotetrue%
       \m@kenotebox
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2 \space Leaving \the\ht255, \the\dp255}%
@@ -547,12 +547,12 @@
     \global\setbox\partial=\vbox{
       \ifvoid\partial\else \unvbox\partial \fi
       \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi
-      \dimen0=\dp\colA
+      \lastd@pth=\dp\colA
       \dimen1=\textwidth \advance\dimen1 -\ExtraRMargin \advance\dimen1 -\columnshift
       \hbox to \dimen1{%\hbox to \columnshift{}%
         \box\colA\hbox to \ExtraRMargin{}\hfil}
       \ifvoid\bottomins\else%
-        \kern-\dimen0 \dimen0=0pt \vskip\skip\bottomins \unvbox\bottomins \fi
+        \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\bottomins \unvbox\bottomins \fi
       \f@rstnotetrue
       \m@kenotebox
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}
@@ -864,12 +864,12 @@
 \def\c@lcboxheights{
   \g@tcolhts
   \trace{b}{BALANCE pageout: cols=2: texta=\the\ht\colA , \the\dp\colA : textb=\the\ht\colB , \the\dp\colB : partial=\the\ht\partial, \the\dp\partial : topins=\the\ht\topins+\the\skip\topins, \the\ht\topleftins+\the\skip\topleftins, \the\ht\toprightins+\the\skip\toprightins : bottomins=\the\ht\bottomins+\the\skip\bottomins, \the\ht\bottomleftins+\the\skip\bottomleftins, \the\ht\bottomrightins+\the\skip\bottomrightins}
-  \dimen0=\dp\colA \setbox\colA=\vbox to \availht{\unvbox\topleftins\box\colA\vfil\unvbox\bottomleftins}\dp\colA=\dimen0
-  \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\else\ifdim\dimen0<\dp\colB\dimen0=\dp\colB\fi\fi
-  \setbox\colB=\vbox to \availht{\unvbox\toprightins\box\colB\vfil\unvbox\bottomrightins}\dp\colB=\dimen0
-  \ifdim\colhtA>\colhtB \dimen3=\colhtA\dimen0=\dp\colA\dp\colB=\dimen0\else
-    \dimen3=\colhtB\dimen0=\dp\colB\dp\colA=\dimen0\fi
-  \advance\dimen3 by \dimen0
+  \lastd@pth=\dp\colA \setbox\colA=\vbox to \availht{\unvbox\topleftins\box\colA\vfil\unvbox\bottomleftins}\dp\colA=\lastd@pth
+  \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\else\ifdim\lastd@pth<\dp\colB\lastd@pth=\dp\colB\fi\fi
+  \setbox\colB=\vbox to \availht{\unvbox\toprightins\box\colB\vfil\unvbox\bottomrightins}\dp\colB=\lastd@pth
+  \ifdim\colhtA>\colhtB \dimen3=\colhtA\lastd@pth=\dp\colA\dp\colB=\lastd@pth\else
+    \dimen3=\colhtB\lastd@pth=\dp\colB\dp\colA=\lastd@pth\fi
+  \advance\dimen3 by \lastd@pth
 }
 %-c_calcboxheights
 
@@ -937,8 +937,8 @@
       \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
       \dimen5=\textwidth\advance\dimen5 by -\ExtraRMargin\advance\dimen5 by -\columnshift %
       \vbox{\hbox to \dimen5{%\hbox to \columnshift{}
-        \ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\dimen0}\box\colA %
-        \else \box\colA\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\dimen0}\box\colB\hbox to \ExtraRMargin{}\fi}}}
+        \ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}\box\colA %
+        \else \box\colA\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}\box\colB\hbox to \ExtraRMargin{}\fi}}}
     %\advance\dimen3 by \dimen4 \ht\partial=\dimen3
 %-c_savepartialpaged_intro
 %+c_savepartialpaged
@@ -981,11 +981,11 @@
   \iff@rstnote % no notes actually occurred!
     \trace{i}{No notes}
     \ifnoteseen\MSG{Page \the\pageno\space is being printed without any footnotes/xrefs, etc. But at least one was seen earlier. Maybe it's ended up on the previous page or moved to the next one, or maybe it's vanished. Human checking is needed.}\fi
-    \kern-\dimen0 \vfil
+    \kern-\lastd@pth \vfil
   \else
     \setbox0=\lastbox
-    \trace{i}{Inserted notes, ht \the\ht0\space dp \the\dimen0}
-    \dimen0=\dp0 \box0 \kern-\dimen0
+    \trace{i}{Inserted notes, ht \the\ht0\space dp \the\lastd@pth,\the\dp0}%
+    \lastd@pth=\dp0 \box0 \kern-\lastd@pth
   \fi}}
 %-c_makenotebox
 
@@ -1015,12 +1015,12 @@
       \ifvoid\partial\else %\msg{2colout partial: \the\ht\partial}\hskip\columnshift
         \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}}\fi % output partial page
       \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
-      \trace{p}{Text depth = \the\dimen3}%\showthe\dimen0
+      \trace{p}{Text depth = \the\dimen3}%\showthe\lastd@pth
       \hbox to \dimen1{\hbox to \columnshift{}%
-        \ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\availht}{\the\dimen0}\box\colA
-        \else \box\colA\makecolumngutter{\the\dimen3}{\the\availht}{\the\dimen0}\box\colB\hbox to \ExtraRMargin{}\fi}
-      \ifvoid\bottomins\else %\kern-\dimen0
-        \dimen0=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\bottomins}}\fi % ouput bottom spanning pictures
+        \ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}\box\colA
+        \else \box\colA\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}\box\colB\hbox to \ExtraRMargin{}\fi}
+      \ifvoid\bottomins\else \kern-\lastd@pth
+        \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\bottomins}}\fi % ouput bottom spanning pictures
       \f@rstnotetrue
       \m@kenotebox
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
@@ -1150,9 +1150,9 @@
     \trace{b}{BALANCE pageout: cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins}
     \vbox{\dimen1=\textwidth \advance\dimen1 -\ExtraRMargin
     \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\box\partial}} \fi
-	\dimen0=\dp\partial
+	\lastd@pth=\dp\partial
     \ifvoid\bottomins\else % \kern-\dimen0
-      \dimen0=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\bottomins}}\fi
+      \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\bottomins}}\fi
     \f@rstnotetrue%
     \m@kenotebox
     \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
