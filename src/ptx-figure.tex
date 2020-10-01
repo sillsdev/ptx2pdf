@@ -1,4 +1,3 @@
-%:skip
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Part of the ptx2pdf macro package for formatting USFM text
 % copyright (c) 2007-2020 by SIL International
@@ -32,7 +31,6 @@
 
 % \fig handling code, originally from paratext2.tex
 
-%:id intro
 % Inserts
 \count\topins=1000 \dimen\topins=\maxdimen \skip\topins=0pt
 \newinsert\bottomins \count\bottomins=1000 \dimen\bottomins=\maxdimen
@@ -416,7 +414,6 @@
       }%
       \setbox0\hbox{\pr@pic\box0\p@stpic}%
     \fi
-    \trace{g}{Picture height=\the\ht0, vs:\the\vsize, \the\partialLpenalty,  pg:\the\pagegoal, pt:\the\pagetotal, av:\the\availht, aligned:\pic@lign}%
     %Align image left/right or centre
     \ifx\pic@lign\@lignRight\hbox to \p@cinswid{\hss\box0}%
     \else
@@ -425,6 +422,7 @@
     \fi
     \ifCaptionFirst\vskip 0.5\baselineskip\else\d@caption\fi
   }% END of box0
+  \trace{g}{Picture height=\the\ht0, vs:\the\vsize, \the\partialLpenalty,  pg:\the\pagegoal, pt:\the\pagetotal, av:\the\availht, aligned:\pic@lign}%
 %-cfig_dofigure_4
 %+cfig_dofigure_5
   \trace{b}{BALANCE fig: height=\the\ht0: baselineskip=\the\baselineskip}%

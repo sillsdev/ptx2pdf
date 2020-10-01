@@ -225,8 +225,6 @@
  \ifx\t@bBoxCol\relax\ifx\t@bgBoxCol\relax\let\t@bBoxCol\tabBoxCol\else\let\t@bBoxCol\t@bgBoxCol\fi\fi
  \ifx\t@bFontCol\relax\ifx\t@bgFontCol\relax\let\t@bFontCol\tabFontCol\else\let\t@bFontCol\t@bgFontCol\fi\fi
  \tempfalse% Don't rotate
- \tracingmacros=0
- \tracingassigns=0
  \ifTabAutoRotate 
    \ifdim\tabheight>\tabwidth% Normally rotate
      \ifTabRotationNormal
@@ -311,8 +309,6 @@
  \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
  \XeTeXuseglyphmetrics=3
  \ifnum\NumTabs=0 \else
-   \tracingmacros=1
-   \tracingassigns=1
    \sett@bname{\id@@@}\gett@bgroup\x@\let\x@\tabnum\csname\t@bname -num\endcsname
   \trace{pt}{\t@bname, Tabnum: \tabnum}%
    \ifx\tabnum\relax\else %NOT ifx..  This allows setting the number to \relax and it'll disable it.
