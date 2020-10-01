@@ -410,7 +410,7 @@
       \dimen0=\dp\colA
       \hbox to \dimen1{\hbox to \columnshift{}%
         \box\colA\hbox to \ExtraRMargin{}\hfil}%
-      \ifvoid\bottomins\else % \vfil\kern-\dimen0
+      \ifvoid\bottomins\else \vfil% \kern-\dimen0
         \dimen0=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\box\bottomins} \fi % ouput bottom spanning pictures
       \f@rstnotetrue%
       \m@kenotebox
