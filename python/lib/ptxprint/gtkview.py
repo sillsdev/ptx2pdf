@@ -803,14 +803,18 @@ class GtkViewModel(ViewModel):
             bks = self.getBooks()
         if len(bks) and len(bks[0]) and bks[0] != 'NONE':
             picinfos = self.generatePicLists(bks, priority, output=output)
-            self.picListView.load(picinfos)
+            if len(picinfos):
+                self.picListView.load(picinfos)
 
     def updatePicChecks(self, src):
         self.picChecksView.savepic()
         self.picChecksView.loadpic(src)
 
     def onPlAddClicked(self, btn):
+        self.set("nbk_PicList", 1)
         self.picListView.add_row()
+        for w in ["t_plAnchor", "t_plFilename", "t_plCaption", "t_plRef", "t_plAltText", "t_plCopyright"]: 
+            self.set(w, "")
 
     def onPlDelClicked(self, btn):
         self.picListView.del_row()

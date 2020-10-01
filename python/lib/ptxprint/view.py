@@ -33,9 +33,9 @@ def newBase(fpath):
 def refKey(r, info=""):
     m = re.match(r"^(\D*)\s*(\d*)\.?(\d*)(\S*?)$", r)
     if m:
-        return (books.get(m.group(1)[:3], "100"), int(m.group(2) or 0), int(m.group(3) or 0), m.group(1)[3:], info, m.group(4))
+        return (books.get(m.group(1)[:3], 100), int(m.group(2) or 0), int(m.group(3) or 0), m.group(1)[3:], info, m.group(4))
     else:
-        return (r, "", 0, 0, info)
+        return (100, 0, 0, r, info, "")
 
 class Path(pathlib.Path):
 
