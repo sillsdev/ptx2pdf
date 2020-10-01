@@ -1132,7 +1132,7 @@ class ViewModel:
             fname = self.getBookFilename(bk, prjid)
             fpath = os.path.join(self.settings_dir, prjid)
             res[os.path.join(fpath, fname)] = fname
-            picinfos.update(self.getFigures(bk))
+            picinfos.update(self._getFigures(bk))
         self.getFigureSources(picinfos)
         pathkey = 'src path'
         for f in (p[pathkey] for p in picinfos.values() if pathkey in p):

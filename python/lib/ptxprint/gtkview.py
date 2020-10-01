@@ -1885,3 +1885,6 @@ class GtkViewModel(ViewModel):
                 lsp.append([posn, _pgpos[posn]])
             fcb.set_active(0)
  
+    def onPLrowActivated(self, *a):
+        self.set("nbk_PicList", 1)
+        
