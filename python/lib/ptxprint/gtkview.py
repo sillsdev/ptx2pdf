@@ -22,7 +22,9 @@ from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, ch
 from ptxprint.piclist import PicList, PicChecks
 from ptxprint.runjob import isLocked
 from ptxprint.texmodel import TexModel
-from ptxprint.utils import _
+from ptxprint.minidialog import MiniDialog
+import ptxprint.scriptsnippets as scriptsnippets
+from ptxprint.utils import _, f_
 import configparser
 import traceback
 from threading import Thread
@@ -1887,4 +1889,13 @@ class GtkViewModel(ViewModel):
  
     def onPLrowActivated(self, *a):
         self.set("nbk_PicList", 1)
+
+    def onScrSettingsClicked(self, btn):
+        script = self.get("fcb_script")
+        gclass = getattr(scriptsnippets, script.lower(), None)
+        if gclass is None or gclass.dialogstruct is None:
+            return
+        d = MiniDialog(self, gclass.dialogstruct, f_("{script} Script Settings"))
+        response = d.run()
+        d.destroy()
         

@@ -12,6 +12,7 @@ from ptxprint.sfm import usfm, style
 from ptxprint.usfmutils import Usfm, Sheets
 from ptxprint.utils import _
 from ptxprint.dimension import Dimension
+import ptxprint.scriptsnippets as scriptsnippets
 
 def universalopen(fname, rewrite=False):
     """ Opens a file with the right codec from a small list and perhaps rewrites as utf-8 """
@@ -211,6 +212,9 @@ ModelMap = {
     "document/ifspacing":       ("c_spacing", lambda w,v :"" if v else "%"),
     "document/spacestretch":    ("s_maxSpace", lambda w,v : str((int(float(v)) - 100) / 100.)),
     "document/spaceshrink":     ("s_minSpace", lambda w,v : str((100 - int(float(v))) / 100.)),
+    "document/ifletter":        ("c_letterSpacing", None),
+    "document/letterstretch":   ("s_letterStretch", lambda w,v: float(v or "5.0") / 100.),
+    "document/lettershrink":    ("s_letterShrink", lambda w,v: float(v or "1.0") / 100.),
     "document/ifcolorfonts":    ("c_colorfonts", lambda w,v: "%" if v else ""),
 
     "document/ifchaplabels":    ("c_useChapterLabel", lambda w,v: "%" if v else ""),
@@ -311,6 +315,8 @@ ModelMap = {
     "thumbtabs/foreground":     ("col_thumbtext", None),
     "thumbtabs/restart":        ("c_thumbrestart", None),
     "thumbtabs/groups":         ("t_thumbgroups", None),
+
+    "scrmymr/syllables":        ("c_scrmymrSyllable", None),
 }
 
 _fontstylemap = {
@@ -718,6 +724,11 @@ class TexModel:
                                 res.append(c[1].texCode.format(**self.dict))
                             else:
                                 res.append(c[1].texCode)
+                    script = self.dict["document/script"]
+                    if len(script) > 0:
+                        sclass = getattr(scriptsnippets, script[8:].lower(), None)
+                        if sclass is not None:
+                            res.append(sclass.tex(self))
                 else:
                     res.append(l.format(**self.dict))
         return "".join(res).replace("\OmitChapterNumberfalse\n\OmitChapterNumbertrue\n","")
@@ -1013,6 +1024,12 @@ class TexModel:
                     pass
                 else:
                     self.localChanges.extend(c[1].regexes)
+
+        script = self.dict["document/script"]
+        if len(script):
+            sscript = getattr(scriptsnippets, script[8:].lower(), None)
+            if sscript is not None:
+                self.localChanges.extend(sscript.regexes(self))
 
         ## Final tweaks
         # Strip out any spaces either side of an en-quad 
