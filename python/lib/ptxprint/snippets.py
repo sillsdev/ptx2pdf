@@ -312,7 +312,7 @@ class ImgCredits(Snippet):
                         artpgs.setdefault(a, []).append(int(f[0]))
 
             if len(artpgs):
-                artistWithMost = max(artpgs, key= lambda x: len(set(artpgs[x])))
+                artistWithMost = max(artpgs, key=lambda x: len(set(artpgs[x])))
             else:
                 artistWithMost = ""
         
@@ -348,9 +348,9 @@ class ImgCredits(Snippet):
 
             if artistWithMost != "":
                 if sensitive and len(artstr[artistWithMost][1]):
-                    cpystr = re.sub('_', '\u00A0', artstr[artistWithMost][1])
+                    cpystr = re.sub('_', '\u00A0', artstr.get(artistWithMost, ("", artistWithMost))[1])
                 else:
-                    cpystr = re.sub('_', '\u00A0', artstr[artistWithMost][0])
+                    cpystr = re.sub('_', '\u00A0', artstr.get(artistWithMost, (artistWithMost, ""))[0])
                 if len(crdts) == 1:
                     crdts += ["\\{} All illustrations {}{}\n".format(mkr, exceptpgs, cpystr)]
                 elif len(crdts) > 1:
