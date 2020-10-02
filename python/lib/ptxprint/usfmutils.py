@@ -1,9 +1,23 @@
 from ptxprint.sfm import usfm, style
 from ptxprint import sfm
+from ptxprint.sfm.ucd import get_ucd
 import re, os
 from collections import namedtuple
+from itertools import groupby
 
 RefRange = namedtuple("RefRange", ["fromc", "fromv", "toc", "tov"])
+
+def isScriptureText(e):
+    if 'nonvernacular' in e.meta.get('TextProperties', []):
+        return False
+    if e.name in ("h", "id"):
+        return False
+    return True
+
+takslc_cats = {'Lu', 'Ll', 'Lt', 'Lm', 'Lo', 'Sm', 'Sc', 'Sk', 'So',
+               'Nd', 'Nl', 'No', 
+               'Pd', 'Pc', 'Pe', 'Ps', 'Pi', 'Pf', 'Po'}
+space_cats = { 'Zs', 'Zl', 'Zp', 'Cf' }
 
 class _Reference(sfm.Position):
     def __new__(cls, pos, ref):
@@ -129,3 +143,55 @@ class Usfm:
                     j += 1
             return res
         ge(0, self.doc[0])
+
+    def _proctext(self, fn):
+        def _g(e):
+            if isinstance(e, sfm.Element):
+                e[:] = map(_g, e)
+                return e
+            else:
+                return fn(e)
+        self.doc = map(_g, self.doc)
+
+    def transform_text(self, *regs):
+        """ Given tuples of (lambda, match, replace) tests the lambda against the
+            parent of a text node and if matches (or is None) does match and replace. """
+        def fn(e):
+            s = str(e)
+            processed = False
+            for r in regs:
+                if r[0] is not None and not r[0](e.parent):
+                    continue
+                ns = r[1].sub(r[2], s)
+                if ns != s:
+                    processed = True
+                    s = ns
+            if processed:
+                return sfm.Text(s, e.pos, e.parent)
+            else:
+                return e
+        self._proctext(fn)
+
+    def letter_space(self, inschar):
+        def fn(e):
+            if not isScriptureText(e.parent):
+                return e
+            done = False
+            lastspace = False
+            res = []
+            for (islet, c) in groupby(e, key=lambda x:get_ucd(ord(x), "gc") in takslc_cats):
+                chars = "".join(c)
+                print("{} = {}".format(chars, islet))
+                if not len(chars):
+                    continue
+                if islet:
+                    res.append(("" if lastspace else inschar) + inschar.join(chars))
+                    done = True
+                else:
+                    res.append(chars)
+                lastspace = get_ucd(ord(chars[-1]), "gc") in space_cats
+            if done:
+                print("{} -> {}".format(e, "".join(res)))
+            return sfm.Text("".join(res), e.pos, e.parent) if done else e
+        self._proctext(fn)
+

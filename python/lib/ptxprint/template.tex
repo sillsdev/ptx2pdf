@@ -70,7 +70,12 @@
 {document/ifcolorfonts}\ColorFontsfalse
 
 %% Specify the fallback font to be used for special/missing characters
-%\extrafont  
+%\extrafont
+
+{document/ifletter}\newskip\intercharskip \intercharskip=0pt plus {document/letterstretch:.2f}em minus {document/lettershrink:.2f}em
+{document/ifletter}\def\letterspace{{\nobreak\hskip\intercharskip}}
+{document/ifletter}\DefineActiveChar{{^^^^fdd0}}{{\letterspace}}
+
 
 %%%%% Layout %%%%%
 {document/ifhidehboxerrors}\overfullrule=0pt

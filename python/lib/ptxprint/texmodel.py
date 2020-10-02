@@ -9,7 +9,7 @@ from ptxprint.ptsettings import chaps, books, bookcodes, oneChbooks
 from ptxprint.runner import checkoutput
 from ptxprint import sfm
 from ptxprint.sfm import usfm, style
-from ptxprint.usfmutils import Usfm, Sheets
+from ptxprint.usfmutils import Usfm, Sheets, isScriptureText
 from ptxprint.utils import _
 from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
@@ -212,7 +212,7 @@ ModelMap = {
     "document/ifspacing":       ("c_spacing", lambda w,v :"" if v else "%"),
     "document/spacestretch":    ("s_maxSpace", lambda w,v : str((int(float(v)) - 100) / 100.)),
     "document/spaceshrink":     ("s_minSpace", lambda w,v : str((100 - int(float(v))) / 100.)),
-    "document/ifletter":        ("c_letterSpacing", None),
+    "document/ifletter":        ("c_letterSpacing", lambda w,v: "" if v else "%"),
     "document/letterstretch":   ("s_letterStretch", lambda w,v: float(v or "5.0") / 100.),
     "document/lettershrink":    ("s_letterShrink", lambda w,v: float(v or "1.0") / 100.),
     "document/ifcolorfonts":    ("c_colorfonts", lambda w,v: "%" if v else ""),
@@ -802,6 +802,8 @@ class TexModel:
                     "if PrintDraftChanges.txt has caused the error(s).", 
                     title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr))
                 else:
+                    if self.dict["document/ifletter"] == "":
+                        doc.letter_space("\uFDD0")
                     dat = str(doc)
 
             if self.localChanges is not None:

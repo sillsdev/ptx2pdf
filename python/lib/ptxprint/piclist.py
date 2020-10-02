@@ -39,6 +39,7 @@ class PicList:
         for k, v in _form_structure.items():
             w = builder.get_object(v)
             w.connect("value-changed" if v[0].startswith("s_") else "changed", self.item_changed, k)
+        self.clear()
 
     def modify_font(self, p):
         for a in ("", "1", "2"):
