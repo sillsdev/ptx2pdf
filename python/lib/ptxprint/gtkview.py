@@ -1855,26 +1855,32 @@ class GtkViewModel(ViewModel):
 
     def onPLsizeChanged(self, *a):
         size = self.get("fcb_plSize")
+        wids = ["l_plHoriz", "fcb_plHoriz"]
         if size in ["col", "span"]:
             self._updatePgPosOptions()
-            # if self.get("fcb_plPgPos") in ["P", "F"]:
-                # self.builder.get_object("fcb_plPgPos").set_active_id("t")
-            # for w in ["fcb_plPgPos", "fcb_plHoriz", "s_plLines"]:
-                # self.builder.get_object(w).set_sensitive(True)
         elif size in ["page", "full"]:
             self._updatePgPosOptions(fullpage=size)
-            # for w in ["fcb_plPgPos", "fcb_plHoriz", "s_plLines"]:
-                # self.builder.get_object(w).set_sensitive(False)
+        if size == "span":
+            for w in wids:
+                self.builder.get_object("fcb_plHoriz").set_active_id("-")
+                self.builder.get_object(w).set_sensitive(False)
+        else:
+            for w in wids:
+                self.builder.get_object(w).set_sensitive(True)
 
     def onPLpgPosChanged(self, *a):
         pgpos = self.get("fcb_plPgPos")
-        self.builder.get_object("l_plOffsetNum").set_label("Number of\nlines:")
-        # if pgpos == "P":
-            # self.builder.get_object("fcb_plSize").set_active_id("page")
-        # elif pgpos == "F":
-            # self.builder.get_object("fcb_plSize").set_active_id("full")
-        if pgpos == "p":
-            self.builder.get_object("l_plOffsetNum").set_label("Number of\nparagraphs:")
+        wids = ["l_plOffsetNum", "s_plLines"]
+        if pgpos in ["p", "c"]:
+            for w in wids:
+                self.builder.get_object(w).set_sensitive(True)
+            if pgpos == "p":
+                self.builder.get_object("l_plOffsetNum").set_label("Number of\nparagraphs:")
+            else:
+                self.builder.get_object("l_plOffsetNum").set_label("Number of\nlines:")
+        else:
+            for w in wids:
+                self.builder.get_object(w).set_sensitive(False)
 
     def _updatePgPosOptions(self, fullpage=""):
         lsp = self.builder.get_object("ls_plPgPos")
