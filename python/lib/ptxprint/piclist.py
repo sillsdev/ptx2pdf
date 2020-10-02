@@ -83,7 +83,8 @@ class PicList:
     def getinfo(self):
         res = {}
         for row in self.model:
-            res[row[0]] = self.getrowinfo(row)
+            if len(row[0]) > 5:
+                res[row[0]] = self.getrowinfo(row)
         return res
 
     def row_select(self, selection):

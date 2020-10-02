@@ -192,14 +192,14 @@ _vertical_thumb = {
 
 class GtkViewModel(ViewModel):
 
-    def __init__(self, settings_dir, workingdir, userconfig, scriptsdir):
+    def __init__(self, settings_dir, workingdir, userconfig, scriptsdir, args=None):
         self._setup_css()
         GLib.set_prgname("ptxprint")
         self.builder = Gtk.Builder()
         self.builder.set_translation_domain("ptxprint")
         self.builder.add_from_file(os.path.join(os.path.dirname(__file__), "ptxprint.glade"))
         self.builder.connect_signals(self)
-        super(GtkViewModel, self).__init__(settings_dir, workingdir, userconfig, scriptsdir)
+        super(GtkViewModel, self).__init__(settings_dir, workingdir, userconfig, scriptsdir, args)
         self.isDisplay = True
         self.config_dir = None
         self.initialised = False
@@ -211,6 +211,7 @@ class GtkViewModel(ViewModel):
         self.otherDiglot = None
         self.notebooks = {}
         self.pendingerror = None
+        self.logfile = None
         for n in _notebooks:
             nbk = self.builder.get_object("nbk_"+n)
             self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
@@ -328,7 +329,15 @@ class GtkViewModel(ViewModel):
         self.mw.resize(830, 594)
         self.mw.show_all()
         GObject.timeout_add(1000, self.monitor)
+        if self.args is not None and self.args.capture is not None:
+            self.logfile = open(self.args.capture, "w")
+            GObject.add_emission_hook(Gtk.Button, "clicked", self.emission_hook, "clicked")
         Gtk.main()
+
+    def emission_hook(self, w, *a):
+        name = Gtk.Buildable.get_name(w)
+        self.logfile.write('<event w="{}" s="{}"/>\n'.format(name, a[0]))
+        return True
 
     def monitor(self):
         if self.pendingerror is not None:
@@ -446,6 +455,8 @@ class GtkViewModel(ViewModel):
         setWidgetVal(wid, w, value)
 
     def onDestroy(self, btn):
+        if self.logfile != None:
+            self.logfile.close()
         Gtk.main_quit()
 
     def onKeyPress(self, dlg, event):
@@ -800,12 +811,13 @@ class GtkViewModel(ViewModel):
         return self.picListView.getinfo()
 
     def updatePicList(self, bks=None, priority="Both", output=False):
-        self.picListView.clear()
+        #self.picListView.clear()
         if bks is None:
             bks = self.getBooks()
         if len(bks) and len(bks[0]) and bks[0] != 'NONE':
             picinfos = self.generatePicLists(bks, priority, output=output)
-            self.picListView.load(picinfos)
+            if len(picinfos):
+                self.picListView.load(picinfos)
 
     def updatePicChecks(self, src):
         self.picChecksView.savepic()

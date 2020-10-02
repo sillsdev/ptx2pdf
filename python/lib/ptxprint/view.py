@@ -97,12 +97,13 @@ class ViewModel:
         "document/diglotsecprj": "updateDiglotConfigList"
     }
 
-    def __init__(self, settings_dir, workingdir, userconfig, scriptsdir):
+    def __init__(self, settings_dir, workingdir, userconfig, scriptsdir, args=None):
         self.settings_dir = settings_dir
         self.fixed_wd = workingdir != None
         self.working_dir = workingdir
         self.userconfig = userconfig
         self.scriptsdir = scriptsdir
+        self.args = args
         self.ptsettings = None
         self.customScript = None
         self.FrontPDFs = None

@@ -36,6 +36,7 @@ parser.add_argument('--nofontcache',action="store_true",help="Don't use system f
 parser.add_argument('-A','--archive',help="Create archive of project")
 parser.add_argument('--nuseusfmerge',action="store_true",help="Use a different kind of merge for diglot")
 parser.add_argument('--debug',action="store_true",help="Give debug output")
+parser.add_argument("-C","--capture",help="Capture interaction events to file. Not to be used yet")
 # parser.add_argument('-t','--test', action='store_true',help="Quick start for a lazy typist")
 args = parser.parse_args()
 
@@ -105,10 +106,10 @@ else:
     macrosdir = os.path.join(scriptsdir, "..", "..", "src")
 
 if args.print or args.archive is not None:
-    mainw = ViewModel(args.paratext, args.directory, config, macrosdir)
+    mainw = ViewModel(args.paratext, args.directory, config, macrosdir, args)
 else:
     from ptxprint.gtkview import GtkViewModel
-    mainw = GtkViewModel(args.paratext, args.directory, config, macrosdir)
+    mainw = GtkViewModel(args.paratext, args.directory, config, macrosdir, args)
     mainw.ExperimentalFeatures(args.experimental)
 
 if args.pid:
