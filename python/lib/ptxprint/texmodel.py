@@ -1,6 +1,7 @@
 import configparser, re, os, gi
 from shutil import copyfile
 from pathlib import Path
+from functools import reduce
 import regex
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
@@ -739,10 +740,9 @@ class TexModel:
             if c[0] is None:
                 dat = c[1].sub(c[2], dat)
             else:
-                newdat = c[0].split(dat)
-                for i in range(1, len(newdat), 2):
-                    newdat[i] = c[1].sub(c[2], newdat[i])
-                dat = "".join(newdat)
+                def simple(s):
+                    return c[1].sub(c[2], s)
+                dat = c[0](simple, dat)
         return dat
 
     def convertBook(self, bk, outdir, prjdir):
@@ -810,6 +810,19 @@ class TexModel:
         else:
             return bn
 
+    def make_contextsfn(self, *changes):
+        def makefn(reg, currfn):
+            if currfn is not None:
+                def compfn(fn, s):
+                    def domatch(m):
+                        return currfn(fn, m.group(0))
+                    return reg.sub(domatch, s)
+            else:
+                def compfn(fn, s):
+                    return reg.sub(lambda m:fn(m.group(0)), s)
+            return compfn
+        return reduce(lambda currfn, are: makefn(are, currfn), reversed(changes), None)
+
     def readChanges(self, fname):
         changes = []
         if not os.path.exists(fname):
@@ -821,17 +834,24 @@ class TexModel:
                 l = re.sub(r"\s*#.*$", "", l)
                 if not len(l):
                     continue
+                context = []
                 try:
+                    while True:
+                        m = re.match(r"^\s*in\s+"+qreg+r"\s*:\s*", l)
+                        if not m:
+                            break
+                        context.append(self.make_context(regex.compile(m.group(1) or m.group(2), flags=regex.M)))
+                        l = l[m.end():]
+                    if not len(context):
+                        context = None
+                    else:
+                        context = self.make_contextsfn(*context)
                     m = re.match(r"^"+qreg+r"\s*>\s*"+qreg, l)
                     if m:
-                        changes.append((None, regex.compile(m.group(1) or m.group(2), flags=regex.M),
+                        changes.append((context, regex.compile(m.group(1) or m.group(2), flags=regex.M),
                                         m.group(3) or m.group(4) or ""))
                         continue
-                    m = re.match(r"^in\s+"+qreg+r"\s*:\s*"+qreg+r"\s*>\s*"+qreg, l)
-                    if m:
-                        changes.append((regex.compile("("+(m.group(1) or m.group(2))+")", flags=regex.M), \
-                        regex.compile((m.group(3) or m.group(4)), flags=regex.M), (m.group(5) or m.group(6) or "")))
-                except regex._regex_core.error as e:
+                except re.error as e:
                     self.printer.doError("Regular expression error: {} in changes file at line {}".format(str(e), i+1))
         if not len(changes):
             return None
@@ -967,8 +987,10 @@ class TexModel:
             self.localChanges.append((None, regex.compile(r"(\\[fx]q .+?):* ?(\\[fx]t)", flags=regex.M), r"\1: \2")) 
         
         if self.asBool("notes/keepbookwithrefs"): # keep Booknames and ch:vs nums together within \xt and \xo 
-            self.localChanges.append((regex.compile(r"(\\[xf]t [^\\]+)"), regex.compile(r"(?<!\\[fx][rto]) (\d+[:.]\d+([-,]\d+)?)"), r"\u00A0\1"))
-            self.localChanges.append((regex.compile(r"(\\[xf]t [^\\]+)"), regex.compile(r"( .) "), r"\1\u00A0"))
+            self.localChanges.append((self.make_contextsfn(regex.compile(r"(\\[xf]t [^\\]+)")),
+                                    regex.compile(r"(?<!\\[fx][rto]) (\d+[:.]\d+([-,]\d+)?)"), r"\u00A0\1"))
+            self.localChanges.append((self.make_contextsfn(regex.compile(r"(\\[xf]t [^\\]+)")),
+                                    regex.compile(r"( .) "), r"\1\u00A0"))
 
         # keep \xo & \fr refs with whatever follows (i.e the bookname or footnote) so it doesn't break at end of line
         self.localChanges.append((None, regex.compile(r"(\\(xo|fr) (\d+[:.]\d+([-,]\d+)?)) "), r"\1\u2000"))

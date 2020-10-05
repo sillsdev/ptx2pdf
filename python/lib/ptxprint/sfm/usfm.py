@@ -283,7 +283,7 @@ class parser(sfm.parser):
                  canonicalise_footnotes=True,
                  *args, **kwds):
         if not canonicalise_footnotes:
-            self._canonicalise_footnote = lambda _, x: x
+            self._canonicalise_footnote = lambda x: x
 
         super().__init__(source,
                          stylesheet,
