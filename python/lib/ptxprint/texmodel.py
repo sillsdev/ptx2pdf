@@ -811,11 +811,12 @@ class TexModel:
             return bn
 
     def make_contextsfn(self, *changes):
+        # functional programmers eat your hearts out
         def makefn(reg, currfn):
             if currfn is not None:
                 def compfn(fn, s):
                     def domatch(m):
-                        return currfn(fn, m.group(0))
+                        return currfn(lambda x:fn(x.group(0)), m.group(0))
                     return reg.sub(domatch, s)
             else:
                 def compfn(fn, s):
