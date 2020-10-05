@@ -282,10 +282,8 @@ class parser(sfm.parser):
                  default_meta=_default_meta,
                  canonicalise_footnotes=True,
                  *args, **kwds):
-        if canonicalise_footnotes:
-            self._canonicalise_footnote = parser._canonicalise_footnote
-        else:
-            self._canonicalise_footnote = lambda x: x
+        if not canonicalise_footnotes:
+            self._canonicalise_footnote = lambda _, x: x
 
         super().__init__(source,
                          stylesheet,
@@ -361,14 +359,16 @@ class parser(sfm.parser):
         return tuple()
     _versenumber_ = _VerseNumber_
 
-    @staticmethod
-    def _canonicalise_footnote(content):
+    def _canonicalise_footnote(self, content):
         def g(e):
             if getattr(e, 'name', None) == 'ft':
                 e.parent.annotations['content-promoted'] = True
                 if len(e.parent) > 0:
                     prev = e.parent[-1]
-                    if prev.meta['StyleType'] == 'Character':
+                    if not isinstance(prev, sfm.Element):
+                        self._error(ErrorLevel.Content,
+                                    "Badly formed footnote", e.parent)
+                    elif prev.meta['StyleType'] == 'Character':
                         del prev.annotations['implicit-closed']
                 return e
             else:
