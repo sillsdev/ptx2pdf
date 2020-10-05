@@ -1,0 +1,95 @@
+#!/usr/bin/python3
+
+import argparse, os, sys, re
+from ptxprint.usfmutils import Usfm, Sheets
+from ptxprint import sfm
+
+def read_module(inf, sheets):
+    lines = inf.readlines()
+    if not re.match(r"\uFEFF?\\id\s", lines[0]):
+        lines.insert(0, "\\id MOD Module\n")
+    return Usfm(lines, sheets)
+
+def parse_refs(s):
+    bits = re.split(r"([,;])", s)
+    bk = ""
+    c = "0"
+    for ref, sep in zip(bits[::2], [""] + bits[1::2]):
+        m = re.match(r"^\s*([A-Z]{3})?\s*(\d+[a-z]?)\s*(?:([.:])\s*(\d*[a-z]?))?\s*(?:(-)\s*(\d*[a-z]?)\s*(?:([.:])\s*(\d*[a-z]?))?)?", ref)
+        if m:
+            bk = m.group(1) or bk
+            if m.group(3):
+                firstc = m.group(2) or c
+                firstv = m.group(4) or 0
+            elif sep == ",":
+                firstc = c
+                firstv = m.group(2) or 0
+            else:
+                firstc = m.group(2) or c
+                firstv = "0"
+            if m.group(5):
+                if m.group(7):
+                    c = m.group(6) or firstc
+                    lastv = m.group(8) or "200"
+                elif firstv == "0":
+                    c = m.group(6) or firstc
+                    lastv = "200"
+                else:
+                    c = firstc
+                    lastv = m.group(6) or "200"
+            else:
+                c = firstc
+                lastv = firstv if firstv != "0" else "200"
+            yield (bk, firstc, firstv, c, lastv)
+        else:
+            print("Bad ref: {}".format(ref))
+
+def parse_module(e):
+    if isinstance(e, sfm.Text):
+        return e
+    elif e.name == "ref" or e.name == "refn":
+        for r in parse_refs(e[0]):
+            print(r)
+
+parser = argparse.ArgumentParser()
+parser.add_argument("infile", help="Input module file to expand")
+parser.add_argument("-p","--paratext", help="Root or paratext projects")
+parser.add_argument("-P","--project", help="Project to read files from")
+parser.add_argument("-o","--outfile", help="File to store expansion in")
+parser.add_argument("-s","--stylesheet", action="append", help="Use stylesheet(s)")
+args = parser.parse_args()
+
+if " " in args.infile:
+    print(list(parse_refs(args.infile)))
+    sys.exit(0)
+
+if args.paratext is None:
+    for a in ("Paratext8Projects", "Paratext9Projects"):
+        args.paratext = os.path.expanduser("~/"+a)
+        if os.path.exists(os.path.join(args.paratext, args.project)):
+            break
+prjdir = os.path.join(args.paratext, args.project)
+if not os.path.exists(prjdir):
+    print("Can't find project dir: {}".format(prjdir))
+    sys.exit(1)
+
+bookfiles = {}
+for f in os.listdir(prjdir):
+    m = re.match(r"^(\d{2})", f)
+    if m:
+        try:
+            bookfiles[allbooks[int(m.group(1))]] = f
+        except KeyError:
+            pass
+
+sheet = Sheets(args.stylesheet)
+books = {}
+for k, v in books.items():
+    with open(v, encoding="utf-8") as inf:
+        books[k] = Usfm(inf, sheet)
+
+with open(args.infile, encoding="utf-8") as inf:
+    main = read_module(inf, sheets)
+
+
+
