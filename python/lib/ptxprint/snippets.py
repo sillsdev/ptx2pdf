@@ -151,6 +151,8 @@ class FancyBorders(Snippet):
 {fancy/sectionheader}  \vrule width 0pt height 0pt depth 0.5em
 {fancy/sectionheader}}}
 {fancy/sectionheader}\sethook{{start}}{{s}}{{\placesectionheadbox}}
+{fancy/sectionheader}\sethook{{start}}{{s1}}{{\placesectionheadbox}}
+{fancy/sectionheader}\sethook{{start}}{{s2}}{{\placesectionheadbox}}
 
 % The following code puts the verse number inside a star
 %

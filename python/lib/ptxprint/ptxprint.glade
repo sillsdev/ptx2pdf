@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -8965,7 +8965,6 @@ files, for debugging</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="row_spacing">6</property>
                                 <property name="column_spacing">16</property>
-                                <property name="column_homogeneous">True</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_showHboxErrorBars">
                                     <property name="label" translatable="yes">Show Error Bars For Overfull Lines</property>
@@ -9064,6 +9063,78 @@ to print.</property>
                                     <property name="left_attach">1</property>
                                     <property name="top_attach">2</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_keepTemporaryFiles">
+                                    <property name="label" translatable="yes">Preserve Intermediate Files and Logs </property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">AN AID FOR TRACKING PROBLEMS
+
+If the output is not as you expect, it is possible to discover
+what might have gone wrong by examining the intermediate
+files and logs. If this option is checked, then the folder which
+contains the resulting PDf will also contain several other related
+files.</property>
+                                    <property name="halign">start</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_tracing">
+                                    <property name="label" translatable="yes">Debug Tracing</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">This advanced feature is for
+troubleshooting use only.</property>
+                                    <property name="opacity">0.80000000000000004</property>
+                                    <property name="halign">start</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_removeTempFiles">
+                                    <property name="label" translatable="yes">Remove Temp Files</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="tooltip_text" translatable="yes">Click this to tidy up the output folder (usually PrintDraft).
+This will delete all previous log and intermediate temporary files for the entire project and is a good way to easily remove many unwanted files.</property>
+                                    <signal name="clicked" handler="onDeleteTemporaryFilesClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                                 <child>
                                   <placeholder/>
@@ -9986,7 +10057,6 @@ to make it fit. </property>
                                 <property name="receives_default">True</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
-                                <property name="margin_bottom">4</property>
                                 <signal name="clicked" handler="onPageBorderPDFclicked" swapped="no"/>
                               </object>
                               <packing>
@@ -10094,7 +10164,6 @@ font and size to ensure verses fit well.</property>
                                 <property name="valign">center</property>
                                 <property name="margin_right">6</property>
                                 <property name="margin_top">4</property>
-                                <property name="margin_bottom">4</property>
                                 <signal name="clicked" handler="onVerseDecoratorPDFclicked" swapped="no"/>
                               </object>
                               <packing>
@@ -10407,231 +10476,6 @@ been enabled.</property>
                     <property name="vexpand">True</property>
                     <property name="orientation">vertical</property>
                     <child>
-                      <object class="GtkFrame" id="fr_Debugging">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="margin_top">4</property>
-                        <property name="margin_bottom">4</property>
-                        <property name="label_xalign">0.019999999552965164</property>
-                        <child>
-                          <object class="GtkGrid" id="gr_debugTools">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="column_spacing">6</property>
-                            <child>
-                              <object class="GtkLabel" id="l_examineBook">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="halign">end</property>
-                                <property name="margin_left">6</property>
-                                <property name="label" translatable="yes">Book in
-Focus:</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkComboBox" id="ecb_examineBook">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">Choose any book (including
-those which are not currently
-in the list to be printed.)</property>
-                                <property name="halign">end</property>
-                                <property name="margin_top">6</property>
-                                <property name="margin_bottom">6</property>
-                                <property name="model">ls_books</property>
-                                <property name="wrap_width">5</property>
-                                <property name="active">0</property>
-                                <property name="has_entry">True</property>
-                                <property name="entry_text_column">0</property>
-                                <property name="id_column">0</property>
-                                <signal name="changed" handler="onExamineBookChanged" swapped="no"/>
-                                <child internal-child="entry">
-                                  <object class="GtkEntry">
-                                    <property name="can_focus">True</property>
-                                    <property name="halign">start</property>
-                                    <property name="max_length">3</property>
-                                    <property name="width_chars">6</property>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="left_attach">2</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="btn_PrevBook">
-                                <property name="label">&lt;&lt;</property>
-                                <property name="width_request">-1</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">Show previous book in
-list of books to be printed.</property>
-                                <property name="halign">end</property>
-                                <property name="margin_top">6</property>
-                                <property name="margin_bottom">6</property>
-                                <property name="image_position">right</property>
-                                <property name="always_show_image">True</property>
-                                <signal name="clicked" handler="onPrevBookClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="btn_NextBook">
-                                <property name="label">&gt;&gt;</property>
-                                <property name="width_request">-1</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">Show next book in list
-of books to be printed.</property>
-                                <property name="halign">start</property>
-                                <property name="margin_top">6</property>
-                                <property name="margin_bottom">6</property>
-                                <property name="image_position">top</property>
-                                <property name="always_show_image">True</property>
-                                <signal name="clicked" handler="onNextBookClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">3</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="btn_Generate">
-                                <property name="label" translatable="yes">Generate</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">This button will (re-)generate the PicList(s) or
-AdjList(s) for all/any books which have been
-selected for printing.
-
-If you only want to (re-)generate a List for a 
-single book, then just select that book on the 
-Basic tab. Otherwise it will (re-)generate a Pic/Adj
-list for each of the books listed for printing.</property>
-                                <property name="halign">start</property>
-                                <property name="margin_top">6</property>
-                                <property name="margin_bottom">6</property>
-                                <signal name="clicked" handler="onGenerateClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">5</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkCheckButton" id="c_randomPicPosn">
-                                <property name="label" translatable="yes">Random
-Position</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">By default all illustrations are place in the top-left
-corner (when double columns are used) and at the
-top in single column mode. 
-Checking this option will randomly position the
-illustrations on the page (using top-left, top-right
-bottom-left and bottom-right). 
-By editing the PicList file, you can intentionally
-place illustrations in one of these 4 locations.</property>
-                                <property name="halign">end</property>
-                                <property name="active">True</property>
-                                <property name="draw_indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">6</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton">
-                                <property name="label" translatable="yes">View/Edit...</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">If you would prefer to view or edit this file in
-the Editor Application designated by your 
-system then click here.
-If nothing happens when you click here, it is
-probably because you have not associated the
-file type (.sfm, .piclist, .adjlist, .tex, .log, .sty etc.)
-with a text editor (such as Notepad or NP++).</property>
-                                <property name="halign">end</property>
-                                <property name="margin_top">6</property>
-                                <property name="margin_bottom">6</property>
-                                <signal name="clicked" handler="onOpenInSystemEditor" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">7</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkComboBox" id="fcb_diglotPicListSources">
-                                <property name="width_request">86</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">When generating a PicList for a
-Diglot/DiScript publication, you
-need to decide which images to
-include in the publication.
-
-Note that this control remains
-inactive until Diglot is enabled.</property>
-                                <property name="halign">start</property>
-                                <property name="valign">center</property>
-                                <property name="model">ls_diglotPicListSources</property>
-                                <property name="active">0</property>
-                                <property name="id_column">0</property>
-                                <property name="active_id">1</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">4</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                          </object>
-                        </child>
-                        <child type="label">
-                          <object class="GtkCheckButton" id="c_keepTemporaryFiles">
-                            <property name="label" translatable="yes">Preserve Intermediate Files and Logs </property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">False</property>
-                            <property name="tooltip_text" translatable="yes">AN AID FOR TRACKING PROBLEMS
-
-If the output is not as you expect, it is possible to discover
-what might have gone wrong by examining the intermediate
-files and logs. If this option is checked, then the folder which
-contains the resulting PDf will also contain several other related
-files.
-Turning this option OFF will prompt you to delete ALL previous
-log and intermediate temporary file for the entire project and is
-a good way to easily remove a whole bunch of unwanted files.</property>
-                            <property name="halign">start</property>
-                            <property name="active">True</property>
-                            <property name="draw_indicator">True</property>
-                            <signal name="clicked" handler="onKeepTemporaryFilesClicked" swapped="no"/>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
                       <object class="GtkNotebook" id="nbk_Viewer">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -10706,7 +10550,7 @@ a good way to easily remove a whole bunch of unwanted files.</property>
                                                 <property name="resizable">True</property>
                                                 <property name="spacing">4</property>
                                                 <property name="sizing">fixed</property>
-                                                <property name="fixed_width">320</property>
+                                                <property name="fixed_width">280</property>
                                                 <property name="title" translatable="yes">Caption</property>
                                                 <child>
                                                   <object class="GtkCellRendererText" id="cr_caption"/>
@@ -10782,6 +10626,20 @@ a good way to easily remove a whole bunch of unwanted files.</property>
                                                   <object class="GtkCellRendererText" id="cr_ref"/>
                                                   <attributes>
                                                     <attribute name="text">6</attribute>
+                                                  </attributes>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkTreeViewColumn">
+                                                <property name="spacing">6</property>
+                                                <property name="sizing">fixed</property>
+                                                <property name="fixed_width">45</property>
+                                                <property name="title" translatable="yes">Mirror</property>
+                                                <child>
+                                                  <object class="GtkCellRendererText" id="cr_mirror"/>
+                                                  <attributes>
+                                                    <attribute name="text">9</attribute>
                                                   </attributes>
                                                 </child>
                                               </object>
@@ -12491,9 +12349,9 @@ are likely to have to re-do it all again.</property>
                           <object class="GtkFrame" id="tb_Links">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="margin_left">6</property>
+                            <property name="margin_left">10</property>
                             <property name="margin_right">6</property>
-                            <property name="margin_top">6</property>
+                            <property name="margin_top">20</property>
                             <property name="margin_bottom">6</property>
                             <property name="hexpand">True</property>
                             <property name="vexpand">True</property>
@@ -12505,7 +12363,7 @@ are likely to have to re-do it all again.</property>
                                 <property name="can_focus">False</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
-                                <property name="row_spacing">2</property>
+                                <property name="row_spacing">10</property>
                                 <property name="column_spacing">6</property>
                                 <child>
                                   <object class="GtkLabel">
@@ -12869,7 +12727,7 @@ general users and common solutions.</property>
                       <packing>
                         <property name="expand">True</property>
                         <property name="fill">True</property>
-                        <property name="position">1</property>
+                        <property name="position">0</property>
                       </packing>
                     </child>
                     <child>
@@ -12877,9 +12735,11 @@ general users and common solutions.</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
                         <property name="margin_top">4</property>
                         <property name="margin_bottom">4</property>
-                        <property name="column_homogeneous">True</property>
+                        <property name="column_spacing">8</property>
                         <child>
                           <object class="GtkButton" id="btn_saveEdits">
                             <property name="label">gtk-save</property>
@@ -12905,42 +12765,6 @@ Shortcut key: &lt;Ctrl-S&gt;</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton">
-                            <property name="label">gtk-undo</property>
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">True</property>
-                            <property name="halign">end</property>
-                            <property name="margin_top">5</property>
-                            <property name="margin_bottom">5</property>
-                            <property name="use_stock">True</property>
-                            <property name="always_show_image">True</property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">1</property>
-                            <property name="top_attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkButton">
-                            <property name="label">gtk-redo</property>
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">True</property>
-                            <property name="halign">start</property>
-                            <property name="margin_top">5</property>
-                            <property name="margin_bottom">5</property>
-                            <property name="use_stock">True</property>
-                            <property name="always_show_image">True</property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">2</property>
-                            <property name="top_attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
                           <object class="GtkButton" id="btn_refreshViewerText">
                             <property name="label">gtk-refresh</property>
                             <property name="visible">True</property>
@@ -12962,13 +12786,12 @@ of this file as it was when last saved.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkCheckButton" id="c_showLineNumbers">
-                            <property name="label" translatable="yes">Show Line 
-Numbers</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">False</property>
-                            <property name="no_show_all">True</property>
-                            <property name="draw_indicator">True</property>
+                          <object class="GtkLabel" id="l_examineBook">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="halign">end</property>
+                            <property name="label" translatable="yes">Book in
+Focus:</property>
                           </object>
                           <packing>
                             <property name="left_attach">0</property>
@@ -12976,16 +12799,124 @@ Numbers</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkCheckButton" id="c_tracing">
-                            <property name="label" translatable="yes">Debug
-Tracing</property>
+                          <object class="GtkComboBox" id="ecb_examineBook">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="tooltip_text" translatable="yes">Choose any book (including
+those which are not currently
+in the list to be printed.)</property>
+                            <property name="halign">end</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
+                            <property name="model">ls_books</property>
+                            <property name="wrap_width">5</property>
+                            <property name="active">0</property>
+                            <property name="has_entry">True</property>
+                            <property name="entry_text_column">0</property>
+                            <property name="id_column">0</property>
+                            <signal name="changed" handler="onExamineBookChanged" swapped="no"/>
+                            <child internal-child="entry">
+                              <object class="GtkEntry">
+                                <property name="can_focus">True</property>
+                                <property name="halign">start</property>
+                                <property name="max_length">3</property>
+                                <property name="width_chars">6</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkComboBox" id="fcb_diglotPicListSources">
+                            <property name="width_request">86</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="tooltip_text" translatable="yes">When generating a PicList for a
+Diglot/DiScript publication, you
+need to decide which images to
+include in the publication.
+
+Note that this control remains
+inactive until Diglot is enabled.</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <property name="model">ls_diglotPicListSources</property>
+                            <property name="active">0</property>
+                            <property name="id_column">0</property>
+                            <property name="active_id">1</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">2</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="btn_Generate">
+                            <property name="label" translatable="yes">Generate</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">This button will (re-)generate the PicList(s) or
+AdjList(s) for all/any books which have been
+selected for printing.
+
+If you only want to (re-)generate a List for a 
+single book, then just select that book on the 
+Basic tab. Otherwise it will (re-)generate a Pic/Adj
+list for each of the books listed for printing.</property>
+                            <property name="halign">start</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
+                            <signal name="clicked" handler="onGenerateClicked" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left_attach">3</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton">
+                            <property name="label" translatable="yes">View/Edit...</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">If you would prefer to view or edit this file in
+the Editor Application designated by your 
+system then click here.
+If nothing happens when you click here, it is
+probably because you have not associated the
+file type (.sfm, .piclist, .adjlist, .tex, .log, .sty etc.)
+with a text editor (such as Notepad or NP++).</property>
+                            <property name="halign">end</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
+                            <signal name="clicked" handler="onOpenInSystemEditor" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left_attach">7</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="c_randomPicPosn">
+                            <property name="label" translatable="yes">Random
+Position</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="tooltip_text" translatable="yes">This advanced feature is for
-troubleshooting use only.</property>
-                            <property name="opacity">0.80000000000000004</property>
+                            <property name="tooltip_text" translatable="yes">By default all illustrations are place in the top-left
+corner (when double columns are used) and at the
+top in single column mode. 
+Checking this option will randomly position the
+illustrations on the page (using top-left, top-right
+bottom-left and bottom-right). 
+By editing the PicList file, you can intentionally
+place illustrations in one of these 4 locations.</property>
                             <property name="halign">end</property>
+                            <property name="active">True</property>
                             <property name="draw_indicator">True</property>
                           </object>
                           <packing>
@@ -12993,14 +12924,11 @@ troubleshooting use only.</property>
                             <property name="top_attach">0</property>
                           </packing>
                         </child>
-                        <child>
-                          <placeholder/>
-                        </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">False</property>
-                        <property name="position">2</property>
+                        <property name="position">1</property>
                       </packing>
                     </child>
                   </object>

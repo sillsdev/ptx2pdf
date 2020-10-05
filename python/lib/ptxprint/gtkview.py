@@ -752,36 +752,6 @@ class GtkViewModel(ViewModel):
         for c in ["btn_saveConfig", "btn_deleteConfig", "t_configNotes", "c_hideAdvancedSettings"]:
             self.builder.get_object(c).set_sensitive(status)
         
-    def onPrevBookClicked(self, btn_NextBook):
-        bks = self.getBooks()
-        ndx = 0
-        try:
-            ndx = bks.index(self.get("ecb_examineBook"))
-        except ValueError:
-            self.builder.get_object("ecb_examineBook").set_active_id(bks[0])
-        if ndx > 0:
-            self.builder.get_object("ecb_examineBook").set_active_id(bks[ndx-1])
-            self.builder.get_object("btn_NextBook").set_sensitive(True)
-            if ndx == 1:
-                self.builder.get_object("btn_PrevBook").set_sensitive(False)
-        else:
-            self.builder.get_object("btn_PrevBook").set_sensitive(False)
-    
-    def onNextBookClicked(self, btn_NextBook):
-        bks = self.getBooks()
-        ndx = 0
-        try:
-            ndx = bks.index(self.get("ecb_examineBook"))
-        except ValueError:
-            self.builder.get_object("ecb_examineBook").set_active_id(bks[0])
-        if ndx < len(bks)-1:
-            self.builder.get_object("ecb_examineBook").set_active_id(bks[ndx+1])
-            self.builder.get_object("btn_PrevBook").set_sensitive(True)
-            if ndx == len(bks)-2:
-                self.builder.get_object("btn_NextBook").set_sensitive(False)
-        else:
-            self.builder.get_object("btn_NextBook").set_sensitive(False)
-    
     def onExamineBookChanged(self, cb_examineBook):
         if self.bookNoUpdate == True:
             return
@@ -885,12 +855,9 @@ class GtkViewModel(ViewModel):
         if bk == None or bk == "" and len(bks):
             bk = bks[0]
             self.builder.get_object("ecb_examineBook").set_active_id(bk)
-        for o in ("l_examineBook", "btn_PrevBook", "ecb_examineBook", "btn_NextBook", "fcb_diglotPicListSources", "btn_Generate"):
+        for o in ("l_examineBook", "ecb_examineBook", "fcb_diglotPicListSources", "btn_Generate"):
             self.builder.get_object(o).set_sensitive(pgid in allpgids[:3])
 
-        if len(bks) == 1:
-            self.builder.get_object("btn_PrevBook").set_sensitive(False)
-            self.builder.get_object("btn_NextBook").set_sensitive(False)
         fndict = {"tb_PicList" : ("PicLists", ".piclist"), "scroll_AdjList" : ("AdjLists", ".adj"), "scroll_FinalSFM" : ("", ""),
                   "scroll_TeXfile" : ("", ".tex"), "scroll_XeTeXlog" : ("", ".log"), "scroll_Settings": ("", ""), "tb_Links": ("", "")}
 
@@ -1088,41 +1055,40 @@ class GtkViewModel(ViewModel):
         if not self.sensiVisible("c_introOutline"):
             self.builder.get_object("c_prettyIntroOutline").set_active(False)
 
-    def onKeepTemporaryFilesClicked(self, c_keepTemporaryFiles):
+    def onDeleteTemporaryFilesClicked(self, btn):
         dir = self.working_dir
         warnings = []
-        self.builder.get_object("gr_debugTools").set_sensitive(self.get("c_keepTemporaryFiles"))
-        if self.builder.get_object("nbk_Main").get_current_page() == 10:
-            if not self.get("c_keepTemporaryFiles"):
-                title = _("Remove Intermediate Files and Logs?")
-                question = _("Are you sure you want to delete\nALL the temporary PTXprint files?")
-                if self.msgQuestion(title, question):
-                    patterns = []
-                    for extn in ('delayed','parlocs','notepages', 'log'):
-                        patterns.append(r".+\.{}".format(extn))
-                    patterns.append(r".+\-draft\....".format(extn))
-                    patterns.append(r".+\.toc".format(extn))
-                    # patterns.append(r"NestedStyles\.sty".format(extn)) # To be updated as locn has changed (maybe no longer need to delete it)
-                    patterns.append(r"ptxprint\-.+\.tex".format(extn))
-                    # print(patterns)
-                    for pattern in patterns:
-                        for f in os.listdir(dir):
-                            if re.search(pattern, f):
-                                try:
-                                    os.remove(os.path.join(dir, f))
-                                except (OSError, PermissionError):
-                                    warnings += [f]
-                    for p in ["tmpPics", "tmpPicLists"]:
-                        path2del = os.path.join(dir, p)
-                        # Make sure we're not deleting something closer to Root!
-                        if len(path2del) > 30 and os.path.exists(path2del):
-                            try:
-                                rmtree(path2del)
-                            except (OSError, PermissionError):
-                                warnings += [path2del]
-                    if len(warnings):
-                        self.printer.doError(_("Warning: Could not delete some file(s) or folders(s):"),
-                                secondary="\n".join(warnings))
+        # MP: Need to decide which tabs and options in View+Edit should be visible
+        # self.builder.get_object("gr_debugTools").set_sensitive(self.get("c_keepTemporaryFiles"))
+        title = _("Remove Intermediate Files and Logs?")
+        question = _("Are you sure you want to delete\nALL the temporary PTXprint files?")
+        if self.msgQuestion(title, question):
+            patterns = []
+            for extn in ('delayed','parlocs','notepages', 'log'):
+                patterns.append(r".+\.{}".format(extn))
+            patterns.append(r".+\-draft\....".format(extn))
+            patterns.append(r".+\.toc".format(extn))
+            # patterns.append(r"NestedStyles\.sty".format(extn)) # To be updated as locn has changed (maybe no longer need to delete it)
+            patterns.append(r"ptxprint\-.+\.tex".format(extn))
+            # print(patterns)
+            for pattern in patterns:
+                for f in os.listdir(dir):
+                    if re.search(pattern, f):
+                        try:
+                            os.remove(os.path.join(dir, f))
+                        except (OSError, PermissionError):
+                            warnings += [f]
+            for p in ["tmpPics", "tmpPicLists"]:
+                path2del = os.path.join(dir, p)
+                # Make sure we're not deleting something closer to Root!
+                if len(path2del) > 30 and os.path.exists(path2del):
+                    try:
+                        rmtree(path2del)
+                    except (OSError, PermissionError):
+                        warnings += [path2del]
+            if len(warnings):
+                self.printer.doError(_("Warning: Could not delete some file(s) or folders(s):"),
+                        secondary="\n".join(warnings))
 
     def onRefreshFontsclicked(self, btn):
         fc = fccache()

@@ -94,7 +94,6 @@ ModelMap = {
     "project/ifusemodssty":     ("c_useModsSty", lambda w,v: "" if v else "%"),
     "project/ifstarthalfpage":  ("c_startOnHalfPage", lambda w,v :"true" if v else "false"),
     "project/randompicposn":    ("c_randomPicPosn", None),
-    "project/showlinenumbers":  ("c_showLineNumbers", None),
     "project/canonicalise":     ("c_canonicalise", None),
 
     "paper/height":             ("ecb_pagesize", lambda w,v: re.sub(r"^.*?,\s*(.+?)\s*(?:\(.*|$)", r"\1", v) or "210mm"),
