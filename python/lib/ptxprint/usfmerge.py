@@ -287,13 +287,13 @@ def usfmerge(infilea, infileb, outfile, stylesheetsa=[], stylesheetsb=[], fsecon
 
     with open(infilea, encoding="utf-8") as inf:
         doc = list(usfm.parser(inf, stylesheet=stylesheeta,
-                               canonicalise_footnotes=True, tag_escapes=tag_escapes))
+                               canonicalise_footnotes=False, tag_escapes=tag_escapes))
         pcoll = Collector(doc=doc, fsecondary=fsecondary)
     mainchunks = {c.ident: c for c in pcoll.acc}
 
     with open(infileb, encoding="utf-8") as inf:
         doc = list(usfm.parser(inf, stylesheet=stylesheetb,
-                               canonicalise_footnotes=True, tag_escapes=tag_escapes))
+                               canonicalise_footnotes=False, tag_escapes=tag_escapes))
         scoll = Collector(doc=doc, primary=False)
     secondchunks = {c.ident: c for c in scoll.acc}
     mainkeys = ["_".join(str(x) for x in c.ident) for c in pcoll.acc]

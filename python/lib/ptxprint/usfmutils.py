@@ -1,6 +1,5 @@
 from ptxprint.sfm import usfm, style
 from ptxprint import sfm
-from ptxprint.sfm.ucd import get_ucd
 import re, os
 from collections import namedtuple
 from itertools import groupby
@@ -29,7 +28,7 @@ class _Reference(sfm.Position):
 
 class Sheets:
     def __init__(self, init=[]):
-        self.sheet = usfm.default_stylesheet.copy()
+        self.sheet = {k: v.copy() for k, v in usfm.default_stylesheet.items()}
         for s in init:
             self.append(s)
 
@@ -52,6 +51,7 @@ class Usfm:
     def addorncv(self):
         if self.cvaddorned:
             return
+        self.chapters = []
         ref = [None] * 3
         def _g(_, e):
             if isinstance(e, sfm.Element):
@@ -59,6 +59,12 @@ class Usfm:
                     ref[0] = str(e[0]).split()[0]
                 elif e.name == 'c':
                     ref[1] = e.args[0]
+                    if ref[1] == len(self.chapters):
+                        self.chapters.append(e)
+                    else:
+                        if ref[1] > len(self.chapters):
+                            self.chapters += [None] * (ref[i] - len(self.chapters) + 1)
+                        self.chapters[ref[1]] = e
                 elif e.name == 'v':
                     ref[2] = e.args[0]
                 return reduce(_g, e, None)
@@ -173,6 +179,7 @@ class Usfm:
         self._proctext(fn)
 
     def letter_space(self, inschar):
+        from ptxprint.sfm.ucd import get_ucd
         def fn(e):
             if not isScriptureText(e.parent):
                 return e

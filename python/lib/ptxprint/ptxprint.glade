@@ -30,6 +30,15 @@ THE SOFTWARE.
   <!-- interface-name ptxprint -->
   <!-- interface-description USFM typesetting -->
   <!-- interface-copyright SIL International -->
+  <object class="GtkApplicationWindow">
+    <property name="can_focus">False</property>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+  </object>
   <object class="GtkAdjustment" id="a_PriColWidth">
     <property name="lower">20</property>
     <property name="upper">300</property>
@@ -181,14 +190,12 @@ THE SOFTWARE.
     <property name="value">1</property>
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">1</property>
-    <property name="page_size">5</property>
   </object>
   <object class="GtkAdjustment" id="a_letterStretch">
     <property name="upper">100</property>
     <property name="value">5</property>
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">1</property>
-    <property name="page_size">5</property>
   </object>
   <object class="GtkAdjustment" id="a_linespacing">
     <property name="lower">4</property>
@@ -1737,6 +1744,12 @@ in the Windows system.</property>
         <col id="0" translatable="yes">Top-to-Bottom</col>
       </row>
     </data>
+  </object>
+  <object class="GtkTreeStore" id="ts_styles">
+    <columns>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+    </columns>
   </object>
   <object class="GtkDialog" id="ptxprint">
     <property name="can_focus">False</property>
@@ -10343,10 +10356,45 @@ been enabled.</property>
                   </packing>
                 </child>
                 <child>
-                  <placeholder/>
+                  <object class="GtkBox" id="tb_StyleEdtor">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkTreeView" id="tv_Styles">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
+                        <property name="model">ts_styles</property>
+                        <property name="enable_tree_lines">True</property>
+                        <child internal-child="selection">
+                          <object class="GtkTreeSelection"/>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="position">11</property>
+                  </packing>
                 </child>
-                <child type="tab">
-                  <placeholder/>
+                <child type="org.freedesktop.IBus">
+                  <object class="GtkLabel" id="lb_StyleEditor">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Styles</property>
+                  </object>
+                  <packing>
+                    <property name="position">11</property>
+                    <property name="tab_fill">False</property>
+                  </packing>
                 </child>
                 <child>
                   <object class="GtkBox" id="tb_ViewerEditor">
