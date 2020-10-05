@@ -1,6 +1,5 @@
 from ptxprint.sfm import usfm, style
 from ptxprint import sfm
-from ptxprint.sfm.ucd import get_ucd
 import re, os
 from collections import namedtuple
 from itertools import groupby
@@ -180,6 +179,7 @@ class Usfm:
         self._proctext(fn)
 
     def letter_space(self, inschar):
+        from ptxprint.sfm.ucd import get_ucd
         def fn(e):
             if not isScriptureText(e.parent):
                 return e
