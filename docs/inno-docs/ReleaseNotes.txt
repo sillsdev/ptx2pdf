@@ -1,5 +1,12 @@
-PTXprint 1.2 Release Notes 
-3rd October 2020
+PTXprint 1.2.1 Release Notes 
+9th October 2020
+
+Bug Fixes and Improvements in 1.2.1
+
+  * Stylesheet editor introduced (early test version - use with care)
+  
+  * Colophon implemented
+  
 
 Significant Improvements in 1.2
 

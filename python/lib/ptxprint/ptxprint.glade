@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -2799,7 +2799,7 @@ Viewer tab.</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="halign">start</property>
+                                <property name="halign">end</property>
                                 <property name="label" translatable="yes">Copyright Statement:</property>
                               </object>
                               <packing>
@@ -2831,12 +2831,12 @@ Viewer tab.</property>
                                 <property name="receives_default">False</property>
                                 <property name="tooltip_text" translatable="yes">It is highly recommended to leave this setting ON. PTXprint will automatically generate the copyright statement(s)
 for each of the artists (with page numbers).</property>
-                                <property name="margin_left">12</property>
+                                <property name="halign">start</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
-                                <property name="left_attach">0</property>
+                                <property name="left_attach">1</property>
                                 <property name="top_attach">2</property>
                                 <property name="width">2</property>
                               </packing>
@@ -2867,6 +2867,38 @@ for each of the artists (with page numbers).</property>
                               <packing>
                                 <property name="left_attach">1</property>
                                 <property name="top_attach">1</property>
+                                <property name="width">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_resetCopyright">
+                                <property name="label">↺</property>
+                                <property name="width_request">-1</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Clicking this button will reload
+the Copyright Statement from the
+Paratext project settings.
+
+Note that if the callers have not
+been defined in the Paratext project
+then the default set will be loaded.</property>
+                                <signal name="clicked" handler="onResetCopyrightClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">2</property>
                               </packing>
                             </child>
                           </object>

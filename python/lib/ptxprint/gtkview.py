@@ -1918,3 +1918,6 @@ class GtkViewModel(ViewModel):
         
     def onColophonClicked(self, btn):
         self.onSimpleClicked(btn)
+
+    def onResetCopyrightClicked(self, btn):
+        print("Need to add code to re-read the copyright statement from PT")
