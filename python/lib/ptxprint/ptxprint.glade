@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 
+<!-- Generated with glade 3.22.2 
 
 The MIT License (MIT)
 
@@ -1840,6 +1840,8 @@ in the Windows system.</property>
     <columns>
       <!-- column-name name -->
       <column type="gchararray"/>
+      <!-- column-name active -->
+      <column type="gboolean"/>
     </columns>
   </object>
   <object class="GtkDialog" id="ptxprint">
@@ -10513,15 +10515,28 @@ been enabled.</property>
                     <property name="can_focus">False</property>
                     <property name="homogeneous">True</property>
                     <child>
-                      <object class="GtkTreeView" id="tv_Styles">
+                      <object class="GtkScrolledWindow">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="margin_left">6</property>
-                        <property name="margin_right">6</property>
-                        <property name="model">ts_styles</property>
-                        <property name="enable_tree_lines">True</property>
-                        <child internal-child="selection">
-                          <object class="GtkTreeSelection"/>
+                        <property name="shadow_type">in</property>
+                        <child>
+                          <object class="GtkTreeView" id="tv_Styles">
+                            <property name="width_request">260</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="halign">start</property>
+                            <property name="margin_left">6</property>
+                            <property name="margin_right">6</property>
+                            <property name="model">ts_styles</property>
+                            <property name="headers_visible">False</property>
+                            <property name="search_column">0</property>
+                            <property name="level_indentation">1</property>
+                            <property name="enable_tree_lines">True</property>
+                            <property name="activate_on_single_click">True</property>
+                            <child internal-child="selection">
+                              <object class="GtkTreeSelection" id="tsel_Styles"/>
+                            </child>
+                          </object>
                         </child>
                       </object>
                       <packing>
@@ -10845,7 +10860,7 @@ been enabled.</property>
                                         <property name="receives_default">True</property>
                                         <property name="tooltip_text" translatable="yes">Overrides the colour in the stylesheet for toc3</property>
                                         <property name="halign">start</property>
-                                        <property name="title" translatable="yes">Thumb Tab Text Colour</property>
+                                        <property name="title" translatable="yes">Text Colour</property>
                                         <property name="rgba">rgb(0,0,0)</property>
                                       </object>
                                       <packing>

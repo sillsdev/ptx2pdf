@@ -20,10 +20,12 @@ from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton
 from ptxprint.runner import StreamTextBuffer
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from ptxprint.piclist import PicList, PicChecks
+from ptxprint.styleditor import StyleEditor
 from ptxprint.runjob import isLocked
 from ptxprint.texmodel import TexModel
 from ptxprint.minidialog import MiniDialog
 import ptxprint.scriptsnippets as scriptsnippets
+from ptxprint.usfmutils import Sheets
 from ptxprint.utils import _, f_
 import configparser
 import traceback
@@ -267,6 +269,7 @@ class GtkViewModel(ViewModel):
         self.picListView = PicList(self.builder.get_object('tv_picListEdit'),
                                    self.builder.get_object('tv_picList'), self.builder, self)
         self.picChecksView = PicChecks(self)
+        self.styleEditorView = StyleEditor(self.builder)
 
         self.logbuffer = StreamTextBuffer()
         self.builder.get_object("tv_logging").set_buffer(self.logbuffer)
@@ -1343,6 +1346,8 @@ class GtkViewModel(ViewModel):
         self.updatePicList()
         self.updateDialogTitle()
         self.picChecksView.init(basepath=self.configPath(cfgname=None), configid=self.configId)
+        sheets = Sheets(self.getStyleSheets())
+        self.styleEditorView.load(sheets.sheet)
 
     def onConfigNameChanged(self, cb_savedConfig):
         if self.configNoUpdate:

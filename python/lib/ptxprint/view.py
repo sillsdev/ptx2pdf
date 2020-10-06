@@ -973,7 +973,7 @@ class ViewModel:
             c = len(hyphenatedWords)
             if c >= listlimit:
                 hyphwords = set([x.replace("-", "") for x in hyphenatedWords])
-                sheets = usfmutils.load_stylesheets(self.getStylesheets())
+                sheets = usfmutils.load_stylesheets(self.getStyleSheets())
                 acc = {}
                 for bk in self.getBooks():
                     f = os.path.join(self.prjdir, self.getBookFilename(bk, self.prjdir))
@@ -1090,6 +1090,8 @@ class ViewModel:
         pass
 
     def getStyleSheets(self, generated=False):
+        if self.prjid is None:
+            return []
         res = []
         cpath = self.configPath(cfgname=self.configName())
         rcpath = self.configPath("")
