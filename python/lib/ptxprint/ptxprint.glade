@@ -299,6 +299,43 @@ THE SOFTWARE.
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
+  <object class="GtkAdjustment" id="a_styCallerRaise">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="a_styFirstLineIndent">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="a_styLeftMargin">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="a_styRaise">
+    <property name="upper">50</property>
+    <property name="step_increment">0.5</property>
+    <property name="page_increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="a_styRightMargin">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="a_stySpaceAfter">
+    <property name="lower">-50</property>
+    <property name="upper">10</property>
+    <property name="step_increment">0.5</property>
+    <property name="page_increment">5</property>
+  </object>
+  <object class="GtkAdjustment" id="a_stySpaceBefore">
+    <property name="lower">-50</property>
+    <property name="upper">10</property>
+    <property name="step_increment">0.5</property>
+    <property name="page_increment">5</property>
+  </object>
   <object class="GtkAdjustment" id="a_thumbfont">
     <property name="upper">100</property>
     <property name="value">12</property>
@@ -1725,6 +1762,60 @@ in the Windows system.</property>
       <row>
         <col id="0">Latn</col>
         <col id="1">Latn</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="ls_styJustification">
+    <columns>
+      <!-- column-name Justification -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">justified</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">left</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">center</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">right</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="ls_styStyleType">
+    <columns>
+      <!-- column-name StyleType -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">paragraph</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">character</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">note</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="ls_styTextType">
+    <columns>
+      <!-- column-name TextType -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">title</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">section</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">other</col>
       </row>
     </data>
   </object>
@@ -8390,6 +8481,7 @@ Custom Script at:</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
                                                     <property name="halign">start</property>
+                                                    <property name="active">True</property>
                                                     <property name="draw_indicator">True</property>
                                                     <property name="group">c_processScriptAfter</property>
                                                   </object>
@@ -9117,15 +9209,6 @@ This will delete all previous log and intermediate temporary files for the entir
                                     <property name="left_attach">2</property>
                                     <property name="top_attach">3</property>
                                   </packing>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
                                 </child>
                                 <child>
                                   <placeholder/>
@@ -10428,6 +10511,7 @@ been enabled.</property>
                   <object class="GtkBox" id="tb_StyleEdtor">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="homogeneous">True</property>
                     <child>
                       <object class="GtkTreeView" id="tv_Styles">
                         <property name="visible">True</property>
@@ -10447,17 +10531,939 @@ been enabled.</property>
                       </packing>
                     </child>
                     <child>
-                      <placeholder/>
+                      <object class="GtkFrame">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">7</property>
+                        <property name="label_xalign">0.019999999552965164</property>
+                        <child>
+                          <object class="GtkBox">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="orientation">vertical</property>
+                            <child>
+                              <object class="GtkGrid">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="margin_left">6</property>
+                                <property name="margin_right">6</property>
+                                <property name="margin_top">6</property>
+                                <property name="margin_bottom">6</property>
+                                <property name="row_spacing">6</property>
+                                <property name="column_spacing">3</property>
+                                <child>
+                                  <object class="GtkLabel" id="l_styTextType">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Text Type:</property>
+                                    <property name="justify">right</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkComboBox" id="fcb_styTextType">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="can_default">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="model">ls_styTextType</property>
+                                    <property name="wrap_width">1</property>
+                                    <property name="active">1</property>
+                                    <property name="has_entry">True</property>
+                                    <property name="entry_text_column">0</property>
+                                    <property name="active_id">1</property>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="width_chars">9</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_styStyleType">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Style Type:</property>
+                                    <property name="justify">right</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkComboBox" id="fcb_styStyleType">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="can_default">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="model">ls_styStyleType</property>
+                                    <property name="wrap_width">1</property>
+                                    <property name="active">1</property>
+                                    <property name="has_entry">True</property>
+                                    <property name="entry_text_column">0</property>
+                                    <property name="active_id">1</property>
+                                    <signal name="changed" handler="onStyleTypeChanged" swapped="no"/>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="width_chars">9</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkFrame" id="fr_styCharSettings">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="margin_top">3</property>
+                                <property name="label_xalign">0.019999999552965164</property>
+                                <property name="shadow_type">none</property>
+                                <child>
+                                  <object class="GtkGrid">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="margin_left">6</property>
+                                    <property name="margin_right">6</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="row_spacing">6</property>
+                                    <property name="column_spacing">3</property>
+                                    <child>
+                                      <object class="GtkButton" id="bl_font_styFontName">
+                                        <property name="label" translatable="yes">Select Font...</property>
+                                        <property name="width_request">160</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">True</property>
+                                        <signal name="clicked" handler="onFontStyclicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">0</property>
+                                        <property name="width">5</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_styFontName">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="label" translatable="yes">Font:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_styFontSize">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Font Size:</property>
+                                        <property name="justify">right</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSpinButton" id="s_styLineSpacing1">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="width_chars">5</property>
+                                        <property name="text">1.0</property>
+                                        <property name="caps_lock_warning">False</property>
+                                        <property name="placeholder_text">0.0</property>
+                                        <property name="input_purpose">number</property>
+                                        <property name="adjustment">a_styLeftMargin</property>
+                                        <property name="digits">1</property>
+                                        <property name="numeric">True</property>
+                                        <property name="update_policy">if-valid</property>
+                                        <property name="value">1</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">1</property>
+                                        <property name="width">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_styAbsoluteFontSize">
+                                        <property name="label" translatable="yes">Absolute Font Size (in pts)</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">The Font Size is usually calculated as a factor of the Font Size Unit. If you prefer to specify an exact/absolute font size (in points), then enable this option.</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">4</property>
+                                        <property name="top_attach">1</property>
+                                        <property name="width">4</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_styFaceBold">
+                                        <property name="label" translatable="yes">Bold</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">2</property>
+                                        <property name="width">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_styFaceItalic">
+                                        <property name="label" translatable="yes">Italic</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">3</property>
+                                        <property name="top_attach">2</property>
+                                        <property name="width">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_styFaceSuperscript">
+                                        <property name="label" translatable="yes">Superscript</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">3</property>
+                                        <property name="width">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_stySmallCap">
+                                        <property name="label" translatable="yes">SmallCaps</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">5</property>
+                                        <property name="top_attach">2</property>
+                                        <property name="width">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_styRaise">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Raise:</property>
+                                        <property name="justify">right</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">4</property>
+                                        <property name="top_attach">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSpinButton" id="s_styRaise">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="width_chars">5</property>
+                                        <property name="text">1.0</property>
+                                        <property name="caps_lock_warning">False</property>
+                                        <property name="placeholder_text">0.0</property>
+                                        <property name="input_purpose">number</property>
+                                        <property name="adjustment">a_styRaise</property>
+                                        <property name="digits">1</property>
+                                        <property name="numeric">True</property>
+                                        <property name="update_policy">if-valid</property>
+                                        <property name="value">1</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">5</property>
+                                        <property name="top_attach">3</property>
+                                        <property name="width">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkColorButton" id="col_styColor">
+                                        <property name="width_request">40</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="tooltip_text" translatable="yes">Overrides the colour in the stylesheet for toc3</property>
+                                        <property name="halign">start</property>
+                                        <property name="title" translatable="yes">Thumb Tab Text Colour</property>
+                                        <property name="rgba">rgb(0,0,0)</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">7</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_styColor">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Color:</property>
+                                        <property name="justify">right</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">6</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child type="label">
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">Character Settings</property>
+                                    <attributes>
+                                      <attribute name="weight" value="bold"/>
+                                      <attribute name="foreground" value="#72729f9fcfcf"/>
+                                    </attributes>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkFrame" id="fr_styParaSettings">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="margin_top">3</property>
+                                <property name="label_xalign">0.019999999552965164</property>
+                                <property name="shadow_type">none</property>
+                                <child>
+                                  <object class="GtkGrid">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="margin_left">6</property>
+                                    <property name="margin_right">6</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="row_spacing">6</property>
+                                    <property name="column_spacing">3</property>
+                                    <child>
+                                      <object class="GtkLabel" id="l_styJustification">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="label" translatable="yes">Alignment:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkComboBox" id="fcb_styJustification">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="can_default">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="model">ls_styJustification</property>
+                                        <property name="wrap_width">1</property>
+                                        <property name="active">1</property>
+                                        <property name="has_entry">True</property>
+                                        <property name="entry_text_column">0</property>
+                                        <property name="active_id">1</property>
+                                        <child internal-child="entry">
+                                          <object class="GtkEntry">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="width_chars">9</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">0</property>
+                                        <property name="width">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_styFirstLineIndent">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">First Line
+Indent:</property>
+                                        <property name="justify">right</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">4</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSpinButton" id="s_styFirstLineIndent">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="width_chars">5</property>
+                                        <property name="text">1.0</property>
+                                        <property name="caps_lock_warning">False</property>
+                                        <property name="placeholder_text">0.0</property>
+                                        <property name="input_purpose">number</property>
+                                        <property name="adjustment">a_styFirstLineIndent</property>
+                                        <property name="digits">1</property>
+                                        <property name="numeric">True</property>
+                                        <property name="update_policy">if-valid</property>
+                                        <property name="value">1</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">5</property>
+                                        <property name="top_attach">0</property>
+                                        <property name="width">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSpinButton" id="s_styLeftMargin">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="width_chars">5</property>
+                                        <property name="text">1.0</property>
+                                        <property name="caps_lock_warning">False</property>
+                                        <property name="placeholder_text">0.0</property>
+                                        <property name="input_purpose">number</property>
+                                        <property name="adjustment">a_styLeftMargin</property>
+                                        <property name="digits">1</property>
+                                        <property name="numeric">True</property>
+                                        <property name="update_policy">if-valid</property>
+                                        <property name="value">1</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">1</property>
+                                        <property name="width">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_styLeftMargin">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Left
+Margin:</property>
+                                        <property name="justify">right</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_styRightMargin">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Right
+Margin:</property>
+                                        <property name="justify">right</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">4</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSpinButton" id="s_styRightMargin">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="width_chars">5</property>
+                                        <property name="text">1.0</property>
+                                        <property name="caps_lock_warning">False</property>
+                                        <property name="placeholder_text">0.0</property>
+                                        <property name="input_purpose">number</property>
+                                        <property name="adjustment">a_styRightMargin</property>
+                                        <property name="digits">1</property>
+                                        <property name="numeric">True</property>
+                                        <property name="update_policy">if-valid</property>
+                                        <property name="value">1</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">5</property>
+                                        <property name="top_attach">1</property>
+                                        <property name="width">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Line
+Spacing:</property>
+                                        <property name="justify">right</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSpinButton" id="s_styLineSpacing">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="width_chars">5</property>
+                                        <property name="text">1.0</property>
+                                        <property name="caps_lock_warning">False</property>
+                                        <property name="placeholder_text">0.0</property>
+                                        <property name="input_purpose">number</property>
+                                        <property name="adjustment">a_styLeftMargin</property>
+                                        <property name="digits">1</property>
+                                        <property name="numeric">True</property>
+                                        <property name="update_policy">if-valid</property>
+                                        <property name="value">1</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">2</property>
+                                        <property name="width">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_styAbsoluteLineSpacing">
+                                        <property name="label" translatable="yes">Absolute Spacing (in pts)</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">The Line Spacing is usually calculated as a factor of the Font Size. If you prefer to specify an exact/absolute line spacing (in points), then enable this option.</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">4</property>
+                                        <property name="top_attach">2</property>
+                                        <property name="width">4</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_stySpaceBefore">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Space
+Before:</property>
+                                        <property name="justify">right</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSpinButton" id="s_stySpaceBefore">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="width_chars">5</property>
+                                        <property name="text">1.0</property>
+                                        <property name="caps_lock_warning">False</property>
+                                        <property name="placeholder_text">0.0</property>
+                                        <property name="input_purpose">number</property>
+                                        <property name="adjustment">a_stySpaceBefore</property>
+                                        <property name="digits">1</property>
+                                        <property name="numeric">True</property>
+                                        <property name="update_policy">if-valid</property>
+                                        <property name="value">1</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">3</property>
+                                        <property name="width">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_stySpaceAfter">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Space
+After:</property>
+                                        <property name="justify">right</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">4</property>
+                                        <property name="top_attach">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSpinButton" id="s_stySpaceAfter">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="width_chars">5</property>
+                                        <property name="text">1.0</property>
+                                        <property name="caps_lock_warning">False</property>
+                                        <property name="placeholder_text">0.0</property>
+                                        <property name="input_purpose">number</property>
+                                        <property name="adjustment">a_stySpaceAfter</property>
+                                        <property name="digits">1</property>
+                                        <property name="numeric">True</property>
+                                        <property name="update_policy">if-valid</property>
+                                        <property name="value">1</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">5</property>
+                                        <property name="top_attach">3</property>
+                                        <property name="width">3</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child type="label">
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">Paragraph Settings</property>
+                                    <attributes>
+                                      <attribute name="weight" value="bold"/>
+                                      <attribute name="foreground" value="#72729f9fcfcf"/>
+                                    </attributes>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkFrame" id="fr_styNoteSettings">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="margin_top">3</property>
+                                <property name="label_xalign">0.019999999552965164</property>
+                                <property name="shadow_type">none</property>
+                                <child>
+                                  <object class="GtkGrid">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="margin_left">6</property>
+                                    <property name="margin_right">6</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="row_spacing">6</property>
+                                    <property name="column_spacing">3</property>
+                                    <child>
+                                      <object class="GtkLabel" id="l_styCallerStyle">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Caller
+Style:</property>
+                                        <property name="justify">right</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkComboBox" id="fcb_styCallerStyle">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="can_default">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="model">ls_styJustification</property>
+                                        <property name="wrap_width">1</property>
+                                        <property name="active">1</property>
+                                        <property name="has_entry">True</property>
+                                        <property name="entry_text_column">0</property>
+                                        <property name="active_id">1</property>
+                                        <child internal-child="entry">
+                                          <object class="GtkEntry">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="width_chars">9</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_styCallerRaise">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Caller
+Raise:</property>
+                                        <property name="justify">right</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">2</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSpinButton" id="s_styCallerRaise">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="width_chars">5</property>
+                                        <property name="text">1.0</property>
+                                        <property name="caps_lock_warning">False</property>
+                                        <property name="placeholder_text">0.0</property>
+                                        <property name="input_purpose">number</property>
+                                        <property name="adjustment">a_styCallerRaise</property>
+                                        <property name="digits">1</property>
+                                        <property name="numeric">True</property>
+                                        <property name="update_policy">if-valid</property>
+                                        <property name="value">1</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">3</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_styCallerStyle1">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Note Caller
+Style:</property>
+                                        <property name="justify">right</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkComboBox" id="fcb_styCallerStyle1">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="can_default">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="model">ls_styJustification</property>
+                                        <property name="wrap_width">1</property>
+                                        <property name="active">1</property>
+                                        <property name="has_entry">True</property>
+                                        <property name="entry_text_column">0</property>
+                                        <property name="active_id">1</property>
+                                        <child internal-child="entry">
+                                          <object class="GtkEntry">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="width_chars">9</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_styCallerRaise1">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Note Caller
+Raise:</property>
+                                        <property name="justify">right</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">2</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSpinButton" id="s_styCallerRaise1">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="width_chars">5</property>
+                                        <property name="text">1.0</property>
+                                        <property name="caps_lock_warning">False</property>
+                                        <property name="placeholder_text">0.0</property>
+                                        <property name="input_purpose">number</property>
+                                        <property name="adjustment">a_styCallerRaise</property>
+                                        <property name="digits">1</property>
+                                        <property name="numeric">True</property>
+                                        <property name="update_policy">if-valid</property>
+                                        <property name="value">1</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">3</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_styCallerStyle2">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Note Blend
+Into Style:</property>
+                                        <property name="justify">right</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkComboBox" id="fcb_styCallerStyle2">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="can_default">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="model">ls_styJustification</property>
+                                        <property name="wrap_width">1</property>
+                                        <property name="active">1</property>
+                                        <property name="has_entry">True</property>
+                                        <property name="entry_text_column">0</property>
+                                        <property name="active_id">1</property>
+                                        <child internal-child="entry">
+                                          <object class="GtkEntry">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="width_chars">9</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child type="label">
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">Note  Settings</property>
+                                    <attributes>
+                                      <attribute name="weight" value="bold"/>
+                                      <attribute name="foreground" value="#72729f9fcfcf"/>
+                                    </attributes>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">3</property>
+                              </packing>
+                            </child>
+                          </object>
+                        </child>
+                        <child type="label">
+                          <object class="GtkCheckButton" id="c_styTextProperties">
+                            <property name="label" translatable="yes">Hide/Exclude Contents of Marker</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="tooltip_text" translatable="yes">If this option is checked, the marker becomes "non-publishable" and the contents of this marker will not be included in the output.</property>
+                            <property name="halign">end</property>
+                            <property name="valign">start</property>
+                            <property name="image_position">right</property>
+                            <property name="draw_indicator">True</property>
+                            <signal name="clicked" handler="onstyTextPropertiesClicked" swapped="no"/>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
                     </child>
                   </object>
                   <packing>
                     <property name="position">11</property>
                   </packing>
                 </child>
-                <child type="org.freedesktop.IBus">
+                <child type="tab">
                   <object class="GtkLabel" id="lb_StyleEditor">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="halign">start</property>
                     <property name="label" translatable="yes">Styles</property>
                   </object>
                   <packing>
@@ -10700,6 +11706,8 @@ been enabled.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="orientation">vertical</property>
+                                    <property name="position">190</property>
+                                    <property name="position_set">True</property>
                                     <property name="wide_handle">True</property>
                                     <child>
                                       <object class="GtkBox">
@@ -10887,7 +11895,6 @@ been enabled.</property>
                                       <object class="GtkBox">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="vexpand">True</property>
                                         <property name="baseline_position">bottom</property>
                                         <child>
                                           <object class="GtkScrolledWindow">
@@ -11388,6 +12395,7 @@ Lines:</property>
                                   </object>
                                   <packing>
                                     <property name="position">1</property>
+                                    <property name="tab_fill">False</property>
                                   </packing>
                                 </child>
                                 <child type="tab">
@@ -11408,6 +12416,8 @@ of the images.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="orientation">vertical</property>
+                                    <property name="position">120</property>
+                                    <property name="position_set">True</property>
                                     <property name="wide_handle">True</property>
                                     <child>
                                       <object class="GtkBox">
@@ -12950,6 +13960,12 @@ edit various control and log files.</property>
                     <property name="position">12</property>
                     <property name="tab_fill">False</property>
                   </packing>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child type="tab">
+                  <placeholder/>
                 </child>
               </object>
               <packing>
