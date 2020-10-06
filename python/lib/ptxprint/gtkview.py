@@ -103,7 +103,7 @@ _sensitivities = {
     "c_useFallbackFont" :      ["btn_findMissingChars", "t_missingChars", "l_fallbackFont", "bl_fontExtraR"],
     "c_includeFootnotes" :     ["bx_fnOptions"],
     "c_includeXrefs" :         ["bx_xrOptions"],
-    "c_includeillustrations" : ["gr_IllustrationOptions"],
+    "c_includeillustrations" : ["gr_IllustrationOptions", "c_includeImageCopyrights"],
     "c_diglot" :               ["gr_diglot", "fcb_diglotPicListSources", "c_hdrLeftPri", "c_hdrCenterPri", "c_hdrRightPri",
                                 "c_ftrCenterPri", "c_hdrLeftSec", "c_hdrCenterSec", "c_hdrRightSec", "c_ftrCenterSec"],
     "c_borders" :              ["gr_borders"],
@@ -143,8 +143,7 @@ _sensitivities = {
     "c_fakebolditalic" :       ["s_bolditalicembolden", "s_bolditalicslant"],
     "c_thumbtabs":             ["gr_thumbs"],
     "c_thumbrotate":           ["fcb_rotateTabs"],
-    # "c_thumbtabs":             ["s_thumblength", "s_thumbheight", "s_thumbfont", "c_thumbrotate", "c_thumbitalic",
-                                # "c_thumbbold", "t_thumbgroups", "col_thumbback", "col_thumbtext", "s_thumbtabs", "c_thumbrestart"],
+    "c_colophon":              ["gr_colophon"],
 }
 # Checkboxes and the different objects they make (in)sensitive when toggled
 # These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
@@ -380,7 +379,7 @@ class GtkViewModel(ViewModel):
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
                   "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection", "l_colgutteroffset", "fr_hyphenation",
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "c_fnOverride", "c_xrOverride",
-                  "row_ToC", "c_hyphenate", "l_missingPictureCount",
+                  "row_ToC", "c_hyphenate", "l_missingPictureCount", "bx_colophon", "tb_StyleEdtor",
                   "c_hdrLeftPri", "c_hdrLeftSec", "c_hdrCenterPri", "c_hdrCenterSec", "c_hdrRightPri", "c_hdrRightSec", 
                   "c_omitverseone", "c_glueredupwords", "c_firstParaIndent", "c_hangpoetry", "c_preventwidows", 
                   "l_sidemarginfactor", "s_sidemarginfactor", "l_min", "s_linespacingmin", "l_max", "s_linespacingmax",
@@ -1917,3 +1916,5 @@ class GtkViewModel(ViewModel):
         else:
             print("Something's wrong!")
         
+    def onColophonClicked(self, btn):
+        self.onSimpleClicked(btn)

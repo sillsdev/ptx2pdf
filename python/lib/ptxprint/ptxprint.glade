@@ -868,6 +868,12 @@ saved configuration.</property>
       </object>
     </child>
   </object>
+  <object class="GtkListStore" id="ls_NoteBlendInto">
+    <columns>
+      <!-- column-name NoteBlendInto -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkListStore" id="ls_PicList">
     <columns>
       <!-- column-name Anchor -->
@@ -1765,6 +1771,12 @@ in the Windows system.</property>
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="ls_styCallerStyle">
+    <columns>
+      <!-- column-name CallerStyle -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkListStore" id="ls_styJustification">
     <columns>
       <!-- column-name Justification -->
@@ -1784,6 +1796,12 @@ in the Windows system.</property>
         <col id="0" translatable="yes">right</col>
       </row>
     </data>
+  </object>
+  <object class="GtkListStore" id="ls_styNoteCallerStyle">
+    <columns>
+      <!-- column-name NoteCallerStyle -->
+      <column type="gchararray"/>
+    </columns>
   </object>
   <object class="GtkListStore" id="ls_styStyleType">
     <columns>
@@ -2247,29 +2265,6 @@ The list is based on any available
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="c_colophon">
-                                <property name="label" translatable="yes">Include
-Colophon</property>
-                                <property name="visible">True</property>
-                                <property name="sensitive">False</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">A brief statement containing information
-about the publication such as the place of 
-publication, the publisher, and the date of 
-publication. This will be printed at the END
-of the book. Similar to a "biblio-page" or a
-"copyright-page" at the front of a book.</property>
-                                <property name="halign">start</property>
-                                <property name="active">True</property>
-                                <property name="draw_indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">7</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkLabel" id="l_projectFullName">
                                 <property name="width_request">300</property>
                                 <property name="visible">True</property>
@@ -2319,6 +2314,9 @@ of the book. Similar to a "biblio-page" or a
                             <child>
                               <placeholder/>
                             </child>
+                            <child>
+                              <placeholder/>
+                            </child>
                           </object>
                         </child>
                         <child type="label">
@@ -2339,7 +2337,6 @@ of the book. Similar to a "biblio-page" or a
                       <object class="GtkFrame" id="bx_SavedConfigSettings">
                         <property name="width_request">675</property>
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
                         <property name="margin_left">6</property>
@@ -2778,7 +2775,126 @@ Viewer tab.</property>
                       </packing>
                     </child>
                     <child>
-                      <placeholder/>
+                      <object class="GtkFrame" id="bx_colophon">
+                        <property name="width_request">675</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
+                        <property name="margin_top">3</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="label_xalign">0.019999999552965164</property>
+                        <child>
+                          <object class="GtkGrid" id="gr_colophon">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_left">6</property>
+                            <property name="margin_right">6</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
+                            <property name="row_spacing">6</property>
+                            <property name="column_spacing">6</property>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="label" translatable="yes">Copyright Statement:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">end</property>
+                                <property name="valign">start</property>
+                                <property name="margin_top">6</property>
+                                <property name="label" translatable="yes">Additional Text
+(Optional):</property>
+                                <property name="justify">right</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_includeImageCopyrights">
+                                <property name="label" translatable="yes">Automatically include copyright attribution for the illustrations used in this publication</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">It is highly recommended to leave this setting ON. PTXprint will automatically generate the copyright statement(s)
+for each of the artists (with page numbers).</property>
+                                <property name="margin_left">12</property>
+                                <property name="active">True</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">2</property>
+                                <property name="width">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="hexpand">True</property>
+                                <property name="text" translatable="yes">© 2020 Wycliffe Bible Translators, Inc.</property>
+                                <property name="xalign">0.5</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry">
+                                <property name="height_request">100</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="valign">start</property>
+                                <property name="hexpand">True</property>
+                                <property name="xalign">0.5</property>
+                                <property name="placeholder_text" translatable="yes">Add any additional information here which needs to be included at the end of the publication.</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                        </child>
+                        <child type="label">
+                          <object class="GtkCheckButton" id="c_colophon">
+                            <property name="label" translatable="yes">Include Colophon</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="tooltip_text" translatable="yes">A brief statement containing information
+about the publication such as the place of 
+publication, the publisher, and the date of 
+publication. This will be printed at the END
+of the book. Similar to a "biblio-page" or a
+"copyright-page" at the front of a book.</property>
+                            <property name="halign">start</property>
+                            <property name="active">True</property>
+                            <property name="draw_indicator">True</property>
+                            <signal name="clicked" handler="onColophonClicked" swapped="no"/>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">2</property>
+                      </packing>
                     </child>
                   </object>
                   <packing>
@@ -8314,8 +8430,7 @@ positioning of illustrations.
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="tooltip_text" translatable="yes">It is important to provide proper copyright attribution for the
-illustrations used in the publication.
+                            <property name="tooltip_text" translatable="yes">It is important to provide proper copyright attribution for the illustrations used in the publication.
 
 If you enable this option and insert this code (in Paratext's USFM text):
       \zImageCopyrights
@@ -10742,12 +10857,12 @@ been enabled.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="c_styAbsoluteFontSize">
-                                        <property name="label" translatable="yes">Absolute Font Size (in pts)</property>
+                                      <object class="GtkCheckButton" id="c_styFontScale">
+                                        <property name="label" translatable="yes">Scale Relative to Parent</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">The Font Size is usually calculated as a factor of the Font Size Unit. If you prefer to specify an exact/absolute font size (in points), then enable this option.</property>
+                                        <property name="tooltip_text" translatable="yes">The Font Size is usually calculated as relative to the current Font Size Unit. If you prefer to specify an an amount relative to the underlying (parent) font then enable this option. Note that \p has a FontSize of 12 in usfm.sty</property>
                                         <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
@@ -11073,7 +11188,7 @@ Margin:</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="l_styLineSpacing">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">end</property>
@@ -11253,7 +11368,7 @@ Style:</property>
                                         <property name="can_focus">False</property>
                                         <property name="can_default">True</property>
                                         <property name="halign">start</property>
-                                        <property name="model">ls_styJustification</property>
+                                        <property name="model">ls_styCallerStyle</property>
                                         <property name="wrap_width">1</property>
                                         <property name="active">1</property>
                                         <property name="has_entry">True</property>
@@ -11308,7 +11423,7 @@ Raise:</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel" id="l_styCallerStyle1">
+                                      <object class="GtkLabel" id="l_styNoteCallerStyle">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">end</property>
@@ -11322,12 +11437,12 @@ Style:</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkComboBox" id="fcb_styCallerStyle1">
+                                      <object class="GtkComboBox" id="fcb_styNoteCallerStyle">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="can_default">True</property>
                                         <property name="halign">start</property>
-                                        <property name="model">ls_styJustification</property>
+                                        <property name="model">ls_styNoteCallerStyle</property>
                                         <property name="wrap_width">1</property>
                                         <property name="active">1</property>
                                         <property name="has_entry">True</property>
@@ -11347,7 +11462,7 @@ Style:</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel" id="l_styCallerRaise1">
+                                      <object class="GtkLabel" id="l_styNoteCallerRaise">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">end</property>
@@ -11361,7 +11476,7 @@ Raise:</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkSpinButton" id="s_styCallerRaise1">
+                                      <object class="GtkSpinButton" id="s_styNoteCallerRaise">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="halign">start</property>
@@ -11382,7 +11497,7 @@ Raise:</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel" id="l_styCallerStyle2">
+                                      <object class="GtkLabel" id="l_NoteBlendInto">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">end</property>
@@ -11396,12 +11511,12 @@ Into Style:</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkComboBox" id="fcb_styCallerStyle2">
+                                      <object class="GtkComboBox" id="fcb_NoteBlendInto">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="can_default">True</property>
                                         <property name="halign">start</property>
-                                        <property name="model">ls_styJustification</property>
+                                        <property name="model">ls_NoteBlendInto</property>
                                         <property name="wrap_width">1</property>
                                         <property name="active">1</property>
                                         <property name="has_entry">True</property>
