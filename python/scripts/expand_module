@@ -46,27 +46,64 @@ def parse_refs(s):
         else:
             print("Bad ref: {}".format(ref))
 
-def parse_module(e):
-    if isinstance(e, sfm.Text):
+exclusionmap = {
+    'v': ['v'],
+    'x': ['x'],
+    'f': ['f'],
+    's': ['s', 's1', 's2'],
+    'p': ['fig']
+}
+
+class Module:
+    def __init__(self, fname, sheets, bookfiles):
+        self.sheets = sheets
+        self.bookfiles = bookfiles
+        self.books = {}
+        self.removes = set()
+        with open(fname, encoding="utf-8") as inf:
+            self.doc = read_module(inf, sheets)
+
+    def parse(self):
+        final = sum(map(self.parse_element, self.doc.doc), start=[])
+        return final
+        
+    def parse_element(self, e):
+        if isinstance(e, sfm.Text):
+            return [e]
+        elif e.name == "ref" or e.name == "refn":
+            res = []
+            for r in parse_refs(e[0]):
+                p = self.get_passage(r, removes=self.removes)
+                for i, t in enumerate(p):
+                    if isinstance(t, sfm.Element) and t.meta.get('StyleType', '') == 'Paragraph':
+                        if i:
+                            p[0:i] = [self.new_element(e, "p" if e.name == "ref" else "np", p[0:i])]
+                        break
+                else:
+                    p = [self.new_element(e, "p" if e.name == "ref" else "np", p)]
+                res.extend(p)
+            return res
+        elif e.name == 'inc':
+            s = "".join(e).strip()
+            for c in s:
+                if c == "-":
+                    self.removes = set(sum(exclusionmap.values(), []))
+                else:
+                    self.removes.difference_update(exclusionmap.get(c, []))
+        else:
+            cs = sum(map(self.parse_element, e), start=[])
+            e[:] = cs
         return [e]
-    elif e.name == "ref" or e.name == "refn":
-        res = []
-        for r in parse_refs(e[0]):
-            print(r)
-            p = get_passage(r)
-            for i, t in enumerate(p):
-                if isinstance(t, sfm.Element) and t.meta.get('StyleType', '') == 'Paragraph':
-                    if i:
-                        p[0:i] = [new_element(e, "p" if e.name == "ref" else "np", p[0:i])]
-                    break
-            else:
-                p = [new_element(e, "p" if e.name == "ref" else "np", p)]
-            res.extend(p)
-        return res
-    else:
-        cs = sum(map(parse_module, e), start=[])
-        e[:] = cs
-    return [e]
+
+    def get_passage(self, ref, removes={}):
+        if ref[0] not in self.books:
+            with open(os.path.join(prjdir, self.bookfiles[ref[0]]), encoding="utf-8") as inf:
+                self.books[ref[0]] = Usfm(inf, sheets)
+        return self.books[ref[0]].subdoc(ref[1:], removes=removes)
+
+    def new_element(self, e, name, content):
+        return sfm.Element(name, e.pos, [], e.parent, content=[sfm.Text("\n", e.pos)]+content, meta=self.sheets.sheet[name])
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument("infile", help="Input module file to expand")
@@ -104,22 +141,10 @@ modsheet = {k: marker(modinfo) for k in ('inc', 'vrs', 'ref', 'refnp', 'rep', 'm
 
 sheets = Sheets(args.stylesheet)
 sheets.update(modsheet)
-books = {}
 
-def get_passage(ref):
-    if ref[0] not in books:
-        with open(os.path.join(prjdir, bookfiles[ref[0]]), encoding="utf-8") as inf:
-            books[ref[0]] = Usfm(inf, sheets)
-    return books[ref[0]].subdoc(ref[1:])
+main = Module(args.infile, sheets, bookfiles)
 
-def new_element(e, name, content):
-    return sfm.Element(name, e.pos, [], e.parent, content=[sfm.Text("\n", e.pos)]+content, meta=sheets.sheet[name])
-
-with open(args.infile, encoding="utf-8") as inf:
-    main = read_module(inf, sheets)
-
-final = sum(map(parse_module, main.doc), start=[])
-print(sfm.generate(final))
+print(sfm.generate(main.parse()))
 
 
 

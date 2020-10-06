@@ -129,7 +129,6 @@ class Usfm:
             The list must include overlapping ranges'''
         self.addorncv()
         r = RefRange(*ref)
-        print(r.start, r.end)
         chaps = self.chapters[r.start[0]:r.end[0]+1]
         def pred(e):
             if isinstance(e.pos, _Reference) and e.pos.cmp_range(r) == 0:
