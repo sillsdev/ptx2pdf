@@ -320,6 +320,7 @@
    \gdef\ch@pter{##1}% remember chapter number
    \gdef\ch@ptert@xt{##1}% the chapter number we will actually output
    \gdef\v@rse{}% clear verse number
+   \global\let\print@bleVerse=\v@rse
    \m@kedigitsletters
    % If omitting chapter number, skip this. 
    % We would have to set \OmitChapterNumbertrue on a book by book basis
