@@ -76,3 +76,14 @@ may also have their own watermark or background image.
 % any stylesheet commands behave as though in a normal stylesheet, and options given 
 % above file apply to \esb boxes without a specified category.
 ```
+
+## Thoughts
+- I would suggest a different separator between the category and the marker. How about `|` or `:`. I can see `_` being popular in user markers.
+
+- I suggest we add `\Marker` support within a `\category` block, without needing to use the separator. This allows us to change the separator if things go wrong.
+
+- Do we need  a special `\categorysheet` command? The real deal is the `\category` command that turns on the goodies.
+
+- Might we add some border options?
+
+- 
