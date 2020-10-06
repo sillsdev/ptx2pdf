@@ -40,12 +40,13 @@
 
 
 \def\setcatp@ram#1#2{\x@\xdef\csname c@tegory-\c@tegory-#1\endcsname{#2}}
-\def\getcatp@ram#1{\x@\let\x@\cp@ram\csname c@tegory-\c@tegory-#1\endcsname}
+\def\getcatp@ram#1{\x@\let\x@\cp@ram\csname c@tegory-\c@tegory-#1\endcsname\ifx\cp@ram\empty\global\let\cp@ram\relax\fi}
+\setcatp@ram{hascol}{T}
 \setcatp@ram{colour}{0 1 0}
-\setcatp@ram{alpha}{0.2}
+\setcatp@ram{alpha}{0.2}% 1=solid 0=invisible
 \setcatp@ram{posn}{b}
 \setcatp@ram{wid}{\colwidth}
-\setcatp@ram{figspec}{}%Normally 
+\setcatp@ram{fgfigspec}{}%Normally no picture.
 \def\fb@hpadding{1pt}%Added left and right of feintbox content
 \def\fb@vpadding{1pt}%added above and below feintbox content
 
@@ -71,19 +72,68 @@
   \egroup}
 \def\feintbox#1#2#3{% Set a (transparent) coloured box as background for box given in #3. #1: alpha, #2: {r g b}  (all numbers in range 0-1.0)
   \setbox0#3\hbox{\feintb@x{#1}{#2}{\ht0}{\dp0}{\wd0}\box0}}
-\def\esb{\setbox\extb@x\vbox\bgroup\inextendedtrue\old@bx{\the\everyhbox}\everyhbox{\startesb}}
+\def\esb{\setbox\extb@x\vbox\bgroup\inextendedtrue\old@bx{\the\everyhbox}\everyhbox{\st@rtesb}}
 
-\def\startesb{%
+\def\st@rtesb{%
  \everyhbox{\old@bx}%
  \getcatp@ram{wid}\hsize=\cp@ram
- \getcatp@ram{figspec}\ifx\cp@ram\empty\else\fig \cp@ram\fig*\fi
+ \getcatp@ram{fgfigspec}\ifx\cp@ram\relax\else\x@\fig \cp@ram\fig*\fi
 }
 
 \def\esbe{\ifinextended\egroup\else\message{\\ebse called without \\esb}\fi
   \inextendedfalse
-  \getcatp@ram{alpha}\let\pdf@lpha=\cp@ram
-  \getcatp@ram{colour}\let\pdfBGc@l=\cp@ram
-  \getcatp@ram{pos}\let\esbpos\cp@ram
-  \insert\bottomleftins{\vskip\baselineskip\feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extb@x}}}
+  \getcatp@ram{bgfiglow}%
+  \if\cp@ram F\getcatp@ram{bgfigspec}\ifx\cp@ram\relax\else
+    %FIXME: modify the esbbox
+  \fi\fi
+  \getcatp@ram{hascol}%
+  \if\cp@ram T
+    \getcatp@ram{alpha}\let\pdf@lpha=\cp@ram
+    \getcatp@ram{colour}\let\pdfBGc@l=\cp@ram
+    \getcatp@ram{pos}\let\esbpos\cp@ram
+    \getcatp@ram{bgfigspec}%
+    \insert\bottomleftins{\vskip\baselineskip\feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extb@x}}%
+  \else
+    \insert\bottomleftins{%
+    \ifx\cp@ram\relax\else\vbox to 0px{\vbox to\ht\extb@x{\vfil\d@figure{\cp@ram}\vfil}\vss}\fi
+    \vskip\baselineskip
+    \box\extb@x}%
+  \fi
+}
 
+% Category file parsing 
+\def\Category   #1\relax{%Store name of current category and defaults
+  \gdef\c@tegory{#1}%
+  \setcatp@ram{bgfigscale}{1}%
+  \setcatp@ram{fgfigsize}{box}%What is image scaled to?
+  \setcatp@ram{fgfigscale}{0.5}%
+  \setcatp@ram{fgfigpos}{cl}%Default is cutout left
+  \setcatp@ram{bgfigscale}{1}%Full size
+  \setcatp@ram{bgfigpos}{pc}%Horizontally centred
+  \setcatp@ram{hascol}{F}%No default colour.
+}
+\def\Position   #1\relax{\setcatp@ram{posn}{#1}}% Where does it go on the page? (like figures, but also B for below notes)
+\def\Breakable   #1\relax{\setcatp@ram{break}{\uppercase #1}} %Can the box page-break?
+\def\FgImage      #1\relax{\setcatp@ram{fgfigname}{#1}\GenC@tFig{fg}}
+\def\FgImagePos   #1\relax{\setcatp@ram{fgfigpos}{#1}\GenC@tFig{fg}}
+\def\FgImageScale   #1\relax{\setcatp@ram{fgfigscale}{#1}\GenC@tFig{fg}}
+\def\BgImage      #1\relax{\setcatp@ram{bgfigname}{#1}\GenC@tFig{bg}}
+\def\BgImageScale   #1\relax{\setcatp@ram{bgfigscale}{#1}\GenC@tFig{bg}}
+\def\BgImageLow   #1\relax{\setcatp@ram{bgfiglow}{\uppercase #1}}% What's the right sequence for colour layer and background image
+
+\def\BgColour   #1\relax{\setcatp@ram{hascol}{T}\setcatp@ram{colour}{#1}}%For British/Australian/NZ/etc.
+\let\BgColor\BgColour%For Americans
+\def\Alpha   #1\relax{\setcatp@ram{alpha}{#1}}% 1=solid 0=invisible
+
+\def\GenC@tFig#1{
+ \getcatp@ram{#1figname}\ifx\cp@ram\relax\let\cp@ram\empty\fi\ifx\cp@ram\empty\else
+   \let\c@tfigname\cp@ram
+   \getcatp@ram{#1figsize}
+ \fi
+}
+
+\def\EndCategory{\gdef\c@tegory{}}
+\def\categorysheet#1{%Just wrap \stylesheet with category-blanking commands
+  \EndCategory\stylesheet{#1}\EndCategory
+}
 
