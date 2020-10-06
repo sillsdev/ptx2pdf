@@ -853,7 +853,7 @@ class TexModel:
                         m = re.match(r"^\s*in\s+"+qreg+r"\s*:\s*", l)
                         if not m:
                             break
-                        context.append(self.make_context(regex.compile(m.group(1) or m.group(2), flags=regex.M)))
+                        context.append(self.make_contextsfn(regex.compile(m.group(1) or m.group(2), flags=regex.M)))
                         l = l[m.end():]
                     if not len(context):
                         context = None
