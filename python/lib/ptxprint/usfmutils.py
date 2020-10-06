@@ -3,8 +3,24 @@ from ptxprint import sfm
 import re, os
 from collections import namedtuple
 from itertools import groupby
+from functools import reduce
 
-RefRange = namedtuple("RefRange", ["fromc", "fromv", "toc", "tov"])
+verse_reg = re.compile(r"^\s*(\d+)(\D*?)(?:\s*(-)\s*(\d+)(\D*?))?\s*$")
+def make_rangetuple(chap, verse, start=True):
+    m = verse_reg.match(verse)
+    if m:
+        if m.group(3) and not start:
+            return (int(chap), int(m.group(4)), m.group(5))
+        else:
+            return (int(chap), int(m.group(1)), m.group(2))
+    else:
+        return (int(chap), 0, verse)
+
+class RefRange(namedtuple("RefRange", ["fromc", "fromv", "toc", "tov"])):
+    def __init__(self, *a, **kw):
+        super().__init__()
+        self.start = make_rangetuple(self[0], self[1])
+        self.end = make_rangetuple(self[2], self[3], start=False)
 
 def isScriptureText(e):
     if 'nonvernacular' in e.meta.get('TextProperties', []):
@@ -24,11 +40,22 @@ class _Reference(sfm.Position):
         p.book = ref[0]
         p.chapter = ref[1]
         p.verse = ref[2]
+        p.startref = make_rangetuple(p.chapter, p.verse)
+        p.endref = make_rangetuple(p.chapter, p.verse, start=False)
         return p
+
+    def cmp_range(self, r):
+        if self.endref < r.start:
+            return -1
+        elif self.startref > r.end:
+            return 1
+        return 0
 
 class Sheets:
     def __init__(self, init=[]):
         self.sheet = {k: v.copy() for k, v in usfm.default_stylesheet.items()}
+        if init is None or not len(init):
+            return
         for s in init:
             self.append(s)
 
@@ -36,6 +63,9 @@ class Sheets:
         if os.path.exists(sf):
             with open(sf) as s:
                 self.sheet = style.update_sheet(self.sheet, style.parse(s))
+
+    def update(self, d):
+        self.sheet = style.update_sheet(self.sheet, d)
 
 class Usfm:
     def __init__(self, iterable, sheets):
@@ -52,23 +82,27 @@ class Usfm:
         if self.cvaddorned:
             return
         self.chapters = []
-        ref = [None] * 3
+        ref = ["", "0", "0"]
         def _g(_, e):
             if isinstance(e, sfm.Element):
                 if e.name == 'id':
                     ref[0] = str(e[0]).split()[0]
                 elif e.name == 'c':
                     ref[1] = e.args[0]
-                    if ref[1] == len(self.chapters):
+                    c = int(ref[1])
+                    if c == len(self.chapters):
                         self.chapters.append(e)
                     else:
-                        if ref[1] > len(self.chapters):
-                            self.chapters += [None] * (ref[i] - len(self.chapters) + 1)
-                        self.chapters[ref[1]] = e
+                        if c > len(self.chapters):
+                            self.chapters += [None] * (c - len(self.chapters) + 1)
+                        self.chapters[c] = e
+                    ref[2] = "0"
                 elif e.name == 'v':
                     ref[2] = e.args[0]
-                return reduce(_g, e, None)
-            e.pos = _Reference(e.pos, ref)
+                e.pos = _Reference(e.pos, ref)
+                reduce(_g, e, None)
+            else:
+                e.pos = _Reference(e.pos, ref)
         reduce(_g, self.doc, None)
         self.cvaddorned = True
 
@@ -88,36 +122,33 @@ class Usfm:
         words = self.sreduce(nullelement, addwords, self.doc, init)
         return words
 
-    def subdoc(self, refs, title=False, intro=False):
+    def subdoc(self, ref, removes={}):
         ''' Creates a document consisting of only the text covered by the reference
-            ranges. refs is a list of ranges of the form:
-                (frombk, fromc, fromv, toc, tov)
+            ranges. ref is a tuple in the form:
+                (fromc, fromv, toc, tov)
             The list must include overlapping ranges'''
         self.addorncv()
-        ranges = {}
-        for r in refs:
-            ranges.setdefault(r[0], []).append(RefRange(*r[1:]))
-        for r in ranges.values:
-            r.sort()
-        def isintro(e):
-            return e.pos.chapter is None
-        def istitle(e):
-            return e.pos.chapter is None and e.parent.name == "id" and not e.name.startswith("i")
-        def filt(e):
-            if e.parent is None:
+        r = RefRange(*ref)
+        print(r.start, r.end)
+        chaps = self.chapters[r.start[0]:r.end[0]+1]
+        def pred(e):
+            if isinstance(e.pos, _Reference) and e.pos.cmp_range(r) == 0:
                 return True
-            elif e.parent.name == "id" and e.name in ("h", "cl"):
-                return True
-            elif istitle(e):
-                return title
-            elif isintro(e):
-                return intro
-            for r in ranges[e.pos.book]:
-                if ((r.fromc == e.pos.chapter and e.pos.verse >= r.fromv) or r.fromc < e.pos.chapter) \
-                        and ((r.toc == e.pos.chapter and e.pos.verse <= r.tov) or r.toc > e.pos.chapter):
-                    return True
             return False
-        return self.doc.sfilter(filt, self.doc)
+
+        def _g(a, e):
+            if isinstance(e, sfm.Text):
+                if pred(e):
+                    a.append(sfm.Text(e, e.pos, a or None))
+                return a
+            e_ = sfm.Element(e.name, e.pos, e.args, parent=a or None, meta=e.meta)
+            reduce(_g, e, e_)
+            if pred(e):
+                a.append(e_)
+            elif len(e_):
+                a.extend(e_[:])
+            return a
+        return reduce(_g, chaps, [])
 
     def normalise(self):
         ''' Normalise USFM in place '''

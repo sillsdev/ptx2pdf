@@ -3,6 +3,8 @@
 import argparse, os, sys, re
 from ptxprint.usfmutils import Usfm, Sheets
 from ptxprint import sfm
+from ptxprint.sfm.style import marker
+from ptxprint.ptsettings import allbooks
 
 def read_module(inf, sheets):
     lines = inf.readlines()
@@ -20,10 +22,10 @@ def parse_refs(s):
             bk = m.group(1) or bk
             if m.group(3):
                 firstc = m.group(2) or c
-                firstv = m.group(4) or 0
+                firstv = m.group(4) or "0"
             elif sep == ",":
                 firstc = c
-                firstv = m.group(2) or 0
+                firstv = m.group(2) or "0"
             else:
                 firstc = m.group(2) or c
                 firstv = "0"
@@ -39,17 +41,32 @@ def parse_refs(s):
                     lastv = m.group(6) or "200"
             else:
                 c = firstc
-                lastv = firstv if firstv != "0" else "200"
+                lastv = "200" if firstv == "0" else firstv
             yield (bk, firstc, firstv, c, lastv)
         else:
             print("Bad ref: {}".format(ref))
 
 def parse_module(e):
     if isinstance(e, sfm.Text):
-        return e
+        return [e]
     elif e.name == "ref" or e.name == "refn":
+        res = []
         for r in parse_refs(e[0]):
             print(r)
+            p = get_passage(r)
+            for i, t in enumerate(p):
+                if isinstance(t, sfm.Element) and t.meta.get('StyleType', '') == 'Paragraph':
+                    if i:
+                        p[0:i] = [new_element(e, "p" if e.name == "ref" else "np", p[0:i])]
+                    break
+            else:
+                p = [new_element(e, "p" if e.name == "ref" else "np", p)]
+            res.extend(p)
+        return res
+    else:
+        cs = sum(map(parse_module, e), start=[])
+        e[:] = cs
+    return [e]
 
 parser = argparse.ArgumentParser()
 parser.add_argument("infile", help="Input module file to expand")
@@ -78,18 +95,31 @@ for f in os.listdir(prjdir):
     m = re.match(r"^(\d{2})", f)
     if m:
         try:
-            bookfiles[allbooks[int(m.group(1))]] = f
+            bookfiles[allbooks[int(m.group(1))-1]] = f
         except KeyError:
             pass
+print(bookfiles)
+modinfo = { 'OccursUnder': {'id'}, 'TextType': 'Other', 'EndMarker': None, 'StyleType': 'Paragraph'}
+modsheet = {k: marker(modinfo) for k in ('inc', 'vrs', 'ref', 'refnp', 'rep', 'mod')}
 
-sheet = Sheets(args.stylesheet)
+sheets = Sheets(args.stylesheet)
+sheets.update(modsheet)
 books = {}
-for k, v in books.items():
-    with open(v, encoding="utf-8") as inf:
-        books[k] = Usfm(inf, sheet)
+
+def get_passage(ref):
+    if ref[0] not in books:
+        with open(os.path.join(prjdir, bookfiles[ref[0]]), encoding="utf-8") as inf:
+            books[ref[0]] = Usfm(inf, sheets)
+    return books[ref[0]].subdoc(ref[1:])
+
+def new_element(e, name, content):
+    return sfm.Element(name, e.pos, [], e.parent, content=[sfm.Text("\n", e.pos)]+content, meta=sheets.sheet[name])
 
 with open(args.infile, encoding="utf-8") as inf:
     main = read_module(inf, sheets)
+
+final = sum(map(parse_module, main.doc), start=[])
+print(sfm.generate(final))
 
 
 
