@@ -60,6 +60,9 @@ class Module:
         self.bookfiles = bookfiles
         self.books = {}
         self.removes = set()
+        modinfo = { 'OccursUnder': {'id'}, 'TextType': 'Other', 'EndMarker': None, 'StyleType': 'Paragraph'}
+        modsheet = {k: marker(modinfo) for k in ('inc', 'vrs', 'ref', 'refnp', 'rep', 'mod')}
+        sheets.update(modsheet)
         with open(fname, encoding="utf-8") as inf:
             self.doc = read_module(inf, sheets)
 
@@ -135,16 +138,13 @@ for f in os.listdir(prjdir):
             bookfiles[allbooks[int(m.group(1))-1]] = f
         except KeyError:
             pass
-print(bookfiles)
-modinfo = { 'OccursUnder': {'id'}, 'TextType': 'Other', 'EndMarker': None, 'StyleType': 'Paragraph'}
-modsheet = {k: marker(modinfo) for k in ('inc', 'vrs', 'ref', 'refnp', 'rep', 'mod')}
 
 sheets = Sheets(args.stylesheet)
-sheets.update(modsheet)
-
 main = Module(args.infile, sheets, bookfiles)
 
-print(sfm.generate(main.parse()))
-
-
-
+result = main.parse()
+if args.outfile is not None:
+    with open(args.outfile, "w", encoding="utf-8") as outf:
+        outf.write(sfm.generate(result))
+else:
+    print(sfm.generate(result))
