@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 
+<!-- Generated with glade 3.22.2 
 
 The MIT License (MIT)
 
@@ -1854,6 +1854,7 @@ in the Windows system.</property>
       </row>
     </data>
   </object>
+  <object class="GtkTextBuffer" id="tb_colophon"/>
   <object class="GtkTreeStore" id="ts_styles">
     <columns>
       <!-- column-name name -->
@@ -2890,7 +2891,17 @@ then the default set will be loaded.</property>
                                 <signal name="focus-in-event" handler="onColophonXtraText_focus_in" swapped="no"/>
                                 <signal name="focus-out-event" handler="onColophonXtraText_focus_out" swapped="no"/>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkViewport">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <child>
+                                      <object class="GtkTextView" id="textv_colophon">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="buffer">tb_colophon</property>
+                                      </object>
+                                    </child>
+                                  </object>
                                 </child>
                               </object>
                               <packing>

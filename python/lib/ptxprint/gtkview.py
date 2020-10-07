@@ -267,8 +267,8 @@ class GtkViewModel(ViewModel):
             view.connect("focus-in-event", self.onViewerFocus)
 
         # Need to set up a view+buffer etc. for "scroll_colophonXtraText"
-        self.colo = GtkSource.View.new_with_buffer(GtkSource.Buffer())
-        self.builder.get_object("scroll_colophonXtraText").add(self.colo)
+        #self.colo = GtkSource.View.new_with_buffer(GtkSource.Buffer())
+        #self.builder.get_object("scroll_colophonXtraText").add(self.colo)
         # self.colo.set_text("This is where you can type any additional text for the Colophon text\nand it is a multi-line control.")
         # colo.set_show_line_numbers(False)  # Turn line numbers OFF
 

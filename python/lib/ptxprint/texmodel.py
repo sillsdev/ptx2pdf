@@ -96,7 +96,7 @@ ModelMap = {
     "project/randompicposn":    ("c_randomPicPosn", None),
     "project/canonicalise":     ("c_canonicalise", None),
     "project/copyright":        ("t_copyrightStatement", None),
-    "project/colophonetext":    ("t_colophontext", None),
+    "project/colophontext":     ("tb_colophon", None),
     "project/inclimagecopyright": ("c_includeImageCopyrights", None),
 
     "paper/height":             ("ecb_pagesize", lambda w,v: re.sub(r"^.*?,\s*(.+?)\s*(?:\(.*|$)", r"\1", v) or "210mm"),
