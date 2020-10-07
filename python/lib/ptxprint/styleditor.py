@@ -1,4 +1,5 @@
 
+import re
 from gi.repository import Gtk
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 
@@ -8,13 +9,13 @@ stylemap = {
     'StyleType':    ('fcb_styStyleType', 'Paragraph', None),
     'FontName':     ('bl_font_styFontName', None, None),
     'Color':        ('col_styColor', 'x000000', None),
-    'FontSize':     ('s_styLineSpacing1', '12', None),
+    'FontSize':     ('s_styFontSize', '12', None),
     'Bold':         ('c_styFaceBold', '-', lambda v: "" if v else "-"),
     'Italic':       ('c_styFaceItalic', '-', lambda v: "" if v else "-"),
     'SmallCap':     ('c_stySmallCap', '-', lambda v: "" if v else "-"),
     'Superscript':  ('c_styFaceSuperscript', '-', lambda v: "" if v else "-"),
     'Raise':        ('s_styRaise', '0', None),
-    'Justification': ('fcb_styJustification', 'full', None),
+    'Justification': ('fcb_styJustification', 'justified', None),
     'FirstLineIndent': ('s_styFirstLineIndent', '0', None),
     'LeftMargin':   ('s_styLeftMargin', '0', None),
     'RightMargin':  ('s_styRightMargin', '0', None),
@@ -30,23 +31,11 @@ stylemap = {
     '_linespacing': ('c_styAbsoluteLineSpacing', False, lambda v: "BaseLine" if v else 'LineSpacing')
 }
 
-topLevelOrder = (
-    'Introduction',
-    'Chapters & Verses',
-    'Paragraphs',
-    'Poetry',
-    'Titles & Headings',
-    'Tables',
-    'Lists',
-    'Footnotes',
-    'Cross References',
-    'Special Text',
-    'Character Styling',
-    'Breaks',
-    'Peripheral Materials',
-    'Peripheral References',
-    'Other'
-)
+topLevelOrder = ('Introduction', 'Chapters & Verses', 'Paragraphs', 'Poetry',
+    'Titles & Headings', 'Tables', 'Lists', 'Footnotes', 'Cross References',
+    'Special Text', 'Character Styling', 'Breaks', 'Peripheral Materials',
+    'Peripheral References', 'Other', 'Obsolete & Deprecated')
+catorder = {k: i for i, k in enumerate(topLevelOrder)}
 
     # '*Introduction':               'Introduction',
     # '*Poetry':                     'Poetry',
@@ -72,7 +61,21 @@ categorymapping = {
     'Periph':                      'Peripheral Materials',
     'Peripherals':                 'Peripheral Materials',
     'Auxiliary':                   'Peripheral Materials',
-    'Concordance and Names Index': 'Peripheral Materials'
+    'Concordance and Names Index': 'Peripheral Materials',
+    'OBSOLETE':                    'Obsolete & Deprecated',
+    'DEPRECATED':                  'Obsolete & Deprecated',
+}
+
+stylediverts = {
+    'LineSpacing': '_linespacing',
+    'FontSize': '_fontsize'
+}
+
+widgetsignals = {
+    's': "value-changed",
+    'c': "toggled",
+    "bl": "clicked",
+    "col": "color-set"
 }
 
 def triefit(k, base, start):
@@ -82,6 +85,24 @@ def triefit(k, base, start):
             break
     else:
         base[k] = {}
+
+def coltotex(s):
+    vals = s[s.find("(")+1:-1].split(",")
+    return "x"+"".join("{:02X}".format(x) for x in vals[:3])
+
+def textocol(s):
+    if s.startswith("x"):
+        vals = [int(x, 16) for x in s[1::2]]
+    else:
+        v = int(s)
+        vals = []
+        while v:
+            vals.append(v % 256)
+            v //= 256
+        vals.extend([0] * (3 - len(vals)))
+    return "rgb({0},{1},{2})".format(*vals)
+
+name_reg = re.compile(r"^(OBSOLETE|DEPRECATED)?\s*([^-]*?)\s*-\s*([^-]*?)\s*-\s*(.*?)\s*$")
 
 class StyleEditor:
     def __init__(self, builder):
@@ -95,24 +116,38 @@ class StyleEditor:
         tself = self.treeview.get_selection()
         tself.connect("changed", self.onSelected)
         self.sheet = None
+        for k, v in stylemap.items():
+            if v[0].startswith("l_"):
+                continue
+            w = self.builder.get_object(v[0])
+            key = stylediverts.get(k, k)
+            (pref, name) = v[0].split("_", 1)
+            signal = widgetsignals.get(pref, "changed")
+            print(f"{pref} {name} -> {signal} {key}")
+            w.connect(signal, self.item_changed, key)
+        self.isLoading = False
 
     def load(self, sheet):
         self.sheet = sheet
-        hierarchy = {"th": {"thc": {}, "thr": {}}, "tc": {"tcc": {}, "tcr": {}}, "zpa-": {}}
-        results = {}
-        for k in sorted(sheet.keys(), key=lambda x:(len(x), x)):
-            triefit(k, hierarchy, 1)
-        for k, v in sorted(hierarchy.items(), key=lambda x:(len(x[0]), x[0])):
-            if k not in sheet:
-                tt = sheet[list(v.keys())[-1]]['TextType']
-            else:
-                tt = sheet[k]['TextType']
-            results.setdefault(tt, {})[k] = v
+        results = {"Table": {"th": {"thc": {}, "thr": {}}, "tc": {"tcc": {}, "tcr": {}}},
+                   "Peripheral Materials": {"zpa-": {}}}
+        for k, v in sorted(sheet.items(), key=lambda x:(len(x[0]), x[0])):
+            cat = 'Other'
+            if 'Name' in v:
+                m = name_reg.match(v['Name'])
+                if m:
+                    cat = m.group(1) or m.group(3)
+                    cat = categorymapping.get(cat, cat)
+            triefit(k, results.setdefault(cat, {}), 1)
         self.treestore.clear()
         self._fill_store(results, None)
 
     def _fill_store(self, d, parent):
-        for k, v in sorted(d.items(), key=lambda x:(len(x), x)):
+        if parent is None:
+            keyfn = lambda x:(catorder.get(x[0], len(catorder)), x[0])
+        else:
+            keyfn = lambda x:(len(x[0]), x[0])
+        for k, v in sorted(d.items(), key=keyfn):
             if k in self.sheet:
                 n = self.sheet[k].get('name', k)
             else:
@@ -132,10 +167,9 @@ class StyleEditor:
         self.editMarker()
 
     def editMarker(self):
+        self.isLoading = True
         data = self.sheet.get(self.marker, {})
         for k, v in stylemap.items():
-            if v[0].startswith("bl_"):
-                continue
             if k.startswith("_"):
                 val = v[1]
                 for m, f in ((v[2](x), x) for x in (False, True)):
@@ -144,17 +178,49 @@ class StyleEditor:
                         break
             else:
                 val = data.get(k, v[1])
+                if v[0].startswith("c_"):
+                    val = val != v[1]
             w = self.builder.get_object(v[0])
             if w is None:
                 print("Can't find widget {}".format(v[0]))
             else:
+                if v[0].startswith("bl_"):
+                    if val is None:
+                        continue
+                    val = (val, "")
+                elif v[0].startswith("col_"):
+                    val = textocol(val)
+                print("{} = {}".format(v[0], val))
                 setWidgetVal(v[0], w, val)
+        self.isLoading = False
 
     def item_changed(self, w, key):
+        if self.isLoading:
+            return
+        print(f"{w}, {key}")
+        data = self.sheet[self.marker]
         v = stylemap[key]
-        val = v[2](getWidgetVal(v[0], w))
+        w = self.builder.get_object(v[0])  # since LineSpacing triggers the checkbutton
+        val = getWidgetVal(v[0], w)
         if key.startswith("_"):
-            k = v[2](False)
+            val = v[2](val)
+            isset = getWidgetVal(v[0], w)
+            other = v[2](not isset)
+            if other in data:
+                del data[other]
+            newv = stylemap[val]
+            wtemp = self.builder.get_object(newv[0])
+            value = getWidgetVal(newv[0], wtemp)
+            key = val
+        elif key.startswith("bl_"):
+            value = val[0]
+        elif v[2] is not None:
+            value = v[2](val)
+        else:
+            value = val
+        print("{} := {}".format(key, value))
+        data[key] = value
+            
 
             
 
