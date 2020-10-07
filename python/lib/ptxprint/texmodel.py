@@ -76,7 +76,7 @@ ModelMap = {
     "project/bookscope":        ("r_book", None),
     "project/combinebooks":     ("c_combine", None),
     "project/book":             ("ecb_book", None),
-    "project/module":           ("btn_chooseBibleModule", lambda w,v: w.moduleFile.as_posix() if w.moduleFile is not None else ""),
+    "project/modulefile":       ("btn_chooseBibleModule", lambda w,v: w.moduleFile.as_posix() if w.moduleFile is not None else ""),
     "project/booklist":         ("t_booklist", lambda w,v: v or ""),
     "project/ifinclfrontpdf":   ("c_inclFrontMatter", None),
     "project/frontincludes":    ("btn_selectFrontPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s.as_posix()) \

@@ -96,7 +96,7 @@ _sensitivities = {
     "r_book": {
         "r_book_single":       ["ecb_book", "l_chapfrom", "fcb_chapfrom", "l_chapto", "fcb_chapto"],
         "r_book_multiple":     ["btn_chooseBooks", "t_booklist", "c_combine", "c_autoToC"],
-        "r_book_module":       ["btn_chooseBibleModule", "l_bibleModule"],
+        "r_book_module":       ["btn_chooseBibleModule", "lb_bibleModule"],
         "r_book_dbl":          ["btn_chooseDBLbundle", "l_dblBundle"]},
     "c_mainBodyText" :         ["gr_mainBodyText"],
     "c_doublecolumn" :         ["gr_doubleColumn", "c_singleColLayout", "t_singleColBookList"],
@@ -1547,11 +1547,11 @@ class GtkViewModel(ViewModel):
                 multiple = False, basedir=os.path.join(self.settings_dir, self.prjid, "Modules"))
         if moduleFile is not None:
             self.moduleFile = moduleFile[0]
-            self.builder.get_object("l_bibleModule").set_label(os.path.basename(moduleFile[0]))
+            self.builder.get_object("lb_bibleModule").set_label(os.path.basename(moduleFile[0]))
             self.builder.get_object("btn_chooseBibleModule").set_tooltip_text(str(moduleFile[0]))
         else:
             self.builder.get_object("r_book_single").set_active(True)
-            self.builder.get_object("l_bibleModule").set_label("")
+            self.builder.get_object("lb_bibleModule").set_label("")
             self.moduleFile = None
             self.builder.get_object("btn_chooseBibleModule").set_tooltip_text("")
 

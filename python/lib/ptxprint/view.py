@@ -81,6 +81,7 @@ class ViewModel:
         "project/frontincludes":    ("FrontPDFs", True, "lb_inclFrontMatter"),
         "project/backincludes":     ("BackPDFs", True, "lb_inclBackMatter"),
         "project/selectscript":     ("customScript", False, None),
+        "project/modulefile":       ("moduleFile", False, "lb_bibleModule"),
         "paper/watermarkpdf":       ("watermarks", False, "lb_applyWatermark"),
         "fancy/pageborderpdf":      ("pageborder", False, "lb_inclPageBorder"),
         "fancy/sectionheaderpdf":   ("sectionheader", False, "lb_inclSectionHeader"),
