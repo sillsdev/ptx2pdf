@@ -103,7 +103,7 @@
 
 % Category file parsing 
 \def\Category   #1\relax{%Store name of current category and defaults
-  \gdef\c@tegory{#1}%
+  \S@tCat{#1}%
   \setcatp@ram{bgfigscale}{1}%
   \setcatp@ram{fgfigsize}{box}%What is image scaled to?
   \setcatp@ram{fgfigscale}{0.5}%
@@ -131,8 +131,9 @@
    \getcatp@ram{#1figsize}
  \fi
 }
-
 \def\EndCategory{\gdef\c@tegory{}}
+\def\S@tCat#1{\message{Started Category #1}\gdef\c@tegory{#1}}
+\def\StyleCategory#1#2{\S@tCat{#1}#2\EndCategory}
 \def\categorysheet#1{%Just wrap \stylesheet with category-blanking commands
   \EndCategory\stylesheet{#1}\EndCategory
 }
