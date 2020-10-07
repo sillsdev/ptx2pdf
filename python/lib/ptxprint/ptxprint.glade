@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -30,15 +30,6 @@ THE SOFTWARE.
   <!-- interface-name ptxprint -->
   <!-- interface-description USFM typesetting -->
   <!-- interface-copyright SIL International -->
-  <object class="GtkApplicationWindow">
-    <property name="can_focus">False</property>
-    <child type="titlebar">
-      <placeholder/>
-    </child>
-    <child>
-      <placeholder/>
-    </child>
-  </object>
   <object class="GtkAdjustment" id="a_PriColWidth">
     <property name="lower">20</property>
     <property name="upper">300</property>
@@ -1784,16 +1775,16 @@ in the Windows system.</property>
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">justified</col>
+        <col id="0" translatable="yes">Justified</col>
       </row>
       <row>
-        <col id="0" translatable="yes">left</col>
+        <col id="0" translatable="yes">Left</col>
       </row>
       <row>
-        <col id="0" translatable="yes">center</col>
+        <col id="0" translatable="yes">Center</col>
       </row>
       <row>
-        <col id="0" translatable="yes">right</col>
+        <col id="0" translatable="yes">Right</col>
       </row>
     </data>
   </object>
@@ -1810,13 +1801,13 @@ in the Windows system.</property>
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">paragraph</col>
+        <col id="0" translatable="yes">Paragraph</col>
       </row>
       <row>
-        <col id="0" translatable="yes">character</col>
+        <col id="0" translatable="yes">Character</col>
       </row>
       <row>
-        <col id="0" translatable="yes">note</col>
+        <col id="0" translatable="yes">Note</col>
       </row>
     </data>
   </object>
@@ -1827,13 +1818,13 @@ in the Windows system.</property>
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">title</col>
+        <col id="0" translatable="yes">Title</col>
       </row>
       <row>
-        <col id="0" translatable="yes">section</col>
+        <col id="0" translatable="yes">Section</col>
       </row>
       <row>
-        <col id="0" translatable="yes">other</col>
+        <col id="0" translatable="yes">Other</col>
       </row>
     </data>
   </object>
@@ -2208,53 +2199,6 @@ PDF files - one for each book.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkComboBoxText" id="ecb_biblemodule">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">A Bible module brings together text
-selections from a Paratext project.
-Normally, you would just select the
-appropriate XXA-XXG book, but if
-you want to work with a module
-directly, it can be selected from the
-list of available modules listed here.
-The list is based on any available
-.SFM files found in the project's
-"Modules" folder.</property>
-                                <property name="halign">start</property>
-                                <property name="active">0</property>
-                                <property name="has_entry">True</property>
-                                <property name="active_id">0</property>
-                                <items>
-                                  <item translatable="yes">(None)</item>
-                                </items>
-                                <child internal-child="entry">
-                                  <object class="GtkEntry">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">A Bible module brings together text
-selections from a Paratext project.
-Normally, you would just select the
-appropriate XXA-XXG book, but if
-you want to work with a module
-directly, it can be selected from the
-list of available modules listed here.
-The list is based on any available
-.SFM files found in the project's
-"Modules" folder.</property>
-                                    <property name="halign">start</property>
-                                    <property name="max_length">32</property>
-                                    <property name="width_chars">35</property>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">3</property>
-                                <property name="width">4</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkButton" id="btn_chooseDBLbundle">
                                 <property name="label" translatable="yes">Ch_oose...</property>
                                 <property name="can_focus">True</property>
@@ -2304,13 +2248,31 @@ The list is based on any available
                               </packing>
                             </child>
                             <child>
-                              <placeholder/>
+                              <object class="GtkButton" id="btn_chooseBibleModule">
+                                <property name="label" translatable="yes">Ch_oose...</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="no_show_all">True</property>
+                                <property name="use_underline">True</property>
+                                <accelerator key="o" signal="activate" modifiers="GDK_MOD1_MASK"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">3</property>
+                              </packing>
                             </child>
                             <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
+                              <object class="GtkLabel" id="l_bibleModule">
+                                <property name="can_focus">False</property>
+                                <property name="no_show_all">True</property>
+                                <property name="opacity">0.70196078431372544</property>
+                                <property name="halign">start</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">3</property>
+                                <property name="width">6</property>
+                              </packing>
                             </child>
                             <child>
                               <placeholder/>
@@ -2780,7 +2742,7 @@ Viewer tab.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkFrame" id="bx_colophon">
+                      <object class="GtkFrame" id="bx_copyrightLicense">
                         <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -2792,10 +2754,10 @@ Viewer tab.</property>
                         <property name="margin_bottom">6</property>
                         <property name="label_xalign">0.019999999552965164</property>
                         <child>
-                          <object class="GtkGrid" id="gr_colophon">
+                          <object class="GtkGrid">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="margin_left">6</property>
+                            <property name="margin_left">10</property>
                             <property name="margin_right">6</property>
                             <property name="margin_top">6</property>
                             <property name="margin_bottom">6</property>
@@ -2807,27 +2769,11 @@ Viewer tab.</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">end</property>
                                 <property name="margin_left">8</property>
-                                <property name="label" translatable="yes">Copyright Statement:</property>
+                                <property name="label" translatable="yes">Copyright:</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
                                 <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="halign">end</property>
-                                <property name="valign">start</property>
-                                <property name="margin_top">6</property>
-                                <property name="label" translatable="yes">Additional Text
-(Optional):</property>
-                                <property name="justify">right</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">1</property>
                               </packing>
                             </child>
                             <child>
@@ -2839,19 +2785,23 @@ Viewer tab.</property>
                                 <property name="tooltip_text" translatable="yes">It is highly recommended to leave this setting ON. PTXprint will automatically generate the copyright statement(s)
 for each of the artists (with page numbers).</property>
                                 <property name="halign">start</property>
+                                <property name="margin_left">60</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
-                                <property name="left_attach">1</property>
+                                <property name="left_attach">0</property>
                                 <property name="top_attach">2</property>
-                                <property name="width">2</property>
+                                <property name="width">3</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkEntry" id="t_copyrightStatement">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="tooltip_text" translatable="yes">It is important to include a copyright statement on every publication. By default this will be set according to the Paratext project settings, but you can edit it here if needed. 
+
+Note: If you manually type (c) then the © symbol will magically appear.</property>
                                 <property name="hexpand">True</property>
                                 <property name="placeholder_text" translatable="yes">© 2020 Wycliffe Bible Translators, Inc.</property>
                                 <signal name="changed" handler="onCopyrightStatementChanged" swapped="no"/>
@@ -2883,26 +2833,42 @@ then the default set will be loaded.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkScrolledWindow" id="scroll_colophonXtraText">
-                                <property name="height_request">80</property>
+                              <object class="GtkLabel">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="hexpand">True</property>
-                                <property name="vexpand">True</property>
-                                <property name="shadow_type">etched-in</property>
-                                <signal name="focus-in-event" handler="onColophonXtraText_focus_in" swapped="no"/>
-                                <signal name="focus-out-event" handler="onColophonXtraText_focus_out" swapped="no"/>
-                                <child>
-                                  <object class="GtkViewport">
+                                <property name="can_focus">False</property>
+                                <property name="halign">end</property>
+                                <property name="label" translatable="yes">License:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkComboBoxText" id="ecb_licenseText">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">Select a standard License Text or type your own customized License.</property>
+                                <property name="active">0</property>
+                                <property name="has_entry">True</property>
+                                <property name="active_id">0</property>
+                                <items>
+                                  <item translatable="yes">(None)</item>
+                                </items>
+                                <child internal-child="entry">
+                                  <object class="GtkEntry">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <child>
-                                      <object class="GtkTextView" id="textv_colophon">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="buffer">tb_colophon</property>
-                                      </object>
-                                    </child>
+                                    <property name="can_focus">True</property>
+                                    <property name="tooltip_text" translatable="yes">Enter a name for the configuration to be saved.
+
+Note that only Roman/Latin names
+are supported using: a-z A-Z, 0-9,
+parentheses, underscores and hyphens.
+
+Longer descriptions may be typed into
+the Notes field below.</property>
+                                    <property name="max_length">32</property>
+                                    <property name="width_chars">35</property>
                                   </object>
                                 </child>
                               </object>
@@ -2912,37 +2878,13 @@ then the default set will be loaded.</property>
                                 <property name="width">2</property>
                               </packing>
                             </child>
-                            <child>
-                              <object class="GtkEntry" id="t_colophontext">
-                                <property name="sensitive">False</property>
-                                <property name="can_focus">True</property>
-                                <property name="no_show_all">True</property>
-                                <property name="halign">start</property>
-                                <property name="placeholder_text" translatable="yes">Holding place for colophon text.</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">2</property>
-                              </packing>
-                            </child>
                           </object>
                         </child>
                         <child type="label">
-                          <object class="GtkCheckButton" id="c_colophon">
-                            <property name="label" translatable="yes">Include Colophon</property>
+                          <object class="GtkLabel">
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">False</property>
-                            <property name="tooltip_text" translatable="yes">A brief statement containing information
-about the publication such as the place of 
-publication, the publisher, and the date of 
-publication. This will be printed at the END
-of the book. Similar to a "biblio-page" or a
-"copyright-page" at the front of a book.</property>
-                            <property name="halign">start</property>
-                            <property name="active">True</property>
-                            <property name="draw_indicator">True</property>
-                            <signal name="clicked" handler="onColophonClicked" swapped="no"/>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Copyright &amp; Licensing</property>
                           </object>
                         </child>
                       </object>
@@ -3896,7 +3838,99 @@ that should be typeset as a single column.</property>
                       </packing>
                     </child>
                     <child>
-                      <placeholder/>
+                      <object class="GtkFrame" id="bx_colophon">
+                        <property name="width_request">675</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="valign">start</property>
+                        <property name="margin_top">3</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="label_xalign">0.019999999552965164</property>
+                        <child>
+                          <object class="GtkGrid" id="gr_colophon">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_left">10</property>
+                            <property name="margin_right">10</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
+                            <property name="row_spacing">6</property>
+                            <property name="column_spacing">6</property>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">end</property>
+                                <property name="valign">start</property>
+                                <property name="margin_top">6</property>
+                                <property name="label" translatable="yes">Colophon
+Text:</property>
+                                <property name="justify">right</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkScrolledWindow" id="scroll_colophon">
+                                <property name="height_request">80</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="hexpand">True</property>
+                                <property name="vexpand">True</property>
+                                <property name="shadow_type">etched-in</property>
+                                <child>
+                                  <object class="GtkViewport">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <child>
+                                      <object class="GtkTextView" id="textv_colophon">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="buffer">tb_colophon</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">0</property>
+                                <property name="width">2</property>
+                              </packing>
+                            </child>
+                          </object>
+                        </child>
+                        <child type="label">
+                          <object class="GtkCheckButton" id="c_colophon">
+                            <property name="label" translatable="yes">Include Colophon</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="tooltip_text" translatable="yes">A brief statement containing information
+about the publication such as the place of 
+publication, the publisher, and the date of 
+publication. This will be printed at the END
+of the book. Similar to a "biblio-page" or a
+"copyright-page" at the front of a book.
+
+Note that you may use the following codes to automatically "suck in" special text using the following markers:
+\zCopyright   - copyright statement from the Basic tab
+\zLicense     - License text from the Basic tab
+\zImageCopyrights   - Automatically generated list of images, page numbers and attributions.</property>
+                            <property name="halign">start</property>
+                            <property name="active">True</property>
+                            <property name="draw_indicator">True</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">2</property>
+                      </packing>
                     </child>
                   </object>
                   <packing>
@@ -10822,7 +10856,7 @@ been enabled.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel" id="l_description">
+                                  <object class="GtkLabel" id="l_styDescription">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>

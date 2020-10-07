@@ -3,7 +3,7 @@ from gi.repository import Gtk
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 
 stylemap = {
-    'Description':  ('l_description', None, None),
+    'Description':  ('l_styDescription', None, None),
     'TextType':     ('fcb_styTextType', 'Paragraph', None),
     'StyleType':    ('fcb_styStyleType', 'Paragraph', None),
     'FontName':     ('bl_font_styFontName', None, None),
@@ -71,8 +71,8 @@ categorymapping = {
     'Peripheral Ref':              'Peripheral References',
     'Periph':                      'Peripheral Materials',
     'Peripherals':                 'Peripheral Materials',
-    'Auxiliary':                   'Peripheral Materials'
-    'Concordance and Names Index': 'Peripheral Materials',
+    'Auxiliary':                   'Peripheral Materials',
+    'Concordance and Names Index': 'Peripheral Materials'
 }
 
 def triefit(k, base, start):
