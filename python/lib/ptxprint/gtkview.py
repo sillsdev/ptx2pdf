@@ -265,6 +265,13 @@ class GtkViewModel(ViewModel):
             view.pageid = "scroll_"+k
             view.connect("focus-out-event", self.onViewerLostFocus)
             view.connect("focus-in-event", self.onViewerFocus)
+
+        # Need to set up a view+buffer etc. for "scroll_colophonXtraText"
+        self.colo = GtkSource.View.new_with_buffer(GtkSource.Buffer())
+        self.builder.get_object("scroll_colophonXtraText").add(self.colo)
+        # self.colo.set_text("This is where you can type any additional text for the Colophon text\nand it is a multi-line control.")
+        # colo.set_show_line_numbers(False)  # Turn line numbers OFF
+
         self.picListView = PicList(self.builder.get_object('tv_picListEdit'),
                                    self.builder.get_object('tv_picList'), self.builder, self)
         self.picChecksView = PicChecks(self)
@@ -1920,4 +1927,20 @@ class GtkViewModel(ViewModel):
         self.onSimpleClicked(btn)
 
     def onResetCopyrightClicked(self, btn):
-        print("Need to add code to re-read the copyright statement from PT")
+        self.builder.get_object("t_copyrightStatement").set_text(self.ptsettings.get('Copyright', ""))
+
+    def onCopyrightStatementChanged(self, btn):
+        w = self.builder.get_object("t_copyrightStatement")
+        t = w.get_text()
+        t = re.sub("</?p>", "", t)
+        t = re.sub("\([cC]\)", "\u00a9 ", t)
+        w.set_text(t)
+        
+    def onColophonXtraText_focus_in(self, btn):
+        print("onColophonXtraText_focus_in")
+        self.colo.set_text(self.get("t_colophontext"))
+        
+    def onColophonXtraText_focus_out(self, btn):
+        print("onColophonXtraText_focus_out")
+        t_colophontext = self.colo.get_text()
+        

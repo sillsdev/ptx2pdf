@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -1926,6 +1926,7 @@ in the Windows system.</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
+                        <property name="valign">start</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">6</property>
@@ -2113,9 +2114,9 @@ if need be.</property>
                             <child>
                               <object class="GtkRadioButton" id="r_book_module">
                                 <property name="label" translatable="yes">Bible Module:</property>
+                                <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="no_show_all">True</property>
                                 <property name="halign">start</property>
                                 <property name="margin_left">12</property>
                                 <property name="active">True</property>
@@ -2205,8 +2206,8 @@ PDF files - one for each book.</property>
                             </child>
                             <child>
                               <object class="GtkComboBoxText" id="ecb_biblemodule">
+                                <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="no_show_all">True</property>
                                 <property name="tooltip_text" translatable="yes">A Bible module brings together text
 selections from a Paratext project.
 Normally, you would just select the
@@ -2339,6 +2340,7 @@ The list is based on any available
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
+                        <property name="valign">start</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">3</property>
@@ -2780,6 +2782,7 @@ Viewer tab.</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
+                        <property name="valign">start</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">3</property>
@@ -2800,6 +2803,7 @@ Viewer tab.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">end</property>
+                                <property name="margin_left">8</property>
                                 <property name="label" translatable="yes">Copyright Statement:</property>
                               </object>
                               <packing>
@@ -2842,32 +2846,16 @@ for each of the artists (with page numbers).</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry">
+                              <object class="GtkEntry" id="t_copyrightStatement">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="hexpand">True</property>
-                                <property name="text" translatable="yes">© 2020 Wycliffe Bible Translators, Inc.</property>
-                                <property name="xalign">0.5</property>
+                                <property name="placeholder_text" translatable="yes">© 2020 Wycliffe Bible Translators, Inc.</property>
+                                <signal name="changed" handler="onCopyrightStatementChanged" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
                                 <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkEntry">
-                                <property name="height_request">100</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="valign">start</property>
-                                <property name="hexpand">True</property>
-                                <property name="xalign">0.5</property>
-                                <property name="placeholder_text" translatable="yes">Add any additional information here which needs to be included at the end of the publication.</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">1</property>
-                                <property name="width">2</property>
                               </packing>
                             </child>
                             <child>
@@ -2892,9 +2880,32 @@ then the default set will be loaded.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel">
+                              <object class="GtkScrolledWindow" id="scroll_colophonXtraText">
+                                <property name="height_request">80</property>
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
+                                <property name="can_focus">True</property>
+                                <property name="hexpand">True</property>
+                                <property name="vexpand">True</property>
+                                <property name="shadow_type">etched-in</property>
+                                <signal name="focus-in-event" handler="onColophonXtraText_focus_in" swapped="no"/>
+                                <signal name="focus-out-event" handler="onColophonXtraText_focus_out" swapped="no"/>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">1</property>
+                                <property name="width">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="t_colophontext">
+                                <property name="sensitive">False</property>
+                                <property name="can_focus">True</property>
+                                <property name="no_show_all">True</property>
+                                <property name="halign">start</property>
+                                <property name="placeholder_text" translatable="yes">Holding place for colophon text.</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -2927,6 +2938,9 @@ of the book. Similar to a "biblio-page" or a
                         <property name="fill">False</property>
                         <property name="position">2</property>
                       </packing>
+                    </child>
+                    <child>
+                      <placeholder/>
                     </child>
                   </object>
                   <packing>
@@ -4828,6 +4842,7 @@ spacing:</property>
                                       <object class="GtkSpinButton" id="s_letterShrink">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="width_chars">3</property>
                                         <property name="adjustment">a_letterShrink</property>
                                         <property name="climb_rate">0.20000000000000001</property>
                                         <property name="digits">1</property>
@@ -4855,6 +4870,7 @@ spacing:</property>
                                       <object class="GtkSpinButton" id="s_letterStretch">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="width_chars">3</property>
                                         <property name="adjustment">a_letterStretch</property>
                                         <property name="climb_rate">0.20000000000000001</property>
                                         <property name="digits">1</property>
@@ -10668,7 +10684,7 @@ been enabled.</property>
                         <property name="shadow_type">in</property>
                         <child>
                           <object class="GtkTreeView" id="tv_Styles">
-                            <property name="width_request">260</property>
+                            <property name="width_request">280</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="halign">start</property>
@@ -10698,6 +10714,7 @@ been enabled.</property>
                         <property name="can_focus">False</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">7</property>
+                        <property name="margin_top">6</property>
                         <property name="label_xalign">0.019999999552965164</property>
                         <child>
                           <object class="GtkBox">
@@ -10713,7 +10730,7 @@ been enabled.</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="row_spacing">6</property>
-                                <property name="column_spacing">3</property>
+                                <property name="column_spacing">6</property>
                                 <child>
                                   <object class="GtkLabel" id="l_styTextType">
                                     <property name="visible">True</property>
@@ -10792,10 +10809,43 @@ been enabled.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="label" translatable="yes">Marker Description</property>
+                                    <property name="wrap">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">0</property>
+                                    <property name="width">2</property>
+                                  </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">Description:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLinkButton">
+                                    <property name="label" translatable="yes">Info</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="relief">none</property>
+                                    <property name="uri">https://ubsicap.github.io/usfm/introductions/index.html#is</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">4</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
                                 </child>
                                 <child>
                                   <placeholder/>
@@ -10826,7 +10876,7 @@ been enabled.</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
                                     <property name="row_spacing">6</property>
-                                    <property name="column_spacing">3</property>
+                                    <property name="column_spacing">6</property>
                                     <child>
                                       <object class="GtkButton" id="bl_font_styFontName">
                                         <property name="label" translatable="yes">Select Font...</property>
@@ -10846,7 +10896,9 @@ been enabled.</property>
                                       <object class="GtkLabel" id="l_styFontName">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="halign">end</property>
                                         <property name="label" translatable="yes">Font:</property>
+                                        <property name="justify">right</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
@@ -11061,7 +11113,6 @@ been enabled.</property>
                               <object class="GtkFrame" id="fr_styParaSettings">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="margin_top">3</property>
                                 <property name="label_xalign">0.019999999552965164</property>
                                 <property name="shadow_type">none</property>
                                 <child>
@@ -11073,7 +11124,7 @@ been enabled.</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
                                     <property name="row_spacing">6</property>
-                                    <property name="column_spacing">3</property>
+                                    <property name="column_spacing">6</property>
                                     <child>
                                       <object class="GtkLabel" id="l_styJustification">
                                         <property name="visible">True</property>
@@ -11379,7 +11430,7 @@ After:</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
                                     <property name="row_spacing">6</property>
-                                    <property name="column_spacing">3</property>
+                                    <property name="column_spacing">6</property>
                                     <child>
                                       <object class="GtkLabel" id="l_styCallerStyle">
                                         <property name="visible">True</property>
