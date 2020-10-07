@@ -31,7 +31,7 @@ stylemap = {
     '_linespacing': ('c_styAbsoluteLineSpacing', False, lambda v: "BaseLine" if v else 'LineSpacing')
 }
 
-topLevelOrder = ('Introduction', 'Chapters & Verses', 'Paragraphs', 'Poetry',
+topLevelOrder = ('File', 'Introduction', 'Chapters & Verses', 'Paragraphs', 'Poetry',
     'Titles & Headings', 'Tables', 'Lists', 'Footnotes', 'Cross References',
     'Special Text', 'Character Styling', 'Breaks', 'Peripheral Materials',
     'Peripheral References', 'Other', 'Obsolete & Deprecated')
@@ -49,13 +49,22 @@ categorymapping = {
     'Verse Number':                'Chapters & Verses',
     'Paragraph':                   'Paragraphs',
     'Poetry Text':                 'Poetry',
+    'Label':                       'Titles & Headings',
     'Title':                       'Titles & Headings',
     'Heading':                     'Titles & Headings',
     'Table':                       'Tables',
+    'Embedded List Entry':         'Lists',
+    'Embedded List Item':          'Lists',
     'List Entry':                  'Lists',
+    'List Footer':                 'Lists',
+    'List Header':                 'Lists',
+    'Structured List Entry':       'Lists',
     'Footnote':                    'Footnotes',
+    'Footnote Paragraph Mark':     'Footnotes',
+    'Endnote':                     'Footnotes',
     'Cross Reference':             'Cross References',
     'Character':                   'Character Styling',
+    'Link text':                   'Character Styling',
     'Break':                       'Breaks',
     'Peripheral Ref':              'Peripheral References',
     'Periph':                      'Peripheral Materials',
@@ -102,7 +111,7 @@ def textocol(s):
         vals.extend([0] * (3 - len(vals)))
     return "rgb({0},{1},{2})".format(*vals)
 
-name_reg = re.compile(r"^(OBSOLETE|DEPRECATED)?\s*([^-]*?)\s*-\s*([^-]*?)\s*-\s*(.*?)\s*$")
+name_reg = re.compile(r"^(OBSOLETE|DEPRECATED)?\s*(.*?)\s+-\s+([^-]*?)\s*(?:-\s*(.*?)\s*)?$")
 
 class StyleEditor:
     def __init__(self, builder):
@@ -123,14 +132,14 @@ class StyleEditor:
             key = stylediverts.get(k, k)
             (pref, name) = v[0].split("_", 1)
             signal = widgetsignals.get(pref, "changed")
-            print(f"{pref} {name} -> {signal} {key}")
             w.connect(signal, self.item_changed, key)
         self.isLoading = False
 
     def load(self, sheet):
         self.sheet = sheet
-        results = {"Table": {"th": {"thc": {}, "thr": {}}, "tc": {"tcc": {}, "tcr": {}}},
-                   "Peripheral Materials": {"zpa-": {}}}
+        results = {"Tables": {"th": {"thc": {}, "thr": {}}, "tc": {"tcc": {}, "tcr": {}}},
+                   "Peripheral Materials": {"zpa-": {}},
+                   "File": {"toc": {}}}
         for k, v in sorted(sheet.items(), key=lambda x:(len(x[0]), x[0])):
             cat = 'Other'
             if 'Name' in v:
@@ -190,7 +199,6 @@ class StyleEditor:
                     val = (val, "")
                 elif v[0].startswith("col_"):
                     val = textocol(val)
-                print("{} = {}".format(v[0], val))
                 setWidgetVal(v[0], w, val)
         self.isLoading = False
 
@@ -218,7 +226,6 @@ class StyleEditor:
             value = v[2](val)
         else:
             value = val
-        print("{} := {}".format(key, value))
         data[key] = value
             
 
