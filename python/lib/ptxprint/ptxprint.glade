@@ -11235,6 +11235,7 @@ been enabled.</property>
                                         <property name="active">1</property>
                                         <property name="has_entry">True</property>
                                         <property name="entry_text_column">0</property>
+                                        <property name="id_column">0</property>
                                         <property name="active_id">1</property>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">

@@ -15,7 +15,7 @@ stylemap = {
     'SmallCap':     ('c_stySmallCap', '-', lambda v: "" if v else "-"),
     'Superscript':  ('c_styFaceSuperscript', '-', lambda v: "" if v else "-"),
     'Raise':        ('s_styRaise', '0', None),
-    'Justification': ('fcb_styJustification', 'justified', None),
+    'Justification': ('fcb_styJustification', 'Justified', None),
     'FirstLineIndent': ('s_styFirstLineIndent', '0', None),
     'LeftMargin':   ('s_styLeftMargin', '0', None),
     'RightMargin':  ('s_styRightMargin', '0', None),
@@ -227,8 +227,3 @@ class StyleEditor:
         else:
             value = val
         data[key] = value
-            
-
-            
-
-
