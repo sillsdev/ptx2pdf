@@ -96,7 +96,7 @@ _sensitivities = {
     "r_book": {
         "r_book_single":       ["ecb_book", "l_chapfrom", "fcb_chapfrom", "l_chapto", "fcb_chapto"],
         "r_book_multiple":     ["btn_chooseBooks", "t_booklist", "c_combine", "c_autoToC"],
-        "r_book_module":       ["ecb_biblemodule"],
+        "r_book_module":       ["btn_chooseBibleModule", "l_bibleModule"],
         "r_book_dbl":          ["btn_chooseDBLbundle", "l_dblBundle"]},
     "c_mainBodyText" :         ["gr_mainBodyText"],
     "c_doublecolumn" :         ["gr_doubleColumn", "c_singleColLayout", "t_singleColBookList"],
@@ -1327,6 +1327,7 @@ class GtkViewModel(ViewModel):
         else:
             self.builder.get_object("l_projectFullName").set_label("")
             self.builder.get_object("l_projectFullName").set_tooltip_text("")
+        self.builder.get_object("t_copyrightStatement").set_text(self.ptsettings.get('Copyright', ""))
 
     def updatePrjLinks(self):
         if self.settings_dir != None and self.prjid != None:
@@ -1539,6 +1540,21 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("c_useprintdraftfolder").set_active(True)
             self.builder.get_object("btn_selectOutputFolder").set_sensitive(False)
 
+    def onSelectModuleClicked(self, btn):
+        moduleFile = self.fileChooser("Select a Paratext Module", 
+                filters = {"Modules": {"patterns": ["*.sfm"] , "mime": "text/plain", "default": True},
+                           "All Files": {"pattern": "*"}},
+                multiple = False, basedir=os.path.join(self.settings_dir, self.prjid, "Modules"))
+        if moduleFile is not None:
+            self.moduleFile = moduleFile[0]
+            self.builder.get_object("l_bibleModule").set_label(os.path.basename(moduleFile[0]))
+            self.builder.get_object("btn_chooseBibleModule").set_tooltip_text(str(moduleFile[0]))
+        else:
+            self.builder.get_object("r_book_single").set_active(True)
+            self.builder.get_object("l_bibleModule").set_label("")
+            self.moduleFile = None
+            self.builder.get_object("btn_chooseBibleModule").set_tooltip_text("")
+
     def onUsePiclistsToggle(self, btn):
         if btn.get_active():
             picinfos = {}
@@ -1738,18 +1754,6 @@ class GtkViewModel(ViewModel):
     def onGenerateHyphenationListClicked(self, btn):
         self.generateHyphenationFile()
 
-    # def onPrettyIntroOutlineClicked(self, btn):
-        # if self.get("c_prettyIntroOutline"): # if turned on...
-            # badbks = self.checkSFMforFancyIntroMarkers()
-            # if len(badbks):
-                # self.set("c_prettyIntroOutline", False)
-                # m1 = _("Invalid Option for Selected Books")
-                # m2 = _("The book(s) listed below do not have the" + \
-                   # "\nrequired markup for this feature to be enabled." + \
-                   # "\n(Refer to Tooltip for further details.)" + \
-                   # "\n\n{}").format(", ".join(badbks))
-                # self.doError(m1, m2)
-
     def onFindMissingCharsClicked(self, btn_findMissingChars):
         missing = super(GtkViewModel, self).onFindMissingCharsClicked(btn_findMissingChars)
         missingcodes = " ".join(repr(c.encode('raw_unicode_escape'))[2:-1].replace("\\\\","\\") for c in missing)
@@ -1925,10 +1929,10 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("fr_styNoteSettings").set_visible(False)
         elif stype == "Note":
             self.builder.get_object("fr_styParaSettings").set_visible(False)
-            self.builder.get_object("fr_styCharSettings").set_visible(False)
+            self.builder.get_object("fr_styCharSettings").set_visible(True)
             self.builder.get_object("fr_styNoteSettings").set_visible(True)
         else:
-            print("Something's wrong!")
+            print("Something's wrong! - Unknown StyleType in StyleEditor")
         
     def onColophonClicked(self, btn):
         self.onSimpleClicked(btn)
@@ -1942,12 +1946,4 @@ class GtkViewModel(ViewModel):
         t = re.sub("</?p>", "", t)
         t = re.sub("\([cC]\)", "\u00a9 ", t)
         w.set_text(t)
-        
-    def onColophonXtraText_focus_in(self, btn):
-        print("onColophonXtraText_focus_in")
-        self.colo.set_text(self.get("t_colophontext"))
-        
-    def onColophonXtraText_focus_out(self, btn):
-        print("onColophonXtraText_focus_out")
-        t_colophontext = self.colo.get_text()
         

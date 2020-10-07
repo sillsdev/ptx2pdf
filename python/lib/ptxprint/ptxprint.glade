@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -2236,7 +2236,7 @@ PDF files - one for each book.</property>
                             </child>
                             <child>
                               <object class="GtkLabel" id="l_projectFullName">
-                                <property name="width_request">300</property>
+                                <property name="width_request">330</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="opacity">0.69999999999999996</property>
@@ -2251,7 +2251,7 @@ PDF files - one for each book.</property>
                               <packing>
                                 <property name="left_attach">3</property>
                                 <property name="top_attach">0</property>
-                                <property name="width">4</property>
+                                <property name="width">5</property>
                               </packing>
                             </child>
                             <child>
@@ -2260,7 +2260,7 @@ PDF files - one for each book.</property>
                                 <property name="no_show_all">True</property>
                                 <property name="opacity">0.69999999999999996</property>
                                 <property name="halign">start</property>
-                                <property name="margin_left">20</property>
+                                <property name="margin_left">12</property>
                                 <property name="label" translatable="yes">DBL Bundle Name/Description</property>
                               </object>
                               <packing>
@@ -2272,10 +2272,11 @@ PDF files - one for each book.</property>
                             <child>
                               <object class="GtkButton" id="btn_chooseBibleModule">
                                 <property name="label" translatable="yes">Ch_oose...</property>
+                                <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
-                                <property name="no_show_all">True</property>
                                 <property name="use_underline">True</property>
+                                <signal name="clicked" handler="onSelectModuleClicked" swapped="no"/>
                                 <accelerator key="o" signal="activate" modifiers="GDK_MOD1_MASK"/>
                               </object>
                               <packing>
@@ -2285,19 +2286,18 @@ PDF files - one for each book.</property>
                             </child>
                             <child>
                               <object class="GtkLabel" id="l_bibleModule">
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
                                 <property name="can_focus">False</property>
-                                <property name="no_show_all">True</property>
                                 <property name="opacity">0.70196078431372544</property>
                                 <property name="halign">start</property>
+                                <property name="margin_left">12</property>
                               </object>
                               <packing>
                                 <property name="left_attach">2</property>
                                 <property name="top_attach">3</property>
                                 <property name="width">6</property>
                               </packing>
-                            </child>
-                            <child>
-                              <placeholder/>
                             </child>
                             <child>
                               <placeholder/>
@@ -2875,7 +2875,10 @@ then the default set will be loaded.</property>
                                 <property name="has_entry">True</property>
                                 <property name="active_id">0</property>
                                 <items>
-                                  <item translatable="yes">(None)</item>
+                                  <item translatable="yes">This work is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.</item>
+                                  <item translatable="yes">This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</item>
+                                  <item translatable="yes">This work is licensed under a Creative Commons Attribution 4.0 International License.</item>
+                                  <item translatable="yes">All Rights Reserved.</item>
                                 </items>
                                 <child internal-child="entry">
                                   <object class="GtkEntry">
@@ -2889,8 +2892,6 @@ parentheses, underscores and hyphens.
 
 Longer descriptions may be typed into
 the Notes field below.</property>
-                                    <property name="max_length">32</property>
-                                    <property name="width_chars">35</property>
                                   </object>
                                 </child>
                               </object>
@@ -11406,9 +11407,9 @@ Spacing:</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">4</property>
+                                        <property name="left_attach">5</property>
                                         <property name="top_attach">2</property>
-                                        <property name="width">5</property>
+                                        <property name="width">4</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -11493,6 +11494,9 @@ After:</property>
                                         <property name="left_attach">4</property>
                                         <property name="top_attach">0</property>
                                       </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
                                     </child>
                                     <child>
                                       <placeholder/>

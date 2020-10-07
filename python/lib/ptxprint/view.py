@@ -198,7 +198,9 @@ class ViewModel:
                     blst.append(b)
             return blst
         elif scope == "module":
-            return [self.get("ecb_biblemodule")]
+            pass
+            # MH: Need to do something else now that a filepath is being used.
+            # return [self.get("ecb_biblemodule")]
         else:
             # return self.booklist
             return []
