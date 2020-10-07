@@ -30,7 +30,7 @@ stylemap = {
     '_linespacing': ('c_styAbsoluteLineSpacing', False, lambda v: "BaseLine" if v else 'LineSpacing')
 }
 
-topLevelList = (
+topLevelOrder = (
     'Introduction',
     'Chapters & Verses',
     'Paragraphs',
@@ -48,30 +48,32 @@ topLevelList = (
     'Other'
 )
 
+    # '*Introduction':               'Introduction',
+    # '*Poetry':                     'Poetry',
+    # '*Special Text':               'Special Text',
+    # '*Other':                      'Other',
+    # '*File':                       '*DROP from list*'
+    # '*Publication':                '*DROP from list*'
 categorymapping = {
-    'Chapter': 'Chapters & Verses',
-    'Chapter Number': 'Chapters & Verses',
-    'Verse Number': 'Chapters & Verses',
-    'Paragraph': 'Paragraphs',
-    'Poetry Text': 'Poetry',
-    'Title': 'Titles & Headings',
-    'Heading': 'Titles & Headings',
-    'Table': 'Tables',
-    'List Entry': 'Lists',
-    'Footnote': 'Footnotes',
-    'Cross Reference': 'Cross References',
-    'Character': 'Character Styling',
-    'Break': 'Breaks',
+    'Chapter':                     'Chapters & Verses',
+    'Chapter Number':              'Chapters & Verses',
+    'Verse Number':                'Chapters & Verses',
+    'Paragraph':                   'Paragraphs',
+    'Poetry Text':                 'Poetry',
+    'Title':                       'Titles & Headings',
+    'Heading':                     'Titles & Headings',
+    'Table':                       'Tables',
+    'List Entry':                  'Lists',
+    'Footnote':                    'Footnotes',
+    'Cross Reference':             'Cross References',
+    'Character':                   'Character Styling',
+    'Break':                       'Breaks',
+    'Peripheral Ref':              'Peripheral References',
+    'Periph':                      'Peripheral Materials',
+    'Peripherals':                 'Peripheral Materials',
+    'Auxiliary':                   'Peripheral Materials'
     'Concordance and Names Index': 'Peripheral Materials',
-    'Peripheral Ref': 'Peripheral References',
-    'Periph': 'Peripheral Materials',
-    'Peripherals': 'Peripheral Materials',
-    'Auxiliary': 'Peripheral Materials'
 }
-    # '*Introduction': 'Introduction',
-    # '*Poetry': 'Poetry',
-    # '*Special Text': 'Special Text',
-    # '*Other': 'Other',
 
 def triefit(k, base, start):
     for i in range(start, len(k)):
