@@ -1909,6 +1909,6 @@
 \def\testmarker{\hbox to 0pt{\vrule height 7pt depth 0pt width 0.5pt \kern-0.5pt}\message{_}}
 
 %Reinstate this post v1:
-\addtoendhooks{\bgroup\count255=\cumulativeDelta \divide\count255 by \pageno \ifdiglot\message{Overall column delta \the\cumulativeDelta pt (\the\count255 pt/ pg)\space(-ve means left longer)}\egroup\cumulativeDelta=0 \fi}
+\addtoendhooks{\bgroup\count255=\cumulativeDelta \divide\count255 by \pageno \ifdiglot\message{Overall column delta \the\cumulativeDelta pt (\the\count255 pt/ pg)\space(-ve means left longer)}\fi\egroup\cumulativeDelta=0}
 
 \endinput

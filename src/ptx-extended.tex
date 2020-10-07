@@ -131,9 +131,13 @@
    \getcatp@ram{#1figsize}
  \fi
 }
-\def\EndCategory{\gdef\c@tegory{}}
-\def\S@tCat#1{\message{Started Category #1}\gdef\c@tegory{#1}}
-\def\StyleCategory#1#2{\S@tCat{#1}#2\EndCategory}
+\def\EndCategory{\gdef\c@tegory{}\global\let\c@tprefix\empty}
+
+\def\S@tCat#1{\message{Started Category #1}%
+  \setc@tprefix{#1}%
+  \gdef\c@tegory{#1}%
+}
+\message{Started Category #1}\def\StyleCategory#1#2{\S@tCat{#1}#2\EndCategory}
 \def\categorysheet#1{%Just wrap \stylesheet with category-blanking commands
   \EndCategory\stylesheet{#1}\EndCategory
 }

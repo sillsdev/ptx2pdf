@@ -130,10 +130,11 @@
 % Constructs a macro name \_<marker>_:_<parameter>_ to hold the value.
 % `csname` is required here in order to build a macro name containing a colon and possibly a number.
 %
-\def\defp@ram#1#2{\x@\def\csname\m@rker\ds@ffix:#1\endcsname{#2}}
+
+\def\defp@ram#1#2{\x@\def\csname\c@tprefix\m@rker\ds@ffix:#1\endcsname{#2}\trace{s}{\c@tprefix\m@rker\ds@ffix:#1 -> #2}}
 \def\condp@ram#1#2#3{\edef\t@mp{#1}\ifx\t@mp\h@phen\relax\def\t@mp{#3}\else\def\t@mp{#2}\fi\t@mp}
 \def\defbinp@ram#1#2{\edef\t@mp{#2}\ifx\t@mp\h@phen\defp@ram{#1}{false}\else\defp@ram{#1}{true}\fi}
-\def\setp@ram#1#2#3{\x@\xdef\csname#2\ds@ffix:#1\endcsname{#3}} % expand now, not later 
+\def\setp@ram#1#2#3{\x@\xdef\csname\c@tprefix#2\ds@ffix:#1\endcsname{#3}} % expand now, not later 
 %-csty_defparam
 
 %+csty_getparam
@@ -148,17 +149,32 @@
 % The macro is diglot aware, allowing all parameters to have L Left/Right variant or use
 % default. (e.g when asked for paramter for v, check for vL|vR, default to v)
 %
-\def\getp@r@m#1#2{\x@\let\x@\p@ram\csname#2:#1\endcsname}
+\def\getp@r@m#1#2{\x@\let\x@\p@ram\csname#2:#1\endcsname\ifx\p@ram\relax\else\trace{s}{#2:#1 found}\fi}
 \def\getp@ram#1#2{\trace{Ds}{getp@ram #2:#1}%
 \ifdiglot
-  \ifdiglotL\getp@r@m{#1}{#2L}\else\getp@r@m{#1}{#2R}\fi
+  \edef\d@sf{\ifdiglotL L\else R\fi}%
+  \getp@r@m{#1}{\c@tprefix#2\d@sf}%
+  \ifx\p@ram\relax
+    \ifx\c@tprefix\empty\else\getp@r@m{#1}{\c@tprefix#2}\fi%
+  \else
+    \trace{sc}{Category specific(\c@tprefix#2\d@sf):#1 found}%
+    \trace{Ds}{...side-specfic -> \p@ram}%
+  \fi
   \ifx\p@ram\relax
     \getp@r@m{#1}{#2}\trace{Ds}{...default -> \p@ram}%
-  \else\trace{Ds}{...side-specfic -> \p@ram}%
+  \else
+    \trace{Ds}{...side-specfic -> \p@ram}%
   \fi
-\else\getp@r@m{#1}{#2}%
+\else\getp@r@m{#1}{\c@tprefix#2}%
+  \ifx\p@ram\relax
+    \ifx\c@tprefix\empty\else
+      \getp@r@m{#1}{#2}%
+    \fi
+  \else
+    \ifx\c@tprefix\empty\else\trace{sc}{Category specific(\c@tprefix#2):#1 found}\fi%
+  \fi
 \fi
-\trace{s}{\space\space #2:#1 is \p@ram}%
+\trace{s}{\space\space \c@tprefix#2 : #1 is \p@ram}%
 }
 %-csty_getparam
 
@@ -543,8 +559,10 @@
 % \stylesheet{...} reads a Paratext stylesheet line by line
 %
 \newif\ifc@ntinue
+\def\c@tegory{}
 \newread\styl@sheet
 \def\stylesheet#1{
+ \let\oldc@tegory=\c@tegory
  \m@kedigitsother
  \let\save@regular=\regular \let\regular=\Regular
  \let\save@bold=\bold \let\bold=\Bold
@@ -566,6 +584,8 @@
  \let\regular=\save@regular
  \let\bold=\save@bold
  \let\italic=\save@italic
+ \ifx\oldc@tegory\c@tegory\else\message{Error: Stylesheet changed category from '\oldc@tegory' to '\c@tegory'.}\fi%
+ \global\let\c@tegory=\oldc@tegory
 }
 %-csty_stylesheet
 
@@ -712,6 +732,27 @@
 \def\sl@shprint{\char`\/}
 \catcode`\/=12
 %-csty_slash
+
+%+csty_category
+% Define the current category
+\def\s@tc@tprefix#1{
+  \def\c@tegory{#1}%NOT global
+  \ifx\c@tegory\empty\let\c@tprefix\empty
+  \else
+    \edef\c@tprefix{cat:\c@tegory|}%
+  \fi
+  \trace{sc}{Stylesheet prefix:'\c@tprefix'}%
+}
+\def\@ndc@tprefix{\s@tc@tprefix{}}
+\def\cat #1\cat*{%
+  \s@tc@tprefix{#1}%
+  %\aftergroup\@ndc@tprefix
+ % \mcpush{S+#1}%
+%  \bgroup
+  %\ifinn@te \bgroup\fi% Not sure why this is needed.  Just for notes, or everything?
+}
+\global\let\c@tprefix\empty
+%-csty_category
 
 % Create registers to hold configuration information, set defaults
 \newdimen\FontSizeUnit		\FontSizeUnit=1bp % units for font sizes in Paratext stylesheet
