@@ -62,6 +62,8 @@ def setWidgetVal(wid, w, value, noui=False):
         w.set_font_name(value)
         # w.emit("font-set")
     elif wid.startswith("c_"):
+        if isinstance(value, str):
+            value = value.lower() == "true"
         w.set_active(value)
     elif wid.startswith("s_"):
         w.set_value(float(value))

@@ -708,14 +708,20 @@ class GtkViewModel(ViewModel):
                     if s:
                         anyset = s
                     for w in v:
-                        self.builder.get_object(w).set_sensitive(l(s))
+                        wid = self.builder.get_object(w)
+                        if wid is not None:
+                            wid.set_sensitive(l(s))
                 if not anyset:
                     v = d[d[k].keys()[0]]
                     for w in v:
-                        self.builder.get_object(w).set_sensitive(l(s))
+                        wid = self.builder.get_object(w)
+                        if wid is not None:
+                            wid.set_sensitive(l(s))
             else:
                 for w in d[k]:
-                    self.builder.get_object(w).set_sensitive(l(state))
+                    wid = self.builder.get_object(w)
+                    if wid is not None:
+                        wid.set_sensitive(l(state))
         if focus and k in _sensitivities:
             self.builder.get_object(_sensitivities[k][0]).grab_focus()
         return state
