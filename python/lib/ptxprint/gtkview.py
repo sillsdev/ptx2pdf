@@ -220,6 +220,7 @@ class GtkViewModel(ViewModel):
             self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
         for fcb in ("digits", "script", "chapfrom", "chapto", "diglotPicListSources",
                     "textDirection", "glossaryMarkupStyle", "fontFaces",
+                    "styTextType", "styStyleType", "styCallerStyle", "styNoteCallerStyle", "NoteBlendInto",
                     "picaccept", "pubusage", "pubaccept"): #, "rotateTabs"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
@@ -1914,15 +1915,15 @@ class GtkViewModel(ViewModel):
         
     def onStyleTypeChanged(self, btn):
         stype = self.builder.get_object("fcb_styStyleType").get_child().get_text()
-        if stype == "paragraph":
+        if stype == "Paragraph":
             self.builder.get_object("fr_styParaSettings").set_visible(True)
             self.builder.get_object("fr_styCharSettings").set_visible(True)
             self.builder.get_object("fr_styNoteSettings").set_visible(False)
-        elif stype == "character":
+        elif stype == "Character":
             self.builder.get_object("fr_styParaSettings").set_visible(False)
             self.builder.get_object("fr_styCharSettings").set_visible(True)
             self.builder.get_object("fr_styNoteSettings").set_visible(False)
-        elif stype == "note":
+        elif stype == "Note":
             self.builder.get_object("fr_styParaSettings").set_visible(False)
             self.builder.get_object("fr_styCharSettings").set_visible(False)
             self.builder.get_object("fr_styNoteSettings").set_visible(True)
