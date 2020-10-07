@@ -30,6 +30,49 @@ stylemap = {
     '_linespacing': ('c_styAbsoluteLineSpacing', False, lambda v: "BaseLine" if v else 'LineSpacing')
 }
 
+topLevelList = (
+    'Introduction',
+    'Chapters & Verses',
+    'Paragraphs',
+    'Poetry',
+    'Titles & Headings',
+    'Tables',
+    'Lists',
+    'Footnotes',
+    'Cross References',
+    'Special Text',
+    'Character Styling',
+    'Breaks',
+    'Peripheral Materials',
+    'Peripheral References',
+    'Other'
+)
+
+categorymapping = {
+    'Chapter': 'Chapters & Verses',
+    'Chapter Number': 'Chapters & Verses',
+    'Verse Number': 'Chapters & Verses',
+    'Paragraph': 'Paragraphs',
+    'Poetry Text': 'Poetry',
+    'Title': 'Titles & Headings',
+    'Heading': 'Titles & Headings',
+    'Table': 'Tables',
+    'List Entry': 'Lists',
+    'Footnote': 'Footnotes',
+    'Cross Reference': 'Cross References',
+    'Character': 'Character Styling',
+    'Break': 'Breaks',
+    'Concordance and Names Index': 'Peripheral Materials',
+    'Peripheral Ref': 'Peripheral References',
+    'Periph': 'Peripheral Materials',
+    'Peripherals': 'Peripheral Materials',
+    'Auxiliary': 'Peripheral Materials'
+}
+    # '*Introduction': 'Introduction',
+    # '*Poetry': 'Poetry',
+    # '*Special Text': 'Special Text',
+    # '*Other': 'Other',
+
 def triefit(k, base, start):
     for i in range(start, len(k)):
         if k[:i] in base:
