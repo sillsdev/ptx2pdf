@@ -2,6 +2,7 @@
 import re
 from gi.repository import Gtk
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
+from ptxprint.usfmutils import Sheets
 
 stylemap = {
     'Description':  ('l_styDescription', None, None),
@@ -15,7 +16,7 @@ stylemap = {
     'SmallCap':     ('c_stySmallCap', '-', lambda v: "" if v else "-"),
     'Superscript':  ('c_styFaceSuperscript', '-', lambda v: "" if v else "-"),
     'Raise':        ('s_styRaise', '0', None),
-    'Justification': ('fcb_styJustification', 'Justified', None),
+    'Justification': ('fcb_styJustification', 'Justified', lambda v: "" if v == "Justified" else v),
     'FirstLineIndent': ('s_styFirstLineIndent', '0', None),
     'LeftMargin':   ('s_styLeftMargin', '0', None),
     'RightMargin':  ('s_styRightMargin', '0', None),
@@ -135,12 +136,13 @@ class StyleEditor:
             w.connect(signal, self.item_changed, key)
         self.isLoading = False
 
-    def load(self, sheet):
-        self.sheet = sheet
+    def load(self, sheetfiles):
+        self.basesheet = Sheets(sheetfiles[:-1])
+        self.sheet = Sheets(sheetfiles[-1:], base=self.basesheet)
         results = {"Tables": {"th": {"thc": {}, "thr": {}}, "tc": {"tcc": {}, "tcr": {}}},
                    "Peripheral Materials": {"zpa-": {}},
                    "File": {"toc": {}}}
-        for k, v in sorted(sheet.items(), key=lambda x:(len(x[0]), x[0])):
+        for k, v in sorted(self.sheet.items(), key=lambda x:(len(x[0]), x[0])):
             cat = 'Other'
             if 'Name' in v:
                 m = name_reg.match(v['Name'])
@@ -227,3 +229,34 @@ class StyleEditor:
         else:
             value = val
         data[key] = value
+
+    def _list_usfms(self, treeiter=None):
+        if treeiter is None:
+            treeiter = self.treestore.get_iter_first()
+        while treeiter != None:
+            if self.treestore[treeiter][2]:
+                yield self.treestore[treeiter][0]
+            if self.treestore.iter_has_child(treeiter):
+                childiter = self.treestore.iter_children(treeiter)
+                for u in self._list_usfms(childiter):
+                    yield u
+            treeiter = self.treestore.iter_next(treeiter)
+
+    def _eq_val(self, a, b):
+        try:
+            fa = float(a)
+            fb = float(b)
+            return fa == fb
+        except (ValueError, TypeError):
+            return a == b
+
+    def output_diffile(self, outfh):
+        for m in self._list_usfms():
+            markerout = False
+            for k,v in self.sheet[m].items():
+                other = self.base[m].get(k, None)
+                if self._eq_val(other, v):
+                    if not markerout:
+                        outfh.write("\n\\Marker {}\n".format(m))
+                        markerout = True
+                    outfh.write("\n\\{} {}\n".format(k, v))

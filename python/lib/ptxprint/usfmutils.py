@@ -51,9 +51,10 @@ class _Reference(sfm.Position):
             return 1
         return 0
 
-class Sheets:
-    def __init__(self, init=[]):
-        self.sheet = {k: v.copy() for k, v in usfm.default_stylesheet.items()}
+class Sheets(dict):
+    def __init__(self, init=[], base=None):
+        self.update({k: v.copy() for k, v in \
+                        (base.items() if base is not None else usfm.default_stylesheet.items())})
         if init is None or not len(init):
             return
         for s in init:
@@ -62,15 +63,37 @@ class Sheets:
     def append(self, sf):
         if os.path.exists(sf):
             with open(sf) as s:
-                self.sheet = style.update_sheet(self.sheet, style.parse(s))
+                self.update_sheet(style.parse(s))
 
-    def update(self, d):
-        self.sheet = style.update_sheet(self.sheet, d)
+    def update_sheet(self, d):
+        style.update_sheet(self, d)
+
+    def copy(self):
+        return Sheets(base=self)
+
+class UsfmCollection:
+    def __init__(self, bkmapper, basedir, sheets):
+        self.bkmapper = bkmapper
+        self.basedir = basedir
+        self.sheets = sheets
+        self.books = {}
+
+    def get(self, bk):
+        if bk not in self.books:
+            bkfile = self.bkmapper(bk)
+            if bkfile is None:
+                return None
+            bkfile = os.path.join(self.basedir, bkfile)
+            if not os.path.exists(bkfile):
+                return None
+            with open(bkfile, encoding="utf-8") as inf:
+                self.books[bk] = Usfm(inf, self.sheets)
+        return self.books[bk]
 
 class Usfm:
     def __init__(self, iterable, sheets):
         tag_escapes = r"[^0-9A-Za-z]"
-        self.doc = list(usfm.parser(iterable, stylesheet=sheets.sheet,
+        self.doc = list(usfm.parser(iterable, stylesheet=sheets,
                                     canonicalise_footnotes=False,
                                     tag_escapes=tag_escapes))
         self.cvaddorned = False
@@ -233,4 +256,58 @@ class Usfm:
                 print("{} -> {}".format(e, "".join(res)))
             return sfm.Text("".join(res), e.pos, e.parent) if done else e
         self._proctext(fn)
+
+class Module:
+    def __init__(self, fname, usfms):
+        self.fname = fname
+        self.usfms = usfms
+        self.removes = set()
+        self.sheets = usfm.sheets.copy()
+        modinfo = { 'OccursUnder': {'id'}, 'TextType': 'Other', 'EndMarker': None, 'StyleType': 'Paragraph'}
+        modsheet = {k: marker(modinfo) for k in ('inc', 'vrs', 'ref', 'refnp', 'rep', 'mod')}
+        self.sheets.update(modsheet)
+        with open(fname, encoding="utf-8") as inf:
+            self.doc = read_module(inf, self.sheets)
+
+    def parse(self):
+        final = sum(map(self.parse_element, self.doc.doc), start=[])
+        return final
+        
+    def parse_element(self, e):
+        if isinstance(e, sfm.Text):
+            return [e]
+        elif e.name == "ref" or e.name == "refn":
+            res = []
+            for r in parse_refs(e[0]):
+                p = self.get_passage(r, removes=self.removes)
+                for i, t in enumerate(p):
+                    if isinstance(t, sfm.Element) and t.meta.get('StyleType', '') == 'Paragraph':
+                        if i:
+                            p[0:i] = [self.new_element(e, "p" if e.name == "ref" else "np", p[0:i])]
+                        break
+                else:
+                    p = [self.new_element(e, "p" if e.name == "ref" else "np", p)]
+                res.extend(p)
+            return res
+        elif e.name == 'inc':
+            s = "".join(e).strip()
+            for c in s:
+                if c == "-":
+                    self.removes = set(sum(exclusionmap.values(), []))
+                else:
+                    self.removes.difference_update(exclusionmap.get(c, []))
+        else:
+            cs = sum(map(self.parse_element, e), start=[])
+            e[:] = cs
+        return [e]
+
+    def get_passage(self, ref, removes={}):
+        book = self.usfms.get(ref[0])
+        if book is None:
+            return []
+        return book.subdoc(ref[1:], removes=removes)
+
+    def new_element(self, e, name, content):
+        return sfm.Element(name, e.pos, [], e.parent, content=[sfm.Text("\n", e.pos)] \
+                                                        + content, meta=self.sheets.sheet[name])
 

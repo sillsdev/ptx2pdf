@@ -160,7 +160,7 @@ class RunJob:
         self.tmpdir = os.path.join(self.prjdir, 'PrintDraft') if info.asBool("project/useprintdraftfolder") \
                                                                  or self.args.directory is None else self.args.directory
         os.makedirs(self.tmpdir, exist_ok=True)
-        jobs = self.printer.getBooks()
+        jobs = self.printer.getBooks(files=True)
 
         self.books = []
         if self.printer.get("c_onlyRunOnce"):
@@ -395,10 +395,7 @@ class RunJob:
             cfgname = ""
         else:
             cfgname = "-" + cfgname
-        if len(jobs) > 1:
-            outfname = "ptxprint{}-{}_{}{}.tex".format(cfgname, jobs[0], jobs[-1], prjid)
-        else:
-            outfname = "ptxprint{}-{}{}.tex".format(cfgname, jobs[0], prjid)
+        outfname = info.printer.baseTeXPDFnames(jobs)[0] + ".tex"
         info.update()
         with open(os.path.join(self.tmpdir, outfname), "w", encoding="utf-8") as texf:
             texf.write(info.asTex(filedir=self.tmpdir, jobname=outfname.replace(".tex", ""), extra=extra))

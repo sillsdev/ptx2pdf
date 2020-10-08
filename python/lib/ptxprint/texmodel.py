@@ -10,7 +10,7 @@ from ptxprint.ptsettings import chaps, books, bookcodes, oneChbooks
 from ptxprint.runner import checkoutput
 from ptxprint import sfm
 from ptxprint.sfm import usfm, style
-from ptxprint.usfmutils import Usfm, Sheets, isScriptureText
+from ptxprint.usfmutils import Usfm, Sheets, isScriptureText, Module
 from ptxprint.utils import _
 from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
@@ -76,7 +76,7 @@ ModelMap = {
     "project/bookscope":        ("r_book", None),
     "project/combinebooks":     ("c_combine", None),
     "project/book":             ("ecb_book", None),
-    "project/modulefile":       ("btn_chooseBibleModule", lambda w,v: w.moduleFile.as_posix() if w.moduleFile is not None else ""),
+    "project/modulefile":       ("btn_chooseBibleModule", lambda w,v: v.replace("\\","/") if v is not None else ""),
     "project/booklist":         ("t_booklist", lambda w,v: v or ""),
     "project/ifinclfrontpdf":   ("c_inclFrontMatter", None),
     "project/frontincludes":    ("btn_selectFrontPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s.as_posix()) \
@@ -736,6 +736,18 @@ class TexModel:
                     res.append(l.format(**self.dict))
         return "".join(res).replace("\OmitChapterNumberfalse\n\OmitChapterNumbertrue\n","")
 
+    def flattenModule(self, infpath, outdir):
+        outfpath = os.path.join(outdir, os.path.basename(infpath))
+        doti = outfpath.rfind(".")
+        if doti > 0:
+            outfpath = outfpath[:doti] + "-flat" + outfpath[doti:]
+        usfms = self.printer.get_usfms()
+        mod = Module(infpath, usfms)
+        res = mod.parse()
+        with open(outfpath, "w", encoding="utf-8") as outf:
+            outf.write(sfm.generate(res))
+        return outfpath
+
     def runConversion(self, infpath, outdir):
         outfpath = infpath
         if self.dict['project/processscript'] and self.dict['project/selectscript']:
@@ -774,7 +786,11 @@ class TexModel:
         else:
             self.dict["/nocustomsty"] = ""
         fname = printer.getBookFilename(bk)
-        infpath = os.path.join(prjdir, fname)
+        if fname is None:
+            infpath = os.path.join(prjdir, bk)  # assume module
+            infpath = self.flattenModule(infpath)
+        else:
+            infpath = os.path.join(prjdir, fname)
         if not self.dict['project/runscriptafter']:
             infpath = self.runConversion(infpath, outdir)
         outfname = os.path.basename(infpath)

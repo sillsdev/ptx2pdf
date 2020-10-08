@@ -25,7 +25,6 @@ from ptxprint.runjob import isLocked
 from ptxprint.texmodel import TexModel
 from ptxprint.minidialog import MiniDialog
 import ptxprint.scriptsnippets as scriptsnippets
-from ptxprint.usfmutils import Sheets
 from ptxprint.utils import _, f_
 import configparser
 import traceback
@@ -435,7 +434,7 @@ class GtkViewModel(ViewModel):
         w = self.builder.get_object(wid)
         if w is None:
             if not skipmissing and not (wid.startswith("_") or wid.startswith("r_")):
-                print(_("Can't find {} in the model").format(wid))
+                print(_("Can't get {} in the model").format(wid))
             return super().get(wid)
         if wid.startswith("r_"):
             bits = wid.split("_")[1:]
@@ -448,7 +447,7 @@ class GtkViewModel(ViewModel):
         w = self.builder.get_object(wid)
         if w is None and not wid.startswith("r_"):
             if not skipmissing and not wid.startswith("_"):
-                print(_("Can't find {} in the model").format(wid))
+                print(_("Can't set {} in the model").format(wid))
             super(GtkViewModel, self).set(wid, value)
             return
         if wid.startswith("r_"):
@@ -502,7 +501,7 @@ class GtkViewModel(ViewModel):
     def onOK(self, btn):
         if isLocked():
             return
-        jobs = self.getBooks()
+        jobs = self.getBooks(files=True)
         if not len(jobs) or jobs[0] == '':
             return
         # If the viewer/editor is open on an Editable tab, then "autosave" contents
@@ -512,7 +511,7 @@ class GtkViewModel(ViewModel):
                 self.onSaveEdits(None)
         # If any PicLists are missing, they need to be generated
         if self.get('c_includeillustrations') and self.get("c_usePicList"):
-            self.generatePicLists(jobs, generateMissingLists=True)
+            self.generatePicLists(self.getBooks(), generateMissingLists=True)
 
         # Work out what the resulting PDFs are to be called
         cfgname = self.configName()
@@ -522,14 +521,9 @@ class GtkViewModel(ViewModel):
             cfgname = "-" + cfgname
         if not os.path.exists(self.working_dir):
             os.makedirs(self.working_dir)
-        if len(jobs) > 1:
-            if self.get("c_combine"):
-                pdfnames = [os.path.join(self.working_dir, "ptxprint{}-{}_{}{}.pdf".format(cfgname, jobs[0], jobs[-1], self.prjid))]
-            else:
-                pdfnames = [os.path.join(self.working_dir, "ptxprint{}-{}{}.pdf".format(cfgname, j, self.prjid)) for j in jobs]
-        else:
-            pdfnames = [os.path.join(self.working_dir, "ptxprint{}-{}{}.pdf".format(cfgname, jobs[0], self.prjid))]
-        for pdfname in pdfnames:
+        pdfnames = self.baseTeXPDFnames()
+        for basename in pdfnames:
+            pdfname = os.path.join(self.working_dir, basename) + ".pdf"
             fileLocked = True
             while fileLocked:
                 try:
@@ -901,7 +895,7 @@ class GtkViewModel(ViewModel):
                 genBtn.set_sensitive(True)
 
         elif pgid in ("scroll_TeXfile", "scroll_XeTeXlog"): # (TeX,Log)
-            fpath = self.baseTeXPDFname()+fndict[pgid][1]
+            fpath = os.path.join(self.working_dir, self.baseTeXPDFname()[0])+fndict[pgid][1]
 
         elif pgid == "scroll_Settings": # View/Edit one of the 4 Settings files or scripts
             fpath = self.builder.get_object("l_Settings").get_tooltip_text()
@@ -1327,7 +1321,9 @@ class GtkViewModel(ViewModel):
         else:
             self.builder.get_object("l_projectFullName").set_label("")
             self.builder.get_object("l_projectFullName").set_tooltip_text("")
-        self.builder.get_object("t_copyrightStatement").set_text(self.ptsettings.get('Copyright', ""))
+        pts = self._getPtSettings()
+        if pts is not None:
+            self.builder.get_object("t_copyrightStatement").set_text(pts.get('Copyright', ""))
 
     def updatePrjLinks(self):
         if self.settings_dir != None and self.prjid != None:
@@ -1360,8 +1356,7 @@ class GtkViewModel(ViewModel):
         self.updatePicList()
         self.updateDialogTitle()
         self.picChecksView.init(basepath=self.configPath(cfgname=None), configid=self.configId)
-        sheets = Sheets(self.getStyleSheets())
-        self.styleEditorView.load(sheets.sheet)
+        self.styleEditorView.load(self.getStyleSheets())
 
     def onConfigNameChanged(self, cb_savedConfig):
         if self.configNoUpdate:
@@ -1938,7 +1933,7 @@ class GtkViewModel(ViewModel):
         self.onSimpleClicked(btn)
 
     def onResetCopyrightClicked(self, btn):
-        self.builder.get_object("t_copyrightStatement").set_text(self.ptsettings.get('Copyright', ""))
+        self.builder.get_object("t_copyrightStatement").set_text(self._getPtSettings().get('Copyright', ""))
 
     def onCopyrightStatementChanged(self, btn):
         w = self.builder.get_object("t_copyrightStatement")

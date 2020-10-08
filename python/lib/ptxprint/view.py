@@ -4,6 +4,7 @@ from .texmodel import ModelMap, TexModel, universalopen
 from .ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from .font import TTFont, cachepath, cacheremovepath
 from ptxprint.utils import _
+from ptxprint.usfmutils import Sheets, UsfmCollection
 import pathlib, os, sys
 from configparser import NoSectionError, NoOptionError, _UNSET
 from zipfile import ZipFile, ZIP_DEFLATED
@@ -106,9 +107,10 @@ class ViewModel:
         self.scriptsdir = scriptsdir
         self.args = args
         self.ptsettings = None
-        self.customScript = None
         self.FrontPDFs = None
         self.BackPDFs = None
+        self.customScript = None
+        self.moduleFile = None
         self.watermarks = None
         self.pageborder = None
         self.sectionheader = None
@@ -120,6 +122,7 @@ class ViewModel:
         self.configId = None
         self.isDisplay = False
         self.tempFiles = []
+        self.usfms = None
 
         # private to this implementation
         self.dict = {}
@@ -168,8 +171,9 @@ class ViewModel:
         else:
             self.dict[wid] = value
 
-    def baseTeXPDFname(self):
-        bks = self.getBooks()
+    def baseTeXPDFnames(self, bks=None, force_combine=False):
+        if bks is None:
+            bks = self.getBooks(files=True)
         if self.working_dir == None:
             self.working_dir = os.path.join(self.settings_dir, self.prjid, 'PrintDraft')
         cfgname = self.configName()
@@ -178,14 +182,17 @@ class ViewModel:
         else:
             cfgname = "-" + cfgname
         if len(bks) > 1:
-            fname = "ptxprint{}-{}_{}{}".format(cfgname, bks[0], bks[-1], self.prjid)
+            if force_combine or self.get("c_combine"):
+                fname = "ptxprint{}-{}_{}{}".format(cfgname, bks[0], bks[-1], self.prjid)
+            else:
+                return sum((self.baseTeXPDFnames(bks=[bk]) for bk in bks), [])
+        elif "." in bks[0]:
+            fname = "ptxprint{}-{}{}".format(cfgname, os.path.splitext(os.path.basename(bks[0]))[0], self.prjid)
         else:
             fname = "ptxprint{}-{}{}".format(cfgname, bks[0], self.prjid)
-        if not os.path.exists(self.working_dir):
-            os.makedirs(self.working_dir)
-        return os.path.join(self.working_dir, fname)
+        return [fname]
         
-    def getBooks(self, scope=None):
+    def getBooks(self, scope=None, files=False):
         bl = self.get("t_booklist", "").split()
         if scope is None:
             scope = self.get("r_book")
@@ -199,15 +206,13 @@ class ViewModel:
                     blst.append(b)
             return blst
         elif scope == "module":
-            pass
-            # MH: Need to do something else now that a filepath is being used.
-            # return [self.get("ecb_biblemodule")]
+            return [self.get("btn_chooseBibleModule")] if files else []
         else:
             # return self.booklist
             return []
 
-    def _getPtSettings(self, prjid):
-        if self.ptsettings is None:
+    def _getPtSettings(self, prjid=None):
+        if self.ptsettings is None and self.prjid is not None:
             self.ptsettings = ParatextSettings(self.settings_dir, self.prjid)
         if prjid is None:
             prjid = self.prjid
@@ -344,20 +349,26 @@ class ViewModel:
                 self.configId = configName
                 if self.configId is not None and len(self.configId):
                     self.userconfig.set("init", "config", self.configId)
+            if readConfig:  # project changed
+                self.usfms = None
+                self.get_usfms()
             return res
         else:
             return True
+
+    def get_usfms(self):
+        if self.usfms is None:
+            self.usfms = UsfmCollection(self.getBookFilename, 
+                            os.path.join(self.settings_dir, self.prjid),
+                            Sheets(self.getStyleSheets()))
+        return self.usfms
 
     def getDialogTitle(self):
         prjid = self.get("fcb_project")
         if prjid is None:
             return _("PTXprint {} - Bible Layout for Everyone!     Start by selecting a project to work with...").format(VersionStr)
         else:
-            if self.get('r_book') == "multiple":
-                bks = self.get('t_booklist').split()
-            else:
-                bks = [self.get('ecb_book')]
-                
+            bks = self.getBooks(files=True)
             if len(bks) == 2:
                 bks = bks[0] + "," + bks[1]
             elif len(bks) <= 4:
@@ -440,14 +451,14 @@ class ViewModel:
                 else:
                     val = val.withvars(self)
             elif v[0].startswith("bl_"):
-                val = self.get(v[0])
+                val = self.get(v[0], skipmissing=True)
                 self._configset(config, k+"/name", val[0] or "")
                 self._configset(config, k+"/style", val[1] or "")
                 continue
             else:
                 if v[0] is None:
                     continue
-                val = self.get(v[0], asstr=True)
+                val = self.get(v[0], asstr=True, skipmissing=True)
             if k in self._settingmappings:
                 if val == "" or val == self.ptsettings.dict.get(self._settingmappings[k], ""):
                     continue
@@ -1134,11 +1145,17 @@ class ViewModel:
 
         # pictures and texts
         picinfos = {}
+        fpath = os.path.join(self.settings_dir, prjid)
         for bk in books:
             fname = self.getBookFilename(bk, prjid)
-            fpath = os.path.join(self.settings_dir, prjid)
-            res[os.path.join(fpath, fname)] = fname
-            picinfos.update(self._getFigures(bk))
+            if fname is None:
+                scope = self.get("r_books")
+                if scope == "module":
+                    res[os.path.join(fpath, bk)] = os.path.basename(bk)
+                    cfgchanges['btn_chooseBibleModule'] = os.path.basename(fname)
+            else:
+                res[os.path.join(fpath, fname)] = fname
+                picinfos.update(self._getFigures(bk))
         self.getFigureSources(picinfos)
         pathkey = 'src path'
         for f in (p[pathkey] for p in picinfos.values() if pathkey in p):
@@ -1202,9 +1219,8 @@ class ViewModel:
         if os.path.exists(os.path.join(hyphenfpath, hyphenfile)):
             res[os.path.join(hyphenfpath, hyphenfile)] = hyphentpath + hyphenfile
 
-        if self.ptsettings is None or self.prjid != prjid:
-            self.ptsettings = ParatextSettings(self.settings_dir, prjid)
-        ptres = self.ptsettings.getArchiveFiles()
+        pts = self._getPtSettings(prjid=prjid)
+        ptres = pts.getArchiveFiles()
         res.update(ptres)
         return (res, cfgchanges)
 
@@ -1224,10 +1240,10 @@ class ViewModel:
             filename += ".zip"
         zf = ZipFile(filename, mode="w", compression=ZIP_DEFLATED, compresslevel=9)
         zf.write(os.path.join(self.settings_dir, "usfm.sty"), "usfm.sty")
-        self._archiveAdd(zf, self.getBooks())
+        self._archiveAdd(zf, self.getBooks(files=True))
         if self.get("c_diglot"):
             digview = self.createDiglotView()
-            digview._archiveAdd(zf, self.getBooks())
+            digview._archiveAdd(zf, self.getBooks(files=True))
         if self.get("c_archiveTemps"):
             prjdir = os.path.join(self.settings_dir, self.prjid)
             for f in self.tempFiles:
