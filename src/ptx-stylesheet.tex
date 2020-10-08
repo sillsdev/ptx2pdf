@@ -735,8 +735,11 @@
 
 %+csty_category
 % Define the current category
-\def\s@tc@tprefix#1{
+\def\s@tc@tprefix#1{%
   \def\c@tegory{#1}%NOT global
+  \s@tc@tpr@fix
+}
+\def\s@tc@tpr@fix{%
   \ifx\c@tegory\empty\let\c@tprefix\empty
   \else
     \edef\c@tprefix{cat:\c@tegory|}%
@@ -746,14 +749,53 @@
 \def\@ndc@tprefix{\s@tc@tprefix{}}
 \def\cat #1\cat*{%
   \s@tc@tprefix{#1}%
-  %\aftergroup\@ndc@tprefix
- % \mcpush{S+#1}%
-%  \bgroup
-  %\ifinn@te \bgroup\fi% Not sure why this is needed.  Just for notes, or everything?
 }
 \global\let\c@tprefix\empty
 %-csty_category
 
+%+csty_hooks
+%Hook-runners for paragraph and character styles
+\def\op@ninghooks#1{% for <start> and <before> hooks
+   \csname #1-\newch@rstyle\endcsname % 
+   \ifx\c@tegory\empty\else\csname #1-\c@tprefix\newch@rstyle\endcsname\fi
+   \ifdiglot\setsid@ % \MSG{start-\thisch@rstyle\sid@}%
+     \csname #1-\newch@rstyle\sid@\endcsname\relax % handle side-specific <before> hook
+     \ifx\c@tegory\empty\else
+        \csname #1-\c@tprefix\newch@rstyle\sid@\endcsname %side-specific and category-specific
+     \fi
+   \fi
+}
+\newtoks\afterh@@ks
+\def\cl@singhooks#1{% for <end> and <after> hooks. For <after> hooks, it's necessary to end the group after these are defined 
+  \global\let\n@xt\relax
+  \global\let\n@@xt\relax
+  \global\let\n@@@xt\relax
+  \global\let\n@@@@xt\relax
+  \tracingassigns=1
+  \ifdiglot\setsid@ % \MSG{end-\thisch@rstyle\sid@}%
+    \ifx\c@tegory\empty\else
+      \x@\global\x@\let\x@\n@xt
+        \csname #1-\c@tprefix\newch@rstyle\sid@\endcsname %side-specific and category-specific
+      \afterh@@ks{\n@xt}%
+    \fi
+    \x@\global\x@\let\x@\n@@xt
+      \csname #1-\thisch@rstyle\sid@\endcsname % handle side-specific <end> hook
+    \x@\afterh@@ks\x@{\the\afterh@@ks\n@@xt}%
+  \fi
+  \ifx\c@tegory\empty\else
+    \x@\global\x@\let\x@\n@@@xt
+      \csname #1-\c@tprefix\newch@rstyle\endcsname
+    \x@\afterh@@ks\x@{\the\afterh@@ks\n@@@xt}%
+  \fi
+  \x@\global\x@\let\x@\n@@@@xt
+    \csname #1-\thisch@rstyle\endcsname%
+  \x@\afterh@@ks\x@{\the\afterh@@ks\n@@@@xt}%
+  \showthe\afterh@@ks
+  \edef\@@@a{#1}\edef\@@@b{after}%
+  \ifx\@@@a\@@@b\else\the\afterh@@ks\afterh@@ks{}\fi
+  \tracingassigns=0
+}
+%-csty_hooks
 % Create registers to hold configuration information, set defaults
 \newdimen\FontSizeUnit		\FontSizeUnit=1bp % units for font sizes in Paratext stylesheet
 \newdimen\IndentUnit		\IndentUnit=1in % units for indents
