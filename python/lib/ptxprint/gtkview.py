@@ -1536,11 +1536,13 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("btn_selectOutputFolder").set_sensitive(False)
 
     def onSelectModuleClicked(self, btn):
+        prjdir = os.path.join(self.settings_dir, self.prjid)
         moduleFile = self.fileChooser("Select a Paratext Module", 
                 filters = {"Modules": {"patterns": ["*.sfm"] , "mime": "text/plain", "default": True},
                            "All Files": {"pattern": "*"}},
-                multiple = False, basedir=os.path.join(self.settings_dir, self.prjid, "Modules"))
+                multiple = False, basedir=os.path.join(prjdir, "Modules"))
         if moduleFile is not None:
+            moduleFile = [x.relative_to(prjdir) for x in moduleFile]
             self.moduleFile = moduleFile[0]
             self.builder.get_object("lb_bibleModule").set_label(os.path.basename(moduleFile[0]))
             self.builder.get_object("btn_chooseBibleModule").set_tooltip_text(str(moduleFile[0]))

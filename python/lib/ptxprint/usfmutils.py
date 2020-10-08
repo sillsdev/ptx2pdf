@@ -257,14 +257,62 @@ class Usfm:
             return sfm.Text("".join(res), e.pos, e.parent) if done else e
         self._proctext(fn)
 
+def read_module(inf, sheets):
+    lines = inf.readlines()
+    if not re.match(r"\uFEFF?\\id\s", lines[0]):
+        lines.insert(0, "\\id MOD Module\n")
+    return Usfm(lines, sheets)
+
+def parse_refs(s):
+    bits = re.split(r"([,;])", s)
+    bk = ""
+    c = "0"
+    for ref, sep in zip(bits[::2], [""] + bits[1::2]):
+        m = re.match(r"^\s*([A-Z]{3})?\s*(\d+[a-z]?)\s*(?:([.:])\s*(\d*[a-z]?))?\s*(?:(-)\s*(\d*[a-z]?)\s*(?:([.:])\s*(\d*[a-z]?))?)?", ref)
+        if m:
+            bk = m.group(1) or bk
+            if m.group(3):
+                firstc = m.group(2) or c
+                firstv = m.group(4) or "0"
+            elif sep == ",":
+                firstc = c
+                firstv = m.group(2) or "0"
+            else:
+                firstc = m.group(2) or c
+                firstv = "0"
+            if m.group(5):
+                if m.group(7):
+                    c = m.group(6) or firstc
+                    lastv = m.group(8) or "200"
+                elif firstv == "0":
+                    c = m.group(6) or firstc
+                    lastv = "200"
+                else:
+                    c = firstc
+                    lastv = m.group(6) or "200"
+            else:
+                c = firstc
+                lastv = "200" if firstv == "0" else firstv
+            yield (bk, firstc, firstv, c, lastv)
+        else:
+            print("Bad ref: {}".format(ref))
+
+exclusionmap = {
+    'v': ['v'],
+    'x': ['x'],
+    'f': ['f'],
+    's': ['s', 's1', 's2'],
+    'p': ['fig']
+}
+
 class Module:
     def __init__(self, fname, usfms):
         self.fname = fname
         self.usfms = usfms
         self.removes = set()
-        self.sheets = usfm.sheets.copy()
+        self.sheets = self.usfms.sheets.copy()
         modinfo = { 'OccursUnder': {'id'}, 'TextType': 'Other', 'EndMarker': None, 'StyleType': 'Paragraph'}
-        modsheet = {k: marker(modinfo) for k in ('inc', 'vrs', 'ref', 'refnp', 'rep', 'mod')}
+        modsheet = {k: style.marker(modinfo) for k in ('inc', 'vrs', 'ref', 'refnp', 'rep', 'mod')}
         self.sheets.update(modsheet)
         with open(fname, encoding="utf-8") as inf:
             self.doc = read_module(inf, self.sheets)
@@ -309,5 +357,5 @@ class Module:
 
     def new_element(self, e, name, content):
         return sfm.Element(name, e.pos, [], e.parent, content=[sfm.Text("\n", e.pos)] \
-                                                        + content, meta=self.sheets.sheet[name])
+                                                        + content, meta=self.sheets[name])
 

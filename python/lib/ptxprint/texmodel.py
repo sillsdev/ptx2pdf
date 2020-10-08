@@ -788,7 +788,7 @@ class TexModel:
         fname = printer.getBookFilename(bk)
         if fname is None:
             infpath = os.path.join(prjdir, bk)  # assume module
-            infpath = self.flattenModule(infpath)
+            infpath = self.flattenModule(infpath, outdir)
         else:
             infpath = os.path.join(prjdir, fname)
         if not self.dict['project/runscriptafter']:

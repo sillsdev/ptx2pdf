@@ -206,7 +206,9 @@ class ViewModel:
                     blst.append(b)
             return blst
         elif scope == "module":
-            return [self.get("btn_chooseBibleModule")] if files else []
+            res = self.moduleFile.as_posix()
+            # res = self.get("btn_chooseBibleModule")
+            return [res] if files and res else []
         else:
             # return self.booklist
             return []
@@ -223,6 +225,8 @@ class ViewModel:
         return ptsettings
 
     def getBookFilename(self, bk, prjid=None):
+        if any(x in "./\\" for x in bk):
+            return None
         ptsettings = self._getPtSettings(prjid)
         fbkfm = ptsettings['FileNameBookNameForm']
         bknamefmt = (ptsettings['FileNamePrePart'] or "") + \
@@ -573,6 +577,9 @@ class ViewModel:
         pass
 
     def generateNProcPicLists(self, bk, outdir, processor, priority="Both", sfmonly="piclist", isTemp=False, output=True):
+        plfname = self.getDraftFilename(bk)
+        if plfname is None:
+            return ({}, [])
         picposns = { "L": {"col":  ("tl", "bl"),             "span": ("t")},
                      "R": {"col":  ("tr", "br"),             "span": ("b")},
                      "":  {"col":  ("tl", "tr", "bl", "br"), "span": ("t", "b")}}
@@ -620,7 +627,6 @@ class ViewModel:
 
         missingPicList = []
         extOrder = self.getExtOrder()
-        plfname = self.getDraftFilename(bk)
         # Now write out the new PicList to a temp folder
         piclstfname = os.path.join(self.configPath(cfgname=self.configId, makePath=False), "PicLists", plfname)
         isdblcol = self.get("c_doublecolumn")
@@ -723,6 +729,8 @@ class ViewModel:
 
     def getDraftFilename(self, bk, ext=".piclist"):
         fname = self.getBookFilename(bk, self.prjid)
+        if fname is None:
+            return None
         cname = "-" + (self.configName() or "Default")
         doti = fname.rfind(".")
         res = fname[:doti] + cname + fname[doti:] + ext if doti > 0 else fname + cname + ext
