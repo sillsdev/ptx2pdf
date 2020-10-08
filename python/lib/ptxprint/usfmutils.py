@@ -156,16 +156,19 @@ class Usfm:
         words = self.sreduce(nullelement, addwords, self.doc, init)
         return words
 
-    def subdoc(self, ref, removes={}):
+    def subdoc(self, ref, removes={}, strippara=False):
         ''' Creates a document consisting of only the text covered by the reference
             ranges. ref is a tuple in the form:
                 (fromc, fromv, toc, tov)
             The list must include overlapping ranges'''
         self.addorncv()
+        ispara = sfm.text_properties('paragraph')
         r = RefRange(*ref)
         chaps = self.chapters[r.start[0]:r.end[0]+1]
         def pred(e):
             if isinstance(e.pos, _Reference) and e.pos.cmp_range(r) == 0:
+                if strippara and isinstance(e, sfm.Element) and ispara(e):
+                    return False
                 return True
             return False
 
@@ -335,17 +338,19 @@ class Module:
     def parse_element(self, e):
         if isinstance(e, sfm.Text):
             return [e]
-        elif e.name == "ref" or e.name == "refn":
+        elif e.name == "ref" or e.name == "refnp":
             res = []
+            isidparent = e.parent is None or e.parent.name == "id"
             for r in parse_refs(e[0]):
-                p = self.get_passage(r, removes=self.removes)
-                for i, t in enumerate(p):
-                    if isinstance(t, sfm.Element) and t.meta.get('StyleType', '') == 'Paragraph':
-                        if i:
-                            p[0:i] = [self.new_element(e, "p" if e.name == "ref" else "np", p[0:i])]
-                        break
-                else:
-                    p = [self.new_element(e, "p" if e.name == "ref" else "np", p)]
+                p = self.get_passage(r, removes=self.removes, strippara=e.name=="refnp")
+                if e.name == "ref":
+                    for i, t in enumerate(p):
+                        if isinstance(t, sfm.Element) and t.meta.get('StyleType', '') == 'Paragraph':
+                            if i:
+                                p[0:i] = [self.new_element(e, "p1" if isidparent else "p", p[0:i])]
+                            break
+                    else:
+                        p = [self.new_element(e, "p1" if isidparent else "p", p)]
                 res.extend(p)
             return res
         elif e.name == 'inc':
@@ -360,11 +365,11 @@ class Module:
             e[:] = cs
         return [e]
 
-    def get_passage(self, ref, removes={}):
+    def get_passage(self, ref, removes={}, strippara=False):
         book = self.usfms.get(ref[0])
         if book is None:
             return []
-        return book.subdoc(ref[1:], removes=removes)
+        return book.subdoc(ref[1:], removes=removes, strippara=strippara)
 
     def new_element(self, e, name, content):
         return sfm.Element(name, e.pos, [], e.parent, content=[sfm.Text("\n", e.pos)] \
