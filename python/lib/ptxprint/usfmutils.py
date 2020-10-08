@@ -36,13 +36,16 @@ space_cats = { 'Zs', 'Zl', 'Zp', 'Cf' }
 
 class _Reference(sfm.Position):
     def __new__(cls, pos, ref):
-        p = super().__new__(cls, *pos)
+        p = super().__new__(cls, *pos[:2])
         p.book = ref[0]
         p.chapter = ref[1]
         p.verse = ref[2]
         p.startref = make_rangetuple(p.chapter, p.verse)
         p.endref = make_rangetuple(p.chapter, p.verse, start=False)
         return p
+
+    def __str__(self):
+        return f"{self.book} {self.chapter}:{self.verse} line {self.line},{self.col}"
 
     def cmp_range(self, r):
         if self.endref < r.start:
@@ -104,8 +107,10 @@ class Usfm:
     def addorncv(self):
         if self.cvaddorned:
             return
+        ispara = sfm.text_properties('paragraph')
         self.chapters = []
         ref = ["", "0", "0"]
+        pending = []
         def _g(_, e):
             if isinstance(e, sfm.Element):
                 if e.name == 'id':
@@ -122,6 +127,12 @@ class Usfm:
                     ref[2] = "0"
                 elif e.name == 'v':
                     ref[2] = e.args[0]
+                    for t in pending:
+                        t.pos = _Reference(t.pos, ref)
+                    pending.clear()
+                elif e.meta.get('StyleType', '') == 'Paragraph':
+                    if ref[2] != "0":
+                        pending.append(e)
                 e.pos = _Reference(e.pos, ref)
                 reduce(_g, e, None)
             else:
@@ -273,10 +284,10 @@ def parse_refs(s):
             bk = m.group(1) or bk
             if m.group(3):
                 firstc = m.group(2) or c
-                firstv = m.group(4) or "0"
+                firstv = m.group(4)
             elif sep == ",":
                 firstc = c
-                firstv = m.group(2) or "0"
+                firstv = m.group(2)
             else:
                 firstc = m.group(2) or c
                 firstv = "0"
@@ -284,7 +295,7 @@ def parse_refs(s):
                 if m.group(7):
                     c = m.group(6) or firstc
                     lastv = m.group(8) or "200"
-                elif firstv == "0":
+                elif firstv == "":
                     c = m.group(6) or firstc
                     lastv = "200"
                 else:
@@ -293,7 +304,7 @@ def parse_refs(s):
             else:
                 c = firstc
                 lastv = "200" if firstv == "0" else firstv
-            yield (bk, firstc, firstv, c, lastv)
+            yield (bk, firstc, firstv or "0", c, lastv or "0")
         else:
             print("Bad ref: {}".format(ref))
 
