@@ -167,10 +167,7 @@
 % end a paragraph, handling cutouts (shaping around drop-cap) if any, and the <end> hook
 \def\par{\ifhmode
    \makecutouts
-   \ifdiglot\setsid@%\MSG{end-\m@rker\sid@}%
-     \csname end-\m@rker\sid@\endcsname % handle side-specific <end> hook
-   \fi
-   \csname end-\m@rker\endcsname
+   \cl@singhooks{end}{\m@rker}%
    \trace{j}{baselineskip = \the\baselineskip, looseness = \the\looseness}%
    \endgraf
    \cutoutcarryover 
@@ -268,16 +265,11 @@
   \def\d@##1+##2\E{\edef\tmp{##2}%
     \ifx\tmp\m@rker\else\ifx\m@rker\relax\else\MSG{Bad closing "marker" \tmp\space expecting "\m@rker"}\fi\fi}%
   \mctop \mcpop                                                                 %(2)
-  \ifdiglot\setsid@ % \MSG{start-\thisch@rstyle\sid@}%
-    \csname after-\m@rker\sid@\endcsname\relax% handle side-specific <start> hook
-  \fi
-  \csname after-\m@rker\endcsname % handle <after> hook for the previous style
+  \cl@singhooks{after}{\m@rker}%
+  \the\afterh@@ks
   \gdef\m@rker{#1}% remember the new style name
   \mcpush{P+#1}%
-  \csname before-\m@rker\endcsname % handle its <before> hook
-  \ifdiglot
-    \csname before-\m@rker\sid@\endcsname\relax % handle side-specific <start> hook
-  \fi
+  \op@ninghooks{before}{\m@rker}%
 %-cpar_parstyle_after
   %
   % now we check what kind of marker this is: intro? title? section? other?
@@ -439,10 +431,7 @@
    \fi
    \ifvoid\ch@pterbox\else \kern-\wd\ch@pterbox \box\ch@pterbox \fi
    \global\p@ranesting=1
-   \csname start-\m@rker\endcsname % handle <start> hook
-   \ifdiglot\setsid@ % \MSG{start-\m@rker\sid@}%
-     \csname start-\m@rker\sid@\endcsname % handle side-specific <start> hook
-   \fi
+   \op@ninghooks{start}{\m@rker}%handle <start> hook
    \ifdr@ppednumber \spacefactor=0\n@wchaptersf \fi
    \startparafalse
    % set special \spacefactor if we're at a chapter number, so \v 1 can omit the verse number here

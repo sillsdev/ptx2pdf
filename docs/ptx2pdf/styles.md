@@ -92,6 +92,67 @@ don't need those routines outside of stylesheet reading.
 
 [=csty_stylesheet]::
 
+### Style Categories
+A complicating issue for styles is that USFM version 2.1 introduced the concept 
+of categories  for `\esb` blocks and `\ef` extended / enhanced footnotes.
+Any number of categories may be defined, and it is relatively clear that while
+not altering the semantic meaning of the markers, they change the appearence.
+I.e. each category potentially represents an alternative set of styles. 
+
+Further complicating issues is that a category is selected once, within the `\esb`, 
+`\ef` (and potentially other elements), without any overt end marker. 
+
+Two variables are maintained, the category that the user has typed (```\c@tegory```) 
+and the representation of that category as a style-prefix (```\c@tprefix```). At the time
+of writing, that prefix is ```cat:\c@tegory|```, i.e. for a category of people and a marker of 
+fq, as demonstrated in the current USFM3.0 documentation, the stylesheet entry 
+will begin: 
+```
+\Marker cat:people|fq
+```
+
+This category prefix is also used in the style-processing hooks, enabling the specification of 
+hook code that is only executed for markers in a particular style, maintaining the principle that 
+most anything that can be specified as a marker style can also be specified as a hook.
+
+While not actually a marker style, the hooks normally associated with style marker are run at the 
+beginning and end of a category's scope, in the normal manner.  For this to function correctly, 
+the ```\cat ...\cat*``` directive must occur inside a simple group[^1].  The footnote code functions as such, as do 
+character styles and ```\esb ....\esb*``` groups.
+
+[^1]: TeX has several types of groupings: vbox groups, (various) hbox groups,
+  and also so-called simple groups (`{...}` or `\bgroup ... \egroup`) and
+  semi-simple groups (`\begingroup ... \endgroup`).  These last two types can both 
+  contain macros, text, etc. and behave only slightly differently in some very
+  specific contexts (e.g. in typesetting maths). One notable difference is that
+  they must nest correctly, or they will trigger an error. 
+  This fact is used to ensure that hook code that does not
+  balance correctly (e.g. has a `\bgroup` but no corresponding `\egroup`) is
+  caught quickly.
+
+The code relies on this in the following way. First, once any before-hooks have
+been executed a semi-simple group (1) is entered. Then after the start-hooks, a
+simple group (2) is entered, and an `\aftergroup` command provided. 
+Assuming there is nothing very strange in the USFM, the simple group from (2) will be 
+ended at the end of footnote or end of `\esb` block. Thus we subvert the grouping 
+commands provided by other parts of the macros.
+
+This (externally provided) `\egroup` closes the simple group begun earlier (2)
+and also triggers the expansion of the `\@ndc@t` macro, which runs the end
+hooks,  closes the semi-simple group (3) and finally (4) provides an `\egroup` to
+replace the one we borrowed from the external code.
+
+In the case when ```\cat ...\cat*``` is called when `\c@tegory` is not empty (5),
+there are two possible scenarios: a category is already defined for the 
+present box or a category is currently defined for an enclosing box, e.g. 
+this is defining a category for a footnote inside  an `\esb` block. It is
+presently considered that a second category within the same level of block is a
+violation of the USFM specification. In the case of nesting, no specific action
+is needed.
+
+[=csty_category]::
+
+
 ## Character Styles
 
 The lowest level styling is character styling. Paragraph and note styling both
@@ -106,7 +167,7 @@ that a new paragraph style will close all open character and paragraph styles.
 
 There are two entry points for character styles corresponding to their types. In
 each case we need to capture whatever comes after the marker, whether it is a
-`*`, which indicates a close marker or a space ` ` that indicates an opening
+```*```, which indicates a close marker or a space that indicates an opening
 marker. We treat end of line as a space here. We set up the catcodes for space
 and end of line and then capture the next token (which is immediately after the
 marker) and store it in `\n@xt`. We can then call another macro to process the

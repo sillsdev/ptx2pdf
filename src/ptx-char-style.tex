@@ -136,7 +136,7 @@
    \let\thisch@rstyle=\newch@rstyle
   \else
    \leavevmode % in case the paragraph hasn't started yet               %(2)
-   \op@ninghooks{before}% execute any <before> hook
+   \op@ninghooks{before}{\newch@rstyle}% execute any <before> hook
    \bgroup % start a group to encapsulate the style's formatting changes
     \let\thisch@rstyle=\newch@rstyle % remember the current style
     \s@tfont{\thisch@rstyle}% set up font attributes
@@ -144,7 +144,7 @@
     \else \global\advance\p@ranesting by 1 \fi
     \getmcp@ram{raise}%
     \ifx\p@ram\relax\else \setbox0=\hbox\bgroup \fi                     %(3)
-    \op@ninghooks{start}%% execute any <start> hook
+    \op@ninghooks{start}{\thisch@rstyle}%% execute any <start> hook
   \fi
 }
 %-cchar_startcharstyle
@@ -159,14 +159,14 @@
      \MSG{*** unmatched character style end-marker |\newch@rstyle*}%
    \else
     \ifskipch@rstyle\egroup\else%
-     \cl@singhooks{end}% discover and execute any <end> hook
+     \cl@singhooks{end}{\thisch@rstyle}% discover and execute any <end> hook
      \getmcp@ramR{raise}%
      \ifx\p@ram\relax\else \egroup \raise\p@ram\box0 \fi
-     \cl@singhooks{after}% discover any <after> hooks
+     \cl@singhooks{after}{\thisch@rstyle}% discover any <after> hooks
      \ifnum\n@tenesting>0 \global\advance\n@tenesting by -1 % decrement nesting level
      \else \global\advance\p@ranesting by -1 \fi
      \egroup % end the style's group, so formatting reverts             %(2)
-     \the\afterh@@ks % execute all the <after>-hook, if there was one
+     \the\afterh@@ks%\global\afterh@@ks{} % execute all the <after>-hook, if there was one
     \fi
    \mcpop
    \fi

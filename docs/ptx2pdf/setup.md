@@ -57,10 +57,38 @@ There are also diglot hooks:
 
 [=cdig_define-hooks]::
 
-Within the style system there a style specific hooks that run at different
-points in style processing: before, start, end, after.
+Within the style system there are style specific hooks that run at different
+points in style processing: before, start, end, after. 
 
 [=csty_sethook]::
+
+Style category (see later) and diglot-side specific hooks are processed in a
+defined order, from most general to most specific for the opening markers (before and start),
+and the reverse order for the closing markers (end and after).
+* Marker
+* Diglot-side, marker
+* Category, marker
+* Category, diglot-side, marker
+
+Thus each of the four points could potentially have four hooks associated with
+it, with the more specific hooks able to undo or override changes made by less
+specific ones. The code for the opening hooks (`\op@ninghooks`) is relatively
+straight-foward: if appropriate the internal control sequence name is put
+together  and executed. `\csname foo\endcsname` expands to the definition of
+`\foo` if that exists and  to `\relax` otherwise.
+
+For the closing hooks (`\cl@singhooks`) the situation is more complex. `after` 
+hooks must be defined while the current paragraph or character style is known, 
+but only executed after the enclosing group has been exited.  Temporary (but 
+global, so their definitions are not lost) variables are defined, and then 
+added, as appropriate to a token-list, `\afterh@@ks`.  The final addition to 
+this token list (1) ensures the list is emptied, again globally.
+
+The code (2) checks to see if all this has actually been necessary (i.e. is 
+this an `after` hook) and if not executes the token list, thus keeping code in 
+other parts of the macros a little cleaner.
+
+[=csty_hooks]::
 
 ### Declarations
 

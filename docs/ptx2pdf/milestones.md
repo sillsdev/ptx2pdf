@@ -375,7 +375,7 @@ a chapter then insert the special kern to help `\x`. If we omit verse one then
 cancel the first verse. Then we start the group for the verse and set digits
 back to digits and call our `\marginverse`.
 
-To hook this in we set up our `\initmyverse` which moves '\@V` away so that we
+To hook this in we set up our `\initmyverse` which moves `\@V` away so that we
 can use it later and sets `\v` to `\myv` to hook in. This then gets added as an
 initialisation hook that executes after ptx-stylesheet cv hook. And we also set
 up to use hangprintv@rse to handle verses and bridge verses.

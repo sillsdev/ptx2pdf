@@ -123,10 +123,10 @@
 %:
 % \defp@ram: store the value of a parameter from the .sty file
 %
-% -- ------
-% #1 name of parameter to store
-% #2 value
-% -- ------
+% --|------
+% #1|name of parameter to store
+% #2|value
+% --|------
 % Constructs a macro name \_<marker>_:_<parameter>_ to hold the value.
 % `csname` is required here in order to build a macro name containing a colon and possibly a number.
 %
@@ -141,10 +141,10 @@
 %:
 % \getp@aram: fetch the value of a style parameter into \p@ram
 %
-% -- ------
-% #1 name of parameter to fetch
-% #2 name of marker
-% -- ------
+% --|------
+% #1|name of parameter to fetch
+% #2|name of marker
+% --|------
 % Sets temporary macro \p@ram to the value
 % The macro is diglot aware, allowing all parameters to have L Left/Right variant or use
 % default. (e.g when asked for paramter for v, check for vL|vR, default to v)
@@ -736,7 +736,7 @@
 %+csty_category
 % Define the current category
 \def\s@tc@tprefix#1{%
-  \def\c@tegory{#1}%NOT global
+  \def\c@tegory{#1}%global or NOT global? No apparent issue with either, so stick with local, as that allows nesting.
   \s@tc@tpr@fix
 }
 \def\s@tc@tpr@fix{%
@@ -744,57 +744,82 @@
   \else
     \edef\c@tprefix{cat:\c@tegory|}%
   \fi
-  \trace{sc}{Stylesheet prefix:'\c@tprefix'}%
+  \trace{sc}{Stylesheet prefix for \c@tegory: '\c@tprefix'}%
 }
-\def\@ndc@tprefix{\s@tc@tprefix{}}
+\def\@ndc@t{
+  \ifx\c@tegory\empty
+    \trace{sc}{@ndc@t called with empty category. Eh?}%
+  \else
+    \op@ninghooks{end}{cat}% 
+    \endgroup %End the group started between the cat groups     %(3)
+    \cl@singhooks{after}{cat}%
+    \s@tc@tprefix{}%
+    \the\afterh@@ks
+  \fi
+  \egroup % End the group from the containing code.             %(4)
+}
 \def\cat #1\cat*{%
+  \ifx\c@tegory\empty\else                                      %(5)
+    \trace{sc}{Odd situation: two \\cat commands in one group or nested categories? Assuming nesting.}%
+    % Assume nesting and don't run any endhooks. Otherwise we'd do this:
+    %\op@ninghooks{end}{cat}% 
+    %\endgroup %End the group started between the cat groups  
+    %\cl@singhooks{after}{cat}%
+  \fi
   \s@tc@tprefix{#1}%
+  \op@ninghooks{before}{cat}% Note that there are NO end / closing hooks 
+  \begingroup % This group will be closed between the end and after hooks of endc@t %(1)
+  \op@ninghooks{start}{cat}%
+  \bgroup % This group will be closed by the end-of footnote marker / other container.  %(2)
+  %I.e. we're borrowing the egroup from other bits of code.  
+  \aftergroup\@ndc@t %
 }
 \global\let\c@tprefix\empty
 %-csty_category
 
 %+csty_hooks
 %Hook-runners for paragraph and character styles
-\def\op@ninghooks#1{% for <start> and <before> hooks
-   \csname #1-\newch@rstyle\endcsname % 
-   \ifx\c@tegory\empty\else\csname #1-\c@tprefix\newch@rstyle\endcsname\fi
+\def\op@ninghooks#1#2{% for <start> and <before> hooks
+   \csname #1-#2\endcsname % 
+   \ifx\c@tegory\empty\else\csname #1-\c@tprefix#2\endcsname\fi
    \ifdiglot\setsid@ % \MSG{start-\thisch@rstyle\sid@}%
-     \csname #1-\newch@rstyle\sid@\endcsname\relax % handle side-specific <before> hook
+     \csname #1-#2\sid@\endcsname\relax % handle side-specific <before> hook
      \ifx\c@tegory\empty\else
-        \csname #1-\c@tprefix\newch@rstyle\sid@\endcsname %side-specific and category-specific
+        \csname #1-\c@tprefix#2\sid@\endcsname %side-specific and category-specific
      \fi
    \fi
 }
 \newtoks\afterh@@ks
-\def\cl@singhooks#1{% for <end> and <after> hooks. For <after> hooks, it's necessary to end the group after these are defined 
+\def\cl@singhooks#1#2{% for <end> and <after> hooks. For <after> hooks, it's necessary to end the group after these are defined 
   \global\let\n@xt\relax
   \global\let\n@@xt\relax
   \global\let\n@@@xt\relax
   \global\let\n@@@@xt\relax
-  \tracingassigns=1
+  %\global\afterh@@ks{}%
+  %\tracingassigns=1
   \ifdiglot\setsid@ % \MSG{end-\thisch@rstyle\sid@}%
     \ifx\c@tegory\empty\else
       \x@\global\x@\let\x@\n@xt
-        \csname #1-\c@tprefix\newch@rstyle\sid@\endcsname %side-specific and category-specific
-      \afterh@@ks{\n@xt}%
+        \csname #1-\c@tprefix#2\sid@\endcsname %side-specific and category-specific
+      \x@\global\afterh@@ks{\n@xt}%
     \fi
     \x@\global\x@\let\x@\n@@xt
-      \csname #1-\thisch@rstyle\sid@\endcsname % handle side-specific <end> hook
-    \x@\afterh@@ks\x@{\the\afterh@@ks\n@@xt}%
+      \csname #1-#2\sid@\endcsname % handle side-specific <end> hook
+    \x@\global\x@\afterh@@ks\x@{\the\afterh@@ks\n@@xt}%
   \fi
   \ifx\c@tegory\empty\else
     \x@\global\x@\let\x@\n@@@xt
-      \csname #1-\c@tprefix\newch@rstyle\endcsname
-    \x@\afterh@@ks\x@{\the\afterh@@ks\n@@@xt}%
+      \csname #1-\c@tprefix#2\endcsname
+    \x@\global\x@\afterh@@ks\x@{\the\afterh@@ks\n@@@xt}%
   \fi
   \x@\global\x@\let\x@\n@@@@xt
-    \csname #1-\thisch@rstyle\endcsname%
-  \x@\afterh@@ks\x@{\the\afterh@@ks\n@@@@xt}%
-  \showthe\afterh@@ks
-  \edef\@@@a{#1}\edef\@@@b{after}%
-  \ifx\@@@a\@@@b\else\the\afterh@@ks\afterh@@ks{}\fi
-  \tracingassigns=0
+    \csname #1-#2\endcsname%
+  \x@\global\x@\afterh@@ks\x@{\the\afterh@@ks\n@@@@xt\global\afterh@@ks{}}% Notice the self-clearing %(1)
+  %\showthe\afterh@@ks
+  \edef\@@@a{#1}%                                                  %(2)
+  \ifx\@@@a\@fter\else\the\afterh@@ks\fi
 }
+\edef\@fter{after}
 %-csty_hooks
 % Create registers to hold configuration information, set defaults
 \newdimen\FontSizeUnit		\FontSizeUnit=1bp % units for font sizes in Paratext stylesheet
