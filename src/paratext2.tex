@@ -958,7 +958,7 @@
     %\global\advance\vsize by -\baselineskip
     %\global\let\whichtrial=\savepartialpaged
     \global\let\whichtrial=\twocoltrial
-    %\global\rerunsavepartialpagedtrue
+    \global\rerunsavepartialpagedtrue
     \global\output={\backingup}%
     \tempfalse%\ifvoid\partial\else\temptrue\fi%
     % remember \holdingInserts=1 from \@emptyinserts
@@ -1036,7 +1036,7 @@
     \nextshipout
     \global\holdinginserts=1
     \ifrerunsavepartialpaged
-      \global\output={\savepartialpaged}\unvbox\s@vedpage\global\rerunsavepartialpagedfalse
+      \global\output={\savepartialpaged}\global\rerunsavepartialpagedfalse\unvbox\s@vedpage
     \else\global\output={\twocols}\unvbox\s@vedpage\fi
   \else % the contents of the "galley" didn't fit into the columns,         %(+)
         % so reduce \vsize and try again with an earlier break
