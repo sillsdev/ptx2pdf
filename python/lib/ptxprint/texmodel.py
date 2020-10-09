@@ -1121,6 +1121,8 @@ class TexModel:
                         break
                 if not found:
                     figchngs.append((f,"")) 
+        if len(figchngs):
+            print(figchngs)
         return(figchngs)
 
     def base(self, fpath):

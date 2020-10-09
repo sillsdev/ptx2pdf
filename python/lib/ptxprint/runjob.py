@@ -144,6 +144,7 @@ class RunJob:
         self.res = 0
         self.thread = None
         self.busy = False
+        self.ispdfxa = False
 
     def doit(self):
         if not lockme(self):
@@ -171,6 +172,7 @@ class RunJob:
         self.checkForMissingDecorations(info)
         if info.asBool("document/ifinclfigs"):
             self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
+        self.ispdfxa = self.printer.get("c_PDFx1aOutput")
         
         if info.asBool("project/combinebooks"):
             joblist = [jobs]
@@ -523,14 +525,20 @@ class RunJob:
         return res
 
     def convertToJPGandResize(self, ratio, infile, outfile):
-        white = (255, 255, 255, 255)
+        if self.ispdfxa:
+            white = (0, 0, 0, 0)
+            fmt = fmta = "CMYK"
+        else:
+            white = (255, 255, 255, 255)
+            fmta = "RGBA"
+            fmt = "RGB"
         with open(infile,"rb") as inf:
             rawdata = inf.read()
         newinf = cStringIO(rawdata)
         im = Image.open(newinf)
         try:
             p = im.load()
-            onlyRGBAimage = im.convert('RGBA')
+            onlyRGBAimage = im.convert(fmta)
             iw = im.size[0]
             ih = im.size[1]
         except OSError:
@@ -541,15 +549,15 @@ class RunJob:
         if iw/ih < ratio:
             # print(infile)
             newWidth = int(ih * ratio)
-            newimg = Image.new("RGBA", (newWidth, ih), color=white)
+            newimg = Image.new(fmta, (newWidth, ih), color=white)
             newimg.alpha_composite(onlyRGBAimage, (int((newWidth-iw)/2),0))
             iw = newimg.size[0]
             ih = newimg.size[1]
             # print(">>>>>> Resized: ih={} iw={}".format(ih, iw))
-            onlyRGBimage = newimg.convert('RGB')
+            onlyRGBimage = newimg.convert(fmt)
             onlyRGBimage.save(outfile)
         else:
-            onlyRGBimage = onlyRGBAimage.convert('RGB')
+            onlyRGBimage = onlyRGBAimage.convert(fmt)
             onlyRGBimage.save(outfile)
 
     def carefulCopy(self, ratio, srcpath, tgtfile):
@@ -564,7 +572,7 @@ class RunJob:
             return srcpath
         # If either the source image is a TIF (or) the proportions aren't right for page dimensions 
         # then we first need to convert to a JPG and/or pad with which space on either side
-        if iw/ih < ratio or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
+        if self.ispdfxa or iw/ih < ratio or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
             tgtpath = os.path.splitext(tgtpath)[0]+".jpg"
             try:
                 self.convertToJPGandResize(ratio, srcpath, tgtpath)

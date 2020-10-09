@@ -111,6 +111,16 @@ class Usfm:
         self.chapters = []
         ref = ["", "0", "0"]
         pending = []
+
+        def isHeading(e):
+            if not isinstance(e, sfm.Element):
+                return False
+            if e.meta.get('StyleType', '').lower() != 'paragraph':
+                return False
+            if e.meta.get('TextType', '').lower() == 'section':
+                return True
+            return False
+
         def _g(_, e):
             if isinstance(e, sfm.Element):
                 if e.name == 'id':
@@ -130,13 +140,16 @@ class Usfm:
                     for t in pending:
                         t.pos = _Reference(t.pos, ref)
                     pending.clear()
-                elif e.meta.get('StyleType', '') == 'Paragraph':
-                    if ref[2] != "0":
+                elif ref[2] != "0":
+                    if isHeading(e) or len(pending):
                         pending.append(e)
                 e.pos = _Reference(e.pos, ref)
                 reduce(_g, e, None)
             else:
-                e.pos = _Reference(e.pos, ref)
+                if len(pending):
+                    pending.append(e)
+                else:
+                    e.pos = _Reference(e.pos, ref)
         reduce(_g, self.doc, None)
         self.cvaddorned = True
 
@@ -219,16 +232,20 @@ class Usfm:
             return res
         ge(0, self.doc[0])
 
-    def _proctext(self, fn):
+    def _proctext(self, fn, doc=None):
         def _g(e):
             if isinstance(e, sfm.Element):
                 e[:] = map(_g, e)
                 return e
             else:
                 return fn(e)
-        self.doc = map(_g, self.doc)
+        if doc is None:
+            self.doc = map(_g, self.doc)
+            return self.doc
+        else:
+            return map(_g, doc)
 
-    def transform_text(self, *regs):
+    def transform_text(self, *regs, doc=None):
         """ Given tuples of (lambda, match, replace) tests the lambda against the
             parent of a text node and if matches (or is None) does match and replace. """
         def fn(e):
@@ -245,9 +262,9 @@ class Usfm:
                 return sfm.Text(s, e.pos, e.parent)
             else:
                 return e
-        self._proctext(fn)
+        self._proctext(fn, doc=doc)
 
-    def letter_space(self, inschar):
+    def letter_space(self, inschar, doc=None):
         from ptxprint.sfm.ucd import get_ucd
         def fn(e):
             if not isScriptureText(e.parent):
@@ -269,7 +286,7 @@ class Usfm:
             if done:
                 print("{} -> {}".format(e, "".join(res)))
             return sfm.Text("".join(res), e.pos, e.parent) if done else e
-        self._proctext(fn)
+        self._proctext(fn, doc=doc)
 
 def read_module(inf, sheets):
     lines = inf.readlines()
@@ -323,7 +340,6 @@ class Module:
     def __init__(self, fname, usfms):
         self.fname = fname
         self.usfms = usfms
-        self.removes = set()
         self.sheets = self.usfms.sheets.copy()
         modinfo = { 'OccursUnder': {'id'}, 'TextType': 'Other', 'EndMarker': None, 'StyleType': 'Paragraph'}
         modsheet = {k: style.marker(modinfo) for k in ('inc', 'vrs', 'ref', 'refnp', 'rep', 'mod')}
@@ -332,26 +348,42 @@ class Module:
             self.doc = read_module(inf, self.sheets)
 
     def parse(self):
+        self.removes = set()
         final = sum(map(self.parse_element, self.doc.doc), start=[])
         return final
-        
+
     def parse_element(self, e):
         if isinstance(e, sfm.Text):
             return [e]
         elif e.name == "ref" or e.name == "refnp":
             res = []
             isidparent = e.parent is None or e.parent.name == "id"
+            reps = []
+            curr = e.parent.index(e)
+            while curr + 1 < len(e.parent):
+                rep = e.parent[curr+1]
+                if rep.name != "rep":
+                    break
+                # parse rep
+                m = re.match("^\s*(.*?)\s*=>\s*(.*?)\s*$", rep[0], re.M)
+                if m:
+                    reps.append((None,
+                            re.compile(r"(?<=\s|^)"+m.group(1).replace("...","[^\n\r]+")+"(\\b|(?=\\s)|$)",
+                            m.group(2))))
+                del e.parent[curr+1]
             for r in parse_refs(e[0]):
                 p = self.get_passage(r, removes=self.removes, strippara=e.name=="refnp")
                 if e.name == "ref":
                     for i, t in enumerate(p):
-                        if isinstance(t, sfm.Element) and t.meta.get('StyleType', '') == 'Paragraph':
+                        if isinstance(t, sfm.Element) and t.meta.get('StyleType', '').lower() == 'paragraph':
                             if i:
                                 p[0:i] = [self.new_element(e, "p1" if isidparent else "p", p[0:i])]
                             break
                     else:
                         p = [self.new_element(e, "p1" if isidparent else "p", p)]
                 res.extend(p)
+            if len(reps):
+                res = self.doc.transform_text(*reps, doc=res)
             return res
         elif e.name == 'inc':
             s = "".join(e).strip()
@@ -360,6 +392,9 @@ class Module:
                     self.removes = set(sum(exclusionmap.values(), []))
                 else:
                     self.removes.difference_update(exclusionmap.get(c, []))
+        elif e.name == 'mod':
+            mod = Module(e[0].strip(), self.usfms)
+            return mod.parse()
         else:
             cs = sum(map(self.parse_element, e), start=[])
             e[:] = cs

@@ -399,6 +399,7 @@ class parser(sfm.parser):
             self._tokens.put_back(tok)
 
         return self._canonicalise_footnote(self._default_(parent))
+    _notetext_ = _NoteText_
 
     def _Unspecified_(self, parent):
         orig_name = parent.name

@@ -145,7 +145,7 @@ class StyleEditor:
         for k, v in sorted(self.sheet.items(), key=lambda x:(len(x[0]), x[0])):
             cat = 'Other'
             if 'Name' in v:
-                m = name_reg.match(v['Name'])
+                m = name_reg.match(str(v['Name']))
                 if m:
                     cat = m.group(1) or m.group(3)
                     cat = categorymapping.get(cat, cat)

@@ -895,7 +895,7 @@ class GtkViewModel(ViewModel):
                 genBtn.set_sensitive(True)
 
         elif pgid in ("scroll_TeXfile", "scroll_XeTeXlog"): # (TeX,Log)
-            fpath = os.path.join(self.working_dir, self.baseTeXPDFname()[0])+fndict[pgid][1]
+            fpath = os.path.join(self.working_dir, self.baseTeXPDFnames()[0])+fndict[pgid][1]
 
         elif pgid == "scroll_Settings": # View/Edit one of the 4 Settings files or scripts
             fpath = self.builder.get_object("l_Settings").get_tooltip_text()
@@ -1809,7 +1809,7 @@ class GtkViewModel(ViewModel):
         GLib.idle_add(fn, *args)
 
     def showLogFile(self):
-        self.builder.get_object("nbk_Main").set_current_page(11)   # Switch to the Viewer tab
+        self.builder.get_object("nbk_Main").set_current_page(12)   # Switch to the Viewer tab
         self.builder.get_object("nbk_Viewer").set_current_page(4) # Display the tab with the .log file
         # self.builder.get_object("scroll_XeTeXlog").scroll_to_mark(self.buf[4].get_insert(), 0.0, True, 0.5, 0.5)
 
