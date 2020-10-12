@@ -639,19 +639,6 @@ class TexModel:
                         fname = self.dict['project/books'][i]
                         if extra != "":
                             fname = re.sub(r"^([^.]*).(.*)$", r"\1"+extra+r".\2", fname)
-                        # if f in ["XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG",
-                                # "GLO", "TDX", "NDX", "CNC", "OTH", "BAK"]:
-                            # mirror = self.asBool("header/mirrorlayout")
-                            # for toe in ['title', 'noVodd', 'noVeven']:
-                                # for side in ('left', 'center', 'right'):
-                                    # v = self.dict["header/hdr"+side]
-                                    # t = self._hdrmappings.get(v, v)
-                                    # if not t.endswith("ref"):
-                                        # if mirror and side != 'center' and toe == 'noVeven': 
-                                            # res.append("\\def\RH{}{}{{{}}}\n".format(toe, self._swapRL[side], t))
-                                        # else:
-                                            # res.append("\\def\RH{}{}{{{}}}\n".format(toe, side, t))
-                                # res.append("\n")
                         if self.asBool('document/ifomitsinglechnum') and \
                            self.asBool('document/showchapternums') and \
                            f in oneChbooks:

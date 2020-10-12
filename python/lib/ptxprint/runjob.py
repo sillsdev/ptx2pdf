@@ -487,10 +487,10 @@ class RunJob:
         pageRatios = self.usablePageRatios(info)
         tmpPicpath = os.path.join(self.printer.working_dir, "tmpPics")
         folderList = ["tmpPics", "tmpPicLists"] 
-        try:
-            self.removeTmpFolders(self.printer.working_dir, folderList, mkdirs=True)
-        except PermissionError:
-            print("Warning: Couldn't Remove Temporary Folders - is a temp file open?")
+        #try:
+        #    self.removeTmpFolders(self.printer.working_dir, folderList, mkdirs=True)
+        #except PermissionError:
+        #    print("Warning: Couldn't Remove Temporary Folders - is a temp file open?")
             
         def carefulCopy(p, src, tgt):
             ratio = pageRatios[0 if p['size'].startswith("span") else 1]
@@ -508,7 +508,7 @@ class RunJob:
         res = [v['dest file'] for v in picinfos.values() if 'dest file' in v]
         print("processes {} vs failed {} pics".format(len(res), len(missingPics)))
         outfname = info.printer.baseTeXPDFnames(jobs)[0] + ".piclist"
-        picinfos.out(os.path.join(self.tmpdir, outfname), skipkey="disabled", usedest=True)
+        picinfos.out(os.path.join(self.tmpdir, outfname), bks=jobs, skipkey="disabled", usedest=True)
         info["document/piclistfile"] = outfname
 
         if len(missingPics):

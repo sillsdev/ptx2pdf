@@ -480,9 +480,11 @@ class PicInfo(dict):
                     if nB not in newfigs:
                         continue
                     for k in newfigs[nB]:
+                        if 'dest file' in self[k]:
+                            continue
                         if key in self[k]:
-                            old = extensions.get(os.path.splitext(self[k][key])[1].lower(), 10000)
-                            new = extensions.get(os.path.splitext(filepath)[1].lower(), 10000)
+                            old = self.extensions.get(os.path.splitext(self[k][key])[1].lower(), 10000)
+                            new = self.extensions.get(os.path.splitext(filepath)[1].lower(), 10000)
                             if old > new:
                                 self[k][key] = filepath
                             elif old == new and (self.get("c_useLowResPics") \

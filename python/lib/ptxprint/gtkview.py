@@ -575,7 +575,8 @@ class GtkViewModel(ViewModel):
             self.updateDialogTitle()
         self.writeConfig()
         if self.picinfos is not None:
-            self.picinfos.out(os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint", "{}.piclist".format(self.prjid)))
+            self.picinfos.out(os.path.join(self.configPath(self.configName()),
+                                "{}-{}.piclist".format(self.prjid, self.configName())))
 
     def writeConfig(self, cfgname=None):
         if self.prjid is not None:
