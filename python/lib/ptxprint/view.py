@@ -413,6 +413,8 @@ class ViewModel:
             self.diglotView = self.createDiglotView()
         else:
             self.diglotView = None
+        if self.picinfos is None:
+            self.picinfos = PicInfo(self)
         if self.get("c_includeillustrations"):
             self.picinfos.load_files()
         else:

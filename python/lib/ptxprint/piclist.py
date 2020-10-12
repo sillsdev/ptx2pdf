@@ -316,11 +316,13 @@ class PicInfo(dict):
             cfg = self.config
         if prjdir is None or prj is None or cfg is None:
             return
-        for f in ["shared/ptxprint/{}.piclist".format(prj),
-                   "shared/ptxprint/{1}/{0}-{1}.piclist".format(prj, cfg)] \
-                + ["shared/ptxprint/{0}/PicLists/{1}".format(cfg, x) \
-                        for x in os.listdir(os.path.join(prjdir, "shared", "ptxprint", cfg, "PicLists")) \
-                        if x.lower().endswith(".piclist")]:
+        places = ["shared/ptxprint/{}.piclist".format(prj),
+                  "shared/ptxprint/{1}/{0}-{1}.piclist".format(prj, cfg)]
+        plistsdir = os.path.join(prjdir, "shared", "ptxprint", cfg, "PicLists")
+        if os.path.exists(plistsdir):
+            places += ["shared/ptxprint/{0}/PicLists/{1}".format(cfg, x) \
+                        for x in os.listdir(plistsdir) if x.lower().endswith(".piclist")]
+        for f in places:
             p = os.path.join(prjdir, f)
             if os.path.exists(p):
                 self.read_piclist(p, suffix=suffix)

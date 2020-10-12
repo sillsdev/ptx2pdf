@@ -170,6 +170,7 @@ class RunJob:
             self.maxRuns = 5
         self.changes = None
         self.checkForMissingDecorations(info)
+        info["document/piclistfile"] = ""
         if info.asBool("document/ifinclfigs"):
             self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
         self.ispdfxa = self.printer.get("c_PDFx1aOutput")
@@ -183,8 +184,9 @@ class RunJob:
             digfraction = info.dict["document/diglotprifraction"]
             digprjid = info.dict["document/diglotsecprj"]
             digcfg = info.dict["document/diglotsecconfig"]
+            digprjdir = os.path.join(self.args.paratext, digprjid)
             digptsettings = ParatextSettings(self.args.paratext, digprjid)
-            diginfo = TexModel(self.diglotView, self.args.paratext, digptsettings, digprjid)
+            diginfo = TexModel(self.printer.diglotView, self.args.paratext, digptsettings, digprjid)
             self.texfiles += sum((self.digdojob(j, info, diginfo, digprjid, digprjdir) for j in joblist), [])
         else: # Normal (non-diglot)
             self.texfiles += sum((self.dojob(j, info) for j in joblist), [])
