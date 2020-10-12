@@ -68,6 +68,7 @@ may also have their own watermark or background image.
 
 %\FgImageScale  value(0-1)
 % Width of the image relatve to the size of the size of the containing box.
+% Default: 0.2
 
 %\BgImage      
 %\BgImageScale   

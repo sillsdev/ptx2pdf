@@ -300,6 +300,8 @@
    \fi
    \nobreak\hskip0.5sp % let \x detect that there's "space" (or maybe drop-chapter) here
   }
+  \let\C@T\cat %Preserve \cat definition from stylesheet in case that's ever useful, and then restore it to correct version
+  \let\cat\c@t
 %-csty_defv
   % define handling for usfm \v marker
 %+csty_verse
@@ -364,6 +366,8 @@
   \def\m@rker{c}\defp@ram{fontsize}{\dr@psize}
   \ifdiglot \resetdropc@p\fi%Can't do this here since things get lowercased
  }
+%-csty_dropchap
+
 }
 
 \def\calcdr@psize{%
@@ -584,9 +588,10 @@
  \let\regular=\save@regular
  \let\bold=\save@bold
  \let\italic=\save@italic
- \ifx\oldc@tegory\c@tegory\else\message{Error: Stylesheet changed category from '\oldc@tegory' to '\c@tegory'.}\fi%
+ \ifx\oldc@tegory\c@tegory\else\ifsubc@ll\else\message{Error: Stylesheet changed category from '\oldc@tegory' to '\c@tegory'.}\fi\fi%
  \global\let\c@tegory=\oldc@tegory
 }
+\newif\ifsubc@ll \subc@llfalse
 %-csty_stylesheet
 
 \newif\iflastptxfile
@@ -758,7 +763,8 @@
   \fi
   \egroup % End the group from the containing code.             %(4)
 }
-\def\cat #1\cat*{%
+% remember as c@t, onetime setup will define \cat to this, protecting the definition from stylesheet
+\def\c@t #1\cat*{%
   \ifx\c@tegory\empty\else                                      %(5)
     \trace{sc}{Odd situation: two \\cat commands in one group or nested categories? Assuming nesting.}%
     % Assume nesting and don't run any endhooks. Otherwise we'd do this:
@@ -767,7 +773,8 @@
     %\cl@singhooks{after}{cat}%
   \fi
   \s@tc@tprefix{#1}%
-  \op@ninghooks{before}{cat}% Note that there are NO end / closing hooks 
+  \the\c@th@@ks% Run anythingthe enclosing code wants
+  \op@ninghooks{before}{cat}% 
   \begingroup % This group will be closed between the end and after hooks of endc@t %(1)
   \op@ninghooks{start}{cat}%
   \bgroup % This group will be closed by the end-of footnote marker / other container.  %(2)
@@ -789,6 +796,7 @@
      \fi
    \fi
 }
+\newtoks\c@th@@ks
 \newtoks\afterh@@ks
 \def\cl@singhooks#1#2{% for <end> and <after> hooks. For <after> hooks, it's necessary to end the group after these are defined 
   \global\let\n@xt\relax

@@ -33,19 +33,17 @@
 % Declare things we need.
 
 \newbox\extb@x % Box in which extended study matter is placed
-\newinsert\extended
 \newif\ifinextended \inextendedfalse
 \newtoks\old@bx %store old definition of \everyhbox
 \def\c@tegory{}
 
 
-\def\setcatp@ram#1#2{\x@\xdef\csname c@tegory-\c@tegory-#1\endcsname{#2}}
-\def\getcatp@ram#1{\x@\let\x@\cp@ram\csname c@tegory-\c@tegory-#1\endcsname\ifx\cp@ram\empty\global\let\cp@ram\relax\fi}
+\def\setcatp@ram#1#2{\trace{sc}{Styling cat \c@tegory:#1 #2}\x@\xdef\csname c@tegory-\c@tegory-#1\endcsname{#2}}
+\def\getcatp@ram#1{\x@\let\x@\cp@ram\csname c@tegory-\c@tegory-#1\endcsname\ifx\cp@ram\empty\global\let\cp@ram\relax\fi\trace{sc}{Got result for \c@tegory:#1: \cp@ram}}
 \setcatp@ram{hascol}{T}
 \setcatp@ram{colour}{0 1 0}
 \setcatp@ram{alpha}{0.2}% 1=solid 0=invisible
 \setcatp@ram{posn}{b}
-\setcatp@ram{wid}{\colwidth}
 \setcatp@ram{fgfigspec}{}%Normally no picture.
 \def\fb@hpadding{1pt}%Added left and right of feintbox content
 \def\fb@vpadding{1pt}%added above and below feintbox content
@@ -72,33 +70,116 @@
   \egroup}
 \def\feintbox#1#2#3{% Set a (transparent) coloured box as background for box given in #3. #1: alpha, #2: {r g b}  (all numbers in range 0-1.0)
   \setbox0#3\hbox{\feintb@x{#1}{#2}{\ht0}{\dp0}{\wd0}\box0}}
-\def\esb{\setbox\extb@x\vbox\bgroup\inextendedtrue\old@bx{\the\everyhbox}\everyhbox{\st@rtesb}}
 
-\def\st@rtesb{%
- \everyhbox{\old@bx}%
- \getcatp@ram{wid}\hsize=\cp@ram
- \getcatp@ram{fgfigspec}\ifx\cp@ram\relax\else\x@\fig \cp@ram\fig*\fi
+\def\minip@rs@two#1#2\end{%
+   \edef\tempc{#1}\edef\tempd{#2}}%
+\def\minip@rsepos#1#2\mid#3\end{%Parse just enough of the FgImagePos and pos parameters to determine the \hsize
+   \edef\tempa{#1}\edef\tempb{#2}%
+   \minip@rs@two#3\end
+   \trace{e}{parsed: \tempa(\tempb), \tempc(\tempd)}%
 }
 
-\def\esbe{\ifinextended\egroup\else\message{\\ebse called without \\esb}\fi
+\def\s@tesbwidth{%Set default / specific width of esb box
+ %h*,c*,p* take the current page width as their base
+ %tX,bX take the column width 
+ %t,b,B take the text width
+ \getcatp@ram{posn}
+ \ifx\cp@ram\relax\gdef\esbpos{bo}\else
+   \global\let\esbpos\cp@ram
+ \fi
+ \getcatp@ram{fgfigpos}\let\fgfigp@s\cp@ram
+ \getcatp@ram{fgfigspec}\let\fgfigsp@c\cp@ram
+ \getcatp@ram{wid}%
+ \ifx\cp@ram\relax
+   \x@\minip@rsepos\fgfigp@s\mid\esbpos\end
+   \dimen1=\hsize
+   \ifx\tempd\empty
+     \if\tempc t\dimen1=\textwidth\else
+       \if\tempc b\dimen1=\textwidth\else
+         \if\tempc B\dimen1=\textwidth\fi\fi\fi
+   \else
+     \if\tempc t\dimen1=\colwidth\else
+       \if\tempc b\dimen1=\colwidth\fi\fi
+   \fi
+   % Now apply scale..
+   \getcatp@ram{scale}\ifx\cp@ram\relax\else
+      \dimen1=\cp@ram\dimen1
+   \fi
+   % And shrink further if s has been specified for the fg picture
+   \ifx\fgfigsp@c\empty\else
+     \if\tempa s
+     \getcatp@ram{fgfigscale}%
+     \ifx\cp@ram\relax
+       \dimen0=0.2\dimen1
+     \else
+       \dimen0=\cp@ram\dimen1
+     \fi
+     \advance\dimen1 by \dimen0
+   \fi\fi
+   \setcatp@ram{wid}{\the\dimen1}%
+ \else
+   \dimen1=\cp@ram
+ \fi
+ \hsize=\dimen1
+}
+ 
+\def\@sb{\let\oldc@tegory\c@tegory
+  \getcatp@ram{wid}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup
+    \s@tesbwidth\inextendedtrue
+    %\global\holdinginserts=0
+    \global\c@th@@ks{\st@rtesb}}
+
+\def\st@rtesb{%Gets run by \cat..\cat*, if one is used. 
+ \c@th@@ks{}%Once per box is enough!
+ \s@tesbwidth
+ \trace{e}{startESB \the\dimen1}%
+ %\egroup\setbox\extb@x\vbox\bgroup
+ \getcatp@ram{fgfigspec}\ifx\cp@ram\relax\else\x@\fig \cp@ram\fig*\fi
+}
+\def\esbb@x{ESB inset box}
+
+\def\@sbe{\ifinextended\global\let\c@t@gory\c@tegory\egroup\else\message{\\ebse called without \\esb}\fi
+  \trace{e}{ESBE}%
+  \let\c@tegory\c@t@gory%recover boxed value
   \inextendedfalse
-  \getcatp@ram{bgfiglow}%
-  \if\cp@ram F\getcatp@ram{bgfigspec}\ifx\cp@ram\relax\else
-    %FIXME: modify the esbbox
-  \fi\fi
+  \getcatp@ram{bgfigspec}\let\bgf@gsp@c\cp@ram
+  \getcatp@ram{bgfiglow}\let\bgf@gl@w\cp@ram%
+  \tempfalse
+  \ifx\bgf@gsp@c\relax\else
+    \if\bgf@gl@w F
+      \temptrue
+    \fi
+    \getcatp@ram{hascol}%
+    \if\cp@ram F
+      \temptrue
+    \fi
+  \fi
+  \iftemp
+    %modify the esbbox
+    \setbox\extb@x\vbox to \ht\extb@x{\vbox to 0pt{\vbox to\ht\extb@x{\vfil\d@figure{\bgf@gsp@c}\vfil}\vss}\extb@x}%
+    \let\bgf@gsp@c\relax %used it, so if it's still there later, we need to use it.
+  \fi
+  \let\w@tsit\esbb@x   % Make sure the debugging info is correct
+  %\ifx\esbpos\relax\gdef\esbpos{bo}\fi
+  \let\loc@ption\esbpos
+  \x@\p@rsePicUse\loc@ption\end 
   \getcatp@ram{hascol}%
   \if\cp@ram T
     \getcatp@ram{alpha}\let\pdf@lpha=\cp@ram
     \getcatp@ram{colour}\let\pdfBGc@l=\cp@ram
-    \getcatp@ram{pos}\let\esbpos\cp@ram
-    \getcatp@ram{bgfigspec}%
-    \insert\bottomleftins{\vskip\baselineskip\feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extb@x}}%
-  \else
-    \insert\bottomleftins{%
-    \ifx\cp@ram\relax\else\vbox to 0px{\vbox to\ht\extb@x{\vfil\d@figure{\cp@ram}\vfil}\vss}\fi
-    \vskip\baselineskip
-    \box\extb@x}%
+    \setbox\extb@x\vbox{%
+      \ifx\bgf@gsp@c\relax\else\vbox to 0pt{\vbox to\ht\extb@x{\vfil\d@figure{\bgf@gsp@c}\vfil}\vss}\fi
+      \vskip\baselineskip\feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extb@x}}%
   \fi
+  \ifpicUsesIns
+    \trace{e}{using ins-\loc@ption}%
+    \x@\let\x@\@xtins\csname ins-\loc@ption\endcsname
+    \insert\@xtins{\vskip\baselineskip\box\extb@x}%
+  \else
+    \trace{e}{\loc@ption\space is inline}%
+    \unvbox\extb@x
+  \fi
+  \let\c@tegory\oldc@tegory 
 }
 
 % Category file parsing 
@@ -106,13 +187,15 @@
   \S@tCat{#1}%
   \setcatp@ram{bgfigscale}{1}%
   \setcatp@ram{fgfigsize}{box}%What is image scaled to?
-  \setcatp@ram{fgfigscale}{0.5}%
+  \setcatp@ram{fgfigscale}{0.2}%
   \setcatp@ram{fgfigpos}{cl}%Default is cutout left
   \setcatp@ram{bgfigscale}{1}%Full size
   \setcatp@ram{bgfigpos}{pc}%Horizontally centred
   \setcatp@ram{hascol}{F}%No default colour.
+  \setcatp@ram{posn}{bo}%
 }
 \def\Position   #1\relax{\setcatp@ram{posn}{#1}}% Where does it go on the page? (like figures, but also B for below notes)
+\def\Scale      #1\relax{\setcatp@ram{scale}{#1}}% Where does it go on the page? (like figures, but also B for below notes)
 \def\Breakable   #1\relax{\setcatp@ram{break}{\uppercase #1}} %Can the box page-break?
 \def\FgImage      #1\relax{\setcatp@ram{fgfigname}{#1}\GenC@tFig{fg}}
 \def\FgImagePos   #1\relax{\setcatp@ram{fgfigpos}{#1}\GenC@tFig{fg}}
@@ -133,12 +216,18 @@
 }
 \def\EndCategory{\gdef\c@tegory{}\global\let\c@tprefix\empty}
 
-\def\S@tCat#1{\message{Started Category #1}%
+\def\S@tCat#1{\trace{sc}{Started Category #1}%
   \gdef\c@tegory{#1}%
   \s@tc@tpr@fix%
 }
-\message{Started Category #1}\def\StyleCategory#1#2{\S@tCat{#1}#2\EndCategory}
+\def\testcategory{\c@tegory}
+
+\def\StyleCategory#1#2{\S@tCat{#1}#2\EndCategory}
 \def\categorysheet#1{%Just wrap \stylesheet with category-blanking commands
+  \subc@lltrue
   \EndCategory\stylesheet{#1}\EndCategory
+  \subc@llfalse
 }
+
+\addtoinithooks{\let\@SB\esb\let\@SBE\ESBE \let\esb\@sb\let\esbe\@sbe}
 

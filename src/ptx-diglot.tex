@@ -199,6 +199,7 @@
      \decr{\availht}{\bottomrightins}%
    \fi%
    \decr{\availht}{\bottomins}%
+   \decr{\availht}{\verybottomins}%
    \ifdiglotL%
      \global\availhtL=\availht %
    \else%
@@ -1857,6 +1858,8 @@
      \m@kenotebox
      \unvbox2 % defined by m@kenotebox
    \fi%
+   \ifvoid\verybottomins\else % \kern-\dimen0
+     \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi
   }%
   \trace{D}{PFM:\p@gefirstmark\space PBM:\p@gebotmark\space NPFM:\nextp@gefirstmark}%
   \global\adjustp@ge=0pt

@@ -384,7 +384,7 @@
   \f@rstnotetrue
   \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
   \decr{\availht}{\topins}% and by the space needed for spanning pictures
-  \decr{\availht}{\bottomins}
+  \decr{\availht}{\bottomins}%And post-footnote inserts
   \ifdim\availht<0pt                                                        %(2)
     \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}
   \fi
@@ -417,6 +417,8 @@
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2 \space Leaving \the\ht255, \the\dp255}%
       \ifdim\ht2<0pt\trace{b}{Strange notes height}\fi
       \unvbox2
+      \ifvoid\verybottomins\else % \kern-\dimen0
+        \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi
     }
 %-c_onecoltrial_pagecontents
 %+c_onecoltrial_pagefit
@@ -557,6 +559,8 @@
       \m@kenotebox
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}
       \unvbox2
+      \ifvoid\verybottomins\else%
+        \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\verybottomins \unvbox\verybottomins \fi
     }
     \resetvsize%
     \ifdim\ht\colA>\baselineskip\plainoutput
@@ -882,6 +886,7 @@
   \global\setbox\toprightins=\box\voidb@x
   \global\setbox\bottomleftins=\box\voidb@x
   \global\setbox\bottomrightins=\box\voidb@x
+  \global\setbox\verybottomins=\box\voidb@x
   \global\setbox255=\box\voidb@x
   \global\holdinginserts=1
 }
@@ -906,6 +911,7 @@
   \multiply\availht by 8 \divide\availht by\dimen0 \multiply\availht by\dimen0 \divide\availht by 8
   \decr{\availht}{\topins}% and by the space needed for spanning pictures
   \decr{\availht}{\bottomins}%
+  \decr{\availht}{\verybottomins}%
   \advance\availht by \dp255 % split includes depth so give it space for that
   \trace{o}{new availht=\the\availht, topins=\the\ht\topins, bottomins=\the\ht\bottomins, baselineskip=\the\baselineskip}%
   \splittopskip=\topskip
@@ -1027,6 +1033,8 @@
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
       \unvbox2
       \global\noteseenfalse%
+      \ifvoid\verybottomins\else%
+        \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi % ouput bottom spanning picture
     }
     \global\setbox255=\box\voidb@x                                          %(+)
     \resetvsize % reset size of next page since it will not have any 1 column material
@@ -1158,6 +1166,8 @@
     \m@kenotebox
     \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
     \unvbox2
+    \ifvoid\verybottomins\else % \kern-\dimen0
+      \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi
     }}\plainoutput
     \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
     \nextshipout

@@ -34,6 +34,7 @@
 % Inserts
 \count\topins=1000 \dimen\topins=\maxdimen \skip\topins=0pt
 \newinsert\bottomins \count\bottomins=1000 \dimen\bottomins=\maxdimen
+\newinsert\verybottomins \count\bottomins=1000 \dimen\bottomins=\maxdimen
 \newinsert\topleftins \count\topleftins=1000 \dimen\topleftins=\maxdimen
 \newinsert\toprightins \count\toprightins=1000 \dimen\toprightins=\maxdimen
 \newinsert\bottomleftins \count\bottomleftins=1000 \dimen\bottomleftins=\maxdimen
@@ -157,6 +158,7 @@
 \def\p@rsePicXtra#1#2\end{% Parse optional new picture options, and remember them
   \xdef\t@mpb{#1}\xdef\t@mpc{#2}%
 }
+\def\gr@phic{graphic}
 \def\p@rsePicUse#1#2\end{% Parse the new picture options, and remember them
   \edef\t@mp{#1}\edef\t@mpb{#2}%
   \ifx\t@mpb\empty\let\t@mpc=\t@mpb\else\x@\p@rsePicXtra\t@mpb\end\fi
@@ -173,12 +175,12 @@
     \ifx\t@mp\loc@T\temptrue\fi
     \ifx\t@mp\loc@B\temptrue\fi
     \iftemp
-      %redefine loc@option
+      %redefine loc@ption
       \xdef\loc@ption{\t@mp\t@mpb}%
   \fi\fi
   % new options 
   \ifx\t@mp\loc@Inl
-    \trace{g}{Experimental inline graphic}%
+    \trace{g}{Experimental inline \w@tsit}%
     \global\let\picl@c\loc@Inl\xdef\pic@lign{\t@mpb}\global\picUsesInsfalse\p@cinswid=\hsize
     \ifx\t@mpb\@lignLeft\picNarrowtrue\fi
     \ifx\t@mpb\@lignRight\picNarrowtrue\fi
@@ -187,10 +189,10 @@
     \global\let\picl@c\loc@Cut\global\picUsesInsfalse\global\picNarrowtrue\p@cinswid=\hsize
     \xdef\l@cspec{\t@mpb}%
     \ifx\t@mpc\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\t@mpc}\fi%
-    \trace{g}{Experimental graphic in cutout, after \c@tskip lines}%
+    \trace{g}{Experimental \w@tsit in cutout, after \c@tskip lines}%
   \fi
   \ifx\t@mp\loc@Par
-    \global\let\picl@c=\loc@Par\p@cinswid=\hsize\trace{g}{Experimental after-paragraph graphic}%
+    \global\let\picl@c=\loc@Par\p@cinswid=\hsize\trace{g}{Experimental after-paragraph \w@tsit}%
     \xdef\pic@lign{\t@mpb}\global\picUsesInsfalse
     \ifx\t@mpb\@lignLeft\picNarrowtrue\fi
     \ifx\t@mpb\@lignRight\picNarrowtrue\fi
@@ -201,7 +203,7 @@
   \ifx\t@mp\loc@Page\global\let\picl@c=\loc@Pag\global\picUsesInsfalse\p@cinswid=\PaperWidth\temptrue\fi
   \ifx\t@mp\loc@Full\global\let\picl@c=\loc@Full\global\picUsesInsfalse\temptrue\fi
   \iftemp
-    \trace{g}{Experimental page / full-page graphic}%
+    \trace{g}{Experimental page / full-page \w@tsit}%
     \xdef\pic@lign{\t@mpb}\xdef\picV@lign{\t@mpc}%
   \fi
 }
@@ -307,6 +309,7 @@
     \whichp@ge=\pgn@
     \trace{g}{Picture \the\im@gecount was on page \pgn@ last time. [\the\pageno]}%
   \fi
+  \let\w@tsit\gr@phic   % Make sure the debugging info is correct
   \x@\p@rsePicUse\loc@ption\end                                               %(2)
   % make \p@cins point to insertion class for this location
   \otherinsht=0pt % subtract this from the insert height.
@@ -314,21 +317,22 @@
   \else\ifx\loc@ption\loc@B \let\p@cins=\bottomins
   \else
       \ifnum\c@rrentcols>1
-        \ifx\loc@ption\loc@TL \let\p@cins=\topleftins \otherinsht=\ht\toprightins \p@cinswid=\hsize
-        \else\ifx\loc@ption\loc@TR \let\p@cins=\toprightins \otherinsht=\ht\topleftins \p@cinswid=\hsize
-        \else\ifx\loc@ption\loc@BL \let\p@cins=\bottomleftins \otherinsht=\ht\bottomrightins \p@cinswid=\hsize
-        \else\ifx\loc@ption\loc@BR \let\p@cins=\bottomrightins \otherinsht=\ht\bottomleftins \p@cinswid=\hsize
+        \ifx\loc@ption\loc@TL  \otherinsht=\ht\toprightins \p@cinswid=\hsize
+        \else\ifx\loc@ption\loc@TR  \otherinsht=\ht\topleftins \p@cinswid=\hsize
+        \else\ifx\loc@ption\loc@BL  \otherinsht=\ht\bottomrightins \p@cinswid=\hsize
+        \else\ifx\loc@ption\loc@BR  \otherinsht=\ht\bottomleftins \p@cinswid=\hsize
         \fi\fi\fi\fi
       \else
         \ifdiglot\MSG{HOW DID THAT HAPPEN? currentcols=\the\c@rrentcols}\fi
-        \ifx\loc@ption\loc@TL \picw@rning{tl}{t}\let\p@cins=\topins
-        \else\ifx\loc@ption\loc@TR \picw@rning{tr}{t}\let\p@cins=\topins
-        \else\ifx\loc@ption\loc@BL \picw@rning{bl}{b}\let\p@cins=\bottomins
-        \else\ifx\loc@ption\loc@BR \picw@rning{br}{b}\let\p@cins=\bottomins
+        \ifx\loc@ption\loc@TL \picw@rning{tl}{t}\let\loc@ption\loc@T
+        \else\ifx\loc@ption\loc@TR \picw@rning{tr}{t}\let\loc@ption\loc@T
+        \else\ifx\loc@ption\loc@BL \picw@rning{bl}{b}\let\loc@ption\loc@B
+        \else\ifx\loc@ption\loc@BR \picw@rning{br}{b}\let\loc@ption\loc@B
         \fi\fi\fi\fi
       \fi
   \fi\fi
   \ifpicUsesIns
+    \x@\let\x@\p@cins\csname ins-\loc@ption\endcsname
     \ifx\p@cins\relax
       %\errmessage{Unknown picture location "\loc@ption",
       %  expected one of t,b,tl,tr,bl,br}%
@@ -584,6 +588,7 @@
 \def\size@FULL{full}% the paper size
 \def\loc@T{t}
 \def\loc@B{b}
+\def\loc@VB{B}
 \def\loc@TL{tl}
 \def\loc@TR{tr}
 \def\loc@BL{bl}
@@ -605,6 +610,14 @@
 \def\valb@th{both}
 \def\val@BIND{binding}
 \def\val@EDGE{edge}
+\x@\let\csname ins-\loc@TL\endcsname\topleftins
+\x@\let\csname ins-\loc@TR\endcsname\toprightins
+\x@\let\csname ins-\loc@BL\endcsname\bottomleftins
+\x@\let\csname ins-\loc@BR\endcsname\bottomrightins
+\x@\let\csname ins-\loc@T\endcsname\topins
+\x@\let\csname ins-\loc@B\endcsname\bottomins
+\x@\let\csname ins-\loc@VB\endcsname\verybottomins
+
 
 \newbox\picb@x % Delayed picture
 \newbox\picb@xR % (diglot, right-hand) delayed picture.
