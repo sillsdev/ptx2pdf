@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 
+<!-- Generated with glade 3.22.2 
 
 The MIT License (MIT)
 
@@ -897,6 +897,10 @@ saved configuration.</property>
       <column type="gchararray"/>
       <!-- column-name Mirror -->
       <column type="gchararray"/>
+      <!-- column-name disabled -->
+      <column type="gboolean"/>
+      <!-- column-name cleardest -->
+      <column type="gboolean"/>
     </columns>
     <data>
       <row>
@@ -910,6 +914,8 @@ saved configuration.</property>
         <col id="7">1:16</col>
         <col id="8">None</col>
         <col id="9">N</col>
+        <col id="10">False</col>
+        <col id="11">False</col>
       </row>
       <row>
         <col id="0">JHN 3:16-17</col>
@@ -922,6 +928,8 @@ saved configuration.</property>
         <col id="7">3:16</col>
         <col id="8">None</col>
         <col id="9">N</col>
+        <col id="10">False</col>
+        <col id="11">False</col>
       </row>
       <row>
         <col id="0">LUK 15:8</col>
@@ -934,6 +942,8 @@ saved configuration.</property>
         <col id="7">15:8</col>
         <col id="8">None</col>
         <col id="9">N</col>
+        <col id="10">False</col>
+        <col id="11">False</col>
       </row>
       <row>
         <col id="0">ACT 18:27</col>
@@ -946,6 +956,8 @@ saved configuration.</property>
         <col id="7">18:27</col>
         <col id="8">None</col>
         <col id="9">N</col>
+        <col id="10">False</col>
+        <col id="11">False</col>
       </row>
       <row>
         <col id="0">ROM 8:28</col>
@@ -958,6 +970,8 @@ saved configuration.</property>
         <col id="7">8:28</col>
         <col id="8">Gordon Thompson and friends.</col>
         <col id="9">N</col>
+        <col id="10">False</col>
+        <col id="11">False</col>
       </row>
       <row>
         <col id="0">1CO 3:16</col>
@@ -970,6 +984,8 @@ saved configuration.</property>
         <col id="7">3:16-19</col>
         <col id="8">None</col>
         <col id="9">N</col>
+        <col id="10">False</col>
+        <col id="11">False</col>
       </row>
       <row>
         <col id="0">REV 3:20</col>
@@ -982,6 +998,8 @@ saved configuration.</property>
         <col id="7">3:20</col>
         <col id="8">None</col>
         <col id="9">N</col>
+        <col id="10">False</col>
+        <col id="11">False</col>
       </row>
       <row>
         <col id="0">GLO 1:0</col>
@@ -994,6 +1012,8 @@ saved configuration.</property>
         <col id="7">1:0</col>
         <col id="8">Map Creator</col>
         <col id="9">N</col>
+        <col id="10">False</col>
+        <col id="11">False</col>
       </row>
     </data>
   </object>
@@ -8478,27 +8498,6 @@ then enable this option).</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_usePicList">
-                                    <property name="label" translatable="yes">Use PicLists for Maximum Control</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">The Viewer tab has a button to Generate a PicList file
-which enables more precise control over the sizing and
-positioning of illustrations.
-</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin_left">10</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                    <signal name="toggled" handler="onUsePiclistsToggle" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
@@ -8526,17 +8525,10 @@ positioning of illustrations.
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="btn_editPicList">
-                                    <property name="label" translatable="yes">Edit...</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <signal name="clicked" handler="onEditPicListClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">3</property>
-                                  </packing>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                               </object>
                             </child>
@@ -10151,6 +10143,7 @@ settings for the project)</property>
                                 <items>
                                   <item translatable="yes">(None)</item>
                                 </items>
+                                <signal name="changed" handler="ondiglotSecConfigChanged" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>

@@ -4,12 +4,12 @@ from io import BytesIO as cStringIO
 from shutil import copyfile, rmtree
 from threading import Thread
 from ptxprint.runner import call, checkoutput
-from ptxprint.texmodel import TexModel, universalopen
+from ptxprint.texmodel import TexModel
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.view import ViewModel, VersionStr, refKey
 from ptxprint.font import getfontcache
 from ptxprint.usfmerge import usfmerge
-from ptxprint.utils import _
+from ptxprint.utils import _, universalopen
 
 _errmsghelp = {
 "! TeX capacity exceeded, sorry":        "Uh oh! You've pushed TeX too far! Try turning Hyphenation off, or contact support.\n",
@@ -179,20 +179,12 @@ class RunJob:
         else:
             joblist = [[j] for j in jobs]
 
-        isDiglot = self.printer.get("c_diglot")
-        if isDiglot:
+        if self.printer.diglotView is not None:
             digfraction = info.dict["document/diglotprifraction"]
             digprjid = info.dict["document/diglotsecprj"]
             digcfg = info.dict["document/diglotsecconfig"]
-            digprjdir = os.path.join(self.args.paratext, digprjid)
-            if digprjid is None or not len(digprjid):     # can't print no project
-                return
             digptsettings = ParatextSettings(self.args.paratext, digprjid)
-            digprinter = ViewModel(self.args.paratext, self.printer.working_dir, self.userconfig, self.macrosdir)
-            digprinter.setPrjid(digprjid)
-            if digcfg is not None and digcfg != "":
-                digprinter.setConfigId(digcfg)
-            diginfo = TexModel(digprinter, self.args.paratext, digptsettings, digprjid)
+            diginfo = TexModel(self.diglotView, self.args.paratext, digptsettings, digprjid)
             self.texfiles += sum((self.digdojob(j, info, diginfo, digprjid, digprjdir) for j in joblist), [])
         else: # Normal (non-diglot)
             self.texfiles += sum((self.dojob(j, info) for j in joblist), [])
@@ -491,6 +483,7 @@ class RunJob:
                         secondary="\n".join(warnings))
 
     def gatherIllustrations(self, info, jobs, ptfolder):
+        picinfos = self.printer.picinfos
         pageRatios = self.usablePageRatios(info)
         tmpPicpath = os.path.join(self.printer.working_dir, "tmpPics")
         folderList = ["tmpPics", "tmpPicLists"] 
@@ -503,18 +496,21 @@ class RunJob:
             ratio = pageRatios[0 if p['size'].startswith("span") else 1]
             return self.carefulCopy(ratio, src, tgt)
         missingPics = []
-        res = []
         print("document/ifinclfigs {}".format(info['document/ifinclfigs']))
         if info['document/ifinclfigs'] == 'false':
             print("NoFigs")
-            return res
+            return []
+        picinfos.build_searchlist()
         for j in jobs:
-            pi, mp = self.printer.generateNProcPicLists(j, \
-                                os.path.join(self.printer.working_dir, "tmpPicLists"),
-                                carefulCopy, sfmonly="both", isTemp=True)
-            missingPics += mp
-            res += [v['dest file'] for v in pi.values() if 'dest file' in v]
-            
+            picinfos.getFigureSources(keys=j)
+            picinfos.set_destinations(fn=carefulCopy, keys=j)
+        missingPics = [v['src'] for v in picinfos.values() if 'dest file' not in v]
+        res = [v['dest file'] for v in picinfos.values() if 'dest file' in v]
+        print("processes {} vs failed {} pics".format(len(res), len(missingPics)))
+        outfname = info.printer.baseTeXPDFnames(jobs)[0] + ".piclist"
+        picinfos.out(os.path.join(self.tmpdir, outfname), skipkey="disabled", usedest=True)
+        info["document/piclistfile"] = outfname
+
         if len(missingPics):
             missingPicList = ["{}".format(", ".join(list(set(missingPics))))]
             self.printer.set("l_missingPictureCount", "({} Missing)".format(len(set(missingPics))))
@@ -585,7 +581,8 @@ class RunJob:
             except OSError:
                 print(_("Error: Unable to copy {}\n       image to {} in tmpPics folder"), srcpath, tgtpath)
                 return srcpath
-        return tgtpath
+        print('"Copying" {} to {}'.format(srcpath, tgtpath))
+        return tgtfile
 
     def removeTempFiles(self, texfiles):
         notDeleted = []
@@ -612,8 +609,8 @@ class RunJob:
                     os.remove(delfname)
                 except OSError:
                     notDeleted += [delfname]
-        folderList = ["tmpPics", "tmpPicLists"] 
-        notDeleted += self.removeTmpFolders(self.tmpdir, folderList)
+        #folderList = ["tmpPics", "tmpPicLists"] 
+        #notDeleted += self.removeTmpFolders(self.tmpdir, folderList)
         if len(notDeleted):
             self.printer.doError(_("Warning: Could not delete\ntemporary file(s) or folder(s):"),
                     secondary="\n".join(set(notDeleted)))

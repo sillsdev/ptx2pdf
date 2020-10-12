@@ -121,7 +121,7 @@ _sensitivities = {
     "c_fnautocallers" :        ["t_fncallers", "btn_resetFNcallers"],
     "c_xrautocallers" :        ["t_xrcallers", "btn_resetXRcallers"],
     "c_glossaryFootnotes" :    ["c_firstOccurenceOnly"],
-    "c_usePicList" :           ["btn_editPicList"],
+    # "c_usePicList" :           ["btn_editPicList"],
     "c_useCustomFolder" :      ["btn_selectFigureFolder", "c_exclusiveFiguresFolder"],
     "c_processScript" :        ["c_processScriptBefore", "c_processScriptAfter", "btn_selectScript", "btn_editScript"],
     "c_usePrintDraftChanges" : ["btn_editChangesFile"],
@@ -149,7 +149,7 @@ _sensitivities = {
 _nonsensitivities = {
     "c_omitrhchapnum" :        ["c_hdrverses"],
     "c_blendfnxr" :            ["l_internote", "s_internote"],
-    "c_usePicList" :           ["c_figexclwebapp"],
+    # "c_usePicList" :           ["c_figexclwebapp"],
     "c_useprintdraftfolder" :  ["btn_selectOutputFolder"],
     "c_styTextProperties":     ["l_styTextType", "fcb_styTextType", "l_styStyleType", "fcb_styStyleType", 
                                 "fr_styParaSettings", "fr_styCharSettings", "fr_styNoteSettings"],
@@ -510,8 +510,8 @@ class GtkViewModel(ViewModel):
             if self.notebooks["Viewer"][pgnum] in ("scroll_Adjust", "scroll_FinalSFM", "scroll_Settings"):
                 self.onSaveEdits(None)
         # If any PicLists are missing, they need to be generated
-        if self.get('c_includeillustrations') and self.get("c_usePicList"):
-            self.generatePicLists(self.getBooks(), generateMissingLists=True)
+        # if self.get('c_includeillustrations') and self.get("c_usePicList"):
+        #    self.generatePicLists(self.getBooks(), generateMissingLists=True)
 
         # Work out what the resulting PDFs are to be called
         cfgname = self.configName()
@@ -541,11 +541,8 @@ class GtkViewModel(ViewModel):
                         return
                 fileLocked = False
         invPW = self.get("t_invisiblePassword")
-        if invPW == None or invPW == "" or self.configName() == "": # This config is unlocked
-            # So it it safe/allowed to save the current config
-            self.writeConfig()
-        # else:
-            # print("Current Config is Locked, so changes have NOT been saved")
+        if invPW == None or invPW == "":
+            self.onSaveConfig(None)
 
         self._incrementProgress(val=0.)
         self.callback(self)
@@ -570,22 +567,15 @@ class GtkViewModel(ViewModel):
         if self.prjid is None:
             return
         newconfigId = self.configName() # self.get("ecb_savedConfig")
-        if newconfigId == self.configId:
-            self.writeConfig()
-            return
-        # don't updateProjectSettings, since don't want to read old config
-        currconfigpath = self.configPath(cfgname=self.configId)
-        configpath = self.configPath(cfgname=newconfigId, makePath=True)
-        for subdirname in ("PicLists", "AdjLists"):
-            if os.path.exists(os.path.join(configpath, subdirname)) \
-                    or not os.path.exists(os.path.join(currconfigpath, subdirname)): 
-                continue
-            copytree(os.path.join(currconfigpath, subdirname), os.path.join(configpath, subdirname))
-        self.configId = newconfigId
+        if newconfigId != self.configId:
+            self._copyConfig(self.configId, newconfigId)
+            self.configId = newconfigId
+            self.updateSavedConfigList()
+            self.set("lb_settings_dir", configpath)
+            self.updateDialogTitle()
         self.writeConfig()
-        self.updateSavedConfigList()
-        self.set("lb_settings_dir", configpath)
-        self.updateDialogTitle()
+        if self.picinfos is not None:
+            self.picinfos.out(os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint", "{}.piclist".format(self.prjid)))
 
     def writeConfig(self, cfgname=None):
         if self.prjid is not None:
@@ -793,13 +783,10 @@ class GtkViewModel(ViewModel):
         return self.picListView.getinfo()
 
     def updatePicList(self, bks=None, priority="Both", output=False):
-        #self.picListView.clear()
-        if bks is None:
-            bks = self.getBooks()
-        if len(bks) and len(bks[0]) and bks[0] != 'NONE':
-            picinfos = self.generatePicLists(bks, priority, output=output)
-            if len(picinfos):
-                self.picListView.load(picinfos)
+        # if disable filter, bks = None
+        if self.picinfos is None:
+            return
+        self.picinfos.updateView(self.picListView, bks)
 
     def updatePicChecks(self, src):
         self.picChecksView.savepic()
@@ -822,10 +809,17 @@ class GtkViewModel(ViewModel):
         bk = self.get("ecb_examineBook")
         bk = bk if bk in bks2gen else None
         if pgid == "tb_PicList": # PicList
-            if not self.get('r_book') == "multiple" and self.get("ecb_examineBook") != bks2gen[0]: 
-                self.updatePicList(bks=[self.get("ecb_examineBook")], priority=priority, output=True)
+            ab = self.getAllBooks()
+            if not self.get('r_book') == "multiple" and self.get("ecb_examineBook") != bks2gen[0]:
+                bks = [self.get("ecb_examineBook")]
             else:
-                self.updatePicList(bks=bks2gen, priority=priority, output=True)
+                bks = bks2gen
+            if self.diglotView is None:
+                PicInfoUpdateProject(self, bks, ab, self.picinfos)
+            else:
+                PicInfoUpdateProject(self, bks, ab, self.picinfos, suffix="L")
+                PicInfoUpdateProject(self.diglotView, bks, ab, self.picinfos, suffix="R")
+            self.updatePicList(bks)
         elif pgid == "scroll_AdjList": # AdjList
             self.generateAdjList()
         elif pgid == "scroll_FinalSFM" and bk is not None: # FinalSFM
@@ -977,9 +971,8 @@ class GtkViewModel(ViewModel):
         fsize = self.get("s_fontsize")
         (name, style) = self.get("bl_fontR")
         fallback = ',Sans'
-        if self.get("c_diglot"):
-            digview = self.createDiglotView()
-            (digname, digstyle) = digview.get("bl_fontR")
+        if self.diglotView is not None:
+            (digname, digstyle) = self.diglotView.get("bl_fontR")
             fallback = "," + digname + fallback
         pangostr = '{}{} {} {}'.format(name, fallback, style, fsize)
         p = Pango.FontDescription(pangostr)
@@ -1030,6 +1023,12 @@ class GtkViewModel(ViewModel):
     def onUseIllustrationsClicked(self, btn):
         self.onSimpleClicked(btn)
         self.colourTabs()
+        if btn.get_active():
+            self.picinfos.load_files()
+            self.picListView.load(picinfos)
+        else:
+            self.picinfos.clear()
+            self.picListView.clear()
 
     def onUseCustomFolderclicked(self, btn):
         status = self.sensiVisible("c_useCustomFolder")
@@ -1338,6 +1337,8 @@ class GtkViewModel(ViewModel):
                 fblabel = self.builder.get_object(fb).set_label("Select font...")
         if self.prjid:
             self.updatePrjLinks()
+            self.userconfig.set("init", "project", self.prjid)
+            self.userconfig.set("init", "config", self.configId)
         status = self.get("r_book") == "multiple"
         for c in ("c_combine", "t_booklist"):
             self.builder.get_object(c).set_sensitive(status)
@@ -1552,15 +1553,6 @@ class GtkViewModel(ViewModel):
             self.moduleFile = None
             self.builder.get_object("btn_chooseBibleModule").set_tooltip_text("")
 
-    def onUsePiclistsToggle(self, btn):
-        if btn.get_active():
-            picinfos = {}
-            for bk in self.getBooks():
-                picinfos.update(self._getFigures(bk))
-            self.picListView.load(picinfos)
-        else:
-            self.picListView.clear()
-
     def onSelectFigureFolderClicked(self, btn_selectFigureFolder):
         customFigFolder = self.fileChooser(_("Select the folder containing image files"),
                 filters = None, multiple = False, folder = True)
@@ -1709,6 +1701,12 @@ class GtkViewModel(ViewModel):
         self.sensiVisible("c_borders")
         self.updateHdrFtrOptions(btn.get_active())
         self.colourTabs()
+        if self.get("c_diglot"):
+            self.diglotView = self.createDiglotView()
+        else:
+            self.diglotView = None
+        self.loadPics()
+        self.updatePicList()
 
     def onDiglotSwitchClicked(self, btn):
         oprjid = None
@@ -1747,6 +1745,11 @@ class GtkViewModel(ViewModel):
         
     def ondiglotSecProjectChanged(self, btn):
         self.updateDiglotConfigList()
+
+    def ondiglotSecConfigChanged(self, btn):
+        self.diglotView = self.createDiglotView()
+        self.loadPics()
+        self.updatePicList()
         
     def onGenerateHyphenationListClicked(self, btn):
         self.generateHyphenationFile()

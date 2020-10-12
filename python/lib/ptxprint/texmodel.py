@@ -11,30 +11,9 @@ from ptxprint.runner import checkoutput
 from ptxprint import sfm
 from ptxprint.sfm import usfm, style
 from ptxprint.usfmutils import Usfm, Sheets, isScriptureText, Module
-from ptxprint.utils import _
+from ptxprint.utils import _, universalopen
 from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
-
-def universalopen(fname, rewrite=False):
-    """ Opens a file with the right codec from a small list and perhaps rewrites as utf-8 """
-    fh = open(fname, "r", encoding="utf-8")
-    try:
-        fh.readline()
-        fh.seek(0)
-        return fh
-    except ValueError:
-        pass
-    fh = open(fname, "r", encoding="utf-16")
-    fh.readline()
-    fh.seek(0)
-    if rewrite:
-        dat = fh.readlines()
-        fh.close()
-        with open(fname, "w", encoding="utf-8") as fh:
-            for d in dat:
-                fh.write(d)
-        fh = open(fname, "r", encoding="utf-8", errors="ignore")
-    return fh
 
 # After universalopen to resolve circular import. Kludge
 from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ImgCredits, ThumbTabs

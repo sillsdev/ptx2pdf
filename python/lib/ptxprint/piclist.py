@@ -1,12 +1,16 @@
 
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
-from ptxprint.view import refKey, newBase
+from ptxprint.view import refKey
+from ptxprint.utils import refKey, universalopen
+from ptxprint.texmodel import TexModel
 from gi.repository import Gtk, GdkPixbuf
 import configparser
-import os, re
+import os, re, random, sys
 
+posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror", "scale"]
+pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale"]
 
-_piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copyright", "mirror"]
+_piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copyright", "mirror", "disabled", "cleardest"]
 _form_structure = {
     'anchor':   't_plAnchor',
     'caption':  't_plCaption',
@@ -22,6 +26,15 @@ _form_structure = {
     'nlines':   's_plLines',
 }
 _comblist = ['pgpos', 'hpos', 'nlines']
+
+def newBase(fpath):
+    doti = fpath.rfind(".")
+    f = os.path.basename(fpath[:doti])
+    cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?$", f)
+    if cl:
+        return cl[0].lower()
+    else:
+        return re.sub('[()&+,.;: \-]', '_', f.lower())
 
 class PicList:
     def __init__(self, view, listview, builder, parent):
@@ -58,13 +71,21 @@ class PicList:
         self.model.clear()
         if picinfo is not None:
             for k, v in sorted(picinfo.items(), key=lambda x:(refKey(x[0]), x[1])):
-                row = [k] + [v[e] if e in v else (1 if e == "scale" else "") for e in _piclistfields[1:]]
-                try:
-                    row[4] = float(row[4]) * 100
-                except (ValueError, TypeError):
-                    row[4] = 100
+                row = [k]
+                for e in _piclistfields[1:]:
+                    if e == "scale":
+                        try:
+                            val = float(v.get(e, 1)) * 100
+                        except (ValueError, TypeError):
+                            val = 100.
+                    elif e == 'cleardest':
+                        val = False
+                    elif e == "disabled":
+                        val = v.get(e, False)
+                    else:
+                        val = v.get(e, "")
+                    row.append(val)
                 self.model.append(row)
-                # print(v, [x for x in row])
         self.view.set_model(self.model)
         self.listview.set_model(self.model)
 
@@ -81,11 +102,21 @@ class PicList:
         e['scale'] = e['scale'] / 100. if e['scale'] != 100 else None
         return e
 
-    def getinfo(self):
+    def updateinfo(self, picinfos):
         res = {}
         for row in self.model:
             if len(row[0]) > 5:
-                res[row[0]] = self.getrowinfo(row)
+                k = row[0]
+                p = picinfos.setdefault(k, {})
+                for i, e in enumerate(_piclistfields[1:]):
+                    if e == 'scale':
+                        val = "{:.3f}".format(row[i+1] / 100.)
+                    elif e == "cleardest":
+                        if row[i+1] and 'dest file' in p:
+                            del p['dest file']
+                    else:
+                        val = row[i+1]
+                    p[k] = val
         return res
 
     def row_select(self, selection):
@@ -147,7 +178,9 @@ class PicList:
             val = self.get(key)
         if self.model is not None and len(self.model):
             row = self.model[self.selection.get_selected()[1]]
-            row[_piclistfields.index(key)] = val
+            fieldi = _piclistfields.index(key)
+            oldval = res[fieldi]
+            row[fieldi] = val
             if key == "src":
                 tempinfo = {}
                 e = self.getrowinfo(row)
@@ -165,8 +198,12 @@ class PicList:
                 else:
                     pic.clear()
                     picc.clear()
+                if val != oldval:
+                    row[_piclistfields.index('cleardest')] = True
+            elif key == "scale" and val != oldval:
+                row[_piclistfields.index('cleardest')] = True
             elif key == "mirror" and val == "None":
-                row[_piclistfields.index(key)] = ""
+                row[fieldi] = ""
 
     def get_row_from_items(self):
         row = [self.get(k, default="") for k in _piclistfields]
@@ -188,6 +225,7 @@ class PicList:
         model, i = self.selection.get_selected()
         del self.model[i]
         self.select_row(model.get_path(i).get_indices()[0])
+
 
 _checks = {
     "r_picclear":       "unknown",
@@ -255,3 +293,260 @@ class PicChecks:
             except configparser.NoSectionError:
                 cfg.add_section(self.src)
                 cfg.set(self.src, n, val)
+
+class PicInfo(dict):
+
+    srcfkey = 'src path'
+
+    def __init__(self, model):
+        self.model = model
+        self.prj = model.prjid
+        if model.prjid is None:
+            self.basedir = model.settings_dir
+        else:
+            self.basedir = os.path.join(model.settings_dir, model.prjid)
+        self.config = model.configName()
+
+    def load_files(self, suffix="", prjdir=None, prj=None, cfg=None):
+        if prjdir is None:
+            prjdir = self.basedir
+        if prj is None:
+            prj = self.prj
+        if cfg is None:
+            cfg = self.config
+        if prjdir is None or prj is None or cfg is None:
+            return
+        for f in ["shared/ptxprint/{}.piclist".format(prj),
+                   "shared/ptxprint/{1}/{0}-{1}.piclist".format(prj, cfg)] \
+                + ["shared/ptxprint/{0}/PicLists/{1}".format(cfg, x) \
+                        for x in os.listdir(os.path.join(prjdir, "shared", "ptxprint", cfg, "PicLists")) \
+                        if x.lower().endswith(".piclist")]:
+            p = os.path.join(prjdir, f)
+            if os.path.exists(p):
+                self.read_piclist(p, suffix=suffix)
+
+    def _fixPicinfo(self, vals):
+        p = vals['pgpos']
+        if all(x in "apw" for x in p):
+            vals['media'] = p
+            del vals['pgpos']
+        elif re.match(r"^[tbhpc][lrc]?[0-9]?$", p):
+            vals['media'] = 'p'
+        else:
+            vals['loc'] = p
+            del vals['pgpos']
+        p = vals['size']
+        m = re.match(r"(col|span|page|full)(?:\*(\d+(?:\.\d*)))?$", p)
+        if m:
+            vals['size'] = m[1]
+            if m[2] is not None and len(m[2]):
+                vals['scale'] = m[2]
+        return vals
+
+    def read_piclist(self, fname, suffix=""):
+        if not os.path.exists(fname):
+            return
+        with universalopen(fname) as inf:
+            for l in (x.strip() for x in inf.readlines()):
+                if not len(l) or l.startswith("%"):
+                    continue
+                m = l.split("|")
+                r = m[0].split(maxsplit=2)
+                if suffix == "":
+                    k = "{} {}".format(r[0], r[1])
+                else:
+                    k = "{}{} {}".format(r[0][:3], suffix, r[1])
+                pic = {'caption': r[2] if len(r) > 2 else ""}
+                self[k] = pic
+                if len(m) > 6:
+                    for i, f in enumerate(m[1:]):
+                        pic[posparms[i+1]] = f
+                    self._fixPicinfo(pic)
+                else:
+                    for d in re.findall(r'(\S+)\s*=\s*"([^"]+)"', m[-1]):
+                        pic[d[0]] = d[1]
+
+    def read_sfm(self, bk, fname, suffix="", media=None):
+        isperiph = bk in TexModel._peripheralBooks
+        with universalopen(fname) as inf:
+            dat = inf.read()
+            blocks = ["0"] + re.split(r"\\c\s+(\d+)", dat)
+            for c, t in zip(blocks[0::2], blocks[1::2]):
+                m = re.findall(r"(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*"
+                               r"\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?"
+                               r"\|([^\\]+?)?\|([^\\]+?)?\\fig\*", t)
+                if len(m):
+                    for f in m:     # usfm 2
+                        r = "{}{} {}.{}".format(bk, suffix, c, f[0])
+                        pic = {'caption':f[8].strip(), 'anchor': "{}.{}".format(c, f[0])}
+                        self[r] = pic
+                        for i, v in enumerate(f[3:]):
+                            pic[posparms[i]] = v
+                        self._fixPicinfo(res[r])
+                elif isperiph:
+                    m = re.findall(r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(col|span)[^|]*\|([^\\]+?)?\\fig\*", dat)
+                    if len(m):
+                        for i, f in enumerate(m):
+                            r = "{}{} 1.{}".format(bk, suffix, i)
+                            pic = {'caption':f[0].strip(), 'src': f[1], 'size': f[2], 'anchor': "1.{}".format(i)}
+                            self[r] = pic
+                            # self._fixPicinfo(pic)
+                m = re.findall(r'(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig ([^\\]*?)\|([^\\]+)\\fig\*', t)
+                if len(m):
+                    for i, f in enumerate(m):     # usfm 3
+                        if "|" in f[4]:
+                            break
+                        a = (1, i+1) if isperiph else (c, f[0])
+                        r = "{}{} {}.{}".format(bk, suffix, *a)
+                        pic = {'caption':f[3].strip(), 'anchor': "{}.{}".format(*a)}
+                        self[r] = pic
+                        labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f[4])
+                        for l in labelParams:
+                            k,v = l.split("=")
+                            pic[k.strip()] = v.strip('"')
+                if media is not None and r in self:
+                    if 'media' in pic and not any(x in media for x in pic['media']):
+                        del self[r]
+
+    def out(self, fpath, bks=[], skipkey=None, usedest=False):
+        ''' Generate a picinfo file, with given date.
+                bks is a list of 3 letter bkids only to include. If empty, include all.
+                skipkey if set will skip a record if there is a non False value associated with skipkey
+                usedest says to use dest file rather than src as the file source in the output'''
+        hiderefs = self.model.get("c_fighiderefs")
+        if usedest:
+            p3p = ["dest file"] + pos3parms[1:]
+        else:
+            p3p = pos3parms
+        lines = []
+        for k, v in sorted(self.items(),
+                           key=lambda x: refKey(x[0][:3]+x[0][4:], info=x[0][3])):
+            if (len(bks) and k[:3] not in bks) or (skipkey is not None and v.get(skipkey, False)):
+                continue
+            lines.append("{} {}|".format(k, v['caption']) + " ".join('{}="{}"' \
+                                        .format(pos3parms[i], v[x]) for i, x in enumerate(p3p) \
+                                        if x in v and v[x] and (not usedest or not hiderefs or x != 'ref')))
+        dat = "\n".join(lines)+"\n"
+        with open(fpath, "w", encoding="utf-8") as outf:
+            outf.write(dat)
+
+    def build_searchlist(self):
+        if self.model.get("c_useCustomFolder"):
+            self.srchlist = [self.model.customFigFolder]
+        else:
+            self.srchlist = []
+            if sys.platform == "win32":
+                self.srchlist += [os.path.join(self.basedir, "figures")]
+                self.srchlist += [os.path.join(self.basedir, "local", "figures")]
+            elif sys.platform == "linux":
+                chkpaths = []
+                for d in ("local", "figures"):
+                    chkpaths += [os.path.join(self.basedir, x) for x in (d, d.title())]
+                for p in chkpaths:
+                    if os.path.exists(p):
+                        self.srchlist += [p]
+        self.extensions = []
+        extdflt = {x:i for i, x in enumerate(["jpg", "jpeg", "png", "tif", "tiff", "bmp", "pdf"])}
+        imgord = self.model.get("t_imageTypeOrder").lower()
+        extuser = re.sub("[ ,;/><]"," ",imgord).split()
+        self.extensions = {x:i for i, x in enumerate(extuser) if x in extdflt}
+        if not len(self.extensions):   # If the user hasn't defined any extensions 
+            self.extensions = extdflt  # then we can assign defaults
+
+    def getFigureSources(self, filt=newBase, key='src path', keys=None):
+        ''' Add source filename information to each figinfo, stored with the key '''
+        res = {}
+        newfigs = {}
+        for k, f in self.items():
+            if keys is not None and k[:3] not in keys:
+                continue
+            newk = filt(f['src']) if filt is not None else f['src']
+            newfigs.setdefault(newk, []).append(k)
+        for srchdir in self.srchlist:
+            if srchdir is None or not os.path.exists(srchdir):
+                continue
+            if self.get("c_exclusiveFiguresFolder"):
+                search = [(srchdir, [], os.listdir(srchdir))]
+            else:
+                search = os.walk(srchdir)
+            for subdir, dirs, files in search:
+                for f in files:
+                    doti = f.rfind(".")
+                    origExt = f[doti:].lower()
+                    if origExt[1:] not in self.extensions:
+                        continue
+                    filepath = os.path.join(subdir, f)
+                    nB = filt(f) if filt is not None else f
+                    if nB not in newfigs:
+                        continue
+                    for k in newfigs[nB]:
+                        if key in self[k]:
+                            old = extensions.get(os.path.splitext(self[k][key])[1].lower(), 10000)
+                            new = extensions.get(os.path.splitext(filepath)[1].lower(), 10000)
+                            if old > new:
+                                self[k][key] = filepath
+                            elif old == new and (self.get("c_useLowResPics") \
+                                                != bool(os.path.getsize(self[k][key]) < os.path.getsize(filepath))):
+                                self[k][key] = filepath
+                        else:
+                            self[k][key] = filepath
+
+    def set_positions(self):
+        picposns = { "L": {"col":  ("tl", "bl"),             "span": ("t")},
+                     "R": {"col":  ("tr", "br"),             "span": ("b")},
+                     "":  {"col":  ("tl", "tr", "bl", "br"), "span": ("t", "b")}}
+        randomizePosn = self.model.get("c_randomPicPosn")
+        isdblcol = self.model.get("c_doublecolumn")
+        for k, v in self:
+            if not isdblcol: # Single Column layout so change all tl+tr > t and bl+br > b
+                if 'pgpos' in v:
+                    v['pgpos'] = re.sub(r"([tb])[lr]", r"\1", v['pgpos'])
+                else:
+                    v['pgpos'] = "t"
+            if 'pgpos' not in v:
+                if not isTemp and randomizePosn:
+                    v['pgpos'] = random.choice(picposn.get(v['size'], 'col')) # Randomize location of illustrations on the page (tl,tr,bl,br)
+                else:
+                    v['pgpos'] = picposn.get(v['size'], 'col')[0]
+
+    def set_destinations(self, fn=lambda x,y,z:z, keys=None):
+        print("Set destinations for {} pics".format(len(self)))
+        for k, v in self.items():
+            if 'dest file' in v:
+                continue            # no need to regenerate
+            if keys is not None and k[:3] not in keys:
+                continue
+            nB = newBase(v['src'])
+            if self.srcfkey not in v:
+                continue
+            fpath = v[self.srcfkey]
+            origExt = os.path.splitext(fpath)[1]
+            v['dest file'] = fn(v, v[self.srcfkey], nB+origExt.lower())
+            if 'media' in v and len(v['media']) and 'p' not in v['media']:
+                v['disabled'] = True
+
+    def updateView(self, view, bks=None):
+        view.load(self)
+        # enable bks filter if set
+
+def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix=""):
+    newpics = PicInfo(model)
+    newpics.read_piclist(os.path.join(model.settings_dir, model.prjid, 'shared',
+                                      'ptxprint'), "{}.piclist".format(mode.prjid))
+    delpics = set()
+    for bk in bks:
+        bkf = allbooks.get(bk, None)
+        if bkf is None or not os.path.exists(bkf):
+            continue
+        for k in (k for k in newpics.keys() if k[:3] == bk):
+            del newpics[k]
+            delpics.add(k)
+        newpics.read_usfm(bk, bkf)
+        for k in (k for k in newpics.keys() if k[:3] == bk):
+            if k in delpics:
+                delpics.remove(k)
+            else:
+                picinfos[k+suffix] = newpics[k]
+        for k in deplics:
+            if k+suffix in picinfos:
+                del picinfos[k+suffix]

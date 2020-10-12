@@ -1,10 +1,11 @@
 
 import configparser, os, re, regex, random, collections
-from .texmodel import ModelMap, TexModel, universalopen
-from .ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
-from .font import TTFont, cachepath, cacheremovepath
-from ptxprint.utils import _
+from ptxprint.texmodel import ModelMap, TexModel
+from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
+from ptxprint.font import TTFont, cachepath, cacheremovepath
+from ptxprint.utils import _, refKey, universalopen
 from ptxprint.usfmutils import Sheets, UsfmCollection
+from ptxprint.piclist import PicInfo
 import pathlib, os, sys
 from configparser import NoSectionError, NoOptionError, _UNSET
 from zipfile import ZipFile, ZIP_DEFLATED
@@ -21,22 +22,6 @@ varpaths = (
     ('settingsdir', ('settings_dir',)),
     ('workingdir', ('working_dir',)),
 )
-
-def newBase(fpath):
-    doti = fpath.rfind(".")
-    f = os.path.basename(fpath[:doti])
-    cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?$", f)
-    if cl:
-        return cl[0].lower()
-    else:
-        return re.sub('[()&+,.;: \-]', '_', f.lower())
-
-def refKey(r, info=""):
-    m = re.match(r"^(\D*)\s*(\d*)\.?(\d*)(\S*?)$", r)
-    if m:
-        return (books.get(m.group(1)[:3], 100), int(m.group(2) or 0), int(m.group(3) or 0), m.group(1)[3:], info, m.group(4))
-    else:
-        return (100, 0, 0, r, info, "")
 
 class Path(pathlib.Path):
 
@@ -120,9 +105,11 @@ class ViewModel:
         self.customOutputFolder = None
         self.prjid = None
         self.configId = None
+        self.diglotView = None
         self.isDisplay = False
         self.tempFiles = []
         self.usfms = None
+        self.picinfos = None
 
         # private to this implementation
         self.dict = {}
@@ -212,6 +199,16 @@ class ViewModel:
         else:
             # return self.booklist
             return []
+
+    def getAllBooks(self):
+        prjdir = os.path.join(self.settings_dir, self.prjid)
+        res = {}
+        for bk in allbooks:
+            f = self.getBookFilename(bk)
+            fp = os.path.join(prjdir, f)
+            if os.path.exists(fp):
+                res[f] = fp
+        return res
 
     def _getPtSettings(self, prjid=None):
         if self.ptsettings is None and self.prjid is not None:
@@ -340,7 +337,6 @@ class ViewModel:
             if os.path.exists(fdir):
                 cachepath(fdir)
             readConfig = True
-        self.userconfig.set("init", "project", self.prjid)
         if readConfig or self.configId != configName:
             if configName == "Default":
                 self._copyConfig(None, configName, moving=True)
@@ -351,11 +347,12 @@ class ViewModel:
             res = self.readConfig(cfgname=configName)
             if res or forceConfig:
                 self.configId = configName
-                if self.configId is not None and len(self.configId):
-                    self.userconfig.set("init", "config", self.configId)
             if readConfig:  # project changed
                 self.usfms = None
                 self.get_usfms()
+            self.picinfos = PicInfo(self)
+            if self.get("c_includeillustrations"):
+                self.picinfos.load_files()
             return res
         else:
             return True
@@ -412,6 +409,14 @@ class ViewModel:
         config.read(path, encoding="utf-8")
         self.versionFwdConfig(config)
         self.loadConfig(config)
+        if self.get("c_diglot"):
+            self.diglotView = self.createDiglotView()
+        else:
+            self.diglotView = None
+        if self.get("c_includeillustrations"):
+            self.picinfos.load_files()
+        else:
+            self.picinfos.clear()
         return True
 
     def writeConfig(self, cfgname=None):
@@ -565,167 +570,21 @@ class ViewModel:
                 setv(ModelMap[k][0], self.ptsettings.dict.get(v, ""))
         if self.get("c_thumbtabs"):
             self.updateThumbLines()
-        #self.customFolder = self.get("btn_selectOutputFolder")
-        #if not self.get("c_useprintdraftfolder") and self.customFolder is not None and len(self.customFolder):
-        #    self.working_dir = self.customFolder
-        #    self.fixed_wd = True
-        #else:
-        #    self.working_dir = os.path.join(self.settings_dir, self.prjid, "PrintDraft")
-        #    self.fixed_wd = False
 
     def editFile_delayed(self, *a):
         pass
 
-    def generateNProcPicLists(self, bk, outdir, processor, priority="Both", sfmonly="piclist", isTemp=False, output=True):
-        plfname = self.getDraftFilename(bk)
-        if plfname is None:
-            return ({}, [])
-        picposns = { "L": {"col":  ("tl", "bl"),             "span": ("t")},
-                     "R": {"col":  ("tr", "br"),             "span": ("b")},
-                     "":  {"col":  ("tl", "tr", "bl", "br"), "span": ("t", "b")}}
-        srcfkey = 'src path'
-        randomizePosn = self.get("c_randomPicPosn")
-        diglotPrinter = None
-        if self.get("c_diglot"):
-            diglotPrinter = self.createDiglotView()
-            diglotPics = {}
-        self.setDate()  # update date/time to now
-        if not os.path.exists(outdir):
-            os.makedirs(outdir)
-
-        # Assemble a list of figures and their sources
-        picinfos = None
-        if diglotPrinter is not None:
-            diglotPics = None
-            if isTemp and sfmonly != "sfm":      # only merge if source doesn't have L/R
-                tmppics = self._getFigures(bk)
-                if any(x[3] in "LR" for x in tmppics.keys()):
-                    picinfos = tmppics
-            if picinfos is None:
-                if priority == "Both" or priority =="Pri ":
-                    picinfos = self._getFigures(bk, suffix="L", sfmonly=sfmonly, usepiclists=not output)
-                if priority == "Sec ":
-                    picinfos = diglotPrinter._getFigures(bk, suffix="R", sfmonly=sfmonly, usepiclists=not output)
-                if priority == "Both":
-                    diglotPics = diglotPrinter._getFigures(bk, suffix="R", sfmonly=sfmonly, usepiclists=not output)
+    def loadPics(self):
+        if self.picinfos is None:
+            self.picinfos = PicInfo(self)
         else:
-            picinfos = self._getFigures(bk, sfmonly=sfmonly)
-        self.getFigureSources(picinfos, key=srcfkey)
-        if diglotPrinter is not None and diglotPics is not None:
-            diglotPrinter.getFigureSources(diglotPics, key=srcfkey)
-            picinfos.update(diglotPics)
-        # Copy them
-        missingPics = []
-        for k, v in picinfos.items():
-            nB = newBase(v['src'])
-            if srcfkey not in v:
-                missingPics.append(v['src'])
-                continue
-            fpath = v[srcfkey]
-            origExt = os.path.splitext(fpath)[1]
-            v['dest file'] = processor(v, v[srcfkey], nB+origExt.lower())
-
-        missingPicList = []
-        extOrder = self.getExtOrder()
-        # Now write out the new PicList to a temp folder
-        piclstfname = os.path.join(self.configPath(cfgname=self.configId, makePath=False), "PicLists", plfname)
-        isdblcol = self.get("c_doublecolumn")
-        ishiderefs = self.get("c_fighiderefs")
-        lines = []
-        if not len(picinfos):
-            return ({}, [])
-        for k, v in sorted(picinfos.items(),
-                           key=lambda x: refKey(x[0][:3]+x[0][4:], info=x[0][3])):
-            picposn = picposns[k[3] if diglotPrinter is not None else ""]
-            if 'dest file' not in v:
-                missingPics.append(v['src'])
-                continue
-            if 'media' in v and len(v['media']) and 'p' not in v['media']:
-                continue
-            if not isdblcol: # Single Column layout so change all tl+tr > t and bl+br > b
-                if 'pgpos' in v:
-                    v['pgpos'] = re.sub(r"([tb])[lr]", r"\1", v['pgpos'])
-                else:
-                    v['pgpos'] = "t"
-            if 'pgpos' not in v:
-                if not isTemp and randomizePosn:
-                    v['pgpos'] = random.choice(picposn.get(v['size'], 'col')) # Randomize location of illustrations on the page (tl,tr,bl,br)
-                else:
-                    v['pgpos'] = picposn.get(v['size'], 'col')[0]
-            if 'ref' in v and ishiderefs:
-                del v['ref']
-            v['src'] = os.path.basename(v['dest file'])
-        if output:
-            piclstfname = os.path.join(outdir, plfname)
-            self._outPicInfo(picinfos, piclstfname, isTemp=isTemp)
-        return (picinfos, missingPics)
-
-    def _outPicInfo(self, picinfo, fpath, isTemp=True):
-        lines = []
-        if isTemp:
-            lines.append(_("% TEMPORARY PicList: ({}) - DO NOT EDIT\n\n").format(self.get("_date")))
+            self.picinfos.clear()
+        if self.diglotView is None:
+            self.picinfos.load_files()
         else:
-            lines.append(_("% PicList Generated by PTXprint: {}\n\n").format(self.get("_date")))
-        for k, v in sorted(picinfo.items(),
-                           key=lambda x: refKey(x[0][:3]+x[0][4:], info=x[0][3])):
-            lines.append("{} {}|".format(k, v['caption']) + " ".join('{}="{}"'.format(x, v[x]) for x in pos3parms if x in v and v[x]))
-        if not isTemp:
-            lines.append(_("""
-            
-% Tips for PicLists:
-%   a) If illustrations don't appear in PDF, check the anchor reference (start of each line):
-%      (i) only use '.' as the ch.vs separator
-%      (ii) anchor refs must match the text itself and be in logical ch.vs order
-%   b) Delete the line to remove an illustration (or prefix with a % to skip over it)
-%   c) In single-column layout no difference will be seen between 'span' and 'col'
-%   d) To scale an image use the notation: size="span*.7" or size="col*1.3" (for 70% and 130%)
-"""))
-        dat = "\n".join(lines)+"\n"
-        with open(fpath, "w", encoding="utf-8") as outf:
-            outf.write(dat)
-
-    def generatePicLists(self, booklist, priority="Both", generateMissingLists=False, output=True):
-        xl = []
-        outdir = self.configPath(cfgname=self.configName())
-        if outdir is None:
-            return {}
-        outdir = os.path.join(outdir, "PicLists")
-        existingList = []
-        existingFilelist = []
-        if output:
-            for bk in booklist:
-                outfname = os.path.join(outdir, self.getDraftFilename(bk))
-                if os.path.exists(outfname) and os.path.getsize(outfname) != 0:
-                    existingFilelist.append(os.path.basename(outfname))
-                    existingList.append(bk)
-            if len(existingFilelist) and not generateMissingLists:
-                q1 = _("One or more PicList file(s) already exist!")
-                q2 = "\n".join(existingFilelist)+_("\n\nDo you want to OVERWRITE the above-listed file(s)?")
-                if self.msgQuestion(q1, q2):
-                    existingList = []
-        bks = list(set(booklist) - set(existingList))
-        def procbk(pic, src, tgt):
-            return pic['src']
-        missingPics = []
-        picinfos = {}
-        for bk in bks:
-            (pi, mps) = self.generateNProcPicLists(bk, outdir, procbk, sfmonly=("sfm" if output else "piclist"), priority=priority, output=output)
-            missingPics.extend(mps)
-            picinfos.update(pi) # ({"{} {}".format(bk, k): v for k,v in pi.items()})
-        return picinfos
-
-    def savePicLists(self, picinfo):
-        bks = self.getBooks()
-        for bk in bks:
-            picitems = {k: v for k, v in picinfo.items() if k.startswith(bk + " ")}
-            if not len(picitems):
-                continue
-            fname = self.getDraftFilename(bk)
-            fdir = os.path.join(self.configPath(cfgname=self.configName()), "PicLists")
-            if not os.path.exists(fdir):
-                os.makedirs(fdir)
-            fpath = os.path.join(fdir, fname)
-            self._outPicInfo(picitems, fpath, isTemp=False)
+            self.picinfos.load_files(suffix="L")
+            self.picinfos.load_files(suffix="R", prjdir=os.path.join(self.settings_dir, self.diglotView.prjid),
+                                     prj=self.diglotView.prjid, cfg=self.diglotView.configName())
 
     def getDraftFilename(self, bk, ext=".piclist"):
         fname = self.getBookFilename(bk, self.prjid)
@@ -735,167 +594,6 @@ class ViewModel:
         doti = fname.rfind(".")
         res = fname[:doti] + cname + fname[doti:] + ext if doti > 0 else fname + cname + ext
         return res
-
-    def _fixPicinfo(self, vals):
-        p = vals['pgpos']
-        if all(x in "apw" for x in p):
-            vals['media'] = p
-            del vals['pgpos']
-        elif re.match(r"^[tbhpc][lrc]?[0-9]?$", p):
-            vals['media'] = 'p'
-        else:
-            vals['loc'] = p
-            del vals['pgpos']
-        p = vals['size']
-        m = re.match(r"(col|span|page|full)(?:\*(\d+(?:\.\d*)))?$", p)
-        if m:
-            vals['size'] = m[1]
-            if m[2] is not None and len(m[2]):
-                vals['scale'] = m[2]
-        return vals
-
-    def _getFigures(self, bk, suffix="", sfmonly="piclist", media=None, usepiclists=False):
-        res = {}
-        fname = self.getBookFilename(bk, self.prjid)
-        usepiclist = usepiclists or (sfmonly != "sfm" and self.get("c_usePicList")) # and bk not in TexModel._peripheralBooks
-        if usepiclist:
-            plfname = self.getDraftFilename(bk)
-            piclstfname = os.path.join(self.configPath(cfgname=self.configName()), "PicLists", plfname)
-            if not os.path.exists(piclstfname):
-                # print("Can't find {}".format(piclstfname))
-                usepiclist = False
-            else:
-                fname = piclstfname
-        if not usepiclist:      # since possibly set false in above if
-            fname = os.path.join(self.settings_dir, self.prjid, fname)
-        if not os.path.exists(fname):
-            return res
-        elif usepiclist:
-            with universalopen(fname) as inf:
-                for l in (x.strip() for x in inf.readlines()):
-                    if not len(l) or l.startswith("%"):
-                        continue
-                    m = l.split("|")
-                    r = m[0].split(maxsplit=2)
-                    if suffix == "":
-                        k = "{} {}".format(r[0], r[1])
-                    else:
-                        k = "{}{} {}".format(r[0][:3], suffix, r[1])
-                    res[k] = {'caption': r[2] if len(r) > 2 else ""}
-                    if len(m) > 6:
-                        for i, f in enumerate(m[1:]):
-                            res[k][posparms[i+1]] = f
-                        self._fixPicinfo(res[k])
-                    else:
-                        for d in re.findall(r'(\S+)\s*=\s*"([^"]+)"', m[-1]):
-                            res[k][d[0]] = d[1]
-                    # print(res[k])
-        elif sfmonly != "piclist":
-            with universalopen(fname) as inf:
-                dat = inf.read()
-                blocks = ["0"] + re.split(r"\\c\s+(\d+)", dat)
-                for c, t in zip(blocks[0::2], blocks[1::2]):
-                    m = re.findall(r"(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\\fig\*", t)
-                    if len(m):
-                        for f in m:     # usfm 2
-                            r = "{}{} {}.{}".format(bk, suffix, c, f[0])
-                            res[r] = {}
-                            res[r] = {'caption':f[8].strip()}
-                            res[r]['anchor'] = "{}.{}".format(c, f[0])
-                            for i, v in enumerate(f[3:]):
-                                res[r][posparms[i]] = v
-                            self._fixPicinfo(res[r])
-                    elif bk in TexModel._peripheralBooks:
-                        m = re.findall(r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(col|span)[^|]*\|([^\\]+?)?\\fig\*", dat)
-                        if len(m):
-                            for i, f in enumerate(m):
-                                r = "{}{} 1.{}".format(bk, suffix, i)
-                                res[r] = {}
-                                res[r] = {'caption':f[0].strip()}
-                                res[r]['src'] = f[1]
-                                res[r]['size'] = f[2]
-                                res[r]['anchor'] = "1.{}".format(i)
-                                # self._fixPicinfo(res[r])
-                    m = re.findall(r'(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig ([^\\]*?)\|([^\\]+)\\fig\*', t)
-                    if len(m):
-                        for f in m:     # usfm 3
-                            if "|" in f[4]:
-                                break
-                            r = "{}{} {}.{}".format(bk, suffix, c, f[0])
-                            res[r] = {'caption':f[3].strip()}
-                            res[r]['anchor'] = "{}.{}".format(c, f[0])
-                            labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f[4])
-                            for l in labelParams:
-                                k,v = l.split("=")
-                                res[r][k.strip()] = v.strip('"')
-                    elif bk in TexModel._peripheralBooks:
-                        pass
-                        # TO DO: Need to do something similar to what is above (but for USFM3 inline)
-                    if media is not None and r in res:
-                        if 'media' in res[r] and not any(x in media for x in res[r]['media']):
-                            del res[r]
-        return res
-
-    def _sortkey(self, c, v):
-        return "{:0>3}{:0>3}".format(c, re.sub(r"(\d+)[\-,abc\d]*", r"\1", v or "0"))
-
-    def getFigureSources(self, figinfos, filt=newBase, key='src path'):
-        ''' Add source filename information to each figinfo, stored with the key '''
-        res = {}
-        newfigs = {}
-        for k, f in figinfos.items():
-            newk = filt(f['src']) if filt is not None else f['src']
-            newfigs.setdefault(newk, []).append(k)
-        if self.get("c_useCustomFolder"):
-            srchlist = [self.customFigFolder]
-        else:
-            srchlist = []
-            if sys.platform == "win32":
-                srchlist += [os.path.join(self.settings_dir, self.prjid, "figures")]
-                srchlist += [os.path.join(self.settings_dir, self.prjid, "local", "figures")]
-            elif sys.platform == "linux":
-                chkpaths = []
-                for d in ("local", "figures"):
-                    chkpaths += [os.path.join(self.settings_dir, self.prjid, x) for x in (d, d.title())]
-                for p in chkpaths:
-                    if os.path.exists(p):
-                        srchlist += [p]
-        extensions = []
-        extdflt = {x:i for i, x in enumerate(["jpg", "jpeg", "png", "tif", "tiff", "bmp", "pdf"])}
-        imgord = self.get("t_imageTypeOrder").lower()
-        extuser = re.sub("[ ,;/><]"," ",imgord).split()
-        extensions = {x:i for i, x in enumerate(extuser) if x in extdflt}
-        if not len(extensions):   # If the user hasn't defined any extensions 
-            extensions = extdflt  # then we can assign defaults
-
-        for srchdir in srchlist:
-            if srchdir is None or not os.path.exists(srchdir):
-                continue
-            if self.get("c_exclusiveFiguresFolder"):
-                search = [(srchdir, [], os.listdir(srchdir))]
-            else:
-                search = os.walk(srchdir)
-            for subdir, dirs, files in search:
-                for f in files:
-                    doti = f.rfind(".")
-                    origExt = f[doti:].lower()
-                    if origExt[1:] not in extensions:
-                        continue
-                    filepath = os.path.join(subdir, f)
-                    nB = filt(f) if filt is not None else f
-                    if nB not in newfigs:
-                        continue
-                    for k in newfigs[nB]:
-                        if key in figinfos[k]:
-                            old = extensions.get(os.path.splitext(figinfos[k][key])[1].lower(), 10000)
-                            new = extensions.get(os.path.splitext(filepath)[1].lower(), 10000)
-                            if old > new:
-                                figinfos[k][key] = filepath
-                            elif old == new and (self.get("c_useLowResPics") \
-                                                != bool(os.path.getsize(figinfos[k][key]) < os.path.getsize(filepath))):
-                                figinfos[k][key] = filepath
-                        else:
-                            figinfos[k][key] = filepath
 
     def generateAdjList(self):
         existingFilelist = []
@@ -1152,7 +850,6 @@ class ViewModel:
         basecfpath = self.configPath(cfgname=cfgid, prjid=prjid)
 
         # pictures and texts
-        picinfos = {}
         fpath = os.path.join(self.settings_dir, prjid)
         for bk in books:
             fname = self.getBookFilename(bk, prjid)
@@ -1161,10 +858,7 @@ class ViewModel:
                 if scope == "module":
                     res[os.path.join(fpath, bk)] = os.path.basename(bk)
                     cfgchanges['btn_chooseBibleModule'] = os.path.basename(fname)
-            else:
-                res[os.path.join(fpath, fname)] = fname
-                picinfos.update(self._getFigures(bk))
-        self.getFigureSources(picinfos)
+        self.picinfos.getFigureSources()
         pathkey = 'src path'
         for f in (p[pathkey] for p in picinfos.values() if pathkey in p):
                 res[f] = "figures/"+os.path.basename(f)
@@ -1235,6 +929,8 @@ class ViewModel:
     def createDiglotView(self):
         prjid = self.get("fcb_diglotSecProject")
         cfgid = self.get("ecb_diglotSecConfig")
+        if prjid is None or cfgid is None:
+            return None
         digview = ViewModel(self.settings_dir, self.working_dir, self.userconfig, self.scriptsdir)
         digview.setPrjid(prjid)
         if cfgid is not None and cfgid != "":
@@ -1249,9 +945,8 @@ class ViewModel:
         zf = ZipFile(filename, mode="w", compression=ZIP_DEFLATED, compresslevel=9)
         zf.write(os.path.join(self.settings_dir, "usfm.sty"), "usfm.sty")
         self._archiveAdd(zf, self.getBooks(files=True))
-        if self.get("c_diglot"):
-            digview = self.createDiglotView()
-            digview._archiveAdd(zf, self.getBooks(files=True))
+        if self.diglotView is not None:
+            self.diglotView._archiveAdd(zf, self.getBooks(files=True))
         if self.get("c_archiveTemps"):
             prjdir = os.path.join(self.settings_dir, self.prjid)
             for f in self.tempFiles:
