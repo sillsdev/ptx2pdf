@@ -1247,7 +1247,6 @@ class ViewModel:
         if not filename.lower().endswith(".zip"):
             filename += ".zip"
         zf = ZipFile(filename, mode="w", compression=ZIP_DEFLATED, compresslevel=9)
-        zf.write(os.path.join(self.settings_dir, "usfm.sty"), "usfm.sty")
         self._archiveAdd(zf, self.getBooks(files=True))
         if self.get("c_diglot"):
             digview = self.createDiglotView()
