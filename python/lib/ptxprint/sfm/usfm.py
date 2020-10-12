@@ -98,7 +98,7 @@ def _load_cached_stylesheet(path):
         return style.parse(open(_source_path(path), 'r'))
 
 
-default_stylesheet = _load_cached_stylesheet('usfm.sty')
+default_stylesheet = _load_cached_stylesheet('usfm_sb.sty')
 
 _default_meta = {
     'TextType':    'Milestone',
