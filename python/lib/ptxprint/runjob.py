@@ -422,7 +422,7 @@ class RunJob:
         self.thread = Thread(target=self.run_xetex, args=(outfname, info, logbuffer))
         self.busy = True
         self.thread.start()
-        return [os.path.join(self.tmpdir, outfname)]
+        return [os.path.join(self.tmpdir, outfname.replace(".tex", x)) for x in (".tex", ".xdv", ".pdf")]
 
     def wait(self):
         if self.busy:
@@ -515,9 +515,10 @@ class RunJob:
             picinfos.getFigureSources(keys=j, exclusive=self.printer.get("c_exclusiveFiguresFolder"))
             picinfos.set_destinations(fn=carefulCopy, keys=j)
         missingPics = [v['src'] for v in picinfos.values() if 'dest file' not in v]
-        res = [v['dest file'] for v in picinfos.values() if 'dest file' in v]
+        res = [os.path.join("tmpPics", v['dest file']) for v in picinfos.values() if 'dest file' in v]
         outfname = info.printer.baseTeXPDFnames(jobs)[0] + ".piclist"
         picinfos.out(os.path.join(self.tmpdir, outfname), bks=jobs, skipkey="disabled", usedest=True)
+        res.append(outfname)
         info["document/piclistfile"] = outfname
 
         if len(missingPics):

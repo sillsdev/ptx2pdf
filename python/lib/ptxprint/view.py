@@ -873,7 +873,7 @@ class ViewModel:
                     cfgchanges['btn_chooseBibleModule'] = os.path.basename(fname)
         self.picinfos.getFigureSources(exclusive=self.get("c_exclusiveFiguresFolder"))
         pathkey = 'src path'
-        for f in (p[pathkey] for p in picinfos.values() if pathkey in p):
+        for f in (p[pathkey] for p in self.picinfos.values() if pathkey in p):
                 res[f] = "figures/"+os.path.basename(f)
 
         # adjlists
@@ -956,15 +956,15 @@ class ViewModel:
         if not filename.lower().endswith(".zip"):
             filename += ".zip"
         zf = ZipFile(filename, mode="w", compression=ZIP_DEFLATED, compresslevel=9)
-        zf.write(os.path.join(self.settings_dir, "usfm.sty"), "usfm.sty")
         self._archiveAdd(zf, self.getBooks(files=True))
         if self.diglotView is not None:
             self.diglotView._archiveAdd(zf, self.getBooks(files=True))
         if self.get("c_archiveTemps"):
-            prjdir = os.path.join(self.settings_dir, self.prjid)
             for f in self.tempFiles:
-                outfname = os.path.relpath(f, prjdir)
-                zf.write(f, outfname)
+                pf = os.path.join(self.working_dir, f)
+                outfname = os.path.relpath(pf, self.settings_dir)
+                print("Zip {} -> {}".format(pf, outfname))
+                zf.write(pf, outfname)
         zf.close()
 
     def _archiveAdd(self, zf, books):
