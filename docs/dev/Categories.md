@@ -43,9 +43,13 @@ may also have their own watermark or background image.
 % Width of the box relative to the nominal size of the containing box.
 
 %\Breakable option
-% Options: t, f
-% Default: f
-% Should the contents of this box be forced to be on one page or can it be broken?
+% Options: T, F, value(0-1)
+% Default: F
+% Should the contents of this box be forced to be on one page or can it be broken? (Not compatible with background images)
+% With a background colour, the box will be broken into sections and these sections will be added one chunk at a time.
+% If a value is given, this is the smallest fraction of the pageheight that the sections will be, if 't' is given, the fraction 
+% will be 0.2 of the page height. If splitting a given chunk of the box is impossible, the algorithm will increase the chunk-size until 
+% a break IS possible. This 
 
 %\BgColour value(0-1) value(0-1) value(0.1)
 % 3 values (0-1) for red, green and blue. With \Alpha below, this defines the colour of the \esb box

@@ -895,6 +895,16 @@
  \advance\dimen0 by -\bottomm@rgin
  \textheight=\dimen0
  \vsize=\textheight
+ \iffalse % Code for testing breakable inserts. It breaks things!
+   \dimen\topins=\textheight
+   \dimen\bottomins=\textheight
+   \dimen\topleftins=0.7\textheight
+   \dimen\toprightins=0.7\textheight
+   \dimen\bottomleftins=0.7\textheight
+   \dimen\bottomrightins=0.7\textheight
+   \dimen\bottomins=\textheight
+   \dimen\verybottomins=\textheight
+ \fi
  \ifrotate\pdfpagewidth=\PaperHeight \pdfpageheight=\PaperWidth\else
  \pdfpagewidth=\PaperWidth \pdfpageheight=\PaperHeight\fi
  \trace{p}{setupsizes: \the\pdfpagewidth, \the\pdfpageheight}

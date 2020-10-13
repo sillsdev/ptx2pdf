@@ -33,6 +33,7 @@
 % Declare things we need.
 
 \newbox\extb@x % Box in which extended study matter is placed
+\newbox\extchunkb@x % Box in which extended study matter is placed
 \newif\ifinextended \inextendedfalse
 \newtoks\old@bx %store old definition of \everyhbox
 \def\c@tegory{}
@@ -48,12 +49,14 @@
 \def\fb@hpadding{1pt}%Added left and right of feintbox content
 \def\fb@vpadding{1pt}%added above and below feintbox content
 
-
+\newcount\feintb@xnum
+\feintb@xnum=1
 \addtoendhooks{\ifinextended\errmessage{Reached end of book without finding \\esbe.}\fi}
 \def\feintb@x#1#2#3#4#5{%
   % 1 - alpha
   % 2 - colour (r g b)
   % 3 4 5 height, depth, width of colour block
+  \trace{e}{feintbox #1 #2 #3 #4 #5}%
   \bgroup
   \hbox to 0pt{%
     \dimen0=#3\advance\dimen0 by \fb@vpadding
@@ -61,13 +64,14 @@
     \dimen3=\fb@hpadding
     \dimen2=#5\advance\dimen2 by 2\dimen3
     \hskip -\dimen3 % Backup so the expanded box is centred properly
-    \special{pdf:put @resources << /ExtGState << /GS01 << /Type /ExtGState /CA #1 /ca #1 /AIS false >>  >> >>}%
-     \special{pdf:code q /GS01 gs #2 rg}%
+    \edef\thisalpha{#1 }%
+    \special{pdf:put @resources << /ExtGState << /GS0\the\feintb@xnum\space << /Type /ExtGState /CA \thisalpha /ca #1 /AIS false >>  >> >>}%
+     \x@\special\x@{pdf:code q /GS0\the\feintb@xnum\space gs #2 rg}%
      \vrule height \dimen0 depth \dimen1  width \dimen2 %should be possible to get this working in pdf code, but this works.
      \special{pdf:code Q}%
      \hss
   }%
-  \egroup}
+  \egroup\global\advance\feintb@xnum by 1}
 \def\feintbox#1#2#3{% Set a (transparent) coloured box as background for box given in #3. #1: alpha, #2: {r g b}  (all numbers in range 0-1.0)
   \setbox0#3\hbox{\feintb@x{#1}{#2}{\ht0}{\dp0}{\wd0}\box0}}
 
@@ -75,7 +79,7 @@
    \edef\tempc{#1}\edef\tempd{#2}}%
 \def\minip@rsepos#1#2\mid#3\end{%Parse just enough of the FgImagePos and pos parameters to determine the \hsize
    \edef\tempa{#1}\edef\tempb{#2}%
-   \minip@rs@two#3\end
+   \x@\minip@rs@two#3\end
    \trace{e}{parsed: \tempa(\tempb), \tempc(\tempd)}%
 }
 
@@ -83,8 +87,12 @@
  %h*,c*,p* take the current page width as their base
  %tX,bX take the column width 
  %t,b,B take the text width
- \getcatp@ram{posn}
- \ifx\cp@ram\relax\gdef\esbpos{bo}\else
+ \trace{e}{setesbwidth c:\the\colwidth, t:\the\textwidth, h:\the\hsize}%
+ \getcatp@ram{posn}%
+ \ifx\cp@ram\relax
+   \gdef\esbpos{b}%
+   \setcatp@ram{posn}{\esbpos}%
+ \else
    \global\let\esbpos\cp@ram
  \fi
  \getcatp@ram{fgfigpos}\let\fgfigp@s\cp@ram
@@ -105,6 +113,7 @@
    \getcatp@ram{scale}\ifx\cp@ram\relax\else
       \dimen1=\cp@ram\dimen1
    \fi
+   \trace{e}{basic width of \esbpos: \the\dimen1}%
    % And shrink further if s has been specified for the fg picture
    \ifx\fgfigsp@c\empty\else
      \if\tempa s
@@ -126,33 +135,48 @@
 \def\@sb{\let\oldc@tegory\c@tegory
   \getcatp@ram{wid}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup
     \s@tesbwidth\inextendedtrue
-    %\global\holdinginserts=0
+    \global\esbchunkh@ight=\maxdimen
     \global\c@th@@ks{\st@rtesb}}
-
+\newdimen\esbchunkh@ight
+\newdimen\esbus@dheightl
+\newdimen\esbus@dheightr
 \def\st@rtesb{%Gets run by \cat..\cat*, if one is used. 
  \c@th@@ks{}%Once per box is enough!
  \s@tesbwidth
  \trace{e}{startESB \the\dimen1}%
+ \global\esbchunkh@ight=\maxdimen
+ \getcatp@ram{break}\ifx\cp@ram\relax\else \if\cp@ram F\else
+   \if\cp@ram T
+     \global\esbchunkh@ight=0.2\textheight
+   \else
+     \global\esbchunkh@ight=\cp@ram\textheight
+   \fi
+   \floatingpenalty=500\insertpenalties=0
+ \fi\fi
  %\egroup\setbox\extb@x\vbox\bgroup
  \getcatp@ram{fgfigspec}\ifx\cp@ram\relax\else\x@\fig \cp@ram\fig*\fi
 }
 \def\esbb@x{ESB inset box}
 
 \def\@sbe{\ifinextended\global\let\c@t@gory\c@tegory\egroup\else\message{\\ebse called without \\esb}\fi
-  \trace{e}{ESBE}%
+  \trace{e}{ESBE \the\esbchunkh@ight}%
   \let\c@tegory\c@t@gory%recover boxed value
   \inextendedfalse
+  \let\s@vedvpadding=\fb@vpadding%
   \getcatp@ram{bgfigspec}\let\bgf@gsp@c\cp@ram
   \getcatp@ram{bgfiglow}\let\bgf@gl@w\cp@ram%
+  \getcatp@ram{hascol}\let\h@scol\cp@ram%
   \tempfalse
   \ifx\bgf@gsp@c\relax\else
     \if\bgf@gl@w F
       \temptrue
     \fi
-    \getcatp@ram{hascol}%
-    \if\cp@ram F
+    \if\h@scol F
       \temptrue
     \fi
+  \fi
+  \ifx\bgf@gsp@c\relax\else % Background images and page-broken chunks are incompatible 
+    \esbchunkh@ight=\maxdimen
   \fi
   \iftemp
     %modify the esbbox
@@ -162,23 +186,50 @@
   \let\w@tsit\esbb@x   % Make sure the debugging info is correct
   %\ifx\esbpos\relax\gdef\esbpos{bo}\fi
   \let\loc@ption\esbpos
-  \x@\p@rsePicUse\loc@ption\end 
-  \getcatp@ram{hascol}%
-  \if\cp@ram T
-    \getcatp@ram{alpha}\let\pdf@lpha=\cp@ram
+  \picUsesInstrue
+  \x@\p@rsePicUse\loc@ption\end  %set loc@ption and discover if there's to be an insert. (sets \picUsesInsfalse if not)
+  \if\h@scol T
+    \getcatp@ram{alpha}\global\let\pdf@lpha=\cp@ram
     \getcatp@ram{colour}\let\pdfBGc@l=\cp@ram
-    \setbox\extb@x\vbox{%
-      \ifx\bgf@gsp@c\relax\else\vbox to 0pt{\vbox to\ht\extb@x{\vfil\d@figure{\bgf@gsp@c}\vfil}\vss}\fi
-      \vskip\baselineskip\feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extb@x}}%
   \fi
-  \ifpicUsesIns
-    \trace{e}{using ins-\loc@ption}%
+  \loop
+    \ifdim\ht\extb@x>\esbchunkh@ight % to enable page splitting, the box should be chunked.
+      \dimen1=\esbchunkh@ight
+      {% 
+        \loop
+          \setbox2=\copy\extb@x
+          \global\setbox\extchunkb@x=\vsplit\extb@x to \dimen1
+          \ifnum\badness>999999
+            \setbox\extb@x=\box2
+            \advance\dimen1 by \baselineskip %Couldnt split, make the chunk bigger.
+            \trace{e}{Chunk grown to \the\dimen1}%
+        \repeat
+      }%
+      \setbox\extchunkb@x=\vbox{\unvbox\extchunkb@x}% Reset to natural size
+      \ifvoid\extb@x\else \dp\extchunkb@x=0pt\fi
+    \else
+      \setbox\extchunkb@x=\box\extb@x
+      \let\fb@vpadding=\s@vedvpadding
+    \fi
+    \trace{e}{Chunk of extbox is \the\ht\extchunkb@x (\the\ht\extb@x)}%
+    \if\h@scol T
+      \setbox\extchunkb@x\vbox{%
+       \ifx\bgf@gsp@c\relax\else\vbox to 0pt{\vbox to\ht\extchunkb@x{\vfil\d@figure{\bgf@gsp@c}\vfil}\vss}\fi
+       % \vskip\baselineskip
+        \feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}}%
+    \fi
     \x@\let\x@\@xtins\csname ins-\loc@ption\endcsname
-    \insert\@xtins{\vskip\baselineskip\box\extb@x}%
-  \else
-    \trace{e}{\loc@ption\space is inline}%
-    \unvbox\extb@x
-  \fi
+    \ifpicUsesIns
+      \trace{e}{using ins-\loc@ption}%
+      \insert\@xtins{%\vskip\baselineskip
+          \penalty10000\unvbox\extchunkb@x}%
+    \else
+      \trace{e}{\loc@ption\space is inline}%
+      \unvbox\extchunkb@x
+    \fi
+  \ifdim\ht\extb@x>0pt
+    \def\fb@vpadding{0pt}
+    \repeat
   \let\c@tegory\oldc@tegory 
 }
 
@@ -193,10 +244,11 @@
   \setcatp@ram{bgfigpos}{pc}%Horizontally centred
   \setcatp@ram{hascol}{F}%No default colour.
   \setcatp@ram{posn}{bo}%
+  \setcatp@ram{alpha}{0.2}% 1=solid 0=invisible
 }
 \def\Position   #1\relax{\setcatp@ram{posn}{#1}}% Where does it go on the page? (like figures, but also B for below notes)
 \def\Scale      #1\relax{\setcatp@ram{scale}{#1}}% Where does it go on the page? (like figures, but also B for below notes)
-\def\Breakable   #1\relax{\setcatp@ram{break}{\uppercase #1}} %Can the box page-break?
+\def\Breakable   #1\relax{\tempfalse\setbox0\hbox{\ifcat 1#1 \global\temptrue\fi}\iftemp\setcatp@ram{break}{#1}\else\setcatp@ram{break}{\uppercase #1}\fi} %Can the box page-break?
 \def\FgImage      #1\relax{\setcatp@ram{fgfigname}{#1}\GenC@tFig{fg}}
 \def\FgImagePos   #1\relax{\setcatp@ram{fgfigpos}{#1}\GenC@tFig{fg}}
 \def\FgImageScale   #1\relax{\setcatp@ram{fgfigscale}{#1}\GenC@tFig{fg}}
@@ -220,7 +272,7 @@
   \gdef\c@tegory{#1}%
   \s@tc@tpr@fix%
 }
-\def\testcategory{\c@tegory}
+\def\showTheCategory{\c@tegory\message{The category is \c@tegory}}
 
 \def\StyleCategory#1#2{\S@tCat{#1}#2\EndCategory}
 \def\categorysheet#1{%Just wrap \stylesheet with category-blanking commands
@@ -229,5 +281,5 @@
   \subc@llfalse
 }
 
-\addtoinithooks{\let\@SB\esb\let\@SBE\ESBE \let\esb\@sb\let\esbe\@sbe}
+\addtoinithooks{\let\@SB=\esb\let\@SBE=\esbe \let\esb=\@sb\let\esbe=\@sbe}
 
