@@ -20,7 +20,7 @@ from ptxprint.view import ViewModel, Path
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton
 from ptxprint.runner import StreamTextBuffer
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
-from ptxprint.piclist import PicList, PicChecks
+from ptxprint.piclist import PicList, PicChecks, PicInfoUpdateProject
 from ptxprint.styleditor import StyleEditor
 from ptxprint.runjob import isLocked
 from ptxprint.texmodel import TexModel
@@ -1055,8 +1055,10 @@ class GtkViewModel(ViewModel):
         self.onSimpleClicked(btn)
         self.colourTabs()
         if btn.get_active():
+            if self.picinfos is None:
+                self.picinfos = PicInfo(self)
             self.picinfos.load_files()
-            self.picListView.load(picinfos)
+            self.picListView.load(self.picinfos)
         else:
             self.picinfos.clear()
             self.picListView.clear()

@@ -590,7 +590,7 @@ class PicInfo(dict):
 def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix=""):
     newpics = PicInfo(model)
     newpics.read_piclist(os.path.join(model.settings_dir, model.prjid, 'shared',
-                                      'ptxprint'), "{}.piclist".format(mode.prjid))
+                                      'ptxprint'), "{}.piclist".format(model.prjid))
     delpics = set()
     for bk in bks:
         bkf = allbooks.get(bk, None)
