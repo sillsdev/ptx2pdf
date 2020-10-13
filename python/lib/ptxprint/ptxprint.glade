@@ -901,6 +901,8 @@ saved configuration.</property>
       <column type="gboolean"/>
       <!-- column-name cleardest -->
       <column type="gboolean"/>
+      <!-- column-name origkey -->
+      <column type="gchararray"/>
     </columns>
     <data>
       <row>
@@ -916,6 +918,7 @@ saved configuration.</property>
         <col id="9">N</col>
         <col id="10">False</col>
         <col id="11">False</col>
+        <col id="12" translatable="yes"/>
       </row>
       <row>
         <col id="0">JHN 3:16-17</col>
@@ -930,6 +933,7 @@ saved configuration.</property>
         <col id="9">N</col>
         <col id="10">False</col>
         <col id="11">False</col>
+        <col id="12" translatable="yes"/>
       </row>
       <row>
         <col id="0">LUK 15:8</col>
@@ -944,6 +948,7 @@ saved configuration.</property>
         <col id="9">N</col>
         <col id="10">False</col>
         <col id="11">False</col>
+        <col id="12" translatable="yes"/>
       </row>
       <row>
         <col id="0">ACT 18:27</col>
@@ -958,6 +963,7 @@ saved configuration.</property>
         <col id="9">N</col>
         <col id="10">False</col>
         <col id="11">False</col>
+        <col id="12" translatable="yes"/>
       </row>
       <row>
         <col id="0">ROM 8:28</col>
@@ -972,6 +978,7 @@ saved configuration.</property>
         <col id="9">N</col>
         <col id="10">False</col>
         <col id="11">False</col>
+        <col id="12" translatable="yes"/>
       </row>
       <row>
         <col id="0">1CO 3:16</col>
@@ -986,6 +993,7 @@ saved configuration.</property>
         <col id="9">N</col>
         <col id="10">False</col>
         <col id="11">False</col>
+        <col id="12" translatable="yes"/>
       </row>
       <row>
         <col id="0">REV 3:20</col>
@@ -1000,6 +1008,7 @@ saved configuration.</property>
         <col id="9">N</col>
         <col id="10">False</col>
         <col id="11">False</col>
+        <col id="12" translatable="yes"/>
       </row>
       <row>
         <col id="0">GLO 1:0</col>
@@ -1014,6 +1023,7 @@ saved configuration.</property>
         <col id="9">N</col>
         <col id="10">False</col>
         <col id="11">False</col>
+        <col id="12" translatable="yes"/>
       </row>
     </data>
   </object>

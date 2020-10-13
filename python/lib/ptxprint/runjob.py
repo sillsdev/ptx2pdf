@@ -512,11 +512,10 @@ class RunJob:
             return []
         picinfos.build_searchlist()
         for j in jobs:
-            picinfos.getFigureSources(keys=j)
+            picinfos.getFigureSources(keys=j, exclusive=self.printer.get("c_exclusiveFiguresFolder"))
             picinfos.set_destinations(fn=carefulCopy, keys=j)
         missingPics = [v['src'] for v in picinfos.values() if 'dest file' not in v]
         res = [v['dest file'] for v in picinfos.values() if 'dest file' in v]
-        print("processes {} vs failed {} pics".format(len(res), len(missingPics)))
         outfname = info.printer.baseTeXPDFnames(jobs)[0] + ".piclist"
         picinfos.out(os.path.join(self.tmpdir, outfname), bks=jobs, skipkey="disabled", usedest=True)
         info["document/piclistfile"] = outfname
@@ -591,7 +590,6 @@ class RunJob:
             except OSError:
                 print(_("Error: Unable to copy {}\n       image to {} in tmpPics folder"), srcpath, tgtpath)
                 return srcpath
-        print('"Copying" {} to {}'.format(srcpath, tgtpath))
         return tgtfile
 
     def removeTempFiles(self, texfiles):

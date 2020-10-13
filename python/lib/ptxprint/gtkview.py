@@ -3,6 +3,7 @@
 import sys, os, re, regex, gi, subprocess
 gi.require_version('Gtk', '3.0')
 from shutil import copyfile, copytree, rmtree
+import time
 from gi.repository import Gdk, Gtk, Pango, GObject, GLib
 
 if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
@@ -193,13 +194,13 @@ _vertical_thumb = {
 }
 
 _signals = {
-    'clicked': ("GtkButton",),
-    'changed': ("GtkComboBox", "GtkEntry"),
-    'color-set': ("GtkColorButton",),
-    'change-current-page': ("GtkNotebook",),
-    'change-value': ("GtkSpinButton",),
-    'state-set': ("GtkSwitch",),
-    'row-activated': ("GtkTreeView",),
+    'clicked': ("Button",),
+    'changed': ("ComboBox", "Entry"),
+    'color-set': ("ColorButton",),
+    'change-current-page': ("Notebook",),
+    'change-value': ("SpinButton",),
+    'state-set': ("Switch",),
+    'row-activated': ("TreeView",),
 }
 
 class GtkViewModel(ViewModel):
@@ -357,13 +358,22 @@ class GtkViewModel(ViewModel):
             for k, v in _signals.items():
                 for w in v:
                     GObject.add_emission_hook(getattr(Gtk, w), k, self.emission_hook, k)
+            self.logactive = True
         Gtk.main()
 
     def emission_hook(self, w, *a):
+        if not self.logactive:
+            return True
         name = Gtk.Buildable.get_name(w)
         self.logfile.write('    <event w="{}" s="{}" t="{}"/>\n'.format(name, a[0],
-                            self.starttime-time.time()))
+                            time.time()-self.starttime))
         return True
+
+    def pause_logging(self):
+        self.logactive = False
+
+    def unpause_logging(self):
+        self.logactive = True
 
     def monitor(self):
         if self.pendingerror is not None:
@@ -482,7 +492,7 @@ class GtkViewModel(ViewModel):
 
     def onDestroy(self, btn):
         if self.logfile != None:
-            self.write("</actions>\n")
+            self.logfile.write("</actions>\n")
             self.logfile.close()
         Gtk.main_quit()
 
@@ -590,9 +600,7 @@ class GtkViewModel(ViewModel):
             self.set("lb_settings_dir", configpath)
             self.updateDialogTitle()
         self.writeConfig()
-        if self.picinfos is not None:
-            self.picinfos.out(os.path.join(self.configPath(self.configName()),
-                                "{}-{}.piclist".format(self.prjid, self.configName())))
+        self.savePics()
 
     def writeConfig(self, cfgname=None):
         if self.prjid is not None:
@@ -946,11 +954,17 @@ class GtkViewModel(ViewModel):
                                                \n   * Click 'Print' to create the PDF"))
         self.bookNoUpdate = False
 
+    def savePics(self):
+        if self.picinfos is not None:
+            self.picListView.updateinfo(self.picinfos)
+            self.picinfos.out(os.path.join(self.configPath(self.configName()),
+                                    "{}-{}.piclist".format(self.prjid, self.configName())))
+
     def onSaveEdits(self, btn):
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
         pgid = self.notebooks["Viewer"][pg]
         if pg == 0:
-            self.savePicLists(self.picListView.getinfo())
+            self.savePics()
             return
         buf = self.fileViews[pg][0]
         fpath = self.builder.get_object("l_{1}".format(*pgid.split("_"))).get_tooltip_text()
