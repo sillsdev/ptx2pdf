@@ -192,6 +192,16 @@ _vertical_thumb = {
     "4" : (270, 270),
 }
 
+_signals = {
+    'clicked': ("GtkButton",),
+    'changed': ("GtkComboBox", "GtkEntry"),
+    'color-set': ("GtkColorButton",),
+    'change-current-page': ("GtkNotebook",),
+    'change-value': ("GtkSpinButton",),
+    'state-set': ("GtkSwitch",),
+    'row-activated': ("GtkTreeView",),
+}
+
 class GtkViewModel(ViewModel):
 
     def __init__(self, settings_dir, workingdir, userconfig, scriptsdir, args=None):
@@ -342,12 +352,17 @@ class GtkViewModel(ViewModel):
         GObject.timeout_add(1000, self.monitor)
         if self.args is not None and self.args.capture is not None:
             self.logfile = open(self.args.capture, "w")
-            GObject.add_emission_hook(Gtk.Button, "clicked", self.emission_hook, "clicked")
+            self.logfile.write("<?xml version='1.0'?>\n<actions>\n")
+            self.starttime = time.time()
+            for k, v in _signals.items():
+                for w in v:
+                    GObject.add_emission_hook(getattr(Gtk, w), k, self.emission_hook, k)
         Gtk.main()
 
     def emission_hook(self, w, *a):
         name = Gtk.Buildable.get_name(w)
-        self.logfile.write('<event w="{}" s="{}"/>\n'.format(name, a[0]))
+        self.logfile.write('    <event w="{}" s="{}" t="{}"/>\n'.format(name, a[0],
+                            self.starttime-time.time()))
         return True
 
     def monitor(self):
@@ -467,6 +482,7 @@ class GtkViewModel(ViewModel):
 
     def onDestroy(self, btn):
         if self.logfile != None:
+            self.write("</actions>\n")
             self.logfile.close()
         Gtk.main_quit()
 

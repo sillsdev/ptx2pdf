@@ -10,6 +10,7 @@ import pathlib, os, sys
 from configparser import NoSectionError, NoOptionError, _UNSET
 from zipfile import ZipFile, ZIP_DEFLATED
 from io import StringIO
+from shutil import rmtree
 import datetime, time
 from shutil import copyfile, copytree, move
 
@@ -419,6 +420,16 @@ class ViewModel:
             self.picinfos.load_files()
         else:
             self.picinfos.clear()
+        # clear generated pictures
+        for f in ("tmpPics", "tmpPicLists"):
+            path2del = os.path.join(self.working_dir, f)
+            print("Removing "+path2del)
+            if os.path.exists(path2del):
+                try:
+                    rmtree(path2del)
+                except OSError:
+                    pass
+            os.makedirs(path2del)
         return True
 
     def writeConfig(self, cfgname=None):

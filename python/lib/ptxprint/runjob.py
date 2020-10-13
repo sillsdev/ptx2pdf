@@ -435,9 +435,7 @@ class RunJob:
             self.printer.incrementProgress()
             if info["document/toc"] != "%":
                 tocdata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".toc")))
-            cmd = ["xetex", "--halt-on-error"]
-            if self.args.testing:
-                cmd += ["-no-pdf"]
+            cmd = ["xetex", "--halt-on-error", "-no-pdf"]
             runner = call(cmd + [outfname], cwd=self.tmpdir, logbuffer=logbuffer)
             if isinstance(runner, subprocess.Popen) and runner is not None:
                 try:
@@ -465,6 +463,16 @@ class RunJob:
             else:
                 break
             numruns -= 1
+        if not self.args.testing and not self.res:
+            self.printer.incrementProgress()
+            cmd = ["xdvipdfmx", "-E"]
+            runner = call(cmd + [outfname.replace(".tex", ".xdv")], cwd=self.tmpdir, logbuffer=logbuffer)
+            if isinstance(runner, subprocess.Popen) and runner is not None:
+                try:
+                    runner.wait(self.args.timeout)
+                except subprocess.TimeoutExpired:
+                    print("Timed out!")
+                    self.res = runner.returncode
         print("Done")
         self.done_job(outfname, info)
 
