@@ -408,7 +408,7 @@ class ViewModel:
         #print("Reading config: {}".format(path))
         config = configparser.ConfigParser()
         config.read(path, encoding="utf-8")
-        self.versionFwdConfig(config)
+        self.versionFwdConfig(config, cfgname)
         self.loadConfig(config)
         if self.get("c_diglot"):
             self.diglotView = self.createDiglotView()
@@ -500,7 +500,7 @@ class ViewModel:
             return fallback
         return conv(v)
 
-    def versionFwdConfig(self, config):
+    def versionFwdConfig(self, config, cfgname):
         version = self._config_get(config, "config", "version", conv=float, fallback=0.0)
         # print("version=",version)
         v = float(version)
@@ -519,9 +519,8 @@ class ViewModel:
             bl = self._config_get(config, "project", "booklist")
             self._configset(config, "project/bookscope", "multiple" if len(bl) else "single")
         if v < 1.201:
-            cnfname = self.configName() or "Default"
             for d in ('PicLists', 'AdjLists'):
-                p = os.path.join(self.configPath(cnfname), d)
+                p = os.path.join(self.configPath(cfgname), d)
                 if not os.path.exists(p):
                     continue
                 for f in os.listdir(p):
@@ -530,6 +529,11 @@ class ViewModel:
                         if not os.path.exists(newf):
                             move(os.path.join(p, f), newf)
             config.set("config", "version", "1.201")
+        styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
+        if not os.path.exists(styf):
+            print("Creating {}".format(styf))
+            with open(styf, "w", encoding="utf-8") as outf:
+                outf.write("# This file left intentionally blank\n")
 
     def loadConfig(self, config):
         def setv(k, v): self.set(k, v, skipmissing=True)
@@ -843,6 +847,7 @@ class ViewModel:
                 if os.path.exists(fp):
                     res.append(fp)
                     break
+        res.append(os.path.join(cpath, "ptxprint.sty"))
         return res
 
     def _getArchiveFiles(self, books, prjid=None, cfgid=None):

@@ -137,6 +137,10 @@ class StyleEditor:
         self.isLoading = False
 
     def load(self, sheetfiles):
+        if len(sheetfiles) == 0:
+            return
+        print("BaseSheets: ", sheetfiles[:-1])
+        print("Sheet: ", sheetfiles[-1:])
         self.basesheet = Sheets(sheetfiles[:-1])
         self.sheet = Sheets(sheetfiles[-1:], base=self.basesheet)
         results = {"Tables": {"th": {"thc": {}, "thr": {}}, "tc": {"tcc": {}, "tcr": {}}},
@@ -250,13 +254,19 @@ class StyleEditor:
         except (ValueError, TypeError):
             return a == b
 
+    def _str_val(self, v):
+        if isinstance(v, (set, list)):
+            return " ".join(sorted(v))
+        else:
+            return str(v)
+
     def output_diffile(self, outfh):
         for m in self._list_usfms():
             markerout = False
             for k,v in self.sheet[m].items():
-                other = self.base[m].get(k, None)
-                if self._eq_val(other, v):
+                other = self.basesheet[m].get(k, None)
+                if not self._eq_val(other, v):
                     if not markerout:
                         outfh.write("\n\\Marker {}\n".format(m))
                         markerout = True
-                    outfh.write("\n\\{} {}\n".format(k, v))
+                    outfh.write("\\{} {}\n".format(k, self._str_val(v)))

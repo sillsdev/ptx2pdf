@@ -601,6 +601,7 @@ class GtkViewModel(ViewModel):
             self.updateDialogTitle()
         self.writeConfig()
         self.savePics()
+        self.saveStyles()
 
     def writeConfig(self, cfgname=None):
         if self.prjid is not None:
@@ -960,6 +961,11 @@ class GtkViewModel(ViewModel):
                                                \n   * Generate the PiCList or AdjList \
                                                \n   * Click 'Print' to create the PDF"))
         self.bookNoUpdate = False
+
+    def saveStyles(self):
+        fname = os.path.join(self.configPath(self.configName(), makePath=True), "ptxprint.sty")
+        with open(fname, "w", encoding="Utf-8") as outf:
+            self.styleEditorView.output_diffile(outf)
 
     def savePics(self):
         if self.picinfos is not None:

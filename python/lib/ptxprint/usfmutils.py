@@ -61,7 +61,8 @@ class Sheets(dict):
         if init is None or not len(init):
             return
         for s in init:
-            self.append(s)
+            if os.path.exists(s):
+                self.append(s)
 
     def append(self, sf):
         if os.path.exists(sf):
