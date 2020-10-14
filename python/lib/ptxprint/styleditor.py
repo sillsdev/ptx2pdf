@@ -139,8 +139,6 @@ class StyleEditor:
     def load(self, sheetfiles):
         if len(sheetfiles) == 0:
             return
-        print("BaseSheets: ", sheetfiles[:-1])
-        print("Sheet: ", sheetfiles[-1:])
         self.basesheet = Sheets(sheetfiles[:-1])
         self.sheet = Sheets(sheetfiles[-1:], base=self.basesheet)
         results = {"Tables": {"th": {"thc": {}, "thr": {}}, "tc": {"tcc": {}, "tcr": {}}},

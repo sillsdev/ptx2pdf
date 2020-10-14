@@ -423,7 +423,6 @@ class ViewModel:
         # clear generated pictures
         for f in ("tmpPics", "tmpPicLists"):
             path2del = os.path.join(self.working_dir, f)
-            print("Removing "+path2del)
             if os.path.exists(path2del):
                 try:
                     rmtree(path2del)
