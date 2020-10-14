@@ -546,11 +546,15 @@ class RunJob:
         im = Image.open(newinf)
         try:
             p = im.load()
+        except OSError:
+            print(_("Failed to load (image) file:"), infile)
+            return
+        try:
             onlyRGBAimage = im.convert(fmta)
             iw = im.size[0]
             ih = im.size[1]
         except OSError:
-            print(_("Failed to convert (image) file:"), srcpath)
+            print(_("Failed to convert (image) file:"), infile)
             return
         # print("Orig ih={} iw={}".format(ih, iw))
         # print("iw/ih = ", iw/ih)
@@ -586,14 +590,14 @@ class RunJob:
                 self.convertToJPGandResize(ratio, srcpath, tgtpath)
             except: # MH: Which exception should I try to catch?
                 print(_("Error: Unable to convert/resize image!\nImage skipped:"), srcpath)
-                return srcpath
+                return os.path.basename(tgtpath)
         else:
             try:
                 copyfile(srcpath, tgtpath)
             except OSError:
                 print(_("Error: Unable to copy {}\n       image to {} in tmpPics folder"), srcpath, tgtpath)
-                return srcpath
-        return tgtfile
+                return os.path.basename(tgtpath)
+        return os.path.basename(tgtpath)
 
     def removeTempFiles(self, texfiles):
         notDeleted = []
