@@ -253,7 +253,7 @@ class GtkViewModel(ViewModel):
             digits.append([d, v])
         self.fcb_digits.set_active_id(_alldigits[0])
 
-        for d in ["dlg_multiBookSelector", "dlg_fontChooser", "dlg_password"]:
+        for d in ["dlg_multiBookSelector", "dlg_fontChooser", "dlg_password", "dlg_generate"]:
             dialog = self.builder.get_object(d)
             dialog.add_buttons(
                 Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
@@ -839,12 +839,19 @@ class GtkViewModel(ViewModel):
                 bks = [self.get("ecb_examineBook")]
             else:
                 bks = bks2gen
-            if self.diglotView is None:
-                PicInfoUpdateProject(self, bks, ab, self.picinfos)
-            else:
-                PicInfoUpdateProject(self, bks, ab, self.picinfos, suffix="L")
-                PicInfoUpdateProject(self.diglotView, bks, ab, self.picinfos, suffix="R")
-            self.updatePicList(bks)
+            dialog = self.builder.get_object("dlg_generate")
+            self.set("l_generate_booklist", " ".join(bks))
+            response = dialog.run()
+            if response == Gtk.ResponseType.OK:
+                if self.get("r_generate") == "all":
+                    bks = self.getAllBooks()
+                if self.diglotView is None:
+                    PicInfoUpdateProject(self, bks, ab, self.picinfos)
+                else:
+                    PicInfoUpdateProject(self, bks, ab, self.picinfos, suffix="L")
+                    PicInfoUpdateProject(self.diglotView, bks, ab, self.picinfos, suffix="R")
+                self.updatePicList(bks)
+            dialog.hide()
         elif pgid == "scroll_AdjList": # AdjList
             self.generateAdjList()
         elif pgid == "scroll_FinalSFM" and bk is not None: # FinalSFM

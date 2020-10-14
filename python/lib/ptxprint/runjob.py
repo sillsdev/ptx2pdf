@@ -466,6 +466,8 @@ class RunJob:
         if not self.args.testing and not self.res:
             self.printer.incrementProgress()
             cmd = ["xdvipdfmx", "-E"]
+            if self.printer.get("c_PDFx1aOutput"):
+                cmd += ["-z", "0", "-c"]
             runner = call(cmd + [outfname.replace(".tex", ".xdv")], cwd=self.tmpdir, logbuffer=logbuffer)
             if isinstance(runner, subprocess.Popen) and runner is not None:
                 try:
