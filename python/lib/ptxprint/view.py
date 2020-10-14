@@ -426,9 +426,9 @@ class ViewModel:
             if os.path.exists(path2del):
                 try:
                     rmtree(path2del)
-                except OSError:
+                    os.makedirs(path2del, exist_ok=True)
+                except (OSError, PermissionError):
                     pass
-            os.makedirs(path2del)
         return True
 
     def writeConfig(self, cfgname=None):

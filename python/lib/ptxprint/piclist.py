@@ -26,6 +26,9 @@ _form_structure = {
     'nlines':   's_plLines',
 }
 _comblist = ['pgpos', 'hpos', 'nlines']
+_defaults = {
+    'scale':    "1.000"
+}
 
 def newBase(fpath):
     doti = fpath.rfind(".")
@@ -142,7 +145,7 @@ class PicList:
         self.parent.pause_logging()
         for j, (k, v) in enumerate(_form_structure.items()): # relies on ordered dict
             if k == 'pgpos':
-                val = pgpos[:2] if pgpos[0] in "PF" else pgpos[0]
+                val = pgpos[:2] if pgpos[0:1] in "PF" else (pgpos[0:] or "t")
             elif k == 'hpos':
                 if row[3] == "span":
                     val = "-"
@@ -441,9 +444,16 @@ class PicInfo(dict):
             if (len(bks) and k[:3] not in bks) or (skipkey is not None and v.get(skipkey, False)):
                 continue
             outk = self.stripsp_re.sub(r"\1", k)
-            lines.append("{} {}|".format(outk, v.get('caption', '')) + " ".join('{}="{}"' \
-                                        .format(pos3parms[i], v[x]) for i, x in enumerate(p3p) \
-                                        if x in v and v[x] and (not usedest or not hiderefs or x != 'ref')))
+            line = []
+            for i, x in enumerate(p3p):
+                if x not in v or not v[x]:
+                    continue
+                if x in _defaults and _defaults[x] == v[x]:
+                    continue
+                if usedest and hiderefs and x == "ref":
+                    continue
+                line.append('{}="{}"'.format(pos3parms[i], v[x]))
+            lines.append("{} {}|".format(outk, v.get('caption', ''))+ " ".join(line))
         dat = "\n".join(lines)+"\n"
         with open(fpath, "w", encoding="utf-8") as outf:
             outf.write(dat)
