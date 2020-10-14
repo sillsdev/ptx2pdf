@@ -149,7 +149,7 @@ class PicList:
             elif k == 'hpos':
                 if row[3] == "span":
                     val = "-"
-                elif pgpos[0] in "PF":
+                elif pgpos[0:] in "PF":
                     val = pgpos[2:] or "c"
                 else:
                     val = pgpos[1:] or ""

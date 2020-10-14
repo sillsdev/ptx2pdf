@@ -524,7 +524,7 @@ class ViewModel:
                     continue
                 for f in os.listdir(p):
                     if "-draft" in f:
-                        newf = os.path.join(p, f.replace("-draft", "-"+cnfname))
+                        newf = os.path.join(p, f.replace("-draft", "-"+cfgname))
                         if not os.path.exists(newf):
                             move(os.path.join(p, f), newf)
         if v < 1.290:

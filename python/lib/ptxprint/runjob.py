@@ -544,7 +544,9 @@ class RunJob:
             rawdata = inf.read()
         newinf = cStringIO(rawdata)
         im = Image.open(newinf)
-        try:
+        # try:
+        if True:
+            print("Converting:", srcpath)
             p = im.load()
         except OSError:
             print(_("Failed to load (image) file:"), infile)
@@ -586,7 +588,8 @@ class RunJob:
         # then we first need to convert to a JPG and/or pad with which space on either side
         if self.ispdfxa or iw/ih < ratio or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
             tgtpath = os.path.splitext(tgtpath)[0]+".jpg"
-            try:
+            # try:
+            if True:
                 self.convertToJPGandResize(ratio, srcpath, tgtpath)
             except: # MH: Which exception should I try to catch?
                 print(_("Error: Unable to convert/resize image!\nImage skipped:"), srcpath)
