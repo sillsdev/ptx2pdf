@@ -527,7 +527,27 @@ class ViewModel:
                         newf = os.path.join(p, f.replace("-draft", "-"+cnfname))
                         if not os.path.exists(newf):
                             move(os.path.join(p, f), newf)
-            config.set("config", "version", "1.201")
+        if v < 1.290:
+            picinfo = None
+            path = os.path.join(self.configPath(cfgname), "PicLists")
+            if os.path.exists(path):
+                for f in os.listdir(path):
+                    if not f.endswith(".piclist"):
+                        continue
+                    fpath = os.path.join(path, f)
+                    if picinfo is None:
+                        picinfo = PicInfo(self)
+                    picinfo.read_piclist(fpath)
+                    os.unlink(fpath)
+                if picinfo is not None:
+                    picinfo.out(os.path.join(self.configPath(cfgname), "{}-{}.piclist".format(self.prjid, cfgname)))
+            path = os.path.join(self.configPath(cfgname), "ptxprint.sty")
+            if not os.path.exists(path):
+                modpath = os.path.join(self.configPath(cfgname), "ptxprint-mods.sty")
+                if os.path.exists(modpath):
+                    move(modpath, path)
+            config.set("config", "version", "1.290")
+
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):
             print("Creating {}".format(styf))
