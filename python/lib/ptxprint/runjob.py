@@ -498,6 +498,8 @@ class RunJob:
         picinfos = self.printer.picinfos
         pageRatios = self.usablePageRatios(info)
         tmpPicpath = os.path.join(self.printer.working_dir, "tmpPics")
+        if not os.path.exists(tmpPicpath):
+            os.makedirs(tmpPicpath)
         folderList = ["tmpPics", "tmpPicLists"] 
         #try:
         #    self.removeTmpFolders(self.printer.working_dir, folderList, mkdirs=True)
@@ -508,7 +510,6 @@ class RunJob:
             ratio = pageRatios[0 if p['size'].startswith("span") else 1]
             return self.carefulCopy(ratio, src, tgt)
         missingPics = []
-        print("document/ifinclfigs {}".format(info['document/ifinclfigs']))
         if info['document/ifinclfigs'] == 'false':
             print("NoFigs")
             return []
@@ -544,9 +545,7 @@ class RunJob:
             rawdata = inf.read()
         newinf = cStringIO(rawdata)
         im = Image.open(newinf)
-        # try:
-        if True:
-            print("Converting:", srcpath)
+        try:
             p = im.load()
         except OSError:
             print(_("Failed to load (image) file:"), infile)
@@ -561,7 +560,6 @@ class RunJob:
         # print("Orig ih={} iw={}".format(ih, iw))
         # print("iw/ih = ", iw/ih)
         if iw/ih < ratio:
-            # print(infile)
             newWidth = int(ih * ratio)
             newimg = Image.new(fmta, (newWidth, ih), color=white)
             newimg.alpha_composite(onlyRGBAimage, (int((newWidth-iw)/2),0))
@@ -588,8 +586,7 @@ class RunJob:
         # then we first need to convert to a JPG and/or pad with which space on either side
         if self.ispdfxa or iw/ih < ratio or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
             tgtpath = os.path.splitext(tgtpath)[0]+".jpg"
-            # try:
-            if True:
+            try:
                 self.convertToJPGandResize(ratio, srcpath, tgtpath)
             except: # MH: Which exception should I try to catch?
                 print(_("Error: Unable to convert/resize image!\nImage skipped:"), srcpath)
