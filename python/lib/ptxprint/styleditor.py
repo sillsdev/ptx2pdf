@@ -159,9 +159,7 @@ class StyleEditor:
         for k, v in sorted(self.sheet.items(), key=lambda x:(len(x[0]), x[0])):
             cat = 'Other'
             if 'Name' in v:
-                print(v)
                 m = name_reg.match(str(v['Name']))
-                print(m)
                 if m:
                     if not m.group(1) and " " in m.group(2):
                         cat = m.group(2)
@@ -169,9 +167,9 @@ class StyleEditor:
                         cat = m.group(1) or m.group(3)
                 else:
                     cat = str(v['Name']).strip()
-                # cat = categorymapping.get(cat, (cat, None))[0]
                 cat, url = categorymapping.get(cat, (cat, None))
-                print('https://ubsicap.github.io/usfm/{}/index.html#{}'.format(url,"xyz"))
+                v[' category'] = cat
+                v[' url'] = url
             triefit(k, results.setdefault(cat, {}), 1)
         self.treestore.clear()
         self._fill_store(results, None)
@@ -328,6 +326,8 @@ class StyleEditor:
         for m in self._list_usfms():
             markerout = False
             for k,v in self.sheet[m].items():
+                if k.startswith(" "):
+                    continue
                 other = self.basesheet[m].get(k, None)
                 if not self._eq_val(other, v):
                     if not markerout:
