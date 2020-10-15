@@ -5,6 +5,7 @@ from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.usfmutils import Sheets
 
 stylemap = {
+    'Marker':       ('l_styleTag', None, None),
     'Description':  ('l_styDescription', None, None),
     'TextType':     ('fcb_styTextType', 'Paragraph', None),
     'StyleType':    ('fcb_styStyleType', 'Paragraph', None),
@@ -117,7 +118,7 @@ mkrexceptions = {k.lower().title(): k for k in ('BaseLine', 'TextType', 'TextPro
                 'FontSize', 'FirstLineIndent', 'LeftMargin', 'RightMargin',
                 'SpaceBefore', 'SpaceAfter', 'CallerStyle', 'CallerRaise',
                 'NoteCallerStyle', 'NoteCallerRaise', 'NoteBlendInto', 'LineSpacing',
-                'StyleType')}
+                'StyleType', 'ColorName', 'XMLTag', 'TEStyleName')}
 
 class StyleEditor:
     def __init__(self, builder):
@@ -154,8 +155,13 @@ class StyleEditor:
             if 'Name' in v:
                 m = name_reg.match(str(v['Name']))
                 if m:
-                    cat = m.group(1) or m.group(3)
-                    cat = categorymapping.get(cat, cat)
+                    if not m.group(1) and " " in m.group(2):
+                        cat = m.group(2)
+                    else:
+                        cat = m.group(1) or m.group(3)
+                else:
+                    cat = str(v['Name']).strip()
+                cat = categorymapping.get(cat, cat)
             triefit(k, results.setdefault(cat, {}), 1)
         self.treestore.clear()
         self._fill_store(results, None)
@@ -168,6 +174,9 @@ class StyleEditor:
         for k, v in sorted(d.items(), key=keyfn):
             if k in self.sheet:
                 n = self.sheet[k].get('name', k)
+                m = re.match(r"^([^-\s])+\s[^-]+(?:-|$)", n)
+                if m and m.group(1) not in ('OBSOLETE', 'DEPRECATED'):
+                    n = k + " - " + n
             else:
                 n = k
             s = [k, n, n != k]
@@ -188,7 +197,9 @@ class StyleEditor:
         self.isLoading = True
         data = self.sheet.get(self.marker, {})
         for k, v in stylemap.items():
-            if k.startswith("_"):
+            if k == 'Marker':
+                val = self.marker
+            elif k.startswith("_"):
                 val = v[1]
                 for m, f in ((v[2](x), x) for x in (False, True)):
                     if m in data:

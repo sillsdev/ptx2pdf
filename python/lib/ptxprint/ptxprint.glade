@@ -11031,9 +11031,9 @@ been enabled.</property>
                                     </attributes>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">1</property>
+                                    <property name="left_attach">2</property>
                                     <property name="top_attach">0</property>
-                                    <property name="width">4</property>
+                                    <property name="width">3</property>
                                     <property name="height">2</property>
                                   </packing>
                                 </child>
@@ -11044,7 +11044,7 @@ been enabled.</property>
                                     <property name="label" translatable="yes">Description:</property>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">0</property>
+                                    <property name="left_attach">1</property>
                                     <property name="top_attach">0</property>
                                   </packing>
                                 </child>
@@ -11072,6 +11072,19 @@ been enabled.</property>
                                     <property name="left_attach">2</property>
                                     <property name="top_attach">2</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_styleTag">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                               </object>
                               <packing>
