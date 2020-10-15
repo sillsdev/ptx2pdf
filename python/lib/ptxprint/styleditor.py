@@ -66,14 +66,14 @@ categorymapping = {
     'Endnote':                     ('Footnotes', 'notes_basic'),
     'Cross Reference':             ('Footnotes', 'notes_basic'),
     'Character':                   ('Character Styling', 'characters'),
-    'Special Text':                ('Special Text', ''),
+    'Special Text':                ('Special Text', 'characters'),
     'Link text':                   ('Character Styling', 'linking'),
     'Break':                       ('Breaks', 'characters'),
-    'Peripheral Ref':              ('Peripheral References', None),
-    'Periph':                      ('Peripheral Materials', 'peripherals'),
+    'Peripheral Ref':              ('Peripheral References', 'characters'),
+    'Auxiliary':                   ('Peripheral Materials', 'characters'),
+    'Periph':                      ('Peripheral Materials', None),
     'Peripherals':                 ('Peripheral Materials', 'peripherals'),
-    'Auxiliary':                   ('Peripheral Materials', 'peripherals'),
-    'Concordance and Names Index': ('Peripheral Materials', 'peripherals'),
+    'Concordance and Names Index': ('Peripheral Materials', None),
     'Study':                                    ('Extended Study Content', 'notes_study'),
     'Quotation start/end milestone':            ('Milestones', 'milestones'),
     "Translator's section start/end milestone": ('Milestones', 'milestones'),
@@ -81,7 +81,19 @@ categorymapping = {
     'OBSOLETE':                    ('Obsolete & Deprecated', None),
     'DEPRECATED':                  ('Obsolete & Deprecated', None)
 }
+usfmpgname = {
+    'f':     'fnotes',
+    'x':     'xrefs',
+    'ef':    'efnotes',
+    'ex':    'exrefs',
+    'esb':   'sidebars',
+    'esbe':  'sidebars',
+    'cat':   'categories'
+}
 
+noEndmarker = ('fr', 'fq', 'fqa', 'fk', 'fl', 'fw', 'fp', 'ft', 'xo', 'xk', 'xq', 'xt', 'xta')
+fxceptions  = ('fig', 'fs', 'xtSee', 'xtSeeAlso')
+ 
 stylediverts = {
     'LineSpacing': '_linespacing',
     'FontSize': '_fontsize'
@@ -213,7 +225,9 @@ class StyleEditor:
                 urlmkr = self.marker
                 if data.get('Endmarker', None):
                     val += " ... \\" + data['Endmarker']
-                    urlmkr += "-" + data['Endmarker'].strip('\*')
+                    if urlmkr not in noEndmarker:
+                        urlmkr += "-" + data['Endmarker'].strip('\*')
+                urlmkr = re.sub(r'\d', '', urlmkr)
             elif k == '_publishable':
                 val = 'nonpublishable' in data.get('TextProperties', '')
                 oldval = 'nonpublishable' in old.get('TextProperties', '')
@@ -248,7 +262,20 @@ class StyleEditor:
                     ctxt.add_class("changed")
                 else:
                     ctxt.remove_class("changed")
-        self.builder.get_object("l_url_usfm").set_uri('https://ubsicap.github.io/usfm/{}/index.html#{}'.format(urlcat, urlmkr))
+
+        site = 'https://ubsicap.github.io/usfm'
+        if urlcat is None:
+            self.builder.get_object("l_url_usfm").set_uri('{}/search.html?q=%5C{}&check_keywords=yes&area=default'.format(site, urlmkr.split('-')[0]))
+        else:
+            usfmkeys = tuple(usfmpgname.keys())
+            pgname = 'index'
+            print(urlmkr, urlmkr.split('-')[0], xceptions)
+            if urlmkr.split('-')[0] not in fxceptions and urlmkr.startswith(usfmkeys):
+                for i in range(len(urlmkr), 0, -1):
+                    if urlmkr[:i] in usfmkeys:
+                        pgname = usfmpgname.get(urlmkr[:i])
+                        continue
+            self.builder.get_object("l_url_usfm").set_uri('{}/{}/{}.html#{}'.format(site, urlcat, pgname, urlmkr))
         self.isLoading = False
 
     def item_changed(self, w, key):
