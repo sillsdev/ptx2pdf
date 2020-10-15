@@ -1900,10 +1900,10 @@ class GtkViewModel(ViewModel):
     def onPLsizeChanged(self, *a):
         size = self.get("fcb_plSize")
         wids = ["l_plHoriz", "fcb_plHoriz"]
-        if size in ["col", "span"]:
-            self._updatePgPosOptions()
-        elif size in ["page", "full"]:
-            self._updatePgPosOptions(fullpage=size)
+        # if size in ["col", "span"]:
+        self._updatePgPosOptions(size)
+        # elif size in ["page", "full"]:
+            # self._updatePgPosOptions(size)
         if size == "span":
             for w in wids:
                 self.builder.get_object("fcb_plHoriz").set_active_id("-")
@@ -1926,15 +1926,19 @@ class GtkViewModel(ViewModel):
             for w in wids:
                 self.builder.get_object(w).set_sensitive(False)
 
-    def _updatePgPosOptions(self, fullpage=""):
+    def _updatePgPosOptions(self, size):
         lsp = self.builder.get_object("ls_plPgPos")
         fcb = self.builder.get_object("fcb_plPgPos")
         lsp.clear()
-        if len(fullpage):
+        if size in ["page", "full"]:
             for posn in ["Top", "Center", "Bottom"]:
-                lsp.append([posn, "{}{}".format(fullpage[:1].upper(), posn[:1].lower())])
+                lsp.append([posn, "{}{}".format(size[:1].upper(), posn[:1].lower())])
             fcb.set_active(1)
-        else:
+        elif size == "span":
+            for posn in ["Top", "Bottom"]:
+                lsp.append([posn, _pgpos[posn]])
+            fcb.set_active(0)
+        else: # size == "col"
             for posn in _pgpos.keys():
                 lsp.append([posn, _pgpos[posn]])
             fcb.set_active(0)
