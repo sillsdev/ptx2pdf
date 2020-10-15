@@ -285,7 +285,7 @@ class StyleEditor:
         data[key] = value
         if v[1] is not None:
             ctxt = self.builder.get_object(v[1]).get_style_context()
-            oldval = self.basesheet.get(self.marker, {}).get(key, '')
+            oldval = self.basesheet.get(self.marker, {}).get(key, v[2])
             if v[0].startswith("s_"):
                 diff = float(oldval) != float(value)
             else:
