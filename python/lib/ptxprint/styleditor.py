@@ -113,6 +113,11 @@ def textocol(s):
     return "rgb({0},{1},{2})".format(*vals)
 
 name_reg = re.compile(r"^(OBSOLETE|DEPRECATED)?\s*(.*?)\s+-\s+([^-]*?)\s*(?:-\s*(.*?)\s*)?$")
+mkrexceptions = {k.lower().title(): k for k in ('BaseLine', 'TextType', 'TextProperties', 'FontName',
+                'FontSize', 'FirstLineIndent', 'LeftMargin', 'RightMargin',
+                'SpaceBefore', 'SpaceAfter', 'CallerStyle', 'CallerRaise',
+                'NoteCallerStyle', 'NoteCallerRaise', 'NoteBlendInto', 'LineSpacing',
+                'StyleType')}
 
 class StyleEditor:
     def __init__(self, builder):
@@ -259,6 +264,9 @@ class StyleEditor:
             return str(v)
 
     def output_diffile(self, outfh):
+        def normmkr(s):
+            x = s.lower().title()
+            return mkrexceptions.get(x, x)
         for m in self._list_usfms():
             markerout = False
             for k,v in self.sheet[m].items():
@@ -267,4 +275,4 @@ class StyleEditor:
                     if not markerout:
                         outfh.write("\n\\Marker {}\n".format(m))
                         markerout = True
-                    outfh.write("\\{} {}\n".format(k, self._str_val(v)))
+                    outfh.write("\\{} {}\n".format(normmkr(k), self._str_val(v)))
