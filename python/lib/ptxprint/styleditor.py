@@ -34,48 +34,52 @@ stylemap = {
     '_publishable': ('c_styTextProperties', False, None)
 }
 
-topLevelOrder = ('File', 'Introduction', 'Chapters & Verses', 'Paragraphs', 'Poetry',
-    'Titles & Headings', 'Tables', 'Lists', 'Footnotes', 'Cross References',
-    'Special Text', 'Character Styling', 'Breaks', 'Peripheral Materials',
-    'Peripheral References', 'Other', 'Obsolete & Deprecated')
+topLevelOrder = ('Identification', 'Introduction', 'Chapters & Verses', 'Paragraphs', 'Poetry',
+    'Titles & Headings', 'Tables', 'Lists', 'Footnotes', 'Cross References', 'Special Text', 
+    'Character Styling', 'Breaks', 'Peripheral Materials', 'Peripheral References', 
+    'Extended Study Content', 'Milestones', 'Other', 'Obsolete & Deprecated')
 catorder = {k: i for i, k in enumerate(topLevelOrder)}
 
-    # '*Introduction':               'Introduction',
-    # '*Poetry':                     'Poetry',
-    # '*Special Text':               'Special Text',
-    # '*Other':                      'Other',
-    # '*File':                       '*DROP from list*'
     # '*Publication':                '*DROP from list*'
 categorymapping = {
-    'Chapter':                     'Chapters & Verses',
-    'Chapter Number':              'Chapters & Verses',
-    'Verse Number':                'Chapters & Verses',
-    'Paragraph':                   'Paragraphs',
-    'Poetry Text':                 'Poetry',
-    'Label':                       'Titles & Headings',
-    'Title':                       'Titles & Headings',
-    'Heading':                     'Titles & Headings',
-    'Table':                       'Tables',
-    'Embedded List Entry':         'Lists',
-    'Embedded List Item':          'Lists',
-    'List Entry':                  'Lists',
-    'List Footer':                 'Lists',
-    'List Header':                 'Lists',
-    'Structured List Entry':       'Lists',
-    'Footnote':                    'Footnotes',
-    'Footnote Paragraph Mark':     'Footnotes',
-    'Endnote':                     'Footnotes',
-    'Cross Reference':             'Cross References',
-    'Character':                   'Character Styling',
-    'Link text':                   'Character Styling',
-    'Break':                       'Breaks',
-    'Peripheral Ref':              'Peripheral References',
-    'Periph':                      'Peripheral Materials',
-    'Peripherals':                 'Peripheral Materials',
-    'Auxiliary':                   'Peripheral Materials',
-    'Concordance and Names Index': 'Peripheral Materials',
-    'OBSOLETE':                    'Obsolete & Deprecated',
-    'DEPRECATED':                  'Obsolete & Deprecated',
+    'File':                        ('Identification', 'identification'),
+    'Identification':              ('Identification', 'identification'),
+    'Introduction':                ('Introduction', 'introductions'),
+    'Chapter':                     ('Chapters & Verses', 'chapters_verses'),
+    'Chapter Number':              ('Chapters & Verses', 'chapters_verses'),
+    'Verse Number':                ('Chapters & Verses', 'chapters_verses'),
+    'Paragraph':                   ('Paragraphs', 'paragraphs'),
+    'Poetry':                      ('Poetry', 'poetry'),
+    'Poetry Text':                 ('Poetry', 'poetry'),
+    'Label':                       ('Titles & Headings', 'titles_headings'),
+    'Title':                       ('Titles & Headings', 'titles_headings'),
+    'Heading':                     ('Titles & Headings', 'titles_headings'),
+    'Table':                       ('Tables', 'tables'),
+    'Embedded List Entry':         ('Lists', 'lists'),
+    'Embedded List Item':          ('Lists', 'lists'),
+    'List Entry':                  ('Lists', 'lists'),
+    'List Footer':                 ('Lists', 'lists'),
+    'List Header':                 ('Lists', 'lists'),
+    'Structured List Entry':       ('Lists', 'lists'),
+    'Footnote':                    ('Footnotes', 'notes_basic'),
+    'Footnote Paragraph Mark':     ('Footnotes', 'notes_basic'),
+    'Endnote':                     ('Footnotes', 'notes_basic'),
+    'Cross Reference':             ('Footnotes', 'notes_basic'),
+    'Character':                   ('Character Styling', 'characters'),
+    'Special Text':                ('Special Text', ''),
+    'Link text':                   ('Character Styling', 'linking'),
+    'Break':                       ('Breaks', 'characters'),
+    'Peripheral Ref':              ('Peripheral References', None),
+    'Periph':                      ('Peripheral Materials', 'peripherals'),
+    'Peripherals':                 ('Peripheral Materials', 'peripherals'),
+    'Auxiliary':                   ('Peripheral Materials', 'peripherals'),
+    'Concordance and Names Index': ('Peripheral Materials', 'peripherals'),
+    'Study':                                    ('Extended Study Content', 'notes_study'),
+    'Quotation start/end milestone':            ('Milestones', 'milestones'),
+    "Translator's section start/end milestone": ('Milestones', 'milestones'),
+    'Other':                       ('Other', None),
+    'OBSOLETE':                    ('Obsolete & Deprecated', None),
+    'DEPRECATED':                  ('Obsolete & Deprecated', None)
 }
 
 stylediverts = {
@@ -150,11 +154,13 @@ class StyleEditor:
         self.sheet = Sheets(sheetfiles[-1:], base=self.basesheet)
         results = {"Tables": {"th": {"thc": {}, "thr": {}}, "tc": {"tcc": {}, "tcr": {}}},
                    "Peripheral Materials": {"zpa-": {}},
-                   "File": {"toc": {}}}
+                   "Identification": {"toc": {}}}
         for k, v in sorted(self.sheet.items(), key=lambda x:(len(x[0]), x[0])):
             cat = 'Other'
             if 'Name' in v:
+                print(v)
                 m = name_reg.match(str(v['Name']))
+                print(m)
                 if m:
                     if not m.group(1) and " " in m.group(2):
                         cat = m.group(2)
@@ -162,7 +168,9 @@ class StyleEditor:
                         cat = m.group(1) or m.group(3)
                 else:
                     cat = str(v['Name']).strip()
-                cat = categorymapping.get(cat, cat)
+                # cat = categorymapping.get(cat, (cat, None))[0]
+                cat, url = categorymapping.get(cat, (cat, None))
+                print('https://ubsicap.github.io/usfm/{}/index.html#{}'.format(url,"xyz"))
             triefit(k, results.setdefault(cat, {}), 1)
         self.treestore.clear()
         self._fill_store(results, None)
