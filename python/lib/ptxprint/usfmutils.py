@@ -4,6 +4,7 @@ import re, os
 from collections import namedtuple
 from itertools import groupby
 from functools import reduce
+from copy import deepcopy
 
 verse_reg = re.compile(r"^\s*(\d+)(\D*?)(?:\s*(-)\s*(\d+)(\D*?))?\s*$")
 def make_rangetuple(chap, verse, start=True):
@@ -55,13 +56,16 @@ class _Reference(sfm.Position):
         return 0
 
 class Sheets(dict):
+
+    default = usfm._load_cached_stylesheet('usfm_sb.sty')
+
     def __init__(self, init=[], base=None):
-        self.update({k: v.copy() for k, v in \
-                        (base.items() if base is not None else usfm.default_stylesheet.items())})
+        self.update(deepcopy(base) if base is not None else deepcopy(self.default))
         if init is None or not len(init):
             return
         for s in init:
-            self.append(s)
+            if os.path.exists(s):
+                self.append(s)
 
     def append(self, sf):
         if os.path.exists(sf):
@@ -100,6 +104,7 @@ class Usfm:
                                     canonicalise_footnotes=False,
                                     tag_escapes=tag_escapes))
         self.cvaddorned = False
+        self.tocs = []
 
     def __str__(self):
         return sfm.generate(self.doc)
@@ -152,6 +157,19 @@ class Usfm:
                     e.pos = _Reference(e.pos, ref)
         reduce(_g, self.doc, None)
         self.cvaddorned = True
+
+    def readnames(self):
+        if len(self.toc) > 0:
+            return
+        for e in self.doc[0]:       # children of id
+            if not isinstance(e, sfm.Element):
+                continue
+            m = re.match(r"^toc(\d)", e.name)
+            if m:
+                ind = int(m.group(1))
+                if ind > len(self.tocs):
+                    self.tocs.extend([""] * (ind - len(self.tocs) + 1))
+                self.tocs[ind] = e[0]
 
     def getwords(self, init=None, constrain=None):
         ''' Counts words found in the document. If constrain then is a set or
@@ -337,6 +355,10 @@ exclusionmap = {
 }
 
 class Module:
+
+    localise_re = re.compile(r"\$([asl]?)\(\s*(\S+)\s+(\d+):(\S+)\s*\)")
+    localcodes = {'a': 3, 's': 2, 'l': 1}
+
     def __init__(self, fname, usfms):
         self.fname = fname
         self.usfms = usfms
@@ -352,8 +374,24 @@ class Module:
         final = sum(map(self.parse_element, self.doc.doc), start=[])
         return final
 
+    def localref(self, m):
+        loctype = m.group(1) or "a"
+        bk = m.group(2)
+        c = m.group(3)
+        v = m.group(4)
+        book = self.usfms.get(bk)
+        book.readnames()
+        tocindex = self.localcodes.get(loctype.lower(), 0)
+        if tocindex > len(book.tocs):
+            return ''
+        else:
+            return book.tocs[tocindex]
+
     def parse_element(self, e):
         if isinstance(e, sfm.Text):
+            t = self.localise_re.sub(self.localref, e)
+            if t != e:
+                return [sfm.Text(t, e.pos, e.parent)]
             return [e]
         elif e.name == "ref" or e.name == "refnp":
             res = []

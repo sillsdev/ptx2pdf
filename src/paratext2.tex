@@ -481,6 +481,7 @@
     \global\output={\savepartialpage}\eject % save any partially-full page
 	% if single column material already fills 3/4 page, go to next page to start double columns
     \dimen0=\ht\partial
+    \trace{o}{DoubleColumns: \the\dimen0\space > \PageFullFactor\space\the\textheight}%
     \ifdim\dimen0>\PageFullFactor\textheight
 %%%      \msg{Output full page from 1 to 2 columns}%
       \global\output={\onecol} % but output it immediately if 75% full
@@ -1186,6 +1187,7 @@
     \global\hsize=\textwidth \advance\hsize by -\columnshift
     \global\vsize=\textheight
     %\tempfalse
+    \trace{o}{SingleColumn: \the\ht\partial > \PageFullFactor\space\the\textheight}%
     \ifdim\ht\partial>\PageFullFactor\textheight
       \twocolp@geout \fi%Set up pagecontents and call \plainoutput
     \global\c@rrentcols=1

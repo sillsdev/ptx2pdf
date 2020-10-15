@@ -25,7 +25,7 @@ from .records import sequence, unique
 from .records import UnrecoverableError
 
 
-_comment = re.compile(r'\s*#.*$')
+_comment = re.compile(r'\s*#(?:!|.*$)')
 _markers = re.compile(r'^\s*\\[^\s\\]+\s')
 
 
