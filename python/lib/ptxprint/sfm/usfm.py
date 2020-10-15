@@ -86,7 +86,7 @@ def _load_cached_stylesheet(path):
             try:
                 with contextlib.closing(bz2.BZ2File(cached_path, 'rb')) as sf:
                     return pickle.load(sf)
-            except (OSError, pickle.UnpicklingError):
+            except (OSError, EOFError, pickle.UnpicklingError):
                 os.unlink(cached_path)
                 cached_path = _cached_stylesheet(path)
                 with contextlib.closing(bz2.BZ2File(cached_path, 'rb')) as sf:
@@ -98,14 +98,14 @@ def _load_cached_stylesheet(path):
         return style.parse(open(_source_path(path), 'r'))
 
 
-default_stylesheet = _load_cached_stylesheet('usfm_sb.sty')
+default_stylesheet = _load_cached_stylesheet('usfm.sty')
 
-_default_meta = {
-    'TextType':    'Milestone',
-    'OccursUnder': None,
-    'Endmarker':   None,
-    'StyleType':   None
-}
+_default_meta = style.Marker(
+    TextType=style.CaselessStr('Milestone'),
+    OccursUnder={None},
+    Endmarker=None,
+    StyleType=None
+)
 
 
 class parser(sfm.parser):
@@ -271,6 +271,16 @@ class parser(sfm.parser):
                           re.UNICODE)
     caller_re = re.compile(r'\s*([^\s\\])', re.UNICODE)
     sep_re = re.compile(r'\s|$', re.UNICODE)
+    __unspecified_metas = {
+        ('Section', True): 's',
+        ('Title', True): 't',
+        ('VerseText', True): 'p',
+        ('VerseText', False): 'nd',
+        ('Other', True): 'p',
+        ('Other', False): 'nd',
+        ('Unspecified', True): 'p',
+        ('Unspecified', False): 'nd'
+    }
 
     @classmethod
     def extend_stylesheet(cls, *names, **kwds):
@@ -285,11 +295,27 @@ class parser(sfm.parser):
         if not canonicalise_footnotes:
             self._canonicalise_footnote = lambda x: x
 
+        stylesheet = self.__synthesise_private_meta(stylesheet, default_meta)
         super().__init__(source,
                          stylesheet,
                          default_meta,
                          private_prefix='z',
                          *args, **kwds)
+
+    @classmethod
+    def __synthesise_private_meta(cls, sty, default_meta):
+        private_metas = dict(r for r in sty.items() if r[0].startswith('z'))
+        metas = {
+            n: sty.get(
+                cls.__unspecified_metas.get(
+                    (m['TextType'], m['Endmarker'] is None
+                        and m.get('StyleType', None) == 'Paragraph'),
+                    None),
+                default_meta).copy()
+            for n, m in private_metas.items()
+        }
+        return style.update_sheet(sty,
+                                  style.update_sheet(metas, private_metas))
 
     def _force_close(self, parent, tok):
         if tok is not sfm.parser._eos \
@@ -359,16 +385,14 @@ class parser(sfm.parser):
         return tuple()
     _versenumber_ = _VerseNumber_
 
-    def _canonicalise_footnote(self, content):
+    @staticmethod
+    def _canonicalise_footnote(content):
         def g(e):
             if getattr(e, 'name', None) == 'ft':
                 e.parent.annotations['content-promoted'] = True
                 if len(e.parent) > 0:
                     prev = e.parent[-1]
-                    if not isinstance(prev, sfm.Element):
-                        self._error(ErrorLevel.Content,
-                                    "Badly formed footnote", e.parent)
-                    elif prev.meta['StyleType'] == 'Character':
+                    if prev.meta['StyleType'] == 'Character':
                         del prev.annotations['implicit-closed']
                 return e
             else:
@@ -434,8 +458,10 @@ def decorate_references(source):
                 ref[1] = e.args[0]
             elif e.name == 'v':
                 ref[2] = e.args[0]
+            e.pos = Reference(e.pos, ref)
             return reduce(_g, e, None)
-        e.pos = Reference(e.pos, ref)
+        else:
+            e.pos = Reference(e.pos, ref)
     source = list(source)
     reduce(_g, source, None)
     return source

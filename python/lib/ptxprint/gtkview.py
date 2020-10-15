@@ -968,12 +968,6 @@ class GtkViewModel(ViewModel):
         with open(fname, "w", encoding="Utf-8") as outf:
             self.styleEditorView.output_diffile(outf)
 
-    def savePics(self):
-        if self.picinfos is not None:
-            self.picListView.updateinfo(self.picinfos)
-            self.picinfos.out(os.path.join(self.configPath(self.configName()),
-                                    "{}-{}.piclist".format(self.prjid, self.configName())))
-
     def onSaveEdits(self, btn):
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
         pgid = self.notebooks["Viewer"][pg]

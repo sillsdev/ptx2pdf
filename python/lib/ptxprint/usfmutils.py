@@ -70,10 +70,10 @@ class Sheets(dict):
     def append(self, sf):
         if os.path.exists(sf):
             with open(sf) as s:
-                self.update_sheet(style.parse(s), field_replace=True)
+                self.update_sheet(style.parse(s))
 
     def update_sheet(self, d):
-        style.update_sheet(self, d)
+        style.update_sheet(self, d, field_replace=True)
 
     def copy(self):
         return Sheets(base=self)

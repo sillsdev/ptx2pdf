@@ -23,6 +23,7 @@ from .. import sfm
 from functools import partial, reduce
 from itertools import chain
 from typing import NamedTuple, Mapping
+from copy import deepcopy
 
 
 class Schema(NamedTuple):
@@ -64,14 +65,9 @@ def unique(p):
     return lambda v: set(p(v))
 
 
-class ErrorLevel(object):
-    __slots__ = ('msg', 'level')
-
-    def __new__(cls, level, msg):
-        el = super().__new__(cls)
-        el.msg = msg
-        el.level = level
-        return el
+class ErrorLevel(NamedTuple):
+    level: sfm.ErrorLevel
+    msg: str
 
 
 NoteError = partial(ErrorLevel, sfm.ErrorLevel.Note)
@@ -151,7 +147,7 @@ class parser(sfm.parser):
     '''
     def __init__(self, source, schema, error_level=sfm.ErrorLevel.Content):
         if not isinstance(schema, _schema):
-            raise TypeError(f"arg 2 must a \'Schema\' not {schema!r}")
+            raise TypeError(f"arg 2 must be a \'Schema\' not {schema!r}")
         self._mapping_type = type(schema.fields)
         self._schema = schema
         default_meta = self._mapping_type(super().default_meta)
@@ -164,9 +160,8 @@ class parser(sfm.parser):
         default_field = (lambda x: x, None)
 
         def record(e):
-            rec = self._mapping_type(e)
-            rec_ = proto.copy()
-            rec_.update(rec)
+            rec_ = deepcopy(proto)
+            rec_.update(e)
             for field, err in filter(lambda i: isinstance(i[1], ErrorLevel),
                                      rec_.items()):
                 if err:

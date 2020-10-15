@@ -319,7 +319,7 @@ class StyleEditor:
 
     def _str_val(self, v):
         if isinstance(v, (set, list)):
-            return " ".join(sorted(v))
+            return " ".join(x or "" for x in sorted(v))
         else:
             return str(v)
 

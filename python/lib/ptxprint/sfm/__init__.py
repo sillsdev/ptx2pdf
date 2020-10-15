@@ -546,8 +546,9 @@ class parser(collections.Iterable):
         em_def = {'TextType': None, 'Endmarker': None}
         self._sty = stylesheet.copy()
         self._sty.update(
-            (m['Endmarker'], dict(em_def, OccursUnder={k}))
-            for k, m in stylesheet.items() if m['Endmarker'])
+            (m['Endmarker'], type(m)(em_def, OccursUnder={k}))
+            for k, m in stylesheet.items() 
+            if m['Endmarker'])
 
     def _error(self, severity, msg, ev, *args, **kwds):
         """
@@ -716,6 +717,8 @@ class parser(collections.Iterable):
 
     _Other_ = _default_
     _other_ = _Other_
+    _Unspecified_ = _default_
+    _unspecified_ = _Unspecified_
 
     def _force_close(self, parent, tok):
         """

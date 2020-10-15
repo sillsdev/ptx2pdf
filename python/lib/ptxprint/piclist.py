@@ -48,6 +48,7 @@ class PicList:
         self.parent = parent
         self.picinfo = None
         self.selection = view.get_selection()
+        # _, self.curriter = self.selection.get_selected()
         for w in ("tv_picList", "tv_picListEdit", "tv_picListEdit1"):
             wid = self.builder.get_object(w)
             sel = wid.get_selection()
@@ -141,21 +142,24 @@ class PicList:
         if self.model.get_path(i).get_indices()[0] >= len(self.model):
             return
         row = self.model[i]
-        pgpos = re.sub(r'([PF])([lcr])([tb])', r'\1\3\2', row[5])
+        pgpos = re.sub(r'^([PF])([lcr])([tb])', r'\1\3\2', row[5])
         self.parent.pause_logging()
         for j, (k, v) in enumerate(_form_structure.items()): # relies on ordered dict
             if k == 'pgpos':
-                val = pgpos[:2] if pgpos[0:1] in "PF" else (pgpos[0:] or "t")
+                val = pgpos[:2] if pgpos[0:1] in "PF" else (pgpos[0:1] or "t")
             elif k == 'hpos':
                 if row[3] == "span":
                     val = "-"
-                elif pgpos[0:] in "PF":
+                elif pgpos[0:1] in "PF":
                     val = pgpos[2:] or "c"
                 else:
                     val = pgpos[1:] or ""
             elif k == 'nlines':
                 val = re.sub(r'^\D*', "", pgpos)
-                val = int(val) if len(val) > 0 else 0
+                try:
+                    val = int(val)
+                except (ValueError, TypeError):
+                    val = 0
             elif k == 'mirror':
                 val = row[j] or "None"
             else:
@@ -177,6 +181,9 @@ class PicList:
         res = re.sub(r'([PF])([tcb])([lcr])', r'\1\3\2', res)
         if len(res) and res[0] in "PF":
             res = res.strip("c")
+        lines = self.get("nlines", 0)
+        if lines > 0 and len(res) and res[0] == "p":
+            res += str(lines)
         return res
 
     def item_changed(self, w, key):
@@ -316,6 +323,7 @@ class PicInfo(dict):
         else:
             self.basedir = os.path.join(model.settings_dir, model.prjid)
         self.config = model.configName()
+        self.loaded = False
 
     def load_files(self, suffix="", prjdir=None, prj=None, cfg=None):
         if prjdir is None:
@@ -326,8 +334,11 @@ class PicInfo(dict):
             cfg = self.config
         if prjdir is None or prj is None or cfg is None:
             return
-        places = ["shared/ptxprint/{}.piclist".format(prj),
-                  "shared/ptxprint/{1}/{0}-{1}.piclist".format(prj, cfg)]
+        preferred = os.path.join(prjdir, "shared/ptxprint/{1}/{0}-{1}.piclist".format(prj, cfg))
+        if os.path.exists(preferred):
+            self.read_piclist(preferred, suffix=suffix)
+            return
+        places = ["shared/ptxprint/{}.piclist".format(prj)]
         plistsdir = os.path.join(prjdir, "shared", "ptxprint", cfg, "PicLists")
         if os.path.exists(plistsdir):
             places += ["shared/ptxprint/{0}/PicLists/{1}".format(cfg, x) \
@@ -336,6 +347,8 @@ class PicInfo(dict):
             p = os.path.join(prjdir, f)
             if os.path.exists(p):
                 self.read_piclist(p, suffix=suffix)
+        self.model.savePics()
+        self.loaded = True
 
     def _fixPicinfo(self, vals):
         p = vals['pgpos']
