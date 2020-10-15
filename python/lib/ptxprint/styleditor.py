@@ -1,37 +1,37 @@
 
 import re
-from gi.repository import Gtk
+from gi.repository import Gtk, Pango
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.usfmutils import Sheets
 
 stylemap = {
-    'Marker':       ('l_styleTag', None, None),
-    'Description':  ('l_styDescription', None, None),
-    'TextType':     ('fcb_styTextType', 'Paragraph', None),
-    'StyleType':    ('fcb_styStyleType', 'Paragraph', None),
-    'FontName':     ('bl_font_styFontName', None, None),
-    'Color':        ('col_styColor', 'x000000', None),
-    'FontSize':     ('s_styFontSize', '12', None),
-    'Bold':         ('c_styFaceBold', '-', lambda v: "" if v else "-"),
-    'Italic':       ('c_styFaceItalic', '-', lambda v: "" if v else "-"),
-    'SmallCap':     ('c_stySmallCap', '-', lambda v: "" if v else "-"),
-    'Superscript':  ('c_styFaceSuperscript', '-', lambda v: "" if v else "-"),
-    'Raise':        ('s_styRaise', '0', None),
-    'Justification': ('fcb_styJustification', 'Justified', lambda v: "" if v == "Justified" else v),
-    'FirstLineIndent': ('s_styFirstLineIndent', '0', None),
-    'LeftMargin':   ('s_styLeftMargin', '0', None),
-    'RightMargin':  ('s_styRightMargin', '0', None),
-    'LineSpacing':  ('s_styLineSpacing', '0', None),
-    'SpaceBefore':  ('s_stySpaceBefore', '0', None),
-    'SpaceAfter':   ('s_stySpaceAfter', '0', None),
-    'CallerStyle':  ('fcb_styCallerStyle', '', None),
-    'NoteCallerStyle': ('fcb_styNoteCallerStyle', '', None),
-    'NoteBlendInto': ('fcb_NoteBlendInto', '', None),
-    'CallerRaise':  ('s_styCallerRaise', '0', None),
-    'NoteCallerRaise': ('s_styNoteCallerRaise', '0', None),
-    '_fontsize':    ('c_styFontScale', False, lambda v: "FontScale" if v else "FontSize"),
-    '_linespacing': ('c_styAbsoluteLineSpacing', False, lambda v: "BaseLine" if v else 'LineSpacing'),
-    '_publishable': ('c_styTextProperties', False, None)
+    'Marker':       ('l_styleTag',          None,               None, None),
+    'Description':  ('l_styDescription',    None,               None, None),
+    'TextType':     ('fcb_styTextType',     'l_styTextType',    'Paragraph', None),
+    'StyleType':    ('fcb_styStyleType',    'l_styStyleType',   'Paragraph', None),
+    'FontName':     ('bl_font_styFontName', 'l_styFontName',    None, None),
+    'Color':        ('col_styColor',        'l_styColor',       'x000000', None),
+    'FontSize':     ('s_styFontSize',       'l_styFontSize',    '12', None),
+    'Bold':         ('c_styFaceBold',       'c_styFaceBold',    '-', lambda v: "" if v else "-"),
+    'Italic':       ('c_styFaceItalic',     'c_styFaceItalic',  '-', lambda v: "" if v else "-"),
+    'SmallCap':     ('c_stySmallCap',       'c_stySmallCap',    '-', lambda v: "" if v else "-"),
+    'Superscript':  ('c_styFaceSuperscript', 'c_styFaceSuperscript', '-', lambda v: "" if v else "-"),
+    'Raise':        ('s_styRaise',          'l_styRaise',       '0', None),
+    'Justification': ('fcb_styJustification', 'l_styJustification', 'Justified', lambda v: "" if v == "Justified" else v),
+    'FirstLineIndent': ('s_styFirstLineIndent', 'l_styFirstLineIndent', '0', None),
+    'LeftMargin':   ('s_styLeftMargin',     'l_styLeftMargin',  '0', None),
+    'RightMargin':  ('s_styRightMargin',    'l_styRightMargin', '0', None),
+    'LineSpacing':  ('s_styLineSpacing',    'l_styLineSpacing', '0', None),
+    'SpaceBefore':  ('s_stySpaceBefore',    'l_stySpaceBefore', '0', None),
+    'SpaceAfter':   ('s_stySpaceAfter',     'l_stySpaceAfter',  '0', None),
+    'CallerStyle':  ('fcb_styCallerStyle',  'l_styCallerStyle', '', None),
+    'NoteCallerStyle': ('fcb_styNoteCallerStyle', 'l_styNoteCallerStyle', '', None),
+    'NoteBlendInto': ('fcb_NoteBlendInto',  'l_NoteBlendInto',  '', None),
+    'CallerRaise':  ('s_styCallerRaise',    'l_styCallerRaise', '0', None),
+    'NoteCallerRaise': ('s_styNoteCallerRaise', 'l_styNoteCallerRaise', '0', None),
+    '_fontsize':    ('c_styFontScale',      'c_styFontScale',   False, lambda v: "FontScale" if v else "FontSize"),
+    '_linespacing': ('c_styAbsoluteLineSpacing', 'c_styAbsoluteLineSpacing', False, lambda v: "BaseLine" if v else 'LineSpacing'),
+    '_publishable': ('c_styTextProperties', 'c_styTextProperties', False, None)
 }
 
 topLevelOrder = ('Identification', 'Introduction', 'Chapters & Verses', 'Paragraphs', 'Poetry',
@@ -126,6 +126,7 @@ mkrexceptions = {k.lower().title(): k for k in ('BaseLine', 'TextType', 'TextPro
                 'StyleType', 'ColorName', 'XMLTag', 'TEStyleName')}
 
 class StyleEditor:
+
     def __init__(self, builder):
         self.builder = builder
         self.treestore = builder.get_object("ts_styles")
@@ -205,6 +206,8 @@ class StyleEditor:
     def editMarker(self):
         self.isLoading = True
         data = self.sheet.get(self.marker, {})
+        old = self.basesheet.get(self.marker, {})
+        oldval = None
         for k, v in stylemap.items():
             if k == 'Marker':
                 val = "\\" + self.marker
@@ -212,16 +215,21 @@ class StyleEditor:
                     val += " ... \\" + data['Endmarker']
             elif k == '_publishable':
                 val = 'nonpublishable' in data.get('TextProperties', '')
+                oldval = 'nonpublishable' in old.get('TextProperties', '')
             elif k.startswith("_"):
-                val = v[1]
-                for m, f in ((v[2](x), x) for x in (False, True)):
+                val = v[2]
+                for m, f in ((v[3](x), x) for x in (False, True)):
+                    if m in old:
+                        oldval = f
                     if m in data:
                         val = f
                         break
             else:
-                val = data.get(k, v[1])
+                val = data.get(k, v[2])
+                oldval = old.get(k, v[2])
                 if v[0].startswith("c_"):
-                    val = val != v[1]
+                    val = val != v[2]
+                    oldval = oldval != v[2]
             w = self.builder.get_object(v[0])
             if w is None:
                 print("Can't find widget {}".format(v[0]))
@@ -233,6 +241,12 @@ class StyleEditor:
                 elif v[0].startswith("col_"):
                     val = textocol(val)
                 setWidgetVal(v[0], w, val)
+            if v[1] is not None:
+                ctxt = self.builder.get_object(v[1]).get_style_context()
+                if val != oldval:
+                    ctxt.add_class("changed")
+                else:
+                    ctxt.remove_class("changed")
         self.isLoading = False
 
     def item_changed(self, w, key):
@@ -251,9 +265,9 @@ class StyleEditor:
             data['TextProperties'].add(add+'publishable')
             return
         elif key.startswith("_"):
-            val = v[2](val)
+            val = v[3](val)
             isset = getWidgetVal(v[0], w)
-            other = v[2](not isset)
+            other = v[3](not isset)
             if other in data:
                 del data[other]
             newv = stylemap[val]
@@ -262,11 +276,24 @@ class StyleEditor:
             key = val
         elif key.startswith("bl_"):
             value = val[0]
-        elif v[2] is not None:
-            value = v[2](val)
+        elif v[3] is not None:
+            value = v[3](val)
         else:
             value = val
         data[key] = value
+        if v[1] is not None:
+            ctxt = self.builder.get_object(v[1]).get_style_context()
+            oldval = self.basesheet.get(self.marker, {}).get(key, '')
+            if v[0].startswith("s_"):
+                diff = float(oldval) != float(value)
+            else:
+                diff = oldval != value
+            if diff:
+                ctxt.add_class("changed")
+                # print("Adding 'changed' to {} because {} != {}".format(v[1], value, oldval))
+            else:
+                ctxt.remove_class("changed")
+                # print("Removing 'changed' to {} because {} == {}".format(v[1], value, oldval))
 
     def _list_usfms(self, treeiter=None):
         if treeiter is None:

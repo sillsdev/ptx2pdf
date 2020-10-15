@@ -320,7 +320,8 @@ class GtkViewModel(ViewModel):
             .mainnb {background-color: #F0F0F0}
             .mainnb tab {min-height: 0pt; margin: 0pt; padding-bottom: 15pt}
             .viewernb {background-color: #F0F0F0}
-            .viewernb tab {min-height: 0pt; margin: 0pt; padding-bottom: 3pt} """
+            .viewernb tab {min-height: 0pt; margin: 0pt; padding-bottom: 3pt}
+            .changed { font-weight: bold} """
         provider = Gtk.CssProvider()
         provider.load_from_data(css.encode("utf-8"))
         Gtk.StyleContext().add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
