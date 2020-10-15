@@ -198,7 +198,7 @@ class StyleEditor:
         data = self.sheet.get(self.marker, {})
         for k, v in stylemap.items():
             if k == 'Marker':
-                val = self.marker
+                val = "\\" + self.marker
             elif k.startswith("_"):
                 val = v[1]
                 for m, f in ((v[2](x), x) for x in (False, True)):

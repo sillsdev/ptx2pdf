@@ -10950,6 +10950,7 @@ been enabled.</property>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">2</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -10974,7 +10975,7 @@ been enabled.</property>
                                     </child>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">1</property>
+                                    <property name="left_attach">2</property>
                                     <property name="top_attach">2</property>
                                   </packing>
                                 </child>
@@ -11041,6 +11042,7 @@ been enabled.</property>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="halign">end</property>
                                     <property name="label" translatable="yes">Description:</property>
                                   </object>
                                   <packing>
@@ -11060,6 +11062,7 @@ been enabled.</property>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">1</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -11077,14 +11080,14 @@ been enabled.</property>
                                   <object class="GtkLabel" id="l_styleTag">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <attributes>
+                                      <attribute name="weight" value="bold"/>
+                                    </attributes>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">0</property>
                                   </packing>
-                                </child>
-                                <child>
-                                  <placeholder/>
                                 </child>
                               </object>
                               <packing>
