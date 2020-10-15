@@ -209,8 +209,11 @@ class StyleEditor:
         for k, v in stylemap.items():
             if k == 'Marker':
                 val = "\\" + self.marker
+                urlcat = data[' url']
+                urlmkr = self.marker
                 if data.get('Endmarker', None):
                     val += " ... \\" + data['Endmarker']
+                    urlmkr += "-" + data['Endmarker'].strip('\*')
             elif k == '_publishable':
                 val = 'nonpublishable' in data.get('TextProperties', '')
                 oldval = 'nonpublishable' in old.get('TextProperties', '')
@@ -245,6 +248,7 @@ class StyleEditor:
                     ctxt.add_class("changed")
                 else:
                     ctxt.remove_class("changed")
+        self.builder.get_object("l_url_usfm").set_uri('https://ubsicap.github.io/usfm/{}/index.html#{}'.format(urlcat, urlmkr))
         self.isLoading = False
 
     def item_changed(self, w, key):

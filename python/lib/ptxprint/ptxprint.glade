@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -11025,10 +11025,9 @@ been enabled.</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>
                                     <property name="valign">start</property>
-                                    <property name="label" translatable="yes">Marker Description</property>
                                     <property name="wrap">True</property>
                                     <attributes>
-                                      <attribute name="weight" value="semibold"/>
+                                      <attribute name="style" value="italic"/>
                                     </attributes>
                                   </object>
                                   <packing>
@@ -11039,25 +11038,13 @@ been enabled.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Description:</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLinkButton">
+                                  <object class="GtkLinkButton" id="l_url_usfm">
                                     <property name="label" translatable="yes">More Info...</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
                                     <property name="relief">none</property>
-                                    <property name="uri">https://ubsicap.github.io/usfm/introductions/index.html#is</property>
+                                    <property name="uri">https://ubsicap.github.io/usfm/index.html</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -11087,6 +11074,7 @@ been enabled.</property>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">0</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                               </object>
