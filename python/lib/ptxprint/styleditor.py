@@ -30,7 +30,8 @@ stylemap = {
     'CallerRaise':  ('s_styCallerRaise', '0', None),
     'NoteCallerRaise': ('s_styNoteCallerRaise', '0', None),
     '_fontsize':    ('c_styFontScale', False, lambda v: "FontScale" if v else "FontSize"),
-    '_linespacing': ('c_styAbsoluteLineSpacing', False, lambda v: "BaseLine" if v else 'LineSpacing')
+    '_linespacing': ('c_styAbsoluteLineSpacing', False, lambda v: "BaseLine" if v else 'LineSpacing'),
+    '_publishable': ('c_styTextProperties', False, None)
 }
 
 topLevelOrder = ('File', 'Introduction', 'Chapters & Verses', 'Paragraphs', 'Poetry',
@@ -199,6 +200,10 @@ class StyleEditor:
         for k, v in stylemap.items():
             if k == 'Marker':
                 val = "\\" + self.marker
+                if data.get('Endmarker', None):
+                    val += " ... \\" + data['Endmarker']
+            elif k == '_publishable':
+                val = 'nonpublishable' in data.get('TextProperties', '')
             elif k.startswith("_"):
                 val = v[1]
                 for m, f in ((v[2](x), x) for x in (False, True)):
@@ -225,12 +230,19 @@ class StyleEditor:
     def item_changed(self, w, key):
         if self.isLoading:
             return
-        print(f"{w}, {key}")
         data = self.sheet[self.marker]
         v = stylemap[key]
         w = self.builder.get_object(v[0])  # since LineSpacing triggers the checkbutton
         val = getWidgetVal(v[0], w)
-        if key.startswith("_"):
+        if key == '_publishable':
+            if val:
+                add, rem = "non", ""
+            else:
+                add, rem = "", "non"
+            data['TextProperties'].remove(rem+'publishable')
+            data['TextProperties'].add(add+'publishable')
+            return
+        elif key.startswith("_"):
             val = v[2](val)
             isset = getWidgetVal(v[0], w)
             other = v[2](not isset)

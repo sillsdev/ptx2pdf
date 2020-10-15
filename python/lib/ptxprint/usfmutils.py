@@ -4,6 +4,7 @@ import re, os
 from collections import namedtuple
 from itertools import groupby
 from functools import reduce
+from copy import deepcopy
 
 verse_reg = re.compile(r"^\s*(\d+)(\D*?)(?:\s*(-)\s*(\d+)(\D*?))?\s*$")
 def make_rangetuple(chap, verse, start=True):
@@ -56,8 +57,7 @@ class _Reference(sfm.Position):
 
 class Sheets(dict):
     def __init__(self, init=[], base=None):
-        self.update({k: v.copy() for k, v in \
-                        (base.items() if base is not None else usfm.default_stylesheet.items())})
+        self.update(deepcopy(base) if base is not None else deepcopy(usfm.default_stylesheet))
         if init is None or not len(init):
             return
         for s in init:
