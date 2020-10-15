@@ -332,7 +332,7 @@ class StyleEditor:
             for k,v in self.sheet[m].items():
                 if k.startswith(" "):
                     continue
-                other = self.basesheet[m].get(k, None)
+                other = self.basesheet.get("m", {}).get(k, None)
                 if not self._eq_val(other, v):
                     if not markerout:
                         outfh.write("\n\\Marker {}\n".format(m))

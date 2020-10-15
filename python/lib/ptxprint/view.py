@@ -538,7 +538,7 @@ class ViewModel:
                     if picinfo is None:
                         picinfo = PicInfo(self)
                     picinfo.read_piclist(fpath)
-                    os.unlink(fpath)
+                    move(fpath, fpath+".old")
                 if picinfo is not None:
                     picinfo.out(os.path.join(self.configPath(cfgname), "{}-{}.piclist".format(self.prjid, cfgname)))
             path = os.path.join(self.configPath(cfgname), "ptxprint.sty")
