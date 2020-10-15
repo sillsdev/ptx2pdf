@@ -37,15 +37,19 @@
 \newif\ifinextended \inextendedfalse
 \newtoks\old@bx %store old definition of \everyhbox
 \def\c@tegory{}
+\gdef\sb@rmarker{esb} % future-proofing. What's the current sidebar marker?
 
-
-\def\setcatp@ram#1#2{\trace{sc}{Styling cat \c@tegory:#1 #2}\x@\xdef\csname c@tegory-\c@tegory-#1\endcsname{#2}}
-\def\getcatp@ram#1{\x@\let\x@\cp@ram\csname c@tegory-\c@tegory-#1\endcsname\ifx\cp@ram\empty\global\let\cp@ram\relax\fi\trace{sc}{Got result for \c@tegory:#1: \cp@ram}}
-\setcatp@ram{hascol}{T}
-\setcatp@ram{colour}{0 1 0}
-\setcatp@ram{alpha}{0.2}% 1=solid 0=invisible
-\setcatp@ram{posn}{b}
-\setcatp@ram{fgfigspec}{}%Normally no picture.
+\def\setsbp@ram#1#2{\trace{sc}{Styling cat \c@tegory:#1 #2}\setp@ram{#1}{\sb@rmarker}{#2}}
+\def\getsbp@ram#1{\getp@ram{#1}{\sb@rmarker}\let\cp@ram\p@ram\ifx\cp@ram\empty\global\let\cp@ram\relax\fi\trace{sc}{Got result for (\c@tegory)\sb@rmarker:#1: \cp@ram}}
+\def\getsbp@ramNoInh#1{\ifdiglot \edef\d@sf{\ifdiglotL L\else R\fi}\else\def\d@sf{}\fi
+  \getp@r@m{#1}{\c@tprefix\sb@rmarker\d@sf}\ifx\p@ram\relax\getp@ram{#1}{\c@tprefix\sb@rmarker}\fi
+  \let\cp@ram\p@ram
+  \ifx\cp@ram\empty\global\let\cp@ram\relax\fi\trace{sc}{Got result for \c@tprefix\sb@rmarker:#1: \cp@ram}}
+%\setsbp@ram{hascol}{T}
+%\setsbp@ram{bgcolour}{0 1 0}
+%\setsbp@ram{alpha}{0.2}% 1=solid 0=invisible
+\setsbp@ram{posn}{b}
+\setsbp@ram{fgfigspec}{}%Normally no picture.
 \def\fb@hpadding{1pt}%Added left and right of feintbox content
 \def\fb@vpadding{1pt}%added above and below feintbox content
 
@@ -83,23 +87,23 @@
    \trace{e}{parsed: \tempa(\tempb), \tempc(\tempd)}%
 }
 
-\def\s@tesbwidth{%Set default / specific width of esb box
+\def\s@tsb@rwidth{%Set default / specific width of esb box
  %h*,c*,p* take the current page width as their base
  %tX,bX take the column width 
  %t,b,B take the text width
- \trace{e}{setesbwidth c:\the\colwidth, t:\the\textwidth, h:\the\hsize}%
- \getcatp@ram{posn}%
+ \trace{e}{setsb@rwidth c:\the\colwidth, t:\the\textwidth, h:\the\hsize}%
+ \getsbp@ramNoInh{posn}%
  \ifx\cp@ram\relax
-   \gdef\esbpos{b}%
-   \setcatp@ram{posn}{\esbpos}%
+   \gdef\sb@rpos{b}%
+   \setsbp@ram{posn}{\sb@rpos}%
  \else
-   \global\let\esbpos\cp@ram
+   \global\let\sb@rpos\cp@ram
  \fi
- \getcatp@ram{fgfigpos}\let\fgfigp@s\cp@ram
- \getcatp@ram{fgfigspec}\let\fgfigsp@c\cp@ram
- \getcatp@ram{wid}%
+ \getsbp@ram{fgfigpos}\let\fgfigp@s\cp@ram
+ \getsbp@ram{fgfigspec}\let\fgfigsp@c\cp@ram
+ \getsbp@ramNoInh{wid}%
  \ifx\cp@ram\relax
-   \x@\minip@rsepos\fgfigp@s\mid\esbpos\end
+   \x@\minip@rsepos\fgfigp@s\mid\sb@rpos\end
    \dimen1=\hsize
    \ifx\tempd\empty
      \if\tempc t\dimen1=\textwidth\else
@@ -110,14 +114,14 @@
        \if\tempc b\dimen1=\colwidth\fi\fi
    \fi
    % Now apply scale..
-   \getcatp@ram{scale}\ifx\cp@ram\relax\else
+   \getsbp@ram{scale}\ifx\cp@ram\relax\else
       \dimen1=\cp@ram\dimen1
    \fi
-   \trace{e}{basic width of \esbpos: \the\dimen1}%
+   \trace{e}{basic width of \sb@rpos: \the\dimen1}%
    % And shrink further if s has been specified for the fg picture
    \ifx\fgfigsp@c\empty\else
      \if\tempa s
-     \getcatp@ram{fgfigscale}%
+     \getsbp@ram{fgfigscale}%
      \ifx\cp@ram\relax
        \dimen0=0.2\dimen1
      \else
@@ -125,7 +129,7 @@
      \fi
      \advance\dimen1 by \dimen0
    \fi\fi
-   \setcatp@ram{wid}{\the\dimen1}%
+   \setsbp@ram{wid}{\the\dimen1}%
  \else
    \dimen1=\cp@ram
  \fi
@@ -133,39 +137,41 @@
 }
  
 \def\@sb{\let\oldc@tegory\c@tegory
-  \getcatp@ram{wid}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup
-    \s@tesbwidth\inextendedtrue
-    \global\esbchunkh@ight=\maxdimen
-    \global\c@th@@ks{\st@rtesb}}
-\newdimen\esbchunkh@ight
-\newdimen\esbus@dheightl
-\newdimen\esbus@dheightr
-\def\st@rtesb{%Gets run by \cat..\cat*, if one is used. 
+  \getsbp@ram{wid}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup
+    \s@tsb@rwidth\inextendedtrue
+    \global\sb@rchunkh@ight=\maxdimen
+    \global\c@th@@ks{\st@rtsb@r}}
+\newdimen\sb@rchunkh@ight
+\newdimen\sb@rus@dheightl
+\newdimen\sb@rus@dheightr
+\def\st@rtsb@r{%Gets run by \cat..\cat*, if one is used. 
  \c@th@@ks{}%Once per box is enough!
- \s@tesbwidth
+ \s@tsb@rwidth
  \trace{e}{startESB \the\dimen1}%
- \global\esbchunkh@ight=\maxdimen
- \getcatp@ram{break}\ifx\cp@ram\relax\else \if\cp@ram F\else
+ \global\sb@rchunkh@ight=\maxdimen
+ \getsbp@ram{break}\ifx\cp@ram\relax\else \if\cp@ram F\else
    \if\cp@ram T
-     \global\esbchunkh@ight=0.2\textheight
+     \global\sb@rchunkh@ight=0.2\textheight
    \else
-     \global\esbchunkh@ight=\cp@ram\textheight
+     \global\sb@rchunkh@ight=\cp@ram\textheight
    \fi
    \floatingpenalty=500\insertpenalties=0
  \fi\fi
  %\egroup\setbox\extb@x\vbox\bgroup
- \getcatp@ram{fgfigspec}\ifx\cp@ram\relax\else\x@\fig \cp@ram\fig*\fi
+ \getsbp@ram{fgfigspec}\ifx\cp@ram\relax\else\x@\fig \cp@ram\fig*\fi
 }
-\def\esbb@x{ESB inset box}
+\def\sb@rb@x{ESB inset box}
 
 \def\@sbe{\ifinextended\global\let\c@t@gory\c@tegory\egroup\else\message{\\ebse called without \\esb}\fi
-  \trace{e}{ESBE \the\esbchunkh@ight}%
+  \trace{e}{ESBE \the\sb@rchunkh@ight}%
   \let\c@tegory\c@t@gory%recover boxed value
+  \s@tc@tpr@fix
+  \trace{e}{ESBE \c@tprefix}%
   \inextendedfalse
   \let\s@vedvpadding=\fb@vpadding%
-  \getcatp@ram{bgfigspec}\let\bgf@gsp@c\cp@ram
-  \getcatp@ram{bgfiglow}\let\bgf@gl@w\cp@ram%
-  \getcatp@ram{hascol}\let\h@scol\cp@ram%
+  \getsbp@ram{bgfigspec}\let\bgf@gsp@c\cp@ram
+  \getsbp@ram{bgfiglow}\let\bgf@gl@w\cp@ram%
+  \getsbp@ram{hascol}\let\h@scol\cp@ram%
   \tempfalse
   \ifx\bgf@gsp@c\relax\else
     \if\bgf@gl@w F
@@ -176,25 +182,25 @@
     \fi
   \fi
   \ifx\bgf@gsp@c\relax\else % Background images and page-broken chunks are incompatible 
-    \esbchunkh@ight=\maxdimen
+    \sb@rchunkh@ight=\maxdimen
   \fi
   \iftemp
     %modify the esbbox
     \setbox\extb@x\vbox to \ht\extb@x{\vbox to 0pt{\vbox to\ht\extb@x{\vfil\d@figure{\bgf@gsp@c}\vfil}\vss}\extb@x}%
     \let\bgf@gsp@c\relax %used it, so if it's still there later, we need to use it.
   \fi
-  \let\w@tsit\esbb@x   % Make sure the debugging info is correct
-  %\ifx\esbpos\relax\gdef\esbpos{bo}\fi
-  \let\loc@ption\esbpos
+  \let\w@tsit\sb@rb@x   % Make sure the debugging info is correct
+  %\ifx\sb@rpos\relax\gdef\sb@rpos{bo}\fi
+  \let\loc@ption\sb@rpos
   \picUsesInstrue
   \x@\p@rsePicUse\loc@ption\end  %set loc@ption and discover if there's to be an insert. (sets \picUsesInsfalse if not)
   \if\h@scol T
-    \getcatp@ram{alpha}\global\let\pdf@lpha=\cp@ram
-    \getcatp@ram{colour}\let\pdfBGc@l=\cp@ram
+    \getsbp@ram{alpha}\global\let\pdf@lpha=\cp@ram
+    \getsbp@ram{bgcolour}\let\pdfBGc@l=\cp@ram
   \fi
   \loop
-    \ifdim\ht\extb@x>\esbchunkh@ight % to enable page splitting, the box should be chunked.
-      \dimen1=\esbchunkh@ight
+    \ifdim\ht\extb@x>\sb@rchunkh@ight % to enable page splitting, the box should be chunked.
+      \dimen1=\sb@rchunkh@ight
       {% 
         \loop
           \setbox2=\copy\extb@x
@@ -236,34 +242,35 @@
 % Category file parsing 
 \def\Category   #1\relax{%Store name of current category and defaults
   \S@tCat{#1}%
-  \setcatp@ram{bgfigscale}{1}%
-  \setcatp@ram{fgfigsize}{box}%What is image scaled to?
-  \setcatp@ram{fgfigscale}{0.2}%
-  \setcatp@ram{fgfigpos}{cl}%Default is cutout left
-  \setcatp@ram{bgfigscale}{1}%Full size
-  \setcatp@ram{bgfigpos}{pc}%Horizontally centred
-  \setcatp@ram{hascol}{F}%No default colour.
-  \setcatp@ram{posn}{bo}%
-  \setcatp@ram{alpha}{0.2}% 1=solid 0=invisible
+  \xdef\m@rker{esb}%
+  \setsbp@ram{bgfigscale}{1}%
+  \setsbp@ram{fgfigsize}{box}%What is image scaled to?
+  \setsbp@ram{fgfigscale}{0.2}%
+  \setsbp@ram{fgfigpos}{cl}%Default is cutout left
+  \setsbp@ram{bgfigscale}{1}%Full size
+  \setsbp@ram{bgfigpos}{pc}%Horizontally centred
+  \setsbp@ram{hascol}{F}%No default colour.
+  \setsbp@ram{posn}{bo}%
+  \setsbp@ram{alpha}{0.2}% 1=solid 0=invisible
 }
-\def\Position   #1\relax{\setcatp@ram{posn}{#1}}% Where does it go on the page? (like figures, but also B for below notes)
-\def\Scale      #1\relax{\setcatp@ram{scale}{#1}}% Where does it go on the page? (like figures, but also B for below notes)
-\def\Breakable   #1\relax{\tempfalse\setbox0\hbox{\ifcat 1#1 \global\temptrue\fi}\iftemp\setcatp@ram{break}{#1}\else\setcatp@ram{break}{\uppercase #1}\fi} %Can the box page-break?
-\def\FgImage      #1\relax{\setcatp@ram{fgfigname}{#1}\GenC@tFig{fg}}
-\def\FgImagePos   #1\relax{\setcatp@ram{fgfigpos}{#1}\GenC@tFig{fg}}
-\def\FgImageScale   #1\relax{\setcatp@ram{fgfigscale}{#1}\GenC@tFig{fg}}
-\def\BgImage      #1\relax{\setcatp@ram{bgfigname}{#1}\GenC@tFig{bg}}
-\def\BgImageScale   #1\relax{\setcatp@ram{bgfigscale}{#1}\GenC@tFig{bg}}
-\def\BgImageLow   #1\relax{\setcatp@ram{bgfiglow}{\uppercase #1}}% What's the right sequence for colour layer and background image
+\def\Position   #1\relax{\setsbp@ram{posn}{#1}}% Where does it go on the page? (like figures, but also B for below notes)
+\def\Scale      #1\relax{\setsbp@ram{scale}{#1}}% Where does it go on the page? (like figures, but also B for below notes)
+\def\Breakable   #1\relax{\tempfalse\setbox0\hbox{\ifcat 1#1 \global\temptrue\fi}\iftemp\setsbp@ram{break}{#1}\else\setsbp@ram{break}{\uppercase #1}\fi} %Can the box page-break?
+\def\FgImage      #1\relax{\setsbp@ram{fgfigname}{#1}\GenC@tFig{fg}}
+\def\FgImagePos   #1\relax{\setsbp@ram{fgfigpos}{#1}\GenC@tFig{fg}}
+\def\FgImageScale   #1\relax{\setsbp@ram{fgfigscale}{#1}\GenC@tFig{fg}}
+\def\BgImage      #1\relax{\setsbp@ram{bgfigname}{#1}\GenC@tFig{bg}}
+\def\BgImageScale   #1\relax{\setsbp@ram{bgfigscale}{#1}\GenC@tFig{bg}}
+\def\BgImageLow   #1\relax{\setsbp@ram{bgfiglow}{\uppercase #1}}% What's the right sequence for colour layer and background image
 
-\def\BgColour   #1\relax{\setcatp@ram{hascol}{T}\setcatp@ram{colour}{#1}}%For British/Australian/NZ/etc.
+\def\BgColour   #1\relax{\setsbp@ram{hascol}{T}\setsbp@ram{bgcolour}{#1}}%For British/Australian/NZ/etc.
 \let\BgColor\BgColour%For Americans
-\def\Alpha   #1\relax{\setcatp@ram{alpha}{#1}}% 1=solid 0=invisible
+\def\Alpha   #1\relax{\setsbp@ram{alpha}{#1}}% 1=solid 0=invisible
 
 \def\GenC@tFig#1{
- \getcatp@ram{#1figname}\ifx\cp@ram\relax\let\cp@ram\empty\fi\ifx\cp@ram\empty\else
+ \getsbp@ram{#1figname}\ifx\cp@ram\relax\let\cp@ram\empty\fi\ifx\cp@ram\empty\else
    \let\c@tfigname\cp@ram
-   \getcatp@ram{#1figsize}
+   \getsbp@ram{#1figsize}
  \fi
 }
 \def\EndCategory{\gdef\c@tegory{}\global\let\c@tprefix\empty}
