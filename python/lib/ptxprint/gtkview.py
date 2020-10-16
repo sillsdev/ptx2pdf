@@ -813,7 +813,10 @@ class GtkViewModel(ViewModel):
         # if disable filter, bks = None
         if self.picinfos is None:
             return
-        self.picinfos.updateView(self.picListView, bks, filtered=self.get("c_filterPicList"))
+        filtered = self.get("c_filterPicList")
+        if bks is None and filtered:
+            bks = self.getBooks()
+        self.picinfos.updateView(self.picListView, bks, filtered=filtered)
 
     def updatePicChecks(self, src):
         self.picChecksView.savepic()
@@ -868,7 +871,7 @@ class GtkViewModel(ViewModel):
         self.onViewerChangePage(None,None,pg)
 
     def onFilterPicListClicked(self, btn):
-        self.updatePicList(self.getBooks())
+        self.updatePicList()
 
     def onChangedMainTab(self, nbk_Main, scrollObject, pgnum):
         pgid = Gtk.Buildable.get_name(nbk_Main.get_nth_page(pgnum))
