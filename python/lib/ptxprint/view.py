@@ -589,7 +589,6 @@ class ViewModel:
 
     def savePics(self):
         if self.picinfos is not None and self.picinfos.loaded:
-            self.picListView.updateinfo(self.picinfos)
             self.picinfos.out(os.path.join(self.configPath(self.configName()),
                                     "{}-{}.piclist".format(self.prjid, self.configName())))
 

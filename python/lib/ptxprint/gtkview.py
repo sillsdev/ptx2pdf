@@ -598,7 +598,7 @@ class GtkViewModel(ViewModel):
             self._copyConfig(self.configId, newconfigId)
             self.configId = newconfigId
             self.updateSavedConfigList()
-            self.set("lb_settings_dir", configpath)
+            self.set("lb_settings_dir", self.configPath(self.configName()))
             self.updateDialogTitle()
         self.writeConfig()
         self.savePics()
@@ -985,6 +985,11 @@ class GtkViewModel(ViewModel):
         fname = os.path.join(self.configPath(self.configName(), makePath=True), "ptxprint.sty")
         with open(fname, "w", encoding="Utf-8") as outf:
             self.styleEditorView.output_diffile(outf)
+
+    def savePics(self):
+        if self.picinfos is not None and self.picinfos.loaded:
+            self.picListView.updateinfo(self.picinfos)
+        super().savePics()
 
     def onSaveEdits(self, btn):
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
