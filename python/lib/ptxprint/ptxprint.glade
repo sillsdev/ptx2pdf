@@ -4088,6 +4088,25 @@ Text:</property>
                                 <property name="left_attach">1</property>
                                 <property name="top_attach">0</property>
                                 <property name="width">2</property>
+                                <property name="height">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_resetColophon">
+                                <property name="label">↺</property>
+                                <property name="width_request">-1</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Clicking this button will reload the 
+default Colophon text markers which
+include the Copyright statement tag,
+the License statement tag, and the
+Illustrtation credits tag.</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">1</property>
                               </packing>
                             </child>
                           </object>
