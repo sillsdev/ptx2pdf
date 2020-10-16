@@ -106,6 +106,18 @@ widgetsignals = {
     "col": "color-set"
 }
 
+stylediverts = {
+    'LineSpacing': '_linespacing',
+    'FontSize': '_fontsize'
+}
+
+widgetsignals = {
+    's': "value-changed",
+    'c': "toggled",
+    "bl": "clicked",
+    "col": "color-set"
+}
+
 def triefit(k, base, start):
     for i in range(start, len(k)):
         if k[:i] in base:

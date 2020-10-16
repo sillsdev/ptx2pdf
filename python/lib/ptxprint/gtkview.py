@@ -854,12 +854,19 @@ class GtkViewModel(ViewModel):
                     procbks = bks2gen
                 else:
                     procbks = bks
+                rnd = self.get("c_randomPicPosn")
+                cols = 2 if self.get("c_doublecolumn") else 1
                 if self.diglotView is None:
-                    PicInfoUpdateProject(self, procbks, ab, self.picinfos)
+                    PicInfoUpdateProject(self, procbks, ab, self.picinfos, random=rnd, cols=cols)
                 else:
-                    PicInfoUpdateProject(self, procbks, ab, self.picinfos, suffix="L")
-                    diallbooks = self.diglotView.getAllBooks()
-                    PicInfoUpdateProject(self.diglotView, procbks, diallbooks, self.picinfos, suffix="R")
+                    mode = self.get("fcb_diglotPicListSources")
+                    if mode in ("both", "left"):
+                        PicInfoUpdateProject(self, procbks, ab, self.picinfos,
+                                             suffix="L", random=rnd, cols=cols)
+                    if mode in ("both", "right"):
+                        diallbooks = self.diglotView.getAllBooks()
+                        PicInfoUpdateProject(self.diglotView, procbks, diallbooks,
+                                             self.picinfos, suffix="R", random=rnd, cols=cols)
                 self.updatePicList(procbks)
             dialog.hide()
         elif pgid == "scroll_AdjList": # AdjList

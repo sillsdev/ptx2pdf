@@ -574,23 +574,25 @@ class PicInfo(dict):
                     return os.path.join(subdir, f)
         return None
 
-    def set_positions(self):
+    def set_positions(self, cols=1, randomize=False, suffix=""):
         picposns = { "L": {"col":  ("tl", "bl"),             "span": ("t")},
                      "R": {"col":  ("tr", "br"),             "span": ("b")},
                      "":  {"col":  ("tl", "tr", "bl", "br"), "span": ("t", "b")}}
-        randomizePosn = self.model.get("c_randomPicPosn")
         isdblcol = self.model.get("c_doublecolumn")
-        for k, v in self:
-            if not isdblcol: # Single Column layout so change all tl+tr > t and bl+br > b
+        for k, v in self.items():
+            if cols == 1: # Single Column layout so change all tl+tr > t and bl+br > b
                 if 'pgpos' in v:
                     v['pgpos'] = re.sub(r"([tb])[lr]", r"\1", v['pgpos'])
+                elif randomize:
+                    v['pgpos'] = random.choice(picposns[suffix]['span'])
                 else:
                     v['pgpos'] = "t"
-            if 'pgpos' not in v:
-                if not isTemp and randomizePosn:
-                    v['pgpos'] = random.choice(picposn.get(v['size'], 'col')) # Randomize location of illustrations on the page (tl,tr,bl,br)
+            elif 'pgpos' not in v:
+                posns = picposns[suffix].get(v.get('size', 'col'), picposns[suffix]["col"])
+                if randomize:
+                    v['pgpos'] = random.choice(posns)
                 else:
-                    v['pgpos'] = picposn.get(v['size'], 'col')[0]
+                    v['pgpos'] = posns[0]
 
     def set_destinations(self, fn=lambda x,y,z:z, keys=None):
         print("Set destinations for {} pics".format(len(self)))
@@ -611,7 +613,7 @@ class PicInfo(dict):
     def updateView(self, view, bks=None, filtered=True):
         view.load(self, bks=bks if filtered else None)
 
-def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix=""):
+def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False, cols=1):
     newpics = PicInfo(model)
     newpics.read_piclist(os.path.join(model.settings_dir, model.prjid, 'shared',
                                       'ptxprint', "{}.piclist".format(model.prjid)))
@@ -624,6 +626,7 @@ def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix=""):
             del newpics[k]
             delpics.add(k)
         newpics.read_sfm(bk, bkf)
+        newpics.set_positions(randomize=random, suffix=suffix, cols=cols)
         for k in (k for k in newpics.keys() if k[:3] == bk):
             if k in delpics:
                 delpics.remove(k)
