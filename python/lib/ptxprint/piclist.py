@@ -310,6 +310,11 @@ class PicChecks:
             except configparser.NoSectionError:
                 cfg.add_section(self.src)
                 cfg.set(self.src, n, val)
+        val = self.parent.get("c_pubApproved")
+        if val:
+            cfg = self.cfgShared if self.parent.get("r_pubapprove") == "scopeAny" else self.cfgProject
+            cfg.set(self.src, "approved", self.get("t_pubInits"))
+            cfg.set(self.src, "approval_date", self.get("t_pubApprDate"))
 
 class PicInfo(dict):
 
