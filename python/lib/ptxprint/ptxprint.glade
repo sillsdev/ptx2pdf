@@ -1368,6 +1368,7 @@ saved configuration.</property>
                         <property name="margin_bottom">10</property>
                         <property name="label" translatable="yes">MAT MRK LUK JHN ACT ROM 1CO 2CO GAL EPH PHP COL 1TH 2TH 1TI 2TI TIT</property>
                         <property name="wrap">True</property>
+                        <property name="max_width_chars">40</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
