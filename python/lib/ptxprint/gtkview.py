@@ -813,7 +813,7 @@ class GtkViewModel(ViewModel):
         # if disable filter, bks = None
         if self.picinfos is None:
             return
-        self.picinfos.updateView(self.picListView, bks)
+        self.picinfos.updateView(self.picListView, bks, filtered=self.get("c_filterPicList"))
 
     def updatePicChecks(self, src):
         self.picChecksView.savepic()
@@ -857,7 +857,7 @@ class GtkViewModel(ViewModel):
                     PicInfoUpdateProject(self, procbks, ab, self.picinfos, suffix="L")
                     diallbooks = self.diglotView.getAllBooks()
                     PicInfoUpdateProject(self.diglotView, procbks, diallbooks, self.picinfos, suffix="R")
-                self.updatePicList(bks)
+                self.updatePicList(procbks)
             dialog.hide()
         elif pgid == "scroll_AdjList": # AdjList
             self.generateAdjList()
@@ -867,14 +867,17 @@ class GtkViewModel(ViewModel):
             self.editFile(out, loc="wrk", pgid=pgid)
         self.onViewerChangePage(None,None,pg)
 
+    def onFilterPicListClicked(self, btn):
+        self.updatePicList(self.getBooks())
+
     def onChangedMainTab(self, nbk_Main, scrollObject, pgnum):
         pgid = Gtk.Buildable.get_name(nbk_Main.get_nth_page(pgnum))
         if pgid == "tb_ViewerEditor": # Viewer tab
             self.onRefreshViewerTextClicked(None)
 
-        def onRefreshViewerTextClicked(self, btn):
-            pg = self.get("nbk_Viewer")
-            self.onViewerChangePage(None, None, pg)
+    def onRefreshViewerTextClicked(self, btn):
+        pg = self.get("nbk_Viewer")
+        self.onViewerChangePage(None, None, pg)
 
     def onViewerChangePage(self, nbk_Viewer, scrollObject, pgnum):
         allpgids = ("tb_PicList", "scroll_AdjList", "scroll_FinalSFM", "scroll_TeXfile",
@@ -1071,7 +1074,7 @@ class GtkViewModel(ViewModel):
             if self.picinfos is None:
                 self.picinfos = PicInfo(self)
             self.picinfos.load_files()
-            self.picListView.load(self.picinfos)
+            self.updatePicList()
         else:
             self.picinfos.clear()
             self.picListView.clear()

@@ -70,13 +70,15 @@ class PicList:
     def clear(self):
         self.model.clear()
 
-    def load(self, picinfo):
+    def load(self, picinfo, bks=None):
         self.picinfo = picinfo
         self.view.set_model(None)
         self.listview.set_model(None)
         self.model.clear()
         if picinfo is not None:
             for k, v in sorted(picinfo.items(), key=lambda x:(refKey(x[0]), x[1])):
+                if bks is not None and k[:3] not in bks:
+                    continue
                 row = [k]
                 for e in _piclistfields[1:]:
                     if e == 'origkey':
@@ -606,9 +608,8 @@ class PicInfo(dict):
             if 'media' in v and len(v['media']) and 'p' not in v['media']:
                 v['disabled'] = True
 
-    def updateView(self, view, bks=None):
-        view.load(self)
-        # enable bks filter if set
+    def updateView(self, view, bks=None, filtered=True):
+        view.load(self, bks=bks if filtered else None)
 
 def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix=""):
     newpics = PicInfo(model)
@@ -623,7 +624,6 @@ def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix=""):
             del newpics[k]
             delpics.add(k)
         newpics.read_sfm(bk, bkf)
-        print(newpics)
         for k in (k for k in newpics.keys() if k[:3] == bk):
             if k in delpics:
                 delpics.remove(k)
