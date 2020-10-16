@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -1676,6 +1676,8 @@ in the Windows system.</property>
                   <object class="GtkSearchEntry" id="t_fontSearch">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="has_focus">True</property>
+                    <property name="is_focus">True</property>
                     <property name="margin_left">8</property>
                     <property name="margin_bottom">6</property>
                     <property name="primary_icon_name">edit-find-symbolic</property>
@@ -2580,7 +2582,7 @@ PDF files - one for each book.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkFrame" id="bx_SavedConfigSettings">
+                      <object class="GtkFrame" id="fr_SavedConfigSettings">
                         <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -3022,7 +3024,7 @@ Viewer tab.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkFrame" id="bx_copyrightLicense">
+                      <object class="GtkFrame" id="fr_copyrightLicense">
                         <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -12833,7 +12835,7 @@ Ref:</property>
                                                           <packing>
                                                             <property name="left_attach">3</property>
                                                             <property name="top_attach">0</property>
-                                                            <property name="width">3</property>
+                                                            <property name="width">2</property>
                                                           </packing>
                                                         </child>
                                                         <child>
@@ -13095,10 +13097,63 @@ Lines:</property>
                                                           </packing>
                                                         </child>
                                                         <child>
-                                                          <placeholder/>
-                                                        </child>
-                                                        <child>
-                                                          <placeholder/>
+                                                          <object class="GtkBox">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <child>
+                                                            <object class="GtkCheckButton" id="c_plMediaP">
+                                                            <property name="label" translatable="yes">Print</property>
+                                                            <property name="visible">True</property>
+                                                            <property name="sensitive">False</property>
+                                                            <property name="can_focus">True</property>
+                                                            <property name="receives_default">False</property>
+                                                            <property name="tooltip_text" translatable="yes">Can be used in Print/PDF publications. </property>
+                                                            <property name="draw_indicator">True</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">0</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkCheckButton" id="c_plMediaA">
+                                                            <property name="label" translatable="yes">App</property>
+                                                            <property name="visible">True</property>
+                                                            <property name="sensitive">False</property>
+                                                            <property name="can_focus">True</property>
+                                                            <property name="receives_default">False</property>
+                                                            <property name="tooltip_text" translatable="yes">Can be used in mobile phone Apps. </property>
+                                                            <property name="draw_indicator">True</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">1</property>
+                                                            </packing>
+                                                            </child>
+                                                            <child>
+                                                            <object class="GtkCheckButton" id="c_plMediaW">
+                                                            <property name="label" translatable="yes">Web</property>
+                                                            <property name="visible">True</property>
+                                                            <property name="sensitive">False</property>
+                                                            <property name="can_focus">True</property>
+                                                            <property name="receives_default">False</property>
+                                                            <property name="tooltip_text" translatable="yes">Can be used on websites. </property>
+                                                            <property name="draw_indicator">True</property>
+                                                            </object>
+                                                            <packing>
+                                                            <property name="expand">False</property>
+                                                            <property name="fill">True</property>
+                                                            <property name="position">2</property>
+                                                            </packing>
+                                                            </child>
+                                                          </object>
+                                                          <packing>
+                                                            <property name="left_attach">5</property>
+                                                            <property name="top_attach">0</property>
+                                                            <property name="width">3</property>
+                                                          </packing>
                                                         </child>
                                                         <child>
                                                           <placeholder/>
@@ -13867,7 +13922,6 @@ in the printed output.</property>
                                                             <child>
                                                             <object class="GtkGrid">
                                                             <property name="visible">True</property>
-                                                            <property name="sensitive">False</property>
                                                             <property name="can_focus">False</property>
                                                             <child>
                                                             <object class="GtkRadioButton" id="r_pubapprove_scopeAny">

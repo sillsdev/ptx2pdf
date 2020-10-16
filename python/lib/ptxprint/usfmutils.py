@@ -84,6 +84,7 @@ class UsfmCollection:
         self.basedir = basedir
         self.sheets = sheets
         self.books = {}
+        self.tocs = []
 
     def get(self, bk):
         if bk not in self.books:
