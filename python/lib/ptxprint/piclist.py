@@ -414,7 +414,7 @@ class PicInfo(dict):
                         self[r] = pic
                         for i, v in enumerate(f[3:]):
                             pic[posparms[i]] = v
-                        self._fixPicinfo(res[r])
+                        self._fixPicinfo(pic)
                 elif isperiph:
                     m = re.findall(r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(col|span)[^|]*\|([^\\]+?)?\\fig\*", dat)
                     if len(m):
@@ -619,15 +619,16 @@ def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix=""):
         bkf = allbooks.get(bk, None)
         if bkf is None or not os.path.exists(bkf):
             continue
-        for k in (k for k in newpics.keys() if k[:3] == bk):
+        for k in [k for k in newpics.keys() if k[:3] == bk]:
             del newpics[k]
             delpics.add(k)
-        newpics.read_usfm(bk, bkf)
+        newpics.read_sfm(bk, bkf)
+        print(newpics)
         for k in (k for k in newpics.keys() if k[:3] == bk):
             if k in delpics:
                 delpics.remove(k)
             else:
                 picinfos[k+suffix] = newpics[k]
-        for k in deplics:
+        for k in delpics:
             if k+suffix in picinfos:
                 del picinfos[k+suffix]

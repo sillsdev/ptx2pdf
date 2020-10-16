@@ -833,6 +833,8 @@ class GtkViewModel(ViewModel):
         pg = self.get("nbk_Viewer")
         pgid = self.notebooks['Viewer'][pg]
         bks2gen = self.getBooks()
+        if not len(bks2gen):
+            return
         bk = self.get("ecb_examineBook")
         bk = bk if bk in bks2gen else None
         if pgid == "tb_PicList": # PicList
@@ -846,12 +848,15 @@ class GtkViewModel(ViewModel):
             response = dialog.run()
             if response == Gtk.ResponseType.OK:
                 if self.get("r_generate") == "all":
-                    bks = self.getAllBooks()
-                if self.diglotView is None:
-                    PicInfoUpdateProject(self, bks, ab, self.picinfos)
+                    procbks = bks2gen
                 else:
-                    PicInfoUpdateProject(self, bks, ab, self.picinfos, suffix="L")
-                    PicInfoUpdateProject(self.diglotView, bks, ab, self.picinfos, suffix="R")
+                    procbks = bks
+                if self.diglotView is None:
+                    PicInfoUpdateProject(self, procbks, ab, self.picinfos)
+                else:
+                    PicInfoUpdateProject(self, procbks, ab, self.picinfos, suffix="L")
+                    diallbooks = self.diglotView.getAllBooks()
+                    PicInfoUpdateProject(self.diglotView, procbks, diallbooks, self.picinfos, suffix="R")
                 self.updatePicList(bks)
             dialog.hide()
         elif pgid == "scroll_AdjList": # AdjList
@@ -1379,7 +1384,8 @@ class GtkViewModel(ViewModel):
         if self.prjid:
             self.updatePrjLinks()
             self.userconfig.set("init", "project", self.prjid)
-            self.userconfig.set("init", "config", self.configId)
+            if self.configid:
+                self.userconfig.set("init", "config", self.configId)
         status = self.get("r_book") == "multiple"
         for c in ("c_combine", "t_booklist"):
             self.builder.get_object(c).set_sensitive(status)

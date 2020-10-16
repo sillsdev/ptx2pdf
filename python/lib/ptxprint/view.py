@@ -204,13 +204,14 @@ class ViewModel:
             return []
 
     def getAllBooks(self):
+        ''' Returns a dict of all books in the project bkid: bookfile_path '''
         prjdir = os.path.join(self.settings_dir, self.prjid)
         res = {}
         for bk in allbooks:
             f = self.getBookFilename(bk)
             fp = os.path.join(prjdir, f)
             if os.path.exists(fp):
-                res[f] = fp
+                res[bk] = fp
         return res
 
     def _getPtSettings(self, prjid=None):

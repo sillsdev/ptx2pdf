@@ -374,7 +374,7 @@ class Module:
 
     def parse(self):
         self.removes = set()
-        final = sum(map(self.parse_element, self.doc.doc), start=[])
+        final = sum(map(self.parse_element, self.doc.doc), [])
         return final
 
     def localref(self, m):
@@ -437,7 +437,7 @@ class Module:
             mod = Module(e[0].strip(), self.usfms)
             return mod.parse()
         else:
-            cs = sum(map(self.parse_element, e), start=[])
+            cs = sum(map(self.parse_element, e), [])
             e[:] = cs
         return [e]
 
