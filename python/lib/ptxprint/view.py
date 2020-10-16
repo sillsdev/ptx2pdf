@@ -318,7 +318,6 @@ class ViewModel:
     def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, forceConfig=False):
         currprj = self.prjid
         currcfg = self.configId
-        # print("updateProjectSettings({}={},{}={})".format(currprj, prjid, currcfg, configName))
         readConfig = False
         if currprj is None or currprj != prjid:
             if currprj is not None and saveCurrConfig:
@@ -331,7 +330,7 @@ class ViewModel:
                     cacheremovepath(fdir)
             self.ptsettings = None
             self.prjid = self.get("fcb_project") if prjid is None else prjid
-            self.configId = None
+            self.configId = "Default"
             if self.prjid:
                 self.ptsettings = ParatextSettings(self.settings_dir, self.prjid)
                 self.updateBookList()
@@ -408,7 +407,6 @@ class ViewModel:
         path = os.path.join(self.configPath(cfgname), "ptxprint.cfg")
         if not os.path.exists(path):
             return False
-        #print("Reading config: {}".format(path))
         config = configparser.ConfigParser()
         config.read(path, encoding="utf-8")
         self.versionFwdConfig(config, cfgname)
@@ -435,7 +433,6 @@ class ViewModel:
             cfgname = self.configName() or ""
         path = os.path.join(self.configPath(cfgname=cfgname, makePath=True), "ptxprint.cfg")
         config = self.createConfig()
-        #print("Writing config: {}".format(path))
         with open(path, "w", encoding="utf-8") as outf:
             config.write(outf)
 
@@ -500,7 +497,6 @@ class ViewModel:
 
     def versionFwdConfig(self, config, cfgname):
         version = self._config_get(config, "config", "version", conv=float, fallback=0.0)
-        # print("version=",version)
         v = float(version)
         if v < 0.9:
             try:
@@ -536,7 +532,6 @@ class ViewModel:
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):
-            print("Creating {}".format(styf))
             with open(styf, "w", encoding="utf-8") as outf:
                 outf.write("# This file left intentionally blank\n")
 
@@ -547,7 +542,6 @@ class ViewModel:
                 key = "{}/{}".format(sect, opt)
                 val = config.get(sect, opt)
                 if key in ModelMap:
-                    # print("Key:", key)
                     v = ModelMap[key]
                     if val == "None":
                         val = None
@@ -566,10 +560,8 @@ class ViewModel:
                     else:
                         try: # Safeguarding from changed/missing keys in .cfg  or v[0].startswith("f_") 
                             if v[0].startswith("s_"):
-                                # print(key,v[0])
                                 val = float(val) if val is not None and val != '' else 0
                             elif v[0].startswith("c_"):
-                                # print("v[0]:", v[0])
                                 val = config.getboolean(sect, opt) if val else False
                             if val is not None:
                                 setv(v[0], val)
@@ -580,7 +572,6 @@ class ViewModel:
                     if v[0].startswith("bl_") and opt == "name":
                         vname = re.sub(r"\s*,?\s+\d+\s*$", "", val) # strip legacy style and size
                         vstyle = config.get(sect, "style", fallback="")
-                        # print("loadConfig: {}->{} = {},{}".format(sect, ModelMap[sect][0], vname, vstyle))
                         setv(ModelMap[sect][0], (vname, vstyle))
                 if key in self._activekeys:
                     getattr(self, self._activekeys[key])()
@@ -597,7 +588,6 @@ class ViewModel:
         pass
 
     def savePics(self):
-        # print("picinfo loaded {}".format(self.picinfos.loaded))
         if self.picinfos is not None and self.picinfos.loaded:
             self.picListView.updateinfo(self.picinfos)
             self.picinfos.out(os.path.join(self.configPath(self.configName()),
@@ -611,9 +601,7 @@ class ViewModel:
         else:
             self.savePics()
             self.picinfos.clear(self)
-        # print("include illustrations {}: {}-{}".format(self.get("c_includeillustrations"), self.prjid, self.configName()))
         if not self.get("c_includeillustrations"):
-            # print("Nothing to do")
             return
         if self.diglotView is None:
             self.picinfos.load_files()

@@ -1086,7 +1086,7 @@ class GtkViewModel(ViewModel):
             self.picinfos.load_files()
             self.updatePicList()
         else:
-            self.picinfos.clear()
+            self.picinfos.clear(self)
             self.picListView.clear()
 
     def onUseCustomFolderclicked(self, btn):
@@ -1461,7 +1461,7 @@ class GtkViewModel(ViewModel):
         if switch:
             self.builder.get_object("nbk_Main").set_current_page(mpgnum)
             self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
-        self.prjid = self.get("fcb_project")
+        # self.prjid = self.get("fcb_project")
         self.prjdir = os.path.join(self.settings_dir, self.prjid)
         if loc == "wrk":
             fpath = os.path.join(self.working_dir, file2edit)
@@ -1522,7 +1522,7 @@ class GtkViewModel(ViewModel):
         self.editFile("PrintDraftChanges.txt", "prj")
 
     def onEditModsTeX(self, btn):
-        self.prjid = self.get("fcb_project")
+        # self.prjid = self.get("fcb_project")
         cfgname = self.configName()
         fpath = os.path.join(self.configPath(cfgname), "ptxprint-mods.tex")
         if not os.path.exists(fpath):
@@ -1878,7 +1878,6 @@ class GtkViewModel(ViewModel):
 
     def onArchTempClicked(self, btn):
         pass
-        # print(self.tempFiles)
 
     def onTabsClicked(self, btn):
         self.onSimpleClicked(btn)

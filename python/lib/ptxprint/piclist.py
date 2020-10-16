@@ -117,7 +117,6 @@ class PicList:
                     if e == 'origkey':
                         oldk = row[i+1]
                         if k != oldk and oldk in picinfos:
-                            print(k, oldk, list(row), p)
                             del picinfos[oldk]
                     elif e == 'scale':
                         val = "{:.3f}".format(row[i+1] / 100.)
@@ -335,7 +334,7 @@ class PicInfo(dict):
             self.basedir = model.settings_dir
         else:
             self.basedir = os.path.join(model.settings_dir, model.prjid)
-        self.config = model.configName()
+        self.config = model.configId
         self.loaded = False
 
     def load_files(self, suffix="", prjdir=None, prj=None, cfg=None):
@@ -346,7 +345,6 @@ class PicInfo(dict):
         if cfg is None:
             cfg = self.config
         if prjdir is None or prj is None or cfg is None:
-            # print("Returning early since {}/{}-{}".format(prjdir, prj, cfg))
             return
         preferred = os.path.join(prjdir, "shared/ptxprint/{1}/{0}-{1}.piclist".format(prj, cfg))
         if os.path.exists(preferred):
