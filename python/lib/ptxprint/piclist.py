@@ -137,8 +137,10 @@ class PicList:
             s = w.get_selection()
             if s != selection:
                 s.select_iter(i)
-                p = w.get_model().get_path(i)
-                w.scroll_to_cell(p)
+                m = w.get_model()
+                if m is not None:
+                    p = m.get_path(i)
+                    w.scroll_to_cell(p)
         if selection != self.selection:
             return
         if self.model.get_path(i).get_indices()[0] >= len(self.model):
@@ -499,16 +501,12 @@ class PicInfo(dict):
             self.srchlist = [self.model.customFigFolder]
         else:
             self.srchlist = []
-            if sys.platform == "win32":
-                self.srchlist += [os.path.join(self.basedir, "figures")]
-                self.srchlist += [os.path.join(self.basedir, "local", "figures")]
-            elif sys.platform == "linux":
-                chkpaths = []
-                for d in ("local", "figures"):
-                    chkpaths += [os.path.join(self.basedir, x) for x in (d, d.title())]
-                for p in chkpaths:
-                    if os.path.exists(p):
-                        self.srchlist += [p]
+            chkpaths = []
+            for d in ("local", ""):
+                chkpaths += [os.path.join(self.basedir, x, y+"igures") for x in (d, d.title()) for y in "fF"]
+            for p in chkpaths:
+                if os.path.exists(p):
+                    self.srchlist += [p]
         self.extensions = []
         extdflt = {x:i for i, x in enumerate(["jpg", "jpeg", "png", "tif", "tiff", "bmp", "pdf"])}
         imgord = self.model.get("t_imageTypeOrder").lower()
