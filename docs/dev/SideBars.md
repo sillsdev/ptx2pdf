@@ -30,12 +30,11 @@ their own watermark or background image.  ```
 % With a background colour, the box will be broken into sections and these sections will be added one chunk at a time.
 % If a value is given, this is the smallest fraction of the pageheight that the sections will be, if 't' is given, the fraction 
 % will be 0.2 of the page height. If splitting a given chunk of the box is impossible, the algorithm will increase the chunk-size until 
-% a break IS possible. This 
+% a break IS possible. 
 
-%\BgColour F, T
+
+%\BgColour F, T, value(0-1) value(0-1) value(0.1)
 % Disable (F) or reenable (T)  any background colour set earlier (or inherited) 
-
-%\BgColour value(0-1) value(0-1) value(0.1)
 % 3 values (0-1) for red, green and blue. With \Alpha below, this defines the colour of the \esb box
 % Note that by default an \esb box has no background colour, so not setting a value here is not the same as setting a value to white. 
 % Setting this to white will overwrite any background image. (For Americans, \BgColor is an acceptable alias).
@@ -70,8 +69,8 @@ their own watermark or background image.  ```
 % out, but .JPGs are probably better below.
 
 %\BorderWidth measurement
-% Default: 0.5pt
-% Define the thickness of the border-line around the box
+% Default: 0.5
+% Define the thickness of the border-line around the box, Measured in FontSizeUnits (normal text is 12 FontSizeUnits)
 
 %\BorderColour value(0-1) value(0-1) value(0.1)
 % Default: 0 0 0 (Black)

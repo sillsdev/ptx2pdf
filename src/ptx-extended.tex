@@ -56,6 +56,7 @@
 \setsbp@ram{bgfigpos}{pc}%Horizontally centred
 \setsbp@ram{hascol}{F}%No default colour.
 \setsbp@ram{alpha}{0.2}% 1=solid 0=invisible
+\setsbp@ram{borderwidth}{0.5}% in FontSizeUnit
 \setsbp@ram{posn}{b}
 \setsbp@ram{fgfigspec}{}%Normally no picture.
 \setsbp@ram{bgfigspec}{}%Normally no picture.
@@ -113,7 +114,7 @@
  \getsbp@ramNoInh{w@dth}% Width must NOT be inherited.
  \ifx\cp@ram\relax
    \x@\minip@rsepos\fgfigp@s\mid\sb@rpos\end
-   \dimen1=\hsize
+   \dimen1=\hs@ze
    \ifx\tempd\empty
      \if\tempc t\dimen1=\textwidth\else
        \if\tempc b\dimen1=\textwidth\else
@@ -126,6 +127,9 @@
    \getsbp@ram{scale}\ifx\cp@ram\relax\else
       \dimen1=\cp@ram\dimen1
    \fi
+   \getsbp@ram{\ifodd\pageno borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
+   \getsbp@ram{\ifodd\pageno borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
+   \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
    \trace{e}{basic width of \sb@rpos: \the\dimen1}%
    % And shrink further if s has been specified for the fg picture
    \ifx\fgfigsp@c\empty\else
@@ -136,8 +140,10 @@
      \else
        \dimen0=\cp@ram\dimen1
      \fi
-     \advance\dimen1 by \dimen0
+     \advance\dimen1 by -\dimen0
    \fi\fi
+   \ifx\b@drleft\tr@e \advance\dimen1 by -\b@drwidth\FontSizeUnit\fi
+   \ifx\b@drright\tr@e \advance\dimen1 by -\b@drwidth\FontSizeUnit\fi
    \setsbp@ram{w@dth}{\the\dimen1}%
  \else
    \dimen1=\cp@ram
@@ -145,7 +151,9 @@
  \hsize=\dimen1
 }
  
-\def\@sb{\let\oldc@tegory\c@tegory
+\def\@sb{\let\oldc@tegory\c@tegory\let\oldc@prefix\c@tprefix
+  \edef\hs@ze{\the\hsize}%
+  \s@tc@tpr@fix
   \getsbp@ram{w@dth}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup
     \s@tsb@rwidth\inextendedtrue
     \global\sb@rchunkh@ight=\maxdimen
@@ -159,7 +167,7 @@
  \trace{e}{startESB \the\dimen1}%
  \global\sb@rchunkh@ight=\maxdimen
  \getsbp@ram{break}\ifx\cp@ram\relax\else \if\cp@ram F\else
-   \if\cp@ram T
+   \ifx\cp@ram\tr@e
      \global\sb@rchunkh@ight=0.2\textheight
    \else
      \global\sb@rchunkh@ight=\cp@ram\textheight
@@ -170,6 +178,8 @@
  \getsbp@ram{fgfigspec}\ifx\cp@ram\relax\else\x@\fig \cp@ram\fig*\fi
 }
 \def\sb@rb@x{ESB inset box}
+\def\tr@e{T}
+\def\false{F}
 
 \def\@sbe{%
   \ifhe@dings\endhe@dings\fi
@@ -184,6 +194,12 @@
   \getsbp@ram{bgfigspec}\let\bgf@gsp@c\cp@ram
   \getsbp@ram{bgfiglow}\let\bgf@gl@w\cp@ram%
   \getsbp@ram{hascol}\let\h@scol\cp@ram%
+  \getsbp@ram{\ifodd\pageno borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
+  \getsbp@ram{\ifodd\pageno borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
+  \getsbp@ram{bordertop}\let\b@drtop\cp@ram
+  \getsbp@ram{borderbottom}\let\b@drbottom\cp@ram 
+  \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
+  
   \tempfalse
   \ifx\bgf@gsp@c\relax\else
     \if\bgf@gl@w F
@@ -206,7 +222,7 @@
   \let\loc@ption\sb@rpos
   \picUsesInstrue
   \x@\p@rsePicUse\loc@ption\end  %set loc@ption and discover if there's to be an insert. (sets \picUsesInsfalse if not)
-  \if\h@scol T
+  \ifx\h@scol\tr@e
     \getsbp@ram{alpha}\global\let\pdf@lpha=\cp@ram
     \getsbp@ram{bgcolour}\let\pdfBGc@l=\cp@ram
   \fi
@@ -230,11 +246,36 @@
       \let\fb@vpadding=\s@vedvpadding
     \fi
     \trace{e}{Chunk of extbox is \the\ht\extchunkb@x (\the\ht\extb@x)}%
-    \if\h@scol T
+    \ifx\h@scol\tr@e
       \setbox\extchunkb@x\vbox{%
        \ifx\bgf@gsp@c\relax\else\vbox to 0pt{\vbox to\ht\extchunkb@x{\vfil\d@figure{\bgf@gsp@c}\vfil}\vss}\fi
        % \vskip\baselineskip
         \feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}}%
+    \fi
+    \tempfalse
+    \ifx\b@drtop\tr@e\temptrue\trace{eb}{Border: Top}\fi
+    \ifx\b@drbottom\tr@e\temptrue\trace{eb}{Border: Bottom}\fi
+    \iftemp
+      \edef\b@xw@dth{\the\wd\extchunkb@x}%
+      \dimen0=\ht\extchunkb@x
+      \advance\dimen0 by \dp\extchunkb@x
+      %\advance\dimen0 by \b@drwidth\FontSizeUnit
+      \edef\b@xh@ight{\the\dimen0}%
+      \setbox\extchunkb@x\vbox{\baselineskip=0pt%
+        \ifx\b@drtop\tr@e\trace{eb}{Drawing Border:top}\hbox{\vrule height\b@drwidth\FontSizeUnit width \b@xw@dth}\fi%
+        \unvbox\extchunkb@x
+        \ifx\b@drbottom\tr@e\trace{eb}{Drawing Border:bottom}\hbox{\vrule depth\b@drwidth\FontSizeUnit width \b@xw@dth}\fi
+      }
+      %\nonstopmode
+      %\showbox\extchunkb@x
+    \fi
+    \tempfalse
+    \ifx\b@drleft\tr@e\temptrue\fi
+    \ifx\b@drright\tr@e\temptrue\fi
+    \iftemp
+      \dimen0=\ht\extchunkb@x
+      \dimen1=\dp\extchunkb@x
+      \setbox\extchunkb@x\vbox{\hbox{\ifx\b@drleft\tr@e\trace{eb}{Drawing Border:left}\vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1 \fi\box\extchunkb@x\ifx\b@drright\tr@e \trace{eb}{Drawing Border: right}\vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1 \fi}}%
     \fi
     \x@\let\x@\@xtins\csname ins-\loc@ption\endcsname
     \ifpicUsesIns
@@ -243,12 +284,13 @@
           \penalty10000\unvbox\extchunkb@x}%
     \else
       \trace{e}{\loc@ption\space is inline}%
-      \unvbox\extchunkb@x
+      {\unvbox\extchunkb@x}%
     \fi
   \ifdim\ht\extb@x>0pt
     \def\fb@vpadding{0pt}
     \repeat
   \let\c@tegory\oldc@tegory 
+  \s@tc@tpr@fix
 }
 
 % Category file parsing 
@@ -279,25 +321,24 @@
 \def\BgImageScale   #1\relax{\initc@t\setsbp@ram{bgfigscale}{#1}\GenC@tFig{bg}}
 \def\BgImageLow   #1\relax{\initc@t\setsbp@ram{bgfiglow}{\uppercase{#1}}}% What's the right sequence for colour layer and background image
 
-\def\BgColour   #1\relax{\initc@t\tempfalse\uppercase{\edef\t@st{#1}}\setbox0\hbox{\if F\t@st \global\temptrue\trace{e}{Cancelling colour}\else\if T\t@st\global\temptrue\fi\fi}\iftemp\setsbp@ram{hascol}{\t@st}\else\setsbp@ram{hascol}{T}\setsbp@ram{bgcolour}{#1}\fi}%For British/Australian/NZ/etc.
+\def\BgColour   #1\relax{\initc@t\tempfalse\uppercase{\edef\t@st{#1}}\setbox0\hbox{\if F\t@st \global\temptrue\trace{e}{Cancelling colour}\else\if\tr@e\t@st\global\temptrue\fi\fi}\iftemp\setsbp@ram{hascol}{\t@st}\else\setsbp@ram{hascol}{T}\setsbp@ram{bgcolour}{#1}\fi}%For British/Australian/NZ/etc.
 \let\BgColor\BgColour%For Americans
 \def\Alpha   #1\relax{\initc@t\setsbp@ram{alpha}{#1}}% 1=solid 0=invisible
-\def\BorderWidth
-\def\BorderColour       #1\relax{}
+\def\BorderWidth        #1\relax{\initc@t\setsbp@ram{borderwidth}{#1}}
+\def\BorderColour       #1\relax{\initc@t\setsbp@ram{bordercolour}{#1}}
 \let\BorderColor=\BorderColour
-\def\BorderTop          #1\relax{}
-\def\BorderBottom       #1\relax{}
-\def\BorderLeft         #1\relax{}
-\def\BorderRight        #1\relax{}
-\def\BorderInner        #1\relax{}
-\def\BorderOuter        #1\relax{}
-\def\BorderAll          #1\relax{}
-
+\def\BorderTop          #1\relax{\initc@t\setsbp@ram{bordertop}{T}}
+\def\BorderBottom       #1\relax{\initc@t\setsbp@ram{borderbottom}{T}}
+\def\BorderLeft         #1\relax{\initc@t\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}}
+\def\BorderRight        #1\relax{\initc@t\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenright}{T}}
+\def\BorderInner        #1\relax{\initc@t\ifBookOpenLeft\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenleft}{T}\else\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenright}{T}\fi}
+\def\BorderOuter        #1\relax{\initc@t\ifBookOpenLeft\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenright}{T}\else\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenleft}{T}\fi}
+\def\BorderAll          #1\relax{\initc@t\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenright}{T}\setsbp@ram{bordertop}{T}\setsbp@ram{borderbottom}{T}}
 
 \def\GenC@tFig#1{
  \getsbp@ram{#1figname}\ifx\cp@ram\relax\let\cp@ram\empty\fi\ifx\cp@ram\empty\else
    \let\c@tfigname\cp@ram
-   \getsbp@ram{#1figsize}
+   \getsbp@ram{#1figsize}%
  \fi
 }
 \def\EndCategory{\gdef\c@tegory{}\global\let\c@tprefix\empty}
