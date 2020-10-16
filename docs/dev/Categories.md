@@ -1,150 +1,85 @@
-# Category file
+# Categories
 
-```\categorysheet{filename}```
+Categories add an additional dimension to styling. While there are not may *contexts* in which they may be officially applied (USFM 3.0 allows only `\ef` and
+`\esb`), they allow alternative styles for almost all styling elements.
+[http://ubs-icap.org/chm/usfm/3.0/notes_study/categories.html]
 
-A category file is an extended stylesheet format that defines the properties of zero or more categories  of ```\esb```  extended study matter panels (or boxes).
-http://ubs-icap.org/chm/usfm/3.0/notes_study/categories.html
-While ```\stylesheet``` may fail to crash when given a category file, results will be unexpected, as ```\stylesheet``` does not cancel categories 
-at start or exit.
-For convenience, a category file MAY also define paragraph / character styling that will be applied  to the box content. Markers within such a 
-category block / file do not need any special naming sequence, this is done automatically.
+## Styling mechanisms
 
-A method for defining paragraph / character styling outside of a category sheet manually (```\Marker category:people:p``` etc) or via a 
-normal stylesheet files also exists:
-
-\StyleCategory{People}{
- \stylesheetL{people-styles-romIntl.sty} % styles for International Rromani Alphabet
- \stylesheetR{people-styles-rmyRo.sty} % styles for Romanian-spelling Vlax Romani 
-}
+There are three mechanisms available for category-specific styling. The user may pick and choose as seems most appropriate.
 
 
-Categories may, according to USFM-3.0 standards, be applied to other types of material, e.g. footnotes, in which case they apply the 
-only the relevant paragraph and character styling. 
-
-```\esb```  boxes may have a colour, which may be transparent (allowing a whole-page background image or decoration to show through). They 
-may also have their own watermark or background image.
+### \stylesheet
+TeX file:
 ```
-% A Work-in-progress, and aspirational document. I.e. this may change, and no features are at present guaranteed to be present!
-% 
-% This file might eventually become the standard template for a category file
-% The format is single much like that of a stylesheet.
+\stylesheet{filename.sty}
+```
 
+Styling may either be done with on a specific marker or multiple markers, e.g. this sets the styling for the  marker ```\esb``` in in category ```History```:
+```
+\Marker cat:History|esb
+\BgColour 1 0 0 
+\Alpha 0.1
+```
+
+For multiple markers, the full format is:
+```
+\Category History
+\Marker p
+. . .
+
+\Marker esb 
+. . .
+\EndCategory
+```
+
+Multiple categories may be defined in this manner, however failing to include the final ```\EndCategory``` is an error.
+
+### \categorysheet
+TeX file:
+```
+\categorysheet{filename.sty}
+```
+
+A category sheet is just a stylesheet with some shorthands. By loading it with the ```\categorysheet``` command, there is no need for the final ```\EndCategory```.
+  that defines the properties of zero or more categories and serves as a shorthand, removing the need 
+for certain extra commands. It takes the format:
+```
 \Category people
-% The identifier of this category. This command also imposes default values on parameters.
+\BgColour 1 0 0
+\Alpha  0.3
 
-%\Position option
-% Options: t, tl, tr, ti, to,  b, bl, br, bi, bo, h, p, F, P  and B
-% Default: bl
-% I.e. any image position may be specified. 
-% B indicates that this box goes below any notes on the page (b normally comes above notes).
-% 
-%\Scale  value(0-1)
-% Default: 1
-% Width of the box relative to the nominal size of the containing box.
+\Marker \p
+\Justification center
 
-%\Breakable option
-% Options: T, F, value(0-1)
-% Default: F
-% Should the contents of this box be forced to be on one page or can it be broken? (Not compatible with background images)
-% With a background colour, the box will be broken into sections and these sections will be added one chunk at a time.
-% If a value is given, this is the smallest fraction of the pageheight that the sections will be, if 't' is given, the fraction 
-% will be 0.2 of the page height. If splitting a given chunk of the box is impossible, the algorithm will increase the chunk-size until 
-% a break IS possible. This 
-
-%\BgColour value(0-1) value(0-1) value(0.1)
-% 3 values (0-1) for red, green and blue. With \Alpha below, this defines the colour of the \esb box
-% Note that by default an \esb box has no background colour, so not setting a value here is not the same as setting a value to white. 
-% Setting this to white will overwrite any background image. (For Americans, \BgColor is an acceptable alias).
-
-%\Alpha value(0-1)
-% The transparency or alpha value of the background colour: 0 is transparent, 1 is solid.
-
-%\FgImage        picturename.jpg
-% Default: no image
-% Name of a foreground image.  The foreground image will appear in the defined place for all occurances of \esb boxes in this category.
-% Note that JPEG has no transparency, use PDF images for line art / transparent images above a coloured background.
-
-%\FgImagePos     option
-% Options: any valid pgpos, plus: sl, sr, si, so
-% Default: cl
-% t and b are reinterpreted to mean the top and bottom of the box. Other out-of line image formats are invalid.  
-% sl and sr position the image to one side of the text, without the text  returning to normal size after the image as would happen with a cutout.
-
-%\FgImageScale  value(0-1)
-% Width of the image relatve to the size of the size of the containing box.
-% Default: 0.2
-
-%\BgImage      
-%\BgImageScale   
-% The same meanings as the Fg images, but for a background (watermark) image. 
-% Background images are horizontally and vertically centred, there is no \BgImagePos command.
-
-%\BgImageLow option
-% Options: t,f
-% Should a background image come below or above the colour. Line art PDFs may
-% display better above the colour layer, as the colour layer will not wash them
-% out, but .JPGs are probably better below.
-
-%\BorderWidth measurement
-% Default: 0.5pt
-% Define the thickness of the border-line around the box
-
-%\BorderColour value(0-1) value(0-1) value(0.1)
-% Default: 0 0 0 (Black)
-%3 values (0-1) for red, green and blue components of the border-line arount the box
-
-%\BorderTop option
-%\BorderBottom option
-%\BorderLeft option
-%\BorderRight option
-%\BorderInner option
-%\BorderOuter option
-%\BorderAll option
-% Options: t,f
-% Default: \BorderAll t
-% Which of the 4 possible borders will have a line.
-% Six internal flags are set by these options which are processed in order.
-% (e.g. the flag for the left border on odd pages will be altered by
-% \BorderAll, \BorderLeft or \BorderInner) For 'Book opens on the left'
-% publications (Right-to-left languages, but complicated by diglots), the
-% inner/outer processing requires that \BookOpenLefttrue is specified before
-% the category sheet is processed.
-
-
-%\EndCategory
-% Cancels the current category (sets the value to empty). This is used
-% internally, before and after the categorysheet is defined and is not normally
-% necesary. Placing it in a categorysheet file means that until the next \Category,
-% any stylesheet commands behave as though in a normal stylesheet, and options given 
-% above file apply to \esb boxes without a specified category.
 ```
 
-## Thoughts
-- I would suggest a different separator between the category and the marker. How about `|` or `:`. I can see ```_``` being popular in user markers.
-DG reply:  Accepted, how about ```category:people:p```, ```category:history:p```, etc?
+The initial ```\Category``` implicitly  sets the currently active marker to ```\esb```, so after ```\Category``` there is no requirement to include ```\Marker esb```.
 
-- I suggest we add `\Marker` support within a `\category` block, without needing to use the separator. This allows us to change the separator if things go wrong.
-DG reply: This is meant to be what the document says.  Manually including the separator is for `\Marker` support outside the `\categorysheet` file.
 
-- Do we need  a special `\categorysheet` command? The real deal is the `\Category` command that turns on the goodies.
+### \StyleCategory
+This approach allows the loading of a particular pre-defined style sheets which themselves have no categorisation.
 
-DG reply: I thought about this qn. `\categorysheet` is a convenience function that calls \CategoryEnd before and after processing. Without that, 
-once `\c@tegory` is set will remain in effect, I guess  until the first
-`\ptxfile`. I want that feature (`\stylesheet` not cancelling categories), so
-that for categorised footnote styling, (etc?) this sort of approach is permitted:
+For example, for  styling notes of the form: 
+```
+\ef - \cat People\cat*\fr 1.2-6a: \fq Tamar: \ft Bore her twin sons out of wedlock (Gen 38.6-30).\ef*
+```
+In the hypothetical example below, the language-group represented by the left (inner) column do
+not accept the use of green text for styling humans names, prefering red. 
+Those represented by the right column consider that all living creatures named
+in Scripture should be in green.
+
+The TeX file might be:
 
 ```
 \StyleCategory{People}{
- \stylesheetL{people-styles-romIntl.sty} % styles for International Rromani Alphabet
- \stylesheetR{people-styles-rmyRo.sty} % styles for Romanian-spelling Vlax Romani 
+ \stylesheetL{red-fq.sty} % 
+ \stylesheetR{green-fq.sty} %
+}
+\StyleCategory{SpiritualBeing}{
+ \stylesheet{green-fq.sty} % 
 }
 ```
 
-- Might we add some border options?
-DG reply: Yes. Some done, please criticise. As above, I'm imagining \vrules just outside the box, 
-reducing the box size by the appropriate line width(s).
 
-DG qn: At present, the default-setting code that gets called by \Category means
-that there's no sane way to have a secondary categorysheet that overrides some
-previously defined values. Might that be a feature someone would want?
 

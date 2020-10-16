@@ -48,8 +48,17 @@
 %\setsbp@ram{hascol}{T}
 %\setsbp@ram{bgcolour}{0 1 0}
 %\setsbp@ram{alpha}{0.2}% 1=solid 0=invisible
+\setsbp@ram{bgfigscale}{1}%
+\setsbp@ram{fgfigsize}{box}%What is image scaled to?
+\setsbp@ram{fgfigscale}{0.2}%
+\setsbp@ram{fgfigpos}{cl}%Default is cutout left
+\setsbp@ram{bgfigscale}{1}%Full size
+\setsbp@ram{bgfigpos}{pc}%Horizontally centred
+\setsbp@ram{hascol}{F}%No default colour.
+\setsbp@ram{alpha}{0.2}% 1=solid 0=invisible
 \setsbp@ram{posn}{b}
 \setsbp@ram{fgfigspec}{}%Normally no picture.
+\setsbp@ram{bgfigspec}{}%Normally no picture.
 \def\fb@hpadding{1pt}%Added left and right of feintbox content
 \def\fb@vpadding{1pt}%added above and below feintbox content
 
@@ -92,7 +101,7 @@
  %tX,bX take the column width 
  %t,b,B take the text width
  \trace{e}{setsb@rwidth c:\the\colwidth, t:\the\textwidth, h:\the\hsize}%
- \getsbp@ramNoInh{posn}%
+ \getsbp@ram{posn}%
  \ifx\cp@ram\relax
    \gdef\sb@rpos{b}%
    \setsbp@ram{posn}{\sb@rpos}%
@@ -101,7 +110,7 @@
  \fi
  \getsbp@ram{fgfigpos}\let\fgfigp@s\cp@ram
  \getsbp@ram{fgfigspec}\let\fgfigsp@c\cp@ram
- \getsbp@ramNoInh{wid}%
+ \getsbp@ramNoInh{w@dth}% Width must NOT be inherited.
  \ifx\cp@ram\relax
    \x@\minip@rsepos\fgfigp@s\mid\sb@rpos\end
    \dimen1=\hsize
@@ -129,7 +138,7 @@
      \fi
      \advance\dimen1 by \dimen0
    \fi\fi
-   \setsbp@ram{wid}{\the\dimen1}%
+   \setsbp@ram{w@dth}{\the\dimen1}%
  \else
    \dimen1=\cp@ram
  \fi
@@ -137,7 +146,7 @@
 }
  
 \def\@sb{\let\oldc@tegory\c@tegory
-  \getsbp@ram{wid}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup
+  \getsbp@ram{w@dth}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup
     \s@tsb@rwidth\inextendedtrue
     \global\sb@rchunkh@ight=\maxdimen
     \global\c@th@@ks{\st@rtsb@r}}
@@ -162,7 +171,10 @@
 }
 \def\sb@rb@x{ESB inset box}
 
-\def\@sbe{\ifinextended\global\let\c@t@gory\c@tegory\egroup\else\message{\\ebse called without \\esb}\fi
+\def\@sbe{%
+  \ifhe@dings\endhe@dings\fi
+  \ifhmode\par\fi
+  \ifinextended\global\let\c@t@gory\c@tegory\egroup\else\message{\\ebse called without \\esb}\fi
   \trace{e}{ESBE \the\sb@rchunkh@ight}%
   \let\c@tegory\c@t@gory%recover boxed value
   \s@tc@tpr@fix
@@ -243,29 +255,44 @@
 \def\Category   #1\relax{%Store name of current category and defaults
   \S@tCat{#1}%
   \xdef\m@rker{esb}%
-  \setsbp@ram{bgfigscale}{1}%
-  \setsbp@ram{fgfigsize}{box}%What is image scaled to?
-  \setsbp@ram{fgfigscale}{0.2}%
-  \setsbp@ram{fgfigpos}{cl}%Default is cutout left
-  \setsbp@ram{bgfigscale}{1}%Full size
-  \setsbp@ram{bgfigpos}{pc}%Horizontally centred
-  \setsbp@ram{hascol}{F}%No default colour.
-  \setsbp@ram{posn}{bo}%
-  \setsbp@ram{alpha}{0.2}% 1=solid 0=invisible
+  \initc@t
 }
-\def\Position   #1\relax{\setsbp@ram{posn}{#1}}% Where does it go on the page? (like figures, but also B for below notes)
-\def\Scale      #1\relax{\setsbp@ram{scale}{#1}}% Where does it go on the page? (like figures, but also B for below notes)
-\def\Breakable   #1\relax{\tempfalse\setbox0\hbox{\ifcat 1#1 \global\temptrue\fi}\iftemp\setsbp@ram{break}{#1}\else\setsbp@ram{break}{\uppercase #1}\fi} %Can the box page-break?
-\def\FgImage      #1\relax{\setsbp@ram{fgfigname}{#1}\GenC@tFig{fg}}
-\def\FgImagePos   #1\relax{\setsbp@ram{fgfigpos}{#1}\GenC@tFig{fg}}
-\def\FgImageScale   #1\relax{\setsbp@ram{fgfigscale}{#1}\GenC@tFig{fg}}
-\def\BgImage      #1\relax{\setsbp@ram{bgfigname}{#1}\GenC@tFig{bg}}
-\def\BgImageScale   #1\relax{\setsbp@ram{bgfigscale}{#1}\GenC@tFig{bg}}
-\def\BgImageLow   #1\relax{\setsbp@ram{bgfiglow}{\uppercase #1}}% What's the right sequence for colour layer and background image
+\def\initc@t{
+  \ifx\c@tprefix\empty
+    \edef\t@stname{\m@rker\ds@ffix:is_defined}%
+  \else 
+    \edef\t@stname{\c@tprefix \m@rker\ds@ffix:is_defined}%
+  \fi
+  \x@\let\x@\t@st\csname \t@stname\endcsname
+  \ifx\t@st\relax 
+    \trace{e}{First definition of \c@tprefix\m@rker\ds@ffix}%
+    \x@\xdef\csname \t@stname\endcsname{Done}%
+  \fi
+}
+\def\Position   #1\relax{\initc@t\setsbp@ram{posn}{#1}}% Where does it go on the page? (like figures, but also B for below notes)
+\def\Scale      #1\relax{\initc@t\setsbp@ram{scale}{#1}}% Where does it go on the page? (like figures, but also B for below notes)
+\def\Breakable   #1\relax{\initc@t\tempfalse\setbox0\hbox{\ifcat 1#1 \global\temptrue\fi}\iftemp\setsbp@ram{break}{#1}\else\setsbp@ram{break}{\uppercase{#1}}\fi} %Can the box page-break?
+\def\FgImage      #1\relax{\initc@t\setsbp@ram{fgfigname}{#1}\GenC@tFig{fg}}
+\def\FgImagePos   #1\relax{\initc@t\setsbp@ram{fgfigpos}{#1}\GenC@tFig{fg}}
+\def\FgImageScale   #1\relax{\initc@t\setsbp@ram{fgfigscale}{#1}\GenC@tFig{fg}}
+\def\BgImage      #1\relax{\initc@t\setsbp@ram{bgfigname}{#1}\GenC@tFig{bg}}
+\def\BgImageScale   #1\relax{\initc@t\setsbp@ram{bgfigscale}{#1}\GenC@tFig{bg}}
+\def\BgImageLow   #1\relax{\initc@t\setsbp@ram{bgfiglow}{\uppercase{#1}}}% What's the right sequence for colour layer and background image
 
-\def\BgColour   #1\relax{\setsbp@ram{hascol}{T}\setsbp@ram{bgcolour}{#1}}%For British/Australian/NZ/etc.
+\def\BgColour   #1\relax{\initc@t\tempfalse\uppercase{\edef\t@st{#1}}\setbox0\hbox{\if F\t@st \global\temptrue\trace{e}{Cancelling colour}\else\if T\t@st\global\temptrue\fi\fi}\iftemp\setsbp@ram{hascol}{\t@st}\else\setsbp@ram{hascol}{T}\setsbp@ram{bgcolour}{#1}\fi}%For British/Australian/NZ/etc.
 \let\BgColor\BgColour%For Americans
-\def\Alpha   #1\relax{\setsbp@ram{alpha}{#1}}% 1=solid 0=invisible
+\def\Alpha   #1\relax{\initc@t\setsbp@ram{alpha}{#1}}% 1=solid 0=invisible
+\def\BorderWidth
+\def\BorderColour       #1\relax{}
+\let\BorderColor=\BorderColour
+\def\BorderTop          #1\relax{}
+\def\BorderBottom       #1\relax{}
+\def\BorderLeft         #1\relax{}
+\def\BorderRight        #1\relax{}
+\def\BorderInner        #1\relax{}
+\def\BorderOuter        #1\relax{}
+\def\BorderAll          #1\relax{}
+
 
 \def\GenC@tFig#1{
  \getsbp@ram{#1figname}\ifx\cp@ram\relax\let\cp@ram\empty\fi\ifx\cp@ram\empty\else
