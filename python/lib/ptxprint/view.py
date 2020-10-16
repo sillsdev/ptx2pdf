@@ -528,6 +528,8 @@ class ViewModel:
                 modpath = os.path.join(self.configPath(cfgname), "ptxprint-mods.sty")
                 if os.path.exists(modpath):
                     move(modpath, path)
+                    with open(modpath, "w") as outf:
+                        pass
             config.set("config", "version", "1.290")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
