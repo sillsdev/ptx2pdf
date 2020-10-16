@@ -872,9 +872,9 @@ class GtkViewModel(ViewModel):
         if pgid == "tb_ViewerEditor": # Viewer tab
             self.onRefreshViewerTextClicked(None)
 
-    def onRefreshViewerTextClicked(self, btn):
-        pg = self.get("nbk_Viewer")
-        self.onViewerChangePage(None, None, pg)
+        def onRefreshViewerTextClicked(self, btn):
+            pg = self.get("nbk_Viewer")
+            self.onViewerChangePage(None, None, pg)
 
     def onViewerChangePage(self, nbk_Viewer, scrollObject, pgnum):
         allpgids = ("tb_PicList", "scroll_AdjList", "scroll_FinalSFM", "scroll_TeXfile",
@@ -1384,7 +1384,7 @@ class GtkViewModel(ViewModel):
         if self.prjid:
             self.updatePrjLinks()
             self.userconfig.set("init", "project", self.prjid)
-            if self.configid:
+            if getattr(self, 'configid', None) is not None:
                 self.userconfig.set("init", "config", self.configId)
         status = self.get("r_book") == "multiple"
         for c in ("c_combine", "t_booklist"):

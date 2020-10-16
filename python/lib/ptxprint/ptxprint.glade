@@ -12014,16 +12014,16 @@ Shortcut key: &lt;Ctrl-S&gt;</property>
                             <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                           </object>
                           <packing>
-                            <property name="left_attach">5</property>
+                            <property name="left_attach">6</property>
                             <property name="top_attach">0</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkButton" id="btn_refreshViewerText">
                             <property name="label">gtk-refresh</property>
-                            <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="no_show_all">True</property>
                             <property name="tooltip_text" translatable="yes">Discard away any changes that have 
 been made and restore the contents
 of this file as it was when last saved.</property>
@@ -12035,7 +12035,7 @@ of this file as it was when last saved.</property>
                             <signal name="clicked" handler="onRefreshViewerTextClicked" swapped="no"/>
                           </object>
                           <packing>
-                            <property name="left_attach">6</property>
+                            <property name="left_attach">7</property>
                             <property name="top_attach">0</property>
                           </packing>
                         </child>
@@ -12103,7 +12103,7 @@ inactive until Diglot is enabled.</property>
                             <property name="active_id">1</property>
                           </object>
                           <packing>
-                            <property name="left_attach">2</property>
+                            <property name="left_attach">3</property>
                             <property name="top_attach">0</property>
                           </packing>
                         </child>
@@ -12127,7 +12127,7 @@ list for each of the books listed for printing.</property>
                             <signal name="clicked" handler="onGenerateClicked" swapped="no"/>
                           </object>
                           <packing>
-                            <property name="left_attach">3</property>
+                            <property name="left_attach">4</property>
                             <property name="top_attach">0</property>
                           </packing>
                         </child>
@@ -12150,7 +12150,7 @@ with a text editor (such as Notepad or NP++).</property>
                             <signal name="clicked" handler="onOpenInSystemEditor" swapped="no"/>
                           </object>
                           <packing>
-                            <property name="left_attach">7</property>
+                            <property name="left_attach">8</property>
                             <property name="top_attach">0</property>
                           </packing>
                         </child>
@@ -12174,7 +12174,24 @@ place illustrations in one of these 4 locations.</property>
                             <property name="draw_indicator">True</property>
                           </object>
                           <packing>
-                            <property name="left_attach">4</property>
+                            <property name="left_attach">5</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="c_filterPicList">
+                            <property name="label" translatable="yes">Only Show
+Active Books</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="tooltip_text" translatable="yes">Select this option to only display images from the books that are selected to be printed. If unchecked, then images from ALL the books in the project will be listed in the view below.</property>
+                            <property name="active">True</property>
+                            <property name="draw_indicator">True</property>
+                            <signal name="clicked" handler="onFilterPicListClicked" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left_attach">2</property>
                             <property name="top_attach">0</property>
                           </packing>
                         </child>
