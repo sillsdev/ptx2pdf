@@ -851,7 +851,7 @@ class GtkViewModel(ViewModel):
             response = dialog.run()
             if response == Gtk.ResponseType.OK:
                 if self.get("r_generate") == "all":
-                    procbks = bks2gen
+                    procbks = ab.keys()
                 else:
                     procbks = bks
                 rnd = self.get("c_randomPicPosn")
