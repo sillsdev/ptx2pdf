@@ -324,6 +324,10 @@ class PicInfo(dict):
     stripsp_re = re.compile(r"^(\S+\s+\S+)\s+.*$")
 
     def __init__(self, model):
+        self.clear(model)
+
+    def clear(self, model):
+        super().clear()
         self.model = model
         self.prj = model.prjid
         self.srchlist = None
@@ -342,10 +346,12 @@ class PicInfo(dict):
         if cfg is None:
             cfg = self.config
         if prjdir is None or prj is None or cfg is None:
+            # print("Returning early since {}/{}-{}".format(prjdir, prj, cfg))
             return
         preferred = os.path.join(prjdir, "shared/ptxprint/{1}/{0}-{1}.piclist".format(prj, cfg))
         if os.path.exists(preferred):
             self.read_piclist(preferred, suffix=suffix)
+            self.loaded = True
             return
         places = ["shared/ptxprint/{}.piclist".format(prj)]
         plistsdir = os.path.join(prjdir, "shared", "ptxprint", cfg, "PicLists")
@@ -474,6 +480,8 @@ class PicInfo(dict):
                     continue
                 if usedest and hiderefs and x == "ref":
                     continue
+                if x == "scale" and float(v[x]) == 1.0:
+                    continue
                 line.append('{}="{}"'.format(pos3parms[i], v[x]))
             lines.append("{} {}|".format(outk, v.get('caption', ''))+ " ".join(line))
         dat = "\n".join(lines)+"\n"
@@ -598,7 +606,6 @@ class PicInfo(dict):
                     v['pgpos'] = posns[0]
 
     def set_destinations(self, fn=lambda x,y,z:z, keys=None):
-        print("Set destinations for {} pics".format(len(self)))
         for k, v in self.items():
             if 'dest file' in v:
                 continue            # no need to regenerate
@@ -638,3 +645,5 @@ def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False
         for k in delpics:
             if k+suffix in picinfos:
                 del picinfos[k+suffix]
+    picinfos.loaded = True
+

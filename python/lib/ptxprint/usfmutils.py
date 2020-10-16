@@ -159,7 +159,7 @@ class Usfm:
         self.cvaddorned = True
 
     def readnames(self):
-        if len(self.toc) > 0:
+        if len(self.tocs) > 0:
             return
         for e in self.doc[0]:       # children of id
             if not isinstance(e, sfm.Element):
@@ -383,6 +383,8 @@ class Module:
         c = m.group(3)
         v = m.group(4)
         book = self.usfms.get(bk)
+        if book is None:
+            return ''
         book.readnames()
         tocindex = self.localcodes.get(loctype.lower(), 0)
         if tocindex > len(book.tocs):

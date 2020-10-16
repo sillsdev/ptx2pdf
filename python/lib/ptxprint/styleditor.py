@@ -206,6 +206,8 @@ class StyleEditor:
         for k, v in sorted(d.items(), key=keyfn):
             if k in self.sheet:
                 n = self.sheet[k].get('name', k)
+                if n is None:
+                    n = k
                 m = re.match(r"^([^-\s])+\s[^-]+(?:-|$)", n)
                 if m and m.group(1) not in ('OBSOLETE', 'DEPRECATED'):
                     n = k + " - " + n

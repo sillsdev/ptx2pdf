@@ -111,6 +111,7 @@ class ViewModel:
         self.tempFiles = []
         self.usfms = None
         self.picinfos = None
+        self.loadingConfig = False
 
         # private to this implementation
         self.dict = {}
@@ -317,6 +318,7 @@ class ViewModel:
     def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, forceConfig=False):
         currprj = self.prjid
         currcfg = self.configId
+        # print("updateProjectSettings({}={},{}={})".format(currprj, prjid, currcfg, configName))
         readConfig = False
         if currprj is None or currprj != prjid:
             if currprj is not None and saveCurrConfig:
@@ -354,9 +356,7 @@ class ViewModel:
             if readConfig:  # project changed
                 self.usfms = None
                 self.get_usfms()
-            self.picinfos = PicInfo(self)
-            if self.get("c_includeillustrations"):
-                self.picinfos.load_files()
+            self.loadPics()
             return res
         else:
             return True
@@ -412,17 +412,13 @@ class ViewModel:
         config = configparser.ConfigParser()
         config.read(path, encoding="utf-8")
         self.versionFwdConfig(config, cfgname)
+        self.loadingConfig = True
         self.loadConfig(config)
         if self.get("c_diglot"):
             self.diglotView = self.createDiglotView()
         else:
             self.diglotView = None
-        if self.picinfos is None:
-            self.picinfos = PicInfo(self)
-        if self.get("c_includeillustrations"):
-            self.picinfos.load_files()
-        else:
-            self.picinfos.clear()
+        self.loadingConfig = False
         # clear generated pictures
         for f in ("tmpPics", "tmpPicLists"):
             path2del = os.path.join(self.working_dir, f)
@@ -601,17 +597,24 @@ class ViewModel:
         pass
 
     def savePics(self):
+        # print("picinfo loaded {}".format(self.picinfos.loaded))
         if self.picinfos is not None and self.picinfos.loaded:
             self.picListView.updateinfo(self.picinfos)
             self.picinfos.out(os.path.join(self.configPath(self.configName()),
                                     "{}-{}.piclist".format(self.prjid, self.configName())))
 
     def loadPics(self):
+        if self.loadingConfig:
+            return
         if self.picinfos is None:
             self.picinfos = PicInfo(self)
         else:
             self.savePics()
-            self.picinfos.clear()
+            self.picinfos.clear(self)
+        # print("include illustrations {}: {}-{}".format(self.get("c_includeillustrations"), self.prjid, self.configName()))
+        if not self.get("c_includeillustrations"):
+            # print("Nothing to do")
+            return
         if self.diglotView is None:
             self.picinfos.load_files()
         else:
