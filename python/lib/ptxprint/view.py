@@ -194,6 +194,8 @@ class ViewModel:
                     blst.append(b)
             return blst
         elif scope == "module":
+            if self.moduleFile is None:
+                return []
             res = self.moduleFile.as_posix()
             # res = self.get("btn_chooseBibleModule")
             return [res] if files and res else []

@@ -269,7 +269,6 @@ class StyleEditor:
         else:
             usfmkeys = tuple(usfmpgname.keys())
             pgname = 'index'
-            print(urlmkr, urlmkr.split('-')[0], xceptions)
             if urlmkr.split('-')[0] not in fxceptions and urlmkr.startswith(usfmkeys):
                 for i in range(len(urlmkr), 0, -1):
                     if urlmkr[:i] in usfmkeys:
@@ -344,9 +343,11 @@ class StyleEditor:
         except (ValueError, TypeError):
             return a == b
 
-    def _str_val(self, v):
+    def _str_val(self, v, key=None):
         if isinstance(v, (set, list)):
-            return " ".join(x or "" for x in sorted(v))
+            if key.lower() == "textproperties":
+                return " ".join(x.lower().title() if x else "" for x in sorted(v))
+            return " ".join(x or "" for x in v)
         else:
             return str(v)
 
@@ -364,4 +365,4 @@ class StyleEditor:
                     if not markerout:
                         outfh.write("\n\\Marker {}\n".format(m))
                         markerout = True
-                    outfh.write("\\{} {}\n".format(normmkr(k), self._str_val(v)))
+                    outfh.write("\\{} {}\n".format(normmkr(k), self._str_val(v, k)))

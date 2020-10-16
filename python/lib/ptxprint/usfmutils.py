@@ -364,8 +364,11 @@ class Module:
         self.usfms = usfms
         self.sheets = self.usfms.sheets.copy()
         modinfo = { 'OccursUnder': {'id'}, 'TextType': 'Other', 'EndMarker': None, 'StyleType': 'Paragraph'}
-        modsheet = {k: style.marker(modinfo) for k in ('inc', 'vrs', 'ref', 'refnp', 'rep', 'mod')}
+        modsheet = {k: style.Marker(modinfo) for k in ('inc', 'vrs', 'ref', 'refnp', 'rep', 'mod')}
         self.sheets.update(modsheet)
+        for k, v in self.sheets.items():
+            if 'OccursUnder' in v and 'c' in v['OccursUnder']:
+                v['OccursUnder'].add('id')
         with open(fname, encoding="utf-8") as inf:
             self.doc = read_module(inf, self.sheets)
 
