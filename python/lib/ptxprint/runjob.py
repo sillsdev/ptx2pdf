@@ -436,6 +436,8 @@ class RunJob:
             if info["document/toc"] != "%":
                 tocdata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".toc")))
             cmd = ["xetex", "--halt-on-error", "-no-pdf"]
+            if self.ispdfxa:
+                cmd += ["-z", "0"]
             runner = call(cmd + [outfname], cwd=self.tmpdir, logbuffer=logbuffer)
             if isinstance(runner, subprocess.Popen) and runner is not None:
                 try:

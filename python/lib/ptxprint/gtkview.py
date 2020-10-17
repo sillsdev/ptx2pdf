@@ -876,6 +876,7 @@ class GtkViewModel(ViewModel):
                         PicInfoUpdateProject(self.diglotView, procbks, diallbooks,
                                              self.picinfos, suffix="R", random=rnd, cols=cols)
                 self.updatePicList(procbks)
+                self.savePics()
             dialog.hide()
         elif pgid == "scroll_AdjList": # AdjList
             self.generateAdjList()
@@ -1096,7 +1097,7 @@ class GtkViewModel(ViewModel):
         if btn.get_active():
             if self.picinfos is None:
                 self.picinfos = PicInfo(self)
-            self.picinfos.load_files()
+            self.loadPics()
             self.updatePicList()
         else:
             self.picinfos.clear(self)
