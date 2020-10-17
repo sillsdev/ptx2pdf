@@ -399,7 +399,7 @@ class PicInfo(dict):
                 m = l.split("|")
                 r = m[0].split(maxsplit=2)
                 if suffix == "":
-                    k = " ".join(r)
+                    k = " ".join(r[:2])
                 elif len(r) > 1:
                     k = "{}{} {}".format(r[0][:3], suffix, r[1])
                 else:
@@ -476,7 +476,7 @@ class PicInfo(dict):
             p3p = pos3parms
         lines = []
         for k, v in sorted(self.items(),
-                           key=lambda x: refKey(x[0][:3]+x[0][4:], info=x[0][3])):
+                           key=lambda x: refKey(x[0][:3]+x[0][4:], info=x[0][3:4])):
             if (len(bks) and k[:3] not in bks) or (skipkey is not None and v.get(skipkey, False)):
                 continue
             outk = self.stripsp_re.sub(r"\1", k)

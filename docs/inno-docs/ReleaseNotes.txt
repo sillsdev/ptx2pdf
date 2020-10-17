@@ -1,12 +1,17 @@
-PTXprint 1.2.1 Release Notes 
-9th October 2020
+PTXprint 1.2.9 Release Notes 
+17th October 2020
 
-Bug Fixes and Improvements in 1.2.1
+Bug Fixes and Improvements in 1.2.9
 
   * Stylesheet editor introduced (early test version - use with care)
   
-  * Colophon implemented
+  * PicList handling completely revamped
   
+  * Removed the Quick Run option because it's always quick now, and the dialog is editable while you wait for the PDF
+
+  * Colophon (yet to be implemented)
+
+  * Enabling PDF/X1-A outputs pictures in CMYK and doesn't compress the pdf (in order to conform with PDF/X1-A)
 
 Significant Improvements in 1.2
 
