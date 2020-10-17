@@ -399,9 +399,11 @@ class PicInfo(dict):
                 m = l.split("|")
                 r = m[0].split(maxsplit=2)
                 if suffix == "":
-                    k = "{} {}".format(r[0], r[1])
-                else:
+                    k = " ".join(r)
+                elif len(r) > 1:
                     k = "{}{} {}".format(r[0][:3], suffix, r[1])
+                else:
+                    k = "{}{}".format(r[0], suffix)
                 pic = {'caption': r[2] if len(r) > 2 else ""}
                 while k in self:
                     rm = re.match(r"^(\S+\s+\S+)(\s+.*?)(\d+)$", k)
