@@ -11,6 +11,8 @@ posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", 
 pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale"]
 
 _piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copyright", "mirror", "disabled", "cleardest", "origkey"]
+_pickeys = {k:i for i, k in enumerate(_piclistfields)}
+
 _form_structure = {
     'anchor':   't_plAnchor',
     'caption':  't_plCaption',
@@ -47,6 +49,7 @@ class PicList:
         self.builder = builder
         self.parent = parent
         self.picinfo = None
+        self.deletes = set()
         self.selection = view.get_selection()
         # _, self.curriter = self.selection.get_selected()
         for w in ("tv_picList", "tv_picListEdit", "tv_picListEdit1"):
@@ -108,7 +111,6 @@ class PicList:
         return res
 
     def updateinfo(self, picinfos):
-        res = {}
         for row in self.model:
             if len(row[0]) > 5:
                 k = row[0]
@@ -126,7 +128,11 @@ class PicList:
                     else:
                         val = row[i+1]
                     p[e] = val
-        return res
+        for key, src in self.deletes:
+            print("Deleting {}, {}".format(key, src))
+            if key in picinfos and picinfos[key]['src'] == src:
+                del picinfos[key]
+        return picinfos
 
     def row_select(self, selection):
         if selection.count_selected_rows() != 1:
@@ -241,6 +247,8 @@ class PicList:
 
     def del_row(self):
         model, i = self.selection.get_selected()
+        row = model[i]
+        self.deletes.add((row[_pickeys['anchor']], row[_pickeys['src']]))
         del self.model[i]
         self.select_row(model.get_path(i).get_indices()[0])
 
