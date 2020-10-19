@@ -135,7 +135,7 @@ def coltotex(s):
 def textocol(s):
     if s.startswith("x"):
         try:
-            vals = [int(x, 16) for x in s[1::2]]
+            vals = [int(x+y, 16) for x, y in zip(s[1::2], s[2::2])]
         except (ValueError, TypeError):
             vals = [0, 0, 0]
     else:
@@ -332,6 +332,8 @@ class StyleEditor:
             wtemp = self.builder.get_object(newv[0])
             value = getWidgetVal(newv[0], wtemp)
             key = val
+        elif v[0].startswith("col_"):
+            value = coltotex(val)
         elif key.startswith("bl_"):
             value = val[0]
         elif v[3] is not None:
@@ -378,9 +380,6 @@ class StyleEditor:
             if key.lower() == "textproperties":
                 return " ".join(x.lower().title() if x else "" for x in sorted(v))
             return " ".join(x or "" for x in v)
-        elif str(v).startswith("rgb("):
-            v = coltotex(v)
-            return v
         else:
             return str(v)
 
