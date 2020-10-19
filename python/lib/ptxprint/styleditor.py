@@ -127,7 +127,7 @@ def triefit(k, base, start):
 
 def coltotex(s):
     vals = s[s.find("(")+1:-1].split(",")
-    return "x"+"".join("{:02X}".format(x) for x in vals[:3])
+    return "x"+"".join("{:02X}".format(int(x)) for x in vals[:3])
 
 def textocol(s):
     if s.startswith("x"):
@@ -448,7 +448,8 @@ class StyleEditor:
             self.onSelected(selection)
 
     def refreshKey(self):
-        self.sheet[self.marker] = deepcopy(self.basesheet[self.marker])
-        self.editMarker()
+        if self.marker in self.basesheet:
+            self.sheet[self.marker] = deepcopy(self.basesheet[self.marker])
+            self.editMarker()
         
 

@@ -1094,6 +1094,8 @@ saved configuration.</property>
       <column type="gboolean"/>
       <!-- column-name origkey -->
       <column type="gchararray"/>
+      <!-- column-name media -->
+      <column type="gchararray"/>
     </columns>
     <data>
       <row>
@@ -1110,6 +1112,7 @@ saved configuration.</property>
         <col id="10">False</col>
         <col id="11">False</col>
         <col id="12" translatable="yes"/>
+        <col id="13" translatable="yes"/>
       </row>
       <row>
         <col id="0">JHN 3:16-17</col>
@@ -1125,6 +1128,7 @@ saved configuration.</property>
         <col id="10">False</col>
         <col id="11">False</col>
         <col id="12" translatable="yes"/>
+        <col id="13" translatable="yes"/>
       </row>
       <row>
         <col id="0">LUK 15:8</col>
@@ -1140,6 +1144,7 @@ saved configuration.</property>
         <col id="10">False</col>
         <col id="11">False</col>
         <col id="12" translatable="yes"/>
+        <col id="13" translatable="yes"/>
       </row>
       <row>
         <col id="0">ACT 18:27</col>
@@ -1155,6 +1160,7 @@ saved configuration.</property>
         <col id="10">False</col>
         <col id="11">False</col>
         <col id="12" translatable="yes"/>
+        <col id="13" translatable="yes"/>
       </row>
       <row>
         <col id="0">ROM 8:28</col>
@@ -1170,6 +1176,7 @@ saved configuration.</property>
         <col id="10">False</col>
         <col id="11">False</col>
         <col id="12" translatable="yes"/>
+        <col id="13" translatable="yes"/>
       </row>
       <row>
         <col id="0">1CO 3:16</col>
@@ -1185,6 +1192,7 @@ saved configuration.</property>
         <col id="10">False</col>
         <col id="11">False</col>
         <col id="12" translatable="yes"/>
+        <col id="13" translatable="yes"/>
       </row>
       <row>
         <col id="0">REV 3:20</col>
@@ -1200,6 +1208,7 @@ saved configuration.</property>
         <col id="10">False</col>
         <col id="11">False</col>
         <col id="12" translatable="yes"/>
+        <col id="13" translatable="yes"/>
       </row>
       <row>
         <col id="0">GLO 1:0</col>
@@ -1215,6 +1224,7 @@ saved configuration.</property>
         <col id="10">False</col>
         <col id="11">False</col>
         <col id="12" translatable="yes"/>
+        <col id="13" translatable="yes"/>
       </row>
     </data>
   </object>
@@ -13376,7 +13386,6 @@ Lines:</property>
                                                             <object class="GtkCheckButton" id="c_plMediaP">
                                                             <property name="label" translatable="yes">Print</property>
                                                             <property name="visible">True</property>
-                                                            <property name="sensitive">False</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="receives_default">False</property>
                                                             <property name="tooltip_text" translatable="yes">Can be used in Print/PDF publications. </property>
@@ -13392,7 +13401,6 @@ Lines:</property>
                                                             <object class="GtkCheckButton" id="c_plMediaA">
                                                             <property name="label" translatable="yes">App</property>
                                                             <property name="visible">True</property>
-                                                            <property name="sensitive">False</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="receives_default">False</property>
                                                             <property name="tooltip_text" translatable="yes">Can be used in mobile phone Apps. </property>
@@ -13408,7 +13416,6 @@ Lines:</property>
                                                             <object class="GtkCheckButton" id="c_plMediaW">
                                                             <property name="label" translatable="yes">Web</property>
                                                             <property name="visible">True</property>
-                                                            <property name="sensitive">False</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="receives_default">False</property>
                                                             <property name="tooltip_text" translatable="yes">Can be used on websites. </property>

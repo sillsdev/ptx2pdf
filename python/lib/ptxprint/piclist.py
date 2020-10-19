@@ -8,9 +8,9 @@ import configparser
 import os, re, random, sys
 
 posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror", "scale"]
-pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale"]
+pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale", "media"]
 
-_piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copyright", "mirror", "disabled", "cleardest", "origkey"]
+_piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copyright", "mirror", "disabled", "cleardest", "origkey", "media"]
 _pickeys = {k:i for i, k in enumerate(_piclistfields)}
 
 _form_structure = {
@@ -26,6 +26,9 @@ _form_structure = {
     'mirror':   'fcb_plMirror',
     'hpos':     'fcb_plHoriz',
     'nlines':   's_plLines',
+    'medprint': 'c_plMediaP',
+    'medapp':   'c_plMediaA',
+    'medweb':   'c_plMediaW'
 }
 _comblist = ['pgpos', 'hpos', 'nlines']
 _defaults = {
@@ -59,7 +62,12 @@ class PicList:
             sel.connect("changed", self.row_select)
         for k, v in _form_structure.items():
             w = builder.get_object(v)
-            w.connect("value-changed" if v[0].startswith("s_") else "changed", self.item_changed, k)
+            sig = "changed"
+            if v.startswith("s_"):
+                sig = "value-changed"
+            elif v.startswith("c_"):
+                sig = "clicked"
+            w.connect(sig, self.item_changed, k)
         self.clear()
 
     def modify_font(self, p):
@@ -169,6 +177,8 @@ class PicList:
                     val = int(val)
                 except (ValueError, TypeError):
                     val = 0
+            elif k.startswith("med"):
+                val = v[-1].lower() in row[_pickeys['media']]
             elif k == 'mirror':
                 val = row[j] or "None"
             else:
@@ -199,6 +209,9 @@ class PicList:
         if key in _comblist:
             val = self.get_pgpos()
             key = "pgpos"
+        elif key.startswith("med"):
+            val = "".join(v[-1].lower() for k, v in _form_structure.items() if k.startswith("med") and self.get(v))
+            key = "media"
         else:
             val = self.get(key)
         if self.model is not None and len(self.model):
@@ -584,14 +597,14 @@ class PicInfo(dict):
                 search = [(srchdir, [], os.listdir(srchdir))]
             else:
                 search = os.walk(srchdir)
-        for subdir, dirs, files in search:
-            for f in files:
-                _, origExt = os.path.splitext(f)
-                if origExt[1:] not in self.extensions:
-                    continue
-                nB = filt(f) if filt is not None else f
-                if nB == fname:
-                    return os.path.join(subdir, f)
+            for subdir, dirs, files in search:
+                for f in files:
+                    _, origExt = os.path.splitext(f)
+                    if origExt[1:] not in self.extensions:
+                        continue
+                    nB = filt(f) if filt is not None else f
+                    if nB == fname:
+                        return os.path.join(subdir, f)
         return None
 
     def set_positions(self, cols=1, randomize=False, suffix=""):
