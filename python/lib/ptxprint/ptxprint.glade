@@ -2106,7 +2106,7 @@ in the Windows system.</property>
     <property name="can_focus">False</property>
     <property name="halign">start</property>
     <property name="valign">start</property>
-    <property name="title" translatable="yes">PTXprint</property>
+    <property name="title" translatable="yes">PTXprint: Add/Edit Style</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
     <property name="window_position">center-on-parent</property>
@@ -2197,6 +2197,7 @@ in the Windows system.</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">end</property>
+                <property name="margin_left">20</property>
                 <property name="label" translatable="yes">Style Type:</property>
                 <property name="justify">right</property>
               </object>
@@ -2301,7 +2302,7 @@ in the Windows system.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkScrolledWindow" id="scroll_colophon1">
+              <object class="GtkScrolledWindow" id="scroll_description">
                 <property name="height_request">80</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -2312,6 +2313,10 @@ in the Windows system.</property>
                   <object class="GtkViewport">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="margin_left">4</property>
+                    <property name="margin_right">4</property>
+                    <property name="margin_top">4</property>
+                    <property name="margin_bottom">4</property>
                     <child>
                       <object class="GtkTextView" id="textv_styDesc">
                         <property name="visible">True</property>
@@ -2334,6 +2339,7 @@ in the Windows system.</property>
                 <property name="can_focus">False</property>
                 <property name="halign">end</property>
                 <property name="label" translatable="yes">Name:</property>
+                <property name="wrap">True</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -2351,13 +2357,8 @@ in the Windows system.</property>
               <packing>
                 <property name="left_attach">2</property>
                 <property name="top_attach">1</property>
+                <property name="width">3</property>
               </packing>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
             </child>
             <child>
               <placeholder/>
@@ -11340,16 +11341,17 @@ been enabled.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="margin_left">6</property>
-                                <property name="margin_right">7</property>
+                                <property name="margin_right">6</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="column_spacing">6</property>
                                 <child>
                                   <object class="GtkLabel" id="l_styDescription">
+                                    <property name="width_request">220</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
                                     <property name="valign">start</property>
-                                    <property name="hexpand">True</property>
                                     <property name="wrap">True</property>
                                     <attributes>
                                       <attribute name="style" value="italic"/>
