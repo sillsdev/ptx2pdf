@@ -44,7 +44,7 @@ a = Analysis(['python/scripts/ptxprint', 'python/scripts/usfmerge'],
                             ('ptxprint.glade', 'template.tex')]
                       + [('python/lib/ptxprint/sfm/*.*y', 'ptxprint/sfm')]
                       + [('docs/inno-docs/*.txt', 'ptxprint')]
-                      + [('src/*.tex', 'ptx2pdf'), ('src/ptx2pdf.sty', 'ptx2pdf')],
+                      + [('src/*.tex', 'ptx2pdf'), ('src/ptx2pdf.sty', 'src/usfm_sb.sty', 'ptx2pdf')],
              hiddenimports = ['_winreg'],
              hookspath = [],
              runtime_hooks = [],
