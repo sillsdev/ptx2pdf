@@ -18,7 +18,7 @@ xcopy /s /i /y /q C:\msys64\mingw64\share\icons dist\ptxprint\share\icons
 xcopy /s /i /y /q C:\msys64\mingw64\share\themes dist\ptxprint\share\themes
 
 REM Then use a python script to build the #include list of only the needed icons from the Adwaita folders
-python python\scripts\getstockicons -f inno -s dist\ptxprint -d "{app}" -i list-remove-symbolic.symbolic -i list-add-symbolic.symbolic -i pan-down-symbolic.symbolic python\lib\ptxprint\ptxprint.glade AdwaitaIcons.txt
+python python\scripts\getstockicons -f inno -s dist\ptxprint -d "{app}" -i list-remove-symbolic.symbolic -i list-add-symbolic.symbolic -i pan-end-symbolic.symbolic -i pan-up-symbolic.symbolic -i pan-down-symbolic.symbolic python\lib\ptxprint\ptxprint.glade AdwaitaIcons.txt
 
 REM Then call InnoSetup to build the final SetupPTXprint.exe file which is distributed
 IF "%INNOSETUP_PATH%"=="" SET INNOSETUP_PATH="C:\Program Files (x86)\Inno Setup 6"
