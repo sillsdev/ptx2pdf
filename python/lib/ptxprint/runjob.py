@@ -56,11 +56,13 @@ _errmsghelp = {
 # %\extrafont  %% This will be replaced by code for the fallback fonts to be used for special/missing characters
 
 def base(fpath):
+    print("base")
     doti = fpath.rfind(".")
     return os.path.basename(fpath[:doti])
 
 # https://sites.google.com/a/lci-india.org/typesetting/home/illustrations/where-to-find-illustrations
 def codeLower(fpath):
+    print("codeLower")
     cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?$", base(fpath))
     if cl:
         return cl[0].lower()
@@ -68,6 +70,7 @@ def codeLower(fpath):
         return ""
 
 def newBase(fpath):
+    print("newBase")
     clwr = codeLower(fpath)
     if len(clwr):
         return clwr
@@ -116,6 +119,7 @@ _diglot = {
 
 _joblock = None
 def lockme(job):
+    print("lockme")
     global _joblock
     if _joblock is not None:
         return False
@@ -123,15 +127,18 @@ def lockme(job):
     return True
 
 def unlockme():
+    print("unlockme")
     global _joblock
     _joblock = None
 
 def isLocked():
+    print("isLocked")
     global _joblock
     return _joblock is not None
 
 class RunJob:
     def __init__(self, printer, scriptsdir, macrosdir, userconfig, args):
+        print("__init__")
         self.scriptsdir = scriptsdir
         self.macrosdir = macrosdir
         self.printer = printer
@@ -147,6 +154,7 @@ class RunJob:
         self.ispdfxa = False
 
     def doit(self):
+        print("doit")
         if not lockme(self):
             return False
         self.texfiles = []
@@ -192,6 +200,7 @@ class RunJob:
             self.texfiles += sum((self.dojob(j, info) for j in joblist), [])
 
     def done_job(self, outfname, info):
+        print("done_job")
         # Work out what the resulting PDF was called
         cfgname = info['config/name']
         if cfgname is not None and cfgname != "":
@@ -241,6 +250,7 @@ class RunJob:
         unlockme()
 
     def parselog(self, fname, rerunp=False, lines=20):
+        print("parselog")
         loglines = []
         rerunres = False
         if not os.path.exists(fname):
@@ -258,6 +268,7 @@ class RunJob:
         return (loglines, rerunres)
 
     def readfile(self, fname):
+        print("readfile")
         try:
             with open(fname, "r", encoding="utf-8") as inf:
                 res = "".join(inf.readlines())
@@ -266,6 +277,7 @@ class RunJob:
             return ""
 
     def parseLogLines(self):
+        print("parseLogLines")
         # it did NOT finish successfully, so help them troubleshoot what might have gone wrong:
         finalLogLines = self.loglines[-30:-10]
         foundmsg = False
@@ -306,6 +318,7 @@ class RunJob:
         return finalLogLines
 
     def dojob(self, jobs, info, logbuffer=None):
+        print("dojob")
         donebooks = []
         for b in jobs:
             out = info.convertBook(b, self.tmpdir, self.prjdir)
@@ -316,6 +329,7 @@ class RunJob:
         return [os.path.join(self.tmpdir, out)] + self.sharedjob(jobs, info, logbuffer=logbuffer)
 
     def digdojob(self, jobs, info, diginfo, digprjid, digprjdir, logbuffer=None):
+        print("digdojob")
         texfiles = []
         donebooks = []
         digdonebooks = []
@@ -382,6 +396,7 @@ class RunJob:
         return texfiles
 
     def sharedjob(self, jobs, info, prjid=None, prjdir=None, logbuffer=None, extra=""):
+        print("sharedjob")
         if prjid is None:
             prjid = self.prjid
         if prjdir is None:
@@ -425,27 +440,34 @@ class RunJob:
         return [os.path.join(self.tmpdir, outfname.replace(".tex", x)) for x in (".tex", ".xdv", ".pdf")]
 
     def wait(self):
+        print("wait")
         if self.busy:
             self.thread.join()
         return self.res
 
     def run_xetex(self, outfname, info, logbuffer):
+        print("run_xetex")
         numruns = self.maxRuns
         while numruns > 0:
+            print("In numruns > 0")
             self.printer.incrementProgress()
             if info["document/toc"] != "%":
                 tocdata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".toc")))
             cmd = ["xetex", "--halt-on-error", "-no-pdf"]
-            if self.ispdfxa:
-                cmd += ["-z", "0"]
+            # if self.ispdfxa:
+                # cmd += ["-z", "0"]
+            print("cmd = ", cmd)
             runner = call(cmd + [outfname], cwd=self.tmpdir, logbuffer=logbuffer)
             if isinstance(runner, subprocess.Popen) and runner is not None:
                 try:
+                    print("About to do runner.wait...")
                     runner.wait(self.args.timeout)
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
+                print("About to do self.res = runner.returncode...")
                 self.res = runner.returncode
             else:
+                print("About to do self.res = runner...")
                 self.res = runner
             print("cd {}; xetex {} -> {}".format(self.tmpdir, outfname, self.res))
             logfname = outfname.replace(".tex", ".log")
@@ -481,6 +503,7 @@ class RunJob:
         self.done_job(outfname, info)
 
     def checkForMissingDecorations(self, info):
+        print("checkForMissingDecorations")
         deco = {"pageborder" :     "Page Border",
                 "sectionheader" :  "Section Heading",
                 "endofbook" :      "End of Book",
@@ -497,6 +520,7 @@ class RunJob:
                         secondary="\n".join(warnings))
 
     def gatherIllustrations(self, info, jobs, ptfolder):
+        print("gatherIllustrations")
         picinfos = self.printer.picinfos
         pageRatios = self.usablePageRatios(info)
         tmpPicpath = os.path.join(self.printer.working_dir, "tmpPics")
@@ -509,6 +533,7 @@ class RunJob:
         #    print("Warning: Couldn't Remove Temporary Folders - is a temp file open?")
             
         def carefulCopy(p, src, tgt):
+            print("carefulCopy")
             ratio = pageRatios[0 if p['size'].startswith("span") else 1]
             return self.carefulCopy(ratio, src, tgt)
         missingPics = []
@@ -537,6 +562,7 @@ class RunJob:
         return res
 
     def convertToJPGandResize(self, ratio, infile, outfile):
+        print("convertToJPGandResize")
         if self.ispdfxa:
             white = (0, 0, 0, 0)
             fmt = fmta = "CMYK"
@@ -576,6 +602,7 @@ class RunJob:
             onlyRGBimage.save(outfile)
 
     def carefulCopy(self, ratio, srcpath, tgtfile):
+        print("carefulCopy")
         tmpPicPath = os.path.join(self.printer.working_dir, "tmpPics")
         tgtpath = os.path.join(tmpPicPath, tgtfile)
         try:
@@ -603,6 +630,7 @@ class RunJob:
         return os.path.basename(tgtpath)
 
     def removeTempFiles(self, texfiles):
+        print("removeTempFiles")
         notDeleted = []
         # MH: Should we try to remove the generated Nested files (now that they are stored along with the config)?
         # What impact does that have on Paratext's S/R (cluttering)
@@ -634,6 +662,7 @@ class RunJob:
                     secondary="\n".join(set(notDeleted)))
 
     def removeTmpFolders(self, base, delFolders, mkdirs=False):
+        print("removeTmpFolders")
         notDeleted = []
         for p in delFolders:
             path2del = os.path.join(base, p)
@@ -647,6 +676,7 @@ class RunJob:
         return notDeleted
 
     def usablePageRatios(self, info):
+        print("usablePageRatios")
         pageHeight = self.convert2mm(info.dict["paper/height"])
         pageWidth = self.convert2mm(info.dict["paper/width"])
         # print("pageHeight =", pageHeight, "  pageWidth =", pageWidth)
@@ -673,6 +703,7 @@ class RunJob:
         return pageRatios
 
     def convert2mm(self, measure):
+        print("convert2mm")
         _unitConv = {'mm':1, 'cm':10, 'in':25.4, '"':25.4}
         units = _unitConv.keys()
         num = float(re.sub(r"([0-9\.]+).*", r"\1", str(measure)))
