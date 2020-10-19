@@ -1,7 +1,7 @@
 PTXprint 1.2.9 Release Notes 
-19th October 2020
+20th October 2020
 
-Bug Fixes and Improvements in 1.2.9.2
+Bug Fixes and Improvements in 1.2.9.3
 
   * Stylesheet editor (early version - further improvements are still in the pipeline)
   
