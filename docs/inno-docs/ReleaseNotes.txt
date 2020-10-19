@@ -1,13 +1,13 @@
 PTXprint 1.2.9 Release Notes 
-17th October 2020
+19th October 2020
 
 Bug Fixes and Improvements in 1.2.9
 
-  * Stylesheet editor introduced (early test version - use with care)
+  * Stylesheet editor (early version - further improvements are still in the pipeline)
   
   * PicList handling completely revamped
   
-  * Removed the Quick Run option because it's always quick now, and the dialog is editable while you wait for the PDF
+  * Removed the Quick Run option as it is quicker now anyway, and the dialog is editable while you wait for the PDF
 
   * Colophon (yet to be implemented)
 
