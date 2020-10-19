@@ -1,0 +1,68 @@
+\id TST Test file
+\h small test file
+\c 1
+\s This is a title
+\p
+\v 1 This is normal text. There are 4 hook positions: before, start, end,
+after. \add The \+nd Lord\+nd*'s good!\add*  I'm putting little NIV-style angle bracket markers around \beginadd T
+and d\endadd\ to show how close they ought to be when they get put in by the hooks.
+The sequence ought to be before..start..text..end..after.
+\p And that was a  new  parargaph.\nd \f hello \fr 1:1 \ft This is a footnote <<\fq hello\ft >> goodbye\f* \nd*
+\v 2 Here in verse two  we look at hooks on paragraph breaks.
+\m  That's a class m paragraph break. Let's make the line very very very much longer Lorum Ipsum  blah blah blah
+\p And that was a p class paragraph break
+\p As was that.  just
+
+\esb
+\cat inl\cat*
+\s1 Testing 2
+\p This is an esb with 
+\p category "\showTheCategory"
+\p It is put inline 
+\esbe
+
+\esb
+\s1 Testing
+\p This is an esb with no category
+\esbe
+
+
+\esb \cat foo\cat*
+\s Testing 3
+\p This esb (category foo) has a bit more text, and is set top-right. 
+\m Category foo has a start and end hook and the p style paragraphs in foo are centred too, hopefully.
+\p Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
+doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
+veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+\p Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+\p Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
+doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
+veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+\p Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+\p Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+\p Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+\esbe
+
+\p  We're outside the esb (after esb testing3) so ought to be back to normal now
+\v 3 Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
+\p Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+\p
+\v 4
+At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.
+\p Et harum quidem rerum facilis est et expedita distinctio.
+\p
+\v 5  Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.
+\p Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.
+\v 6 Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
+
+\esb \cat foo\cat*
+\s3 Testing 4
+\p This ought to be  on the 2nd page
+\p
+\esbe
+\esb \cat something\cat*
+\s1 Testing 5
+\p This is a box of category "\showTheCategory", which is not defined.
+\esbe
+\p 
+\v 7 There are no more esbs in this book. Three on one page is sufficient.

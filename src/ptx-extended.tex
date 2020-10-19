@@ -96,6 +96,24 @@
    \x@\minip@rs@two#3\end
    \trace{e}{parsed: \tempa(\tempb), \tempc(\tempd)}%
 }
+\def\p@rseBorder#1 #2\relax{
+  \let\n@xtB=\p@rseBorder
+  \def\t@st{#1}%
+  \trace{e}{Parsing border parameter '#1'}
+  \ifx\t@st\empty
+    \let\n@xtB\endP@rseBorder
+  \else
+    \x@\let\x@\t@st\csname B@rder#1\endcsname
+    \ifx\t@st\relax
+      \message{Could not parse \Border #1}%
+    \else
+      \t@st T\relax
+    \fi
+  \fi
+  \n@xtB#2 \relax
+}
+
+\def\endP@rseBorder#1\relax{}
 
 \def\s@tsb@rwidth{%Set default / specific width of esb box
  %h*,c*,p* take the current page width as their base
@@ -326,14 +344,8 @@
 \def\Alpha   #1\relax{\initc@t\setsbp@ram{alpha}{#1}}% 1=solid 0=invisible
 \def\BorderWidth        #1\relax{\initc@t\setsbp@ram{borderwidth}{#1}}
 \def\BorderColour       #1\relax{\initc@t\setsbp@ram{bordercolour}{#1}}
-\let\BorderColor=\BorderColour
-\def\BorderTop          #1\relax{\initc@t\setsbp@ram{bordertop}{T}}
-\def\BorderBottom       #1\relax{\initc@t\setsbp@ram{borderbottom}{T}}
-\def\BorderLeft         #1\relax{\initc@t\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}}
-\def\BorderRight        #1\relax{\initc@t\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenright}{T}}
-\def\BorderInner        #1\relax{\initc@t\ifBookOpenLeft\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenleft}{T}\else\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenright}{T}\fi}
-\def\BorderOuter        #1\relax{\initc@t\ifBookOpenLeft\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenright}{T}\else\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenleft}{T}\fi}
-\def\BorderAll          #1\relax{\initc@t\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenright}{T}\setsbp@ram{bordertop}{T}\setsbp@ram{borderbottom}{T}}
+\let\BorderColor=\BorderColour%for Americans
+\def\Border		#1\relax{\initc@t\x@\p@rseBorder#1 \relax\end\relax}
 
 \def\GenC@tFig#1{
  \getsbp@ram{#1figname}\ifx\cp@ram\relax\let\cp@ram\empty\fi\ifx\cp@ram\empty\else
@@ -355,6 +367,14 @@
   \EndCategory\stylesheet{#1}\EndCategory
   \subc@llfalse
 }
+\def\B@rderTop{\setsbp@ram{bordertop}{T}}
+\def\B@rderBottom{\setsbp@ram{borderbottom}{T}}
+\def\B@rderLeft{\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}}
+\def\B@rderRight{\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenright}{T}}
+\def\B@rderInner{\ifBookOpenLeft\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenleft}{T}\else\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenright}{T}\fi}
+\def\B@rderOuter{\ifBookOpenLeft\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenright}{T}\else\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenleft}{T}\fi}
+\def\B@rderAll{\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenright}{T}\setsbp@ram{bordertop}{T}\setsbp@ram{borderbottom}{T}}
+\def\B@rderNone{\setsbp@ram{borderoddleft}{F}\setsbp@ram{borderevenleft}{F}\setsbp@ram{borderoddright}{F}\setsbp@ram{borderevenright}{F}\setsbp@ram{bordertop}{F}\setsbp@ram{borderbottom}{F}}
 
 \addtoinithooks{\let\@SB=\esb\let\@SBE=\esbe \let\esb=\@sb\let\esbe=\@sbe}
 

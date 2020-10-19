@@ -73,26 +73,24 @@ their own watermark or background image.  ```
 % Define the thickness of the border-line around the box, Measured in FontSizeUnits (normal text is 12 FontSizeUnits)
 
 %\BorderColour value(0-1) value(0-1) value(0.1)
+%\BorderColor value(0-1) value(0-1) value(0.1)
 % Default: 0 0 0 (Black)
 %3 values (0-1) for red, green and blue components of the border-line arount the box
 
-%\BorderTop option
-%\BorderBottom option
-%\BorderLeft option
-%\BorderRight option
-%\BorderInner option
-%\BorderOuter option
-%\BorderAll option
-% Options: t,f
-% Default: \BorderAll t
+%\Border options
+% Options are one or more of these (separated by a space): None Top Bottom Left Right Inner Outer All
 % Which of the 4 possible borders will have a line.
 % Six internal flags are set by these options which are processed in order.
 % (e.g. the flag for the left border on odd pages will be altered by
-% \BorderAll, \BorderLeft or \BorderInner) For 'Book opens on the left'
-% publications (Right-to-left languages, but complicated by diglots), the
+% All, Left or Inner).
+% For 'Book opens on the left'  publications (Right-to-left languages, but complicated by diglots), the
 % inner/outer processing requires that \BookOpenLefttrue is specified before
 % the category sheet is processed.
-
+%
+% The opion None clears all borders set until now. Thus:
+%   \Border All None Left
+% is the same as "\Border None Left". "\Border Left" will retain any previously set or inherited values,
+% While adding a Left-hand border.
 
 %\EndCategory
 % Cancels the current category (sets the value to empty). This is used
