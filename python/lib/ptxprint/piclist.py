@@ -367,7 +367,7 @@ class PicInfo(dict):
 
     def clear(self, model=None):
         super().clear()
-        if mode is not None:
+        if model is not None:
             self.model = model
             self.prj = model.prjid
             if self.model.prjid is None:

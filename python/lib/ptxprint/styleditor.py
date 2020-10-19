@@ -374,6 +374,7 @@ class StyleEditor:
             return " ".join(x or "" for x in v)
         elif str(v).startswith("rgb("):
             v = coltotex(v)
+            return v
         else:
             return str(v)
 
@@ -383,10 +384,11 @@ class StyleEditor:
             return mkrexceptions.get(x, x)
         for m in self._list_usfms():
             markerout = False
-            for k,v in self.sheet[m].items():
+            sm = self.sheet[m]
+            for k,v in sm.items():
                 if k.startswith(" "):
                     continue
-                other = self.basesheet.get("m", {}).get(k, None)
+                other = self.basesheet.get(m, {}).get(k, None)
                 if not self._eq_val(other, v):
                     if not markerout:
                         outfh.write("\n\\Marker {}\n".format(m))
