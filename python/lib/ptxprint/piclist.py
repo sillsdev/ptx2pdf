@@ -345,6 +345,7 @@ class PicInfo(dict):
 
     def __init__(self, model):
         self.clear(model)
+        self.inthread = False
 
     def clear(self, model):
         super().clear()
@@ -378,12 +379,26 @@ class PicInfo(dict):
         if os.path.exists(plistsdir):
             places += ["shared/ptxprint/{0}/PicLists/{1}".format(cfg, x) \
                         for x in os.listdir(plistsdir) if x.lower().endswith(".piclist")]
+        havepiclists = False
         for f in places:
             p = os.path.join(prjdir, f)
             if os.path.exists(p):
                 self.read_piclist(p, suffix=suffix)
-        self.model.savePics()
+                havepiclists = True
         self.loaded = True
+        if not havepiclists:
+            self.inthread = True
+            self.thread = Thread(target=self.threadUsfms, args=(suffix,))
+        else:
+            self.model.savePics()
+
+    def threadUsfms(self, suffix):
+        bks = self.model.getAllBooks()
+        for bk, bkp in bks.get_items():
+            if os.path.exists(bkp):
+                self.read_sfm(bkp, suffix=suffix)
+        self.model.savePics()
+        self.inthread = False
 
     def _fixPicinfo(self, vals):
         p = vals['pgpos']
@@ -643,6 +658,8 @@ class PicInfo(dict):
                 v['disabled'] = True
 
     def updateView(self, view, bks=None, filtered=True):
+        if self.inthread:
+            GObject.timeout_add_seconds(1, self.updateView, view, bks=bks, filtered=filtered)
         view.load(self, bks=bks if filtered else None)
 
 def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False, cols=1):
