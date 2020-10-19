@@ -287,6 +287,12 @@ class StyleEditor:
                 else:
                     ctxt.remove_class("changed")
 
+        stype = data.get('StyleType', '')
+        _showgrid = {'Para': (True, True, False), 'Char': (False, True, False), 'Note': (False, True, True)}
+        visibles = _showgrid.get(stype[:4],(True, True, True))
+        for i, w in enumerate(('Para', 'Char', 'Note')):
+            self.builder.get_object("fr_sty"+w+"Settings").set_visible(visibles[i])
+            
         site = 'https://ubsicap.github.io/usfm'
         if urlcat is None:
             self.builder.get_object("l_url_usfm").set_uri('{}/search.html?q=%5C{}&check_keywords=yes&area=default'.format(site, urlmkr.split('-')[0]))

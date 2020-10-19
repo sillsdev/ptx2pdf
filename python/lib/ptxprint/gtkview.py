@@ -152,8 +152,7 @@ _nonsensitivities = {
     "c_blendfnxr" :            ["l_internote", "s_internote"],
     # "c_usePicList" :           ["c_figexclwebapp"],
     "c_useprintdraftfolder" :  ["btn_selectOutputFolder"],
-    "c_styTextProperties":     ["l_styTextType", "fcb_styTextType", "l_styStyleType", "fcb_styStyleType", 
-                                "fr_styParaSettings", "fr_styCharSettings", "fr_styNoteSettings"],
+    "c_styTextProperties":     ["fr_styParaSettings", "fr_styCharSettings", "fr_styNoteSettings"],
 }
 # Checkboxes and the Tabs that they make (in)visible
 # _visibilities = {
@@ -1996,23 +1995,6 @@ class GtkViewModel(ViewModel):
     def onFontStyclicked(self, btn):
         self.getFontNameFace("bl_font_styFontName")
         self.onFontChanged(btn)
-        
-    def onStyleTypeChanged(self, btn):
-        stype = self.builder.get_object("fcb_styStyleType").get_child().get_text()
-        if stype == "Paragraph":
-            self.builder.get_object("fr_styParaSettings").set_visible(True)
-            self.builder.get_object("fr_styCharSettings").set_visible(True)
-            self.builder.get_object("fr_styNoteSettings").set_visible(False)
-        elif stype == "Character":
-            self.builder.get_object("fr_styParaSettings").set_visible(False)
-            self.builder.get_object("fr_styCharSettings").set_visible(True)
-            self.builder.get_object("fr_styNoteSettings").set_visible(False)
-        elif stype == "Note":
-            self.builder.get_object("fr_styParaSettings").set_visible(False)
-            self.builder.get_object("fr_styCharSettings").set_visible(True)
-            self.builder.get_object("fr_styNoteSettings").set_visible(True)
-        else:
-            print("Something's wrong! - Unknown StyleType in StyleEditor")
         
     def onColophonClicked(self, btn):
         self.onSimpleClicked(btn)
