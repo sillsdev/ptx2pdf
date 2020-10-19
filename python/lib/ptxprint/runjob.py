@@ -613,7 +613,6 @@ class RunJob:
         for extn in ('delayed','parlocs','notepages', 'picpages', 'piclist', 'SFM', 'sfm', 'xdv', 'tex', 'log'):
             for t in set(texfiles):
                 delfname = os.path.join(self.tmpdir, t.replace(".tex", "."+extn))
-                print(delfname)
                 if os.path.exists(delfname):
                     try:
                         os.remove(delfname)
