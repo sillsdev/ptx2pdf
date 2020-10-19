@@ -365,16 +365,16 @@ class PicInfo(dict):
         self.clear(model)
         self.inthread = False
 
-    def clear(self, model):
+    def clear(self, model=None):
         super().clear()
-        self.model = model
-        self.prj = model.prjid
-        self.srchlist = None
-        if model.prjid is None:
-            self.basedir = model.settings_dir
-        else:
-            self.basedir = os.path.join(model.settings_dir, model.prjid)
-        self.config = model.configId
+        if mode is not None:
+            self.model = model
+            self.prj = model.prjid
+            if self.model.prjid is None:
+                self.basedir = self.model.settings_dir
+            else:
+                self.basedir = os.path.join(self.model.settings_dir, model.prjid)
+            self.config = model.configId
         self.loaded = False
         self.srchlist = []
 
@@ -621,7 +621,7 @@ class PicInfo(dict):
     def get_sourcefile(self, fname, filt=newBase, exclusive=False):
         if filt is not None:
             fname = filt(fname)
-        if self.srchlist is None:
+        if self.srchlist is None or not len(self.srchlist):
             self.build_searchlist()
         for srchdir in self.srchlist:
             if srchdir is None or not os.path.exists(srchdir):
@@ -685,22 +685,16 @@ def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False
     newpics.read_piclist(os.path.join(model.settings_dir, model.prjid, 'shared',
                                       'ptxprint', "{}.piclist".format(model.prjid)))
     delpics = set()
+    picinfos.clear()
     for bk in bks:
         bkf = allbooks.get(bk, None)
         if bkf is None or not os.path.exists(bkf):
             continue
         for k in [k for k in newpics.keys() if k[:3] == bk]:
             del newpics[k]
-            delpics.add(k)
         newpics.read_sfm(bk, bkf)
         newpics.set_positions(randomize=random, suffix=suffix, cols=cols)
         for k in (k for k in newpics.keys() if k[:3] == bk):
-            if k in delpics:
-                delpics.remove(k)
-            else:
-                picinfos[k+suffix] = newpics[k]
-        for k in delpics:
-            if k+suffix in picinfos:
-                del picinfos[k+suffix]
+            picinfos[k+suffix] = newpics[k]
     picinfos.loaded = True
 

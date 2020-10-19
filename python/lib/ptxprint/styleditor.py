@@ -127,13 +127,22 @@ def triefit(k, base, start):
 
 def coltotex(s):
     vals = s[s.find("(")+1:-1].split(",")
-    return "x"+"".join("{:02X}".format(int(x)) for x in vals[:3])
+    try:
+        return "x"+"".join("{:02X}".format(int(x)) for x in vals[:3])
+    except (ValueError, TypeError):
+        return ""
 
 def textocol(s):
     if s.startswith("x"):
-        vals = [int(x, 16) for x in s[1::2]]
+        try:
+            vals = [int(x, 16) for x in s[1::2]]
+        except (ValueError, TypeError):
+            vals = [0, 0, 0]
     else:
-        v = int(s)
+        try:
+            v = int(s)
+        except (ValueError, TypeError):
+            v = 0
         vals = []
         while v:
             vals.append(v % 256)
@@ -356,7 +365,7 @@ class StyleEditor:
             fb = float(b)
             return fa == fb
         except (ValueError, TypeError):
-            return a == b
+            return b is None if a is None else (False if b is None else a == b)
 
     def _str_val(self, v, key=None):
         if isinstance(v, (set, list)):
