@@ -363,6 +363,8 @@ class StyleEditor:
             if key.lower() == "textproperties":
                 return " ".join(x.lower().title() if x else "" for x in sorted(v))
             return " ".join(x or "" for x in v)
+        elif str(v).startswith("rgb("):
+            v = coltotex(v)
         else:
             return str(v)
 
