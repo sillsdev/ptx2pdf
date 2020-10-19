@@ -1150,7 +1150,7 @@ class GtkViewModel(ViewModel):
         question = _("Are you sure you want to delete\nALL the temporary PTXprint files?")
         if self.msgQuestion(title, question):
             patterns = []
-            for extn in ('delayed','parlocs','notepages', 'log'):
+            for extn in ('delayed','parlocs','notepages', 'picpages', 'piclist', 'SFM', 'sfm', 'xdv', 'tex', 'log'):
                 patterns.append(r".+\.{}".format(extn))
             patterns.append(r".+\-draft\....".format(extn))
             patterns.append(r".+\.toc".format(extn))

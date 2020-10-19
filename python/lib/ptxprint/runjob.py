@@ -212,10 +212,6 @@ class RunJob:
                 elif sys.platform == "linux":
                     subprocess.call(('xdg-open', pdfname))
                 # Only delete the temp files if the PDF was created AND the user did NOT select to keep them
-            if not info.asBool("project/keeptempfiles"):
-                self.removeTempFiles(self.texfiles)
-            else:
-                self.printer.tempFiles = self.texfiles
 
             if not self.args.print: # We don't want pop-up messages if running in command-line mode
                 fname = os.path.join(self.tmpdir, pdfname.replace(".pdf", ".log"))
@@ -236,6 +232,10 @@ class RunJob:
             self.printer.doError(_("Failed to create: ")+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname),
                     secondary="".join(finalLogLines[-20:]), title="PTXprint [{}] - Error!".format(VersionStr))
             self.printer.onIdle(self.printer.showLogFile)
+        if not info.asBool("project/keeptempfiles"):
+            self.removeTempFiles(self.texfiles)
+        else:
+            self.printer.tempFiles = self.texfiles
         self.printer.finished()
         self.busy = False
         unlockme()
@@ -422,7 +422,7 @@ class RunJob:
         self.thread = Thread(target=self.run_xetex, args=(outfname, info, logbuffer))
         self.busy = True
         self.thread.start()
-        return [os.path.join(self.tmpdir, outfname.replace(".tex", x)) for x in (".tex", ".xdv", ".pdf")]
+        return [os.path.join(self.tmpdir, outfname.replace(".tex", x)) for x in (".tex", ".xdv")]
 
     def wait(self):
         if self.busy:
@@ -610,9 +610,10 @@ class RunJob:
                 # os.remove(n)
             # except:
                 # notDeleted += [n]
-        for extn in ('delayed','parlocs','notepages', 'tex', 'log'):
+        for extn in ('delayed','parlocs','notepages', 'picpages', 'piclist', 'SFM', 'sfm', 'xdv', 'tex', 'log'):
             for t in set(texfiles):
                 delfname = os.path.join(self.tmpdir, t.replace(".tex", "."+extn))
+                print(delfname)
                 if os.path.exists(delfname):
                     try:
                         os.remove(delfname)
