@@ -135,7 +135,7 @@ def coltotex(s):
 def textocol(s):
     if s.startswith("x"):
         try:
-            vals = [int(x+y, 16) for x, y in zip(s[1::2], s[2::2])]
+            vals = [int(s[1:3], 16), int(s[3:5], 16), int(s[5:7], 16)]
         except (ValueError, TypeError):
             vals = [0, 0, 0]
     else:
@@ -390,10 +390,11 @@ class StyleEditor:
         for m in self._list_usfms():
             markerout = False
             sm = self.sheet[m]
+            om = self.basesheet.get(m, {})
             for k,v in sm.items():
                 if k.startswith(" "):
                     continue
-                other = self.basesheet.get(m, {}).get(k, None)
+                other = om.get(k, None)
                 if not self._eq_val(other, v):
                     if not markerout:
                         outfh.write("\n\\Marker {}\n".format(m))
