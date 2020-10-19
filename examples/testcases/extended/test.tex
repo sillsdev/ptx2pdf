@@ -30,16 +30,16 @@
 \def\endadd{\kern -1pt \lower 1pt \hbox{\vrule width \addmtlqutewd height \addmtlqutelw\vrule width \addmtlqutelw height \addmtlquteht}}
 \def\RHoddcenter{\timestamp}
 \def\RHoddleft{\isodate}
-\sethook{before}{m}{\dimen1=\prevdepth\message{TEST: \the\dimen1}\kern-\dimen1\vbox to 0pt{\vskip 0.5pt\hrule width 10em height 0.0pt depth 0.5pt}\vskip 0pt}
-\sethook{after}{m}{\kern .5pt \hrule width 10em height .2pt \kern 1pt \hrule width 10em height .2pt}
-\sethook{start}{m}{\beginadd\beginadd}
-\sethook{end}{m}{\endadd\endadd}
+%\sethook{before}{m}{\dimen1=\prevdepth\message{TEST: \the\dimen1}\kern-\dimen1\vbox to 0pt{\vskip 0.5pt\hrule width 10em height 0.0pt depth 0.5pt}\vskip 0pt}
+%\sethook{after}{m}{\kern .5pt \hrule width 10em height .2pt \kern 1pt \hrule width 10em height .2pt}
+%\sethook{start}{m}{\beginadd\beginadd}
+%\sethook{end}{m}{\endadd\endadd}
 \sethook{before}{add}{|}
 \sethook{after}{add}{|}
 \sethook{start}{add}{\beginadd}
 \sethook{end}{add}{\endadd}
-\sethook{before}{cat:foo|cat}{<<foo_hook }
-\sethook{after}{cat:foo|cat}{foo_hook>>}
+\sethook{start}{cat:foo|cat}{}
+\sethook{end}{cat:foo|cat}{foo_hook>>}
 \csname ColorFontstrue\endcsname
 \tracinggroups=1
 \ptxfile{test.usfm}

@@ -124,10 +124,13 @@
   % text is read later
   \ifhmode\edef\@sf{\spacefactor\the\spacefactor}\/\fi%
   % if footnote is on a chapter number ...
-  \ifhe@dings #3\edef\@wrap{\global\setbox\he@dingnotes=\vbox\bgroup\unvbox\he@dingnotes}\else\edef\@wrap{}%
-    \ifch@pter \everypar={}\ch@pterfalse%
-      \global\setbox\ch@pternote=\hbox{\box\ch@pternote #3}%
-    \else #3\fi % output caller
+  \ifhe@dings #3\edef\@wrap{\global\setbox\he@dingnotes=\vbox\bgroup\unvbox\he@dingnotes}%
+  \else\ifinextended
+    \edef\@wrap{\global\setbox\sid@barnotes=\vbox\bgroup\unvbox\sid@barnotes}\else\edef\@wrap{}%
+      \ifch@pter \everypar={}\ch@pterfalse%
+        \global\setbox\ch@pternote=\hbox{\box\ch@pternote #3}%
+      \else #3\fi % output caller
+    \fi
   \fi%
   % @sf preserves the space factor (e.g. extra space after a period), restore it now
   \@sf \@wrap\vm@kenote{#1}{#2}{\getp@ram{notecallerstyle}{#2}\ifx\p@ram\relax #3\else #4\fi}}

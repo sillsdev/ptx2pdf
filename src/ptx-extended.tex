@@ -34,7 +34,8 @@
 
 \newbox\extb@x % Box in which extended study matter is placed
 \newbox\extchunkb@x % Box in which extended study matter is placed
-\newif\ifinextended \inextendedfalse
+\newif\ifinextended \inextendedfalse % Test for sidebar 
+\newbox\sid@barnotes % Box in which notes are placed in a sidebar
 \newtoks\old@bx %store old definition of \everyhbox
 \def\c@tegory{}
 \gdef\sb@rmarker{esb} % future-proofing. What's the current sidebar marker?
@@ -87,7 +88,14 @@
   }%
   \egroup\global\advance\feintb@xnum by 1}
 \def\feintbox#1#2#3{% Set a (transparent) coloured box as background for box given in #3. #1: alpha, #2: {r g b}  (all numbers in range 0-1.0)
-  \setbox0#3\hbox{\feintb@x{#1}{#2}{\ht0}{\dp0}{\wd0}\box0}}
+  \dimen4=-\fb@vpadding% preserve grid
+  \ifdim\fb@vpadding<0.2\baselineskip \else 
+    \advance\dimen4 by \baselineskip
+  \fi
+  \edef\vp@dskip{\the\dimen4}\vskip\vp@dskip
+  \setbox0#3\hbox{\feintb@x{#1}{#2}{\ht0}{\dp0}{\wd0}\box0}
+  \vskip\vp@dskip % preserve grid
+  }
 
 \def\minip@rs@two#1#2\end{%
    \edef\tempc{#1}\edef\tempd{#2}}%
@@ -100,7 +108,7 @@
 \def\p@rseBorder#1 #2\relax{
   \let\n@xtB=\p@rseBorder
   \def\t@st{#1}%
-  \trace{e}{Parsing border parameter '#1'}
+  \trace{e}{Parsing border parameter '#1' '#2'}%
   \ifx\t@st\empty
     \let\n@xtB\endP@rseBorder
   \else
@@ -108,8 +116,12 @@
     \ifx\t@st\relax
       \message{Could not parse \Border #1}%
     \else
-      \t@st T\relax
+      \t@st \relax
     \fi
+  \fi
+  \def\t@st{#2}%
+  \ifx\t@st\empty
+    \let\n@xtB\endP@rseBorder
   \fi
   \n@xtB#2 \relax
 }
@@ -171,8 +183,10 @@
  \fi
  \hsize=\dimen1
 }
- 
-\def\@sb{\let\oldc@tegory\c@tegory\let\oldc@prefix\c@tprefix
+% Sidebar 
+\def\@sb{\let\oldc@tegory\c@tegory\let\oldc@prefix\c@tprefix 
+  \ifhmode\par\fi
+  \edef\l@stdepth{\the\prevdepth}% Remember for later
   \edef\hs@ze{\the\hsize}%
   \s@tc@tpr@fix
   \getsbp@ram{w@dth}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup
@@ -220,7 +234,6 @@
   \getsbp@ram{bordertop}\let\b@drtop\cp@ram
   \getsbp@ram{borderbottom}\let\b@drbottom\cp@ram 
   \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
-  
   \tempfalse
   \ifx\bgf@gsp@c\relax\else
     \if\bgf@gl@w F
@@ -234,12 +247,11 @@
     \sb@rchunkh@ight=\maxdimen
   \fi
   \iftemp
-    %modify the esbbox
+    %modify the esbbox to include the picture
     \setbox\extb@x\vbox to \ht\extb@x{\vbox to 0pt{\vbox to\ht\extb@x{\vfil\d@figure{\bgf@gsp@c}\vfil}\vss}\extb@x}%
     \let\bgf@gsp@c\relax %used it, so if it's still there later, we need to use it.
   \fi
   \let\w@tsit\sb@rb@x   % Make sure the debugging info is correct
-  %\ifx\sb@rpos\relax\gdef\sb@rpos{bo}\fi
   \let\loc@ption\sb@rpos
   \picUsesInstrue
   \x@\p@rsePicUse\loc@ption\end  %set loc@ption and discover if there's to be an insert. (sets \picUsesInsfalse if not)
@@ -247,7 +259,7 @@
     \getsbp@ram{alpha}\global\let\pdf@lpha=\cp@ram
     \getsbp@ram{bgcolour}\let\pdfBGc@l=\cp@ram
   \fi
-  \loop
+  \loop %Breakable box:
     \ifdim\ht\extb@x>\sb@rchunkh@ight % to enable page splitting, the box should be chunked.
       \dimen1=\sb@rchunkh@ight
       {% 
@@ -274,6 +286,19 @@
         \feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}}%
     \fi
     \tempfalse
+    \ifx\b@drleft\tr@e\temptrue\trace{eb}{Border: left}\fi
+    \ifx\b@drright\tr@e\temptrue\trace{eb}{Border: right}\fi
+    \iftemp
+      \dimen0=\ht\extchunkb@x
+      \dimen1=\dp\extchunkb@x
+      \setbox\extchunkb@x\vbox{\hbox{\ifx\b@drleft\tr@e\trace{eb}{Drawing Border:left}\vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1 \fi\box\extchunkb@x\ifx\b@drright\tr@e \trace{eb}{Drawing Border: right}\vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1 \fi}}%
+    \fi
+    \tempfalse
+    \dimen4=-\b@drwidth\FontSizeUnit
+    \ifdim\b@drwidth\FontSizeUnit>0.2\baselineskip
+      \advance\dimen4 by \baselineskip
+    \fi
+    \edef\b@xadj{\the\dimen4}
     \ifx\b@drtop\tr@e\temptrue\trace{eb}{Border: Top}\fi
     \ifx\b@drbottom\tr@e\temptrue\trace{eb}{Border: Bottom}\fi
     \iftemp
@@ -281,22 +306,13 @@
       \dimen0=\ht\extchunkb@x
       \advance\dimen0 by \dp\extchunkb@x
       %\advance\dimen0 by \b@drwidth\FontSizeUnit
-      \edef\b@xh@ight{\the\dimen0}%
       \setbox\extchunkb@x\vbox{\baselineskip=0pt%
-        \ifx\b@drtop\tr@e\trace{eb}{Drawing Border:top}\hbox{\vrule height\b@drwidth\FontSizeUnit width \b@xw@dth}\fi%
+        \ifx\b@drtop\tr@e\vskip\b@xadj\trace{eb}{Drawing Border:top}\hbox{\vrule height\b@drwidth\FontSizeUnit width \b@xw@dth}\fi%
         \unvbox\extchunkb@x
-        \ifx\b@drbottom\tr@e\trace{eb}{Drawing Border:bottom}\hbox{\vrule depth\b@drwidth\FontSizeUnit width \b@xw@dth}\fi
+        \ifx\b@drbottom\tr@e\trace{eb}{Drawing Border:bottom}\hbox{\vrule depth\b@drwidth\FontSizeUnit width \b@xw@dth}\vskip\b@xadj\fi
       }
       %\nonstopmode
       %\showbox\extchunkb@x
-    \fi
-    \tempfalse
-    \ifx\b@drleft\tr@e\temptrue\fi
-    \ifx\b@drright\tr@e\temptrue\fi
-    \iftemp
-      \dimen0=\ht\extchunkb@x
-      \dimen1=\dp\extchunkb@x
-      \setbox\extchunkb@x\vbox{\hbox{\ifx\b@drleft\tr@e\trace{eb}{Drawing Border:left}\vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1 \fi\box\extchunkb@x\ifx\b@drright\tr@e \trace{eb}{Drawing Border: right}\vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1 \fi}}%
     \fi
     \x@\let\x@\@xtins\csname ins-\loc@ption\endcsname
     \ifpicUsesIns
@@ -304,8 +320,12 @@
       \insert\@xtins{%\vskip\baselineskip
           \penalty10000\unvbox\extchunkb@x}%
     \else
-      \trace{e}{\loc@ption\space is inline}%
-      {\unvbox\extchunkb@x}%
+      \trace{e}{\loc@ption\space is inline \l@stdepth}%
+      \vskip -\l@stdepth
+      \ifx\h@scol\tr@e
+        \ifdim\l@stdepth>0.2pt\vskip\baselineskip\fi%
+      \fi
+      {\gridp@cfalse\gridb@x\extchunkb@x}%
     \fi
   \ifdim\ht\extb@x>0pt
     \def\fb@vpadding{0pt}

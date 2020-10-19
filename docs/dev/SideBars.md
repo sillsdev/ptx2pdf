@@ -23,7 +23,7 @@ their own watermark or background image.  ```
 % Default: 1
 % Width of the box relative to the nominal size of the containing box.
 
-%\Breakable option
+%\Breakable option   !!!DO NOT USE
 % Options: T, F, value(0-1)
 % Default: F
 % Should the contents of this box be forced to be on one page or can it be broken? (Not compatible with background images)
@@ -31,7 +31,7 @@ their own watermark or background image.  ```
 % If a value is given, this is the smallest fraction of the pageheight that the sections will be, if 't' is given, the fraction 
 % will be 0.2 of the page height. If splitting a given chunk of the box is impossible, the algorithm will increase the chunk-size until 
 % a break IS possible. 
-
+% NB: Breakable triggers a bug in the page output mechanism and things go gets things horribly wrong
 
 %\BgColour F, T, value(0-1) value(0-1) value(0.1)
 % Disable (F) or reenable (T)  any background colour set earlier (or inherited) 

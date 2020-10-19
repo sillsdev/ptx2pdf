@@ -775,6 +775,7 @@
   \s@tc@tprefix{#1}%
   \the\c@th@@ks% Run anythingthe enclosing code wants
   \op@ninghooks{before}{cat}% 
+  \ifhmode\par\fi
   \begingroup % This group will be closed between the end and after hooks of endc@t %(1)
   \op@ninghooks{start}{cat}%
   \bgroup % This group will be closed by the end-of footnote marker / other container.  %(2)

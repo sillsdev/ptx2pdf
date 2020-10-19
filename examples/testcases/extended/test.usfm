@@ -8,14 +8,10 @@ after. \add The \+nd Lord\+nd*'s good!\add*  I'm putting little NIV-style angle 
 and d\endadd\ to show how close they ought to be when they get put in by the hooks.
 The sequence ought to be before..start..text..end..after.
 \p And that was a  new  parargaph.\nd \f hello \fr 1:1 \ft This is a footnote <<\fq hello\ft >> goodbye\f* \nd*
-\v 2 Here in verse two  we look at hooks on paragraph breaks.
-\m  That's a class m paragraph break. Let's make the line very very very much longer Lorum Ipsum  blah blah blah
 \p And that was a p class paragraph break
-\p As was that.  just
-
+\p As was that, just.
 \esb
 \cat inl\cat*
-\s1 Testing 2
 \p This is an esb with 
 \p category "\showTheCategory"
 \p It is put inline 
@@ -30,7 +26,7 @@ The sequence ought to be before..start..text..end..after.
 \esb \cat foo\cat*
 \s Testing 3
 \p This esb (category foo) has a bit more text, and is set top-right. 
-\m Category foo has a start and end hook and the p style paragraphs in foo are centred too, hopefully.
+\m Category foo has an end hook and the p style paragraphs in foo are centred too, hopefully.
 \p Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
 doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
 veritatis et quasi architecto beatae vitae dicta sunt explicabo.
