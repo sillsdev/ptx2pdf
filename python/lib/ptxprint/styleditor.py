@@ -3,6 +3,8 @@ import re
 from gi.repository import Gtk, Pango
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.usfmutils import Sheets
+from ptxprint.sfm.style import Marker, CaselessStr
+from copy import deepcopy
 
 stylemap = {
     'Marker':       ('l_styleTag',          None,               None, None),
@@ -106,16 +108,13 @@ widgetsignals = {
     "col": "color-set"
 }
 
-stylediverts = {
-    'LineSpacing': '_linespacing',
-    'FontSize': '_fontsize'
-}
-
-widgetsignals = {
-    's': "value-changed",
-    'c': "toggled",
-    "bl": "clicked",
-    "col": "color-set"
+dialogKeys = {
+    "Marker":       "t_styMarker",
+    "Name":         "t_styName",
+    "Description":  "tb_styDesc",
+    "OccursUnder":  "t_styOccursUnder",
+    "TextType":     "fcb_styTextType",
+    "StyleType":    "fcb_styStyleType"
 }
 
 def triefit(k, base, start):
@@ -151,9 +150,10 @@ mkrexceptions = {k.lower().title(): k for k in ('BaseLine', 'TextType', 'TextPro
 
 class StyleEditor:
 
-    def __init__(self, builder):
-        self.builder = builder
-        self.treestore = builder.get_object("ts_styles")
+    def __init__(self, model):
+        self.model = model
+        self.builder = model.builder
+        self.treestore = self.builder.get_object("ts_styles")
         self.treeview = self.builder.get_object("tv_Styles")
         self.treeview.set_model(self.treestore)
         cr = Gtk.CellRendererText()
@@ -171,6 +171,7 @@ class StyleEditor:
             signal = widgetsignals.get(pref, "changed")
             w.connect(signal, self.item_changed, key)
         self.isLoading = False
+        self.marker = None
 
     def load(self, sheetfiles):
         if len(sheetfiles) == 0:
@@ -235,7 +236,7 @@ class StyleEditor:
         for k, v in stylemap.items():
             if k == 'Marker':
                 val = "\\" + self.marker
-                urlcat = data[' url']
+                urlcat = data.get(' url', '')
                 urlmkr = self.marker
                 if data.get('Endmarker', None):
                     val += " ... \\" + data['Endmarker']
@@ -380,3 +381,72 @@ class StyleEditor:
                         outfh.write("\n\\Marker {}\n".format(m))
                         markerout = True
                     outfh.write("\\{} {}\n".format(normmkr(k), self._str_val(v, k)))
+
+    def mkrDialog(self, newkey=False):
+        dialog = self.builder.get_object("dlg_styModsdialog")
+        data = self.sheet.get(self.marker, {})
+        for k, v in dialogKeys.items():
+            if k == "OccursUnder":
+                self.model.set(v, " ".join(sorted(data.get(k, {}))))
+            else:
+                self.model.set(v, data.get(k, ''))
+        if newkey:
+            self.model.set(dialogKeys['Marker'], '')
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            key = self.model.get(dialogKeys['Marker'])
+            if key == "":
+                return
+            (_, selecti) = self.treeview.get_selection().get_selected()
+            if key not in self.sheet:
+                self.sheet[key] = Marker({" deletable": True})
+                name = self.model.get(dialogKeys['Name'], '')
+                m = name_reg.match(name)
+                if m:
+                    if not m.group(1) and " " in m.group(2):
+                        cat = m.group(2)
+                    else:
+                        cat = m.group(1) or m.group(3)
+                else:
+                    cat = "Other"
+                cat, url = categorymapping.get(cat, (cat, None))
+                self.sheet[key][' category'] = cat
+                selecti = self.treestore.get_iter_first()
+                while selecti:
+                    r = self.treestore[selecti]
+                    if r[0] == cat:
+                        selecti = self.treestore.append(selecti, [key, name, True])
+                        break
+                    selecti = self.treestore.iter_next(selecti)
+                else:
+                    selecti = self.treestore.append(None, [cat, cat, False])
+                    selecti = self.treestore.append(selecti, [key, name, True])
+            data = self.sheet[key]
+            for k, v in dialogKeys.items():
+                val = self.model.get(v)
+                if k.lower() == 'occursunder':
+                    val = set(val.split())
+                    data[k] = val
+                elif val:
+                    data[k] = CaselessStr(val)
+            if data['styletype'] == 'Character':
+                data['EndMarker'] = key + "*"
+                data['OccursUnder'].add("NEST")
+            #self.marker = key
+            self.treeview.get_selection().select_iter(selecti)
+            #self.editMarker()
+        dialog.hide()
+
+    def delKey(self):
+        if self.sheet.get(self.marker, {}).get(" deletable", False):
+            del self.sheet[self.marker]
+            selection = self.treeview.get_selection()
+            model, i = selection.get_selected()
+            model.remove(i)
+            self.onSelected(selection)
+
+    def refreshKey(self):
+        self.sheet[self.marker] = deepcopy(self.basesheet[self.marker])
+        self.editMarker()
+        
+

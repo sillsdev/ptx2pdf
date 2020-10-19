@@ -344,6 +344,7 @@ class PicInfo(dict):
             self.basedir = os.path.join(model.settings_dir, model.prjid)
         self.config = model.configId
         self.loaded = False
+        self.srchlist = []
 
     def load_files(self, suffix="", prjdir=None, prj=None, cfg=None):
         if prjdir is None:

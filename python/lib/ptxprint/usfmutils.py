@@ -78,6 +78,16 @@ class Sheets(dict):
     def copy(self):
         return Sheets(base=self)
 
+    def add_parparent(self, marker):
+        for k, v in self.items():
+            if 'p' in v['OccursUnder']:
+                v['OccursUnder'].add(marker)
+
+    def remove_parparent(self, marker):
+        for k, v in self.items():
+            v['OccursUnder'].discard(marker)
+
+
 class UsfmCollection:
     def __init__(self, bkmapper, basedir, sheets):
         self.bkmapper = bkmapper

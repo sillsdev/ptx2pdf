@@ -254,7 +254,8 @@ class GtkViewModel(ViewModel):
             digits.append([d, v])
         self.fcb_digits.set_active_id(_alldigits[0])
 
-        for d in ["dlg_multiBookSelector", "dlg_fontChooser", "dlg_password", "dlg_generate"]:
+        for d in ("dlg_multiBookSelector", "dlg_fontChooser", "dlg_password",
+                  "dlg_generate", "dlg_styModsdialog"):
             dialog = self.builder.get_object(d)
             dialog.add_buttons(
                 Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
@@ -287,7 +288,7 @@ class GtkViewModel(ViewModel):
         self.picListView = PicList(self.builder.get_object('tv_picListEdit'),
                                    self.builder.get_object('tv_picList'), self.builder, self)
         self.picChecksView = PicChecks(self)
-        self.styleEditorView = StyleEditor(self.builder)
+        self.styleEditorView = StyleEditor(self)
 
         self.logbuffer = StreamTextBuffer()
         self.builder.get_object("tv_logging").set_buffer(self.logbuffer)
@@ -2026,3 +2027,15 @@ class GtkViewModel(ViewModel):
         t = re.sub("\([cC]\)", "\u00a9 ", t)
         w.set_text(t)
         
+    def onStyleAdd(self, btn):
+        self.styleEditorView.mkrDialog(newkey=True)
+
+    def onStyleEdit(self, btn):
+        self.styleEditorView.mkrDialog()
+
+    def onStyleDel(self, btn):
+        self.styleEditorView.delKey()
+
+    def onStyleRefresh(self, btn):
+        self.styleEditorView.refreshKey()
+
