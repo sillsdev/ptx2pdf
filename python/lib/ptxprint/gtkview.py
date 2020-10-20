@@ -171,7 +171,8 @@ _object_classes = {
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
-    "stybutton":   ("btn_styAdd", "btn_styEdit", "btn_styDel", "btn_styReset", ),
+    "stybutton":   ("btn_resetCopyright", "btn_resetColophon", "btn_resetFNcallers", "btn_resetXRcallers", 
+                    "btn_styAdd", "btn_styEdit", "btn_styDel", "btn_styReset"),
 }
 
     # "Center": "c", 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -2321,6 +2321,7 @@ in the Windows system.</property>
                       <object class="GtkTextView" id="textv_styDesc">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="wrap_mode">word</property>
                         <property name="buffer">tb_styDesc</property>
                       </object>
                     </child>
@@ -3306,10 +3307,9 @@ Viewer tab.</property>
                             <child>
                               <object class="GtkCheckButton" id="c_includeImageCopyrights">
                                 <property name="label" translatable="yes">Automatically include copyright attribution for the illustrations used in this publication</property>
-                                <property name="visible">True</property>
-                                <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
+                                <property name="no_show_all">True</property>
                                 <property name="tooltip_text" translatable="yes">It is highly recommended to leave this setting ON. PTXprint will automatically generate the copyright statement(s)
 for each of the artists (with page numbers).</property>
                                 <property name="halign">start</property>
@@ -4418,6 +4418,11 @@ Text:</property>
                                       <object class="GtkTextView" id="textv_colophon">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="margin_left">4</property>
+                                        <property name="margin_right">5</property>
+                                        <property name="margin_top">4</property>
+                                        <property name="margin_bottom">4</property>
+                                        <property name="wrap_mode">word</property>
                                         <property name="buffer">tb_colophon</property>
                                       </object>
                                     </child>
@@ -4434,7 +4439,6 @@ Text:</property>
                             <child>
                               <object class="GtkButton" id="btn_resetColophon">
                                 <property name="label">↺</property>
-                                <property name="width_request">-1</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
@@ -4443,6 +4447,7 @@ default Colophon text markers which
 include the Copyright statement tag,
 the License statement tag, and the
 Illustration credits tag.</property>
+                                <property name="halign">end</property>
                                 <signal name="clicked" handler="onColophonResetClicked" swapped="no"/>
                               </object>
                               <packing>
@@ -10724,7 +10729,7 @@ This is quite likely required for RTL languages.</property>
                               </object>
                               <packing>
                                 <property name="left_attach">2</property>
-                                <property name="top_attach">3</property>
+                                <property name="top_attach">0</property>
                               </packing>
                             </child>
                             <child>
@@ -11407,8 +11412,7 @@ been enabled.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
-                                        <property name="tooltip_text" translatable="yes">Click to Add a
-new Style.</property>
+                                        <property name="tooltip_text" translatable="yes">Find a style within the appropriate section which is similar to the new style you wish to create. Then click this Add button to create a new style based on the currently selected style.</property>
                                         <signal name="clicked" handler="onStyleAdd" swapped="no"/>
                                       </object>
                                       <packing>
@@ -11422,8 +11426,9 @@ new Style.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
-                                        <property name="tooltip_text" translatable="yes">Click to delete 
-this style.</property>
+                                        <property name="tooltip_text" translatable="yes">Click to delete this style.
+Warning: There is no 
+confirmation or undo!</property>
                                         <signal name="clicked" handler="onStyleDel" swapped="no"/>
                                       </object>
                                       <packing>
@@ -11437,8 +11442,8 @@ this style.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
-                                        <property name="tooltip_text" translatable="yes">Click to reset to default 
-values for this style.</property>
+                                        <property name="tooltip_text" translatable="yes">Click to reset this style's
+settings to default values.</property>
                                         <signal name="clicked" handler="onStyleRefresh" swapped="no"/>
                                       </object>
                                       <packing>
