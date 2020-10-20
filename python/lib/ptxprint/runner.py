@@ -168,9 +168,9 @@ elif sys.platform == "win32":
             res = subprocess.call(*newa, creationflags=CREATE_NO_WINDOW, **kw)
             return res
 
-ptob = openkey("Paratext/8")
 pt_settings = "."
 try:
+    ptob = openkey("Paratext/8")
     ptv = queryvalue(ptob, "ParatextVersion")
 except FileNotFoundError:
     for v in ('9', '8'):
