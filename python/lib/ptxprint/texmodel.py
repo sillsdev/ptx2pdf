@@ -643,7 +643,7 @@ class TexModel:
                         if extra != "":
                             fname = re.sub(r"^([^.]*).(.*)$", r"\1"+extra+r".\2", fname)
                         if i == len(self.dict['project/bookids']) - 1 and self.dict['project/ifcolophon'] == "":
-                            res.append("\\lastbooktrue\n\\endbooknoejecttrue\n")
+                            res.append("\\lastptxfiletrue\n\\endbooknoejecttrue\n")
                         if self.asBool('document/ifomitsinglechnum') and \
                            self.asBool('document/showchapternums') and \
                            f in oneChbooks:
