@@ -85,10 +85,19 @@ it will not be recalculated.
 
 
 ### I shrunk my verse numbers and now they're just floating in the middle of the line
-In your configuration .tex file, you need to adjust this number.
+In your configuration .tex file, you need to adjust this measurement.
 ``` 
-\SuperscriptRaise{0.85ex} % note that this is in terms of the scaled-down superscript font size
+\def\SuperscriptRaise{0.85ex}% default 0.85ex, measured in terms of the scaled down font. (an x is 1ex high)
 ```
+For the change to be effective, it must occur before any stylesheet is read.
+There is also individual control within the stylesheet over the amount raised.
+E.g. the stylesheet could contain:
+```
+\Raise  1ex
+``` 
+Note that for ```\Raise``` to be effective, the
+```\Superscript``` needs to come before ```\Raise```, otherwise its value will
+be overwritten by the value of ```\SuperscriptRaise```
 
 ### What Style properties are there?
 
