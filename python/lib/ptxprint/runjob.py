@@ -169,7 +169,7 @@ class RunJob:
             self.maxRuns = 1
         else:
             self.maxRuns = 5
-        if r"\zImageCopyrights" in info.dict['project/colophontext']:
+        if r"\zImageCopyrights" in (info.dict['project/colophontext'] or ""):
             self.minRuns = max(self.minRuns, 1)
         self.changes = None
         self.checkForMissingDecorations(info)

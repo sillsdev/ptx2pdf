@@ -76,7 +76,7 @@ ModelMap = {
     "project/canonicalise":     ("c_canonicalise", None),
     "project/license":          ("ecb_licenseText", None),
     "project/copyright":        ("t_copyrightStatement", None),
-    "project/colophontext":     ("tb_colophon", None),
+    "project/colophontext":     ("tb_colophon", lambda w,v: v or ""),
     "project/ifcolophon":       ("c_colophon", lambda w,v: "" if v else "%"),
     "project/inclimagecopyright": ("c_includeImageCopyrights", None),
 
