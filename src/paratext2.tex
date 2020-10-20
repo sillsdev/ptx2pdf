@@ -1178,6 +1178,7 @@
 }
 %-c_twocolpageout
 
+\newif\iflastbook \lastbookfalse
 %+c_singlecolumn
 % to switch back to single column, we reset the page size parameters
 \def\singlecolumn{%
@@ -1202,7 +1203,7 @@
     \global\count\bottomins=\count255
     \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
     \ifdim\ht\partial>\baselineskip \vbox{\unvbox\partial}
-      \ifendbooknoeject\ifx\p@gefirstmark\t@tle \else\vskip\baselineskip\hskip-\columnshift\hrule\vskip2\baselineskip\fi\fi
+      \ifendbooknoeject\ifx\p@gefirstmark\t@tle \else\vskip\baselineskip\iflastbook\else\hskip-\columnshift\hrule\vskip2\baselineskip\fi\fi\fi
     \fi
   \fi}%
 %-c_singlecolumn
