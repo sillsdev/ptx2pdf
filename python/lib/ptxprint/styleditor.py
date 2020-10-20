@@ -409,8 +409,10 @@ class StyleEditor:
                 self.model.set(v, " ".join(sorted(data.get(k, {}))))
             else:
                 self.model.set(v, data.get(k, ''))
-        if newkey:
-            self.model.set(dialogKeys['Marker'], '')
+        self.model.set(dialogKeys['Marker'], '' if newkey else self.marker)
+        wid = self.builder.get_object(dialogKeys['Marker'])
+        if wid is not None:
+            wid.set_sensitive(newkey)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             key = self.model.get(dialogKeys['Marker'])
@@ -448,9 +450,10 @@ class StyleEditor:
                     data[k] = val
                 elif val:
                     data[k] = CaselessStr(val)
-            if data['styletype'] == 'Character':
+            if data['styletype'] == 'Character' or data['styletype'] == 'Note':
                 data['EndMarker'] = key + "*"
-                data['OccursUnder'].add("NEST")
+                if data['styletype'] == 'Character':
+                    data['OccursUnder'].add("NEST")
             #self.marker = key
             self.treeview.get_selection().select_iter(selecti)
             #self.editMarker()

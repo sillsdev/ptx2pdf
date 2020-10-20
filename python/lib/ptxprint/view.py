@@ -862,7 +862,8 @@ class ViewModel:
         sfiles = {'c_useCustomSty': ("custom.sty", False),
                   'c_useModsSty': ("ptxprint-mods.sty", True),
                   'c_useModsTex': ("ptxprint-mods.tex", True),
-                  'c_usePrintDraftChanges': ("PrintDraftChanges.txt", False)}
+                  'c_usePrintDraftChanges': ("PrintDraftChanges.txt", False),
+                  None: ("picChecks.txt", False)}
         res = {}
         cfgchanges = {}
         pictures = set()
@@ -904,6 +905,10 @@ class ViewModel:
             for pic in os.listdir(piclstpath):
                 if pic.endswith(".piclist") and pic in picbks:
                     res[os.path.join(piclstpath, pic)] = cfpath+"PicLists/"+pic
+        for jobpiclistf in ("{}-{}.piclist".format(prjid, cfgid), "ptxprint.sty", "NestedStyles.sty", "picChecks.txt"):
+            jobpiclist = os.path.join(basecfpath, jobpiclistf)
+            if os.path.exists(jobpiclist):
+                res[jobpiclist] = cfpath+jobpiclistf
 
         # fonts
         for k, v in TexModel._fonts.items():

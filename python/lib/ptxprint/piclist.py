@@ -27,9 +27,9 @@ _form_structure = {
     'mirror':   'fcb_plMirror',
     'hpos':     'fcb_plHoriz',
     'nlines':   's_plLines',
-    'medprint': 'c_plMediaP',
-    'medapp':   'c_plMediaA',
-    'medweb':   'c_plMediaW'
+    'medP':     'c_plMediaP',
+    'medA':     'c_plMediaA',
+    'medW':     'c_plMediaW'
 }
 _comblist = ['pgpos', 'hpos', 'nlines']
 _defaults = {
@@ -204,6 +204,7 @@ class PicList:
                 val = row[j]
             w = self.builder.get_object(v)
             setWidgetVal(v, w, val)
+        self.mask_media(row)
         self.parent.unpause_logging()
 
     def select_row(self, i):
@@ -211,6 +212,18 @@ class PicList:
             i = len(self.model) - 1
         treeiter = self.model.get_iter_from_string(str(i))
         self.selection.select_iter(treeiter)
+
+    def mask_media(self, row):
+        src = row[_pickeys['src']][:2]
+        inf = _picLimitDefault.get(src.lower(), ("paw", "paw", "Default"))
+        val = row[_pickeys['media']]
+        for c in 'paw':
+            w = _form_structure["med"+c.upper()]
+            wid = self.builder.get(w)
+            if wid is not None:
+                wid.set_sensitive(c in info[0])
+            if val is None or val == "":
+                wid.set_active(c in info[1])
 
     def get_pgpos(self):
         res = "".join(self.get(k, default="") for k in _comblist[:-1]).replace("-", "")
@@ -230,6 +243,10 @@ class PicList:
             key = "pgpos"
         elif key.startswith("med"):
             val = "".join(v[-1].lower() for k, v in _form_structure.items() if k.startswith("med") and self.get(v))
+            src = row[_pickeys['src']][:2]
+            inf = _picLimitDefault.get(src.lower(), ("paw", "paw", "Default"))
+            if sorted(val) == sorted(inf[1]):
+                val = ""
             key = "media"
         else:
             val = self.get(key)
@@ -254,6 +271,7 @@ class PicList:
                 else:
                     pic.clear()
                     picc.clear()
+                self.mask_media()
                 if val != oldval:
                     row[_piclistfields.index('cleardest')] = True
             elif key == "scale" and val != oldval:
