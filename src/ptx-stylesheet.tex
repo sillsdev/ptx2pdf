@@ -645,8 +645,6 @@
  \catcode`\%=14 % The return of commentary
  \deactiv@tecustomch@rs
  \catcode13=5
- \iflastptxfile\closepiclist\fi
- \closeadjlist
  \catcode`\/=12
  \catcode`\#=6 \catcode`\%=14 % restore TeX meanings for those we might use
  \catcode`\{=1 \catcode`\}=2
@@ -700,6 +698,8 @@
  \endt@ble
  \ifdiglot\ifdiglotL\norighttext\fi\enddigl@t\fi
  \ifx\b@ok\relax\else\csname bookend-\id@@@\endcsname\relax\csname bookend-all\endcsname\fi
+ \iflastptxfile\closepiclist\fi
+ \closeadjlist
  \unprepusfm
  \singlecolumn\pagebreak
  %\ifendbooknoeject\else\global\output={\global\setbox255=\box\voidb@x}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi

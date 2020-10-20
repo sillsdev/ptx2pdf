@@ -303,7 +303,7 @@ class Usfm:
             res = []
             for (islet, c) in groupby(e, key=lambda x:get_ucd(ord(x), "gc") in takslc_cats):
                 chars = "".join(c)
-                print("{} = {}".format(chars, islet))
+                # print("{} = {}".format(chars, islet))
                 if not len(chars):
                     continue
                 if islet:
@@ -312,8 +312,8 @@ class Usfm:
                 else:
                     res.append(chars)
                 lastspace = get_ucd(ord(chars[-1]), "gc") in space_cats
-            if done:
-                print("{} -> {}".format(e, "".join(res)))
+            # if done:
+                # print("{} -> {}".format(e, "".join(res)))
             return sfm.Text("".join(res), e.pos, e.parent) if done else e
         self._proctext(fn, doc=doc)
 

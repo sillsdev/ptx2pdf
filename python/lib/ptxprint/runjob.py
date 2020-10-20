@@ -139,6 +139,7 @@ class RunJob:
         self.tempFiles = []
         self.tmpdir = "."
         self.maxRuns = 1
+        self.minRuns = 0
         self.changes = None
         self.args = args
         self.res = 0
@@ -168,6 +169,8 @@ class RunJob:
             self.maxRuns = 1
         else:
             self.maxRuns = 5
+        if r"\zImageCopyrights" in info.dict['project/colophontext']:
+            self.minRuns = max(self.minRuns, 1)
         self.changes = None
         self.checkForMissingDecorations(info)
         info["document/piclistfile"] = ""
@@ -430,8 +433,8 @@ class RunJob:
         return self.res
 
     def run_xetex(self, outfname, info, logbuffer):
-        numruns = self.maxRuns
-        while numruns > 0:
+        numruns = 0
+        while numruns < self.maxRuns:
             self.printer.incrementProgress()
             if info["document/toc"] != "%":
                 tocdata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".toc")))
@@ -449,7 +452,7 @@ class RunJob:
             logfname = outfname.replace(".tex", ".log")
             (self.loglines, rerun) = self.parselog(os.path.join(self.tmpdir, logfname), rerunp=True, lines=300)
             info.printer.editFile_delayed(logfname, "wrk", "scroll_XeTeXlog", False)
-            if self.res:
+            if self.res and numRuns >= self.minRuns:
                 break
             elif info["document/toc"] != "%" and not rerun:
                 tocndata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".toc")))
@@ -462,7 +465,7 @@ class RunJob:
                 print(_("Rerunning because inline chapter numbers moved"))
             else:
                 break
-            numruns -= 1
+            numruns += 1
         if not self.args.testing and not self.res:
             self.printer.incrementProgress()
             cmd = ["xdvipdfmx", "-E"]
