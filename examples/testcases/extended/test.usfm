@@ -48,16 +48,21 @@ At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praese
 \p Et harum quidem rerum facilis est et expedita distinctio.
 \p
 \v 5  Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.
+\esb\cat cut\cat*
+\s1 Testing 4
+\p
+This esb should be in a cut-out.
+\esbe
 \p Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.
 \v 6 Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
 
 \esb \cat foo\cat*
-\s3 Testing 4
+\s3 Testing 5
 \p This ought to be  on the 2nd page
 \p
 \esbe
 \esb \cat something\cat*
-\s1 Testing 5
+\s1 Testing 6
 \p This is a box of category "\showTheCategory", which is not defined.
 \esbe
 \p 

@@ -255,7 +255,9 @@ that the next line of text after the picture will be on the text grid.
 [=cfig_dofigure_5]::
 
 The rest of the routine is concerned with inline figures that do not go into an
-`insert`. First we work out how many lines big this figure is. Then if the
+`insert`. The actual insertion is now separated out into separate macros,
+so that the code be re-used by side-bars.
+First we work out how many lines big this figure is. Then if the
 picture is inline then allow a page break before it and if the picture is
 assumed to be narrower than the column width, rebox it to be a column's width,
 inserting appropriate shrink or stretch. The rest of the routine is handling
@@ -276,10 +278,10 @@ main text flow. It also allows a page break after the image.
 Next we count the number of paragraphs we want to skip before inserting this
 image and make a string of `D`s (delay) of that many and store that for the
 post paragraph figure handler to make use of.
-
+ 
 [=cfig_dofigure_6]::
 
-Page and full pictures are treated the same except that they are given a
+Page and full pictures are treated almost the same except that they are given a
 different magic penalty number after each one. Again this is stored ready for
 shipping out at the right time with the appropriate shipout routine.
 

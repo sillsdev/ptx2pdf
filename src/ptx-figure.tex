@@ -246,7 +246,7 @@
  \ifIncludeFigures
   \trace{g}{In d@figure #1}\usfmthreefalse
   \rotimagefalse
-  \edef\curc@lsz{\the\hsize}% Current col size
+  \edef\hs@ze{\the\hsize}% Current col size
   \gdef\p@rams{#1|}% ensure there is a trailing | separator
   % place parts of text into \param-1, \param-2, ...
   \global\p@ramnumber=1
@@ -454,115 +454,140 @@
     % Calculate lines used for the picture
     \dimen0=\ht0 \advance\dimen0 by \dp0 \advance\dimen0 by 0.5\baselineskip % Rounding correction
     \divide\dimen0 by \baselineskip \count255=\dimen0
-    \trace{g}{Inline picture takes \the\count255 lines}%
+    \trace{g}{Inline \w@tsit takes \the\count255 lines}%
     %
     \ifx\picl@c\loc@Inl
-      \trace{g}{Picture is inline \ifhmode in HMODE\fi}%
-      \penalty10 % Allow the page to break
-      \ifpicNarrow
-        \ifx\pic@lign\@lignLeft
-          \setbox0\vbox{\hbox to \colwidth{\box0\hss}}\else\setbox0\vbox{\hbox to \colwidth{\hss\box0}}%
-        \fi
-      \fi
-      %\splittopskip\baselineskip
-      \vadjust pre {
-        \gridp@cfalse% Not true! It's not floating. 
-        \gridb@x0 \dimen9=\lastdepth \kern\dimen9
-        \trace{g}{gridbox dp=\the\dimen9}%There's a skip at the bottom of the box, but somehow the depth is kept. Need to kill it.
-      \penalty10}%
+      \d@figureInl0
     \fi
     %
     \ifx\picl@c\loc@Par
-      \trace{g}{Picture is post-paragraph}%
-      \let\picb@@x=\picb@x
-      \ifdiglot\ifdiglotL\else\let\picb@@x=\picb@xR\fi\fi
-      \global\setbox\picb@@x\box0
-      \ifpicNarrow
-        \ifx\pic@lign\@lignLeft \global\setbox\picb@@x\vbox{\hbox to \colwidth{\box\picb@@x\hss}}\trace{g}{Pic aligned left}%
-        \else \global\setbox\picb@@x\vbox{\hbox to \colwidth{\hss\box\picb@@x}}\trace{g}{Pic aligned right}%
-        \fi
-      \fi
-      \edef\eotpn@me{at@ndofthispar\ifdiglot\ifdiglotL L\else R\fi\fi}% Which endofthispar macro?\emspace
-      \trace{g}{\eotpn@me\space defined}%
-      \x@\gdef\csname \eotpn@me\endcsname{
-        \relax \let\picb@@x=\picb@x \ifdiglot\ifdiglotL\else\let\picb@@x=\picb@xR\fi\fi
-        \penalty10 % Allow the page to break
-        %\gridp@cfalse% Not true. Not a floating image.
-           \gridb@x\picb@@x
-           %\vskip-\prevdepth
-        \penalty10
-       }%
-       \def\temp{}%
-       \ifnum\c@tskip>1 \count255=\c@tskip
-         \loop\ifnum\count255>1
-           \edef\temp{D|\temp}\advance\count255 by -1
-         \repeat
-       \fi
-       \trace{g}{Delay for \eotpn@me set to \temp}%
-       \x@\xdef\csname \eotpn@me Delay\endcsname{\temp}%
-       \relax\relax
+      \d@figurePar0
     \fi
     %
-%-cfig_dofigure_6
-%+cfig_dofigure_7
     \ifx\picl@c\loc@Page
-      \trace{g}{Picture is page, \the\ht0, \the\wd0}%
-      \ifx\picV@lign\@lignTop \setbox0\vtop to \textheight{\box0\vskip 0pt plus 1fill}\fi%CHECKME
-      \ifx\picV@lign\@lignBot \setbox0\vbox to \textheight{\vskip 0pt plus 1fill \box0}\fi%CHECKME
-      \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic\box0\penalty11}% magic number
+      \d@figurePage0
     \fi
     \ifx\picl@c\loc@Full
-      \trace{g}{Picture is full-page, \the\ht0, \the\wd0,}%
-      %Page is not positioned absolutely. Calculate offset
-      \dimen0=\bottomm@rgin\advance\dimen0 by -\topm@rgin
-      \divide\dimen0 by 2
-      \advance\dimen0 by \FullPageFudgeFactor % apply user-tweakable Fudge factor (-2pt)
-      \ifx\picV@lign\@lignTop \setbox0\vtop to \PaperHeight{\kern\dimen0\box0\vss}\fi%CHECKME
-      \ifx\picV@lign\@lignBot \setbox0\vbox to \PaperHeight{\vss\box0}\fi%CHECKME
-      \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic\box0\penalty9}% magic number
+      \d@figureFull0
     \fi
     \ifx\picl@c\loc@Cut
-        \ifhmode
-           \ifx\prev@rsemode\empty
-             \trace{g}{Cutout in horizontal mode. forcing \m@rker}%
-             \csname\m@rker\endcsname
-           \else
-             \trace{g}{Cutout now in horizontal mode, but before this verse was started
-                       it was in vertical mode. Using \prev@rsemode and negative lineskip}%
-             \csname\prev@rsemode\endcsname
-             \vskip -\baselineskip
-           \fi
-        \fi 
-      \trace{g}{Picture is cutout}%
-      \dimen1=\baselineskip \advance\count255 by 1 \multiply\dimen1 by \count255
-      \advance\dimen1 by \c@tskip\baselineskip
-      \dimen2=\wd0 \advance\dimen2 by 10pt
-      \dimen3=\curc@lsz \advance\dimen3 by -\dimen2
-      \ifdim\dimen3<5em\message{*** Picture specification of \size@ption \sizem@ltiple (at \ch@pter:\v@rse)
-                                leaves \the\dimen3 \space for text. That's probably not enough.}\fi
-      %Switch relative (inner/outer) to absolute (left/right) depending on page number for this image.
-      \ifx\l@cspec\@lignLeft
-        \setbox0\hbox to 0pt {\lower\dimen1\box0\hss}%
-        \ht0=0pt \dp0=0pt \vskip-\baselineskip  %Yuck
-        \box0 %FIXME? Box here Adds vertical space
-        \trace{g}{leftcutout \the\dimen2, \c@tskip, \the\count255}%
-        \leftcutout{\the\dimen2}{\c@tskip}{\the\count255}%
-      \else\ifx\l@cspec\@lignRight
-          \setbox0\hbox to \hsize{\hss\lower\dimen1\box0}%
-          \ht0=0pt \dp0=0pt \vskip-\baselineskip %Yuck
-          \box0% FIXME? Box here adds vertical space
-          \trace{g}{rightcutout \the\dimen2, \c@tskip, \the\count255}%\
-          %\edef\t@mpd{\the\dimen2}%
-          \rightcutout{\the\dimen2}{\c@tskip}{\the\count255}%\emspace
-        \else
-          \message{*** Unknown cutout position \l@cspec, picture misplaced}%
-          \box0
-        \fi
-        \unskip
-      \fi
+      \d@figureCut0
     \fi
+    %Sanity check. If we used \box0 then it'll be empty now.
+    \ifvoid0\else\message{Placement for \the\im@gecount could not be understood. Image Lost!}\fi
    \fi
  \fi% end \ifIncludeFigures
+}
+
+\def\d@figureInl#1{%
+  \trace{g}{\w@tsit is inline \ifhmode in HMODE\fi}%
+  \penalty10 % Allow the page to break
+  \ifpicNarrow
+    \ifx\pic@lign\@lignLeft
+      \setbox#1\vbox{\hbox to \colwidth{\box#1\hss}}\else\setbox#1\vbox{\hbox to \colwidth{\hss\box#1}}%
+    \fi
+  \fi
+  %\splittopskip\baselineskip
+  \def\picc@ntents{
+    \gridp@cfalse% Not true! It's not floating. 
+    \gridb@x#1 \dimen9=\lastdepth \kern\dimen9
+    \trace{g}{gridbox dp=\the\dimen9}%There's a skip at the bottom of the box, but somehow the depth is kept. Need to kill it.
+  \penalty10}%
+  \ifvmode \picc@ntents 
+  \else\vadjust pre{\picc@ntents}\fi
+}
+
+
+\def\d@figurePar#1{%
+  \trace{g}{\w@tsit is post-paragraph}%
+  \let\picb@@x=\picb@x
+  \ifdiglot\ifdiglotL\else\let\picb@@x=\picb@xR\fi\fi
+  \global\setbox\picb@@x\box#1
+  \ifpicNarrow
+    \ifx\pic@lign\@lignLeft \global\setbox\picb@@x\vbox{\hbox to \colwidth{\box\picb@@x\hss}}\trace{g}{Pic aligned left}%
+    \else \global\setbox\picb@@x\vbox{\hbox to \colwidth{\hss\box\picb@@x}}\trace{g}{Pic aligned right}%
+    \fi
+  \fi
+  \edef\eotpn@me{at@ndofthispar\ifdiglot\ifdiglotL L\else R\fi\fi}% Which endofthispar macro?\emspace
+  \trace{g}{\eotpn@me\space defined}%
+  \x@\gdef\csname \eotpn@me\endcsname{
+    \relax \let\picb@@x=\picb@x \ifdiglot\ifdiglotL\else\let\picb@@x=\picb@xR\fi\fi
+    \penalty10 % Allow the page to break
+    %\gridp@cfalse% Not true. Not a floating image.
+       \gridb@x\picb@@x
+       %\vskip-\prevdepth
+    \penalty10
+   }%
+   \def\temp{}%
+   \ifnum\c@tskip>1 \count255=\c@tskip
+     \loop\ifnum\count255>1
+       \edef\temp{D|\temp}\advance\count255 by -1
+     \repeat
+   \fi
+   \trace{g}{Delay for \eotpn@me set to \temp}%
+   \x@\xdef\csname \eotpn@me Delay\endcsname{\temp}%
+   \relax\relax
+}
+%-cfig_dofigure_6
+%+cfig_dofigure_7
+
+\def\d@figurePage#1{%
+  \trace{g}{\w@tsit is page, \the\ht#1, \the\wd#1}%
+  \ifx\picV@lign\@lignTop \setbox#1\vtop to \textheight{\box#1\vskip 0pt plus 1fill}\fi%CHECKME
+  \ifx\picV@lign\@lignBot \setbox#1\vbox to \textheight{\vskip 0pt plus 1fill \box#1}\fi%CHECKME
+  \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic\box#1\penalty11}% magic number
+}
+
+\def\d@figureFull#1{%
+  \trace{g}{\w@tsit is full-page, \the\ht#1, \the\wd#1,}%
+  %Page is not positioned absolutely. Calculate offset
+  \dimen0=\bottomm@rgin\advance\dimen0 by -\topm@rgin
+  \divide\dimen0 by 2
+  \advance\dimen0 by \FullPageFudgeFactor % apply user-tweakable Fudge factor (-2pt)
+  \ifx\picV@lign\@lignTop \setbox#1\vtop to \PaperHeight{\kern\dimen0\box#1\vss}\fi%CHECKME
+  \ifx\picV@lign\@lignBot \setbox#1\vbox to \PaperHeight{\vss\box#1}\fi%CHECKME
+  \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic\box#1\penalty9}% magic number
+}
+
+\def\d@figureCut#1{%
+  \trace{g}{\w@tsit is cutout}%
+  \ifhmode
+     \ifx\prev@rsemode\empty
+       \trace{g}{Cutout in horizontal mode. forcing \m@rker}%
+       \csname\m@rker\endcsname
+     \else
+       \trace{g}{Cutout now in horizontal mode, but before this verse was started
+		 it was in vertical mode. Using \prev@rsemode and negative lineskip}%
+       \csname\prev@rsemode\endcsname
+       \vskip -\baselineskip
+     \fi
+  \fi 
+  \dimen1=\baselineskip \advance\count255 by 1 \multiply\dimen1 by \count255
+  \advance\dimen1 by \c@tskip\baselineskip
+  \dimen2=\wd#1 \advance\dimen2 by 10pt
+  \dimen3=\hs@ze \advance\dimen3 by -\dimen2
+  \ifdim\dimen3<5em\message{*** \w@tsit specification of \size@ption \sizem@ltiple (at \ch@pter:\v@rse)
+			    leaves \the\dimen3 \space for text. That's probably not enough.}\fi
+  %Switch relative (inner/outer) to absolute (left/right) depending on page number for this image.
+  \ifx\l@cspec\@lignLeft
+    \setbox#1\hbox to 0pt {\lower\dimen1\box#1\hss}%
+    \ht#1=0pt \dp#1=0pt \vskip-\baselineskip  %Yuck
+    \box#1 %FIXME? Box here Adds vertical space
+    \trace{g}{leftcutout \the\dimen2, \c@tskip, \the\count255}%
+    \leftcutout{\the\dimen2}{\c@tskip}{\the\count255}%
+  \else\ifx\l@cspec\@lignRight
+      \setbox#1\hbox to \hsize{\hss\lower\dimen1\box#1}%
+      \ht#1=0pt \dp#1=0pt \vskip-\baselineskip %Yuck
+      \box#1% FIXME? Box here adds vertical space
+      \trace{g}{rightcutout \the\dimen2, \c@tskip, \the\count255}%\
+      %\edef\t@mpd{\the\dimen2}%
+      \rightcutout{\the\dimen2}{\c@tskip}{\the\count255}%\emspace
+    \else
+      \message{*** Unknown cutout position \l@cspec, picture misplaced}%
+      \box#1
+    \fi
+    \unskip
+  \fi
 }
 %-cfig_dofigure_7
 \newtoks\PicPath % directory containing picture files

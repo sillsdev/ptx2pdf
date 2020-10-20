@@ -175,8 +175,10 @@
      \fi
      \advance\dimen1 by -\dimen0
    \fi\fi
-   \ifx\b@drleft\tr@e \advance\dimen1 by -\b@drwidth\FontSizeUnit\fi
-   \ifx\b@drright\tr@e \advance\dimen1 by -\b@drwidth\FontSizeUnit\fi
+   \ifx\b@drleft\tr@e \advance\dimen1 by -\b@drwidth\FontSizeUnit
+     \advance\dimen1 by \fb@hpadding\fi
+   \ifx\b@drright\tr@e \advance\dimen1 by -\b@drwidth\FontSizeUnit
+     \advance\dimen1 by \fb@hpadding\fi
    \setsbp@ram{w@dth}{\the\dimen1}%
  \else
    \dimen1=\cp@ram
@@ -285,23 +287,38 @@
        % \vskip\baselineskip
         \feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}}%
     \fi
-    \tempfalse
+    \tempfalse\t@mpfalse
     \ifx\b@drleft\tr@e\temptrue\trace{eb}{Border: left}\fi
     \ifx\b@drright\tr@e\temptrue\trace{eb}{Border: right}\fi
-    \iftemp
-      \dimen0=\ht\extchunkb@x
-      \dimen1=\dp\extchunkb@x
-      \setbox\extchunkb@x\vbox{\hbox{\ifx\b@drleft\tr@e\trace{eb}{Drawing Border:left}\vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1 \fi\box\extchunkb@x\ifx\b@drright\tr@e \trace{eb}{Drawing Border: right}\vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1 \fi}}%
+    \ifx\b@drtop\tr@e\temptrue\t@mptrue\trace{eb}{Border: Top}\fi
+    \ifx\b@drbottom\tr@e\temptrue\t@mptrue\trace{eb}{Border: Bottom}\fi
+    \def\v@dj{0pt}%
+    \iftemp\def\v@dj{\fb@vpadding}\fi
+%
+    \iftemp % if ANY border, add padding and any vertical lines
+      \dimen0=\fb@vpadding
+      \dimen1=\dimen0
+      \advance\dimen0 by \ht\extchunkb@x
+      \advance\dimen1 by \dp\extchunkb@x
+      \setbox\extchunkb@x\vbox{%
+         \hbox{\ifx\b@drleft\tr@e\trace{eb}{Drawing Border:left}%
+	     \vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1
+	   \else
+	     \vrule width 0pt height \dimen0 depth \dimen1 %Strut to sort out vertical padding
+	   \fi
+	   \hskip \fb@hpadding
+	   \box\extchunkb@x
+	   \hskip \fb@hpadding
+	   \ifx\b@drright\tr@e \trace{eb}{Drawing Border: right}%
+	     \vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1 
+	   \fi}}%
     \fi
-    \tempfalse
     \dimen4=-\b@drwidth\FontSizeUnit
     \ifdim\b@drwidth\FontSizeUnit>0.2\baselineskip
       \advance\dimen4 by \baselineskip
     \fi
     \edef\b@xadj{\the\dimen4}
-    \ifx\b@drtop\tr@e\temptrue\trace{eb}{Border: Top}\fi
-    \ifx\b@drbottom\tr@e\temptrue\trace{eb}{Border: Bottom}\fi
-    \iftemp
+    \ift@mp
       \edef\b@xw@dth{\the\wd\extchunkb@x}%
       \dimen0=\ht\extchunkb@x
       \advance\dimen0 by \dp\extchunkb@x
@@ -318,14 +335,38 @@
     \ifpicUsesIns
       \trace{e}{using ins-\loc@ption}%
       \insert\@xtins{%\vskip\baselineskip
+	  \vskip-\v@dj
           \penalty10000\unvbox\extchunkb@x}%
     \else
-      \trace{e}{\loc@ption\space is inline \l@stdepth}%
-      \vskip -\l@stdepth
-      \ifx\h@scol\tr@e
-        \ifdim\l@stdepth>0.2pt\vskip\baselineskip\fi%
+      \ifx\picl@c\empty
+        \message{Could not interpret position \loc@ption for \c@tegory:\sb@rmarker}%
+      \else
+	  \dimen0=\ht\extchunkb@x \advance\dimen0 by \dp\extchunkb@x \advance\dimen0 by 0.5\baselineskip % Rounding correction
+	  \divide\dimen0 by \baselineskip \count255=\dimen0
+	  \trace{g}{Inline \w@tsit takes \the\count255 lines}%
+	  \ifx\picl@c\loc@Inl
+	  \vskip -\l@stdepth
+	  \ifx\h@scol\tr@e
+	    \ifdim\l@stdepth>0.2pt\vskip\baselineskip\fi%
+	  \fi
+	  \d@figureInl\extchunkb@x
+	\fi
+	\ifx\picl@c\loc@Par
+	  \d@figurePar\extchunkb@x
+	\fi
+        \ifx\picl@c\loc@Page
+	  \d@figurePage\extchunkb@x
+	\fi
+        \ifx\picl@c\loc@Full
+          \d@figureFull\extchunkb@x
+	\fi
+        \ifx\picl@c\loc@Cut
+          \d@figureCut\extchunkb@x
+	\fi
+        \ifvoid\extchunkb@x\else
+          \message{Could not understand / interpret position \loc@ption for \c@tegory:\sb@rmarker}%
+	\fi
       \fi
-      {\gridp@cfalse\gridb@x\extchunkb@x}%
     \fi
   \ifdim\ht\extb@x>0pt
     \def\fb@vpadding{0pt}
