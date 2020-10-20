@@ -452,7 +452,7 @@ class RunJob:
             logfname = outfname.replace(".tex", ".log")
             (self.loglines, rerun) = self.parselog(os.path.join(self.tmpdir, logfname), rerunp=True, lines=300)
             info.printer.editFile_delayed(logfname, "wrk", "scroll_XeTeXlog", False)
-            if self.res and numRuns >= self.minRuns:
+            if self.res and numruns >= self.minRuns:
                 break
             elif info["document/toc"] != "%" and not rerun:
                 tocndata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".toc")))

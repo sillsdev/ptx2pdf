@@ -442,15 +442,16 @@ class ThumbTabs(Snippet):
 
 class Colophon(Snippet):
     processTex = True
-    texCode = r"""
-\def\zCopyright{{{project/copyright}}}
-\def\zLicense{{{project/license}}}
-\def\zColophon{{
-\prepusfm
-\esb\cat colophon\cat*
+    texCode = """
+\\def\\zCopyright{{{project/copyright}}}
+\\def\\zLicense{{{project/license}}}
+\\catcode"FDEE=1 \\catcode"FDEF=2
+\\prepusfm
+\\def\\zColophon\uFDEE
+\\esb\\cat colophon\\cat*
 {project/colophontext}
-\esbe
-\unprepusfm}}
+\\esbe \uFDEF
+\\unprepusfm
 
 """
     styleInfo=r"""
