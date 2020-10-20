@@ -4,6 +4,7 @@ from ptxprint.view import refKey
 from ptxprint.utils import refKey, universalopen
 from ptxprint.texmodel import TexModel
 from gi.repository import Gtk, GdkPixbuf
+from threading import Thread
 import configparser
 import os, re, random, sys
 
