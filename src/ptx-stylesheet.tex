@@ -619,7 +619,7 @@
 \newif\iftildenbsp
 \tildenbsptrue
 
-\def\pr@pusfm{
+\def\prepusfm{
  %\catcode`\$=12
  \catcode`\^=12 % make these printable
  \catcode`\&=12
@@ -640,7 +640,7 @@
  \m@kedigitsletters
 }
 
-\def\unpr@pusfm{
+\def\unprepusfm{
  \m@kedigitsother
  \catcode`\%=14 % The return of commentary
  \deactiv@tecustomch@rs
@@ -688,7 +688,7 @@
  \openadjlist "\the\AdjListPath#1.adj"
  \openpiclist "\the\PicListPath#1.piclist"
  \openpicpages "\jobname.picpages"
- \pr@pusfm
+ \prepusfm
  \openin\t@stread="\the\PtxFilePath#1"
    \ifeof\t@stread \def\n@xt{\MSG{USFM file "\the\PtxFilePath#1" not found -- ignored}}
    \else \closein\t@stread \def\n@xt{\input "\the\PtxFilePath#1"\relax}\fi
@@ -700,7 +700,7 @@
  \endt@ble
  \ifdiglot\ifdiglotL\norighttext\fi\enddigl@t\fi
  \ifx\b@ok\relax\else\csname bookend-\id@@@\endcsname\relax\csname bookend-all\endcsname\fi
- \unpr@pusfm
+ \unprepusfm
  \singlecolumn\pagebreak
  %\ifendbooknoeject\else\global\output={\global\setbox255=\box\voidb@x}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
  \ifendbooknoeject\else\global\output={\shipout\vbox{\box\partial\box255}}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi

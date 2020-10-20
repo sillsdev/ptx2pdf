@@ -1999,6 +1999,13 @@ class GtkViewModel(ViewModel):
     def onColophonClicked(self, btn):
         self.onSimpleClicked(btn)
 
+    def onColophonResetClicked(self, btn):
+        default_colophon = _(r"""\pc \zCopyright
+\pc \zLicense
+\pc \zImageCopyrights
+""")
+        self.set("tb_colophon", default_colophon)
+
     def onResetCopyrightClicked(self, btn):
         self.builder.get_object("t_copyrightStatement").set_text(self._getPtSettings().get('Copyright', ""))
 

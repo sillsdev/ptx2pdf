@@ -16,7 +16,7 @@ from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
 
 # After universalopen to resolve circular import. Kludge
-from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ImgCredits, ThumbTabs
+from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ImgCredits, ThumbTabs, Colophon
 
 def loosint(x):
     try:
@@ -74,8 +74,10 @@ ModelMap = {
     "project/ifstarthalfpage":  ("c_startOnHalfPage", lambda w,v :"true" if v else "false"),
     "project/randompicposn":    ("c_randomPicPosn", None),
     "project/canonicalise":     ("c_canonicalise", None),
+    "project/license":          ("ecb_licenseText", None),
     "project/copyright":        ("t_copyrightStatement", None),
     "project/colophontext":     ("tb_colophon", None),
+    "project/ifcolophon":       ("c_colophon", lambda w,v: "" if v else "%"),
     "project/inclimagecopyright": ("c_includeImageCopyrights", None),
 
     "paper/height":             ("ecb_pagesize", lambda w,v: re.sub(r"^.*?,\s*(.+?)\s*(?:\(.*|$)", r"\1", v) or "210mm"),
@@ -358,7 +360,8 @@ class TexModel:
         "snippets/diglot":                ("c_diglot", Diglot),
         "snippets/fancyborders":          ("c_borders", FancyBorders),
         "snippets/imgcredits":            ("c_includeillustrations", ImgCredits),
-        "snippets/thumbtabs":             ("c_thumbtabs", ThumbTabs)
+        "snippets/thumbtabs":             ("c_thumbtabs", ThumbTabs),
+        "snippets/colophon":              ("c_colophon", Colophon)
     }
     _settingmappings = {
         "notes/xrcallers": "crossrefs",

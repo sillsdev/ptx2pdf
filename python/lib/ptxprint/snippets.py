@@ -42,6 +42,7 @@ class PDFx1aOutput(Snippet):
 class FancyIntro(Snippet):
     texCode = r"""
 \sethook{before}{ior}{\leaders\hbox to 0.8em{\hss.\hss}\hfill}
+
 """
 
 class Diglot(Snippet):
@@ -260,6 +261,7 @@ class FancyBorders(Snippet):
 \sethook{end}{iref}{\catcode`\:=\active}
 \sethook{start}{gref}{\catcode`\:=12}
 \sethook{end}{gref}{\catcode`\:=\active}
+
 """
 
 artstr = {
@@ -284,6 +286,7 @@ class ImgCredits(Snippet):
 \Marker zImageCopyrights
 \StyleType Paragraph
 \TextProperties paragraph publishable
+
 """
 
     def generateTex(self, texmodel):
@@ -359,7 +362,7 @@ class ImgCredits(Snippet):
                     crdts += ["\\{} All other illustrations {}{}\n".format(mkr, exceptpgs, cpystr)]
             
         crdts += ["}"]
-        return "\n".join(crdts)
+        return "\n".join(crdts)+"\n"
 
 def parsecol(s):
     vals = s[s.find("(")+1:-1].split(",")
@@ -425,7 +428,7 @@ class ThumbTabs(Snippet):
             texlines.append("\\TabTopToEdgeEven{}".format("true" if 0 < rottype < 3 else "false"))
         texlines.append("\\tab{}={:.2f}mm".format("width" if rotate else "height", height))
         texlines.append("\\tab{}={:.2f}mm".format("height" if rotate else "width", width))
-        return "\n".join(texlines)
+        return "\n".join(texlines)+"\n"
 
     def styleInfo(self, model):
         fcol = "x"+"".join("{:02X}".format(int(float(c.strip())*255)) for c in parsecol(model["thumbtabs/foreground"]).split())
@@ -435,5 +438,25 @@ class ThumbTabs(Snippet):
         res.append(f"\\FontSize {fsize}")
         res.append("\\Italic " + ("-" if not model["thumbtabs/italic"] else ""))
         res.append("\\Bold " + ("-" if not model["thumbtabs/bold"] else ""))
-        return "\n".join(res)
+        return "\n".join(res)+"\n"
 
+class Colophon(Snippet):
+    processTex = True
+    texCode = r"""
+\def\zCopyright{{{project/copyright}}}
+\def\zLicense{{{project/license}}}
+\def\zColophon{{
+\prepusfm
+\esb\cat colophon\cat*
+{project/colophontext}
+\esbe
+\unprepusfm}}
+
+"""
+    styleInfo=r"""
+\Category colophon
+\Marker esb
+\Position b
+\EndCategory
+
+"""
