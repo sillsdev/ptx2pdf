@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -4415,12 +4415,13 @@ Text:</property>
                             </child>
                             <child>
                               <object class="GtkScrolledWindow" id="scroll_colophon">
-                                <property name="height_request">120</property>
+                                <property name="height_request">100</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="hexpand">True</property>
                                 <property name="vexpand">True</property>
                                 <property name="shadow_type">etched-in</property>
+                                <property name="overlay_scrolling">False</property>
                                 <child>
                                   <object class="GtkViewport">
                                     <property name="visible">True</property>
@@ -12798,7 +12799,7 @@ Active Books</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="orientation">vertical</property>
-                                    <property name="position">240</property>
+                                    <property name="position">190</property>
                                     <property name="position_set">True</property>
                                     <property name="wide_handle">True</property>
                                     <child>
@@ -12997,6 +12998,7 @@ Active Books</property>
                                             <property name="hscrollbar_policy">never</property>
                                             <property name="shadow_type">in</property>
                                             <property name="min_content_height">128</property>
+                                            <property name="overlay_scrolling">False</property>
                                             <property name="max_content_height">300</property>
                                             <child>
                                               <object class="GtkViewport">
@@ -13019,10 +13021,10 @@ Active Books</property>
                                                         <property name="valign">start</property>
                                                         <property name="margin_left">6</property>
                                                         <property name="margin_right">6</property>
-                                                        <property name="margin_top">6</property>
-                                                        <property name="margin_bottom">6</property>
+                                                        <property name="margin_top">3</property>
+                                                        <property name="margin_bottom">3</property>
                                                         <property name="row_spacing">6</property>
-                                                        <property name="column_spacing">4</property>
+                                                        <property name="column_spacing">3</property>
                                                         <child>
                                                           <object class="GtkLabel">
                                                             <property name="visible">True</property>
@@ -13040,7 +13042,7 @@ Active Books</property>
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="halign">start</property>
-                                                            <property name="width_chars">15</property>
+                                                            <property name="width_chars">12</property>
                                                           </object>
                                                           <packing>
                                                             <property name="left_attach">1</property>
@@ -13131,7 +13133,7 @@ Ref:</property>
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="hexpand">True</property>
-                                                            <property name="width_chars">20</property>
+                                                            <property name="width_chars">16</property>
                                                           </object>
                                                           <packing>
                                                             <property name="left_attach">6</property>
@@ -13404,7 +13406,7 @@ Lines:</property>
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
                                                             <property name="halign">end</property>
-                                                            <property name="spacing">3</property>
+                                                            <property name="spacing">1</property>
                                                             <child>
                                                             <object class="GtkLabel" id="l_plMedia">
                                                             <property name="visible">True</property>
@@ -13576,7 +13578,7 @@ of the images.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="orientation">vertical</property>
-                                    <property name="position">130</property>
+                                    <property name="position">120</property>
                                     <property name="position_set">True</property>
                                     <property name="wide_handle">True</property>
                                     <child>
