@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 
+<!-- Generated with glade 3.22.2 
 
 The MIT License (MIT)
 
@@ -11311,6 +11311,7 @@ been enabled.</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="shadow_type">in</property>
+                        <property name="overlay_scrolling">False</property>
                         <child>
                           <object class="GtkTreeView" id="tv_Styles">
                             <property name="width_request">380</property>
@@ -12585,6 +12586,7 @@ Active Books</property>
                                         <property name="margin_bottom">6</property>
                                         <property name="vexpand">True</property>
                                         <property name="shadow_type">in</property>
+                                        <property name="overlay_scrolling">False</property>
                                         <property name="propagate_natural_height">True</property>
                                         <child>
                                           <object class="GtkTreeView" id="tv_picList">
@@ -12813,6 +12815,7 @@ Active Books</property>
                                             <property name="hexpand">True</property>
                                             <property name="vexpand">True</property>
                                             <property name="shadow_type">in</property>
+                                            <property name="overlay_scrolling">False</property>
                                             <property name="propagate_natural_height">True</property>
                                             <child>
                                               <object class="GtkTreeView" id="tv_picListEdit">
@@ -13590,6 +13593,7 @@ of the images.</property>
                                             <property name="hexpand">True</property>
                                             <property name="vexpand">True</property>
                                             <property name="shadow_type">in</property>
+                                            <property name="overlay_scrolling">False</property>
                                             <property name="propagate_natural_height">True</property>
                                             <child>
                                               <object class="GtkTreeView" id="tv_picListEdit1">
@@ -14480,6 +14484,7 @@ in this publication, and also in other contexts.</property>
                                     <property name="hexpand">True</property>
                                     <property name="vexpand">True</property>
                                     <property name="shadow_type">in</property>
+                                    <property name="overlay_scrolling">False</property>
                                     <child>
                                       <placeholder/>
                                     </child>

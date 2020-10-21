@@ -107,7 +107,7 @@ class PicList:
         self.model.clear()
         if picinfo is not None:
             for k, v in sorted(picinfo.items(), key=lambda x:(refKey(x[0]), x[1])):
-                if bks is not None and k[:3] not in bks:
+                if bks is not None and len(bks) and k[:3] not in bks:
                     continue
                 row = [k]
                 for e in _piclistfields[1:]:
@@ -259,6 +259,7 @@ class PicList:
                 if sorted(val) == sorted(inf[1]):
                     val = ""
             key = "media"
+            print(key, val)
         else:
             val = self.get(key)
         if row is not None:
@@ -408,6 +409,10 @@ class PicInfo(dict):
         self.srchlist = []
 
     def load_files(self, suffix="", prjdir=None, prj=None, cfg=None):
+        if self.inthread:
+            return False
+        else:
+            self.thread = None
         if prjdir is None:
             prjdir = self.basedir
         if prj is None:
@@ -415,12 +420,12 @@ class PicInfo(dict):
         if cfg is None:
             cfg = self.config
         if prjdir is None or prj is None or cfg is None:
-            return
+            return False
         preferred = os.path.join(prjdir, "shared/ptxprint/{1}/{0}-{1}.piclist".format(prj, cfg))
         if os.path.exists(preferred):
             self.read_piclist(preferred, suffix=suffix)
             self.loaded = True
-            return
+            return True
         places = ["shared/ptxprint/{}.piclist".format(prj)]
         plistsdir = os.path.join(prjdir, "shared", "ptxprint", cfg, "PicLists")
         if os.path.exists(plistsdir):
@@ -435,15 +440,18 @@ class PicInfo(dict):
         self.loaded = True
         if not havepiclists:
             self.inthread = True
-            self.thread = Thread(target=self.threadUsfms, args=(suffix,))
+            self.threadUsfms(suffix)
+            #self.thread = Thread(target=self.threadUsfms, args=(suffix,))
+            #return False
         else:
             self.model.savePics()
+        return True
 
     def threadUsfms(self, suffix):
         bks = self.model.getAllBooks()
-        for bk, bkp in bks.get_items():
+        for bk, bkp in bks.items():
             if os.path.exists(bkp):
-                self.read_sfm(bkp, suffix=suffix)
+                self.read_sfm(bk, bkp, suffix=suffix)
         self.model.savePics()
         self.inthread = False
 

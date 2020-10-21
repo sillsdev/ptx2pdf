@@ -202,11 +202,6 @@ class RunJob:
         else:
             cfgname = ""
         pdfname = os.path.join(self.tmpdir, outfname.replace(".tex", ".pdf"))
-#        if len(jobs) > 1 and info.asBool("project/combinebooks"):
-#            pdfname = os.path.join(self.tmpdir, "ptxprint{}-{}_{}{}.pdf".format(cfgname, jobs[0], jobs[-1], self.prjid))
-#        else:
-#            pdfname = os.path.join(self.tmpdir, "ptxprint{}-{}{}.pdf".format(cfgname, jobs[0], self.prjid))
-        # Check the return code to see if generating the PDF was successful before opening the PDF
         print(pdfname)
         if self.res == 0:
             if self.printer.isDisplay and os.path.exists(pdfname):
@@ -300,8 +295,6 @@ class RunJob:
         if 0 < len(mrkrs) < 7:
             if "\ef" in mrkrs or "\ex" in mrkrs:
                 finalLogLines.append("Sorry, Study Bible Markup (\ef \ex etc.) is not yet supported!")
-            # else:
-                # finalLogLines.append("\nMarkers to check: {}".format(", ".join(mrkrs)))
 
         files = re.findall(r'(?i)([^\\/\n."= ]*?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)', "".join(finalLogLines))
         if len(files):
