@@ -219,7 +219,7 @@ class PicList:
         val = row[_pickeys['media']]
         for c in 'paw':
             w = _form_structure["med"+c.upper()]
-            wid = self.builder.get(w)
+            wid = self.builder.get_object(w)
             if wid is not None:
                 wid.set_sensitive(c in info[0])
             if val is None or val == "":
