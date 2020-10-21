@@ -224,6 +224,8 @@ class PicList:
                 wid.set_sensitive(c in inf[0])
             if val is None or val == "":
                 wid.set_active(c in inf[1])
+            else:
+                wid.set_active(c in val)
 
     def get_pgpos(self):
         res = "".join(self.get(k, default="") for k in _comblist[:-1]).replace("-", "")
@@ -275,7 +277,7 @@ class PicList:
                 else:
                     pic.clear()
                     picc.clear()
-                self.mask_media()
+                self.mask_media(row)
                 if val != oldval:
                     row[_piclistfields.index('cleardest')] = True
             elif key == "scale" and val != oldval:
