@@ -409,13 +409,15 @@ class GtkViewModel(ViewModel):
                 # self.builder.get_object(c).set_active(True)
 
         for c in ("tb_Font", "tb_Advanced", "tb_ViewerEditor", "tb_Tabs", "tb_DiglotBorder", "tb_StyleEdtor", "fr_copyrightLicense",
+                  "r_book_module", "btn_chooseBibleModule", "lb_bibleModule",
+                  "r_book_dbl", "btn_chooseDBLbundle", "l_dblBundle", 
                   "l_missingPictureString", "l_imageTypeOrder", "t_imageTypeOrder", "fr_layoutSpecialBooks", "fr_layoutOther",
                   "s_colgutteroffset", "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "l_colgutteroffset",
                   "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", "c_exclusiveFiguresFolder", 
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
                   "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection", "l_colgutteroffset", "fr_hyphenation",
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "c_fnOverride", "c_xrOverride",
-                  "row_ToC", "c_hyphenate", "l_missingPictureCount", "bx_colophon", "tb_StyleEdtor",
+                  "row_ToC", "c_hyphenate", "l_missingPictureCount", "bx_colophon", "tb_StyleEdtor", 
                   "c_hdrLeftPri", "c_hdrLeftSec", "c_hdrCenterPri", "c_hdrCenterSec", "c_hdrRightPri", "c_hdrRightSec", 
                   "c_omitverseone", "c_glueredupwords", "c_firstParaIndent", "c_hangpoetry", "c_preventwidows", 
                   "l_sidemarginfactor", "s_sidemarginfactor", "l_min", "s_linespacingmin", "l_max", "s_linespacingmax",
@@ -1052,10 +1054,10 @@ class GtkViewModel(ViewModel):
         p = Pango.FontDescription(pangostr)
         for w in ("t_clHeading", "t_tocTitle", "t_configNotes", "scroll_FinalSFM", "scroll_PicList", \
                   "ecb_ftrcenter", "ecb_hdrleft", "ecb_hdrcenter", "ecb_hdrright", "t_fncallers", "t_xrcallers", \
-                  "l_projectFullName", "t_plCaption", "t_plRef", "t_plAltText", "t_plCopyright"):
+                  "l_projectFullName", "t_plCaption", "t_plRef", "t_plAltText", "t_plCopyright", "textv_colophon"):
             self.builder.get_object(w).modify_font(p)
         self.picListView.modify_font(p)
-        # TO DO: Also need to handle TWO fallback fonts in the picList for Diglots (otherwise one script will end up as Tofu)
+        # MH TO DO: Also need to handle TWO fallback fonts in the picList for Diglots (otherwise one script will end up as Tofu)
 
     def onRadioChanged(self, btn):
         n = Gtk.Buildable.get_name(btn)

@@ -3307,6 +3307,7 @@ Viewer tab.</property>
                             <child>
                               <object class="GtkCheckButton" id="c_includeImageCopyrights">
                                 <property name="label" translatable="yes">Automatically include copyright attribution for the illustrations used in this publication</property>
+                                <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
                                 <property name="no_show_all">True</property>
@@ -4407,8 +4408,8 @@ Text:</property>
                                 <property name="height_request">80</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="valign">start</property>
                                 <property name="hexpand">True</property>
-                                <property name="vexpand">True</property>
                                 <property name="shadow_type">etched-in</property>
                                 <child>
                                   <object class="GtkViewport">
