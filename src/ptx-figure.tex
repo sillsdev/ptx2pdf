@@ -69,7 +69,7 @@
     \ifx\p@ramid\FigP@ramXtra\global\p@ramnumber=8\else %experimental extra parameter, post filename e.g. "rotated 90"
     \ifx\p@ramid\FigP@ramMirror\global\p@ramnumber=9\else %experimental mirror parameter.
     \ifx\p@ramid\FigP@ramScale\global\p@ramnumber=10\else
-    \trace{g}{Unrecognised usfm3 parameter \p@ramid}%
+    \trace{g}{Unrecognised usfm3 parameter \p@ramid}\p@ramnumber=-1%
     \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
     \tempfalse
     \ifx\p@ramval\empty\ifusfmthree\else
