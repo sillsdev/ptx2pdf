@@ -216,6 +216,10 @@ class PicList:
     def mask_media(self, row):
         src = row[_pickeys['src']][:2]
         inf = _picLimitDefault.get(src.lower(), ("paw", "paw", "Default"))
+        if inf[2] == 'Default':
+            self.builder.get_object("l_plMedia").set_tooltip_text("Media permissions unknown\nfor this illustration")
+        else:
+            self.builder.get_object("l_plMedia").set_tooltip_text("Permission for {} series:\n{}".format(src.upper(),inf[2]))
         val = row[_pickeys['media']]
         for c in 'paw':
             w = _form_structure["med"+c.upper()]

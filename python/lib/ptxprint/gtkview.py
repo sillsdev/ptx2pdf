@@ -184,6 +184,15 @@ _pgpos = {
     "Cutout": "c"
 }
 
+_horiz = {
+    "Left":     "l", 
+    "Center":   "c", 
+    "Right":    "r",
+    "Inner":    "i",
+    "Outer":    "o",
+    "-":        "-"
+}
+
 _notebooks = ("Main", "Viewer", "PicList")
 
 # Vertical Thumb Tab Orientation options L+R
@@ -1928,7 +1937,6 @@ class GtkViewModel(ViewModel):
             wid.set_text(markup.format(w[:-1]))
             wid.set_use_markup(True)
 
-
     def onRotateTabsChanged(self, *a):
         orientation = self.get("fcb_rotateTabs")
         self.builder.get_object("l_thumbVerticalL").set_angle(_vertical_thumb[orientation][0])
@@ -1939,8 +1947,6 @@ class GtkViewModel(ViewModel):
         wids = ["l_plHoriz", "fcb_plHoriz"]
         # if size in ["col", "span"]:
         self._updatePgPosOptions(size)
-        # elif size in ["page", "full"]:
-            # self._updatePgPosOptions(size)
         if size == "span":
             for w in wids:
                 self.builder.get_object("fcb_plHoriz").set_active_id("-")
@@ -1962,6 +1968,7 @@ class GtkViewModel(ViewModel):
         else:
             for w in wids:
                 self.builder.get_object(w).set_sensitive(False)
+        self._updateHorizOptions(self.get("fcb_plSize"), self.get("fcb_plPgPos"))
 
     def _updatePgPosOptions(self, size):
         lsp = self.builder.get_object("ls_plPgPos")
@@ -1978,6 +1985,20 @@ class GtkViewModel(ViewModel):
         else: # size == "col"
             for posn in _pgpos.keys():
                 lsp.append([posn, _pgpos[posn]])
+            fcb.set_active(0)
+        self._updateHorizOptions(size, self.get("fcb_plPgPos"))
+ 
+    def _updateHorizOptions(self, size, pgpos):
+        lsp = self.builder.get_object("ls_plHoriz")
+        fcb = self.builder.get_object("fcb_plHoriz")
+        lsp.clear()
+        for horiz in ["Left", "Center", "Right", "Inner", "Outer", "-"]:
+            if horiz == "Center" and \
+               size not in ["page", "full"] and \
+               pgpos not in ["h", "p"]:
+               continue
+            else:
+                lsp.append([horiz, _horiz[horiz]])
             fcb.set_active(0)
  
     def onPLrowActivated(self, *a):
