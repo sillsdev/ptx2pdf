@@ -221,9 +221,9 @@ class PicList:
             w = _form_structure["med"+c.upper()]
             wid = self.builder.get_object(w)
             if wid is not None:
-                wid.set_sensitive(c in info[0])
+                wid.set_sensitive(c in inf[0])
             if val is None or val == "":
-                wid.set_active(c in info[1])
+                wid.set_active(c in inf[1])
 
     def get_pgpos(self):
         res = "".join(self.get(k, default="") for k in _comblist[:-1]).replace("-", "")
@@ -238,20 +238,24 @@ class PicList:
         return res
 
     def item_changed(self, w, key):
+        if self.model is not None and len(self.model):
+            row = self.model[self.selection.get_selected()[1]]
+        else:
+            row = None
         if key in _comblist:
             val = self.get_pgpos()
             key = "pgpos"
         elif key.startswith("med"):
             val = "".join(v[-1].lower() for k, v in _form_structure.items() if k.startswith("med") and self.get(v))
-            src = row[_pickeys['src']][:2]
-            inf = _picLimitDefault.get(src.lower(), ("paw", "paw", "Default"))
-            if sorted(val) == sorted(inf[1]):
-                val = ""
+            if row is not None:
+                src = row[_pickeys['src']][:2]
+                inf = _picLimitDefault.get(src.lower(), ("paw", "paw", "Default"))
+                if sorted(val) == sorted(inf[1]):
+                    val = ""
             key = "media"
         else:
             val = self.get(key)
-        if self.model is not None and len(self.model):
-            row = self.model[self.selection.get_selected()[1]]
+        if row is not None:
             fieldi = _piclistfields.index(key)
             oldval = row[fieldi]
             row[fieldi] = val

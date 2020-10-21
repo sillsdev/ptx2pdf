@@ -313,7 +313,7 @@ def usfmerge(infilea, infileb, outfile, stylesheetsa=[], stylesheetsb=[], fsecon
                 isright = False
             outf.write(str(p[0]))
             outf.write("\\p\n")
-        elif i != 0 and isright:
+        elif i != 0 and isright and p[1] is not None and len(p[1]):
             outf.write("\\nolefttext\n")
         if p[1] is not None and len(p[1]):
             if not isright:
