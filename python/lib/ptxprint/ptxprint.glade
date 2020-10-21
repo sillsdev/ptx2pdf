@@ -12788,7 +12788,7 @@ Active Books</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="orientation">vertical</property>
-                                    <property name="position">190</property>
+                                    <property name="position">230</property>
                                     <property name="position_set">True</property>
                                     <property name="wide_handle">True</property>
                                     <child>
@@ -13389,6 +13389,8 @@ Lines:</property>
                                                           <object class="GtkBox">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
+                                                            <property name="margin_left">10</property>
+                                                            <property name="spacing">3</property>
                                                             <child>
                                                             <object class="GtkCheckButton" id="c_plMediaP">
                                                             <property name="label" translatable="yes">Print</property>
@@ -13548,7 +13550,7 @@ of the images.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="orientation">vertical</property>
-                                    <property name="position">170</property>
+                                    <property name="position">130</property>
                                     <property name="position_set">True</property>
                                     <property name="wide_handle">True</property>
                                     <child>
@@ -13742,6 +13744,7 @@ of the images.</property>
                                                             <property name="margin_right">6</property>
                                                             <property name="margin_top">6</property>
                                                             <property name="margin_bottom">6</property>
+                                                            <property name="row_spacing">4</property>
                                                             <property name="column_spacing">2</property>
                                                             <child>
                                                             <object class="GtkLabel" id="l_pic_clear">
