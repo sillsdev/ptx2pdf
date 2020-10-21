@@ -43,13 +43,16 @@
 %
 \newif\ifOmitBookRef
 \def\f@rstref#1{\edef\t@st{#1}%
- \ifx\t@st\empty\else\x@\extr@ctfirst\t@st\relax
-  \ifx\@book\empty\else
-   \ifOmitBookRef\else\@book\ \fi
-   \ifOmitChapterNumberRH\else\@chapter\fi
-   \ifVerseRefs
-    \ifOmitChapterNumberRH\else\cvs@p\fi
-    \@verse
+ \ifx\t@st\empty\else
+  \ifx\t@st\t@tle\else
+    \trace{H}{Extracting 1st ref from "\t@st"}\x@\extr@ctfirst\t@st\relax
+    \ifx\@book\empty\else
+     \ifOmitBookRef\else\@book\ \fi
+     \ifOmitChapterNumberRH\else\@chapter\fi
+     \ifVerseRefs
+      \ifOmitChapterNumberRH\else\cvs@p\fi
+      \@verse
+     \fi
    \fi
   \fi
  \fi}
@@ -59,8 +62,11 @@
 % (same as above unless there are bridged verses)
 %
 \def\l@stref#1{\edef\t@st{#1}%
- \ifx\t@st\empty\else\x@\extr@ctlast\t@st\relax
- \ifx\@@book\empty\else\ifx\@@book\t@tle\else\ifOmitBookRef\else\@@book\ \fi\ifOmitChapterNumberRH\else\@@chapter\fi\ifVerseRefs\ifOmitChapterNumberRH\else\cvs@p\fi\@@verse\fi\fi\fi\fi}
+ \ifx\t@st\empty\else\ifx\t@st\t@tle\else
+   \x@\extr@ctlast\t@st\relax
+     \ifx\@@book\empty\else
+       \ifx\@@book\t@tle\else
+         \ifOmitBookRef\else\@@book\ \fi\ifOmitChapterNumberRH\else\@@chapter\fi\ifVerseRefs\ifOmitChapterNumberRH\else\cvs@p\fi\@@verse\fi\fi\fi\fi\fi}
 
 %
 % Print the range of references from a pair of marks
