@@ -445,7 +445,7 @@ Jonathan Kew (Author of XeTeX + sfm2pdf)</property>
     <property name="can_focus">False</property>
     <property name="halign">start</property>
     <property name="valign">start</property>
-    <property name="title" translatable="yes">PTXprint</property>
+    <property name="title" translatable="yes">PTXprint: Generate PicList</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
     <property name="window_position">center-on-parent</property>
@@ -515,6 +515,9 @@ Jonathan Kew (Author of XeTeX + sfm2pdf)</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
+                        <property name="tooltip_text" translatable="yes">This option will ADD to any existing entries
+in the PicList and/or replace entries for the 
+book(s) listed below.</property>
                         <property name="halign">start</property>
                         <property name="active">True</property>
                         <property name="draw_indicator">True</property>
@@ -533,6 +536,11 @@ Jonathan Kew (Author of XeTeX + sfm2pdf)</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
+                        <property name="tooltip_text" translatable="yes">This option will REPLACE ALL entries
+in the existing PicList. Do you really
+want to do this?
+
+If in doubt, then click Cancel.</property>
                         <property name="halign">start</property>
                         <property name="active">True</property>
                         <property name="draw_indicator">True</property>
@@ -551,7 +559,7 @@ Jonathan Kew (Author of XeTeX + sfm2pdf)</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="margin_left">30</property>
+                        <property name="margin_left">20</property>
                         <property name="margin_bottom">10</property>
                         <property name="label" translatable="yes">MAT MRK LUK JHN ACT ROM 1CO 2CO GAL EPH PHP COL 1TH 2TH 1TI 2TI TIT</property>
                         <property name="wrap">True</property>
@@ -601,6 +609,40 @@ the Edit PicList tab later.</property>
                         <property name="left_attach">0</property>
                         <property name="top_attach">3</property>
                         <property name="width">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="halign">end</property>
+                        <property name="valign">start</property>
+                        <property name="label" translatable="yes">Warning!</property>
+                        <attributes>
+                          <attribute name="foreground" value="#cccc00000000"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">5</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="label" translatable="yes">This operation can overwrite 
+carefully crafted settings.
+So chose carefully...
+If in doubt, click Cancel.</property>
+                        <attributes>
+                          <attribute name="foreground" value="#cccc00000000"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">5</property>
                       </packing>
                     </child>
                   </object>
@@ -1003,21 +1045,58 @@ start of the publication in this oder:
           <object class="GtkBox">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="halign">center</property>
-            <property name="margin_left">6</property>
-            <property name="margin_right">6</property>
-            <property name="margin_top">10</property>
-            <property name="margin_bottom">10</property>
-            <property name="spacing">6</property>
+            <property name="orientation">vertical</property>
             <child>
-              <object class="GtkLabel">
+              <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="tooltip_text" translatable="yes">Enter a password of 
+                <property name="halign">center</property>
+                <property name="margin_left">6</property>
+                <property name="margin_right">6</property>
+                <property name="margin_top">10</property>
+                <property name="margin_bottom">10</property>
+                <property name="spacing">6</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Enter a password of 
 upto 16 characters to
 lock/unlock this
 saved configuration.</property>
-                <property name="label" translatable="yes">Enter Password:</property>
+                    <property name="label" translatable="yes">Enter Password:</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="t_password">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="has_focus">True</property>
+                    <property name="is_focus">True</property>
+                    <property name="can_default">True</property>
+                    <property name="has_default">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="tooltip_text" translatable="yes">Enter a password of 
+upto 16 characters to
+lock/unlock this
+saved configuration.</property>
+                    <property name="max_length">16</property>
+                    <property name="visibility">False</property>
+                    <property name="invisible_char">●</property>
+                    <property name="width_chars">22</property>
+                    <property name="input_purpose">password</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1026,28 +1105,232 @@ saved configuration.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkEntry" id="t_password">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="has_focus">True</property>
-                <property name="is_focus">True</property>
-                <property name="can_default">True</property>
-                <property name="has_default">True</property>
-                <property name="receives_default">True</property>
-                <property name="tooltip_text" translatable="yes">Enter a password of 
-upto 16 characters to
-lock/unlock this
-saved configuration.</property>
-                <property name="max_length">16</property>
-                <property name="visibility">False</property>
-                <property name="invisible_char">●</property>
-                <property name="width_chars">22</property>
-                <property name="input_purpose">password</property>
+              <object class="GtkBox" id="bx_ShowTabs1">
+                <property name="sensitive">False</property>
+                <property name="can_focus">False</property>
+                <property name="no_show_all">True</property>
+                <property name="opacity">0.59999999999999998</property>
+                <property name="margin_bottom">6</property>
+                <property name="spacing">4</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Lock Tabs:</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="c_showLayoutTab1">
+                    <property name="label" translatable="yes">Layout</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="tooltip_text" translatable="yes">Show/Hide the
+Layout tab.</property>
+                    <property name="halign">start</property>
+                    <property name="active">True</property>
+                    <property name="draw_indicator">True</property>
+                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                    <signal name="toggled" handler="onSimpleClicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="c_showFontTab1">
+                    <property name="label" translatable="yes">Font</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="tooltip_text" translatable="yes">Show/Hide the
+Font tab.</property>
+                    <property name="halign">start</property>
+                    <property name="active">True</property>
+                    <property name="draw_indicator">True</property>
+                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                    <signal name="toggled" handler="onSimpleClicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="c_showBodyTab1">
+                    <property name="label" translatable="yes">Body</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="tooltip_text" translatable="yes">Show/Hide the
+Font tab.</property>
+                    <property name="halign">start</property>
+                    <property name="active">True</property>
+                    <property name="draw_indicator">True</property>
+                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                    <signal name="toggled" handler="onSimpleClicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="c_showHeadFootTab1">
+                    <property name="label" translatable="yes">Head+Foot</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="tooltip_text" translatable="yes">Show/Hide the
+Header+Footer tab.</property>
+                    <property name="halign">start</property>
+                    <property name="active">True</property>
+                    <property name="draw_indicator">True</property>
+                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                    <signal name="toggled" handler="onSimpleClicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">4</property>
+                  </packing>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox" id="bx_ShowTabs">
+                <property name="sensitive">False</property>
+                <property name="can_focus">False</property>
+                <property name="no_show_all">True</property>
+                <property name="opacity">0.59999999999999998</property>
+                <property name="margin_bottom">6</property>
+                <property name="spacing">4</property>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="c_showPicturesTab">
+                    <property name="label" translatable="yes">Pictures</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="tooltip_text" translatable="yes">Show/Hide the
+Pictures tab.</property>
+                    <property name="halign">start</property>
+                    <property name="active">True</property>
+                    <property name="draw_indicator">True</property>
+                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                    <signal name="toggled" handler="onSimpleClicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">5</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="c_showAdvancedTab">
+                    <property name="label" translatable="yes">Advanced</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="tooltip_text" translatable="yes">Show/Hide the
+Advanced tab.</property>
+                    <property name="halign">start</property>
+                    <property name="active">True</property>
+                    <property name="draw_indicator">True</property>
+                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                    <signal name="toggled" handler="onSimpleClicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">6</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="c_showDiglotBorderTab">
+                    <property name="label" translatable="yes">Diglot+Border</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="tooltip_text" translatable="yes">Show/Hide the
+Diglot+Border tab.</property>
+                    <property name="halign">start</property>
+                    <property name="active">True</property>
+                    <property name="draw_indicator">True</property>
+                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                    <signal name="toggled" handler="onSimpleClicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">7</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="c_showViewerTab">
+                    <property name="label" translatable="yes">Viewer</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="tooltip_text" translatable="yes">Show/Hide the
+Viewer tab.</property>
+                    <property name="halign">start</property>
+                    <property name="active">True</property>
+                    <property name="draw_indicator">True</property>
+                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                    <signal name="toggled" handler="onSimpleClicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">8</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
               </packing>
             </child>
           </object>
@@ -3065,193 +3348,7 @@ saved or the configuration to be deleted.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkBox" id="bx_ShowTabs">
-                                <property name="sensitive">False</property>
-                                <property name="can_focus">False</property>
-                                <property name="no_show_all">True</property>
-                                <property name="opacity">0.59999999999999998</property>
-                                <property name="margin_bottom">6</property>
-                                <property name="spacing">4</property>
-                                <child>
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="margin_left">6</property>
-                                    <property name="label" translatable="yes">Show Tabs:</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_showLayoutTab">
-                                    <property name="label" translatable="yes">Layout</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Show/Hide the
-Layout tab.</property>
-                                    <property name="halign">start</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                    <signal name="toggled" handler="onSimpleClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_showFontTab">
-                                    <property name="label" translatable="yes">Font</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Show/Hide the
-Font tab.</property>
-                                    <property name="halign">start</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                    <signal name="toggled" handler="onSimpleClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_showBodyTab">
-                                    <property name="label" translatable="yes">Body</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Show/Hide the
-Font tab.</property>
-                                    <property name="halign">start</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                    <signal name="toggled" handler="onSimpleClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_showHeadFootTab">
-                                    <property name="label" translatable="yes">Head+Foot</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Show/Hide the
-Header+Footer tab.</property>
-                                    <property name="halign">start</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                    <signal name="toggled" handler="onSimpleClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">4</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_showPicturesTab">
-                                    <property name="label" translatable="yes">Pictures</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Show/Hide the
-Pictures tab.</property>
-                                    <property name="halign">start</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                    <signal name="toggled" handler="onSimpleClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">5</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_showAdvancedTab">
-                                    <property name="label" translatable="yes">Advanced</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Show/Hide the
-Advanced tab.</property>
-                                    <property name="halign">start</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                    <signal name="toggled" handler="onSimpleClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">6</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_showDiglotBorderTab">
-                                    <property name="label" translatable="yes">Diglot+Border</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Show/Hide the
-Diglot+Border tab.</property>
-                                    <property name="halign">start</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                    <signal name="toggled" handler="onSimpleClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">7</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_showViewerTab">
-                                    <property name="label" translatable="yes">Viewer</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Show/Hide the
-Viewer tab.</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin_right">6</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                    <signal name="toggled" handler="onSimpleClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">8</property>
-                                  </packing>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">1</property>
-                              </packing>
+                              <placeholder/>
                             </child>
                           </object>
                         </child>
@@ -12501,7 +12598,7 @@ list for each of the books listed for printing.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton">
+                          <object class="GtkButton" id="btn_viewEdit">
                             <property name="label" translatable="yes">View/Edit...</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>

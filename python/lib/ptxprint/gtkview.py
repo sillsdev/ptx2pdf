@@ -800,7 +800,8 @@ class GtkViewModel(ViewModel):
         else:
             status = False
             lockBtn.set_label(_("Unlock Config"))
-        for c in ["btn_saveConfig", "btn_deleteConfig", "t_configNotes", "c_hideAdvancedSettings"]:
+        for c in ["btn_saveConfig", "btn_deleteConfig", "t_configNotes", "c_hideAdvancedSettings", 
+                  "btn_Generate", "btn_plAdd", "btn_plDel", "btn_plAdd1", "btn_plDel1", ]:
             self.builder.get_object(c).set_sensitive(status)
         
     def onExamineBookChanged(self, cb_examineBook):
@@ -884,8 +885,8 @@ class GtkViewModel(ViewModel):
                                              self.picinfos, suffix="R", random=rnd, cols=cols)
                 self.updatePicList(procbks)
                 self.savePics()
+                self.set("c_filterPicList", False)
             dialog.hide()
-            self.set("c_filterPicList", False)
         elif pgid == "scroll_AdjList": # AdjList
             self.generateAdjList()
         elif pgid == "scroll_FinalSFM" and bk is not None: # FinalSFM
@@ -914,51 +915,60 @@ class GtkViewModel(ViewModel):
         page = nbk_Viewer.get_nth_page(pgnum)
         if page == None:
             return
+        for w in ["gr_editableButtons", "l_examineBook", "ecb_examineBook", "btn_Generate", 
+                  "btn_saveEdits", "btn_refreshViewerText", "btn_viewEdit"]:
+            self.builder.get_object(w).set_sensitive(True)
+        for w in ["btn_Generate", "c_filterPicList"]:
+            self.builder.get_object(w).set_sensitive(False)
         pgid = Gtk.Buildable.get_name(page)
         self.bookNoUpdate = True
-        self.builder.get_object("gr_editableButtons").set_sensitive(False)
         prjid = self.get("fcb_project")
         prjdir = os.path.join(self.settings_dir, prjid)
         bks = self.getBooks()
         bk = self.get("ecb_examineBook")
-        opa = 1.0 if pgid in allpgids[:3] else 0.1  # (Visible for PicList and AdjList, but very hidden for the rest)
-        for w in ["fcb_diglotPicListSources", "btn_Generate", "c_randomPicPosn"]:
-            self.builder.get_object(w).set_opacity(opa)
         genBtn = self.builder.get_object("btn_Generate")
-        genBtn.set_sensitive(False)
-        self.builder.get_object("c_randomPicPosn").set_sensitive(False)
         if bk == None or bk == "" and len(bks):
             bk = bks[0]
             self.builder.get_object("ecb_examineBook").set_active_id(bk)
-        for o in ("l_examineBook", "ecb_examineBook", "fcb_diglotPicListSources", "btn_Generate"):
-            self.builder.get_object(o).set_sensitive(pgid in allpgids[:3])
+        for o in ("l_examineBook", "ecb_examineBook"):
+            self.builder.get_object(o).set_sensitive(pgid in allpgids[1:3])
 
         fndict = {"tb_PicList" : ("PicLists", ".piclist"), "scroll_AdjList" : ("AdjLists", ".adj"), "scroll_FinalSFM" : ("", ""),
                   "scroll_TeXfile" : ("", ".tex"), "scroll_XeTeXlog" : ("", ".log"), "scroll_Settings": ("", ""), "tb_Links": ("", "")}
 
         if pgid == "tb_PicList":   # PicList
-            self.builder.get_object("c_randomPicPosn").set_sensitive(True)
-            genBtn.set_sensitive(True)
+            self.builder.get_object("c_filterPicList").set_sensitive(True)
+            self.builder.get_object("btn_refreshViewerText").set_sensitive(False)
+            self.builder.get_object("btn_viewEdit").set_sensitive(False)
+            if self.get("t_invisiblePassword") == "":
+                genBtn.set_sensitive(True)
+            else:
+                self.builder.get_object("btn_saveEdits").set_sensitive(False)
             fpath = None
 
         elif pgid in ("scroll_AdjList", "scroll_FinalSFM"):  # (AdjList,SFM)
             fname = self.getBookFilename(bk, prjid)
             if pgid == "scroll_FinalSFM":
                 fpath = os.path.join(self.working_dir, fndict[pgid][0], fname)
-                # self.builder.get_object("btn_Generate").set_sensitive(False)
-                self.builder.get_object("fcb_diglotPicListSources").set_sensitive(False)
+                genBtn.set_sensitive(True)
             else:
                 fpath = os.path.join(self.configPath(cfgname=self.configId, makePath=False), fndict[pgid][0], fname)
             doti = fpath.rfind(".")
             if doti > 0:
                 fpath = fpath[:doti] + "-" + self.configName() + fpath[doti:] + fndict[pgid][1]
             if pgnum == 1: # AdjList
-                self.builder.get_object("c_randomPicPosn").set_opacity(0.2)
-                self.builder.get_object("fcb_diglotPicListSources").set_opacity(0.2)
-                genBtn.set_sensitive(True)
+                if self.get("t_invisiblePassword") == "":
+                    genBtn.set_sensitive(True)
+                else:
+                    self.builder.get_object("btn_saveEdits").set_sensitive(False)
+            else: # scroll_FinalSFM
+                self.builder.get_object("btn_saveEdits").set_sensitive(False)
+                self.builder.get_object("btn_refreshViewerText").set_sensitive(False)
 
         elif pgid in ("scroll_TeXfile", "scroll_XeTeXlog"): # (TeX,Log)
             fpath = os.path.join(self.working_dir, self.baseTeXPDFnames()[0])+fndict[pgid][1]
+            self.builder.get_object("btn_saveEdits").set_sensitive(False)
+            self.builder.get_object("btn_refreshViewerText").set_sensitive(False)
 
         elif pgid == "scroll_Settings": # View/Edit one of the 4 Settings files or scripts
             fpath = self.builder.get_object("l_Settings").get_tooltip_text()
@@ -968,14 +978,12 @@ class GtkViewModel(ViewModel):
                 return
 
         elif pgid == "tb_Links": # Just show the Folders & Links page
-            # self.builder.get_object("l_Links").set_text("Folders & Links")
+            self.builder.get_object("gr_editableButtons").set_sensitive(False)
             return
 
         else:
             return
 
-        if pgid in ("tb_PicList", "scroll_AdjList", "scroll_Settings"):
-            self.builder.get_object("gr_editableButtons").set_sensitive(True)
         if fpath is None:
             return
         set_tooltip = self.builder.get_object("l_{1}".format(*pgid.split("_"))).set_tooltip_text
