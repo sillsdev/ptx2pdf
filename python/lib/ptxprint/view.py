@@ -976,7 +976,7 @@ class ViewModel:
             filename = os.path.join(self.configPath(self.configName()), "ptxprintArchive.zip")
         if not filename.lower().endswith(".zip"):
             filename += ".zip"
-        zf = ZipFile(filename, mode="w", compression=ZIP_DEFLATED, compresslevel=9)
+        zf = ZipFile(filename, mode="w", compression=ZIP_DEFLATED)  # need at least python 3.7 for: compresslevel=9
         self._archiveAdd(zf, self.getBooks(files=True))
         if self.diglotView is not None:
             self.diglotView._archiveAdd(zf, self.getBooks(files=True))
