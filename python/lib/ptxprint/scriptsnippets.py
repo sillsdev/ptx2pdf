@@ -21,10 +21,10 @@ class mymr(ScriptSnippet):
     @classmethod
     def regexes(cls, model):
         res = [(None, re.compile(r'(\s)/'), r'\1'),
-               (None, re.compile(r'/([\s\u104A\u104B])'), r'\1'),
+               (None, re.compile(r'/([\s\u104A\u104B])'), r'\1', re.S),
                (None, re.compile(r'/'), "\u200B")]
         if model["scrmymr/syllables"]:
-            res += [(None, re.compile('(?<![\\s\u1039])([\u1000-\u1022\uAA61-\uAA6F\uAA71])(?!\uFE00?[\\s\u1039])'), '\u200B\\1')]
+            res += [(None, re.compile('(?<![\\s\u1039])([\u1000-\u1022\uAA61-\uAA6F\uAA71])(?!\uFE00?[\\s\u1039\u103A])'), '\u200B\\1')]
         return res
 
 class thai(ScriptSnippet):

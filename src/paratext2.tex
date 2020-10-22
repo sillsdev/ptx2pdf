@@ -380,8 +380,8 @@
   \tracingparagraphs=0
   %\tracingall=1\tracingoutput=0\tracingpages=0\tracingparagraphs=0\tracingassigns=0\tracingscantokens=0
   \trace{i}{1c TRIAL with ht=\the\trialheight, vsize=\the\vsize, hIns=\the\holdinginserts}
-  \edef\p@gebotmark{\botmark}% remember last \mark for running header
-  \edef\t@st{\p@gefirstmark}%
+  \xdef\p@gebotmark{\botmark}% remember last \mark for running header
+  \xdef\t@st{\p@gefirstmark}%
   \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi % remember first, if not already set
   \availht=\trialheight % amount of space we think is available             %(1)
   \f@rstnotetrue

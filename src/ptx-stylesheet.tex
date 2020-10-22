@@ -508,7 +508,7 @@
 \obeylines%
 \gdef\@ddspecialhooks{% there are a few special USFM markers that we give "magic" properties
  \let\@H=\h%
- \def\h{\bgroup\deactiv@tecustomch@rs
+ \def\h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12
         \obeylines\@h}% \h gets stored as the book name (for references)
  \def\@h ##1^^M{\ifdiglot\ifdiglotL\gdef\b@ok{##1}\else\gdef\b@okR{##1}\fi\else\gdef\b@ok{##1}\fi\egroup}% store book id in \b@ok
  %
