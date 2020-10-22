@@ -327,7 +327,12 @@ class PicList:
         row = model[i]
         self.deletes.add((row[_pickeys['anchor']], row[_pickeys['src']]))
         del self.model[i]
-        self.select_row(model.get_path(i).get_indices()[0])
+        ind = model.get_path(i)
+        if ind is None:
+            indt = model.get_iter_first()
+            ind = model.get_path(indt)
+        if ind is not None:         # otherwise we have an empty list
+            self.select_row(ind.get_indices()[0])
 
     def set_src(self, src):
         wid = _form_structure.get('src', 'src')
