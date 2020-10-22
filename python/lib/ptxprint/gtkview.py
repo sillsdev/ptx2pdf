@@ -844,15 +844,6 @@ class GtkViewModel(ViewModel):
         self.picChecksView.savepic()
         self.picChecksView.loadpic(src)
 
-    def onPlAddClicked(self, btn):
-        self.set("nbk_PicList", 1)
-        self.picListView.add_row()
-        for w in ["t_plAnchor", "t_plFilename", "t_plCaption", "t_plRef", "t_plAltText", "t_plCopyright"]: 
-            self.set(w, "")
-
-    def onPlDelClicked(self, btn):
-        self.picListView.del_row()
-
     def onGenerateClicked(self, btn):
         priority=self.get("fcb_diglotPicListSources")[:4]
         pg = self.get("nbk_Viewer")
@@ -881,7 +872,7 @@ class GtkViewModel(ViewModel):
                 rnd = self.get("c_randomPicPosn")
                 cols = 2 if self.get("c_doublecolumn") else 1
                 if self.diglotView is None:
-                    PicInfoUpdateProject(self, procbks, ab, self.picinfos, random=rnd, cols=cols, clear=doclear)
+                    PicInfoUpdateProject(self, procbks, ab, self.picinfos, random=rnd, cols=cols, doclear=doclear)
                 else:
                     mode = self.get("fcb_diglotPicListSources")
                     if mode in ("both", "left"):
@@ -894,6 +885,7 @@ class GtkViewModel(ViewModel):
                 self.updatePicList(procbks)
                 self.savePics()
             dialog.hide()
+            self.set("c_filterPicList", False)
         elif pgid == "scroll_AdjList": # AdjList
             self.generateAdjList()
         elif pgid == "scroll_FinalSFM" and bk is not None: # FinalSFM
@@ -2063,7 +2055,7 @@ class GtkViewModel(ViewModel):
     def onStyleRefresh(self, btn):
         self.styleEditorView.refreshKey()
 
-    def onPicSrcClicked(self, btn):
+    def onPlAddClicked(self, btn):
         picroot = os.path.join(self.settings_dir, self.prjid)
         for a in ("figures", "Figures", "FIGURES"):
             picdir = os.path.join(picroot, a)
@@ -2083,5 +2075,15 @@ class GtkViewModel(ViewModel):
                                   filters={"Images": {"patterns": ['*.tif', '*.png', '*.jpg'], "mime": "application/image"}},
                                    multiple=False, basedir=picdir, preview=update_preview)
         if picfile is not None:
+            self.set("nbk_PicList", 1)
+            self.picListView.add_row()
+            for w in ["t_plAnchor", "t_plFilename", "t_plCaption", "t_plRef", "t_plAltText", "t_plCopyright"]: 
+                self.set(w, "")
             self.picListView.set_src(os.path.basename(picfile[0]))
 
+    def onPlDelClicked(self, btn):
+        self.picListView.del_row()
+
+    def onAnchorRefChanged(self, t_plAnchor, foo): # called on "focus-out-event"
+        # Ensure that the anchor ref only uses . (and not :) as the ch.vs separator
+        self.set("t_plAnchor", re.sub(r':', r'.', self.get('t_plAnchor')))

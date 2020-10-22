@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -13043,6 +13043,7 @@ Active Books</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="halign">start</property>
                                                             <property name="width_chars">12</property>
+                                                            <signal name="focus-out-event" handler="onAnchorRefChanged" swapped="no"/>
                                                           </object>
                                                           <packing>
                                                             <property name="left_attach">1</property>
@@ -13133,11 +13134,13 @@ Ref:</property>
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="hexpand">True</property>
+                                                            <property name="editable">False</property>
                                                             <property name="width_chars">12</property>
                                                           </object>
                                                           <packing>
                                                             <property name="left_attach">6</property>
                                                             <property name="top_attach">0</property>
+                                                            <property name="width">2</property>
                                                           </packing>
                                                         </child>
                                                         <child>
@@ -13468,19 +13471,6 @@ Lines:</property>
                                                             <property name="left_attach">1</property>
                                                             <property name="top_attach">0</property>
                                                             <property name="width">3</property>
-                                                          </packing>
-                                                        </child>
-                                                        <child>
-                                                          <object class="GtkButton" id="btn_picFile">
-                                                            <property name="label" translatable="yes">Choose</property>
-                                                            <property name="visible">True</property>
-                                                            <property name="can_focus">True</property>
-                                                            <property name="receives_default">True</property>
-                                                            <signal name="clicked" handler="onPicSrcClicked" swapped="no"/>
-                                                          </object>
-                                                          <packing>
-                                                            <property name="left_attach">7</property>
-                                                            <property name="top_attach">0</property>
                                                           </packing>
                                                         </child>
                                                         <child>
