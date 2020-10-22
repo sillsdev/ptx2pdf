@@ -608,8 +608,7 @@ class GtkViewModel(ViewModel):
             self.updateSavedConfigList()
             self.set("lb_settings_dir", self.configPath(self.configName()))
             self.updateDialogTitle()
-        self.writeConfig()
-        self.savePics(force=force)
+        self.saveConfig(force=force)
         self.saveStyles(force=force)
 
     def writeConfig(self, cfgname=None):
@@ -1415,6 +1414,9 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("lb_working_dir").set_label(self.working_dir or "")
             
     def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None):
+        self.picListView.clear()
+        if self.picinfos is not None:
+            self.picinfos.clear()
         if not super(GtkViewModel, self).updateProjectSettings(prjid, saveCurrConfig=saveCurrConfig, configName=configName):
             for fb in ['bl_fontR', 'bl_fontB', 'bl_fontI', 'bl_fontBI', 'bl_fontExtraR', 'bl_verseNumFont']:  # 
                 fblabel = self.builder.get_object(fb).set_label("Select font...")
