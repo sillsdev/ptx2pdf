@@ -3,11 +3,13 @@ PTXprint 1.2.9.5 Release Notes
 
 Bug Fixes and Improvements in 1.2.9.5
 
-  * Lots of bug fixes to the PicList editor
+  * Lots of bug fixes to the PicList editor and interaction
   
-  * Colophon
+  * Media options 'P'rint, 'A'pp, and/or 'W'eb can be set according to series permissions 
   
-  * Lock Config (on Basic tab) prevents settings being overwritten
+  * Colophon text can now be generated automatically with Copyright, License & Pic Credits
+  
+  * Lock Config (on Basic tab) should now prevent settings being overwritten
   
   * Buttons on View+Edit tab made context-sensitive 
   
