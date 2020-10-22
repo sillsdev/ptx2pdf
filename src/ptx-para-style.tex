@@ -241,7 +241,12 @@
    %\ifnum\pagetracing>0\tracingparagraphs=1\ifnum\pagetracing>1\looseness=-1%\emergencystretch=1sp
    %  \fi\else\tolerance=10\fi
    \par % end the paragraph
-   \ifdim\prevdepth>0pt\lastdepth=\prevdepth\else\lastdepth=-1pt\fi
+   \ifvmode
+    \ifdim\prevdepth>0pt\lastdepth=\prevdepth\else\lastdepth=-1pt\fi
+   \else
+     \lastdepth=0pt
+     \ifinner\trace{s}{Inner mode at end of paragraph style \m@rker}\fi
+   \fi
    \ifnum\pagetracing>0\tracingparagraphs=0\fi
    \ifdr@ppednumber % the preceding par had a dropped number;                       %(2)
                     % add \nobreak if it was a single line, else clear the flag
