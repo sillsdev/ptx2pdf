@@ -1,5 +1,19 @@
-PTXprint 1.2.9 Release Notes 
-20th October 2020
+PTXprint 1.2.9.5 Release Notes 
+22nd October 2020
+
+Bug Fixes and Improvements in 1.2.9.5
+
+  * Lots of bug fixes to the PicList editor and interaction
+  
+  * Media options 'P'rint, 'A'pp, and/or 'W'eb can be set according to series permissions 
+  
+  * Colophon text can now be generated automatically with Copyright, License & Pic Credits
+  
+  * Lock Config (on Basic tab) should now prevent settings being overwritten
+  
+  * Buttons on View+Edit tab made context-sensitive 
+  
+  * Styles can now be added, edited, reset or deleted
 
 Bug Fixes and Improvements in 1.2.9.3
 
@@ -8,8 +22,6 @@ Bug Fixes and Improvements in 1.2.9.3
   * PicList handling completely revamped
   
   * Removed the Quick Run option as it is quicker now anyway, and the dialog is editable while you wait for the PDF
-
-  * Colophon (yet to be implemented)
 
   * Enabling PDF/X1-A outputs pictures in CMYK and doesn't compress the pdf (in order to conform with PDF/X1-A)
 

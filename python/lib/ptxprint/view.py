@@ -14,7 +14,7 @@ from shutil import rmtree
 import datetime, time
 from shutil import copyfile, copytree, move
 
-VersionStr = "1.2.9"
+VersionStr = "1.2.9.5"
 
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
 
@@ -592,7 +592,9 @@ class ViewModel:
     def editFile_delayed(self, *a):
         pass
 
-    def savePics(self):
+    def savePics(self, force=False):
+        if not force or self.configLocked():
+            return
         if self.picinfos is not None and self.picinfos.loaded:
             self.picinfos.out(os.path.join(self.configPath(self.configName()),
                                     "{}-{}.piclist".format(self.prjid, self.configName())))
