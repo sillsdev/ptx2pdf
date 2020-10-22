@@ -987,9 +987,9 @@ class ViewModel:
         if self.get("c_archiveTemps"):
             for f in self.tempFiles:
                 pf = os.path.join(self.working_dir, f)
-                outfname = os.path.relpath(pf, self.settings_dir)
-                print("Zip {} -> {}".format(pf, outfname))
-                zf.write(pf, outfname)
+                if os.path.exists(pf):
+                    outfname = os.path.relpath(pf, self.settings_dir)
+                    zf.write(pf, outfname)
         zf.close()
 
     def _archiveAdd(self, zf, books):

@@ -295,7 +295,7 @@ class parser(sfm.parser):
         if not canonicalise_footnotes:
             self._canonicalise_footnote = lambda x: x
 
-        stylesheet = self.__synthesise_private_meta(stylesheet, default_meta)
+        #stylesheet = self.__synthesise_private_meta(stylesheet, default_meta)
         super().__init__(source,
                          stylesheet,
                          default_meta,
