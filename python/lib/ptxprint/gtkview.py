@@ -608,7 +608,8 @@ class GtkViewModel(ViewModel):
             self.updateSavedConfigList()
             self.set("lb_settings_dir", self.configPath(self.configName()))
             self.updateDialogTitle()
-        self.saveConfig(force=force)
+        self.writeConfig()
+        self.savePics(force=force)
         self.saveStyles(force=force)
 
     def writeConfig(self, cfgname=None):
