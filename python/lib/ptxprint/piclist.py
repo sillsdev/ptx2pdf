@@ -73,6 +73,7 @@ class PicList:
         self.picinfo = None
         self.deletes = set()
         self.selection = view.get_selection()
+        self.picrect = None
         # _, self.curriter = self.selection.get_selected()
         for w in ("tv_picList", "tv_picListEdit", "tv_picListEdit1"):
             wid = self.builder.get_object(w)
@@ -88,6 +89,7 @@ class PicList:
                 sig = "clicked"
             w.connect(sig, self.item_changed, k)
         self.clear()
+        self.loading = False
 
     def modify_font(self, p):
         for a in ("", "1", "2"):
@@ -105,11 +107,13 @@ class PicList:
         self.view.set_model(None)
         self.listview.set_model(None)
         self.model.clear()
+        self.loading = True
         if picinfo is not None:
             for k, v in sorted(picinfo.items(), key=lambda x:(refKey(x[0]), x[1])):
                 if bks is not None and len(bks) and k[:3] not in bks:
                     continue
                 row = [k]
+                defaultmedia = _picLimitDefault.get(v.get('src', '')[:2].lower(), ('paw', 'paw', 'Default'))
                 for e in _piclistfields[1:]:
                     if e == 'origkey':
                         val = k
@@ -122,12 +126,19 @@ class PicList:
                         val = False
                     elif e == "disabled":
                         val = v.get(e, False)
+                    elif e == "media":
+                        val = v.get(e, None)
+                        if val is None:
+                            val = defaultmedia[1]
+                        else:
+                            val = "".join(x for x in val if x in defaultmedia[0])
                     else:
                         val = v.get(e, "")
                     row.append(val)
                 self.model.append(row)
         self.view.set_model(self.model)
         self.listview.set_model(self.model)
+        self.loading = False
 
     def get(self, wid, default=None):
         wid = _form_structure.get(wid, wid)
@@ -180,6 +191,7 @@ class PicList:
         row = self.model[i]
         pgpos = re.sub(r'^([PF])([lcr])([tb])', r'\1\3\2', row[5])
         self.parent.pause_logging()
+        self.loading = True
         for j, (k, v) in enumerate(_form_structure.items()): # relies on ordered dict
             if k == 'pgpos':
                 val = pgpos[:2] if pgpos[0:1] in "PF" else (pgpos[0:1] or "t")
@@ -197,7 +209,7 @@ class PicList:
                 except (ValueError, TypeError):
                     val = 0
             elif k.startswith("med"):
-                val = v[-1].lower() in row[_pickeys['media']]
+                val = v[-1].lower() in row[_pickeys['media']] or "paw"
             elif k == 'mirror':
                 val = row[j] or "None"
             else:
@@ -206,6 +218,7 @@ class PicList:
             setWidgetVal(v, w, val)
         self.mask_media(row)
         self.parent.unpause_logging()
+        self.loading = False
 
     def select_row(self, i):
         if i >= len(self.model):
@@ -227,7 +240,7 @@ class PicList:
             if wid is not None:
                 wid.set_sensitive(c in inf[0])
             if val is None or val == "":
-                wid.set_active(c in inf[1])
+                wid.set_active(True)
             else:
                 wid.set_active(c in val)
 
@@ -244,6 +257,8 @@ class PicList:
         return res
 
     def item_changed(self, w, key):
+        if self.loading and key not in ("src", ):
+            return
         if self.model is not None and len(self.model):
             row = self.model[self.selection.get_selected()[1]]
         else:
@@ -256,7 +271,7 @@ class PicList:
             if row is not None:
                 src = row[_pickeys['src']][:2]
                 inf = _picLimitDefault.get(src.lower(), ("paw", "paw", "Default"))
-                if sorted(val) == sorted(inf[1]):
+                if sorted(val) == sorted("paw"):
                     val = ""
             key = "media"
             print(key, val)
@@ -274,9 +289,10 @@ class PicList:
                 picc = self.builder.get_object("img_piccheckPreview")
                 if fpath is not None:
                     self.parent.updatePicChecks(val)       # only update checks if src exists
-                    picframe = self.builder.get_object("fr_picPreview")
-                    rect = picframe.get_allocation()
-                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, rect.width - 6, rect.height - 6)
+                    if self.picrect is None:
+                        picframe = self.builder.get_object("fr_picPreview")
+                        self.picrect = picframe.get_allocation()
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, self.picrect.width - 6, self.picrect.height - 6)
                     pic.set_from_pixbuf(pixbuf)
                     picc.set_from_pixbuf(pixbuf)
                 else:
