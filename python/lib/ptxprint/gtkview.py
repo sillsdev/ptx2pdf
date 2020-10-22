@@ -551,11 +551,6 @@ class GtkViewModel(ViewModel):
             pgnum = self.get("nbk_Viewer")
             if self.notebooks["Viewer"][pgnum] in ("scroll_Adjust", "scroll_FinalSFM", "scroll_Settings"):
                 self.onSaveEdits(None)
-        # If any PicLists are missing, they need to be generated
-        # if self.get('c_includeillustrations') and self.get("c_usePicList"):
-        #    self.generatePicLists(self.getBooks(), generateMissingLists=True)
-
-        # Work out what the resulting PDFs are to be called
         cfgname = self.configName()
         if cfgname is None:
             cfgname = ""
@@ -582,9 +577,7 @@ class GtkViewModel(ViewModel):
                     else:
                         return
                 fileLocked = False
-        invPW = self.get("t_invisiblePassword")
-        if invPW == None or invPW == "":
-            self.onSaveConfig(None)
+        self.onSaveConfig(None)
 
         self._incrementProgress(val=0.)
         self.callback(self)
@@ -606,7 +599,7 @@ class GtkViewModel(ViewModel):
         self.updateDialogTitle()
 
     def onSaveConfig(self, btn, force=False):
-        if self.prjid is None or self.configLocked():
+        if self.prjid is None or (not force and self.configLocked()):
             return
         newconfigId = self.configName() # self.get("ecb_savedConfig")
         if newconfigId != self.configId:
@@ -616,8 +609,8 @@ class GtkViewModel(ViewModel):
             self.set("lb_settings_dir", self.configPath(self.configName()))
             self.updateDialogTitle()
         self.writeConfig()
-        self.savePics()
-        self.saveStyles()
+        self.savePics(force=force)
+        self.saveStyles(force=force)
 
     def writeConfig(self, cfgname=None):
         if self.prjid is not None:
@@ -640,8 +633,6 @@ class GtkViewModel(ViewModel):
                 self.doError(_("Can't delete that configuration from disk"), secondary=_("Folder: ") + delCfgPath)
             self.updateSavedConfigList()
             self.set("t_savedConfig", "Default")
-            # self.onConfigNameChanged("Default")
-            # self.set("t_configNotes", "")
             self.loadConfig("Default")
             self.updateDialogTitle()
 
@@ -1006,12 +997,16 @@ class GtkViewModel(ViewModel):
                                                \n   * Click 'Print' to create the PDF"))
         self.bookNoUpdate = False
 
-    def saveStyles(self):
+    def saveStyles(self, force=False):
+        if not force and self.configLocked():
+            return
         fname = os.path.join(self.configPath(self.configName(), makePath=True), "ptxprint.sty")
         with open(fname, "w", encoding="Utf-8") as outf:
             self.styleEditorView.output_diffile(outf)
 
-    def savePics(self):
+    def savePics(self, force=False):
+        if not force and self.configLocked():
+            return
         if self.picinfos is not None and self.picinfos.loaded:
             self.picListView.updateinfo(self.picinfos)
         super().savePics()

@@ -593,11 +593,13 @@ class PicInfo(dict):
             for i, x in enumerate(p3p):
                 if x not in v or not v[x]:
                     continue
-                if x in _defaults and _defaults[x] == v[x]:
+                elif x in _defaults and _defaults[x] == v[x]:
                     continue
-                if usedest and hiderefs and x == "ref":
+                elif usedest and hiderefs and x == "ref":
                     continue
-                if x == "scale" and float(v[x]) == 1.0:
+                elif x == "scale" and float(v[x]) == 1.0:
+                    continue
+                elif x == "media" and sorted(v[x]) == "apw":
                     continue
                 line.append('{}="{}"'.format(pos3parms[i], v[x]))
             lines.append("{} {}|".format(outk, v.get('caption', ''))+ " ".join(line))
