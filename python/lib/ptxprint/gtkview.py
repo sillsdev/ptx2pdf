@@ -4,7 +4,7 @@ import sys, os, re, regex, gi, subprocess
 gi.require_version('Gtk', '3.0')
 from shutil import copyfile, copytree, rmtree
 import time
-from gi.repository import Gdk, Gtk, Pango, GObject, GLib
+from gi.repository import Gdk, Gtk, Pango, GObject, GLib, GdkPixbuf
 
 if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
     sys.stdout = open(os.devnull, "w")
@@ -874,12 +874,14 @@ class GtkViewModel(ViewModel):
             if response == Gtk.ResponseType.OK:
                 if self.get("r_generate") == "all":
                     procbks = ab.keys()
+                    doclear = True
                 else:
                     procbks = bks
+                    doclear = False
                 rnd = self.get("c_randomPicPosn")
                 cols = 2 if self.get("c_doublecolumn") else 1
                 if self.diglotView is None:
-                    PicInfoUpdateProject(self, procbks, ab, self.picinfos, random=rnd, cols=cols)
+                    PicInfoUpdateProject(self, procbks, ab, self.picinfos, random=rnd, cols=cols, clear=doclear)
                 else:
                     mode = self.get("fcb_diglotPicListSources")
                     if mode in ("both", "left"):
@@ -1727,7 +1729,8 @@ class GtkViewModel(ViewModel):
         it = b.get_iter_at_offset(-1)
         atv.scroll_to_iter(it, 0, False, 0, 0)
 
-    def fileChooser(self, title, filters=None, multiple=True, folder=False, save=False, basedir=None, defaultSaveName=None):
+    def fileChooser(self, title, filters=None, multiple=True, folder=False,
+                    save=False, basedir=None, defaultSaveName=None, preview=None):
         if folder:
             action = Gtk.FileChooserAction.SELECT_FOLDER
             btnlabel = "Select"
@@ -1742,7 +1745,7 @@ class GtkViewModel(ViewModel):
             (action),
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
             (btnlabel), Gtk.ResponseType.OK))
-        dialog.set_default_size(730, 565)
+        dialog.set_default_size(400, 300)
         dialog.set_select_multiple(multiple)
         if basedir is not None:
             dialog.set_current_folder(basedir)
@@ -1752,6 +1755,15 @@ class GtkViewModel(ViewModel):
                 dialog.set_current_name("XYZptxPrintArchive.zip")
             else:
                 dialog.set_current_name(defaultSaveName)
+        if preview is not None:
+            preview_image = Gtk.Image()
+            def dopreview(dialog):
+                pixbuf = preview(dialog)
+                dialog.set_preview_widget_active(pixbuf is not None)
+                if pixbuf is not None:
+                    preview_image.set_from_pixbuf(pixbuf)
+            dialog.connect("update-preview", dopreview)
+            dialog.set_preview_widget(preview_image)
         if filters != None: # was len(filters):
             # filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}}
             for k, f in filters.items():
@@ -2051,4 +2063,26 @@ class GtkViewModel(ViewModel):
 
     def onStyleRefresh(self, btn):
         self.styleEditorView.refreshKey()
+
+    def onPicSrcClicked(self, btn):
+        picroot = os.path.join(self.settings_dir, self.prjid)
+        for a in ("figures", "Figures", "FIGURES"):
+            picdir = os.path.join(picroot, a)
+            if os.path.exists(picdir):
+                break
+        else:
+            picdir = picroot
+        def update_preview(dialog):
+            picpath = dialog.get_preview_filename()
+            try:
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(picpath, 200, 300)
+            except Exception as e:
+                pixbuf = None
+
+            return pixbuf
+        picfile = self.fileChooser(_("Choose Image"),
+                                  filters={"Images": {"patterns": ['*.tif', '*.png', '*.jpg'], "mime": "application/image"}},
+                                   multiple=False, basedir=picdir, preview=update_preview)
+        if picfile is not None:
+            self.picListView.set_src(os.path.basename(picfile[0]))
 

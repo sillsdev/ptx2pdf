@@ -86,9 +86,9 @@ class ViewModel:
     }
 
     def __init__(self, settings_dir, workingdir, userconfig, scriptsdir, args=None):
-        self.settings_dir = settings_dir
+        self.settings_dir = settings_dir        # ~/Paratext8Projects
         self.fixed_wd = workingdir != None
-        self.working_dir = workingdir
+        self.working_dir = workingdir           # . or ~/Paratext8Projects/<prj>/PrintDraft
         self.userconfig = userconfig
         self.scriptsdir = scriptsdir
         self.args = args

@@ -329,6 +329,10 @@ class PicList:
         del self.model[i]
         self.select_row(model.get_path(i).get_indices()[0])
 
+    def set_src(self, src):
+        wid = _form_structure.get('src', 'src')
+        w = self.builder.get_object(wid)
+        setWidgetVal(wid, w, src)
 
 _checks = {
     "r_picclear":       "unknown",
@@ -733,21 +737,25 @@ class PicInfo(dict):
             GObject.timeout_add_seconds(1, self.updateView, view, bks=bks, filtered=filtered)
         view.load(self, bks=bks if filtered else None)
 
-def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False, cols=1):
+def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False, cols=1, doclear=True):
     newpics = PicInfo(model)
     newpics.read_piclist(os.path.join(model.settings_dir, model.prjid, 'shared',
                                       'ptxprint', "{}.piclist".format(model.prjid)))
     delpics = set()
-    picinfos.clear()
+    if doclear:
+        picinfos.clear()
     for bk in bks:
         bkf = allbooks.get(bk, None)
         if bkf is None or not os.path.exists(bkf):
             continue
         for k in [k for k in newpics.keys() if k[:3] == bk]:
             del newpics[k]
+        for k in [k for k in picinfos.keys() if k[:3] == bk]:
+            del picinfos[k]
         newpics.read_sfm(bk, bkf)
         newpics.set_positions(randomize=random, suffix=suffix, cols=cols)
-        for k in (k for k in newpics.keys() if k[:3] == bk):
-            picinfos[k+suffix] = newpics[k]
+        for k, v in newpics.items():
+            if k[:3] == bk:
+                picinfos[k+suffix] = v
     picinfos.loaded = True
 
