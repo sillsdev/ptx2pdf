@@ -87,7 +87,7 @@ class Collector:
         if c is None:
             currChunk = Chunk(mode=self.mode)
         else:
-            mode = _textype_map.get(c.meta.get('TextType'), self.mode)
+            mode = _textype_map.get(str(c.meta.get('TextType')), self.mode)
             currChunk = Chunk(mode=mode, chap=self.chap, verse=self.verse, end=self.end, pnum=self.pnum(c))
             self.mode = mode
         self.acc.append(currChunk)
@@ -111,7 +111,7 @@ class Collector:
             if c.name == "cl" and self.chap == 0:
                 self.chaplabel = c
             if ispara(c):
-                newmode = _textype_map.get(c.meta.get('TextType'), self.mode)
+                newmode = _textype_map.get(str(c.meta.get('TextType')), self.mode)
                 if newmode != self.mode:
                     newchunk = True
                 elif self.mode == ChunkType.HEADING:
