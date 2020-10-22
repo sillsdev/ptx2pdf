@@ -605,8 +605,8 @@ class GtkViewModel(ViewModel):
         self.updateExamineBook()
         self.updateDialogTitle()
 
-    def onSaveConfig(self, btn):
-        if self.prjid is None:
+    def onSaveConfig(self, btn, force=False):
+        if self.prjid is None or self.configLocked():
             return
         newconfigId = self.configName() # self.get("ecb_savedConfig")
         if newconfigId != self.configId:
@@ -781,7 +781,7 @@ class GtkViewModel(ViewModel):
         if invPW == None or invPW == "": # No existing PW, so set a new one
             self.builder.get_object("t_invisiblePassword").set_text(pw)
             self.builder.get_object("c_hideAdvancedSettings").set_sensitive(False)
-            self.onSaveConfig(None)
+            self.onSaveConfig(None, force=True)     # Always save the config when locking
         else: # try to unlock the settings by removing the settings
             if pw == invPW:
                 self.builder.get_object("t_invisiblePassword").set_text("")
@@ -1590,8 +1590,8 @@ class GtkViewModel(ViewModel):
         cfname = self.configName()
         zfname = self.prjid+("-"+cfname if cfname else "")+"PTXprintArchive.zip"
         archiveZipFile = self.fileChooser(_("Select the location and name for the Archive file"),
-                filters = {"ZIP files": {"pattern": "*.zip", "mime": "application/zip"}},
-                multiple = False, folder = False, save= True, basedir = self.working_dir, defaultSaveName=zfname)
+                filters={"ZIP files": {"pattern": "*.zip", "mime": "application/zip"}},
+                multiple=False, folder=False, save=True, basedir=self.working_dir, defaultSaveName=zfname)
         if archiveZipFile is not None:
             # self.archiveZipFile = archiveZipFile[0]
             btn_createZipArchive.set_tooltip_text(str(archiveZipFile[0]))

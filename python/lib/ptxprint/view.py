@@ -401,6 +401,9 @@ class ViewModel:
             os.makedirs(prjdir,exist_ok=True)
         return prjdir
 
+    def configLocked(self):
+        return self.get("t_invisiblePassword") != ""
+
     def readConfig(self, cfgname=None):
         if cfgname is None:
             cfgname = self.configName() or ""
