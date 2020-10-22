@@ -1076,11 +1076,10 @@ class GtkViewModel(ViewModel):
         if btn.get_active():
             self.set("r_"+bits[0], bits[1])
         self.sensiVisible("r_"+bits[0])
-        #self.sensiVisible("c_singlebook")
-        #self.sensiVisible("c_multiplebooks")
-        #self.sensiVisible("c_biblemodule")
-        # self.sensiVisible("c_dblbundle")
-
+        if n.startswith("r_book_"):
+            self.updateExamineBook()
+            self.updateDialogTitle()
+        
     def updateFakeLabels(self):
         status = self.get("c_fakebold") or self.get("c_fakeitalic") or self.get("c_fakebolditalic")
         for c in ("l_embolden", "l_slant"):
