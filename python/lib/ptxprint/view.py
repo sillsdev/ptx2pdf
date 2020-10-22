@@ -889,7 +889,7 @@ class ViewModel:
                     res[os.path.join(fpath, bk)] = os.path.basename(bk)
                     cfgchanges['btn_chooseBibleModule'] = os.path.basename(fname)
             else:
-                res[fname] = os.path.basename(fname)
+                res[os.path.join(fpath, fname)] = os.path.basename(fname)
         self.picinfos.getFigureSources(exclusive=self.get("c_exclusiveFiguresFolder"))
         pathkey = 'src path'
         for f in (p[pathkey] for p in self.picinfos.values() if pathkey in p):
