@@ -52,7 +52,7 @@
 %+cfig_getonepair
 \def\FigP@ramAlt{alt} \def\FigP@ramSrc{src} \def\FigP@ramSize{size} \def\FigP@ramLoc{loc}
 \def\FigP@ramCopy{copy} \def\FigP@ramRef{ref} \def\FigP@ramXtra{x-xetex} \def\FigP@ramPgpos{pgpos}
-\def\FigP@ramMirror{mirror} \def\FigP@ramScale{scale} 
+\def\FigP@ramMirror{mirror} \def\FigP@ramScale{scale}  \def\FigP@ramMedia{media} 
 
 \newif\ifusfmthree \usfmthreefalse
 \def\getonepairp@ram#1="#2" {\stripspace#1\end/ \end/\relax{#1}\edef\p@ramid{\p@ram}%
@@ -69,8 +69,13 @@
     \ifx\p@ramid\FigP@ramXtra\global\p@ramnumber=8\else %experimental extra parameter, post filename e.g. "rotated 90"
     \ifx\p@ramid\FigP@ramMirror\global\p@ramnumber=9\else %experimental mirror parameter.
     \ifx\p@ramid\FigP@ramScale\global\p@ramnumber=10\else
-    \trace{g}{Unrecognised usfm3 parameter \p@ramid}\p@ramnumber=-1%
-    \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
+    \ifx\p@ramid\FigP@ramMedia\global\p@ramnumber=11\else
+    \ifx\p@ramval\empty
+      \trace{g}{usfm2 parameter \p@ramid}%
+    \else
+      \trace{g}{Unrecognised usfm3 parameter \p@ramid}\p@ramnumber=-1%
+    \fi% If there's no value, it's probably usfm2-style
+    \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
     \tempfalse
     \ifx\p@ramval\empty\ifusfmthree\else
       \trace{g}{param-\the\p@ramnumber = "\p@ramid" but not "\p@ramval"}%
