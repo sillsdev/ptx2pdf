@@ -1997,15 +1997,17 @@ class GtkViewModel(ViewModel):
     def _updateHorizOptions(self, size, pgpos):
         lsp = self.builder.get_object("ls_plHoriz")
         fcb = self.builder.get_object("fcb_plHoriz")
+        initVal = self.get("fcb_plHoriz")
         lsp.clear()
         for horiz in ["Left", "Center", "Right", "Inner", "Outer", "-"]:
             if horiz == "Center" and \
                size not in ["page", "full"] and \
                pgpos not in ["h", "p"]:
+               if initVal == "Center":
+                    fcb.set_active(0)
                continue
             else:
                 lsp.append([horiz, _horiz[horiz]])
-            fcb.set_active(0)
  
     def onPLrowActivated(self, *a):
         self.set("nbk_PicList", 1)
