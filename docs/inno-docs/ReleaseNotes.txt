@@ -1,7 +1,7 @@
-PTXprint 1.2.9.6 Release Notes 
+PTXprint 1.2.9.7 Release Notes 
 23rd October 2020
 
-Bug Fixes and Improvements in 1.2.9.6
+Bug Fixes and Improvements in 1.2.9.7
 
   * Fixed problems resulting from PicList not being saved
   
