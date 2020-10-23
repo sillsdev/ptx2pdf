@@ -113,6 +113,15 @@ else:
     mainw.ExperimentalFeatures(args.experimental)
 
 if args.pid:
+    pdir = os.path.join(args.paratext, args.pid)
+    if not os.path.exists(pdir):
+        args.pid = None
+    elif args.config:
+        pdir = os.path.join(pdir, "shared", "ptxprint", args.config, "ptxprint.cfg")
+        if not os.path.exists(pdir):
+            args.config = None
+
+if args.pid:
     mainw.setPrjid(args.pid)
     mainw.setConfigId(args.config or "Default")
 
