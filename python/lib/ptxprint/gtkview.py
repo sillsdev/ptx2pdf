@@ -1424,7 +1424,7 @@ class GtkViewModel(ViewModel):
         if self.prjid:
             self.updatePrjLinks()
             self.userconfig.set("init", "project", self.prjid)
-            if getattr(self, 'configid', None) is not None:
+            if getattr(self, 'configId', None) is not None:
                 self.userconfig.set("init", "config", self.configId)
         status = self.get("r_book") == "multiple"
         for c in ("c_combine", "t_booklist"):
