@@ -11,7 +11,6 @@ _ = gettext.gettext
 def setup_i18n():
     localedir = os.path.join(getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__))), "mo")
     if sys.platform.startswith('win'):
-        print(locale.getdefaultlocale())
         if os.getenv('LANG') is None:
             lang, enc = locale.getdefaultlocale()
             os.environ['LANG'] = lang
