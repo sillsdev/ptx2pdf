@@ -5,19 +5,20 @@ from inspect import currentframe
 from ptxprint.ptsettings import books
 
 APP = 'ptxprint'
-MODIR = os.path.join(os.path.dirname(__file__), 'mo')
 
 _ = gettext.gettext
 
 def setup_i18n():
+    localedir = os.path.join(getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__))), "mo")
     if sys.platform.startswith('win'):
+        print(locale.getdefaultlocale())
         if os.getenv('LANG') is None:
             lang, enc = locale.getdefaultlocale()
             os.environ['LANG'] = lang
     else:
-        locale.bindtextdomain(APP, MODIR)
+        locale.bindtextdomain(APP, localedir)
     locale.setlocale(locale.LC_ALL, '')
-    gettext.bindtextdomain(APP, MODIR)
+    gettext.bindtextdomain(APP, localedir=localedir)
 
 def f_(s):
     frame = currentframe().f_back
