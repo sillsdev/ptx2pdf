@@ -257,11 +257,16 @@ class StyleEditor:
                 oldval = 'nonpublishable' in old.get('TextProperties', '')
             elif k.startswith("_"):
                 val = v[2]
-                for m, f in ((v[3](x), x) for x in (False, True)):
+                olddat = False
+                oldval = old.get(v[3](False), '')
+                for m, f in ((v[3](x), x) for x in (True, False)):
                     if m in old:
-                        oldval = f
+                        olddat = f
+                        oldval = old[m]
                     if m in data:
-                        val = f
+                        val = data[m]
+                        self._setFieldVal(v, olddat, f)
+                        v = stylemap[v[3](False)]
                         break
             else:
                 val = data.get(k, v[2])
@@ -269,23 +274,7 @@ class StyleEditor:
                 if v[0].startswith("c_"):
                     val = val != v[2]
                     oldval = oldval != v[2]
-            w = self.builder.get_object(v[0])
-            if w is None:
-                print("Can't find widget {}".format(v[0]))
-            else:
-                if v[0].startswith("bl_"):
-                    if val is None:
-                        continue
-                    val = (val, "")
-                elif v[0].startswith("col_"):
-                    val = textocol(val)
-                setWidgetVal(v[0], w, val)
-            if v[1] is not None:
-                ctxt = self.builder.get_object(v[1]).get_style_context()
-                if val != oldval:
-                    ctxt.add_class("changed")
-                else:
-                    ctxt.remove_class("changed")
+            self._setFieldVal(v, oldval, val)
 
         stype = data.get('StyleType', '')
         _showgrid = {'Para': (True, True, False), 'Char': (False, True, False), 'Note': (False, True, True)}
@@ -307,6 +296,25 @@ class StyleEditor:
             self.builder.get_object("l_url_usfm").set_uri('{}/{}/{}.html#{}'.format(site, urlcat, pgname, urlmkr))
         self.isLoading = False
 
+    def _setFieldVal(self, v, oldval, val):
+        w = self.builder.get_object(v[0])
+        if w is None:
+            print("Can't find widget {}".format(v[0]))
+        else:
+            if v[0].startswith("bl_"):
+                if val is None:
+                    return
+                val = (val, "")
+            elif v[0].startswith("col_"):
+                val = textocol(val)
+            setWidgetVal(v[0], w, val)
+        if v[1] is not None:
+            ctxt = self.builder.get_object(v[1]).get_style_context()
+            if val != oldval:
+                ctxt.add_class("changed")
+            else:
+                ctxt.remove_class("changed")
+
     def item_changed(self, w, key):
         if self.isLoading:
             return
@@ -323,12 +331,12 @@ class StyleEditor:
             data['TextProperties'].add(add+'publishable')
             return
         elif key.startswith("_"):
+            newv = stylemap[v[3](False)]
             key = v[3](val)
             isset = getWidgetVal(v[0], w)
             other = v[3](not isset)
             if other in data:
                 del data[other]
-            newv = stylemap[val]
             wtemp = self.builder.get_object(newv[0])
             value = getWidgetVal(newv[0], wtemp)
         elif v[0].startswith("col_"):
