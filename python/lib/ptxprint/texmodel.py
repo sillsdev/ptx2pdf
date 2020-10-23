@@ -781,10 +781,9 @@ class TexModel:
                     doc = Usfm(dat.splitlines(True), self.sheets)
                     doc.normalise()
                 except SyntaxError as e:
-                    print(self.prjid, bk, str(e).split('line', maxsplit=1)[1])
                     syntaxErrors.append("{} {} line:{}".format(self.prjid, bk, str(e).split('line', maxsplit=1)[1]))
-                except IndexError as e:
-                    syntaxErrors.append("{} {} line:{}".format(self.prjid, bk, str(e)))
+                except Exception as e:
+                    syntaxErrors.append("{} {} Error: {}".format(self.prjid, bk, str(e)))
                 if len(syntaxErrors):
                     self.printer.doError("Failed to canonicalise texts due to a Syntax Error:",        
                     secondary="\n".join(syntaxErrors)+"\n\nIf original USFM text is correct, then check "+ \

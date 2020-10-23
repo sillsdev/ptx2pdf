@@ -351,11 +351,10 @@ class RunJob:
             sheetsb = diginfo.printer.getStyleSheets()
             try:
                 usfmerge(left, right, outFile, stylesheetsa=sheetsa, stylesheetsb=sheetsb)
-            except IndexError as e:
-                syntaxErrors.append("{} {} line:{}".format(self.prjid, b, str(e)))
+            except SyntaxError as e:
+                syntaxErrors.append("{} {} line: {}".format(self.prjid, b, str(e).split('line', maxsplit=1)[1]))
             except Exception as e:
-                print(self.prjid, b, str(e).split('line', maxsplit=1)[1])
-                syntaxErrors.append("{} {} line:{}".format(self.prjid, b, str(e).split('line', maxsplit=1)[1]))
+                syntaxErrors.append("{} {} Error: {}".format(self.prjid, b, str(e)))
             for f in [left, right, outFile, logFile]:
                 texfiles += [os.path.join(self.tmpdir, f)]
         if len(syntaxErrors):

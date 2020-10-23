@@ -323,7 +323,7 @@ class StyleEditor:
             data['TextProperties'].add(add+'publishable')
             return
         elif key.startswith("_"):
-            val = v[3](val)
+            key = v[3](val)
             isset = getWidgetVal(v[0], w)
             other = v[3](not isset)
             if other in data:
@@ -331,7 +331,6 @@ class StyleEditor:
             newv = stylemap[val]
             wtemp = self.builder.get_object(newv[0])
             value = getWidgetVal(newv[0], wtemp)
-            key = val
         elif v[0].startswith("col_"):
             value = coltotex(val)
         elif key.startswith("bl_"):
