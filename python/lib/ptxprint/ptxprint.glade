@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -4583,6 +4583,7 @@ of the book. Similar to a "biblio-page" or a
                             <property name="active">True</property>
                             <property name="draw_indicator">True</property>
                             <signal name="clicked" handler="onColophonClicked" swapped="no"/>
+                            <signal name="toggled" handler="onColophonClicked" swapped="no"/>
                           </object>
                         </child>
                       </object>

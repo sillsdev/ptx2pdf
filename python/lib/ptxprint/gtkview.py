@@ -193,6 +193,11 @@ _horiz = {
     "-":        "-"
 }
 
+_defaultColophon = r"""\pc \zCopyright
+\pc \zLicense
+\pc \zImageCopyrights
+"""
+
 _notebooks = ("Main", "Viewer", "PicList")
 
 # Vertical Thumb Tab Orientation options L+R
@@ -288,11 +293,8 @@ class GtkViewModel(ViewModel):
             view.connect("focus-out-event", self.onViewerLostFocus)
             view.connect("focus-in-event", self.onViewerFocus)
 
-        # Need to set up a view+buffer etc. for "scroll_colophonXtraText"
-        #self.colo = GtkSource.View.new_with_buffer(GtkSource.Buffer())
-        #self.builder.get_object("scroll_colophonXtraText").add(self.colo)
-        # self.colo.set_text("This is where you can type any additional text for the Colophon text\nand it is a multi-line control.")
-        # colo.set_show_line_numbers(False)  # Turn line numbers OFF
+        if self.get("c_colophon") and self.get("tb_colophon") == "":
+            self.set("tb_colophon", _defaultColophon)
 
         self.picListView = PicList(self.builder.get_object('tv_picListEdit'),
                                    self.builder.get_object('tv_picList'), self.builder, self)
@@ -2033,13 +2035,11 @@ class GtkViewModel(ViewModel):
         
     def onColophonClicked(self, btn):
         self.onSimpleClicked(btn)
+        if self.get("c_colophon") and self.get("tb_colophon") == "":
+            self.set("tb_colophon", _defaultColophon)
 
     def onColophonResetClicked(self, btn):
-        default_colophon = _(r"""\pc \zCopyright
-\pc \zLicense
-\pc \zImageCopyrights
-""")
-        self.set("tb_colophon", default_colophon)
+        self.set("tb_colophon", _defaultColophon)
 
     def onResetCopyrightClicked(self, btn):
         self.builder.get_object("t_copyrightStatement").set_text(self._getPtSettings().get('Copyright', ""))

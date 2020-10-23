@@ -572,7 +572,7 @@ class PicInfo(dict):
                     if 'media' in pic and not any(x in media for x in pic['media']):
                         del self[r]
 
-    def out(self, fpath, bks=[], skipkey=None, usedest=False):
+    def out(self, fpath, bks=[], skipkey=None, usedest=False, media=None):
         ''' Generate a picinfo file, with given date.
                 bks is a list of 3 letter bkids only to include. If empty, include all.
                 skipkey if set will skip a record if there is a non False value associated with skipkey
@@ -600,9 +600,12 @@ class PicInfo(dict):
                 elif x == "scale" and float(v[x]) == 1.0:
                     continue
                 elif x == "media" and sorted(v[x]) == "apw":
+                    if media is not None and media not in v[x]:
+                        break
                     continue
                 line.append('{}="{}"'.format(pos3parms[i], v[x]))
-            lines.append("{} {}|".format(outk, v.get('caption', ''))+ " ".join(line))
+            else:
+                lines.append("{} {}|".format(outk, v.get('caption', ''))+ " ".join(line))
         dat = "\n".join(lines)+"\n"
         with open(fpath, "w", encoding="utf-8") as outf:
             outf.write(dat)
