@@ -301,9 +301,12 @@ class ViewModel:
         newp = self.configPath(cfgname=newcfg)
         if not os.path.exists(newp):
             os.makedirs(newp)
-            for f in ('ptxprint-mods.sty', 'ptxprint-mods.tex', 'ptxprint.cfg', 'PicLists', 'AdjLists'):
+            jobs = {k:k for k in('ptxprint-mods.sty', 'ptxprint.sty', 'ptxprint-mods.tex',
+                                 'ptxprint.cfg', 'PicLists', 'AdjLists')}
+            jobs["{}-{}.piclist".format(self.prjid, oldcfg)] = "{}-{}.piclist".format(self.prjid, newcfg)
+            for f, n in jobs.items():
                 srcp = os.path.join(oldp, f)
-                destp = os.path.join(newp, f)
+                destp = os.path.join(newp, n)
                 if os.path.exists(srcp):
                     if moving:
                         move(srcp, destp)
@@ -593,7 +596,7 @@ class ViewModel:
         pass
 
     def savePics(self, force=False):
-        if not force or self.configLocked():
+        if not force and self.configLocked():
             return
         if self.picinfos is not None and self.picinfos.loaded:
             self.picinfos.out(os.path.join(self.configPath(self.configName()),
