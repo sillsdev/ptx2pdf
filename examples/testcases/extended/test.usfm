@@ -7,7 +7,9 @@
 after. \add The \+nd Lord\+nd*'s good!\add*  I'm putting little NIV-style angle bracket markers around \beginadd T
 and d\endadd\ to show how close they ought to be when they get put in by the hooks.
 The sequence ought to be before..start..text..end..after.
+\qt-s\*
 \p And that was a  new  parargaph.\nd \f hello \fr 1:1 \ft This is a footnote <<\fq hello\ft >> goodbye\f* \nd*
+\qt-e\*
 \p And that was a p class paragraph break
 \p As was that, just.
 \esb

@@ -43,3 +43,23 @@ Consider lifting magic from context?
 
 coloured breakable/ normal paragraphs, could extend parlocs file  to mark top left / bottom right of each column.
 
+### PDF-X/1a
+(if that's the right code).
+Needs us to use no colour or cmyk.
+rgb->cmyk is device-dependent, but the actual maths is not too complex. Option 1 would be for X1a, people must specify colour in cmyk 
+Option 2 is auto-conversion using e.g. method described in latex xcolor.sty's documentation.
+Option 3 is for ptxprint to convert.
+Options 1 and 3 demand that tex macros know colours are specified in CMYK, 
+Option 2 needs the conversion parameters to be specified in a tex-readable form.
+
+Colours are specified in the following places:
+a) FontColor (xRRGGBB or r+256*(g+256*b) -> \font...:color=RRGGBB 
+  There is no way to specify CMYK in a \font definition, however the macros COULD be modified to use \special{color: cmyk ...}
+b) Images (not addressable in macros)
+  
+c) Colour of tabs (r g b)
+
+d) Background colour for side-bars
+
+
+

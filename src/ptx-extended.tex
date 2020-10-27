@@ -190,7 +190,7 @@
   \edef\l@stdepth{\the\prevdepth}% Remember for later
   \edef\hs@ze{\the\hsize}%
   \s@tc@tpr@fix
-  \getsbp@ram{w@dth}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup
+  \getsbp@ram{w@dth}\end@llpoppedstyles{s}\mcpush{s+\sb@rmarker}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup
     \s@tsb@rwidth\inextendedtrue
     \global\sb@rchunkh@ight=\maxdimen
     \global\c@th@@ks{\st@rtsb@r}}
@@ -221,6 +221,7 @@
   \ifhe@dings\endhe@dings\fi
   \ifhmode\par\fi
   \ifinextended\global\let\c@t@gory\c@tegory\egroup\else\message{\\ebse called without \\esb}\fi
+  \end@llpoppedstyles{s*}
   \trace{e}{ESBE \the\sb@rchunkh@ight}%
   \let\c@tegory\c@t@gory%recover boxed value
   \s@tc@tpr@fix

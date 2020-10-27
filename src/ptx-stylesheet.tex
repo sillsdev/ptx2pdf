@@ -122,7 +122,7 @@
 %+csty_defparam
 %:
 % \defp@ram: store the value of a parameter from the .sty file
-%
+% p | description
 % --|------
 % #1|name of parameter to store
 % #2|value
@@ -140,42 +140,79 @@
 %+csty_getparam
 %:
 % \getp@aram: fetch the value of a style parameter into \p@ram
-%
 % --|------
 % #1|name of parameter to fetch
 % #2|name of marker
 % --|------
 % Sets temporary macro \p@ram to the value
-% The macro is diglot aware, allowing all parameters to have L Left/Right variant or use
-% default. (e.g when asked for paramter for v, check for vL|vR, default to v)
-%
-\def\getp@r@m#1#2{\x@\let\x@\p@ram\csname#2:#1\endcsname\ifx\p@ram\relax\else\trace{s}{#2:#1 found: \p@ram}\fi}
-\def\getp@ram#1#2{\trace{Ds}{getp@ram #2:#1}%
-\ifdiglot
-  \edef\d@sf{\ifdiglotL L\else R\fi}%
-  \getp@r@m{#1}{\c@tprefix#2\d@sf}%
-  \ifx\p@ram\relax
-    \ifx\c@tprefix\empty\else\getp@r@m{#1}{\c@tprefix#2}\fi%
-  \else
-    \trace{sc}{Category specific(\c@tprefix#2\d@sf):#1 found}%
-    \trace{Ds}{...side-specfic -> \p@ram}%
-  \fi
-  \ifx\p@ram\relax
-    \getp@r@m{#1}{#2}\trace{Ds}{...default -> \p@ram}%
-  \else
-    \trace{Ds}{...side-specfic -> \p@ram}%
-  \fi
-\else\getp@r@m{#1}{\c@tprefix#2}%
-  \ifx\p@ram\relax
-    \ifx\c@tprefix\empty\else
-      \getp@r@m{#1}{#2}%
+% The macro was once just diglot aware, allowing all parameters to have L Left/Right variant or use
+% default. (e.g when asked for paramter for v, check for vL|vR, default to v). Now it (potentially) needs to 
+% take into account: diglot, categories and milestones.
+% Rather than attempt to code \ifs for all possible 8 options, it now builds a comma-separated list of them, 
+% and finds the first match.
+
+\def\getp@ram#1#2{\trace{s}{getp@ram #2:#1}%
+ \iftrue
+   {%protect outer version of \d@, etc.
+   \let\p@ram\relax
+   \edef\p@ramcheck{#1}%
+   %\tracingassigns=1
+   %\tracingmacros=1
+   \ifdiglot
+     \edef\d@sf{\ifdiglotL L\else R\fi}%
+     \edef\p@ssParams{#2\d@sf,#2}%
+   \else
+     \edef\p@ssParams{#2}%
+   \fi
+   %\trace{s}{1. Checking \p@ssParams}%
+   \ifx\mspr@fix\empty\else
+     \edef\@lso{\mspr@fix}%
+     \let\@ut=\empty \let\d@=\cs@lsolist\x@\cstackdown \p@ssParams,\E \let\p@ssParams=\@ut
+   \fi
+   %\trace{s}{2. Checking \p@ssParams}%
+   \ifx\c@tprefix\empty\else
+     \edef\@lso{\c@tprefix}%
+     \let\@ut=\empty \let\d@=\cs@lsolist\x@\cstackdown \p@ssParams,\E \let\p@ssParams=\@ut
+   \fi
+   \trace{s}{Checking \p@ssParams}%
+   \let\d@=\stackg@tp@ram
+   \x@\cstackdown \p@ssParams,\E
+   \global\let\p@@r@m=\p@ram % Need to return outside the brackets
+   %\tracingassigns=0
+   %\tracingmacros=0
+   }%
+   \let\p@ram=\p@@r@m
+ \else %Old, working, but ignorant of milestones
+   \ifdiglot
+    \getp@r@m{#1}{\c@tprefix#2\d@sf}%
+    \ifx\p@ram\relax
+      \ifx\c@tprefix\empty\else\getp@r@m{#1}{\c@tprefix#2}\fi%
+    \else
+      \trace{sc}{Category specific(\c@tprefix#2\d@sf):#1 found}%
+      \trace{Ds}{...side-specfic -> \p@ram}%
     \fi
-  \else
-    \ifx\c@tprefix\empty\else\trace{sc}{Category specific(\c@tprefix#2):#1 found}\fi%
-  \fi
-\fi
-\trace{s}{\space\space (\c@tprefix)#2\ifdiglot(\d@sf)\fi : #1 is \p@ram}%
+    \ifx\p@ram\relax
+      \getp@r@m{#1}{#2}\trace{Ds}{...default -> \p@ram}%
+    \else
+      %\trace{Ds}{...side-specfic -> \p@ram}%
+    \fi
+   \else\getp@r@m{#1}{\c@tprefix#2}%
+    \ifx\p@ram\relax
+      \ifx\c@tprefix\empty\else
+	\getp@r@m{#1}{#2}%
+      \fi
+    \else
+      \ifx\c@tprefix\empty\else\trace{sc}{Milestone/Category specific(\c@tprefix#2):#1 found}\fi%
+    \fi
+   \fi
+ \fi
+  \trace{s}{\space\space (\c@tprefix)(\mspr@fix)#2\ifdiglot(\d@sf)\fi :#1 is \p@ram}%
 }
+
+\def\stackg@tp@ram#1\E{\getp@r@m{\p@ramcheck}{#1}\ifx\p@ram\relax\else\let\d@=\cstackrelax\fi}
+\def\getp@r@m#1#2{\x@\let\x@\p@ram\csname#2:#1\endcsname \ifx\p@ram\relax\else\trace{s}{#2:#1 found: \p@ram}\fi}
+\def\cs@lsolist#1\E{\trace{s}{expanding #1->\@lso#1,#1}\ifx\@ut\empty\xdef\@ut{\@lso#1,#1}\else\xdef\@ut{\@ut,\@lso#1,#1}\fi}
+%\def\cs@lsolist#1\E{\trace{s}{expanding #1->\@lso#1,#1}\@lso#1,#1}
 %-csty_getparam
 
 %+csty_getmcparam
@@ -551,12 +588,49 @@
 
 %+csty_mstack
 \gdef\mcstack{+,}
+\let\mcstack@mpty\mcstack
 \def\cstackempty{,}
 \def\mcpop{\traceNum{s}{pop stack: \mcstack}\xdef\mcstack{\x@\cstackpop\mcstack\E}\ifx\mcstack\empty\xdef\mcstack{+,}\fi}
 \def\mcpush#1{\traceNum{s}{push #1 onto \mcstack}\xdef\mcstack{#1,\mcstack}}
 \def\mcup{\x@\cstackup\mcstack\E}
 \def\mcdown{\x@\cstackdown\mcstack\E}
 \def\mctop{\x@\cstacktop\mcstack\E}
+% Test to see if a new THING pops other things.
+\def\mct@stname#1#2{#1-mcp@ps-#2}
+\def\mcp@pCont#1#2{\edef\t@@st{\mct@stname{#1}{#2}}\x@\xdef\csname\t@@st\endcsname{Y}} % What pops what?
+\def\mcp@pEnd#1#2{\edef\t@@st{\mct@stname{#1}{#2}}\x@\xdef\csname\t@@st\endcsname{P}} % What pops what?
+\mcp@pCont{P}{P}% new P pops P
+\mcp@pCont{P}{c}% new P pops c
+\mcp@pCont{P}{C}% new P pops C
+\mcp@pCont{C}{c}% new C pops c
+\mcp@pCont{C}{C}% new C pops C
+\mcp@pCont{s}{C}% Side bars pop character styles.
+\mcp@pCont{s}{c}% Side bars pop character styles.
+\mcp@pCont{s*}{t}% sidebar end pops caT
+\mcp@pCont{s*}{P}% sidebar end pops Paragraph
+\mcp@pCont{s*}{c}% sidebar end pops embedded charstyle
+\mcp@pCont{s*}{C}% sidebar end pops Charstyle
+\mcp@pEnd{s*}{s}% sidebar end pops ONE sidebar, then finish
+\mcp@pCont{t}{t}% new cat pops old cat
+\mcp@pEnd{t*}{t}% cat end pops one old cat, then finish
+\mcp@pEnd{m*}{m}% milestone end pops a milestone, then finish
+\def\endit@c{\endch@rstyle*}
+\def\endit@C{\endch@rstyle*}
+\def\whileitp@ps#1+#2\E{% This almost does the same as \end@llcharstyle, but uses the new mechanism
+  \trace{s}{whileitp@ps:\mcch@cking: #1+#2 (\mcstack)}%
+  \x@\let\x@\tmp\csname\mct@stname{\mcch@cking}{#1}\endcsname
+  \if Y\tmp\relax% 
+     \csname endit@#1\endcsname
+     \mcpop
+  \else
+     \let\d@=\cstackrelax
+     \if P\tmp\relax
+       \csname endit@#1\endcsname
+       \mcpop
+     \fi
+  \fi}
+\def\end@llpoppedstyles#1{\edef\mcch@cking{#1}\let\d@=\whileitp@ps\mcdown}
+
 %-csty_mstack
 
 %+csty_stylesheet
@@ -746,6 +820,28 @@
 \catcode`\/=12
 %-csty_slash
 
+%+csty_milestone
+% Operations on the current milestone(s)
+\def\st@rtmilestone{%
+  \end@llpoppedstyles{m}%
+  \mcpush{m+\thismil@stone}%
+  \end@llpoppedstyles{m}%
+  \upd@teMsPrefix
+}
+\def\@ndmilestone{%
+  \end@llpoppedstyles{m*}%
+  \upd@teMsPrefix
+}
+\def\st@ndalonemilestone{}
+\def\upd@teMsPrefix{%Build a prefix based on all currently-in-force milestones.
+  \xdef\mspr@fix{}\let\d@=\mil@st@necheck\mcup
+  \ifx\mspr@fix\empty\else\xdef\mspr@fix{ms:\mspr@fix|}\trace{s}{msPrefix set to \mspr@fix}\fi}
+\def\mil@st@necheck#1+#2\E{%
+  \if #1m\relax\xdef\mspr@fix{\mspr@fix#2}\fi}
+   
+
+%-csty_milestone
+
 %+csty_category
 % Define the current category
 \def\s@tc@tprefix#1{%
@@ -759,11 +855,12 @@
   \fi
   \trace{sc}{Stylesheet prefix for \c@tegory: '\c@tprefix'}%
 }
-\def\@ndc@t{
+\def\@ndc@t{%
   \ifx\c@tegory\empty
     \trace{sc}{@ndc@t called with empty category. Eh?}%
   \else
-    \op@ninghooks{end}{cat}% 
+    \cl@singhooks{end}{cat}% 
+    \end@llpoppedstyles{t*}%pop styles closed by and end of t
     \endgroup %End the group started between the cat groups     %(3)
     \cl@singhooks{after}{cat}%
     \s@tc@tprefix{}%
@@ -775,6 +872,7 @@
 \def\c@t #1\cat*{%
   \ifx\c@tegory\empty\else                                      %(5)
     \trace{sc}{Odd situation: two \\cat commands in one group or nested categories? Assuming nesting.}%
+    \end@llpoppedstyles{t}%pop styles closed by a start of t, in case this IS 2 cat commands
     % Assume nesting and don't run any endhooks. Otherwise we'd do this:
     %\op@ninghooks{end}{cat}% 
     %\endgroup %End the group started between the cat groups  
@@ -785,12 +883,14 @@
   \op@ninghooks{before}{cat}% 
   \ifhmode\par\fi
   \begingroup % This group will be closed between the end and after hooks of endc@t %(1)
+  \mcpush{t+#1}%
   \op@ninghooks{start}{cat}%
   \bgroup % This group will be closed by the end-of footnote marker / other container.  %(2)
   %I.e. we're borrowing the egroup from other bits of code.  
   \aftergroup\@ndc@t %
 }
-\global\let\c@tprefix\empty
+\global\let\c@tprefix\empty % category-specific prefix
+\global\let\mspr@fix\empty % Milestone-specific prefix
 %-csty_category
 
 %+csty_hooks

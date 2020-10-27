@@ -91,7 +91,9 @@
   \catcode13=10 % and <return> is also a space (we don't want blank line -> \par)
   \if\n@xt*\let\n@xt@\endch@rstylen % check for "*", if so then we need to end the style
   \else\if\n@xt~\let\n@xt@\startch@rstyle@spc\else
-      \if\n@xt_\let\n@xt@\startch@rstyle@nl\else\let\n@xt@\startch@rstyle@misc\fi\fi
+      \if\n@xt_\let\n@xt@\startch@rstyle@nl\else
+        \if\n@xt-\let\n@xt@\startch@rstyle@minus\else
+	  \let\n@xt@\startch@rstyle@misc\fi\fi\fi
     \end@llcharstyles % a char style closes all other char styles
   \fi % else we need to start it
   \xdef\stylet@pe{C}%                                                                   %(2)
@@ -112,6 +114,7 @@
  % so we have to explicitly consume it here as part of the macro parameter list
  \def\startch@rstyle@spc~{\startch@rstyle}%                                             %(3)
  \def\startch@rstyle@nl_{\startch@rstyle}%
+ \def\startch@rstyle@minus-#1{\edef\thismil@stone{\newch@rstyle}\xdef\milestoneType{#1}\startch@rstyle}%			%(4)
 }
 %-cchar_docharstyle
 
@@ -151,6 +154,15 @@
 
 %+cchar_endcharstyle
 \lccode`\|=`\\ % for printing backslash in error message
+
+\let\milestoneType\empty
+\def\*{\endch@rstyle*\unskip\mil@stone}% USFM3 'self closing marker' milestone
+\def\mil@stone{\trace{s}{Milestone \newch@rstyle (\milestoneType)}%
+ \if\milestoneType s\relax\st@rtmilestone\else
+   \if\milestoneType e\relax\@ndmilestone\else
+   \st@ndalonemilestone\fi\fi
+ \let\milestoneType\empty
+}
 \lowercase{
  \def\endch@rstyle*{\TRACE{endch@rstyle}% consume the * that marked the SFM as ending a style
    \def\d@##1+##2\E{\xdef\thisch@rstyle{##2}}\mctop

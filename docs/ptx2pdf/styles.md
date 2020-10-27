@@ -195,17 +195,30 @@ style. Next we start testing `\n@xt` which contains the character after the
 style marker. If it is `*` then call the end character style routine. Notice we
 reuse `\n@xt` here. Otherwise we call an appropriate macro according to the type
 of space following the marker. If there is no space, but somehow they have
-managed to close of a marker some other way, we don't consume the character and
+managed to close a marker some other way, we don't consume the character and
 simply jump into the start character style routine itself. Notice that we can
 now merge the paths and we differentiate later using the global macro
 `\stylet@pe` to differentiate (2). There are two macros that we call to consume
 the space or carriage return before calling the start character style (3).
 
+The third special case is introduced by /milestones/ in the USFM-3 standard.
+These have one of three possible formats:
+```
+\ts-s ...\* 
+\ts-e ...\*
+\ts ...\*
+```
+Each one of these may optionally have attributes consisting of a nameless (default) parameter and 
+then any foo="bar" style parameters.
+While it is not clearly prohibited, it seems unlikely that they will contain any actual text prior 
+to the attribute mark (```|```).  But in any case, the ```-s``` or ```-e``` flags must be treated as start and end markers.
+
 [=cchar_docharstyle]::
 
 ### Style Stack
 
-Since character styles can embed inside each other, it is necessary to have a
+Since character styles can embed inside each other, and paragraphs can 
+embed (or stack) within a side-bar, it is necessary to have a
 stack of currently open styles. TeX doesn't have a stack or array type, so we
 use strings instead. Stack items are separated by a comma `,` and are stored
 with the top of the stack first in the string. Within each
@@ -218,6 +231,10 @@ Type  Description
  C    Normal non emebded character style
  P    Paragraph style
  N    Note
+ t    caTegory (` \ef \cat people\cat* .... \ef*`) 
+ s    SideBar (`\esb \cat History\cat* \p .... \esb*`) 
+ m    USFM milestone group (` \qt-s[attributes]\* .... \qt-e\* `)  
+
 
 The second component is the marker itself. Thus one might have a stack string of
 `C+nd,c+ft,N+f,c+wj,P+p,+,` which says we are in an embedded `\nd` marker inside
@@ -365,6 +382,11 @@ Otherwise each routine passes off the work of closing the character style to a
 common routine.
 
 [=cchar_endstyle]::
+USFM-3 Milestones make use of the ```\\*``` "self-closing marker" as their 
+distinguishing feature. Plain TeX defines ```\\*``` as a discretionary multplication 
+sign (i.e. if the line breaks here, put in a multiplication sign), and that definition
+has (until now) has survived. Presumably / hopefully it's not commonly used in 
+USFM otherwise! We define it as (a) calling a macro and (b) closing the character style.
 
 The routine to handle ending character styles is encapsulated in a `\lowercase`
 so that it can use a `\\` as a character in an error message. The first thing is

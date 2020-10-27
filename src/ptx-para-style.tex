@@ -36,7 +36,7 @@
 \newif\ifstartpara
 
 %+cpar_init
-\def\initp@rastyles{\@ntrofalse \t@tlefalse \b@dyfalse \def\m@rker{}}
+\def\initp@rastyles{\@ntrofalse \t@tlefalse \b@dyfalse \def\m@rker{something}}
 %-cpar_init
 
 % test if a marker is an "introduction" style (name begins with "i")
@@ -231,16 +231,14 @@
 \newif\ifnsp@cebefore
 \newif\ifJustifyPars \JustifyParstrue
 \newdimen\lastdepth
-\def\p@rstyle#1{\trace{s}{p@rstyle: #1}%
- \ifsk@pping \egroup \fi % if we were skipping nonpublishable text, end that mode
- \the\p@rstylehooks % allow other modules to hook in here
+\def\endit@P{%Called by whileitp@ps, to end a paragraph style
+ \let\p@r=\par % end the paragraph
  \ifhmode\unskip % remove any trailing space
-   \end@llcharstyles % end any character styles in effect
    \beginL\pdfsavepos
    \write\p@rlocs{\noexpand\@parend{\the\pdflastxpos}{\the\pdflastypos}}\endL       %(1)
    %\ifnum\pagetracing>0\tracingparagraphs=1\ifnum\pagetracing>1\looseness=-1%\emergencystretch=1sp
    %  \fi\else\tolerance=10\fi
-   \par % end the paragraph
+   \p@r
    \ifvmode
     \ifdim\prevdepth>0pt\lastdepth=\prevdepth\else\lastdepth=-1pt\fi
    \else
@@ -254,11 +252,18 @@
      \ifnum\prevgraf=1 \nobreak \else \dr@ppednumberfalse \fi
    \fi
  \fi
+}
+
+\def\p@rstyle#1{\trace{s}{p@rstyle: #1}%
+ \ifsk@pping \egroup \fi % if we were skipping nonpublishable text, end that mode
+ \let\p@r=\par
+ \the\p@rstylehooks % allow other modules to hook in here
+ \end@llpoppedstyles{P}%
 %-cpar_parstyle_intro
 %+cpar_parstyle_after
  \t@stpublishability{#1}% test if the new marker is nonpublishable
  \ifn@npublishable
-  \par % End the present paragaph, to make sure that cutouts, etc. are handled properly
+  \p@r% End the present paragaph, to make sure that cutouts, etc. are handled properly
   \setbox\j@nkbox=\vbox\bgroup\def\m@rker{#1}\sk@ppingtrue % and if so, start a box to consume and discard the text
  \else % else we need to actually process it!
   \getp@ram{spaceafter}{\m@rker}% output any <spaceafter> for the previous style
@@ -267,9 +272,12 @@
     \vskip\p@ram\verticalsp@ceunit                                              %(1)
   \fi
   \resetp@rstyle
-  \def\d@##1+##2\E{\edef\tmp{##2}%
-    \ifx\tmp\m@rker\else\ifx\m@rker\relax\else\MSG{Bad closing "marker" \tmp\space expecting "\m@rker"}\fi\fi}%
-  \mctop \mcpop                                                                 %(2)
+  %\ifx\mcstack\mcstack@mpty\else
+    %\def\d@##1+##2\E{\edef\tmp{##2}%
+      %\ifx\tmp\m@rker\else\ifx\m@rker\relax\else\MSG{Bad closing marker "\tmp" expecting "\m@rker"}\fi\fi}%
+  
+    %\mctop \mcpop                                                                 %(2)
+  %\fi
   \cl@singhooks{after}{\m@rker}%
   \the\afterh@@ks
   \gdef\m@rker{#1}% remember the new style name
