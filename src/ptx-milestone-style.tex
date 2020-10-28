@@ -1,0 +1,109 @@
+%:strip
+% Part of the ptx2pdf macro package for formatting USFM text
+% copyright (c) 2007-2020 by SIL International
+% written by David Gardner and pior editors of ptx-char-style
+%
+% Permission is hereby granted, free of charge, to any person obtaining  
+% a copy of this software and associated documentation files (the  
+% "Software"), to deal in the Software without restriction, including  
+% without limitation the rights to use, copy, modify, merge, publish,  
+% distribute, sublicense, and/or sell copies of the Software, and to  
+% permit persons to whom the Software is furnished to do so, subject to  
+% the following conditions:
+%
+% The above copyright notice and this permission notice shall be  
+% included in all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
+% NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
+% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
+% CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+% WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+%
+% Except as contained in this notice, the name of SIL International  
+% shall not be used in advertising or otherwise to promote the sale,  
+% use or other dealings in this Software without prior written  
+% authorization from SIL International.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Milestone macros
+\def\mst@nestyle#1{\trace{s}{mst@nestyle:#1}%
+ \gdef\thismil@stone{\detokenize{#1}}% record the name of the style
+ \catcode32=12 % make <space> an "other" character, so it won't be skipped by \futurelet
+ \catcode13=12 % ditto for <return>
+ \futurelet\n@xt\domst@nestyle % look at following character and call \domst@nestyle
+}
+
+\catcode`\~=12 \lccode`\~=32 % we'll use \lowercase{~} when we need a category-12 space
+\catcode`\_=12 \lccode`\_=13 % and \lowercase{_} for category-12 <return>
+\lowercase{
+ \def\domst@nestyle{% here, \n@xt has been \let to the next character after the marker
+  \catcode32=10 % reset <space> to act like a space again
+  \catcode13=10 % and <return> is also a space (we don't want blank line -> \par)
+  \if\n@xt-\let\n@xt@\startmst@nestyle@minus\else
+    \if\n@xt~\let\n@xt@\startmst@nestyle@spc\else
+      \if\n@xt_\let\n@xt@\startmst@nestyle@nl\else
+	\let\n@xt@\startmst@nestyle\fi\fi\fi
+  \n@xt@
+ }
+ \def\startmst@nestyle@spc~{\startmst@nestyle}%                                             
+ \def\startmst@nestyle@nl_{\startmst@nestyle}%
+ \def\startmst@nestyle@minus-#1{\mst@netrue\edef\thismil@stoneVal{}\xdef\milestoneOp{#1}\startmst@nestyle}%
+}
+\def\*{\ifmst@nefalse\endch@rstyle*\fi\proc@ttribs\mil@stone}% USFM3 'self closing marker' milestone
+\newif\ifmst@ne
+\def\mil@stone{\trace{s}{Milestone \newch@rstyle (\milestoneOp)}%
+  \if\milestoneOp s\relax\st@rtmilestone\else
+   \if\milestoneOp e\relax\@ndmilestone\else
+    \st@ndalonemilestone\fi\fi
+ \let\milestoneOp\empty
+ \s@tfont{\thisch@rstyle}% set up font attributes
+}
+
+\def\startmst@nestyle{%What actually changes between the beginning of a milestone and the end-marker? 
+   \init@ttribs
+}
+
+\newif\ifin@ttrib
+\def\init@ttribs{
+ % Attribute code goes here.
+  \def\attrst@ck{,}%
+  \in@ttribfalse
+  \catcode`\|=\active
+}
+\def\proc@ttribs{
+  \catcode`\|=12
+  \ifin@ttrib\egroup
+    \trace{A}{Attributes specified:\attrib@rgs}%
+  \fi
+}
+{
+  \catcode`\|=\active
+  \def|{\in@ttribtrue\def\attrib@rgs\bgroup}
+}
+
+\def\dr@pmilest@ne#1+#2\E{% This kills a milestone that might be quite burried in the stack
+  \edef\MSt@mp{#2}
+  \if#1m\relax
+    \ifx\MSt@mp\mcch@cking\relax
+      %\csname endit@#1\endcsname
+      \trace{s}{Found #1+#2}%
+    \else
+      \ifx\@ut\empty\xdef\@ut{#1+#2}\else\xdef\@ut{\@ut,#1+#2}\fi 
+    \fi
+  \else
+    \ifx\@ut\empty\xdef\@ut{#1+#2}\else\xdef\@ut{\@ut,#1+#2}\fi 
+  \fi
+  \trace{s}{dr@pmilest@ne: \@ut}%
+}
+\def\dr@pmilestone#1{
+  \trace{s}{Dropping milestone #1 from \MScstack}%
+  \edef\mcch@cking{#1}%
+  \let\@ut=\empty
+  \let\d@=\dr@pmilest@ne
+  \MScdown
+  \let\MScstack=\@ut
+  \trace{s}{Stack now: \MScstack}%
+}

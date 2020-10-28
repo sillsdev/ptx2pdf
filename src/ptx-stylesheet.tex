@@ -1,7 +1,7 @@
 %:strip
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Part of the ptx2pdf macro package for formatting USFM text
-% copyright (c) 2007 by SIL International
+% copyright (c) 2007-2020 by SIL International
 % written by Jonathan Kew
 %
 % Permission is hereby granted, free of charge, to any person obtaining  
@@ -149,7 +149,7 @@
 % default. (e.g when asked for paramter for v, check for vL|vR, default to v). Now it (potentially) needs to 
 % take into account: diglot, categories and milestones.
 % Rather than attempt to code \ifs for all possible 8 options, it now builds a comma-separated list of them, 
-% and finds the first match.
+% and finds the first match. This results in cleaner code.
 
 \def\getp@ram#1#2{\trace{s}{getp@ram #2:#1}%
  \iftrue
@@ -167,13 +167,14 @@
    %\trace{s}{1. Checking \p@ssParams}%
    \ifx\mspr@fix\empty\else
      \edef\@lso{\mspr@fix}%
-     \let\@ut=\empty \let\d@=\cs@lsolist\x@\cstackdown \p@ssParams,\E \let\p@ssParams=\@ut
+     \let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E \edef\p@ssParams{\@ut,\p@ssParams}%
    \fi
    %\trace{s}{2. Checking \p@ssParams}%
    \ifx\c@tprefix\empty\else
      \edef\@lso{\c@tprefix}%
-     \let\@ut=\empty \let\d@=\cs@lsolist\x@\cstackdown \p@ssParams,\E \let\p@ssParams=\@ut
+     \let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E \edef\p@ssParams{\@ut,\p@ssParams}%
    \fi
+   % Final version of the list might be cat:inl|ms:qt|pR,cat:inl|ms:qt|p,cat:inl|pR,cat:inl|p,ms:qt|pR,ms:qt|p,pR,p
    \trace{s}{Checking \p@ssParams}%
    \let\d@=\stackg@tp@ram
    \x@\cstackdown \p@ssParams,\E
@@ -211,6 +212,7 @@
 
 \def\stackg@tp@ram#1\E{\getp@r@m{\p@ramcheck}{#1}\ifx\p@ram\relax\else\let\d@=\cstackrelax\fi}
 \def\getp@r@m#1#2{\x@\let\x@\p@ram\csname#2:#1\endcsname \ifx\p@ram\relax\else\trace{s}{#2:#1 found: \p@ram}\fi}
+\def\cspr@pend#1\E{\ifx\@ut\empty\xdef\@ut{\@lso#1}\else\xdef\@ut{\@ut,\@lso#1}\fi}
 \def\cs@lsolist#1\E{\trace{s}{expanding #1->\@lso#1,#1}\ifx\@ut\empty\xdef\@ut{\@lso#1,#1}\else\xdef\@ut{\@ut,\@lso#1,#1}\fi}
 %\def\cs@lsolist#1\E{\trace{s}{expanding #1->\@lso#1,#1}\@lso#1,#1}
 %-csty_getparam
@@ -255,11 +257,13 @@
  \ifx\styl@type\P@ra \x@\defp@rstyle\x@{\m@rker}
  \else\ifx\styl@type\Ch@r \x@\defch@rstyle\x@{\m@rker}
  \else\ifx\styl@type\N@te \x@\defn@testyle\x@{\m@rker}
+ \else\ifx\styl@type\MSt@ne \x@\defmst@nestyle\m@rker\E
  \else \message{unknown style type \styl@type}
  \fi\fi\fi}
 \def\P@ra{paragraph}
 \def\Ch@r{character}
 \def\N@te{note}
+\def\MSt@ne{milestone}
 
 %:
 % \def*style: define a USFM marker as a paragraph, character or note style marker
@@ -274,6 +278,8 @@
 \def\defch@rstyle#1{\x@\def\csname#1\endcsname{\ch@rstyle{#1}}\x@\def\csname +#1\endcsname{\ch@rstylepls{#1}}}
 \catcode`+=\pl@scatcode
 \def\defn@testyle#1{\x@\def\csname#1\endcsname{\n@testyle{#1}}\m@ken@tecl@ss{#1}}
+%Make a milestone marker if there isn't a character style with the same prefix
+\def\defmst@nestyle#1-#2\E{\x@\let\x@\tmp\csname #1\endcsname\ifx\tmp\relax\x@\def\csname#1\endcsname{\mst@nestyle{#1}}\fi} 
 %-csty_makestyle
 
 %+csty_sethook
@@ -400,7 +406,7 @@
   \ifdim\dropnumbersize=0pt
     \calcdr@psize
   \fi
-  \def\m@rker{c}\defp@ram{fontsize}{\dr@psize}
+  \def\m@rker{c}\defp@ram{fontsize}{\dr@psize}%
   \ifdiglot \resetdropc@p\fi%Can't do this here since things get lowercased
  }
 %-csty_dropchap
@@ -447,7 +453,7 @@
       \trace{h}{dropnumbersize=\the\dropnumbersize, dimen1=\the\dimen1, dimen3=\the\dimen3}%
       \ifdim\dimen3>\dp1 % would overflow downwards. Need to shift              %(4)
         \advance\dimen3 by -\dp1% \divide\dropnumberraise by 2
-        \setp@ram{raise}{c}{\the\dimen3}
+        \setp@ram{raise}{c}{\the\dimen3}%
       \fi
       \trace{h}{dropnumbersize = \the\dropnumbersize, dropnumberraise = \the\dropnumberraise}%
     %\fi
@@ -575,7 +581,7 @@
 %-csty_addspecialhooks
 
 %+csty_stack
-% marker stack operations (mcst@ck)
+% Comma Separated stack
 \def\E{}
 \def\cstackpop#1,#2\E{#2}
 \def\cstackpush#1#2{#2,#1}
@@ -587,7 +593,8 @@
 %-csty_stack
 
 %+csty_mstack
-\gdef\mcstack{+,}
+% marker stack operations (mcstack)
+\gdef\mcstack{+,} 
 \let\mcstack@mpty\mcstack
 \def\cstackempty{,}
 \def\mcpop{\traceNum{s}{pop stack: \mcstack}\xdef\mcstack{\x@\cstackpop\mcstack\E}\ifx\mcstack\empty\xdef\mcstack{+,}\fi}
@@ -595,6 +602,13 @@
 \def\mcup{\x@\cstackup\mcstack\E}
 \def\mcdown{\x@\cstackdown\mcstack\E}
 \def\mctop{\x@\cstacktop\mcstack\E}
+
+% milestone stack (MScstack)
+\gdef\MScstack{+,}  
+\def\MScup{\x@\cstackup\MScstack\E}
+\def\MScdown{\x@\cstackdown\MScstack\E}
+\def\MScpush#1{\traceNum{s}{push #1 onto \MScstack}\xdef\MScstack{#1,\MScstack}}
+
 % Test to see if a new THING pops other things.
 \def\mct@stname#1#2{#1-mcp@ps-#2}
 \def\mcp@pCont#1#2{\edef\t@@st{\mct@stname{#1}{#2}}\x@\xdef\csname\t@@st\endcsname{Y}} % What pops what?
@@ -613,7 +627,6 @@
 \mcp@pEnd{s*}{s}% sidebar end pops ONE sidebar, then finish
 \mcp@pCont{t}{t}% new cat pops old cat
 \mcp@pEnd{t*}{t}% cat end pops one old cat, then finish
-\mcp@pEnd{m*}{m}% milestone end pops a milestone, then finish
 \def\endit@c{\endch@rstyle*}
 \def\endit@C{\endch@rstyle*}
 \def\whileitp@ps#1+#2\E{% This almost does the same as \end@llcharstyle, but uses the new mechanism
@@ -630,6 +643,7 @@
      \fi
   \fi}
 \def\end@llpoppedstyles#1{\edef\mcch@cking{#1}\let\d@=\whileitp@ps\mcdown}
+
 
 %-csty_mstack
 
@@ -824,20 +838,21 @@
 % Operations on the current milestone(s)
 \def\st@rtmilestone{%
   \end@llpoppedstyles{m}%
-  \mcpush{m+\thismil@stone}%
-  \end@llpoppedstyles{m}%
+  \MScpush{\thismil@stone+\milestoneType=\thismil@stoneVal}%
   \upd@teMsPrefix
 }
 \def\@ndmilestone{%
   \end@llpoppedstyles{m*}%
+  \dr@pmilestone{\thismil@stone}{\thismil@stoneVal}%
   \upd@teMsPrefix
 }
 \def\st@ndalonemilestone{}
 \def\upd@teMsPrefix{%Build a prefix based on all currently-in-force milestones.
-  \xdef\mspr@fix{}\let\d@=\mil@st@necheck\mcup
-  \ifx\mspr@fix\empty\else\xdef\mspr@fix{ms:\mspr@fix|}\trace{s}{msPrefix set to \mspr@fix}\fi}
+  \xdef\mspr@fix{}\let\d@=\mil@st@necheck\MScup
+  \ifx\mspr@fix\empty\else\xdef\mspr@fix{ms:\mspr@fix|}\trace{s}{msPrefix set to \mspr@fix}\fi
+}
 \def\mil@st@necheck#1+#2\E{%
-  \if #1m\relax\xdef\mspr@fix{\mspr@fix#2}\fi}
+  \if #1m\relax\xdef\mspr@fix{\ifx\mspr@fix\empty\else \mspr@fix+\fi#2}\fi}
    
 
 %-csty_milestone

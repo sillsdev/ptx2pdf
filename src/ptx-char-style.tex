@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Part of the ptx2pdf macro package for formatting USFM text
-% copyright (c) 2007 by SIL International
+% copyright (c) 2007-2020 by SIL International
 % written by Jonathan Kew
 %
 % Permission is hereby granted, free of charge, to any person obtaining  
@@ -114,8 +114,9 @@
  % so we have to explicitly consume it here as part of the macro parameter list
  \def\startch@rstyle@spc~{\startch@rstyle}%                                             %(3)
  \def\startch@rstyle@nl_{\startch@rstyle}%
- \def\startch@rstyle@minus-#1{\edef\thismil@stone{\newch@rstyle}\xdef\milestoneType{#1}\startch@rstyle}%			%(4)
+ \def\startch@rstyle@minus-#1{\mst@nefalse\edef\thismil@stone{\newch@rstyle}\edef\thismil@stoneVal{}\xdef\milestoneOp{#1}\startch@rstyle}%			%(4)
 }
+\let\milestoneOp\empty
 %-cchar_docharstyle
 
 %+cchar_endstyle
@@ -130,7 +131,6 @@
   \iftemp\MSG{Unexpected closing marker for plus +\newch@rstyle * on stack \mcstack. Ignoring}\else\endch@rstyle*\fi
 }
 %-cchar_endstyle
-
 %+cchar_startcharstyle
 \def\startch@rstyle{\trace{s}{startch@rstyle \newch@rstyle}%
   \mcpush{\ifx\stylet@pe\empty C\else\stylet@pe\fi+\newch@rstyle}%
@@ -154,15 +154,6 @@
 
 %+cchar_endcharstyle
 \lccode`\|=`\\ % for printing backslash in error message
-
-\let\milestoneType\empty
-\def\*{\endch@rstyle*\unskip\mil@stone}% USFM3 'self closing marker' milestone
-\def\mil@stone{\trace{s}{Milestone \newch@rstyle (\milestoneType)}%
- \if\milestoneType s\relax\st@rtmilestone\else
-   \if\milestoneType e\relax\@ndmilestone\else
-   \st@ndalonemilestone\fi\fi
- \let\milestoneType\empty
-}
 \lowercase{
  \def\endch@rstyle*{\TRACE{endch@rstyle}% consume the * that marked the SFM as ending a style
    \def\d@##1+##2\E{\xdef\thisch@rstyle{##2}}\mctop
@@ -185,7 +176,6 @@
  }
 }
 %-cchar_endcharstyle
-
 %+cchar_endallcharstyles
 \newif\ifskipch@rstyle
 \newcount\n@tenesting \newcount\p@ranesting
@@ -218,8 +208,9 @@
 \let\SpaceShrinkFactor=\empty %default, do-nothing value
 
 \def\g@tfontname#1{%
- \trace{F}{Font request for (\c@tegory)#1}%
+ \trace{F}{Font request for (\c@tegory)(\mspr@fix)#1}%
  \ifdiglot\ifdiglotL\def\f@ntstyle{#1L}\def\sid@{L}\else\def\f@ntstyle{#1R}\def\sid@{R}\fi\else\def\f@ntstyle{#1}\def\sid@{-}\fi%
+ \ifx\mspr@fix\empty\else\edef\f@ntstyle{\mspr@fix\f@ntstyle}\fi % Milestones have different styles
  \ifx\c@tegory\empty\else\s@tc@tpr@fix\edef\f@ntstyle{\c@tprefix\f@ntstyle}\fi % Categories have different styles
  \let\d@@=\d@
  \def\d@##1+##2\E{\edef\tmp{#1}\edef\tmpa{##2}\ifx\tmp\tmpa\getmcfonts@ze\else

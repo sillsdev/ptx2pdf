@@ -92,7 +92,7 @@
     \advance\dimen4 by \baselineskip
   \fi
   \edef\vp@dskip{\the\dimen4}\vskip\vp@dskip
-  \setbox0#3\hbox{\feintb@x{#1}{#2}{\ht0}{\dp0}{\wd0}\box0}
+  \setbox0#3\hbox{\feintb@x{#1}{#2}{\ht0}{\dp0}{\wd0}\box0}%
   \vskip\vp@dskip % preserve grid
   }
 
@@ -317,7 +317,7 @@
     \ifdim\b@drwidth\FontSizeUnit>0.2\baselineskip
       \advance\dimen4 by \baselineskip
     \fi
-    \edef\b@xadj{\the\dimen4}
+    \edef\b@xadj{\the\dimen4}%
     \ift@mp
       \edef\b@xw@dth{\the\wd\extchunkb@x}%
       \dimen0=\ht\extchunkb@x
@@ -327,7 +327,7 @@
         \ifx\b@drtop\tr@e\vskip\b@xadj\trace{eb}{Drawing Border:top}\hbox{\vrule height\b@drwidth\FontSizeUnit width \b@xw@dth}\fi%
         \unvbox\extchunkb@x
         \ifx\b@drbottom\tr@e\trace{eb}{Drawing Border:bottom}\hbox{\vrule depth\b@drwidth\FontSizeUnit width \b@xw@dth}\vskip\b@xadj\fi
-      }
+      }%
       %\nonstopmode
       %\showbox\extchunkb@x
     \fi
@@ -369,7 +369,7 @@
       \fi
     \fi
   \ifdim\ht\extb@x>0pt
-    \def\fb@vpadding{0pt}
+    \def\fb@vpadding{0pt}%
     \repeat
   \let\c@tegory\oldc@tegory 
   \s@tc@tpr@fix
