@@ -259,7 +259,7 @@
  \else\ifx\styl@type\N@te \x@\defn@testyle\x@{\m@rker}
  \else\ifx\styl@type\MSt@ne \x@\defmst@nestyle\m@rker\E
  \else \message{unknown style type \styl@type}
- \fi\fi\fi}
+ \fi\fi\fi\fi}
 \def\P@ra{paragraph}
 \def\Ch@r{character}
 \def\N@te{note}
@@ -607,7 +607,7 @@
 \gdef\MScstack{+,}  
 \def\MScup{\x@\cstackup\MScstack\E}
 \def\MScdown{\x@\cstackdown\MScstack\E}
-\def\MScpush#1{\traceNum{s}{push #1 onto \MScstack}\xdef\MScstack{#1,\MScstack}}
+\def\MScpush#1{\traceNum{s}{push #1 onto milestone stack \MScstack}\xdef\MScstack{#1,\MScstack}}
 
 % Test to see if a new THING pops other things.
 \def\mct@stname#1#2{#1-mcp@ps-#2}
@@ -838,7 +838,7 @@
 % Operations on the current milestone(s)
 \def\st@rtmilestone{%
   \end@llpoppedstyles{m}%
-  \MScpush{\thismil@stone+\milestoneType=\thismil@stoneVal}%
+  \MScpush{\thismil@stone+\thismil@stoneKey=\thismil@stoneVal}%
   \upd@teMsPrefix
 }
 \def\@ndmilestone{%
