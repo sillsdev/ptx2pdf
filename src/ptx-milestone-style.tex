@@ -50,10 +50,21 @@
  }
  \def\startmst@nestyle@spc~{\startmst@nestyle}%                                             
  \def\startmst@nestyle@nl_{\startmst@nestyle}%
- \def\startmst@nestyle@minus-#1{\mst@netrue\edef\thismil@stoneVal{}\xdef\milestoneOp{#1}\startmst@nestyle}%
+ \def\startmst@nestyle@minus-#1{\mst@nestyletrue
+    \edef\thismil@stoneVal{}%
+    \initmil@stone{#1}%
+    \startmst@nestyle
+  }%
 }
-\def\*{\ifmst@nefalse\endch@rstyle*\fi\proc@ttribs\mil@stone}% USFM3 'self closing marker' milestone
-\newif\ifmst@ne
+
+\def\initmil@stone#1{%called by startmst@nestyle@minus and startch@rstyle@minus
+   \edef\thismil@stoneKey{}% Set by Attributes
+   \edef\thismil@stoneVal{}%
+   \xdef\milestoneOp{#1}
+}
+
+\def\*{\ifmst@nestyle\else\endch@rstyle*\fi\proc@ttribs\mil@stone}% USFM3 'self closing marker' milestone
+\newif\ifmst@nestyle
 \def\mil@stone{\trace{s}{Milestone \newch@rstyle (\milestoneOp)}%
   \if\milestoneOp s\relax\st@rtmilestone\else
    \if\milestoneOp e\relax\@ndmilestone\else
@@ -87,7 +98,7 @@
 \def\dr@pmilest@ne#1+#2\E{% This kills a milestone that might be quite burried in the stack
   \edef\MSt@mp{#2}
   \if#1m\relax
-    \ifx\MSt@mp\mcch@cking\relax
+    \ifx\MSt@mp\MSch@cking\relax
       %\csname endit@#1\endcsname
       \trace{s}{Found #1+#2}%
     \else
@@ -100,7 +111,7 @@
 }
 \def\dr@pmilestone#1{
   \trace{s}{Dropping milestone #1 from \MScstack}%
-  \edef\mcch@cking{#1}%
+  \edef\MSch@cking{#1}%
   \let\@ut=\empty
   \let\d@=\dr@pmilest@ne
   \MScdown

@@ -114,7 +114,11 @@
  % so we have to explicitly consume it here as part of the macro parameter list
  \def\startch@rstyle@spc~{\startch@rstyle}%                                             %(3)
  \def\startch@rstyle@nl_{\startch@rstyle}%
- \def\startch@rstyle@minus-#1{\mst@nefalse\edef\thismil@stone{\newch@rstyle}\edef\thismil@stoneVal{}\xdef\milestoneOp{#1}\startch@rstyle}%			%(4)
+ \def\startch@rstyle@minus-#1{\mst@nestylefalse	%					%(4)
+   \edef\thismil@stone{#1}%
+   \initmil@stone{\thisch@rstyle}{#1}%
+   \startch@rstyle
+  }
 }
 \let\milestoneOp\empty
 %-cchar_docharstyle
