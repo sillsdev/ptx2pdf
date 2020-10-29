@@ -29,14 +29,30 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newif\ifin@ttrib
+\def\@ttrSlash#1\*{\xdef\attrib@rgs{#1}\message{Attr:\attrib@rgs}\*}
+
+
 \catcode`\|=\active
-\def|#1\*{\in@ttribtrue\def\attrib@rgs{#1}\message{Attr:\attrib@rgs}\*}
+\def\use@ttrSlash{%
+    \let|=\@ttrSlash %this one is easy
+}
+\def\use@ttrGrab{%
+    \let|=\start@ttributegrab %have to build attributes char-by-char, sadly.
+}
 \catcode`\|=12
+
 \def\init@ttribs{%
- % Attribute code goes here.
+ % Attribute pre-setupcode goes here.
   \catcode`\|=\active
+  %\ifmst@nestyle
+  \iffalse
+    \use@ttrSlash
+  \else
+    \use@ttrGrab
+  \fi
   \def\attrst@ck{,}%
   \in@ttribfalse
+  \xdef\@ttributes{}%
 }
 
 \def\proc@ttribs{%
@@ -48,4 +64,42 @@
 }
 
 
+\edef\p@stattribcmd{}
+\def\store@ttributes#1{\def\newbit{#1}\message{'\newbit'}\edef\@ttributes{\@ttributes\newbit}\futurelet\nxt\isitshash}                                                                    
+\def\startp@stattribcmd#1{\futurelet\nxt\isitcmd}
+\def\storep@stattribcmd#1{\def\newbit{#1}\message{"\newbit"}\edef\p@stattribcmd{\p@stattribcmd\newbit}\futurelet\nxt\isitcmd}                                                                          
+\lccode`\~=32
+\lowercase{
+ \gdef\isitcmd{%
+        \let\c@ntinue\storep@stattribcmd
+        \ifcat a\nxt\else\ifcat=\nxt
+        \else \let\c@ntinue\end@ttributegrab\fi\fi\c@ntinue}
+}
+%\def\foo#1{Thatsit "#1"}
+
+\def\oddc@tcodes{\catcode`"=11 \catcode`==11 \catcode`\ =11 \catcode`|=0
+\catcode`\\=12}                                                                                 
+\def\normalc@tcodes{\catcode`"=12 \catcode`==12 \catcode`\ =10\catcode`\\=0
+\catcode`\|=12}                                                                              
+
+\def\start@ttributegrab{\let\c@ntinue\isitshash\oddc@tcodes\futurelet\nxt\c@ntinue}
+\def\end@ttributegrab{%
+  \xdef\@ttributes{\x@\detokenize\x@{\@ttributes}}%
+  \message{Now executing \p@stattribcmd}%
+  \csname\p@stattribcmd\endcsname}
+
+\oddc@tcodes
+|gdef|isitshash{%
+|let|c@ntinue|store@ttributes%
+%|edef|@nnxt{|detokenize{|nxt}}
+|if|nxt\|let|c@ntinue|startp@stattribcmd|normalc@tcodes%
+|fi|c@ntinue}
+|normalc@tcodes
+
+%\grabwords one two three="hi"\foo{folks}
+%
+%Store=\store
+%\def\firstword #1 #2 #3\end{Word:"#2" (#3)}
+%\x@\firstword\store\end
+%
 
