@@ -605,6 +605,7 @@
 
 % milestone stack (MScstack)
 \gdef\MScstack{+,}  
+\let\MScstack@mpty\MScstack
 \def\MScup{\x@\cstackup\MScstack\E}
 \def\MScdown{\x@\cstackdown\MScstack\E}
 \def\MScpush#1{\traceNum{s}{push #1 onto milestone stack \MScstack}\xdef\MScstack{#1,\MScstack}}
@@ -833,30 +834,6 @@
 \def\sl@shprint{\char`\/}
 \catcode`\/=12
 %-csty_slash
-
-%+csty_milestone
-% Operations on the current milestone(s)
-\def\st@rtmilestone{%
-  \end@llpoppedstyles{m}%
-  \MScpush{\thismil@stone+\thismil@stoneKey=\thismil@stoneVal}%
-  \upd@teMsPrefix
-}
-\def\@ndmilestone{%
-  \end@llpoppedstyles{m*}%
-  \dr@pmilestone{\thismil@stone}{\thismil@stoneVal}%
-  \upd@teMsPrefix
-}
-\def\st@ndalonemilestone{}
-\def\upd@teMsPrefix{%Build a prefix based on all currently-in-force milestones.
-  \xdef\mspr@fix{}\let\d@=\mil@st@necheck\MScup
-  \ifx\mspr@fix\empty\else\xdef\mspr@fix{ms:\mspr@fix|}\trace{s}{msPrefix set to \mspr@fix}\fi
-}
-\def\mil@st@necheck#1+#2\E{%
-  \if #1m\relax\xdef\mspr@fix{\ifx\mspr@fix\empty\else \mspr@fix+\fi#2}\fi}
-   
-
-%-csty_milestone
-
 %+csty_category
 % Define the current category
 \def\s@tc@tprefix#1{%

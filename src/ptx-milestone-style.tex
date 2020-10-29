@@ -29,7 +29,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Milestone macros
-\def\mst@nestyle#1{\trace{s}{mst@nestyle:#1}%
+\def\mst@nestyle#1{\trace{m}{mst@nestyle:#1}%
  \gdef\thismil@stone{\detokenize{#1}}% record the name of the style
  \catcode32=12 % make <space> an "other" character, so it won't be skipped by \futurelet
  \catcode13=12 % ditto for <return>
@@ -50,71 +50,109 @@
  }
  \def\startmst@nestyle@spc~{\startmst@nestyle}%                                             
  \def\startmst@nestyle@nl_{\startmst@nestyle}%
- \def\startmst@nestyle@minus-#1{\mst@nestyletrue
-    \edef\thismil@stoneVal{}%
-    \initmil@stone{#1}%
-    \startmst@nestyle
-  }%
+}
+\def\startmst@nestyle@minus-#1{%
+  \mst@nestyletrue
+  \initmil@stone{#1}%
+  \startmst@nestyle
 }
 
-\def\initmil@stone#1{%called by startmst@nestyle@minus and startch@rstyle@minus
-   \edef\thismil@stoneKey{}% Set by Attributes
-   \edef\thismil@stoneVal{}%
-   \xdef\milestoneOp{#1}
+\def\initmil@stone#1{%called by startmst@nestyle@minus and startch@rstyle@minus.
+   \trace{m}{initmil@stone #1}%
+   \ifmst@nestyle\else %Was this marker defined as a milestone or as a character style
+     \edef\thismil@stone{\newch@rstyle}%
+   \fi
+   \edef\thismil@stoneKey{}\edef\thismil@stoneVal{}% Set by Attributes
+   \xdef\milestoneOp{#1}%
 }
 
-\def\*{\ifmst@nestyle\else\endch@rstyle*\fi\proc@ttribs\mil@stone}% USFM3 'self closing marker' milestone
-\newif\ifmst@nestyle
-\def\mil@stone{\trace{s}{Milestone \newch@rstyle (\milestoneOp)}%
+\def\*{%This might end a + style (c)  or a normal style character style(C), or a milestone style
+  \proc@ttribs
+  \trace{m}{slash *}%
+  \ifmst@nestyle\else
+    \if c\stylet@pe\relax
+      \endch@rstylepls*
+    \else
+      \endch@rstyle*
+    \fi
+  \fi
+  \mst@nestylefalse
+  \mil@stone}% USFM3 'self closing marker' milestone
+
+\let\milestoneOp\empty
+\let\thismil@stone\empty
+\newif\ifmst@nestyle \mst@nestylefalse
+
+\def\mil@stone{\trace{m}{Milestone \thismil@stone (\milestoneOp), \csname thisch@rstyle\endcsname}%
   \if\milestoneOp s\relax\st@rtmilestone\else
    \if\milestoneOp e\relax\@ndmilestone\else
     \st@ndalonemilestone\fi\fi
  \let\milestoneOp\empty
+ %\xdef\thisch@rstyle{\mcpeek}%
+ \def\d@##1+##2\E{\edef\thisch@rstyle{##2}}\mctop
  \s@tfont{\thisch@rstyle}% set up font attributes
 }
 
 \def\startmst@nestyle{%What actually changes between the beginning of a milestone and the end-marker? 
+   \trace{m}{startmst@nestyle}%
    \init@ttribs
 }
 
-\newif\ifin@ttrib
-\def\init@ttribs{
- % Attribute code goes here.
-  \def\attrst@ck{,}%
-  \in@ttribfalse
-  \catcode`\|=\active
-}
-\def\proc@ttribs{
-  \catcode`\|=12
-  \ifin@ttrib\egroup
-    \trace{A}{Attributes specified:\attrib@rgs}%
-  \fi
-}
-{
-  \catcode`\|=\active
-  \def|{\in@ttribtrue\def\attrib@rgs\bgroup}
-}
-
-\def\dr@pmilest@ne#1+#2\E{% This kills a milestone that might be quite burried in the stack
-  \edef\MSt@mp{#2}
-  \if#1m\relax
-    \ifx\MSt@mp\MSch@cking\relax
-      %\csname endit@#1\endcsname
-      \trace{s}{Found #1+#2}%
-    \else
-      \ifx\@ut\empty\xdef\@ut{#1+#2}\else\xdef\@ut{\@ut,#1+#2}\fi 
-    \fi
+\def\dr@pmilest@ne#1+#2\E{% This kills the TOP matching milestone that might be burried in the stack, and might be nexted.
+  \edef\MSt@mp{#1}%
+  \ifx\MSt@mp\MSch@cking\relax
+    %\csname endit@#1\endcsname
+    \trace{m}{Found #1}%
+    \let\d@=\cstackrelax
   \else
-    \ifx\@ut\empty\xdef\@ut{#1+#2}\else\xdef\@ut{\@ut,#1+#2}\fi 
+    \ifx\MSt@mp\empty
+      \let\d@=\cstackrelax
+    \else
+      \ifx\@ut\empty \xdef\@ut{#1+#2}\else
+      \xdef\@ut{\@ut,#1+#2}\fi%
+    \fi
   \fi
-  \trace{s}{dr@pmilest@ne: \@ut}%
+  \trace{m}{dr@pmilest@ne: \@ut}%
 }
-\def\dr@pmilestone#1{
-  \trace{s}{Dropping milestone #1 from \MScstack}%
+\def\dr@pmilestone#1#2{
+  \trace{m}{Dropping milestone #1 from \MScstack}% 
   \edef\MSch@cking{#1}%
   \let\@ut=\empty
   \let\d@=\dr@pmilest@ne
   \MScdown
-  \let\MScstack=\@ut
-  \trace{s}{Stack now: \MScstack}%
+  \ifx\@ut\empty
+    \xdef\MScstack{\MScstack@mpty}%
+  \else
+    \xdef\MScstack{\@ut,\MScstack@mpty}%
+  \fi
+  \trace{m}{Stack now: \MScstack}%
 }
+%+csty_milestone
+% Operations on the current milestone(s)
+\def\st@rtmilestone{%
+  % There may multiple milestones of a given type (can't sensibly have both \qt+s |Jesus\* and 
+  % \qt+s |Pilate\* active at the same time, but in some cases it might make sense to do something siilar.)
+  \MScpush{\thismil@stone+\thismil@stoneKey=\thismil@stoneVal}%
+  \upd@teMsPrefix
+}
+\def\@ndmilestone{%
+  \dr@pmilestone{\thismil@stone}{\thismil@stoneVal}{\thismil@stoneKey}%
+  \upd@teMsPrefix
+}
+\def\st@ndalonemilestone{
+  % FIXME:Potentially some kind of hook? Or use this as an image anchor?
+}%
+\def\upd@teMsPrefix{%Build a prefix based on all currently-in-force milestones.
+  \trace{m}{upd@teMsPrefix}%
+  \xdef\mspr@fix{}\let\d@=\mil@st@necheck\MScup
+  \ifx\mspr@fix\empty\else\xdef\mspr@fix{ms:\mspr@fix|}\trace{m}{msPrefix set to \mspr@fix}\fi
+}
+\xdef\equ@l{=}
+\def\mil@st@necheck#1+#2\E{%
+  \edef\k@yv@al{#2}%
+  \xdef\mspr@fix{\ifx\mspr@fix\empty\else \mspr@fix+\fi#1\ifx\k@yv@al\equ@l\else#2\fi}}
+   
+
+%-csty_milestone
+
+
