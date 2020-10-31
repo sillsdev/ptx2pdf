@@ -101,11 +101,7 @@
 \newif\ifTabAutoRotate \TabAutoRotatetrue % Does autorotation of text occur?
 \newif\ifTabRotationNormal \TabRotationNormaltrue % TabRotationNormalfalse==rotate text (if auto-rotate off). (If auto-rotate on: invert autorotate logic, i.e. assume the \toc3 are narrower than they are tall).
 
-\def\zthumbtab{\bgroup\obeylines\th@mt@b} %Manual control of thumbtab text, from usfm file.
 
-{\obeylines
- \gdef\th@mt@b #1^^M{\gdef\b@okShort{#1}\ifx\b@okShort\empty\gdef\b@okShort{\relax}\fi\egroup}%
-}
 
 \NumTabs=2
 \tabheight=50pt

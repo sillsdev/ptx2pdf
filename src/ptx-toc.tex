@@ -67,6 +67,7 @@
   \def\toc1{\bgroup\obeylines\t@cA}
   \def\toc2{\bgroup\obeylines\t@cB}
   \def\toc3{\bgroup\obeylines\t@cC}
+  \def\zthumbtab{\bgroup\obeylines\th@mt@b} %Manual control of thumbtab text, from usfm file.
 
 }
 \m@kedigitsother
@@ -75,6 +76,7 @@
  \gdef\t@cA #1^^M{\ifuseTOCone\gdef\toc@A{#1}\fi\egroup}%
  \gdef\t@cB #1^^M{\ifuseTOCtwo\gdef\toc@B{#1}\fi\egroup}%
  \gdef\t@cC #1^^M{\ifuseTOCthree\gdef\toc@C{#1}\fi\ifTOCthreetab\ifx\b@okShort\empty\gdef\b@okShort{#1}\fi\fi\egroup}%
+ \gdef\th@mt@b #1^^M{\gdef\b@okShort{#1}\ifx\b@okShort\empty\gdef\b@okShort{\relax}\fi\egroup}%
 }
 
 {\catcode`\#=12
