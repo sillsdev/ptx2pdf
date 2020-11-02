@@ -124,9 +124,9 @@
   % text is read later
   \ifhmode\edef\@sf{\spacefactor\the\spacefactor}\/\fi%
   % if footnote is on a chapter number ...
-  \ifhe@dings #3\edef\@wrap{\global\setbox\he@dingnotes=\vbox\bgroup\unvbox\he@dingnotes}%
-  \else\ifinextended
-    \edef\@wrap{\global\setbox\sid@barnotes=\vbox\bgroup\unvbox\sid@barnotes}\else\edef\@wrap{}%
+  \ifinextended #3\edef\@wrap{\global\setbox\sid@barnotes=\vbox\bgroup\unvbox\sid@barnotes}\else
+    \ifhe@dings #3\edef\@wrap{\global\setbox\he@dingnotes=\vbox\bgroup\unvbox\he@dingnotes}%
+    \else\edef\@wrap{}%
       \ifch@pter \everypar={}\ch@pterfalse%
         \global\setbox\ch@pternote=\hbox{\box\ch@pternote #3}%
       \else #3\fi % output caller
@@ -137,13 +137,18 @@
 %-c_makenote
 
 %+c_vmakenote
+\newtoks\d@note
 \def\vm@kenote#1#2#3{%
   \inn@tetrue%
   \let\next\relax%
   \def\n@tetype{#1}%
   \ifdiglot\ifdiglotSepNotes\ifdiglotL\def\n@tetype{#1}\else\def\n@tetype{#1R}\fi\fi\fi%
   \TRACE{vm@kenote \n@tetype}%
-  \x@\insert\csname note-\n@tetype\endcsname\bgroup% insert note-f (or note-x)
+  \d@note{\x@\insert\csname note-\n@tetype\endcsname}%
+  \x@\let\x@\th@sins\csname note-no-insert-\n@tetype\endcsname
+  \ifx\th@sins\relax\else\d@note{\th@sins}\fi%
+  %\th@sins
+  \the\d@note\bgroup% insert note-f (or note-x)
 %%% single-column notes:
   \checkp@ranotes{#1}% check whether this note class is to be paragraphed 
   \hsize=\ifp@ranotes\maxdimen\else\textwidth\advance\hsize by -\columnshift\fi % insert penalties to control breaking of footnotes
@@ -177,6 +182,23 @@
   \s@tfont{#2}%
   \futurelet\next\fo@t}% use plain.tex footnote processor
 %-c_vmakenote
+
+%+c_endnotes
+
+\def\NoteAtEnd#1{%Treat the specified note as an end-note.
+        \x@\newb@x\csname endnote-#1\endcsname
+        \x@\gdef\csname addt@endnote-#1\endcsname{\unvbox\csname endnote-#1\endcsname}%
+        \x@\gdef\csname note-no-insert-#1\endcsname{\x@\afterassignment\csname addt@endnote-#1\endcsname\global\setbox\csname endnote-#1\endcsname\vbox}%
+        \x@\gdef\csname zplacenotes#1\endcsname{\unvbox\csname endnote-#1\endcsname}% Individual 
+        \x@\placendnotes\x@{\the\placendnotes\csname zplacenotes#1\endcsname}%
+}
+\let\newb@x=\newbox
+\newtoks\placendnotes
+\newif\ifnotesEachBook
+\notesEachBooktrue
+\NoteAtEnd{fe}
+
+%-c_endnotes
 
 % use \OmitCallerInNote{f} to omit callers from the note at foot of page
 % but leave them in the body text (e.g. all the callers are *'s)

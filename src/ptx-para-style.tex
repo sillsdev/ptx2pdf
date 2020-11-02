@@ -365,7 +365,7 @@
    % handle drop-cap style chapter number, if this is the beginning of a chapter
    %
 %+cpar_parstyle_chapter
-   \ifch@pter
+   \ifinextended\else\ifch@pter
     \getp@ram{type}{\m@rker}%
     \ifx\p@ram\v@rsetext
      \t@stpublishability{c}\ifn@npublishable
@@ -419,7 +419,7 @@
      \dr@ppednumberfalse
      \spacefactor=\n@wchaptersf % prevent hanging verse number here
     \fi
-   \fi
+   \fi\fi
 %-cpar_parstyle_drop
 %+cpar_parstyle_final
    \ifx\f@rstindent\relax \else

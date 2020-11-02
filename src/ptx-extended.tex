@@ -111,9 +111,10 @@
   \ifx\t@st\empty
     \let\n@xtB\endP@rseBorder
   \else
-    \x@\let\x@\t@st\csname B@rder#1\endcsname
+    \uppercase{\def\uc@ption{#1}}
+    \x@\let\x@\t@st\csname B@rder\uc@ption\endcsname
     \ifx\t@st\relax
-      \message{Could not parse \Border #1}%
+      \message{Could not parse Border #1}%
     \else
       \t@st \relax
     \fi
@@ -186,6 +187,7 @@
 }
 % Sidebar 
 \def\@sb{\let\oldc@tegory\c@tegory\let\oldc@prefix\c@tprefix 
+  \trace{e}{Starting side bar from \m@rker}%
   \ifhmode\par\fi
   \edef\l@stdepth{\the\prevdepth}% Remember for later
   \edef\hs@ze{\the\hsize}%
@@ -220,10 +222,13 @@
 \def\@sbe{%
   \ifhe@dings\endhe@dings\fi
   \ifhmode\par\fi
-  \ifinextended\global\let\c@t@gory\c@tegory\egroup\else\message{\\ebse called without \\esb}\fi
+  \relax
+  \tracingassigns=1
+  \ifinextended\global\let\c@t@gory=\c@tegory\egroup \else \global\let\c@t@gory=\empty \trace{e}{\\ebse called without \\esb}\fi
   \trace{e}{ESBE \the\sb@rchunkh@ight}%
-  \let\c@tegory\c@t@gory%recover boxed value
+  \let\c@tegory=\c@t@gory %recover value from box, without making global changes.
   \s@tc@tpr@fix
+  \tracingassigns=0
   \trace{e}{ESBE \c@tprefix}%
   \inextendedfalse
   \let\s@vedvpadding=\fb@vpadding%
@@ -372,6 +377,7 @@
     \repeat
   \let\c@tegory\oldc@tegory 
   \s@tc@tpr@fix
+  \unvbox\sid@barnotes
 }
 
 % Category file parsing 
@@ -430,13 +436,13 @@
   \EndCategory\stylesheet{#1}\EndCategory
   \subc@llfalse
 }
-\def\B@rderTop{\setsbp@ram{bordertop}{T}}
-\def\B@rderBottom{\setsbp@ram{borderbottom}{T}}
-\def\B@rderLeft{\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}}
-\def\B@rderRight{\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenright}{T}}
-\def\B@rderInner{\ifBookOpenLeft\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenleft}{T}\else\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenright}{T}\fi}
-\def\B@rderOuter{\ifBookOpenLeft\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenright}{T}\else\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenleft}{T}\fi}
-\def\B@rderAll{\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenright}{T}\setsbp@ram{bordertop}{T}\setsbp@ram{borderbottom}{T}}
+\def\B@rderTOP{\setsbp@ram{bordertop}{T}}
+\def\B@rderBOTTOM{\setsbp@ram{borderbottom}{T}}
+\def\B@rderLEFT{\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}}
+\def\B@rderRIGHT{\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenright}{T}}
+\def\B@rderINNER{\ifBookOpenLeft\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenleft}{T}\else\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenright}{T}\fi}
+\def\B@rderOUTER{\ifBookOpenLeft\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenright}{T}\else\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenleft}{T}\fi}
+\def\B@rderALL{\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenright}{T}\setsbp@ram{bordertop}{T}\setsbp@ram{borderbottom}{T}}
 \def\B@rderNone{\setsbp@ram{borderoddleft}{F}\setsbp@ram{borderevenleft}{F}\setsbp@ram{borderoddright}{F}\setsbp@ram{borderevenright}{F}\setsbp@ram{bordertop}{F}\setsbp@ram{borderbottom}{F}}
 
 \addtoinithooks{\let\@SB=\esb\let\@SBE=\esbe \let\esb=\@sb\let\esbe=\@sbe}

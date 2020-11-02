@@ -1,7 +1,9 @@
 % Test the 'hook' code.
 \input "paratext2.tex"
 \catcode`\@=11
-\input "ptx-extended.tex"
+\addtoversehooks{\ifx\prev@rsemode\empty \endash\penalty5 \fi}
+%\input "ptx-extended.tex"
+\input "ptxplus-marginalverses.tex"
 \catcode`\@=12
 \stylesheet{usfm.sty}
 \stylesheet{default-custom.sty}

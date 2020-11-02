@@ -891,8 +891,12 @@ should we) then use the default space width otherwise continue with the existing
 space glue. If we are in a heading then output the caller in that place in the
 heading, but append the actual insert to the end of the headings. This reduces
 any pressure to break a page within a headings bloxk by placing all the page
-length cost at the end of the headings block. If we are in a chapter box then
-append the ntoe to the chapternote. Otherwise just output the caller as normal.
+length cost at the end of the headings block. If we are in an sidebar or
+chapter box then output the caller and wrap the note so it can be appended to
+the chapternote or sidebar note box (necessary because any insert that 
+enters the text-flow inside a ```\vbox```  will simply vanish, they need to 
+be added to the main flow of text). 
+Otherwise just output the caller as normal.
 Now set the spacefactor for the text inside the footnote and call to setup the
 note insert, which may get wrapped. Notice that if there is no notecallerstyle
 then simply use the same caller as in the main text.
@@ -903,9 +907,15 @@ This is where we actually start making the note itself. We are passed the target
 note class, the note marker and the code for the caller box. To set up, we set
 the flag to say we are in a note and we clear the `next` token ready for the end
 of the routine. We capture the note class into which the note is going, with
-appropriate diglot adaptation. Then we start the insert. An insert is a vbox
-that is inserted into the main contribution list before the main text line it is
-part of. The insert starts a vbox and we start a group for it.
+appropriate diglot adaptation. Then we start the insert. An insert is a special 
+type of vbox that is inserted into the main contribution list before the main text
+line it is part of. The insert starts a vbox and we start a group for it.
+Endnotes, however should not be processed as inserts (otherwise they'd 
+appear at the end of the page). Therefore the code  allows 
+```\csname note-insert-fe\endcsname```  to name one example, to define what ought to 
+happen with notes. Typically this just means putting them into a named vbox.
+
+
 
 ### Ending Notes
 
@@ -970,5 +980,15 @@ of the horizontal mode and close the styling group we started for the note. Next
 we check that the style stack is in good order and then pop it.
 
 [=c_foot]::
+
+### End Notes
+The macro ```\NoteAtEnd``` sets the standard behaviour for end notes. A new box is 
+reserved, and various macros are defined. When a new endnote is defined then it
+should be added to the box after the current contents and new USFM code added to 
+manually place the note contents. e.g. for ```\\fe``` notes,
+```\zplacenotesfe``` is defined.  The token list ```\placeendnotes``` is executed at the end 
+the book.
+
+[=c_endnotes]::
 
 [-d_styles]::

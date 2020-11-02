@@ -698,6 +698,7 @@
  \endt@ble
  \ifdiglot\ifdiglotL\norighttext\fi\enddigl@t\fi
  \ifx\b@ok\relax\else\csname bookend-\id@@@\endcsname\relax\csname bookend-all\endcsname\fi
+ \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \the\placendnotes\fi
  \iflastptxfile\closepiclist\fi
  \closeadjlist
  \unprepusfm
@@ -772,6 +773,7 @@
   \egroup % End the group from the containing code.             %(4)
 }
 % remember as c@t, onetime setup will define \cat to this, protecting the definition from stylesheet
+\def\nofin@lspace #1 #2\E{#1}%Eat a final space
 \def\c@t #1\cat*{%
   \ifx\c@tegory\empty\else                                      %(5)
     \trace{sc}{Odd situation: two \\cat commands in one group or nested categories? Assuming nesting.}%
@@ -780,7 +782,7 @@
     %\endgroup %End the group started between the cat groups  
     %\cl@singhooks{after}{cat}%
   \fi
-  \s@tc@tprefix{#1}%
+  \x@\s@tc@tprefix{\nofin@lspace #1 \E}%
   \the\c@th@@ks% Run anythingthe enclosing code wants
   \op@ninghooks{before}{cat}% 
   \ifhmode\par\fi
