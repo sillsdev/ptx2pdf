@@ -185,9 +185,9 @@
      \advance\dimen1 by \fb@hpadding\fi
    \ifx\b@drright\tr@e \advance\dimen1 by -\b@drwidth\FontSizeUnit
      \advance\dimen1 by \fb@hpadding\fi
-   %\if h\tempc\relax\else
-   %  \setsbp@ram{w@dth}{\the\dimen1}%
-   %\fi
+   \if h\tempc\relax\else
+     \setsbp@ram{w@dth}{\the\dimen1}%
+   \fi
  \else
    \dimen1=\cp@ram
  \fi
@@ -386,6 +386,7 @@
   \let\c@tegory\oldc@tegory 
   \s@tc@tpr@fix
   \unvbox\sid@barnotes
+  \cancelcutouts
 }
 
 % Category file parsing 
