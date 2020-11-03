@@ -396,7 +396,7 @@ THE SOFTWARE.
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 1.3</property>
+    <property name="version">Version 1.3.0.1</property>
     <property name="copyright">© 2020, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -13331,6 +13331,7 @@ Position:</property>
                                                             <property name="progress_pulse_step">0</property>
                                                             <property name="adjustment">a_plScale</property>
                                                             <property name="value">100</property>
+                                                            <signal name="focus-out-event" handler="onPlScaleFocusOut" swapped="no"/>
                                                           </object>
                                                           <packing>
                                                             <property name="left_attach">3</property>
@@ -14798,7 +14799,7 @@ are likely to have to re-do it all again.</property>
                                 <property name="can_focus">False</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
-                                <property name="row_spacing">10</property>
+                                <property name="row_spacing">5</property>
                                 <property name="column_spacing">6</property>
                                 <child>
                                   <object class="GtkLabel">
@@ -15124,13 +15125,66 @@ general users and common solutions.</property>
                                     <property name="top_attach">0</property>
                                   </packing>
                                 </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">In order to keep the size of the file to a minimum
+you are encouraged to turn off features (pictures?)
+that don't affect the issue being reported. To transfer
+the .ZIP file to the developers, either upload and send
+a link, OR email it to ptxprint_support@sil.org </property>
+                                    <property name="halign">end</property>
+                                    <property name="valign">start</property>
+                                    <property name="label" translatable="yes">The easiest wasy for the developers to replicate
+an issue is for you to Create a ZIP Archive with
+all the required files and then send it to them:</property>
+                                    <property name="justify">right</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">10</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_createZipArchiveXtra">
+                                    <property name="label" translatable="yes">Create ZIP Archive...</property>
+                                    <property name="width_request">140</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="tooltip_text" translatable="yes">Create a ZIPped archive of all the files
+required to recreate this configuration
+on a different computer. Used for 
+troubleshooting issues.
+Note that no fonts or illustrations will
+be included. Only the various PTXprint
+settings files, along with the relevant
+Paratext USFM data files. You can
+examine the contents of the ZIPped
+file before manually sending it to the
+PTXprint team for support. To transfer
+the .ZIP file to the developers, either 
+upload and send a link, OR email it to
+ptxprint_support@sil.org </property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin_left">15</property>
+                                    <signal name="clicked" handler="onCreateZipArchiveClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">10</property>
+                                  </packing>
+                                </child>
                               </object>
                             </child>
                             <child type="label">
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Folder Paths &amp; More Info:</property>
+                                <property name="label" translatable="yes">Folders &amp; Other Helpful Info:</property>
                                 <attributes>
                                   <attribute name="weight" value="bold"/>
                                 </attributes>
@@ -15145,7 +15199,7 @@ general users and common solutions.</property>
                           <object class="GtkLabel" id="l_Links">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Folders &amp; Links</property>
+                            <property name="label" translatable="yes">Links &amp; Help</property>
                           </object>
                           <packing>
                             <property name="position">6</property>

@@ -1,5 +1,5 @@
-PTXprint 1.3 Release Notes 
-23rd October 2020
+PTXprint 1.3.0.1 Release Notes 
+1 November 2020
 
 Bug Fixes and Improvements in 1.3
 

@@ -14,7 +14,7 @@ from shutil import rmtree
 import datetime, time
 from shutil import copyfile, copytree, move
 
-VersionStr = "1.3"
+VersionStr = "1.3.0.1"
 
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
 
@@ -753,27 +753,6 @@ class ViewModel:
                 m1 = _("Hyphenation List was NOT Generated")
                 m2 = _("No valid words were found in Paratext's Hyphenation List")
         self.doError(m1, m2)
-
-    # def checkSFMforFancyIntroMarkers(self):
-        # unfitBooks = []
-        # prjid = self.get("fcb_project")
-        # prjdir = os.path.join(self.settings_dir, prjid)
-        # bks = self.getBooks()
-        # for bk in bks:
-            # if bk not in TexModel._peripheralBooks:
-                # fname = self.getBookFilename(bk, prjid)
-                # fpath = os.path.join(self.settings_dir, prjid, fname)
-                # if os.path.exists(fpath):
-                    # with open(fpath, "r", encoding="utf-8") as inf:
-                        # sfmtxt = inf.read()
-                    # # Put strict conditions on the format (including only valid \ior using 0-9, not \d digits from any script)
-                    # # This was probably too restrictive, but is a great RegEx: \\ior ([0-9]+(:[0-9]+)?[-\u2013][0-9]+(:[0-9]+)?) ?\\ior\*
-                    # if regex.search(r"\\iot .+\r?\n(\\io\d .+?\\ior [()0-9\-:.,\u2013\u2014 ]+?\\ior\* ?\r?\n)+\\c 1", sfmtxt, flags=regex.MULTILINE) \
-                       # and len(regex.findall(r"\\iot",sfmtxt)) == 1: # Must have exactly 1 \iot per book 
-                        # pass
-                    # else:
-                        # unfitBooks.append(bk)
-        # return unfitBooks
 
     def onFindMissingCharsClicked(self, btn_findMissingChars):
         count = collections.Counter()

@@ -84,6 +84,8 @@ class PicList:
             w = builder.get_object(v)
             sig = "changed"
             if v.startswith("s_"):
+                # sig = "focus-out-event" - MH: we need to connect this signal for typed in values
+                #                           but it gives an extra positional argument. So how to fix it?
                 sig = "value-changed"
             elif v.startswith("c_"):
                 sig = "clicked"
@@ -292,6 +294,10 @@ class PicList:
                     if self.picrect is None:
                         picframe = self.builder.get_object("fr_picPreview")
                         self.picrect = picframe.get_allocation()
+                    # MH: I think what we had earlier, where the image filled the available space 
+                    #     was better (as the current view is too small, and doesn't grow when you
+                    #     stretch the dialog box bigger. Not sure how you changed it to be fixed.
+                    #     Was it a combination of Glade params and this next line, or something else?
                     pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, self.picrect.width - 6, self.picrect.height - 6)
                     pic.set_from_pixbuf(pixbuf)
                     picc.set_from_pixbuf(pixbuf)

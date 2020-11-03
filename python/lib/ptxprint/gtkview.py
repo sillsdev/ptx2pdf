@@ -1154,8 +1154,6 @@ class GtkViewModel(ViewModel):
     def onDeleteTemporaryFilesClicked(self, btn):
         dir = self.working_dir
         warnings = []
-        # MP: Need to decide which tabs and options in View+Edit should be visible
-        # self.builder.get_object("gr_debugTools").set_sensitive(self.get("c_keepTemporaryFiles"))
         title = _("Remove Intermediate Files and Logs?")
         question = _("Are you sure you want to delete\nALL the temporary PTXprint files?")
         if self.msgQuestion(title, question):
@@ -1164,6 +1162,7 @@ class GtkViewModel(ViewModel):
                 patterns.append(r".+\.{}".format(extn))
             patterns.append(r".+\-draft\....".format(extn))
             patterns.append(r".+\.toc".format(extn))
+            # MH: Should we be deleting NestedStyles.sty as well? 
             # patterns.append(r"NestedStyles\.sty".format(extn)) # To be updated as locn has changed (maybe no longer need to delete it)
             patterns.append(r"ptxprint\-.+\.tex".format(extn))
             # print(patterns)
@@ -1540,7 +1539,6 @@ class GtkViewModel(ViewModel):
         GLib.idle_add(self.fileViews[pgnum][1].scroll_mark_onscreen, tmark)
 
     def onEditScriptFile(self, btn):
-        # Ask MH how to do this properly (in one line!?) with Path from pathlib
         customScriptFPath = self.get("btn_selectScript")
         scriptName = os.path.basename(customScriptFPath)
         scriptPath = customScriptFPath[:-len(scriptName)]
@@ -1654,6 +1652,9 @@ class GtkViewModel(ViewModel):
             btn_selectFigureFolder.set_tooltip_text("")
             self.builder.get_object("c_useCustomFolder").set_active(False)
             self.builder.get_object("btn_selectFigureFolder").set_sensitive(False)
+        # MH: Setting this Tooltip works fine when you first select it, 
+        #     but we need to set it again after loading a config 
+        #    (otherwise users don't know what it is pointing to)
 
     def _onPDFClicked(self, title, isSingle, basedir, ident, attr, btn):
         vals = self.fileChooser(title,
@@ -2095,3 +2096,10 @@ class GtkViewModel(ViewModel):
     def onAnchorRefChanged(self, t_plAnchor, foo): # called on "focus-out-event"
         # Ensure that the anchor ref only uses . (and not :) as the ch.vs separator
         self.set("t_plAnchor", re.sub(r':', r'.', self.get('t_plAnchor')))
+
+    def onPlScaleFocusOut(self, plScale, foo):
+        return
+        # MH: This is where we need to tell the PicList editor that the info has changed for the spinner
+        # w = self.builder.get_object("s_plScale")
+        # PicList.item_changed(self, w, "scale")
+

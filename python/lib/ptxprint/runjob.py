@@ -27,7 +27,10 @@ _errmsghelp = {
                                          "To confirm that this is a stylesheet issue, temporarily turn off Stylesheets.\n" +\
                                          "Then, check any recent changes to the Stylesheets (on Advanced tab) and try again.\n",
 "! File ended while scanning use of":    "Try turning off PrintDraftChanges.txt and both Stylesheets on Advanced tab.\n",
-"! Output loop---25 consecutive dead cycles.":  "Unknown cause. Try changing one or more settings or contact support.\n",
+"! Output loop---25 consecutive dead cycles.":  "Sory! XeTeX was unable to complete the typesetting.\n" +\
+                                         "If creating a Diglot, ensure both texts can print successfully\n" +\
+                                         "before merging them as a Diglot print. Also ensure that there\n" +\
+                                         "aren't any large chunks of missing text in either of the projects.\n",
 "! Paratext stylesheet":                 "Try turning off the ptxprint-mods stylesheet\n",
 "! File ended while scanning use of \iotableleader.": "Problem with Formatting Intro Outline\n" +\
                                          "Try disabling option 'Right-Align \ior with tabbed leaders' on the Body tab\n",
