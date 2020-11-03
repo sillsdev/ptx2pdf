@@ -1,7 +1,7 @@
 %:strip
 % Part of the ptx2pdf macro package for formatting USFM text
-% copyright (c) 2007-2020 by SIL International
-% written by David Gardner and pior editors of ptx-char-style
+% copyright (c) 2020 by SIL International
+% written by David Gardner 
 %
 % Permission is hereby granted, free of charge, to any person obtaining  
 % a copy of this software and associated documentation files (the  
@@ -29,8 +29,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newif\ifin@ttrib
-\def\@ttrSlash#1\*{\xdef\attrib@rgs{#1}\message{Attr:\attrib@rgs}\*}
 
+
+
+%\def\@ttrSlash#1\*{\xdef\attrib@rgs{#1}\message{Attr:\attrib@rgs}\*}
+%\tracingall=1
 
 \catcode`\|=\active
 \def\use@ttrSlash{%
@@ -40,12 +43,30 @@
     \let|=\start@ttributegrab %have to build attributes char-by-char, sadly.
 }
 \catcode`\|=12
-
-\def\init@ttribs{%
- % Attribute pre-setupcode goes here.
+\def\kill@ttrib #1\E{%
+  \trace{A}{Destroying attribute #1}%
+  \x@\let\csname attr:#1\endcsname=\undefined
+}
+\def\unset@ttribs{% Destroy any current attibute definitions
+  \let\d@=\kill@ttrib
+  \x@\cstackdown \attribsus@d,\E
+  \relax\relax
+  \trace{A}{attributes list reset}%
+}
+\def\init@ttribs{%Attribute pre-setupcode 
+  \tracingassigns=1
+  \trace{A}{InitAttribs}%
+  \unset@ttribs% Clear any old attributes.
+  \x@\let\x@\tmp\csname defaultattrkey-\thisch@rstyle\endcsname
+  \ifx\tmp\relax
+    \let\thisdefault@ttrkey=\default@ttrkey
+  \else
+    \let\thisdefault@ttrkey=\tmp
+    \trace{A}{Attributes with no keyname will be \tmp}%
+  \fi
   \catcode`\|=\active
-  %\ifmst@nestyle
-  \iffalse
+  \ifmst@nestyle
+  %\iffalse
     \use@ttrSlash
   \else
     \use@ttrGrab
@@ -55,16 +76,20 @@
   \xdef\@ttributes{}%
 }
 
+
 \def\proc@ttribs{%
   \ifin@ttrib
     \trace{A}{Attributes specified:\attrib@rgs}%
+    \parse@ttribs{\attrib@rgs}%
     \in@ttribfalse
   \fi
   \catcode`\|=12
 }
 
 
-\edef\p@stattribcmd{}
+\def\setdefaultattrib#1#2{\trace{A}{Default attrib for #1 is #2}\x@\def\csname defaultattrkey-#1\endcsname{#2}}
+
+\edef\p@stattribcmd{}% Parse the attributes, run any code.
 \def\store@ttributes#1{\def\newbit{#1}\message{'\newbit'}\edef\@ttributes{\@ttributes\newbit}\futurelet\nxt\isitshash}                                                                    
 \def\startp@stattribcmd#1{\futurelet\nxt\isitcmd}
 \def\storep@stattribcmd#1{\def\newbit{#1}\message{"\newbit"}\edef\p@stattribcmd{\p@stattribcmd\newbit}\futurelet\nxt\isitcmd}                                                                          
@@ -77,29 +102,61 @@
 }
 %\def\foo#1{Thatsit "#1"}
 
-\def\oddc@tcodes{\catcode`"=11 \catcode`==11 \catcode`\ =11 \catcode`|=0
-\catcode`\\=12}                                                                                 
-\def\normalc@tcodes{\catcode`"=12 \catcode`==12 \catcode`\ =10\catcode`\\=0
-\catcode`\|=12}                                                                              
+\def\oddc@tcodes{\catcode`"=11 \catcode`==11 
+\catcode`\ =11 \catcode`|=0\catcode`\\=12}                                                                                 
+\def\normalc@tcodes{\catcode`"=12 \catcode`==12 
+\catcode`\ =10\catcode`\\=0\catcode`\|=12}                                                                              
+\message{CATCODES: "\the\catcode`",  =\the\catcode`=,  \the\catcode`\ , *\the\catcode`\*,  \the\catcode`\\,  \the\catcode`\|}%
 
-\def\start@ttributegrab{\let\c@ntinue\isitshash\oddc@tcodes\futurelet\nxt\c@ntinue}
+
+\xdef\attribsus@d{}% List of used attributes.
+
+\def\start@ttributegrab{\let\c@ntinue\isitslash\oddc@tcodes\futurelet\nxt\c@ntinue}
 \def\end@ttributegrab{%
   \xdef\@ttributes{\x@\detokenize\x@{\@ttributes}}%
   \message{Now executing \p@stattribcmd}%
   \csname\p@stattribcmd\endcsname}
 
-\oddc@tcodes
-|gdef|isitshash{%
-|let|c@ntinue|store@ttributes%
-%|edef|@nnxt{|detokenize{|nxt}}
-|if|nxt\|let|c@ntinue|startp@stattribcmd|normalc@tcodes%
-|fi|c@ntinue}
-|normalc@tcodes
 
-%\grabwords one two three="hi"\foo{folks}
-%
-%Store=\store
-%\def\firstword #1 #2 #3\end{Word:"#2" (#3)}
-%\x@\firstword\store\end
+\oddc@tcodes%NO SPACES until |normalc@tcodes is called.
+|gdef|isitslash{|let|c@ntinue|store@ttributes|if|nxt\|let|c@ntinue|startp@stattribcmd|normalc@tcodes|fi|c@ntinue}%
+|normalc@tcodes%
 %
 
+%Parse key="value" or value.
+\def\default@ttrkey{} % What unnamed attributes get saved 
+\def\thisdefault@ttrkey{} % What do unnamed attributes get saved as?
+\def\relaxval{\relax}
+
+\def\save@ttribute#1="#2"=#3\E{
+  \lowercase{\def\attr@key{#1}}\def\attr@val{#2}%
+  \ifx\attr@val\relaxval
+    \trace{A}{Got unnamed(\thisdefault@ttrkey) attribute #1}%
+    \ifx\default@ttrkey\empty
+      \x@\edef\csname attr:UnNamed\endcsname{#1}%don't use attrkey here as it's been lowercased
+      \edef\attribsus@d{\attribsus@d,UnNamed}% Keep a list so we can junk it later.
+    \else
+      \x@\edef\csname attr:\thisdefault@ttrkey\endcsname{#1}%
+      \edef\attribsus@d{\attribsus@d,\thisdefault@ttrkey}% Keep a list so we can junk it later.
+    \fi
+  \else
+    \trace{A}{Got named attribute \attr@key="\attr@val"}%
+    \x@\edef\csname attr:\attr@key\endcsname{\attr@val}%
+    \edef\attribsus@d{\attribsus@d,\attr@val}% Keep a list so we can junk it later.
+  \fi
+}
+
+% Parse a space-separated list.
+\def\relax@pair#1\E{}
+
+\def\geton@pair #1 #2\E{% Parse space separated list
+  \trace{A}{getone pair "#1" "#2"}%
+  \edef\it@m{#1}\ifx\it@m\empty\let\nxt@ttrib=\relax@pair\else
+  \x@\save@ttribute #1="\relax"=\E
+  \fi
+  \nxt@ttrib #2 \E
+}
+\def\parse@ttribs#1{%
+  \let\nxt@ttrib=\geton@pair
+  \x@\geton@pair #1 \E
+}
