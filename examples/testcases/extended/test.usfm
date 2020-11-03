@@ -8,7 +8,7 @@ after. \add The \+nd Lord\+nd*'s good!\add*  I'm putting little NIV-style angle 
 and d\endadd\ to show how close they ought to be when they get put in by the hooks.
 The sequence ought to be before..start..text..end..after.
 \p And that was a  new  parargaph.\f hello \fr 1:1 \ft This is a footnote <<\fq hello\ft >> goodbye\f*
-\p And that was a p class |paragraph \nd break 
+\p And that was a p class paragraph \nd break 
 \+qt-s | foo \*
 now inside a qt-s..qt-e block \nd*
 \p with a paragraph break
