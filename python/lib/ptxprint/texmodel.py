@@ -1166,7 +1166,7 @@ class TexModel:
                 nstylist.append("{} {}\n".format(mkr[l][0],mkr[l][1]))
             nstylist.append("\\Justification {}\n\n".format("Right" if rtl else "Left"))
 
-        if True: # Hack! We need to qualify this (look in USFM for a \cl and if it exists, then don't do this)
+        if True: # Hack!     MH: We need to qualify this (look in USFM for a \cl and if it exists, then don't do this)
             nstylist.append("# The descriptive heading is typically considered VerseText, but then often formatted as a heading.\n")
             nstylist.append("# We need to change the TextType so that Print Draft will handle it correctly beside drop-caps.\n")
             nstylist.append("\\Marker d\n\\TextType Section\n\\SpaceBefore 0\n\n")
