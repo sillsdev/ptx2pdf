@@ -396,7 +396,7 @@ THE SOFTWARE.
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 1.3.0.1</property>
+    <property name="version">Version 1.3.1</property>
     <property name="copyright">© 2020, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -13230,8 +13230,12 @@ Ref:</property>
                                                           <object class="GtkEntry" id="t_plFilename">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
+                                                            <property name="tooltip_text" translatable="yes">Note that any changes you make to the filename
+here will NOT automatically be updated in the
+Paratext USFM files. Please edit/fit the figure
+information manually in Paratext if you change
+things here in PTXprint.</property>
                                                             <property name="hexpand">True</property>
-                                                            <property name="editable">False</property>
                                                             <property name="width_chars">12</property>
                                                           </object>
                                                           <packing>
@@ -13626,7 +13630,7 @@ Lines:</property>
                                                       <object class="GtkImage" id="img_picPreview">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">False</property>
-                                                        <property name="pixbuf">splash_small.png</property>
+                                                        <property name="pixbuf">62859-open-book-icon(128).png</property>
                                                       </object>
                                                     </child>
                                                   </object>
@@ -14526,7 +14530,7 @@ in the printed output.</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="hexpand">True</property>
                                                 <property name="vexpand">True</property>
-                                                <property name="pixbuf">splash_small.png</property>
+                                                <property name="pixbuf">62859-open-book-icon(128).png</property>
                                               </object>
                                               <packing>
                                                 <property name="expand">True</property>
