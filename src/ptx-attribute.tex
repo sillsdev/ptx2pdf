@@ -30,10 +30,7 @@
 
 \newif\ifin@ttrib
 
-
-
-%\def\@ttrSlash#1\*{\xdef\attrib@rgs{#1}\message{Attr:\attrib@rgs}\*}
-%\tracingall=1
+\def\@ttrSlash#1\*{\xdef\attrib@rgs{#1}\message{Attr:\attrib@rgs}\*}
 
 \catcode`\|=\active
 \def\use@ttrSlash{%
@@ -50,14 +47,19 @@
 \def\unset@ttribs{% Destroy any current attibute definitions
   \let\d@=\kill@ttrib
   \x@\cstackdown \attribsus@d,\E
+  \xdef\attribsus@d{}%
   \relax\relax
   \trace{A}{attributes list reset}%
 }
 \def\init@ttribs{%Attribute pre-setupcode 
-  \tracingassigns=1
   \trace{A}{InitAttribs}%
   \unset@ttribs% Clear any old attributes.
-  \x@\let\x@\tmp\csname defaultattrkey-\thisch@rstyle\endcsname
+  \x@\ifx\csname thismil@stone\endcsname\relax
+    \x@\let\x@\tmp\csname defaultattrkey-\thisch@rstyle\endcsname
+  \else
+
+    \x@\let\x@\tmp\csname defaultattrkey-\thismil@stone\endcsname
+  \fi
   \ifx\tmp\relax
     \let\thisdefault@ttrkey=\default@ttrkey
   \else
@@ -106,7 +108,7 @@
 \catcode`\ =11 \catcode`|=0\catcode`\\=12}                                                                                 
 \def\normalc@tcodes{\catcode`"=12 \catcode`==12 
 \catcode`\ =10\catcode`\\=0\catcode`\|=12}                                                                              
-\message{CATCODES: "\the\catcode`",  =\the\catcode`=,  \the\catcode`\ , *\the\catcode`\*,  \the\catcode`\\,  \the\catcode`\|}%
+%\message{CATCODES: "\the\catcode`",  =\the\catcode`=,  \the\catcode`\ , *\the\catcode`\*,  \the\catcode`\\,  \the\catcode`\|}%
 
 
 \xdef\attribsus@d{}% List of used attributes.
@@ -132,7 +134,7 @@
   \lowercase{\def\attr@key{#1}}\def\attr@val{#2}%
   \ifx\attr@val\relaxval
     \trace{A}{Got unnamed(\thisdefault@ttrkey) attribute #1}%
-    \ifx\default@ttrkey\empty
+    \ifx\thisdefault@ttrkey\empty
       \x@\edef\csname attr:UnNamed\endcsname{#1}%don't use attrkey here as it's been lowercased
       \edef\attribsus@d{\attribsus@d,UnNamed}% Keep a list so we can junk it later.
     \else
