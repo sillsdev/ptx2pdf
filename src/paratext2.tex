@@ -1269,6 +1269,11 @@
 \def\pagebreak{
   \ifsk@pping \egroup \fi%
   \ifhe@dings\endhe@dings\fi%
+  \vfill\eject%
+}
+\def\bookendpagebreak{
+  \ifsk@pping \egroup \fi%
+  \ifhe@dings\endhe@dings\fi%
   \ifendbooknoeject\else%
   \vfill\eject\fi%
 }
