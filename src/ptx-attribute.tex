@@ -30,7 +30,10 @@
 
 \newif\ifin@ttrib
 
+
+
 \def\@ttrSlash#1\*{\xdef\attrib@rgs{#1}\message{Attr:\attrib@rgs}\*}
+%\tracingall=1
 
 \catcode`\|=\active
 \def\use@ttrSlash{%
@@ -52,23 +55,27 @@
   \trace{A}{attributes list reset}%
 }
 \def\init@ttribs{%Attribute pre-setupcode 
+  \tracingassigns=1
   \trace{A}{InitAttribs}%
   \unset@ttribs% Clear any old attributes.
-  \x@\ifx\csname thismil@stone\endcsname\relax
-    \x@\let\x@\tmp\csname defaultattrkey-\thisch@rstyle\endcsname
+  \let\attrkey\relax
+  %\x@\let\x@\attrkey\csname defaultattrkey-\thisch@rstyle\endcsname
+  \x@\let\x@\t@st\csname thismil@stone\endcsname
+  \ifx\t@st\relax
+    \x@\let\x@\attrkey\csname defaultattrkey-\thisch@rstyle\endcsname
   \else
-
-    \x@\let\x@\tmp\csname defaultattrkey-\thismil@stone\endcsname
+%
+    \x@\let\x@\attrkey\csname defaultattrkey-\thismil@stone\endcsname
   \fi
-  \ifx\tmp\relax
+  \ifx\attrkey\relax
     \let\thisdefault@ttrkey=\default@ttrkey
   \else
-    \let\thisdefault@ttrkey=\tmp
-    \trace{A}{Attributes with no keyname will be \tmp}%
+    \let\thisdefault@ttrkey=\attrkey
+    \trace{A}{Attributes with no keyname will be \attrkey}%
   \fi
   \catcode`\|=\active
-  \ifmst@nestyle
-  %\iffalse
+  %\ifmst@nestyle
+  \iffalse
     \use@ttrSlash
   \else
     \use@ttrGrab
@@ -92,7 +99,7 @@
 \def\setdefaultattrib#1#2{\trace{A}{Default attrib for #1 is #2}\x@\def\csname defaultattrkey-#1\endcsname{#2}}
 
 \edef\p@stattribcmd{}% Parse the attributes, run any code.
-\def\store@ttributes#1{\def\newbit{#1}\message{'\newbit'}\edef\@ttributes{\@ttributes\newbit}\futurelet\nxt\isitshash}                                                                    
+\def\store@ttributes#1{\def\newbit{#1}\message{'\newbit'}\edef\@ttributes{\@ttributes\newbit}\futurelet\nxt\isitslash}                                                                    
 \def\startp@stattribcmd#1{\futurelet\nxt\isitcmd}
 \def\storep@stattribcmd#1{\def\newbit{#1}\message{"\newbit"}\edef\p@stattribcmd{\p@stattribcmd\newbit}\futurelet\nxt\isitcmd}                                                                          
 \lccode`\~=32
@@ -108,14 +115,14 @@
 \catcode`\ =11 \catcode`|=0\catcode`\\=12}                                                                                 
 \def\normalc@tcodes{\catcode`"=12 \catcode`==12 
 \catcode`\ =10\catcode`\\=0\catcode`\|=12}                                                                              
-%\message{CATCODES: "\the\catcode`",  =\the\catcode`=,  \the\catcode`\ , *\the\catcode`\*,  \the\catcode`\\,  \the\catcode`\|}%
+\message{CATCODES: "\the\catcode`",  =\the\catcode`=,  \the\catcode`\ , *\the\catcode`\*,  \the\catcode`\\,  \the\catcode`\|}%
 
 
 \xdef\attribsus@d{}% List of used attributes.
 
 \def\start@ttributegrab{\let\c@ntinue\isitslash\oddc@tcodes\futurelet\nxt\c@ntinue}
 \def\end@ttributegrab{%
-  \xdef\@ttributes{\x@\detokenize\x@{\@ttributes}}%
+  \xdef\@ttributes{\x@\detokenize\x@{\@ttributes}}% Make it all strings.
   \message{Now executing \p@stattribcmd}%
   \csname\p@stattribcmd\endcsname}
 

@@ -2,7 +2,8 @@
 all: test.pdf
 DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
 .tex.pdf:
-	TEXINPUTS=.:$(DIR) xetex -no-pdf $<
+	#TEXINPUTS=.:$(DIR) xetex -no-pdf $<
+	TEXINPUTS=.:$(DIR) xetex $<
 	TEXINPUTS=.:$(DIR) xetex $<
 	
 
