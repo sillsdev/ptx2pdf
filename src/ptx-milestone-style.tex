@@ -38,7 +38,7 @@
 
 \catcode`\~=12 \lccode`\~=32 % we'll use \lowercase{~} when we need a category-12 space
 \catcode`\_=12 \lccode`\_=13 % and \lowercase{_} for category-12 <return>
-\lowercase{
+\lowercase{%
  \def\domst@nestyle{% here, \n@xt has been \let to the next character after the marker
   \catcode32=10 % reset <space> to act like a space again
   \catcode13=10 % and <return> is also a space (we don't want blank line -> \par)
@@ -67,7 +67,13 @@
 }
 
 \def\*{%This might end a + style (c)  or a normal style character style(C), or a milestone style
+  \trace{m}{slash *}%
   \proc@ttribs
+  \get@ttribute{\thisdefault@ttrkey}%
+  \ifx\attr@b\relax\else
+    \let\thismil@stoneKey\thisdefault@ttrkey
+    \let\thismil@stoneVal\attr@b
+  \fi
   \trace{m}{slash *}%
   \ifmst@nestyle\else
     \if c\stylet@pe\relax
@@ -77,7 +83,7 @@
     \fi
   \fi
   \mst@nestylefalse
-  \mil@stone}% USFM3 'self closing marker' milestone
+  \mil@stone\ignorespaces}% USFM3 'self closing marker' milestone
 
 \let\milestoneOp\empty
 \let\thismil@stone\empty
@@ -98,25 +104,38 @@
    \csname init@ttribs\endcsname
 }
 
-\def\dr@pmilest@ne#1+#2\E{% This kills the TOP matching milestone that might be burried in the stack, and might be nexted.
+\def\dr@pmilest@ne#1+#2\E{% This kills the TOP matching milestone that might be burried in the stack, and might be nested.
   \edef\MSt@mp{#1}%
-  \ifx\MSt@mp\MSch@cking\relax
-    %\csname endit@#1\endcsname
-    \trace{m}{Found #1}%
-    \let\d@=\cstackrelax
+  \x@\pars@msid #2;;\E
+  \ifx\MSt@mp\empty
+    \let\d@=\cstackrelax %permanent change
   \else
-    \ifx\MSt@mp\empty
-      \let\d@=\cstackrelax
+    \ifx\MSt@mp\MSch@cking\relax
+      \ifx\mstone@id\MSch@ckid
+        %\csname endit@#1\endcsname
+        \trace{m}{Found #1}%
+        \let\d@=\empty %just a signal to skip this one.
+        \tempfalse
+      \else
+        \trace{m}{Found #1, but ids do not match "\MSch@ckid"!="\mstone@id"}%
+        \temptrue% flag error
+      \fi
+    \fi
+    \ifx\d@\empty
+      \let\d@=\dr@pmilest@ne
     \else
       \ifx\@ut\empty \xdef\@ut{#1+#2}\else
-      \xdef\@ut{\@ut,#1+#2}\fi%
+	\xdef\@ut{\@ut,#1+#2}%
+      \fi
     \fi
   \fi
   \trace{m}{dr@pmilest@ne: \@ut}%
 }
-\def\dr@pmilestone#1#2{
+\def\dr@pmilestone#1#2{%
   \trace{m}{Dropping milestone #1 from \MScstack}% 
   \edef\MSch@cking{#1}%
+  \edef\MSch@ckid{#2}%
+  \tempfalse
   \let\@ut=\empty
   \let\d@=\dr@pmilest@ne
   \MScdown
@@ -126,21 +145,38 @@
     \xdef\MScstack{\@ut,\MScstack@mpty}%
   \fi
   \trace{m}{Stack now: \MScstack}%
+  \iftemp
+    \message{End-milestone of class '\MSch@cking', id '\MSch@ckid' partially matched one or more open milestones, but no match on the id was
+    found sid and eid must match exactly}%
+  \fi
 }
 %+csty_milestone
 % Operations on the current milestone(s)
 \def\st@rtmilestone{%
   % There may multiple milestones of a given type (can't sensibly have both \qt+s |Jesus\* and 
   % \qt+s |Pilate\* active at the same time, but in some cases it might make sense to do something siilar.)
-  \MScpush{\thismil@stone+\thismil@stoneKey=\thismil@stoneVal}%
+  \get@ttribute{\attrid}\ifx\attr@b\relax %sid/eid must match, and may contain letters,numbers,underscore.
+    \MScpush{\thismil@stone+\thismil@stoneKey=\thismil@stoneVal}%
+    \trace{m}{Milestone without ID stacked}%
+  \else
+    \MScpush{\thismil@stone+\thismil@stoneKey=\thismil@stoneVal;\attr@b}%
+    \trace{m}{Milestone with \attrid =\attr@b\space stacked}%
+  \fi
   \upd@teMsPrefix
+  \trace{m}{Milestone stack now: \MScstack}%
 }
 \def\@ndmilestone{%
-  \dr@pmilestone{\thismil@stone}{\thismil@stoneVal}{\thismil@stoneKey}%
+  \trace{m}{@ndmilestone.  stack now: \MScstack}%
+  \get@ttribute{\attrid}\ifx\attr@b\relax 
+  \dr@pmilestone{\thismil@stone}{}%
+  \else
+  \dr@pmilestone{\thismil@stone}{\attr@b}%
+  \fi
+  \trace{m}{Milestone stack now: \MScstack}%
   \upd@teMsPrefix
+  \let\attr@b\empty\let\attrid\empty
 }
-\def\st@ndalonemilestone{
-  % FIXME:Potentially some kind of hook? Or use this as an image anchor?
+\def\st@ndalonemilestone{% FIXME:Potentially some kind of hook? Or use this as an image anchor?
 }%
 \def\upd@teMsPrefix{%Build a prefix based on all currently-in-force milestones.
   \trace{m}{upd@teMsPrefix}%
@@ -148,11 +184,43 @@
   \ifx\mspr@fix\empty\else\xdef\mspr@fix{ms:\mspr@fix|}\trace{m}{msPrefix set to \mspr@fix}\fi
 }
 \xdef\equ@l{=}
-\def\mil@st@necheck#1+#2\E{%
-  \edef\k@yv@al{#2}%
-  \xdef\mspr@fix{\ifx\mspr@fix\empty\else \mspr@fix+\fi#1\ifx\k@yv@al\equ@l\else#2\fi}}
-   
+\def\pars@msid#1;#2;#3\E{\edef\k@yv@al{#1}\def\mstone@id{#2}}
 
+\def\mil@st@necheck#1+#2\E{%The milestone has a key value and possibly an ID field. Ignore the id for building the prefix
+  \x@\pars@msid #2;;\E
+  \trace{m}{parsed #2->\k@yv@al, \mstone@id}%
+  \xdef\mspr@fix{\ifx\mspr@fix\empty\else \mspr@fix+\fi#1\ifx\k@yv@al\equ@l\else\k@yv@al\fi}}
+ 
+\newtoks\tmpt@ks
+\def\exp@ndmspr@fix#1{%for each potential prefix, call #1 with \@lso defined
+   %\tracingmacros=1
+   %\tracingassigns=1
+   \tmpt@ks{#1}%
+   \trace{m}{Expanding \mspr@fix}%
+   \def\D@IT##1{\edef\@lso{ms:##1|}\trace{m}{adding option \@lso to styles}\the\tmpt@ks}%
+   \it@mcount=0
+   \x@\@xp@ndmspr@fix \mspr@fix
+   %\ifnum \it@mcount>1
+     %\let\@lso\mspr@fix \the\tmpt@ks
+   %\fi
+}
+
+%simple + separated list processing
+\def\l@stitem #1\E{}
+\newcount\it@mcount
+\def\e@chitem#1+#2\E{%
+  \edef\it@mtmp{#1}\ifx\it@mtmp\empty\let\nxt@item\l@stitem\else
+    \advance\it@mcount by 1
+    \D@IT{#1}\fi
+  \x@\nxt@item #2+\E
+}
+
+\def\@xp@ndmspr@fix ms:#1|{%
+   \trace{m}{list: #1}%
+   \let\nxt@item\e@chitem
+   \x@\nxt@item #1+\E
+}
 %-csty_milestone
+\def\attrid{}
 
 

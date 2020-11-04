@@ -1,0 +1,23 @@
+\input paratext2
+\tracing{m}
+\tracing{A}
+\tracing{s}
+%\input "ptx-extended.tex"
+\stylesheet{usfm_sb.sty}
+\stylesheet{default-custom.sty}
+\stylesheet{test.sty}
+\catcode`\@=11
+\gdef\b@okShort{}
+\def\thisch@rstyle{w}
+\ptxfile{test.usfm}
+\setdefaultattrib{w}{lemma}
+\init@ttribs
+\parse@ttribs{hi}
+\attribsus@d
+
+\init@ttribs
+\parse@ttribs{z a="b"}
+
+\attribsus@d
+\init@ttribs
+\bye

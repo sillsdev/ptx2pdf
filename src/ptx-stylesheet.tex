@@ -166,8 +166,8 @@
    \fi
    %\trace{s}{1. Checking \p@ssParams}%
    \ifx\mspr@fix\empty\else
-     \edef\@lso{\mspr@fix}%
-     \let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E \edef\p@ssParams{\@ut,\p@ssParams}%
+     %\edef\@lso{\mspr@fix}%
+     \exp@ndmspr@fix{\let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E \edef\p@ssParams{\@ut,\p@ssParams}}%
    \fi
    %\trace{s}{2. Checking \p@ssParams}%
    \ifx\c@tprefix\empty\else

@@ -32,7 +32,7 @@
 
 
 
-\def\@ttrSlash#1\*{\xdef\attrib@rgs{#1}\message{Attr:\attrib@rgs}\*}
+\def\@ttrSlash#1\*{\xdef\attrib@rgs{#1}\message{Attr:\attrib@rgs}\in@ttribtrue\*}
 %\tracingall=1
 
 \catcode`\|=\active
@@ -44,10 +44,10 @@
 }
 \catcode`\|=12
 \def\kill@ttrib #1\E{%
-  \trace{A}{Destroying attribute #1}%
-  \x@\let\csname attr:#1\endcsname=\undefined
+  \trace{A}{removing (old) attribute '#1'}%
+  \x@\global\x@\let\csname attr:#1\endcsname=\undefined
 }
-\def\unset@ttribs{% Destroy any current attibute definitions
+\def\unset@ttribs{% Remove any current attibute definitions
   \let\d@=\kill@ttrib
   \x@\cstackdown \attribsus@d,\E
   \xdef\attribsus@d{}%
@@ -55,7 +55,7 @@
   \trace{A}{attributes list reset}%
 }
 \def\init@ttribs{%Attribute pre-setupcode 
-  \tracingassigns=1
+  %\tracingassigns=1
   \trace{A}{InitAttribs}%
   \unset@ttribs% Clear any old attributes.
   \let\attrkey\relax
@@ -73,6 +73,7 @@
     \let\thisdefault@ttrkey=\attrkey
     \trace{A}{Attributes with no keyname will be \attrkey}%
   \fi
+  \edef\attrid{\milestoneOp id}% id / sid / eid, depending.
   \catcode`\|=\active
   \ifmst@nestyle
   %\iffalse
@@ -87,6 +88,7 @@
 
 
 \def\proc@ttribs{%
+  \trace{A}{Processing attributes (\ifin@ttrib true\else false\fi)}%
   \ifin@ttrib
     \trace{A}{Attributes specified:\attrib@rgs}%
     \parse@ttribs{\attrib@rgs}%
@@ -106,8 +108,8 @@
 \lowercase{
  \gdef\isitcmd{%
         \let\c@ntinue\storep@stattribcmd
-        \ifcat a\nxt\else\ifcat=\nxt
-        \else \let\c@ntinue\end@ttributegrab\fi\fi\c@ntinue}
+        \ifcat a\nxt\else\ifcat=\nxt \else
+	\let\c@ntinue\end@ttributegrab\fi\fi\c@ntinue}%
 }
 %\def\foo#1{Thatsit "#1"}
 
@@ -124,8 +126,7 @@
 \def\end@ttributegrab{%
   \xdef\@ttributes{\x@\detokenize\x@{\@ttributes}}% Make it all strings.
   \message{Now executing \p@stattribcmd}%
-  \csname\p@stattribcmd\endcsname}
-
+  \csname\p@stattribcmd\endcsname}% 
 
 \oddc@tcodes%NO SPACES until |normalc@tcodes is called.
 |gdef|isitslash{|let|c@ntinue|store@ttributes|if|nxt\|let|c@ntinue|startp@stattribcmd|normalc@tcodes|fi|c@ntinue}%
@@ -137,7 +138,7 @@
 \def\thisdefault@ttrkey{} % What do unnamed attributes get saved as?
 \def\relaxval{\relax}
 
-\def\save@ttribute#1="#2"=#3\E{
+\def\save@ttribute#1="#2"=#3\E{%
   \lowercase{\def\attr@key{#1}}\def\attr@val{#2}%
   \ifx\attr@val\relaxval
     \trace{A}{Got unnamed(\thisdefault@ttrkey) attribute #1}%
@@ -151,16 +152,26 @@
   \else
     \trace{A}{Got named attribute \attr@key="\attr@val"}%
     \x@\edef\csname attr:\attr@key\endcsname{\attr@val}%
-    \edef\attribsus@d{\attribsus@d,\attr@val}% Keep a list so we can junk it later.
+    \edef\attribsus@d{\attribsus@d,\attr@key}% Keep a list so we can junk it later.
   \fi
 }
+
+\def\get@ttribute#1{\x@\let\x@\attr@b\csname attr:#1\endcsname \trace{A}{attrib #1 is \attr@b}} %simple access function
 
 % Parse a space-separated list.
 \def\relax@pair#1\E{}
 
+\def\zap@space#1 #2{%borrowed from latex.ltx. Eats all spaces in arg, including mid-space
+  #1%
+  \ifx#2\empty\else\expandafter\zap@space\fi
+  #2}
+
+\def\spaceless #1 \E{#1}
 \def\geton@pair #1 #2\E{% Parse space separated list
-  \trace{A}{getone pair "#1" "#2"}%
-  \edef\it@m{#1}\ifx\it@m\empty\let\nxt@ttrib=\relax@pair\else
+  \edef\it@m{#1}%
+  \edef\it@mtwo{\zap@space #2 \empty}%
+  \trace{A}{getone pair (#1) (#2) -> (\it@m) (\it@mtwo)}%
+  \ifx\it@m\empty\ifx\it@mtwo\empty\let\nxt@ttrib=\relax@pair\fi\else
   \x@\save@ttribute #1="\relax"=\E
   \fi
   \nxt@ttrib #2 \E
@@ -169,3 +180,9 @@
   \let\nxt@ttrib=\geton@pair
   \x@\geton@pair #1 \E
 }
+
+%usfm 3.0 defaults
+\setdefaultattrib{qt}{who}
+\setdefaultattrib{rb}{gloss}
+\setdefaultattrib{w}{lemma}
+
