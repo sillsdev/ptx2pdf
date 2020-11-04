@@ -337,7 +337,7 @@
 \newskip\intern@teskip \intern@teskip=15pt plus 3pt minus 5pt
 \newskip\noteRag\noteRag=0pt plus 18pt
 \def\maken@tepara#1#2{%
-  \setn@tewidth{\n@tetype}%
+  \setn@tewidth{#2}%
   \hsize=\n@tewidth%\advance\hsize by -\columnshift % width is full page size
   \let\par=\endgraf\ch@pterfalse
   \everypar={}% don't do body text formatting

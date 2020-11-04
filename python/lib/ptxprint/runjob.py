@@ -573,7 +573,7 @@ class RunJob:
         newinf = cStringIO(rawdata)
         im = Image.open(newinf)
         if cropme:
-            print("Cropme: ", infile)
+            # print("Cropme: ", infile)
             im = self.cropBorder(im)
         try:
             p = im.load()
