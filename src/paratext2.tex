@@ -146,12 +146,16 @@
   \TRACE{vm@kenote \n@tetype}%
   \d@note{\x@\insert\csname note-\n@tetype\endcsname}%
   \x@\let\x@\th@sins\csname note-no-insert-\n@tetype\endcsname
-  \ifx\th@sins\relax\else\d@note{\th@sins}\fi%
-  %\th@sins
+  \ifx\th@sins\relax
+    \checkp@ranotes{#1}% check whether this note class is to be paragraphed 
+    \n@tewidth=\ifp@ranotes\maxdimen\else\textwidth\advance\hsize by -\columnshift\fi % insert penalties to control breaking of footnotes
+  \else\d@note{\th@sins}%
+    \n@tewidth=\hsize
+  \fi%
+  \trace{f}{Footnote (\n@tetype) will be \the\n@tewidth wide}%
   \the\d@note\bgroup% insert note-f (or note-x)
+    \hsize=\n@tewidth
 %%% single-column notes:
-  \checkp@ranotes{#1}% check whether this note class is to be paragraphed 
-  \hsize=\ifp@ranotes\maxdimen\else\textwidth\advance\hsize by -\columnshift\fi % insert penalties to control breaking of footnotes
   \interlinepenalty\interfootnotelinepenalty % set penalty to break lines
   \floatingpenalty\@MM % make sure note does not float away from caller to another page
   \leftskip\z@skip \rightskip\z@skip \spaceskip\z@skip \xspaceskip\z@skip % reset extra space around paragraph 0
@@ -245,7 +249,7 @@
   \trace{j}{set baselineskip=\the\baselineskip}}
 
 \def\ins@rtn@tecl@ss#1{% insert the given note class, either paragraphed or separately
-  \iff@rstnote\setn@tewidth\fi % set appropriate hsize width for diglot or not.
+  \iff@rstnote\setn@tewidth{#1}\fi % set appropriate hsize width for diglot or not.
   \checkp@ranotes{#1}\ifp@ranotes\let\n@xt=\parains@rtn@tecl@ss
     \else\let\n@xt=\separateins@rtn@tecl@ss\fi
   \n@xt{#1}}
@@ -279,7 +283,7 @@
 \newif\iff@rstnote
 \f@rstnotetrue
 \def\footnoterule{\kern-0.5\AboveNoteSpace\kern-.4pt % the \hrule is .4pt high
-  \setn@tewidth
+  \setn@tewidth{-}%
   \dimen0=\n@tewidth
   \ifdiglot\else
      \advance\dimen0 by -\columnshift %handled differently in diglot
@@ -303,12 +307,24 @@
 % Notewidth for diglots depends on settings and column. 
 %+c_setnotewidth
 \newdimen\n@tewidth
-\def\setn@tewidth{%
-  \ifdiglot
-    \ifdiglotSepNotes
-      \ifdiglotL\n@tewidth=\columnLwidth\else\n@tewidth=\columnRwidth\fi
-    \else\n@tewidth=\textwidth\fi
-  \else\n@tewidth=\textwidth\fi
+\def\setn@tewidth#1{%
+  \trace{f}{setn@tewidth}%
+  \x@\let\x@\th@sins\csname note-no-insert-#1\endcsname
+  \ifx\th@sins\relax % Normal footnote
+   \ifdiglot
+     \ifdiglotSepNotes
+       \ifdiglotL\n@tewidth=\columnLwidth\else\n@tewidth=\columnRwidth\fi
+     \else\n@tewidth=\textwidth\fi
+   \else\n@tewidth=\textwidth\fi
+  \else
+    %Assume that the note will be inserted using the current text width.
+    \ifnum\c@rrentcols=1
+      \n@tewidth=\textwidth
+    \else
+      \n@tewidth=\colwidth
+    \fi
+  \fi
+  \trace{f}{end-setn@tewidth}%
 }
 %-c_setnotewidth
 
@@ -321,7 +337,7 @@
 \newskip\intern@teskip \intern@teskip=15pt plus 3pt minus 5pt
 \newskip\noteRag\noteRag=0pt plus 18pt
 \def\maken@tepara#1#2{%
-  \setn@tewidth
+  \setn@tewidth{\n@tetype}%
   \hsize=\n@tewidth%\advance\hsize by -\columnshift % width is full page size
   \let\par=\endgraf\ch@pterfalse
   \everypar={}% don't do body text formatting

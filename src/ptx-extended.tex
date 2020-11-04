@@ -44,7 +44,12 @@
 \def\getsbp@ramNoInh#1{\ifdiglot \edef\d@sf{\ifdiglotL L\else R\fi}\else\def\d@sf{}\fi
   \getp@r@m{#1}{\c@tprefix\sb@rmarker\d@sf}\ifx\p@ram\relax\getp@ram{#1}{\c@tprefix\sb@rmarker}\fi
   \let\cp@ram\p@ram
-  \ifx\cp@ram\empty\global\let\cp@ram\relax\fi\trace{sc}{Got result for \c@tprefix\sb@rmarker:#1: \cp@ram}}
+  \ifx\cp@ram\empty\global\let\cp@ram\relax\fi
+  \ifx\cp@ram\relax
+    \trace{sc}{No result for \c@tprefix\sb@rmarker:#1}\else
+    \trace{sc}{Got result for \c@tprefix\sb@rmarker:#1: \cp@ram}%
+  \fi
+}
 %\setsbp@ram{hascol}{T}
 %\setsbp@ram{bgcolour}{0 1 0}
 %\setsbp@ram{alpha}{0.2}% 1=solid 0=invisible
@@ -134,7 +139,7 @@
  %h*,c*,p* take the current page width as their base
  %tX,bX take the column width 
  %t,b,B take the text width
- \trace{e}{setsb@rwidth c:\the\colwidth, t:\the\textwidth, h:\the\hsize}%
+ \trace{e}{setsb@rwidth c:\the\colwidth, t:\the\textwidth, h:\the\hsize, \the\c@rrentcols}%
  \getsbp@ram{posn}%
  \ifx\cp@ram\relax
    \gdef\sb@rpos{b}%
@@ -147,14 +152,15 @@
  \getsbp@ramNoInh{w@dth}% Width must NOT be inherited.
  \ifx\cp@ram\relax
    \x@\minip@rsepos\fgfigp@s\mid\sb@rpos\end
-   \dimen1=\hs@ze
+   \dimen1=\ifnum \c@rrentcols=1 \textwidth \else \colwidth\fi
+   \trace{sc}{Initial width set to \the\dimen1}%
    \ifx\tempd\empty
-     \if\tempc t\dimen1=\textwidth\else
-       \if\tempc b\dimen1=\textwidth\else
-         \if\tempc B\dimen1=\textwidth\fi\fi\fi
+     \if\tempc t\relax\dimen1=\textwidth\else
+       \if\tempc b\relax\dimen1=\textwidth\else
+         \if\tempc B\relax\dimen1=\textwidth\fi\fi\fi
    \else
-     \if\tempc t\dimen1=\colwidth\else
-       \if\tempc b\dimen1=\colwidth\fi\fi
+     \if\tempc t\relax\dimen1=\colwidth\else
+       \if\tempc b\relax\dimen1=\colwidth\fi\fi
    \fi
    % Now apply scale..
    \getsbp@ram{scale}\ifx\cp@ram\relax\else
@@ -179,7 +185,9 @@
      \advance\dimen1 by \fb@hpadding\fi
    \ifx\b@drright\tr@e \advance\dimen1 by -\b@drwidth\FontSizeUnit
      \advance\dimen1 by \fb@hpadding\fi
-   \setsbp@ram{w@dth}{\the\dimen1}%
+   \if h\tempc\relax\else
+     \setsbp@ram{w@dth}{\the\dimen1}%
+   \fi
  \else
    \dimen1=\cp@ram
  \fi
@@ -378,6 +386,7 @@
   \let\c@tegory\oldc@tegory 
   \s@tc@tpr@fix
   \unvbox\sid@barnotes
+  \cancelcutouts
 }
 
 % Category file parsing 
