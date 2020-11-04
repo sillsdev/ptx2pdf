@@ -1,11 +1,17 @@
 PTXprint 1.3.1 Release Notes 
 4 November 2020
 
-Bug Fixes in 1.3.1
+Bug Fixes and Improvements in 1.3.1
 
   * Endnotes should now display at the end of each book
   
   * Add option to crop borders on all images (eliminates spurious lines on edges of illustrations)
+  
+  * Add (another) button on Help & Links tab to Create ZIP Archive (in the context of filing bug reports)
+
+  * Fixed: #237 Piclist spinners not retaining typed values 
+  
+  * Fixed: #265 Changes to the picture scale not retained after closing and opening the app
 
   * Fixed: #267 Colophon did not print for single book PDF
   
