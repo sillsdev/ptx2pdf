@@ -545,7 +545,7 @@ class RunJob:
             # 8 = 256 * 5% (approx)
             if score > 8 * (othere - others):
                 break
-        return max(box[start], t - 1) if start < end else min(box[start], t + 1)
+        return t
 
     def cropBorder(self, im):
         bwim = im.convert("L").load()
