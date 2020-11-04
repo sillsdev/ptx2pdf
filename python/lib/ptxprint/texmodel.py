@@ -170,6 +170,7 @@ ModelMap = {
     # "document/iffigfrmpiclist": ("c_usePicList", None),
     "document/iffigexclwebapp": ("c_figexclwebapp", None),
     "document/iffigskipmissing": ("c_skipmissingimages", None),
+    "document/iffigcrop":       ("c_cropborders", None),
     "document/iffigplaceholders": ("c_figplaceholders", lambda w,v: "true" if v else "false"),
     "document/iffighiderefs":   ("c_fighiderefs", None),
     "document/usesmallpics":    ("c_useLowResPics", lambda w,v :"" if v else "%"),

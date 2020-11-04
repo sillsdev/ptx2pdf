@@ -733,9 +733,9 @@ class PicInfo(dict):
                 else:
                     v['pgpos'] = posns[0]
 
-    def set_destinations(self, fn=lambda x,y,z:z, keys=None):
+    def set_destinations(self, fn=lambda x,y,z:z, keys=None, cropme=False):
         for k, v in self.items():
-            if 'dest file' in v:
+            if v.get(' crop', False) == cropme and 'dest file' in v:
                 continue            # no need to regenerate
             if keys is not None and k[:3] not in keys:
                 continue
@@ -745,6 +745,7 @@ class PicInfo(dict):
             fpath = v[self.srcfkey]
             origExt = os.path.splitext(fpath)[1]
             v['dest file'] = fn(v, v[self.srcfkey], nB+origExt.lower())
+            v[' crop'] = cropme
             if 'media' in v and len(v['media']) and 'p' not in v['media']:
                 v['disabled'] = True
 

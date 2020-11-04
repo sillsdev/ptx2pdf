@@ -503,10 +503,10 @@ class RunJob:
         #    self.removeTmpFolders(self.printer.working_dir, folderList, mkdirs=True)
         #except PermissionError:
         #    print("Warning: Couldn't Remove Temporary Folders - is a temp file open?")
-            
+        cropme = info['document/iffigcrop']
         def carefulCopy(p, src, tgt):
             ratio = pageRatios[0 if p['size'].startswith("span") else 1]
-            return self.carefulCopy(ratio, src, tgt)
+            return self.carefulCopy(ratio, src, tgt, cropme)
         missingPics = []
         if info['document/ifinclfigs'] == 'false':
             print("NoFigs")
@@ -514,7 +514,7 @@ class RunJob:
         picinfos.build_searchlist()
         for j in jobs:
             picinfos.getFigureSources(keys=j, exclusive=self.printer.get("c_exclusiveFiguresFolder"))
-            picinfos.set_destinations(fn=carefulCopy, keys=j)
+            picinfos.set_destinations(fn=carefulCopy, keys=j, cropme=cropme)
         missingPics = [v['src'] for k,v in picinfos.items() if k[:3] in j and 'dest file' not in v and 'src' in v]
         # missingPics = [v['src'] for v in picinfos.values() if 'dest file' not in v and 'src' in v]
         res = [os.path.join("tmpPics", v['dest file']) for v in picinfos.values() if 'dest file' in v]
@@ -560,7 +560,7 @@ class RunJob:
             return im.crop(cbox)
         return im
 
-    def convertToJPGandResize(self, ratio, infile, outfile):
+    def convertToJPGandResize(self, ratio, infile, outfile, cropme):
         if self.ispdfxa:
             white = (0, 0, 0, 0)
             fmt = fmta = "CMYK"
@@ -572,7 +572,9 @@ class RunJob:
             rawdata = inf.read()
         newinf = cStringIO(rawdata)
         im = Image.open(newinf)
-        im = self.cropBorder(im)
+        if cropme:
+            print("Cropme: ", infile)
+            im = self.cropBorder(im)
         try:
             p = im.load()
         except OSError:
@@ -600,7 +602,7 @@ class RunJob:
             onlyRGBimage = onlyRGBAimage.convert(fmt)
             onlyRGBimage.save(outfile)
 
-    def carefulCopy(self, ratio, srcpath, tgtfile):
+    def carefulCopy(self, ratio, srcpath, tgtfile, cropme):
         tmpPicPath = os.path.join(self.printer.working_dir, "tmpPics")
         tgtpath = os.path.join(tmpPicPath, tgtfile)
         try:
@@ -612,10 +614,10 @@ class RunJob:
             return srcpath
         # If either the source image is a TIF (or) the proportions aren't right for page dimensions 
         # then we first need to convert to a JPG and/or pad with which space on either side
-        if True or self.ispdfxa or iw/ih < ratio or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
+        if cropme or self.ispdfxa or iw/ih < ratio or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
             tgtpath = os.path.splitext(tgtpath)[0]+".jpg"
             try:
-                self.convertToJPGandResize(ratio, srcpath, tgtpath)
+                self.convertToJPGandResize(ratio, srcpath, tgtpath, cropme)
             except: # MH: Which exception should I try to catch?
                 print(_("Error: Unable to convert/resize image!\nImage skipped:"), srcpath)
                 return os.path.basename(tgtpath)
