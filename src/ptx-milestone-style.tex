@@ -93,9 +93,9 @@
  \s@tfont{\thisch@rstyle}% set up font attributes
 }
 
-\def\startmst@nestyle{%What actually changes between the beginning of a milestone and the end-marker? 
+\def\startmst@nestyle{%What actually changes between the beginning of a milestone and the end-marker? Attribute values!
    \trace{m}{startmst@nestyle}%
-   \init@ttribs
+   \csname init@ttribs\endcsname
 }
 
 \def\dr@pmilest@ne#1+#2\E{% This kills the TOP matching milestone that might be burried in the stack, and might be nexted.
