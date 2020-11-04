@@ -1,9 +1,23 @@
 PTXprint 1.3.1 Release Notes 
-3 November 2020
+4 November 2020
 
-Bug Fixes and Improvements in 1.3
+Bug Fixes in 1.3.1
 
-  * 
+  * Endnotes should now display at the end of each book
+  
+  * Add option to crop borders on all images (eliminates spurious lines on edges of illustrations)
+
+  * Fixed: #267 Colophon did not print for single book PDF
+  
+  * Fixed: #268 Always start 1st Chapter on new page
+
+  * Fixed: #269 Unable to add A4 watermark
+  
+  * Fixed: #271 We can't change a picture's filename inside PTXprint
+  
+  * Fixed: #273 Header can't display verse numbers when Marginal verse numbers used
+
+  * Fixed: #275 Selecting "Letter spacing" prevents printing
   
 Bug Fixes and Improvements in 1.3
 
