@@ -213,7 +213,8 @@ _signals = {
     'changed': ("ComboBox", "Entry"),
     'color-set': ("ColorButton",),
     'change-current-page': ("Notebook",),
-    'change-value': ("SpinButton",),
+    #'change-value': ("SpinButton",),
+    'value-changed': ("SpinButton",),
     'state-set': ("Switch",),
     'row-activated': ("TreeView",),
 }

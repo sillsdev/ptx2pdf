@@ -532,6 +532,34 @@ class RunJob:
             self.printer.set("l_missingPictureString", "")
         return res
 
+    def getBorder(self, box, start, end, fn):
+        if start > end:
+            it = range(box[start]-1, box[end]-1, -1)
+        else:
+            it = range(box[start], box[end])
+        otheri = 0 if (start & 1) else 1
+        others = box[otheri]
+        othere = box[otheri+2]
+        for t in it:
+            score = sum(fn(t, i) for i in range(others, othere))
+            # 8 = 256 * 5% (approx)
+            if score > 8 * (othere - others):
+                break
+        return max(box[start], t - 1) if start < end else min(box[start], t + 1)
+
+    def cropBorder(self, im):
+        bwim = im.convert("L").load()
+        box = im.getbbox()
+        cbox = []
+        cbox.append(self.getBorder(box, 0, 2, lambda x, y: bwim[x, y]))
+        cbox.append(self.getBorder(box, 1, 3, lambda y, x: bwim[x, y]))     # top is 0
+        cbox.append(self.getBorder(box, 2, 0, lambda x, y: bwim[x, y]))
+        cbox.append(self.getBorder(box, 3, 1, lambda y, x: bwim[x, y]))
+        cbox = tuple(cbox)
+        if cbox != box:
+            return im.crop(cbox)
+        return im
+
     def convertToJPGandResize(self, ratio, infile, outfile):
         if self.ispdfxa:
             white = (0, 0, 0, 0)
@@ -544,6 +572,7 @@ class RunJob:
             rawdata = inf.read()
         newinf = cStringIO(rawdata)
         im = Image.open(newinf)
+        im = self.cropBorder(im)
         try:
             p = im.load()
         except OSError:
@@ -583,7 +612,7 @@ class RunJob:
             return srcpath
         # If either the source image is a TIF (or) the proportions aren't right for page dimensions 
         # then we first need to convert to a JPG and/or pad with which space on either side
-        if self.ispdfxa or iw/ih < ratio or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
+        if True or self.ispdfxa or iw/ih < ratio or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
             tgtpath = os.path.splitext(tgtpath)[0]+".jpg"
             try:
                 self.convertToJPGandResize(ratio, srcpath, tgtpath)
