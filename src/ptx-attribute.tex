@@ -56,16 +56,17 @@
 }
 \def\init@ttribs{%Attribute pre-setupcode 
   %\tracingassigns=1
-  \trace{A}{InitAttribs}%
+  \edef\thiswh@tstyle{\ifmst@nestyle\thismil@stone\else\thisch@rstyle\fi}%
+  \trace{A}{InitAttribs \thiswh@tstyle (\csname thisch@rstyle\endcsname,\csname thismil@stone\endcsname)}%
   \unset@ttribs% Clear any old attributes.
   \let\attrkey\relax
   %\x@\let\x@\attrkey\csname defaultattrkey-\thisch@rstyle\endcsname
-  \x@\let\x@\t@st\csname thismil@stone\endcsname
+  \x@\let\x@\t@st\csname thiswh@tstyle\endcsname
   \ifx\t@st\relax
-    \x@\let\x@\attrkey\csname defaultattrkey-\thisch@rstyle\endcsname
+    \x@\let\x@\attrkey\csname defaultattrkey-\thiswh@tstyle\endcsname
   \else
 %
-    \x@\let\x@\attrkey\csname defaultattrkey-\thismil@stone\endcsname
+    \x@\let\x@\attrkey\csname defaultattrkey-\thiswh@tstyle\endcsname
   \fi
   \ifx\attrkey\relax
     \let\thisdefault@ttrkey=\default@ttrkey
@@ -165,30 +166,63 @@
 }
 
 % Parse a space-separated list.
-\def\relax@pair#1\E{}
+\def\relax@tem#1\E{}
 
 \def\zap@space#1 #2{%borrowed from latex.ltx. Eats all spaces in arg, including mid-space
   #1%
   \ifx#2\empty\else\expandafter\zap@space\fi
   #2}
 
-\def\spaceless #1 \E{#1}
-\def\geton@pair #1 #2\E{% Parse space separated list
+\def\geton@item #1 #2\E{% Parse space separated list
   \edef\it@m{#1}%
   \edef\it@mtwo{\zap@space #2 \empty}%
   \trace{A}{getone pair (#1) (#2) -> (\it@m) (\it@mtwo)}%
-  \ifx\it@m\empty\ifx\it@mtwo\empty\let\nxt@ttrib=\relax@pair\fi\else
-  \x@\save@ttribute #1="\relax"=\E
+  \ifx\it@m\empty\ifx\it@mtwo\empty\let\nxt@tem=\relax@tem\fi\else
+    \D@first{#1}%
   \fi
-  \nxt@ttrib #2 \E
-}
-\def\parse@ttribs#1{%
-  \let\nxt@ttrib=\geton@pair
-  \x@\geton@pair #1 \E
+  \nxt@tem #2 \E
 }
 
-%usfm 3.0 defaults
-\setdefaultattrib{qt}{who}
-\setdefaultattrib{rb}{gloss}
-\setdefaultattrib{w}{lemma}
+
+% Parse an attribute="value" from the USFM code.
+\def\s@ve@ttribute#1{%
+   \x@\save@ttribute #1="\relax"=\E
+}
+
+\def\parse@ttribs#1{%
+  \let\nxt@tem=\geton@item
+  \let\D@first=\s@ve@ttribute
+  \x@\geton@item #1 \E
+}
+
+% Parse list of attributes from style file to read the default attribute
+\def\Attributes#1\relax{% Override empty \Attributes from ptx-stylesheets
+  \let\nxt@tem=\relax@tem %only need the first one.
+  \let\D@first=\interpr@tfirstattrib
+  \x@\geton@item #1 \E}
+
+\def\interpr@tfirstattrib#1{%
+  \x@\interpr@tfirst@ttrib #1??\E
+}
+
+\def\setd@faultattrib#1-#2|#3\E{%Ignore - in milestone markers
+  \setdefaultattrib{#1}{#3}%
+}
+
+
+\def\interpr@tfirst@ttrib#1?#2?#3\E{% There may be a preceding ? mark. Also setdefaultattrib needs to not have the -s / -e for milestones. 
+  \def\tmp{#1}
+  \ifx\tmp\empty
+     \trace{A}{Attribute '#2' is optional (#1,#2,#3)}%
+     \x@\setd@faultattrib\m@rker-|#2\E
+  \else
+     \trace{A}{Attribute '#1' is officially required (#1,#2,#3)}%
+     \x@\setd@faultattrib\m@rker-|#1\E
+  \fi
+}
+
+%usfm 3.0 defaults - now loaded from stylesheet.
+%\setdefaultattrib{qt}{who}
+%\setdefaultattrib{rb}{gloss}
+%\setdefaultattrib{w}{lemma}
 
