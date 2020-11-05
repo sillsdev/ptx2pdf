@@ -139,24 +139,30 @@
 \def\relaxval{\relax}
 
 \def\save@ttribute#1="#2"=#3\E{%
+  \tracingassigns=1
   \lowercase{\def\attr@key{#1}}\def\attr@val{#2}%
   \ifx\attr@val\relaxval
-    \trace{A}{Got unnamed(\thisdefault@ttrkey) attribute #1}%
     \ifx\thisdefault@ttrkey\empty
-      \x@\edef\csname attr:UnNamed\endcsname{#1}%don't use attrkey here as it's been lowercased
-      \edef\attribsus@d{\attribsus@d,UnNamed}% Keep a list so we can junk it later.
-    \else
-      \x@\edef\csname attr:\thisdefault@ttrkey\endcsname{#1}%
-      \edef\attribsus@d{\attribsus@d,\thisdefault@ttrkey}% Keep a list so we can junk it later.
+      \edef\thisdefault@ttrkey{UnNamed}%
     \fi
+    \get@ttribute{\thisdefault@ttrkey}%
+    \if\attr@b\relax
+        \edef\attr@val{#1}\else
+    \edef\attr@val{\attr@b_#1}\fi % Join words with _ instead of space.
+    \trace{A}{Got unnamed(\thisdefault@ttrkey) attribute #1 -> \attr@val}%
+    \set@ttribute{\thisdefault@ttrkey}{\attr@val}%
   \else
     \trace{A}{Got named attribute \attr@key="\attr@val"}%
-    \x@\edef\csname attr:\attr@key\endcsname{\attr@val}%
-    \edef\attribsus@d{\attribsus@d,\attr@key}% Keep a list so we can junk it later.
+    \set@ttribute{\attr@key}{\attr@val}%
   \fi
+  \tracingassigns=0
 }
 
 \def\get@ttribute#1{\x@\let\x@\attr@b\csname attr:#1\endcsname \trace{A}{attrib #1 is \attr@b}} %simple access function
+\def\set@ttribute#1#2{%
+  \x@\edef\csname attr:#1\endcsname{#2}%
+  \edef\attribsus@d{\ifx\attribsus@d\empty\else\attribsus@d,\fi#1}% Keep a list so we can junk it later.
+}
 
 % Parse a space-separated list.
 \def\relax@pair#1\E{}

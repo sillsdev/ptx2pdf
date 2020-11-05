@@ -182,6 +182,8 @@
      \the\afterh@@ks%\global\afterh@@ks{} % execute all the <after>-hook, if there was one
     \fi
    \mcpop
+   \def\d@##1+##2\E{\edef\thiswh@tvrstyle{##2}}\mctop
+   \s@tfont{\thiswh@tvrstyle}% set up font attributes
    \fi
  }
 }
