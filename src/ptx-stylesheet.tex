@@ -258,7 +258,7 @@
  \else\ifx\styl@type\Ch@r \x@\defch@rstyle\x@{\m@rker}
  \else\ifx\styl@type\N@te \x@\defn@testyle\x@{\m@rker}
  \else\ifx\styl@type\MSt@ne \x@\defmst@nestyle\m@rker\E
- \else \message{unknown style type \styl@type}
+ \else \message{unknown style type '\styl@type'}
  \fi\fi\fi\fi}
 \def\P@ra{paragraph}
 \def\Ch@r{character}
@@ -651,6 +651,29 @@
 %+csty_stylesheet
 % \stylesheet{...} reads a Paratext stylesheet line by line
 %
+{% Horrible piece of parsing to ignore everything after # except when there's #! at the start of a line.
+  \catcode`\~=6
+  \catcode`\#=12
+  \gdef\styl@sheetline~1{%
+     \x@\styl@sh@@tline ~1#!#\relax
+  }
+  \gdef\styl@sh@@tline~1#~2!~3#~4\relax{%
+     %\trace{s}{\detokenize{ReadLine '~1' # '~2' ! '~3'}}%
+     \catcode`\~=13
+     \catcode`\#=6
+     \def\tmpa{~1}\def\tmpb{~3}%
+     \def\tmpc{~1~2}%
+     \ifx\tmpc\empty%There's a line-start #!
+       \ifx\tmpb\empty\else % and the line isn't empty
+         ~3\relax
+       \fi
+     \else %A normal line
+       \ifx\tmpa\empty\else %that's not empty
+         ~1\relax
+       \fi
+     \fi
+  }
+}
 \newif\ifc@ntinue
 \def\c@tegory{}
 \newread\styl@sheet
@@ -664,10 +687,12 @@
  \ifeof\styl@sheet\errmessage{Paratext stylesheet "#1" not found}\else
    \message{Reading Paratext stylesheet "#1"...}%
    \endlinechar=-1
-   \catcode`\#=5 % paratext comment char
+   %\catcode`\#=5 % paratext comment char
    \loop
+    \catcode`\#=12
     \read\styl@sheet to \th@line                            %(2)
-    \th@line \relax
+    \styl@sheetline{\th@line}
+   % \th@line \relax
     \ifeof\styl@sheet \c@ntinuefalse \fi
     \ifc@ntinue\repeat
    \endlinechar=13
