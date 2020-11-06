@@ -21,16 +21,19 @@ _errmsghelp = {
                                          "then ensure that the PDF(s) exist(s); OR uncheck those options (Advanced tab).\n",
 "! Missing control sequence inserted.":  "Fallback font probably being applied to text in a footnote (not permitted!)\n",
 "! Missing number, treated as zero.":    "Related to USFM3 illustration markup\n",
-"! Undefined control sequence.":         "This is related to a USFM marker error (such as an unsupported marker)\n" +\
+"! Undefined control sequence.":         "This might be related to a USFM marker error (using an unsupported marker).\n" +\
                                          "Try 'Run Basic Checks' in Paratext\n",
 "! Illegal unit of measure (pt inserted).":    "One of the settings in the Stylesheet may be missing the units.\n" +\
                                          "To confirm that this is a stylesheet issue, temporarily turn off Stylesheets.\n" +\
                                          "Then, check any recent changes to the Stylesheets (on Advanced tab) and try again.\n",
 "! File ended while scanning use of":    "Try turning off PrintDraftChanges.txt and both Stylesheets on Advanced tab.\n",
-"! Output loop---25 consecutive dead cycles.":  "Sory! XeTeX was unable to complete the typesetting.\n" +\
-                                         "If creating a Diglot, ensure both texts can print successfully\n" +\
-                                         "before merging them as a Diglot print. Also ensure that there\n" +\
-                                         "aren't any large chunks of missing text in either of the projects.\n",
+"! Output loop---25 consecutive dead cycles.":  "Sorry! XeTeX was unable to complete the typesetting.\n" +\
+                                         "* If creating a Diglot, ensure both texts can print successfully\n" +\
+                                         "  before merging them as a Diglot print. And ensure that there\n" +\
+                                         "  aren't any large chunks of missing text in either of the projects.\n" +\
+                                         "* Also check that you haven't inadvertently left certain settings on\n" +\
+                                         "  from a previous session (Pictures, Diglot, Borders - which will show\n" +\
+                                         "  in blue if these features are currently enabled).", 
 "! Paratext stylesheet":                 "Try turning off the ptxprint-mods stylesheet\n",
 "! File ended while scanning use of \iotableleader.": "Problem with Formatting Intro Outline\n" +\
                                          "Try disabling option 'Right-Align \ior with tabbed leaders' on the Body tab\n",
@@ -50,7 +53,8 @@ _errmsghelp = {
 "Unknown":                               "Sorry, there is no diagnostic help for this error.\n" +\
                                          "Ensure that the Basic Checks (in Paratext) pass for all books in list.\n" +\
                                          "Try turning off various settings, and disable Changes or Stylesheets.\n" +\
-                                         "If peripheral books are selected, try excluding those."
+                                         "If peripheral books are selected, try excluding those.\n" +\
+                                         "Sometimes just closing and re-opening PTXprint can make things work again!"
 }
 # \def\LineSpacingFactor{{{paragraph/linespacingfactor}}}
 # \def\VerticalSpaceFactor{{1.0}}
