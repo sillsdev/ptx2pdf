@@ -22,6 +22,7 @@ __history__ = '''
 from . import ErrorLevel, style
 from itertools import chain
 from functools import reduce
+from copy import deepcopy
 from .. import sfm
 import bz2
 import contextlib
@@ -98,7 +99,17 @@ def _load_cached_stylesheet(path):
         return style.parse(open(_source_path(path), 'r'))
 
 
-default_stylesheet = _load_cached_stylesheet('usfm.sty')
+def resolve_milestones(sheet):
+    for k, v in list(sheet.items()):
+        if v.get('styletype', '') == 'milestone':
+            if 'endmarker' in v:
+                newm = v['endmarker']
+                v['endmarker'] = None
+                if newm not in sheet:
+                    sheet[newm] = deepcopy(v)
+    return sheet
+
+default_stylesheet = resolve_milestones(_load_cached_stylesheet('usfm.sty'))
 
 _default_meta = style.Marker(
     TextType=style.CaselessStr('Milestone'),
@@ -291,15 +302,18 @@ class parser(sfm.parser):
                  stylesheet=default_stylesheet,
                  default_meta=_default_meta,
                  canonicalise_footnotes=True,
+                 tag_escapes=r"\\",
                  *args, **kwds):
         if not canonicalise_footnotes:
             self._canonicalise_footnote = lambda x: x
 
-        #stylesheet = self.__synthesise_private_meta(stylesheet, default_meta)
+        stylesheet = self.__synthesise_private_meta(stylesheet, default_meta)
         super().__init__(source,
                          stylesheet,
                          default_meta,
                          private_prefix='z',
+                         tokeniser=re.compile(rf'(?:\\(?:{tag_escapes})|[^\\])+|\\[^\s\\|]+',
+                                 re.DOTALL | re.UNICODE),
                          *args, **kwds)
 
     @classmethod
@@ -465,3 +479,4 @@ def decorate_references(source):
     source = list(source)
     reduce(_g, source, None)
     return source
+
