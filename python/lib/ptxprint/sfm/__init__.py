@@ -496,9 +496,10 @@ class parser(collections.Iterable):
 
     def __init__(self, source,
                  stylesheet={},
-                 default_meta=_default_meta,
+                 default_meta=default_meta,
                  private_prefix=None, error_level=ErrorLevel.Content,
-                 tag_escapes=r'\\'):
+                 tag_escapes=r'\\',
+                 tokeniser=None):
         """
         Create a SFM parser object. This object is an interator over SFM
         Element trees. For simple unstructured documents this is one element
@@ -534,13 +535,12 @@ class parser(collections.Iterable):
         self.source = getattr(source, 'name', '<string>')
         self._default_meta = default_meta
         self._pua_prefix = private_prefix
-        self._tokens = _put_back_iter(self.__lexer(
-            source,
-            re.compile(rf'(?:\\(?:{tag_escapes})|[^\\])+|\\[^\s\\]+',
-                       re.DOTALL | re.UNICODE)))
+        if tokeniser is None:
+            tokeniser = re.compile(rf'(?:\\(?:{tag_escapes})|[^\\])+|\\[^\s\\]+',
+                re.DOTALL | re.UNICODE)
+        self._tokens = _put_back_iter(self.__lexer(source, tokeniser))
         self._error_level = error_level
-        self._escaped_tag = re.compile(rf'^\\{tag_escapes}',
-                                       re.DOTALL | re.UNICODE)
+        self._escaped_tag = re.compile(rf'^\\{tag_escapes}', re.DOTALL | re.UNICODE)
 
         # Compute end marker stylesheet definitions
         em_def = {'TextType': None, 'Endmarker': None}
@@ -660,6 +660,8 @@ class parser(collections.Iterable):
         for tok in self._tokens:
             tag = self.__get_tag(parent, tok)
             if tag:  # Parse markers.
+                if tag.name == "*" and parent is not None:
+                    return
                 meta = self.__get_style(tag.name)
                 if self.__need_subnode(parent, tag, meta):
                     sub_parser = meta.get('TextType')
@@ -700,7 +702,7 @@ class parser(collections.Iterable):
             else:   # Pass non marker data through with a litte fix-up
                 if parent is not None \
                         and len(parent) == 0 \
-                        and not tok.startswith(('\r\n', '\n', '\\')):
+                        and tok.startswith(" "):
                     tok = tok[1:]
                 if tok:
                     tok.parent = parent
@@ -919,21 +921,23 @@ def generate(doc):
     def ge(e, a, body):
         styletype = e.meta['StyleType']
         sep = ''
+        end = ''
         if len(e) > 0:
             if styletype == 'Paragraph' \
                     and isinstance(e[0], Element) \
                     and e[0].meta['StyleType'] == 'Paragraph':
                 sep = os.linesep
-            elif not body.startswith(('\r\n', '\n')):
+            elif not body.startswith(('\r\n', '\n', '|')):
                 sep = ' '
+            elif styletype != 'Character' and not body.endswith((" ", "\r\n", "\n")):
+                end = '*'
         elif styletype == 'Character':
             body = ' '
         elif styletype == 'Paragraph':
             body = os.linesep
         nested = '+' if 'nested' in e.annotations else ''
-        end = ''
         if 'implicit-closed' not in e.annotations:
-            end = e.meta.get('Endmarker', '') or ''
+            end = e.meta.get('Endmarker', '') or end
         end = end and f"\\{nested}{end}"
 
         return f"{a}\\{nested}{' '.join([e.name] + e.args)}{sep}{body}{end}" \
