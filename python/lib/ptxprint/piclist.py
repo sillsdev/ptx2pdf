@@ -67,7 +67,7 @@ class PicList:
     def __init__(self, view, listview, builder, parent):
         self.view = view
         self.model = view.get_model()
-        self.listview = listview
+        # self.listview = listview
         self.builder = builder
         self.parent = parent
         self.picinfo = None
@@ -75,7 +75,7 @@ class PicList:
         self.selection = view.get_selection()
         self.picrect = None
         # _, self.curriter = self.selection.get_selected()
-        for w in ("tv_picList", "tv_picListEdit", "tv_picListEdit1"):
+        for w in ("tv_picListEdit", "tv_picListEdit1"):
             wid = self.builder.get_object(w)
             sel = wid.get_selection()
             sel.set_mode=Gtk.SelectionMode.SINGLE
@@ -96,7 +96,12 @@ class PicList:
     def modify_font(self, p):
         for a in ("", "1", "2"):
             w = self.builder.get_object("cr_caption"+a)
-            w.set_property("font-desc", p)
+            print("cr_caption"+a, p)
+            try: # MH: I need to work out what is calling this and stop it being called for
+                 #     the no-longer existent PicList
+                w.set_property("font-desc", p)
+            except:
+                pass
 
     def isEmpty(self):
         return len(self.model) == 0
@@ -107,7 +112,7 @@ class PicList:
     def load(self, picinfo, bks=None):
         self.picinfo = picinfo
         self.view.set_model(None)
-        self.listview.set_model(None)
+        # self.listview.set_model(None)
         self.model.clear()
         self.loading = True
         if picinfo is not None:
@@ -139,7 +144,7 @@ class PicList:
                     row.append(val)
                 self.model.append(row)
         self.view.set_model(self.model)
-        self.listview.set_model(self.model)
+        # self.listview.set_model(self.model)
         self.loading = False
 
     def get(self, wid, default=None):
@@ -178,7 +183,7 @@ class PicList:
         if selection.count_selected_rows() != 1:
             return
         model, i = selection.get_selected()
-        for w in (self.builder.get_object(x) for x in ("tv_picList", "tv_picListEdit", "tv_picListEdit1")):
+        for w in (self.builder.get_object(x) for x in ("tv_picListEdit", "tv_picListEdit1")):
             s = w.get_selection()
             if s != selection:
                 s.select_iter(i)

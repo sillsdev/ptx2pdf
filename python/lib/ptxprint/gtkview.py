@@ -828,6 +828,7 @@ class GtkViewModel(ViewModel):
 
     def updatePicList(self, bks=None, priority="Both", output=False):
         # if disable filter, bks = None
+        # MH: When I turn the filter off, then it crashes out and exits. Any ideas why?
         if self.picinfos is None:
             return
         filtered = self.get("c_filterPicList")
