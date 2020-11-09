@@ -131,12 +131,12 @@
 %+cchar_endstyle
 \def\endch@rstylen*{%Consume the star..
   \trace{s}{endch@rstylen \newch@rstyle}%
-  \def\d@##1+##2\E{\tempfalse\if ##1c\else\if ##1C\else\temptrue\fi\fi}\mctop
+  \def\d@##1+##2\E{\tempfalse\if ##1c\else\if ##1C\else\temptrue\fi\fi}\mctopnoms
   \iftemp\MSG{Unexpected closing marker for no plus \newch@rstyle * on stack \mcstack. Ignoring}\else\endch@rstyle*\fi
 }
 \def\endch@rstylepls*{%Consume the star..
   \trace{s}{endch@rstylepls \newch@rstyle}%
-  \def\d@##1+##2\E{\edef\tmp{\detokenize{##2}}\edef\tmq{\newch@rstyle}\tempfalse\ifx\tmp\tmq\else\temptrue\MSG{\tmp !=\tmq}\fi}\mctop
+  \def\d@##1+##2\E{\edef\tmp{\detokenize{##2}}\edef\tmq{\newch@rstyle}\tempfalse\ifx\tmp\tmq\else\temptrue\MSG{\tmp !=\tmq}\fi}\mctopnoms
   \iftemp\MSG{Unexpected closing marker for plus +\newch@rstyle * on stack \mcstack. Ignoring}\else\endch@rstyle*\fi
 }
 %-cchar_endstyle
@@ -166,7 +166,7 @@
 \lccode`\|=`\\ % for printing backslash in error message
 \lowercase{
  \def\endch@rstyle*{\TRACE{endch@rstyle}% consume the * that marked the SFM as ending a style
-   \def\d@##1+##2\E{\xdef\oldch@rstyle{##2}}\mctop
+   \def\d@##1+##2\E{\xdef\oldch@rstyle{##2}}\mctopnoms
    \trace{s}{endch@rstyle \oldch@rstyle\space from \newch@rstyle}%
    \ifx\thisch@rstyle\undefined
      \MSG{*** unmatched character style end-marker |\newch@rstyle*}%

@@ -167,7 +167,7 @@
    %\trace{s}{1. Checking \p@ssParams}%
    \ifx\mspr@fix\empty\else
      %\edef\@lso{\mspr@fix}%
-     \exp@ndmspr@fix{\let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E \edef\p@ssParams{\@ut,\p@ssParams}}%
+     %\exp@ndmspr@fix{\let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E \edef\p@ssParams{\@ut,\p@ssParams}}%
    \fi
    %\trace{s}{2. Checking \p@ssParams}%
    \ifx\c@tprefix\empty\else
@@ -597,11 +597,17 @@
 \gdef\mcstack{+,} 
 \let\mcstack@mpty\mcstack
 \def\cstackempty{,}
-\def\mcpop{\traceNum{s}{pop stack: \mcstack}\xdef\mcstack{\x@\cstackpop\mcstack\E}\ifx\mcstack\empty\xdef\mcstack{+,}\fi}
+\def\mcpopsimple{\traceNum{s}{pop stack: \mcstack}\xdef\mcstack{\x@\cstackpop\mcstack\E}\ifx\mcstack\empty\xdef\mcstack{+,}\fi}
 \def\mcpush#1{\traceNum{s}{push #1 onto \mcstack}\xdef\mcstack{#1,\mcstack}}
 \def\mcup{\x@\cstackup\mcstack\E}
 \def\mcdown{\x@\cstackdown\mcstack\E}
 \def\mctop{\x@\cstacktop\mcstack\E}
+\def\mctopnoms{\let\d@a=\d@\gdef\d@##1+##2\E{\if ##1m\else\d@a ##1+##2\E\let\d@=\cstackrelax\fi}\mcdown}
+\def\mcstackdown#1,#2\E{\let\n@x=\mcstackdown\edef\tmp{#1}%
+    \ifx\tmp\empty\let\n@x=\cstackrelax\else\d@b #1\E\iftemp\xdef\mcstack{\msstack #2}\let\n@x=\cstackrelax\fi\fi\n@x #2\E}
+\def\mcpop{\traceNum{s}{pop stack: \mcstack}\global\tempfalse\xdef\msstack{}%
+    \def\d@b##1+##2\E{\if ##1m\xdef\msstack{##1+##2,\msstack}\else\global\temptrue\fi}%
+    \x@\mcstackdown\mcstack\E\ifx\mcstack\empty\xdef\mcstack{+,}\fi}
 
 % milestone stack (MScstack)
 \gdef\MScstack{+,}  
