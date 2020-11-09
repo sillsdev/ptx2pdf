@@ -799,6 +799,7 @@
 %-c_getcolhts
 
 %+c_splitcols
+\newif\ifswapcol
 \def\spl@tcols#1{
     % even if \vsplit to 0pt, TeX will always pull one line from the input box over
     %\trace{o}{split params maxdepth=\the\splitmaxdepth, topskip=\the\splittopskip, colhtA=\the\colhtA, colhtB=\the\colhtB}
@@ -808,7 +809,7 @@
     \setbox9=\copy#1
     \setbox\colB=\vsplit#1 to \colhtB \ifnum\badness>999999\setbox#1=\box9\setbox\colB\box\voidb@x\else\setbox\colB=\vbox{\unvbox\colB}\fi
     % swap boxes if either, colA is empty and colB full, or colB is empty and colA is over full.
-    \ifvoid\colA\ifvoid\colB\else\ifdim\colhtA<\ht\colB\else\setbox\colA=\box\colB\fi\fi\fi
+    \ifvoid\colA\ifvoid\colB\else\ifswapcol\ifdim\colhtA<\ht\colB\else\setbox\colA=\box\colB\fi\fi\fi\fi
     \ifdim\ht\colA>\colhtA\ifdim\ht\colB<1pt\ifdim\ht\colA<\colhtB\setbox\colB=\box\colA\fi\fi\fi
     \xdef\p@gebotmark{\splitbotmark}
 }
@@ -968,6 +969,7 @@
   \c@lcavailht
   \setbox\s@vedpage=\vbox{\unvbox255}
   \trace{o}{balancing from savepartialpaged, height=\the\ht\s@vedpage, hIns:\the\holdinginserts, vsz=\the\vsize}
+  \ifdim\ht\partial>\baselineskip\swapcolfalse\else\swapcoltrue\fi
   \ifdim\availht<\baselineskip 
     \rem@indertrue % No, I don't know what this does, but once If i  didn't do it then we get lost verses. 
     %\rem@inderfalse
@@ -1049,6 +1051,7 @@
   \fi
   \setbox\s@vedpage=\copy255
   \trace{o}{balance from twocoltrial height \the\ht\s@vedpage}
+  \ifdim\ht\partial>\baselineskip\swapcolfalse\else\swapcoltrue\fi
   \rem@indertrue\balanced
   \iffitonpage\ifvoid\s@vedpage\else\fitonpagefalse\fi
   \else\ifnum\vsize<0 \fitonpagetrue\fi % no fit so dump the page we have now and try again with a new one.
