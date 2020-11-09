@@ -10174,7 +10174,7 @@ of the images.</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="orientation">vertical</property>
-                            <property name="position">120</property>
+                            <property name="position">150</property>
                             <property name="position_set">True</property>
                             <property name="wide_handle">True</property>
                             <child>
