@@ -809,7 +809,8 @@
     \setbox9=\copy#1
     \setbox\colB=\vsplit#1 to \colhtB \ifnum\badness>999999\setbox#1=\box9\setbox\colB\box\voidb@x\else\setbox\colB=\vbox{\unvbox\colB}\fi
     % swap boxes if either, colA is empty and colB full, or colB is empty and colA is over full.
-    \ifvoid\colA\ifvoid\colB\else\ifswapcol\ifdim\colhtA<\ht\colB\else\setbox\colA=\box\colB\fi\fi\fi\fi
+    \ifvoid\colA\ifvoid\colB\else\ifswapcol\ifdim\colhtA<\ht\colB\else
+      \trace{o}{splitcols swapping B->A}\setbox\colA=\box\colB\fi\fi\fi\fi
     \ifdim\ht\colA>\colhtA\ifdim\ht\colB<1pt\ifdim\ht\colA<\colhtB\setbox\colB=\box\colA\fi\fi\fi
     \xdef\p@gebotmark{\splitbotmark}
 }
@@ -852,8 +853,7 @@
         \ifvoid0\loopcount=10\fi  
         \ifnum\loopcount=10\repeat % so ugly you can't \else\repeat
       \trace{o}{Rebalance starting with \the\colhtA, \the\colhtB}
-    \fi
-    \g@tcolhts                                                                  %(4)
+    \else \g@tcolhts \fi                                                        %(4)
     \ifunbalanced\shortavail=\availht\else\ifdim\colhtB<\colhtA \rebalancetrue \shortavail=\colhtA\fi\fi
     \advance\colhtA -\baselineskip\ifdim\colhtA<\colhtB \rebalancetrue \shortavail=\colhtB\fi
     \advance\shortavail \baselineskip
