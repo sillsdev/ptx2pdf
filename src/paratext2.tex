@@ -852,6 +852,9 @@
         \spl@tcols0
         \ifvoid0\loopcount=10\fi  
         \ifnum\loopcount=10\repeat % so ugly you can't \else\repeat
+      \g@tcolhts
+      \advance\colhtA by \baselineskip
+      \advance\colhtB by \baselineskip
       \trace{o}{Rebalance starting with \the\colhtA, \the\colhtB}
     \else \g@tcolhts \fi                                                        %(4)
     \ifunbalanced\shortavail=\availht\else\ifdim\colhtB<\colhtA \rebalancetrue \shortavail=\colhtA\fi\fi
