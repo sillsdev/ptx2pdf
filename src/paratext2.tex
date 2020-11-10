@@ -854,7 +854,8 @@
         \ifvoid0\loopcount=10\fi
         \ifnum\loopcount=10\repeat
       \trace{o}{Rebalance starting with \the\colhtA=\the\colhtA, \the\colhtB=\the\colhtB}
-    \else \g@tcolhts \fi                                                                 %(4)
+    \fi
+    \g@tcolhts                                                                  %(4)
     \shortavail=\colhtA
     \ifunbalanced\shortavail=\availht\else\ifdim\colhtB<\colhtA \rebalancetrue \shortavail=\colhtA\fi\fi
     \advance\colhtA -\baselineskip\ifdim\colhtA<\colhtB \rebalancetrue \shortavail=\colhtB\fi
