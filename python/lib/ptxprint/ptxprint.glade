@@ -15301,10 +15301,9 @@ edit various control and log files.</property>
               <object class="GtkSwitch" id="c_hideAdvancedSettings">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="tooltip_text" translatable="yes">Hide Advanced Settings:
+                <property name="tooltip_text" translatable="yes">Show Advanced Settings:
 
-If the number of options is too overwhelming then use
-this switch to hide the more complex/advanced options.</property>
+There are many more complex options available for use within PTXprint.</property>
                 <property name="margin_left">20</property>
                 <property name="margin_right">20</property>
                 <property name="margin_top">7</property>

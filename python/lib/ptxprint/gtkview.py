@@ -375,6 +375,9 @@ class GtkViewModel(ViewModel):
                 for w in v:
                     GObject.add_emission_hook(getattr(Gtk, w), k, self.emission_hook, k)
             self.logactive = True
+        expert = self.userconfig.getboolean('init', 'expert', fallback=False)
+        self.set("c_hideAdvancedSettings", expert)
+        self.onHideAdvancedSettingsClicked(None, None)
         Gtk.main()
 
     def emission_hook(self, w, *a):
@@ -398,7 +401,9 @@ class GtkViewModel(ViewModel):
         return True
 
     def onHideAdvancedSettingsClicked(self, c_hideAdvancedSettings, foo):
-        if self.get("c_hideAdvancedSettings"):
+        val = self.get("c_hideAdvancedSettings")
+        self.userconfig.set('init', 'expert', 'true' if val else 'false')
+        if not val:
             for c in ("c_startOnHalfPage", "c_marginalverses", "c_figplaceholders"):
                 self.builder.get_object(c).set_active(False)
 
@@ -437,10 +442,10 @@ class GtkViewModel(ViewModel):
                   "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
                   "gr_fnAdvOptions", "c_figexclwebapp", "bx_horizRule", "l_glossaryMarkupStyle"):
             # print(c)
-            self.builder.get_object(c).set_visible(not self.get("c_hideAdvancedSettings"))
+            self.builder.get_object(c).set_visible(val)
 
         # Resize Main UI Window appropriately
-        if self.get("c_hideAdvancedSettings"):
+        if not val:
             self.mw.resize(828, 292)
         else:
             self.mw.resize(830, 594)
