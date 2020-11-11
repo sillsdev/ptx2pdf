@@ -1,4 +1,4 @@
-PTXprint 1.3.1 - AboutPTXprint.txt
+PTXprint 1.3.2 - AboutPTXprint.txt
 
 "Bible Layout For Everyone" - A tool to rapidly and easily create scripture PDFs of adequate quality for trial publications
 
