@@ -715,7 +715,10 @@ class TexModel:
             outfpath = outfpath[:doti] + "-flat" + outfpath[doti:]
         usfms = self.printer.get_usfms()
         mod = Module(infpath, usfms)
-        res = mod.parse()
+        try:
+            res = mod.parse()
+        except SyntaxError:
+            return None
         with open(outfpath, "w", encoding="utf-8") as outf:
             outf.write(sfm.generate(res))
         return outfpath
@@ -761,6 +764,11 @@ class TexModel:
         if fname is None:
             infpath = os.path.join(prjdir, bk)  # assume module
             infpath = self.flattenModule(infpath, outdir)
+            if infpath is None:
+                self.printer.doError("Failed to flatten module text (due to a Syntax Error?):",        
+                secondary="Check for USFM errors and/or problems with a module.", 
+                title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr))
+                return None
         else:
             infpath = os.path.join(prjdir, fname)
         if not self.dict['project/runscriptafter']:

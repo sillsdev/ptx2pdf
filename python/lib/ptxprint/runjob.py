@@ -312,7 +312,11 @@ class RunJob:
         donebooks = []
         for b in jobs:
             out = info.convertBook(b, self.tmpdir, self.prjdir)
+            if out is None:
+                continue
             donebooks.append(out)
+        if not len(donebooks):
+            return []
         self.books += donebooks
         info["project/bookids"] = jobs
         info["project/books"] = donebooks
@@ -344,9 +348,15 @@ class RunJob:
         syntaxErrors = []
         for b in jobs:
             out = info.convertBook(b, self.tmpdir, self.prjdir)
+            if out is None:
+                continue
+            else:
+                donebooks.append(out)
             digout = diginfo.convertBook(b, self.tmpdir, digprjdir)
-            donebooks.append(out)
-            digdonebooks.append(digout)
+            if digout is None:
+                continue
+            else:
+                digdonebooks.append(digout)
             
             # Now merge the secondary text (right) into the primary text (left) 
             left = os.path.join(self.tmpdir, out)
@@ -364,6 +374,10 @@ class RunJob:
                 syntaxErrors.append("{} {} Error: {}".format(self.prjid, b, str(e)))
             for f in [left, right, outFile, logFile]:
                 texfiles += [os.path.join(self.tmpdir, f)]
+
+        if not len(donebooks) or not len(digdonebooks):
+            return []
+
         if len(syntaxErrors):
             self.printer.doError(_("Failed to merge texts due to a Syntax Error:"),
             secondary="\n".join(syntaxErrors)+_("\n\nIf original USFM text is correct, then check "+ \
