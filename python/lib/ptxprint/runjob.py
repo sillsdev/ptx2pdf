@@ -316,6 +316,7 @@ class RunJob:
                 continue
             donebooks.append(out)
         if not len(donebooks):
+            unlockme()
             return []
         self.books += donebooks
         info["project/bookids"] = jobs
@@ -376,6 +377,7 @@ class RunJob:
                 texfiles += [os.path.join(self.tmpdir, f)]
 
         if not len(donebooks) or not len(digdonebooks):
+            unlockme()
             return []
 
         if len(syntaxErrors):
