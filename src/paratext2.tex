@@ -842,17 +842,20 @@
     \shortavail=\colhtB \advance\shortavail by -\ht\colB                        %(3)
     \advance\shortavail by \colhtA \advance\shortavail by -\ht\colA
     \ifdim\shortavail>5\baselineskip
-      \trace{o}{Rebalance trying from average \the\shortavail\space of \the\colhtA =\the\ht\colA, \the\colhtB =\the\ht\colB}
+      \trace{o}{Rebalance trying from average \the\shortavail\space of
+                \the\colhtA =\the\ht\colA, \the\colhtB =\the\ht\colB}
       \divide\shortavail 2% \advance\shortavail by -0.5\ht\colA \advance\shortavail by -0.5\ht\colB
       \advance\colhtA by -\shortavail \advance\colhtB by -\shortavail
-      \loopcount=0
       \loop\setbox0=\copy\s@vedpage
         \advance\colhtA by \baselineskip
         \advance\colhtB by \baselineskip
-        \trace{o}{Rebalance average loop: \the\colhtA, \the\colhtB}%
+        \advance\shortavail by -\baselineskip
         \spl@tcols0
-        \ifvoid0\loopcount=10\fi
-        \ifnum\loopcount=10\repeat
+        \trace{o}{Rebalance average loop(\the\shortavail): \the\ht\colA=\the\colhtA,
+                  \the\ht\colB=\the\colhtB\space remainder \the\ht0}
+        \ifdim\ht0>0pt \temptrue\else\tempfalse\fi
+        \ifdim\shortavail<\baselineskip\tempfalse\fi
+        \iftemp\repeat
       \trace{o}{Rebalance starting with \the\colhtA=\the\colhtA, \the\colhtB=\the\colhtB}
     \fi
     \g@tcolhts                                                                  %(4)
