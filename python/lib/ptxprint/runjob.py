@@ -311,7 +311,11 @@ class RunJob:
     def dojob(self, jobs, info, logbuffer=None):
         donebooks = []
         for b in jobs:
-            out = info.convertBook(b, self.tmpdir, self.prjdir)
+            try:
+                out = info.convertBook(b, self.tmpdir, self.prjdir)
+            except FileNotFoundError as e:
+                self.printer.doError(str(e))
+                out = None
             if out is None:
                 continue
             donebooks.append(out)
