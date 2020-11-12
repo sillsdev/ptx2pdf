@@ -352,12 +352,16 @@ class RunJob:
             diginfo[k]=info[k]
         syntaxErrors = []
         for b in jobs:
-            out = info.convertBook(b, self.tmpdir, self.prjdir)
+            try:
+                out = info.convertBook(b, self.tmpdir, self.prjdir)
+                digout = diginfo.convertBook(b, self.tmpdir, digprjdir)
+            except FileNotFoundError as e:
+                self.printer.doError(str(e))
+                out = None
             if out is None:
                 continue
             else:
                 donebooks.append(out)
-            digout = diginfo.convertBook(b, self.tmpdir, digprjdir)
             if digout is None:
                 continue
             else:
