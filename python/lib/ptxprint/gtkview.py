@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import sys, os, re, regex, gi, subprocess
+import sys, os, re, regex, gi, subprocess, traceback
 gi.require_version('Gtk', '3.0')
 from shutil import copyfile, copytree, rmtree
 import time
@@ -22,7 +22,7 @@ from ptxprint.runner import StreamTextBuffer
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from ptxprint.piclist import PicList, PicChecks, PicInfoUpdateProject
 from ptxprint.styleditor import StyleEditor
-from ptxprint.runjob import isLocked
+from ptxprint.runjob import isLocked, unlockme
 from ptxprint.texmodel import TexModel
 from ptxprint.minidialog import MiniDialog
 import ptxprint.scriptsnippets as scriptsnippets
@@ -378,7 +378,12 @@ class GtkViewModel(ViewModel):
         expert = self.userconfig.getboolean('init', 'expert', fallback=False)
         self.set("c_hideAdvancedSettings", expert)
         self.onHideAdvancedSettingsClicked(None, None)
-        Gtk.main()
+        try:
+            Gtk.main()
+        except Exception as e:
+            s = traceback.format_exc()
+            s += "\n" + str(e)
+            self.doError(s)
 
     def emission_hook(self, w, *a):
         if not self.logactive:
@@ -588,7 +593,13 @@ class GtkViewModel(ViewModel):
         self.onSaveConfig(None)
 
         self._incrementProgress(val=0.)
-        self.callback(self)
+        try:
+            self.callback(self)
+        except Exception as e:
+            s = traceback.format_exc()
+            s += "\n" + str(e)
+            self.doError(s)
+            unlockme()
 
     def onCancel(self, btn):
         self.onDestroy(btn)

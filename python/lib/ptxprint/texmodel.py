@@ -644,7 +644,7 @@ class TexModel:
                         if extra != "":
                             fname = re.sub(r"^([^.]*).(.*)$", r"\1"+extra+r".\2", fname)
                         if i == len(self.dict['project/bookids']) - 1 and self.dict['project/ifcolophon'] == "":
-                            res.append("\\lastptxfiletrue\n\\endbooknoejecttrue\n")
+                            res.append("\\lastptxfiletrue\n")
                         if self.asBool('document/ifomitsinglechnum') and \
                            self.asBool('document/showchapternums') and \
                            f in oneChbooks:
@@ -956,7 +956,7 @@ class TexModel:
                                           flags=regex.M), r"\1\4"))   # USFM3
         else:
             # Strip out all \figs from the USFM as an internally generated temp PicList will do the same job
-            self.localChanges.append((None, regex.compile(r'\\fig [^\\]+?\\fig\*', flags=regex.M), ""))
+            self.localChanges.append((None, regex.compile(r'\\fig[\s|][^\\]+?\\fig\*', flags=regex.M), ""))
         
         if not self.asBool("document/bookintro"): # Drop Introductory matter
             self.localChanges.append((None, regex.compile(r"\\i(s|m|mi|mt|p|pi|li\d?|pq|mq|pr|b|q\d?) .+?\r?\n", flags=regex.M), "")) 
