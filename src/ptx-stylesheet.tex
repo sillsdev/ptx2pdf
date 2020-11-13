@@ -500,7 +500,8 @@
 \let\b@ok\relax
 \def\ch@pter{}
 \def\v@rse{}
-\def\m@rkverse{\ifdiglot\ifdiglotL\m@rkverseL\else\m@rkverseR\fi\else\m@rkverseL\fi}
+\def\m@rkverse{\ifdiglot\ifdiglotL\m@rkverseL\else\m@rkverseR\fi\else\m@rkverseN\fi}
+\def\m@rkverseN{\mark{\b@ok:\ch@pter:\print@bleVerse}}
 \def\m@rkverseL{\mark{\b@ok:\ch@pter:\print@bleVerse}\marks1{\b@ok:\ch@pter:\print@bleVerse}}
 \def\m@rkverseR{\mark{\b@okR:\ch@pter:\print@bleVerse}\marks2{\b@okR:\ch@pter:\print@bleVerse}}
 

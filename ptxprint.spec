@@ -6,7 +6,7 @@
 #  'C:/msys64/mingw64/lib/python3.7/site-packages',
 #  'C:/msys64/mingw64/lib/python3.7/site-packages/setuptools-33.1.1-py3.7.egg',
 #  'C:/msys64/mingw64/lib/python3.7/site-packages/pyinstaller-4.0.dev0+g4065d2c2-py3.7.egg'
-#					  + [('python/lib/ptxprint/mo/'+x+	'/LC_MESSAGES', 'mo/'+x+'/LC_MESSAGES') for x in os.listdir('python/lib/ptxprint/mo')],
+#  [('python/lib/ptxprint/mo/'+x+'/LC_MESSAGES', 'mo/'+x+'/LC_MESSAGES') for x in os.listdir('python/lib/ptxprint/mo')],
 
 block_cipher = None
 import sys, os
@@ -41,7 +41,8 @@ a = Analysis(['python/scripts/ptxprint', 'python/scripts/usfmerge'],
                       + [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
                             ('Google-Noto-Emoji-Objects-62859-open-book.ico', '62859-open-book-icon(128).png', 'ps_cmyk.icc')]
                       + [('src/mappings/*.tec', 'ptx2pdf/mappings')]
-					  + [('python/lib/ptxprint/mo', 'mo')],
+                      + [('python/lib/ptxprint/sfm/*.bz2', 'ptxprint/sfm')]
+                      + [('python/lib/ptxprint/mo', 'mo')],
              datas =    [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
                             ('ptxprint.glade', 'template.tex')]
                       + [('python/lib/ptxprint/sfm/*.*y', 'ptxprint/sfm')]
