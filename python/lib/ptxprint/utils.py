@@ -14,6 +14,9 @@ def setup_i18n():
         if os.getenv('LANG') is None:
             lang, enc = locale.getdefaultlocale()
             os.environ['LANG'] = lang
+        from ctypes import cdll
+        libintl = cdll.intl
+        libintl.bindtexdomain(APP, localedir)
     else:
         locale.bindtextdomain(APP, localedir)
     locale.setlocale(locale.LC_ALL, '')
