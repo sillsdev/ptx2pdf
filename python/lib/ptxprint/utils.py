@@ -14,14 +14,26 @@ def setup_i18n():
         if os.getenv('LANG') is None:
             lang, enc = locale.getdefaultlocale()
             os.environ['LANG'] = lang
-        from ctypes import cdll
-        libintl = cdll.intl
-        libintl.bindtexdomain(APP, localedir)
+        else:
+            lang = os.getenv('LANG')
+        from ctypes import cdll, windll
+        from ctypes.util import find_msvcrt
+        cdll.msvcrt._putenv('LANG={}'.format(lang))
+        msvcrt = find_msvcrt()
+        msvcrtname = str(msvcrt).split('.')[0] if '.' in msvcrt else str(msvcrt)
+        cdll.LoadLibrary(msvcrt)._putenv('LANG={}'.format(lang))        
+        windll.kernel32.SetEnvironmentVariableW("LANG", lang)
+        libintl = cdll.LoadLibrary("libintl-8.dll")
+        libintl.bindtextdomain(APP, localedir)
+
+        libintl.textdomain(APP)
+        print(localedir, lang)
     else:
         locale.bindtextdomain(APP, localedir)
     locale.setlocale(locale.LC_ALL, '')
     gettext.bindtextdomain(APP, localedir=localedir)
-
+    gettext.textdomain(APP)
+    
 def f_(s):
     frame = currentframe().f_back
     return eval("f'{}'".format(_(s)), frame.f_locals, frame.f_globals)

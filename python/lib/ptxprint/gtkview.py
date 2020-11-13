@@ -18,6 +18,7 @@ import xml.etree.ElementTree as et
 from ptxprint.font import TTFont, initFontCache, fccache
 from ptxprint.view import ViewModel, Path
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton
+from ptxprint.utils import APP
 from ptxprint.runner import StreamTextBuffer
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from ptxprint.piclist import PicList, PicChecks, PicInfoUpdateProject
@@ -225,8 +226,20 @@ class GtkViewModel(ViewModel):
         self._setup_css()
         GLib.set_prgname("ptxprint")
         self.builder = Gtk.Builder()
-        self.builder.set_translation_domain("ptxprint")
-        self.builder.add_from_file(os.path.join(os.path.dirname(__file__), "ptxprint.glade"))
+        gladefile = os.path.join(os.path.dirname(__file__), "ptxprint.glade")
+        if sys.platform.startswith("win"):
+            tree = et.parse(gladefile)
+            for node in tree.iter():
+                if 'translatable' in node.attrib:
+                    node.text = _(node.text)
+                    del node.attrib['translatable']
+                if node.get('name') in ('pixbuf', 'icon', 'logo'):
+                    node.text = os.path.join(os.path.dirname(__file__), node.text)
+            xml_text = et.tostring(tree.getroot(), encoding='unicode', method='xml')
+            self.builder = Gtk.Builder.new_from_string(xml_text, -1)
+        else:
+            self.builder.set_translation_domain(APP)
+            self.builder.add_from_file(os.path.join(os.path.dirname(__file__), "ptxprint.glade"))
         self.builder.connect_signals(self)
         super(GtkViewModel, self).__init__(settings_dir, workingdir, userconfig, scriptsdir, args)
         self.isDisplay = True
