@@ -6,10 +6,6 @@
 #  'C:/msys64/mingw64/lib/python3.7/site-packages',
 #  'C:/msys64/mingw64/lib/python3.7/site-packages/setuptools-33.1.1-py3.7.egg',
 #  'C:/msys64/mingw64/lib/python3.7/site-packages/pyinstaller-4.0.dev0+g4065d2c2-py3.7.egg'
-<<<<<<< HEAD
-#  [('python/lib/ptxprint/mo/'+x+'/LC_MESSAGES', 'mo/'+x+'/LC_MESSAGES') for x in os.listdir('python/lib/ptxprint/mo')],
-=======
->>>>>>> ec13fb4 (manually copy .mo l10n files to correct location)
 
 block_cipher = None
 import sys, os
