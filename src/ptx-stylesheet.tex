@@ -618,38 +618,50 @@
 
 % Test to see if a new THING pops other things.
 \def\mct@stname#1#2{#1-mcp@ps-#2}
-\def\mcp@pCont#1#2{\edef\t@@st{\mct@stname{#1}{#2}}\x@\xdef\csname\t@@st\endcsname{Y}} % What pops what?
-\def\mcp@pEnd#1#2{\edef\t@@st{\mct@stname{#1}{#2}}\x@\xdef\csname\t@@st\endcsname{P}} % What pops what?
+\def\mcp@pCont#1#2{\edef\t@@st{\mct@stname{#1}{#2}}\x@\xdef\csname\t@@st\endcsname{Y}} % Pop and continue
+\def\mcp@pEnd#1#2{\edef\t@@st{\mct@stname{#1}{#2}}\x@\xdef\csname\t@@st\endcsname{P}} % Pop and end.
+\def\mcp@pStore#1#2{\edef\t@@st{\mct@stname{#1}{#2}}\x@\xdef\csname\t@@st\endcsname{S}} % Store and continue
 \mcp@pCont{P}{P}% new P pops P
-\mcp@pCont{P}{c}% new P pops c
-\mcp@pCont{P}{C}% new P pops C
+\mcp@pCont{P}{c}% new P pops c (\+char)
+\mcp@pCont{P}{C}% new P pops C (\char)
 \mcp@pCont{C}{c}% new C pops c
 \mcp@pCont{C}{C}% new C pops C
 \mcp@pCont{s}{C}% Side bars pop character styles.
 \mcp@pCont{s}{c}% Side bars pop character styles.
+\mcp@pCont{t}{t}% new cat pops old cat
+\mcp@pStore{*}{M}% Milestones are always stored.
+%Style end pops:
 \mcp@pCont{s*}{t}% sidebar end pops caT
 \mcp@pCont{s*}{P}% sidebar end pops Paragraph
 \mcp@pCont{s*}{c}% sidebar end pops embedded charstyle
 \mcp@pCont{s*}{C}% sidebar end pops Charstyle
 \mcp@pEnd{s*}{s}% sidebar end pops ONE sidebar, then finish
-\mcp@pCont{t}{t}% new cat pops old cat
 \mcp@pEnd{t*}{t}% cat end pops one old cat, then finish
+
+\def\itp@psstore{}
 \def\endit@c{\endch@rstyle*}
 \def\endit@C{\endch@rstyle*}
 \def\whileitp@ps#1+#2\E{% This almost does the same as \end@llcharstyle, but uses the new mechanism
   \trace{s}{whileitp@ps:\mcch@cking: #1+#2 (\mcstack)}%
   \x@\let\x@\tmp\csname\mct@stname{\mcch@cking}{#1}\endcsname
-  \if Y\tmp\relax% 
-     \csname endit@#1\endcsname
-     \mcpop
+  \ifx\tmp\relax\else %No specific style pop, is there a generic?
+    \x@\let\x@\tmp\csname\mct@stname{*}{#1}\endcsname
+  \fi
+  \if S\tmp\relax % Store it?
+     \edef\itp@psstore{#1+#2,\itp@psstore}
   \else
-     \let\d@=\cstackrelax
-     \if P\tmp\relax
-       \csname endit@#1\endcsname
-       \mcpop
+    \if Y\tmp\relax  %end it and pop it
+      \csname endit@#1\endcsname
+      \mcpop
+    \else
+       \let\d@=\cstackrelax %stop here
+       \if P\tmp\relax % ....but end it and pop first
+         \csname endit@#1\endcsname
+         \mcpop
+       \fi
      \fi
   \fi}
-\def\end@llpoppedstyles#1{\edef\mcch@cking{#1}\let\d@=\whileitp@ps\mcdown}
+\def\end@llpoppedstyles#1{\edef\mcch@cking{#1}\let\d@=\whileitp@ps\mcdown\ifx\itp@psstore\empty\else\edef\mcstack{\itp@psstore\mcstack}\fi}
 
 
 %-csty_mstack
