@@ -546,13 +546,14 @@ class PicInfo(dict):
             dat = inf.read()
             blocks = ["0"] + re.split(r"\\c\s+(\d+)", dat)
             for c, t in zip(blocks[0::2], blocks[1::2]):
+                key = None
                 m = re.findall(r"(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*"
                                r"\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?"
                                r"\|([^\\]+?)?\|([^\\]+?)?\\fig\*", t)
                 if len(m):
                     for f in m:     # usfm 2
                         r = "{}{} {}.{}".format(bk, suffix, c, f[0])
-                        pic = {'anchor': r, 'caption':f[8].strip(), 'anchor': "{}.{}".format(c, f[0])}
+                        pic = {'anchor': r, 'caption':f[8].strip()}
                         key = self.newkey(suffix)
                         self[key] = pic
                         for i, v in enumerate(f[3:]):
@@ -563,7 +564,7 @@ class PicInfo(dict):
                     if len(m):
                         for i, f in enumerate(m):
                             r = "{}{} 1.{}".format(bk, suffix, i)
-                            pic = {'anchor': r, 'caption':f[0].strip(), 'src': f[1], 'size': f[2], 'anchor': "1.{}".format(i)}
+                            pic = {'anchor': r, 'caption':f[0].strip(), 'src': f[1], 'size': f[2]}
                             key = self.newkey(suffix)
                             self[key] = pic
                 m = re.findall(r'(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig ([^\\]*?)\|([^\\]+)\\fig\*', t)
@@ -573,16 +574,16 @@ class PicInfo(dict):
                             break
                         a = (1, i+1) if isperiph else (c, f[0])
                         r = "{}{} {}.{}".format(bk, suffix, *a)
-                        pic = {'caption':f[3].strip(), 'anchor': "{}.{}".format(*a)}
+                        pic = {'caption':f[3].strip(), 'anchor': r}
                         key = self.newkey(suffix)
                         self[key] = pic
                         labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f[4])
                         for l in labelParams:
                             k,v = l.split("=")
                             pic[k.strip()] = v.strip('"')
-                if media is not None and r in self:
-                    if 'media' in pic and not any(x in media for x in pic['media']):
-                        del self[r]
+                        if media is not None and key in self:
+                            if 'media' in pic and not any(x in media for x in pic['media']):
+                                del self[key]
 
     def out(self, fpath, bks=[], skipkey=None, usedest=False, media=None):
         ''' Generate a picinfo file, with given date.
