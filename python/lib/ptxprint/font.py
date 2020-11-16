@@ -221,12 +221,15 @@ class TTFont:
         self.ttfont = None
         self.usepath = False
         if self.filename is not None:
-            self.readfont()
-            self.family = self.names.get(1, self.family)
-            self.style = self.names.get(2, self.style)
-            self.style = " ".join(x.title() for x in self.style.split())
-            if self.style.lower() == "regular":
-                self.style = ""
+            if self.readfont():
+                self.family = self.names.get(1, self.family)
+                self.style = self.names.get(2, self.style)
+                self.style = " ".join(x.title() for x in self.style.split())
+                if self.style.lower() == "regular":
+                    self.style = ""
+            else:                       # corrupted font so dump it
+                self.dict = {}
+                self.filename = None
         else:
             self.dict = {}
         # print([name, self.family, self.style, self.filename])
@@ -244,9 +247,13 @@ class TTFont:
             dat = inf.read(numtables * 16)
             for i in range(numtables):
                 (tag, csum, offset, length) = struct.unpack(">4sLLL", dat[i * 16: (i+1) * 16])
-                self.dict[tag.decode("utf-8")] = [offset, length]
+                try:
+                    self.dict[tag.decode("ascii")] = [offset, length]
+                except UnicodeDecodeError:      # messed up tag
+                    return False
             self.readNames(inf)
             self.readFeat(inf)
+        return True
 
     def readFeat(self, inf):
         self.feats = {}

@@ -3,7 +3,7 @@ from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.view import refKey
 from ptxprint.utils import refKey, universalopen
 from ptxprint.texmodel import TexModel
-from gi.repository import Gtk, GdkPixbuf, GObject
+from gi.repository import Gtk, GdkPixbuf, GObject, Gdk
 from threading import Thread
 import configparser
 import os, re, random, sys
@@ -75,6 +75,7 @@ class PicList:
         self.picinfo = None
         self.selection = view.get_selection()
         self.picrect = None
+        self.currow = None
         # _, self.curriter = self.selection.get_selected()
         for w in ("tv_picList", "tv_picListEdit", "tv_picListEdit1"):
             wid = self.builder.get_object(w)
@@ -88,6 +89,7 @@ class PicList:
                 # sig = "focus-out-event" - MH: we need to connect this signal for typed in values
                 #                           but it gives an extra positional argument. So how to fix it?
                 sig = "value-changed"
+                w.connect("focus-out-event", self.item_changed, k)
             elif v.startswith("c_"):
                 sig = "clicked"
             w.connect(sig, self.item_changed, k)
@@ -176,6 +178,14 @@ class PicList:
     def row_select(self, selection):
         if selection.count_selected_rows() != 1:
             return
+        if self.currow is not None:
+            for k, s in ((k, x) for k,x in _form_structure.items() if x.startswith("s_")):
+                w = self.builder.get_object(s)
+                if w.has_focus():
+                    e = Gdk.Event(Gdk.EventType.FOCUS_CHANGE)
+                    e.window = w
+                    e.send_event = True
+                    w.emit("focus-out-event", e)
         model, i = selection.get_selected()
         for w in (self.builder.get_object(x) for x in ("tv_picList", "tv_picListEdit", "tv_picListEdit1")):
             s = w.get_selection()
@@ -189,15 +199,15 @@ class PicList:
             return
         if self.model.get_path(i).get_indices()[0] >= len(self.model):
             return
-        row = self.model[i]
-        pgpos = re.sub(r'^([PF])([lcr])([tb])', r'\1\3\2', row[5])
+        self.currow = self.model[i]
+        pgpos = re.sub(r'^([PF])([lcr])([tb])', r'\1\3\2', self.currow[5])
         self.parent.pause_logging()
         self.loading = True
         for j, (k, v) in enumerate(_form_structure.items()): # relies on ordered dict
             if k == 'pgpos':
                 val = pgpos[:2] if pgpos[0:1] in "PF" else (pgpos[0:1] or "t")
             elif k == 'hpos':
-                if row[3] == "span":
+                if self.currow[3] == "span":
                     val = "-"
                 elif pgpos[0:1] in "PF":
                     val = pgpos[2:] or "c"
@@ -210,14 +220,14 @@ class PicList:
                 except (ValueError, TypeError):
                     val = 0
             elif k.startswith("med"):
-                val = v[-1].lower() in row[_pickeys['media']] or "paw"
+                val = v[-1].lower() in self.currow[_pickeys['media']] or "paw"
             elif k == 'mirror':
-                val = row[j] or "None"
+                val = self.currow[j] or "None"
             else:
-                val = row[j]
+                val = self.currow[j]
             w = self.builder.get_object(v)
             setWidgetVal(v, w, val)
-        self.mask_media(row)
+        self.mask_media(self.currow)
         self.parent.unpause_logging()
         self.loading = False
 
@@ -257,13 +267,10 @@ class PicList:
             res += str(lines)
         return res
 
-    def item_changed(self, w, key):
+    def item_changed(self, w, *a):
+        key = a[-1]
         if self.loading and key not in ("src", ):
             return
-        if self.model is not None and len(self.model):
-            row = self.model[self.selection.get_selected()[1]]
-        else:
-            row = None
         if key in _comblist:
             val = self.get_pgpos()
             key = "pgpos"
@@ -277,10 +284,10 @@ class PicList:
             key = "media"
         else:
             val = self.get(key)
-        if row is not None:
+        if self.currow is not None:
             fieldi = _piclistfields.index(key)
-            oldval = row[fieldi]
-            row[fieldi] = val
+            oldval = self.currow[fieldi]
+            self.currow[fieldi] = val
             if key == "src":
                 fpath = None
                 if self.picinfo is not None:
@@ -302,13 +309,13 @@ class PicList:
                 else:
                     pic.clear()
                     picc.clear()
-                self.mask_media(row)
+                self.mask_media(self.currow)
                 if val != oldval:
-                    row[_piclistfields.index('cleardest')] = True
+                    self.currow[_piclistfields.index('cleardest')] = True
             elif key == "scale" and val != oldval:
-                row[_piclistfields.index('cleardest')] = True
+                self.currow[_piclistfields.index('cleardest')] = True
             elif key == "mirror" and val == "None":
-                row[fieldi] = ""
+                self.currow[fieldi] = ""
 
     def get_row_from_items(self):
         row = [self.get(k, default="") for k in _piclistfields]
