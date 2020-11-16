@@ -173,6 +173,7 @@ _object_classes = {
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
     "stybutton":   ("btn_resetCopyright", "btn_resetColophon", "btn_resetFNcallers", "btn_resetXRcallers", 
                     "btn_styAdd", "btn_styEdit", "btn_styDel", "btn_styReset"),
+    "smradio":     ("r_filter_show", "r_filter_hide"),
 }
 
     # "Center": "c", 
@@ -336,6 +337,7 @@ class GtkViewModel(ViewModel):
             .mainnb tab {min-height: 0pt; margin: 0pt; padding-bottom: 15pt}
             .viewernb {background-color: #F0F0F0}
             .viewernb tab {min-height: 0pt; margin: 0pt; padding-bottom: 3pt}
+            .smradio {font-size: 11px; padding: 1px 1px}
             .changed { font-weight: bold} """
         provider = Gtk.CssProvider()
         provider.load_from_data(css.encode("utf-8"))
@@ -516,7 +518,6 @@ class GtkViewModel(ViewModel):
         Gtk.main_quit()
 
     def onKeyPress(self, dlg, event):
-        # print(event)
         if event.keyval == Gdk.KEY_Escape:
             # print("Esc pressed, ignoring")
             return True
@@ -806,7 +807,6 @@ class GtkViewModel(ViewModel):
 
     def onBookSelectorChange(self, btn):
         status = self.sensiVisible("c_multiplebooks")
-        # self.set("c_prettyIntroOutline", False)
         if status and self.get("t_booklist") == "" and self.prjid is not None:
             self.updateDialogTitle()
         else:
