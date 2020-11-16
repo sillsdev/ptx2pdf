@@ -779,7 +779,8 @@ class TexModel:
         if doti > 0:
             outfname = outfname[:doti] + draft + outfname[doti:]
         outfpath = os.path.join(outdir, outfname)
-        with universalopen(infpath) as inf:
+        codepage = self.ptsettings.get('Encoding', 65001)
+        with universalopen(infpath, cp=codepage) as inf:
             dat = inf.read()
             if self.changes is not None:
                 dat = self.runChanges(self.changes, dat)

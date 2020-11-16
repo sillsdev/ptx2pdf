@@ -107,6 +107,7 @@ class ParatextSettings:
         #self.dict['FullName'] = ""
         #self.dict['Copyright'] = ""
         self.dict['DefaultFont'] = ""
+        self.dict['Encoding'] = 65001
         
         fbkfm = self.dict['FileNameBookNameForm']
         bknamefmt = self.get('FileNamePrePart', "") + \

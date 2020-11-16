@@ -1,5 +1,5 @@
 import gettext
-import locale
+import locale, codecs
 import os, sys, re
 from inspect import currentframe
 from ptxprint.ptsettings import books
@@ -45,9 +45,41 @@ def refKey(r, info=""):
     else:
         return (100, 0, 0, r, info, "")
 
-def universalopen(fname, rewrite=False):
+_wincodepages = {
+    'cp950' : 'big5',
+    'cp951' : 'big5hkscs',
+    'cp20932': 'euc_jp',
+    'cp954':  'euc_jp',
+    'cp20866': 'ko18_r',
+    'cp20936': 'gb2312',
+    'cp10000': 'mac_roman',
+    'cp10002': 'big5',
+    'cp10006': 'mac_greek',
+    'cp10007': 'mac_cyrillic',
+    'cp10008': 'gb2312',
+    'cp10029': 'mac_latin2',
+    'cp10079': 'mac_iceland',
+    'cp10081': 'mac_turkish',
+    'cp1200':  'utf_16_le',
+    'cp1201':  'utf_16_be',
+    'cp12000': 'utf_32',
+    'cp12001': 'utf_32_be',
+    'cp65000': 'utf_7',
+    'cp65001': 'utf_8'
+}
+_wincodepages.update({"cp{}".format(i+28590) : "iso8859_{}".format(i) for i in range(2, 17)})
+
+def wincpaliases(enc):
+    if enc in _wincodepages:
+        return codecs.lookup(_wincodepages[enc])
+    return None
+
+codecs.register(wincpaliases)
+
+def universalopen(fname, rewrite=False, cp=65001):
     """ Opens a file with the right codec from a small list and perhaps rewrites as utf-8 """
-    fh = open(fname, "r", encoding="utf-8")
+    encoding = "cp{}".format(cp) if cp != 65001 else "utf-8"
+    fh = open(fname, "r", encoding=encoding)
     try:
         fh.readline()
         fh.seek(0)
