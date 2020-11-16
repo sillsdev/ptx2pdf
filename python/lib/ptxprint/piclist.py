@@ -76,6 +76,7 @@ class PicList:
         self.selection = view.get_selection()
         self.picrect = None
         self.currow = None
+        self.bookfilters = None
         # _, self.curriter = self.selection.get_selected()
         for w in ("tv_picList", "tv_picListEdit", "tv_picListEdit1"):
             wid = self.builder.get_object(w)
@@ -113,9 +114,10 @@ class PicList:
         self.listview.set_model(None)
         self.model.clear()
         self.loading = True
+        self.bookfilters = bks
         if picinfo is not None:
             for k, v in sorted(picinfo.items(), key=lambda x:refKey(x[1]['anchor'])):
-                if bks is not None and len(bks) and k[:3] not in bks:
+                if bks is not None and len(bks) and v['anchor'][:3] not in bks:
                     continue
                 row = []
                 defaultmedia = _picLimitDefault.get(v.get('src', '')[:2].lower(), ('paw', 'paw', 'Default'))
@@ -170,8 +172,8 @@ class PicList:
                 else:
                     val = row[i]
                 p[e] = val
-        for k in list(picinfos.keys()):
-            if k not in allkeys:
+        for k,v in list(picinfos.items()):
+            if k not in allkeys and (self.bookfilters is None or v['anchor'][:3] in self.bookfilters):
                 del picinfos[k]
         return picinfos
 
