@@ -11,7 +11,7 @@ import os, re, random, sys
 posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror", "scale"]
 pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale", "media"]
 
-_piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copyright", "mirror", "disabled", "cleardest", "key", "media"]
+_piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copy", "mirror", "disabled", "cleardest", "key", "media"]
 _pickeys = {k:i for i, k in enumerate(_piclistfields)}
 
 _form_structure = {
@@ -23,7 +23,7 @@ _form_structure = {
     'pgpos':    'fcb_plPgPos',
     'ref':      't_plRef',
     'alt':      't_plAltText',
-    'copyright':    't_plCopyright',
+    'copy':    't_plCopyright',
     'mirror':   'fcb_plMirror',
     'hpos':     'fcb_plHoriz',
     'nlines':   's_plLines',
