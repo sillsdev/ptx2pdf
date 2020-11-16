@@ -723,7 +723,7 @@ class GtkViewModel(ViewModel):
         if len(diglotConfigs):
             for cfgName in sorted(diglotConfigs):
                 self.ecb_diglotSecConfig.append_text(cfgName)
-            self.ecb_diglotSecConfig.set_active_id("")
+            self.set("ecb_diglotSecConfig", "Default")
 
     def loadConfig(self, config):
         self.updateBookList()
