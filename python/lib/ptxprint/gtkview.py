@@ -834,8 +834,7 @@ class GtkViewModel(ViewModel):
         self.onViewerChangePage(None,None,pg)
 
     def onBookSelectorChange(self, btn):
-        status = self.sensiVisible("c_multiplebooks")
-        # self.set("c_prettyIntroOutline", False)
+        status = self.sensiVisible("r_book_multiple")
         if status and self.get("t_booklist") == "" and self.prjid is not None:
             self.updateDialogTitle()
         else:
@@ -1104,6 +1103,7 @@ class GtkViewModel(ViewModel):
             self.set("r_"+bits[0], bits[1])
         self.sensiVisible("r_"+bits[0])
         if n.startswith("r_book_"):
+            self.onBookSelectorChange(btn)
             self.updateExamineBook()
             self.updateDialogTitle()
         
