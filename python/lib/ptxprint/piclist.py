@@ -66,9 +66,13 @@ def newBase(fpath):
         return re.sub('[()&+,.;: \-]', '_', f.lower())
 
 class PicList:
-    def __init__(self, view, listview, builder, parent):
+    def __init__(self, view, checkview, builder, parent):
         self.view = view
+        self.checkview = checkview
         self.model = view.get_model()
+        self.checkmodel = self.model.filter_new()
+        self.checkview.set_model(self.checkmodel)
+        self.checkmodel.set_visible_func(self.checkfilter)
         # self.listview = listview
         self.builder = builder
         self.parent = parent
@@ -77,9 +81,10 @@ class PicList:
         self.picrect = None
         self.currow = None
         self.bookfilters = None
+        self.checkinv = False
+        self.checkfilt = 0
         # _, self.curriter = self.selection.get_selected()
-        for w in ("tv_picListEdit", "tv_picListEdit1"):
-            wid = self.builder.get_object(w)
+        for wid in (self.view, self.checkview):
             sel = wid.get_selection()
             sel.set_mode=Gtk.SelectionMode.SINGLE
             sel.connect("changed", self.row_select)
@@ -96,6 +101,18 @@ class PicList:
             w.connect(sig, self.item_changed, k)
         self.clear()
         self.loading = False
+
+    def checkfilter(self, model, i, data):
+        res = True
+        if self.checkfilt > 0:
+            res = self.parent.picChecksFilter(model[i][_pickeys['src']], self.checkfilt)
+        return not res if self.checkinv else res
+
+    def setCheckFilter(self, invert, filt):
+        print(filt)
+        self.checkinv = invert
+        self.checkfilt = filt
+        self.checkmodel.refilter()
 
     def modify_font(self, p):
         for a in ("", "1", "2"):
@@ -194,14 +211,15 @@ class PicList:
                     e.send_event = True
                     w.emit("focus-out-event", e)
         model, i = selection.get_selected()
-        for w in (self.builder.get_object(x) for x in ("tv_picListEdit", "tv_picListEdit1")):
+        for w in (self.view, self.checkview):
             s = w.get_selection()
             if s != selection:
                 s.select_iter(i)
                 m = w.get_model()
                 if m is not None:
                     p = m.get_path(i)
-                    w.scroll_to_cell(p)
+                    if p is not None:
+                        w.scroll_to_cell(p)
         if selection != self.selection:
             return
         if self.model.get_path(i).get_indices()[0] >= len(self.model):
@@ -283,8 +301,8 @@ class PicList:
             key = "pgpos"
         elif key.startswith("med"):
             val = "".join(v[-1].lower() for k, v in _form_structure.items() if k.startswith("med") and self.get(v))
-            if row is not None:
-                src = row[_pickeys['src']][:2]
+            if self.currow is not None:
+                src = self.currow[_pickeys['src']][:2]
                 inf = _picLimitDefault.get(src.lower(), ("paw", "paw", "Default"))
                 if sorted(val) == sorted("paw"):
                     val = ""
@@ -411,19 +429,14 @@ class PicChecks:
         if self.src == newBase(src):
             return
         self.src = newBase(src)
-        for k, v in _checks.items():
-            t, n = k.split("_")
-            cfg = self.cfgShared if n.startswith("pic") else self.cfgProject
+        for (cfg, n, v, k) in self._allFields():
             val = cfg.get(self.src, n, fallback=v)
             self.parent.set(k, val)
 
     def savepic(self):
         if self.src is None:
             return
-        for k, v in _checks.items():
-            val = self.parent.get(k)
-            t, n = k.split("_")
-            cfg = self.cfgShared if n.startswith("pic") else self.cfgProject
+        for (cfg, n, val, _) in self._allFields():
             try:
                 cfg.set(self.src, n, val)
             except configparser.NoSectionError:
@@ -434,6 +447,24 @@ class PicChecks:
             cfg = self.cfgShared if self.parent.get("r_pubapprove") == "scopeAny" else self.cfgProject
             cfg.set(self.src, "approved", self.get("t_pubInits"))
             cfg.set(self.src, "approval_date", self.get("t_pubApprDate"))
+
+    def filter(self, src, filt):
+        if filt == 0:       # All
+            return True
+        elif filt == 3:     # Approved
+            return self.cfgShared.has_option(src, "approved") or self.cfgProject.has_option(src, "approved")
+        elif filt == 1:     # All unknown/unchecked
+            return all(cfg.get(src, n, fallback=v) == v for (cfg, n, v, _) in self._allFields())
+        elif filt == 2:     # Any unknown/unchecked
+            return any(cfg.get(src, n, fallback=v) == v for (cfg, n, v, _) in self._allFields())
+        return True
+
+    def _allFields(self):
+        for k, v in _checks.items():
+            t, n = k.split("_")
+            cfg = self.cfgShared if n.startswith("pic") else self.cfgProject
+            yield(cfg, n, v, k)
+            
 
 class PicInfo(dict):
 

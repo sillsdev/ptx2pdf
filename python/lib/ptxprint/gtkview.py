@@ -173,8 +173,7 @@ _object_classes = {
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
     "stybutton":   ("btn_resetCopyright", "btn_resetColophon", "btn_resetFNcallers", "btn_resetXRcallers", 
-                    "btn_styAdd", "btn_styEdit", "btn_styDel", "btn_styReset"),
-    "smradio":     ("r_filter_show", "r_filter_hide"),
+                    "btn_styAdd", "btn_styEdit", "btn_styDel", "btn_styReset")
 }
 
     # "Center": "c", 
@@ -261,13 +260,17 @@ class GtkViewModel(ViewModel):
         for fcb in ("digits", "script", "chapfrom", "chapto", "diglotPicListSources",
                     "textDirection", "glossaryMarkupStyle", "fontFaces",
                     "styTextType", "styStyleType", "styCallerStyle", "styNoteCallerStyle", "NoteBlendInto",
-                    "picaccept", "pubusage", "pubaccept"): #, "rotateTabs"):
+                    "picaccept", "pubusage", "pubaccept", "chklstFilter"): #, "rotateTabs"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
         for k, v in _object_classes.items():
             for a in v:
-                self.builder.get_object(a).get_style_context().add_class(k)
+                w = self.builder.get_object(a)
+                if w is None:
+                    print("Can't find {}".format(a))
+                else:
+                    w.get_style_context().add_class(k)
 
         scripts = self.builder.get_object("ls_scripts")
         scripts.clear()
@@ -312,7 +315,7 @@ class GtkViewModel(ViewModel):
             self.set("tb_colophon", _defaultColophon)
 
         self.picListView = PicList(self.builder.get_object('tv_picListEdit'),
-                                   self.builder.get_object('tv_picList'), self.builder, self)
+                                   self.builder.get_object('tv_picListEdit1'), self.builder, self)
         self.picChecksView = PicChecks(self)
         self.styleEditorView = StyleEditor(self)
 
@@ -865,6 +868,14 @@ class GtkViewModel(ViewModel):
     def updatePicChecks(self, src):
         self.picChecksView.savepic()
         self.picChecksView.loadpic(src)
+
+    def picChecksFilter(self, src, filt):
+        return self.picChecksView.filter(src, filt)
+
+    def onPicCheckFilterChanged(self, *a):
+        w = self.builder.get_object('fcb_chklstFilter')
+        f = w.get_active()
+        self.picListView.setCheckFilter(self.get('c_picCheckInvFilter'), f)
 
     def onGeneratePicListClicked(self, btn):
         priority=self.get("fcb_diglotPicListSources")[:4]
