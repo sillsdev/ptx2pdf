@@ -866,8 +866,10 @@ class GtkViewModel(ViewModel):
         self.picinfos.updateView(self.picListView, bks, filtered=filtered)
 
     def updatePicChecks(self, src):
-        self.picChecksView.savepic()
         self.picChecksView.loadpic(src)
+
+    def savePicChecks(self, it):
+        self.picChecksView.savepic()
 
     def picChecksFilter(self, src, filt):
         return self.picChecksView.filter(src, filt)

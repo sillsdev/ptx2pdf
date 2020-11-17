@@ -109,20 +109,14 @@ class PicList:
         return not res if self.checkinv else res
 
     def setCheckFilter(self, invert, filt):
-        print(filt)
         self.checkinv = invert
         self.checkfilt = filt
         self.checkmodel.refilter()
 
     def modify_font(self, p):
-        for a in ("", "1", "2"):
+        for a in ("", "2"):
             w = self.builder.get_object("cr_caption"+a)
-            print("cr_caption"+a, p)
-            try: # MH: I need to work out what is calling this and stop it being called for
-                 #     the no-longer existent PicList
-                w.set_property("font-desc", p)
-            except:
-                pass
+            w.set_property("font-desc", p)
 
     def isEmpty(self):
         return len(self.model) == 0
@@ -220,11 +214,16 @@ class PicList:
                     p = m.get_path(i)
                     if p is not None:
                         w.scroll_to_cell(p)
-        if selection != self.selection:
+        if selection == self.selection:
+            if self.model.get_path(i).get_indices()[0] >= len(self.model):
+                return
+            else:
+                self.currow = self.model[i]
+        elif self.checkmodel.get_path(i).get_indices()[0] >= len(self.checkmodel):
             return
-        if self.model.get_path(i).get_indices()[0] >= len(self.model):
-            return
-        self.currow = self.model[i]
+        else:
+            self.parent.savePicChecks(i)
+            self.currow = self.checkmodel[i]
         pgpos = re.sub(r'^([PF])([lcr])([tb])', r'\1\3\2', self.currow[5])
         self.parent.pause_logging()
         self.loading = True
@@ -432,27 +431,45 @@ class PicChecks:
         for (cfg, n, v, k) in self._allFields():
             val = cfg.get(self.src, n, fallback=v)
             self.parent.set(k, val)
+        self.parent.set("tb_picNotes", self.cfgProject.get(self.src, "notes", fallback=""))
+        for cfg in (self.cfgShared, self.cfgProject):
+            if cfg.getboolean(self.src, "approved", fallback=False):
+                self.parent.set("t_pubInits", cfg.get(self.src, "approved_by"))
+                self.parent.set("t_pubApprDate", cfg.get(self.src, "approved_date"))
+                self.parent.set("r_pubapprove", "scopeAny" if cfg == self.cfgProject else "scopeProject")
+                self.parent.set('c_pubApproved', True)
+                break
+        else:
+            self.parent.set('c_pubApproved', False)
 
     def savepic(self):
         if self.src is None:
             return
-        for (cfg, n, val, _) in self._allFields():
+        for (cfg, n, val, k) in self._allFields():
+            val = self.parent.get(k)
             try:
                 cfg.set(self.src, n, val)
             except configparser.NoSectionError:
                 cfg.add_section(self.src)
                 cfg.set(self.src, n, val)
         val = self.parent.get("c_pubApproved")
+        cfg = self.cfgShared if self.parent.get("r_pubapprove") == "scopeAny" else self.cfgProject
+        ocfg = self.cfgProject if self.parent.get("r_pubapprove") == "scopeAny" else self.cfgShared
         if val:
-            cfg = self.cfgShared if self.parent.get("r_pubapprove") == "scopeAny" else self.cfgProject
-            cfg.set(self.src, "approved", self.get("t_pubInits"))
-            cfg.set(self.src, "approval_date", self.get("t_pubApprDate"))
+            cfg.set(self.src, "approved_by", self.parent.get("t_pubInits"))
+            cfg.set(self.src, "approval_date", self.parent.get("t_pubApprDate"))
+            cfg.set(self.src, "approved", "true")
+        else:
+            cfg.set(self.src, "approved", "false")
+        ocfg.set(self.src, "approved", "false")
+        self.cfgProject.set(self.src, "notes", self.parent.get("tb_picNotes"))
 
     def filter(self, src, filt):
         if filt == 0:       # All
             return True
         elif filt == 3:     # Approved
-            return self.cfgShared.has_option(src, "approved") or self.cfgProject.has_option(src, "approved")
+            return self.cfgShared.getboolean(src, "approved", fallback=False) \
+                or self.cfgProject.getboolean(src, "approved", fallback=False)
         elif filt == 1:     # All unknown/unchecked
             return all(cfg.get(src, n, fallback=v) == v for (cfg, n, v, _) in self._allFields())
         elif filt == 2:     # Any unknown/unchecked
