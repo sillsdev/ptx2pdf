@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import sys, os, re, regex, gi, subprocess
+import sys, os, re, regex, gi, subprocess, traceback
 gi.require_version('Gtk', '3.0')
 from shutil import copyfile, copytree, rmtree
 import time
@@ -18,11 +18,12 @@ import xml.etree.ElementTree as et
 from ptxprint.font import TTFont, initFontCache, fccache
 from ptxprint.view import ViewModel, Path
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton
+from ptxprint.utils import APP
 from ptxprint.runner import StreamTextBuffer
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from ptxprint.piclist import PicList, PicChecks, PicInfoUpdateProject
 from ptxprint.styleditor import StyleEditor
-from ptxprint.runjob import isLocked
+from ptxprint.runjob import isLocked, unlockme
 from ptxprint.texmodel import TexModel
 from ptxprint.minidialog import MiniDialog
 import ptxprint.scriptsnippets as scriptsnippets
@@ -96,8 +97,8 @@ _sensitivities = {
     "r_book": {
         "r_book_single":       ["ecb_book", "l_chapfrom", "fcb_chapfrom", "l_chapto", "fcb_chapto"],
         "r_book_multiple":     ["btn_chooseBooks", "t_booklist", "c_combine", "c_autoToC"],
-        "r_book_module":       ["btn_chooseBibleModule", "lb_bibleModule"],
-        "r_book_dbl":          ["btn_chooseDBLbundle", "l_dblBundle"]},
+        "r_book_module":       ["btn_chooseBibleModule", "lb_bibleModule"]},
+        # "r_book_dbl":          ["btn_chooseDBLbundle", "l_dblBundle"]},
     "c_mainBodyText" :         ["gr_mainBodyText"],
     "c_doublecolumn" :         ["gr_doubleColumn", "c_singleColLayout", "t_singleColBookList"],
     "c_useFallbackFont" :      ["btn_findMissingChars", "t_missingChars", "l_fallbackFont", "bl_fontExtraR"],
@@ -226,8 +227,20 @@ class GtkViewModel(ViewModel):
         self._setup_css()
         GLib.set_prgname("ptxprint")
         self.builder = Gtk.Builder()
-        self.builder.set_translation_domain("ptxprint")
-        self.builder.add_from_file(os.path.join(os.path.dirname(__file__), "ptxprint.glade"))
+        gladefile = os.path.join(os.path.dirname(__file__), "ptxprint.glade")
+        if sys.platform.startswith("win"):
+            tree = et.parse(gladefile)
+            for node in tree.iter():
+                if 'translatable' in node.attrib:
+                    node.text = _(node.text)
+                    del node.attrib['translatable']
+                if node.get('name') in ('pixbuf', 'icon', 'logo'):
+                    node.text = os.path.join(os.path.dirname(__file__), node.text)
+            xml_text = et.tostring(tree.getroot(), encoding='unicode', method='xml')
+            self.builder = Gtk.Builder.new_from_string(xml_text, -1)
+        else:
+            self.builder.set_translation_domain(APP)
+            self.builder.add_from_file(os.path.join(os.path.dirname(__file__), "ptxprint.glade"))
         self.builder.connect_signals(self)
         super(GtkViewModel, self).__init__(settings_dir, workingdir, userconfig, scriptsdir, args)
         self.isDisplay = True
@@ -377,7 +390,15 @@ class GtkViewModel(ViewModel):
                 for w in v:
                     GObject.add_emission_hook(getattr(Gtk, w), k, self.emission_hook, k)
             self.logactive = True
-        Gtk.main()
+        expert = self.userconfig.getboolean('init', 'expert', fallback=False)
+        self.set("c_hideAdvancedSettings", expert)
+        self.onHideAdvancedSettingsClicked(None, None)
+        try:
+            Gtk.main()
+        except Exception as e:
+            s = traceback.format_exc()
+            s += "\n" + str(e)
+            self.doError(s)
 
     def emission_hook(self, w, *a):
         if not self.logactive:
@@ -400,7 +421,9 @@ class GtkViewModel(ViewModel):
         return True
 
     def onHideAdvancedSettingsClicked(self, c_hideAdvancedSettings, foo):
-        if self.get("c_hideAdvancedSettings"):
+        val = self.get("c_hideAdvancedSettings")
+        self.userconfig.set('init', 'expert', 'true' if val else 'false')
+        if not val:
             for c in ("c_startOnHalfPage", "c_marginalverses", "c_figplaceholders"):
                 self.builder.get_object(c).set_active(False)
 
@@ -424,7 +447,7 @@ class GtkViewModel(ViewModel):
                   "r_book_dbl", "btn_chooseDBLbundle", "l_dblBundle", "c_fighiderefs", "lb_selectFigureFolder",
                   "l_missingPictureString", "l_imageTypeOrder", "t_imageTypeOrder", "fr_layoutSpecialBooks", "fr_layoutOther",
                   "s_colgutteroffset", "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "l_colgutteroffset",
-                  "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", "c_exclusiveFiguresFolder", 
+                  "c_cropborders", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", "c_exclusiveFiguresFolder",
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
                   "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection", "l_colgutteroffset", "fr_hyphenation",
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "c_fnOverride", "c_xrOverride",
@@ -436,10 +459,10 @@ class GtkViewModel(ViewModel):
                   "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
                   "gr_fnAdvOptions", "c_figexclwebapp", "bx_horizRule", "l_glossaryMarkupStyle"):
             # print(c)
-            self.builder.get_object(c).set_visible(not self.get("c_hideAdvancedSettings"))
+            self.builder.get_object(c).set_visible(val)
 
         # Resize Main UI Window appropriately
-        if self.get("c_hideAdvancedSettings"):
+        if not val:
             self.mw.resize(828, 292)
         else:
             self.mw.resize(830, 594)
@@ -581,7 +604,13 @@ class GtkViewModel(ViewModel):
         self.onSaveConfig(None)
 
         self._incrementProgress(val=0.)
-        self.callback(self)
+        try:
+            self.callback(self)
+        except Exception as e:
+            s = traceback.format_exc()
+            s += "\n" + str(e)
+            self.doError(s)
+            unlockme()
 
     def onCancel(self, btn):
         self.onDestroy(btn)
@@ -692,7 +721,7 @@ class GtkViewModel(ViewModel):
         if len(diglotConfigs):
             for cfgName in sorted(diglotConfigs):
                 self.ecb_diglotSecConfig.append_text(cfgName)
-            self.ecb_diglotSecConfig.set_active_id("")
+            self.set("ecb_diglotSecConfig", "Default")
 
     def loadConfig(self, config):
         self.updateBookList()
@@ -803,7 +832,7 @@ class GtkViewModel(ViewModel):
         self.onViewerChangePage(None,None,pg)
 
     def onBookSelectorChange(self, btn):
-        status = self.sensiVisible("c_multiplebooks")
+        status = self.sensiVisible("r_book_multiple")
         if status and self.get("t_booklist") == "" and self.prjid is not None:
             self.updateDialogTitle()
         else:
@@ -1059,6 +1088,7 @@ class GtkViewModel(ViewModel):
             self.set("r_"+bits[0], bits[1])
         self.sensiVisible("r_"+bits[0])
         if n.startswith("r_book_"):
+            self.onBookSelectorChange(btn)
             self.updateExamineBook()
             self.updateDialogTitle()
         

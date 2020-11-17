@@ -39,8 +39,9 @@ a = Analysis(['python/scripts/ptxprint', 'python/scripts/usfmerge'],
                              'A4-12mmBorder.pdf', 'A5-10mmBorder.pdf', 'A4-CopyrightWatermark.pdf', 'A5-CopyrightWatermark.pdf')]
                       + [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
                             ('Google-Noto-Emoji-Objects-62859-open-book.ico', '62859-open-book-icon(128).png', 'ps_cmyk.icc')]
-                      + [('src/mappings/*.tec', 'ptx2pdf/mappings')]
-					  + [('python/lib/ptxprint/mo/'+x+'/LC_MESSAGES/ptxprint.mo', 'mo/'+x+'/LC_MESSAGES') for x in os.listdir('python/lib/ptxprint/mo')],
+                      + [('python/lib/ptxprint/sfm/*.bz2', 'ptxprint/sfm')]
+                      + [('src/mappings/*.tec', 'ptx2pdf/mappings')],
+#					  + [('python/lib/ptxprint/mo/' + y +'/LC_MESSAGES/ptxprint.mo', 'mo/' + y + '/LC_MESSAGES') for y in os.listdir('python/lib/ptxprint/mo')],
              datas =    [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
                             ('ptxprint.glade', 'template.tex')]
                       + [('python/lib/ptxprint/sfm/*.*y', 'ptxprint/sfm')]

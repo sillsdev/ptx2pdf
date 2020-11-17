@@ -311,8 +311,17 @@ class RunJob:
     def dojob(self, jobs, info, logbuffer=None):
         donebooks = []
         for b in jobs:
-            out = info.convertBook(b, self.tmpdir, self.prjdir)
+            try:
+                out = info.convertBook(b, self.tmpdir, self.prjdir)
+            except FileNotFoundError as e:
+                self.printer.doError(str(e))
+                out = None
+            if out is None:
+                continue
             donebooks.append(out)
+        if not len(donebooks):
+            unlockme()
+            return []
         self.books += donebooks
         info["project/bookids"] = jobs
         info["project/books"] = donebooks
@@ -343,10 +352,20 @@ class RunJob:
             diginfo[k]=info[k]
         syntaxErrors = []
         for b in jobs:
-            out = info.convertBook(b, self.tmpdir, self.prjdir)
-            digout = diginfo.convertBook(b, self.tmpdir, digprjdir)
-            donebooks.append(out)
-            digdonebooks.append(digout)
+            try:
+                out = info.convertBook(b, self.tmpdir, self.prjdir)
+                digout = diginfo.convertBook(b, self.tmpdir, digprjdir)
+            except FileNotFoundError as e:
+                self.printer.doError(str(e))
+                out = None
+            if out is None:
+                continue
+            else:
+                donebooks.append(out)
+            if digout is None:
+                continue
+            else:
+                digdonebooks.append(digout)
             
             # Now merge the secondary text (right) into the primary text (left) 
             left = os.path.join(self.tmpdir, out)
@@ -364,6 +383,11 @@ class RunJob:
                 syntaxErrors.append("{} {} Error: {}".format(self.prjid, b, str(e)))
             for f in [left, right, outFile, logFile]:
                 texfiles += [os.path.join(self.tmpdir, f)]
+
+        if not len(donebooks) or not len(digdonebooks):
+            unlockme()
+            return []
+
         if len(syntaxErrors):
             self.printer.doError(_("Failed to merge texts due to a Syntax Error:"),
             secondary="\n".join(syntaxErrors)+_("\n\nIf original USFM text is correct, then check "+ \
@@ -519,8 +543,7 @@ class RunJob:
         for j in jobs:
             picinfos.getFigureSources(keys=j, exclusive=self.printer.get("c_exclusiveFiguresFolder"))
             picinfos.set_destinations(fn=carefulCopy, keys=j, cropme=cropme)
-        missingPics = [v['src'] for k,v in picinfos.items() if k[:3] in j and 'dest file' not in v and 'src' in v]
-        # missingPics = [v['src'] for v in picinfos.values() if 'dest file' not in v and 'src' in v]
+        missingPics = [v['src'] for v in picinfos.values() if v['anchor'][:3] in jobs and 'dest file' not in v and 'src' in v]
         res = [os.path.join("tmpPics", v['dest file']) for v in picinfos.values() if 'dest file' in v]
         outfname = info.printer.baseTeXPDFnames(jobs)[0] + ".piclist"
         picinfos.out(os.path.join(self.tmpdir, outfname), bks=jobs, skipkey="disabled", usedest=True, media='p')

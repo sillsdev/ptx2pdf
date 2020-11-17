@@ -7,33 +7,33 @@ from ptxprint.sfm.style import Marker, CaselessStr
 from copy import deepcopy
 
 stylemap = {
-    'Marker':       ('l_styleTag',          None,               None, None),
-    'Description':  ('l_styDescription',    None,               None, None),
-    'TextType':     ('fcb_styTextType',     'l_styTextType',    'Paragraph', None),
-    'StyleType':    ('fcb_styStyleType',    'l_styStyleType',   'Paragraph', None),
-    'FontName':     ('bl_font_styFontName', 'l_styFontName',    None, None),
-    'Color':        ('col_styColor',        'l_styColor',       'x000000', None),
-    'FontSize':     ('s_styFontSize',       'l_styFontSize',    '12', None),
-    'Bold':         ('c_styFaceBold',       'c_styFaceBold',    '-', lambda v: "" if v else "-"),
-    'Italic':       ('c_styFaceItalic',     'c_styFaceItalic',  '-', lambda v: "" if v else "-"),
-    'SmallCap':     ('c_stySmallCap',       'c_stySmallCap',    '-', lambda v: "" if v else "-"),
-    'Superscript':  ('c_styFaceSuperscript', 'c_styFaceSuperscript', '-', lambda v: "" if v else "-"),
-    'Raise':        ('s_styRaise',          'l_styRaise',       '0', None),
-    'Justification': ('fcb_styJustification', 'l_styJustification', 'Justified', lambda v: "" if v == "Justified" else v),
-    'FirstLineIndent': ('s_styFirstLineIndent', 'l_styFirstLineIndent', '0', None),
-    'LeftMargin':   ('s_styLeftMargin',     'l_styLeftMargin',  '0', None),
-    'RightMargin':  ('s_styRightMargin',    'l_styRightMargin', '0', None),
-    'LineSpacing':  ('s_styLineSpacing',    'l_styLineSpacing', '0', None),
-    'SpaceBefore':  ('s_stySpaceBefore',    'l_stySpaceBefore', '0', None),
-    'SpaceAfter':   ('s_stySpaceAfter',     'l_stySpaceAfter',  '0', None),
-    'CallerStyle':  ('fcb_styCallerStyle',  'l_styCallerStyle', '', None),
-    'NoteCallerStyle': ('fcb_styNoteCallerStyle', 'l_styNoteCallerStyle', '', None),
-    'NoteBlendInto': ('fcb_NoteBlendInto',  'l_NoteBlendInto',  '', None),
-    'CallerRaise':  ('s_styCallerRaise',    'l_styCallerRaise', '0', None),
-    'NoteCallerRaise': ('s_styNoteCallerRaise', 'l_styNoteCallerRaise', '0', None),
-    '_fontsize':    ('c_styFontScale',      'c_styFontScale',   False, lambda v: "FontScale" if v else "FontSize"),
-    '_linespacing': ('c_styAbsoluteLineSpacing', 'c_styAbsoluteLineSpacing', False, lambda v: "BaseLine" if v else 'LineSpacing'),
-    '_publishable': ('c_styTextProperties', 'c_styTextProperties', False, None)
+    'Marker':       ('l_styleTag',          None,               None, None, None),
+    'Description':  ('l_styDescription',    None,               None, None, None),
+    'TextType':     ('fcb_styTextType',     'l_styTextType',    'Paragraph', None, None),
+    'StyleType':    ('fcb_styStyleType',    'l_styStyleType',   'Paragraph', None, None),
+    'FontName':     ('bl_font_styFontName', 'l_styFontName',    None, None, None),
+    'Color':        ('col_styColor',        'l_styColor',       'x000000', None, None),
+    'FontSize':     ('s_styFontSize',       'l_styFontSize',    '12', None, None),
+    'Bold':         ('c_styFaceBold',       'c_styFaceBold',    '-', lambda v: "" if v else "-", None),
+    'Italic':       ('c_styFaceItalic',     'c_styFaceItalic',  '-', lambda v: "" if v else "-", None),
+    'SmallCap':     ('c_stySmallCap',       'c_stySmallCap',    '-', lambda v: "" if v else "-", None),
+    'Superscript':  ('c_styFaceSuperscript', 'c_styFaceSuperscript', '-', lambda v: "" if v else "-", None),
+    'Raise':        ('s_styRaise',          'l_styRaise',       '0', lambda v: str(v)+"ex", lambda v: re.sub(r"(?<=\d)\D+$", "", v)),
+    'Justification': ('fcb_styJustification', 'l_styJustification', 'Justified', lambda v: "" if v == "Justified" else v, None),
+    'FirstLineIndent': ('s_styFirstLineIndent', 'l_styFirstLineIndent', '0', None, None),
+    'LeftMargin':   ('s_styLeftMargin',     'l_styLeftMargin',  '0', None, None),
+    'RightMargin':  ('s_styRightMargin',    'l_styRightMargin', '0', None, None),
+    'LineSpacing':  ('s_styLineSpacing',    'l_styLineSpacing', '0', None, None),
+    'SpaceBefore':  ('s_stySpaceBefore',    'l_stySpaceBefore', '0', None, None),
+    'SpaceAfter':   ('s_stySpaceAfter',     'l_stySpaceAfter',  '0', None, None),
+    'CallerStyle':  ('fcb_styCallerStyle',  'l_styCallerStyle', '', None, None),
+    'NoteCallerStyle': ('fcb_styNoteCallerStyle', 'l_styNoteCallerStyle', '', None, None),
+    'NoteBlendInto': ('fcb_NoteBlendInto',  'l_NoteBlendInto',  '', None, None),
+    'CallerRaise':  ('s_styCallerRaise',    'l_styCallerRaise', '0', None, None),
+    'NoteCallerRaise': ('s_styNoteCallerRaise', 'l_styNoteCallerRaise', '0', None, None),
+    '_fontsize':    ('c_styFontScale',      'c_styFontScale',   False, lambda v: "FontScale" if v else "FontSize", None),
+    '_linespacing': ('c_styAbsoluteLineSpacing', 'c_styAbsoluteLineSpacing', False, lambda v: "BaseLine" if v else 'LineSpacing', None),
+    '_publishable': ('c_styTextProperties', 'c_styTextProperties', False, None, None)
 }
 
 topLevelOrder = ('Identification', 'Introduction', 'Chapters & Verses', 'Paragraphs', 'Poetry',
@@ -307,7 +307,7 @@ class StyleEditor:
                 val = (val, "")
             elif v[0].startswith("col_"):
                 val = textocol(val)
-            setWidgetVal(v[0], w, val)
+            setWidgetVal(v[0], w, val if v[4] is None else v[4](val))
         if v[1] is not None:
             ctxt = self.builder.get_object(v[1]).get_style_context()
             if val != oldval:

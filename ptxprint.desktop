@@ -1,8 +1,8 @@
 [Desktop Entry]
 Name=PTXprint
-Comment=GUI to control PTX macros for XeTeX
+Comment= Bible Layout For Everyone (GUI for XeTeX macros for Paratext)
 Exec=ptxprint
-Icon=icon/Google-Noto-Emoji-Objects-62859-open-book.ico
+Icon=ptxprint
 TryExec=ptxprint
 Terminal=false
 Type=Application

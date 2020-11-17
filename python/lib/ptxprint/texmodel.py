@@ -644,7 +644,7 @@ class TexModel:
                         if extra != "":
                             fname = re.sub(r"^([^.]*).(.*)$", r"\1"+extra+r".\2", fname)
                         if i == len(self.dict['project/bookids']) - 1 and self.dict['project/ifcolophon'] == "":
-                            res.append("\\lastptxfiletrue\n\\endbooknoejecttrue\n")
+                            res.append("\\lastptxfiletrue\n")
                         if self.asBool('document/ifomitsinglechnum') and \
                            self.asBool('document/showchapternums') and \
                            f in oneChbooks:
@@ -715,7 +715,10 @@ class TexModel:
             outfpath = outfpath[:doti] + "-flat" + outfpath[doti:]
         usfms = self.printer.get_usfms()
         mod = Module(infpath, usfms)
-        res = mod.parse()
+        try:
+            res = mod.parse()
+        except SyntaxError:
+            return None
         with open(outfpath, "w", encoding="utf-8") as outf:
             outf.write(sfm.generate(res))
         return outfpath
@@ -761,6 +764,11 @@ class TexModel:
         if fname is None:
             infpath = os.path.join(prjdir, bk)  # assume module
             infpath = self.flattenModule(infpath, outdir)
+            if infpath is None:
+                self.printer.doError("Failed to flatten module text (due to a Syntax Error?):",        
+                secondary="Check for USFM errors and/or problems with a module.", 
+                title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr))
+                return None
         else:
             infpath = os.path.join(prjdir, fname)
         if not self.dict['project/runscriptafter']:
@@ -771,7 +779,8 @@ class TexModel:
         if doti > 0:
             outfname = outfname[:doti] + draft + outfname[doti:]
         outfpath = os.path.join(outdir, outfname)
-        with universalopen(infpath) as inf:
+        codepage = self.ptsettings.get('Encoding', 65001)
+        with universalopen(infpath, cp=codepage) as inf:
             dat = inf.read()
             if self.changes is not None:
                 dat = self.runChanges(self.changes, dat)
@@ -948,7 +957,7 @@ class TexModel:
                                           flags=regex.M), r"\1\4"))   # USFM3
         else:
             # Strip out all \figs from the USFM as an internally generated temp PicList will do the same job
-            self.localChanges.append((None, regex.compile(r'\\fig [^\\]+?\\fig\*', flags=regex.M), ""))
+            self.localChanges.append((None, regex.compile(r'\\fig[\s|][^\\]+?\\fig\*', flags=regex.M), ""))
         
         if not self.asBool("document/bookintro"): # Drop Introductory matter
             self.localChanges.append((None, regex.compile(r"\\i(s|m|mi|mt|p|pi|li\d?|pq|mq|pr|b|q\d?) .+?\r?\n", flags=regex.M), "")) 
@@ -1010,13 +1019,10 @@ class TexModel:
         # Paratext marks no-break space as a tilde ~
         self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
 
-        # Remove the + of embedded markup (xetex handles it)
-        self.localChanges.append((None, regex.compile(r"\\\+", flags=regex.M), r"\\"))  
-            
-        for c in range(1,4): # Remove any \toc lines that we don't want appearing in the Table of Contents
-            if not self.asBool("document/usetoc{}".format(c)) and (c != 3 or self.asBool("thumbtabs/ifthumbtab")):
+        # for c in range(1,4): # Remove any \toc lines that we don't want appearing in the Table of Contents
+            # if not self.asBool("document/usetoc{}".format(c)) and (c != 3 or self.asBool("thumbtabs/ifthumbtab")):
                 # print("Deleting toc{} with thumbtabs/ifthumbtab of {}".format(c, self.printer.get("thumbtabs/ifthumbtab")))
-                self.localChanges.append((None, regex.compile(r"(\\toc{} .+)".format(c), flags=regex.M), ""))
+                # self.localChanges.append((None, regex.compile(r"(\\toc{} .+)".format(c), flags=regex.M), ""))
 
         # Add End of Book decoration PDF to Scripture books only if FancyBorders is enabled and .PDF defined
         if self.asBool("fancy/enableborders") and self.asBool("fancy/endofbook") and bk not in self._peripheralBooks \

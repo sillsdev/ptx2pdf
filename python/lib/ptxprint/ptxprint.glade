@@ -396,7 +396,7 @@ THE SOFTWARE.
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 1.3.1</property>
+    <property name="version">Version 1.3.3</property>
     <property name="copyright">© 2020, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -2695,9 +2695,8 @@ in the Windows system.</property>
   </object>
   <object class="GtkDialog" id="ptxprint">
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">PTXprint App</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
-    <property name="type_hint">dialog</property>
+    <property name="type_hint">normal</property>
     <property name="urgency_hint">True</property>
     <property name="has_resize_grip">True</property>
     <signal name="destroy" handler="onDestroy" swapped="no"/>
@@ -2963,6 +2962,7 @@ if need be.</property>
                             <child>
                               <object class="GtkRadioButton" id="r_book_dbl">
                                 <property name="label" translatable="yes">DBL Bundle:</property>
+                                <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
                                 <property name="no_show_all">True</property>
@@ -3038,6 +3038,7 @@ PDF files - one for each book.</property>
                             <child>
                               <object class="GtkButton" id="btn_chooseDBLbundle">
                                 <property name="label" translatable="yes">Ch_oose...</property>
+                                <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="no_show_all">True</property>
@@ -3071,6 +3072,7 @@ PDF files - one for each book.</property>
                             </child>
                             <child>
                               <object class="GtkLabel" id="l_dblBundle">
+                                <property name="sensitive">False</property>
                                 <property name="can_focus">False</property>
                                 <property name="no_show_all">True</property>
                                 <property name="opacity">0.69999999999999996</property>
@@ -5137,6 +5139,7 @@ Fonts</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">Do we support or ignore \Color specifications in stylesheets?</property>
                                         <property name="halign">end</property>
+                                        <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -15424,10 +15427,9 @@ ptxprint_support@sil.org </property>
               <object class="GtkSwitch" id="c_hideAdvancedSettings">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="tooltip_text" translatable="yes">Hide Advanced Settings:
+                <property name="tooltip_text" translatable="yes">Show Advanced Settings:
 
-If the number of options is too overwhelming then use
-this switch to hide the more complex/advanced options.</property>
+There are many more complex options available for use within PTXprint.</property>
                 <property name="margin_left">20</property>
                 <property name="margin_right">20</property>
                 <property name="margin_top">7</property>

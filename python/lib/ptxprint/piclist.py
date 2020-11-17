@@ -3,7 +3,7 @@ from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.view import refKey
 from ptxprint.utils import refKey, universalopen
 from ptxprint.texmodel import TexModel
-from gi.repository import Gtk, GdkPixbuf, GObject
+from gi.repository import Gtk, GdkPixbuf, GObject, Gdk
 from threading import Thread
 import configparser
 import os, re, random, sys
@@ -11,7 +11,7 @@ import os, re, random, sys
 posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror", "scale"]
 pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale", "media"]
 
-_piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copyright", "mirror", "disabled", "cleardest", "origkey", "media"]
+_piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copy", "mirror", "disabled", "cleardest", "key", "media"]
 _pickeys = {k:i for i, k in enumerate(_piclistfields)}
 
 _form_structure = {
@@ -23,7 +23,7 @@ _form_structure = {
     'pgpos':    'fcb_plPgPos',
     'ref':      't_plRef',
     'alt':      't_plAltText',
-    'copyright':    't_plCopyright',
+    'copy':     't_plCopyright',
     'mirror':   'fcb_plMirror',
     'hpos':     'fcb_plHoriz',
     'nlines':   's_plLines',
@@ -54,6 +54,8 @@ _picLimitDefault = {
     'ib': ('p','p', 'Only Print media')
 }
 
+newrowcounter = 1
+
 def newBase(fpath):
     doti = fpath.rfind(".")
     f = os.path.basename(fpath[:doti])
@@ -71,9 +73,10 @@ class PicList:
         self.builder = builder
         self.parent = parent
         self.picinfo = None
-        self.deletes = set()
         self.selection = view.get_selection()
         self.picrect = None
+        self.currow = None
+        self.bookfilters = None
         # _, self.curriter = self.selection.get_selected()
         for w in ("tv_picListEdit", "tv_picListEdit1"):
             wid = self.builder.get_object(w)
@@ -87,6 +90,7 @@ class PicList:
                 # sig = "focus-out-event" - MH: we need to connect this signal for typed in values
                 #                           but it gives an extra positional argument. So how to fix it?
                 sig = "value-changed"
+                w.connect("focus-out-event", self.item_changed, k)
             elif v.startswith("c_"):
                 sig = "clicked"
             w.connect(sig, self.item_changed, k)
@@ -115,14 +119,15 @@ class PicList:
         # self.listview.set_model(None)
         self.model.clear()
         self.loading = True
+        self.bookfilters = bks
         if picinfo is not None:
-            for k, v in sorted(picinfo.items(), key=lambda x:(refKey(x[0]), x[1])):
-                if bks is not None and len(bks) and k[:3] not in bks:
+            for k, v in sorted(picinfo.items(), key=lambda x:refKey(x[1]['anchor'])):
+                if bks is not None and len(bks) and v['anchor'][:3] not in bks:
                     continue
-                row = [k]
+                row = []
                 defaultmedia = _picLimitDefault.get(v.get('src', '')[:2].lower(), ('paw', 'paw', 'Default'))
-                for e in _piclistfields[1:]:
-                    if e == 'origkey':
+                for e in _piclistfields:
+                    if e == 'key':
                         val = k
                     elif e == "scale":
                         try:
@@ -156,32 +161,38 @@ class PicList:
         return res
 
     def updateinfo(self, picinfos):
+        allkeys = set()
         for row in self.model:
-            if len(row[0]) > 5:
-                k = row[0]
-                p = picinfos.setdefault(k, {})
-                for i, e in enumerate(_piclistfields[1:]):
-                    if e == 'origkey':
-                        oldk = row[i+1]
-                        if k != oldk and oldk in picinfos:
-                            del picinfos[oldk]
-                    elif e == 'scale':
-                        val = "{:.3f}".format(row[i+1] / 100.)
-                    elif e == "cleardest":
-                        if row[i+1] and 'dest file' in p:
-                            del p['dest file']
-                    else:
-                        val = row[i+1]
-                    p[e] = val
-        for key, src in self.deletes:
-            print("Deleting {}, {}".format(key, src))
-            if key in picinfos and picinfos[key]['src'] == src:
-                del picinfos[key]
+            k = row[_pickeys['key']]
+            p = picinfos.setdefault(k, {})
+            for i, e in enumerate(_piclistfields):
+                if e == 'key':
+                    allkeys.add(row[i])
+                    continue
+                elif e == 'scale':
+                    val = "{:.3f}".format(row[i] / 100.)
+                elif e == "cleardest":
+                    if row[i] and 'dest file' in p:
+                        del p['dest file']
+                else:
+                    val = row[i]
+                p[e] = val
+        for k,v in list(picinfos.items()):
+            if k not in allkeys and (self.bookfilters is None or v['anchor'][:3] in self.bookfilters):
+                del picinfos[k]
         return picinfos
 
     def row_select(self, selection):
         if selection.count_selected_rows() != 1:
             return
+        if self.currow is not None:
+            for k, s in ((k, x) for k,x in _form_structure.items() if x.startswith("s_")):
+                w = self.builder.get_object(s)
+                if w.has_focus():
+                    e = Gdk.Event(Gdk.EventType.FOCUS_CHANGE)
+                    e.window = w
+                    e.send_event = True
+                    w.emit("focus-out-event", e)
         model, i = selection.get_selected()
         for w in (self.builder.get_object(x) for x in ("tv_picListEdit", "tv_picListEdit1")):
             s = w.get_selection()
@@ -195,15 +206,15 @@ class PicList:
             return
         if self.model.get_path(i).get_indices()[0] >= len(self.model):
             return
-        row = self.model[i]
-        pgpos = re.sub(r'^([PF])([lcr])([tb])', r'\1\3\2', row[5])
+        self.currow = self.model[i]
+        pgpos = re.sub(r'^([PF])([lcr])([tb])', r'\1\3\2', self.currow[5])
         self.parent.pause_logging()
         self.loading = True
         for j, (k, v) in enumerate(_form_structure.items()): # relies on ordered dict
             if k == 'pgpos':
                 val = pgpos[:2] if pgpos[0:1] in "PF" else (pgpos[0:1] or "t")
             elif k == 'hpos':
-                if row[3] == "span":
+                if self.currow[3] == "span":
                     val = "-"
                 elif pgpos[0:1] in "PF":
                     val = pgpos[2:] or "c"
@@ -216,14 +227,14 @@ class PicList:
                 except (ValueError, TypeError):
                     val = 0
             elif k.startswith("med"):
-                val = v[-1].lower() in row[_pickeys['media']] or "paw"
+                val = v[-1].lower() in self.currow[_pickeys['media']] or "paw"
             elif k == 'mirror':
-                val = row[j] or "None"
+                val = self.currow[j] or "None"
             else:
-                val = row[j]
+                val = self.currow[j]
             w = self.builder.get_object(v)
             setWidgetVal(v, w, val)
-        self.mask_media(row)
+        self.mask_media(self.currow)
         self.parent.unpause_logging()
         self.loading = False
 
@@ -263,13 +274,10 @@ class PicList:
             res += str(lines)
         return res
 
-    def item_changed(self, w, key):
+    def item_changed(self, w, *a):
+        key = a[-1]
         if self.loading and key not in ("src", ):
             return
-        if self.model is not None and len(self.model):
-            row = self.model[self.selection.get_selected()[1]]
-        else:
-            row = None
         if key in _comblist:
             val = self.get_pgpos()
             key = "pgpos"
@@ -281,13 +289,12 @@ class PicList:
                 if sorted(val) == sorted("paw"):
                     val = ""
             key = "media"
-            print(key, val)
         else:
             val = self.get(key)
-        if row is not None:
+        if self.currow is not None:
             fieldi = _piclistfields.index(key)
-            oldval = row[fieldi]
-            row[fieldi] = val
+            oldval = self.currow[fieldi]
+            self.currow[fieldi] = val
             if key == "src":
                 fpath = None
                 if self.picinfo is not None:
@@ -315,13 +322,13 @@ class PicList:
                     pic.set_tooltip_text("")
                     picc.set_tooltip_text("")
                     self.builder.get_object("t_plFilename").set_tooltip_text("")
-                self.mask_media(row)
+                self.mask_media(self.currow)
                 if val != oldval:
-                    row[_piclistfields.index('cleardest')] = True
+                    self.currow[_piclistfields.index('cleardest')] = True
             elif key == "scale" and val != oldval:
-                row[_piclistfields.index('cleardest')] = True
+                self.currow[_piclistfields.index('cleardest')] = True
             elif key == "mirror" and val == "None":
-                row[fieldi] = ""
+                self.currow[fieldi] = ""
 
     def get_row_from_items(self):
         row = [self.get(k, default="") for k in _piclistfields]
@@ -333,16 +340,16 @@ class PicList:
     def add_row(self):
         if len(self.model) > 0:
             row = self.model[self.selection.get_selected()[1]][:]
-            row[0] = ""
         else:
             row = self.get_row_from_items()
+        row[_pickeys['ref']] = "row{}".format(newrowcounter)
+        newrowcounter += 1
         self.model.append(row)
         self.select_row(len(self.model)-1)
 
     def del_row(self):
         model, i = self.selection.get_selected()
         row = model[i]
-        self.deletes.add((row[_pickeys['anchor']], row[_pickeys['src']]))
         del self.model[i]
         ind = model.get_path(i)
         if ind is None:
@@ -436,6 +443,7 @@ class PicInfo(dict):
     def __init__(self, model):
         self.clear(model)
         self.inthread = False
+        self.keycounter = 0
 
     def clear(self, model=None):
         super().clear()
@@ -515,6 +523,10 @@ class PicInfo(dict):
                 vals['scale'] = m[2]
         return vals
 
+    def newkey(self, suffix=""):
+        self.keycounter += 1
+        return "pic{}{}".format(suffix, self.keycounter)
+
     def read_piclist(self, fname, suffix=""):
         if not os.path.exists(fname):
             return
@@ -530,14 +542,8 @@ class PicInfo(dict):
                     k = "{}{} {}".format(r[0][:3], suffix, r[1])
                 else:
                     k = "{}{}".format(r[0], suffix)
-                pic = {'caption': r[2] if len(r) > 2 else ""}
-                while k in self:
-                    rm = re.match(r"^(\S+\s+\S+)(\s+.*?)(\d+)$", k)
-                    if rm:
-                        k = rm.group(1) + rm.group(2) + str(int(rm.group(3))+1)
-                    else:
-                        k += " 1"
-                self[k] = pic
+                pic = {'anchor': k, 'caption': r[2] if len(r) > 2 else ""}
+                self[self.newkey(suffix)] = pic
                 if len(m) > 6:
                     for i, f in enumerate(m[1:]):
                         pic[posparms[i+1]] = f
@@ -553,14 +559,16 @@ class PicInfo(dict):
             dat = inf.read()
             blocks = ["0"] + re.split(r"\\c\s+(\d+)", dat)
             for c, t in zip(blocks[0::2], blocks[1::2]):
+                key = None
                 m = re.findall(r"(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*"
                                r"\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?"
                                r"\|([^\\]+?)?\|([^\\]+?)?\\fig\*", t)
                 if len(m):
                     for f in m:     # usfm 2
                         r = "{}{} {}.{}".format(bk, suffix, c, f[0])
-                        pic = {'caption':f[8].strip(), 'anchor': "{}.{}".format(c, f[0])}
-                        self[r] = pic
+                        pic = {'anchor': r, 'caption':f[8].strip()}
+                        key = self.newkey(suffix)
+                        self[key] = pic
                         for i, v in enumerate(f[3:]):
                             pic[posparms[i]] = v
                         self._fixPicinfo(pic)
@@ -569,9 +577,9 @@ class PicInfo(dict):
                     if len(m):
                         for i, f in enumerate(m):
                             r = "{}{} 1.{}".format(bk, suffix, i)
-                            pic = {'caption':f[0].strip(), 'src': f[1], 'size': f[2], 'anchor': "1.{}".format(i)}
-                            self[r] = pic
-                            # self._fixPicinfo(pic)
+                            pic = {'anchor': r, 'caption':f[0].strip(), 'src': f[1], 'size': f[2]}
+                            key = self.newkey(suffix)
+                            self[key] = pic
                 m = re.findall(r'(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig ([^\\]*?)\|([^\\]+)\\fig\*', t)
                 if len(m):
                     for i, f in enumerate(m):     # usfm 3
@@ -579,15 +587,16 @@ class PicInfo(dict):
                             break
                         a = (1, i+1) if isperiph else (c, f[0])
                         r = "{}{} {}.{}".format(bk, suffix, *a)
-                        pic = {'caption':f[3].strip(), 'anchor': "{}.{}".format(*a)}
-                        self[r] = pic
+                        pic = {'caption':f[3].strip(), 'anchor': r}
+                        key = self.newkey(suffix)
+                        self[key] = pic
                         labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f[4])
                         for l in labelParams:
                             k,v = l.split("=")
                             pic[k.strip()] = v.strip('"')
-                if media is not None and r in self:
-                    if 'media' in pic and not any(x in media for x in pic['media']):
-                        del self[r]
+                        if media is not None and key in self:
+                            if 'media' in pic and not any(x in media for x in pic['media']):
+                                del self[key]
 
     def out(self, fpath, bks=[], skipkey=None, usedest=False, media=None):
         ''' Generate a picinfo file, with given date.
@@ -602,10 +611,10 @@ class PicInfo(dict):
             p3p = pos3parms
         lines = []
         for k, v in sorted(self.items(),
-                           key=lambda x: refKey(x[0][:3]+x[0][4:], info=x[0][3:4])):
-            if (len(bks) and k[:3] not in bks) or (skipkey is not None and v.get(skipkey, False)):
+                           key=lambda x: refKey(x[1]['anchor'][:3]+x[0][4:], info=x[1]['anchor'][3:4])):
+            if (len(bks) and v['anchor'][:3] not in bks) or (skipkey is not None and v.get(skipkey, False)):
                 continue
-            outk = self.stripsp_re.sub(r"\1", k)
+            outk = self.stripsp_re.sub(r"\1", v['anchor'])
             line = []
             for i, x in enumerate(p3p):
                 if x not in v or not v[x]:
@@ -629,8 +638,8 @@ class PicInfo(dict):
 
     def rmdups(self):
         allkeys = {}
-        for k in self.keys():
-            allkeys.setdefault(self.stripsp_re.sub(r"\1", k), []).append(k)
+        for k,v in self.items():
+            allkeys.setdefault(self.stripsp_re.sub(r"\1", v['anchor']), []).append(k)
         for k, v in allkeys.items():
             if len(v) == 1:
                 continue
@@ -667,7 +676,7 @@ class PicInfo(dict):
         res = {}
         newfigs = {}
         for k, f in self.items():
-            if keys is not None and k[:3] not in keys:
+            if keys is not None and f['anchor'][:3] not in keys:
                 continue
             newk = filt(f['src']) if filt is not None else f['src']
             newfigs.setdefault(newk, []).append(k)
@@ -745,10 +754,10 @@ class PicInfo(dict):
                     v['pgpos'] = posns[0]
 
     def set_destinations(self, fn=lambda x,y,z:z, keys=None, cropme=False):
-        for k, v in self.items():
+        for v in self.values():
             if v.get(' crop', False) == cropme and 'dest file' in v:
                 continue            # no need to regenerate
-            if keys is not None and k[:3] not in keys:
+            if keys is not None and v['anchor'][:3] not in keys:
                 continue
             nB = newBase(v['src'])
             if self.srcfkey not in v:
@@ -776,14 +785,14 @@ def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False
         bkf = allbooks.get(bk, None)
         if bkf is None or not os.path.exists(bkf):
             continue
-        for k in [k for k in newpics.keys() if k[:3] == bk]:
+        for k in [k for k,v in newpics.items() if v['anchor'][:3] == bk]:
             del newpics[k]
-        for k in [k for k in picinfos.keys() if k[:3] == bk]:
+        for k in [k for k,v in picinfos.items() if v['anchor'][:3] == bk]:
             del picinfos[k]
         newpics.read_sfm(bk, bkf)
         newpics.set_positions(randomize=random, suffix=suffix, cols=cols)
         for k, v in newpics.items():
-            if k[:3] == bk:
+            if v['anchor'][:3] == bk:
                 picinfos[k+suffix] = v
     picinfos.loaded = True
 
