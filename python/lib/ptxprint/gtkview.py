@@ -123,7 +123,7 @@ _sensitivities = {
     "c_xrautocallers" :        ["t_xrcallers", "btn_resetXRcallers"],
     "c_glossaryFootnotes" :    ["c_firstOccurenceOnly"],
     # "c_usePicList" :           ["btn_editPicList"],
-    "c_useCustomFolder" :      ["btn_selectFigureFolder", "c_exclusiveFiguresFolder"],
+    "c_useCustomFolder" :      ["btn_selectFigureFolder", "c_exclusiveFiguresFolder", "lb_selectFigureFolder"],
     "c_processScript" :        ["c_processScriptBefore", "c_processScriptAfter", "btn_selectScript", "btn_editScript"],
     "c_usePrintDraftChanges" : ["btn_editChangesFile"],
     "c_useModsTex" :           ["btn_editModsTeX"],
@@ -280,7 +280,7 @@ class GtkViewModel(ViewModel):
         self.fileViews = []
         self.buf = []
         self.cursors = []
-        for i,k in enumerate(["PicList", "AdjList", "FinalSFM", "TeXfile", "XeTeXlog", "Settings"]):
+        for i,k in enumerate(["AdjList", "FinalSFM", "TeXfile", "XeTeXlog", "Settings"]):
             self.buf.append(GtkSource.Buffer())
             self.cursors.append((0,0))
             view = GtkSource.View.new_with_buffer(self.buf[i])
@@ -419,12 +419,9 @@ class GtkViewModel(ViewModel):
                 "If the number of options is too overwhelming then use\n" + \
                 "this switch to hide the more complex/advanced options."))
                       
-            # for c in ("c_showAdvancedTab", "c_showViewerTab"):
-                # self.builder.get_object(c).set_active(True)
-
-        for c in ("tb_Font", "tb_Advanced", "tb_ViewerEditor", "tb_Tabs", "tb_DiglotBorder", "tb_StyleEdtor", "fr_copyrightLicense",
-                  "r_book_module", "btn_chooseBibleModule", "lb_bibleModule",
-                  "r_book_dbl", "btn_chooseDBLbundle", "l_dblBundle", 
+        for c in ("tb_Font", "tb_Advanced", "tb_ViewerEditor", "tb_Tabs", "tb_DiglotBorder", "tb_StyleEdtor", "tb_Help",
+                  "fr_copyrightLicense", "r_book_module", "btn_chooseBibleModule", "lb_bibleModule",
+                  "r_book_dbl", "btn_chooseDBLbundle", "l_dblBundle", "c_fighiderefs", "lb_selectFigureFolder",
                   "l_missingPictureString", "l_imageTypeOrder", "t_imageTypeOrder", "fr_layoutSpecialBooks", "fr_layoutOther",
                   "s_colgutteroffset", "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "l_colgutteroffset",
                   "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", "c_exclusiveFiguresFolder", 
@@ -1062,7 +1059,7 @@ class GtkViewModel(ViewModel):
             fallback = "," + digname + fallback
         pangostr = '{}{} {} {}'.format(name, fallback, style, fsize)
         p = Pango.FontDescription(pangostr)
-        for w in ("t_clHeading", "t_tocTitle", "t_configNotes", "scroll_FinalSFM", "scroll_PicList", \
+        for w in ("t_clHeading", "t_tocTitle", "t_configNotes", "scroll_FinalSFM", \
                   "ecb_ftrcenter", "ecb_hdrleft", "ecb_hdrcenter", "ecb_hdrright", "t_fncallers", "t_xrcallers", \
                   "l_projectFullName", "t_plCaption", "t_plRef", "t_plAltText", "t_plCopyright", "textv_colophon"):
             self.builder.get_object(w).modify_font(p)
@@ -1645,18 +1642,16 @@ class GtkViewModel(ViewModel):
     def onSelectFigureFolderClicked(self, btn_selectFigureFolder):
         customFigFolder = self.fileChooser(_("Select the folder containing image files"),
                 filters = None, multiple = False, folder = True)
-        if len(customFigFolder):
-            self.customFigFolder = customFigFolder[0]
-            btn_selectFigureFolder.set_tooltip_text(str(customFigFolder[0]))
-            self.builder.get_object("c_useCustomFolder").set_active(True)
-        else:
-            self.customFigFolder = None
-            btn_selectFigureFolder.set_tooltip_text("")
-            self.builder.get_object("c_useCustomFolder").set_active(False)
-            self.builder.get_object("btn_selectFigureFolder").set_sensitive(False)
-        # MH: Setting this Tooltip works fine when you first select it, 
-        #     but we need to set it again after loading a config 
-        #    (otherwise users don't know what it is pointing to)
+        if customFigFolder is not None:
+            if len(customFigFolder):
+                self.customFigFolder = customFigFolder[0]
+                self.set("lb_selectFigureFolder", str(customFigFolder[0]))
+                self.set("c_useCustomFolder", True)
+            else:
+                self.customFigFolder = None
+                self.set("lb_selectFigureFolder", "")
+                self.set("c_useCustomFolder", False)
+                self.builder.get_object("btn_selectFigureFolder").set_sensitive(False)
 
     def _onPDFClicked(self, title, isSingle, basedir, ident, attr, btn):
         vals = self.fileChooser(title,
@@ -1786,7 +1781,6 @@ class GtkViewModel(ViewModel):
                 if deffilter:
                     dialog.set_filter(filter_in)
 
-        # dialog.set_keep_above(True) # causes problems of confirmation boxes being hidden in windows
         response = dialog.run()
         fcFilepath = None
         if response == Gtk.ResponseType.OK:
@@ -1794,7 +1788,6 @@ class GtkViewModel(ViewModel):
                 fcFilepath = [Path(dialog.get_filename()+"/")]
             else:
                 fcFilepath = [Path(x) for x in dialog.get_filenames()]
-        # dialog.set_keep_above(False) # matching above
         dialog.destroy()
         return fcFilepath
 
@@ -1917,9 +1910,6 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("nbk_Main").set_current_page(12)   # Switch to the Viewer tab
         self.builder.get_object("nbk_Viewer").set_current_page(4) # Display the tab with the .log file
         # self.builder.get_object("scroll_XeTeXlog").scroll_to_mark(self.buf[4].get_insert(), 0.0, True, 0.5, 0.5)
-
-    def onArchTempClicked(self, btn):
-        pass
 
     def onTabsClicked(self, btn):
         self.onSimpleClicked(btn)

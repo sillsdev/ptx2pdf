@@ -8930,6 +8930,7 @@ possible PDF file (usually in order to send by
 e-mail) or to produce a PDF to be printed
 without illustrations.</property>
                                             <property name="halign">start</property>
+                                            <property name="margin_left">56</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
                                           <packing>
@@ -8977,7 +8978,7 @@ all the required illustrations.</property>
                                           </object>
                                           <packing>
                                             <property name="left_attach">3</property>
-                                            <property name="top_attach">2</property>
+                                            <property name="top_attach">3</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -9024,7 +9025,7 @@ attribute.  Note: w= web, a=app, p=print.</property>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>
-                                            <property name="top_attach">0</property>
+                                            <property name="top_attach">2</property>
                                             <property name="width">2</property>
                                           </packing>
                                         </child>
@@ -9047,7 +9048,7 @@ missing (right).</property>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>
-                                            <property name="top_attach">2</property>
+                                            <property name="top_attach">3</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -9066,7 +9067,7 @@ for the required illustrations.</property>
                                           </object>
                                           <packing>
                                             <property name="left_attach">2</property>
-                                            <property name="top_attach">2</property>
+                                            <property name="top_attach">3</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -9089,7 +9090,7 @@ or
                                           </object>
                                           <packing>
                                             <property name="left_attach">2</property>
-                                            <property name="top_attach">3</property>
+                                            <property name="top_attach">2</property>
                                             <property name="width">2</property>
                                           </packing>
                                         </child>
@@ -9116,7 +9117,7 @@ NOTE: TIF files are converted internally to JPGs.</property>
                                           </object>
                                           <packing>
                                             <property name="left_attach">4</property>
-                                            <property name="top_attach">3</property>
+                                            <property name="top_attach">2</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -9141,7 +9142,7 @@ then enable this option).</property>
                                           </object>
                                           <packing>
                                             <property name="left_attach">4</property>
-                                            <property name="top_attach">2</property>
+                                            <property name="top_attach">3</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -9167,7 +9168,7 @@ then enable this option).</property>
                                           </object>
                                           <packing>
                                             <property name="left_attach">1</property>
-                                            <property name="top_attach">2</property>
+                                            <property name="top_attach">3</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -9188,7 +9189,24 @@ images, not just those with lines.</property>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>
-                                            <property name="top_attach">3</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="lb_selectFigureFolder">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="opacity">0.80000000000000004</property>
+                                            <property name="halign">end</property>
+                                            <property name="valign">start</property>
+                                            <property name="justify">right</property>
+                                            <property name="ellipsize">middle</property>
+                                            <property name="max_width_chars">128</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">4</property>
+                                            <property name="width">5</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -9243,7 +9261,7 @@ more than once (to update the list of page numbers).</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="orientation">vertical</property>
-                            <property name="position">220</property>
+                            <property name="position">230</property>
                             <property name="position_set">True</property>
                             <property name="wide_handle">True</property>
                             <child>
@@ -9505,6 +9523,7 @@ more than once (to update the list of page numbers).</property>
                                         <property name="receives_default">False</property>
                                         <property name="halign">start</property>
                                         <property name="valign">end</property>
+                                        <property name="margin_left">24</property>
                                         <property name="vexpand">True</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">c_previewLocn</property>
@@ -9523,6 +9542,7 @@ more than once (to update the list of page numbers).</property>
                                         <property name="receives_default">False</property>
                                         <property name="halign">start</property>
                                         <property name="valign">end</property>
+                                        <property name="margin_right">12</property>
                                         <property name="vexpand">True</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">c_previewImage</property>
@@ -9639,6 +9659,8 @@ Shortcut key: &lt;Ctrl-S&gt;</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="halign">start</property>
                                                 <property name="valign">start</property>
+                                                <property name="margin_left">6</property>
+                                                <property name="margin_right">12</property>
                                                 <property name="margin_top">3</property>
                                                 <property name="margin_bottom">3</property>
                                                 <property name="row_spacing">6</property>
@@ -10203,7 +10225,7 @@ of the images.</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="orientation">vertical</property>
-                            <property name="position">190</property>
+                            <property name="position">182</property>
                             <property name="position_set">True</property>
                             <property name="wide_handle">True</property>
                             <child>
@@ -11239,37 +11261,6 @@ in this publication, and also in other contexts.</property>
                             <property name="tab_fill">False</property>
                           </packing>
                         </child>
-                        <child>
-                          <object class="GtkScrolledWindow" id="scroll_PicList">
-                            <property name="sensitive">False</property>
-                            <property name="can_focus">True</property>
-                            <property name="no_show_all">True</property>
-                            <property name="hexpand">True</property>
-                            <property name="vexpand">True</property>
-                            <property name="shadow_type">in</property>
-                            <property name="overlay_scrolling">False</property>
-                            <child>
-                              <placeholder/>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="position">3</property>
-                          </packing>
-                        </child>
-                        <child type="tab">
-                          <object class="GtkLabel">
-                            <property name="sensitive">False</property>
-                            <property name="can_focus">False</property>
-                            <property name="no_show_all">True</property>
-                            <property name="tooltip_text" translatable="yes">If you would rather edit the raw PicList text
-then you may find this view helpful.</property>
-                            <property name="label" translatable="yes">Plain Text</property>
-                          </object>
-                          <packing>
-                            <property name="position">3</property>
-                            <property name="tab_fill">False</property>
-                          </packing>
-                        </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -11946,7 +11937,6 @@ files, for debugging</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">Add all the files needed for TeX to run this job without ptxprint. Only enable this if directed to do so.</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onArchTempClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -14744,7 +14734,7 @@ with a text editor (such as Notepad or NP++).</property>
                         <signal name="select-page" handler="onViewerChangePage" swapped="no"/>
                         <signal name="switch-page" handler="onViewerChangePage" swapped="no"/>
                         <child>
-                          <object class="GtkBox" id="tb_PicList">
+                          <object class="GtkBox" id="tb_FrontMatter">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="vexpand">True</property>
@@ -14755,7 +14745,7 @@ with a text editor (such as Notepad or NP++).</property>
                           </object>
                         </child>
                         <child type="tab">
-                          <object class="GtkLabel" id="l_PicList">
+                          <object class="GtkLabel" id="l_FrontMatter">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="tooltip_text" translatable="yes">A PicList is used to specify the 
@@ -14917,18 +14907,53 @@ are likely to have to re-do it all again.</property>
                             <property name="tab_fill">False</property>
                           </packing>
                         </child>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="position">12</property>
+                  </packing>
+                </child>
+                <child type="tab">
+                  <object class="GtkLabel" id="lb_ViewerEditor">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">The Viewer allows you to view and
+edit various control and log files.</property>
+                    <property name="halign">start</property>
+                    <property name="label" translatable="yes">View+Edit</property>
+                    <signal name="focus" handler="onRefreshViewerTextClicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="position">12</property>
+                    <property name="tab_fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox" id="tb_Help">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkFrame">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="valign">start</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
+                        <property name="margin_top">6</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="label_xalign">0.0099999997764825821</property>
                         <child>
-                          <object class="GtkFrame" id="tb_Links">
+                          <object class="GtkAlignment">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="margin_left">10</property>
-                            <property name="margin_right">6</property>
-                            <property name="margin_top">20</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="hexpand">True</property>
-                            <property name="vexpand">True</property>
-                            <property name="label_xalign">0.0099999997764825821</property>
-                            <property name="shadow_type">none</property>
+                            <property name="left_padding">12</property>
                             <child>
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
@@ -15306,7 +15331,6 @@ upload and send a link, OR email it to
 ptxprint_support@sil.org </property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="margin_left">15</property>
                                     <signal name="clicked" handler="onCreateZipArchiveClicked" swapped="no"/>
                                   </object>
                                   <packing>
@@ -15316,62 +15340,42 @@ ptxprint_support@sil.org </property>
                                 </child>
                               </object>
                             </child>
-                            <child type="label">
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Folders &amp; Other Helpful Info:</property>
-                                <attributes>
-                                  <attribute name="weight" value="bold"/>
-                                </attributes>
-                              </object>
-                            </child>
                           </object>
-                          <packing>
-                            <property name="position">6</property>
-                          </packing>
                         </child>
-                        <child type="tab">
-                          <object class="GtkLabel" id="l_Links">
+                        <child type="label">
+                          <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Links &amp; Help</property>
+                            <property name="label" translatable="yes">Helpful Links</property>
                           </object>
-                          <packing>
-                            <property name="position">6</property>
-                            <property name="tab_fill">False</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child type="tab">
-                          <placeholder/>
                         </child>
                       </object>
                       <packing>
-                        <property name="expand">True</property>
+                        <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">1</property>
+                        <property name="position">0</property>
                       </packing>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
                     </child>
                   </object>
                   <packing>
-                    <property name="position">12</property>
+                    <property name="position">13</property>
                   </packing>
                 </child>
                 <child type="tab">
-                  <object class="GtkLabel" id="lb_ViewerEditor">
+                  <object class="GtkLabel" id="lb_Help">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">The Viewer allows you to view and
-edit various control and log files.</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">View+Edit</property>
-                    <signal name="focus" handler="onRefreshViewerTextClicked" swapped="no"/>
+                    <property name="label" translatable="yes">Help</property>
                   </object>
                   <packing>
-                    <property name="position">12</property>
+                    <property name="position">13</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>

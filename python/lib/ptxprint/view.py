@@ -74,7 +74,7 @@ class ViewModel:
         "fancy/sectionheaderpdf":   ("sectionheader", False, "lb_inclSectionHeader"),
         "fancy/endofbookpdf":       ("endofbook", False, "lb_inclEndOfBook"),
         "fancy/versedecoratorpdf":  ("versedecorator", False, "lb_inclVerseDecorator"),
-        "document/customfigfolder": ("customFigFolder", False, None),
+        "document/customfigfolder": ("customFigFolder", False, "lb_selectFigureFolder"),
         "document/customoutputfolder": ("customOutputFolder", False, None)
     }
     _settingmappings = {
