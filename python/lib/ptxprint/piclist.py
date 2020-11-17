@@ -23,7 +23,7 @@ _form_structure = {
     'pgpos':    'fcb_plPgPos',
     'ref':      't_plRef',
     'alt':      't_plAltText',
-    'copy':    't_plCopyright',
+    'copy':     't_plCopyright',
     'mirror':   'fcb_plMirror',
     'hpos':     'fcb_plHoriz',
     'nlines':   's_plLines',
@@ -665,7 +665,7 @@ class PicInfo(dict):
         res = {}
         newfigs = {}
         for k, f in self.items():
-            if keys is not None and k[:3] not in keys:
+            if keys is not None and f['anchor'][:3] not in keys:
                 continue
             newk = filt(f['src']) if filt is not None else f['src']
             newfigs.setdefault(newk, []).append(k)
