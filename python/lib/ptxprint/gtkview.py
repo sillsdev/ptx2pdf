@@ -837,6 +837,44 @@ class GtkViewModel(ViewModel):
         self.picChecksView.savepic()
         self.picChecksView.loadpic(src)
 
+    def onGeneratePicListClicked(self, btn):
+        priority=self.get("fcb_diglotPicListSources")[:4]
+        bks2gen = self.getBooks()
+        if not len(bks2gen):
+            return
+        ab = self.getAllBooks()
+        bks = bks2gen
+        dialog = self.builder.get_object("dlg_generate")
+        self.set("l_generate_booklist", " ".join(bks))
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            if self.get("r_generate") == "all":
+                procbks = ab.keys()
+                doclear = True
+            else:
+                procbks = bks
+                doclear = False
+            rnd = self.get("c_randomPicPosn")
+            cols = 2 if self.get("c_doublecolumn") else 1
+            if self.diglotView is None:
+                PicInfoUpdateProject(self, procbks, ab, self.picinfos, random=rnd, cols=cols, doclear=doclear)
+            else:
+                mode = self.get("fcb_diglotPicListSources")
+                if mode in ("both", "left"):
+                    PicInfoUpdateProject(self, procbks, ab, self.picinfos,
+                                         suffix="L", random=rnd, cols=cols)
+                if mode in ("both", "right"):
+                    diallbooks = self.diglotView.getAllBooks()
+                    PicInfoUpdateProject(self.diglotView, procbks, diallbooks,
+                                         self.picinfos, suffix="R", random=rnd, cols=cols)
+            self.updatePicList(procbks)
+            self.savePics()
+            self.set("c_filterPicList", False)
+            dialog.hide()
+
+    def onFilterPicListClicked(self, btn):
+        self.updatePicList()
+
     def onGenerateClicked(self, btn):
         priority=self.get("fcb_diglotPicListSources")[:4]
         pg = self.get("nbk_Viewer")
@@ -846,49 +884,13 @@ class GtkViewModel(ViewModel):
             return
         bk = self.get("ecb_examineBook")
         bk = bk if bk in bks2gen else None
-        if pgid == "tb_PicList": # PicList
-            ab = self.getAllBooks()
-            if not self.get('r_book') == "multiple" and self.get("ecb_examineBook") != bks2gen[0]:
-                bks = [self.get("ecb_examineBook")]
-            else:
-                bks = bks2gen
-            dialog = self.builder.get_object("dlg_generate")
-            self.set("l_generate_booklist", " ".join(bks))
-            response = dialog.run()
-            if response == Gtk.ResponseType.OK:
-                if self.get("r_generate") == "all":
-                    procbks = ab.keys()
-                    doclear = True
-                else:
-                    procbks = bks
-                    doclear = False
-                rnd = self.get("c_randomPicPosn")
-                cols = 2 if self.get("c_doublecolumn") else 1
-                if self.diglotView is None:
-                    PicInfoUpdateProject(self, procbks, ab, self.picinfos, random=rnd, cols=cols, doclear=doclear)
-                else:
-                    mode = self.get("fcb_diglotPicListSources")
-                    if mode in ("both", "left"):
-                        PicInfoUpdateProject(self, procbks, ab, self.picinfos,
-                                             suffix="L", random=rnd, cols=cols)
-                    if mode in ("both", "right"):
-                        diallbooks = self.diglotView.getAllBooks()
-                        PicInfoUpdateProject(self.diglotView, procbks, diallbooks,
-                                             self.picinfos, suffix="R", random=rnd, cols=cols)
-                self.updatePicList(procbks)
-                self.savePics()
-                self.set("c_filterPicList", False)
-            dialog.hide()
-        elif pgid == "scroll_AdjList": # AdjList
+        if pgid == "scroll_AdjList": # AdjList
             self.generateAdjList()
         elif pgid == "scroll_FinalSFM" and bk is not None: # FinalSFM
             tmodel = TexModel(self, self.settings_dir, self.ptsettings, self.prjid)
             out = tmodel.convertBook(bk, self.working_dir, os.path.join(self.settings_dir, self.prjid))
             self.editFile(out, loc="wrk", pgid=pgid)
         self.onViewerChangePage(None,None,pg)
-
-    def onFilterPicListClicked(self, btn):
-        self.updatePicList()
 
     def onChangedMainTab(self, nbk_Main, scrollObject, pgnum):
         pgid = Gtk.Buildable.get_name(nbk_Main.get_nth_page(pgnum))
@@ -910,8 +912,7 @@ class GtkViewModel(ViewModel):
         for w in ["gr_editableButtons", "l_examineBook", "ecb_examineBook", "btn_Generate", 
                   "btn_saveEdits", "btn_refreshViewerText", "btn_viewEdit"]:
             self.builder.get_object(w).set_sensitive(True)
-        for w in ["btn_Generate", "c_filterPicList"]:
-            self.builder.get_object(w).set_sensitive(False)
+        self.builder.get_object("btn_Generate").set_sensitive(False)
         pgid = Gtk.Buildable.get_name(page)
         self.bookNoUpdate = True
         prjid = self.get("fcb_project")
@@ -925,20 +926,10 @@ class GtkViewModel(ViewModel):
         for o in ("l_examineBook", "ecb_examineBook"):
             self.builder.get_object(o).set_sensitive(pgid in allpgids[1:3])
 
-        fndict = {"tb_PicList" : ("PicLists", ".piclist"), "scroll_AdjList" : ("AdjLists", ".adj"), "scroll_FinalSFM" : ("", ""),
+        fndict = {"scroll_AdjList" : ("AdjLists", ".adj"), "scroll_FinalSFM" : ("", ""),
                   "scroll_TeXfile" : ("", ".tex"), "scroll_XeTeXlog" : ("", ".log"), "scroll_Settings": ("", ""), "tb_Links": ("", "")}
 
-        if pgid == "tb_PicList":   # PicList
-            self.builder.get_object("c_filterPicList").set_sensitive(True)
-            self.builder.get_object("btn_refreshViewerText").set_sensitive(False)
-            self.builder.get_object("btn_viewEdit").set_sensitive(False)
-            if self.get("t_invisiblePassword") == "":
-                genBtn.set_sensitive(True)
-            else:
-                self.builder.get_object("btn_saveEdits").set_sensitive(False)
-            fpath = None
-
-        elif pgid in ("scroll_AdjList", "scroll_FinalSFM"):  # (AdjList,SFM)
+        if pgid in ("scroll_AdjList", "scroll_FinalSFM"):  # (AdjList,SFM)
             fname = self.getBookFilename(bk, prjid)
             if pgid == "scroll_FinalSFM":
                 fpath = os.path.join(self.working_dir, fndict[pgid][0], fname)
@@ -969,10 +960,6 @@ class GtkViewModel(ViewModel):
                 self.builder.get_object("l_Settings").set_text("Settings")
                 return
 
-        elif pgid == "tb_Links": # Just show the Folders & Links page
-            self.builder.get_object("gr_editableButtons").set_sensitive(False)
-            return
-
         else:
             return
 
@@ -989,7 +976,6 @@ class GtkViewModel(ViewModel):
                                            \nClick on View/Edit... button to see more.")
             self.fileViews[pgnum][0].set_text(txt)
             self.onViewerFocus(self.fileViews[pgnum][1], None)
-            # self.fileViews[pgnum][1].grab_focus()
         else:
             set_tooltip(None)
             self.fileViews[pgnum][0].set_text(_("\nThis file doesn't exist yet.\n\nTry... \
@@ -1330,11 +1316,7 @@ class GtkViewModel(ViewModel):
         self.chapNoUpdate = False
 
     def onBookChange(self, cb_book):
-        # print("self.bookNoUpdate:", self.bookNoUpdate)
-        # if self.bookNoUpdate == True:
-            # return
         self.bk = self.get("ecb_book")
-        # self.set("c_prettyIntroOutline", False)
         if self.bk != "":
             self.chs = int(chaps.get(str(self.bk)))
             self.chapfrom = self.builder.get_object("ls_chapfrom")
@@ -1433,8 +1415,6 @@ class GtkViewModel(ViewModel):
         toc.set_sensitive(status)
         if not status:
             toc.set_active(False)
-        # for c in ("c_singlebook", "ecb_book", "l_chapfrom", "fcb_chapfrom", "l_chapto", "fcb_chapto"):
-            # self.builder.get_object(c).set_sensitive(not status)
         for i in self.notebooks['Viewer']:
             obj = self.builder.get_object("l_{1}".format(*i.split("_")))
             if obj is not None:

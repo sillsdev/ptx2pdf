@@ -306,9 +306,15 @@ class PicList:
                     pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, self.picrect.width - 6, self.picrect.height - 6)
                     pic.set_from_pixbuf(pixbuf)
                     picc.set_from_pixbuf(pixbuf)
+                    pic.set_tooltip_text(fpath)
+                    picc.set_tooltip_text(fpath)
+                    self.builder.get_object("t_plFilename").set_tooltip_text(fpath)
                 else:
                     pic.clear()
                     picc.clear()
+                    pic.set_tooltip_text("")
+                    picc.set_tooltip_text("")
+                    self.builder.get_object("t_plFilename").set_tooltip_text("")
                 self.mask_media(row)
                 if val != oldval:
                     row[_piclistfields.index('cleardest')] = True
