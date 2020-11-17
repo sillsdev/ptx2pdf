@@ -308,6 +308,7 @@ class ImgCredits(Snippet):
                 for f in m:
                     a = 'co' if f[2] == 'cn' else f[2] # merge Cook's OT & NT illustrations together
                     if a == '' and f[3] != '':
+                        print(f[3])
                         customStmt += [f[0]]
                         artpgs.setdefault(f[3], []).append(int(f[0]))
                     elif a == '':
@@ -315,7 +316,6 @@ class ImgCredits(Snippet):
                         artpgs.setdefault('zz', []).append(int(f[0]))
                     else:
                         artpgs.setdefault(a, []).append(int(f[0]))
-
             if len(artpgs):
                 artistWithMost = max(artpgs, key=lambda x: len(set(artpgs[x])))
             else:

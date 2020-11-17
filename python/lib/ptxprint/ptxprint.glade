@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -9213,7 +9213,15 @@ images, not just those with lines.</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <placeholder/>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="width_chars">12</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">1</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
                                         </child>
                                       </object>
                                     </child>
@@ -9246,6 +9254,22 @@ more than once (to update the list of page numbers).</property>
                                 <property name="position">0</property>
                               </packing>
                             </child>
+                            <child>
+                              <object class="GtkLabel" id="l_missingPictureString">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="valign">start</property>
+                                <property name="margin_top">6</property>
+                                <property name="margin_bottom">6</property>
+                                <property name="wrap">True</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
                           </object>
                         </child>
                         <child type="tab">
@@ -9260,7 +9284,7 @@ more than once (to update the list of page numbers).</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkPaned">
+                          <object class="GtkPaned" id="pn_details">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="orientation">vertical</property>
@@ -9268,7 +9292,7 @@ more than once (to update the list of page numbers).</property>
                             <property name="position_set">True</property>
                             <property name="wide_handle">True</property>
                             <child>
-                              <object class="GtkBox">
+                              <object class="GtkBox" id="bx_detailsTop">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="vexpand">True</property>
@@ -9630,7 +9654,7 @@ Shortcut key: &lt;Ctrl-S&gt;</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkBox">
+                              <object class="GtkBox" id="bx_detailsBottom">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="baseline_position">bottom</property>
@@ -10208,14 +10232,14 @@ Lines:</property>
                           </object>
                           <packing>
                             <property name="position">1</property>
-                            <property name="tab_fill">False</property>
                           </packing>
                         </child>
                         <child type="tab">
-                          <object class="GtkLabel">
+                          <object class="GtkLabel" id="lb_details">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">Use this tab to change the position, size or orientation
+                            <property name="tooltip_text" translatable="yes">Use this tab to change the 
+position, size or orientation
 of the images.</property>
                             <property name="label" translatable="yes">Details</property>
                           </object>
@@ -10225,7 +10249,7 @@ of the images.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkPaned">
+                          <object class="GtkPaned" id="pn_checklist">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="orientation">vertical</property>
@@ -10233,7 +10257,7 @@ of the images.</property>
                             <property name="position_set">True</property>
                             <property name="wide_handle">True</property>
                             <child>
-                              <object class="GtkBox">
+                              <object class="GtkBox" id="bx_checklistTop">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="vexpand">True</property>
@@ -10455,7 +10479,7 @@ status of the checking values.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkBox">
+                              <object class="GtkBox" id="bx_checklistBottom">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="vexpand">True</property>
@@ -10921,7 +10945,6 @@ in the printed output.</property>
                                                     <child>
                                                       <object class="GtkEntry" id="t_pubApprDate">
                                                         <property name="visible">True</property>
-                                                        <property name="sensitive">False</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="tooltip_text" translatable="yes">The most recent date that the
 consultant approval updated.</property>
@@ -11238,12 +11261,12 @@ consultant approval updated.</property>
                           </packing>
                         </child>
                         <child type="tab">
-                          <object class="GtkLabel">
+                          <object class="GtkLabel" id="lb_checklist">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="tooltip_text" translatable="yes">This tab encourages you to think through
 the appropriateness of the pictures used
-in this publication, and also in other contexts.</property>
+in this publication, as well as other contexts.</property>
                             <property name="label" translatable="yes">Checklist</property>
                           </object>
                           <packing>
@@ -11256,24 +11279,6 @@ in this publication, and also in other contexts.</property>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
                         <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="l_missingPictureString">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="halign">start</property>
-                        <property name="valign">start</property>
-                        <property name="margin_left">40</property>
-                        <property name="margin_right">40</property>
-                        <property name="margin_top">6</property>
-                        <property name="margin_bottom">6</property>
-                        <property name="wrap">True</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
                       </packing>
                     </child>
                   </object>

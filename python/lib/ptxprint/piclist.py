@@ -434,8 +434,8 @@ class PicChecks:
         self.parent.set("tb_picNotes", self.cfgProject.get(self.src, "notes", fallback=""))
         for cfg in (self.cfgShared, self.cfgProject):
             if cfg.getboolean(self.src, "approved", fallback=False):
-                self.parent.set("t_pubInits", cfg.get(self.src, "approved_by"))
-                self.parent.set("t_pubApprDate", cfg.get(self.src, "approved_date"))
+                self.parent.set("t_pubInits", cfg.get(self.src, "approved_by", fallback=""))
+                self.parent.set("t_pubApprDate", cfg.get(self.src, "approved_date", fallback=""))
                 self.parent.set("r_pubapprove", "scopeAny" if cfg == self.cfgProject else "scopeProject")
                 self.parent.set('c_pubApproved', True)
                 break

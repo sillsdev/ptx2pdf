@@ -446,11 +446,12 @@ class GtkViewModel(ViewModel):
                 "this switch to hide the more complex/advanced options."))
                       
         for c in ("tb_Font", "tb_Advanced", "tb_ViewerEditor", "tb_Tabs", "tb_DiglotBorder", "tb_StyleEdtor", "tb_Help",
-                  "fr_copyrightLicense", "r_book_module", "btn_chooseBibleModule", "lb_bibleModule",
+                  "fr_copyrightLicense", "r_book_module", "btn_chooseBibleModule", "lb_bibleModule", "tb_Pictures",
+                  # "bx_detailsTop", "bx_checklistTop", "bx_detailsBottom", "bx_checklistBottom", "lb_details", "lb_checklist", 
                   "r_book_dbl", "btn_chooseDBLbundle", "l_dblBundle", "c_fighiderefs", "lb_selectFigureFolder",
                   "l_missingPictureString", "l_imageTypeOrder", "t_imageTypeOrder", "fr_layoutSpecialBooks", "fr_layoutOther",
                   "s_colgutteroffset", "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "l_colgutteroffset",
-                  "c_cropborders", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", "c_exclusiveFiguresFolder",
+                  "c_fighiderefs", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", "c_exclusiveFiguresFolder",
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
                   "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection", "l_colgutteroffset", "fr_hyphenation",
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "c_fnOverride", "c_xrOverride",
@@ -461,7 +462,7 @@ class GtkViewModel(ViewModel):
                   "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "fcb_textDirection", "l_digits", "fcb_digits",
                   "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
                   "gr_fnAdvOptions", "c_figexclwebapp", "bx_horizRule", "l_glossaryMarkupStyle"):
-            # print(c)
+            print(c)
             self.builder.get_object(c).set_visible(val)
 
         # Resize Main UI Window appropriately
@@ -482,8 +483,7 @@ class GtkViewModel(ViewModel):
                 self.builder.get_object(c).set_visible(False)
                 self.builder.get_object(c).set_sensitive(False)
         for w in ("tb_", "lb_"):
-            for exp in ("Pictures", "Logging"):
-                self.builder.get_object("{}{}".format(w, exp)).set_visible(value)
+            self.builder.get_object("{}Logging".format(w)).set_visible(value)
 
     def addCR(self, name, index):
         v = self.builder.get_object(name)
