@@ -998,12 +998,12 @@ class GtkViewModel(ViewModel):
             self.picListView.updateinfo(self.picinfos)
         super().savePics(force=force)
 
+    def onSavePicListEdits(self, btn):
+        self.savePics()
+
     def onSaveEdits(self, btn):
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
         pgid = self.notebooks["Viewer"][pg]
-        if pg == 0:
-            self.savePics()
-            return
         buf = self.fileViews[pg][0]
         fpath = self.builder.get_object("l_{1}".format(*pgid.split("_"))).get_tooltip_text()
         titer = buf.get_iter_at_mark(buf.get_insert())

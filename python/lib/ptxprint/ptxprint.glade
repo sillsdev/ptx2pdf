@@ -9348,7 +9348,7 @@ more than once (to update the list of page numbers).</property>
                                           <object class="GtkTreeViewColumn">
                                             <property name="spacing">4</property>
                                             <property name="sizing">fixed</property>
-                                            <property name="title" translatable="yes">Width</property>
+                                            <property name="title" translatable="yes">Frame</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cr_size"/>
                                               <attributes>
@@ -9446,7 +9446,6 @@ more than once (to update the list of page numbers).</property>
                                           <object class="GtkTreeViewColumn">
                                             <property name="spacing">4</property>
                                             <property name="sizing">fixed</property>
-                                            <property name="max_width">3</property>
                                             <property name="title" translatable="yes">Media</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cr_media"/>
@@ -9606,6 +9605,7 @@ Shortcut key: &lt;Ctrl-S&gt;</property>
                                         <property name="margin_bottom">5</property>
                                         <property name="use_stock">True</property>
                                         <property name="always_show_image">True</property>
+                                        <signal name="clicked" handler="onSavePicListEdits" swapped="no"/>
                                         <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                                       </object>
                                       <packing>
@@ -9835,7 +9835,7 @@ Attribution:</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="halign">end</property>
-                                                    <property name="label" translatable="yes">Size:</property>
+                                                    <property name="label" translatable="yes">Frame Size:</property>
                                                     <property name="justify">right</property>
                                                   </object>
                                                   <packing>
