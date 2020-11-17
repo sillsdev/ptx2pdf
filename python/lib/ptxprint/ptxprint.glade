@@ -14734,14 +14734,10 @@ with a text editor (such as Notepad or NP++).</property>
                         <signal name="select-page" handler="onViewerChangePage" swapped="no"/>
                         <signal name="switch-page" handler="onViewerChangePage" swapped="no"/>
                         <child>
-                          <object class="GtkBox" id="tb_FrontMatter">
+                          <object class="GtkScrolledWindow" id="scroll_FrontMatter">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="vexpand">True</property>
-                            <property name="orientation">vertical</property>
-                            <child>
-                              <placeholder/>
-                            </child>
+                            <property name="can_focus">True</property>
+                            <property name="shadow_type">in</property>
                           </object>
                         </child>
                         <child type="tab">

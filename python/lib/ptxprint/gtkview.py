@@ -280,7 +280,7 @@ class GtkViewModel(ViewModel):
         self.fileViews = []
         self.buf = []
         self.cursors = []
-        for i,k in enumerate(["AdjList", "FinalSFM", "TeXfile", "XeTeXlog", "Settings"]):
+        for i,k in enumerate(["FrontMatter", "AdjList", "FinalSFM", "TeXfile", "XeTeXlog", "Settings"]):
             self.buf.append(GtkSource.Buffer())
             self.cursors.append((0,0))
             view = GtkSource.View.new_with_buffer(self.buf[i])
