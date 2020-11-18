@@ -600,34 +600,23 @@ class RunJob:
         newinf = cStringIO(rawdata)
         im = Image.open(newinf)
         if cropme:
-            # print("Cropme: ", infile)
             im = self.cropBorder(im)
-        try:
-            p = im.load()
-        except OSError:
-            print(_("Failed to load (image) file:"), infile)
-            return
-        try:
-            onlyRGBAimage = im.convert(fmta)
-            iw = im.size[0]
-            ih = im.size[1]
-        except OSError:
-            print(_("Failed to convert (image) file:"), infile)
-            return
-        # print("Orig ih={} iw={}".format(ih, iw))
-        # print("iw/ih = ", iw/ih)
+        p = im.load()
+        onlyRGBAimage = im.convert(fmta)
+        iw = im.size[0]
+        ih = im.size[1]
         if iw/ih < ratio:
             newWidth = int(ih * ratio)
             newimg = Image.new(fmta, (newWidth, ih), color=white)
             newimg.alpha_composite(onlyRGBAimage, (int((newWidth-iw)/2),0))
             iw = newimg.size[0]
             ih = newimg.size[1]
-            # print(">>>>>> Resized: ih={} iw={}".format(ih, iw))
             onlyRGBimage = newimg.convert(fmt)
             onlyRGBimage.save(outfile)
         else:
             onlyRGBimage = onlyRGBAimage.convert(fmt)
             onlyRGBimage.save(outfile)
+        return True
 
     def carefulCopy(self, ratio, srcpath, tgtfile, cropme):
         tmpPicPath = os.path.join(self.printer.working_dir, "tmpPics")
@@ -638,7 +627,6 @@ class RunJob:
             ih = im.size[1]
         except OSError:
             print(("Failed to get size of (image) file:"), srcpath)
-            return srcpath
         # If either the source image is a TIF (or) the proportions aren't right for page dimensions 
         # then we first need to convert to a JPG and/or pad with which space on either side
         if cropme or self.ispdfxa or iw/ih < ratio or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
