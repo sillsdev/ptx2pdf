@@ -13900,6 +13900,7 @@ properties for this style.</property>
                                       <object class="GtkEventBox">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
                                           <object class="GtkLabel" id="l_styFontSize">
                                             <property name="visible">True</property>
@@ -13907,7 +13908,6 @@ properties for this style.</property>
                                             <property name="halign">end</property>
                                             <property name="label" translatable="yes">Font Size:</property>
                                             <property name="justify">right</property>
-                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                           </object>
                                         </child>
                                       </object>
@@ -13920,6 +13920,7 @@ properties for this style.</property>
                                       <object class="GtkEventBox">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
                                           <object class="GtkLabel" id="l_styRaise">
                                             <property name="visible">True</property>
@@ -14170,12 +14171,12 @@ properties for this style.</property>
                                       <object class="GtkEventBox">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
                                           <object class="GtkLabel" id="l_styJustification">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="label" translatable="yes">Alignment:</property>
-                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                           </object>
                                         </child>
                                       </object>
@@ -14188,6 +14189,7 @@ properties for this style.</property>
                                       <object class="GtkEventBox">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
                                           <object class="GtkLabel" id="l_styFirstLineIndent">
                                             <property name="visible">True</property>
@@ -14196,7 +14198,6 @@ properties for this style.</property>
                                             <property name="label" translatable="yes">First Line
 Indent:</property>
                                             <property name="justify">right</property>
-                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                           </object>
                                         </child>
                                       </object>
@@ -14209,6 +14210,7 @@ Indent:</property>
                                       <object class="GtkEventBox">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
                                           <object class="GtkLabel" id="l_styLeftMargin">
                                             <property name="visible">True</property>
@@ -14217,7 +14219,6 @@ Indent:</property>
                                             <property name="label" translatable="yes">Left
 Margin:</property>
                                             <property name="justify">right</property>
-                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                           </object>
                                         </child>
                                       </object>
@@ -14230,6 +14231,7 @@ Margin:</property>
                                       <object class="GtkEventBox">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
                                           <object class="GtkLabel" id="l_styRightMargin">
                                             <property name="visible">True</property>
@@ -14238,7 +14240,6 @@ Margin:</property>
                                             <property name="label" translatable="yes">Right
 Margin:</property>
                                             <property name="justify">right</property>
-                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                           </object>
                                         </child>
                                       </object>
@@ -14251,6 +14252,7 @@ Margin:</property>
                                       <object class="GtkEventBox">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
                                           <object class="GtkLabel" id="l_styLineSpacing">
                                             <property name="visible">True</property>
@@ -14259,7 +14261,6 @@ Margin:</property>
                                             <property name="label" translatable="yes">Line
 Spacing:</property>
                                             <property name="justify">right</property>
-                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                           </object>
                                         </child>
                                       </object>
@@ -14272,6 +14273,7 @@ Spacing:</property>
                                       <object class="GtkEventBox">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
                                           <object class="GtkLabel" id="l_stySpaceBefore">
                                             <property name="visible">True</property>
@@ -14280,7 +14282,6 @@ Spacing:</property>
                                             <property name="label" translatable="yes">Space
 Before:</property>
                                             <property name="justify">right</property>
-                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                           </object>
                                         </child>
                                       </object>
@@ -14293,6 +14294,7 @@ Before:</property>
                                       <object class="GtkEventBox">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
                                           <object class="GtkLabel" id="l_stySpaceAfter">
                                             <property name="visible">True</property>
@@ -14491,6 +14493,7 @@ After:</property>
                                       <object class="GtkEventBox">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
                                           <object class="GtkLabel" id="l_styCallerStyle">
                                             <property name="visible">True</property>
@@ -14499,7 +14502,6 @@ After:</property>
                                             <property name="label" translatable="yes">Caller
 Style:</property>
                                             <property name="justify">right</property>
-                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                           </object>
                                         </child>
                                       </object>
@@ -14512,6 +14514,7 @@ Style:</property>
                                       <object class="GtkEventBox">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
                                           <object class="GtkLabel" id="l_styCallerRaise">
                                             <property name="visible">True</property>
@@ -14520,7 +14523,6 @@ Style:</property>
                                             <property name="label" translatable="yes">Caller
 Raise:</property>
                                             <property name="justify">right</property>
-                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                           </object>
                                         </child>
                                       </object>
@@ -14533,6 +14535,7 @@ Raise:</property>
                                       <object class="GtkEventBox">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
                                           <object class="GtkLabel" id="l_styNoteCallerStyle">
                                             <property name="visible">True</property>
@@ -14541,7 +14544,6 @@ Raise:</property>
                                             <property name="label" translatable="yes">Note Caller
 Style:</property>
                                             <property name="justify">right</property>
-                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                           </object>
                                         </child>
                                       </object>
@@ -14554,6 +14556,7 @@ Style:</property>
                                       <object class="GtkEventBox">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
                                           <object class="GtkLabel" id="l_styNoteCallerRaise">
                                             <property name="visible">True</property>
@@ -14562,7 +14565,6 @@ Style:</property>
                                             <property name="label" translatable="yes">Note Caller
 Raise:</property>
                                             <property name="justify">right</property>
-                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                           </object>
                                         </child>
                                       </object>
@@ -14575,6 +14577,7 @@ Raise:</property>
                                       <object class="GtkEventBox">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
                                           <object class="GtkLabel" id="l_NoteBlendInto">
                                             <property name="visible">True</property>
@@ -14583,7 +14586,6 @@ Raise:</property>
                                             <property name="label" translatable="yes">Note Blend
 Into Style:</property>
                                             <property name="justify">right</property>
-                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                           </object>
                                         </child>
                                       </object>
@@ -14643,12 +14645,13 @@ Into Style:</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="margin_bottom">6</property>
-                                <property name="label" translatable="yes">When a setting's name is in bold it indicates that 
+                                <property name="tooltip_text" translatable="yes">When a setting's name is in bold it indicates that 
 the value is different from what is in the stylesheet.
 
 Note that you can click on a bold setting name of 
 any parameter to reset it to the stylesheet value.</property>
+                                <property name="margin_bottom">6</property>
+                                <property name="label" translatable="yes">Why are some parameter names in bold?</property>
                                 <attributes>
                                   <attribute name="foreground" value="#5c5c35356666"/>
                                 </attributes>
