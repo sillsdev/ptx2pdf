@@ -482,4 +482,14 @@ class StyleEditor:
             self.sheet[self.marker] = deepcopy(self.basesheet[self.marker])
             self.editMarker()
         
-
+    def resetParam(self, label):
+        if label is None:
+            return
+        for k, v in stylemap.items():
+            if v[1] == label:
+                break
+        else:
+            return
+        old = self.basesheet.get(self.marker, {})
+        oldval = old.get(k, v[2])
+        self._setFieldVal(v, oldval, oldval)

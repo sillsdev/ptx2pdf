@@ -2127,4 +2127,5 @@ class GtkViewModel(ViewModel):
         # PicList.item_changed(self, w, "scale")
 
     def resetParam(self, btn, foo):
-        print("Yes! Reset this widget for me NOW")
+        label = Gtk.Buildable.get_name(btn.get_child())
+        self.styleEditorView.resetParam(label)
