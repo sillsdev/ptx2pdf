@@ -2126,5 +2126,5 @@ class GtkViewModel(ViewModel):
         # w = self.builder.get_object("s_plScale")
         # PicList.item_changed(self, w, "scale")
 
-    def on_l_styFontName_button_release_event(self, btn, foo):
+    def resetParam(self, btn, foo):
         print("Yes! Reset this widget for me NOW")
