@@ -462,7 +462,6 @@ class GtkViewModel(ViewModel):
                   "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "fcb_textDirection", "l_digits", "fcb_digits",
                   "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
                   "gr_fnAdvOptions", "c_figexclwebapp", "bx_horizRule", "l_glossaryMarkupStyle"):
-            print(c)
             self.builder.get_object(c).set_visible(val)
 
         # Resize Main UI Window appropriately
@@ -1251,13 +1250,14 @@ class GtkViewModel(ViewModel):
     def responseToDialog(entry, dialog, response):
         dialog.response(response)
 
-    def getFontNameFace(self, btnid):
+    def getFontNameFace(self, btnid, noStyles=False):
         btn = self.builder.get_object(btnid)
         lb = self.builder.get_object("tv_fontFamily")
         lb.set_cursor(0)
         dialog = self.builder.get_object("dlg_fontChooser")
         self.builder.get_object("t_fontSearch").set_text("")
         self.builder.get_object("t_fontSearch").has_focus()
+        self.builder.get_object("fcb_fontFaces").set_sensitive(not noStyles)
         # dialog.set_default_response(Gtk.ResponseType.OK)
         dialog.set_keep_above(True)
         
@@ -1267,9 +1267,12 @@ class GtkViewModel(ViewModel):
             ls, row = sel.get_selected()
             name = ls.get_value(row, 0)
             cb = self.builder.get_object("fcb_fontFaces")
-            style = cb.get_model()[cb.get_active()][0]
-            if style == "Regular":
+            if noStyles:
                 style = ""
+            else:
+                style = cb.get_model()[cb.get_active()][0]
+                if style == "Regular":
+                    style = ""
             setFontButton(btn, name, style)
         elif response == Gtk.ResponseType.CANCEL:
             pass
@@ -2051,7 +2054,7 @@ class GtkViewModel(ViewModel):
         self.onSimpleClicked(btn)
 
     def onFontStyclicked(self, btn):
-        self.getFontNameFace("bl_font_styFontName")
+        self.getFontNameFace("bl_font_styFontName", noStyles=True)
         self.onFontChanged(btn)
         
     def onColophonClicked(self, btn):

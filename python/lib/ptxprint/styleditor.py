@@ -341,7 +341,7 @@ class StyleEditor:
             value = getWidgetVal(newv[0], wtemp)
         elif v[0].startswith("col_"):
             value = coltotex(val)
-        elif key.startswith("bl_"):
+        elif v[0].startswith("bl_"):
             value = val[0]
         elif v[3] is not None:
             value = v[3](val)
@@ -383,7 +383,10 @@ class StyleEditor:
             return b is None if a is None else (False if b is None else a == b)
 
     def _str_val(self, v, key=None):
+        if key is not None and key.lower() == "fontname":
+            print(key, v)
         if isinstance(v, (set, list)):
+            print("{} items".format(len(v)))
             if key.lower() == "textproperties":
                 return " ".join(x.lower().title() if x else "" for x in sorted(v))
             return " ".join(x or "" for x in v)
