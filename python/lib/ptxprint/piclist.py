@@ -73,7 +73,6 @@ class PicList:
         self.checkmodel = self.model.filter_new()
         self.checkview.set_model(self.checkmodel)
         self.checkmodel.set_visible_func(self.checkfilter)
-        # self.listview = listview
         self.builder = builder
         self.parent = parent
         self.picinfo = None
@@ -83,7 +82,6 @@ class PicList:
         self.bookfilters = None
         self.checkinv = False
         self.checkfilt = 0
-        # _, self.curriter = self.selection.get_selected()
         for wid in (self.view, self.checkview):
             sel = wid.get_selection()
             sel.set_mode=Gtk.SelectionMode.SINGLE
@@ -92,8 +90,6 @@ class PicList:
             w = builder.get_object(v)
             sig = "changed"
             if v.startswith("s_"):
-                # sig = "focus-out-event" - MH: we need to connect this signal for typed in values
-                #                           but it gives an extra positional argument. So how to fix it?
                 sig = "value-changed"
                 w.connect("focus-out-event", self.item_changed, k)
             elif v.startswith("c_"):
@@ -127,7 +123,6 @@ class PicList:
     def load(self, picinfo, bks=None):
         self.picinfo = picinfo
         self.view.set_model(None)
-        # self.listview.set_model(None)
         self.model.clear()
         self.loading = True
         self.bookfilters = bks
@@ -160,7 +155,6 @@ class PicList:
                     row.append(val)
                 self.model.append(row)
         self.view.set_model(self.model)
-        # self.listview.set_model(self.model)
         self.loading = False
 
     def get(self, wid, default=None):
@@ -185,6 +179,7 @@ class PicList:
                 elif e == "cleardest":
                     if row[i] and 'dest file' in p:
                         del p['dest file']
+                    continue
                 else:
                     val = row[i]
                 p[e] = val

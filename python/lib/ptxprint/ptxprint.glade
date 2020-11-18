@@ -9258,8 +9258,9 @@ more than once (to update the list of page numbers).</property>
                               <object class="GtkLabel" id="l_missingPictureString">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="halign">start</property>
                                 <property name="valign">start</property>
+                                <property name="margin_left">30</property>
+                                <property name="margin_right">30</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="wrap">True</property>
@@ -9273,7 +9274,7 @@ more than once (to update the list of page numbers).</property>
                           </object>
                         </child>
                         <child type="tab">
-                          <object class="GtkLabel">
+                          <object class="GtkLabel" id="lb_settings">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="tooltip_text" translatable="yes">Overview of the Pictures used in the publication.</property>
@@ -13705,19 +13706,6 @@ properties for this style.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel" id="l_styFontName">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="halign">end</property>
-                                        <property name="label" translatable="yes">Font:</property>
-                                        <property name="justify">right</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
                                       <object class="GtkLabel" id="l_styFontSize">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
@@ -13901,6 +13889,26 @@ properties for this style.</property>
                                       <packing>
                                         <property name="left_attach">3</property>
                                         <property name="top_attach">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEventBox">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <signal name="button-release-event" handler="on_l_styFontName_button_release_event" swapped="no"/>
+                                        <child>
+                                          <object class="GtkLabel" id="l_styFontName">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="halign">end</property>
+                                            <property name="label" translatable="yes">Font:</property>
+                                            <property name="justify">right</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">0</property>
                                       </packing>
                                     </child>
                                     <child>

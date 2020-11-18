@@ -971,7 +971,12 @@ class GtkViewModel(ViewModel):
         fndict = {"scroll_AdjList" : ("AdjLists", ".adj"), "scroll_FinalSFM" : ("", ""),
                   "scroll_TeXfile" : ("", ".tex"), "scroll_XeTeXlog" : ("", ".log"), "scroll_Settings": ("", ""), "tb_Links": ("", "")}
 
-        if pgid in ("scroll_AdjList", "scroll_FinalSFM"):  # (AdjList,SFM)
+        if pgid == "scroll_FrontMatter": # This hasn't been built yet, but is coming soon!
+            self.fileViews[pgnum][0].set_text("\n"  +_(" PicLists have now moved! Look for Details & Checklist on the Pictures tab.") + \
+                                              "\n"*2+_(" In future a tool to help build and edit Front Matter will be included here."))
+            return
+
+        elif pgid in ("scroll_AdjList", "scroll_FinalSFM"):  # (AdjList,SFM)
             fname = self.getBookFilename(bk, prjid)
             if pgid == "scroll_FinalSFM":
                 fpath = os.path.join(self.working_dir, fndict[pgid][0], fname)
@@ -2118,3 +2123,5 @@ class GtkViewModel(ViewModel):
         # w = self.builder.get_object("s_plScale")
         # PicList.item_changed(self, w, "scale")
 
+    def on_l_styFontName_button_release_event(self, btn, foo):
+        print("Yes! Reset this widget for me NOW")
