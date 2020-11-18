@@ -9285,6 +9285,12 @@ more than once (to update the list of page numbers).</property>
                           </packing>
                         </child>
                         <child>
+                          <placeholder/>
+                        </child>
+                        <child type="tab">
+                          <placeholder/>
+                        </child>
+                        <child>
                           <object class="GtkPaned" id="pn_details">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>

@@ -447,6 +447,7 @@ class GtkViewModel(ViewModel):
                       
         for c in ("tb_Font", "tb_Advanced", "tb_ViewerEditor", "tb_Tabs", "tb_DiglotBorder", "tb_StyleEdtor", "tb_Help",
                   "fr_copyrightLicense", "r_book_module", "btn_chooseBibleModule", "lb_bibleModule", "tb_Pictures",
+                  # "pn_details", "pn_checklist",
                   # "bx_detailsTop", "bx_checklistTop", "bx_detailsBottom", "bx_checklistBottom", "lb_details", "lb_checklist", 
                   "r_book_dbl", "btn_chooseDBLbundle", "l_dblBundle", "c_fighiderefs", "lb_selectFigureFolder",
                   "l_missingPictureString", "l_imageTypeOrder", "t_imageTypeOrder", "fr_layoutSpecialBooks", "fr_layoutOther",
