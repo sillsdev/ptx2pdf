@@ -445,11 +445,9 @@ class GtkViewModel(ViewModel):
                 "If the number of options is too overwhelming then use\n" + \
                 "this switch to hide the more complex/advanced options."))
                       
-        for c in ("tb_Font", "tb_Advanced", "tb_ViewerEditor", "tb_Tabs", "tb_DiglotBorder", "tb_StyleEdtor", "tb_Help",
+        for c in ("tb_Font", "tb_Advanced", "tb_ViewerEditor", "tb_Tabs", "tb_DiglotBorder", "tb_StyleEdtor",
                   "fr_copyrightLicense", "r_book_module", "btn_chooseBibleModule", "lb_bibleModule", "tb_Pictures",
-                  # "pn_details", "pn_checklist",
-                  # "bx_detailsTop", "bx_checklistTop", "bx_detailsBottom", "bx_checklistBottom", "lb_details", "lb_checklist", 
-                  "r_book_dbl", "btn_chooseDBLbundle", "l_dblBundle", "c_fighiderefs", "lb_selectFigureFolder",
+                  "c_fighiderefs", "lb_selectFigureFolder", # "r_book_dbl", "btn_chooseDBLbundle", "l_dblBundle", 
                   "l_missingPictureString", "l_imageTypeOrder", "t_imageTypeOrder", "fr_layoutSpecialBooks", "fr_layoutOther",
                   "s_colgutteroffset", "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "l_colgutteroffset",
                   "c_fighiderefs", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", "c_exclusiveFiguresFolder",
@@ -464,6 +462,11 @@ class GtkViewModel(ViewModel):
                   "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
                   "gr_fnAdvOptions", "c_figexclwebapp", "bx_horizRule", "l_glossaryMarkupStyle"):
             self.builder.get_object(c).set_visible(val)
+            
+        # Show Hide specific Help items
+        for pre in ("l_", "lb_"):
+            for h in ("ptxprintdir", "prjdir", "settings_dir", "pdfViewer", "techFAQ", "reportBugs"): 
+                self.builder.get_object("{}{}".format(pre, h)).set_visible(val)
 
         # Resize Main UI Window appropriately
         if not val:

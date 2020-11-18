@@ -10598,6 +10598,7 @@ status of the checking values.</property>
                                                         <property name="halign">end</property>
                                                         <property name="draw_indicator">True</property>
                                                         <property name="group">r_picclear_yes</property>
+                                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
                                                         <property name="left_attach">4</property>
@@ -10733,6 +10734,7 @@ in the printed output.</property>
                                                         <property name="receives_default">False</property>
                                                         <property name="draw_indicator">True</property>
                                                         <property name="group">r_picreverse_no</property>
+                                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
                                                         <property name="left_attach">2</property>
@@ -15115,7 +15117,7 @@ edit various control and log files.</property>
                                 <property name="row_spacing">5</property>
                                 <property name="column_spacing">6</property>
                                 <child>
-                                  <object class="GtkLabel">
+                                  <object class="GtkLabel" id="l_prjdir">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">end</property>
@@ -15127,7 +15129,7 @@ edit various control and log files.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel">
+                                  <object class="GtkLabel" id="l_settings_dir">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">end</property>
@@ -15139,7 +15141,7 @@ edit various control and log files.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel">
+                                  <object class="GtkLabel" id="l_working_dir">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">end</property>
@@ -15151,7 +15153,7 @@ edit various control and log files.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel">
+                                  <object class="GtkLabel" id="l_pdfViewer">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">To use PTXprint effectively you need a good PDF viewer
@@ -15176,7 +15178,7 @@ Effective PDF viewer:</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLinkButton">
+                                  <object class="GtkLinkButton" id="lb_pdfViewer">
                                     <property name="label" translatable="yes">Visit SumatraPDF Download Page</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -15193,7 +15195,7 @@ Effective PDF viewer:</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel">
+                                  <object class="GtkLabel" id="l_reportBugs">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
@@ -15215,7 +15217,7 @@ Annoyances or Other Issues:</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLinkButton">
+                                  <object class="GtkLinkButton" id="lb_reportBugs">
                                     <property name="label" translatable="yes">Report an Issue via GitHub</property>
                                     <property name="name">Report an Issue with PTXprint</property>
                                     <property name="visible">True</property>
@@ -15233,7 +15235,7 @@ Annoyances or Other Issues:</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLinkButton">
+                                  <object class="GtkLinkButton" id="lb_homePage">
                                     <property name="label" translatable="yes">Visit PTXprint's Home Page to Download Latest Version</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -15250,7 +15252,7 @@ Annoyances or Other Issues:</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel">
+                                  <object class="GtkLabel" id="l_homePage">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">PTXprint does not have an auto-updating
@@ -15284,7 +15286,7 @@ Videos, FAQs and Latest Updates:</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel">
+                                  <object class="GtkLabel" id="l_techFAQ">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">For technical FAQs relating to how the TeX macros
@@ -15302,7 +15304,7 @@ to the PTX2PDF Macros:</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLinkButton">
+                                  <object class="GtkLinkButton" id="lb_techFAQ">
                                     <property name="label" translatable="yes">See PTX2PDF Macros FAQ</property>
                                     <property name="name">Refer to deeper technical help</property>
                                     <property name="visible">True</property>
@@ -15372,7 +15374,7 @@ to the PTX2PDF Macros:</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLinkButton">
+                                  <object class="GtkLinkButton" id="lb_faq">
                                     <property name="label" translatable="yes">Answers to Frequently Asked Questions (FAQs)</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -15389,7 +15391,7 @@ to the PTX2PDF Macros:</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel">
+                                  <object class="GtkLabel" id="l_faq">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">Frequently Asked Questions (FAQs) from
@@ -15423,7 +15425,7 @@ general users and common solutions.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel">
+                                  <object class="GtkLabel" id="l_ptxprintdir">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">Among other things, this folder contains:
@@ -15439,7 +15441,7 @@ general users and common solutions.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel">
+                                  <object class="GtkLabel" id="l_createZipArchiveXtra">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">In order to keep the size of the file to a minimum
@@ -15483,6 +15485,7 @@ upload and send a link, OR email it to
 ptxprint_support@sil.org </property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
+                                    <property name="margin_left">16</property>
                                     <signal name="clicked" handler="onCreateZipArchiveClicked" swapped="no"/>
                                   </object>
                                   <packing>

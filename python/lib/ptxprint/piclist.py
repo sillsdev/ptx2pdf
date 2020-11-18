@@ -188,7 +188,7 @@ class PicList:
                 del picinfos[k]
         return picinfos
 
-    def row_select(self, selection):
+    def row_select(self, selection): # Populate the form from the model
         if selection.count_selected_rows() != 1:
             return
         if self.currow is not None:
@@ -200,7 +200,7 @@ class PicList:
                     e.send_event = True
                     w.emit("focus-out-event", e)
         model, i = selection.get_selected()
-        for w in (self.view, self.checkview):
+        for w in (self.view, self.checkview): # keep both views in sync
             s = w.get_selection()
             if s != selection:
                 s.select_iter(i)
@@ -219,14 +219,14 @@ class PicList:
         else:
             self.parent.savePicChecks(i)
             self.currow = self.checkmodel[i]
-        pgpos = re.sub(r'^([PF])([lcr])([tb])', r'\1\3\2', self.currow[5])
+        pgpos = re.sub(r'^([PF])([lcr])([tb])', r'\1\3\2', self.currow[_pickeys['pgpos']])
         self.parent.pause_logging()
         self.loading = True
         for j, (k, v) in enumerate(_form_structure.items()): # relies on ordered dict
             if k == 'pgpos':
                 val = pgpos[:2] if pgpos[0:1] in "PF" else (pgpos[0:1] or "t")
             elif k == 'hpos':
-                if self.currow[3] == "span":
+                if self.currow[_pickeys['size']] == "span":
                     val = "-"
                 elif pgpos[0:1] in "PF":
                     val = pgpos[2:] or "c"
@@ -239,7 +239,7 @@ class PicList:
                 except (ValueError, TypeError):
                     val = 0
             elif k.startswith("med"):
-                val = v[-1].lower() in self.currow[_pickeys['media']] or "paw"
+                val = v[-1].lower() in (self.currow[_pickeys['media']] or "paw")
             elif k == 'mirror':
                 val = self.currow[j] or "None"
             else:
@@ -276,13 +276,13 @@ class PicList:
 
     def get_pgpos(self):
         res = "".join(self.get(k, default="") for k in _comblist[:-1]).replace("-", "")
-        if res.startswith("c"):
-            res += str(self.get(_comblist[-1]))
+        # if res.startswith("c"):
+            # res += str(self.get(_comblist[-1]))
         res = re.sub(r'([PF])([tcb])([lcr])', r'\1\3\2', res)
         if len(res) and res[0] in "PF":
             res = res.strip("c")
         lines = self.get("nlines", 0)
-        if lines > 0 and len(res) and res[0] == "p":
+        if lines > 0 and len(res) and res[0] in "pc":
             res += str(lines)
         return res
 
@@ -295,11 +295,11 @@ class PicList:
             key = "pgpos"
         elif key.startswith("med"):
             val = "".join(v[-1].lower() for k, v in _form_structure.items() if k.startswith("med") and self.get(v))
-            if self.currow is not None:
-                src = self.currow[_pickeys['src']][:2]
-                inf = _picLimitDefault.get(src.lower(), ("paw", "paw", "Default"))
-                if sorted(val) == sorted("paw"):
-                    val = ""
+            # if self.currow is not None:
+                # src = self.currow[_pickeys['src']][:2]
+                # inf = _picLimitDefault.get(src.lower(), ("paw", "paw", "Default"))
+            if sorted(val) == sorted("paw"):
+                val = ""
             key = "media"
         else:
             val = self.get(key)
@@ -335,16 +335,16 @@ class PicList:
                     picc.set_tooltip_text("")
                     self.builder.get_object("t_plFilename").set_tooltip_text("")
                 self.mask_media(self.currow)
-                if val != oldval:
+                if val != oldval: # New source implies new destination file
                     self.currow[_piclistfields.index('cleardest')] = True
-            elif key == "scale" and val != oldval:
+            elif key == "scale" and val != oldval: # Not sure why we need to do this
                 self.currow[_piclistfields.index('cleardest')] = True
             elif key == "mirror" and val == "None":
                 self.currow[fieldi] = ""
 
     def get_row_from_items(self):
         row = [self.get(k, default="") for k in _piclistfields]
-        if row[9] == "None":
+        if row[9] == "None": # mirror
             row[9] = ""
         row[_piclistfields.index('pgpos')] = self.get_pgpos()
         return row
@@ -354,14 +354,13 @@ class PicList:
             row = self.model[self.selection.get_selected()[1]][:]
         else:
             row = self.get_row_from_items()
-        row[_pickeys['ref']] = "row{}".format(newrowcounter)
+        row[_pickeys['key']] = "row{}".format(newrowcounter)
         newrowcounter += 1
         self.model.append(row)
         self.select_row(len(self.model)-1)
 
     def del_row(self):
         model, i = self.selection.get_selected()
-        row = model[i]
         del self.model[i]
         ind = model.get_path(i)
         if ind is None:
@@ -434,7 +433,7 @@ class PicChecks:
                 self.parent.set("r_pubapprove", "scopeAny" if cfg == self.cfgProject else "scopeProject")
                 self.parent.set('c_pubApproved', True)
                 break
-        else:
+        else: # this happens if we never got to the break above (neither was found)
             self.parent.set('c_pubApproved', False)
 
     def savepic(self):
@@ -443,10 +442,10 @@ class PicChecks:
         for (cfg, n, val, k) in self._allFields():
             val = self.parent.get(k)
             try:
-                cfg.set(self.src, n, val)
+                cfg.set(self.src, n, val)   # update the existing entry if it already exists
             except configparser.NoSectionError:
-                cfg.add_section(self.src)
-                cfg.set(self.src, n, val)
+                cfg.add_section(self.src)   # otherwise add a section/src first
+                cfg.set(self.src, n, val)   # and then throw in the values
         val = self.parent.get("c_pubApproved")
         cfg = self.cfgShared if self.parent.get("r_pubapprove") == "scopeAny" else self.cfgProject
         ocfg = self.cfgProject if self.parent.get("r_pubapprove") == "scopeAny" else self.cfgShared
@@ -548,7 +547,7 @@ class PicInfo(dict):
         self.model.savePics()
         self.inthread = False
 
-    def _fixPicinfo(self, vals):
+    def _fixPicinfo(self, vals): # USFM2 to USFM3 converter
         p = vals['pgpos']
         if all(x in "apw" for x in p):
             vals['media'] = p
@@ -582,16 +581,16 @@ class PicInfo(dict):
                 if suffix == "":
                     k = " ".join(r[:2])
                 elif len(r) > 1:
-                    k = "{}{} {}".format(r[0][:3], suffix, r[1])
+                    k = "{}{} {}".format(r[0][:2], suffix, r[1])  # :3 or :2 ?
                 else:
                     k = "{}{}".format(r[0], suffix)
                 pic = {'anchor': k, 'caption': r[2] if len(r) > 2 else ""}
                 self[self.newkey(suffix)] = pic
-                if len(m) > 6:
+                if len(m) > 6: # must be USFM2, so|grab|all|the|different|pieces!
                     for i, f in enumerate(m[1:]):
                         pic[posparms[i+1]] = f
                     self._fixPicinfo(pic)
-                else:
+                else: # otherwise USFM3, so find all the named params
                     for d in re.findall(r'(\S+)\s*=\s*"([^"]+)"', m[-1]):
                         pic[d[0]] = d[1]
         self.rmdups()
@@ -679,7 +678,7 @@ class PicInfo(dict):
         with open(fpath, "w", encoding="utf-8") as outf:
             outf.write(dat)
 
-    def rmdups(self):
+    def rmdups(self): # MH {checking I understand this right} Does this assume we can't have 2 pics with the same anchor?
         allkeys = {}
         for k,v in self.items():
             allkeys.setdefault(self.stripsp_re.sub(r"\1", v['anchor']), []).append(k)
