@@ -350,7 +350,7 @@ class GtkViewModel(ViewModel):
             .stybutton {font-size: 12px; padding: 4px 6px}
             progress, trough {min-height: 24px}
             .mainnb {background-color: #F0F0F0}
-            .mainnb tab {min-height: 0pt; margin: 0pt; padding-bottom: 15pt}
+            .mainnb tab {min-height: 0pt; margin: 0pt; padding-bottom: 12pt}
             .viewernb {background-color: #F0F0F0}
             .viewernb tab {min-height: 0pt; margin: 0pt; padding-bottom: 3pt}
             .smradio {font-size: 11px; padding: 1px 1px}
@@ -446,7 +446,7 @@ class GtkViewModel(ViewModel):
                 "this switch to hide the more complex/advanced options."))
                       
         for c in ("tb_Font", "tb_Advanced", "tb_ViewerEditor", "tb_Tabs", "tb_DiglotBorder", "tb_StyleEdtor",
-                  "fr_copyrightLicense", "r_book_module", "btn_chooseBibleModule", "lb_bibleModule", "tb_Pictures",
+                  "fr_copyrightLicense", "r_book_module", "btn_chooseBibleModule", "lb_bibleModule", # "tb_Pictures",
                   "c_fighiderefs", "lb_selectFigureFolder", # "r_book_dbl", "btn_chooseDBLbundle", "l_dblBundle", 
                   "l_missingPictureString", "l_imageTypeOrder", "t_imageTypeOrder", "fr_layoutSpecialBooks", "fr_layoutOther",
                   "s_colgutteroffset", "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "l_colgutteroffset",
@@ -462,6 +462,15 @@ class GtkViewModel(ViewModel):
                   "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
                   "gr_fnAdvOptions", "c_figexclwebapp", "bx_horizRule", "l_glossaryMarkupStyle"):
             self.builder.get_object(c).set_visible(val)
+
+        # Hide the Details and Checklist tabs on the Pictures tab
+        if not val:
+            self.builder.get_object("scr_picListEdit").set_visible(val)
+            self.builder.get_object("scr_picListEdit1").set_visible(val)
+            for x in ("checklist", "details"): 
+                self.builder.get_object("pn_{}".format(x)).set_visible(val)
+        else: # Still haven't found a way to turn these tabs back on without a segfault! :-(
+            pass
             
         # Show Hide specific Help items
         for pre in ("l_", "lb_"):
@@ -862,11 +871,16 @@ class GtkViewModel(ViewModel):
         # if disable filter, bks = None
         # MH: When I turn the filter off, then it crashes out and exits. Any ideas why?
         if self.picinfos is None:
+            print("self.picinfos is None - RETURNING")
             return
         filtered = self.get("c_filterPicList")
         if bks is None and filtered:
+            print("bks is None and filtered is ON")
             bks = self.getBooks()
+            print("bks:", bks)
+        print("About to call picinfos.updateView")
         self.picinfos.updateView(self.picListView, bks, filtered=filtered)
+        print("-"*50)
 
     def updatePicChecks(self, src):
         self.picChecksView.loadpic(src)
@@ -889,6 +903,7 @@ class GtkViewModel(ViewModel):
             return
         ab = self.getAllBooks()
         bks = bks2gen
+        print("bks:", bks)
         dialog = self.builder.get_object("dlg_generate")
         self.set("l_generate_booklist", " ".join(bks))
         response = dialog.run()
@@ -902,6 +917,8 @@ class GtkViewModel(ViewModel):
             rnd = self.get("c_randomPicPosn")
             cols = 2 if self.get("c_doublecolumn") else 1
             if self.diglotView is None:
+                print("PicInfoUpdateProject(self, procbks, ab, self.picinfos, random=rnd, cols=cols, doclear=doclear)")
+                print(procbks, ab, self.picinfos, rnd, cols, doclear)
                 PicInfoUpdateProject(self, procbks, ab, self.picinfos, random=rnd, cols=cols, doclear=doclear)
             else:
                 mode = self.get("fcb_diglotPicListSources")
@@ -912,9 +929,10 @@ class GtkViewModel(ViewModel):
                     diallbooks = self.diglotView.getAllBooks()
                     PicInfoUpdateProject(self.diglotView, procbks, diallbooks,
                                          self.picinfos, suffix="R", random=rnd, cols=cols)
+            print("In GeneratePicList, about to updatePicList({})".format(procbks))
             self.updatePicList(procbks)
             self.savePics()
-            self.set("c_filterPicList", False)
+            # self.set("c_filterPicList", False)
             dialog.hide()
 
     def onFilterPicListClicked(self, btn):
@@ -2133,3 +2151,23 @@ class GtkViewModel(ViewModel):
     def resetParam(self, btn, foo):
         label = Gtk.Buildable.get_name(btn.get_child())
         self.styleEditorView.resetParam(label)
+
+    def onPicShowDetails(self, btn):
+        val = True
+        # for x in ("details", "checklist"):
+        if True:
+            x = "details"
+            print("pn",x)
+            self.builder.get_object("pn_{}".format(x)).set_visible(val)
+            print("bx_Bottom",x)
+            self.builder.get_object("bx_{}Bottom".format(x)).set_visible(val)
+            print("bx_Top",x)
+            self.builder.get_object("bx_{}Top".format(x)).set_visible(val)
+            print("scr_picListEdit")
+            self.builder.get_object("scr_picListEdit").set_visible(val)
+            print("tv_picListEdit")
+            self.builder.get_object("tv_picListEdit").set_visible(val)
+            print("lb",x)
+            self.builder.get_object("lb_{}".format(x)).set_visible(val)
+        # print("scr_picListEdit1")
+        # self.builder.get_object("scr_picListEdit1").set_visible(val)
