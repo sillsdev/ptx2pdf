@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 
+<!-- Generated with glade 3.22.2 
 
 The MIT License (MIT)
 
@@ -9323,6 +9323,8 @@ more than once (to update the list of page numbers).</property>
                                     <property name="can_focus">True</property>
                                     <property name="margin_bottom">6</property>
                                     <property name="vexpand">True</property>
+                                    <property name="hscrollbar_policy">always</property>
+                                    <property name="vscrollbar_policy">always</property>
                                     <property name="shadow_type">in</property>
                                     <property name="overlay_scrolling">False</property>
                                     <property name="propagate_natural_height">True</property>

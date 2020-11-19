@@ -124,29 +124,12 @@ class PicList:
         return len(self.model) == 0
 
     def clear(self):
-        self.loading = True
-        while len(self.model) > 0:
-            it = self.model[-1].iter
-            print(len(self.model))
-            self.model.remove(it)
-        #self.model.clear()
-        self.loading = False
+        self.model.clear()
 
     def load(self, picinfo, bks=None):
-        print("in load. len(picinfo)={}, len(bks)={}".format(len(picinfo), len(bks) if bks is not None else 0))
-        #print_traceback()
         self.picinfo = picinfo
-        # print("self.view.set_model(None)")
-        # self.view.set_model(None)
-        # print("TRY: self.model.clear()")
-        self.loading = True
-        try:
-            print("IAFFM")
-            self.clear()
-        except:
-            print("Got an exception")
-            pass
-        print("IAFFM2")
+        self.view.set_model(None)
+        self.model.clear()
         self.bookfilters = bks
         if picinfo is not None:
             for k, v in sorted(picinfo.items(), key=lambda x:refKey(x[1]['anchor'])):
@@ -176,6 +159,7 @@ class PicList:
                         val = v.get(e, "")
                     row.append(val)
                 self.model.append(row)
+        self.view.set_model(self.model)
         self.loading = False
 
     def get(self, wid, default=None):
