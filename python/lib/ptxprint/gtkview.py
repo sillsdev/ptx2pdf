@@ -29,7 +29,6 @@ from ptxprint.minidialog import MiniDialog
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.utils import _, f_
 import configparser
-import traceback
 from threading import Thread
 
 pdfre = re.compile(r".+[\\/](.+)\.pdf")

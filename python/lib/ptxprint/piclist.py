@@ -1,7 +1,7 @@
 
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.view import refKey
-from ptxprint.utils import refKey, universalopen
+from ptxprint.utils import refKey, universalopen, print_traceback
 from ptxprint.texmodel import TexModel
 from gi.repository import Gtk, GdkPixbuf, GObject, Gdk
 from threading import Thread
@@ -99,9 +99,15 @@ class PicList:
         self.loading = False
 
     def checkfilter(self, model, i, data):
+        if self.loading:
+            return False
+        try:
+            v = model[i][_pickeys['src']]
+        except TypeError:
+            return False
         res = True
         if self.checkfilt > 0:
-            res = self.parent.picChecksFilter(model[i][_pickeys['src']], self.checkfilt)
+            res = self.parent.picChecksFilter(v, self.checkfilt)
         return not res if self.checkinv else res
 
     def setCheckFilter(self, invert, filt):
@@ -118,12 +124,29 @@ class PicList:
         return len(self.model) == 0
 
     def clear(self):
-        self.model.clear()
+        self.loading = True
+        while len(self.model) > 0:
+            it = self.model[-1].iter
+            print(len(self.model))
+            self.model.remove(it)
+        #self.model.clear()
+        self.loading = False
 
     def load(self, picinfo, bks=None):
+        print("in load. len(picinfo)={}, len(bks)={}".format(len(picinfo), len(bks) if bks is not None else 0))
+        #print_traceback()
         self.picinfo = picinfo
-        self.model.clear()
+        # print("self.view.set_model(None)")
+        # self.view.set_model(None)
+        # print("TRY: self.model.clear()")
         self.loading = True
+        try:
+            print("IAFFM")
+            self.clear()
+        except:
+            print("Got an exception")
+            pass
+        print("IAFFM2")
         self.bookfilters = bks
         if picinfo is not None:
             for k, v in sorted(picinfo.items(), key=lambda x:refKey(x[1]['anchor'])):

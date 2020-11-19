@@ -1,5 +1,5 @@
 import gettext
-import locale, codecs
+import locale, codecs, traceback
 import os, sys, re
 from inspect import currentframe
 from ptxprint.ptsettings import books
@@ -98,3 +98,5 @@ def universalopen(fname, rewrite=False, cp=65001):
         fh = open(fname, "r", encoding="utf-8", errors="ignore")
     return fh
 
+def print_traceback():
+    traceback.print_stack()
