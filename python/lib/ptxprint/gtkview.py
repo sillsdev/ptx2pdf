@@ -868,19 +868,13 @@ class GtkViewModel(ViewModel):
         return self.picListView.getinfo()
 
     def updatePicList(self, bks=None, priority="Both", output=False):
-        # if disable filter, bks = None
-        # MH: When I turn the filter off, then it crashes out and exits. Any ideas why?
         if self.picinfos is None:
-            print("self.picinfos is None - RETURNING")
             return
         filtered = self.get("c_filterPicList")
         if bks is None and filtered:
-            print("bks is None and filtered is ON")
             bks = self.getBooks()
             print("bks:", bks)
-        print("About to call picinfos.updateView")
         self.picinfos.updateView(self.picListView, bks, filtered=filtered)
-        print("-"*50)
 
     def updatePicChecks(self, src):
         self.picChecksView.loadpic(src)
@@ -903,7 +897,6 @@ class GtkViewModel(ViewModel):
             return
         ab = self.getAllBooks()
         bks = bks2gen
-        print("bks:", bks)
         dialog = self.builder.get_object("dlg_generate")
         self.set("l_generate_booklist", " ".join(bks))
         response = dialog.run()
@@ -917,8 +910,6 @@ class GtkViewModel(ViewModel):
             rnd = self.get("c_randomPicPosn")
             cols = 2 if self.get("c_doublecolumn") else 1
             if self.diglotView is None:
-                print("PicInfoUpdateProject(self, procbks, ab, self.picinfos, random=rnd, cols=cols, doclear=doclear)")
-                print(procbks, ab, self.picinfos, rnd, cols, doclear)
                 PicInfoUpdateProject(self, procbks, ab, self.picinfos, random=rnd, cols=cols, doclear=doclear)
             else:
                 mode = self.get("fcb_diglotPicListSources")
@@ -929,10 +920,9 @@ class GtkViewModel(ViewModel):
                     diallbooks = self.diglotView.getAllBooks()
                     PicInfoUpdateProject(self.diglotView, procbks, diallbooks,
                                          self.picinfos, suffix="R", random=rnd, cols=cols)
-            print("In GeneratePicList, about to updatePicList({})".format(procbks))
             self.updatePicList(procbks)
             self.savePics()
-            # self.set("c_filterPicList", False)
+            self.set("c_filterPicList", False)
             dialog.hide()
 
     def onFilterPicListClicked(self, btn):
@@ -2159,6 +2149,8 @@ class GtkViewModel(ViewModel):
             x = "details"
             print("pn",x)
             self.builder.get_object("pn_{}".format(x)).set_visible(val)
+            print("lb",x)
+            self.builder.get_object("lb_{}".format(x)).set_visible(val)
             print("bx_Bottom",x)
             self.builder.get_object("bx_{}Bottom".format(x)).set_visible(val)
             print("bx_Top",x)
@@ -2167,7 +2159,5 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("scr_picListEdit").set_visible(val)
             print("tv_picListEdit")
             self.builder.get_object("tv_picListEdit").set_visible(val)
-            print("lb",x)
-            self.builder.get_object("lb_{}".format(x)).set_visible(val)
         # print("scr_picListEdit1")
         # self.builder.get_object("scr_picListEdit1").set_visible(val)

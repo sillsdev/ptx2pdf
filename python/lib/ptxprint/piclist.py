@@ -121,22 +121,12 @@ class PicList:
         self.model.clear()
 
     def load(self, picinfo, bks=None):
-        print("in load. len(picinfo)={}".format(len(picinfo)))
         self.picinfo = picinfo
         self.model.clear()
-        # print("self.view.set_model(None)")
-        # self.view.set_model(None)
-        # print("TRY: self.model.clear()")
         self.loading = True
-        try:
-            self.model.clear()
-        except:
-            print("Got an exception")
-            pass
         self.bookfilters = bks
         if picinfo is not None:
             for k, v in sorted(picinfo.items(), key=lambda x:refKey(x[1]['anchor'])):
-                # print("k, v", k, v)
                 if bks is not None and len(bks) and v['anchor'][:3] not in bks:
                     continue
                 row = []
@@ -162,12 +152,8 @@ class PicList:
                     else:
                         val = v.get(e, "")
                     row.append(val)
-                # print("self.model.append(row)=", row)
                 self.model.append(row)
-        # print("self.view.set_model(self.model)")
-        # self.view.set_model(self.model)
         self.loading = False
-        print("load was successful! Wow, now where?")
 
     def get(self, wid, default=None):
         wid = _form_structure.get(wid, wid)
@@ -230,9 +216,7 @@ class PicList:
                 self.loading = False
                 m = w.get_model()
                 if m is not None:
-                    print("IAFFM")
                     p = m.get_path(fi)
-                    print("IAFFM2")
                     if p is not None:
                         w.scroll_to_cell(p)
         if selection == self.selection:
@@ -840,11 +824,8 @@ class PicInfo(dict):
                 v['disabled'] = True
 
     def updateView(self, view, bks=None, filtered=True):
-        print("in updateView.   view={},   bks={},   filtered={}".format(view, bks, filtered))
         if self.inthread:
-            print("self.inthread is True!")
             GObject.timeout_add_seconds(1, self.updateView, view, bks=bks, filtered=filtered)
-        print("About to view.load")
         view.load(self, bks=bks if filtered else None)
 
 def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False, cols=1, doclear=True):
