@@ -1,5 +1,20 @@
-PTXprint 1.3.3 Release Notes 
-13 November 2020
+PTXprint 1.3.8 Release Notes 
+19 November 2020
+
+Bug Fixes and Improvements in 1.3.8
+
+  * Re-arrange Pictures UI items and fix multiple bugs relating to picture handling
+
+  * Moved links to a new Help tab
+  
+  * Improvements to Style editor
+  
+  * Fixed #293 for more logical access to ToC settings
+  
+  * #290 Add notes in Pictures Checklist #290 
+  
+  * #291 Add filter for Checking Status of Pictures
+
 
 Bug Fixes and Improvements in 1.3.3
 

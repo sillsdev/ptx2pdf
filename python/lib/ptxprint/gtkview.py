@@ -2140,22 +2140,24 @@ class GtkViewModel(ViewModel):
         label = Gtk.Buildable.get_name(btn.get_child())
         self.styleEditorView.resetParam(label)
 
-    def onPicShowDetails(self, btn):
-        val = True
+    # def onPicShowDetails(self, btn):
+        # val = True
         # for x in ("details", "checklist"):
-        if True:
-            x = "details"
-            print("pn",x)
-            self.builder.get_object("pn_{}".format(x)).set_visible(val)
-            print("lb",x)
-            self.builder.get_object("lb_{}".format(x)).set_visible(val)
-            print("bx_Bottom",x)
-            self.builder.get_object("bx_{}Bottom".format(x)).set_visible(val)
-            print("bx_Top",x)
-            self.builder.get_object("bx_{}Top".format(x)).set_visible(val)
-            print("scr_picListEdit")
-            self.builder.get_object("scr_picListEdit").set_visible(val)
-            print("tv_picListEdit")
-            self.builder.get_object("tv_picListEdit").set_visible(val)
+            # print("pn",x)
+            # self.builder.get_object("pn_{}".format(x)).set_visible(val)
+            # print("lb",x)
+            # self.builder.get_object("lb_{}".format(x)).set_visible(val)
+            # print("bx_Bottom",x)
+            # self.builder.get_object("bx_{}Bottom".format(x)).set_visible(val)
+            # print("scr_Bottom",x)
+            # self.builder.get_object("scr_{}Bottom".format(x)).set_visible(val)
+            # print("bx_Top",x)
+            # self.builder.get_object("bx_{}Top".format(x)).set_visible(val)
+        # print("scr_picListEdit")
+        # self.builder.get_object("scr_picListEdit").set_visible(val)
+        # print("tv_picListEdit")
+        # self.builder.get_object("tv_picListEdit").set_visible(val)
         # print("scr_picListEdit1")
         # self.builder.get_object("scr_picListEdit1").set_visible(val)
+        # print("tv_picListEdit1")
+        # self.builder.get_object("tv_picListEdit1").set_visible(val)

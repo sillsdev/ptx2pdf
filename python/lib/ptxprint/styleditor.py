@@ -383,10 +383,7 @@ class StyleEditor:
             return b is None if a is None else (False if b is None else a == b)
 
     def _str_val(self, v, key=None):
-        if key is not None and key.lower() == "fontname":
-            print(key, v)
         if isinstance(v, (set, list)):
-            print("{} items".format(len(v)))
             if key.lower() == "textproperties":
                 return " ".join(x.lower().title() if x else "" for x in sorted(v))
             return " ".join(x or "" for x in v)

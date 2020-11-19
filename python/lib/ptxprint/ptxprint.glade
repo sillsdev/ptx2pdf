@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -396,7 +396,7 @@ THE SOFTWARE.
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 1.3.3</property>
+    <property name="version">Version 1.3.8</property>
     <property name="copyright">© 2020, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -9277,12 +9277,11 @@ more than once (to update the list of page numbers).</property>
                             <child>
                               <object class="GtkButton">
                                 <property name="label" translatable="yes">Show Details &gt;&gt;&gt;</property>
-                                <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
+                                <property name="no_show_all">True</property>
                                 <property name="halign">end</property>
                                 <property name="margin_right">12</property>
-                                <signal name="clicked" handler="onPicShowDetails" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -9326,7 +9325,6 @@ more than once (to update the list of page numbers).</property>
                                     <property name="hscrollbar_policy">always</property>
                                     <property name="vscrollbar_policy">always</property>
                                     <property name="shadow_type">in</property>
-                                    <property name="overlay_scrolling">False</property>
                                     <property name="propagate_natural_height">True</property>
                                     <child>
                                       <object class="GtkTreeView" id="tv_picListEdit">
@@ -9677,14 +9675,14 @@ Shortcut key: &lt;Ctrl-S&gt;</property>
                                 <property name="can_focus">False</property>
                                 <property name="baseline_position">bottom</property>
                                 <child>
-                                  <object class="GtkScrolledWindow">
+                                  <object class="GtkScrolledWindow" id="scr_detailsBottom">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="halign">start</property>
                                     <property name="hscrollbar_policy">never</property>
+                                    <property name="vscrollbar_policy">always</property>
                                     <property name="shadow_type">in</property>
                                     <property name="min_content_height">128</property>
-                                    <property name="overlay_scrolling">False</property>
                                     <property name="max_content_height">300</property>
                                     <child>
                                       <object class="GtkViewport">
@@ -10287,8 +10285,9 @@ of the images.</property>
                                     <property name="margin_bottom">6</property>
                                     <property name="hexpand">True</property>
                                     <property name="vexpand">True</property>
+                                    <property name="hscrollbar_policy">always</property>
+                                    <property name="vscrollbar_policy">always</property>
                                     <property name="shadow_type">in</property>
-                                    <property name="overlay_scrolling">False</property>
                                     <property name="propagate_natural_height">True</property>
                                     <child>
                                       <object class="GtkTreeView" id="tv_picListEdit1">
@@ -10503,14 +10502,14 @@ status of the checking values.</property>
                                 <property name="vexpand">True</property>
                                 <property name="baseline_position">bottom</property>
                                 <child>
-                                  <object class="GtkScrolledWindow">
+                                  <object class="GtkScrolledWindow" id="scr_checklistBottom">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="halign">start</property>
                                     <property name="hscrollbar_policy">never</property>
+                                    <property name="vscrollbar_policy">always</property>
                                     <property name="shadow_type">in</property>
                                     <property name="min_content_height">128</property>
-                                    <property name="overlay_scrolling">False</property>
                                     <property name="max_content_height">300</property>
                                     <child>
                                       <object class="GtkViewport">
