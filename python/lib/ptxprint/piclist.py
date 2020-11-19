@@ -122,7 +122,6 @@ class PicList:
 
     def load(self, picinfo, bks=None):
         self.picinfo = picinfo
-        self.view.set_model(None)
         self.model.clear()
         self.loading = True
         self.bookfilters = bks
@@ -154,7 +153,6 @@ class PicList:
                         val = v.get(e, "")
                     row.append(val)
                 self.model.append(row)
-        self.view.set_model(self.model)
         self.loading = False
 
     def get(self, wid, default=None):
@@ -189,7 +187,7 @@ class PicList:
         return picinfos
 
     def row_select(self, selection): # Populate the form from the model
-        if selection.count_selected_rows() != 1:
+        if self.loading or selection.count_selected_rows() != 1:
             return
         if self.currow is not None:
             for k, s in ((k, x) for k,x in _form_structure.items() if x.startswith("s_")):
@@ -203,10 +201,24 @@ class PicList:
         for w in (self.view, self.checkview): # keep both views in sync
             s = w.get_selection()
             if s != selection:
-                s.select_iter(i)
+                self.loading = True
+                if selection == self.selection:
+                    if not model.iter_is_valid(i):
+                        return
+                    (isin, fi) = w.get_model().convert_child_iter_to_iter(i)
+                else:
+                    fi = model.convert_iter_to_child_iter(i)
+                    isin = True
+                if isin:
+                    s.select_iter(fi)
+                else:
+                    s.unselect_all()
+                self.loading = False
                 m = w.get_model()
                 if m is not None:
-                    p = m.get_path(i)
+                    print("IAFFM")
+                    p = m.get_path(fi)
+                    print("IAFFM2")
                     if p is not None:
                         w.scroll_to_cell(p)
         if selection == self.selection:
@@ -217,7 +229,9 @@ class PicList:
         elif self.checkmodel.get_path(i).get_indices()[0] >= len(self.checkmodel):
             return
         else:
-            self.parent.savePicChecks(i)
+            self.parent.savePicChecks()
+            if not self.checkmodel.do_visible(self.checkmodel, self.checkmodel.get_model(), i):
+                return
             self.currow = self.checkmodel[i]
         pgpos = re.sub(r'^([PF])([lcr])([tb])', r'\1\3\2', self.currow[_pickeys['pgpos']])
         self.parent.pause_logging()
