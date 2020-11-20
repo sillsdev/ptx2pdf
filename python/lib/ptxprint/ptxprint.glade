@@ -409,6 +409,7 @@ please create an issue in Github.</property>
     <property name="authors">Martin Hosken (Project Lead, System Architect, TeX macros)
 Mark Penny (UI Developer, Testing + Documentation)
 David Gardner (TeX Macro Hacks, Tweaks + Bugfixing)
+David Coward (User Acceptance Testing)
 Nicolas Spalinger (Linux Packaging)
 
 Built on the foundation laid by:
@@ -4153,7 +4154,7 @@ Top:</property>
                                     <property name="margin_left">2</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                    <signal name="clicked" handler="on2colClicked" swapped="no"/>
                                   </object>
                                 </child>
                               </object>
@@ -9557,10 +9558,10 @@ more than once (to update the list of page numbers).</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkRadioButton" id="c_previewImage">
-                                        <property name="label" translatable="yes">Image</property>
+                                      <object class="GtkRadioButton" id="r_image_preview">
+                                        <property name="label" translatable="yes">Image
+Preview</property>
                                         <property name="visible">True</property>
-                                        <property name="sensitive">False</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="halign">start</property>
@@ -9568,7 +9569,8 @@ more than once (to update the list of page numbers).</property>
                                         <property name="margin_left">24</property>
                                         <property name="vexpand">True</property>
                                         <property name="draw_indicator">True</property>
-                                        <property name="group">c_previewLocn</property>
+                                        <property name="group">r_image_location</property>
+                                        <signal name="clicked" handler="onPicRadioChanged" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
@@ -9576,10 +9578,10 @@ more than once (to update the list of page numbers).</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkRadioButton" id="c_previewLocn">
-                                        <property name="label" translatable="yes">Locn</property>
+                                      <object class="GtkRadioButton" id="r_image_location">
+                                        <property name="label" translatable="yes">Location
+on Page</property>
                                         <property name="visible">True</property>
-                                        <property name="sensitive">False</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="halign">start</property>
@@ -9587,7 +9589,8 @@ more than once (to update the list of page numbers).</property>
                                         <property name="margin_right">12</property>
                                         <property name="vexpand">True</property>
                                         <property name="draw_indicator">True</property>
-                                        <property name="group">c_previewImage</property>
+                                        <property name="group">r_image_preview</property>
+                                        <signal name="clicked" handler="onPicRadioChanged" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
@@ -14967,7 +14970,7 @@ A Paragraph Adjust List needs to be in this format:
 MRK 2.7 +1    (i.e. expand the para at Mark 2.7 by one line) 
 MRK 3.20 -1   (i.e. shrink the para at Mark 3:20 by one line)
 %MARK 4.14 +1   (ignore this line - treat it as a comment)   
-MRK 5.8 +2    (i.e. expand the para at Mark 2.7 by two lines)
+MRK 5.8 +2    (i.e. expand the para at Mark 5.8 by two lines)
 etc.
 Note that adjusting paragraphs needs to be done right at the
 end when all other settings have been finalized. Otherwise you

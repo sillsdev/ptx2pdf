@@ -515,12 +515,12 @@ class GtkViewModel(ViewModel):
         if w is None:
             if not skipmissing and not (wid.startswith("_") or wid.startswith("r_")):
                 print(_("Can't get {} in the model").format(wid))
-            return super().get(wid)
+            return super().get(wid, default=default)
         if wid.startswith("r_"):
             bits = wid.split("_")[1:]
             if len(bits) > 1:
                 return w.get_active()
-            return super().get(wid)
+            return super().get(wid, default=default)
         return getWidgetVal(wid, w, default=default, asstr=asstr, sub=sub)
 
     def set(self, wid, value, skipmissing=False):
@@ -797,6 +797,10 @@ class GtkViewModel(ViewModel):
 
     def onSimpleClicked(self, btn):
         self.sensiVisible(Gtk.Buildable.get_name(btn))
+
+    def on2colClicked(self, btn):
+        self.onSimpleClicked(btn)
+        self.picListView.onRadioChanged()
 
     def onSimpleFocusClicked(self, btn):
         self.sensiVisible(Gtk.Buildable.get_name(btn), focus=True)
@@ -1118,7 +1122,11 @@ class GtkViewModel(ViewModel):
             self.onBookSelectorChange(btn)
             self.updateExamineBook()
             self.updateDialogTitle()
-        
+
+    def onPicRadioChanged(self, btn):
+        self.onRadioChanged(btn)
+        self.picListView.onRadioChanged()
+    
     def updateFakeLabels(self):
         status = self.get("c_fakebold") or self.get("c_fakeitalic") or self.get("c_fakebolditalic")
         for c in ("l_embolden", "l_slant"):

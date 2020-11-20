@@ -95,6 +95,7 @@ class PicList:
             elif v.startswith("c_"):
                 sig = "clicked"
             w.connect(sig, self.item_changed, k)
+        self.previewBuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(os.path.dirname(__file__), "picLocationPreviews.png"))
         self.clear()
         self.loading = False
 
@@ -269,6 +270,27 @@ class PicList:
         self.parent.unpause_logging()
         self.loading = False
 
+    _locGrid = {"1" : (0,0), "1-b" : (1,0), "1-cl" : (2,0), "1-pa" : (0,1)}
+    
+    def dispLocPreview(self, key):
+        x,y = self._locGrid.get(key, (7,3))
+        x = x * 212 + 14
+        y = y * 201 + 10
+        pic = self.previewBuf.new_subpixbuf(x,y,130,180)
+        return pic
+
+    def getLocnKey(self):
+        cols = 2 if self.get("c_doublecolumn") else 1
+        frSize = self.currow[_pickeys['size']]
+        pgposLocn = self.currow[_pickeys['pgpos']]
+        # print(cols, frSize, pgposLocn)
+        locnKey = "{}-{}-{}".format(cols, frSize, pgposLocn)
+        locnKey = re.sub(r'^\d\-(page|full)\-.+', r'\1', locnKey)
+        locnKey = re.sub(r'^1\-(col|span)\-', '1-', locnKey)
+        locnKey = re.sub(r'^(1\-[tb])[lcrio]$', r'\1', locnKey)
+        # print(" {}\n".format(locnKey))
+        return locnKey
+
     def select_row(self, i):
         if i >= len(self.model):
             i = len(self.model) - 1
@@ -326,33 +348,25 @@ class PicList:
             fieldi = _piclistfields.index(key)
             oldval = self.currow[fieldi]
             self.currow[fieldi] = val
+            r_image = self.parent.get("r_image", default="preview")
+            if r_image == "location":
+                locKey = self.getLocnKey()
+                pic = self.dispLocPreview(locKey)
+                self.setPreview(pic)
             if key == "src":
-                fpath = None
-                if self.picinfo is not None:
-                    fpath = self.picinfo.get_sourcefile(val, exclusive=self.parent.get("c_exclusiveFiguresFolder"))
-                pic = self.builder.get_object("img_picPreview")
-                picc = self.builder.get_object("img_piccheckPreview")
-                if fpath is not None:
-                    self.parent.updatePicChecks(val)       # only update checks if src exists
-                    if self.picrect is None:
-                        picframe = self.builder.get_object("fr_picPreview")
-                        self.picrect = picframe.get_allocation()
-                    # MH: I think what we had earlier, where the image filled the available space 
-                    #     was better (as the current view is too small, and doesn't grow when you
-                    #     stretch the dialog box bigger. Not sure how you changed it to be fixed.
-                    #     Was it a combination of Glade params and this next line, or something else?
-                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, self.picrect.width - 6, self.picrect.height - 6)
-                    pic.set_from_pixbuf(pixbuf)
-                    picc.set_from_pixbuf(pixbuf)
-                    pic.set_tooltip_text(fpath)
-                    picc.set_tooltip_text(fpath)
-                    self.builder.get_object("t_plFilename").set_tooltip_text(fpath)
-                else:
-                    pic.clear()
-                    picc.clear()
-                    pic.set_tooltip_text("")
-                    picc.set_tooltip_text("")
-                    self.builder.get_object("t_plFilename").set_tooltip_text("")
+                if r_image == "preview":
+                    fpath = None
+                    if self.picinfo is not None:
+                        fpath = self.picinfo.get_sourcefile(val, exclusive=self.parent.get("c_exclusiveFiguresFolder"))
+                    if fpath is not None:
+                        if self.picrect is None:
+                            picframe = self.builder.get_object("fr_picPreview")
+                            self.picrect = picframe.get_allocation()
+                        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, self.picrect.width - 6, self.picrect.height - 6)
+                        self.setPreview(pixbuf, tooltip=fpath)
+                        self.parent.updatePicChecks(val)       # only update checks if src exists
+                    else:
+                        self.setPreview(None)
                 self.mask_media(self.currow)
                 if val != oldval: # New source implies new destination file
                     self.currow[_piclistfields.index('cleardest')] = True
@@ -360,6 +374,24 @@ class PicList:
                 self.currow[_piclistfields.index('cleardest')] = True
             elif key == "mirror" and val == "None":
                 self.currow[fieldi] = ""
+
+    def setPreview(self, pixbuf, tooltip=None):
+        pic = self.builder.get_object("img_picPreview")
+        picc = self.builder.get_object("img_piccheckPreview")
+        if pixbuf is None:
+            pic.clear()
+            picc.clear()
+            tooltip = ""
+        else:
+            pic.set_from_pixbuf(pixbuf)
+            picc.set_from_pixbuf(pixbuf)
+        if tooltip is not None:
+            pic.set_tooltip_text(tooltip)
+            picc.set_tooltip_text(tooltip)
+            self.builder.get_object("t_plFilename").set_tooltip_text(tooltip)
+    
+    def onRadioChanged(self):
+        self.item_changed(None, "src")
 
     def get_row_from_items(self):
         row = [self.get(k, default="") for k in _piclistfields]
