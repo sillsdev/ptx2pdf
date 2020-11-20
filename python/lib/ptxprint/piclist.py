@@ -270,7 +270,12 @@ class PicList:
         self.parent.unpause_logging()
         self.loading = False
 
-    _locGrid = {"1" : (0,0), "1-b" : (1,0), "1-cl" : (2,0), "1-pa" : (0,1)}
+    _locGrid = {
+"1"   :    (0,0),"1-b":     (1,0),"1-cl":    (2,0),"1-cr":   (3,0),"1-hc":    (4,0),"1-hl":    (5,0),"1-hr":    (6,0),"1-p":     (7,0),
+"1-pa":    (0,1),"1-pb":    (1,1),"1-t":     (2,1),"2":      (3,1),"2-col-bl":(4,1),"2-col-br":(5,1),"2-col-cl":(6,1),"2-col-cr":(7,1),
+"2-col-hc":(0,2),"2-col-hl":(1,2),"2-col-hr":(2,2),"2-col-p":(3,2),"2-col-pa":(4,2),"2-col-pb":(5,2),"2-col-tl":(6,2),"2-col-tr":(7,2),
+"2-span-b":(0,3),"2-span-t":(1,3),"full":    (2,3),"page":   (3,3)
+}
     
     def dispLocPreview(self, key):
         x,y = self._locGrid.get(key, (7,3))
@@ -280,15 +285,20 @@ class PicList:
         return pic
 
     def getLocnKey(self):
-        cols = 2 if self.get("c_doublecolumn") else 1
-        frSize = self.currow[_pickeys['size']]
-        pgposLocn = self.currow[_pickeys['pgpos']]
-        # print(cols, frSize, pgposLocn)
-        locnKey = "{}-{}-{}".format(cols, frSize, pgposLocn)
-        locnKey = re.sub(r'^\d\-(page|full)\-.+', r'\1', locnKey)
-        locnKey = re.sub(r'^1\-(col|span)\-', '1-', locnKey)
-        locnKey = re.sub(r'^(1\-[tb])[lcrio]$', r'\1', locnKey)
-        # print(" {}\n".format(locnKey))
+        if self.get("c_doublecolumn"):
+            cols = 2
+        else:
+            cols = 1
+        if not self.get("c_plMediaP"):
+            locnKey = "1" if cols == 1 else "2"
+        else:
+            frSize = self.currow[_pickeys['size']]
+            pgposLocn = self.currow[_pickeys['pgpos']]
+            locnKey = "{}-{}-{}".format(cols, frSize, pgposLocn)
+            locnKey = re.sub(r'^\d\-(page|full)\-.+', r'\1', locnKey)
+            locnKey = re.sub(r'^1\-(col|span)\-', '1-', locnKey)
+            locnKey = re.sub(r'^(1\-[tb])[lcrio]$', r'\1', locnKey)
+            print(cols, frSize, pgposLocn, " ==> {}".format(locnKey))
         return locnKey
 
     def select_row(self, i):
