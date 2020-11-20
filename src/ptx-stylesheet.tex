@@ -505,6 +505,7 @@
 \def\m@rkverseL{\mark{\b@ok:\ch@pter:\print@bleVerse}\marks1{\b@ok:\ch@pter:\print@bleVerse}}
 \def\m@rkverseR{\mark{\b@okR:\ch@pter:\print@bleVerse}\marks2{\b@okR:\ch@pter:\print@bleVerse}}
 
+\def\n@xtparstart{}
 %+csty_addspecialhooks
 \begingroup
 \obeylines%
@@ -515,7 +516,7 @@
  \def\@h ##1^^M{\ifdiglot\ifdiglotL\gdef\b@ok{##1}\else\gdef\b@okR{##1}\fi\else\gdef\b@ok{##1}\fi\egroup}% store book id in \b@ok
  %
  \let\@CL=\cl%
- \def\do@CL{\global\ch@pterfalse\@CL}%
+ \def\do@CL{\global\ch@pterfalse\gdef\n@xtparstart{\pdfch@ptermark}\@CL}%
  \def\cl{\ifch@pter \let\n@xt=\do@CL \else \let\n@xt=\st@recl \fi \n@xt}%
  \def\st@recl{\bgroup\obeylines\@cl}% \cl gets stored as chapter label and changes \c format
  \def\@cl ##1^^M{\ifdiglot\ifdiglotL\gdef\ch@plabel{##1}\else\gdef\ch@plabelR{##1}\fi\else\gdef\ch@plabel{##1}\fi\egroup}%
