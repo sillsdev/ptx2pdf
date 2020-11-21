@@ -422,6 +422,10 @@ class GtkViewModel(ViewModel):
             self.pendingerror = None
         return True
 
+    def onMainConfigure(self, w, ev, *a):
+        if self.picListView is not None:
+            self.picListView.onResized()
+
     def onHideAdvancedSettingsClicked(self, c_hideAdvancedSettings, foo):
         val = self.get("c_hideAdvancedSettings")
         self.userconfig.set('init', 'expert', 'true' if val else 'false')

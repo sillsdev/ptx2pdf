@@ -95,7 +95,7 @@ class PicList:
             elif v.startswith("c_"):
                 sig = "clicked"
             w.connect(sig, self.item_changed, k)
-        self.previewBuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(os.path.dirname(__file__), "picLocationPreviews.png"))
+        #self.previewBuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(os.path.dirname(__file__), "picLocationPreviews.png"))
         self.clear()
         self.loading = False
 
@@ -401,6 +401,11 @@ class PicList:
             self.builder.get_object("t_plFilename").set_tooltip_text(tooltip)
     
     def onRadioChanged(self):
+        self.item_changed(None, "src")
+
+    def onResized(self):
+        picframe = self.builder.get_object("fr_picPreview")
+        self.picrect = picframe.get_allocation()
         self.item_changed(None, "src")
 
     def get_row_from_items(self):
