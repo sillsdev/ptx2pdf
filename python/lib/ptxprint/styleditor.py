@@ -197,12 +197,15 @@ class StyleEditor:
     def load(self, sheetfiles):
         if len(sheetfiles) == 0:
             return
+        foundp = False
         self.basesheet = Sheets(sheetfiles[:-1])
         self.sheet = Sheets(sheetfiles[-1:], base=self.basesheet)
         results = {"Tables": {"th": {"thc": {}, "thr": {}}, "tc": {"tcc": {}, "tcr": {}}},
                    "Peripheral Materials": {"zpa-": {}},
                    "Identification": {"toc": {}}}
         for k, v in sorted(self.sheet.items(), key=lambda x:(len(x[0]), x[0])):
+            if k == "p":
+                foundp = True
             cat = 'Other'
             if 'Name' in v:
                 m = name_reg.match(str(v['Name']))
@@ -219,6 +222,8 @@ class StyleEditor:
             triefit(k, results.setdefault(cat, {}), 1)
         self.treestore.clear()
         self._fill_store(results, None)
+        if foundp:
+            self.selectMarker("p")
 
     def _fill_store(self, d, parent):
         if parent is None:
@@ -248,6 +253,27 @@ class StyleEditor:
             return
         self.marker = model[i][0]
         self.editMarker()
+
+    def selectMarker(self, marker):
+        root = self.treestore.get_iter_first()
+        it = self._searchMarker(root, marker)
+        path = self.treestore.get_path(it)
+        print(path)
+        self.treeview.expand_to_path(path)
+        self.treeview.get_selection().select_path(path)
+        
+
+    def _searchMarker(self, it, marker):
+        while it is not None:
+            if self.treestore[it][0] == marker:
+                return it
+            if self.treestore.iter_has_child(it):
+                childit = self.treestore.iter_children(it)
+                ret = self._searchMarker(childit, marker)
+                if ret is not None:
+                    return ret
+            it = self.treestore.iter_next(it)
+        return None
 
     def editMarker(self):
         self.isLoading = True
