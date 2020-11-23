@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -3377,9 +3377,6 @@ saved or the configuration to be deleted.</property>
                                 <property name="position">0</property>
                               </packing>
                             </child>
-                            <child>
-                              <placeholder/>
-                            </child>
                           </object>
                         </child>
                         <child type="label">
@@ -4265,8 +4262,10 @@ main body text begins.</property>
                     </child>
                     <child>
                       <object class="GtkFrame" id="fr_layoutSpecialBooks">
+                        <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">3</property>
@@ -4506,6 +4505,8 @@ that should be typeset as a single column.</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
                         <property name="valign">start</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
                         <property name="margin_top">3</property>
                         <property name="margin_bottom">6</property>
                         <property name="label_xalign">0.019999999552965164</property>
@@ -5188,7 +5189,7 @@ Script:</property>
                                     </child>
                                     <child>
                                       <object class="GtkComboBox" id="fcb_script">
-                                        <property name="width_request">120</property>
+                                        <property name="width_request">110</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">In most cases XeTeX can auto-detect
@@ -5562,7 +5563,11 @@ spacing:</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Enabling letter space can help with space problems. Use only if needed. Values are in percentage of the text point size and get used everywhere.</property>
+                                        <property name="tooltip_text" translatable="yes">Enabling letter spacing allows the spaces between
+characters to be adjusted (usually by a very small
+percentage). This can help alleviate space problems.
+Values are in percentage of the text point size and 
+get used everywhere. Only use this if really needed! </property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -5699,6 +5704,11 @@ Break Locale:</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">Some languages that use complex scripts need
+the locale to be specified for proper line-breaking.
+For example, zh for Chinese, ko for Korean, etc.
+Note that Graphite fonts can also have line breaking
+rules which can be enabled by using the gr locale.</property>
                                         <property name="halign">end</property>
                                         <property name="draw_indicator">True</property>
                                         <signal name="clicked" handler="onSimpleFocusClicked" swapped="no"/>
@@ -5714,6 +5724,14 @@ Break Locale:</property>
                                         <property name="width_request">65</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">ja = Japanese
+km = Khmer
+ko = Korean
+my = Myanmar
+th = Thai
+zh = Chinese
+   OR
+gr = Graphite</property>
                                         <property name="halign">start</property>
                                         <property name="width_chars">6</property>
                                         <property name="max_width_chars">4</property>
@@ -7117,7 +7135,7 @@ the "Override..." setting above.
                                                     </child>
                                                     <child>
                                                       <object class="GtkEntry" id="t_fncallers">
-                                                        <property name="width_request">150</property>
+                                                        <property name="width_request">165</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="tooltip_text" translatable="yes">These callers should automatically be loaded from
@@ -7352,7 +7370,7 @@ the "Override..." setting above.</property>
                                                     </child>
                                                     <child>
                                                       <object class="GtkEntry" id="t_xrcallers">
-                                                        <property name="width_request">150</property>
+                                                        <property name="width_request">165</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="tooltip_text" translatable="yes">These callers should automatically be loaded from
@@ -8025,7 +8043,6 @@ secondary text as the Outer text.</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>
                                     <property name="row_spacing">4</property>
-                                    <property name="column_spacing">4</property>
                                     <child>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
@@ -9311,7 +9328,7 @@ more than once (to update the list of page numbers).</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="orientation">vertical</property>
-                            <property name="position">230</property>
+                            <property name="position">240</property>
                             <property name="position_set">True</property>
                             <property name="wide_handle">True</property>
                             <child>
@@ -10376,7 +10393,6 @@ of the images.</property>
                                     <property name="can_focus">False</property>
                                     <property name="margin_right">6</property>
                                     <property name="margin_top">6</property>
-                                    <property name="margin_bottom">6</property>
                                     <property name="row_spacing">6</property>
                                     <property name="column_spacing">3</property>
                                     <child>
@@ -10700,7 +10716,8 @@ what is happening in this image?</property>
                                                         <property name="can_focus">False</property>
                                                         <property name="tooltip_text" translatable="yes">For example, do the colors have the same meaning in the local culture? Is there anything in the background that is distracting from the story? Are there any objects, gestures, or other things that imply something unintended or that isn’t in the passage? Are there any anachronisms in the picture (a minaret in Bethlehem)?</property>
                                                         <property name="halign">start</property>
-                                                        <property name="label" translatable="yes">Is the image communicating anything that isn’t in the text?</property>
+                                                        <property name="label" translatable="yes">Does the image communicate something 
+that it should not in this particular context?</property>
                                                       </object>
                                                       <packing>
                                                         <property name="left_attach">1</property>
@@ -10713,7 +10730,7 @@ what is happening in this image?</property>
                                                         <property name="can_focus">False</property>
                                                         <property name="tooltip_text" translatable="yes">Do the images and their style fit with the type of publication, i.e. Scripture, children’s materials, lectionary, etc.? Are people and actions depicted in acceptable ways?</property>
                                                         <property name="halign">start</property>
-                                                        <property name="label" translatable="yes">Is this image culturally appropriate in this publication?</property>
+                                                        <property name="label" translatable="yes">Is the image appropriate for the publication?</property>
                                                       </object>
                                                       <packing>
                                                         <property name="left_attach">1</property>
@@ -10912,7 +10929,7 @@ in the printed output.</property>
                                                       <object class="GtkLabel">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">False</property>
-                                                        <property name="width_chars">3</property>
+                                                        <property name="width_chars">6</property>
                                                       </object>
                                                       <packing>
                                                         <property name="left_attach">0</property>
@@ -11005,7 +11022,7 @@ consultant approval updated.</property>
                                                         <property name="can_focus">False</property>
                                                         <child>
                                                           <object class="GtkRadioButton" id="r_pubapprove_scopeAny">
-                                                            <property name="label" translatable="yes">any</property>
+                                                            <property name="label" translatable="yes">any publication</property>
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="receives_default">False</property>
@@ -11020,7 +11037,7 @@ consultant approval updated.</property>
                                                         </child>
                                                         <child>
                                                           <object class="GtkRadioButton" id="r_pubapprove_scopeThis">
-                                                            <property name="label" translatable="yes">this</property>
+                                                            <property name="label" translatable="yes">this publication</property>
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="receives_default">False</property>
@@ -11035,7 +11052,8 @@ consultant approval updated.</property>
                                                         </child>
                                                         <child>
                                                           <object class="GtkCheckButton" id="c_pubApproved">
-                                                            <property name="label" translatable="yes">Approved to be used in</property>
+                                                            <property name="label" translatable="yes">Approved to
+be used in:</property>
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="receives_default">False</property>
@@ -11051,7 +11069,7 @@ consultant approval updated.</property>
                                                           <object class="GtkLabel">
                                                             <property name="visible">True</property>
                                                             <property name="can_focus">False</property>
-                                                            <property name="label" translatable="yes">publication     </property>
+                                                            <property name="label" translatable="yes">     </property>
                                                           </object>
                                                           <packing>
                                                             <property name="left_attach">2</property>
@@ -12960,10 +12978,10 @@ This is quite likely required for RTL languages.</property>
                               <object class="GtkCheckButton" id="c_diglotAdjCenter">
                                 <property name="label" translatable="yes">Adjust Center Header 
 Based on Column Widths</property>
-                                <property name="visible">True</property>
                                 <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
+                                <property name="no_show_all">True</property>
                                 <property name="tooltip_text" translatable="yes">If the column widths of the two sides of the
 diglot are unequal, PTXprint can ensure that
 the content of the center header matches the
@@ -12974,29 +12992,6 @@ different columns).</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
-                                <property name="top_attach">4</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkCheckButton" id="c_diglotSeparateNotes">
-                                <property name="label" translatable="yes">Separate Notes
-in Two Columns</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">If this option is disabled, the footnotes from
-both sides of the diglot get merged together
-and are interspersed one after the other.
-
-Depending on the scripts and text direction,
-this may or may not be desirable. If in doubt,
-leave this option checked ON.</property>
-                                <property name="halign">start</property>
-                                <property name="active">True</property>
-                                <property name="draw_indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
                                 <property name="top_attach">4</property>
                               </packing>
                             </child>
@@ -13041,6 +13036,29 @@ inactive until Diglot is enabled.</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
+                                <property name="top_attach">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_diglotSeparateNotes">
+                                <property name="label" translatable="yes">Separate Notes
+in Two Columns</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">If this option is disabled, the footnotes from
+both sides of the diglot get merged together
+and are interspersed one after the other.
+
+Depending on the scripts and text direction,
+this may or may not be desirable. If in doubt,
+leave this option checked ON.</property>
+                                <property name="halign">start</property>
+                                <property name="active">True</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">2</property>
                                 <property name="top_attach">3</property>
                               </packing>
                             </child>
@@ -13109,7 +13127,7 @@ options here to create a Diglot or Didoc.</property>
                         <property name="valign">end</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
-                        <property name="margin_top">12</property>
+                        <property name="margin_top">3</property>
                         <property name="margin_bottom">6</property>
                         <property name="label_xalign">0.039999999105930328</property>
                         <child>
@@ -13522,7 +13540,7 @@ been enabled.</property>
                     <property name="can_focus">False</property>
                     <child>
                       <object class="GtkScrolledWindow">
-                        <property name="width_request">330</property>
+                        <property name="width_request">310</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="shadow_type">in</property>
@@ -13749,7 +13767,7 @@ properties for this style.</property>
                                         <property name="placeholder_text">0.0</property>
                                         <property name="input_purpose">number</property>
                                         <property name="adjustment">a_styFontSize</property>
-                                        <property name="digits">1</property>
+                                        <property name="digits">2</property>
                                         <property name="numeric">True</property>
                                         <property name="update_policy">if-valid</property>
                                         <property name="value">1</property>
@@ -13763,6 +13781,7 @@ properties for this style.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_styFontScale">
                                         <property name="label" translatable="yes">Scale Relative to Parent</property>
+                                        <property name="width_request">165</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -13933,6 +13952,7 @@ properties for this style.</property>
                                         <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
                                           <object class="GtkLabel" id="l_styFontSize">
+                                            <property name="width_request">60</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="tooltip_text" translatable="yes">If you want the font sizes here in styles to equal
@@ -14233,6 +14253,7 @@ and size 8 will give you 7.33pt.</property>
                                         <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
                                           <object class="GtkLabel" id="l_styFirstLineIndent">
+                                            <property name="width_request">60</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="halign">end</property>
@@ -14691,6 +14712,7 @@ the value is different from what is in the stylesheet.
 
 Note that you can click on a bold setting name of 
 any parameter to reset it to the stylesheet value.</property>
+                                <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="label" translatable="yes">Why are some parameter names in bold?</property>
                                 <attributes>
