@@ -2049,7 +2049,6 @@ class GtkViewModel(ViewModel):
         lsp = self.builder.get_object("ls_plHoriz")
         fcb = self.builder.get_object("fcb_plHoriz")
         initVal = self.get("fcb_plHoriz")
-        print(initVal)
         valid = ""
         lsp.clear()
         for horiz in ["Left", "Center", "Right", "Inner", "Outer", "-"]:
@@ -2061,14 +2060,11 @@ class GtkViewModel(ViewModel):
                continue
             else:
                 valid += _horiz[horiz]
-                print(valid)
                 lsp.append([horiz, _horiz[horiz]])
         if initVal is not None:
             if initVal in valid:
                 self.set("fcb_plHoriz", initVal)
-                print("Still there")
             else:
-                print("No longer there")
                 fcb.set_active(0)
  
     def onPLrowActivated(self, *a):
@@ -2153,12 +2149,6 @@ class GtkViewModel(ViewModel):
         # Ensure that the anchor ref only uses . (and not :) as the ch.vs separator
         self.set("t_plAnchor", re.sub(r':', r'.', self.get('t_plAnchor')))
 
-    def onPlScaleFocusOut(self, plScale, foo):
-        return
-        # MH: This is where we need to tell the PicList editor that the info has changed for the spinner
-        # w = self.builder.get_object("s_plScale")
-        # PicList.item_changed(self, w, "scale")
-
     def resetParam(self, btn, foo):
         label = Gtk.Buildable.get_name(btn.get_child())
         self.styleEditorView.resetParam(label)
@@ -2171,24 +2161,3 @@ class GtkViewModel(ViewModel):
         if pgid == "pn_checklist":
             self.set("r_image", "preview")
 
-    # def onPicShowDetails(self, btn):
-        # val = True
-        # for x in ("details", "checklist"):
-            # print("pn",x)
-            # self.builder.get_object("pn_{}".format(x)).set_visible(val)
-            # print("lb",x)
-            # self.builder.get_object("lb_{}".format(x)).set_visible(val)
-            # print("bx_Bottom",x)
-            # self.builder.get_object("bx_{}Bottom".format(x)).set_visible(val)
-            # print("scr_Bottom",x)
-            # self.builder.get_object("scr_{}Bottom".format(x)).set_visible(val)
-            # print("bx_Top",x)
-            # self.builder.get_object("bx_{}Top".format(x)).set_visible(val)
-        # print("scr_picListEdit")
-        # self.builder.get_object("scr_picListEdit").set_visible(val)
-        # print("tv_picListEdit")
-        # self.builder.get_object("tv_picListEdit").set_visible(val)
-        # print("scr_picListEdit1")
-        # self.builder.get_object("scr_picListEdit1").set_visible(val)
-        # print("tv_picListEdit1")
-        # self.builder.get_object("tv_picListEdit1").set_visible(val)

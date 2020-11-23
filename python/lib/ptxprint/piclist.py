@@ -300,9 +300,7 @@ class PicList:
             locnKey = re.sub(r'^(.+)i(\d?)$', r'\1l\2', locnKey)
             locnKey = re.sub(r'^(.+)o(\d?)$', r'\1r\2', locnKey)
             locnKey = re.sub(r'^(1\-[tb])[lcrio]$', r'\1', locnKey)
-            print(cols, frSize, pgposLocn, " ==> {}".format(locnKey))
             locnKey = re.sub(r'\d$', '', locnKey)
-            print(cols, frSize, pgposLocn, " ==> {}\n".format(locnKey))
         return locnKey
 
     def select_row(self, i):
