@@ -2049,6 +2049,8 @@ class GtkViewModel(ViewModel):
         lsp = self.builder.get_object("ls_plHoriz")
         fcb = self.builder.get_object("fcb_plHoriz")
         initVal = self.get("fcb_plHoriz")
+        print(initVal)
+        valid = ""
         lsp.clear()
         for horiz in ["Left", "Center", "Right", "Inner", "Outer", "-"]:
             if horiz == "Center" and \
@@ -2058,7 +2060,16 @@ class GtkViewModel(ViewModel):
                     fcb.set_active(0)
                continue
             else:
+                valid += _horiz[horiz]
+                print(valid)
                 lsp.append([horiz, _horiz[horiz]])
+        if initVal is not None:
+            if initVal in valid:
+                self.set("fcb_plHoriz", initVal)
+                print("Still there")
+            else:
+                print("No longer there")
+                fcb.set_active(0)
  
     def onPLrowActivated(self, *a):
         self.set("nbk_PicList", 1)
@@ -2151,6 +2162,14 @@ class GtkViewModel(ViewModel):
     def resetParam(self, btn, foo):
         label = Gtk.Buildable.get_name(btn.get_child())
         self.styleEditorView.resetParam(label)
+
+    def onPLpageChanged(self, nbk_PicList, scrollObject, pgnum):
+        page = nbk_PicList.get_nth_page(pgnum)
+        if page == None:
+            return
+        pgid = Gtk.Buildable.get_name(page)
+        if pgid == "pn_checklist":
+            self.set("r_image", "preview")
 
     # def onPicShowDetails(self, btn):
         # val = True

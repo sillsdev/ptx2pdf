@@ -8886,6 +8886,9 @@ content of Headers and Footers.</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="vexpand">True</property>
+                        <signal name="change-current-page" handler="onPLpageChanged" swapped="no"/>
+                        <signal name="select-page" handler="onPLpageChanged" swapped="no"/>
+                        <signal name="switch-page" handler="onPLpageChanged" swapped="no"/>
                         <child>
                           <object class="GtkBox" id="bx_picList">
                             <property name="visible">True</property>
@@ -9387,7 +9390,7 @@ more than once (to update the list of page numbers).</property>
                                             <property name="resizable">True</property>
                                             <property name="spacing">4</property>
                                             <property name="sizing">fixed</property>
-                                            <property name="fixed_width">280</property>
+                                            <property name="fixed_width">250</property>
                                             <property name="title" translatable="yes">Caption</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cr_caption"/>
@@ -12106,7 +12109,6 @@ PDF/X-1a files are regular PDF 1.3 or PDF 1.4 files to which a number of restric
 and so on...</property>
                                     <property name="halign">start</property>
                                     <property name="margin_top">6</property>
-                                    <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>

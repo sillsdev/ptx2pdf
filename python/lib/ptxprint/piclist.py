@@ -95,7 +95,7 @@ class PicList:
             elif v.startswith("c_"):
                 sig = "clicked"
             w.connect(sig, self.item_changed, k)
-        #self.previewBuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(os.path.dirname(__file__), "picLocationPreviews.png"))
+        self.previewBuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(os.path.dirname(__file__), "picLocationPreviews.png"))
         self.clear()
         self.loading = False
 
