@@ -4435,7 +4435,9 @@ of books that only have a single chapter (OBA, PHM,
 columns creates all sorts of
 unforeseen issues and whitespace.
 This option allows unbalanced
-poetry to improve the overall look.</property>
+poetry to improve the overall look.
+It also allows Widow and Orphan 
+lines to occur.</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
@@ -15204,7 +15206,7 @@ Effective PDF viewer:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">7</property>
+                                    <property name="top_attach">8</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
@@ -15222,7 +15224,7 @@ Effective PDF viewer:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
-                                    <property name="top_attach">7</property>
+                                    <property name="top_attach">8</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -15243,7 +15245,7 @@ Annoyances or Other Issues:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">9</property>
+                                    <property name="top_attach">10</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
@@ -15262,7 +15264,7 @@ Annoyances or Other Issues:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
-                                    <property name="top_attach">9</property>
+                                    <property name="top_attach">10</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -15330,7 +15332,7 @@ to the PTX2PDF Macros:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">8</property>
+                                    <property name="top_attach">9</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
@@ -15349,7 +15351,7 @@ to the PTX2PDF Macros:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
-                                    <property name="top_attach">8</property>
+                                    <property name="top_attach">9</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -15418,7 +15420,7 @@ to the PTX2PDF Macros:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
-                                    <property name="top_attach">6</property>
+                                    <property name="top_attach">7</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -15433,7 +15435,7 @@ general users and common solutions.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">6</property>
+                                    <property name="top_attach">7</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
@@ -15489,7 +15491,7 @@ all the required files and then send it to them:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">10</property>
+                                    <property name="top_attach">11</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
@@ -15521,7 +15523,40 @@ ptxprint_support@sil.org </property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
-                                    <property name="top_attach">10</property>
+                                    <property name="top_attach">11</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLinkButton" id="lb_community">
+                                    <property name="label" translatable="yes">Get help from other PTXprint users</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="focus_on_click">False</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">end</property>
+                                    <property name="relief">none</property>
+                                    <property name="uri">https://community.scripture.software.sil.org/c/ptxprint/27</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">6</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_community">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">Frequently Asked Questions (FAQs) from
+general users and common solutions.</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">PTXprint User Community:</property>
+                                    <property name="justify">right</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">6</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                               </object>
