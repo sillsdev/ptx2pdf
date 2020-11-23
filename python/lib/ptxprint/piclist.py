@@ -399,6 +399,16 @@ class PicList:
             pic.set_tooltip_text(tooltip)
             picc.set_tooltip_text(tooltip)
             self.builder.get_object("t_plFilename").set_tooltip_text(tooltip)
+
+    def drawPreview(self, wid, cr):
+        if self.previewScales:
+            pixbuf = self.pixbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
+        else:
+            pixbuf = self.pixbuf
+        cr.set_source_pixbuf(pixbuf, 0, 0)
+        cr.paint()
+        return False
+
     
     def onRadioChanged(self):
         self.item_changed(None, "src")

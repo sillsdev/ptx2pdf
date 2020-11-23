@@ -37,8 +37,8 @@ stylemap = {
 }
 
 topLevelOrder = ('Identification', 'Introduction', 'Chapters & Verses', 'Paragraphs', 'Poetry',
-    'Titles & Headings', 'Tables', 'Lists', 'Footnotes', 'Cross References', 'Special Text', 
-    'Character Styling', 'Breaks', 'Peripheral Materials', 'Peripheral References', 
+    'Titles & Headings', 'Tables', 'Lists', 'Footnotes', 'Cross References', 'Special Text',
+    'Character Styling', 'Breaks', 'Peripheral Materials', 'Peripheral References',
     'Extended Study Content', 'Milestones', 'Other', 'Obsolete & Deprecated')
 catorder = {k: i for i, k in enumerate(topLevelOrder)}
 
@@ -175,12 +175,24 @@ class StyleEditor:
             if v[0].startswith("l_"):
                 continue
             w = self.builder.get_object(v[0])
-            key = stylediverts.get(k, k)
+            #key = stylediverts.get(k, k)
             (pref, name) = v[0].split("_", 1)
             signal = widgetsignals.get(pref, "changed")
-            w.connect(signal, self.item_changed, key)
+            w.connect(signal, self.item_changed, k)
         self.isLoading = False
         self.marker = None
+
+    def get(self, key, default=None):
+        w = self.builder.get_object(key)
+        if w is None:
+            return None
+        return getWidgetVal(key, w, default)
+
+    def set(self, key, value):
+        w = self.builder.get_object(key)
+        if w is None:
+            return
+        setWidgetVal(key, w, value)
 
     def load(self, sheetfiles):
         if len(sheetfiles) == 0:
@@ -242,6 +254,9 @@ class StyleEditor:
         data = self.sheet.get(self.marker, {})
         old = self.basesheet.get(self.marker, {})
         oldval = None
+        if 'LineSpacing' not in old and 'BaseLine' not in old:
+            old['LineSpacing'] = "1"
+            data['LineSpacing'] = "1"
         for k, v in stylemap.items():
             if k == 'Marker':
                 val = "\\" + self.marker
@@ -268,6 +283,7 @@ class StyleEditor:
                         self._setFieldVal(v, olddat, f)
                         v = stylemap[v[3](False)]
                         break
+                old[" "+k] = olddat
             else:
                 val = data.get(k, v[2])
                 oldval = old.get(k, v[2])
@@ -304,10 +320,12 @@ class StyleEditor:
             if v[0].startswith("bl_"):
                 if val is None:
                     return
-                val = (val, "")
+                newval = (val, "")
             elif v[0].startswith("col_"):
-                val = textocol(val)
-            setWidgetVal(v[0], w, val if v[4] is None else v[4](val))
+                newval = textocol(val)
+            else:
+                newval = val
+            setWidgetVal(v[0], w, newval if v[4] is None else v[4](newval))
         if v[1] is not None:
             ctxt = self.builder.get_object(v[1]).get_style_context()
             if val != oldval:
@@ -315,13 +333,32 @@ class StyleEditor:
             else:
                 ctxt.remove_class("changed")
 
+    def _convertabs(self, key, valstr):
+        def asfloat(v, d):
+            try:
+                return float(v)
+            except TypeError:
+                return d
+        if key == "FontSize":
+            basesize = float(self.get("s_fontsize", 12.))
+            res = asfloat(valstr, 1.) * basesize
+        elif key == "FontScale":
+            basesize = float(self.get("s_fontsize", 12.))
+            res = asfloat(valstr, basesize) / basesize
+        elif key == "LineSpacing":
+            linespacing = float(self.get("s_linespacing", 12.))
+            res = asfloat(valstr, linespacing) / linespacing
+        elif key == "BaseLine":
+            linespacing = float(self.get("s_linespacing", 12.))
+            res = asfloat(valstr, 1.) * linespacing
+        return res
+
     def item_changed(self, w, key):
         if self.isLoading:
             return
         data = self.sheet[self.marker]
         v = stylemap[key]
-        w = self.builder.get_object(v[0])  # since LineSpacing triggers the checkbutton
-        val = getWidgetVal(v[0], w)
+        val = self.get(v[0], w)
         if key == '_publishable':
             if val:
                 add, rem = "non", ""
@@ -330,37 +367,47 @@ class StyleEditor:
             data['TextProperties'].remove(rem+'publishable')
             data['TextProperties'].add(add+'publishable')
             return
-        elif key.startswith("_"):
-            newv = stylemap[v[3](False)]
-            key = v[3](val)
-            isset = getWidgetVal(v[0], w)
-            other = v[3](not isset)
+        elif key in stylediverts:
+            newk = stylediverts[key]
+            newv = stylemap[newk]
+            isset = self.get(newv[0], newv[2])
+            key = newv[3](isset)
+            other = newv[3](not isset)
             if other in data:
                 del data[other]
-            wtemp = self.builder.get_object(newv[0])
-            value = getWidgetVal(newv[0], wtemp)
+            value = val
         elif v[0].startswith("col_"):
             value = coltotex(val)
         elif v[0].startswith("bl_"):
             value = val[0]
+        elif key.startswith("_"):
+            newkey = v[3](val)
+            otherkey = v[3](not val)
+            data[newkey] = self._convertabs(newkey, data.get(otherkey, None))
+            self.set(stylemap.get(newkey, stylemap.get(otherkey, [None]))[0], data[newkey])
+            if otherkey in data:
+                del data[otherkey]
+            value = val
         elif v[3] is not None:
             value = v[3](val)
         else:
             value = val
-        data[key] = value
+        if not key.startswith("_"):
+            data[key] = value
         if v[1] is not None:
             ctxt = self.builder.get_object(v[1]).get_style_context()
-            oldval = self.basesheet.get(self.marker, {}).get(key, v[2])
+            if key.startswith("_"):
+                oldval = self.basesheet.get(" "+key, False)
+            else:
+                oldval = self.basesheet.get(self.marker, {}).get(key, v[2])
             if v[0].startswith("s_"):
-                diff = float(oldval) != float(value)
+                diff = abs(float(oldval) - float(value)) > 0.05
             else:
                 diff = oldval != value
             if diff:
                 ctxt.add_class("changed")
-                # print("Adding 'changed' to {} because {} != {}".format(v[1], value, oldval))
             else:
                 ctxt.remove_class("changed")
-                # print("Removing 'changed' to {} because {} == {}".format(v[1], value, oldval))
 
     def _list_usfms(self, treeiter=None):
         if treeiter is None:
@@ -378,7 +425,7 @@ class StyleEditor:
         try:
             fa = float(a)
             fb = float(b)
-            return fa == fb
+            return abs(fa - fb) < 0.005
         except (ValueError, TypeError):
             return b is None if a is None else (False if b is None else a == b)
 
@@ -387,6 +434,8 @@ class StyleEditor:
             if key.lower() == "textproperties":
                 return " ".join(x.lower().title() if x else "" for x in sorted(v))
             return " ".join(x or "" for x in v)
+        elif isinstance(v, float):
+            return re.sub(r"(:\.0)?0$", "", str(int(v * 100) / 100.))
         else:
             return str(v)
 
