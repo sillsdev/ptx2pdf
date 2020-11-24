@@ -192,7 +192,7 @@ we don't treat carriage return as a carriage return because we don't want a
 double line break to be considered a paragraph break. Instead we treat
 everything as one very long line, until we get to the end of the character
 style. Next we start testing `\n@xt` which contains the character after the
-style marker. If it is `*` then call the end character style routine. Notice we
+style marker. If it is ```*``` then call the end character style routine. Notice we
 reuse `\n@xt` here. Otherwise we call an appropriate macro according to the type
 of space following the marker. If there is no space, but somehow they have
 managed to close a marker some other way, we don't consume the character and

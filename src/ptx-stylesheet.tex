@@ -166,8 +166,8 @@
    \fi
    %\trace{s}{1. Checking \p@ssParams}%
    \ifx\mspr@fix\empty\else
-     %\edef\@lso{\mspr@fix}%
-     %\exp@ndmspr@fix{\let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E \edef\p@ssParams{\@ut,\p@ssParams}}%
+     %If we allow special styling of milestone+marker, then:
+     \exp@ndmspr@fix{\let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E \edef\p@ssParams{\@ut,\p@ssParams}}%
    \fi
    %\trace{s}{2. Checking \p@ssParams}%
    \ifx\c@tprefix\empty\else
@@ -593,7 +593,7 @@
 %-csty_stack
 
 %+csty_mstack
-% marker stack operations (mcstack)
+% marker (comma) stack operations (mcstack)
 \gdef\mcstack{+,} 
 \let\mcstack@mpty\mcstack
 \def\cstackempty{,}
@@ -610,17 +610,26 @@
     \x@\mcstackdown\mcstack\E\ifx\mcstack\empty\xdef\mcstack{+,}\fi}
 
 % milestone stack (MScstack)
-\gdef\MScstack{+,}  
-\let\MScstack@mpty\MScstack
-\def\MScup{\x@\cstackup\MScstack\E}
-\def\MScdown{\x@\cstackdown\MScstack\E}
-\def\MScpush#1{\traceNum{s}{push #1 onto milestone stack \MScstack}\xdef\MScstack{#1,\MScstack}}
+%\gdef\MScstack{+,}  
+%\let\MScstack@mpty\MScstack
+%\def\MScup{\x@\cstackup\MScstack\E}
+%\def\MScdown{\x@\cstackdown\MScstack\E}
+%\def\MScpush#1{\traceNum{s}{push #1 onto milestone stack \MScstack}\xdef\MScstack{#1,\MScstack}}
 
 % Test to see if a new THING pops other things.
 \def\mct@stname#1#2{#1-mcp@ps-#2}
 \def\mcp@pCont#1#2{\edef\t@@st{\mct@stname{#1}{#2}}\x@\xdef\csname\t@@st\endcsname{Y}} % Pop and continue
 \def\mcp@pEnd#1#2{\edef\t@@st{\mct@stname{#1}{#2}}\x@\xdef\csname\t@@st\endcsname{P}} % Pop and end.
-\def\mcp@pStore#1#2{\edef\t@@st{\mct@stname{#1}{#2}}\x@\xdef\csname\t@@st\endcsname{S}} % Store and continue
+\def\mcnp@pSt@re#1#2{\edef\t@@st{\mct@stname{#1}{#2}}\x@\xdef\csname\t@@st\endcsname{S}} % no pop, Store and continue
+%defs for comparison purposes 
+\def\ss@Char{C}%
+\def\ss@ChrP{c}%
+\def\ss@Para{P}%
+\def\ss@Note{N}%
+\def\ss@Mstn{m}%
+\def\ss@Ctgy{t}%
+\def\ss@Sbar{b}%
+
 \mcp@pCont{P}{P}% new P pops P
 \mcp@pCont{P}{c}% new P pops c (\+char)
 \mcp@pCont{P}{C}% new P pops C (\char)
@@ -629,7 +638,7 @@
 \mcp@pCont{s}{C}% Side bars pop character styles.
 \mcp@pCont{s}{c}% Side bars pop character styles.
 \mcp@pCont{t}{t}% new cat pops old cat
-\mcp@pStore{*}{M}% Milestones are always stored.
+\mcnp@pSt@re{*}{m}% Milestones are always stored.
 %Style end pops:
 \mcp@pCont{s*}{t}% sidebar end pops caT
 \mcp@pCont{s*}{P}% sidebar end pops Paragraph
@@ -637,16 +646,19 @@
 \mcp@pCont{s*}{C}% sidebar end pops Charstyle
 \mcp@pEnd{s*}{s}% sidebar end pops ONE sidebar, then finish
 \mcp@pEnd{t*}{t}% cat end pops one old cat, then finish
+\mcp@pCont{N*}{c}% Ending Note pops c
+\mcp@pCont{N*}{C}% Ending Note pops C
 
 \def\itp@psstore{}
 \def\endit@c{\endch@rstyle*}
 \def\endit@C{\endch@rstyle*}
 \def\whileitp@ps#1+#2\E{% This almost does the same as \end@llcharstyle, but uses the new mechanism
-  \trace{s}{whileitp@ps:\mcch@cking: #1+#2 (\mcstack)}%
+  \trace{s}{whileitp@ps:\mcch@cking:#1+#2 (\mcstack)}%
   \x@\let\x@\tmp\csname\mct@stname{\mcch@cking}{#1}\endcsname
-  \ifx\tmp\relax\else %No specific style pop, is there a generic?
+  \ifx\tmp\relax %No specific style pop, is there a generic?
     \x@\let\x@\tmp\csname\mct@stname{*}{#1}\endcsname
   \fi
+  \trace{s}{whileitp@ps result:\tmp}%
   \if S\tmp\relax % Store it?
      \edef\itp@psstore{#1+#2,\itp@psstore}
   \else
@@ -661,7 +673,7 @@
        \fi
      \fi
   \fi}
-\def\end@llpoppedstyles#1{\edef\mcch@cking{#1}\let\d@=\whileitp@ps\mcdown\ifx\itp@psstore\empty\else\edef\mcstack{\itp@psstore\mcstack}\fi}
+\def\end@llpoppedstyles#1{\let\itp@psstore\empty\edef\mcch@cking{#1}\let\d@=\whileitp@ps\mcdown\ifx\itp@psstore\empty\else\edef\mcstack{\itp@psstore\mcstack}\fi}
 
 
 %-csty_mstack

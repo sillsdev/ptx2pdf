@@ -99,7 +99,8 @@
         \if\n@xt-\let\n@xt@\startmst@nestyle@minus\let\thismil@stone\newch@rstyle\tempfalse\else
 	  \let\n@xt@\startch@rstyle@misc\fi\fi\fi
     \iftemp
-      \end@llcharstyles % a char style closes all other char styles, milestones do not.
+      \end@llpoppedstyles{C}% Char style
+      %\end@llcharstyles % a char style closes all other char styles, milestones do not.
     \fi
   \fi % else we need to start it
   \xdef\stylet@pe{C}%                                                                   %(2)
@@ -195,10 +196,10 @@
 
 %
 % end all character styles in effect within the current note or paragraph
-%
-\def\end@llcharstyles{\let\d@=\end@llcharstyle\mcdown}
-\def\end@llcharstyle#1+#2\E{\trace{s}{endcharstyles: #1+#2}\edef\tmp{#1}%
-    \ifx\tmp\empty\else\if#1c\endch@rstyle*\else\if#1C\endch@rstyle*\else\let\d@=\cstackrelax\fi\fi\fi}
+% now replaced by end@llpoppedstyles
+%\def\end@llcharstyles{\let\d@=\end@llcharstyle\mcdown}
+%\def\end@llcharstyle#1+#2\E{\trace{s}{endcharstyles: #1+#2}\edef\tmp{#1}%
+    %\ifx\tmp\empty\else\if#1c\endch@rstyle*\else\if#1C\endch@rstyle*\else\let\d@=\cstackrelax\fi\fi\fi}
 %-cchar_endallcharstyles
 
 %\def\end@llcharstyles{%
