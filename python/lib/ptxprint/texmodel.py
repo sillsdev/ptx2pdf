@@ -794,11 +794,12 @@ class TexModel:
                     syntaxErrors.append("{} {} line:{}".format(self.prjid, bk, str(e).split('line', maxsplit=1)[1]))
                 except Exception as e:
                     syntaxErrors.append("{} {} Error: {}".format(self.prjid, bk, str(e)))
+                    traceback.print_exc()
                 if len(syntaxErrors):
                     self.printer.doError("Failed to canonicalise texts due to a Syntax Error:",        
-                    secondary="\n".join(syntaxErrors)+"\n\nIf original USFM text is correct, then check "+ \
-                    "if PrintDraftChanges.txt has caused the error(s).", 
-                    title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr))
+                            secondary="\n".join(syntaxErrors)+"\n\nIf original USFM text is correct, then check "+ \
+                            "if PrintDraftChanges.txt has caused the error(s).", 
+                            title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr))
                 else:
                     if self.dict["document/ifletter"] == "":
                         doc.letter_space("\uFDD0")

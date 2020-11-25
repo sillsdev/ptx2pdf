@@ -148,7 +148,7 @@
 % --|------
 % Sets temporary macro \p@ram to the value
 % The macro is diglot aware, allowing all parameters to have L Left/Right variant or use
-% default. (e.g when asked for paramter for v, check for vL|vR, default to v)
+% default. (e.g when asked for parameter for v, check for vL|vR, default to v)
 %
 \def\getp@r@m#1#2{\x@\let\x@\p@ram\csname#2:#1\endcsname\ifx\p@ram\relax\else\trace{s}{#2:#1 found: \p@ram}\fi}
 \def\getp@ram#1#2{\trace{Ds}{getp@ram #2:#1}%

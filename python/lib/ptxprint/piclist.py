@@ -6,6 +6,7 @@ from ptxprint.texmodel import TexModel
 from gi.repository import Gtk, GdkPixbuf, GObject, Gdk
 from threading import Thread
 import configparser
+import regex
 import os, re, random, sys
 
 posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror", "scale"]
@@ -663,7 +664,8 @@ class PicInfo(dict):
                 self[self.newkey(suffix)] = pic
                 if len(m) > 6: # must be USFM2, so|grab|all|the|different|pieces!
                     for i, f in enumerate(m[1:]):
-                        pic[posparms[i+1]] = f
+                        if i < len(posparms)-1:
+                            pic[posparms[i+1]] = f
                     self._fixPicinfo(pic)
                 else: # otherwise USFM3, so find all the named params
                     for d in re.findall(r'(\S+)\s*=\s*"([^"]+)"', m[-1]):
@@ -676,20 +678,7 @@ class PicInfo(dict):
             dat = inf.read()
             blocks = ["0"] + re.split(r"\\c\s+(\d+)", dat)
             for c, t in zip(blocks[0::2], blocks[1::2]):
-                key = None
-                m = re.findall(r"(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*"
-                               r"\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?"
-                               r"\|([^\\]+?)?\|([^\\]+?)?\\fig\*", t)
-                if len(m):
-                    for f in m:     # usfm 2
-                        r = "{}{} {}.{}".format(bk, suffix, c, f[0])
-                        pic = {'anchor': r, 'caption':f[8].strip()}
-                        key = self.newkey(suffix)
-                        self[key] = pic
-                        for i, v in enumerate(f[3:]):
-                            pic[posparms[i]] = v
-                        self._fixPicinfo(pic)
-                elif isperiph:
+                if isperiph:
                     m = re.findall(r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(col|span)[^|]*\|([^\\]+?)?\\fig\*", dat)
                     if len(m):
                         for i, f in enumerate(m):
@@ -697,23 +686,42 @@ class PicInfo(dict):
                             pic = {'anchor': r, 'caption':f[0].strip(), 'src': f[1], 'size': f[2]}
                             key = self.newkey(suffix)
                             self[key] = pic
-                m = re.findall(r'(?ms)(?<=\\v )(\d+?[abc]?([,-]\d+?[abc]?)?) (.(?!\\v ))*\\fig ([^\\]*?)\|([^\\]+)\\fig\*', t)
-                if len(m):
-                    for i, f in enumerate(m):     # usfm 3
-                        if "|" in f[4]:
-                            break
-                        a = (1, i+1) if isperiph else (c, f[0])
-                        r = "{}{} {}.{}".format(bk, suffix, *a)
-                        pic = {'caption':f[3].strip(), 'anchor': r}
-                        key = self.newkey(suffix)
-                        self[key] = pic
-                        labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f[4])
-                        for l in labelParams:
-                            k,v = l.split("=")
-                            pic[k.strip()] = v.strip('"')
-                        if media is not None and key in self:
-                            if 'media' in pic and not any(x in media for x in pic['media']):
-                                del self[key]
+                    continue
+                for v in re.findall(r"(?s)(?<=\\v )(\d+[abc]?(?:[,-]\d+?[abc]?)?) ((?:.(?!\\v ))+)", t):
+                    lastv = v[0]
+                    s = v[1]
+                    key = None
+                    m = regex.findall(r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?"
+                                   r"\|([^\\]+?)?\|([^\\]+?)?\\fig\*", s)
+                    if len(m):
+                        print("usfm2:", lastv, m)
+                        for f in m:     # usfm 2
+                            r = "{}{} {}.{}".format(bk, suffix, c, lastv)
+                            pic = {'anchor': r, 'caption':f[5].strip()}
+                            key = self.newkey(suffix)
+                            self[key] = pic
+                            for i, v in enumerate(f):
+                                pic[posparms[i]] = v
+                            self._fixPicinfo(pic)
+                    m = regex.findall(r'(?ms)\\fig ([^\\]*?)\|([^\\]+)\\fig\*', s)
+                    if len(m):
+                        print("usfm3:", lastv, m)
+                        for i, f in enumerate(m):     # usfm 3
+                            lastv = f[0] or lastv
+                            if "|" in f[1]:
+                                break
+                            a = (1, i+1) if isperiph else (c, lastv)
+                            r = "{}{} {}.{}".format(bk, suffix, *a)
+                            pic = {'caption':f[0].strip(), 'anchor': r}
+                            key = self.newkey(suffix)
+                            self[key] = pic
+                            labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f[1])
+                            for l in labelParams:
+                                k,v = l.split("=")
+                                pic[k.strip()] = v.strip('"')
+                            if media is not None and key in self:
+                                if 'media' in pic and not any(x in media for x in pic['media']):
+                                    del self[key]
 
     def out(self, fpath, bks=[], skipkey=None, usedest=False, media=None):
         ''' Generate a picinfo file, with given date.

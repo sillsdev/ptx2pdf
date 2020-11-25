@@ -566,8 +566,14 @@ class parser(collections.Iterable):
         Any remaining aguments or keyword arguments are used to format the msg
         string.
         """
-        msg = (f'{self.source}: line {ev.pos.line},{ev.pos.col}: '
-               f'{str(msg).format(token=ev,source=self.source, *args,**kwds)}')
+        path = []
+        pev = ev.parent
+        while pev is not None:
+            path.append(pev.name)
+            pev = pev.parent
+        pathstr = " ["+" ".join(reversed(path))+"]" if len(path) else ""
+        msg = (f'{self.source}: line {ev.pos.line},{ev.pos.col}{pathstr}: ' +
+               str(msg).format(token=ev,source=self.source, *args,**kwds))
         if severity >= 0 and severity >= self._error_level:
             raise SyntaxError(msg)
         elif severity < 0 and severity < self._error_level:
