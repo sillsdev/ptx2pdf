@@ -226,6 +226,7 @@ class PicList:
                 else:
                     s.unselect_all()
                 self.loading = False
+        # print("path,cpath,fpath:", path,cpath,fpath)
         if selection != self.selection:
             self.parent.savePicChecks()
             if not self.checkmodel.do_visible(self.checkmodel, self.checkmodel.get_model(), cit):
@@ -707,7 +708,7 @@ class PicInfo(dict):
                     if len(m):
                         print("usfm3:", lastv, m)
                         for i, f in enumerate(m):     # usfm 3
-                            lastv = f[0] or lastv
+                            # lastv = f[0] or lastv
                             if "|" in f[1]:
                                 break
                             a = (1, i+1) if isperiph else (c, lastv)
