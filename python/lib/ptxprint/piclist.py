@@ -69,10 +69,13 @@ class PicList:
     def __init__(self, view, checkview, builder, parent):
         self.view = view
         self.checkview = checkview
+        self.loading = False
+        self.checkinv = False
+        self.checkfilt = 0
         self.model = view.get_model()
         self.checkmodel = self.model.filter_new()
-        self.checkview.set_model(self.checkmodel)
         self.checkmodel.set_visible_func(self.checkfilter)
+        self.checkview.set_model(self.checkmodel)
         self.builder = builder
         self.parent = parent
         self.picinfo = None
@@ -80,8 +83,6 @@ class PicList:
         self.picrect = None
         self.currow = None
         self.bookfilters = None
-        self.checkinv = False
-        self.checkfilt = 0
         for wid in (self.view, self.checkview):
             sel = wid.get_selection()
             sel.set_mode=Gtk.SelectionMode.SINGLE
@@ -103,8 +104,9 @@ class PicList:
         if self.loading:
             return False
         try:
-            v = model[i][_pickeys['src']]
+            v = newBase(model[i][_pickeys['src']])
         except TypeError:
+            print("Failed to load src for", model.get_string_from_iter(i), model, i)
             return False
         res = True
         if self.checkfilt > 0:
@@ -129,7 +131,7 @@ class PicList:
 
     def load(self, picinfo, bks=None):
         self.picinfo = picinfo
-        self.view.set_model(None)
+        #self.view.set_model(None)
         self.model.clear()
         self.bookfilters = bks
         if picinfo is not None:
@@ -160,7 +162,8 @@ class PicList:
                         val = v.get(e, "")
                     row.append(val)
                 self.model.append(row)
-        self.view.set_model(self.model)
+        #self.view.set_model(self.model)
+        self.checkmodel.refilter()
         self.loading = False
 
     def get(self, wid, default=None):
@@ -195,6 +198,7 @@ class PicList:
         return picinfos
 
     def row_select(self, selection): # Populate the form from the model
+        model, it = selection.get_selected()
         if self.loading or selection.count_selected_rows() != 1:
             return
         if self.currow is not None:
@@ -205,40 +209,31 @@ class PicList:
                     e.window = w
                     e.send_event = True
                     w.emit("focus-out-event", e)
-        model, i = selection.get_selected()
+        model, it = selection.get_selected()
+        path = model.get_path(it)
+        cpath = path if selection == self.selection else model.convert_path_to_child_path(path)
+        cit = self.model.get_iter(cpath)
         for w in (self.view, self.checkview): # keep both views in sync
             s = w.get_selection()
             if s != selection:
                 self.loading = True
-                if selection == self.selection:
-                    if not model.iter_is_valid(i):
-                        return
-                    (isin, fi) = w.get_model().convert_child_iter_to_iter(i)
-                else:
-                    fi = model.convert_iter_to_child_iter(i)
-                    isin = True
-                if isin:
-                    s.select_iter(fi)
+                m = w.get_model()
+                fpath = cpath if s == self.selection else m.convert_child_path_to_path(cpath)
+                if fpath is not None:
+                    s.select_path(fpath)
+                    w.scroll_to_cell(fpath)
                 else:
                     s.unselect_all()
                 self.loading = False
-                m = w.get_model()
-                if m is not None:
-                    p = m.get_path(fi)
-                    if p is not None:
-                        w.scroll_to_cell(p)
-        if selection == self.selection:
-            if self.model.get_path(i).get_indices()[0] >= len(self.model):
+        if selection != self.selection:
+            self.parent.savePicChecks()
+            if not self.checkmodel.do_visible(self.checkmodel, self.checkmodel.get_model(), cit):
                 return
-            else:
-                self.currow = self.model[i]
-        elif self.checkmodel.get_path(i).get_indices()[0] >= len(self.checkmodel):
+        if cpath.get_indices()[0] >= len(self.model):
+            print("Too Long!")
             return
         else:
-            self.parent.savePicChecks()
-            if not self.checkmodel.do_visible(self.checkmodel, self.checkmodel.get_model(), i):
-                return
-            self.currow = self.checkmodel[i]
+            self.currow = self.model[cit][:]    # copy it so that any edits don't mess with the model if the iterator moves
         pgpos = re.sub(r'^([PF])([lcr])([tb])', r'\1\3\2', self.currow[_pickeys['pgpos']])
         self.parent.pause_logging()
         self.loading = True
@@ -376,9 +371,9 @@ class PicList:
                             self.picrect = picframe.get_allocation()
                         pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, self.picrect.width - 6, self.picrect.height - 6)
                         self.setPreview(pixbuf, tooltip=fpath)
-                        self.parent.updatePicChecks(val)       # only update checks if src exists
                     else:
                         self.setPreview(None)
+                self.parent.updatePicChecks(val)       # only update checks if src exists
                 self.mask_media(self.currow)
                 if val != oldval: # New source implies new destination file
                     self.currow[_piclistfields.index('cleardest')] = True
@@ -517,7 +512,7 @@ class PicChecks:
     def savepic(self):
         if self.src is None:
             return
-        for (cfg, n, val, k) in self._allFields():
+        for (cfg, n, defval, k) in self._allFields():
             val = self.parent.get(k)
             try:
                 cfg.set(self.src, n, val)   # update the existing entry if it already exists
@@ -542,11 +537,13 @@ class PicChecks:
         elif filt == 3:     # Approved
             return self.cfgShared.getboolean(src, "approved", fallback=False) \
                 or self.cfgProject.getboolean(src, "approved", fallback=False)
-        elif filt == 1:     # All unknown/unchecked
-            return all(cfg.get(src, n, fallback=v) == v for (cfg, n, v, _) in self._allFields())
-        elif filt == 2:     # Any unknown/unchecked
-            return any(cfg.get(src, n, fallback=v) == v for (cfg, n, v, _) in self._allFields())
-        return True
+        else:
+            vals = [cfg.get(src, n, fallback=v) == v for (cfg, n, v, _) in self._allFields()]
+            if filt == 1:     # All unknown/unchecked
+                return all(vals)
+            elif filt == 2:     # Any unknown/unchecked
+                return any(vals)
+            return True
 
     def _allFields(self):
         for k, v in _checks.items():

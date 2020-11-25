@@ -258,7 +258,6 @@ class StyleEditor:
         root = self.treestore.get_iter_first()
         it = self._searchMarker(root, marker)
         path = self.treestore.get_path(it)
-        print(path)
         self.treeview.expand_to_path(path)
         self.treeview.get_selection().select_path(path)
         
