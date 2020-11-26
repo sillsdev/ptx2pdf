@@ -536,7 +536,12 @@ class ViewModel:
                     move(modpath, path)
                     with open(modpath, "w") as outf:
                         pass
-            config.set("config", "version", "1.290")
+        if v < 1.400:
+            indent = config.getfloat("document", "indentunit", fallback="2.000")
+            if indent == 2.0 and config.getboolean("paper", "columns", fallback=True):
+                    config.set("document", "indentunit", "1.000")
+            config.set("config", "version", "1.400")
+
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):
