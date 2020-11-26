@@ -39,7 +39,7 @@ def f_(s):
     return eval("f'{}'".format(_(s)), frame.f_locals, frame.f_globals)
 
 def refKey(r, info=""):
-    m = re.match(r"^(\D*)\s*(\d*)\.?(\d*)(\S*?)$", r)
+    m = re.match(r"^(\d?\D+)?\s*(\d*)\.?(\d*)(\S*?)$", r)
     if m:
         return (books.get(m.group(1)[:3], 100), int(m.group(2) or 0), int(m.group(3) or 0), m.group(1)[3:], info, m.group(4))
     else:
