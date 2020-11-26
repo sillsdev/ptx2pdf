@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -10048,6 +10048,21 @@ Position:</property>
                                                   <object class="GtkLabel">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
+                                                    <property name="tooltip_text" translatable="yes">It is good typesetting practice to make people
+look outwards from the gutter, so you can set
+whether the image is to be mirrored just on 
+odd pages or even pages.
+
+Some artists' pictures do not take into account
+the "dirty left-hand" culture. For example, it would
+be "awkward" to use a picture where Jesus is healing
+a person using his LEFT hand! What an insult!
+
+So this option allows the image to be mirrored (on
+both pages) in order to make the left become right.
+
+Note that you should check carefully to see what
+other unwanted side effects this mirroring may cause.</property>
                                                     <property name="halign">end</property>
                                                     <property name="label" translatable="yes">Mirror:</property>
                                                     <property name="justify">right</property>
@@ -10063,6 +10078,10 @@ Position:</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="can_default">True</property>
+                                                    <property name="tooltip_text" translatable="yes">None = The image will never be mirrored
+Odd = Mirrored only if image ends up on an odd page
+Even = Mirrored only if image ends up on an even page
+Both = Always mirrored (regardless of where it ends up)</property>
                                                     <property name="halign">start</property>
                                                     <property name="model">ls_plMirror</property>
                                                     <property name="wrap_width">1</property>
