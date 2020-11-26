@@ -183,7 +183,7 @@
      \the\afterh@@ks%\global\afterh@@ks{} % execute all the <after>-hook, if there was one
     \fi
    \mcpop
-   \def\d@##1+##2\E{\edef\thiswh@tvrstyle{##2}}\mctop
+   \def\d@##1+##2\E{\edef\tmp{##2}\csname d@code-##1\endcsname\let\thiswh@tvrstyle\tmp}\mctop
    \s@tfont{\thiswh@tvrstyle}% set up font attributes
    \fi
  }
@@ -227,7 +227,8 @@
  \ifx\c@tegory\empty\else\s@tc@tpr@fix\edef\f@ntstyle{\c@tprefix\f@ntstyle}\fi % Categories have different styles
  \let\d@@=\d@
  \def\d@##1+##2\E{\edef\tmp{#1}\edef\tmpa{##2}\ifx\tmp\tmpa\getmcfonts@ze\else
-                        \getp@ram{fontsize}{#1}\ifx\p@ram\relax\xdef\c@rrfontsize{12}%
+			\csname d@code-##1\endcsname
+                        \getp@ram{fontsize}{\tmp}\ifx\p@ram\relax\xdef\c@rrfontsize{12}%
                         \else\global\let\c@rrfontsize=\p@ram\fi\fi}%
  \mctop\let\d@=\d@@\edef\f@ntstyle{\f@ntstyle-\c@rrfontsize}}
 %-cchar_getfontname
@@ -268,7 +269,7 @@
     \x@\ParseColor\p@ram\end\ifx\r@s\z@ros\else\edef\typef@ce{\typef@ce :color=\r@s}\fi%
   \fi\fi%
   \dimen0=\c@rrfontsize\FontSizeUnit                                    %(+)
-  \getFp@ramR{fontfactor}{#1}% scale down by \SuperscriptFactor if superscripted style
+  \getFp@ramR{fontfactor}{#1}% scale down by \SuperscriptFactor if superscripted style %FIXME! Should this be R version or not (regular=!shrunk??)
   \ifx\p@ram\relax\else \dimen0=\p@ram\dimen0\fi
   %\edef\f@ntstyle{\f@ntstyle-\c@rrfontsize}%
   % create the font identifier for this style
@@ -287,6 +288,7 @@
   \fi
  \fi
  % switch to the appropriate font
+ \trace{F}{Font set to font<\f@ntstyle>}%
  \csname font<\f@ntstyle>\endcsname                                     %(+)
 }
 %-cchar_setfont

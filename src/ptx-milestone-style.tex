@@ -95,7 +95,8 @@
     \st@ndalonemilestone\fi\fi
  \let\milestoneOp\empty
  %\xdef\thisch@rstyle{\mcpeek}%
- \def\d@##1+##2\E{\edef\thisch@rstyle{##2}}\mctop
+ \def\d@##1+##2\E{\def\tmp{##2}\csname d@code-##1\endcsname\edef\thisch@rstyle{\tmp}}\mctop
+ \trace{m}{Milestone style is \thisch@rstyle}%
  \s@tfont{\thisch@rstyle}% set up font attributes
 }
 
@@ -110,7 +111,7 @@
     \let\d@=\cstackrelax %permanent change
   \else
     \ifx\ss@Mstn\MSt@mp\relax %It's a milestone
-      \x@\pars@msid #2;;\E
+      \x@\pars@msid #2;;;\E
       \ifx\MStyp@\MSch@cking\relax
         \ifx\mstone@id\MSch@ckid
           %\csname endit@#1\endcsname
@@ -166,10 +167,10 @@
   % There may multiple milestones of a given type (can't sensibly have both \qt+s |Jesus\* and 
   % \qt+s |Pilate\* active at the same time, but in some cases it might make sense to do something siilar.)
   \get@ttribute{\attrid}\ifx\attr@b\relax %if sid is set, sid/eid must match, and may contain letters,numbers,underscore.
-    \mcpush{\ss@Mstn+\thismil@stone;\thismil@stoneKey=\thismil@stoneVal}%
+    \mcpush{\ss@Mstn+\thismil@stone;\thismil@stoneVal}%
     \trace{m}{Milestone without ID stacked}%
   \else
-    \mcpush{\ss@Mstn+\thismil@stone;\thismil@stoneKey=\thismil@stoneVal;\attr@b}%
+    \mcpush{\ss@Mstn+\thismil@stone;\thismil@stoneVal;\attr@b}%
     \trace{m}{Milestone with \attrid =\attr@b\space stacked}%
   \fi
   \upd@teMsPrefix
@@ -197,10 +198,14 @@
 \xdef\equ@l{=}
 \def\pars@msid#1;#2;#3;#4\E{\edef\MStyp@{#1}\edef\k@yv@al{#2}\def\mstone@id{#3}}
 
+\x@\def\csname d@code-m\endcsname{%Modify contents of \tmp to only include bits of the stack value of use for styles.
+  \x@\pars@msid \tmp;;;\E
+  \edef\tmp{\MStyp@-\ifx\k@yv@al\empty s\else\k@yv@al\fi}%
+}
 \def\mil@st@necheck#1+#2\E{%The milestone has a key value and possibly an ID field. Ignore the id for building the prefix
   \edef\MSt@mp{#1}%
   \ifx\MSt@mp\ss@Mstn
-    \x@\pars@msid #2;;\E
+    \x@\pars@msid #2;;;\E
     \trace{m}{parsed #2->\k@yv@al, \mstone@id}%
   \xdef\mspr@fix{\ifx\mspr@fix\empty\else \mspr@fix+\fi\MStyp@\ifx\k@yv@al\equ@l\else\k@yv@al\fi}\fi}
  

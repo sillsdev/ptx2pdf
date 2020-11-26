@@ -361,7 +361,8 @@
    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
    \trace{s}{\m@rker\ifdiglot\ifdiglotL L \else R\fi\fi\space iu=\the\IndentUnit, ls=\the\leftskip, rs=\the\rightskip}%
    %\getp@ram{fontsize}{\m@rker}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%
-   \s@tfont{\m@rker}%
+   \def\d@##1+##2\E{\edef\tmp{##2}\csname d@code-##1\endcsname\let\thiswh@tvrstyle\tmp}\mctop
+   \s@tfont{\thiswh@tvrstyle}% set up font attributes
    \trace{j}{baselineskip=\the\baselineskip ; UseGlyphMetrics=\the\XeTeXuseglyphmetrics}%
    \allowp@rindenttrue
    %

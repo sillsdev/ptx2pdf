@@ -295,18 +295,22 @@ nothing with the item.
 
 The other key macros involving the stack are those for getting the current value
 of a parameter. `getmcp@ram` and its corresponding `R` specific version for
-diglots, starts at the bottom of the stack (1) and sets the parameter each time a
+some font parameters, starts at the bottom of the stack (1) and sets the parameter each time a
 style is encountered that sets that parameter. Well it's more complex than that
 because it takes into account whether the item on the stack is a paragraph or
 note style in which case the result is force reset. (1) After running the stack, the
 result is in a global `r@s` which is then stored in `p@ram` as the normal return
 value from such macros.
 
-There is also a macro for getting the value of a parameter if the top of stack
+There is also a macro (`getFp@ram`) for getting the value of a parameter if the top of stack
 is of the given type, else looking back through the stack for a value. This is
 like the `getmcp@ram` but allows the top of stack to trump the value, even if
-none, if it is of the right type. And there is a diglot R version of the macro
+none, if it is of the right type. And there is a  `R` version of the macro
 too.
+
+Both `getmcp@ram` and `getFp@ram` call ```\csname d@code-##1\endcsname```, 
+which permits the modification to the marker-name stored  in ```\tmp``` for 
+those style types that need it. This is currently only used for milestones.
 
 [=csty_getmcparam]::
 
