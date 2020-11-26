@@ -83,6 +83,7 @@ class PicList:
         self.selection = view.get_selection()
         self.picrect = None
         self.currow = None
+        self.curriter = None
         self.bookfilters = None
         for wid in (self.view, self.checkview):
             sel = wid.get_selection()
@@ -236,6 +237,7 @@ class PicList:
             return
         else:
             self.currow = self.model[cit][:]    # copy it so that any edits don't mess with the model if the iterator moves
+            self.curriter = cit
         pgpos = re.sub(r'^([PF])([lcr])([tb])', r'\1\3\2', self.currow[_pickeys['pgpos']])
         self.parent.pause_logging()
         self.loading = True
@@ -383,6 +385,8 @@ class PicList:
                 self.currow[_piclistfields.index('cleardest')] = True
             elif key == "mirror" and val == "None":
                 self.currow[fieldi] = ""
+            if not self.loading:
+                self.model.set_value(self.curriter, fieldi, self.currow[fieldi])
 
     def setPreview(self, pixbuf, tooltip=None):
         pic = self.builder.get_object("img_picPreview")
