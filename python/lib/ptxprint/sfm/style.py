@@ -47,7 +47,12 @@ class Marker(dict):
         self.update(kwarg)
 
     def __getitem__(self, key):
-        return super().__getitem__(key.casefold())
+        try:
+            return super().__getitem__(key.casefold())
+        except KeyError:
+            if key in _fields:
+                return _fields[key][1]
+            raise
 
     def __setitem__(self, key, value):
         return super().__setitem__(CaselessStr(key), value)
