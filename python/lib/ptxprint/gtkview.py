@@ -1221,7 +1221,10 @@ class GtkViewModel(ViewModel):
     def onFnLineSpacingChanged(self, btn, *a):
         val = self.get("s_fnlinespacing")
         for k in ("f", "x"):
-            isabs = self.styleEditorView.getval(k, "LineSpacing") == None
+            try:
+                isabs = self.styleEditorView.getval(k, "LineSpacing") == None
+            except KeyError:
+                return      # probably haven't fully initialised yet
             if isabs:
                 self.styleEditorView.setval(k, "Baseline", val)
             else:
@@ -1245,7 +1248,10 @@ class GtkViewModel(ViewModel):
         if rtl == self.rtl:
             return
         for k in self.styleEditorView.allStyles():
-            j = self.styleEditorView.getval(k, "Justification")
+            try:
+                j = self.styleEditorView.getval(k, "Justification")
+            except KeyError:
+                return
             if j.lower() == "right":
                 self.styleEditorView.setval(k, "Justification", "Left")
             elif j.lower() == "left":

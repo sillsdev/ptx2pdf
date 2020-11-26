@@ -502,7 +502,7 @@ class StyleEditor:
         except (ValueError, TypeError):
             return b is None if a is None else (False if b is None else a == b)
 
-    def _str_val(self, v, key=None):
+    def _str_val(self, v, key=""):
         if isinstance(v, (set, list)):
             if key.lower() == "textproperties":
                 res = " ".join(x.lower().title() if x else "" for x in sorted(v))
@@ -511,7 +511,7 @@ class StyleEditor:
             res = re.sub(r"(:\.0)?0$", "", str(int(v * 100) / 100.))
         else:
             res =  str(v)
-        if k.lower() == "baseline":
+        if key.lower() == "baseline":
             res = re.match(r"^\s*(.*\d+)\s*$", r"\1pt", res)
         return res
 
