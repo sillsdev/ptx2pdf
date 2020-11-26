@@ -29,7 +29,7 @@ class PDFx1aOutput(Snippet):
 %\special{{pdf:close @OBJCVR}}
 \special{{pdf:docview <<
 /OutputIntents [ <<
-/Type/OutputIndent
+/Type/OutputIntent
 /S/GTS_PDFX
 /OutputCondition (An Unknown print device)
 /OutputConditionIdentifier (Custom)

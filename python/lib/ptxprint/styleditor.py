@@ -181,6 +181,28 @@ class StyleEditor:
             w.connect(signal, self.item_changed, k)
         self.isLoading = False
         self.marker = None
+        self.registers = {}
+
+    def getval(self, mrk, key):
+        if self.sheet is None:
+            raise KeyError(f"{mrk} + {key}")
+        return self.sheet.get(mrk, {}).get(key, self.basesheet.get(mrk, {}).get(key, None))
+
+    def setval(self, mrk, key, val, ifunchanged=False):
+        if self.sheet is None:
+            raise KeyError(f"{mrk} + {key}")
+        if ifunchanged and self.basesheet.get(mrk, {}).get(key, None) != \
+                self.sheet.get(self.marker, {}).get(key, None):
+            return
+        if self.basesheet.get(mrk, {}).get(key, None) != val:
+            self.sheet.setdefault(self.marker, {})[key] = val
+        if mrk == self.marker:
+            v = stylemap.get(key)
+            if v is None:
+                return
+            self.loading = True
+            self.set(key, val)
+            self.loading = False
 
     def get(self, key, default=None):
         w = self.builder.get_object(key)
@@ -193,6 +215,9 @@ class StyleEditor:
         if w is None:
             return
         setWidgetVal(key, w, value)
+
+    def registerFn(self, mark, key, fn):
+        self.registers.setdefault(mark, {})[key] = fn
 
     def load(self, sheetfiles):
         if len(sheetfiles) == 0:
@@ -303,18 +328,24 @@ class StyleEditor:
                     if m in old:
                         olddat = f
                         oldval = old[m]
+                        if m.lower() == "baseline":
+                            oldval = re.sub(r"(-?\d*\.?\d*)(\D|$)", r"\1", oldval)
                     if m in data:
                         val = data[m]
+                        if m.lower() == "baseline":
+                            val = re.sub(r"(-?\d*\.?\d*)(\D|$)", r"\1", val)
                         self._setFieldVal(v, olddat, f)
                         v = stylemap[v[3](False)]
                         break
                 old[" "+k] = olddat
             else:
-                val = data.get(k, v[2])
                 oldval = old.get(k, v[2])
+                val = data.get(k, oldval)
                 if v[0].startswith("c_"):
                     val = val != v[2]
                     oldval = oldval != v[2]
+            if (isinstance(val, str) and val.endswith("pt")) or (isinstance(oldval, str) and oldval.endswith("pt")):
+                print("pt value!", k, val, oldval)
             self._setFieldVal(v, oldval, val)
 
         stype = data.get('StyleType', '')
@@ -378,6 +409,13 @@ class StyleEditor:
             res = asfloat(valstr, 1.) * linespacing
         return res
 
+    def _setData(self, key, val):
+        if self.basesheet.get(self.marker, {}).get(key, None) != val:
+            self.sheet[self.marker][key] = val
+            fn = self.registers.get(self.marker, {}).get(key, None)
+            if fn is not None:
+                fn(val)
+
     def item_changed(self, w, key):
         if self.isLoading:
             return
@@ -408,7 +446,7 @@ class StyleEditor:
         elif key.startswith("_"):
             newkey = v[3](val)
             otherkey = v[3](not val)
-            data[newkey] = self._convertabs(newkey, data.get(otherkey, None))
+            self._setData(newkey, self._convertabs(newkey, data.get(otherkey, None)))
             self.set(stylemap.get(newkey, stylemap.get(otherkey, [None]))[0], data[newkey])
             if otherkey in data:
                 del data[otherkey]
@@ -418,7 +456,7 @@ class StyleEditor:
         else:
             value = val
         if not key.startswith("_"):
-            data[key] = value
+            self._setData(key, value)
         if v[1] is not None:
             ctxt = self.builder.get_object(v[1]).get_style_context()
             if key.startswith("_"):
@@ -457,12 +495,15 @@ class StyleEditor:
     def _str_val(self, v, key=None):
         if isinstance(v, (set, list)):
             if key.lower() == "textproperties":
-                return " ".join(x.lower().title() if x else "" for x in sorted(v))
-            return " ".join(x or "" for x in v)
+                res = " ".join(x.lower().title() if x else "" for x in sorted(v))
+            res = " ".join(x or "" for x in v)
         elif isinstance(v, float):
-            return re.sub(r"(:\.0)?0$", "", str(int(v * 100) / 100.))
+            res = re.sub(r"(:\.0)?0$", "", str(int(v * 100) / 100.))
         else:
-            return str(v)
+            res =  str(v)
+        if k.lower() == "baseline":
+            res = re.match(r"^\s*(.*\d+)\s*$", r"\1pt", res)
+        return res
 
     def output_diffile(self, outfh):
         def normmkr(s):
