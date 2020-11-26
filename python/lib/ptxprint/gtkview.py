@@ -137,7 +137,7 @@ _sensitivities = {
     "c_inclPageBorder" :       ["btn_selectPageBorderPDF"],
     "c_inclSectionHeader" :    ["btn_selectSectionHeaderPDF"],
     "c_inclEndOfBook" :        ["btn_selectEndOfBookPDF"],
-    "c_inclVerseDecorator" :   ["l_verseFont", "bl_verseNumFont", "l_verseSize", "s_verseNumSize", "btn_selectVerseDecorator"],
+    "c_inclVerseDecorator" :   ["btn_selectVerseDecorator"],
     "c_fakebold" :             ["s_boldembolden", "s_boldslant"],
     "c_fakeitalic" :           ["s_italicembolden", "s_italicslant"],
     "c_fakebolditalic" :       ["s_bolditalicembolden", "s_bolditalicslant"],
@@ -1249,7 +1249,12 @@ class GtkViewModel(ViewModel):
             if j.lower() == "right":
                 self.styleEditorView.setval(k, "Justification", "Left")
             elif j.lower() == "left":
-                self.styleEditorView.setval(k, "Justification", "Left")
+                self.styleEditorView.setval(k, "Justification", "Right")
+
+    def onThumbStyleClicked(self, btn):
+        self.styleEditorView.selectMarker("zthumbtab" if self.get("c_thumbIsZthumb") else "toc3")
+        mpgnum = self.notebooks['Main'].index("Style")
+        self.builder.get_object("nbk_Main").set_current_page(mpgnum)
 
     def onProcessScriptClicked(self, btn):
         if not self.sensiVisible("c_processScript"):
@@ -1313,9 +1318,6 @@ class GtkViewModel(ViewModel):
         
     def onFontBIclicked(self, btn):
         self.getFontNameFace("bl_fontBI")
-        
-    def onVerseNumFontClicked(self, btn):
-        self.getFontNameFace("bl_verseNumFont")
         
     def onFontRowSelected(self, dat):
         lsstyles = self.builder.get_object("ls_fontFaces")
@@ -1531,7 +1533,7 @@ class GtkViewModel(ViewModel):
         if self.picinfos is not None:
             self.picinfos.clear()
         if not super(GtkViewModel, self).updateProjectSettings(prjid, saveCurrConfig=saveCurrConfig, configName=configName):
-            for fb in ['bl_fontR', 'bl_fontB', 'bl_fontI', 'bl_fontBI', 'bl_fontExtraR', 'bl_verseNumFont']:  # 
+            for fb in ['bl_fontR', 'bl_fontB', 'bl_fontI', 'bl_fontBI', 'bl_fontExtraR']:
                 fblabel = self.builder.get_object(fb).set_label("Select font...")
         if self.prjid:
             self.updatePrjLinks()
@@ -1579,12 +1581,12 @@ class GtkViewModel(ViewModel):
         if self.ptsettings is None:
             return
         ptfont = self.ptsettings.get("DefaultFont", "Arial")
-        for fb in ['bl_fontR', 'bl_verseNumFont']:  # 'bl_fontB', 'bl_fontI', 'bl_fontBI', 'bl_fontExtraR'
-            fblabel = self.builder.get_object(fb).get_label()
-            if fblabel == _("Select font..."):
-                w = self.builder.get_object(fb)
-                setFontButton(w, ptfont, "")
-                self.onFontChanged(w)
+        fb = 'bl_fontR'
+        fblabel = self.builder.get_object(fb).get_label()
+        if fblabel == _("Select font..."):
+            w = self.builder.get_object(fb)
+            setFontButton(w, ptfont, "")
+            self.onFontChanged(w)
 
     def updateDialogTitle(self):
         titleStr = super(GtkViewModel, self).getDialogTitle()

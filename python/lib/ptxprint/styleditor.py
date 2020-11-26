@@ -183,6 +183,13 @@ class StyleEditor:
         self.marker = None
         self.registers = {}
 
+    def allStyles(self):
+        if self.sheet is None:
+            return {}
+        res = set(self.basesheet.keys())
+        res.update(self.sheet.keys())
+        return res
+
     def getval(self, mrk, key):
         if self.sheet is None:
             raise KeyError(f"{mrk} + {key}")
