@@ -115,6 +115,7 @@ elif sys.platform == "win32":
     def openkey(path):
         try:
             k = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\\" + path.replace("/", "\\"))
+            print("k=", k)
         except FileNotFoundError:
             txt1 = "Unable to locate Registry Key for Paratext installation"
             txt2 = "Sorry - PTXprint cannot work unless Paratext 8 (or later) is installed"
@@ -131,6 +132,7 @@ elif sys.platform == "win32":
         return k
 
     def queryvalue(base, value):
+        print("value=", value)
         return winreg.QueryValueEx(base, value)[0]
 
     def fclist(family, pattern):
@@ -177,10 +179,17 @@ except FileNotFoundError:
         path = "C:\\My Paratext {} Projects".format(v)
         if os.path.exists(path):
             pt_settings = path
-            pt_bindir = "C:\\Program Files (x86)\\Paratext {}".format(v)
+            pt_bindir = "C:\\Program Files\\Paratext {}".format(v)
+            if os.path.exists(pt_bindir):
+                break
+            else:
+                pt_bindir = "C:\\Program Files (x86)\\Paratext {}".format(v)
             break
 else:
     if ptv:
         version = ptv[:ptv.find(".")]
-        pt_bindir = queryvalue(ptob, 'Program_Files_Directory_Ptw'+version)
+        try:
+            pt_bindir = queryvalue(ptob, 'Paratext{}_Full_Release_AppPath'.format(version))
+        except:
+            pt_bindir = queryvalue(ptob, 'Program_Files_Directory_Ptw'+version)
     pt_settings = queryvalue(ptob, 'Settings_Directory')
