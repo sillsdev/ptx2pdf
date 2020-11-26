@@ -9299,19 +9299,7 @@ more than once (to update the list of page numbers).</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton">
-                                <property name="label" translatable="yes">Show Details &gt;&gt;&gt;</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="no_show_all">True</property>
-                                <property name="halign">end</property>
-                                <property name="margin_right">12</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">2</property>
-                              </packing>
+                              <placeholder/>
                             </child>
                           </object>
                         </child>
@@ -10622,7 +10610,7 @@ status of the checking values.</property>
                                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">2</property>
+                                                        <property name="left_attach">4</property>
                                                         <property name="top_attach">1</property>
                                                       </packing>
                                                     </child>
@@ -10637,7 +10625,7 @@ status of the checking values.</property>
                                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">3</property>
+                                                        <property name="left_attach">2</property>
                                                         <property name="top_attach">1</property>
                                                       </packing>
                                                     </child>
@@ -10653,7 +10641,7 @@ status of the checking values.</property>
                                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">4</property>
+                                                        <property name="left_attach">3</property>
                                                         <property name="top_attach">1</property>
                                                       </packing>
                                                     </child>
@@ -10790,7 +10778,7 @@ in the printed output.</property>
                                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">2</property>
+                                                        <property name="left_attach">4</property>
                                                         <property name="top_attach">3</property>
                                                       </packing>
                                                     </child>
@@ -10805,7 +10793,7 @@ in the printed output.</property>
                                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">3</property>
+                                                        <property name="left_attach">2</property>
                                                         <property name="top_attach">3</property>
                                                       </packing>
                                                     </child>
@@ -10821,7 +10809,7 @@ in the printed output.</property>
                                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">4</property>
+                                                        <property name="left_attach">3</property>
                                                         <property name="top_attach">3</property>
                                                       </packing>
                                                     </child>
@@ -10858,7 +10846,7 @@ in the printed output.</property>
                                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">2</property>
+                                                        <property name="left_attach">4</property>
                                                         <property name="top_attach">6</property>
                                                       </packing>
                                                     </child>
@@ -10873,7 +10861,7 @@ in the printed output.</property>
                                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">3</property>
+                                                        <property name="left_attach">2</property>
                                                         <property name="top_attach">6</property>
                                                       </packing>
                                                     </child>
@@ -10889,7 +10877,7 @@ in the printed output.</property>
                                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">4</property>
+                                                        <property name="left_attach">3</property>
                                                         <property name="top_attach">6</property>
                                                       </packing>
                                                     </child>
@@ -10919,7 +10907,7 @@ in the printed output.</property>
                                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">3</property>
+                                                        <property name="left_attach">4</property>
                                                         <property name="top_attach">7</property>
                                                       </packing>
                                                     </child>
@@ -10968,7 +10956,7 @@ in the printed output.</property>
                                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">4</property>
+                                                        <property name="left_attach">3</property>
                                                         <property name="top_attach">7</property>
                                                       </packing>
                                                     </child>
@@ -10992,33 +10980,23 @@ in the printed output.</property>
                                                       </packing>
                                                     </child>
                                                     <child>
-                                                      <object class="GtkLabel">
-                                                        <property name="visible">True</property>
-                                                        <property name="can_focus">False</property>
-                                                        <property name="halign">end</property>
-                                                        <property name="label" translatable="yes">Date:</property>
-                                                        <property name="justify">right</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left_attach">3</property>
-                                                        <property name="top_attach">10</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
                                                       <object class="GtkEntry" id="t_pubApprDate">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="tooltip_text" translatable="yes">The most recent date that the
 consultant approval updated.</property>
+                                                        <property name="margin_left">6</property>
+                                                        <property name="margin_right">3</property>
                                                         <property name="margin_top">4</property>
                                                         <property name="margin_bottom">4</property>
                                                         <property name="max_length">11</property>
                                                         <property name="width_chars">11</property>
-                                                        <property name="placeholder_text" translatable="yes">dd-mmm-yy</property>
+                                                        <property name="placeholder_text" translatable="yes">Date</property>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">4</property>
+                                                        <property name="left_attach">3</property>
                                                         <property name="top_attach">10</property>
+                                                        <property name="width">2</property>
                                                       </packing>
                                                     </child>
                                                     <child>
