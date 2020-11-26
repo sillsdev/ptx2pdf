@@ -3,6 +3,58 @@
 This document discusses different schemes for encoding different aspects of
 marker semantic styling into the style `\Marker` entry.
 
+## Use Cases
+
+It would be helpful to have some driving use cases to consider.
+
+### Words of Jesus
+
+The words of Jesus can run to multiple paragraphs
+
+```
+\p
+\v 2 And he opened his mouth and taught them, saying:
+\p
+\v 3 \wj-s\* "Blessed are the poor in spirit, for theirs is the kingdom of heaven.
+\p
+\v 4 "Blessed are those who mourn, for they shall be comforted.
+ ...
+\c 7
+ ...
+\s Build Your House on the Rock
+\p
+ ...
+\v 27 ... and it fell, and great was the fall of it."\wj-e\*
+```
+
+#### Discussion
+
+One of the problems of a text like this is whether we need to turn off `\wj` for
+subheadings. One way around this is explicitly colour text that doesn't change
+colour for `wj`. Thus verse numbers and subheadings might get `\Color #000000`.
+
+### Actor Script Markup
+
+This is a similar problem to the words of Jesus but with the extra issue of
+parameterised milestones:
+
+```
+\v 15 He sad to them, \qt-s |Jesus\* "But who do you say that I am?"\qt-e\*
+\v 16 Simon Peter replied, \qt-s |Peter\* "You are the Christ, the Son of the
+living God."\qt-e\*
+```
+### Table of Contents
+
+Table of contents generation in TeX is a bit of a pain because there is no start
+or finish marker to the complete table, so it is not possible to add a top level
+category. So one approach might be:
+
+```
+\tr \cat toc\cat* \tc1 Matthew \tc2 MAT \tcr3 12
+\tr \cat toc\cat* \tc1 Mark    \tc2 MRK \tcr3 75
+```
+
+
 ## Markup Actions
 
 ### Simple Milestone
@@ -15,6 +67,7 @@ paragraphs ending with `\wj-e\*`.
 1.  wj-s
 2.  ms:wj
 3.  ms:|wj
+4.  ms:wj|*
 ```
 
 Approach 1 is the simplest in terms of the user just adding styling to an
@@ -22,6 +75,16 @@ existing miletone marker description. The question is whether it scales well or
 whether it needs to. Approach 2 is half-way to being consistent with other
 milestones. Approach 3 is fully conformant with a model that supports approach 2
 in the next question, but it is very unwieldy.
+
+Approach 4 takes a different path and describes how markers with a milestone
+grouping should be styled. Thus one could more explicitly style `ms:wj|p` with
+the wildcard `ms:wj|*` as the fallback, before considering the `p` marker. Would
+this imply having to give all the paragraph styling for `ms:wj|p` or would both
+`p` and `ms:wj|p` be processed inside a '\p \wj-s\* text \wj-e\*` block? It is
+addressing the nastiness of something like `wj-s+p` or worse `ms:Jesus|qt+p`.
+But the question remains how often does one want to change the styling of one
+marker inside another other than with regard to the character styling a
+milestone marker might add.
 
 ### Default Parameterised Milestone
 
