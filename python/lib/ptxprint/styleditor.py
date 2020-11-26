@@ -194,6 +194,9 @@ class StyleEditor:
         if ifunchanged and self.basesheet.get(mrk, {}).get(key, None) != \
                 self.sheet.get(self.marker, {}).get(key, None):
             return
+        if val is None and key in self.sheet.get(mrk, {}):
+            del self.sheet[mrk][key]
+            return
         if self.basesheet.get(mrk, {}).get(key, None) != val:
             self.sheet.setdefault(self.marker, {})[key] = val
         if mrk == self.marker:
@@ -201,7 +204,7 @@ class StyleEditor:
             if v is None:
                 return
             self.loading = True
-            self.set(key, val)
+            self.set(v[0], val)
             self.loading = False
 
     def get(self, key, default=None):
@@ -217,7 +220,7 @@ class StyleEditor:
         setWidgetVal(key, w, value)
 
     def registerFn(self, mark, key, fn):
-        self.registers.setdefault(mark, {})[key] = fn
+        self.registers.setdefault(mark, {})[key.lower()] = fn
 
     def load(self, sheetfiles):
         if len(sheetfiles) == 0:
@@ -412,9 +415,9 @@ class StyleEditor:
     def _setData(self, key, val):
         if self.basesheet.get(self.marker, {}).get(key, None) != val:
             self.sheet[self.marker][key] = val
-            fn = self.registers.get(self.marker, {}).get(key, None)
+            fn = self.registers.get(self.marker, {}).get(key.lower(), None)
             if fn is not None:
-                fn(val)
+                fn(key, val)
 
     def item_changed(self, w, key):
         if self.isLoading:

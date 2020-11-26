@@ -219,6 +219,11 @@ _signals = {
     'row-activated': ("TreeView",),
 }
 
+_styleLinks = {
+    "updateFnFontSize": (("f", "FontSize"),),
+    "updateFnLineSpacing": (("f", "Baseline"), ("f", "LineSpacing")),
+}
+
 class GtkViewModel(ViewModel):
 
     def __init__(self, settings_dir, workingdir, userconfig, scriptsdir, args=None):
@@ -317,6 +322,9 @@ class GtkViewModel(ViewModel):
                                    self.builder.get_object('tv_picListEdit1'), self.builder, self)
         self.picChecksView = PicChecks(self)
         self.styleEditorView = StyleEditor(self)
+        for k, v in _styleLinks.items():
+            for a in v:
+                self.styleEditorView.registerFn(a[0], a[1], getattr(self, k))
 
         self.logbuffer = StreamTextBuffer()
         self.builder.get_object("tv_logging").set_buffer(self.logbuffer)
@@ -805,6 +813,12 @@ class GtkViewModel(ViewModel):
     def on2colClicked(self, btn):
         self.onSimpleClicked(btn)
         self.picListView.onRadioChanged()
+        val = self.get("s_indentUnit")
+        if btn.is_active():
+            val = val / 2
+        else:
+            val = val * 2
+        self.set("s_indentUnit", val)
 
     def onSimpleFocusClicked(self, btn):
         self.sensiVisible(Gtk.Buildable.get_name(btn), focus=True)
@@ -1193,7 +1207,50 @@ class GtkViewModel(ViewModel):
         w.set_text(re.sub(" ", ",", self.ptsettings.get('crossrefs', "")))
         if w.get_text() == "":
             w.set_text("†,‡,§,∥,#")
-        
+
+    def onFnFontSizeChanged(self, btn, *a):
+        val = float(self.get("s_fnfontsize"))
+        val = val * float(self.get("s_fontsize")) / 12.
+        self.styleEditorView.setval("f", "FontSize", val)
+        self.styleEditorView.setval("x", "FontSize", val, ifunchanged=True)
+
+    def updateFnFontSize(self, key, val):
+        val = float(val) * 12. / float(self.get("s_fontsize"))
+        self.set("s_fnfontsize", val)
+
+    def onFnLineSpacingChanged(self, btn, *a):
+        val = self.get("s_fnlinespacing")
+        for k in ("f", "x"):
+            isabs = self.styleEditorView.getval(k, "LineSpacing") == None
+            if isabs:
+                self.styleEditorView.setval(k, "Baseline", val)
+            else:
+                v = val / float(self.get("s_linespacing", default=12.))
+                self.styleEditorView.setval(k, "LineSpacing", v)
+
+    def updateFnLineSpacing(self, key, val):
+        val = float(val)
+        if key.lower() == "linespacing":
+            val = val * self.get("s_linespacing", default=12.)
+        self.set("s_fnlinespacing", val)
+
+    def onFnBlendClicked(self, btn):
+        self.onSimpleClicked(btn)
+        self.styleEditorView.setval("x", "NoteBlendInto", "f" if btn.get_active() else None)
+
+    def onDirectionChanged(self, btn, *a):
+        rtl = self.get("fcb_textDirection") == "Right-to-Left"
+        if self.loadingConfig:
+            self.rtl = rtl
+        if rtl == self.rtl:
+            return
+        for k in self.styleEditorView.allStyles():
+            j = self.styleEditorView.getval(k, "Justification")
+            if j.lower() == "right":
+                self.styleEditorView.setval(k, "Justification", "Left")
+            elif j.lower() == "left":
+                self.styleEditorView.setval(k, "Justification", "Left")
+
     def onProcessScriptClicked(self, btn):
         if not self.sensiVisible("c_processScript"):
             self.builder.get_object("btn_editScript").set_sensitive(False)
