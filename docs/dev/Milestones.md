@@ -29,9 +29,21 @@ The words of Jesus can run to multiple paragraphs
 
 #### Discussion
 
-One of the problems of a text like this is whether we need to turn off `\wj` for
+1) One of the problems of a text like this is whether we need to turn off `\wj` for
 subheadings. One way around this is explicitly colour text that doesn't change
 colour for `wj`. Thus verse numbers and subheadings might get `\Color #000000`.
+
+2) The above assumes that `\wj-s` takes on the attributes of `\wj`. DJG's
+original understanding of the USFM standard was that this was true, but a 2nd
+re-read convinced him it wasn't. He's now confused about what is intended in the
+standard. ```\qt-s \* ...\qt-e\* ``` while quoted text as in who is saying what, seems
+distinct to ```\qt``` 'quoted text from the Old Testament'.
+
+The milestone certainly gets a different treatment to the character stle in the style sheet.
+
+
+
+
 
 ### Actor Script Markup
 
@@ -43,6 +55,40 @@ parameterised milestones:
 \v 16 Simon Peter replied, \qt-s |Peter\* "You are the Christ, the Son of the
 living God."\qt-e\*
 ```
+
+### Unchecked work
+
+This has been raised on the paratext help page. Someone wanted to use a
+milestone to mark unchecked work. 
+
+In this example, ```\ip``` may have a colour associated with it, let's assume
+it's grey. And that ```\sts|unchecked```  is coloured blue.
+("Dear friends, we've done some revision, what do you think of the text in blue,
+is it OK?").
+
+```
+\c 1
+\ip Checked intro text
+\sts-s |unchecked\*
+However this bit isn't checked
+
+\ip A whole unchecked paragraph
+
+\sts-e\*
+```
+#### Discussion
+
+The example above for the words of Jesus *implicitly assumes* that an ```\s```
+within a milestone block is above (takes precedece over) the milestone marker.  
+
+The transition from ```\ip``` to milestone markup assumes that the
+milestone's markup takes precedence over the the paragraph style.
+
+Things are fine up to this point. However, by the logic that gives ```\s```
+precedence over the milestone, any font-styling applied by the mid-milestone 
+```\ip``` will override the milestone's formatting, giving the impression that
+"A whole uncheced paragraph" is original text.
+
 ### Table of Contents
 
 Table of contents generation in TeX is a bit of a pain because there is no start

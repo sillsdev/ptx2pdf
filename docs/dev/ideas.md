@@ -7,23 +7,6 @@ There is some barcode-creating code available (one package uses secial fonts, bu
 Someone was working on producing covers. It would be good to get them involved and merge efforts.
 
 
-------------------
-
-### \w word|glossary entry\w* and other |attributes.
-
-USFM3.0 has added the | symbol to several character styles. The most useful one is \w,  (the lemma [default] attribute of a \w ... \w* could trigger the
-inclusion of glossary entries, for example). But in any case, their presence should be parsed and not cause processing errors.
-
-
-----------------
-### Milestones
-The syntax: \foo ...\* is taken in usfm to indicate a milestone, a non-printable indication of some kind of context type. 
-
-Script marked with \qt-s |who="Jesus"\* .... \qt-e\* might be used to mark up scripts applying different colouration for alternate speakers, for instance.
-One method of using these might be to apply hooks based on milestones.
-
-Effectively another category-like mechanism
-
 -----------------
 
 ### Categories
