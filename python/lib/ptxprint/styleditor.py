@@ -120,4 +120,40 @@ class StyleEditor:
                         markerout = True
                     outfh.write("\\{} {}\n".format(normmkr(k), self._str_val(v, k)))
 
+    def asFloatPts(self, s, mrk=None):
+        if mrk is None:
+            mrk = self.marker
+        m = re.match(r"^\s*(-?\d+(?:\.\d*))\s*(\D*?)\s*$", s)
+        if m:
+            try:
+                v = float(m[1])
+            except TypeError:
+                v = 0.
+            units = m[2]
+            if units == "" or units.lower() == "pt" or mrk is None:
+                return v
+            elif units == "in":
+                return v * 72.27
+            elif units == "mm":
+                return v * 72.27 / 25.4
+            try:
+                fsize = float(self.getval(mrk, "FontSize"))
+            except TypeError:
+                return v
+            if fsize is None:
+                return v
+            try:
+                bfsize = float(self.model.get("s_fontsize"))
+            except TypeError:
+                return v
+            if units == "ex":
+                return v * fsize / 12. / 2.
+            elif units == "em":
+                return v * fsize / 12.
+            return v
+        else:
+            try:
+                return float(s)
+            except TypeError:
+                return 0.
 

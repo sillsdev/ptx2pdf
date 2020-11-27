@@ -416,7 +416,7 @@ class StyleEditorView(StyleEditor):
             else:
                 oldval = self.basesheet.get(self.marker, {}).get(key, v[2])
             if v[0].startswith("s_"):
-                diff = abs(float(oldval) - float(value)) > 0.05
+                diff = abs(self.asFloatPts(oldval) - self.asFloatPts(value)) > 0.05
             else:
                 diff = oldval != value
             if diff:
