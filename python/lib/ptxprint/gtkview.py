@@ -134,10 +134,10 @@ _sensitivities = {
     "c_applyWatermark" :       ["btn_selectWatermarkPDF"],
     "c_linebreakon" :          ["t_linebreaklocale"],
     "c_spacing" :              ["l_minSpace", "s_minSpace", "l_maxSpace", "s_maxSpace"],
-    "c_inclPageBorder" :       ["btn_selectPageBorderPDF"],
-    "c_inclSectionHeader" :    ["btn_selectSectionHeaderPDF"],
-    "c_inclEndOfBook" :        ["btn_selectEndOfBookPDF"],
-    "c_inclVerseDecorator" :   ["btn_selectVerseDecorator"],
+    "c_inclPageBorder" :       ["btn_selectPageBorderPDF", "lb_inclPageBorder"],
+    "c_inclSectionHeader" :    ["btn_selectSectionHeaderPDF", "lb_inclSectionHeader"],
+    "c_inclEndOfBook" :        ["btn_selectEndOfBookPDF", "lb_inclEndOfBook"],
+    "c_inclVerseDecorator" :   ["btn_selectVerseDecorator", "lb_inclVerseDecorator", "btn_VerseStyle"],
     "c_fakebold" :             ["s_boldembolden", "s_boldslant"],
     "c_fakeitalic" :           ["s_italicembolden", "s_italicslant"],
     "c_fakebolditalic" :       ["s_bolditalicembolden", "s_bolditalicslant"],
@@ -456,7 +456,7 @@ class GtkViewModel(ViewModel):
                 "If the number of options is too overwhelming then use\n" + \
                 "this switch to hide the more complex/advanced options."))
                       
-        for c in ("tb_Font", "tb_Advanced", "tb_ViewerEditor", "tb_Tabs", "tb_DiglotBorder", "tb_StyleEdtor",
+        for c in ("tb_Font", "tb_Advanced", "tb_ViewerEditor", "tb_Tabs", "tb_DiglotBorder", "tb_StyleEditor",
                   "fr_copyrightLicense", "r_book_module", "btn_chooseBibleModule", "lb_bibleModule", # "tb_Pictures",
                   "c_fighiderefs", "lb_selectFigureFolder", # "r_book_dbl", "btn_chooseDBLbundle", "l_dblBundle", 
                   "l_missingPictureString", "l_imageTypeOrder", "t_imageTypeOrder", "fr_layoutSpecialBooks", "fr_layoutOther",
@@ -465,13 +465,14 @@ class GtkViewModel(ViewModel):
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
                   "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection", "l_colgutteroffset", "fr_hyphenation",
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "c_fnOverride", "c_xrOverride",
-                  "row_ToC", "c_hyphenate", "l_missingPictureCount", "bx_colophon", "tb_StyleEdtor", 
+                  "row_ToC", "c_hyphenate", "l_missingPictureCount", "bx_colophon", 
                   "c_hdrLeftPri", "c_hdrLeftSec", "c_hdrCenterPri", "c_hdrCenterSec", "c_hdrRightPri", "c_hdrRightSec", 
                   "c_omitverseone", "c_glueredupwords", "c_firstParaIndent", "c_hangpoetry", "c_preventwidows", 
                   "l_sidemarginfactor", "s_sidemarginfactor", "l_min", "s_linespacingmin", "l_max", "s_linespacingmax",
                   "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "fcb_textDirection", "l_digits", "fcb_digits",
                   "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
                   "gr_fnAdvOptions", "c_figexclwebapp", "bx_horizRule", "l_glossaryMarkupStyle"):
+            # print(c)
             self.builder.get_object(c).set_visible(val)
 
         # Hide the Details and Checklist tabs on the Pictures tab
@@ -1003,8 +1004,9 @@ class GtkViewModel(ViewModel):
                   "scroll_TeXfile" : ("", ".tex"), "scroll_XeTeXlog" : ("", ".log"), "scroll_Settings": ("", ""), "tb_Links": ("", "")}
 
         if pgid == "scroll_FrontMatter": # This hasn't been built yet, but is coming soon!
-            self.fileViews[pgnum][0].set_text("\n"  +_(" PicLists have now moved! Look for Details & Checklist on the Pictures tab.") + \
-                                              "\n"*2+_(" In future a tool to help build and edit Front Matter will be included here."))
+            self.fileViews[pgnum][0].set_text("\n"  +_(" PicLists have been renamed and moved!") + \
+                                              "\n"  +_(" Look on the <Pictures> tab for Details & Checklist along the top row.") + \
+                                              "\n"*2+_(" A tool to help create Front Matter (the FRT book) may show up here in future."))
             return
 
         elif pgid in ("scroll_AdjList", "scroll_FinalSFM"):  # (AdjList,SFM)
@@ -1056,10 +1058,9 @@ class GtkViewModel(ViewModel):
             self.onViewerFocus(self.fileViews[pgnum][1], None)
         else:
             set_tooltip(None)
-            self.fileViews[pgnum][0].set_text(_("\nThis file doesn't exist yet.\n\nTry... \
-                                               \n   * Check option (above) to 'Preserve Intermediate Files and Logs' \
-                                               \n   * Generate the PiCList or AdjList \
-                                               \n   * Click 'Print' to create the PDF"))
+            self.fileViews[pgnum][0].set_text(_("\nThis file doesn't exist yet.\n\nTry clicking... \
+                                               \n   * the 'Generate' button \
+                                               \n   * the 'Print' button to create the PDF first"))
         self.bookNoUpdate = False
 
     def saveStyles(self, force=False):
@@ -1144,6 +1145,18 @@ class GtkViewModel(ViewModel):
     def onPicRadioChanged(self, btn):
         self.onRadioChanged(btn)
         self.picListView.onRadioChanged()
+    
+    def onReverseRadioChanged(self, btn):
+        self.onRadioChanged(btn)
+        r = self.get("r_picreverse")
+        # self.picListView.onRadioChanged()
+        self.builder.get_object("fcb_plMirror").set_sensitive(False)
+        if r == "always":
+            self.set("fcb_plMirror", "both")
+        elif r == "never":
+            self.set("fcb_plMirror", "None")
+        else: # unlock the control
+            self.builder.get_object("fcb_plMirror").set_sensitive(True)
     
     def updateFakeLabels(self):
         status = self.get("c_fakebold") or self.get("c_fakeitalic") or self.get("c_fakebolditalic")
@@ -1259,7 +1272,13 @@ class GtkViewModel(ViewModel):
 
     def onThumbStyleClicked(self, btn):
         self.styleEditorView.selectMarker("zthumbtab" if self.get("c_thumbIsZthumb") else "toc3")
-        mpgnum = self.notebooks['Main'].index("Style")
+        self.set("c_styTextProperties", False)
+        mpgnum = self.notebooks['Main'].index("tb_StyleEditor")
+        self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+
+    def onVerseStyleClicked(self, btn):
+        self.styleEditorView.selectMarker("v")
+        mpgnum = self.notebooks['Main'].index("tb_StyleEditor")
         self.builder.get_object("nbk_Main").set_current_page(mpgnum)
 
     def onProcessScriptClicked(self, btn):
@@ -2050,14 +2069,15 @@ class GtkViewModel(ViewModel):
             return h
 
         bcol = coltohex(self.get("col_thumbback"))
-        fcol = coltohex(self.get("col_thumbtext"))
-        bold = "bold" if self.get("c_thumbbold") else "normal"
-        ital = "italic" if self.get("c_thumbitalic") else "normal"
-        markup = '<span background="{}" foreground="{}" font-weight="{}" font-style="{}">  {{}}  </span>'.format(bcol, fcol, bold, ital)
-        for w in ("VerticalL", "VerticalR", "HorizontalL", "HorizontalR"):
-            wid = self.builder.get_object("l_thumb"+w)
-            wid.set_text(markup.format(w[:-1]))
-            wid.set_use_markup(True)
+        # MH: We have to get these values from the Stylesheet(s) now. How do to so?
+        # fcol = coltohex(self.get("col_thumbtext"))
+        # bold = "bold" if self.get("c_thumbbold") else "normal"
+        # ital = "italic" if self.get("c_thumbitalic") else "normal"
+        # markup = '<span background="{}" foreground="{}" font-weight="{}" font-style="{}">  {{}}  </span>'.format(bcol, fcol, bold, ital)
+        # for w in ("VerticalL", "VerticalR", "HorizontalL", "HorizontalR"):
+            # wid = self.builder.get_object("l_thumb"+w)
+            # wid.set_text(markup.format(w[:-1]))
+            # wid.set_use_markup(True)
 
     def onRotateTabsChanged(self, *a):
         orientation = self.get("fcb_rotateTabs")

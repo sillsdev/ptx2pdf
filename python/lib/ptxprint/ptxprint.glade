@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -9376,6 +9376,7 @@ more than once (to update the list of page numbers).</property>
                                           <object class="GtkTreeViewColumn">
                                             <property name="spacing">4</property>
                                             <property name="sizing">fixed</property>
+                                            <property name="fixed_width">72</property>
                                             <property name="title" translatable="yes">Anchor Ref</property>
                                             <property name="clickable">True</property>
                                             <property name="reorderable">True</property>
@@ -9393,7 +9394,7 @@ more than once (to update the list of page numbers).</property>
                                             <property name="resizable">True</property>
                                             <property name="spacing">4</property>
                                             <property name="sizing">fixed</property>
-                                            <property name="fixed_width">248</property>
+                                            <property name="fixed_width">250</property>
                                             <property name="title" translatable="yes">Caption</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cr_caption"/>
@@ -9408,7 +9409,7 @@ more than once (to update the list of page numbers).</property>
                                             <property name="resizable">True</property>
                                             <property name="spacing">4</property>
                                             <property name="sizing">fixed</property>
-                                            <property name="fixed_width">90</property>
+                                            <property name="fixed_width">88</property>
                                             <property name="title" translatable="yes">File</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cr_filename"/>
@@ -9420,8 +9421,10 @@ more than once (to update the list of page numbers).</property>
                                         </child>
                                         <child>
                                           <object class="GtkTreeViewColumn">
+                                            <property name="resizable">True</property>
                                             <property name="spacing">4</property>
                                             <property name="sizing">fixed</property>
+                                            <property name="fixed_width">43</property>
                                             <property name="title" translatable="yes">Frame</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cr_size"/>
@@ -10084,7 +10087,11 @@ other unwanted side effects this mirroring may cause.</property>
                                                     <property name="tooltip_text" translatable="yes">None = The image will never be mirrored
 Odd = Mirrored only if image ends up on an odd page
 Even = Mirrored only if image ends up on an even page
-Both = Always mirrored (regardless of where it ends up)</property>
+Both = Always mirrored (regardless of where it ends up)
+
+Note that if this option is grayed out, it is because 
+you have already restricted the mirroring options 
+on the Checklist tab.</property>
                                                     <property name="halign">start</property>
                                                     <property name="model">ls_plMirror</property>
                                                     <property name="wrap_width">1</property>
@@ -10677,10 +10684,16 @@ status of the checking values.</property>
                                                       <object class="GtkLabel">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">False</property>
-                                                        <property name="tooltip_text" translatable="yes">Sometimes reversing an image makes it acceptable since a left hand becomes a right hand, etc.</property>
+                                                        <property name="tooltip_text" translatable="yes">Sometimes mirroring (reversing) an image makes it
+acceptable since a left hand becomes a right hand, etc.
+
+Some artists' pictures do not take into account
+the "dirty left-hand" culture. For example, it would
+be "awkward" to use a picture where Jesus is healing
+a person using his left hand!</property>
                                                         <property name="halign">start</property>
                                                         <property name="label" translatable="yes">Would the image be culturally acceptable if 
-the image was reversed (left becomes right)?</property>
+the image was mirrored (left becomes right)?</property>
                                                       </object>
                                                       <packing>
                                                         <property name="left_attach">1</property>
@@ -10783,29 +10796,37 @@ in the printed output.</property>
                                                       </packing>
                                                     </child>
                                                     <child>
-                                                      <object class="GtkRadioButton" id="r_picreverse_yes">
-                                                        <property name="label" translatable="yes">Yes</property>
+                                                      <object class="GtkRadioButton" id="r_picreverse_OK">
+                                                        <property name="label" translatable="yes">OK to
+mirror</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
+                                                        <property name="tooltip_text" translatable="yes">It is fine to mirror the image if needed. It would
+not change the impact or response of the readers.</property>
                                                         <property name="draw_indicator">True</property>
-                                                        <property name="group">r_picreverse_no</property>
-                                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                                        <property name="group">r_picreverse_never</property>
+                                                        <signal name="clicked" handler="onReverseRadioChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">2</property>
+                                                        <property name="left_attach">4</property>
                                                         <property name="top_attach">3</property>
                                                       </packing>
                                                     </child>
                                                     <child>
-                                                      <object class="GtkRadioButton" id="r_picreverse_no">
-                                                        <property name="label" translatable="yes">No</property>
+                                                      <object class="GtkRadioButton" id="r_picreverse_never">
+                                                        <property name="label" translatable="yes">Never
+mirror</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
+                                                        <property name="tooltip_text" translatable="yes">Ensure that this image is always shown
+as currently depicted in the preview. Do
+NOT allow it to be mirrored (reversed).</property>
+                                                        <property name="halign">start</property>
                                                         <property name="draw_indicator">True</property>
-                                                        <property name="group">r_picreverse_yes</property>
-                                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                                        <property name="group">r_picreverse_OK</property>
+                                                        <signal name="clicked" handler="onReverseRadioChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
                                                         <property name="left_attach">3</property>
@@ -10813,18 +10834,23 @@ in the printed output.</property>
                                                       </packing>
                                                     </child>
                                                     <child>
-                                                      <object class="GtkRadioButton" id="r_picreverse_unknown">
-                                                        <property name="label" translatable="yes">Unknown</property>
+                                                      <object class="GtkRadioButton" id="r_picreverse_always">
+                                                        <property name="label" translatable="yes">Always
+mirror</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
+                                                        <property name="tooltip_text" translatable="yes">Ensure that this image is always mirrored from
+what is currently shown in the preview. Therefore
+actions being done with the left hand will show as
+being done with the right hand, and vice versa.</property>
                                                         <property name="halign">end</property>
                                                         <property name="draw_indicator">True</property>
-                                                        <property name="group">r_picreverse_yes</property>
-                                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                                        <property name="group">r_picreverse_OK</property>
+                                                        <signal name="clicked" handler="onReverseRadioChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">4</property>
+                                                        <property name="left_attach">2</property>
                                                         <property name="top_attach">3</property>
                                                       </packing>
                                                     </child>
@@ -12401,59 +12427,13 @@ from XeTeX processing.</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">Size of the text inside the Thumb Tab in points (pts).</property>
-                                <property name="halign">end</property>
-                                <property name="label" translatable="yes">Font Size:</property>
-                                <property name="justify">right</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkSpinButton" id="s_thumbfont">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="tooltip_text" translatable="yes">Size of the text inside the Thumb Tab in points (pts).</property>
-                                <property name="halign">start</property>
-                                <property name="width_chars">5</property>
-                                <property name="text" translatable="yes">12</property>
-                                <property name="secondary_icon_tooltip_text" translatable="yes">Font size of text in the thumb tab. Specify this as you would the font size in a stylesheet. Thus the value is multiplied by the FontUnits. The main body text size is usually 12.</property>
-                                <property name="adjustment">a_thumbfont</property>
-                                <property name="climb_rate">1</property>
-                                <property name="value">12</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">Thumb Tabs usually use a dark colour for the Tab with a light (or white) text.</property>
                                 <property name="halign">end</property>
                                 <property name="label" translatable="yes">Tab Colour:</property>
                               </object>
                               <packing>
-                                <property name="left_attach">3</property>
-                                <property name="top_attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">Overrides the colour in the stylesheet for toc3</property>
-                                <property name="halign">end</property>
-                                <property name="label" translatable="yes">Text Colour:</property>
-                                <property name="justify">right</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">5</property>
-                                <property name="top_attach">2</property>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">1</property>
                               </packing>
                             </child>
                             <child>
@@ -12469,25 +12449,8 @@ from XeTeX processing.</property>
                                 <signal name="color-set" handler="onThumbColourChange" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left_attach">4</property>
-                                <property name="top_attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkColorButton" id="col_thumbtext">
-                                <property name="width_request">40</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">Overrides the colour in the stylesheet for toc3</property>
-                                <property name="halign">start</property>
-                                <property name="title" translatable="yes">Thumb Tab Text Colour</property>
-                                <property name="rgba">rgb(255,255,255)</property>
-                                <signal name="color-set" handler="onThumbColourChange" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">6</property>
-                                <property name="top_attach">2</property>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">1</property>
                               </packing>
                             </child>
                             <child>
@@ -12508,38 +12471,6 @@ from XeTeX processing.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="c_thumbbold">
-                                <property name="label" translatable="yes">Bold font</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">Sets bold font. Often useful for white text on a black background. Overrides the default style setting for toc3.</property>
-                                <property name="halign">start</property>
-                                <property name="draw_indicator">True</property>
-                                <signal name="clicked" handler="onThumbColourChange" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">2</property>
-                                <property name="top_attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkCheckButton" id="c_thumbitalic">
-                                <property name="label" translatable="yes">Italic font</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">Italicise the font. Overrides default style settings of toc3</property>
-                                <property name="halign">start</property>
-                                <property name="draw_indicator">True</property>
-                                <signal name="clicked" handler="onThumbColourChange" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">2</property>
-                                <property name="top_attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
@@ -12550,8 +12481,8 @@ Tab Positions:</property>
                                 <property name="justify">right</property>
                               </object>
                               <packing>
-                                <property name="left_attach">3</property>
-                                <property name="top_attach">1</property>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">2</property>
                               </packing>
                             </child>
                             <child>
@@ -12562,25 +12493,8 @@ Tab Positions:</property>
                                 <property name="adjustment">a_thumbtabs</property>
                               </object>
                               <packing>
-                                <property name="left_attach">4</property>
-                                <property name="top_attach">1</property>
-                                <property name="width">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkCheckButton" id="c_thumbrestart">
-                                <property name="label" translatable="yes">Restart
-at MAT</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">Normally books will follow sequentially and if the next tab would be off the bottom of the page, then it will be set to the top for a new cycle of tabs. Setting this starts a new cycle at the start of the New Testament (Matthew).</property>
-                                <property name="halign">start</property>
-                                <property name="draw_indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">6</property>
-                                <property name="top_attach">3</property>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">2</property>
                               </packing>
                             </child>
                             <child>
@@ -12641,7 +12555,9 @@ at MAT</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">Groups adjacent books together into the same tab.</property>
+                                <property name="tooltip_text" translatable="yes">When several shorter adjacent books occur, it is
+common to group them together to use the same
+tab position (but still have differently named tabs).</property>
                                 <property name="halign">end</property>
                                 <property name="margin_left">6</property>
                                 <property name="label" translatable="yes">Grouped Tabs:</property>
@@ -12656,7 +12572,13 @@ at MAT</property>
                               <object class="GtkEntry" id="t_thumbgroups">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="tooltip_text" translatable="yes">List book ids with spaces between. Use ; to separate groups. For example: PHM TIT; 1JN 2JN 3JN JUD</property>
+                                <property name="tooltip_text" translatable="yes">List book IDs of short books to be grouped together
+at the same tab position. Use spaces between book 
+IDs, and use ; to separate groups. There is no need to
+list all the book IDs here - only the special ones which
+need to share the same tab position.
+
+For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                                 <property name="placeholder_text" translatable="yes">PHM TIT; 1JN 2JN 3JN JUD</property>
                               </object>
                               <packing>
@@ -12744,6 +12666,7 @@ at MAT</property>
                               <object class="GtkSeparator">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="halign">center</property>
                                 <property name="orientation">vertical</property>
                               </object>
                               <packing>
@@ -12753,7 +12676,54 @@ at MAT</property>
                               </packing>
                             </child>
                             <child>
-                              <placeholder/>
+                              <object class="GtkCheckButton" id="c_thumbrestart">
+                                <property name="label" translatable="yes">Restart Tabs at MAT</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">Normally books will follow sequentially and if the next tab would be off the bottom of the page, then it will be set to the top for a new cycle of tabs. Setting this starts a new cycle at the start of the New Testament (Matthew).</property>
+                                <property name="halign">start</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">6</property>
+                                <property name="top_attach">3</property>
+                                <property name="width">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_ThumbStyle">
+                                <property name="label" translatable="yes">Adjust Style...</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <signal name="clicked" handler="onThumbStyleClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">2</property>
+                                <property name="width">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_thumbIsZthumb">
+                                <property name="label" translatable="yes">Use \zthumbtab Style</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">By default the Thumb Tabs use the styling specified
+for the \toc3 marker. If you want to specify different
+styling for the tabs, then select this option.
+
+The USFM extension \zthumbtab'' can be used to set an alternative value for the thumbtab contents. If a book's header contains a \zthumbtab entry, then\toc3 will not set the thumbtab contents. An empty\zthumbtab'' entry specifies that there should be no text in the thumbtab for that book.</property>
+                                <property name="halign">start</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">4</property>
+                                <property name="top_attach">2</property>
+                                <property name="width">2</property>
+                              </packing>
                             </child>
                             <child>
                               <placeholder/>
@@ -12778,7 +12748,9 @@ at MAT</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="tooltip_text" translatable="yes">Thumb Tabs are sometimes used in longer publications to help the user find a scripture book easier. These use the \toc3 element in a USFM file to provide the text for the tab. If you have no \toc3 elements, there is no point in enabling Thumb Tabs.
+                            <property name="tooltip_text" translatable="yes">Thumb Tabs are sometimes used in longer publications to help the user find a scripture book easier. By default
+these use the \toc3 element in a USFM file to provide
+the text for the tab.
 Note: If only a single book is currently selected, it will place the Thumb Tab relative to ALL the books listed in the multiple book list.</property>
                             <property name="draw_indicator">True</property>
                             <signal name="clicked" handler="onTabsClicked" swapped="no"/>
@@ -13156,10 +13128,11 @@ options here to create a Diglot or Didoc.</property>
                           <object class="GtkGrid" id="gr_borders">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="margin_left">6</property>
+                            <property name="margin_left">12</property>
                             <property name="margin_right">6</property>
-                            <property name="margin_top">12</property>
+                            <property name="margin_top">6</property>
                             <property name="margin_bottom">6</property>
+                            <property name="row_spacing">6</property>
                             <property name="column_spacing">6</property>
                             <child>
                               <object class="GtkCheckButton" id="c_inclPageBorder">
@@ -13205,8 +13178,6 @@ to make it fit. </property>
                                 <property name="receives_default">True</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
-                                <property name="margin_top">4</property>
-                                <property name="margin_bottom">4</property>
                                 <signal name="clicked" handler="onSectionHeaderPDFclicked" swapped="no"/>
                               </object>
                               <packing>
@@ -13221,7 +13192,6 @@ to make it fit. </property>
                                 <property name="can_focus">False</property>
                                 <property name="opacity">0.80000000000000004</property>
                                 <property name="halign">end</property>
-                                <property name="margin_bottom">6</property>
                                 <property name="justify">right</property>
                                 <property name="ellipsize">middle</property>
                                 <property name="max_width_chars">30</property>
@@ -13267,6 +13237,7 @@ font and size to ensure verses fit well.</property>
                               <packing>
                                 <property name="left_attach">3</property>
                                 <property name="top_attach">0</property>
+                                <property name="width">2</property>
                               </packing>
                             </child>
                             <child>
@@ -13275,7 +13246,6 @@ font and size to ensure verses fit well.</property>
                                 <property name="can_focus">False</property>
                                 <property name="opacity">0.80000000000000004</property>
                                 <property name="halign">end</property>
-                                <property name="margin_bottom">6</property>
                                 <property name="justify">right</property>
                                 <property name="ellipsize">middle</property>
                                 <property name="max_width_chars">30</property>
@@ -13292,10 +13262,9 @@ font and size to ensure verses fit well.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
-                                <property name="halign">start</property>
+                                <property name="halign">end</property>
                                 <property name="valign">center</property>
                                 <property name="margin_right">6</property>
-                                <property name="margin_top">4</property>
                                 <signal name="clicked" handler="onVerseDecoratorPDFclicked" swapped="no"/>
                               </object>
                               <packing>
@@ -13335,13 +13304,14 @@ a special graphic. Ensure that there is
 adequate space - both horizontal as well
 as vertical to make sure all headings fit.</property>
                                 <property name="halign">start</property>
+                                <property name="margin_left">40</property>
                                 <property name="margin_top">4</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">5</property>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">3</property>
                               </packing>
                             </child>
                             <child>
@@ -13356,8 +13326,8 @@ as vertical to make sure all headings fit.</property>
                                 <property name="max_width_chars">30</property>
                               </object>
                               <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">6</property>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">4</property>
                                 <property name="width">2</property>
                               </packing>
                             </child>
@@ -13367,15 +13337,14 @@ as vertical to make sure all headings fit.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
-                                <property name="halign">start</property>
+                                <property name="halign">end</property>
                                 <property name="valign">center</property>
-                                <property name="margin_top">4</property>
-                                <property name="margin_bottom">4</property>
+                                <property name="margin_right">6</property>
                                 <signal name="clicked" handler="onEndOfBookPDFclicked" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left_attach">2</property>
-                                <property name="top_attach">5</property>
+                                <property name="left_attach">5</property>
+                                <property name="top_attach">3</property>
                                 <property name="height">2</property>
                               </packing>
                             </child>
@@ -13387,6 +13356,7 @@ as vertical to make sure all headings fit.</property>
                                 <property name="receives_default">False</property>
                                 <property name="tooltip_text" translatable="yes">If set, the border is expanded to the full page. Otherwise it is expanded only to the gutter margins.</property>
                                 <property name="halign">end</property>
+                                <property name="valign">start</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
@@ -13395,28 +13365,21 @@ as vertical to make sure all headings fit.</property>
                               </packing>
                             </child>
                             <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
+                              <object class="GtkButton" id="btn_VerseStyle">
+                                <property name="label" translatable="yes">Adjust Style...</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="halign">end</property>
+                                <property name="valign">start</property>
+                                <property name="margin_right">6</property>
+                                <signal name="clicked" handler="onVerseStyleClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">2</property>
+                                <property name="width">3</property>
+                              </packing>
                             </child>
                             <child>
                               <placeholder/>
@@ -13482,7 +13445,7 @@ been enabled.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox" id="tb_StyleEdtor">
+                  <object class="GtkBox" id="tb_StyleEditor">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>

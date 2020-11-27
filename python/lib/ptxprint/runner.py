@@ -115,7 +115,6 @@ elif sys.platform == "win32":
     def openkey(path):
         try:
             k = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\\" + path.replace("/", "\\"))
-            print("k=", k)
         except FileNotFoundError:
             txt1 = "Unable to locate Registry Key for Paratext installation"
             txt2 = "Sorry - PTXprint cannot work unless Paratext 8 (or later) is installed"
@@ -132,7 +131,6 @@ elif sys.platform == "win32":
         return k
 
     def queryvalue(base, value):
-        print("value=", value)
         return winreg.QueryValueEx(base, value)[0]
 
     def fclist(family, pattern):

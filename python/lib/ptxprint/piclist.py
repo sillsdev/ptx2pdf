@@ -456,7 +456,7 @@ class PicList:
 _checks = {
     "r_picclear":       "unknown",
     "fcb_picaccept":    "Unknown",
-    "r_picreverse":     "unknown",
+    "r_picreverse":     "OK",
     "fcb_pubusage":     "Unknown",
     "r_pubclear":       "unchecked",
     "r_pubnoise":       "unchecked",
