@@ -320,8 +320,8 @@ class StyleEditorView(StyleEditor):
                 print("pt value!", k, val, oldval)
             self._setFieldVal(v, oldval, val)
 
-        stype = data.get('StyleType', '')
-        _showgrid = {'Para': (True, True, False), 'Char': (False, True, False), 'Note': (False, True, True)}
+        stype = data.get('StyleType', old.get('StyleType', ''))
+        _showgrid = {'Para': (True, True, False), 'Char': (False, True, False), 'Note': (True, True, True)}
         visibles = _showgrid.get(stype[:4],(True, True, True))
         for i, w in enumerate(('Para', 'Char', 'Note')):
             self.builder.get_object("fr_sty"+w+"Settings").set_visible(visibles[i])
@@ -496,8 +496,8 @@ class StyleEditorView(StyleEditor):
             self.onSelected(selection)
 
     def refreshKey(self):
-        if self.marker in self.basesheet:
-            self.sheet[self.marker] = deepcopy(self.basesheet[self.marker])
+        if self.marker in self.sheet:
+            del self.sheet[self.marker]
             self.editMarker()
         
     def resetParam(self, label):
