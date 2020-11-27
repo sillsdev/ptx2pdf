@@ -1140,16 +1140,8 @@ class GtkViewModel(ViewModel):
         self.picListView.onRadioChanged()
     
     def onReverseRadioChanged(self, btn):
-        self.onRadioChanged(btn)
-        r = self.get("r_picreverse")
-        # self.picListView.onRadioChanged()
-        self.builder.get_object("fcb_plMirror").set_sensitive(False)
-        if r == "always":
-            self.set("fcb_plMirror", "both")
-        elif r == "never":
-            self.set("fcb_plMirror", "None")
-        else: # unlock the control
-            self.builder.get_object("fcb_plMirror").set_sensitive(True)
+        self.onPicRadioChanged(btn)
+        self.picChecksView.onReverseRadioChanged()
     
     def updateFakeLabels(self):
         status = self.get("c_fakebold") or self.get("c_fakeitalic") or self.get("c_fakebolditalic")
@@ -1218,10 +1210,17 @@ class GtkViewModel(ViewModel):
         val = float(self.get("s_fnfontsize"))
         val = val * float(self.get("s_fontsize")) / 12.
         try:
+<<<<<<< Updated upstream
             self.styleEditor.setval("f", "FontSize", val)
             self.styleEditor.setval("x", "FontSize", val, ifunchanged=True)
         except KeyError:
             return
+=======
+            self.styleEditorView.setval("f", "FontSize", val)
+        except KeyError: 
+            return
+        self.styleEditorView.setval("x", "FontSize", val, ifunchanged=True)
+>>>>>>> Stashed changes
 
     def updateFnFontSize(self, key, val):
         val = float(val) * 12. / float(self.get("s_fontsize"))
@@ -1950,7 +1949,8 @@ class GtkViewModel(ViewModel):
             oconfig = self.get("ecb_diglotSecConfig")
             if oprjid is not None and oconfig is not None:
                 self.otherDiglot = (self.prjid, self.configName())
-                btn.set_label(_("Return to\nDiglot Project"))
+                btn.set_label(_("Save & Return to\nDiglot Project"))
+        self.onSaveConfig(None)
         if oprjid is not None and oconfig is not None:
             self.set("fcb_project", oprjid)
             self.set("ecb_savedConfig", oconfig)

@@ -514,6 +514,7 @@ class PicChecks:
                 break
         else: # this happens if we never got to the break above (neither was found)
             self.parent.set('c_pubApproved', False)
+        self.onReverseRadioChanged()
 
     def savepic(self):
         if self.src is None:
@@ -557,7 +558,17 @@ class PicChecks:
             cfg = self.cfgShared if n.startswith("pic") else self.cfgProject
             yield(cfg, n, v, k)
             
-
+    def onReverseRadioChanged(self):
+        r = self.parent.get("r_picreverse")
+        print(r)
+        self.parent.builder.get_object("fcb_plMirror").set_sensitive(False)
+        if r == "always":
+            self.parent.set("fcb_plMirror", "both")
+        elif r == "never":
+            self.parent.set("fcb_plMirror", "None")
+        else: # unlock the control
+            self.parent.builder.get_object("fcb_plMirror").set_sensitive(True)
+        
 class PicInfo(dict):
 
     srcfkey = 'src path'

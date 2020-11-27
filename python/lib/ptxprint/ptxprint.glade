@@ -155,8 +155,8 @@ THE SOFTWARE.
   <object class="GtkAdjustment" id="a_indentUnit">
     <property name="upper">4</property>
     <property name="value">1</property>
-    <property name="step_increment">0.20000000000000001</property>
-    <property name="page_increment">1</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">0.25</property>
   </object>
   <object class="GtkAdjustment" id="a_internote">
     <property name="upper">100</property>
@@ -6788,11 +6788,12 @@ file(s) in the Viewer tab.</property>
                                       <object class="GtkLabel" id="l_indentUnit">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">The factor by which paragraphs
-should be indented.
-(default=2, min=0, max=4)</property>
+                                        <property name="tooltip_text" translatable="yes">The amount by which paragraphs
+should be indented (inches). This 
+also affects poetry indentation.
+(default=1, min=0, max=4)</property>
                                         <property name="halign">end</property>
-                                        <property name="label" translatable="yes">Paragraph Indentation Factor:</property>
+                                        <property name="label" translatable="yes">Global Paragraph Indent:</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
@@ -6803,10 +6804,10 @@ should be indented.
                                       <object class="GtkSpinButton" id="s_indentUnit">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">The factor by which paragraphs
-should be indented. This also
-affects poetry indentation.
-(default=2, min=0, max=6)</property>
+                                        <property name="tooltip_text" translatable="yes">The amount by which paragraphs
+should be indented (inches). This 
+also affects poetry indentation.
+(default=1, min=0, max=4)</property>
                                         <property name="opacity">0.80000000000000004</property>
                                         <property name="halign">start</property>
                                         <property name="max_length">4</property>
@@ -6815,8 +6816,8 @@ affects poetry indentation.
                                         <property name="caps_lock_warning">False</property>
                                         <property name="input_purpose">number</property>
                                         <property name="adjustment">a_indentUnit</property>
-                                        <property name="climb_rate">0.5</property>
-                                        <property name="digits">1</property>
+                                        <property name="climb_rate">0.10000000000000001</property>
+                                        <property name="digits">2</property>
                                         <property name="numeric">True</property>
                                         <property name="update_policy">if-valid</property>
                                         <property name="value">1</property>
