@@ -396,7 +396,7 @@ THE SOFTWARE.
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 1.4</property>
+    <property name="version">Version 1.4.1</property>
     <property name="copyright">© 2020, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -6737,12 +6737,6 @@ file(s) in the Viewer tab.</property>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">0</property>
                                       </packing>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
                                     </child>
                                   </object>
                                 </child>
@@ -13491,7 +13485,7 @@ been enabled.</property>
                     <property name="can_focus">False</property>
                     <child>
                       <object class="GtkScrolledWindow">
-                        <property name="width_request">280</property>
+                        <property name="width_request">270</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="shadow_type">in</property>
@@ -14112,7 +14106,7 @@ Factor:</property>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_styAbsoluteLineSpacing">
-                                        <property name="label" translatable="yes">Absolute Spacing (in pts)</property>
+                                        <property name="label" translatable="yes">Use Absolute Spacing (in pts)</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -14202,7 +14196,7 @@ Factor:</property>
                                     </child>
                                     <child>
                                       <object class="GtkEventBox">
-                                        <property name="width_request">81</property>
+                                        <property name="width_request">78</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <signal name="button-release-event" handler="resetParam" swapped="no"/>

@@ -1,5 +1,20 @@
-PTXprint 1.4 Release Notes 
-23 November 2020
+PTXprint 1.4.1 Release Notes 
+28 November 2020
+
+Bug Fixes and Improvements in 1.4.1
+
+!! Note that this version is only for private circulation to a handful of testers. Major code
+!! changes and behavoral changes have been made. Please back up your settings before testing!
+  
+  * Completely eliminate the need for NestedStyles.sty (can now be deleted permanently)
+  
+  * Some significant improvements to the Style Editor
+  
+  * Update wording and integrate Checklist Reverse/Mirror settings with Details tab settings
+  
+  * Rename controls to reflect Base (on Layout tab) + Factor (on Style tab)
+  
+  * Moved "Variable Line Spacing" to Advanced tab [currently still broken] 
 
 Bug Fixes and Improvements in 1.4
 
