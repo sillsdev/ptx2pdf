@@ -35,13 +35,13 @@ class StyleEditor:
         if self.sheet is None:
             raise KeyError(f"{mrk} + {key}")
         if ifunchanged and self.basesheet.get(mrk, {}).get(key, None) != \
-                self.sheet.get(self.marker, {}).get(key, None):
+                self.sheet.get(mrk, {}).get(key, None):
             return
         if val is None and key in self.sheet.get(mrk, {}):
             del self.sheet[mrk][key]
             return
         if self.basesheet.get(mrk, {}).get(key, None) != val:
-            self.sheet.setdefault(self.marker, {})[key] = val
+            self.sheet.setdefault(mrk, {})[key] = val
 
     def registerFn(self, mark, key, fn):
         self.registers.setdefault(mark, {})[key.lower()] = fn
@@ -99,7 +99,7 @@ class StyleEditor:
         else:
             res = str(v)
         if key.lower() == "baseline":
-            res = re.match(r"^\s*(.*\d+)\s*$", r"\1pt", res)
+            res = re.sub(r"^\s*(.*\d+)\s*$", r"\1pt", res)
         return res
 
     def output_diffile(self, outfh):

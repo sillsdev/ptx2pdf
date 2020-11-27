@@ -1208,19 +1208,12 @@ class GtkViewModel(ViewModel):
 
     def onFnFontSizeChanged(self, btn, *a):
         val = float(self.get("s_fnfontsize"))
-        val = val * float(self.get("s_fontsize")) / 12.
+        val = val / float(self.get("s_fontsize")) * 12.
         try:
-<<<<<<< Updated upstream
             self.styleEditor.setval("f", "FontSize", val)
-            self.styleEditor.setval("x", "FontSize", val, ifunchanged=True)
+            self.styleEditor.setval("x", "FontSize", val)
         except KeyError:
             return
-=======
-            self.styleEditorView.setval("f", "FontSize", val)
-        except KeyError: 
-            return
-        self.styleEditorView.setval("x", "FontSize", val, ifunchanged=True)
->>>>>>> Stashed changes
 
     def updateFnFontSize(self, key, val):
         val = float(val) * 12. / float(self.get("s_fontsize"))

@@ -560,7 +560,6 @@ class PicChecks:
             
     def onReverseRadioChanged(self):
         r = self.parent.get("r_picreverse")
-        print(r)
         self.parent.builder.get_object("fcb_plMirror").set_sensitive(False)
         if r == "always":
             self.parent.set("fcb_plMirror", "both")

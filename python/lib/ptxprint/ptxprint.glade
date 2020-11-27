@@ -136,7 +136,7 @@ THE SOFTWARE.
   <object class="GtkAdjustment" id="a_fontsize">
     <property name="lower">2</property>
     <property name="upper">36</property>
-    <property name="value">11</property>
+    <property name="value">12</property>
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">1</property>
   </object>
@@ -3939,7 +3939,7 @@ main body text (pts).</property>
                                         <property name="climb_rate">0.10000000000000001</property>
                                         <property name="digits">1</property>
                                         <property name="numeric">True</property>
-                                        <property name="value">11</property>
+                                        <property name="value">12</property>
                                         <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                                       </object>
                                       <packing>
