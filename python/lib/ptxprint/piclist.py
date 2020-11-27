@@ -510,6 +510,8 @@ class PicChecks:
         self.src = newBase(src)
         for (cfg, n, v, k) in self._allFields():
             val = cfg.get(self.src, n, fallback=v)
+            if n == "picreverse" and val == "unknown":
+                val = "OK"
             self.parent.set(k, val)
         self.parent.set("tb_picNotes", self.cfgProject.get(self.src, "notes", fallback=""))
         for cfg in (self.cfgShared, self.cfgProject):

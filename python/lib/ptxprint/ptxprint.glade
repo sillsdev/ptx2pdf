@@ -10832,7 +10832,7 @@ NOT allow it to be mirrored (reversed).</property>
                                                         <signal name="clicked" handler="onReverseRadioChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">2</property>
+                                                        <property name="left_attach">3</property>
                                                         <property name="top_attach">3</property>
                                                       </packing>
                                                     </child>
