@@ -851,12 +851,6 @@ class ViewModel:
                 if os.path.exists(fp):
                     res.append(fp)
                     break
-        if generated:
-            for p in (cpath, rcpath):
-                fp = os.path.join(p, "NestedStyles.sty")
-                if os.path.exists(fp):
-                    res.append(fp)
-                    break
         res.append(os.path.join(cpath, "ptxprint.sty"))
         return res
 
@@ -909,7 +903,7 @@ class ViewModel:
             for pic in os.listdir(piclstpath):
                 if pic.endswith(".piclist") and pic in picbks:
                     res[os.path.join(piclstpath, pic)] = cfpath+"PicLists/"+pic
-        for jobpiclistf in ("{}-{}.piclist".format(prjid, cfgid), "ptxprint.sty", "NestedStyles.sty", "picChecks.txt"):
+        for jobpiclistf in ("{}-{}.piclist".format(prjid, cfgid), "ptxprint.sty", "picChecks.txt"):
             jobpiclist = os.path.join(basecfpath, jobpiclistf)
             if os.path.exists(jobpiclist):
                 res[jobpiclist] = cfpath+jobpiclistf

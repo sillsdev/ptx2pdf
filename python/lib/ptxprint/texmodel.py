@@ -423,19 +423,8 @@ class TexModel:
         if not os.path.exists(fpath):
             fpath = j(rcpath, "ptxprint-mods.tex")
         self.dict['/modspath'] = rel(fpath, docdir).replace("\\","/")
-        # Look in local Config folder for NestedStyles.sty, and drop back to shared/ptxprint if not found
-        fpath = j(cpath, "NestedStyles.sty")
-        if not os.path.exists(fpath):
-            fpath = j(rcpath, "NestedStyles.sty")
-        self.dict['/nststypath'] = rel(fpath, docdir).replace("\\","/")
-        # If Diglot, look in local Config folder for NestedStylesR.sty, and drop back to shared/ptxprint if not found
-        fpathR = j(cpath, "NestedStylesR.sty")
-        if self.dict["document/ifdiglot"] == "":
-            if not os.path.exists(fpathR):
-                fpathR = j(rcpath, "NestedStylesR.sty")
         if "document/diglotcfgrpath" not in self.dict:
             self.dict["document/diglotcfgrpath"] = ""
-        self.dict['/nststypathR'] = rel(fpathR, docdir).replace("\\","/")
         self.dict['paragraph/linespacingfactor'] = "{:.3f}".format(float(self.dict['paragraph/linespacing']) / 14 / float(self.dict['paper/fontfactor']))
         self.dict['paragraph/ifhavehyphenate'] = "" if os.path.exists(os.path.join(self.printer.configPath(""), \
                                                        "hyphen-"+self.dict["project/id"]+".tex")) else "%"
