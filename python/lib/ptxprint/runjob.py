@@ -165,7 +165,6 @@ class RunJob:
         self.prjdir = os.path.join(self.args.paratext, self.prjid)
         if self.prjid is None or not len(self.prjid):     # can't print no project
             return
-        # self.texfiles += info.generateNestedStyles()
         self.tmpdir = os.path.join(self.prjdir, 'PrintDraft') if info.asBool("project/useprintdraftfolder") \
                                                                  or self.args.directory is None else self.args.directory
         os.makedirs(self.tmpdir, exist_ok=True)
@@ -401,9 +400,7 @@ class RunJob:
         # Pass all the needed parameters for the snippet from diginfo to info
         for k,v in _diglot.items():
             info[k]=diginfo[v]
-            # print(k, v, diginfo[v])
         info["document/diglotcfgrpath"] = os.path.relpath(diginfo.printer.configPath(diginfo.printer.configName()), docdir).replace("\\","/")
-        # texfiles += info.generateNestedStyles(diglot=True)
         texfiles += self.sharedjob(jobs, info, logbuffer=logbuffer, extra="-diglot")
         return texfiles
 

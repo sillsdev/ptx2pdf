@@ -1,6 +1,7 @@
 from gi.repository import Gtk, Pango
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.styleditor import StyleEditor
+from ptxprint.utils import _
 import re
 
 stylemap = {
@@ -87,8 +88,8 @@ categorymapping = {
 }
 
 stylediverts = {
-    'LineSpacing': '_linespacing',
-    'FontSize': '_fontsize'
+    'LineSpacing': ('_linespacing', _('LineSpacing\nFactor'), _('Baseline')),
+    'FontSize': ('_fontsize', _('Font Size\nFactor'), _('Font Scale'))
 }
 
 widgetsignals = {
@@ -376,7 +377,7 @@ class StyleEditorView(StyleEditor):
             data['TextProperties'].add(add+'publishable')
             return
         elif key in stylediverts:
-            newk = stylediverts[key]
+            newk = stylediverts[key][0]
             newv = stylemap[newk]
             isset = self.get(newv[0], newv[2])
             key = newv[3](isset)
@@ -391,8 +392,12 @@ class StyleEditorView(StyleEditor):
         elif key.startswith("_"):
             newkey = v[3](val)
             otherkey = v[3](not val)
+            controlk = v[3](False)
             self._setData(newkey, self._convertabs(newkey, data.get(otherkey, None)))
             self.set(stylemap.get(newkey, stylemap.get(otherkey, [None]))[0], data[newkey])
+            newlabel = stylediverts[controlk][2 if val else 1]
+            controlw = stylemap[controlk][1]
+            self.set(controlw, newlabel)
             if otherkey in data:
                 del data[otherkey]
             value = val

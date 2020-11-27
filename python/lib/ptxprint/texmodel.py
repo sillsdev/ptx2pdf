@@ -118,7 +118,6 @@ ModelMap = {
     "fancy/versedecoratorpdf":  ("btn_selectVerseDecorator", lambda w,v: w.versedecorator.as_posix() \
                                             if (w.versedecorator is not None and w.versedecorator != 'None') \
                                             else get("/ptxprintlibpath")+"/Verse number star.pdf"),
-    "fancy/versenumsize":       ("s_verseNumSize", lambda w,v: v or "11.00"),
 
     "paragraph/varlinespacing":    ("c_variableLineSpacing", lambda w,v: "" if v else "%"),
     "paragraph/useglyphmetrics":   ("c_variableLineSpacing", lambda w,v: "%" if v else ""),
@@ -270,7 +269,6 @@ ModelMap = {
     "fontitalic":               ("bl_fontI", lambda w,v: v[0]),
     "fontbolditalic":           ("bl_fontBI", lambda w,v: v[0]),
     "fontextraregular":         ("bl_fontExtraR", lambda w,v: v[0]),
-    "versenumfont":             ("bl_verseNumFont", lambda w,v: v[0]),
     "font/features":            ("t_fontfeatures", None),
     "font/usegraphite":         ("c_useGraphite", None),
     "fontbold/fakeit":          ("c_fakebold", None),
@@ -291,11 +289,7 @@ ModelMap = {
     "thumbtabs/numtabs":        ("s_thumbtabs", None),
     "thumbtabs/length":         ("s_thumblength", None),
     "thumbtabs/height":         ("s_thumbheight", None),
-    "thumbtabs/fontsize":       ("s_thumbfont", None),
-    "thumbtabs/italic":         ("c_thumbitalic", None),
-    "thumbtabs/bold":           ("c_thumbbold", None),
     "thumbtabs/background":     ("col_thumbback", None),
-    "thumbtabs/foreground":     ("col_thumbtext", None),
     "thumbtabs/rotate":         ("c_thumbrotate", None),
     "thumbtabs/rotatetype":     ("fcb_rotateTabs", None),
     "thumbtabs/background":     ("col_thumbback", None),
@@ -324,7 +318,6 @@ class TexModel:
         "fontitalic":               ("bl_fontI", None, "c_fakeitalic", "fontitalic/embolden", "fontitalic/slant"),
         "fontbolditalic":           ("bl_fontBI", None, "c_fakebolditalic", "fontbolditalic/embolden", "fontbolditalic/slant"),
         "fontextraregular":         ("bl_fontExtraR", "c_useFallbackFont", None, None, None),
-        "versenumfont":             ("bl_verseNumFont", "c_inclVerseDecorator", None, None, None)
     }
     _hdrmappings = {
         _("First Reference"):           r"\firstref",
@@ -1122,77 +1115,6 @@ class TexModel:
             return clwr
         else:
             return re.sub('[()&+,.;: ]', '_', self.base(fpath).lower())
-
-    def generateNestedStyles(self, diglot=False):
-        if diglot:
-            pfx = "diglot"
-            sfx = "R.sty"
-        else:
-            pfx = "notes"
-            sfx = ".sty"
-        rtl = self['document/ifrtl'] == "true"
-        cfgname = self.printer.configName()
-        nstyfname = os.path.join(self.printer.configPath(cfgname), "NestedStyles"+sfx)
-        nstylist = []
-        if self.dict["document/ifshowversenums"] == '':
-            nstylist.append("##### Remove all verse numbers\n\\Marker v\n\\TextProperties nonpublishable\n\n")
-
-        if not self.asBool(pfx+"/includefootnotes"):
-            nstylist.append("##### Set Footnote Size and Line Spacing\n")
-            nstylist.append("\\Marker {}\n\\FontSize {}\n".format("f", self.dict[pfx+'/fnfontsize']))
-            nstylist.append("\\BaseLine {}pt plus 2pt\n".format(self.dict[pfx+'/fnlinespacing']))
-            nstylist.append("\\Justification {}\n\n".format("Right" if rtl else "Left"))
-        else:
-            nstylist.append("##### Remove all footnotes\n\\Marker f\n\\TextProperties nonpublishable\n\n")
-
-        if not self.asBool("notes/includexrefs"):
-            nstylist.append("##### Set Cross-reference Size and Line Spacing\n")
-            nstylist.append("\\Marker {}\n\\FontSize {}\n".format("x", self.dict[pfx+'/fnfontsize']))
-            nstylist.append("\\BaseLine {}pt plus 2pt\n".format(self.dict[pfx+'/fnlinespacing']))
-            nstylist.append("\\Justification {}\n\n".format("Right" if rtl else "Left"))
-        else:
-            nstylist.append("##### Remove all cross-references\n\\Marker x\n\\TextProperties nonpublishable\n\n")
-
-        if self.dict[pfx+"/ifblendfnxr"]:
-            nstylist.append("##### Treat x-refs as footnotes with their own caller\n\\Marker x\n\\NoteBlendInto f\n\n")
-
-        # Adjust the amount of indent on \p according to the IndentUnit setting 2=default
-        iu = float(self.dict["document/indentunit"])
-        cols = int(self.dict["paper/columns"])
-        nstylist.append("##### Adjust p-first-line-indent\n\\Marker p\n\\FirstLineIndent {:.3f}\n\n".format(0.250 * iu / cols))
-
-        
-        for mkr in r:
-            for l in range(0,3):
-                nstylist.append("{} {}\n".format(mkr[l][0],mkr[l][1]))
-            nstylist.append("\\Justification {}\n\n".format("Right" if rtl else "Left"))
-
-        if True: # Hack!     MH: We need to qualify this (look in USFM for a \cl and if it exists, then don't do this)
-            nstylist.append("# The descriptive heading is typically considered VerseText, but then often formatted as a heading.\n")
-            nstylist.append("# We need to change the TextType so that Print Draft will handle it correctly beside drop-caps.\n")
-            nstylist.append("\\Marker d\n\\TextType Section\n\\SpaceBefore 0\n\n")
-
-        for k, c in self._snippets.items():
-            if self.printer is None:
-                v = self.asBool(k)
-            else:
-                v = self.printer.get(c[0])
-                self.dict[k] = "true" if v else "false"
-            if v: # if the c_checkbox is true then add the stylesheet snippet for that option
-                if isinstance(c[1].styleInfo, str):
-                    nstylist.append(c[1].styleInfo+"\n")
-                else:
-                    nstylist.append(c[1].styleInfo(c[1], self)+"\n")
-
-        if nstylist == []:
-            if os.path.exists(nstyfname):
-                os.remove(nstyfname)
-            return []
-        else:
-            os.makedirs(self.printer.configPath(cfgname), exist_ok=True)
-            with open(nstyfname, "w", encoding="utf-8") as outf:
-                outf.write("".join(nstylist))
-            return [nstyfname]
 
     def makeGlossaryFootnotes(self, printer, bk):
         # Glossary entries for the key terms appearing like footnotes
