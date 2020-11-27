@@ -777,7 +777,7 @@ class TexModel:
                 except SyntaxError as e:
                     syntaxErrors.append("{} {} line:{}".format(self.prjid, bk, str(e).split('line', maxsplit=1)[1]))
                 except Exception as e:
-                    syntaxErrors.append("{} {} Error: {}".format(self.prjid, bk, str(e)))
+                    syntaxErrors.append("{} {} Error({}): {}".format(self.prjid, bk, type(e), str(e)))
                     traceback.print_exc()
                 if len(syntaxErrors):
                     self.printer.doError("Failed to canonicalise texts due to a Syntax Error:",        

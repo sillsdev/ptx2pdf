@@ -294,10 +294,12 @@ class StyleEditorView(StyleEditor):
                 val = 'nonpublishable' in data.get('TextProperties', '')
                 oldval = 'nonpublishable' in old.get('TextProperties', '')
             elif k.startswith("_"):
-                val = v[2]
-                olddat = False
-                oldval = old.get(v[3](False), '')
-                for m, f in ((v[3](x), x) for x in (True, False)):
+                basekey = v[3](v[2])
+                obasekey = v[3](not v[2])
+                oldval = old.get(basekey, old.get(obasekey, ''))
+                val = data.get(basekey, oldval)
+                olddat = v[2]
+                for m, f in ((v[3](x), x) for x in (v[2], not v[2])):
                     if m in old:
                         olddat = f
                         oldval = old[m]
@@ -502,7 +504,7 @@ class StyleEditorView(StyleEditor):
 
     def refreshKey(self):
         if self.marker in self.sheet:
-            del self.sheet[self.marker]
+            self.sheet[self.marker] = {k: v for k,v in self.sheet[self.marker].items() if k in dialogKeys}
             self.editMarker()
         
     def resetParam(self, label):
