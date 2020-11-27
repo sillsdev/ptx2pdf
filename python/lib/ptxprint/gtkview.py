@@ -134,7 +134,7 @@ _sensitivities = {
     "c_applyWatermark" :       ["btn_selectWatermarkPDF"],
     "c_linebreakon" :          ["t_linebreaklocale"],
     "c_spacing" :              ["l_minSpace", "s_minSpace", "l_maxSpace", "s_maxSpace"],
-    "c_inclPageBorder" :       ["btn_selectPageBorderPDF", "lb_inclPageBorder"],
+    "c_inclPageBorder" :       ["btn_selectPageBorderPDF", "lb_inclPageBorder", "c_borderPageWide"],
     "c_inclSectionHeader" :    ["btn_selectSectionHeaderPDF", "lb_inclSectionHeader"],
     "c_inclEndOfBook" :        ["btn_selectEndOfBookPDF", "lb_inclEndOfBook"],
     "c_inclVerseDecorator" :   ["btn_selectVerseDecorator", "lb_inclVerseDecorator", "btn_VerseStyle"],

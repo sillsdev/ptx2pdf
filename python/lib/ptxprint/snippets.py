@@ -294,7 +294,6 @@ class ImgCredits(Snippet):
         mkr='pc'
         sensitive = texmodel['document/sensitive']
         picpagesfile = os.path.join(texmodel.docdir()[0], texmodel['jobname'] + ".picpages")
-        # picpagesfile = r"C:\My Paratext 9 Projects\WSGlatin\PrintDraft\temp4testing.picpages"
         crdts = ["\\def\\zImageCopyrights{%"]
         if os.path.exists(picpagesfile):
             with universalopen(picpagesfile) as inf:
@@ -407,9 +406,9 @@ class ThumbTabs(Snippet):
             books[b] = index
             texlines.append(f"\\setthumbtab{{{b}}}{{{index}}}")
         bcol = parsecol(model["thumbtabs/background"])
-        fcol = parsecol(model["thumbtabs/foreground"])
+        # fcol = parsecol(model["thumbtabs/foreground"])
         texlines.append("\\def\\tabBoxCol{{{}}}".format(bcol))
-        texlines.append("\\def\\tabFontCol{{{}}}".format(fcol))
+        # texlines.append("\\def\\tabFontCol{{{}}}".format(fcol))
         try:
             height = float(model["thumbtabs/height"])
         except (ValueError, TypeError):

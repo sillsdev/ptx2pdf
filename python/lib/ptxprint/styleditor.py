@@ -512,7 +512,7 @@ class StyleEditor:
         else:
             res =  str(v)
         if key.lower() == "baseline":
-            res = re.match(r"^\s*(.*\d+)\s*$", r"\1pt", res)
+            res = re.match(r"^\s*(.*\d+)\s*$", r"\1pt", str(res))
         return res
 
     def output_diffile(self, outfh):
