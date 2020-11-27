@@ -88,8 +88,8 @@ categorymapping = {
 }
 
 stylediverts = {
-    'LineSpacing': ('_linespacing', _('LineSpacing\nFactor'), _('Baseline')),
-    'FontSize': ('_fontsize', _('Font Size\nFactor'), _('Font Scale'))
+    'LineSpacing': ('_linespacing', _('Line Spacing\nFactor:'), _('Baseline:')),
+    'FontSize': ('_fontsize', _('Font Size\nFactor:'), _('Font Scale:'))
 }
 
 widgetsignals = {
