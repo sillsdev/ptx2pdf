@@ -22,7 +22,7 @@ from ptxprint.utils import APP
 from ptxprint.runner import StreamTextBuffer
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from ptxprint.piclist import PicList, PicChecks, PicInfoUpdateProject
-from ptxprint.styleditor import StyleEditor
+from ptxprint.gtkstyleditor import StyleEditorView
 from ptxprint.runjob import isLocked, unlockme
 from ptxprint.texmodel import TexModel
 from ptxprint.minidialog import MiniDialog
@@ -321,10 +321,10 @@ class GtkViewModel(ViewModel):
         self.picListView = PicList(self.builder.get_object('tv_picListEdit'),
                                    self.builder.get_object('tv_picListEdit1'), self.builder, self)
         self.picChecksView = PicChecks(self)
-        self.styleEditorView = StyleEditor(self)
+        self.styleEditor = StyleEditorView(self)
         for k, v in _styleLinks.items():
             for a in v:
-                self.styleEditorView.registerFn(a[0], a[1], getattr(self, k))
+                self.styleEditor.registerFn(a[0], a[1], getattr(self, k))
 
         self.logbuffer = StreamTextBuffer()
         self.builder.get_object("tv_logging").set_buffer(self.logbuffer)
@@ -1063,13 +1063,6 @@ class GtkViewModel(ViewModel):
                                                \n   * the 'Print' button to create the PDF first"))
         self.bookNoUpdate = False
 
-    def saveStyles(self, force=False):
-        if not force and self.configLocked():
-            return
-        fname = os.path.join(self.configPath(self.configName(), makePath=True), "ptxprint.sty")
-        with open(fname, "w", encoding="Utf-8") as outf:
-            self.styleEditorView.output_diffile(outf)
-
     def savePics(self, force=False):
         if not force and self.configLocked():
             return
@@ -1224,8 +1217,11 @@ class GtkViewModel(ViewModel):
     def onFnFontSizeChanged(self, btn, *a):
         val = float(self.get("s_fnfontsize"))
         val = val * float(self.get("s_fontsize")) / 12.
-        self.styleEditorView.setval("f", "FontSize", val)
-        self.styleEditorView.setval("x", "FontSize", val, ifunchanged=True)
+        try:
+            self.styleEditor.setval("f", "FontSize", val)
+            self.styleEditor.setval("x", "FontSize", val, ifunchanged=True)
+        except KeyError:
+            return
 
     def updateFnFontSize(self, key, val):
         val = float(val) * 12. / float(self.get("s_fontsize"))
@@ -1235,14 +1231,14 @@ class GtkViewModel(ViewModel):
         val = self.get("s_fnlinespacing")
         for k in ("f", "x"):
             try:
-                isabs = self.styleEditorView.getval(k, "LineSpacing") == None
+                isabs = self.styleEditor.getval(k, "LineSpacing") == None
             except KeyError:
                 return      # probably haven't fully initialised yet
             if isabs:
-                self.styleEditorView.setval(k, "Baseline", val)
+                self.styleEditor.setval(k, "Baseline", val)
             else:
                 v = val / float(self.get("s_linespacing", default=12.))
-                self.styleEditorView.setval(k, "LineSpacing", v)
+                self.styleEditor.setval(k, "LineSpacing", v)
 
     def updateFnLineSpacing(self, key, val):
         val = float(val)
@@ -1252,7 +1248,10 @@ class GtkViewModel(ViewModel):
 
     def onFnBlendClicked(self, btn):
         self.onSimpleClicked(btn)
-        self.styleEditorView.setval("x", "NoteBlendInto", "f" if btn.get_active() else None)
+        try:
+            self.styleEditor.setval("x", "NoteBlendInto", "f" if btn.get_active() else None)
+        except KeyError:
+            return
 
     def onDirectionChanged(self, btn, *a):
         rtl = self.get("fcb_textDirection") == "Right-to-Left"
@@ -1260,24 +1259,24 @@ class GtkViewModel(ViewModel):
             self.rtl = rtl
         if rtl == self.rtl:
             return
-        for k in self.styleEditorView.allStyles():
+        for k in self.styleEditor.allStyles():
             try:
-                j = self.styleEditorView.getval(k, "Justification")
+                j = self.styleEditor.getval(k, "Justification")
             except KeyError:
                 return
             if j.lower() == "right":
-                self.styleEditorView.setval(k, "Justification", "Left")
+                self.styleEditor.setval(k, "Justification", "Left")
             elif j.lower() == "left":
-                self.styleEditorView.setval(k, "Justification", "Right")
+                self.styleEditor.setval(k, "Justification", "Right")
 
     def onThumbStyleClicked(self, btn):
-        self.styleEditorView.selectMarker("zthumbtab" if self.get("c_thumbIsZthumb") else "toc3")
+        self.styleEditor.selectMarker("zthumbtab" if self.get("c_thumbIsZthumb") else "toc3")
         self.set("c_styTextProperties", False)
         mpgnum = self.notebooks['Main'].index("tb_StyleEditor")
         self.builder.get_object("nbk_Main").set_current_page(mpgnum)
 
     def onVerseStyleClicked(self, btn):
-        self.styleEditorView.selectMarker("v")
+        self.styleEditor.selectMarker("v")
         mpgnum = self.notebooks['Main'].index("tb_StyleEditor")
         self.builder.get_object("nbk_Main").set_current_page(mpgnum)
 
@@ -1581,7 +1580,6 @@ class GtkViewModel(ViewModel):
         self.updatePicList()
         self.updateDialogTitle()
         self.picChecksView.init(basepath=self.configPath(cfgname=None), configid=self.configId)
-        self.styleEditorView.load(self.getStyleSheets())
 
     def onConfigNameChanged(self, cb_savedConfig):
         if self.configNoUpdate:
@@ -2190,16 +2188,16 @@ class GtkViewModel(ViewModel):
         w.set_text(t)
         
     def onStyleAdd(self, btn):
-        self.styleEditorView.mkrDialog(newkey=True)
+        self.styleEditor.mkrDialog(newkey=True)
 
     def onStyleEdit(self, btn):
-        self.styleEditorView.mkrDialog()
+        self.styleEditor.mkrDialog()
 
     def onStyleDel(self, btn):
-        self.styleEditorView.delKey()
+        self.styleEditor.delKey()
 
     def onStyleRefresh(self, btn):
-        self.styleEditorView.refreshKey()
+        self.styleEditor.refreshKey()
 
     def onPlAddClicked(self, btn):
         picroot = os.path.join(self.settings_dir, self.prjid)
@@ -2236,7 +2234,7 @@ class GtkViewModel(ViewModel):
 
     def resetParam(self, btn, foo):
         label = Gtk.Buildable.get_name(btn.get_child())
-        self.styleEditorView.resetParam(label)
+        self.styleEditor.resetParam(label)
 
     def onPLpageChanged(self, nbk_PicList, scrollObject, pgnum):
         page = nbk_PicList.get_nth_page(pgnum)

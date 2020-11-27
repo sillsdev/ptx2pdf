@@ -6,6 +6,7 @@ from ptxprint.font import TTFont, cachepath, cacheremovepath
 from ptxprint.utils import _, refKey, universalopen
 from ptxprint.usfmutils import Sheets, UsfmCollection
 from ptxprint.piclist import PicInfo
+from ptxprint.styleditor import StyleEditor
 import pathlib, os, sys
 from configparser import NoSectionError, NoOptionError, _UNSET
 from zipfile import ZipFile, ZIP_DEFLATED
@@ -112,6 +113,7 @@ class ViewModel:
         self.usfms = None
         self.picinfos = None
         self.loadingConfig = False
+        self.styleEditor = StyleEditor(self)
 
         # private to this implementation
         self.dict = {}
@@ -358,6 +360,7 @@ class ViewModel:
             if readConfig:  # project changed
                 self.usfms = None
                 self.get_usfms()
+            self.styleEditor.load(self.getStyleSheets())
             self.loadPics()
             return res
         else:
@@ -599,6 +602,13 @@ class ViewModel:
 
     def editFile_delayed(self, *a):
         pass
+
+    def saveStyles(self, force=False):
+        if not force and self.configLocked():
+            return
+        fname = os.path.join(self.configPath(self.configName(), makePath=True), "ptxprint.sty")
+        with open(fname, "w", encoding="Utf-8") as outf:
+            self.styleEditor.output_diffile(outf)
 
     def savePics(self, force=False):
         if not force and self.configLocked():

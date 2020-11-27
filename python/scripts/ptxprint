@@ -152,6 +152,8 @@ if args.print or args.archive is not None:
             elif len(bl) > 1:
                 mainw.set("t_booklist", args.books)
                 mainw.set("r_booK", "multiple")
+        mainw.savePics()
+        mainw.saveStyles()
         job = doit(mainw)
         if job is not None:
             res = job.wait()
