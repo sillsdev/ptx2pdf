@@ -265,8 +265,8 @@ class FancyBorders(Snippet):
 """
 
 artstr = {
-"cn" : ("©_1996_David_C._Cook.", "©_DCC."),
-"co" : ("©_1996_David_C._Cook.", "©_DCC."),
+"cn" : ("©_1996_David_C._Cook.", "©_DCC,_1996."),
+"co" : ("©_1996_David_C._Cook.", "©_DCC_1996."),
 "hk" : ("by_Horace_Knowles\n©_The_British \\& Foreign Bible Society, 1954, 1967, 1972, 1995.", "©_BFBS,_1995."),
 "lb" : ("by_Louise_Bass\n©_The_British \\& Foreign Bible Society, 1994.", "©_BFBS,_1994."),
 "bk" : ("by_Horace_Knowles revised by_Louise_Bass\n©_The_British \\& Foreign Bible Society, 1994.", "©_BFBS,_1994."),

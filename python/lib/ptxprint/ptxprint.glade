@@ -4533,7 +4533,10 @@ automatically include special text using the
 following markers:
 \zCopyright   - copyright statement from the Basic tab
 \zLicense     - License text from the Basic tab
-\zImageCopyrights   - Automatically generated list of images, page numbers and attributions.</property>
+\zImageCopyrights   - Automatically generated list of images, page numbers and attributions.
+
+Note that you will have to hit Print a second time in
+order to get accurate Image Copyright Attribution.</property>
                                 <property name="halign">end</property>
                                 <property name="valign">start</property>
                                 <property name="margin_top">6</property>
@@ -4615,7 +4618,10 @@ about the publication such as the place of
 publication, the publisher, and the date of 
 publication. This will be printed at the END
 of the book. Similar to a "biblio-page" or a
-"copyright-page" at the front of a book.</property>
+"copyright-page" at the front of a book.
+
+Note that you will have to hit Print a second time in
+order to get accurate Image Copyright Attribution.</property>
                             <property name="halign">start</property>
                             <property name="active">True</property>
                             <property name="draw_indicator">True</property>
@@ -9303,19 +9309,7 @@ more than once (to update the list of page numbers).</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton">
-                                <property name="label" translatable="yes">Show Details &gt;&gt;&gt;</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="no_show_all">True</property>
-                                <property name="halign">end</property>
-                                <property name="margin_right">12</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">2</property>
-                              </packing>
+                              <placeholder/>
                             </child>
                           </object>
                         </child>
@@ -9594,6 +9588,9 @@ Preview</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">Provided that the image can be located
+in the specified folder(s), a preview of
+the picture should be displayed below.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">end</property>
                                         <property name="margin_left">24</property>
@@ -9614,6 +9611,11 @@ on Page</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">This option will show the position of the
+picture on the page. When Inner/Outer
+Horizontal Position is used, the layout
+will show for the odd/right-hand page
+of a spread.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">end</property>
                                         <property name="margin_right">12</property>
@@ -10633,7 +10635,7 @@ status of the checking values.</property>
                                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">2</property>
+                                                        <property name="left_attach">4</property>
                                                         <property name="top_attach">1</property>
                                                       </packing>
                                                     </child>
@@ -10648,7 +10650,7 @@ status of the checking values.</property>
                                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">3</property>
+                                                        <property name="left_attach">2</property>
                                                         <property name="top_attach">1</property>
                                                       </packing>
                                                     </child>
@@ -10664,7 +10666,7 @@ status of the checking values.</property>
                                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">4</property>
+                                                        <property name="left_attach">3</property>
                                                         <property name="top_attach">1</property>
                                                       </packing>
                                                     </child>
@@ -10830,7 +10832,7 @@ NOT allow it to be mirrored (reversed).</property>
                                                         <signal name="clicked" handler="onReverseRadioChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">3</property>
+                                                        <property name="left_attach">2</property>
                                                         <property name="top_attach">3</property>
                                                       </packing>
                                                     </child>
@@ -10888,7 +10890,7 @@ in the printed output.</property>
                                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">2</property>
+                                                        <property name="left_attach">4</property>
                                                         <property name="top_attach">6</property>
                                                       </packing>
                                                     </child>
@@ -10903,7 +10905,7 @@ in the printed output.</property>
                                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">3</property>
+                                                        <property name="left_attach">2</property>
                                                         <property name="top_attach">6</property>
                                                       </packing>
                                                     </child>
@@ -10919,7 +10921,7 @@ in the printed output.</property>
                                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">4</property>
+                                                        <property name="left_attach">3</property>
                                                         <property name="top_attach">6</property>
                                                       </packing>
                                                     </child>
@@ -10949,7 +10951,7 @@ in the printed output.</property>
                                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">3</property>
+                                                        <property name="left_attach">4</property>
                                                         <property name="top_attach">7</property>
                                                       </packing>
                                                     </child>
@@ -10998,7 +11000,7 @@ in the printed output.</property>
                                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">4</property>
+                                                        <property name="left_attach">3</property>
                                                         <property name="top_attach">7</property>
                                                       </packing>
                                                     </child>
@@ -11022,33 +11024,23 @@ in the printed output.</property>
                                                       </packing>
                                                     </child>
                                                     <child>
-                                                      <object class="GtkLabel">
-                                                        <property name="visible">True</property>
-                                                        <property name="can_focus">False</property>
-                                                        <property name="halign">end</property>
-                                                        <property name="label" translatable="yes">Date:</property>
-                                                        <property name="justify">right</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left_attach">3</property>
-                                                        <property name="top_attach">10</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
                                                       <object class="GtkEntry" id="t_pubApprDate">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="tooltip_text" translatable="yes">The most recent date that the
 consultant approval updated.</property>
+                                                        <property name="margin_left">6</property>
+                                                        <property name="margin_right">3</property>
                                                         <property name="margin_top">4</property>
                                                         <property name="margin_bottom">4</property>
                                                         <property name="max_length">11</property>
                                                         <property name="width_chars">11</property>
-                                                        <property name="placeholder_text" translatable="yes">dd-mmm-yy</property>
+                                                        <property name="placeholder_text" translatable="yes">Date</property>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">4</property>
+                                                        <property name="left_attach">3</property>
                                                         <property name="top_attach">10</property>
+                                                        <property name="width">2</property>
                                                       </packing>
                                                     </child>
                                                     <child>
@@ -14190,7 +14182,7 @@ Indent:</property>
                                             <property name="can_focus">False</property>
                                             <property name="halign">end</property>
                                             <property name="label" translatable="yes">Left
-Margin:</property>
+Indent:</property>
                                             <property name="justify">right</property>
                                           </object>
                                         </child>
@@ -14211,7 +14203,7 @@ Margin:</property>
                                             <property name="can_focus">False</property>
                                             <property name="halign">end</property>
                                             <property name="label" translatable="yes">Right
-Margin:</property>
+Indent:</property>
                                             <property name="justify">right</property>
                                           </object>
                                         </child>

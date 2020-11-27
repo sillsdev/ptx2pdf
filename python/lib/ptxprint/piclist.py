@@ -291,6 +291,7 @@ class PicList:
         if not self.get("c_plMediaP"):
             locnKey = "1" if cols == 1 else "2"
         else:
+        # Unhandled: 2-col-h, 2-col-p[lrcio], 2-col-c, 1-pl
             frSize = self.currow[_pickeys['size']]
             pgposLocn = self.currow[_pickeys['pgpos']]
             locnKey = "{}-{}-{}".format(cols, frSize, pgposLocn)
@@ -299,7 +300,13 @@ class PicList:
             locnKey = re.sub(r'^(.+)i(\d?)$', r'\1l\2', locnKey)
             locnKey = re.sub(r'^(.+)o(\d?)$', r'\1r\2', locnKey)
             locnKey = re.sub(r'^(1\-[tb])[lcrio]$', r'\1', locnKey)
+            locnKey = re.sub(r'^1\-p[lcrio]', '1-p', locnKey)
+            locnKey = re.sub(r'^2\-col\-p[lcrio]', '2-col-p', locnKey)
+            locnKey = re.sub(r'^2\-col\-h$', '2-col-hc', locnKey)
+            locnKey = re.sub(r'^2\-col\-c$', '2-col-cl', locnKey)
+            locnKey = re.sub(r'^1\-c$', '1-cl', locnKey)
             locnKey = re.sub(r'\d$', '', locnKey)
+            print("cols, frSize, pgposLocn:",cols, frSize, pgposLocn, " ==> ", locnKey)
         return locnKey
 
     def select_row(self, i):
