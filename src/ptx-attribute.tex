@@ -37,7 +37,7 @@
 
 \catcode`\|=\active
 \def\use@ttrSlash{%
-    \let|=\@ttrSlash %this one is easy
+    \let|=\@ttrSlash %this one is easy (for use with milestones)
 }
 \def\use@ttrGrab{%
     \let|=\start@ttributegrab %have to build attributes char-by-char, sadly.
@@ -82,7 +82,6 @@
   \else
     \use@ttrGrab
   \fi
-  \def\attrst@ck{,}%
   \in@ttribfalse
   \xdef\@ttributes{}%
 }
@@ -99,7 +98,18 @@
 }
 
 
-\def\setdefaultattrib#1#2{\trace{A}{Default attrib for #1 is #2}\x@\def\csname defaultattrkey-#1\endcsname{#2}}
+\def\setdefaultattrib#1#2{\trace{A}{Default attrib for #1 is #2}\x@\xdef\csname defaultattrkey-#1\endcsname{#2}}
+
+\x@\def\csname nostore-attrib-eid\endcsname{}
+\x@\def\csname nostore-attrib-sid\endcsname{}
+\def\extend@ttriblist#1#2{%
+  \edef\tmpa{#2}%
+  \edef\@ttrlistname{@ttriblist-#1}%
+  \x@\let\x@\tmp\csname\@ttrlistname\endcsname
+  \ifx\tmp\relax
+    \x@\let\x@\tmp\csname defaultattrkey-#1\endcsname
+  \fi
+  \x@\xdef\csname \@ttrlistname\endcsname{\tmp,#2}}
 
 \edef\p@stattribcmd{}% Parse the attributes, run any code.
 \def\store@ttributes#1{\def\newbit{#1}\message{'\newbit'}\edef\@ttributes{\@ttributes\newbit}\futurelet\nxt\isitslash}                                                                    
@@ -109,8 +119,9 @@
 \lowercase{
  \gdef\isitcmd{%
         \let\c@ntinue\storep@stattribcmd
-        \ifcat a\nxt\else\ifcat=\nxt \else
-	\let\c@ntinue\end@ttributegrab\fi\fi\c@ntinue}%
+        \ifcat a\nxt\else%\ifcat=\nxt \else
+	\let\c@ntinue\end@ttributegrab\fi%\fi
+	\c@ntinue}%
 }
 %\def\foo#1{Thatsit "#1"}
 
@@ -161,8 +172,8 @@
 
 \def\get@ttribute#1{\x@\let\x@\attr@b\csname attr:#1\endcsname \trace{A}{attrib #1 is \attr@b}} %simple access function
 \def\set@ttribute#1#2{%
-  \x@\edef\csname attr:#1\endcsname{#2}%
-  \edef\attribsus@d{\ifx\attribsus@d\empty\else\attribsus@d,\fi#1}% Keep a list so we can junk it later.
+  \x@\xdef\csname attr:#1\endcsname{#2}%
+  \xdef\attribsus@d{\ifx\attribsus@d\empty\else\attribsus@d,\fi#1}% Keep a list so we can junk it later.
 }
 
 % Parse a space-separated list.
@@ -196,28 +207,40 @@
 }
 
 % Parse list of attributes from style file to read the default attribute
+% and the complete list(comma separated).
 \def\Attributes#1\relax{% Override empty \Attributes from ptx-stylesheets
-  \let\nxt@tem=\relax@tem %only need the first one.
+  \let\nxt@tem=\geton@item %only need the first one.
   \let\D@first=\interpr@tfirstattrib
-  \x@\geton@item #1 \E}
+  \let\save@ttrib=\setdefaultattrib
+  \let\@ttrlistname\relax
+  \x@\geton@item #1 \E
+  \ifx\@ttrlistname\relax\else 
+    \trace{A}{Attribute list for \m@rker\space is \csname\@ttrlistname\endcsname}%
+  \fi
+}
+
 
 \def\interpr@tfirstattrib#1{%
-  \x@\interpr@tfirst@ttrib #1??\E
+  \x@\interpr@t@ttrib #1??\E
+  \let\D@first=\interpr@tother@ttrib
+  \let\save@ttrib=\extend@ttriblist
+}
+\def\interpr@tother@ttrib#1{
+  \x@\interpr@t@ttrib #1??\E
+}
+\def\store@nattrib#1-#2|#3\E{%Ignore - in milestone markers
+  \save@ttrib{#1}{#3}%
 }
 
-\def\setd@faultattrib#1-#2|#3\E{%Ignore - in milestone markers
-  \setdefaultattrib{#1}{#3}%
-}
 
-
-\def\interpr@tfirst@ttrib#1?#2?#3\E{% There may be a preceding ? mark. Also setdefaultattrib needs to not have the -s / -e for milestones. 
+\def\interpr@t@ttrib#1?#2?#3\E{% There may be a preceding ? mark. Also setdefaultattrib needs to not have the -s / -e for milestones. 
   \def\tmp{#1}
   \ifx\tmp\empty
      \trace{A}{Attribute '#2' is optional (#1,#2,#3)}%
-     \x@\setd@faultattrib\m@rker-|#2\E
+     \x@\store@nattrib\m@rker-|#2\E
   \else
      \trace{A}{Attribute '#1' is officially required (#1,#2,#3)}%
-     \x@\setd@faultattrib\m@rker-|#1\E
+     \x@\store@nattrib\m@rker-|#1\E
   \fi
 }
 

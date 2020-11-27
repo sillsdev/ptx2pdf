@@ -58,12 +58,13 @@
 }
 
 \def\initmil@stone#1{%called by startmst@nestyle@minus and startch@rstyle@minus.
-   \trace{m}{initmil@stone #1}%
-   \ifmst@nestyle\else %Was this marker defined as a milestone or as a character style
-     \edef\thismil@stone{\newch@rstyle}%
-   \fi
-   \edef\thismil@stoneKey{}\edef\thismil@stoneVal{}% Set by Attributes
-   \xdef\milestoneOp{#1}%
+  \trace{m}{initmil@stone #1}%
+  \ifmst@nestyle\else %Was this marker defined as a milestone or as a character style
+    \edef\thismil@stone{\newch@rstyle}%
+  \fi
+  \edef\thismil@stoneKey{}\edef\thismil@stoneVal{}% Set by Attributes
+  \xdef\milestoneOp{#1}%
+  \edef\attrid{\milestoneOp id}% id / sid / eid, depending.
 }
 
 \def\*{%This might end a + style (c)  or a normal style character style(C), or a milestone style
@@ -165,7 +166,7 @@
 % Operations on the current milestone(s)
 \def\st@rtmilestone{%
   % There may multiple milestones of a given type (can't sensibly have both \qt+s |Jesus\* and 
-  % \qt+s |Pilate\* active at the same time, but in some cases it might make sense to do something siilar.)
+  % \qt+s |Pilate\* active at the same time (except quote in quote), but in some cases it might make sense to do something similar.)
   \get@ttribute{\attrid}\ifx\attr@b\relax %if sid is set, sid/eid must match, and may contain letters,numbers,underscore.
     \mcpush{\ss@Mstn+\thismil@stone;\thismil@stoneVal}%
     \trace{m}{Milestone without ID stacked}%
@@ -178,7 +179,7 @@
 }
 \def\@ndmilestone{%
   \trace{m}{@ndmilestone.  stack now: \mcstack}%
-  \get@ttribute{\attrid}%
+  \get@ttribute{\attrid}%attrid is id/sid/eid (set in init@trrtibs)
   \ifx\attr@b\relax 
   \dr@pmilestone{\thismil@stone}{}%
   \else

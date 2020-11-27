@@ -9,6 +9,11 @@
 \stylesheet{test.sty}
 \catcode`\@=11
 \gdef\b@okShort{}
-\def\thisch@rstyle{w}
+\x@\def\csname complex-w\endcsname{%
+   \message{complex-w}%
+   \unhbox0
+   {\s@tfont{w:lemma}%
+   \get@ttribute{lemma}\attr@b}
+}%
 \ptxfile{test.usfm}
 \bye

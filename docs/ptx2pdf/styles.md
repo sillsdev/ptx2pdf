@@ -364,9 +364,11 @@ start the group that contains the character style. We set the current style and
 then set the font for the style. Rather than take a long excursus into how a
 font is set, we will address that later. There are various depth counters that
 we update, which are hang overs from before we had a full style stack. We find
-out whether this run is to be raised text. (3) If it is then we need to collect
-the text in a box that we can raise. This limits raised text because no line
-breaks can occur within a raised text run.
+out whether this run is to be raised text or collected for applying 
+attribute-based modifications (e.g. ruby glosses or interlinear text). (3) 
+If it is then we need to collect
+the text in a box that we can raise or process later. Raising limits the 
+text run because no line breaks can occur within a raised box. 
 
 Now that we are in the character style, we run the `start` hook if it is
 present, and if in a diglot, set the side and run any side specific start hook.

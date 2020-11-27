@@ -42,9 +42,6 @@ distinct to ```\qt``` 'quoted text from the Old Testament'.
 The milestone certainly gets a different treatment to the character stle in the style sheet.
 
 
-
-
-
 ### Actor Script Markup
 
 This is a similar problem to the words of Jesus but with the extra issue of
@@ -89,6 +86,18 @@ precedence over the milestone, any font-styling applied by the mid-milestone
 ```\ip``` will override the milestone's formatting, giving the impression that
 "A whole uncheced paragraph" is original text.
 
+This could be solved by:
+1. Stacking (```\Marker sts+ip```)
+2. Some additional clue or category being given to the code so that some
+milestones always 'float' to the top of the stack (```\sts```) while others 
+(```\qt```) remain in their normal position. 
+3. A CSS-like `important` flag on some parameters.
+
+Of these options, (1) is on the roadmap, but requires thought / checking of the
+uses of the markers, to determine if it might be useful. (2) would be 
+relatively easy to code. (3) would be fully flexible but complex to code /
+troubleshoot.
+
 ### Table of Contents
 
 Table of contents generation in TeX is a bit of a pain because there is no start
@@ -100,6 +109,8 @@ category. So one approach might be:
 \tr \cat toc\cat* \tc1 Mark    \tc2 MRK \tcr3 75
 ```
 
+Alternatively, an 'inline' `\esb` could be used, could be used to delimit the
+table.
 
 ## Markup Actions
 
@@ -109,17 +120,20 @@ A simple milestone is unparameterised and used for simple character styling. For
 example `\wj-s\*` to start a block of words of Jesus that can span multiple
 paragraphs ending with `\wj-e\*`.
 
+These might be styled in various methods:
 ```
-1.  wj-s
-2.  ms:wj
-3.  ms:|wj
-4.  ms:wj|*
+1.  \Marker wj-s
+2.  \Marker ms:wj
+3.  \Marker ms:|wj
+4.  \Marker ms:wj|*
 ```
 
 Approach 1 is the simplest in terms of the user just adding styling to an
 existing miletone marker description. The question is whether it scales well or
-whether it needs to. Approach 2 is half-way to being consistent with other
-milestones. Approach 3 is fully conformant with a model that supports approach 2
+whether it needs to. Approach 2 is half-way to being consistent with the
+category-style mark-up initially used for milestones.
+
+Approach 3 is fully conformant with a model that supports approach 2
 in the next question, but it is very unwieldy.
 
 Approach 4 takes a different path and describes how markers with a milestone
@@ -138,14 +152,14 @@ This is a milestone that takes a default attribute. For example `\qt-s
 |Jesus\*`.
 
 ```
-1.  qt-Jesus
-2.  ms:Jesus|qt
+1.  \Marker qt-Jesus
+2.  \Marker ms:Jesus|qt
 ```
 
 Approach 1 looks easy but there are a number of moving parts here, not least
 that this wouldn't work for `\qt-s |s\*` since that would be indistinguishable
 with `\qt-s\*`. But this may not be important. Approach 2 is in keeping with
-default attributes and a generalised milestone marker model.
+category-markup and a generalised milestone marker model.
 
 ### Multiply Parameterised Milestone
 
@@ -153,8 +167,8 @@ This is where a milestone is explicitly attributed with multiple attributes. For
 a hypothetical example: `\qt-s |who=Jesus|style=story\*`.
 
 ```
-1.  qt-Jesus-story
-2.  ms:who=Jesus;style=story|qt
+1.  \Marker qt-Jesus-story
+2.  \Marker ms:who=Jesus;style=story|qt
 ```
 
 Approach 1 extends the approach 1 for the default parameterised milestone. It
@@ -163,34 +177,83 @@ list of unnamed attributes? Approach 2 is precise but still suffers from the
 ordering question. In addition, does this mean that `ms:who=Jesus|qt` is to be
 supported for `\qt-s |Jesus\*` as well?
 
+The ordering issue can be dealt with by defining the 'cannonical order' as being 
+the order of attributes within the stylesheet. This however leaves user-defined 
+additional attributes in an undefined random order. Hopefully, however, a user who 
+wishes to defined their own attributes and used them for styling is also capable 
+of supplying their own ```\Attributes``` list in the stylesheet, and so 
+this should not be an issue if documented.
+
+One important consideration is whether there is ever a use-case for a multiply 
+parameterised milestones at all.
+
 ### Default Attributed Character Style
 
 This is where attributes are used in a character style using default attributes.
-For example `\wit word|agloss\wit*`. The first, unattributed text content is
-assumed to be marked with `\wit`. The question is how do we style the `agloss`
-text?
+Some attributes are expected to appear in the flow of the text (eg ```\rb
+name|gloss \rb*```) while others are not (e.g. ```\w word | lemma \w*```).
+
+For those where the text should appear, for example ```\wit word|agloss\wit*```
+the text content is assumed to be styled with the normal marker `\wit`.
+The question is how do we style the `agloss` text?
 
 ```
-1.  at:wit
-2.  at:gloss|wit
+1.  \Marker at:wit
+2.  \Marker at:gloss|wit
+3.  \Marker wit-gloss
+4.  \Marker wit:gloss
+5.  \Marker wit(gloss)
 ```
+
+Method 1 is deficient, not making any distinction between potential values:
+```\w word | strong="124" lemma="something" \w*```
+Method 3. is simple and bears a striking similarlity to the simplest milestone
+format, but while in milestones it was the *content* of the
+attribute that defined the marker, here the content is displayed and the styling
+is applied based on the *attribute* type. This may become confusing to people, hence 
+methods 4 and 5 are suggested.
+
+#### Disussion
+While there are going to be distinct layouts for different markers/attributes there are some 
+comonalities.
+1. Colour size / position should be applied.
+
+2. Full processing of these fragments as though they were full character styles
+is NOT desirable, as that would clash with attribute parsing.
+
+3. Disabling of display should be possible (i.e Publishable should be obeyed for
+these semi-styles)
+
+4. Some marker-specific layout options are going to be necessary, e.g.
+colon-parsing for ruby glosses, as described in the USFM 3 docs.
+
+5. A word-generic stacking mechanism may nonetheless be useful e.g. someone may 
+want Strong's numbers or lemma  on a ```\w``` to be above/below the word rather
+than a superscript. Also, of course multi-line interlinear text. It should not
+be necessary to rewrite the USFM to apply these layout options.
 
 ### Active Categories: Containing Block
 
-This is where a `\cat` occurs inside a block. How do we refer to the styling of
-the containing block? For example: `\ecbs \cat People\cat* \p \ecbe`
+This is where a `\cat` occurs inside a block.  How do we refer to the styling of
+the containing block? For example: 
+```\esb \cat People\cat* \p  text \esbe```
 
 ```
-1.  cat:People|ecbs
+1. \Marker cat:People|esb
 ```
+
+This is only relevant to ```\esb``` blocks at present.
 
 ### Active Categories: Markers within the Block
 
-This is for the markers in the categorised block. For example: `\ecbs \cat
-People\cat* \p \ecbe`. Notice that the precised block type is not of concern
-here.
+This is for the markers in the categorised block (e.g. a footnote or sidebar).
+For example: ```\esb \cat People\cat* \p \esbe```. Notice that the precise block
+type is not of concern here.
 
 ```
-1.  cat:People|p
+1.  \Marker cat:People|p
 ```
+
+Method 1 is the method in use in the current code. If there is no styling for
+the specific value, the normal values for ```\p``` (etc) are used. 
 
