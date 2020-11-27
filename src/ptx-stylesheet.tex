@@ -220,11 +220,11 @@
 %+csty_getmcparam
 %Main utility function for font parameters, stacking-styles aware
 \def\getmcp@ram#1{\let\r@s=\relax
-  \def\d@##1+##2\E{\edef\tmp{##2}\ifx\tmp\empty\else\csname d@code-##1\endcsname\if##1P\global\let\r@s\relax\else\if##1N\global\let\r@s\relax\fi\fi
+  \def\d@##1+##2\E{\edef\tmp{##2}\ifx\tmp\empty\else\csname d@code-##1\endcsname\if##1\ss@Sbar\global\let\r@s\relax\else\if##1\ss@Note\global\let\r@s\relax\fi\fi
     \getp@ram{#1}{\tmp}\ifx\p@ram\relax\else\global\let\r@s\p@ram\fi\fi}%
   \mcup\global\let\p@ram\r@s\traceNum{s}{param #1 for \mcstack\space is \p@ram}}    %(1)
 \def\getmcp@ramR#1{\let\r@s\relax
-  \def\d@##1+##2\E{\edef\tmp{##2}\ifx\tmp\empty\else\csname d@code-##1\endcsname\if##1P\global\let\r@s\relax\else\if##1N\global\let\r@s\relax\fi\fi
+  \def\d@##1+##2\E{\edef\tmp{##2}\ifx\tmp\empty\else\csname d@code-##1\endcsname\if##1\ss@Sbar\global\let\r@s\relax\else\if##1\ss@Note\global\let\r@s\relax\fi\fi
     \getp@ram{regular}{\tmp}\ifx\p@ram\relax\getp@ram{#1}{\tmp}\ifx\p@ram\relax\else\global\let\r@s\p@ram\fi
                            \else\global\let\r@s\relax\fi\fi}%
   \mcup\global\let\p@ram\r@s\traceNum{s}{paramR #1 for \mcstack\space is \p@ram}}
@@ -242,7 +242,7 @@
   \def\d@##1+##2\E{\edef\tmp{##2}\ifx\tmp\empty\else
       \csname d@code-##1\endcsname
       \let\tmpstylen@me\tmp
-      \dimen0=\c@rrfontsize pt\ifnum\if##1P 1\else\if##1N 1\else0\fi\fi =1
+      \dimen0=\c@rrfontsize pt\ifnum\if##1\ss@Para 1\else\if##1\ss@Note 1\else0\fi\fi =1
         \getp@ram{fontsize}{\tmpstylen@me}\dimen0=\ifx\p@ram\relax 12\else\p@ram\fi pt%
       \else\getp@ram{fontscale}{\tmpstylen@me}\edef\sc@le{\p@ram}%                            %(1)
         \ifx\p@ram\relax\edef\sc@le{1}\getp@ram{fontsize}{\tmpstylen@me}%
