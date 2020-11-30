@@ -11386,6 +11386,7 @@ Custom Script at:</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">False</property>
+                                                <property name="tooltip_text" translatable="yes">Processes the .usfm file through a program of your choosing. The program is run as `prog infile outfile` where infile is the source .usfm file and outfile the output .usfm that will then be typeset.</property>
                                                 <property name="draw_indicator">True</property>
                                                 <signal name="clicked" handler="onProcessScriptClicked" swapped="no"/>
                                               </object>
@@ -11407,6 +11408,7 @@ Custom Script at:</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
+                                                    <property name="tooltip_text" translatable="yes">Execute processing script before running any printdraftchanges, canonicalisation or local changes.</property>
                                                     <property name="halign">start</property>
                                                     <property name="active">True</property>
                                                     <property name="draw_indicator">True</property>
@@ -11424,6 +11426,7 @@ Custom Script at:</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
+                                                    <property name="tooltip_text" translatable="yes">Execute processing script before running any printdraftchanges, canonicalisation or local changes.</property>
                                                     <property name="halign">start</property>
                                                     <property name="active">True</property>
                                                     <property name="draw_indicator">True</property>
@@ -11448,6 +11451,7 @@ Custom Script at:</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">True</property>
+                                                <property name="tooltip_text" translatable="yes">Script to run with 2 command line parameters, the input file and the output file.</property>
                                                 <property name="valign">center</property>
                                                 <property name="margin_top">4</property>
                                                 <property name="margin_bottom">4</property>
@@ -11592,6 +11596,7 @@ this option checked (on).</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
+                                            <property name="tooltip_text" translatable="yes">Edit the processing script</property>
                                             <property name="margin_top">4</property>
                                             <property name="margin_bottom">4</property>
                                             <signal name="clicked" handler="onEditScriptFile" swapped="no"/>

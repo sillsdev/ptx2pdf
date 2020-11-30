@@ -815,7 +815,7 @@ class GtkViewModel(ViewModel):
         self.onSimpleClicked(btn)
         self.picListView.onRadioChanged()
         val = self.get("s_indentUnit")
-        if btn.is_active():
+        if btn.get_active():
             val = val / 2
         else:
             val = val * 2
@@ -1241,7 +1241,7 @@ class GtkViewModel(ViewModel):
     def onFnBlendClicked(self, btn):
         self.onSimpleClicked(btn)
         try:
-            self.styleEditor.setval("x", "NoteBlendInto", "f" if btn.get_active() else None)
+            self.styleEditor.setval("x", "NoteBlendInto", "f" if btn.get_active() else "")
         except KeyError:
             return
 
