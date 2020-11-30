@@ -202,7 +202,14 @@ class StyleEditorView(StyleEditor):
         results = {"Tables": {"th": {"thc": {}, "thr": {}}, "tc": {"tcc": {}, "tcr": {}}},
                    "Peripheral Materials": {"zpa-": {}},
                    "Identification": {"toc": {}}}
+        callerlists = ('ecb_styCallerStyle', 'ecb_styNoteCallerStyle', 'ecb_NoteBlendInto')
+        for w in callerlists:
+            wid = self.builder.get_object(w)
+            wid.set_model(None)
+        mlist_store = self.builder.get_object("ls_styCallerStyle")
+        mlist_store.clear()
         for k, v in sorted(self.sheet.items(), key=lambda x:(len(x[0]), x[0])):
+            mlist_store.append([k])
             if k == "p":
                 foundp = True
             cat = 'Other'
@@ -221,6 +228,9 @@ class StyleEditorView(StyleEditor):
             triefit(k, results.setdefault(cat, {}), 1)
         self.treestore.clear()
         self._fill_store(results, None)
+        for w in callerlists:
+            wid = self.builder.get_object(w)
+            wid.set_model(mlist_store)
         if foundp:
             self.selectMarker("p")
 
