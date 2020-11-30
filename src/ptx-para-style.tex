@@ -302,7 +302,7 @@
   \else
     \if@ntromarker\st@rtintro\else\st@rtbody\fi
   \fi\fi\fi                                                                     %(2)
-  \ifhe@dingstyle\TRACE{headingstyle true}%
+  \ifhe@dingstyle\trace{s}{headingstyle true}%
     \ifhe@dings\nsp@cebeforetrue\s@tbaseline{\m@rker}%In a heading again, may be different so set a new baseline
       \else
         % Headingtopspace gets removed at top of page, preserve for titles.
@@ -316,8 +316,9 @@
         \hyphenpenalty=10000 \exhyphenpenalty=10000 % don't hyphenate in headings
     \fi
     \nobreak
-  \else\TRACE{headingstyle false}%
+  \else\trace{s}{headingstyle false}%
     \ifhe@dings\endhe@dings\fi
+    \s@tbaseline{\m@rker}%
   \fi
   \getp@ram{spacebefore}{\m@rker}% output <spacebefore> for this style
   \ifx\p@ram\relax \else

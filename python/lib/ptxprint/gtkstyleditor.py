@@ -24,9 +24,9 @@ stylemap = {
     'LineSpacing':  ('s_styLineSpacing',    'l_styLineSpacing', '0', None, None),
     'SpaceBefore':  ('s_stySpaceBefore',    'l_stySpaceBefore', '0', None, None),
     'SpaceAfter':   ('s_stySpaceAfter',     'l_stySpaceAfter',  '0', None, None),
-    'CallerStyle':  ('fcb_styCallerStyle',  'l_styCallerStyle', '', None, None),
-    'NoteCallerStyle': ('fcb_styNoteCallerStyle', 'l_styNoteCallerStyle', '', None, None),
-    'NoteBlendInto': ('fcb_NoteBlendInto',  'l_NoteBlendInto',  '', None, None),
+    'CallerStyle':  ('ecb_styCallerStyle',  'l_styCallerStyle', '', None, None),
+    'NoteCallerStyle': ('ecb_styNoteCallerStyle', 'l_styNoteCallerStyle', '', None, None),
+    'NoteBlendInto': ('ecb_NoteBlendInto',  'l_NoteBlendInto',  '', None, None),
     'CallerRaise':  ('s_styCallerRaise',    'l_styCallerRaise', '0', None, None),
     'NoteCallerRaise': ('s_styNoteCallerRaise', 'l_styNoteCallerRaise', '0', None, None),
     '_fontsize':    ('c_styFontScale',      'c_styFontScale',   False, lambda v: "FontScale" if v else "FontSize", None),
@@ -369,7 +369,7 @@ class StyleEditorView(StyleEditor):
             return
         data = self.sheet[self.marker]
         v = stylemap[key]
-        val = self.get(v[0], w)
+        val = self.get(v[0], v[2])
         if key == '_publishable':
             if val:
                 add, rem = "non", ""

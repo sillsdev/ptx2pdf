@@ -10,6 +10,8 @@ mkrexceptions = {k.lower().title(): k for k in ('BaseLine', 'TextType', 'TextPro
                 'NoteCallerStyle', 'NoteCallerRaise', 'NoteBlendInto', 'LineSpacing',
                 'StyleType', 'ColorName', 'XMLTag', 'TEStyleName')}
 
+absolutes = {"baseline", "raise", "callerraise", "notecallerraise"}
+
 class StyleEditor:
 
     def __init__(self, model):
@@ -80,13 +82,17 @@ class StyleEditor:
             if fn is not None:
                 fn(key, val)
 
-    def _eq_val(self, a, b):
-        try:
-            fa = float(a)
-            fb = float(b)
-            return abs(fa - fb) < 0.005
-        except (ValueError, TypeError):
-            return b is None if a is None else (False if b is None else a == b)
+    def _eq_val(self, a, b, key=""):
+        if key.lower() in absolutes:
+            fa = self.asFloatPts(str(a))
+            fb = self.asFloatPts(str(b))
+        else:
+            try:
+                fa = float(a)
+                fb = float(b)
+            except (ValueError, TypeError):
+                return b is None if a is None else (False if b is None else a == b)
+        return abs(fa - fb) < 0.005
 
     def _str_val(self, v, key=""):
         if isinstance(v, (set, list)):
@@ -94,6 +100,9 @@ class StyleEditor:
                 res = " ".join(x.lower().title() if x else "" for x in sorted(v))
             else:
                 res = " ".join(self._str_val(x, key) for x in v)
+        elif key.lower() in absolutes:
+            fv = self.asFloatPts(str(v))
+            res = "{:.3f} pt".format(fv)
         elif isinstance(v, float):
             res = re.sub(r"(:\.0)?0$", "", str(int(v * 100) / 100.))
         else:
@@ -114,7 +123,7 @@ class StyleEditor:
                 if k.startswith(" "):
                     continue
                 other = om.get(k, None)
-                if not self._eq_val(other, v):
+                if not self._eq_val(other, v, key=k):
                     if not markerout:
                         outfh.write("\n\\Marker {}\n".format(m))
                         markerout = True
@@ -127,7 +136,7 @@ class StyleEditor:
         if m:
             try:
                 v = float(m[1])
-            except TypeError:
+            except (TypeError, ValueError):
                 v = 0.
             units = m[2]
             if units == "" or units.lower() == "pt" or mrk is None:
@@ -154,6 +163,6 @@ class StyleEditor:
         else:
             try:
                 return float(s)
-            except TypeError:
+            except (ValueError, TypeError):
                 return 0.
 
