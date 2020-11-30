@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -3515,14 +3515,8 @@ then the default set will be loaded.</property>
                                   <object class="GtkEntry">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">Enter a name for the configuration to be saved.
-
-Note that only Roman/Latin names
-are supported using: a-z A-Z, 0-9,
-parentheses, underscores and hyphens.
-
-Longer descriptions may be typed into
-the Notes field below.</property>
+                                    <property name="tooltip_text" translatable="yes">Select one of these licenses, 
+or type a different license.</property>
                                   </object>
                                 </child>
                               </object>
@@ -8840,7 +8834,7 @@ content of Headers and Footers.</property>
                                         <property name="column_spacing">6</property>
                                         <property name="row_homogeneous">True</property>
                                         <child>
-                                          <object class="GtkRadioButton" id="c_useLowResPics">
+                                          <object class="GtkRadioButton" id="r_pictureRes_Low">
                                             <property name="label" translatable="yes">Low (Smaller File)</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
@@ -8852,7 +8846,8 @@ will be relatively small, and therefore easy to
 share, but the image quality will be low.</property>
                                             <property name="halign">start</property>
                                             <property name="draw_indicator">True</property>
-                                            <property name="group">c_useHighResPics</property>
+                                            <property name="group">r_pictureRes_High</property>
+                                            <signal name="clicked" handler="onPicRescan" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">4</property>
@@ -8884,7 +8879,7 @@ without illustrations.</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkRadioButton" id="c_useHighResPics">
+                                          <object class="GtkRadioButton" id="r_pictureRes_High">
                                             <property name="label" translatable="yes">High (Larger File)</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
@@ -8901,7 +8896,8 @@ therefore difficult to share electronically, but
 the image quality will be as good as possible.</property>
                                             <property name="halign">start</property>
                                             <property name="draw_indicator">True</property>
-                                            <property name="group">c_useLowResPics</property>
+                                            <property name="group">r_pictureRes_Low</property>
+                                            <signal name="clicked" handler="onPicRescan" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">3</property>
@@ -9083,6 +9079,7 @@ specified directly (and NOT look in any other folders
 then enable this option).</property>
                                             <property name="halign">end</property>
                                             <property name="draw_indicator">True</property>
+                                            <signal name="clicked" handler="onPicRescan" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">4</property>

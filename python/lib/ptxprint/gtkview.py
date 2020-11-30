@@ -1122,7 +1122,6 @@ class GtkViewModel(ViewModel):
                   "l_projectFullName", "t_plCaption", "t_plRef", "t_plAltText", "t_plCopyright", "textv_colophon"):
             self.builder.get_object(w).modify_font(p)
         self.picListView.modify_font(p)
-        # MH TO DO: Also need to handle TWO fallback fonts in the picList for Diglots (otherwise one script will end up as Tofu)
 
     def onRadioChanged(self, btn):
         n = Gtk.Buildable.get_name(btn)
@@ -1185,7 +1184,12 @@ class GtkViewModel(ViewModel):
         status = self.sensiVisible("c_useCustomFolder")
         if not status:
             self.builder.get_object("c_exclusiveFiguresFolder").set_active(status)
-
+        self.onPicRescan(btn)
+        
+    def onPicRescan(self, btn):
+        print("Clearing OLD SrcPaths")
+        self.picListView.clearSrcPaths()
+        
     def onPageNumTitlePageChanged(self, btn):
         if self.get("c_pageNumTitlePage"):
             self.builder.get_object("c_printConfigName").set_active(False)
@@ -1240,9 +1244,11 @@ class GtkViewModel(ViewModel):
 
     def onFnBlendClicked(self, btn):
         self.onSimpleClicked(btn)
+        print("onFnBlendClicked")
         try:
             self.styleEditor.setval("x", "NoteBlendInto", "f" if btn.get_active() else "")
         except KeyError:
+            print("KeyError")
             return
 
     def onDirectionChanged(self, btn, *a):
@@ -2236,4 +2242,3 @@ class GtkViewModel(ViewModel):
         pgid = Gtk.Buildable.get_name(page)
         if pgid == "pn_checklist":
             self.set("r_image", "preview")
-
