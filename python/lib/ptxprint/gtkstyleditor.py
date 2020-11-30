@@ -517,7 +517,7 @@ class StyleEditorView(StyleEditor):
             return
         old = self.basesheet.get(self.marker, {})
         if k in stylediverts:
-            newk = stylediverts[k]
+            newk = stylediverts[k][0]
             newval = old.get(" "+newk, None)
             if newval is not None:
                 self._setFieldVal(stylemap[newk], newval, newval)
