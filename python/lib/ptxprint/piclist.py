@@ -386,7 +386,9 @@ class PicList:
                 if r_image == "preview":
                     fpath = None
                     if self.picinfo is not None:
-                        fpath = self.picinfo.get_sourcefile(val, exclusive=self.parent.get("c_exclusiveFiguresFolder"))
+                        dat = self.picinfo.getFigureSources(data={'1': {'src': val}},
+                                    key='path', exclusive=self.parent.get("c_exclusiveFiguresFolder"))
+                        fpath = dat['1']['path']
                     if fpath is not None:
                         if self.picrect is None:
                             picframe = self.builder.get_object("fr_picPreview")
@@ -840,11 +842,15 @@ class PicInfo(dict):
         if not len(self.extensions):   # If the user hasn't defined any extensions 
             self.extensions = extdflt  # then we can assign defaults
 
-    def getFigureSources(self, filt=newBase, key='src path', keys=None, exclusive=False):
+    def getFigureSources(self, filt=newBase, key='src path', keys=None, exclusive=False, data=None):
         ''' Add source filename information to each figinfo, stored with the key '''
+        if data is None:
+            data = self
+        if self.srchlist is None or not len(self.srchlist):
+            self.build_searchlist()
         res = {}
         newfigs = {}
-        for k, f in self.items():
+        for k, f in data.items():
             if keys is not None and f['anchor'][:3] not in keys:
                 continue
             newk = filt(f['src']) if filt is not None else f['src']
@@ -867,18 +873,19 @@ class PicInfo(dict):
                     if nB not in newfigs:
                         continue
                     for k in newfigs[nB]:
-                        if 'dest file' in self[k]:
+                        if 'dest file' in data[k]:
                             continue
-                        if key in self[k]:
-                            old = self.extensions.get(os.path.splitext(self[k][key])[1].lower(), 10000)
+                        if key in data[k]:
+                            old = self.extensions.get(os.path.splitext(data[k][key])[1].lower(), 10000)
                             new = self.extensions.get(os.path.splitext(filepath)[1].lower(), 10000)
                             if old > new:
-                                self[k][key] = filepath
+                                data[k][key] = filepath
                             elif old == new and (self.get("c_useLowResPics") \
-                                                != bool(os.path.getsize(self[k][key]) < os.path.getsize(filepath))):
-                                self[k][key] = filepath
+                                                != bool(os.path.getsize(data[k][key]) < os.path.getsize(filepath))):
+                                data[k][key] = filepath
                         else:
-                            self[k][key] = filepath
+                            data[k][key] = filepath
+        return data
 
     def get_sourcefile(self, fname, filt=newBase, exclusive=False):
         if filt is not None:
