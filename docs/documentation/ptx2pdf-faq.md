@@ -132,7 +132,7 @@ Notice that markers are case dependent.
 \\NoteCallerRaise | dimension to raise the in note caller
 \\NoteBlendInto   | name of note type marker to merge these notes into that class
 \\SmallCap    | blank enables, "-" disables. Only works with fonts with a +smcp feature
-\\LineSpacing | (see also BaseLine.) Dimension of line spacing, in the same units as fontsize. I.e. actual measurement is \\LineSpacing * \\FontSizeUnit
+\\LineSpacing | (see also BaseLine.) Dimension of line spacing, in scaled linespacing units. I.e. actual measurement is \\LineSpacing * \\LineSpacingFactor * \\FontSizeUnit
 \\StyleType   | "paragraph", "character", "note"
 
 These styles are used by other programs but have no action in the macros:

@@ -288,8 +288,9 @@ class StyleEditorView(StyleEditor):
         old = self.basesheet.get(self.marker, {})
         oldval = None
         if 'LineSpacing' not in old and 'BaseLine' not in old:
-            old['LineSpacing'] = "1"
-            data['LineSpacing'] = "1"
+            old['LineSpacing'] = "12"
+            if 'LineSpacing' not in data and 'BaseLine' not in data:
+                data['LineSpacing'] = "12"
         for k, v in stylemap.items():
             if k == 'Marker':
                 val = "\\" + self.marker

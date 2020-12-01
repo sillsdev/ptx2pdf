@@ -59,20 +59,18 @@ class StyleEditor:
         def asfloat(v, d):
             try:
                 return float(v)
-            except TypeError:
+            except (ValueError, TypeError):
                 return d
-        if key == "FontSize":
-            basesize = float(self.get("s_fontsize", 12.))
+        basesize = float(self.model.get("s_fontsize", 12.))
+        baseline = float(self.model.get("s_linespacing", 14.))
+        if key.lower() == "fontsize":
             res = asfloat(valstr, 1.) * basesize
-        elif key == "FontScale":
-            basesize = float(self.get("s_fontsize", 12.))
+        elif key.lower() == "baseline":
+            res = asfloat(valstr, 12.) * baseline / 12.
+        elif key.lower() == "fontscale": 
             res = asfloat(valstr, basesize) / basesize
-        elif key == "LineSpacing":
-            linespacing = float(self.get("s_linespacing", 12.))
-            res = asfloat(valstr, linespacing) / linespacing
-        elif key == "BaseLine":
-            linespacing = float(self.get("s_linespacing", 12.))
-            res = asfloat(valstr, 1.) * linespacing
+        elif key.lower() == "linespacing":
+            res = asfloat(valstr, baseline) / baseline * 12.
         return res
 
     def _setData(self, key, val):
