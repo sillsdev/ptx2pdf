@@ -8,12 +8,10 @@ Bug Fixes and Improvements in 1.4.2
   * Significant improvements and bug fixes in the Style Editor
   
   * Updated Picture Checklist wording and integrated Reverse/Mirror settings with Details tab settings
-  
-  * Renamed various controls to reflect Base (on Layout tab) + Factor (on Style tab) settings
-  
-  * Moved "Variable Line Spacing" to Advanced tab [currently still broken] 
 
   * Added "Location on Page" previews to PicList editor
+  
+  * Renamed various controls to reflect Base (on Layout tab) + Factor (on Style tab) settings
   
   * Added Help page link to Scripture Software Community
   
@@ -21,6 +19,8 @@ Bug Fixes and Improvements in 1.4.2
   
   * #306 Fixed adjusting Main Title's before and after space causing crash
 
+  * Moved "Variable Line Spacing" to Advanced tab [currently still broken] 
+  
 Bug Fixes and Improvements in 1.3.8
 
   * Re-arrange Pictures UI items and fix multiple bugs relating to picture handling
