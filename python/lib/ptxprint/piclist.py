@@ -886,28 +886,6 @@ class PicInfo(dict):
                             data[k][key] = filepath
         return data
 
-    def get_sourcefile(self, fname, filt=newBase, exclusive=False):
-        if filt is not None:
-            fname = filt(fname)
-        if self.srchlist is None or not len(self.srchlist):
-            self.build_searchlist()
-        for srchdir in self.srchlist:
-            if srchdir is None or not os.path.exists(srchdir):
-                continue
-            if exclusive:
-                search = [(srchdir, [], os.listdir(srchdir))]
-            else:
-                search = os.walk(srchdir)
-            for subdir, dirs, files in search:
-                for f in files:
-                    _, origExt = os.path.splitext(f)
-                    if origExt[1:] not in self.extensions:
-                        continue
-                    nB = filt(f) if filt is not None else f
-                    if nB == fname:
-                        return os.path.join(subdir, f)
-        return None
-
     def set_positions(self, cols=1, randomize=False, suffix=""):
         picposns = { "L": {"col":  ("tl", "bl"),             "span": ("t")},
                      "R": {"col":  ("tr", "br"),             "span": ("b")},

@@ -1187,7 +1187,6 @@ class GtkViewModel(ViewModel):
         self.onPicRescan(btn)
         
     def onPicRescan(self, btn):
-        print("Clearing OLD SrcPaths")
         self.picListView.clearSrcPaths()
         
     def onPageNumTitlePageChanged(self, btn):
