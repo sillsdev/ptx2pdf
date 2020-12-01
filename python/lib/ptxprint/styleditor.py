@@ -53,6 +53,11 @@ class StyleEditor:
         foundp = False
         self.basesheet = Sheets(sheetfiles[:-1])
         self.sheet = Sheets(sheetfiles[-1:], base=self.basesheet)
+        for a in (self.sheet, self.basesheet):
+            for k, v in a.items():
+                if 'LineSpacing' in v:
+                    fv = float(v['LineSpacing'])
+                    v['LineSpacing'] = "{:.3f}".format(fv / 14. * 12.)
 
     def _convertabs(self, key, valstr):
         def asfloat(v, d):
@@ -97,6 +102,12 @@ class StyleEditor:
                 res = " ".join(x.lower().title() if x else "" for x in sorted(v))
             else:
                 res = " ".join(self._str_val(x, key) for x in v)
+        elif key.lower() == "linespacing":
+            try:
+                fv = float(str(v))
+            except (ValueError, TypeError):
+                fv = 0.
+            res = "{:.3f}".format(fv / 12. * 14.)
         elif key.lower() in absolutes:
             fv = self.asFloatPts(str(v))
             res = "{:.3f} pt".format(fv)
