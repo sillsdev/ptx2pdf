@@ -245,7 +245,6 @@ class ImgCredits(Snippet):
                 for f in m:
                     a = 'co' if f[2] == 'cn' else f[2] # merge Cook's OT & NT illustrations together
                     if a == '' and f[3] != '':
-                        print(f[3])
                         customStmt += [f[0]]
                         artpgs.setdefault(f[3], []).append(int(f[0]))
                     elif a == '':

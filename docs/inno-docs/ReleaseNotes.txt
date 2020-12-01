@@ -1,26 +1,21 @@
-PTXprint 1.4.1 Release Notes 
-28 November 2020
+PTXprint 1.4.2 Release Notes 
+1 December 2020
 
-Bug Fixes and Improvements in 1.4.1
+Bug Fixes and Improvements in 1.4.2
 
-!! Note that this version is only for private circulation to a handful of testers. Major code
-!! changes and behavoral changes have been made. Please back up your settings before testing!
+  * Eliminate the need for NestedStyles.sty (this file can now be deleted permanently)
   
-  * Completely eliminate the need for NestedStyles.sty (can now be deleted permanently)
+  * Significant improvements and bug fixes in the Style Editor
   
-  * Some significant improvements to the Style Editor
+  * Updated Picture Checklist wording and integrated Reverse/Mirror settings with Details tab settings
   
-  * Update wording and integrate Checklist Reverse/Mirror settings with Details tab settings
-  
-  * Rename controls to reflect Base (on Layout tab) + Factor (on Style tab)
+  * Renamed various controls to reflect Base (on Layout tab) + Factor (on Style tab) settings
   
   * Moved "Variable Line Spacing" to Advanced tab [currently still broken] 
 
-Bug Fixes and Improvements in 1.4
-
-  * Added Picture Location on Page previews to PicList editor
+  * Added "Location on Page" previews to PicList editor
   
-  * Added link to Scripture Software Community
+  * Added Help page link to Scripture Software Community
   
   * Fixed (Relative) Font Size and (Absolute) Line Spacing settings in Style editor
   

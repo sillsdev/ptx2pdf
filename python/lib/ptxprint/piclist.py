@@ -388,7 +388,7 @@ class PicList:
                     if self.picinfo is not None:
                         dat = self.picinfo.getFigureSources(data={'1': {'src': val}},
                                     key='path', exclusive=self.parent.get("c_exclusiveFiguresFolder"))
-                        fpath = dat['1']['path']
+                        fpath = dat['1'].get('path', None)
                     if fpath is not None:
                         if self.picrect is None:
                             picframe = self.builder.get_object("fr_picPreview")
@@ -832,7 +832,6 @@ class PicInfo(dict):
                 if os.path.exists(p) and len(os.listdir(p)) > 0:
                     for dp, _, fn in os.walk(p): 
                         if len(fn): 
-                            print(dp)
                             self.srchlist += [dp]
         self.extensions = []
         extdflt = {x:i for i, x in enumerate(["jpg", "jpeg", "png", "tif", "tiff", "bmp", "pdf"])}
@@ -954,9 +953,7 @@ class PicInfo(dict):
         self.build_searchlist()
         for k, v in self.items():
             for a in ('src path', 'dest file'):
-                print(k, a, v)
                 if a in v:
-                    print("Deleting v[a]", v[a])
                     del v[a]        
         
 def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False, cols=1, doclear=True):
