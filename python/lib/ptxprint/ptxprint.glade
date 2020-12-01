@@ -2361,6 +2361,9 @@ in the Windows system.</property>
       <row>
         <col id="0" translatable="yes">Note</col>
       </row>
+      <row>
+        <col id="0" translatable="yes">Milestone</col>
+      </row>
     </data>
   </object>
   <object class="GtkListStore" id="ls_styTextType">
@@ -2583,7 +2586,6 @@ in the Windows system.</property>
               <packing>
                 <property name="left_attach">2</property>
                 <property name="top_attach">0</property>
-                <property name="width">2</property>
               </packing>
             </child>
             <child>
@@ -2672,7 +2674,28 @@ in the Windows system.</property>
               </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">end</property>
+                <property name="margin_left">12</property>
+                <property name="label" translatable="yes">End Marker:</property>
+              </object>
+              <packing>
+                <property name="left_attach">3</property>
+                <property name="top_attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkEntry" id="t_styEndMarker">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="halign">start</property>
+              </object>
+              <packing>
+                <property name="left_attach">4</property>
+                <property name="top_attach">0</property>
+              </packing>
             </child>
           </object>
           <packing>

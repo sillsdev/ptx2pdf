@@ -263,7 +263,7 @@ class GtkViewModel(ViewModel):
             self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
         for fcb in ("digits", "script", "chapfrom", "chapto", "diglotPicListSources",
                     "textDirection", "glossaryMarkupStyle", "fontFaces",
-                    "styTextType", "styStyleType", 
+                    # "styTextType", "styStyleType", 
                     "picaccept", "pubusage", "pubaccept", "chklstFilter"): #, "rotateTabs"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")

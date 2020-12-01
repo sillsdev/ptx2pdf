@@ -1,7 +1,6 @@
 
 import re
 from ptxprint.usfmutils import Sheets
-from ptxprint.sfm.style import Marker, CaselessStr
 from copy import deepcopy
 
 mkrexceptions = {k.lower().title(): k for k in ('BaseLine', 'TextType', 'TextProperties', 'FontName',

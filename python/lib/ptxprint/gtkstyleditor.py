@@ -1,5 +1,6 @@
 from gi.repository import Gtk, Pango
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
+from ptxprint.sfm.style import Marker, CaselessStr
 from ptxprint.styleditor import StyleEditor
 from ptxprint.utils import _
 import re
