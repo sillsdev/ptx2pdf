@@ -445,7 +445,7 @@ class RunJob:
         self.thread = Thread(target=self.run_xetex, args=(outfname, info, logbuffer))
         self.busy = True
         self.thread.start()
-        return [os.path.join(self.tmpdir, outfname.replace(".tex", x)) for x in (".tex", ".xdv", ".pdf")]
+        return [os.path.join(self.tmpdir, outfname.replace(".tex", x)) for x in (".tex", ".xdv")]
 
     def wait(self):
         if self.busy:

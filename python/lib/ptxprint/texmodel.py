@@ -122,7 +122,7 @@ ModelMap = {
     "paragraph/varlinespacing":    ("c_variableLineSpacing", lambda w,v: "" if v else "%"),
     "paragraph/useglyphmetrics":   ("c_variableLineSpacing", lambda w,v: "%" if v else ""),
     "paragraph/linespacing":       ("s_linespacing", lambda w,v: "{:.3f}".format(float(v)) or "15.000"),
-    # "paragraph/linespacingfactor": ("s_linespacing", lambda w,v: "{:.3f}".format(float(v or "15") / 12)),
+    # "paragraph/linespacingfactor": ("s_linespacing", lambda w,v: "{:.3f}".format(float(v or "15") / 14)),
     "paragraph/linemin":           ("s_linespacingmin", lambda w,v: "minus {:.3f}pt".format(float(w.get("s_linespacing")) - float(v)) \
                                                      if float(v) < float(w.get("s_linespacing")) else ""),
     "paragraph/linemax":        ("s_linespacingmax", lambda w,v: "plus {:.3f}pt".format(float(v) - float(w.get("s_linespacing"))) \
@@ -426,7 +426,7 @@ class TexModel:
         self.dict['/modspath'] = rel(fpath, docdir).replace("\\","/")
         if "document/diglotcfgrpath" not in self.dict:
             self.dict["document/diglotcfgrpath"] = ""
-        self.dict['paragraph/linespacingfactor'] = "{:.3f}".format(float(self.dict['paragraph/linespacing']) / 12 / float(self.dict['paper/fontfactor']))
+        self.dict['paragraph/linespacingfactor'] = "{:.3f}".format(float(self.dict['paragraph/linespacing']) / 14 / float(self.dict['paper/fontfactor']))
         self.dict['paragraph/ifhavehyphenate'] = "" if os.path.exists(os.path.join(self.printer.configPath(""), \
                                                        "hyphen-"+self.dict["project/id"]+".tex")) else "%"
         # forward cleanup. If ask for ptxprint-mods.tex but don't have it, copy PrintDraft-mods.tex
