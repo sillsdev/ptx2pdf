@@ -22,7 +22,7 @@ stylemap = {
     'FirstLineIndent': ('s_styFirstLineIndent', 'l_styFirstLineIndent', '0', None, None),
     'LeftMargin':   ('s_styLeftMargin',     'l_styLeftMargin',  '0', None, None),
     'RightMargin':  ('s_styRightMargin',    'l_styRightMargin', '0', None, None),
-    'LineSpacing':  ('s_styLineSpacing',    'l_styLineSpacing', '0', None, None),
+    'LineSpacing':  ('s_styLineSpacing',    'l_styLineSpacing', '12', None, None),
     'SpaceBefore':  ('s_stySpaceBefore',    'l_stySpaceBefore', '0', None, None),
     'SpaceAfter':   ('s_stySpaceAfter',     'l_stySpaceAfter',  '0', None, None),
     'CallerStyle':  ('ecb_styCallerStyle',  'l_styCallerStyle', '', None, None),
@@ -179,7 +179,7 @@ class StyleEditorView(StyleEditor):
     def setval(self, mrk, key, val, ifunchanged=False):
         super().setval(mrk, key, val, ifunchanged=ifunchanged)
         if mrk == self.marker:
-            v = stylemap.get(key)
+            v = stylemap.get(key, None)
             if v is None:
                 return
             self.loading = True

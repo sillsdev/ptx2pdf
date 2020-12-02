@@ -124,7 +124,7 @@ Notice that markers are case dependent.
 \\Raise       | specifies a dimension to raise the text by. Be careful, this can't handle whole paragraphs and will not allow line breaking within the text so marked.
 \\Regular     | Disables italic, bold, superscript
 \\SpaceBefore | Space before paragraph ( actual value is this * \\VerticalSpaceFactor * \\LineSpacingFactor * \\FontSizeUnit)
-\\SpaceAfter  | Space after paragraph (actual value is this ** \\VerticalSpaceFactor * \\LineSpacingFactor * \\FontSizeUnit)
+\\SpaceAfter  | Space after paragraph (actual value is this * \\VerticalSpaceFactor * \\LineSpacingFactor * \\FontSizeUnit)
 \\Justification | "center", "left", "right" anything else is fully justified
 \\CallerStyle | marker to style the body text caller
 \\CallerRaise | dimension to raise the body text caller
@@ -132,13 +132,8 @@ Notice that markers are case dependent.
 \\NoteCallerRaise | dimension to raise the in note caller
 \\NoteBlendInto   | name of note type marker to merge these notes into that class
 \\SmallCap    | blank enables, "-" disables. Only works with fonts with a +smcp feature
-\\LineSpacing | (see also BaseLine.) Dimension of line spacing, in scaled linespacing units. I.e. actual measurement is  \\LineSpacing * \\LineSpacingFactor * \\FontSizeUnit<sup id="a1">[1](#f1)</sup>. If this and `\BaseLine` are both defined for a marker, the last one encountered takes priority.
+\\LineSpacing | (see also BaseLine.) Dimension of line spacing, in scaled linespacing units. I.e. actual measurement is \\LineSpacing * \\LineSpacingFactor * \\FontSizeUnit
 \\StyleType   | "paragraph", "character", "note"
-
-<b id="f1">[1]</b>: `\LineSpacingFactor` is often calculated as 12/14 of actual linespacing / base font size. This is because the default linespacing if none
-is specified is calculated as 14/12 of the `\FontSize` * `\LineSpaceFactor` * `\FontSizeUnit`. This means that 14 scaled linespacing units give a linespace
-which corresonds to the base line spacing which lead to the `\LineSpaceFactor`. Changes to `\LineSpacingFactor` should occur before any style sheet is
-loaded. [↩](#a1)
 
 These styles are used by other programs but have no action in the macros:
 

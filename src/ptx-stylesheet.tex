@@ -850,7 +850,7 @@
 \newdimen\PaperHeight		\PaperHeight=297mm
 \newdimen\MarginUnit		\MarginUnit=1in % units for margins
 \newdimen\BindingGutter		\BindingGutter=5mm
-\def\LineSpacingFactor{1.0} % scale factor used for line spacing
+\def\LineSpacingFactor{1.1666} % scale factor used for line spacing (14/12 is default)
 \def\VerticalSpaceFactor{1.0} % scaling factor applied to space before/after styles
 \def\TopMarginFactor{1.0}
 \def\BottomMarginFactor{\TopMarginFactor}
@@ -874,7 +874,7 @@
  \baselineskip=\origb@selineskip
  \le@dingunit=\LineSpacingFactor\FontSizeUnit
  \verticalsp@ceunit=\VerticalSpaceFactor\le@dingunit
- \ifdim\baselineskip < 1pt \baselineskip=14\le@dingunit\fi % If the baselineskip has been specifically
+ \ifdim\baselineskip < 1pt \baselineskip=12\le@dingunit\fi % If the baselineskip has been specifically
                                                            % set it will remain. Otherwise, the default
                                                            % of 14 will be applied here and set text will
                                                            % hold to the grid.
@@ -884,7 +884,7 @@
 \def\s@tupsizes{
  \s@tb@dyb@seline{}%
  %\tracingifs=1
- \lineskiplimit=-7\le@dingunit
+ \lineskiplimit=-6\le@dingunit
  \lineskip=0pt
  \s@tbaseline{p}%
  \NoteCallerWidth=1.1ex %Something sane?
