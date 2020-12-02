@@ -132,10 +132,8 @@ Notice that markers are case dependent.
 \\NoteCallerRaise | dimension to raise the in note caller
 \\NoteBlendInto   | name of note type marker to merge these notes into that class
 \\SmallCap    | blank enables, "-" disables. Only works with fonts with a +smcp feature
-\\LineSpacing | (see also BaseLine.) Dimension of line spacing, in scaled linespacing units. I.e. actual measurement is \\LineSpacing * \\LineSpacingFactor * \\FontSizeUnit<sup id="a1">[1](#f1)</sup>
+\\LineSpacing | (see also BaseLine.) Dimension of line spacing, in scaled linespacing units. I.e. actual measurement is \\LineSpacing * \\LineSpacingFactor * \\FontSizeUnit
 \\StyleType   | "paragraph", "character", "note"
-
-<b id="f1">[1]</b>: `\LineSpacingFactor` is often calculated as 12/14 of actual linespacing / base font size. This is because the default linespacing if none is specified is calculated as 14/12 of the `\FontSize`. This means that 14 scaled linespacing units give a linespace which corresonds to the base line spacing which lead to the `\LineSpaceFactor`. [↩](#a1)
 
 These styles are used by other programs but have no action in the macros:
 

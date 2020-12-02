@@ -407,7 +407,7 @@ class GtkViewModel(ViewModel):
             Gtk.main()
         except Exception as e:
             s = traceback.format_exc()
-            s += "\n" + str(e)
+            s += "\n{}: {}".format(type(e), str(e))
             self.doError(s)
 
     def emission_hook(self, w, *a):
@@ -635,7 +635,7 @@ class GtkViewModel(ViewModel):
             self.callback(self)
         except Exception as e:
             s = traceback.format_exc()
-            s += "\n" + str(e)
+            s += "\n{}: {}".format(type(e), str(e))
             self.doError(s)
             unlockme()
 
@@ -1243,11 +1243,9 @@ class GtkViewModel(ViewModel):
 
     def onFnBlendClicked(self, btn):
         self.onSimpleClicked(btn)
-        print("onFnBlendClicked")
         try:
             self.styleEditor.setval("x", "NoteBlendInto", "f" if btn.get_active() else "")
         except KeyError:
-            print("KeyError")
             return
 
     def onDirectionChanged(self, btn, *a):
@@ -1732,8 +1730,12 @@ class GtkViewModel(ViewModel):
         if archiveZipFile is not None:
             # self.archiveZipFile = archiveZipFile[0]
             btn_createZipArchive.set_tooltip_text(str(archiveZipFile[0]))
-            self.createArchive(str(archiveZipFile[0]))
-            
+            try:
+                self.createArchive(str(archiveZipFile[0]))
+            except Exception as e:
+                s = traceback.format_exc()
+                s += "\n{}: {}".format(type(e), str(e))
+                self.doError(s)
         else:
             # self.archiveZipFile = None
             btn_createZipArchive.set_tooltip_text("No Archive File Created")
