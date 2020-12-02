@@ -22,12 +22,12 @@ stylemap = {
     'FirstLineIndent': ('s_styFirstLineIndent', 'l_styFirstLineIndent', '0', None, None),
     'LeftMargin':   ('s_styLeftMargin',     'l_styLeftMargin',  '0', None, None),
     'RightMargin':  ('s_styRightMargin',    'l_styRightMargin', '0', None, None),
-    'LineSpacing':  ('s_styLineSpacing',    'l_styLineSpacing', '12', None, None),
+    'LineSpacing':  ('s_styLineSpacing',    'l_styLineSpacing', '1', None, None),
     'SpaceBefore':  ('s_stySpaceBefore',    'l_stySpaceBefore', '0', None, None),
     'SpaceAfter':   ('s_stySpaceAfter',     'l_stySpaceAfter',  '0', None, None),
-    'CallerStyle':  ('ecb_styCallerStyle',  'l_styCallerStyle', '', None, None),
-    'NoteCallerStyle': ('ecb_styNoteCallerStyle', 'l_styNoteCallerStyle', '', None, None),
-    'NoteBlendInto': ('ecb_NoteBlendInto',  'l_NoteBlendInto',  '', None, None),
+    'CallerStyle':  ('t_styCallerStyle',  'l_styCallerStyle', '', None, None),
+    'NoteCallerStyle': ('t_styNoteCallerStyle', 'l_styNoteCallerStyle', '', None, None),
+    'NoteBlendInto': ('t_NoteBlendInto',  'l_NoteBlendInto',  '', None, None),
     'CallerRaise':  ('s_styCallerRaise',    'l_styCallerRaise', '0', None, None),
     'NoteCallerRaise': ('s_styNoteCallerRaise', 'l_styNoteCallerRaise', '0', None, None),
     '_fontsize':    ('c_styFontScale',      'c_styFontScale',   False, lambda v: "FontScale" if v else "FontSize", None),
@@ -179,7 +179,7 @@ class StyleEditorView(StyleEditor):
     def setval(self, mrk, key, val, ifunchanged=False):
         super().setval(mrk, key, val, ifunchanged=ifunchanged)
         if mrk == self.marker:
-            v = stylemap.get(key, None)
+            v = stylemap.get(key)
             if v is None:
                 return
             self.loading = True
@@ -203,14 +203,7 @@ class StyleEditorView(StyleEditor):
         results = {"Tables": {"th": {"thc": {}, "thr": {}}, "tc": {"tcc": {}, "tcr": {}}},
                    "Peripheral Materials": {"zpa-": {}},
                    "Identification": {"toc": {}}}
-        callerlists = ('ecb_styCallerStyle', 'ecb_styNoteCallerStyle', 'ecb_NoteBlendInto')
-        for w in callerlists:
-            wid = self.builder.get_object(w)
-            wid.set_model(None)
-        mlist_store = self.builder.get_object("ls_styCallerStyle")
-        mlist_store.clear()
         for k, v in sorted(self.sheet.items(), key=lambda x:(len(x[0]), x[0])):
-            mlist_store.append([k])
             if k == "p":
                 foundp = True
             cat = 'Other'
@@ -229,9 +222,6 @@ class StyleEditorView(StyleEditor):
             triefit(k, results.setdefault(cat, {}), 1)
         self.treestore.clear()
         self._fill_store(results, None)
-        for w in callerlists:
-            wid = self.builder.get_object(w)
-            wid.set_model(mlist_store)
         if foundp:
             self.selectMarker("p")
 
@@ -289,9 +279,9 @@ class StyleEditorView(StyleEditor):
         old = self.basesheet.get(self.marker, {})
         oldval = None
         if 'LineSpacing' not in old and 'BaseLine' not in old:
-            old['LineSpacing'] = "12"
+            old['LineSpacing'] = "1"
             if 'LineSpacing' not in data and 'BaseLine' not in data:
-                data['LineSpacing'] = "12"
+                data['LineSpacing'] = "1"
         for k, v in stylemap.items():
             if k == 'Marker':
                 val = "\\" + self.marker

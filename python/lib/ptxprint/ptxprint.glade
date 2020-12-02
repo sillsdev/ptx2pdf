@@ -313,9 +313,9 @@ THE SOFTWARE.
   </object>
   <object class="GtkAdjustment" id="a_styLineSpacing">
     <property name="upper">50</property>
-    <property name="value">12</property>
+    <property name="value">1</property>
     <property name="step_increment">0.10000000000000001</property>
-    <property name="page_increment">5</property>
+    <property name="page_increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_styNoteCallerRaise">
     <property name="upper">20</property>
@@ -3875,7 +3875,7 @@ Font Size:</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="adjustment">a_fontsize</property>
                                         <property name="climb_rate">0.10000000000000001</property>
-                                        <property name="digits">1</property>
+                                        <property name="digits">2</property>
                                         <property name="numeric">True</property>
                                         <property name="value">12</property>
                                         <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
@@ -14121,7 +14121,7 @@ Factor:</property>
                                         <property name="digits">2</property>
                                         <property name="numeric">True</property>
                                         <property name="update_policy">if-valid</property>
-                                        <property name="value">12</property>
+                                        <property name="value">1</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
@@ -14308,7 +14308,9 @@ Factor:</property>
                                             <property name="width_request">78</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="tooltip_text" translatable="yes">This is in line spacing units where a line spacing factor of 12 is the same as the base line spacing. Just like a fontsize of 12 is the same as the base font size.</property>
+                                            <property name="tooltip_text" translatable="yes">This a proportion of the base line spacing.
+So 1.0 is the same as the base line spacing from the Layout tab.
+If Absolute Spacing is set, then this value is the line spacing in pts.</property>
                                             <property name="halign">end</property>
                                             <property name="label" translatable="yes">Line Spacing
 Factor:</property>
@@ -14406,32 +14408,6 @@ Factor:</property>
                                     <property name="row_spacing">6</property>
                                     <property name="column_spacing">6</property>
                                     <child>
-                                      <object class="GtkComboBox" id="ecb_styCallerStyle">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="can_default">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="model">ls_styCallerStyle</property>
-                                        <property name="wrap_width">1</property>
-                                        <property name="active">1</property>
-                                        <property name="has_entry">True</property>
-                                        <property name="entry_text_column">0</property>
-                                        <property name="id_column">0</property>
-                                        <property name="active_id">1</property>
-                                        <child internal-child="entry">
-                                          <object class="GtkEntry">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="width_chars">9</property>
-                                          </object>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
                                       <object class="GtkSpinButton" id="s_styCallerRaise">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
@@ -14453,32 +14429,6 @@ Factor:</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkComboBox" id="ecb_styNoteCallerStyle">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="can_default">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="model">ls_styNoteCallerStyle</property>
-                                        <property name="wrap_width">1</property>
-                                        <property name="active">1</property>
-                                        <property name="has_entry">True</property>
-                                        <property name="entry_text_column">0</property>
-                                        <property name="id_column">0</property>
-                                        <property name="active_id">1</property>
-                                        <child internal-child="entry">
-                                          <object class="GtkEntry">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="width_chars">9</property>
-                                          </object>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
                                       <object class="GtkSpinButton" id="s_styNoteCallerRaise">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
@@ -14497,32 +14447,6 @@ Factor:</property>
                                       <packing>
                                         <property name="left_attach">4</property>
                                         <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkComboBox" id="ecb_NoteBlendInto">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="can_default">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="model">ls_NoteBlendInto</property>
-                                        <property name="wrap_width">1</property>
-                                        <property name="active">1</property>
-                                        <property name="has_entry">True</property>
-                                        <property name="entry_text_column">0</property>
-                                        <property name="id_column">0</property>
-                                        <property name="active_id">1</property>
-                                        <child internal-child="entry">
-                                          <object class="GtkEntry">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="width_chars">9</property>
-                                          </object>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -14638,6 +14562,36 @@ Into Style:</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
+                                        <property name="top_attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEntry" id="t_styCallerStyle">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEntry" id="t_styNoteCallerStyle">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEntry" id="t_NoteBlendInto">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
                                         <property name="top_attach">2</property>
                                       </packing>
                                     </child>

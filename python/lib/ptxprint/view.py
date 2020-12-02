@@ -976,7 +976,8 @@ class ViewModel:
         if self.diglotView is not None:
             self.diglotView._archiveAdd(zf, self.getBooks(files=True))
         if self.get("c_archiveTemps"):
-            for f in self.tempFiles:
+            temps = [x.replace(".xdv", ".pdf") for x in self.tempFiles if x.endswith(".xdv")]
+            for f in self.tempFiles + temps:
                 pf = os.path.join(self.working_dir, f)
                 if os.path.exists(pf):
                     outfname = os.path.relpath(pf, self.settings_dir)
